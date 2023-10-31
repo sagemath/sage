@@ -21,26 +21,26 @@ cdef class NumberFieldElement(NumberFieldElement_base):
     cdef object __pari
     cdef object __matrix
 
-    cdef _new(self)
-    cpdef _add_(self, other)
-    cpdef _mul_(self, other)
+    cdef _new(self) noexcept
+    cpdef _add_(self, other) noexcept
+    cpdef _mul_(self, other) noexcept
 
-    cpdef _add_(self, other)
-    cpdef _mul_(self, other)
+    cpdef _add_(self, other) noexcept
+    cpdef _mul_(self, other) noexcept
 
-    cpdef _copy_for_parent(self, Parent parent)
+    cpdef _copy_for_parent(self, Parent parent) noexcept
 
-    cdef number_field(self)
+    cdef number_field(self) noexcept
 
-    cdef void _ntl_coeff_as_mpz(self, mpz_t z, long i)
-    cdef void _ntl_denom_as_mpz(self, mpz_t z)
+    cdef void _ntl_coeff_as_mpz(self, mpz_t z, long i) noexcept
+    cdef void _ntl_denom_as_mpz(self, mpz_t z) noexcept
 
-    cdef void _reduce_c_(self)
+    cdef void _reduce_c_(self) noexcept
 
-    cpdef list _coefficients(self)
+    cpdef list _coefficients(self) noexcept
 
-    cpdef bint is_rational(self)
-    cpdef bint is_one(self)
+    cpdef bint is_rational(self) noexcept
+    cpdef bint is_one(self) noexcept
     cdef int _randomize(self, num_bound, den_bound, distribution) except -1
 
 

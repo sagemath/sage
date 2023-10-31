@@ -122,7 +122,7 @@ cdef class ntl_ZZ_pEContext_class():
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         """
         Sets the global NTL modulus to be self.
 

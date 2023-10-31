@@ -145,7 +145,7 @@ from sage.graphs.base.static_sparse_graph cimport (short_digraph,
 cdef inline c_all_pairs_shortest_path_BFS(short_digraph sd,
                                           unsigned short* predecessors,
                                           unsigned short* distances,
-                                          uint32_t* eccentricity):
+                                          uint32_t* eccentricity) noexcept:
     r"""
     See the module's documentation.
     """
@@ -271,7 +271,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
                                         unsigned short* predecessors,
                                         unsigned short* distances,
                                         uint32_t* eccentricity,
-                                        vertex_list=None):
+                                        vertex_list=None) noexcept:
     r"""
     See the module's documentation.
 
@@ -412,7 +412,7 @@ def shortest_path_all_pairs(G):
 # Distances #
 #############
 
-cdef unsigned short * c_distances_all_pairs(G, vertex_list=None):
+cdef unsigned short * c_distances_all_pairs(G, vertex_list=None) noexcept:
     r"""
     Returns the matrix of distances in G.
 
@@ -1085,7 +1085,7 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
                                           uint32_t* distances,
                                           uint32_t* predecessors,
                                           uint32_t* waiting_list,
-                                          bitset_t seen):
+                                          bitset_t seen) noexcept:
     """
     Compute a lower bound on the diameter using the 2-sweep algorithm.
 
@@ -1144,7 +1144,7 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
 
 cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
                                         short_digraph rev_g,
-                                        uint32_t source):
+                                        uint32_t source) noexcept:
     r"""
     Lower bound on the diameter of digraph using directed version of 2-sweep.
 
@@ -1258,7 +1258,7 @@ cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
 
 
 cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
-                                            uint32_t source):
+                                            uint32_t source) noexcept:
     """
     Lower bound on the diameter using multi-sweep.
 
@@ -1336,7 +1336,7 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
 
 
 cdef uint32_t diameter_iFUB(short_digraph g,
-                            uint32_t source):
+                            uint32_t source) noexcept:
     """
     Compute the diameter of the input Graph using the ``iFUB`` algorithm.
 
@@ -1420,7 +1420,7 @@ cdef uint32_t diameter_iFUB(short_digraph g,
 
 
 cdef uint32_t diameter_DiFUB(short_digraph sd,
-                             uint32_t source):
+                             uint32_t source) noexcept:
     r"""
     Return the diameter of unweighted directed graph.
 
@@ -1545,7 +1545,7 @@ cdef uint32_t diameter_DiFUB(short_digraph sd,
     return LB
 
 
-cdef uint32_t diameter_DHV(short_digraph g):
+cdef uint32_t diameter_DHV(short_digraph g) noexcept:
     r"""
     Return the diameter of unweighted graph `g`.
 
@@ -2088,7 +2088,7 @@ def wiener_index(G):
 # Szeged index #
 ################
 
-cdef uint64_t c_szeged_index_low_memory(short_digraph sd):
+cdef uint64_t c_szeged_index_low_memory(short_digraph sd) noexcept:
     r"""
     Return the Szeged index of the graph.
 
@@ -2196,7 +2196,7 @@ cdef uint64_t c_szeged_index_low_memory(short_digraph sd):
     return s
 
 
-cdef uint64_t c_szeged_index_high_memory(short_digraph sd):
+cdef uint64_t c_szeged_index_high_memory(short_digraph sd) noexcept:
     r"""
     Return the Szeged index of the graph.
 

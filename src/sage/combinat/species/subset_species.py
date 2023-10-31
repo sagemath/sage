@@ -134,7 +134,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: S = species.SubsetSpecies(); S
             Subset species
         """
-        return super(SubsetSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """

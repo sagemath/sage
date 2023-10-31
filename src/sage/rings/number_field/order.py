@@ -1083,6 +1083,14 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             NotImplementedError: computation of class numbers of non-maximal orders
             not in quadratic fields is not implemented
 
+        TESTS:
+
+        Test for PARI bug #2466::
+
+            sage: x = polygen(ZZ)
+            sage: R.<t> = EquationOrder(x^2 - 8461)
+            sage: R.class_number()
+            3
         """
         if not self.is_maximal():
             K = self.number_field()

@@ -632,7 +632,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             from_V = MapFreeModuleToTwoStep
             to_V = MapTwoStepToFreeModule
         elif base is self:
-            return super(pAdicExtensionGeneric, self).free_module(base=base, basis=basis, map=map)
+            return super().free_module(base=base, basis=basis, map=map)
         else:
             raise NotImplementedError
         FromV = Hom(V, self)

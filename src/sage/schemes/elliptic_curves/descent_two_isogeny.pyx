@@ -38,7 +38,7 @@ from sage.libs.pari.convert_gmp cimport _new_GEN_from_mpz_t
 DEF N_RES_CLASSES_BSD = 10
 
 
-cdef unsigned long valuation(mpz_t a, mpz_t p):
+cdef unsigned long valuation(mpz_t a, mpz_t p) noexcept:
     """
     Return the number of times p divides a.
     """
@@ -85,7 +85,7 @@ def test_valuation(a, p):
     return valuation(A.value, P.value)
 
 
-cdef int padic_square(mpz_t a, mpz_t p):
+cdef int padic_square(mpz_t a, mpz_t p) noexcept:
     """
     Test if a is a p-adic square.
     """
@@ -130,7 +130,7 @@ def test_padic_square(a, p):
 
 
 cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
-                mpz_t x, mpz_t p, unsigned long nu):
+                mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
     Implements Lemma 6 of BSD's "Notes on elliptic curves, I" for odd p.
 
@@ -180,7 +180,7 @@ cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
 
 cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
-                mpz_t x, mpz_t p, unsigned long nu):
+                mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
     Implements Lemma 7 of BSD's "Notes on elliptic curves, I" for p=2.
 
@@ -246,7 +246,7 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
 
 cdef int Zp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
-                        mpz_t x_k, mpz_t p, unsigned long k):
+                        mpz_t x_k, mpz_t p, unsigned long k) noexcept:
     """
     Uses the approach of BSD's "Notes on elliptic curves, I" to test for
     solubility of y^2 == ax^4 + bx^3 + cx^2 + dx + e over Zp, with
@@ -283,7 +283,7 @@ cdef int Zp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
                             mpz_t pp, unsigned long pp_ui,
                             nmod_poly_factor_t f_factzn, nmod_poly_t f,
-                            fmpz_poly_t f1, fmpz_poly_t linear):
+                            fmpz_poly_t f1, fmpz_poly_t linear) noexcept:
     """
     Uses the approach of Algorithm 5.3.1 of Siksek's thesis to test for
     solubility of y^2 == ax^4 + bx^3 + cx^2 + dx + e over Zp.
@@ -523,7 +523,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         return result
 
 cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t pp,
-                                    fmpz_poly_t f1, fmpz_poly_t linear):
+                                    fmpz_poly_t f1, fmpz_poly_t linear) noexcept:
     """
     Uses the approach of Algorithm 5.3.1 of Siksek's thesis to test for
     solubility of y^2 == ax^4 + bx^3 + cx^2 + dx + e over Zp.
@@ -790,7 +790,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 cdef bint Qp_soluble_siksek(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
                             mpz_t p, unsigned long P,
                             nmod_poly_factor_t f_factzn, fmpz_poly_t f1,
-                            fmpz_poly_t linear):
+                            fmpz_poly_t linear) noexcept:
     """
     Uses Samir Siksek's thesis results to determine whether the quartic is
     locally soluble at p.
@@ -829,7 +829,7 @@ cdef bint Qp_soluble_siksek(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
 
 
 cdef bint Qp_soluble_siksek_large_p(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
-                                    mpz_t p, fmpz_poly_t f1, fmpz_poly_t linear):
+                                    mpz_t p, fmpz_poly_t f1, fmpz_poly_t linear) noexcept:
     """
     Uses Samir Siksek's thesis results to determine whether the quartic is
     locally soluble at p, when p is bigger than wordsize, and we can't use
@@ -863,7 +863,7 @@ cdef bint Qp_soluble_siksek_large_p(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
     mpz_clear(e)
     return result
 
-cdef bint Qp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p):
+cdef bint Qp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p) noexcept:
     """
     Uses the original test of Birch and Swinnerton-Dyer to test for local
     solubility of the quartic at p.
@@ -880,7 +880,7 @@ cdef bint Qp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p):
     mpz_clear(zero)
     return result
 
-cdef bint Qp_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p):
+cdef bint Qp_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p) noexcept:
     """
     Try the BSD approach for a few residue classes and if no solution is found,
     switch to Siksek to try to prove insolubility.

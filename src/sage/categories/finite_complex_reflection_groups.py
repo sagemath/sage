@@ -135,7 +135,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             desired output (well generated does not appear)::
 
                 sage: CoxeterGroups().Finite()
-                Category of finite coxeter groups
+                Category of finite Coxeter groups
             """
             return self._with_axiom('WellGenerated')
 

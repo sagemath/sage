@@ -235,9 +235,8 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             sage: B = LinearBinaryCodeStruct(M)
             sage: B.automorphism_group()[1]
             17868913969917295853568000000
-
         """
-        cdef int i, n = self.degree
+        cdef int n = self.degree
         cdef PartitionStack *part
         if partition is None:
             part = PS_new(n, 1)
@@ -361,7 +360,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
         if self.output is not NULL:
             deallocate_agcl_output(self.output)
 
-cdef int ith_word_linear(BinaryCodeStruct self, int i, bitset_s *word):
+cdef int ith_word_linear(BinaryCodeStruct self, int i, bitset_s *word) noexcept:
     cdef LinearBinaryCodeStruct LBCS = <LinearBinaryCodeStruct> self
     cdef int j
     bitset_zero(word)
@@ -622,12 +621,12 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
         sig_free(output)
         return output_py
 
-cdef int ith_word_nonlinear(BinaryCodeStruct self, int i, bitset_s *word):
+cdef int ith_word_nonlinear(BinaryCodeStruct self, int i, bitset_s *word) noexcept:
     cdef NonlinearBinaryCodeStruct NBCS = <NonlinearBinaryCodeStruct> self
     bitset_copy(word, &NBCS.words[i])
     return 0
 
-cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     r"""
     Refines the input partition by checking degrees of vertices to the given
     cells in the associated bipartite graph (vertices split into columns and
@@ -650,7 +649,7 @@ cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_ref
     """
     cdef BinaryCodeStruct BCS = <BinaryCodeStruct> S
     cdef int current_cell_against = 0
-    cdef int current_cell, i, r, j
+    cdef int current_cell, i, r
     cdef int first_largest_subcell
     cdef int invariant = 0
     cdef PartitionStack *word_ps = BCS.word_ps
@@ -751,7 +750,7 @@ cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_ref
         current_cell_against += 1
     return invariant
 
-cdef int compare_linear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_linear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     r"""
     Compare gamma_1(S1) and gamma_2(S2).
 
@@ -827,7 +826,7 @@ cdef int compare_linear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, in
                     return <int>bitset_check(&basis_2[i], gamma_2[cur_col]) - <int>bitset_check(&basis_1[i], gamma_1[cur_col])
     return 0
 
-cdef int compare_nonlinear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_nonlinear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     r"""
     Compare gamma_1(S1) and gamma_2(S2).
 
@@ -913,7 +912,7 @@ cdef int compare_nonlinear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2,
 
     return 0
 
-cdef bint all_children_are_equivalent(PartitionStack *col_ps, void *S):
+cdef bint all_children_are_equivalent(PartitionStack *col_ps, void *S) noexcept:
     """
     Returns True if any refinement of the current partition results in the same
     structure.
@@ -956,7 +955,7 @@ cdef bint all_children_are_equivalent(PartitionStack *col_ps, void *S):
         return 1
     return 0
 
-cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int entry, int cell_index, PartitionStack *col_ps):
+cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int entry, int cell_index, PartitionStack *col_ps) noexcept:
     """
     Returns the number of edges from the vertex corresponding to entry to
     vertices in the cell corresponding to cell_index.
@@ -970,7 +969,7 @@ cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int e
         of PS
     """
     cdef bitset_t cell, word
-    cdef int i, h
+    cdef int h
     bitset_init(cell, BCS.degree)
     bitset_zero(cell)
     bitset_init(word, BCS.degree)
@@ -986,7 +985,7 @@ cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int e
     bitset_free(word)
     return h
 
-cdef inline int col_degree(PartitionStack *col_ps, BinaryCodeStruct BCS, int entry, int cell_index, PartitionStack *word_ps):
+cdef inline int col_degree(PartitionStack *col_ps, BinaryCodeStruct BCS, int entry, int cell_index, PartitionStack *word_ps) noexcept:
     """
     Returns the number of edges from the vertex corresponding to entry to
     vertices in the cell corresponding to cell_index.
@@ -1001,7 +1000,7 @@ cdef inline int col_degree(PartitionStack *col_ps, BinaryCodeStruct BCS, int ent
     """
     cdef bitset_t word
     bitset_init(word, BCS.degree)
-    cdef int degree = 0, word_basis, i, b
+    cdef int degree = 0
     entry = col_ps.entries[entry]
     while True:
         BCS.ith_word(BCS, word_ps.entries[cell_index], word)
@@ -1012,20 +1011,19 @@ cdef inline int col_degree(PartitionStack *col_ps, BinaryCodeStruct BCS, int ent
     bitset_free(word)
     return degree
 
-cdef inline int sort_by_function_codes(PartitionStack *PS, int start, int *degrees, int *counts, int *output, int count_max):
+cdef inline int sort_by_function_codes(PartitionStack *PS, int start, int *degrees, int *counts, int *output, int count_max) noexcept:
     """
     A simple counting sort, given the degrees of vertices to a certain cell.
 
     INPUT:
-    PS -- the partition stack to be checked
-    start -- beginning index of the cell to be sorted
-    degrees -- the values to be sorted by
-    count, count_max, output -- scratch space
 
+    - PS -- the partition stack to be checked
+    - start -- beginning index of the cell to be sorted
+    - degrees -- the values to be sorted by
+    - count, count_max, output -- scratch space
     """
-    cdef int n = PS.degree
     cdef int i, j, max, max_location
-    for j from 0 <= j < count_max:
+    for j in range(count_max):
         counts[j] = 0
     i = 0
     while PS.levels[i+start] > PS.depth:
