@@ -343,12 +343,12 @@ doctest::
     sage: sorted([C for C in category_sample()                                          # needs sage.combinat sage.graphs sage.modules sage.rings.number_field
     ....:         if len(C._super_categories_for_classes) != len(C.super_categories())],
     ....:        key=str)
-    [Category of affine weyl groups,
+    [Category of affine Weyl groups,
      Category of fields,
      Category of finite dimensional algebras with basis over Rational Field,
      Category of finite dimensional hopf algebras with basis over Rational Field,
      Category of finite enumerated permutation groups,
-     Category of finite weyl groups,
+     Category of finite Weyl groups,
      Category of number fields]
 
 AUTHOR:
