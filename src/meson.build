@@ -56,6 +56,17 @@ print(cypari2.__file__.replace('__init__.py', ''))
 cypari2 = declare_dependency(
     include_directories: inc_cypari2,
 )
+pari = declare_dependency(
+  dependencies: [
+    cc.find_library('pari'),
+  ]
+)
+
+mpfr = declare_dependency(
+  dependencies: [
+    cc.find_library('mpfr'),
+  ]
+)
 
 # It's strange but cython cannot find its own include files
 # so we find them ourselves, and add them to the include path

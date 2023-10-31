@@ -36,6 +36,7 @@ py.install_sources(
     'toy_variety.py',
     subdir: 'sage/rings/polynomial',
 )
+install_subdir('padics', install_dir: sage_install_dir / 'polynomial')
 
 extension_data_cpp = {
     'multi_polynomial_ideal_libsingular': files('multi_polynomial_ideal_libsingular.pyx'),
@@ -95,3 +96,6 @@ foreach name, pyx : extension_data_cpp
         dependencies: [py_dep, cysignals, cypari2],
     )
 endforeach
+
+subdir('pbori')
+subdir('weil')

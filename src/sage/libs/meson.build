@@ -7,8 +7,10 @@ py.install_sources(
     subdir: 'sage/libs',
 )
 
+extension_data_cpp = {
+    'braiding': files('braiding.pyx'),
+}
 extension_data = {
-    #'braiding': files('braiding.pyx'),# - compile error (ios)
     'ecl': files('ecl.pyx'),
     'homfly': files('homfly.pyx'),
     'libecm': files('libecm.pyx'),
@@ -32,7 +34,21 @@ foreach name, pyx : extension_data
         dependencies: dependencies,
     )
 endforeach
+foreach name, pyx : extension_data_cpp
+    py.extension_module(name,
+        sources: pyx,
+        subdir: 'sage/libs',
+        install: true,
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_cpython],
+        dependencies: dependencies,
+    )
+endforeach
 
 subdir('gmp')
 subdir('gsl')
 subdir('flint')
+subdir('pari')
+subdir('mpmath')
+subdir('ntl')
+subdir('symmetrica')

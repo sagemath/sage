@@ -5,6 +5,8 @@ no_processing = [
     'repl',
     'doctest',
     'features',
+    'tensor',
+    'topology',
     'typeset',
 ]
 foreach package : no_processing
@@ -40,3 +42,6 @@ subdir('rings')
 subdir('arith')
 subdir('combinat')
 subdir('modules')
+subdir('tests')
+subdir('ext')
+subdir('interfaces')

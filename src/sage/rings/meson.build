@@ -92,6 +92,7 @@ mpfi = declare_dependency(
     cc.find_library('mpfi'),
   ]
 )
+gsl = dependency('gsl')
 
 foreach name, pyx : extension_data
     py.extension_module(name,
@@ -100,7 +101,7 @@ foreach name, pyx : extension_data
         install: true,
         #cython_args: ['-I', inc_gsl],
         include_directories: [inc_cpython, inc_flint, inc_gsl],
-        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, gmp],
+        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, mpfr, gmp, pari, gsl],
     )
 endforeach
 

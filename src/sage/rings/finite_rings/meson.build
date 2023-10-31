@@ -37,7 +37,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/rings/finite_rings',
         install: true,
         include_directories: [inc_cpython, inc_ntl, inc_rings],
-        dependencies: [py_dep, cysignals, cypari2],
+        dependencies: [py_dep, cysignals, cypari2, gmp],
     )
 endforeach
 foreach name, pyx : extension_data_cpp

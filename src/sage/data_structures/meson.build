@@ -20,6 +20,6 @@ foreach name, pyx : extension_data
         subdir: 'sage/data_structures',
         install: true,
         include_directories: [inc_cpython],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
