@@ -20,7 +20,7 @@ from sage.misc.cachefunc import cached_method
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
 
 
-cdef inline int ismaximal(binary_matrix_t g, int n, bitset_t s):
+cdef inline int ismaximal(binary_matrix_t g, int n, bitset_t s) noexcept:
     cdef int i
     for i in range(n):
         if (not bitset_in(s, i)) and bitset_are_disjoint(g.rows[i], s):

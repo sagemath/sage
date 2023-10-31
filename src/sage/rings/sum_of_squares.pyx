@@ -24,7 +24,7 @@ from cysignals.signals cimport sig_on, sig_off
 cimport sage.rings.integer as integer
 from . import integer
 
-cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
+cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]) noexcept:
     r"""
     Return ``1`` if ``n`` is a sum of two squares and ``0`` otherwise.
 
@@ -94,7 +94,7 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
     return 0
 
 
-cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]):
+cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]) noexcept:
     r"""
     Return `1` if `n` is a sum of three squares and `0` otherwise.
 

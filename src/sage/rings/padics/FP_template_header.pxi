@@ -31,10 +31,10 @@ cdef class FPElement(pAdicTemplateElement):
     cdef celement unit
     cdef long ordp
 
-    cdef FPElement _new_c(self)
+    cdef FPElement _new_c(self) noexcept
     cdef int _normalize(self) except -1
     cdef int _set_infinity(self) except -1
-    cpdef val_unit(self, p=*)
+    cpdef val_unit(self, p=*) noexcept
 
 cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
     cdef FPElement _zero

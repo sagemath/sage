@@ -960,8 +960,7 @@ class FiniteWords(AbstractLanguage):
             word: 444
         """
         for l in itertools.count():
-            for w in self.iterate_by_length(l):
-                yield w
+            yield from self.iterate_by_length(l)
 
     def __contains__(self, x):
         """

@@ -13,4 +13,4 @@ cdef class TreelengthConnected:
     cdef GenericGraph_pyx tree  # The final tree decomposition is stored
     cdef unsigned int length
     cdef bint leq_k
-    cdef bint _treelength(self, g, k)
+    cdef bint _treelength(self, g, k) noexcept

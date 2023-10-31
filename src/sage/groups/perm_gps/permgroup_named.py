@@ -640,7 +640,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         We illustrate the choice of the category::
 
             sage: A.category()                                                          # needs sage.combinat
-            Join of Category of coxeter group algebras over Rational Field
+            Join of Category of Coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
                 and Category of finite dimensional cellular algebras with basis
                      over Rational Field

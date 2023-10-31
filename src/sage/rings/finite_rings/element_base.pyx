@@ -1077,7 +1077,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
     integer_representation = deprecated_function_alias(33941, to_integer)
 
 cdef class Cache_base(SageObject):
-    cpdef FinitePolyExtElement fetch_int(self, number):
+    cpdef FinitePolyExtElement fetch_int(self, number) noexcept:
         r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns

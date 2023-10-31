@@ -146,7 +146,7 @@ cdef class PowComputer_class(SageObject):
 
         return richcmp(s.in_field, o.in_field, op)
 
-    cdef Integer pow_Integer(self, long n):
+    cdef Integer pow_Integer(self, long n) noexcept:
         """
         Returns self.prime^n
 
@@ -280,7 +280,7 @@ cdef class PowComputer_class(SageObject):
         mpz_set(ans.value, self.pow_mpz_t_tmp(mpz_get_si(_n.value)))
         return ans
 
-    cdef mpz_srcptr pow_mpz_t_top(self):
+    cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns a pointer to self.prime^self.prec_cap as an ``mpz_srcptr``.
 
@@ -549,7 +549,7 @@ cdef class PowComputer_base(PowComputer_class):
         """
         return PowComputer, (self.prime, self.cache_limit, self.prec_cap, self.in_field)
 
-    cdef mpz_srcptr pow_mpz_t_top(self):
+    cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns a pointer to self.prime^self.prec_cap as an ``mpz_srcptr``.
 
@@ -594,7 +594,7 @@ cdef class PowComputer_base(PowComputer_class):
         return self.temp_m
 
 pow_comp_cache = {}
-cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec_cap, in_field, prec_type=None):
+cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec_cap, in_field, prec_type=None) noexcept:
     """
     Returns a PowComputer.
 

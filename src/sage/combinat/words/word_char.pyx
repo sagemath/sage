@@ -1,15 +1,15 @@
 r"""
 Fast word datatype using an array of unsigned char
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -98,9 +98,9 @@ cdef class WordDatatype_char(WordDatatype):
         if data:
             self._set_data(data)
 
-    @cython.boundscheck(False) # assume that indexing will not cause any IndexErrors
+    @cython.boundscheck(False)  # assume that indexing will not cause any IndexErrors
     @cython.wraparound(False)  # not check not correctly handle negative indices
-    cdef _set_data(self, data):
+    cdef _set_data(self, data) noexcept:
         r"""
         set the attribute ._data and ._length from the sequence data
         (usually data is a word, a tuple or a list)
@@ -196,7 +196,7 @@ cdef class WordDatatype_char(WordDatatype):
             [1, 3, 2]
         """
         cdef bitset_t seen
-        bitset_init(seen, 256) # allocation + initialization to 0
+        bitset_init(seen, 256)  # allocation + initialization to 0
 
         cdef size_t i
         cdef list res = []
@@ -209,7 +209,7 @@ cdef class WordDatatype_char(WordDatatype):
         bitset_free(seen)
         return res
 
-    cdef _new_c(self, unsigned char * data, size_t length, WordDatatype_char master):
+    cdef _new_c(self, unsigned char * data, size_t length, WordDatatype_char master) noexcept:
         r"""
         TO DISCUSS: in Integer (sage.rings.integer) this method is actually an
         external function. But we might want to have several possible inheritance.
@@ -217,7 +217,7 @@ cdef class WordDatatype_char(WordDatatype):
         cdef type t = type(self)
         cdef WordDatatype_char other = t.__new__(t)
         other._data = data
-        other._master = master # can be None
+        other._master = master  # can be None
         other._is_slice = 0 if master is None else 1
         other._length = length
         other._parent = self._parent
@@ -367,9 +367,9 @@ cdef class WordDatatype_char(WordDatatype):
         if isinstance(key, slice):
             # here the key is a slice
             PySlice_GetIndicesEx(key,
-                    self._length,
-                    &start, &stop, &step,
-                    &slicelength)
+                                 self._length,
+                                 &start, &stop, &step,
+                                 &slicelength)
             if slicelength == 0:
                 return self._new_c(NULL, 0, None)
             if step == 1:
@@ -425,7 +425,7 @@ cdef class WordDatatype_char(WordDatatype):
         """
         return reversed_word_iterator(self)
 
-    cdef _concatenate(self, WordDatatype_char other):
+    cdef _concatenate(self, WordDatatype_char other) noexcept:
         cdef unsigned char * data
         data = <unsigned char *>check_allocarray(self._length + other._length, sizeof(unsigned char))
 
