@@ -4104,8 +4104,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
             yield self([[None]*(row) for row in self._inner_shape])
         else:
             for unT in StrongTableaux.standard_unmarked_iterator( self.k, size, self._outer_shape, self._inner_shape ):
-                for T in StrongTableaux.marked_given_unmarked_and_weight_iterator( unT, self.k, self._weight ):
-                    yield T
+                yield from StrongTableaux.marked_given_unmarked_and_weight_iterator( unT, self.k, self._weight )
 
     @classmethod
     def standard_unmarked_iterator( cls, k, size, outer_shape=None, inner_shape=[] ):
@@ -4410,8 +4409,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
             [[]]
         """
         for T in cls.standard_unmarked_iterator( k, size, outer_shape, inner_shape ):
-            for TT in cls.marked_given_unmarked_and_weight_iterator( T, k, [1]*(size) ):
-                yield TT
+            yield from cls.marked_given_unmarked_and_weight_iterator( T, k, [1]*(size) )
 
     @classmethod
     def cells_head_dictionary( cls, T ):

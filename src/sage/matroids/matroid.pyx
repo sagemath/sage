@@ -459,7 +459,7 @@ cdef class Matroid(SageObject):
 
     # virtual methods
 
-    cpdef groundset(self):
+    cpdef groundset(self) noexcept:
         """
         Return the groundset of the matroid.
 
@@ -485,7 +485,7 @@ cdef class Matroid(SageObject):
         """
         raise NotImplementedError("subclasses need to implement this.")
 
-    cpdef _rank(self, X):
+    cpdef _rank(self, X) noexcept:
         r"""
         Return the rank of a set ``X``.
 
@@ -520,7 +520,7 @@ cdef class Matroid(SageObject):
     # for better efficiency, its best to override the following methods in
     # each derived class
 
-    cpdef _max_independent(self, X):
+    cpdef _max_independent(self, X) noexcept:
         """
         Compute a maximal independent subset.
 
@@ -552,7 +552,7 @@ cdef class Matroid(SageObject):
                 res.discard(e)
         return frozenset(res)
 
-    cpdef _circuit(self, X):
+    cpdef _circuit(self, X) noexcept:
         """
         Return a minimal dependent subset.
 
@@ -591,7 +591,7 @@ cdef class Matroid(SageObject):
                 l -= 1
         return frozenset(Z)
 
-    cpdef _fundamental_circuit(self, B, e):
+    cpdef _fundamental_circuit(self, B, e) noexcept:
         r"""
         Return the `B`-fundamental circuit using `e`.
 
@@ -614,7 +614,7 @@ cdef class Matroid(SageObject):
         """
         return self._circuit(B.union([e]))
 
-    cpdef _closure(self, X):
+    cpdef _closure(self, X) noexcept:
         """
         Return the closure of a set.
 
@@ -643,7 +643,7 @@ cdef class Matroid(SageObject):
                 X.discard(y)
         return frozenset(X)
 
-    cpdef _corank(self, X):
+    cpdef _corank(self, X) noexcept:
         """
         Return the corank of a set.
 
@@ -665,7 +665,7 @@ cdef class Matroid(SageObject):
         """
         return len(X) + self._rank(self.groundset().difference(X)) - self.full_rank()
 
-    cpdef _max_coindependent(self, X):
+    cpdef _max_coindependent(self, X) noexcept:
         """
         Compute a maximal coindependent subset.
 
@@ -697,7 +697,7 @@ cdef class Matroid(SageObject):
                 res.discard(e)
         return frozenset(res)
 
-    cpdef _cocircuit(self, X):
+    cpdef _cocircuit(self, X) noexcept:
         """
         Return a minimal codependent subset.
 
@@ -736,7 +736,7 @@ cdef class Matroid(SageObject):
                 l -= 1
         return frozenset(Z)
 
-    cpdef _fundamental_cocircuit(self, B, e):
+    cpdef _fundamental_cocircuit(self, B, e) noexcept:
         r"""
         Return the `B`-fundamental circuit using `e`.
 
@@ -759,7 +759,7 @@ cdef class Matroid(SageObject):
         """
         return self._cocircuit(self.groundset().difference(B).union([e]))
 
-    cpdef _coclosure(self, X):
+    cpdef _coclosure(self, X) noexcept:
         """
         Return the coclosure of a set.
 
@@ -788,7 +788,7 @@ cdef class Matroid(SageObject):
                 X.discard(y)
         return frozenset(X)
 
-    cpdef _augment(self, X, Y):
+    cpdef _augment(self, X, Y) noexcept:
         r"""
         Return a maximal subset `I` of `Y` such that `r(X + I)=r(X) + r(I)`.
 
@@ -828,7 +828,7 @@ cdef class Matroid(SageObject):
 
     # override the following methods for even better efficiency
 
-    cpdef _is_independent(self, X):
+    cpdef _is_independent(self, X) noexcept:
         """
         Test if input is independent.
 
@@ -852,7 +852,7 @@ cdef class Matroid(SageObject):
         """
         return len(X) == self._rank(X)
 
-    cpdef _is_basis(self, X):
+    cpdef _is_basis(self, X) noexcept:
         """
         Test if input is a basis.
 
@@ -888,7 +888,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_independent(X)
 
-    cpdef _is_circuit(self, X):
+    cpdef _is_circuit(self, X) noexcept:
         """
         Test if input is a circuit.
 
@@ -923,7 +923,7 @@ cdef class Matroid(SageObject):
             Z.add(x)
         return True
 
-    cpdef _is_closed(self, X):
+    cpdef _is_closed(self, X) noexcept:
         """
         Test if input is a closed set.
 
@@ -955,7 +955,7 @@ cdef class Matroid(SageObject):
             X.discard(y)
         return True
 
-    cpdef _is_coindependent(self, X):
+    cpdef _is_coindependent(self, X) noexcept:
         """
         Test if input is coindependent.
 
@@ -979,7 +979,7 @@ cdef class Matroid(SageObject):
         """
         return self._corank(X) == len(X)
 
-    cpdef _is_cobasis(self, X):
+    cpdef _is_cobasis(self, X) noexcept:
         """
         Test if input is a cobasis.
 
@@ -1010,7 +1010,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_basis(self.groundset().difference(X))
 
-    cpdef _is_cocircuit(self, X):
+    cpdef _is_cocircuit(self, X) noexcept:
         """
         Test if input is a cocircuit.
 
@@ -1045,7 +1045,7 @@ cdef class Matroid(SageObject):
             Z.add(x)
         return True
 
-    cpdef _is_coclosed(self, X):
+    cpdef _is_coclosed(self, X) noexcept:
         """
         Test if input is a coclosed set.
 
@@ -1077,7 +1077,7 @@ cdef class Matroid(SageObject):
             X.discard(y)
         return True
 
-    cpdef _minor(self, contractions, deletions):
+    cpdef _minor(self, contractions, deletions) noexcept:
         r"""
         Return a minor.
 
@@ -1116,7 +1116,7 @@ cdef class Matroid(SageObject):
         from . import minor_matroid
         return minor_matroid.MinorMatroid(self, contractions, deletions)
 
-    cpdef _has_minor(self, N, bint certificate=False):
+    cpdef _has_minor(self, N, bint certificate=False) noexcept:
         """
         Test if matroid has the specified minor,
         and optionally return frozensets ``X`` and ``Y`` so that ``N`` is isomorphic to ``self.minor(X, Y)``.
@@ -1172,7 +1172,7 @@ cdef class Matroid(SageObject):
             return False, None
         return False
 
-    cpdef _line_length(self, F):
+    cpdef _line_length(self, F) noexcept:
         """
         Compute the length of the line specified through flat ``F``.
 
@@ -1198,7 +1198,7 @@ cdef class Matroid(SageObject):
         """
         return len(self.minor(contractions=F).simplify())
 
-    cpdef _extension(self, element, hyperplanes):
+    cpdef _extension(self, element, hyperplanes) noexcept:
         """
         Extend the matroid by a new element.
 
@@ -1266,7 +1266,7 @@ cdef class Matroid(SageObject):
         """
         return self.size()
 
-    cpdef size(self):
+    cpdef size(self) noexcept:
         """
         Return the size of the groundset.
 
@@ -1343,7 +1343,7 @@ cdef class Matroid(SageObject):
 
     # User-visible methods
 
-    cpdef rank(self, X=None):
+    cpdef rank(self, X=None) noexcept:
         r"""
         Return the rank of ``X``.
 
@@ -1377,7 +1377,7 @@ cdef class Matroid(SageObject):
             return self.full_rank()
         return self._rank(self._subset_internal(X))
 
-    cpdef full_rank(self):
+    cpdef full_rank(self) noexcept:
         r"""
         Return the rank of the matroid.
 
@@ -1400,7 +1400,7 @@ cdef class Matroid(SageObject):
             self._stored_full_rank = self._rank(self.groundset())
         return self._stored_full_rank
 
-    cpdef basis(self):
+    cpdef basis(self) noexcept:
         r"""
         Return an arbitrary basis of the matroid.
 
@@ -1429,7 +1429,7 @@ cdef class Matroid(SageObject):
         """
         return self._max_independent(self.groundset())
 
-    cpdef max_independent(self, X):
+    cpdef max_independent(self, X) noexcept:
         """
         Compute a maximal independent subset of ``X``.
 
@@ -1456,7 +1456,7 @@ cdef class Matroid(SageObject):
         """
         return self._max_independent(self._subset_internal(X))
 
-    cpdef circuit(self, X=None):
+    cpdef circuit(self, X=None) noexcept:
         """
         Return a circuit.
 
@@ -1498,7 +1498,7 @@ cdef class Matroid(SageObject):
         """
         return self._circuit(self.__subset_all(X))
 
-    cpdef fundamental_circuit(self, B, e):
+    cpdef fundamental_circuit(self, B, e) noexcept:
         r"""
         Return the `B`-fundamental circuit using `e`.
 
@@ -1533,7 +1533,7 @@ cdef class Matroid(SageObject):
             raise ValueError("input e is not an element of the groundset.")
         return self._fundamental_circuit(B, e)
 
-    cpdef closure(self, X):
+    cpdef closure(self, X) noexcept:
         """
         Return the closure of a set ``X``.
 
@@ -1561,7 +1561,7 @@ cdef class Matroid(SageObject):
         """
         return self._closure(self._subset_internal(X))
 
-    cpdef k_closure(self, X, k):
+    cpdef k_closure(self, X, k) noexcept:
         r"""
         Return the ``k``-closure of ``X``.
 
@@ -1611,7 +1611,7 @@ cdef class Matroid(SageObject):
             S = cl
         return S
 
-    cpdef augment(self, X, Y=None):
+    cpdef augment(self, X, Y=None) noexcept:
         r"""
         Return a maximal subset `I` of `Y - X` such that
         `r(X + I) = r(X) + r(I)`.
@@ -1649,7 +1649,7 @@ cdef class Matroid(SageObject):
         Y = self.__subset_all(Y)
         return self._augment(X, Y.difference(X))
 
-    cpdef corank(self, X=None):
+    cpdef corank(self, X=None) noexcept:
         r"""
         Return the corank of ``X``, or the corank of the groundset if ``X`` is
         ``None``.
@@ -1686,7 +1686,7 @@ cdef class Matroid(SageObject):
         """
         return self._corank(self.__subset_all(X))
 
-    cpdef full_corank(self):
+    cpdef full_corank(self) noexcept:
         """
         Return the corank of the matroid.
 
@@ -1710,7 +1710,7 @@ cdef class Matroid(SageObject):
         """
         return self.size() - self.full_rank()
 
-    cpdef cobasis(self):
+    cpdef cobasis(self) noexcept:
         """
         Return an arbitrary cobasis of the matroid.
 
@@ -1746,7 +1746,7 @@ cdef class Matroid(SageObject):
         """
         return self.max_coindependent(self.groundset())
 
-    cpdef max_coindependent(self, X):
+    cpdef max_coindependent(self, X) noexcept:
         """
         Compute a maximal coindependent subset of ``X``.
 
@@ -1784,7 +1784,7 @@ cdef class Matroid(SageObject):
         """
         return self._max_coindependent(self._subset_internal(X))
 
-    cpdef coclosure(self, X):
+    cpdef coclosure(self, X) noexcept:
         """
         Return the coclosure of a set ``X``.
 
@@ -1816,7 +1816,7 @@ cdef class Matroid(SageObject):
         """
         return self._coclosure(self._subset_internal(X))
 
-    cpdef cocircuit(self, X=None):
+    cpdef cocircuit(self, X=None) noexcept:
         """
         Return a cocircuit.
 
@@ -1864,7 +1864,7 @@ cdef class Matroid(SageObject):
         """
         return self._cocircuit(self.__subset_all(X))
 
-    cpdef fundamental_cocircuit(self, B, e):
+    cpdef fundamental_cocircuit(self, B, e) noexcept:
         r"""
         Return the `B`-fundamental cocircuit using `e`.
 
@@ -1903,7 +1903,7 @@ cdef class Matroid(SageObject):
             raise ValueError("input e is not an element of B.")
         return self._fundamental_cocircuit(B, e)
 
-    cpdef loops(self):
+    cpdef loops(self) noexcept:
         r"""
         Return the set of loops of the matroid.
 
@@ -1924,7 +1924,7 @@ cdef class Matroid(SageObject):
         """
         return self._closure(set())
 
-    cpdef is_independent(self, X):
+    cpdef is_independent(self, X) noexcept:
         r"""
         Check if a subset ``X`` is independent in the matroid.
 
@@ -1950,7 +1950,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_independent(self._subset_internal(X))
 
-    cpdef is_dependent(self, X):
+    cpdef is_dependent(self, X) noexcept:
         r"""
         Check if a subset ``X`` is dependent in the matroid.
 
@@ -1976,7 +1976,7 @@ cdef class Matroid(SageObject):
         """
         return not self._is_independent(self._subset_internal(X))
 
-    cpdef is_basis(self, X):
+    cpdef is_basis(self, X) noexcept:
         r"""
         Check if a subset is a basis of the matroid.
 
@@ -2005,7 +2005,7 @@ cdef class Matroid(SageObject):
             return False
         return self._is_basis(X)
 
-    cpdef is_closed(self, X):
+    cpdef is_closed(self, X) noexcept:
         r"""
         Test if a subset is a closed set of the matroid.
 
@@ -2038,7 +2038,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_closed(self._subset_internal(X))
 
-    cpdef is_subset_k_closed(self, X, int k):
+    cpdef is_subset_k_closed(self, X, int k) noexcept:
         r"""
         Test if ``X`` is a ``k``-closed set of the matroid.
 
@@ -2093,7 +2093,7 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
-    cpdef is_circuit(self, X):
+    cpdef is_circuit(self, X) noexcept:
         r"""
         Test if a subset is a circuit of the matroid.
 
@@ -2121,7 +2121,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_circuit(self._subset_internal(X))
 
-    cpdef coloops(self):
+    cpdef coloops(self) noexcept:
         r"""
         Return the set of coloops of the matroid.
 
@@ -2148,7 +2148,7 @@ cdef class Matroid(SageObject):
         """
         return self._coclosure(set())
 
-    cpdef is_coindependent(self, X):
+    cpdef is_coindependent(self, X) noexcept:
         r"""
         Check if a subset is coindependent in the matroid.
 
@@ -2181,7 +2181,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_coindependent(self._subset_internal(X))
 
-    cpdef is_codependent(self, X):
+    cpdef is_codependent(self, X) noexcept:
         r"""
         Check if a subset is codependent in the matroid.
 
@@ -2214,7 +2214,7 @@ cdef class Matroid(SageObject):
         """
         return not self._is_coindependent(self._subset_internal(X))
 
-    cpdef is_cobasis(self, X):
+    cpdef is_cobasis(self, X) noexcept:
         r"""
         Check if a subset is a cobasis of the matroid.
 
@@ -2251,7 +2251,7 @@ cdef class Matroid(SageObject):
             return False
         return self._is_cobasis(X)
 
-    cpdef is_cocircuit(self, X):
+    cpdef is_cocircuit(self, X) noexcept:
         r"""
         Test if a subset is a cocircuit of the matroid.
 
@@ -2285,7 +2285,7 @@ cdef class Matroid(SageObject):
         """
         return self._is_cocircuit(self._subset_internal(X))
 
-    cpdef is_coclosed(self, X):
+    cpdef is_coclosed(self, X) noexcept:
         r"""
         Test if a subset is a coclosed set of the matroid.
 
@@ -2320,7 +2320,7 @@ cdef class Matroid(SageObject):
 
     # verification
 
-    cpdef is_valid(self):
+    cpdef is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 
@@ -2372,7 +2372,7 @@ cdef class Matroid(SageObject):
 
     # enumeration
 
-    cpdef circuits(self):
+    cpdef circuits(self) noexcept:
         """
         Return the list of circuits of the matroid.
 
@@ -2400,7 +2400,7 @@ cdef class Matroid(SageObject):
                       for e in self.groundset().difference(B)])
         return list(C)
 
-    cpdef nonspanning_circuits(self):
+    cpdef nonspanning_circuits(self) noexcept:
         """
         Return the list of nonspanning circuits of the matroid.
 
@@ -2430,7 +2430,7 @@ cdef class Matroid(SageObject):
                 C.add(self._circuit(N))
         return list(C)
 
-    cpdef cocircuits(self):
+    cpdef cocircuits(self) noexcept:
         """
         Return the list of cocircuits of the matroid.
 
@@ -2455,7 +2455,7 @@ cdef class Matroid(SageObject):
             C.update([self._cocircuit(self.groundset().difference(B).union(set([e]))) for e in B])
         return list(C)
 
-    cpdef noncospanning_cocircuits(self):
+    cpdef noncospanning_cocircuits(self) noexcept:
         """
         Return the list of noncospanning cocircuits of the matroid.
 
@@ -2481,7 +2481,7 @@ cdef class Matroid(SageObject):
         """
         return self.dual().nonspanning_circuits()
 
-    cpdef circuit_closures(self):
+    cpdef circuit_closures(self) noexcept:
         """
         Return the list of closures of circuits of the matroid.
 
@@ -2517,7 +2517,7 @@ cdef class Matroid(SageObject):
             CC[len(C) - 1].add(self.closure(C))
         return {r: CC[r] for r in range(self.rank() + 1) if CC[r]}
 
-    cpdef nonspanning_circuit_closures(self):
+    cpdef nonspanning_circuit_closures(self) noexcept:
         """
         Return the list of closures of nonspanning circuits of the matroid.
 
@@ -2550,7 +2550,7 @@ cdef class Matroid(SageObject):
             CC[len(C) - 1].add(self.closure(C))
         return {r: CC[r] for r in range(self.rank() + 1) if CC[r]}
 
-    cpdef nonbases(self):
+    cpdef nonbases(self) noexcept:
         r"""
         Return the list of nonbases of the matroid.
 
@@ -2584,7 +2584,7 @@ cdef class Matroid(SageObject):
                 res.append(X)
         return res
 
-    cpdef dependent_r_sets(self, long r):
+    cpdef dependent_r_sets(self, long r) noexcept:
         r"""
         Return the list of dependent subsets of fixed size.
 
@@ -2617,7 +2617,7 @@ cdef class Matroid(SageObject):
                 res.append(X)
         return res
 
-    cpdef bases(self):
+    cpdef bases(self) noexcept:
         r"""
         Return the list of bases of the matroid.
 
@@ -2649,7 +2649,7 @@ cdef class Matroid(SageObject):
                 res.append(X)
         return res
 
-    cpdef independent_sets(self):
+    cpdef independent_sets(self) noexcept:
         r"""
         Return the list of independent subsets of the matroid.
 
@@ -2693,7 +2693,7 @@ cdef class Matroid(SageObject):
                 r -= 1
         return res
 
-    cpdef independent_r_sets(self, long r):
+    cpdef independent_r_sets(self, long r) noexcept:
         r"""
         Return the list of size-``r`` independent subsets of the matroid.
 
@@ -2733,7 +2733,7 @@ cdef class Matroid(SageObject):
                 res.append(X)
         return res
 
-    cpdef _extend_flags(self, flags):
+    cpdef _extend_flags(self, flags) noexcept:
         r"""
         Recursion for the ``self._flags(r)`` method.
 
@@ -2759,7 +2759,7 @@ cdef class Matroid(SageObject):
                 X = newX
         return newflags
 
-    cpdef _flags(self, r):
+    cpdef _flags(self, r) noexcept:
         r"""
         Compute rank-``r`` flats, with extra information for more speed.
 
@@ -2797,7 +2797,7 @@ cdef class Matroid(SageObject):
             flags = self._extend_flags(flags)
         return flags
 
-    cpdef flats(self, r):
+    cpdef flats(self, r) noexcept:
         r"""
         Return the collection of flats of the matroid of specified rank.
 
@@ -2826,7 +2826,7 @@ cdef class Matroid(SageObject):
         return SetSystem(list(self.groundset()),
                          subsets=[f[0] for f in self._flags(r)])
 
-    cpdef coflats(self, r):
+    cpdef coflats(self, r) noexcept:
         r"""
         Return the collection of coflats of the matroid of specified corank.
 
@@ -2869,7 +2869,7 @@ cdef class Matroid(SageObject):
              for X in self.flats(i)]
         return LatticePoset((F, lambda x, y: x < y))
 
-    cpdef hyperplanes(self):
+    cpdef hyperplanes(self) noexcept:
         """
         Return the set of hyperplanes of the matroid.
 
@@ -2893,7 +2893,7 @@ cdef class Matroid(SageObject):
         """
         return self.flats(self.full_rank() - 1)
 
-    cpdef f_vector(self):
+    cpdef f_vector(self) noexcept:
         r"""
         Return the `f`-vector of the matroid.
 
@@ -2919,7 +2919,7 @@ cdef class Matroid(SageObject):
             f_vec.append(len(flags))
         return f_vec
 
-    cpdef broken_circuits(self, ordering=None):
+    cpdef broken_circuits(self, ordering=None) noexcept:
         r"""
         Return the list of broken circuits of ``self``.
 
@@ -2961,7 +2961,7 @@ cdef class Matroid(SageObject):
                     break
         return frozenset(ret)
 
-    cpdef no_broken_circuits_sets(self, ordering=None):
+    cpdef no_broken_circuits_sets(self, ordering=None) noexcept:
         r"""
         Return the no broken circuits (NBC) sets of ``self``.
 
@@ -3197,7 +3197,7 @@ cdef class Matroid(SageObject):
 
     # isomorphism and equality
 
-    cpdef is_isomorphic(self, other, certificate=False):
+    cpdef is_isomorphic(self, other, certificate=False) noexcept:
         r"""
         Test matroid isomorphism.
 
@@ -3241,7 +3241,7 @@ cdef class Matroid(SageObject):
             raise TypeError("can only test for isomorphism between matroids.")
         return self._is_isomorphic(other, certificate)
 
-    cpdef _is_isomorphic(self, other, certificate=False):
+    cpdef _is_isomorphic(self, other, certificate=False) noexcept:
         """
         Test if ``self`` is isomorphic to ``other``.
 
@@ -3282,7 +3282,7 @@ cdef class Matroid(SageObject):
             return True
         return (self.full_rank() == other.full_rank() and self.nonbases()._isomorphism(other.nonbases()) is not None)
 
-    cpdef isomorphism(self, other):
+    cpdef isomorphism(self, other) noexcept:
         r"""
         Return a matroid isomorphism.
 
@@ -3321,7 +3321,7 @@ cdef class Matroid(SageObject):
             raise TypeError("can only give isomorphism between matroids.")
         return self._isomorphism(other)
 
-    cpdef _isomorphism(self, other):
+    cpdef _isomorphism(self, other) noexcept:
         """
         Return isomorphism from ``self`` to ``other``, if such an isomorphism exists.
 
@@ -3354,7 +3354,7 @@ cdef class Matroid(SageObject):
         else:
             return None
 
-    cpdef equals(self, other):
+    cpdef equals(self, other) noexcept:
         """
         Test for matroid equality.
 
@@ -3441,7 +3441,7 @@ cdef class Matroid(SageObject):
         morphism = {e: e for e in self.groundset()}
         return self._is_isomorphism(other, morphism)
 
-    cpdef is_isomorphism(self, other, morphism):
+    cpdef is_isomorphism(self, other, morphism) noexcept:
         r"""
         Test if a provided morphism induces a matroid isomorphism.
 
@@ -3580,7 +3580,7 @@ cdef class Matroid(SageObject):
             return False
         return self._is_isomorphism(other, mf)
 
-    cpdef _is_isomorphism(self, other, morphism):
+    cpdef _is_isomorphism(self, other, morphism) noexcept:
         r"""
         Version of :meth:`is_isomorphism` that does no type checking.
 
@@ -3699,7 +3699,7 @@ cdef class Matroid(SageObject):
 
     # Minors and duality
 
-    cpdef minor(self, contractions=None, deletions=None):
+    cpdef minor(self, contractions=None, deletions=None) noexcept:
         r"""
         Return the minor of ``self`` obtained by contracting, respectively
         deleting, the element(s) of ``contractions`` and ``deletions``.
@@ -3815,7 +3815,7 @@ cdef class Matroid(SageObject):
         conset, delset = sanitize_contractions_deletions(self, contractions, deletions)
         return self._minor(conset, delset)
 
-    cpdef contract(self, X):
+    cpdef contract(self, X) noexcept:
         r"""
         Contract elements.
 
@@ -3895,7 +3895,7 @@ cdef class Matroid(SageObject):
         """
         return self.contract(X)
 
-    cpdef delete(self, X):
+    cpdef delete(self, X) noexcept:
         r"""
         Delete elements.
 
@@ -3961,7 +3961,7 @@ cdef class Matroid(SageObject):
         """
         return self.minor(deletions=X)
 
-    cpdef _backslash_(self, X):
+    cpdef _backslash_(self, X) noexcept:
         r"""
         Shorthand for ``self.delete(X)``.
 
@@ -3978,7 +3978,7 @@ cdef class Matroid(SageObject):
         deprecation(36394, 'the backslash operator has been deprecated; use M.delete(X) instead')
         return self.delete(X)
 
-    cpdef dual(self):
+    cpdef dual(self) noexcept:
         r"""
         Return the dual of the matroid.
 
@@ -4012,7 +4012,7 @@ cdef class Matroid(SageObject):
         from . import dual_matroid
         return dual_matroid.DualMatroid(self)
 
-    cpdef truncation(self):
+    cpdef truncation(self) noexcept:
         """
         Return a rank-1 truncation of the matroid.
 
@@ -4043,7 +4043,7 @@ cdef class Matroid(SageObject):
         return self._extension(l, [])._minor(contractions=frozenset([l]),
                                              deletions=frozenset([]))
 
-    cpdef has_minor(self, N, bint certificate=False):
+    cpdef has_minor(self, N, bint certificate=False) noexcept:
         """
         Check if ``self`` has a minor isomorphic to ``N``,
         and optionally return frozensets ``X`` and ``Y`` so that ``N`` is isomorphic to ``self.minor(X, Y)``.
@@ -4090,7 +4090,7 @@ cdef class Matroid(SageObject):
             raise ValueError("N must be a matroid.")
         return self._has_minor(N, certificate)
 
-    cpdef has_line_minor(self, k, hyperlines=None, certificate=False):
+    cpdef has_line_minor(self, k, hyperlines=None, certificate=False) noexcept:
         r"""
         Test if the matroid has a `U_{2, k}`-minor.
 
@@ -4161,7 +4161,7 @@ cdef class Matroid(SageObject):
             # get simplified away anyway.
         return self._has_line_minor(k, hyperlines, certificate)
 
-    cpdef _has_line_minor(self, k, hyperlines, certificate=False):
+    cpdef _has_line_minor(self, k, hyperlines, certificate=False) noexcept:
         r"""
         Test if the matroid has a `U_{2, k}`-minor.
 
@@ -4208,7 +4208,7 @@ cdef class Matroid(SageObject):
 
     # extensions
 
-    cpdef extension(self, element=None, subsets=None):
+    cpdef extension(self, element=None, subsets=None) noexcept:
         r"""
         Return an extension of the matroid.
 
@@ -4285,7 +4285,7 @@ cdef class Matroid(SageObject):
             hyperplanes = [H for H in self.modular_cut(subsets) if self._rank(H) == r]
         return self._extension(element, hyperplanes)
 
-    cpdef coextension(self, element=None, subsets=None):
+    cpdef coextension(self, element=None, subsets=None) noexcept:
         r"""
         Return a coextension of the matroid.
 
@@ -4349,7 +4349,7 @@ cdef class Matroid(SageObject):
         """
         return self.dual().extension(element, subsets).dual()
 
-    cpdef modular_cut(self, subsets):
+    cpdef modular_cut(self, subsets) noexcept:
         r"""
         Compute the modular cut generated by ``subsets``.
 
@@ -4439,7 +4439,7 @@ cdef class Matroid(SageObject):
             final_list.add(F)
         return final_list
 
-    cpdef linear_subclasses(self, line_length=None, subsets=None):
+    cpdef linear_subclasses(self, line_length=None, subsets=None) noexcept:
         r"""
         Return an iterable set of linear subclasses of the matroid.
 
@@ -4508,7 +4508,7 @@ cdef class Matroid(SageObject):
         from . import extension
         return extension.LinearSubclasses(self, line_length=line_length, subsets=subsets)
 
-    cpdef extensions(self, element=None, line_length=None, subsets=None):
+    cpdef extensions(self, element=None, line_length=None, subsets=None) noexcept:
         r"""
         Return an iterable set of single-element extensions of the matroid.
 
@@ -4639,7 +4639,7 @@ cdef class Matroid(SageObject):
 
     # connectivity
 
-    cpdef simplify(self):
+    cpdef simplify(self) noexcept:
         r"""
         Return the simplification of the matroid.
 
@@ -4678,7 +4678,7 @@ cdef class Matroid(SageObject):
         return self._minor(contractions=frozenset([]),
                            deletions=self.groundset().difference(res))
 
-    cpdef cosimplify(self):
+    cpdef cosimplify(self) noexcept:
         r"""
         Return the cosimplification of the matroid.
 
@@ -4717,7 +4717,7 @@ cdef class Matroid(SageObject):
         return self._minor(contractions=self.groundset().difference(res),
                            deletions=frozenset([]))
 
-    cpdef is_simple(self):
+    cpdef is_simple(self) noexcept:
         """
         Test if the matroid is simple.
 
@@ -4750,7 +4750,7 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
-    cpdef is_cosimple(self):
+    cpdef is_cosimple(self) noexcept:
         r"""
         Test if the matroid is cosimple.
 
@@ -4786,7 +4786,7 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
-    cpdef components(self):
+    cpdef components(self) noexcept:
         """
         Return a list of the components of the matroid.
 
@@ -4827,7 +4827,7 @@ cdef class Matroid(SageObject):
             components = components2
         return components
 
-    cpdef is_connected(self, certificate=False):
+    cpdef is_connected(self, certificate=False) noexcept:
         r"""
         Test if the matroid is connected.
 
@@ -4867,7 +4867,7 @@ cdef class Matroid(SageObject):
             else:
                 return False
 
-    cpdef connectivity(self, S, T=None):
+    cpdef connectivity(self, S, T=None) noexcept:
         r"""
         Evaluate the connectivity function of the matroid.
 
@@ -4908,7 +4908,7 @@ cdef class Matroid(SageObject):
             raise ValueError("S and T are not disjoint")
         return len(self._link(S, T)[0]) - self.full_rank() + self._rank(S) + self._rank(T)
 
-    cpdef _connectivity(self, S, T):
+    cpdef _connectivity(self, S, T) noexcept:
         r"""
         Return the connectivity of two subsets ``S`` and ``T`` in the matroid.
 
@@ -4947,7 +4947,7 @@ cdef class Matroid(SageObject):
         """
         return len(self._link(S,T)[0]) - self.full_rank() + self.rank(S) + self.rank(T)
 
-    cpdef link(self, S, T):
+    cpdef link(self, S, T) noexcept:
         r"""
         Given disjoint subsets `S` and `T`, return a connector `I` and a separation `X`,
         which are optimal dual solutions in Tutte's Linking Theorem:
@@ -4994,7 +4994,7 @@ cdef class Matroid(SageObject):
             raise ValueError("S and T are not disjoint")
         return self._link(S, T)
 
-    cpdef _link(self, S, T):
+    cpdef _link(self, S, T) noexcept:
         r"""
         Given disjoint subsets `S` and `T`, return a connector `I` and a separation `X`,
         which are optimal dual solutions in Tutte's Linking Theorem:
@@ -5077,7 +5077,7 @@ cdef class Matroid(SageObject):
                 I = I.symmetric_difference(path)
         return frozenset(I), frozenset(predecessor)|S
 
-    cpdef is_kconnected(self, k, certificate=False):
+    cpdef is_kconnected(self, k, certificate=False) noexcept:
         r"""
         Return ``True`` if the matroid is `k`-connected, ``False`` otherwise.  It can
         optionally return a separator as a witness.
@@ -5203,7 +5203,7 @@ cdef class Matroid(SageObject):
             return True, None
         return True
 
-    cpdef is_3connected(self, certificate=False, algorithm=None):
+    cpdef is_3connected(self, certificate=False, algorithm=None) noexcept:
         r"""
         Return ``True`` if the matroid is 3-connected, ``False`` otherwise. It can
         optionally return a separator as a witness.
@@ -5283,7 +5283,7 @@ cdef class Matroid(SageObject):
             return self._is_3connected_shifting(certificate)
         raise ValueError("Not a valid algorithm.")
 
-    cpdef is_4connected(self, certificate=False, algorithm=None):
+    cpdef is_4connected(self, certificate=False, algorithm=None) noexcept:
         r"""
         Return ``True`` if the matroid is 4-connected, ``False`` otherwise. It can
         optionally return a separator as a witness.
@@ -5335,7 +5335,7 @@ cdef class Matroid(SageObject):
             return self._is_4connected_shifting(certificate)
         raise ValueError("Not a valid algorithm.")
 
-    cpdef _is_3connected_CE(self, certificate=False):
+    cpdef _is_3connected_CE(self, certificate=False) noexcept:
         r"""
         Return ``True`` if the matroid is 3-connected, ``False`` otherwise.
 
@@ -5463,7 +5463,7 @@ cdef class Matroid(SageObject):
         else:
             return True
 
-    cpdef _is_3connected_shifting(self, certificate=False):
+    cpdef _is_3connected_shifting(self, certificate=False) noexcept:
         r"""
         Return ``True`` if the matroid is 3-connected, ``False`` otherwise. It can
         optionally return a separator as a witness.
@@ -5541,7 +5541,7 @@ cdef class Matroid(SageObject):
             return True, None
         return True
 
-    cpdef _is_4connected_shifting(self, certificate=False):
+    cpdef _is_4connected_shifting(self, certificate=False) noexcept:
         r"""
         Return ``True`` if the matroid is 4-connected, ``False`` otherwise. It can
         optionally return a separator as a witness.
@@ -5645,7 +5645,7 @@ cdef class Matroid(SageObject):
             return True, None
         return True
 
-    cpdef _shifting_all(self, X, P_rows, P_cols, Q_rows, Q_cols, m):
+    cpdef _shifting_all(self, X, P_rows, P_cols, Q_rows, Q_cols, m) noexcept:
         r"""
         Given a basis ``X``. If the submatrix of the partial matrix using rows
         `P_rows` columns `P_cols` and submatrix using rows `Q_rows` columns
@@ -5707,7 +5707,7 @@ cdef class Matroid(SageObject):
                 return True, cert
         return False, None
 
-    cpdef _shifting(self, X, X_1, Y_2, X_2, Y_1, m):
+    cpdef _shifting(self, X, X_1, Y_2, X_2, Y_1, m) noexcept:
         r"""
         Given a basis ``X``. If the submatrix of the partial matrix using rows
         `X_1` columns `Y_2` and submatrix using rows `X_2` columns
@@ -5799,7 +5799,7 @@ cdef class Matroid(SageObject):
             return False, None
         return True, S_2
 
-    cpdef _is_3connected_BC(self, certificate=False):
+    cpdef _is_3connected_BC(self, certificate=False) noexcept:
         r"""
         Return ``True`` if the matroid is 3-connected, ``False`` otherwise.
 
@@ -5855,7 +5855,7 @@ cdef class Matroid(SageObject):
         fund_cocircuits = set([self._fundamental_cocircuit(basis, e) for e in basis])
         return self._is_3connected_BC_recursion(self.basis(), fund_cocircuits)
 
-    cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits):
+    cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits) noexcept:
         r"""
         A helper function for ``_is_3connected_BC``. This method assumes the
         matroid is both simple and cosimple. Under the assumption, it return
@@ -5955,7 +5955,7 @@ cdef class Matroid(SageObject):
 
     # representability
 
-    cpdef _local_binary_matroid(self, basis=None):
+    cpdef _local_binary_matroid(self, basis=None) noexcept:
         r"""
         Return a binary matroid `M` so that relative to a fixed basis `B`,
         `X` is a basis of ``self`` if and only if `X` is a basis of `M`
@@ -5996,7 +5996,7 @@ cdef class Matroid(SageObject):
         from sage.matroids.linear_matroid import BinaryMatroid
         return BinaryMatroid(groundset=E, matrix=A, basis=basis, keep_initial_representation=False)
 
-    cpdef binary_matroid(self, randomized_tests=1, verify = True):
+    cpdef binary_matroid(self, randomized_tests=1, verify = True) noexcept:
         r"""
         Return a binary matroid representing ``self``, if such a
         representation exists.
@@ -6054,7 +6054,7 @@ cdef class Matroid(SageObject):
         else:
             return None
 
-    cpdef is_binary(self, randomized_tests=1):
+    cpdef is_binary(self, randomized_tests=1) noexcept:
         r"""
         Decide if ``self`` is a binary matroid.
 
@@ -6092,7 +6092,7 @@ cdef class Matroid(SageObject):
         """
         return self.binary_matroid(randomized_tests=randomized_tests, verify=True) is not None
 
-    cpdef _local_ternary_matroid(self, basis=None):
+    cpdef _local_ternary_matroid(self, basis=None) noexcept:
         r"""
         Return a ternary matroid `M` so that if ``self`` is ternary, then `M` is field
         isomorphic to ``self``.
@@ -6183,7 +6183,7 @@ cdef class Matroid(SageObject):
         from sage.matroids.linear_matroid import TernaryMatroid
         return TernaryMatroid(groundset=E, matrix=A, basis=basis, keep_initial_representation=False)
 
-    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
+    cpdef ternary_matroid(self, randomized_tests=1, verify = True) noexcept:
         r"""
         Return a ternary matroid representing ``self``, if such a
         representation exists.
@@ -6241,7 +6241,7 @@ cdef class Matroid(SageObject):
         else:
             return None
 
-    cpdef is_ternary(self, randomized_tests=1):
+    cpdef is_ternary(self, randomized_tests=1) noexcept:
         r"""
         Decide if ``self`` is a ternary matroid.
 
@@ -6281,7 +6281,7 @@ cdef class Matroid(SageObject):
 
     # matroid k-closed
 
-    cpdef is_k_closed(self, int k):
+    cpdef is_k_closed(self, int k) noexcept:
         r"""
         Return if ``self`` is a ``k``-closed matroid.
 
@@ -6318,7 +6318,7 @@ cdef class Matroid(SageObject):
 
     # matroid chordality
 
-    cpdef _is_circuit_chordal(self, frozenset C, bint certificate=False):
+    cpdef _is_circuit_chordal(self, frozenset C, bint certificate=False) noexcept:
         """
         Check if the circuit ``C`` has a chord.
 
@@ -6366,7 +6366,7 @@ cdef class Matroid(SageObject):
             return False, None
         return False
 
-    cpdef is_circuit_chordal(self, C, bint certificate=False):
+    cpdef is_circuit_chordal(self, C, bint certificate=False) noexcept:
         r"""
         Check if the circuit ``C`` has a chord.
 
@@ -6408,7 +6408,7 @@ cdef class Matroid(SageObject):
             raise ValueError("input C is not a circuit")
         return self._is_circuit_chordal(frozenset(C), certificate)
 
-    cpdef is_chordal(self, k1=4, k2=None, bint certificate=False):
+    cpdef is_chordal(self, k1=4, k2=None, bint certificate=False) noexcept:
         r"""
         Return if a matroid is ``[k1, k2]``-chordal.
 
@@ -6463,7 +6463,7 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
-    cpdef chordality(self):
+    cpdef chordality(self) noexcept:
         r"""
         Return the minimal `k` such that the matroid ``M`` is `k`-chordal.
 
@@ -6495,7 +6495,7 @@ cdef class Matroid(SageObject):
 
     # optimization
 
-    cpdef max_weight_independent(self, X=None, weights=None):
+    cpdef max_weight_independent(self, X=None, weights=None) noexcept:
         r"""
         Return a maximum-weight independent set contained in a subset.
 
@@ -6582,7 +6582,7 @@ cdef class Matroid(SageObject):
                 res.discard(e)
         return frozenset(res)
 
-    cpdef max_weight_coindependent(self, X=None, weights=None):
+    cpdef max_weight_coindependent(self, X=None, weights=None) noexcept:
         r"""
         Return a maximum-weight coindependent set contained in ``X``.
 
@@ -6674,7 +6674,7 @@ cdef class Matroid(SageObject):
                 res.discard(e)
         return frozenset(res)
 
-    cpdef is_max_weight_independent_generic(self, X=None, weights=None):
+    cpdef is_max_weight_independent_generic(self, X=None, weights=None) noexcept:
         r"""
         Test if only one basis of the subset ``X`` has maximal
         weight.
@@ -6823,7 +6823,7 @@ cdef class Matroid(SageObject):
                 del res[-1]
         return True
 
-    cpdef is_max_weight_coindependent_generic(self, X=None, weights=None):
+    cpdef is_max_weight_coindependent_generic(self, X=None, weights=None) noexcept:
         r"""
         Test if only one cobasis of the subset ``X`` has maximal
         weight.
@@ -6980,7 +6980,7 @@ cdef class Matroid(SageObject):
                 del res[-1]
         return True
 
-    cpdef intersection(self, other, weights=None):
+    cpdef intersection(self, other, weights=None) noexcept:
         r"""
         Return a maximum-weight common independent set.
 
@@ -7038,7 +7038,7 @@ cdef class Matroid(SageObject):
                     raise TypeError("the weights argument does not seem to be a collection of weights for the groundset.")
         return self._intersection(other, wt)
 
-    cpdef _intersection(self, other, weights):
+    cpdef _intersection(self, other, weights) noexcept:
         r"""
         Return a maximum-weight common independent.
 
@@ -7078,7 +7078,7 @@ cdef class Matroid(SageObject):
             U = self._intersection_augmentation(other, weights, Y)
         return Y
 
-    cpdef _intersection_augmentation(self, other, weights, Y):
+    cpdef _intersection_augmentation(self, other, weights, Y) noexcept:
         r"""
         Return an augmenting set for the matroid intersection problem.
 
@@ -7169,7 +7169,7 @@ cdef class Matroid(SageObject):
                 path.add(u)
             return True, frozenset(path)
 
-    cpdef intersection_unweighted(self, other):
+    cpdef intersection_unweighted(self, other) noexcept:
         r"""
         Return a maximum-cardinality common independent set.
 
@@ -7205,7 +7205,7 @@ cdef class Matroid(SageObject):
             raise ValueError("matroid intersection requires equal groundsets.")
         return self._intersection_unweighted(other)
 
-    cpdef _intersection_unweighted(self, other):
+    cpdef _intersection_unweighted(self, other) noexcept:
         r"""
         Return a maximum common independent.
 
@@ -7241,7 +7241,7 @@ cdef class Matroid(SageObject):
             U = self._intersection_augmentation_unweighted(other, Y)
         return Y
 
-    cpdef _intersection_augmentation_unweighted(self, other, Y):
+    cpdef _intersection_augmentation_unweighted(self, other, Y) noexcept:
         r"""
         Return a common independent set larger than `Y` or report failure.
 
@@ -7377,7 +7377,7 @@ cdef class Matroid(SageObject):
                             predecessor[v] = u
             return True, Y
 
-    cpdef partition(self):
+    cpdef partition(self) noexcept:
         r"""
         Return a minimum number of disjoint independent sets that covers the
         groundset.
@@ -7443,7 +7443,7 @@ cdef class Matroid(SageObject):
 
     # invariants
 
-    cpdef _internal(self, B):
+    cpdef _internal(self, B) noexcept:
         """
         Return the set of internally active elements of a basis `B`.
 
@@ -7482,7 +7482,7 @@ cdef class Matroid(SageObject):
                 A.add(e)
         return A
 
-    cpdef _external(self, B):
+    cpdef _external(self, B) noexcept:
         """
         Return the set of externally active elements of a basis `B`.
 
@@ -7522,7 +7522,7 @@ cdef class Matroid(SageObject):
                 A.add(e)
         return A
 
-    cpdef tutte_polynomial(self, x=None, y=None):
+    cpdef tutte_polynomial(self, x=None, y=None) noexcept:
         r"""
         Return the Tutte polynomial of the matroid.
 
@@ -7583,7 +7583,7 @@ cdef class Matroid(SageObject):
             T = T(a, b)
         return T
 
-    cpdef flat_cover(self, solver=None, verbose=0, integrality_tolerance=1e-3):
+    cpdef flat_cover(self, solver=None, verbose=0, integrality_tolerance=1e-3) noexcept:
         """
         Return a minimum-size cover of the nonbases by non-spanning flats.
 
@@ -7738,7 +7738,7 @@ cdef class Matroid(SageObject):
         ret.rename("Chow ring of {} over {}".format(self, R))
         return ret
 
-    cpdef plot(self, B=None, lineorders=None, pos_method=None,pos_dict=None,save_pos=False):
+    cpdef plot(self, B=None, lineorders=None, pos_method=None,pos_dict=None,save_pos=False) noexcept:
         """
         Return geometric representation as a sage graphics object.
 
@@ -7799,7 +7799,7 @@ cdef class Matroid(SageObject):
         lineorders2=matroids_plot_helpers.lineorders_union(self._cached_info['lineorders'],lineorders)
         return matroids_plot_helpers.geomrep(self,B,lineorders2,pd=pos_dict, sp=save_pos)
 
-    cpdef show(self,B=None,lineorders=None,pos_method=None,pos_dict=None,save_pos=False,lims=None):
+    cpdef show(self,B=None,lineorders=None,pos_method=None,pos_dict=None,save_pos=False,lims=None) noexcept:
         """
         Show the geometric representation of the matroid.
 
@@ -7848,7 +7848,7 @@ cdef class Matroid(SageObject):
             G.show(xmin=lims[0], xmax=lims[1], ymin=lims[2], ymax=lims[3])
         return
 
-    cpdef _fix_positions(self,pos_dict=None,lineorders=None):
+    cpdef _fix_positions(self,pos_dict=None,lineorders=None) noexcept:
         """
         Cache point positions and line orders without actually plotting
 
@@ -7916,7 +7916,7 @@ cdef class Matroid(SageObject):
         from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self.no_broken_circuits_sets(ordering))
 
-    cpdef bergman_complex(self):
+    cpdef bergman_complex(self) noexcept:
         r"""
         Return the Bergman complex of ``self``.
 
@@ -7941,7 +7941,7 @@ cdef class Matroid(SageObject):
         L = self.lattice_of_flats()
         return L.subposet(L.list()[1: -1]).order_complex()
 
-    cpdef augmented_bergman_complex(self):
+    cpdef augmented_bergman_complex(self) noexcept:
         r"""
         Return the augmented Bergman complex of ``self``.
 

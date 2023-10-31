@@ -228,7 +228,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return n_var - 1
 
-    cpdef set_variable_type(self, int variable, int vtype):
+    cpdef set_variable_type(self, int variable, int vtype) noexcept:
         """
         Set the type of a variable
 
@@ -278,7 +278,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             glp_set_col_kind(self.lp, variable+1, GLP_CV)
 
-    cpdef set_sense(self, int sense):
+    cpdef set_sense(self, int sense) noexcept:
         """
         Set the direction (maximization/minimization).
 
@@ -304,7 +304,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             glp_set_obj_dir(self.lp, GLP_MIN)
 
-    cpdef objective_coefficient(self, int variable, coeff=None):
+    cpdef objective_coefficient(self, int variable, coeff=None) noexcept:
         """
         Set or get the coefficient of a variable in the objective function
 
@@ -347,7 +347,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             glp_set_obj_coef(self.lp, variable + 1, coeff)
 
-    cpdef problem_name(self, name=None):
+    cpdef problem_name(self, name=None) noexcept:
         """
         Return or define the problem's name
 
@@ -379,7 +379,7 @@ cdef class GLPKBackend(GenericBackend):
                 raise ValueError("Problem name for GLPK must not be longer than 255 characters.")
             glp_set_prob_name(self.lp, name)
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d = 0.0) noexcept:
         """
         Set the objective function.
 
@@ -409,7 +409,7 @@ cdef class GLPKBackend(GenericBackend):
 
         self.obj_constant_term = d
 
-    cpdef set_verbosity(self, int level):
+    cpdef set_verbosity(self, int level) noexcept:
         """
         Set the verbosity level
 
@@ -471,7 +471,7 @@ cdef class GLPKBackend(GenericBackend):
             self.iocp.msg_lev = GLP_MSG_ALL
             self.smcp.msg_lev = GLP_MSG_ALL
 
-    cpdef remove_constraint(self, int i):
+    cpdef remove_constraint(self, int i) noexcept:
         r"""
         Remove a constraint from self.
 
@@ -510,7 +510,7 @@ cdef class GLPKBackend(GenericBackend):
         glp_del_rows(self.lp, 1, rows)
         glp_std_basis(self.lp)
 
-    cpdef remove_constraints(self, constraints):
+    cpdef remove_constraints(self, constraints) noexcept:
         r"""
         Remove several constraints.
 
@@ -562,7 +562,7 @@ cdef class GLPKBackend(GenericBackend):
         sig_free(rows)
         glp_std_basis(self.lp)
 
-    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
+    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None) noexcept:
         """
         Add a linear constraint.
 
@@ -649,7 +649,7 @@ cdef class GLPKBackend(GenericBackend):
         if name is not None:
             glp_set_row_name(self.lp, n, str_to_bytes(name))
 
-    cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=None):
+    cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=None) noexcept:
         """
         Add ``'number`` linear constraints.
 
@@ -697,7 +697,7 @@ cdef class GLPKBackend(GenericBackend):
                 glp_set_row_name(self.lp, n-i,
                                  str_to_bytes(names[number-i-1]))
 
-    cpdef row(self, int index):
+    cpdef row(self, int index) noexcept:
         r"""
         Return a row
 
@@ -754,7 +754,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return (indices, values)
 
-    cpdef row_bounds(self, int index):
+    cpdef row_bounds(self, int index) noexcept:
         """
         Return the bounds of a specific constraint.
 
@@ -806,7 +806,7 @@ cdef class GLPKBackend(GenericBackend):
             (ub if ub != +DBL_MAX else None)
             )
 
-    cpdef col_bounds(self, int index):
+    cpdef col_bounds(self, int index) noexcept:
         """
         Return the bounds of a specific variable.
 
@@ -859,7 +859,7 @@ cdef class GLPKBackend(GenericBackend):
             (ub if ub != +DBL_MAX else None)
             )
 
-    cpdef add_col(self, indices, coeffs):
+    cpdef add_col(self, indices, coeffs) noexcept:
         """
         Add a column.
 
@@ -1149,7 +1149,7 @@ cdef class GLPKBackend(GenericBackend):
             raise MIPSolverException("GLPK: "+solution_status_msg.get(solution_status, "unknown error during call to GLPK : "+str(solution_status)))
         return 0
 
-    cpdef get_objective_value(self):
+    cpdef get_objective_value(self) noexcept:
         """
         Returns the value of the objective function.
 
@@ -1180,7 +1180,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             return glp_get_obj_val(self.lp)
 
-    cpdef best_known_objective_bound(self):
+    cpdef best_known_objective_bound(self) noexcept:
         r"""
         Return the value of the currently best known bound.
 
@@ -1213,7 +1213,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.search_tree_data.best_bound
 
-    cpdef get_relative_objective_gap(self):
+    cpdef get_relative_objective_gap(self) noexcept:
         r"""
         Return the relative objective gap of the best known solution.
 
@@ -1255,7 +1255,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.search_tree_data.mip_gap
 
-    cpdef get_variable_value(self, int variable):
+    cpdef get_variable_value(self, int variable) noexcept:
         """
         Returns the value of a variable given by the solver.
 
@@ -1301,7 +1301,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             return glp_get_col_prim(self.lp, variable + 1)
 
-    cpdef get_row_prim(self, int i):
+    cpdef get_row_prim(self, int i) noexcept:
         r"""
         Returns the value of the auxiliary variable associated with i-th row.
 
@@ -1349,7 +1349,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_row_prim(self.lp, i+1)
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -1366,7 +1366,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return glp_get_num_cols(self.lp)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -1383,7 +1383,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_num_rows(self.lp)
 
-    cpdef col_name(self, int index):
+    cpdef col_name(self, int index) noexcept:
         """
         Return the ``index`` th col name
 
@@ -1425,7 +1425,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             return ""
 
-    cpdef row_name(self, int index):
+    cpdef row_name(self, int index) noexcept:
         """
         Return the ``index`` th row name
 
@@ -1466,7 +1466,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             return ""
 
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
@@ -1503,7 +1503,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_col_kind(self.lp, index + 1) == GLP_BV
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
@@ -1540,7 +1540,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_col_kind(self.lp, index + 1) == GLP_IV
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -1579,7 +1579,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_col_kind(self.lp, index + 1) == GLP_CV
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -1596,7 +1596,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_obj_dir(self.lp) == GLP_MAX
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value = False) noexcept:
         """
         Return or define the upper bound on a variable
 
@@ -1695,7 +1695,7 @@ cdef class GLPKBackend(GenericBackend):
                     glp_set_col_bnds(self.lp, index + 1, GLP_DB, min, dvalue)
                 sig_off()
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value = False) noexcept:
         """
         Return or define the lower bound on a variable
 
@@ -1795,7 +1795,7 @@ cdef class GLPKBackend(GenericBackend):
                     glp_set_col_bnds(self.lp, index + 1, GLP_DB, value, max)
                 sig_off()
 
-    cpdef write_lp(self, filename):
+    cpdef write_lp(self, filename) noexcept:
         """
         Write the problem to a .lp file
 
@@ -1822,7 +1822,7 @@ cdef class GLPKBackend(GenericBackend):
         filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         glp_write_lp(self.lp, NULL, filename)
 
-    cpdef write_mps(self, filename, int modern):
+    cpdef write_mps(self, filename, int modern) noexcept:
         """
         Write the problem to a .mps file
 
@@ -1849,7 +1849,7 @@ cdef class GLPKBackend(GenericBackend):
         filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         glp_write_mps(self.lp, modern, NULL, filename)
 
-    cpdef __copy__(self):
+    cpdef __copy__(self) noexcept:
         """
         Returns a copy of self.
 
@@ -1870,7 +1870,7 @@ cdef class GLPKBackend(GenericBackend):
         return p
 
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value = None) noexcept:
         """
         Return or define a solver parameter
 
@@ -2319,7 +2319,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             raise ValueError("This parameter is not available.")
 
-    cpdef bint is_variable_basic(self, int index):
+    cpdef bint is_variable_basic(self, int index) noexcept:
         """
         Test whether the given variable is basic.
 
@@ -2350,7 +2350,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.get_col_stat(index) == GLP_BS
 
-    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the given variable is nonbasic at lower bound.
         This assumes that the problem has been solved with the simplex method
@@ -2380,7 +2380,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.get_col_stat(index) == GLP_NL
 
-    cpdef bint is_slack_variable_basic(self, int index):
+    cpdef bint is_slack_variable_basic(self, int index) noexcept:
         """
         Test whether the slack variable of the given row is basic.
 
@@ -2411,7 +2411,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.get_row_stat(index) == GLP_BS
 
-    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the slack variable of the given row is nonbasic at lower bound.
 
@@ -2525,7 +2525,7 @@ cdef class GLPKBackend(GenericBackend):
                                                 'surrogateescape'))
         return res
 
-    cpdef double get_row_dual(self, int variable):
+    cpdef double get_row_dual(self, int variable) noexcept:
         r"""
         Returns the dual value of a constraint.
 
@@ -2721,7 +2721,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_col_stat(self.lp, j+1)
 
-    cpdef set_row_stat(self, int i, int stat):
+    cpdef set_row_stat(self, int i, int stat) noexcept:
         r"""
         Set the status of a constraint.
 
@@ -2756,7 +2756,7 @@ cdef class GLPKBackend(GenericBackend):
 
         glp_set_row_stat(self.lp, i+1, stat)
 
-    cpdef set_col_stat(self, int j, int stat):
+    cpdef set_col_stat(self, int j, int stat) noexcept:
         r"""
         Set the status of a variable.
 
@@ -2791,7 +2791,7 @@ cdef class GLPKBackend(GenericBackend):
 
         glp_set_col_stat(self.lp, j+1, stat)
 
-    cpdef int warm_up(self):
+    cpdef int warm_up(self) noexcept:
         r"""
         Warm up the basis using current statuses assigned to rows and cols.
 
@@ -2827,7 +2827,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return glp_warm_up(self.lp)
 
-    cpdef eval_tab_row(self, int k):
+    cpdef eval_tab_row(self, int k) noexcept:
         r"""
         Computes a row of the current simplex tableau.
 
@@ -2926,7 +2926,7 @@ cdef class GLPKBackend(GenericBackend):
         values  = [c_values[j+1]      for j in range(i)]
         return (indices, values)
 
-    cpdef eval_tab_col(self, int k):
+    cpdef eval_tab_col(self, int k) noexcept:
         r"""
         Computes a column of the current simplex tableau.
 
@@ -3033,7 +3033,7 @@ cdef class GLPKBackend(GenericBackend):
         sig_free(self.iocp)
         sig_free(self.smcp)
 
-cdef void glp_callback(glp_tree* tree, void* info):
+cdef void glp_callback(glp_tree* tree, void* info) noexcept:
     r"""
     A callback routine called by glp_intopt
 

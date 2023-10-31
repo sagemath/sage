@@ -103,7 +103,7 @@ cdef class ObjWrapper():
         return <Py_hash_t>(self.value)
 
 
-cdef ObjWrapper wrap_obj(Obj obj):
+cdef ObjWrapper wrap_obj(Obj obj) noexcept:
     """
     Constructor function for :class:`ObjWrapper`
     """
@@ -120,14 +120,14 @@ cdef dict owned_objects_refcount = dict()
 #
 # used in Sage's libgap.Gap.count_GAP_objects
 #
-cpdef get_owned_objects():
+cpdef get_owned_objects() noexcept:
     """
     Helper to access the refcount dictionary from Python code
     """
     return owned_objects_refcount
 
 
-cdef void reference_obj(Obj obj):
+cdef void reference_obj(Obj obj) noexcept:
     """
     Reference ``obj``
     """
@@ -140,7 +140,7 @@ cdef void reference_obj(Obj obj):
         owned_objects_refcount[wrapped] = 1
 
 
-cdef void dereference_obj(Obj obj):
+cdef void dereference_obj(Obj obj) noexcept:
     """
     Reference ``obj``
     """
@@ -151,7 +151,7 @@ cdef void dereference_obj(Obj obj):
         owned_objects_refcount[wrapped] = refcount - 1
 
 
-cdef void gasman_callback() with gil:
+cdef void gasman_callback() noexcept with gil:
     """
     Callback before each GAP garbage collection
     """
@@ -184,7 +184,7 @@ MakeImmutable(libgap_errout);
 """
 
 
-cdef initialize():
+cdef initialize() noexcept:
     """
     Initialize the GAP library, if it hasn't already been
     initialized.  It is safe to call this multiple times. One can set
@@ -404,7 +404,7 @@ class GAPError(ValueError):  # ValueError for historical reasons
     """
 
 
-cdef str extract_libgap_errout():
+cdef str extract_libgap_errout() noexcept:
     """
     Reads the global variable libgap_errout and returns a Python string
     containing the error message (with some boilerplate removed).
@@ -428,7 +428,7 @@ cdef str extract_libgap_errout():
     return msg_py
 
 
-cdef void error_handler() with gil:
+cdef void error_handler() noexcept with gil:
     """
     The libgap error handler.
 

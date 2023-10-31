@@ -125,6 +125,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
+
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
@@ -139,10 +141,11 @@ from sage.categories.number_fields import NumberFields
 
 from sage.matrix.constructor import matrix
 
+from sage.misc.lazy_import import lazy_import
+
 from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import number_field_elements_from_algebraics, QQbar
 from sage.rings.rational_field import is_RationalField
 from sage.rings.infinity import infinity
 
@@ -161,6 +164,8 @@ from .point import (AffineCurvePoint_field,
                     IntegralAffinePlaneCurvePoint_finite_field)
 
 from .closed_point import IntegralAffineCurveClosedPoint
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 
 class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
@@ -671,7 +676,7 @@ class AffinePlaneCurve(AffineCurve):
         T = sum([binomial(r, i)*deriv[i]*(vars[0])**i*(vars[1])**(r-i) for i in range(r+1)])
         if not factor:
             return [T(coords)]
-        if self.base_ring() == QQbar:
+        if isinstance(self.base_ring(), sage.rings.abc.AlgebraicField):
             fact = []
             # first add tangents corresponding to vars[0], vars[1] if they divide T
             t = min([e[0] for e in T.exponents()])
@@ -1534,6 +1539,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         def extension(self):
             F = self.base_ring()
+            from sage.rings.qqbar import QQbar
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
             K = number_field_elements_from_algebraics(L)[0]
