@@ -15,6 +15,7 @@ from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 from sage.misc.unknown import Unknown
 
+
 def is_covering_array(array, strength=None, levels=None, verbose=False, parameters=False):
     r"""
     Check if the input is a covering array with given strength.
@@ -349,6 +350,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
     bitset_free(seen)
     return True
 
+
 def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=False):
     r"""
     Checks that input is a Group Divisible Design on `\{0,...,v-1\}`
@@ -588,6 +590,7 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
                                      lambd=lambd,
                                      verbose=verbose)
 
+
 def is_projective_plane(blocks, verbose=False):
     r"""
     Test whether the blocks form a projective plane on `\{0,...,v-1\}`
@@ -661,6 +664,7 @@ def is_projective_plane(blocks, verbose=False):
                                      lambd=1,
                                      verbose=verbose)
 
+
 def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
     r"""
     Test if `M` is a `(G,k,\lambda)`-difference matrix.
@@ -724,6 +728,7 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
         False
     """
     return is_quasi_difference_matrix(M,G,k,lmbda=lmbda,mu=lmbda,u=0,verbose=verbose)
+
 
 def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
     r"""
@@ -938,6 +943,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
     sig_free(M_c)
     return True
 
+
 # Cached information for OA constructions (see .pxd file for more info)
 
 _OA_cache = <cache_entry *> sig_malloc(2*sizeof(cache_entry))
@@ -948,7 +954,7 @@ _OA_cache[0].max_true = -1
 _OA_cache[1].max_true = -1
 _OA_cache_size = 2
 
-cpdef _OA_cache_set(int k,int n,truth_value):
+cpdef _OA_cache_set(int k,int n,truth_value) noexcept:
     r"""
     Sets a value in the OA cache of existence results
 
@@ -983,7 +989,7 @@ cpdef _OA_cache_set(int k,int n,truth_value):
     else:
         _OA_cache[n].min_false   = k if k<_OA_cache[n].min_false   else _OA_cache[n].min_false
 
-cpdef _OA_cache_get(int k,int n):
+cpdef _OA_cache_get(int k,int n) noexcept:
     r"""
     Gets a value from the OA cache of existence results
 
@@ -1002,7 +1008,7 @@ cpdef _OA_cache_get(int k,int n):
 
     return None
 
-cpdef _OA_cache_construction_available(int k,int n):
+cpdef _OA_cache_construction_available(int k,int n) noexcept:
     r"""
     Tests if a construction is implemented using the cache's information
 

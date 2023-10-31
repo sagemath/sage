@@ -132,7 +132,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             raise ValueError("Invalid Cartan Type for Type E affine")
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -152,6 +152,8 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             <BLANKLINE>
         """
         n = self.n
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
 
@@ -181,7 +183,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
         ret += node(2*node_dist, node_dist, label(2), "right=3pt")
         return ret
 
-    def ascii_art(self, label=lambda x: x, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the extended Dynkin diagram.
 
@@ -210,6 +212,8 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             -2  0   1   2   3   4   5   -3
         """
         n = self.n
+        if label is None:
+            label = lambda x: x
         if node is None:
             node = self._ascii_art_node
         if n == 6:

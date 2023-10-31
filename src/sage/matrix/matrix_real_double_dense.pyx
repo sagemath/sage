@@ -99,7 +99,7 @@ cdef class Matrix_real_double_dense(Matrix_double_dense):
         self.__create_matrix__()
         return
 
-    cdef set_unsafe_double(self, Py_ssize_t i, Py_ssize_t j, double value):
+    cdef set_unsafe_double(self, Py_ssize_t i, Py_ssize_t j, double value) noexcept:
         """
         Set the (i,j) entry to value without any type checking or
         bound checking.
@@ -110,7 +110,7 @@ cdef class Matrix_real_double_dense(Matrix_double_dense):
         """
         self.set_unsafe(i,j,value)
 
-    cdef double get_unsafe_double(self, Py_ssize_t i, Py_ssize_t j):
+    cdef double get_unsafe_double(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Get the (i,j) entry without any type checking or bound checking.
 

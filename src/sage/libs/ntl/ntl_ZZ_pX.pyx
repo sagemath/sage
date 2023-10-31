@@ -38,7 +38,7 @@ from sage.misc.randstate cimport current_randstate
 from sage.libs.gmp.mpz cimport *
 
 
-cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
+cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx) noexcept:
     cdef ntl_ZZ_p y
     sig_off()
     y = ntl_ZZ_p(modulus = ctx)
@@ -47,7 +47,7 @@ cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
     return y
 
 
-cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx):
+cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx) noexcept:
     cdef ntl_ZZ_pX y
     y = <ntl_ZZ_pX>ntl_ZZ_pX.__new__(ntl_ZZ_pX)
     y.c = ctx
@@ -138,7 +138,7 @@ cdef class ntl_ZZ_pX():
             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(ntl_ZZ(modulus))
             self.c.restore_c()
 
-    cdef ntl_ZZ_pX _new(self):
+    cdef ntl_ZZ_pX _new(self) noexcept:
         cdef ntl_ZZ_pX r
         self.c.restore_c()
         r = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
@@ -222,7 +222,7 @@ cdef class ntl_ZZ_pX():
         self.c.restore_c()
         ZZ_pX_SetCoeff(self.x, i, _a.x)
 
-    cdef void setitem_from_int(ntl_ZZ_pX self, long i, int value):
+    cdef void setitem_from_int(ntl_ZZ_pX self, long i, int value) noexcept:
         r"""
         Sets ith coefficient to value.
 
@@ -267,7 +267,7 @@ cdef class ntl_ZZ_pX():
             r.x = ZZ_pX_coeff( self.x, i)
         return r
 
-    cdef int getitem_as_int(ntl_ZZ_pX self, long i):
+    cdef int getitem_as_int(ntl_ZZ_pX self, long i) noexcept:
         r"""
         Returns ith coefficient as C int.
         Return value is only valid if the result fits into an int.

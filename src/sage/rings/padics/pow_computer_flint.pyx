@@ -149,14 +149,14 @@ cdef class PowComputer_flint(PowComputer_class):
         fmpz_get_mpz(self.temp_m, self.pow_fmpz_t_tmp(n)[0])
         return self.temp_m
 
-    cdef mpz_srcptr pow_mpz_t_top(self):
+    cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns a pointer to an ``mpz_t`` holding `p^N`, where `N` is
         the precision cap.
         """
         return self.top_power
 
-    cdef unsigned long capdiv(self, unsigned long n):
+    cdef unsigned long capdiv(self, unsigned long n) noexcept:
         """
         Returns ceil(n / e).
         """
@@ -367,7 +367,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
             return NotImplemented
         return False
 
-    cdef fmpz_poly_t* get_modulus(self, unsigned long k):
+    cdef fmpz_poly_t* get_modulus(self, unsigned long k) noexcept:
         """
         Return the defining polynomial reduced modulo `p^k`.
 
@@ -385,7 +385,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
                                       self.pow_fmpz_t_tmp(k)[0])
             return &(self._moduli[c])
 
-    cdef fmpz_poly_t* get_modulus_capdiv(self, unsigned long k):
+    cdef fmpz_poly_t* get_modulus_capdiv(self, unsigned long k) noexcept:
         """
         Returns the defining polynomial reduced modulo `p^a`, where
         `a` is the ceiling of `k/e`.
@@ -432,7 +432,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
             fmpz_poly_set(ans._poly, self.get_modulus(_n)[0])
         return ans
 
-    cdef _new_fmpz_poly(self, fmpz_poly_t value, var='x'):
+    cdef _new_fmpz_poly(self, fmpz_poly_t value, var='x') noexcept:
         """
         Returns a polynomial with the value stored in ``value`` and
         variable name ``var``.

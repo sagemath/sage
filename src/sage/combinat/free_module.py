@@ -328,7 +328,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             latex_names = tuple(latex_names)
             keywords['latex_names'] = latex_names
 
-        return super(CombinatorialFreeModule, cls).__classcall__(cls,
+        return super().__classcall__(cls,
             base_ring, basis_keys, category=category, prefix=prefix, names=names,
             **keywords)
 
@@ -699,7 +699,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         The following originally used to yield ``p[[2]] # p[[2]]``, and if
         there was no natural coercion between ``s`` and ``p``, this would
-        raise a ``NotImplementedError``. Since :trac:`15305`, this takes the
+        raise a :class:`NotImplementedError`.
+        Since :trac:`15305`, this takes the
         coercion between ``s`` and ``p`` and lifts it to the tensor product. ::
 
             sage: pp(a)                                                                 # optional - sage.combinat
@@ -1673,7 +1674,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                     [vector_map[i](M.monomial(x[i]))
                      for i, M in enumerate(modules)]), codomain=self)
 
-            return super(CombinatorialFreeModule_Tensor, self)._coerce_map_from_(R)
+            return super()._coerce_map_from_(R)
 
 
 class CartesianProductWithFlattening():

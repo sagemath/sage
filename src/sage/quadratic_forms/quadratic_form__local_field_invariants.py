@@ -5,7 +5,7 @@ This contains routines to compute local (p-adic) invariants of
 quadratic forms over the rationals.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein and Jonathan Hanke
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -13,8 +13,8 @@ quadratic forms over the rationals.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 ###########################################################################
 # TO DO: Add routines for hasse invariants at all places, anisotropic

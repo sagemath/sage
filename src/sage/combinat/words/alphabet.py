@@ -32,15 +32,14 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+import collections.abc
+
 from sage.categories.sets_cat import Sets
-
-from sage.sets.totally_ordered_finite_set import TotallyOrderedFiniteSet
-from sage.sets.family import Family
-
-from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
-
+from sage.rings.integer import Integer
+from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.totally_ordered_finite_set import TotallyOrderedFiniteSet
 
 
 set_of_letters = {
@@ -222,7 +221,7 @@ def build_alphabet(data=None, names=None, name=None):
             return IntegerRange(Integer(data))
         if isinstance(names, str):
             return TotallyOrderedFiniteSet([names + '%d' % i for i in range(data)])
-        if len(names) == data:
+        if isinstance(names, collections.abc.Sequence) and len(names) == data:
             return TotallyOrderedFiniteSet(names)
         raise ValueError("invalid value for names")
 

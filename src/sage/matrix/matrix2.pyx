@@ -106,7 +106,7 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 from sage.misc.misc_c import prod
 
 # used to deprecate only adjoint method
-from sage.misc.superseded import deprecated_function_alias
+from sage.misc.superseded import deprecation, deprecated_function_alias
 
 
 # temporary hack to silence the warnings from #34806
@@ -146,21 +146,28 @@ cdef class Matrix(Matrix1):
         Used to compute `A \backslash B`, i.e., the backslash solver
         operator.
 
+        DEPRECATED
+
         EXAMPLES::
 
             sage: A = matrix(QQ, 3, [1,2,4,2,3,1,0,1,2])
             sage: B = matrix(QQ, 3, 2, [1,7,5, 2,1,3])
             sage: C = A._backslash_(B); C
+            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             [  -1    1]
             [13/5 -3/5]
             [-4/5  9/5]
             sage: A*C == B
             True
             sage: A._backslash_(B) == A \ B
+            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             True
             sage: A._backslash_(B) == A.solve_right(B)
             True
         """
+        deprecation(36394, 'the backslash operator has been deprecated; use A.solve_right(B) instead')
         return self.solve_right(B)
 
     def subs(self, *args, **kwds):
@@ -462,7 +469,7 @@ cdef class Matrix(Matrix1):
 
         .. NOTE::
 
-            In Sage one can also write ``A \ B`` for
+            DEPRECATED. In Sage one can also write ``A \ B`` for
             ``A.solve_right(B)``, that is, Sage implements "the
             MATLAB/Octave backslash operator".
 
@@ -506,7 +513,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, 3, [1,2,3,-1,2,5,2,3,1])
             sage: b = vector(QQ,[1,2,3])
-            sage: x = A \ b; x
+            sage: x = A.solve_right(b); x
             (-13/12, 23/12, -7/12)
             sage: A * x
             (1, 2, 3)
@@ -525,7 +532,7 @@ cdef class Matrix(Matrix1):
         Another nonsingular example::
 
             sage: A = matrix(QQ,2,3, [1,2,3,2,4,6]); v = vector([-1/2,-1])
-            sage: x = A \ v; x
+            sage: x = A.solve_right(v); x
             (-1/2, 0, 0)
             sage: A*x == v
             True
@@ -533,13 +540,13 @@ cdef class Matrix(Matrix1):
         Same example but over `\ZZ`::
 
             sage: A = matrix(ZZ,2,3, [1,2,3,2,4,6]); v = vector([-1,-2])
-            sage: A \ v
+            sage: A.solve_right(v)
             (-1, 0, 0)
 
         An example in which there is no solution::
 
             sage: A = matrix(QQ,2,3, [1,2,3,2,4,6]); v = vector([1,1])
-            sage: A \ v
+            sage: A.solve_right(v)
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
@@ -564,24 +571,24 @@ cdef class Matrix(Matrix1):
             sage: A*X == B
             True
 
-        We illustrate left associativity, etc., of the backslash operator.
+        We illustrate left associativity, etc., of the ``solve_right`` operator.
 
         ::
 
             sage: A = matrix(QQ, 2, [1,2,3,4])
-            sage: A \ A
+            sage: A.solve_right(A)
             [1 0]
             [0 1]
-            sage: A \ A \ A
+            sage: (A.solve_right(A)).solve_right(A)
             [1 2]
             [3 4]
-            sage: A.parent()(1) \ A
+            sage: A.parent()(1).solve_right(A)
             [1 2]
             [3 4]
-            sage: A \ (A \ A)
+            sage: A.solve_right(A.solve_right(A))
             [  -2    1]
             [ 3/2 -1/2]
-            sage: X = A \ (A - 2); X
+            sage: X = A.solve_right(A - 2); X
             [ 5 -2]
             [-3  2]
             sage: A * X
@@ -593,7 +600,7 @@ cdef class Matrix(Matrix1):
             sage: x = polygen(QQ, 'x')
             sage: A = matrix(2, [x,2*x,-5*x^2+1,3])
             sage: v = vector([3,4*x - 2])
-            sage: X = A \ v
+            sage: X = A.solve_right(v)
             sage: X
             ((-4/5*x^2 + 2/5*x + 9/10)/(x^3 + 1/10*x), (19/10*x^2 - 1/5*x - 3/10)/(x^3 + 1/10*x))
             sage: A * X == v
@@ -635,7 +642,7 @@ cdef class Matrix(Matrix1):
             [    2 + O(5^4)     5 + O(5^5)     4 + O(5^4)]
             [    1 + O(5^4)     1 + O(5^4)     2 + O(5^4)]
             sage: v = vector(k, 3, [1,2,3])
-            sage: x = a \ v; x
+            sage: x = a.solve_right(v); x
             (4 + 5 + 5^2 + 3*5^3 + O(5^4), 2 + 5 + 3*5^2 + 5^3 + O(5^4), 1 + 5 + O(5^4))
             sage: a * x == v
             True
@@ -2182,7 +2189,7 @@ cdef class Matrix(Matrix1):
         self.cache('det', d)
         return d
 
-    cdef _det_by_minors(self, Py_ssize_t level):
+    cdef _det_by_minors(self, Py_ssize_t level) noexcept:
         """
         Compute the determinant of the upper-left level x level submatrix
         of self. Does not handle degenerate cases, level MUST be >= 2
@@ -2552,7 +2559,7 @@ cdef class Matrix(Matrix1):
 
         return res
 
-    cdef _pf_bfl(self):
+    cdef _pf_bfl(self) noexcept:
         r"""
         Computes the Pfaffian of ``self`` using the Baer-Faddeev-LeVerrier
         algorithm.
@@ -3642,7 +3649,8 @@ cdef class Matrix(Matrix1):
         for i from 0 <= i <= n:
             # Finally, set v[i] = c[n,i]
             o = c.get_unsafe(n,i)
-            Py_INCREF(o); PyList_SET_ITEM(v, i, o)
+            Py_INCREF(o)
+            PyList_SET_ITEM(v, i, o)
 
         R = self._base_ring[var]    # polynomial ring over the base ring
         return R(v)
@@ -4554,7 +4562,8 @@ cdef class Matrix(Matrix1):
         # Third: generic first, if requested explicitly
         #   then try specialized class methods, and finally
         #   delegate to ad-hoc methods in greater generality
-        M = None; format = ''
+        M = None
+        format = ''
 
         if algorithm == 'generic':
             format, M = self._right_kernel_matrix_over_field()
@@ -6018,7 +6027,8 @@ cdef class Matrix(Matrix1):
             sage: t.charpoly()                                                          # needs sage.libs.pari
             x^3 - 12*x^2 - 18*x
         """
-        i = int(i); t=int(t)
+        i = int(i)
+        t = int(t)
         if self.nrows() != self.ncols():
             raise ArithmeticError("self must be a square matrix")
         n = self.nrows()
@@ -7934,7 +7944,7 @@ cdef class Matrix(Matrix1):
         else:
             return E
 
-    cpdef _echelon(self, str algorithm):
+    cpdef _echelon(self, str algorithm) noexcept:
         """
         Return the echelon form of ``self`` using ``algorithm``.
 
@@ -8014,7 +8024,7 @@ cdef class Matrix(Matrix1):
         """
         return self._echelon('classical')
 
-    cpdef _echelon_in_place(self, str algorithm):
+    cpdef _echelon_in_place(self, str algorithm) noexcept:
         """
         Transform ``self`` into echelon form and return the pivots of ``self``.
 
@@ -8837,7 +8847,7 @@ cdef class Matrix(Matrix1):
 
     cpdef matrix_window(self, Py_ssize_t row=0, Py_ssize_t col=0,
                       Py_ssize_t nrows=-1, Py_ssize_t ncols=-1,
-                      bint check=1):
+                      bint check=1) noexcept:
         """
         Return the requested matrix window.
 
@@ -11028,7 +11038,8 @@ cdef class Matrix(Matrix1):
         R = self.base_ring()
         if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
             Q, R = self.transpose().QR()
-            m = R.nrows(); n = R.ncols()
+            m = R.nrows()
+            n = R.ncols()
             if m > n:
                 Q = Q[0:m, 0:n]
                 R = R[0:n, 0:n]
@@ -14030,7 +14041,7 @@ cdef class Matrix(Matrix1):
             raise ValueError(msg.format(d))
         return L, vector(L.base_ring(), d)
 
-    cdef tuple _block_ldlt(self, bint classical):
+    cdef tuple _block_ldlt(self, bint classical) noexcept:
         r"""
         Perform a user-unfriendly block-`LDL^{T}` factorization of the
         Hermitian matrix `A`
@@ -14243,8 +14254,11 @@ cdef class Matrix(Matrix1):
                 # a 1x1 pivot, but this time we need to swap
                 # rows/columns k and r.
                 d.append( one_by_one_space(A_rr) )
-                A.swap_columns_c(k,r); A.swap_rows_c(k,r)
-                p_k = p[k]; p[k] = p[r]; p[r] = p_k
+                A.swap_columns_c(k, r)
+                A.swap_rows_c(k, r)
+                p_k = p[k]
+                p[k] = p[r]
+                p[r] = p_k
                 _block_ldlt_pivot1x1(A,k)
                 k += 1
                 continue
@@ -14253,8 +14267,11 @@ cdef class Matrix(Matrix1):
             # or Step (6) in B&K, where we perform a 2x2 pivot.  See
             # pivot1x1() for an explanation of why it's OK to permute
             # the entries of "L" here as well.
-            A.swap_columns_c(k+1,r); A.swap_rows_c(k+1,r)
-            p_k = p[k+1]; p[k+1] = p[r]; p[r] = p_k
+            A.swap_columns_c(k+1, r)
+            A.swap_rows_c(k+1, r)
+            p_k = p[k+1]
+            p[k+1] = p[r]
+            p[r] = p_k
 
             # The top-left 2x2 submatrix (starting at position k,k) is
             # now our pivot.
@@ -15303,7 +15320,7 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.rings.finite_rings.integer_mod.IntegerMod_int' object
-            has no attribute 'conjugate'
+            has no attribute 'conjugate'...
         """
         # limited testing on a 1000 x 1000 matrix over CC:
         #   transpose is fast, conjugate is slow
