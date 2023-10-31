@@ -1333,7 +1333,7 @@ class DiGraphGenerators():
 
         return D
 
-    def RandomDirectedGN(self, n, kernel=lambda x: x, seed=None):
+    def RandomDirectedGN(self, n, kernel=None, seed=None):
         r"""
         Return a random growing network (GN) digraph with `n` vertices.
 
@@ -1348,7 +1348,7 @@ class DiGraphGenerators():
 
         - ``n`` -- integer; number of vertices
 
-        - ``kernel`` -- the attachment kernel
+        - ``kernel`` -- the attachment kernel (default: identity function)
 
         - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the
           random number generator (default: ``None``)
@@ -1367,6 +1367,8 @@ class DiGraphGenerators():
             True
             sage: D.show()                      # long time
         """
+        if kernel is None:
+            kernel = lambda x: x
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)
         import networkx

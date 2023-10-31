@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-#cython: wraparound=False, boundscheck=False
+# cython: wraparound=False, boundscheck=False
 """
 Braid Orbit
 
@@ -8,7 +8,7 @@ Cython function to compute the orbit of the braid moves on a reduced word.
 from cysignals.signals cimport sig_check
 
 
-cpdef set BraidOrbit(list word, list rels):
+cpdef set BraidOrbit(list word, list rels) noexcept:
     r"""
     Return the orbit of ``word`` by all replacements given by ``rels``.
 
@@ -49,11 +49,11 @@ cpdef set BraidOrbit(list word, list rels):
     cdef list rel
 
     l = len(word)
-    cdef set words = set( [tuple(word)] )
-    cdef list test_words = [ tuple(word) ]
+    cdef set words = {tuple(word)}
+    cdef list test_words = [tuple(word)]
 
-    rels = rels + [ [b,a] for a,b in rels ]
-    rels = [ [tuple(a), tuple(b), len(a)] for a,b in rels ]
+    rels = rels + [[b, a] for a, b in rels]
+    rels = [[tuple(a), tuple(b), len(a)] for a, b in rels]
 
     loop_ind = 0
     list_len = 1
@@ -75,7 +75,7 @@ cpdef set BraidOrbit(list word, list rels):
     return words
 
 
-cpdef bint is_fully_commutative(list word, list rels):
+cpdef bint is_fully_commutative(list word, list rels) noexcept:
     r"""
     Check if the braid orbit of ``word`` is using a braid relation.
 
@@ -102,8 +102,8 @@ cpdef bint is_fully_commutative(list word, list rels):
     cdef list rel
 
     l = len(word)
-    cdef set words = set( [tuple(word)] )
-    cdef list test_words = [ tuple(word) ]
+    cdef set words = {tuple(word)}
+    cdef list test_words = [tuple(word)]
 
     rels = rels + [[b, a] for a, b in rels]
     rels = [[tuple(a), tuple(b), len(a)] for a, b in rels]
@@ -130,7 +130,7 @@ cpdef bint is_fully_commutative(list word, list rels):
     return True
 
 
-cdef inline bint pattern_match(tuple L, int i, tuple X, int l):
+cdef inline bint pattern_match(tuple L, int i, tuple X, int l) noexcept:
     r"""
     Return ``True`` if ``L[i:i+l] == X``.
 

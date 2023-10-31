@@ -62,11 +62,83 @@ jobs:
       - name: Download image artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ env.IMAGE_ARTIFACT_NAME }}
-      - name: Load image
-        run: docker load --input image.tar.gz
-      - name: Test
-        run: docker run ghcr.io/${{ github.repository }}/sage-ubuntu-focal-standard-with-targets:${{ github.sha }} "make -j2 V=0 tox && make -j2 ${{ matrix.distribution }}-check"
+          path: upstream
+          name: upstream
+
+      - name: Apply CI fixes from sagemath/sage
+        # After applying the fixes, make sure all changes are marked as uncommitted changes.
+        run: |
+          if [ -r upstream/ci_fixes.patch ]; then
+            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
+          fi
+
+      - name: Incremental build
+        id: incremental
+        run: |
+          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
+          ./bootstrap && make build
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
+          SAGE_NUM_THREADS: 2
+
+      - name: Build modularized distributions
+        if: always() && steps.worktree.outcome == 'success'
+        run: make V=0 tox && make SAGE_CHECK=no pypi-wheels
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
+          SAGE_NUM_THREADS: 2
+
+      - name: Static code check with pyright
+        if: always() && steps.worktree.outcome == 'success'
+        uses: jakebailey/pyright-action@v1
+        with:
+          version: 1.1.332
+          # Many warnings issued by pyright are not yet helpful because there is not yet enough type information.
+          no-comments: true
+          working-directory: ./worktree-image
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192
+      
+      - name: Static code check with pyright (annotated)
+        if: always() && steps.worktree.outcome == 'success'
+        uses: jakebailey/pyright-action@v1
+        with:
+          version: 1.1.332
+          # Issue errors
+          no-comments: false
+          level: error
+          working-directory: ./worktree-image
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192
+
+      - name: Clean (fallback to non-incremental)
+        id: clean
+        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+        run: |
+          set -ex
+          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2
+          SAGE_NUM_THREADS: 2
+
+      - name: Build
+        # This step is needed because building the modularized distributions installs some optional packages,
+        # so the editable install of sagelib needs to build the corresponding optional extension modules.
+        id: build
+        if: always() && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
+        run: |
+          make build
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
+          SAGE_NUM_THREADS: 2
+
+      # Testing
 
   test-new:
     needs: [build]

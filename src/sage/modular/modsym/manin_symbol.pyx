@@ -200,7 +200,7 @@ cdef class ManinSymbol(Element):
         """
         return self._repr_()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         """
         Comparison function for ManinSymbols.
 

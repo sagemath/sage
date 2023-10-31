@@ -948,9 +948,8 @@ class MutablePosetShell(SageObject):
         if key is not None:
             S = sorted(S, key=key)
         for shell in S:
-            for e in shell._iter_depth_first_visit_(marked, reverse,
-                                                    key, condition):
-                yield e
+            yield from shell._iter_depth_first_visit_(marked, reverse,
+                                                    key, condition)
 
     def iter_depth_first(self, reverse=False, key=None, condition=None):
         r"""
@@ -1073,9 +1072,8 @@ class MutablePosetShell(SageObject):
         if key is not None and len(S) > 1:
             S = sorted(S, key=key)
         for shell in S:
-            for e in shell._iter_topological_visit_(marked, reverse,
-                                                    key, condition):
-                yield e
+            yield from shell._iter_topological_visit_(marked, reverse,
+                                                    key, condition)
         yield self
 
     def iter_topological(self, reverse=False, key=None, condition=None):
@@ -1769,8 +1767,7 @@ class MutablePoset(SageObject):
         """
         if include_special:
             yield self.null
-        for e in self._shells_.values():
-            yield e
+        yield from self._shells_.values()
         if include_special:
             yield self.oo
 

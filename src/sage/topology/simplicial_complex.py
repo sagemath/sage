@@ -1396,8 +1396,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if not increasing:
             dim_index = reversed(dim_index)
         for i in dim_index:
-            for F in Fs[i]:
-                yield F
+            yield from Fs[i]
 
     cells = faces
 

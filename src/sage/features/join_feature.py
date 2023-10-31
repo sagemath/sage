@@ -149,7 +149,7 @@ class JoinFeature(Feature):
         """
         for f in self._features:
             f.hide()
-        super(JoinFeature, self).hide()
+        super().hide()
 
     def unhide(self):
         r"""
@@ -173,4 +173,4 @@ class JoinFeature(Feature):
         """
         for f in self._features:
             f.unhide()
-        super(JoinFeature, self).unhide()
+        super().unhide()

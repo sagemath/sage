@@ -87,7 +87,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         """
         return self._x
 
-    cpdef list list(self):
+    cpdef list list(self) noexcept:
         """
         Return a list with just the element.
 
@@ -145,7 +145,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         """
         return hash(self._x)
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Compare the element with the other element with respect to ``op``
 
@@ -176,7 +176,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         except TypeError:
             return NotImplemented
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add the element with the other element.
 
@@ -194,7 +194,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         res._x = self._x + (<FunctionFieldElement>right)._x
         return res
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract the other element from the element.
 
@@ -212,7 +212,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         res._x = self._x - (<FunctionFieldElement>right)._x
         return res
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply the element with the other element
 
@@ -230,7 +230,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         res._x = self._x * (<FunctionFieldElement>right)._x
         return res
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide the element with the other element
 
@@ -361,7 +361,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         else:
             return self._parent(self._x.sqrt())
 
-    cpdef bint is_nth_power(self, n):
+    cpdef bint is_nth_power(self, n) noexcept:
         r"""
         Return whether this element is an ``n``-th power in the rational
         function field.
@@ -414,7 +414,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         raise NotImplementedError("is_nth_power() not implemented for the given n")
 
-    cpdef FunctionFieldElement nth_root(self, n):
+    cpdef FunctionFieldElement nth_root(self, n) noexcept:
         r"""
         Return an ``n``-th root of this element in the function field.
 

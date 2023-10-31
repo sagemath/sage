@@ -101,7 +101,7 @@ import traceback
 from fractions import Fraction
 cdef type FractionType = <type>Fraction
 
-cpdef py_scalar_parent(py_type):
+cpdef py_scalar_parent(py_type) noexcept:
     """
     Returns the Sage equivalent of the given python type, if one exists.
     If there is no equivalent, return None.
@@ -185,7 +185,7 @@ cpdef py_scalar_parent(py_type):
     else:
         return None
 
-cpdef py_scalar_to_element(x):
+cpdef py_scalar_to_element(x) noexcept:
     """
     Convert ``x`` to a Sage :class:`~sage.structure.element.Element` if possible.
 
@@ -416,7 +416,7 @@ def parent_is_real_numerical(P):
     return P._is_real_numerical()
 
 
-cpdef bint is_numpy_type(t):
+cpdef bint is_numpy_type(t) noexcept:
     """
     Return ``True`` if and only if `t` is a type whose name starts
     with ``numpy.``
@@ -467,7 +467,7 @@ cpdef bint is_numpy_type(t):
         return True
     return False
 
-cpdef bint is_mpmath_type(t):
+cpdef bint is_mpmath_type(t) noexcept:
     r"""
     Check whether the type ``t`` is a type whose name starts with
     ``sage.libs.mpmath.``.
@@ -691,7 +691,7 @@ cdef class CoercionModel:
         self._exceptions_cleared = True
         self._exception_stack = []
 
-    cpdef _record_exception(self):
+    cpdef _record_exception(self) noexcept:
         r"""
         Pushes the last exception that occurred onto the stack for later reference,
         for internal use.
@@ -926,7 +926,7 @@ cdef class CoercionModel:
                 print("Result lives in {}".format(res))
         return res
 
-    cpdef analyse(self, xp, yp, op=mul):
+    cpdef analyse(self, xp, yp, op=mul) noexcept:
         """
         Emulate the process of doing arithmetic between xp and yp, returning
         a list of steps and the parent that the result will live in.
@@ -1091,7 +1091,7 @@ cdef class CoercionModel:
                 base = parent(self.canonical_coercion(a, b)[0])
         return base
 
-    cpdef division_parent(self, Parent P):
+    cpdef division_parent(self, Parent P) noexcept:
         r"""
         Deduces where the result of division in ``P`` lies by
         calculating the inverse of ``P.one()`` or ``P.an_element()``.
@@ -1130,7 +1130,7 @@ cdef class CoercionModel:
         self._division_parents.set(P, None, None, ret)
         return ret
 
-    cpdef bin_op(self, x, y, op):
+    cpdef bin_op(self, x, y, op) noexcept:
         """
         Execute the operation ``op`` on `x` and `y`.
 
@@ -1278,7 +1278,7 @@ cdef class CoercionModel:
         # This causes so much headache.
         raise bin_op_exception(op, x, y)
 
-    cpdef canonical_coercion(self, x, y):
+    cpdef canonical_coercion(self, x, y) noexcept:
         r"""
         Given two elements `x` and `y`, with parents `S` and `R` respectively,
         find a common parent `Z` such that there are coercions
@@ -1424,7 +1424,7 @@ cdef class CoercionModel:
 
         raise TypeError("no common canonical parent for objects with parents: '%s' and '%s'"%(xp, yp))
 
-    cpdef coercion_maps(self, R, S):
+    cpdef coercion_maps(self, R, S) noexcept:
         r"""
         Give two parents `R` and `S`, return a pair of coercion maps
         `f: R \rightarrow Z` and `g: S \rightarrow Z` , if such a `Z`
@@ -1573,7 +1573,7 @@ cdef class CoercionModel:
         self._coercion_maps.set(S, R, None, swap)
         return homs
 
-    cpdef verify_coercion_maps(self, R, S, homs, bint fix=False):
+    cpdef verify_coercion_maps(self, R, S, homs, bint fix=False) noexcept:
         """
         Make sure this is a valid pair of homomorphisms from `R` and `S` to a common parent.
         This function is used to protect the user against buggy parents.
@@ -1642,7 +1642,7 @@ cdef class CoercionModel:
         return R_map, S_map
 
 
-    cpdef discover_coercion(self, R, S):
+    cpdef discover_coercion(self, R, S) noexcept:
         """
         This actually implements the finding of coercion maps as described in
         the :meth:`coercion_maps` method.
@@ -1721,7 +1721,7 @@ cdef class CoercionModel:
 
         return None
 
-    cpdef get_action(self, R, S, op=mul, r=None, s=None):
+    cpdef get_action(self, R, S, op=mul, r=None, s=None) noexcept:
         """
         Get the action of R on S or S on R associated to the operation op.
 
@@ -1762,7 +1762,7 @@ cdef class CoercionModel:
         self._action_maps.set(R, S, op, action)
         return action
 
-    cpdef verify_action(self, action, R, S, op, bint fix=True):
+    cpdef verify_action(self, action, R, S, op, bint fix=True) noexcept:
         r"""
         Verify that ``action`` takes an element of R on the left and S
         on the right, raising an error if not.
@@ -1821,7 +1821,7 @@ cdef class CoercionModel:
 
         return action
 
-    cpdef discover_action(self, R, S, op, r=None, s=None):
+    cpdef discover_action(self, R, S, op, r=None, s=None) noexcept:
         """
         INPUT:
 
@@ -1959,7 +1959,7 @@ cdef class CoercionModel:
 
         return None
 
-    cpdef richcmp(self, x, y, int op):
+    cpdef richcmp(self, x, y, int op) noexcept:
         """
         Given two arbitrary objects ``x`` and ``y``, coerce them to
         a common parent and compare them using rich comparison operator

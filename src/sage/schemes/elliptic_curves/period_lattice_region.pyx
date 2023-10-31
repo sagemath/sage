@@ -666,7 +666,7 @@ cdef class PeriodicRegion:
         return sum(L, F)
 
 
-cdef frame_data(data, bint full=True):
+cdef frame_data(data, bint full=True) noexcept:
     """
     Helper function for PeriodicRegion.expand() and
     PeriodicRegion.border().  This makes "wrapping around" work
@@ -696,7 +696,7 @@ cdef frame_data(data, bint full=True):
     framed[-1,:] = framed[-3,:]
     return framed
 
-cdef unframe_data(framed, bint full=True):
+cdef unframe_data(framed, bint full=True) noexcept:
     """
     Helper function for PeriodicRegion.expand().  This glues the
     borders together using the "or" operator.

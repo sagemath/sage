@@ -9,7 +9,7 @@ AUTHOR:
   that does all the actual heavy lifting.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #       Copyright (C) 2007 Jonathan Bober <jwbober@gmail.com>
 #
@@ -17,8 +17,9 @@ AUTHOR:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 
 def ZS1_iterator(int n):
     """
@@ -83,9 +84,10 @@ def ZS1_iterator(int n):
                 if t > 1:
                     h += 1
                     x[h] = t
-        #yield [x[i] for i in range(m+1)]
+        # yield [x[i] for i in range(m+1)]
         yield x[:m+1]
-    #free(x)
+    # free(x)
+
 
 def ZS1_iterator_nk(int n, int k):
     """
@@ -177,4 +179,4 @@ def ZS1_iterator_nk(int n, int k):
                     h += 1
                 x[m] = t
             yield x[:m+1]
-    #free(x)
+    # free(x)

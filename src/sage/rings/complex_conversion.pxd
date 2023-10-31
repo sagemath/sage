@@ -5,4 +5,4 @@ from sage.categories.map cimport Map
 
 cdef class CCtoCDF(Map):
 
-    cpdef Element _call_(self, x)
+    cpdef Element _call_(self, x) noexcept

@@ -15,7 +15,7 @@ from sage.rings.real_mpfr cimport RealField, RealNumber
 from sage.structure.element cimport Element
 
 
-cdef mpfr_from_mpfval(mpfr_t res, tuple x):
+cdef mpfr_from_mpfval(mpfr_t res, tuple x) noexcept:
     """
     Set value of an MPFR number (in place) to that of a given mpmath mpf
     data tuple.
@@ -40,7 +40,7 @@ cdef mpfr_from_mpfval(mpfr_t res, tuple x):
     else:
         mpfr_set_nan(res)
 
-cdef mpfr_to_mpfval(mpfr_t value):
+cdef mpfr_to_mpfval(mpfr_t value) noexcept:
     """
     Given an MPFR value, return an mpmath mpf data tuple representing
     the same number.

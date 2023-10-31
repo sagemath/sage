@@ -31,7 +31,7 @@ AUTHORS:
 
 cdef class GenericSDPBackend:
 
-    cpdef base_ring(self):
+    cpdef base_ring(self) noexcept:
         """
         The base ring
 
@@ -44,7 +44,7 @@ cdef class GenericSDPBackend:
         from sage.rings.real_double import RDF
         return RDF
 
-    cpdef zero(self):
+    cpdef zero(self) noexcept:
         """
         Zero of the base ring
 
@@ -124,7 +124,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef set_sense(self, int sense):
+    cpdef set_sense(self, int sense) noexcept:
         """
         Set the direction (maximization/minimization).
 
@@ -148,7 +148,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef  objective_coefficient(self, int variable, coeff=None):
+    cpdef  objective_coefficient(self, int variable, coeff=None) noexcept:
         """
         Set or get the coefficient of a variable in the objective
         function
@@ -174,7 +174,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef  set_objective(self, list coeff, d=0.0):
+    cpdef  set_objective(self, list coeff, d=0.0) noexcept:
         """
         Set the objective function.
 
@@ -201,7 +201,7 @@ cdef class GenericSDPBackend:
         raise NotImplementedError()
 
 
-    cpdef add_linear_constraint(self, coefficients, name=None):
+    cpdef add_linear_constraint(self, coefficients, name=None) noexcept:
         """
         Add a linear constraint.
 
@@ -236,7 +236,7 @@ cdef class GenericSDPBackend:
         raise NotImplementedError()
 
 
-    cpdef add_linear_constraints(self, int number, names=None):
+    cpdef add_linear_constraints(self, int number, names=None) noexcept:
         """
         Add constraints.
 
@@ -292,7 +292,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef get_objective_value(self):
+    cpdef get_objective_value(self) noexcept:
         """
         Return the value of the objective function.
 
@@ -320,7 +320,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef get_variable_value(self, int variable):
+    cpdef get_variable_value(self, int variable) noexcept:
         """
         Return the value of a variable given by the solver.
 
@@ -349,7 +349,7 @@ cdef class GenericSDPBackend:
 
         raise NotImplementedError()
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -368,7 +368,7 @@ cdef class GenericSDPBackend:
 
         raise NotImplementedError()
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -385,7 +385,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -402,7 +402,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef problem_name(self, name=None):
+    cpdef problem_name(self, name=None) noexcept:
         """
         Return or define the problem's name
 
@@ -423,7 +423,7 @@ cdef class GenericSDPBackend:
 
         raise NotImplementedError()
 
-    cpdef row(self, int i):
+    cpdef row(self, int i) noexcept:
         """
         Return a row
 
@@ -453,7 +453,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef row_name(self, int index):
+    cpdef row_name(self, int index) noexcept:
         """
         Return the ``index`` th row name
 
@@ -473,7 +473,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef col_name(self, int index):
+    cpdef col_name(self, int index) noexcept:
         """
         Return the ``index`` th col name
 
@@ -496,7 +496,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef dual_variable(self, int i, sparse=False):
+    cpdef dual_variable(self, int i, sparse=False) noexcept:
         """
         The `i`-th dual variable
 
@@ -543,7 +543,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef slack(self, int i, sparse=False):
+    cpdef slack(self, int i, sparse=False) noexcept:
         """
         Slack of the `i`-th constraint
 
@@ -592,7 +592,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value = None) noexcept:
         """
         Return or define a solver parameter
 
@@ -704,7 +704,7 @@ def default_sdp_solver(solver=None):
         raise ValueError("'solver' should be set to 'CVXOPT', 'Matrix', a class, or None.")
 
 
-cpdef GenericSDPBackend get_solver(solver=None, base_ring=None):
+cpdef GenericSDPBackend get_solver(solver=None, base_ring=None) noexcept:
     """
     Return a solver according to the given preferences.
 

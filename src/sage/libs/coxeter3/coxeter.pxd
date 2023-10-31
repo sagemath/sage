@@ -21,11 +21,11 @@ cdef class CoxGroup(SageObject):
     cdef object cartan_type
     cdef dict in_ordering
     cdef dict out_ordering
-    cpdef object full_context(self)
+    cpdef object full_context(self) noexcept
 
 cdef class CoxGroupElement:
     cdef c_CoxWord word
     cdef c_CoxGroup* group
     cdef CoxGroup _parent_group
-    cdef CoxGroupElement _new(self)
-    cpdef CoxGroup parent_group(self)
+    cdef CoxGroupElement _new(self) noexcept
+    cpdef CoxGroup parent_group(self) noexcept

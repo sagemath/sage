@@ -27,7 +27,7 @@ class WeylGroups(Category_singleton):
         sage: WeylGroups()
         Category of weyl groups
         sage: WeylGroups().super_categories()
-        [Category of coxeter groups]
+        [Category of Coxeter groups]
 
     Here are some examples::
 
@@ -54,7 +54,7 @@ class WeylGroups(Category_singleton):
         EXAMPLES::
 
             sage: WeylGroups().super_categories()
-            [Category of coxeter groups]
+            [Category of Coxeter groups]
         """
         return [CoxeterGroups()]
 

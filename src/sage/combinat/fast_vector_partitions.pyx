@@ -31,7 +31,7 @@ AUTHORS:
 #
 # To understand the code below, consult the ALGORITHM.
 
-cdef list vector_halve(list v):
+cdef list vector_halve(list v) noexcept:
     r"""
     Return the vector halfway (lexicographically) between ``v`` and zero.
 
@@ -127,18 +127,19 @@ def recursive_within_from_to(list m, list s, list e, bint useS, bint useE):
     if len(m) == 1:
         # We use this style of Cython code for now in order to get this to convert
         #   to an optimized pure C for loop. See Cython github issue #532.
-        #for x in range(start, end - 1, -1):
+        # for x in range(start, end - 1, -1):
         for x from start >= x >= end by 1:
             yield [x]  # we know the answer for singletons
     else:
         # We use this style of Cython code for now in order to get this to convert
         #   to an optimized pure C for loop. See Cython github issue #532.
-        #for x in range(start, end - 1, -1):
+        # for x in range(start, end - 1, -1):
         for x from start >= x >= end by 1:
             useSS = useS and x == <Py_ssize_t> s[0]
             useEE = useE and x == <Py_ssize_t> e[0]
             for o in recursive_within_from_to(m[1:], s[1:], e[1:], useSS, useEE):
                 yield [x] + o
+
 
 def within_from_to(list m, list s, list e):
     r"""
@@ -230,7 +231,8 @@ def within_from_to(list m, list s, list e):
         return
     yield from recursive_within_from_to(m, ss, e, True, True)
 
-cdef inline list vector_sub(list a, list b):
+
+cdef inline list vector_sub(list a, list b) noexcept:
     """
     Return ``a - b`` considered as vectors.
 
@@ -241,6 +243,7 @@ cdef inline list vector_sub(list a, list b):
     for i in range(len(a)):
         ret.append((<Py_ssize_t> a[i]) - (<Py_ssize_t> b[i]))
     return ret
+
 
 def recursive_vector_partitions(list v, list vL):
     r"""

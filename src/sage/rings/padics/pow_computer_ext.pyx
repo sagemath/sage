@@ -539,7 +539,7 @@ cdef class PowComputer_ext(PowComputer_class):
         mpz_set_si(ram_prec_cap.value, self.ram_prec_cap)
         return PowComputer_ext_maker, (self.prime, cache_limit, prec_cap, ram_prec_cap, self.in_field, self._poly, self._prec_type, self._ext_type, self._shift_seed)
 
-    cdef void cleanup_ext(self):
+    cdef void cleanup_ext(self) noexcept:
         """
         Frees memory allocated in PowComputer_ext.
 
@@ -676,7 +676,7 @@ cdef class PowComputer_ext(PowComputer_class):
         return ans
 
 
-    cdef mpz_srcptr pow_mpz_t_top(self):
+    cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns self.prime^self.prec_cap as an ``mpz_srcptr``.
 
@@ -689,7 +689,7 @@ cdef class PowComputer_ext(PowComputer_class):
         ZZ_to_mpz(self.temp_m, &self.top_power)
         return self.temp_m
 
-    cdef ZZ_c* pow_ZZ_top(self):
+    cdef ZZ_c* pow_ZZ_top(self) noexcept:
         """
         Returns self.prime^self.prec_cap as a ZZ_c.
 
@@ -761,7 +761,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         r.x = (self.get_top_modulus()[0]).val()
         return r
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n):
+    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
         """
         Returns a ZZ_pContext for self.prime^(abs(n)).
 
@@ -794,7 +794,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         cdef Integer _n = Integer(n)
         return self.get_context(mpz_get_si(_n.value))
 
-    cdef ntl_ZZ_pContext_class get_context_capdiv(self, long n):
+    cdef ntl_ZZ_pContext_class get_context_capdiv(self, long n) noexcept:
         """
         Returns a ZZ_pContext for self.prime^((n-1) // self.e + 1)
 
@@ -854,7 +854,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
             self.get_modulus(_n)
         return cputime(t)
 
-    cdef ntl_ZZ_pContext_class get_top_context(self):
+    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
         """
         Returns a ZZ_pContext for self.prime^self.prec_cap
 
@@ -878,7 +878,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         """
         return self.get_top_context()
 
-    cdef restore_context(self, long n):
+    cdef restore_context(self, long n) noexcept:
         """
         Restores the contest corresponding to self.prime^n
 
@@ -901,7 +901,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         cdef Integer _n = Integer(n)
         self.restore_context(mpz_get_si(_n.value))
 
-    cdef restore_context_capdiv(self, long n):
+    cdef restore_context_capdiv(self, long n) noexcept:
         """
         Restores the context for self.prime^((n-1) // self.e + 1)
 
@@ -924,7 +924,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         cdef Integer _n = Integer(n)
         self.restore_context_capdiv(mpz_get_si(_n.value))
 
-    cdef void restore_top_context(self):
+    cdef void restore_top_context(self) noexcept:
         """
         Restores the context corresponding to self.prime^self.prec_cap
 
@@ -946,7 +946,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         """
         self.restore_top_context()
 
-    cdef ZZ_pX_Modulus_c* get_modulus(self, long n):
+    cdef ZZ_pX_Modulus_c* get_modulus(self, long n) noexcept:
         """
         Returns the modulus corresponding to self.polynomial() (mod self.prime^n)
 
@@ -989,14 +989,14 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         ZZ_pX_MulMod_pre(r.x, aa.x, bb.x, self.get_modulus(mpz_get_si(n.value))[0])
         return r
 
-    cdef ZZ_pX_Modulus_c* get_modulus_capdiv(self, long n):
+    cdef ZZ_pX_Modulus_c* get_modulus_capdiv(self, long n) noexcept:
         """
         Returns the modulus corresponding to self.polynomial() (mod
         self.prime^((n-1) // self.e + 1)
         """
         return self.get_modulus(self.capdiv(n))
 
-    cdef ZZ_pX_Modulus_c* get_top_modulus(self):
+    cdef ZZ_pX_Modulus_c* get_top_modulus(self) noexcept:
         """
         Returns the modulus corresponding to self.polynomial() (mod
         self.prime^self.prec_cap)
@@ -1033,7 +1033,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         ZZ_pX_MulMod_pre(ans.x, a.x, b.x, self.get_top_modulus()[0])
         return ans
 
-    cdef long capdiv(self, long n):
+    cdef long capdiv(self, long n) noexcept:
         """
         If n >= 0 returns ceil(n / self.e)
 
@@ -1249,7 +1249,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
         else:
             raise NotImplementedError("NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM")
 
-    cdef ntl_ZZ_pContext_class get_top_context(self):
+    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
         """
         Returns a ZZ_pContext for self.prime^self.prec_cap
 
@@ -1261,7 +1261,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
         """
         return self.c
 
-    cdef void restore_top_context(self):
+    cdef void restore_top_context(self) noexcept:
         """
         Restores the context corresponding to self.prime^self.prec_cap
 
@@ -1272,7 +1272,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
         """
         self.c.restore_c()
 
-    cdef ZZ_pX_Modulus_c* get_top_modulus(self):
+    cdef ZZ_pX_Modulus_c* get_top_modulus(self) noexcept:
         """
         Returns the modulus corresponding to self.polynomial() (mod self.prime^self.prec_cap)
 
@@ -1286,7 +1286,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
         """
         return &self.mod
 
-    cdef ZZ_pX_Modulus_c* get_modulus(self, long n):
+    cdef ZZ_pX_Modulus_c* get_modulus(self, long n) noexcept:
         """
         Duplicates functionality of get_top_modulus if n == self.prec_cap.
 
@@ -1422,7 +1422,7 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
         if self._initialized:
             self.cleanup_ZZ_pX_FM_Eis()
 
-    cdef void cleanup_ZZ_pX_FM_Eis(self):
+    cdef void cleanup_ZZ_pX_FM_Eis(self) noexcept:
         """
         Does the actual work of deallocating low_shifter and
         high_shifter.
@@ -1610,7 +1610,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         if self._initialized:
             self.cleanup_ZZ_pX_small()
 
-    cdef void cleanup_ZZ_pX_small(self):
+    cdef void cleanup_ZZ_pX_small(self) noexcept:
         """
         Deallocates cache of contexts, moduli.
 
@@ -1621,7 +1621,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         """
         Delete_ZZ_pX_Modulus_array(self.mod)
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n):
+    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
         """
         Return the context for p^n.  This will use the cache if
         ``abs(n) <= self.cache_limit``.
@@ -1647,7 +1647,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         except IndexError:
             return PowComputer_ZZ_pX.get_context(self, n)
 
-    cdef restore_context(self, long n):
+    cdef restore_context(self, long n) noexcept:
         """
         Restore the context for p^n.  This will use the cache if
         ``abs(n) <= self.cache_limit``.
@@ -1668,7 +1668,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         except IndexError:
             (<ntl_ZZ_pContext_class>PowComputer_ZZ_pX.get_context(self, n)).restore_c()
 
-    cdef ntl_ZZ_pContext_class get_top_context(self):
+    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
         """
         Returns a ZZ_pContext for self.prime^self.prec_cap
 
@@ -1680,7 +1680,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         """
         return self.c[self.prec_cap]
 
-    cdef void restore_top_context(self):
+    cdef void restore_top_context(self) noexcept:
         """
         Restores the context corresponding to self.prime^self.prec_cap
 
@@ -1691,7 +1691,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         """
         (<ntl_ZZ_pContext_class>self.c[self.prec_cap]).restore_c()
 
-    cdef ZZ_pX_Modulus_c* get_modulus(self, long n):
+    cdef ZZ_pX_Modulus_c* get_modulus(self, long n) noexcept:
         """
         Returns the modulus corresponding to self.polynomial() (mod self.prime^n).
 
@@ -1719,7 +1719,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
             ZZ_pX_Modulus_build(self.mod[self.prec_cap+1], tmp)
             return &(self.mod[self.prec_cap+1])
 
-    cdef ZZ_pX_Modulus_c* get_top_modulus(self):
+    cdef ZZ_pX_Modulus_c* get_top_modulus(self) noexcept:
         """
         Returns the modulus corresponding to self.polynomial() (mod self.prime^self.prec_cap)
 
@@ -1854,7 +1854,7 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
         if self._initialized:
             self.cleanup_ZZ_pX_small_Eis()
 
-    cdef void cleanup_ZZ_pX_small_Eis(self):
+    cdef void cleanup_ZZ_pX_small_Eis(self) noexcept:
         """
         Does the actual work of deallocating low_shifter and
         high_shifter.
@@ -1977,7 +1977,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
         if self._initialized:
             self.cleanup_ZZ_pX_big()
 
-    cdef void cleanup_ZZ_pX_big(self):
+    cdef void cleanup_ZZ_pX_big(self) noexcept:
         """
         Deallocates the stored moduli and contexts.
 
@@ -2044,7 +2044,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
         """
         return self.modulus_dict
 
-    cdef ntl_ZZ_pContext_class get_context(self, long n):
+    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept:
         """
         Returns the context for p^n.
 
@@ -2080,7 +2080,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
                 self.context_dict[n] = PowComputer_ZZ_pX.get_context(self, n)
                 return self.context_dict[n]
 
-    cdef ntl_ZZ_pContext_class get_top_context(self):
+    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept:
         """
         Returns a ZZ_pContext for self.prime^self.prec_cap
 
@@ -2092,7 +2092,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
         """
         return self.top_context
 
-    cdef void restore_top_context(self):
+    cdef void restore_top_context(self) noexcept:
         """
         Restores the context corresponding to self.prime^self.prec_cap
 
@@ -2103,7 +2103,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
         """
         self.top_context.restore_c()
 
-    cdef ZZ_pX_Modulus_c* get_modulus(self, long n):
+    cdef ZZ_pX_Modulus_c* get_modulus(self, long n) noexcept:
         """
         Returns the modulus corresponding to self.polynomial() (mod self.prime^n).
 
@@ -2150,7 +2150,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
                 self.modulus_dict[n] = holder
                 return &(holder.x)
 
-    cdef ZZ_pX_Modulus_c* get_top_modulus(self):
+    cdef ZZ_pX_Modulus_c* get_top_modulus(self) noexcept:
         """
         Returns the modulus corresponding to self.polynomial() (mod self.prime^self.prec_cap)
 
@@ -2285,7 +2285,7 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
         if self._initialized:
             self.cleanup_ZZ_pX_big_Eis()
 
-    cdef void cleanup_ZZ_pX_big_Eis(self):
+    cdef void cleanup_ZZ_pX_big_Eis(self) noexcept:
         """
         Does the actual work of deallocating low_shifter and
         high_shifter.

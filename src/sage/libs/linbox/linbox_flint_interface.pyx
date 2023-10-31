@@ -44,7 +44,7 @@ cimport sage.libs.linbox.linbox as linbox
 from sage.libs.linbox.linbox cimport PolynomialRing_integer
 
 
-cdef void fmpz_mat_get_linbox(linbox.DenseMatrix_integer& A, fmpz_mat_t m):
+cdef void fmpz_mat_get_linbox(linbox.DenseMatrix_integer& A, fmpz_mat_t m) noexcept:
     r"""
     Set the entries of A from m (no allocation performed).
 
@@ -60,7 +60,7 @@ cdef void fmpz_mat_get_linbox(linbox.DenseMatrix_integer& A, fmpz_mat_t m):
             A.setEntry(i, j, t)
 
 
-cdef void fmpz_mat_set_linbox(fmpz_mat_t m, linbox.DenseMatrix_integer& A):
+cdef void fmpz_mat_set_linbox(fmpz_mat_t m, linbox.DenseMatrix_integer& A) noexcept:
     r"""
     Set the entries of m from A (no allocation performed).
 
@@ -73,7 +73,7 @@ cdef void fmpz_mat_set_linbox(fmpz_mat_t m, linbox.DenseMatrix_integer& A):
             fmpz_set_mpz(fmpz_mat_entry(m, i, j), A.getEntry(i, j).get_mpz_const())
 
 
-cdef void fmpz_poly_set_linbox(fmpz_poly_t p, PolynomialRing_integer.Element& q):
+cdef void fmpz_poly_set_linbox(fmpz_poly_t p, PolynomialRing_integer.Element& q) noexcept:
     r"""
     Set the entries of the polynomial p from q (no allocation performed).
 
@@ -90,7 +90,7 @@ cdef void fmpz_poly_set_linbox(fmpz_poly_t p, PolynomialRing_integer.Element& q)
     _fmpz_poly_set_length(p, q.size())
 
 
-cdef void linbox_fmpz_mat_mul(fmpz_mat_t C, fmpz_mat_t A, fmpz_mat_t B):
+cdef void linbox_fmpz_mat_mul(fmpz_mat_t C, fmpz_mat_t A, fmpz_mat_t B) noexcept:
     r"""
     Set C to be A * B.
     """
@@ -116,7 +116,7 @@ cdef void linbox_fmpz_mat_mul(fmpz_mat_t C, fmpz_mat_t A, fmpz_mat_t B):
     fmpz_mat_set_linbox(C, LBC[0])
 
 
-cdef void linbox_fmpz_mat_charpoly(fmpz_poly_t cp, fmpz_mat_t A):
+cdef void linbox_fmpz_mat_charpoly(fmpz_poly_t cp, fmpz_mat_t A) noexcept:
     r"""
     Set cp to the characteristic polynomial of A.
     """
@@ -134,7 +134,7 @@ cdef void linbox_fmpz_mat_charpoly(fmpz_poly_t cp, fmpz_mat_t A):
     del m_A
 
 
-cdef void linbox_fmpz_mat_minpoly(fmpz_poly_t mp, fmpz_mat_t A):
+cdef void linbox_fmpz_mat_minpoly(fmpz_poly_t mp, fmpz_mat_t A) noexcept:
     r"""
     Set mp to the minimal polynomial of A.
     """
@@ -152,7 +152,7 @@ cdef void linbox_fmpz_mat_minpoly(fmpz_poly_t mp, fmpz_mat_t A):
     del m_A
 
 
-cdef size_t linbox_fmpz_mat_rank(fmpz_mat_t A):
+cdef size_t linbox_fmpz_mat_rank(fmpz_mat_t A) noexcept:
     r"""
     Return the rank of A
     """
@@ -169,7 +169,7 @@ cdef size_t linbox_fmpz_mat_rank(fmpz_mat_t A):
     return r
 
 
-cdef void linbox_fmpz_mat_det(fmpz_t det, fmpz_mat_t A):
+cdef void linbox_fmpz_mat_det(fmpz_t det, fmpz_mat_t A) noexcept:
     r"""
     Set det to the determinant of A.
     """

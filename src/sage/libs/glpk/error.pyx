@@ -42,7 +42,7 @@ class GLPKError(MIPSolverException):
 cdef error_message = ""
 
 
-cdef int sage_glpk_term_hook(void *info, const char *s) with gil:
+cdef int sage_glpk_term_hook(void *info, const char *s) noexcept with gil:
     """
     A hook to intercept all output written by GLPK.
     """
@@ -57,7 +57,7 @@ cdef int sage_glpk_term_hook(void *info, const char *s) with gil:
         return 0
 
 
-cdef void sage_glpk_error_hook(void *info) with gil:
+cdef void sage_glpk_error_hook(void *info) noexcept with gil:
     """
     A hook to intercept GLPK errors.
     """

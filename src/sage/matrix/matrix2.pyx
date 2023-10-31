@@ -2211,7 +2211,7 @@ cdef class Matrix(Matrix1):
         self.cache('det', d)
         return d
 
-    cdef _det_by_minors(self, Py_ssize_t level):
+    cdef _det_by_minors(self, Py_ssize_t level) noexcept:
         """
         Compute the determinant of the upper-left level x level submatrix
         of self. Does not handle degenerate cases, level MUST be >= 2
@@ -2581,7 +2581,7 @@ cdef class Matrix(Matrix1):
 
         return res
 
-    cdef _pf_bfl(self):
+    cdef _pf_bfl(self) noexcept:
         r"""
         Computes the Pfaffian of ``self`` using the Baer-Faddeev-LeVerrier
         algorithm.
@@ -8001,7 +8001,7 @@ cdef class Matrix(Matrix1):
         else:
             return E
 
-    cpdef _echelon(self, str algorithm):
+    cpdef _echelon(self, str algorithm) noexcept:
         """
         Return the echelon form of ``self`` using ``algorithm``.
 
@@ -8081,7 +8081,7 @@ cdef class Matrix(Matrix1):
         """
         return self._echelon('classical')
 
-    cpdef _echelon_in_place(self, str algorithm):
+    cpdef _echelon_in_place(self, str algorithm) noexcept:
         """
         Transform ``self`` into echelon form and return the pivots of ``self``.
 
@@ -8901,7 +8901,7 @@ cdef class Matrix(Matrix1):
 
     cpdef matrix_window(self, Py_ssize_t row=0, Py_ssize_t col=0,
                       Py_ssize_t nrows=-1, Py_ssize_t ncols=-1,
-                      bint check=1):
+                      bint check=1) noexcept:
         """
         Return the requested matrix window.
 
@@ -14098,7 +14098,7 @@ cdef class Matrix(Matrix1):
             raise ValueError(msg.format(d))
         return L, vector(L.base_ring(), d)
 
-    cdef tuple _block_ldlt(self, bint classical):
+    cdef tuple _block_ldlt(self, bint classical) noexcept:
         r"""
         Perform a user-unfriendly block-`LDL^{T}` factorization of the
         Hermitian matrix `A`

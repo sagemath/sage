@@ -192,7 +192,7 @@ class RibbonShapedTableaux(SkewTableaux):
         #     return RibbonShapedTableaux_shape(Partition(shape))
 
         # Otherwise arg0 takes the place of the category in pickling
-        return super(RibbonShapedTableaux, cls).__classcall__(cls, **kwds)
+        return super().__classcall__(cls, **kwds)
 
     def __init__(self, category=None):
         """
@@ -263,7 +263,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
             return StandardRibbonShapedTableaux_shape(Partition(shape))
 
         # Otherwise arg0 takes the place of the category in pickling
-        return super(StandardRibbonShapedTableaux, cls).__classcall__(cls, **kwds)
+        return super().__classcall__(cls, **kwds)
 
     def __init__(self, category=None):
         """

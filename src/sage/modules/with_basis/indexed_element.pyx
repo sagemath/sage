@@ -228,7 +228,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return self
 
-    cpdef dict monomial_coefficients(self, bint copy=True):
+    cpdef dict monomial_coefficients(self, bint copy=True) noexcept:
         """
         Return the internal dictionary which has the combinatorial objects
         indexing the basis as keys and their corresponding coefficients as
@@ -541,7 +541,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                             repr_monomial = self._parent._latex_term,
                             is_latex=True, strip_one=True)
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Rich comparison for equal parents.
 
@@ -651,7 +651,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         w = sorted(elt._monomial_coefficients.items())
         return richcmp(v, w, op)
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         EXAMPLES::
 
@@ -674,7 +674,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                           add(self._monomial_coefficients,
                               (<IndexedFreeModuleElement>other)._monomial_coefficients))
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         EXAMPLES::
 
@@ -692,7 +692,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return type(self)(self._parent, negate(self._monomial_coefficients))
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         """
         EXAMPLES::
 
@@ -831,7 +831,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
     to_vector = _vector_
 
-    cpdef _acted_upon_(self, scalar, bint self_on_left):
+    cpdef _acted_upon_(self, scalar, bint self_on_left) noexcept:
         """
         Return the action of ``scalar`` (an element of the base ring) on
         ``self``.
@@ -905,7 +905,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                           scal(scalar, self._monomial_coefficients,
                                factor_on_left=not self_on_left))
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         For backward compatibility.
 
@@ -917,7 +917,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return self._acted_upon_(right, True)
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         For backward compatibility.
 

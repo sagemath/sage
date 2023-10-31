@@ -44,7 +44,7 @@ from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport out_degree
 
 
-cdef inline int has_edge(bitset_t bs, int u, int v, int n):
+cdef inline int has_edge(bitset_t bs, int u, int v, int n) noexcept:
     return bitset_in(bs, u * n + v)
 
 
@@ -52,7 +52,7 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
                                       list id_label, int* path, int* InPath,
                                       int* neighbor_index, set VisitedP3,
                                       bint certificate,
-                                      int a, int b, int c, int n):
+                                      int a, int b, int c, int n) noexcept:
     """
     This method is part of method ``is_long_hole_free``.
 
@@ -282,7 +282,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
                                           list id_label, int* path, int* InPath,
                                           int* neighbor_index, set VisitedP3,
                                           bint certificate,
-                                          int a, int b, int c, int n):
+                                          int a, int b, int c, int n) noexcept:
     """
     This method is part of method ``is_long_antihole_free``.
 

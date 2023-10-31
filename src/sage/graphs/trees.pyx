@@ -158,7 +158,7 @@ cdef class TreeIterator:
 
         return G
 
-    cdef int generate_first_level_sequence(self):
+    cdef int generate_first_level_sequence(self) noexcept:
         r"""
         Generates the level sequence representing the first tree with `n` vertices
         """
@@ -194,7 +194,7 @@ cdef class TreeIterator:
 
         return 0
 
-    cdef int generate_next_level_sequence(self):
+    cdef int generate_next_level_sequence(self) noexcept:
         r"""
         Generates the level sequence representing the next tree with `n` vertices
         """

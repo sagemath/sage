@@ -71,7 +71,7 @@ cimport sage.rings.integer as integer
 from sage.rings import ring
 
 arith = None
-cdef void late_import():
+cdef void late_import() noexcept:
     # A hack to avoid circular imports.
     global arith
     if arith is None:
@@ -523,7 +523,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             yield -n
             n += 1
 
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         r"""
         ``x`` canonically coerces to the integers `\ZZ` only if ``x``
         is an int, long or already an element of `\ZZ`.

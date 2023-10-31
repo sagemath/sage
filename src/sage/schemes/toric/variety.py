@@ -2262,20 +2262,21 @@ class ToricVariety_field(AmbientSpace):
             1
         """
         Td = QQ.one()
-        if self.dimension() >= 1:
+        dim = self.dimension()
+        if dim >= 1:
             c1 = self.Chern_class(1)
             Td += QQ.one() / 2 * c1
-        if self.dimension() >= 2:
-            c2 = self.Chern_class(2)
-            Td += QQ.one() / 12 * (c1**2 + c2)
-        if self.dimension() >= 3:
-            Td += QQ.one() / 24 * c1*c2
-        if self.dimension() >= 4:
-            c3 = self.Chern_class(3)
-            c4 = self.Chern_class(4)
-            Td += -QQ.one() / 720 * (c1**4 - 4*c1**2*c2 - 3*c2**2 - c1*c3 + c4)
-        if self.dimension() >= 5:
-            raise NotImplementedError('Todd class is currently only implemented up to degree 4')
+            if dim >= 2:
+                c2 = self.Chern_class(2)
+                Td += QQ.one() / 12 * (c1**2 + c2)
+                if dim >= 3:
+                    Td += QQ.one() / 24 * c1*c2
+                    if dim >= 4:
+                        c3 = self.Chern_class(3)
+                        c4 = self.Chern_class(4)
+                        Td += -QQ.one() / 720 * (c1**4 - 4*c1**2*c2 - 3*c2**2 - c1*c3 + c4)
+                        if dim >= 5:
+                            raise NotImplementedError('Todd class is currently only implemented up to degree 4')
         if deg is None:
             return Td
         else:

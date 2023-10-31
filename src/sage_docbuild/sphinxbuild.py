@@ -77,14 +77,14 @@ class SageSphinxLogger():
             re.compile(r'^loading cross citations... done \([0-9]* citations\).'),
             re.compile('^Compiling a sub-document'),
             re.compile('^updating environment: 0 added, 0 changed, 0 removed'),
+            re.compile('^executing .*'),
             re.compile('^looking for now-outdated files... none found'),
             re.compile(r'^building \[.*\]: targets for 0 source files that are out of date'),
             re.compile(r'^building \[.*\]: targets for 0 po files that are out of date'),
             re.compile(r'^building \[.*\]: targets for 0 mo files that are out of date'),
             re.compile('^pickling environment... done'),
             re.compile('^dumping object inventory... done'),
-            # We still have "Build finished."
-            re.compile('^build succeeded.'),
+            re.compile('^build succeeded.'),  # We still have "Build finished."
             re.compile('^checking consistency... done'),
             re.compile('^preparing documents... done'),
             re.compile('^copying extra files... done'),

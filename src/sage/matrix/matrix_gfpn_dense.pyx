@@ -122,7 +122,7 @@ cdef class FieldConverter_class:
         self.field = field._cache.fetch_int
         self.zero_FEL = self.field_to_fel(field.zero())
 
-    cpdef fel_to_field(self, FEL x):
+    cpdef fel_to_field(self, FEL x) noexcept:
         """
         Fetch a python int into the field.
 
@@ -214,7 +214,7 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
         """
         self.field = field
 
-    cpdef fel_to_field(self, FEL x):
+    cpdef fel_to_field(self, FEL x) noexcept:
         """
         Fetch a python int into the field.
 
@@ -253,7 +253,7 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
 
 
 cdef dict _converter_cache = {}
-cdef FieldConverter_class FieldConverter(field):
+cdef FieldConverter_class FieldConverter(field) noexcept:
     """
     Return a :class:`FieldConverter_class` or :class:`PrimeFieldConverter_class` instance,
     depending whether the field is prime or not.
@@ -282,7 +282,7 @@ cdef FieldConverter_class FieldConverter(field):
 ##
 ######################################
 
-cdef Matrix_gfpn_dense new_mtx(Matrix_t* mat, Matrix_gfpn_dense template):
+cdef Matrix_gfpn_dense new_mtx(Matrix_t* mat, Matrix_gfpn_dense template) noexcept:
     """
     Create a new ``Matrix_gfpn_dense`` from a meataxe matrix
 
@@ -550,7 +550,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         else:
             return mtx_unpickle, (0, 0, 0, '', not self._is_immutable)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Get an element without checking.
 
@@ -571,7 +571,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         FfSetField(self.Data.Field)
         return self._converter.fel_to_field(FfExtract(MatGetPtr(self.Data,i), j))
 
-    cdef inline int get_unsafe_int(self, Py_ssize_t i, Py_ssize_t j):
+    cdef inline int get_unsafe_int(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         # NOTE:
         # It is essential that you call FfSetField and FfSetNoc YOURSELF
         # and that you assert that the matrix is not empty!
@@ -593,7 +593,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         FfSetField(self.Data.Field)
         return FfExtract(MatGetPtr(self.Data,i), j) == self._converter.zero_FEL
 
-    cpdef Matrix_gfpn_dense get_slice(self, Py_ssize_t i, Py_ssize_t j):
+    cpdef Matrix_gfpn_dense get_slice(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Return a horizontal slice of this matrix.
 
@@ -630,7 +630,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
         """
         Set values without bound checking.
 
@@ -661,14 +661,14 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         FfSetField(self.Data.Field)
         FfInsert(MatGetPtr(self.Data,i), j, self._converter.field_to_fel(value))
 
-    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         # NOTE:
         # It is essential that you call FfSetField and FfSetNoc YOURSELF
         # and that you assert that the matrix is not empty!
         # This method is here for speed!
         FfInsert(FfGetPtr(self.Data.Data,i), j, FfFromInt(value))
 
-    cdef set_slice_unsafe(self, Py_ssize_t i, Matrix_gfpn_dense S):
+    cdef set_slice_unsafe(self, Py_ssize_t i, Matrix_gfpn_dense S) noexcept:
         # Overwrite the self[i:i+S.nrows()] by the contents of S.
         #
         # NOTE:
@@ -807,7 +807,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
 ##################
 ## comparison
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare two :class:`Matrix_gfpn_dense` matrices.
 
@@ -866,7 +866,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             return rich_to_bool(op, -1)
         return rich_to_bool(op, 0)
 
-    cpdef list _rowlist_(self, i, j=-1):
+    cpdef list _rowlist_(self, i, j=-1) noexcept:
         """
         Return rows as a flat list of python ints.
 
@@ -966,7 +966,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
 #########################
 ## Arithmetics
-    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col):
+    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col) noexcept:
         """
         Rescale row number `i` in-place by multiplication with the scalar `s`.
 
@@ -1042,7 +1042,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             FfSetNoc(noc)
             FfMulRow(row_head, c)
 
-    cdef add_multiple_of_row_c(self,  Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col):
+    cdef add_multiple_of_row_c(self,  Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col) noexcept:
         """
         Add the ``multiple``-fold of row ``row_from`` in-place to row ``row_to``, beginning with ``start_col``
 
@@ -1112,7 +1112,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             FfSetNoc(noc)
             FfAddMulRow(row_to_head, row_from_head, c)
 
-    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
+    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2) noexcept:
         """
         Swap the rows ``row1`` and ``row2`` in-place.
 
@@ -1156,7 +1156,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             raise ValueError("self must be a square matrix")
         return self._converter.fel_to_field(MatTrace(self.Data))
 
-    cdef _stack_impl(self, bottom):
+    cdef _stack_impl(self, bottom) noexcept:
         r"""
         Stack ``self`` on top of ``bottom``.
 
@@ -1197,7 +1197,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         TESTS::
 
@@ -1224,7 +1224,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         TESTS::
 
@@ -1273,7 +1273,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             raise ValueError("The matrix must not be empty")
         return self._lmul_(self._base_ring(-1))
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -1316,7 +1316,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         # asymptotically faster. So, we used it by default.
         return 0
 
-    cpdef Matrix_gfpn_dense _multiply_classical(Matrix_gfpn_dense self, Matrix_gfpn_dense right):
+    cpdef Matrix_gfpn_dense _multiply_classical(Matrix_gfpn_dense self, Matrix_gfpn_dense right) noexcept:
         """
         Multiplication using the cubic school book multiplication algorithm.
 
@@ -1345,7 +1345,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cpdef Matrix_gfpn_dense _multiply_strassen(Matrix_gfpn_dense self, Matrix_gfpn_dense right, cutoff=0):
+    cpdef Matrix_gfpn_dense _multiply_strassen(Matrix_gfpn_dense self, Matrix_gfpn_dense right, cutoff=0) noexcept:
         """
         Matrix multiplication using the asymptotically fast Strassen-Winograd algorithm.
 
@@ -1381,7 +1381,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cdef _mul_long(self, long n):
+    cdef _mul_long(self, long n) noexcept:
         """
         Multiply an MTX matrix with a field element represented by an integer.
 
@@ -1599,7 +1599,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         self.cache("left_kernel_matrix", OUT)
         return OUT
 
-    cpdef _echelon_in_place(self, str algorithm):
+    cpdef _echelon_in_place(self, str algorithm) noexcept:
         """
         Change this matrix into echelon form, using classical
         Gaussian elimination, and return the pivots.

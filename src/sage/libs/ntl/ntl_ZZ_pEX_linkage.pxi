@@ -26,7 +26,7 @@ from sage.libs.ntl.ZZ_pEX cimport *
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 from sage.libs.ntl.types cimport ZZ_pX_c, ZZ_pEX_c
 
-cdef ZZ_pEX_c *celement_new(cparent parent):
+cdef ZZ_pEX_c *celement_new(cparent parent) noexcept:
     """
     EXAMPLES::
 
@@ -37,7 +37,7 @@ cdef ZZ_pEX_c *celement_new(cparent parent):
         parent[0].zzpec[0].restore()
     return new ZZ_pEX_c()
 
-cdef int celement_delete(ZZ_pEX_c *e, cparent parent):
+cdef int celement_delete(ZZ_pEX_c *e, cparent parent) noexcept:
     """
     EXAMPLES::
 
@@ -49,7 +49,7 @@ cdef int celement_delete(ZZ_pEX_c *e, cparent parent):
         parent[0].zzpec[0].restore()
     del e
 
-cdef int celement_construct(ZZ_pEX_c *e, cparent parent):
+cdef int celement_construct(ZZ_pEX_c *e, cparent parent) noexcept:
     """
     EXAMPLES::
 
@@ -59,7 +59,7 @@ cdef int celement_construct(ZZ_pEX_c *e, cparent parent):
         parent[0].zzpc[0].restore()
         parent[0].zzpec[0].restore()
 
-cdef int celement_destruct(ZZ_pEX_c *e, cparent parent):
+cdef int celement_destruct(ZZ_pEX_c *e, cparent parent) noexcept:
     """
     EXAMPLES::
 
@@ -81,7 +81,7 @@ cdef int celement_gen(ZZ_pEX_c *e, long i, cparent parent) except -2:
         parent[0].zzpec[0].restore()
     ZZ_pEX_SetX(e[0])
 
-cdef object celement_repr(ZZ_pEX_c *e, cparent parent):
+cdef object celement_repr(ZZ_pEX_c *e, cparent parent) noexcept:
     """
     We ignore NTL's printing.
 

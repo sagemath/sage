@@ -29,7 +29,7 @@ from sage.libs.gmp.all cimport *
 from cypari2.paridecl cimport *
 from cypari2.stack cimport new_gen
 
-cdef Gen new_gen_from_mpz_t(mpz_t value):
+cdef Gen new_gen_from_mpz_t(mpz_t value) noexcept:
     """
     Create a new PARI Gen of type ``t_INT`` from a given
     GMP integer ``value``.
@@ -55,7 +55,7 @@ cdef Gen new_gen_from_mpz_t(mpz_t value):
     return new_gen(_new_GEN_from_mpz_t(value))
 
 
-cdef inline GEN _new_GEN_from_mpz_t(mpz_t value):
+cdef inline GEN _new_GEN_from_mpz_t(mpz_t value) noexcept:
     r"""
     Create a new PARI ``t_INT`` from a ``mpz_t``.
 
@@ -75,7 +75,7 @@ cdef inline GEN _new_GEN_from_mpz_t(mpz_t value):
     return z
 
 
-cdef Gen new_gen_from_mpq_t(mpq_t value):
+cdef Gen new_gen_from_mpq_t(mpq_t value) noexcept:
     """
     Create a new PARI Gen of type ``t_INT`` or ``t_FRAC`` from a given
     GMP rational ``value``.
@@ -107,7 +107,7 @@ cdef Gen new_gen_from_mpq_t(mpq_t value):
     return new_gen(_new_GEN_from_mpq_t(value))
 
 
-cdef inline GEN _new_GEN_from_mpq_t(mpq_t value):
+cdef inline GEN _new_GEN_from_mpq_t(mpq_t value) noexcept:
     r"""
     Create a new PARI ``t_INT`` or ``t_FRAC`` from a ``mpq_t``.
 
@@ -123,7 +123,7 @@ cdef inline GEN _new_GEN_from_mpq_t(mpq_t value):
 
 
 cdef Gen new_gen_from_padic(long ordp, long relprec,
-                            mpz_t prime, mpz_t p_pow, mpz_t unit):
+                            mpz_t prime, mpz_t p_pow, mpz_t unit) noexcept:
     """
     Create a new PARI Gen of type ``t_PADIC`` from the given input data
     as GMP integers.
@@ -138,7 +138,7 @@ cdef Gen new_gen_from_padic(long ordp, long relprec,
     return new_gen(z)
 
 
-cdef GEN _new_GEN_from_mpq_t_matrix(mpq_t** B, long nr, long nc):
+cdef GEN _new_GEN_from_mpq_t_matrix(mpq_t** B, long nr, long nc) noexcept:
     """
     Create a new PARI ``t_MAT`` from a given
     2-dimensional array of GMP rationals ``mpq_t``.
@@ -157,7 +157,7 @@ cdef GEN _new_GEN_from_mpq_t_matrix(mpq_t** B, long nr, long nc):
     return A
 
 
-cdef Gen rational_matrix(mpq_t** B, long nr, long nc):
+cdef Gen rational_matrix(mpq_t** B, long nr, long nc) noexcept:
     """
     Create a new PARI matrix of type ``t_MAT`` from a given
     array of GMP rationals ``mpq_t``.
@@ -182,7 +182,7 @@ cdef Gen rational_matrix(mpq_t** B, long nr, long nc):
     return new_gen(g)
 
 
-cdef inline void INT_to_mpz(mpz_ptr value, GEN g):
+cdef inline void INT_to_mpz(mpz_ptr value, GEN g) noexcept:
     """
     Convert a PARI ``t_INT`` to a GMP integer, stored in ``value``.
     """
@@ -196,7 +196,7 @@ cdef inline void INT_to_mpz(mpz_ptr value, GEN g):
         mpz_neg(value, value)
 
 
-cdef void INTFRAC_to_mpq(mpq_ptr value, GEN g):
+cdef void INTFRAC_to_mpq(mpq_ptr value, GEN g) noexcept:
     """
     Convert a PARI ``t_INT`` or ``t_FRAC`` to a GMP rational, stored in
     ``value``.

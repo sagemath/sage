@@ -48,7 +48,7 @@ cdef int mpq_vector_init(mpq_vector* v, Py_ssize_t degree, Py_ssize_t num_nonzer
     v.num_nonzero = num_nonzero
     v.degree = degree
 
-cdef void mpq_vector_clear(mpq_vector* v):
+cdef void mpq_vector_clear(mpq_vector* v) noexcept:
     cdef Py_ssize_t i
     if v.entries == NULL:
         return
@@ -62,7 +62,7 @@ cdef void mpq_vector_clear(mpq_vector* v):
     sig_free(v.entries)
     sig_free(v.positions)
 
-cdef Py_ssize_t mpq_binary_search0(mpq_t* v, Py_ssize_t n, mpq_t x):
+cdef Py_ssize_t mpq_binary_search0(mpq_t* v, Py_ssize_t n, mpq_t x) noexcept:
     """
     Find the position of the rational x in the array v, which has length n.
     Returns -1 if x is not in the array v.
@@ -87,7 +87,7 @@ cdef Py_ssize_t mpq_binary_search0(mpq_t* v, Py_ssize_t n, mpq_t x):
             return k
     return -1
 
-cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* ins):
+cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* ins) noexcept:
     """
     Find the position of the integer x in the array v, which has length n.
     Returns -1 if x is not in the array v, and in this case ins is
@@ -150,7 +150,7 @@ cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     mpq_set(ans, v.entries[m])
     return 0
 
-cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n):
+cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n) noexcept:
     """
     Return if the ``n``-th entry of the sparse vector ``v`` is zero.
 
@@ -159,7 +159,7 @@ cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n):
     """
     return binary_search0(v.positions, v.num_nonzero, n) == -1
 
-cdef object mpq_vector_to_list(mpq_vector* v):
+cdef object mpq_vector_to_list(mpq_vector* v) noexcept:
     """
     Returns a Python list of 2-tuples (i,x), where x=v[i] runs
     through the nonzero elements of x, in order.
@@ -396,7 +396,7 @@ cdef int mpq_vector_scalar_multiply(mpq_vector* v, mpq_vector* w, mpq_t scalar) 
             v.positions[i] = w.positions[i]
         return 0
 
-cdef int mpq_vector_cmp(mpq_vector* v, mpq_vector* w):
+cdef int mpq_vector_cmp(mpq_vector* v, mpq_vector* w) noexcept:
     if v.degree < w.degree:
         return -1
     elif v.degree > w.degree:

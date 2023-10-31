@@ -122,7 +122,7 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
     """
     A class implementing sections of embeddings between finite fields.
     """
-    cpdef Element _call_(self, x):  # Not optimized
+    cpdef Element _call_(self, x) noexcept:  # Not optimized
         """
         TESTS::
 
@@ -292,7 +292,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         return self.domain()._latex_() + " \\hookrightarrow " + self.codomain()._latex_()
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         TESTS::
 
@@ -427,7 +427,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         return Morphism.__hash__(self)
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         r"""
         Helper function for copying and pickling
 
@@ -455,7 +455,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         slots['_section_class'] = self._section_class
         return slots
 
-    cdef _update_slots(self, dict slots):
+    cdef _update_slots(self, dict slots) noexcept:
         r"""
         Helper function for copying and pickling
 
@@ -610,7 +610,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         return s
 
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         TESTS::
 
@@ -831,7 +831,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         return Morphism.__hash__(self)
 
-    cdef _update_slots(self, dict slots):
+    cdef _update_slots(self, dict slots) noexcept:
         r"""
         Helper function for copying and pickling
 

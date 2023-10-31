@@ -90,7 +90,7 @@ except ImportError:
     MatrixGroupElement_gap = ()
 
 
-cpdef is_MatrixGroupElement(x):
+cpdef is_MatrixGroupElement(x) noexcept:
     """
     Test whether ``x`` is a matrix group element
 
@@ -223,7 +223,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         return self._matrix._latex_()
 
-    cpdef _act_on_(self, x, bint self_on_left):
+    cpdef _act_on_(self, x, bint self_on_left) noexcept:
         """
         EXAMPLES::
 
@@ -246,7 +246,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
             except TypeError:
                 return None
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         EXAMPLES::
 
@@ -267,7 +267,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         cdef MatrixGroupElement_generic y = <MatrixGroupElement_generic>other
         return richcmp(x._matrix, y._matrix, op)
 
-    cpdef list list(self):
+    cpdef list list(self) noexcept:
         """
         Return list representation of this matrix.
 
@@ -328,7 +328,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         return self.matrix()
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         """
         Return the product of ``self`` and`` other``, which must
         have identical parents.

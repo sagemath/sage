@@ -56,7 +56,7 @@ class CartanType(cartan_type.CartanType_decorator):
             return type
 
         relabelling = FiniteFamily(relabelling) # Hack to emulate a frozendict which would be hashable!!!!
-        return super(CartanType, cls).__classcall__(cls, type, relabelling)
+        return super().__classcall__(cls, type, relabelling)
 
     def __init__(self, type, relabelling):
         """
@@ -272,7 +272,7 @@ class CartanType(cartan_type.CartanType_decorator):
             ret += " \\text{ relabelled by } " + latex(self._relabelling)
         return ret
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -286,9 +286,11 @@ class CartanType(cartan_type.CartanType_decorator):
             \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         return self._type._latex_dynkin_diagram(lambda i: label(self._relabelling[i]), node, node_dist)
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of this Cartan type.
 
@@ -308,6 +310,8 @@ class CartanType(cartan_type.CartanType_decorator):
             O---O---O=>=O---O
             4   3   2   1   0
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         return self._type.ascii_art(lambda i: label(self._relabelling[i]), node)

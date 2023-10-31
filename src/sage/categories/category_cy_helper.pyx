@@ -22,7 +22,7 @@ AUTHOR:
 #######################################
 #  Sorting
 
-cpdef inline tuple category_sort_key(object category):
+cpdef inline tuple category_sort_key(object category) noexcept:
     """
     Return ``category._cmp_key``.
 
@@ -39,7 +39,7 @@ cpdef inline tuple category_sort_key(object category):
     """
     return category._cmp_key
 
-cpdef tuple _sort_uniq(categories):
+cpdef tuple _sort_uniq(categories) noexcept:
     """
     Return the categories after sorting them and removing redundant categories.
 
@@ -73,7 +73,7 @@ cpdef tuple _sort_uniq(categories):
             result.append(category)
     return tuple(result)
 
-cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
+cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory) noexcept:
     """
     Return the tuple of categories in ``categories``, while
     flattening join categories.
@@ -109,7 +109,7 @@ cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
 #############################################
 #  Join
 
-cdef bint is_supercategory_of_done(new_cat, dict done):
+cdef bint is_supercategory_of_done(new_cat, dict done) noexcept:
     # This is a helper function. It replaces the closure
     # any(cat.is_subcategory(new_cat) for cat in done)
     for cat in done:
@@ -117,7 +117,7 @@ cdef bint is_supercategory_of_done(new_cat, dict done):
             return True
     return False
 
-cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
+cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms) noexcept:
     """
     Helper for :meth:`~sage.categories.category.Category.join`.
 
@@ -268,7 +268,7 @@ cdef class AxiomContainer(dict):
         return self
 
 
-cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom):
+cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom) noexcept:
     """
     Helper function: Return the rank of an axiom.
 
@@ -287,7 +287,7 @@ cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom):
     return (<dict>all_axioms)[axiom]
 
 
-cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms):
+cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms) noexcept:
     r"""
     Canonicalize a set of axioms.
 

@@ -197,7 +197,7 @@ cdef class StaticSparseCGraph(CGraph):
         """
         self.add_vertex_unsafe(k)
 
-    cpdef del_vertex(self, int k):
+    cpdef del_vertex(self, int k) noexcept:
         r"""
         Remove a vertex from the graph. No way.
 
@@ -212,7 +212,7 @@ cdef class StaticSparseCGraph(CGraph):
         """
         self.del_vertex_unsafe(k)
 
-    cpdef list verts(self):
+    cpdef list verts(self) noexcept:
         r"""
         Returns the list of vertices
 
@@ -319,7 +319,7 @@ cdef class StaticSparseCGraph(CGraph):
             neighbors[i] = self.g_rev.neighbors[u][i]
         return -1 if size < degree else degree
 
-    cpdef list out_neighbors(self, int u):
+    cpdef list out_neighbors(self, int u) noexcept:
         r"""
         List the out-neighbors of a vertex
 
@@ -344,7 +344,7 @@ cdef class StaticSparseCGraph(CGraph):
         cdef int i
         return [<int> self.g.neighbors[u][i] for i in range(out_degree(self.g, u))]
 
-    cpdef list in_neighbors(self, int u):
+    cpdef list in_neighbors(self, int u) noexcept:
         r"""
         Return the in-neighbors of a vertex
 
@@ -557,7 +557,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         return v in self._vertex_to_int
 
-    cpdef add_edge(self, object u, object v, object l, bint directed):
+    cpdef add_edge(self, object u, object v, object l, bint directed) noexcept:
         r"""
         Set edge label. No way.
 
@@ -602,7 +602,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         raise ValueError("graph is immutable; please change a copy instead (use function copy())")
 
-    cpdef del_edge(self, object u, object v, object l, bint directed):
+    cpdef del_edge(self, object u, object v, object l, bint directed) noexcept:
         r"""
         Set edge label. No way.
 
@@ -699,7 +699,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             return self._all_edge_labels(u, v, edge)
         return edge_label(cg.g, edge)
 
-    cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL):
+    cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL) noexcept:
         """
         Gives the labels of all arcs from ``u`` to ``v``.
 

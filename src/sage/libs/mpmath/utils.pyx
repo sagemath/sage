@@ -16,7 +16,7 @@ from sage.rings.integer cimport Integer
 from sage.libs.mpfr cimport *
 from sage.libs.gmp.all cimport *
 
-cpdef int bitcount(n):
+cpdef int bitcount(n) noexcept:
     """
     Bitcount of a Sage Integer or Python int/long.
 
@@ -46,7 +46,7 @@ cpdef int bitcount(n):
         return 0
     return mpz_sizeinbase(m.value, 2)
 
-cpdef isqrt(n):
+cpdef isqrt(n) noexcept:
     """
     Square root (rounded to floor) of a Sage Integer or Python int/long.
     The result is a Sage Integer.
@@ -77,7 +77,7 @@ cpdef isqrt(n):
     mpz_sqrt(y.value, m.value)
     return y
 
-cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
+cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd') noexcept:
     """
     Create normalized mpf value tuple from mantissa and exponent.
 
@@ -106,7 +106,7 @@ cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
     else:
         return normalize(0, res, exp, bc, prec, rnd)
 
-cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
+cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd) noexcept:
     """
     Create normalized mpf value tuple from full list of components.
 

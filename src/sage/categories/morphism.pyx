@@ -345,7 +345,7 @@ cdef class Morphism(Map):
             definition = repr(self)
         return hash((domain, codomain, definition))
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Generic comparison function for morphisms.
 
@@ -454,7 +454,7 @@ cdef class FormalCoercionMorphism(Morphism):
     def _repr_type(self):
         return "Coercion"
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         return self._codomain.coerce(x)
 
 cdef class CallMorphism(Morphism):
@@ -462,7 +462,7 @@ cdef class CallMorphism(Morphism):
     def _repr_type(self):
         return "Call"
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         return self._codomain(x)
 
 cdef class IdentityMorphism(Morphism):
@@ -476,10 +476,10 @@ cdef class IdentityMorphism(Morphism):
     def _repr_type(self):
         return "Identity"
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         return x
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
         if not args and not kwds:
             return x
         cdef Parent C = self._codomain
@@ -500,7 +500,7 @@ cdef class IdentityMorphism(Morphism):
         else:
             return left
 
-    cpdef _pow_int(self, n):
+    cpdef _pow_int(self, n) noexcept:
         return self
 
     def __invert__(self):
@@ -587,7 +587,7 @@ cdef class SetMorphism(Morphism):
         Morphism.__init__(self, parent)
         self._function = function
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         INPUT:
 
@@ -608,7 +608,7 @@ cdef class SetMorphism(Morphism):
         """
         return self._function(x)
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
         """
         Extra arguments are passed to the defining function.
 
@@ -630,7 +630,7 @@ cdef class SetMorphism(Morphism):
         except Exception:
             raise TypeError("Underlying map %s does not accept additional arguments" % type(self._function))
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         INPUT:
 
@@ -652,7 +652,7 @@ cdef class SetMorphism(Morphism):
         slots['_function'] = self._function
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         INPUT:
 
@@ -681,7 +681,7 @@ cdef class SetMorphism(Morphism):
         self._function = _slots['_function']
         Map._update_slots(self, _slots)
 
-    cpdef bint _eq_c_impl(self, Element other):
+    cpdef bint _eq_c_impl(self, Element other) noexcept:
         """
         Equality test
 

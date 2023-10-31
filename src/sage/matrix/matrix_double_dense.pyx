@@ -147,7 +147,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     # LEVEL 2 functionality
     #   * def _pickle
     #   * def _unpickle
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two matrices together.
 
@@ -170,7 +170,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         M._matrix_numpy = _left._matrix_numpy + _right._matrix_numpy
         return M
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Return self - right
 
@@ -221,7 +221,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     # def _pickle(self):                        #unsure how to implement
     # def _unpickle(self, data, int version):   # use version >= 0 #unsure how to implement
     ######################################################################
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right) noexcept:
         r"""
         Multiply ``self * right`` as matrices.
 
@@ -3589,7 +3589,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             posdef = self.fetch(cache_str)
         return posdef
 
-    cdef _vector_times_matrix_(self,Vector v):
+    cdef _vector_times_matrix_(self,Vector v) noexcept:
         if self._nrows == 0 or self._ncols == 0:
             return self.row_ambient_module().zero_vector()
         global numpy
@@ -3602,7 +3602,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ans = numpy.dot(v_numpy,self._matrix_numpy)
         return M(ans)
 
-    cdef _matrix_times_vector_(self,Vector v):
+    cdef _matrix_times_vector_(self,Vector v) noexcept:
         if self._nrows == 0 or self._ncols == 0:
             return self.column_ambient_module().zero_vector()
 

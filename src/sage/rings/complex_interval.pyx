@@ -682,7 +682,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         """
         return mpfi_has_zero(self.__re) and mpfi_has_zero(self.__im)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add ``self`` and ``right``.
 
@@ -696,7 +696,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         mpfi_add(x.__im, self.__im, (<ComplexIntervalFieldElement>right).__im)
         return x
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract ``self`` by ``right``.
 
@@ -710,7 +710,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         mpfi_sub(x.__im, self.__im, (<ComplexIntervalFieldElement>right).__im)
         return x
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply ``self`` and ``right``.
 
@@ -780,7 +780,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         mpfi_clear(t)
         return x
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide ``self`` by ``right``.
 
@@ -1513,7 +1513,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         """
         return bool(self.real()) or bool(self.imag())
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         r"""
         As with the real interval fields this never returns false positives.
 

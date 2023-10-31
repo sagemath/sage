@@ -43,7 +43,7 @@ cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
 
 
-cdef void alloc_error(size_t size) nogil:
+cdef void alloc_error(size_t size) noexcept nogil:
     """
     Jump back to ``sig_on()``, raising a :class:`MemoryError`.
     """
@@ -52,7 +52,7 @@ cdef void alloc_error(size_t size) nogil:
     sig_error()
 
 
-cdef void* sage_sig_malloc(size_t size) nogil:
+cdef void* sage_sig_malloc(size_t size) noexcept nogil:
     """
     ``malloc()`` function for the MPIR/GMP library.
 
@@ -64,7 +64,7 @@ cdef void* sage_sig_malloc(size_t size) nogil:
     return p
 
 
-cdef void* sage_sig_realloc(void *ptr, size_t old_size, size_t new_size) nogil:
+cdef void* sage_sig_realloc(void *ptr, size_t old_size, size_t new_size) noexcept nogil:
     """
     ``realloc()`` function for the MPIR/GMP library.
 
@@ -76,7 +76,7 @@ cdef void* sage_sig_realloc(void *ptr, size_t old_size, size_t new_size) nogil:
     return p
 
 
-cdef void sage_sig_free(void *ptr, size_t size) nogil:
+cdef void sage_sig_free(void *ptr, size_t size) noexcept nogil:
     """
     ``free()`` function for the MPIR/GMP library.
     """

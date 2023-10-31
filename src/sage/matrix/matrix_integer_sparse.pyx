@@ -110,10 +110,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             if z:
                 mpz_vector_set_entry(&self._matrix[se.i], se.j, z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
         mpz_vector_set_entry(&self._matrix[i], j, (<Integer> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         cdef Integer x
         x = Integer()
         mpz_vector_get_entry(x.value, &self._matrix[i], j)
@@ -160,7 +160,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
     # def _multiply_classical(left, matrix.Matrix _right):
     # def _list(self):
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -182,7 +182,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             mpz_vector_scalar_multiply(M_row, self_row, _x.value)
         return M
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
@@ -196,7 +196,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         mpz_clear(mul)
         return M
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
@@ -231,7 +231,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         self.cache('dict', d)
         return d
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right) noexcept:
         """
         Return the product of the sparse integer matrices
         ``self`` and ``_right``.
@@ -381,7 +381,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         """
         return self._mod_int_c(modulus)
 
-    cdef _mod_int_c(self, mod_int p):
+    cdef _mod_int_c(self, mod_int p) noexcept:
         cdef Py_ssize_t i, j
         cdef Matrix_modn_sparse res
         cdef mpz_vector* self_row

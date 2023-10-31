@@ -124,7 +124,7 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
 
 
 @cython.cdivision(True)
-cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
+cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True) noexcept:
     r"""
     Return the centrality betweenness of G (C implementation)
 
@@ -328,7 +328,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     return {vv: betweenness_list[i] for i, vv in enumerate(int_to_vertex)}
 
 
-cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU):
+cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* reachU) noexcept:
     r"""
     For each vertex ``v``, bounds the number of vertices reachable from ``v``.
 
@@ -461,7 +461,7 @@ cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* re
         reachU[i] = min(<int>reachU_scc[scc[i]], g.n)
 
 
-cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
+cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable) noexcept:
     r"""
     For each vertex ``v``, compute the number of vertices reachable from ``v``.
 
@@ -514,7 +514,7 @@ cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
             reachable[v] = len(currentcc)
 
 
-cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts):
+cdef void _sort_vertices_degree(short_digraph g, int* sorted_verts) noexcept:
     r"""
     Sort vertices in decreasing order of degree.
 

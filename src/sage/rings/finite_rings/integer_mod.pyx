@@ -79,7 +79,7 @@ from libc.math cimport log2, ceil
 
 from sage.libs.gmp.all cimport *
 
-cdef bint use_32bit_type(int_fast64_t modulus):
+cdef bint use_32bit_type(int_fast64_t modulus) noexcept:
     return modulus <= INTEGER_MOD_INT32_LIMIT
 
 from sage.arith.long cimport (
@@ -220,7 +220,7 @@ def is_IntegerMod(x):
     return isinstance(x, IntegerMod_abstract)
 
 
-cdef inline inverse_or_None(x):
+cdef inline inverse_or_None(x) noexcept:
     try:
         return ~x
     except ArithmeticError:
@@ -394,7 +394,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     raise
         self.set_from_mpz(z.value)
 
-    cdef IntegerMod_abstract _new_c_fast(self, unsigned long value):
+    cdef IntegerMod_abstract _new_c_fast(self, unsigned long value) noexcept:
         cdef type t = type(self)
         x = <IntegerMod_abstract>t.__new__(t)
         x._parent = self._parent
@@ -402,7 +402,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         x.set_from_ulong_fast(value)
         return x
 
-    cdef _new_c_from_long(self, long value):
+    cdef _new_c_from_long(self, long value) noexcept:
         cdef type t = type(self)
         cdef IntegerMod_abstract x = <IntegerMod_abstract>t.__new__(t)
         x._parent = self._parent
@@ -410,13 +410,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         x.set_from_long(value)
         return x
 
-    cdef void set_from_mpz(self, mpz_t value):
+    cdef void set_from_mpz(self, mpz_t value) noexcept:
         raise NotImplementedError("must be defined in child class")
 
-    cdef void set_from_long(self, long value):
+    cdef void set_from_long(self, long value) noexcept:
         raise NotImplementedError("must be defined in child class")
 
-    cdef void set_from_ulong_fast(self, unsigned long value):
+    cdef void set_from_ulong_fast(self, unsigned long value) noexcept:
         """
         Set ``self`` to the value in ``value`` where ``value`` is
         assumed to be less than the modulus
@@ -1001,10 +1001,10 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         else:
             return x - n
 
-    cpdef bint is_one(self):
+    cpdef bint is_one(self) noexcept:
         raise NotImplementedError
 
-    cpdef bint is_unit(self):
+    cpdef bint is_unit(self) noexcept:
         raise NotImplementedError
 
     @coerce_binop
@@ -1918,7 +1918,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 return infinity
         return r
 
-    cpdef _floordiv_(self, right):
+    cpdef _floordiv_(self, right) noexcept:
         """
         Exact division for prime moduli, for compatibility with other fields.
 
@@ -1977,7 +1977,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
     def __cinit__(self):
         mpz_init(self.value)
 
-    cdef IntegerMod_gmp _new_c(self):
+    cdef IntegerMod_gmp _new_c(self) noexcept:
         cdef IntegerMod_gmp x
         x = IntegerMod_gmp.__new__(IntegerMod_gmp)
         x._modulus = self._modulus
@@ -1987,12 +1987,12 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
     def __dealloc__(self):
         mpz_clear(self.value)
 
-    cdef void set_from_mpz(self, mpz_t value):
+    cdef void set_from_mpz(self, mpz_t value) noexcept:
         cdef sage.rings.integer.Integer modulus
         modulus = self._modulus.sageInteger
         mpz_mod(self.value, value, modulus.value)
 
-    cdef void set_from_long(self, long value):
+    cdef void set_from_long(self, long value) noexcept:
         r"""
         EXAMPLES::
 
@@ -2003,7 +2003,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         mpz_set_si(self.value, value)
         mpz_mod(self.value, self.value, self._modulus.sageInteger.value)
 
-    cdef void set_from_ulong_fast(self, unsigned long value):
+    cdef void set_from_ulong_fast(self, unsigned long value) noexcept:
         mpz_set_ui(self.value, value)
 
     def __lshift__(IntegerMod_gmp self, k):
@@ -2034,7 +2034,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         """
         return self.shift(-long(k))
 
-    cdef shift(IntegerMod_gmp self, long k):
+    cdef shift(IntegerMod_gmp self, long k) noexcept:
         r"""
         Performs a bit-shift specified by ``k`` on ``self``.
 
@@ -2076,7 +2076,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
                 mpz_fdiv_q_2exp(x.value, self.value, -k)
             return x
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         EXAMPLES::
 
@@ -2091,7 +2091,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         i = mpz_cmp((<IntegerMod_gmp>left).value, (<IntegerMod_gmp>right).value)
         return rich_to_bool_sgn(op, i)
 
-    cpdef bint is_one(IntegerMod_gmp self):
+    cpdef bint is_one(IntegerMod_gmp self) noexcept:
         """
         Returns ``True`` if this is `1`, otherwise
         ``False``.
@@ -2119,7 +2119,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         """
         return mpz_cmp_si(self.value, 0) != 0
 
-    cpdef bint is_unit(self):
+    cpdef bint is_unit(self) noexcept:
         """
         Return ``True`` iff this element is a unit.
 
@@ -2177,7 +2177,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         # immutable
         return self
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -2192,7 +2192,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             mpz_sub(x.value, x.value, self._modulus.sageInteger.value)
         return x
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -2207,7 +2207,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             mpz_add(x.value, x.value, self._modulus.sageInteger.value)
         return x
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         EXAMPLES::
 
@@ -2223,7 +2223,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         mpz_sub(x.value, self._modulus.sageInteger.value, self.value)
         return x
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -2237,7 +2237,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         mpz_fdiv_r(x.value, x.value, self._modulus.sageInteger.value)
         return x
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -2421,7 +2421,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         True
     """
 
-    cdef IntegerMod_int _new_c(self, int_fast32_t value):
+    cdef IntegerMod_int _new_c(self, int_fast32_t value) noexcept:
         if self._modulus.table is not None:
             return self._modulus.table[value]
         cdef IntegerMod_int x = IntegerMod_int.__new__(IntegerMod_int)
@@ -2430,18 +2430,18 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         x.ivalue = value
         return x
 
-    cdef void set_from_mpz(self, mpz_t value):
+    cdef void set_from_mpz(self, mpz_t value) noexcept:
         self.ivalue = mpz_fdiv_ui(value, self._modulus.int32)
 
-    cdef void set_from_long(self, long value):
+    cdef void set_from_long(self, long value) noexcept:
         self.ivalue = value % self._modulus.int32
         if self.ivalue < 0:
             self.ivalue += self._modulus.int32
 
-    cdef void set_from_ulong_fast(self, unsigned long value):
+    cdef void set_from_ulong_fast(self, unsigned long value) noexcept:
         self.ivalue = value
 
-    cdef void set_from_int(IntegerMod_int self, int_fast32_t ivalue):
+    cdef void set_from_int(IntegerMod_int self, int_fast32_t ivalue) noexcept:
         if ivalue < 0:
             self.ivalue = self._modulus.int32 + (ivalue % self._modulus.int32)
         elif ivalue >= self._modulus.int32:
@@ -2449,10 +2449,10 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         else:
             self.ivalue = ivalue
 
-    cdef int_fast32_t get_int_value(IntegerMod_int self):
+    cdef int_fast32_t get_int_value(IntegerMod_int self) noexcept:
         return self.ivalue
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         """
         EXAMPLES::
 
@@ -2474,7 +2474,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         else:
             return rich_to_bool(op, 1)
 
-    cpdef bint is_one(IntegerMod_int self):
+    cpdef bint is_one(IntegerMod_int self) noexcept:
         """
         Returns ``True`` if this is `1`, otherwise
         ``False``.
@@ -2506,7 +2506,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         """
         return self.ivalue != 0
 
-    cpdef bint is_unit(IntegerMod_int self):
+    cpdef bint is_unit(IntegerMod_int self) noexcept:
         """
         Return ``True`` iff this element is a unit
 
@@ -2576,7 +2576,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         # immutable
         return self
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -2590,7 +2590,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             x = x - self._modulus.int32
         return self._new_c(x)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -2604,7 +2604,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             x = x + self._modulus.int32
         return self._new_c(x)
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         EXAMPLES::
 
@@ -2617,7 +2617,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             return self
         return self._new_c(self._modulus.int32 - self.ivalue)
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -2627,7 +2627,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         """
         return self._new_c((self.ivalue * (<IntegerMod_int>right).ivalue) % self._modulus.int32)
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -2700,7 +2700,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         """
         return self.shift(-int(k))
 
-    cdef shift(IntegerMod_int self, int k):
+    cdef shift(IntegerMod_int self, int k) noexcept:
         """
         Performs a bit-shift specified by ``k`` on ``self``.
 
@@ -3091,7 +3091,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 ### End of class
 
 
-cdef int_fast32_t gcd_int(int_fast32_t a, int_fast32_t b):
+cdef int_fast32_t gcd_int(int_fast32_t a, int_fast32_t b) noexcept:
     """
     Returns the gcd of a and b
 
@@ -3147,7 +3147,7 @@ cdef int_fast32_t mod_inverse_int(int_fast32_t x, int_fast32_t n) except 0:
     raise ZeroDivisionError(f"inverse of Mod({x}, {n}) does not exist")
 
 
-cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t n):
+cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t n) noexcept:
     """
     Returns base^exp mod n
 
@@ -3253,7 +3253,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
     - Robert Bradshaw (2006-09-14)
     """
 
-    cdef IntegerMod_int64 _new_c(self, int_fast64_t value):
+    cdef IntegerMod_int64 _new_c(self, int_fast64_t value) noexcept:
         cdef IntegerMod_int64 x
         x = IntegerMod_int64.__new__(IntegerMod_int64)
         x._modulus = self._modulus
@@ -3261,18 +3261,18 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         x.ivalue = value
         return x
 
-    cdef void set_from_mpz(self, mpz_t value):
+    cdef void set_from_mpz(self, mpz_t value) noexcept:
         self.ivalue = mpz_fdiv_ui(value, self._modulus.int64)
 
-    cdef void set_from_long(self, long value):
+    cdef void set_from_long(self, long value) noexcept:
         self.ivalue = value % self._modulus.int64
         if self.ivalue < 0:
             self.ivalue += self._modulus.int64
 
-    cdef void set_from_ulong_fast(self, unsigned long value):
+    cdef void set_from_ulong_fast(self, unsigned long value) noexcept:
         self.ivalue = value
 
-    cdef void set_from_int(IntegerMod_int64 self, int_fast64_t ivalue):
+    cdef void set_from_int(IntegerMod_int64 self, int_fast64_t ivalue) noexcept:
         if ivalue < 0:
             self.ivalue = self._modulus.int64 + (ivalue % self._modulus.int64) # Is ivalue % self._modulus.int64 actually negative?
         elif ivalue >= self._modulus.int64:
@@ -3280,10 +3280,10 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         else:
             self.ivalue = ivalue
 
-    cdef int_fast64_t get_int_value(IntegerMod_int64 self):
+    cdef int_fast64_t get_int_value(IntegerMod_int64 self) noexcept:
         return self.ivalue
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         """
         EXAMPLES::
 
@@ -3305,7 +3305,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         else:
             return rich_to_bool(op, 1)
 
-    cpdef bint is_one(IntegerMod_int64 self):
+    cpdef bint is_one(IntegerMod_int64 self) noexcept:
         """
         Returns ``True`` if this is `1`, otherwise
         ``False``.
@@ -3333,7 +3333,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         return self.ivalue != 0
 
-    cpdef bint is_unit(IntegerMod_int64 self):
+    cpdef bint is_unit(IntegerMod_int64 self) noexcept:
         """
         Return ``True`` iff this element is a unit.
 
@@ -3412,7 +3412,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         # immutable
         return self
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -3426,7 +3426,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             x = x - self._modulus.int64
         return self._new_c(x)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -3440,7 +3440,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             x = x + self._modulus.int64
         return self._new_c(x)
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         EXAMPLES::
 
@@ -3453,7 +3453,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             return self
         return self._new_c(self._modulus.int64 - self.ivalue)
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -3464,7 +3464,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         return self._new_c((self.ivalue * (<IntegerMod_int64>right).ivalue) % self._modulus.int64)
 
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -3520,7 +3520,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         return self.shift(-int(k))
 
-    cdef shift(IntegerMod_int64 self, int k):
+    cdef shift(IntegerMod_int64 self, int k) noexcept:
         """
         Performs a bit-shift specified by ``k`` on ``self``.
 
@@ -3767,7 +3767,7 @@ cdef int mpz_pow_helper(mpz_t res, mpz_t base, object exp, mpz_t modulus) except
         if not mpz_invert(res, res, modulus):
             raise ZeroDivisionError("Inverse does not exist.")
 
-cdef int_fast64_t gcd_int64(int_fast64_t a, int_fast64_t b):
+cdef int_fast64_t gcd_int64(int_fast64_t a, int_fast64_t b) noexcept:
     """
     Returns the gcd of a and b
 
@@ -3821,7 +3821,7 @@ cdef int_fast64_t mod_inverse_int64(int_fast64_t x, int_fast64_t n) except 0:
     raise ZeroDivisionError(f"inverse of Mod({x}, {n}) does not exist")
 
 
-cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_t n):
+cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_t n) noexcept:
     """
     Returns base^exp mod n
 
@@ -3996,7 +3996,7 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
         x *= p**(val//2)
     return x
 
-cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
+cpdef square_root_mod_prime(IntegerMod_abstract a, p=None) noexcept:
     r"""
     Calculates the square root of `a`, where `a` is an
     integer mod `p`; if `a` is not a perfect square,
@@ -4271,7 +4271,7 @@ cdef class IntegerMod_hom(Morphism):
         self.zero = C._element_constructor_(0)
         self.modulus = C._pyx_order
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for pickling and copying.
 
@@ -4298,7 +4298,7 @@ cdef class IntegerMod_hom(Morphism):
         slots['modulus'] = self.modulus
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for pickling and copying.
 
@@ -4326,7 +4326,7 @@ cdef class IntegerMod_hom(Morphism):
         self.zero = _slots['zero']
         self.modulus = _slots['modulus']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         return IntegerMod(self._codomain, x)
 
 cdef class IntegerMod_to_IntegerMod(IntegerMod_hom):
@@ -4357,7 +4357,7 @@ cdef class IntegerMod_to_IntegerMod(IntegerMod_hom):
         import sage.categories.homset
         IntegerMod_hom.__init__(self, sage.categories.homset.Hom(R, S))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         cdef IntegerMod_abstract a
         zero = <IntegerMod_abstract>self.zero
         cdef unsigned long value
@@ -4425,7 +4425,7 @@ cdef class Integer_to_IntegerMod(IntegerMod_hom):
         import sage.categories.homset
         IntegerMod_hom.__init__(self, sage.categories.homset.Hom(integer_ring.ZZ, R))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         cdef IntegerMod_abstract a
         cdef Py_ssize_t res
         if self.modulus.table is not None:
@@ -4497,7 +4497,7 @@ cdef class IntegerMod_to_Integer(Map):
         from sage.categories.sets_cat import Sets
         Morphism.__init__(self, sage.categories.homset.Hom(R, integer_ring.ZZ, Sets()))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         cdef Integer ans = Integer.__new__(Integer)
         if isinstance(x, IntegerMod_gmp):
             mpz_set(ans.value, (<IntegerMod_gmp>x).value)
@@ -4536,7 +4536,7 @@ cdef class Int_to_IntegerMod(IntegerMod_hom):
         from sage.sets.pythonclass import Set_PythonType
         IntegerMod_hom.__init__(self, sage.categories.homset.Hom(Set_PythonType(int), R))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         cdef IntegerMod_abstract a
         zero = <IntegerMod_abstract>self.zero
 

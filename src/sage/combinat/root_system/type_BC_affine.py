@@ -139,7 +139,7 @@ class CartanType(CartanType_standard_affine):
         else:
             return "BC_{%s}^{(2)}" % self.n
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -181,6 +181,8 @@ class CartanType(CartanType_standard_affine):
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n == 1:
@@ -207,7 +209,7 @@ class CartanType(CartanType_standard_affine):
         ret += "}\n" + node(0, 0, label(0))
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -228,6 +230,8 @@ class CartanType(CartanType_standard_affine):
             O=<=O
             2   3
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         n = self.n

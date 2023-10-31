@@ -347,7 +347,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         if self.val is not NULL:
             gunclone_deep(self.val)
 
-    cdef FiniteFieldElement_pari_ffelt _new(self):
+    cdef FiniteFieldElement_pari_ffelt _new(self) noexcept:
         """
         Create an empty element with the same parent as ``self``.
         """
@@ -356,7 +356,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         x._parent = self._parent
         return x
 
-    cdef void construct(self, GEN g):
+    cdef void construct(self, GEN g) noexcept:
         """
         Initialise ``self`` to the FFELT ``g``, reset the PARI stack,
         and call sig_off().
@@ -601,7 +601,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         # immutable
         return self
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Comparison of finite field elements.
 
@@ -662,7 +662,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sig_off()
         return rich_to_bool(op, r)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Addition.
 
@@ -678,7 +678,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtraction.
 
@@ -694,7 +694,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiplication.
 
@@ -710,7 +710,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Division.
 

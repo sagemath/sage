@@ -996,7 +996,7 @@ cdef class ReductionMap(Map):
         self._repr_type_str = "Partially defined reduction"
         Map.__init__(self, Hom(K, F, SetsWithPartialMaps()))
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1027,7 +1027,7 @@ cdef class ReductionMap(Map):
         slots['_section'] = self._section
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1057,7 +1057,7 @@ cdef class ReductionMap(Map):
         self._PB = _slots['_PB']
         self._section = _slots['_section']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Apply this reduction map to an element that coerces into the global
         field.
@@ -1306,7 +1306,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         self._repr_type_str = "Reduction"
         RingHomomorphism.__init__(self, Hom(K,F))
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1338,7 +1338,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         slots['_section'] = self._section
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1369,7 +1369,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         self._PB = _slots['_PB']
         self._section = _slots['_section']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Applies this morphism to an element.
 
@@ -1573,7 +1573,7 @@ cdef class LiftingMap(Section):
         self._PB = PB
         Section.__init__(self, reduction)
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1599,7 +1599,7 @@ cdef class LiftingMap(Section):
         slots['_PB'] = self._PB
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1624,7 +1624,7 @@ cdef class LiftingMap(Section):
         self._to_order = _slots['_to_order']
         self._PB = _slots['_PB']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Lift from this residue class field to the number field.
 

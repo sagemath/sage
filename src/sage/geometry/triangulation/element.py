@@ -336,8 +336,7 @@ class Triangulation(Element):
             ...
             StopIteration
         """
-        for p in self._triangulation:
-            yield p
+        yield from self._triangulation
 
     def __getitem__(self, i):
         """

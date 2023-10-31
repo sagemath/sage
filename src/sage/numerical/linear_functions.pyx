@@ -115,7 +115,7 @@ from sage.misc.cachefunc import cached_function
 #
 #*****************************************************************************
 
-cpdef is_LinearFunction(x):
+cpdef is_LinearFunction(x) noexcept:
     """
     Test whether ``x`` is a linear function
 
@@ -664,7 +664,7 @@ cdef class LinearFunctionsParent_class(Parent):
         """
         return 'Linear functions over ' + str(self.base_ring())
 
-    cpdef _element_constructor_(self, x):
+    cpdef _element_constructor_(self, x) noexcept:
         """
         Construct a :class:`LinearFunction` from ``x``.
 
@@ -694,7 +694,7 @@ cdef class LinearFunctionsParent_class(Parent):
             return LinearFunction(self, (<LinearFunction>x)._f)
         return LinearFunction(self, x)
 
-    cpdef _coerce_map_from_(self, R):
+    cpdef _coerce_map_from_(self, R) noexcept:
         """
         Allow coercion of scalars into linear functions.
 
@@ -803,7 +803,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         else:
             self._f = {-1: R(f)}
 
-    cpdef iteritems(self):
+    cpdef iteritems(self) noexcept:
         """
         Iterate over the index, coefficient pairs.
 
@@ -906,7 +906,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         except KeyError:
             return self.parent().base_ring().zero()
 
-    cpdef _add_(self, b):
+    cpdef _add_(self, b) noexcept:
         r"""
         Defining the + operator
 
@@ -923,7 +923,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(e)
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         r"""
         Defining the - operator (opposite).
 
@@ -937,7 +937,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P({id: -coeff for id, coeff in self._f.iteritems()})
 
-    cpdef _sub_(self, b):
+    cpdef _sub_(self, b) noexcept:
         r"""
         Defining the - operator (subtraction).
 
@@ -956,7 +956,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(e)
 
-    cpdef _lmul_(self, Element b):
+    cpdef _lmul_(self, Element b) noexcept:
         r"""
         Multiplication by scalars
 
@@ -972,7 +972,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(dict([(id,b*coeff) for (id, coeff) in self._f.iteritems()]))
 
-    cpdef _acted_upon_(self, x, bint self_on_left):
+    cpdef _acted_upon_(self, x, bint self_on_left) noexcept:
         """
         Act with scalars that do not have a natural coercion into
         ``self.base_ring()``
@@ -1131,7 +1131,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         else:
             return t
 
-    cpdef is_zero(self):
+    cpdef is_zero(self) noexcept:
         """
         Test whether ``self`` is zero.
 
@@ -1151,7 +1151,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
                 return False
         return True
 
-    cpdef equals(LinearFunction left, LinearFunction right):
+    cpdef equals(LinearFunction left, LinearFunction right) noexcept:
         """
         Logically compare ``left`` and ``right``.
 
@@ -1268,7 +1268,7 @@ cdef class LinearConstraintsParent_class(Parent):
         """
         return 'Linear constraints over ' + str(self.linear_functions_parent().base_ring())
 
-    cpdef _element_constructor_(self, left, right=None, equality=False):
+    cpdef _element_constructor_(self, left, right=None, equality=False) noexcept:
         """
         Construct a :class:`LinearConstraint`.
 
@@ -1333,7 +1333,7 @@ cdef class LinearConstraintsParent_class(Parent):
         else:
             return LinearConstraint(self, [left, right], equality=equality)
 
-    cpdef _coerce_map_from_(self, R):
+    cpdef _coerce_map_from_(self, R) noexcept:
         """
         Allow coercion of scalars into linear functions.
 
@@ -1433,7 +1433,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         LF = parent.linear_functions_parent()
         self.constraints = [ LF(term) for term in terms ]
 
-    cpdef equals(LinearConstraint left, LinearConstraint right):
+    cpdef equals(LinearConstraint left, LinearConstraint right) noexcept:
         """
         Compare ``left`` and ``right``.
 

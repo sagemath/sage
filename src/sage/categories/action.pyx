@@ -67,7 +67,7 @@ from sage.categories import homset
 from weakref import ref
 
 
-cdef inline category(x):
+cdef inline category(x) noexcept:
     try:
         return x.category()
     except AttributeError:
@@ -179,7 +179,7 @@ cdef class Action(Functor):
         else:
             raise TypeError("actions should be called with 1 or 2 arguments")
 
-    cdef _act_convert(self, g, x):
+    cdef _act_convert(self, g, x) noexcept:
         """
         Let ``g`` act on ``x`` under this action, converting ``g``
         and ``x`` to the correct parents first.
@@ -191,7 +191,7 @@ cdef class Action(Functor):
             x = U(x)
         return self._act_(g, x)
 
-    cpdef _act_(self, g, x):
+    cpdef _act_(self, g, x) noexcept:
         """
         Let ``g`` act on ``x`` under this action.
 
@@ -252,7 +252,7 @@ cdef class Action(Functor):
     def actor(self):
         return self.G
 
-    cdef underlying_set(self):
+    cdef underlying_set(self) noexcept:
         """
         The set on which the actor acts (it is not necessarily the codomain of
         the action).
@@ -411,7 +411,7 @@ cdef class InverseAction(Action):
         """
         return (type(self), (self._action,))
 
-    cpdef _act_(self, g, x):
+    cpdef _act_(self, g, x) noexcept:
         if self.S_precomposition is not None:
             x = self.S_precomposition(x)
         return self._action._act_(~g, x)
@@ -499,7 +499,7 @@ cdef class PrecomposedAction(Action):
         """
         return (type(self), (self._action, self.G_precomposition, self.S_precomposition))
 
-    cpdef _act_(self, g, x):
+    cpdef _act_(self, g, x) noexcept:
         if self.G_precomposition is not None:
             g = self.G_precomposition._call_(g)
         if self.S_precomposition is not None:
@@ -570,7 +570,7 @@ cdef class ActionEndomorphism(Morphism):
         self._action = action
         self._g = g
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for pickling and copying.
 
@@ -592,7 +592,7 @@ cdef class ActionEndomorphism(Morphism):
         slots['_g'] = self._g
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for pickling and copying.
 
@@ -613,7 +613,7 @@ cdef class ActionEndomorphism(Morphism):
         self._g = _slots['_g']
         Morphism._update_slots(self, _slots)
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         return self._action._act_(self._g, x)
 
     def _repr_(self):

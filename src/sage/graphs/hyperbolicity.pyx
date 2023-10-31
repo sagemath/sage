@@ -237,7 +237,7 @@ def _my_subgraph(G, vertices, relabel=False, return_map=False):
 # Building blocks
 ######################################################################
 
-cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d):
+cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d) noexcept:
     """
     Return the hyperbolicity of the given 4-tuple.
     """
@@ -264,7 +264,7 @@ cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d):
 
 cdef tuple hyperbolicity_basic_algorithm(int N,
                                          unsigned short** distances,
-                                         verbose):
+                                         verbose) noexcept:
     """
     Return **twice** the hyperbolicity of a graph, and a certificate.
 
@@ -369,7 +369,7 @@ def _greedy_dominating_set(H, verbose=False):
 cdef inline distances_and_far_apart_pairs(gg,
                                           unsigned short* distances,
                                           unsigned short* far_apart_pairs,
-                                          list int_to_vertex):
+                                          list int_to_vertex) noexcept:
     """
     Compute both distances between all pairs and far-apart pairs.
 
@@ -483,7 +483,7 @@ cdef inline pair** sort_pairs(uint32_t N,
                               unsigned short** values,
                               unsigned short** to_include,
                               uint32_t* nb_p,
-                              uint32_t* nb_pairs_of_length):
+                              uint32_t* nb_pairs_of_length) noexcept:
     """
     Return an array of unordered pairs {i,j} in increasing order of values.
 
@@ -584,7 +584,7 @@ cdef tuple hyperbolicity_BCCM(int N,
                               int h_LB,
                               float approximation_factor,
                               float additive_gap,
-                              verbose=False):
+                              verbose=False) noexcept:
     """
     Return the hyperbolicity of a graph.
 
@@ -842,7 +842,7 @@ cdef tuple hyperbolicity_CCL(int N,
                              int h_LB,
                              float approximation_factor,
                              float additive_gap,
-                             verbose=False):
+                             verbose=False) noexcept:
     """
     Return the hyperbolicity of a graph.
 
@@ -1466,7 +1466,7 @@ def hyperbolicity(G,
 # Distribution of the hyperbolicity of 4-tuples
 ######################################################################
 
-cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances):
+cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances) noexcept:
     """
     Return the distribution of the hyperbolicity of the 4-tuples of the graph.
 
@@ -1527,7 +1527,7 @@ cdef extern from "stdlib.h":
     void c_libc_srandom "srandom"(unsigned int seed)
 
 
-cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size):
+cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size) noexcept:
     """
     Return a sampling of the hyperbolicity distribution of the graph.
 

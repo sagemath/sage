@@ -2328,7 +2328,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             reprs = self.representatives()
         except NotImplementedError:  # Singular does not support the base field
             try:
-                return super(SchemeMorphism_polynomial_projective_subscheme_field, self).__call__(x)
+                return super().__call__(x)
             except ValueError:
                 raise ValueError('cannot apply the morphism to this point')
 

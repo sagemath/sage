@@ -160,7 +160,7 @@ cdef class FractionFieldElement(FieldElement):
         nden = codomain.coerce(self._denominator._im_gens_(codomain, im_gens, base_map=base_map))
         return codomain.coerce(nnum/nden)
 
-    cpdef reduce(self):
+    cpdef reduce(self) noexcept:
         """
         Reduce this fraction.
 
@@ -549,7 +549,7 @@ cdef class FractionFieldElement(FieldElement):
 
         return s
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Compute the sum of ``self`` and ``right``.
 
@@ -634,7 +634,7 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent, rnum*sden + rden*snum, rden*sden,
             coerce=False, reduce=False)
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Computes the product of ``self`` and ``right``.
 
@@ -700,7 +700,7 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent, rnum * snum, rden * sden,
             coerce=False, reduce=False)
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Computes the quotient of ``self`` and ``right``.
 
@@ -935,7 +935,7 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent,
             self._denominator, self._numerator, coerce=False, reduce=False)
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         EXAMPLES::
 
@@ -1172,7 +1172,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
         if not reduce:
             self.normalize_leading_coefficients()
 
-    cdef normalize_leading_coefficients(self):
+    cdef normalize_leading_coefficients(self) noexcept:
         """
         See :meth:`reduce`.
         """
@@ -1217,7 +1217,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
         L.sort()
         return L
 
-    cpdef reduce(self):
+    cpdef reduce(self) noexcept:
         """
         Pick a normalized representation of self.
 

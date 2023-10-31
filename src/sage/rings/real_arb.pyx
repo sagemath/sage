@@ -236,7 +236,7 @@ from sage.rings.real_mpfi import RealIntervalField, RealIntervalField_class
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.cpython.string cimport char_to_str, str_to_bytes
 
-cdef void mpfi_to_arb(arb_t target, const mpfi_t source, const long precision):
+cdef void mpfi_to_arb(arb_t target, const mpfi_t source, const long precision) noexcept:
     r"""
     Convert an MPFI interval to an Arb ball.
 
@@ -1149,7 +1149,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         """
         return ARF_PREC_EXACT
 
-cdef inline bint _do_sig(long prec):
+cdef inline bint _do_sig(long prec) noexcept:
     """
     Whether signal handlers should be installed for calls to arb.
 
@@ -1160,7 +1160,7 @@ cdef inline bint _do_sig(long prec):
     """
     return (prec > 1000)
 
-cdef inline long prec(RealBall ball):
+cdef inline long prec(RealBall ball) noexcept:
     return ball._parent._prec
 
 def create_RealBall(parent, serialized):
@@ -1562,7 +1562,7 @@ cdef class RealBall(RingElement):
 
     # Conversions
 
-    cpdef RealIntervalFieldElement _real_mpfi_(self, RealIntervalField_class parent):
+    cpdef RealIntervalFieldElement _real_mpfi_(self, RealIntervalField_class parent) noexcept:
         """
         Return a :mod:`real interval <sage.rings.real_mpfi>` containing this ball.
 
@@ -2264,7 +2264,7 @@ cdef class RealBall(RingElement):
         """
         return arb_is_exact(self.value)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare ``left`` and ``right``.
 
@@ -2806,7 +2806,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         Return the sum of two balls, rounded to the ambient field's precision.
 
@@ -2824,7 +2824,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         """
         Return the difference of two balls, rounded to the ambient field's
         precision.
@@ -2843,7 +2843,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         """
         Return the product of two balls, rounded to the ambient field's
         precision.
@@ -2862,7 +2862,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _div_(self, other):
+    cpdef _div_(self, other) noexcept:
         """
         Return the quotient of two balls, rounded to the ambient field's
         precision.
@@ -3859,7 +3859,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return result
 
-    cpdef RealBall psi(self):
+    cpdef RealBall psi(self) noexcept:
         """
         Compute the digamma function with argument self.
 

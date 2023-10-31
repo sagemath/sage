@@ -143,7 +143,7 @@ cdef class CVXPYBackend:
             objective = cvxpy.Minimize(0)
         self.problem = cvxpy.Problem(objective, ())
 
-    cpdef __copy__(self):
+    cpdef __copy__(self) noexcept:
         """
         Returns a copy of self.
 
@@ -173,7 +173,7 @@ cdef class CVXPYBackend:
         cp.obj_constant_term = self.obj_constant_term
         return cp
 
-    cpdef cvxpy_problem(self):
+    cpdef cvxpy_problem(self) noexcept:
         return self.problem
 
     def cvxpy_variables(self):
@@ -285,7 +285,7 @@ cdef class CVXPYBackend:
 
         return index
 
-    cpdef set_verbosity(self, int level):
+    cpdef set_verbosity(self, int level) noexcept:
         """
         Set the log (verbosity) level
 
@@ -303,7 +303,7 @@ cdef class CVXPYBackend:
         """
         pass
 
-    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
+    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None) noexcept:
         """
         Add a linear constraint.
 
@@ -362,7 +362,7 @@ cdef class CVXPYBackend:
         self.constraint_names.append(name)
         self.problem = cvxpy.Problem(self.problem.objective, constraints)
 
-    cpdef add_col(self, indices, coeffs):
+    cpdef add_col(self, indices, coeffs) noexcept:
         """
         Add a column.
 
@@ -409,7 +409,7 @@ cdef class CVXPYBackend:
         #self.objective_coefficients.append(0) goes to "self.add_variable"
         self.add_variable(coefficients=zip(indices, coeffs))
 
-    cpdef set_objective(self, list coeff, d=0.0):
+    cpdef set_objective(self, list coeff, d=0.0) noexcept:
         """
         Set the objective function.
 
@@ -441,7 +441,7 @@ cdef class CVXPYBackend:
         self.problem = cvxpy.Problem(objective, constraints)
         self.obj_constant_term = d
 
-    cpdef set_sense(self, int sense):
+    cpdef set_sense(self, int sense) noexcept:
         """
         Set the direction (maximization/minimization).
 
@@ -469,7 +469,7 @@ cdef class CVXPYBackend:
             objective = cvxpy.Minimize(expr)
         self.problem = cvxpy.Problem(objective, self.problem.constraints)
 
-    cpdef objective_coefficient(self, int variable, coeff=None):
+    cpdef objective_coefficient(self, int variable, coeff=None) noexcept:
         """
         Set or get the coefficient of a variable in the objective function
 
@@ -544,7 +544,7 @@ cdef class CVXPYBackend:
             raise MIPSolverException(f"cvxpy.Problem.solve: Problem is unbounded")
         raise MIPSolverException(f"cvxpy.Problem.solve reported an unknown problem status: {status}")
 
-    cpdef get_objective_value(self):
+    cpdef get_objective_value(self) noexcept:
         """
         Return the value of the objective function.
 
@@ -571,7 +571,7 @@ cdef class CVXPYBackend:
         """
         return self.problem.value + self.obj_constant_term
 
-    cpdef get_variable_value(self, int variable):
+    cpdef get_variable_value(self, int variable) noexcept:
         """
         Return the value of a variable given by the solver.
 
@@ -598,7 +598,7 @@ cdef class CVXPYBackend:
         """
         return float(self.variables[variable].value)
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -615,7 +615,7 @@ cdef class CVXPYBackend:
         """
         return len(self.variables)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -631,7 +631,7 @@ cdef class CVXPYBackend:
         """
         return len(self.problem.constraints)
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -647,7 +647,7 @@ cdef class CVXPYBackend:
         """
         return isinstance(self.problem.objective, cvxpy.Maximize)
 
-    cpdef problem_name(self, name=None):
+    cpdef problem_name(self, name=None) noexcept:
         """
         Return or define the problem's name
 
@@ -672,7 +672,7 @@ cdef class CVXPYBackend:
         else:
             self.prob_name = str(name)
 
-    cpdef row(self, int i):
+    cpdef row(self, int i) noexcept:
         """
         Return a row
 
@@ -708,7 +708,7 @@ cdef class CVXPYBackend:
                 coef.append(self.Matrix[i][j])
         return (idx, coef)
 
-    cpdef row_bounds(self, int index):
+    cpdef row_bounds(self, int index) noexcept:
         """
         Return the bounds of a specific constraint.
 
@@ -737,7 +737,7 @@ cdef class CVXPYBackend:
         """
         return (self.row_lower_bound[index], self.row_upper_bound[index])
 
-    cpdef col_bounds(self, int index):
+    cpdef col_bounds(self, int index) noexcept:
         """
         Return the bounds of a specific variable.
 
@@ -765,7 +765,7 @@ cdef class CVXPYBackend:
         """
         return (self.col_lower_bound[index], self.col_upper_bound[index])
 
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
@@ -786,7 +786,7 @@ cdef class CVXPYBackend:
         """
         return bool(self.variables[index].boolean_idx)
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
@@ -807,7 +807,7 @@ cdef class CVXPYBackend:
         """
         return bool(self.variables[index].integer_idx)
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -828,7 +828,7 @@ cdef class CVXPYBackend:
         """
         return not self.is_variable_binary(index) and not self.is_variable_integer(index)
 
-    cpdef row_name(self, int index):
+    cpdef row_name(self, int index) noexcept:
         """
         Return the ``index`` th row name
 
@@ -846,7 +846,7 @@ cdef class CVXPYBackend:
         """
         return self.constraint_names[index] or ("constraint_" + repr(index))
 
-    cpdef col_name(self, int index):
+    cpdef col_name(self, int index) noexcept:
         """
         Return the ``index`` th col name
 
@@ -868,7 +868,7 @@ cdef class CVXPYBackend:
         """
         return self.variables[index].name()
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value = False) noexcept:
         """
         Return or define the upper bound on a variable
 
@@ -900,7 +900,7 @@ cdef class CVXPYBackend:
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value = False) noexcept:
         """
         Return or define the lower bound on a variable
 

@@ -68,15 +68,15 @@ cimport sage.modules.free_module_element as free_module_element
 from sage.libs.gmp.mpq cimport *
 
 
-cdef inline _Rational_from_mpq(mpq_t e):
+cdef inline _Rational_from_mpq(mpq_t e) noexcept:
     cdef Rational z = Rational.__new__(Rational)
     mpq_set(z.value, e)
     return z
 
 cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
@@ -163,7 +163,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
                 mpq_clear(self._entries[i])
             sig_free(self._entries)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         EXAMPLES::
 
@@ -193,7 +193,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
                 return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         EXAMPLES::
 
@@ -254,7 +254,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         return (unpickle_v1, (self._parent, self.list(), self._degree,
                               not self._is_immutable))
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         cdef Vector_rational_dense z, r
         r = right
         z = self._new_c()
@@ -263,7 +263,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_add(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         cdef Vector_rational_dense z, r
         r = right
         z = self._new_c()
@@ -272,7 +272,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_sub(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right) noexcept:
         """
         Dot product of dense vectors over the rationals.
 
@@ -297,7 +297,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         mpq_clear(t)
         return z
 
-    cpdef _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right) noexcept:
         """
         EXAMPLES::
 
@@ -313,7 +313,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_mul(z._entries[i], self._entries[i], r._entries[i])
         return z
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         cdef Vector_rational_dense z
         cdef Rational a
         if isinstance(left, Rational):
@@ -331,7 +331,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_mul(z._entries[i], self._entries[i], a.value)
         return z
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         cdef Vector_rational_dense z
         cdef Rational a
         if isinstance(right, Rational):
@@ -349,7 +349,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
             mpq_mul(z._entries[i], self._entries[i], a.value)
         return z
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         cdef Vector_rational_dense z
         z = self._new_c()
         cdef Py_ssize_t i

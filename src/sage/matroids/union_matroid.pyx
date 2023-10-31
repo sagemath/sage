@@ -54,7 +54,7 @@ cdef class MatroidUnion(Matroid):
             E.update(M.groundset())
         self._groundset = frozenset(E)
 
-    cpdef groundset(self):
+    cpdef groundset(self) noexcept:
         """
         Return the groundset of the matroid.
 
@@ -73,7 +73,7 @@ cdef class MatroidUnion(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X):
+    cpdef _rank(self, X) noexcept:
         r"""
         Return the rank of a set ``X``.
 
@@ -188,7 +188,7 @@ cdef class MatroidSum(Matroid):
             S = S + M._repr_() +"\n"
         return S[:-1]
 
-    cpdef groundset(self):
+    cpdef groundset(self) noexcept:
         """
         Return the groundset of the matroid.
 
@@ -207,7 +207,7 @@ cdef class MatroidSum(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X):
+    cpdef _rank(self, X) noexcept:
         r"""
         Return the rank of a set ``X``.
 
@@ -287,7 +287,7 @@ cdef class PartitionMatroid(Matroid):
             E.update(P)
         self._groundset = frozenset(E)
 
-    cpdef groundset(self):
+    cpdef groundset(self) noexcept:
         """
         Return the groundset of the matroid.
 
@@ -306,7 +306,7 @@ cdef class PartitionMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X):
+    cpdef _rank(self, X) noexcept:
         r"""
         Return the rank of a set ``X``.
 

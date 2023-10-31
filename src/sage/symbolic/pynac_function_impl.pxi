@@ -4,7 +4,7 @@ cpdef call_registered_function(unsigned serial,
                                list args,
                                bint hold,
                                bint allow_numeric_result,
-                               result_parent):
+                               result_parent) noexcept:
     r"""
     Call a function registered with Pynac (GiNaC).
 
@@ -174,7 +174,7 @@ cpdef unsigned register_or_update_function(self, name, latex_name, int nargs,
 cdef dict sfunction_serial_dict = {}
 
 
-cpdef get_sfunction_from_serial(unsigned int serial):
+cpdef get_sfunction_from_serial(unsigned int serial) noexcept:
     """
     Return an already created :class:`SymbolicFunction` given the serial.
 
@@ -190,7 +190,7 @@ cpdef get_sfunction_from_serial(unsigned int serial):
     return sfunction_serial_dict.get(serial)
 
 
-cpdef get_sfunction_from_hash(long myhash):
+cpdef get_sfunction_from_hash(long myhash) noexcept:
     """
     Return an already created :class:`SymbolicFunction` given the hash.
 
