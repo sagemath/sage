@@ -154,7 +154,7 @@ echo >&2 $0:$LINENO: generate conda environment files
     ) 4>> /dev/null 5>> src/environment-optional-template.yml
 
 for f in environment environment-optional src/environment src/environment-optional src/environment-dev; do
-    for python_version in 3.9 3.10 3.11; do
+    for python_version in 3.10 3.11 3.12; do
         sed -E 's/^( *- *)python *$/\1python='$python_version'/' $f-template.yml > $f-$python_version.yml
     done
     rm -f $f-template.yml
