@@ -83,6 +83,7 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 15
 
   standard:
     if: ${{ success() || failure() }}
@@ -101,6 +102,7 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 12
 
   standard-sitepackages:
     if: ${{ success() || failure() }}
@@ -164,6 +166,7 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 10
 
   minimal:
     if: ${{ success() || failure() }}
@@ -182,6 +185,7 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 10
 
   maximal-pre:
     if: ${{ success() || failure() }}
@@ -196,6 +200,7 @@ jobs:
       tox_packages_factors: >-
           ["maximal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 10
 
   optional-0-o:
     if: ${{ success() || failure() }}
@@ -210,7 +215,7 @@ jobs:
           ["maximal"]
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-o]))'
-
+      max_parallel: 10
 
   optional-p-z:
     if: ${{ success() || failure() }}
@@ -225,6 +230,7 @@ jobs:
           ["maximal"]
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
+      max_parallel: 10
 
   experimental-0-o:
     if: ${{ success() || failure() }}
@@ -239,6 +245,7 @@ jobs:
           ["maximal"]
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-o]))'
+      max_parallel: 10
 
   experimental-p-z:
     if: ${{ success() || failure() }}
@@ -253,3 +260,4 @@ jobs:
           ["maximal"]
       docker_targets: "with-targets-optional"
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
+      max_parallel: 10
