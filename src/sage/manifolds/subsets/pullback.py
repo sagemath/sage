@@ -144,14 +144,15 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(2, 'R^2', structure='topological')
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
-            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P                  # needs sage.geometry.polyhedron
+            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: S = ManifoldSubsetPullback(c_cart, P); S                              # needs sage.geometry.polyhedron
+            sage: S = ManifoldSubsetPullback(c_cart, P); S
             Subset x_y_inv_P of the 2-dimensional topological manifold R^2
-            sage: S is ManifoldSubsetPullback(c_cart, P)                                # needs sage.geometry.polyhedron
+            sage: S is ManifoldSubsetPullback(c_cart, P)
             True
 
         """
@@ -605,16 +606,17 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
-            sage: Cube = polytopes.cube(); Cube                                         # needs sage.geometry.polyhedron
+            sage: Cube = polytopes.cube(); Cube
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube  # needs sage.geometry.polyhedron
+            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube
             Subset McCube of the 3-dimensional topological manifold R^3
-            sage: p = McCube.an_element(); p                                            # needs sage.geometry.polyhedron
+            sage: p = McCube.an_element(); p
             Point on the 3-dimensional topological manifold R^3
-            sage: p.coordinates(c_cart)                                                 # needs sage.geometry.polyhedron
+            sage: p.coordinates(c_cart)
             (0, 0, 0)
 
             sage: # needs sage.geometry.polyhedron
@@ -638,21 +640,22 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
-            sage: Cube = polytopes.cube(); Cube                                         # needs sage.geometry.polyhedron
+            sage: Cube = polytopes.cube(); Cube
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube  # needs sage.geometry.polyhedron
+            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube
             Subset McCube of the 3-dimensional topological manifold R^3
-            sage: L = list(McCube.some_elements()); L                                   # needs sage.geometry.polyhedron
+            sage: L = list(McCube.some_elements()); L
             [Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3,
              Point on the 3-dimensional topological manifold R^3]
-            sage: list(p.coordinates(c_cart) for p in L)                                # needs sage.geometry.polyhedron
+            sage: list(p.coordinates(c_cart) for p in L)
             [(0, 0, 0),
              (1, -1, -1),
              (1, 0, -1),
@@ -685,12 +688,13 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
-            sage: Cube = polytopes.cube(); Cube                                         # needs sage.geometry.polyhedron
+            sage: Cube = polytopes.cube(); Cube
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: Cube.vertices_list()                                                  # needs sage.geometry.polyhedron
+            sage: Cube.vertices_list()
             [[1, -1, -1],
             [1, 1, -1],
             [1, 1, 1],
@@ -699,15 +703,15 @@ class ManifoldSubsetPullback(ManifoldSubset):
             [-1, -1, -1],
             [-1, 1, -1],
             [-1, 1, 1]]
-            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube  # needs sage.geometry.polyhedron
+            sage: McCube = ManifoldSubsetPullback(c_cart, Cube, name='McCube'); McCube
             Subset McCube of the 3-dimensional topological manifold R^3
-            sage: p = M.point((0, 0, 0)); p                                             # needs sage.geometry.polyhedron
+            sage: p = M.point((0, 0, 0)); p
             Point on the 3-dimensional topological manifold R^3
-            sage: p in McCube                                                           # needs sage.geometry.polyhedron
+            sage: p in McCube
             True
-            sage: q = M.point((2, 3, 4)); q                                             # needs sage.geometry.polyhedron
+            sage: q = M.point((2, 3, 4)); q
             Point on the 3-dimensional topological manifold R^3
-            sage: q in McCube                                                           # needs sage.geometry.polyhedron
+            sage: q in McCube
             False
          """
         if super().__contains__(point):
@@ -772,11 +776,12 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         The pullback of a (closed convex) polyhedron under a chart is closed::
 
-            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P                  # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron
+            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP              # needs sage.geometry.polyhedron
+            sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP
             Subset McP of the 2-dimensional topological manifold R^2
-            sage: McP.is_closed()                                                       # needs sage.geometry.polyhedron
+            sage: McP.is_closed()
             True
 
         The pullback of real vector subspaces under a chart is closed::

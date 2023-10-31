@@ -900,18 +900,19 @@ class ManifoldPoint(Element):
         An example of plot via a mapping: plot of a point on a 2-sphere viewed
         in the 3-dimensional space ``M``::
 
+            sage: # needs sage.plot
             sage: S2 = Manifold(2, 'S^2', structure='topological')
             sage: U = S2.open_subset('U')  # the open set covered by spherical coord.
             sage: XS.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
             sage: p = U.point((pi/4, pi/8), name='p')
-            sage: F = S2.continuous_map(M, {(XS, X): [sin(th)*cos(ph),                  # needs sage.plot
+            sage: F = S2.continuous_map(M, {(XS, X): [sin(th)*cos(ph),
             ....:                           sin(th)*sin(ph), cos(th)]}, name='F')
             sage: F.display()
             F: S^2 → M
             on U: (th, ph) ↦ (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
-            sage: g = p.plot(chart=X, mapping=F)                                        # needs sage.plot
-            sage: gS2 = XS.plot(chart=X, mapping=F, number_values=9)                    # needs sage.plot
-            sage: g + gS2                                                               # needs sage.plot
+            sage: g = p.plot(chart=X, mapping=F)
+            sage: gS2 = XS.plot(chart=X, mapping=F, number_values=9)
+            sage: g + gS2
             Graphics3d Object
 
         Use of the option ``ambient_coords`` for plots on a 4-dimensional

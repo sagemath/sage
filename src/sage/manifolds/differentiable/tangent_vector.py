@@ -433,7 +433,7 @@ class TangentVector(FiniteRankFreeModuleElement):
              manifold S^2
             sage: graph_v = v.plot(mapping=F)                                           # needs sage.plot
             sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)  # long time, needs sage.plot
-            sage: graph_v + graph_S2  # long time
+            sage: graph_v + graph_S2                                        # long time, needs sage.plot
             Graphics3d Object
 
         .. PLOT::
