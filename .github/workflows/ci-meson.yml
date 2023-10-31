@@ -66,12 +66,9 @@ jobs:
       - name: Build
         shell: bash -l {0}
         run: |
-          # Compile as extra step for better error reporting
-          meson setup builddir
-          meson compile -j2 -C builddir
           pip install --no-build-isolation --config-settings=builddir=builddir --editable .
 
       - name: Test
         if: success() || failure()
         shell: bash -l {0}
-        run: ./sage -m pytest -c src/tox.ini --doctest-modules src
+        run: ./sage -python -m pytest -c src/tox.ini --doctest-modules src
