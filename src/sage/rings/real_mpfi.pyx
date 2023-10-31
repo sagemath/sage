@@ -303,7 +303,7 @@ printing_error_digits = 0
 #*****************************************************************************
 
 cdef dict RealIntervalField_cache = {}
-cpdef RealIntervalField_class RealIntervalField(prec=53, sci_not=False):
+cpdef RealIntervalField_class RealIntervalField(prec=53, sci_not=False) noexcept:
     r"""
     Construct a :class:`RealIntervalField_class`, with caching.
 
@@ -747,7 +747,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
                                   {'sci_not': self.scientific_notation(), 'type': 'Interval'}),
                sage.rings.rational_field.QQ)
 
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         """
         Canonical coercion from ``S`` to this real interval field.
 
@@ -1692,7 +1692,7 @@ cdef class RealIntervalFieldElement(RingElement):
         else:
             raise ValueError('Illegal interval printing style %s' % printing_style)
 
-    cpdef _str_question_style(self, int base, int error_digits, e, bint prefer_sci):
+    cpdef _str_question_style(self, int base, int error_digits, e, bint prefer_sci) noexcept:
         r"""
         Compute the "question-style print representation" of this value,
         with the given base and error_digits. See the documentation for
@@ -2683,7 +2683,7 @@ cdef class RealIntervalFieldElement(RingElement):
         else:
             return Element.__rtruediv__(right, left)
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         Add two real intervals with the same parent.
 
@@ -2727,7 +2727,7 @@ cdef class RealIntervalFieldElement(RingElement):
         mpfi_inv(x.value, self.value)
         return x
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two real intervals with the same parent.
 
@@ -2745,7 +2745,7 @@ cdef class RealIntervalFieldElement(RingElement):
         mpfi_sub(x.value, self.value, (<RealIntervalFieldElement>right).value)
         return x
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply two real intervals with the same parent.
 
@@ -2782,7 +2782,7 @@ cdef class RealIntervalFieldElement(RingElement):
         return x
 
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide ``self`` by ``right``, where both are real intervals with the
         same parent.
@@ -2809,7 +2809,7 @@ cdef class RealIntervalFieldElement(RingElement):
                  (<RealIntervalFieldElement>right).value)
         return x
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         Return the additive "inverse" of this interval. (Technically,
         non-precise intervals don't have additive inverses.)
@@ -2848,7 +2848,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return self.abs()
 
-    cdef RealIntervalFieldElement abs(self):
+    cdef RealIntervalFieldElement abs(self) noexcept:
         """
         Return the absolute value of ``self``.
 
@@ -3653,7 +3653,7 @@ cdef class RealIntervalFieldElement(RingElement):
                                         low_open,
                                         high_open)
 
-    cdef Rational _simplest_rational_helper(self):
+    cdef Rational _simplest_rational_helper(self) noexcept:
         """
         Returns the simplest rational in an interval which is either equal
         to or slightly larger than ``self``. We assume that both endpoints of
@@ -3693,7 +3693,7 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return mpfi_nan_p(self.value)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Implement comparisons between intervals.
 
@@ -5186,7 +5186,7 @@ def _simplest_rational_test_helper(low, high, low_open=False, high_open=False):
     """
     return _simplest_rational_exact(low, high, low_open, high_open)
 
-cdef _simplest_rational_exact(Rational low, Rational high, int low_open, int high_open):
+cdef _simplest_rational_exact(Rational low, Rational high, int low_open, int high_open) noexcept:
     """
     Return the simplest rational between ``low`` and ``high``. May return
     ``low`` or ``high`` unless ``low_open`` or ``high_open`` (respectively) are

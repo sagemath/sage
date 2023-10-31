@@ -3878,8 +3878,7 @@ class ClusterSeed(SageObject):
             ]
         """
         Q = self.quiver()
-        for M in Q.mutation_class_iter(depth=depth, up_to_equivalence=up_to_equivalence, data_type='matrix'):
-            yield M
+        yield from Q.mutation_class_iter(depth=depth, up_to_equivalence=up_to_equivalence, data_type='matrix')
 
     def b_matrix_class(self, depth=infinity, up_to_equivalence=True):
         r"""

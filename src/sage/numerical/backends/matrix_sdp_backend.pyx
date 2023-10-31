@@ -55,7 +55,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             base_ring = QQ
         self._base_ring = base_ring
 
-    cpdef base_ring(self):
+    cpdef base_ring(self) noexcept:
         """
         The base ring
 
@@ -166,7 +166,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             self.add_variable()
         return len(self.objective_function) - 1
 
-    cpdef set_sense(self, int sense):
+    cpdef set_sense(self, int sense) noexcept:
         """
         Set the direction (maximization/minimization).
 
@@ -192,7 +192,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         else:
             self.is_maximize = 0
 
-    cpdef objective_coefficient(self, int variable, coeff=None):
+    cpdef objective_coefficient(self, int variable, coeff=None) noexcept:
         """
         Set or get the coefficient of a variable in the objective
         function
@@ -220,7 +220,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         else:
             return self.objective_function[variable]
 
-    cpdef set_objective(self, list coeff, d=0.0):
+    cpdef set_objective(self, list coeff, d=0.0) noexcept:
         """
         Set the objective function.
 
@@ -245,7 +245,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             self.objective_function[i] = coeff[i]
         obj_constant_term = d
 
-    cpdef add_linear_constraint(self, coefficients, name=None):
+    cpdef add_linear_constraint(self, coefficients, name=None) noexcept:
         """
         Add a linear constraint.
 
@@ -292,7 +292,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         self.matrices_dim[self.nrows()] = m.dimensions()[0] #
         self.row_name_var.append(name)
 
-    cpdef add_linear_constraints(self, int number, names=None):
+    cpdef add_linear_constraints(self, int number, names=None) noexcept:
         """
         Add constraints.
 
@@ -317,7 +317,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
                                        name=None if names is None else names[i])
 
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -335,7 +335,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         return len(self.objective_function)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -354,7 +354,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         return len(self.matrices_dim)
 
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -373,7 +373,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         else:
             return 0
 
-    cpdef problem_name(self, name=None):
+    cpdef problem_name(self, name=None) noexcept:
         """
         Return or define the problem's name
 
@@ -396,7 +396,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         self.name = name
 
 
-    cpdef row(self, int i):
+    cpdef row(self, int i) noexcept:
         """
         Return a row
 
@@ -436,7 +436,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
                 matrices.append(m)
         return (indices, matrices)
 
-    cpdef row_name(self, int index):
+    cpdef row_name(self, int index) noexcept:
         """
         Return the ``index`` th row name
 
@@ -457,7 +457,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             return self.row_name_var[index]
         return "constraint_" + repr(index)
 
-    cpdef col_name(self, int index):
+    cpdef col_name(self, int index) noexcept:
         """
         Return the ``index`` th col name
 

@@ -1210,7 +1210,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         category = Modules(ring).FiniteDimensional().or_subcategory(category)
         if latex_name is None:
             latex_name = name
-        return super(FiniteRankFreeModule, cls).__classcall__(
+        return super().__classcall__(
             cls, ring, rank, name, latex_name, start_index, output_formatter, category, ambient)
 
     def __init__(

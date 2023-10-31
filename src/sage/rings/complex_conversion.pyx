@@ -5,7 +5,7 @@ from sage.libs.gsl.complex cimport GSL_SET_COMPLEX
 
 cdef class CCtoCDF(Map):
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
             sage: from sage.rings.complex_conversion import CCtoCDF

@@ -166,6 +166,32 @@ procedure is different:
 * Add your file to the index contained in
   ``SAGE_ROOT/src/doc/en/reference/combinat/module_list.rst``.
 
+.. _section-documentation-conditional:
+
+Making portions of the reference manual conditional on optional features
+========================================================================
+
+For every dynamically detectable feature such as :class:`graphviz
+<~sage.features.graphviz.Graphviz>` or :class:`sage.symbolic
+<sage.features.sagemath.sage__symbolic>` (see :mod:`sage.features`),
+Sage defines a Sphinx tag that can be used with the `Sphinx
+directive ".. ONLY::"
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags>`_.
+Because Sphinx tags have to use Python identifier syntax, Sage uses
+the format ``feature_``, followed by the feature name where dots are
+replaced by underscores. Hence, conditionalizing on the features of
+the previous examples would look as follows:
+
+.. CODE-BLOCK:: rest
+
+  .. ONLY:: feature_graphviz
+
+and:
+
+.. CODE-BLOCK:: rest
+
+  .. ONLY:: feature_sage_symbolic
+
 .. _section-building-manuals:
 
 Building the manuals

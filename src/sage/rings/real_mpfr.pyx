@@ -373,7 +373,7 @@ cdef double LOG_TEN_TWO_PLUS_EPSILON = 3.321928094887363 # a small overestimate 
 
 cdef object RealField_cache = sage.misc.weak_dict.WeakValueDictionary()
 
-cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN):
+cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN) noexcept:
     """
     RealField(prec, sci_not, rnd):
 
@@ -666,7 +666,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         z._set(x, base)
         return z
 
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         """
         Canonical coercion of x to this MPFR real field.
 
@@ -1452,7 +1452,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         else:
             return numpy_object_interface
 
-    cdef _set(self, x, int base):
+    cdef _set(self, x, int base) noexcept:
         # This should not be called except when the number is being created.
         # Real Numbers are supposed to be immutable.
         cdef RealField_class parent
@@ -1504,7 +1504,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             else:
                 raise TypeError("unable to convert {!r} to a real number".format(s))
 
-    cdef _set_from_GEN_REAL(self, GEN g):
+    cdef _set_from_GEN_REAL(self, GEN g) noexcept:
         """
         EXAMPLES::
 
@@ -2471,7 +2471,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         else:
             return Element.__rtruediv__(right, left)
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         Add two real numbers with the same parent.
 
@@ -2500,7 +2500,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return self._parent(1) / self
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two real numbers with the same parent.
 
@@ -2541,7 +2541,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         import sympy
         return sympy.Float(self, precision=self._parent.precision())
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply two real numbers with the same parent.
 
@@ -2574,7 +2574,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         return x
 
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide ``self`` by other, where both are real numbers with the same
         parent.
@@ -2594,7 +2594,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
                  (<RealNumber>right).value, (<RealField_class>self._parent).rnd)
         return x
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         Return the negative of ``self``.
 
@@ -2628,7 +2628,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return self.abs()
 
-    cdef RealNumber abs(RealNumber self):
+    cdef RealNumber abs(RealNumber self) noexcept:
         """
         Return the absolute value of ``self``.
 
@@ -2981,7 +2981,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
     # Rounding etc
     ###################
 
-    cpdef _mod_(left, right):
+    cpdef _mod_(left, right) noexcept:
         """
         Return the value of ``left - n*right``, rounded according to the
         rounding mode of the parent, where ``n`` is the integer quotient of
@@ -4147,7 +4147,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return not mpfr_zero_p(self.value)
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Compare ``self`` and ``other`` according to the rich
         comparison operator ``op``.
@@ -5955,7 +5955,7 @@ def __create__RealNumber_version0(parent, x, base=10):
 
 
 cdef class RRtoRR(Map):
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
 
@@ -6004,7 +6004,7 @@ cdef class RRtoRR(Map):
         return RRtoRR(self._codomain, self.domain())
 
 cdef class ZZtoRR(Map):
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
 
@@ -6019,7 +6019,7 @@ cdef class ZZtoRR(Map):
         return y
 
 cdef class QQtoRR(Map):
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
 
@@ -6034,7 +6034,7 @@ cdef class QQtoRR(Map):
         return y
 
 cdef class double_toRR(Map):
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Takes anything that can be converted to a double.
 
@@ -6054,7 +6054,7 @@ cdef class double_toRR(Map):
         return y
 
 cdef class int_toRR(Map):
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Takes Python int/long instances.
 
