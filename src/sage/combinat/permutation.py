@@ -5387,9 +5387,9 @@ class Permutation(CombinatorialElement):
         r"""
         Return all n-th roots of ``self`` (as a generator).
 
-        An n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
+        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depend on the cycle type of ``self``.
+        Note that the number of n-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 
@@ -5497,17 +5497,17 @@ class Permutation(CombinatorialElement):
             if not b:
                 return
 
-        #Product of Possibilities (i.e. final result)
+        # Product of Possibilities (i.e. final result)
         for L in product(*possibilities):
             yield P.prod(L)
 
-    def has_nth_root(self, n):
+    def has_nth_root(self, n) -> bool:
         r"""
         Decide if ``self`` has n-th roots.
 
-        An n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
+        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depend on the cycle type of ``self``.
+        Note that the number of n-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 
@@ -5566,9 +5566,9 @@ class Permutation(CombinatorialElement):
         r"""
         Return the number of n-th roots of ``self``.
 
-        An n-th root of the permutation ``self`` is a permutation `\gamma` such that `\gamma^n == self`.
+        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depend on the cycle type of ``self``.
+        Note that the number of n-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 
