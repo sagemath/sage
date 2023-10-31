@@ -463,7 +463,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         OUTPUT: a list of Drinfeld modular forms. The `i`-th element of
         that list corresponds to the `(i+1)`-th coefficient form at `a`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: q = 3
             sage: A = GF(q)['T']
