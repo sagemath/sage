@@ -1287,9 +1287,13 @@ def greedy_dominating_set(G, k=1, vertices=None, ordering=None, return_sets=Fals
         return list(dom)
 
 
+# ==============================================================================
+# Maximum leaf number
+# ==============================================================================
+
 def max_leaf_number(G):
     r"""
-    Return the maximum leaf number of the graph, i.e. the maximum possible number 
+    Return the maximum leaf number of the graph, i.e. the maximum possible number
     of leaf nodes a tree produced from the graph can have.
 
     INPUT:
