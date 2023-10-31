@@ -4,3 +4,7 @@ requires = ['meson-python', 'cython>=3.0.0']
 
 [project]
 name = 'sagemath'
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
