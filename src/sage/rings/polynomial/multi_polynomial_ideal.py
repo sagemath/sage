@@ -2585,7 +2585,7 @@ class MPolynomialIdeal_singular_repr(
              {y: 0.3611030805286474?, x: 2.769292354238632?},
              {y: 1, x: 1}]
 
-        We can also use the `optional package msolve <../../../spkg/msolve.html>`_
+        We can also use the `optional package msolve <spkg/msolve.html>`_
         to compute the variety.
         See :mod:`~sage.rings.polynomial.msolve` for more information. ::
 
@@ -2667,7 +2667,7 @@ class MPolynomialIdeal_singular_repr(
           on a toy implementation otherwise.
 
         - With ``algorithm`` = ``"msolve"``, uses the
-          `optional package msolve <../../../spkg/msolve.html>`_.
+          `optional package msolve <spkg/msolve.html>`_.
           Note that msolve uses heuristics and therefore
           requires setting the ``proof`` flag to ``False``. See
           :mod:`~sage.rings.polynomial.msolve` for more information.
@@ -4275,7 +4275,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             Macaulay2's ``GroebnerBasis`` command with the strategy "MGB" (if available)
 
         ``'msolve'``
-            `optional package msolve <../../../spkg/msolve.html>`_ (degrevlex order)
+            `optional package msolve <spkg/msolve.html>`_ (degrevlex order)
 
         ``'magma:GroebnerBasis'``
             Magma's ``Groebnerbasis`` command (if available)
@@ -4403,7 +4403,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
              b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
 
         Over prime fields of small characteristic, we can also use the
-        `optional package msolve <../../../spkg/msolve.html>`_::
+        `optional package msolve <spkg/msolve.html>`_::
 
             sage: R.<a,b,c> = PolynomialRing(GF(101), 3)
             sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching
