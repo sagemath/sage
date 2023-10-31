@@ -17,6 +17,7 @@ and more precisely:
     :meth:`~is_redundant` | Check whether a set of vertices has redundant vertices (with respect to domination).
     :meth:`~private_neighbors` | Return the private neighbors of a vertex with respect to other vertices.
     :meth:`~greedy_dominating_set` | Return a greedy distance-`k` dominating set of the graph.
+    :meth:`~max_leaf_number` | Return the maximum leaf number of the graph.
 
 
 EXAMPLES:
@@ -1284,3 +1285,41 @@ def greedy_dominating_set(G, k=1, vertices=None, ordering=None, return_sets=Fals
         return dom
     else:
         return list(dom)
+
+
+def max_leaf_number(G):
+    r"""
+    Return the maximum leaf number of the graph, i.e. the maximum possible number 
+    of leaf nodes a tree produced from the graph can have.
+
+    INPUT:
+
+    - ``G`` -- a Graph
+
+    EXAMPLES:
+
+    Empty graph::
+
+        sage: G = Graph()
+        sage: G.max_leaf_number()
+        0
+
+    Petersen graph::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.max_leaf_number()
+        6
+
+    Unconnected graph::
+
+        sage: G = 2 * graphs.PetersenGraph()
+        sage: G.max_leaf_number()
+        Traceback (most recent call last):
+        ...
+        ValueError: the graph must be connected
+    """
+    if G.order() < 2:
+        return 0
+    elif not G.is_connected():
+        raise ValueError('the graph must be connected')
+    return G.order() - dominating_set(G, connected=True, value_only=True)
