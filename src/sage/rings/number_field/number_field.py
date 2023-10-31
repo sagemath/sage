@@ -12055,7 +12055,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         self._standard_embedding = True
 
         # set the generator and element class
-        c, b, a = [QQ(t) for t in self.defining_polynomial().list()]
+        c, b, a = (QQ(t) for t in self.defining_polynomial().list())
         Dpoly = b*b - 4*a*c
         D = (Dpoly.numer() * Dpoly.denom()).squarefree_part(bound=10000)
         self._D = D
