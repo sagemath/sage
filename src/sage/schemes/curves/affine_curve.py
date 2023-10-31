@@ -2118,8 +2118,8 @@ class IntegralAffineCurve(AffineCurve_field):
 
         INPUT:
 
-        - ``f`` -- an element of the fraction field of the coordinate ring of the curve or its
-          ambient space.
+        - ``f`` -- an element of the fraction field of the coordinate ring of
+          the curve or its ambient space.
 
         OUTPUT: An element of the function field of this curve.
 
@@ -2202,9 +2202,9 @@ class IntegralAffineCurve(AffineCurve_field):
         Return the data of a nonsingular model of the curve.
 
         The data consists of an abstract function field `M` and a map from the
-        fraction field of the coordinate ring `R` of the ambient space of the curve to the function
-        field. The coordinate ring of the curve is the quotient of `R` by
-        the kernel of the map restricted to `R`.
+        fraction field of the coordinate ring `R` of the ambient space of the
+        curve to the function field. The coordinate ring of the curve is the
+        quotient of `R` by the kernel of the map restricted to `R`.
 
 
         TESTS::
@@ -2213,14 +2213,16 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C._nonsingular_model
             (Function field in z defined by z^3 + 10*x,
              Ring morphism:
-               From: Fraction Field of Multivariate Polynomial Ring in x, y, z over Finite Field of size 11
+               From: Fraction Field of Multivariate Polynomial Ring in x, y, z
+                     over Finite Field of size 11
                To:   Function field in z defined by z^3 + 10*x
                Defn: x |--> x
                      y |--> z^2
                      z |--> z,
              Ring morphism:
                From: Function field in z defined by z^3 + 10*x
-               To:   Fraction Field of Multivariate Polynomial Ring in x, y, z over Finite Field of size 11)
+               To:   Fraction Field of Multivariate Polynomial Ring in x, y, z
+                     over Finite Field of size 11)
         """
         from sage.structure.sequence import Sequence
         from sage.rings.fraction_field import FractionField
@@ -2379,7 +2381,8 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
             sage: C._lift_to_function_field
             Ring morphism:
-              From: Fraction Field of Multivariate Polynomial Ring in x, y, z over Finite Field of size 11
+              From: Fraction Field of Multivariate Polynomial Ring in x, y, z
+                    over Finite Field of size 11
               To:   Function field in z defined by z^3 + 10*x
               Defn: x |--> x
                     y |--> z^2
@@ -2413,7 +2416,8 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C._pull_from_function_field
             Ring morphism:
               From: Function field in z defined by z^3 + 10*x
-              To:   Fraction Field of Multivariate Polynomial Ring in x, y, z over Finite Field of size 11
+              To:   Fraction Field of Multivariate Polynomial Ring in x, y, z
+                    over Finite Field of size 11
         """
         return self._nonsingular_model[2]
 

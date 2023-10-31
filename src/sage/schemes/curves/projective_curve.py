@@ -2331,7 +2331,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         - ``f`` -- an element in the fraction field of the coordinate ring
 
-        OUTPUT: An element of the function field
+        OUTPUT: An element of the function field.
 
         EXAMPLES::
 
