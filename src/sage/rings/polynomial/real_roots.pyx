@@ -319,7 +319,7 @@ cdef class interval_bernstein_polynomial:
         """
         return (self.min_variations, self.max_variations)
 
-    cdef void update_variations(self, interval_bernstein_polynomial bp1, interval_bernstein_polynomial bp2):
+    cdef void update_variations(self, interval_bernstein_polynomial bp1, interval_bernstein_polynomial bp2) noexcept:
         """
         Update the max_variations of bp1 and bp2 (which are assumed to be
         the result of splitting this polynomial).
@@ -422,7 +422,7 @@ cdef class interval_bernstein_polynomial:
             return (p1, p2, rand)
         return None
 
-    cdef int degree(self):
+    cdef int degree(self) noexcept:
         raise NotImplementedError()
 
     def region(self):
@@ -565,7 +565,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         """
         return 'i'
 
-    cdef void _set_bitsize(self):
+    cdef void _set_bitsize(self) noexcept:
         """
         A private function that computes the maximum coefficient size
         of this Bernstein polynomial (in bits).
@@ -580,7 +580,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         """
         self.bitsize = max_bitsize_intvec(self.coeffs)
 
-    cdef void _count_variations(self):
+    cdef void _count_variations(self) noexcept:
         """
         A private function that counts the number of sign variations in
         this Bernstein polynomial.  Since the coefficients are represented
@@ -677,7 +677,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         else:
             self.max_variations = max(count_maybe_pos, count_maybe_neg)
 
-    cdef int degree(self):
+    cdef int degree(self) noexcept:
         """
         Return the (formal) degree of this polynomial.
         """
@@ -1480,7 +1480,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
         """
         return 'f'
 
-    cdef void _count_variations(self):
+    cdef void _count_variations(self) noexcept:
         """
         A private function that counts the number of sign variations in
         this Bernstein polynomial.  Since the coefficients are represented
@@ -1552,7 +1552,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
         else:
             self.max_variations = max(count_maybe_pos, count_maybe_neg)
 
-    cdef int degree(self):
+    cdef int degree(self) noexcept:
         """
         Return the (formal) degree of this polynomial.
         """
@@ -1939,7 +1939,7 @@ def relative_bounds(a, b):
     return ((bl - al) / width, (bh - al) / width)
 
 
-cdef int bitsize(Integer a):
+cdef int bitsize(Integer a) noexcept:
     """
     Compute the number of bits required to write a given integer
     (the sign is ignored).
@@ -2143,7 +2143,7 @@ def bernstein_up(d1, d2, s=None):
     return m
 
 
-cdef int subsample_vec(int a, int slen, int llen):
+cdef int subsample_vec(int a, int slen, int llen) noexcept:
     """
     Given a vector of length llen, and slen < llen, we want to
     select slen of the elements of the vector, evenly spaced.
@@ -4353,14 +4353,14 @@ cdef class context:
             s = s + "; wordsize=%d" % self.wordsize
         return s
 
-    cdef void dc_log_append(self, x):
+    cdef void dc_log_append(self, x) noexcept:
         """
         Optional logging for the root isolation algorithm.
         """
         if self.do_logging:
             self.dc_log.append(x)
 
-    cdef void be_log_append(self, x):
+    cdef void be_log_append(self, x) noexcept:
         """
         Optional logging for degree reduction in the root isolation algorithm.
         """
@@ -4528,7 +4528,7 @@ def bernstein_expand(Vector_integer_dense c, int d2):
     return (c2, ndivides)
 
 
-cdef int max_bitsize_intvec(Vector_integer_dense b):
+cdef int max_bitsize_intvec(Vector_integer_dense b) noexcept:
     """
     Given an integer vector, find the approximate log2 of the maximum
     of the absolute values of the elements.

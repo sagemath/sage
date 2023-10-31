@@ -2355,8 +2355,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             )
         """
         yield self.an_element()
-        for g in self.gens():
-            yield g
+        yield from self.gens()
 
     def _magma_init_(self, magma):
         r"""

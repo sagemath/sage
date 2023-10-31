@@ -900,8 +900,7 @@ class Word_class(SageObject):
             w = (w*par([letter])).palindromic_closure(f=f)
             length_after = w.length()
             d = length_after - length_before
-            for a in w[-d:]:
-                yield a
+            yield from w[-d:]
 
     def _iterated_right_palindromic_closure_recursive_iterator(self, f=None):
         r"""
@@ -991,8 +990,7 @@ class Word_class(SageObject):
             else:
                 to_append = ipcw[lengths[pos]:]
             ipcw += to_append
-            for a in to_append:
-                yield a
+            yield from to_append
 
     def iterated_right_palindromic_closure(self, f=None, algorithm='recursive'):
         r"""
