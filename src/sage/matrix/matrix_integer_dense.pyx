@@ -86,7 +86,7 @@ from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 #########################################################
 # PARI C library
@@ -114,18 +114,18 @@ from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_int
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import is_Vector
 
-from .matrix_modn_dense_float cimport Matrix_modn_dense_template
-from .matrix_modn_dense_float cimport Matrix_modn_dense_float
-from .matrix_modn_dense_double cimport Matrix_modn_dense_double
+from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_template
+from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_float
+from sage.matrix.matrix_modn_dense_double cimport Matrix_modn_dense_double
 
 from .matrix_mod2_dense import Matrix_mod2_dense
-from .matrix_mod2_dense cimport Matrix_mod2_dense
+from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.rings.finite_rings.finite_field_constructor import GF
 
 
 from .matrix2 import decomp_seq
 
-from .matrix cimport Matrix
+from sage.matrix.matrix cimport Matrix
 
 cimport sage.structure.element
 

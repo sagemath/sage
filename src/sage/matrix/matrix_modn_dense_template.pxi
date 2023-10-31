@@ -123,7 +123,7 @@ from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 import sage.matrix.matrix_space as matrix_space
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 
 from sage.cpython.string cimport char_to_str

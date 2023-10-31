@@ -53,15 +53,15 @@ from sage.libs.gmp.mpz cimport *
 
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
-from .matrix cimport Matrix
+from sage.matrix.matrix cimport Matrix
 
-from .args cimport SparseEntry, MatrixArgs_init
-from .matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_get_mpz
 from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, fmpz_poly_set_coeff_mpz, _fmpz_poly_set_length
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
-from .matrix_modn_sparse cimport Matrix_modn_sparse
+from sage.matrix.matrix_modn_sparse cimport Matrix_modn_sparse
 from sage.structure.element cimport Element
 
 import sage.matrix.matrix_space as matrix_space

@@ -35,8 +35,8 @@ from cpython.sequence cimport *
 
 from sage.rings.rational cimport Rational
 from sage.rings.integer  cimport Integer
-from .matrix cimport Matrix
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix cimport Matrix
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
@@ -51,8 +51,8 @@ cimport sage.structure.element
 
 import sage.matrix.matrix_space
 
-from .matrix_integer_sparse cimport Matrix_integer_sparse
-from .matrix_rational_dense cimport Matrix_rational_dense
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
 
 cdef class Matrix_rational_sparse(Matrix_sparse):

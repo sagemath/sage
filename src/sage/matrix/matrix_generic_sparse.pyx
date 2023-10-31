@@ -55,7 +55,7 @@ EXAMPLES::
 """
 cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.structure.element
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 
 cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):

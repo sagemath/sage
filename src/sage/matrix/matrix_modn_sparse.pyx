@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Sparse matrices over `\ZZ/n\ZZ` for `n` small
 

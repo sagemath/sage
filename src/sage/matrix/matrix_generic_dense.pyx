@@ -9,7 +9,7 @@ from cpython.ref cimport *
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from . import matrix_dense
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
 
