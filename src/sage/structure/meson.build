@@ -50,6 +50,6 @@ foreach name, pyx : extension_data
         subdir: 'sage/structure',
         install: true,
         include_directories: [inc_cpython, inc_rings, inc_src],
-        dependencies: [py_dep, gmpy2, cysignals],
+        dependencies: [py_dep, gmpy2, cysignals, gmp],
     )
 endforeach

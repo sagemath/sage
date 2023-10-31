@@ -60,7 +60,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/rings/padics',
         install: true,
         include_directories: [inc_cpython, inc_ntl, inc_flint, inc_rings_finite, inc_ext],
-        dependencies: [py_dep, cypari2, cysignals],
+        dependencies: [py_dep, cypari2, cysignals, gmp],
     )
 endforeach
 foreach name, pyx : extension_data_cpp
@@ -70,6 +70,6 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_cpython, inc_ntl, inc_ext],
-        dependencies: [py_dep, cypari2, cysignals],
+        dependencies: [py_dep, cypari2, cysignals, gmp],
     )
 endforeach

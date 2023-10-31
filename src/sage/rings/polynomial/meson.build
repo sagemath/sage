@@ -39,10 +39,11 @@ py.install_sources(
 install_subdir('padics', install_dir: sage_install_dir / 'polynomial')
 
 extension_data_cpp = {
+    'evaluation_ntl': files('evaluation_ntl.pyx'),
     'multi_polynomial_ideal_libsingular': files('multi_polynomial_ideal_libsingular.pyx'),
     'multi_polynomial_libsingular': files('multi_polynomial_libsingular.pyx'),
     'polynomial_gf2x': files('polynomial_gf2x.pyx'),
-    #'polynomial_integer_dense_flint': files('polynomial_integer_dense_flint.pyx'), - needs arb
+    'polynomial_integer_dense_flint': files('polynomial_integer_dense_flint.pyx'),
     'polynomial_integer_dense_ntl': files('polynomial_integer_dense_ntl.pyx'),
     'polynomial_modn_dense_ntl': files('polynomial_modn_dense_ntl.pyx'),
     'polynomial_zz_pex': files('polynomial_zz_pex.pyx'),
@@ -51,7 +52,6 @@ extension_data = {
     'commutative_polynomial': files('commutative_polynomial.pyx'),
     'cyclotomic': files('cyclotomic.pyx'),
     'evaluation_flint': files('evaluation_flint.pyx'),
-    'evaluation_ntl': files('evaluation_ntl.pyx'),
     'hilbert': files('hilbert.pyx'),
     'laurent_polynomial': files('laurent_polynomial.pyx'),
     'laurent_polynomial_mpair': files('laurent_polynomial_mpair.pyx'),
@@ -61,10 +61,10 @@ extension_data = {
     #'plural': files('plural.pyx'), - compile error
     'polydict': files('polydict.pyx'),
     'polynomial_compiled': files('polynomial_compiled.pyx'),
-    #'polynomial_complex_arb': files('polynomial_complex_arb.pyx'), - needs arb
+    'polynomial_complex_arb': files('polynomial_complex_arb.pyx'),
     'polynomial_element': files('polynomial_element.pyx'),
     'polynomial_number_field': files('polynomial_number_field.pyx'),
-    #'polynomial_rational_flint': files('polynomial_rational_flint.pyx'), - needs arb
+    'polynomial_rational_flint': files('polynomial_rational_flint.pyx'),
     'polynomial_real_mpfr_dense': files('polynomial_real_mpfr_dense.pyx'),
     'polynomial_ring_homomorphism': files('polynomial_ring_homomorphism.pyx'),
     'polynomial_zmod_flint': files('polynomial_zmod_flint.pyx'),
@@ -81,8 +81,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings/polynomial',
         install: true,
-        include_directories: [inc_cpython, inc_flint, inc_ntl, inc_rings, inc_numpy, inc_ext],
-        dependencies: [py_dep, cysignals, cypari2],
+        include_directories: [inc_cpython, inc_flint, inc_ntl, inc_rings, inc_numpy, inc_ext, inc_arb],
+        dependencies: [py_dep, cysignals, cypari2, gmp, mpfi, arb],
     )
 endforeach
 
@@ -92,8 +92,8 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/rings/polynomial',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_flint, inc_ntl, inc_rings_finite, inc_ext],
-        dependencies: [py_dep, cysignals, cypari2],
+        include_directories: [inc_cpython, inc_flint, inc_ntl, inc_rings_finite, inc_ext, inc_arb, inc_rings],
+        dependencies: [py_dep, cysignals, cypari2, ntl, mpfr, mpfi, arb],
     )
 endforeach
 

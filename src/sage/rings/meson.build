@@ -47,7 +47,7 @@ extension_data = {
     'abc': files('abc.pyx'),
     #'bernmm': files('bernmm.pyx'), - compilation error
     #'bernoulli_mod_p': files('bernoulli_mod_p.pyx'), - compilation error
-    #'complex_arb': files('complex_arb.pyx'), - needs arb
+    'complex_arb': files('complex_arb.pyx'),
     'complex_conversion': files('complex_conversion.pyx'),
     'complex_double': files('complex_double.pyx'),
     'complex_interval': files('complex_interval.pyx'),
@@ -70,7 +70,7 @@ extension_data = {
     'power_series_ring_element': files('power_series_ring_element.pyx'),
     'puiseux_series_ring_element': files('puiseux_series_ring_element.pyx'),
     'rational': files('rational.pyx'),
-    #'real_arb': files('real_arb.pyx'), - needs arb
+    'real_arb': files('real_arb.pyx'),
     'real_double': files('real_double.pyx'),
     'real_double_element_gsl': files('real_double_element_gsl.pyx'),
     'real_interval_absolute': files('real_interval_absolute.pyx'),
@@ -93,15 +93,26 @@ mpfi = declare_dependency(
   ]
 )
 gsl = dependency('gsl')
+# Cannot be found by pkg-config
+flint = declare_dependency(
+  dependencies: [
+    cc.find_library('flint'),
+  ]
+)
+# Cannot be found via pkg-config
+arb = declare_dependency(
+  dependencies: [
+    cc.find_library('arb'),
+  ]
+)
 
 foreach name, pyx : extension_data
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/rings',
         install: true,
-        #cython_args: ['-I', inc_gsl],
-        include_directories: [inc_cpython, inc_flint, inc_gsl],
-        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, mpfr, gmp, pari, gsl],
+        include_directories: [inc_cpython, inc_flint, inc_gsl, inc_arb],
+        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, mpfr, gmp, pari, gsl, flint, arb],
     )
 endforeach
 

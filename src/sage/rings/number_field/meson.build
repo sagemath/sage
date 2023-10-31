@@ -24,12 +24,12 @@ py.install_sources(
 
 extension_data_cpp = {
     'number_field_element': files('number_field_element.pyx'),
+    'number_field_element_quadratic': files('number_field_element_quadratic.pyx'),
 }
 
 extension_data = {
     'number_field_base': files('number_field_base.pyx'),
     'number_field_element_base': files('number_field_element_base.pyx'),
-    #'number_field_element_quadratic': files('number_field_element_quadratic.pyx'), - needs arb
     'number_field_morphisms': files('number_field_morphisms.pyx'),
     'totallyreal': files('totallyreal.pyx'),
     'totallyreal_data': files('totallyreal_data.pyx'),
@@ -50,7 +50,7 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/rings/number_field',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ntl],
-        dependencies: [py_dep, cysignals, cypari2],
+        include_directories: [inc_cpython, inc_ntl, inc_arb, inc_flint],
+        dependencies: [py_dep, cysignals, cypari2, ntl, mpfi, arb],
     )
 endforeach
