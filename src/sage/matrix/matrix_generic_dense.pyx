@@ -81,7 +81,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         ma = MatrixArgs_init(parent, entries)
         self._entries = ma.list(coerce)
 
-    cdef Matrix_generic_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols):
+    cdef Matrix_generic_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
         r"""
         Return a new dense matrix with no entries set.
         """
@@ -93,10 +93,10 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         cdef type t = <type>type(self)
         return <Matrix_generic_dense>t.__new__(t, MS)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
         self._entries[i*self._ncols + j] = value
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         return self._entries[i*self._ncols + j]
 
 
@@ -209,7 +209,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two generic dense matrices with the same parent.
 
@@ -233,7 +233,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two generic dense matrices with the same parent.
 

@@ -20,7 +20,7 @@ class FiniteWeylGroups(CategoryWithAxiom):
         sage: C
         Category of finite weyl groups
         sage: C.super_categories()
-        [Category of finite coxeter groups, Category of weyl groups]
+        [Category of finite Coxeter groups, Category of weyl groups]
         sage: C.example()
         The symmetric group on {0, ..., 3}
 

@@ -217,12 +217,12 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
         return 0
 
 
-cdef inline long dig(const digit* D, int n):
+cdef inline long dig(const digit* D, int n) noexcept:
     # Convenient helper function for integer_check_long_py()
     return (<long>D[n]) << (n * PyLong_SHIFT)
 
 
-cdef inline bint integer_check_long_py(x, long* value, int* err):
+cdef inline bint integer_check_long_py(x, long* value, int* err) noexcept:
     """
     Return whether ``x`` is a python object of type ``int``.
 
@@ -381,7 +381,7 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
     return 1
 
 
-cdef inline bint is_small_python_int(obj):
+cdef inline bint is_small_python_int(obj) noexcept:
     """
     Test whether Python object is a small Python integer.
 

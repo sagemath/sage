@@ -32,7 +32,7 @@ from sage.misc.randstate cimport current_randstate
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 
-cdef make_ZZ(ZZ_c* x):
+cdef make_ZZ(ZZ_c* x) noexcept:
     cdef ntl_ZZ y
     y = ntl_ZZ()
     y.x = x[0]
@@ -269,7 +269,7 @@ cdef class ntl_ZZ():
         """
         return int(self._integer_())
 
-    cdef int get_as_int(ntl_ZZ self):
+    cdef int get_as_int(ntl_ZZ self) noexcept:
         r"""
         Returns value as C int.
 
@@ -312,7 +312,7 @@ cdef class ntl_ZZ():
         ZZ_to_mpz(ans.value, &self.x)
         return ans
 
-    cdef void set_from_int(ntl_ZZ self, int value):
+    cdef void set_from_int(ntl_ZZ self, int value) noexcept:
         r"""
         Sets the value from a C int.
 
