@@ -13,7 +13,7 @@ cdef class ntl_ZZ_pEContext_class():
     cdef ZZ_pEContext_ptrs ptrs
     cdef ZZ_pEContext_c x
     cdef ntl_ZZ_pContext_class pc
-    cdef void restore_c(self)
+    cdef void restore_c(self) noexcept
     cdef ntl_ZZ_pX f
     cpdef void _assert_is_current_modulus(self) except *
 

@@ -609,7 +609,7 @@ class KleberTree(UniqueRepresentation, Parent):
             classical = cartan_type.classical()
         else:
             classical = CartanType(classical)
-        return super(KleberTree, cls).__classcall__(cls, cartan_type, B, classical)
+        return super().__classcall__(cls, cartan_type, B, classical)
 
     def __init__(self, cartan_type, B, classical_ct):
         r"""
@@ -811,8 +811,7 @@ class KleberTree(UniqueRepresentation, Parent):
         #   tradeoff occurs between the methods. However, this may grow as
         #   the _children_iter_vector is further optimized.
         if node != self.root and prod(val+1 for val in node.up_root.coefficients()) < 1000:
-            for x in self._children_iter_vector(node):
-                yield x
+            yield from self._children_iter_vector(node)
             return
 
         n = self._classical_ct.rank()
@@ -985,8 +984,7 @@ class KleberTree(UniqueRepresentation, Parent):
         yield cur
 
         for child in cur.children:
-            for x in self._depth_first_iter(child):
-                yield x
+            yield from self._depth_first_iter(child)
 
     __iter__ = breadth_first_iter
 
@@ -1160,7 +1158,7 @@ class VirtualKleberTree(KleberTree):
             return KleberTreeTypeA2Even(cartan_type, B)
         if cartan_type.classical().is_simply_laced():
             raise ValueError("use KleberTree for simply-laced types")
-        return super(VirtualKleberTree, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, B):
         """
@@ -1354,7 +1352,7 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
         cartan_type = CartanType(cartan_type)
         # Standardize B input into a tuple of tuples
         B = tuple(map(tuple, B))
-        return super(KleberTreeTypeA2Even, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, B):
         """

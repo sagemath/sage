@@ -1428,7 +1428,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
                 G = ring.relative_polynomial()
                 approximant = self._base_valuation.change_domain(G.parent())._initial_approximation
                 return [pAdicValuation(ring, approximant)]
-        return super(pAdicFromLimitValuation, self).extensions(ring)
+        return super().extensions(ring)
 
 def _fraction_field(ring):
     r"""

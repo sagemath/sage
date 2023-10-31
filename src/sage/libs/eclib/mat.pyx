@@ -240,11 +240,11 @@ cdef class Matrix:
 
 
 cdef class MatrixFactory:
-    cdef new_matrix(self, mat M):
+    cdef new_matrix(self, mat M) noexcept:
         return new_Matrix(M)
 
 
-cdef Matrix new_Matrix(mat M):
+cdef Matrix new_Matrix(mat M) noexcept:
     cdef Matrix A = Matrix()
     A.M = new mat(M)
     return A

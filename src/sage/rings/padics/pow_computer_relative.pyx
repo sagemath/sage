@@ -152,7 +152,7 @@ cdef class PowComputer_relative(PowComputer_class):
         """
         return "Relative PowComputer for modulus %s" % (self.modulus,)
 
-    cdef unsigned long capdiv(self, unsigned long n):
+    cdef unsigned long capdiv(self, unsigned long n) noexcept:
         r"""
         Return `\lceil n/e \rceil`.
         """
@@ -219,7 +219,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
         PowComputer_relative.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
         self._inv_shift_seed = self.invert(shift_seed, self.ram_prec_cap)
 
-    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense a, long prec):
+    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense a, long prec) noexcept:
         r"""
         Return the inverse of ``a``.
 

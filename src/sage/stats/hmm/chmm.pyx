@@ -38,7 +38,7 @@ from sage.misc.randstate cimport current_randstate, randstate
 
 
 # TODO: DELETE THIS FUNCTION WHEN MOVE Gaussian stuff to distributions.pyx!!! (next version)
-cdef double random_normal(double mean, double std, randstate rstate):
+cdef double random_normal(double mean, double std, randstate rstate) noexcept:
     r"""
     Return a number chosen randomly with given mean and standard deviation.
 
@@ -446,7 +446,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         return obs, states
 
-    cdef probability_init(self):
+    cdef probability_init(self) noexcept:
         r"""
         Used internally to compute caching information that makes
         certain computations in the Baum-Welch algorithm faster.  This
@@ -458,7 +458,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             self.prob[2*i] = 1.0/(sqrt2pi*self.B[2*i+1])
             self.prob[2*i+1] = -1.0/(2*self.B[2*i+1]*self.B[2*i+1])
 
-    cdef double random_sample(self, int state, randstate rstate):
+    cdef double random_sample(self, int state, randstate rstate) noexcept:
         r"""
         Return a random sample from the normal distribution associated
         to the given state.
@@ -478,7 +478,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         """
         return random_normal(self.B._values[state*2], self.B._values[state*2+1], rstate)
 
-    cdef double probability_of(self, int state, double observation):
+    cdef double probability_of(self, int state, double observation) noexcept:
         r"""
         Return a useful continuous analogue of "the probability b_j(o)"
         of seeing the given observation given that we're in the given
@@ -716,7 +716,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         return state_sequence, mx
 
-    cdef TimeSeries _backward_scale_all(self, TimeSeries obs, TimeSeries scale):
+    cdef TimeSeries _backward_scale_all(self, TimeSeries obs, TimeSeries scale) noexcept:
         r"""
         This function returns the matrix beta_t(i), and is used
         internally as part of the Baum-Welch algorithm.
@@ -756,7 +756,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             t -= 1
         return beta
 
-    cdef _forward_scale_all(self, TimeSeries obs):
+    cdef _forward_scale_all(self, TimeSeries obs) noexcept:
         r"""
         Return scaled values alpha_t(i), the sequence of scalings, and
         the log probability.
@@ -821,7 +821,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         # Termination
         return alpha, scale, log_probability
 
-    cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, TimeSeries obs):
+    cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, TimeSeries obs) noexcept:
         r"""
         Used internally to compute the scaled quantity xi_t(i,j)
         appearing in the Baum-Welch reestimation algorithm.
@@ -1249,7 +1249,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         """
         return list(self.mixture)
 
-    cdef double random_sample(self, int state, randstate rstate):
+    cdef double random_sample(self, int state, randstate rstate) noexcept:
         r"""
         Return a random sample from the normal distribution associated
         to the given state.
@@ -1270,7 +1270,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         cdef GaussianMixtureDistribution G = self.mixture[state]
         return G._sample(rstate)
 
-    cdef double probability_of(self, int state, double observation):
+    cdef double probability_of(self, int state, double observation) noexcept:
         r"""
         Return the probability b_j(o) of see the given observation o
         (=observation) given that we're in the given state j (=state).
@@ -1292,7 +1292,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return G.prob(observation)
 
     cdef TimeSeries _baum_welch_mixed_gamma(self, TimeSeries alpha, TimeSeries beta,
-                                            TimeSeries obs, int j):
+                                            TimeSeries obs, int j) noexcept:
         r"""
         Let gamma_t(j,m) be the m-component (in the mixture) of the
         probability of being in state j at time t, given the

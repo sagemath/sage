@@ -77,7 +77,7 @@ cdef inline linbox_specifier get_method(str algo) except ERROR:
 # matrix_modn_sparse (sparse matrix over Z/nZ) #
 ################################################
 
-cdef inline void set_linbox_matrix_modn_sparse(SparseMatrix_Modular_uint64& A, Matrix_modn_sparse m):
+cdef inline void set_linbox_matrix_modn_sparse(SparseMatrix_Modular_uint64& A, Matrix_modn_sparse m) noexcept:
     r"""
     Set the entries of a LinBox matrix from a Sage matrix.
 
@@ -93,7 +93,7 @@ cdef inline void set_linbox_matrix_modn_sparse(SparseMatrix_Modular_uint64& A, M
         for j in range(<size_t> row.num_nonzero):
             A.setEntry(i, row.positions[j], row.entries[j])
 
-cdef inline SparseMatrix_Modular_uint64 * new_linbox_matrix_modn_sparse(Modular_uint64 &F, Matrix_modn_sparse m):
+cdef inline SparseMatrix_Modular_uint64 * new_linbox_matrix_modn_sparse(Modular_uint64 &F, Matrix_modn_sparse m) noexcept:
     r"""
     Return a new LinBox matrix from a Sage matrix.
 
@@ -112,7 +112,7 @@ cdef inline SparseMatrix_Modular_uint64 * new_linbox_matrix_modn_sparse(Modular_
 # matrix_integer_sparse #
 #########################
 
-cdef inline void set_linbox_matrix_integer_sparse(SparseMatrix_integer& A, Matrix_integer_sparse m):
+cdef inline void set_linbox_matrix_integer_sparse(SparseMatrix_integer& A, Matrix_integer_sparse m) noexcept:
     r"""
     Set the entries of a LinBox matrix from a Sage matrix.
 
@@ -131,7 +131,7 @@ cdef inline void set_linbox_matrix_integer_sparse(SparseMatrix_integer& A, Matri
             mpz_set(t.get_mpz(), v.entries[k])
             A.setEntry(i, j, t)
 
-cdef inline SparseMatrix_integer * new_linbox_matrix_integer_sparse(ZRing &ZZ, Matrix_integer_sparse m):
+cdef inline SparseMatrix_integer * new_linbox_matrix_integer_sparse(ZRing &ZZ, Matrix_integer_sparse m) noexcept:
     r"""
     Return a new LinBox matrix from a Sage matrix.
 
@@ -149,7 +149,7 @@ cdef inline SparseMatrix_integer * new_linbox_matrix_integer_sparse(ZRing &ZZ, M
 # vector integer dense #
 ########################
 
-cdef inline DenseVector_integer * new_linbox_vector_integer_dense(ZRing &ZZ, Vector_integer_dense v):
+cdef inline DenseVector_integer * new_linbox_vector_integer_dense(ZRing &ZZ, Vector_integer_dense v) noexcept:
     r"""
     Return a new linbox vector from a sage one.
 
@@ -167,7 +167,7 @@ cdef inline DenseVector_integer * new_linbox_vector_integer_dense(ZRing &ZZ, Vec
 
     return V
 
-cdef inline Vector_integer_dense new_sage_vector_integer_dense(P, DenseVector_integer &v):
+cdef inline Vector_integer_dense new_sage_vector_integer_dense(P, DenseVector_integer &v) noexcept:
     r"""
     Return a new Sage vector from a LinBox one.
 
