@@ -910,7 +910,8 @@ class BinaryQF(SageObject):
         if algorithm == 'sage':
             if self.discriminant() <= 0:
                 raise NotImplementedError('reduction of definite binary '
-                    'quadratic forms is not implemented in Sage')
+                                          'quadratic forms is not implemented '
+                                          'in Sage')
             return self._reduce_indef(transformation)
 
         elif algorithm == 'pari':
@@ -1154,14 +1155,15 @@ class BinaryQF(SageObject):
         if self.discriminant().is_square():
             # Buchmann/Vollmer assume the discriminant to be non-square
             raise NotImplementedError('computation of cycles is only '
-                    'implemented for non-square discriminants')
+                                      'implemented for non-square '
+                                      'discriminants')
         if proper:
             # Prop 6.10.5 in Buchmann Vollmer
             C = list(self.cycle(proper=False))  # make a copy that we can modify
             if len(C) % 2:
                 C += C
-            for i in range(len(C)//2):
-                C[2*i+1] = C[2*i+1]._Tau()
+            for i in range(len(C) // 2):
+                C[2 * i + 1] = C[2 * i + 1]._Tau()
             return C
         if not hasattr(self, '_cycle_list'):
             C = [self]

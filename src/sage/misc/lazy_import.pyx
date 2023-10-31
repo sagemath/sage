@@ -79,7 +79,7 @@ except ImportError:
     FeatureNotPresentError = ()
 
 
-cdef inline obj(x):
+cdef inline obj(x) noexcept:
     if type(x) is LazyImport:
         return (<LazyImport>x).get_object()
     else:
@@ -92,7 +92,7 @@ cdef bint startup_guard = True
 cdef bint finish_startup_called = False
 
 
-cpdef finish_startup():
+cpdef finish_startup() noexcept:
     """
     Finish the startup phase.
 
@@ -113,7 +113,7 @@ cpdef finish_startup():
     finish_startup_called = True
 
 
-cpdef ensure_startup_finished():
+cpdef ensure_startup_finished() noexcept:
     """
     Make sure that the startup phase is finished.
 
@@ -129,7 +129,7 @@ cpdef ensure_startup_finished():
     startup_guard = False
 
 
-cpdef bint is_during_startup():
+cpdef bint is_during_startup() noexcept:
     """
     Return whether Sage is currently starting up.
 
@@ -147,7 +147,7 @@ cpdef bint is_during_startup():
     return startup_guard
 
 
-cpdef test_fake_startup():
+cpdef test_fake_startup() noexcept:
     """
     For testing purposes only.
 
@@ -216,7 +216,7 @@ cdef class LazyImport():
         self._deprecation = deprecation
         self._feature = feature
 
-    cdef inline get_object(self):
+    cdef inline get_object(self) noexcept:
         """
         Faster, Cython-only partially-inlined version of ``_get_object``.
         """
@@ -224,7 +224,7 @@ cdef class LazyImport():
             return self._object
         return self._get_object()
 
-    cpdef _get_object(self):
+    cpdef _get_object(self) noexcept:
         """
         Return the wrapped object, importing it if necessary.
 

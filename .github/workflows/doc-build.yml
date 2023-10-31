@@ -56,9 +56,23 @@ jobs:
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build & Test workflow"
+          # mathjax path in old doc
+          mathjax_path_from=$(SAGE_USE_CDNS=no /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           .ci/retrofit-worktree.sh worktree-image /sage
-          # Keep track of changes to built HTML
-          new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
+          # mathjax path in new doc
+          mathjax_path_to=$(SAGE_USE_CDNS=yes /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
+          new_version=$(cat src/VERSION.txt)
+          # Wipe out chronic diffs between old doc and new doc
+          (cd /sage/local/share/doc/sage/html/en && \
+           find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
+                                                -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
+                                                -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
+          # Create git repo from old doc
+          (cd /sage/local/share/doc/sage/html/en && \
+           git init && \
+           (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
+           (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
+           git add -A && git commit --quiet -m "old")
 
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
@@ -77,7 +91,7 @@ jobs:
         id: incremental
         run: |
           # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap && make build
+          ./bootstrap && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -88,7 +102,7 @@ jobs:
         if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
-          make sagelib-clean && git clean -fx src/sage && ./config.status && make build
+          make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -105,7 +119,7 @@ jobs:
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
-          ./config.status && make doc-html
+          ./config.status && make sagemath_doc_html-no-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -117,12 +131,58 @@ jobs:
         run: |
           set -ex
           mkdir -p ./docs
-          # Create changelog
-          echo '## Preview of CHANGES.html'
-          (cd /sage/local/share/doc/sage/html/en && git diff --name-only) | tee ./docs/CHANGES.txt
-          (cd /sage/local/share/doc/sage/html/en && git diff; rm -rf .git) > ./docs/html.diff
-          echo '## Preview of html.diff'; head -n 400 ./docs/html.diff
-          (echo '<p><a href="html.diff">HTML diff</a>'; sed -E 's,(.*),<p><a href="\1">\1</a>,' ./docs/CHANGES.txt) > ./docs/CHANGES.html
+          (cd /sage/local/share/doc/sage/html/en && git commit -a -m 'new')
+          # Wipe out chronic diffs between old doc and new doc
+          (cd /sage/local/share/doc/sage/html/en && \
+           find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
+          # Create CHANGES.html
+          echo '<html>' > ./docs/CHANGES.html
+          echo '<head>' >> ./docs/CHANGES.html
+          echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/CHANGES.html
+          echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/CHANGES.html
+          echo '<script>hljs.highlightAll();</script>' >> ./docs/CHANGES.html
+          cat >> ./docs/CHANGES.html << EOF
+          <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const diffSite = 'https://pianomister.github.io/diffsite/'
+            const baseDocURL = 'https://sagemath-tobias.netlify.app/'
+            const diffParagraphs = document.querySelectorAll('p.diff');
+            diffParagraphs.forEach(paragraph => {
+              const rootURL = window.location.origin + '/';
+              const docAnchor = paragraph.querySelector('a');
+              const path = docAnchor.textContent; // .href doesn't work
+              const anchor = document.createElement('a');
+              anchor.href = diffSite + '?url1=' + rootURL + path + '&url2=' + baseDocURL + path;
+              anchor.textContent = 'compare with the base';
+              anchor.setAttribute('target', '_blank');
+              paragraph.appendChild(anchor);
+            });
+          });
+          </script>
+          EOF
+          echo '</head>' >> ./docs/CHANGES.html
+          echo '<body>' >> ./docs/CHANGES.html
+          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/diff.txt
+          /sage/sage -python - << EOF
+          import re, html
+          with open('./docs/diff.txt', 'r') as f:
+              diff_text = f.read()
+              diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
+              out_blocks = []
+              for block in diff_blocks:
+                  match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
+                  if match:
+                      path = match.group(1)
+                      out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&emsp;</p>\n<pre><code class="language-diff">' + html.escape(block).strip() + '</code></pre>')
+              output_text = '\n'.join(out_blocks)
+          with open('./docs/diff.html', 'w') as f:
+              f.write(output_text)
+          EOF
+          cat ./docs/diff.html >> ./docs/CHANGES.html
+          echo '</body>' >> ./docs/CHANGES.html
+          echo '</html>' >>./docs/CHANGES.html
+          rm ./docs/diff.txt ./docs/diff.html
+          (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them

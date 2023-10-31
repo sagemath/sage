@@ -213,7 +213,7 @@ class BoundClass(functools.partial):
     __doc__ = None  # See warning above
 
     def __init__(self, *args):
-        super(BoundClass, self).__init__()
+        super().__init__()
         self.__doc__ = self.func.__doc__
 
     def __repr__(self):
