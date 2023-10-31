@@ -114,7 +114,7 @@ from sage.rings.integer_ring import ZZ, is_IntegerRing
 import sage.rings.abc
 from sage.rings.rational_field import QQ
 
-from .matrix2 import decomp_seq
+from sage.matrix.matrix2 import decomp_seq
 from sage.misc.verbose import verbose
 
 # ########################################################
@@ -1406,7 +1406,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         tm = verbose("computing right kernel matrix over the rationals for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
         # _rational_kernel_flint() gets the zero-row case wrong, fix it there
         if self.nrows()==0:
-            from .constructor import identity_matrix
+            from sage.matrix.constructor import identity_matrix
             K = identity_matrix(QQ, self.ncols())
         else:
             A, _ = self._clear_denom()
@@ -1473,7 +1473,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
                 A.subdivide(self.subdivisions())
             return A
 
-        from .matrix_modn_dense_double import MAX_MODULUS
+        from sage.matrix.matrix_modn_dense_double import MAX_MODULUS
         if isinstance(R, sage.rings.abc.IntegerModRing) and R.order() < MAX_MODULUS:
             b = R.order()
             A, d = self._clear_denom()
@@ -1803,7 +1803,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [   0    0    1    1    3    0]
             [   0    0    0    0    0    1]
         """
-        from .misc import matrix_rational_echelon_form_multimodular
+        from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         E, pivots = matrix_rational_echelon_form_multimodular(self, height_guess, proof=proof)
         self.clear_cache()
         fmpq_mat_swap(self._matrix, (<Matrix_rational_dense>E)._matrix)

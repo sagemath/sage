@@ -931,7 +931,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [0 2]
         """
         if check_rank and self.rank() < self.nrows():
-            from .matrix2 import NotFullRankError
+            from sage.matrix.matrix2 import NotFullRankError
             raise NotFullRankError
 
         if self.base_ring() != B.base_ring():
@@ -1110,7 +1110,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         if self._nrows == 0 or self._ncols == 0:
             raise ValueError("not implemented for nrows=0 or ncols=0")
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
         cdef Matrix_integer_dense B

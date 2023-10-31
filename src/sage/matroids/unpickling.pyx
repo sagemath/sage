@@ -28,13 +28,13 @@ AUTHORS:
 from sage.data_structures.bitset_base cimport *
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
-from .minor_matroid import MinorMatroid
-from .dual_matroid import DualMatroid
+from sage.matroids.minor_matroid import MinorMatroid
+from sage.matroids.dual_matroid import DualMatroid
 from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
 from sage.matroids.basis_matroid cimport BasisMatroid
 from sage.matroids.linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
 from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
-from .graphic_matroid import GraphicMatroid
+from sage.matroids.graphic_matroid import GraphicMatroid
 
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport mpq_set

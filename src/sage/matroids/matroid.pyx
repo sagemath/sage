@@ -346,7 +346,7 @@ MixedIntegerLinearProgram = LazyImport('sage.numerical.mip', 'MixedIntegerLinear
 
 from sage.matroids.lean_matrix cimport BinaryMatrix, TernaryMatrix
 from sage.matroids.set_system cimport SetSystem
-from .utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
+from sage.matroids.utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
 
 
 # On some systems, macros "minor()" and "major()" are defined in system header
@@ -1113,7 +1113,7 @@ cdef class Matroid(SageObject):
                  {'e', 'f', 'g', 'h'}},
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
-        from . import minor_matroid
+        from sage.matroids import minor_matroid
         return minor_matroid.MinorMatroid(self, contractions, deletions)
 
     cpdef _has_minor(self, N, bint certificate=False) noexcept:
@@ -1226,7 +1226,7 @@ cdef class Matroid(SageObject):
             sage: [sorted(C) for C in N.circuits() if len(C) == 3]
             [[0, 1, 6]]
         """
-        from . import basis_matroid
+        from sage.matroids import basis_matroid
         return basis_matroid.BasisMatroid(self)._extension(element, hyperplanes)
 
     # ** user-facing methods **
@@ -3610,8 +3610,8 @@ cdef class Matroid(SageObject):
             sage: M._is_isomorphism(N, morphism)
             True
         """
-        from . import basis_exchange_matroid
-        from . import basis_matroid
+        from sage.matroids import basis_exchange_matroid
+        from sage.matroids import basis_matroid
         sf = basis_matroid.BasisMatroid(self)
         if not isinstance(other, basis_exchange_matroid.BasisExchangeMatroid):
             ot = basis_matroid.BasisMatroid(other)
@@ -3694,7 +3694,7 @@ cdef class Matroid(SageObject):
             return rich_to_bool(op, 1)
 
         # Default implementation: use BasisMatroid
-        from .basis_matroid import BasisMatroid
+        from sage.matroids.basis_matroid import BasisMatroid
         return richcmp(BasisMatroid(left), BasisMatroid(right), op)
 
     # Minors and duality
@@ -4009,7 +4009,7 @@ cdef class Matroid(SageObject):
                  {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
              3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}'
         """
-        from . import dual_matroid
+        from sage.matroids import dual_matroid
         return dual_matroid.DualMatroid(self)
 
     cpdef truncation(self) noexcept:
@@ -4505,7 +4505,7 @@ cdef class Matroid(SageObject):
             sage: len(list(M.linear_subclasses(line_length=5)))
             44
         """
-        from . import extension
+        from sage.matroids import extension
         return extension.LinearSubclasses(self, line_length=line_length, subsets=subsets)
 
     cpdef extensions(self, element=None, line_length=None, subsets=None) noexcept:
@@ -4564,7 +4564,7 @@ cdef class Matroid(SageObject):
             5
 
         """
-        from . import extension
+        from sage.matroids import extension
         if element is None:
             element = newlabel(self.groundset())
         else:
@@ -7773,7 +7773,7 @@ cdef class Matroid(SageObject):
             sage: G.show()                                                              # needs sage.plot sage.rings.finite_rings
 
         """
-        from . import matroids_plot_helpers
+        from sage.matroids import matroids_plot_helpers
         if pos_method == 1 and pos_dict is not None:
             # check sanity of pos_dict and add it to cached info if sane
             if matroids_plot_helpers.posdict_is_sane(self, pos_dict):
@@ -7882,7 +7882,7 @@ cdef class Matroid(SageObject):
             raise NotImplementedError
         # check sanity of pos_dict and add it to cached info if sane
         if pos_dict is not None:
-            from . import matroids_plot_helpers
+            from sage.matroids import matroids_plot_helpers
             if matroids_plot_helpers.posdict_is_sane(self,pos_dict):
                 self._cached_info = {'plot_positions': pos_dict, 'lineorders': lineorders}
         return
@@ -8066,7 +8066,7 @@ cdef class Matroid(SageObject):
             Binary matroid of rank 3 on 7 elements, type (3, 0)
             Ternary matroid of rank 3 on 7 elements, type 0-
         """
-        from . import union_matroid
+        from sage.matroids import union_matroid
         if isinstance(matroids, Matroid):
             matroids = [matroids]
         else:
@@ -8116,7 +8116,7 @@ cdef class Matroid(SageObject):
             sage: len(N.bases())
             2100
         """
-        from . import union_matroid
+        from sage.matroids import union_matroid
         if isinstance(matroids, Matroid):
             matroids = [matroids]
         else:

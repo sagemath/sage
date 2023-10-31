@@ -982,7 +982,7 @@ cdef class MatrixArgs:
         if self.space is None:
             global MatrixSpace
             if MatrixSpace is None:
-                from .matrix_space import MatrixSpace
+                from sage.matrix.matrix_space import MatrixSpace
             self.space = MatrixSpace(self.base, self.nrows, self.ncols,
                     sparse=self.sparse, **self.kwds)
 
@@ -1113,7 +1113,7 @@ cdef class MatrixArgs:
         if not (e.flags.c_contiguous is True or e.flags.f_contiguous is True):
             raise TypeError('numpy matrix must be either c_contiguous or f_contiguous')
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
 

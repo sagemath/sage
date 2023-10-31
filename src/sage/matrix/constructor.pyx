@@ -654,7 +654,7 @@ def matrix(*args, **kwds):
 Matrix = matrix
 
 
-from .special import *
+from sage.matrix.special import *
 
 
 @matrix_method

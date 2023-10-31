@@ -583,7 +583,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - height_guess -- integer or None
         - proof -- boolean (default: True)
         """
-        from .misc import matrix_rational_echelon_form_multimodular
+        from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
         E, pivots = matrix_rational_echelon_form_multimodular(self,
                                  height_guess=height_guess, proof=proof)

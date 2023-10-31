@@ -2151,7 +2151,7 @@ cdef class BasisExchangeMatroid(Matroid):
             True
         """
         if not isinstance(other, BasisExchangeMatroid):
-            from .basis_matroid import BasisMatroid
+            from sage.matroids.basis_matroid import BasisMatroid
             ot = BasisMatroid(other)
         else:
             ot = other
@@ -2217,7 +2217,7 @@ cdef class BasisExchangeMatroid(Matroid):
             True
         """
         if not isinstance(other, BasisExchangeMatroid):
-            from .basis_matroid import BasisMatroid
+            from sage.matroids.basis_matroid import BasisMatroid
             other = BasisMatroid(other)
         if self is other:
             return {e:e for e in self.groundset()}

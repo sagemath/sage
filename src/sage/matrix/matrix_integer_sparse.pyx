@@ -421,7 +421,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             ...
             ZeroDivisionError: The modulus cannot be zero
         """
-        from .misc import matrix_integer_sparse_rational_reconstruction
+        from sage.matrix.misc import matrix_integer_sparse_rational_reconstruction
         return matrix_integer_sparse_rational_reconstruction(self, N)
 
     def _right_kernel_matrix(self, **kwds):
@@ -1037,7 +1037,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 2]
         """
         if check_rank and self.rank() < self.nrows():
-            from .matrix2 import NotFullRankError
+            from sage.matrix.matrix2 import NotFullRankError
             raise NotFullRankError
 
         if self.base_ring() != B.base_ring():
@@ -1230,7 +1230,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         if self._nrows == 0 or self._ncols == 0:
             raise ValueError("not implemented for nrows=0 or ncols=0")
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
         cdef Matrix_integer_dense B

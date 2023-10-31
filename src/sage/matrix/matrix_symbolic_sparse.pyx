@@ -166,7 +166,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.factorization import Factorization
 
 from sage.matrix.matrix_generic_sparse cimport Matrix_generic_sparse
-from .constructor import matrix
+from sage.matrix.constructor import matrix
 
 cdef maxima
 

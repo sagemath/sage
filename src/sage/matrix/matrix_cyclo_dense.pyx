@@ -57,13 +57,13 @@ from sage.libs.flint.fmpq cimport fmpq_is_zero, fmpq_set_mpq, fmpq_canonicalise
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
 
 from sage.matrix.args cimport MatrixArgs_init
-from .constructor import matrix
-from .matrix_space import MatrixSpace
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix cimport Matrix
-from . import matrix_dense
+from sage.matrix import matrix_dense
 from sage.matrix.matrix_integer_dense cimport _lift_crt
 from sage.structure.element cimport Matrix as baseMatrix
-from .misc_flint import matrix_integer_dense_rational_reconstruction
+from sage.matrix.misc_flint import matrix_integer_dense_rational_reconstruction
 
 from sage.arith.misc import binomial, previous_prime
 from sage.rings.rational_field import QQ
@@ -1535,7 +1535,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         K = self.base_ring()
         phi = K.defining_polynomial()
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         F = GF(p)
         aa = [a for a, _ in phi.change_ring(F).roots()]
         n = K.degree()

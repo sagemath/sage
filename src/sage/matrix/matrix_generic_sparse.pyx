@@ -451,7 +451,7 @@ def Matrix_sparse_from_rows(X):
     if not X:
         raise ArithmeticError("X must be nonempty")
 
-    from . import matrix_space
+    from sage.matrix import matrix_space
     entries = {}
     R = X[0].base_ring()
     ncols = X[0].degree()
