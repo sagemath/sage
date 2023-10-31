@@ -161,7 +161,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         return 0
 
 
-    cpdef get_objective_value(self):
+    cpdef get_objective_value(self) noexcept:
         """
         Return the value of the objective function.
 
@@ -196,7 +196,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             i+=1
         return sum
 
-    cpdef _get_answer(self):
+    cpdef _get_answer(self) noexcept:
         """
         return the complete output dict of the solver
 
@@ -222,7 +222,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         """
         return self.answer
 
-    cpdef get_variable_value(self, int variable):
+    cpdef get_variable_value(self, int variable) noexcept:
         """
         Return the value of a variable given by the solver.
 
@@ -256,7 +256,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         """
         return self.answer['x'][variable]
 
-    cpdef dual_variable(self, int i, sparse=False):
+    cpdef dual_variable(self, int i, sparse=False) noexcept:
         """
         The `i`-th dual variable
 
@@ -306,7 +306,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         assert(n == self.answer['zs'][i].size[1]) # must be square matrix
         return Matrix(n, n, list(self.answer['zs'][i]), sparse=sparse)
 
-    cpdef slack(self, int i, sparse=False):
+    cpdef slack(self, int i, sparse=False) noexcept:
         """
         Slack of the `i`-th constraint
 
@@ -358,7 +358,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         return Matrix(n, n, list(self.answer['ss'][i]), sparse=sparse)
 
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value = None) noexcept:
         """
         Return or define a solver parameter
 

@@ -313,8 +313,7 @@ class EnumeratedSets(CategoryWithAxiom):
             if stop is None:
                 if start is None:
                     if step is None:
-                        for x in self:
-                            yield x
+                        yield from self
                         return
                     start = 0
                 elif start < 0:
@@ -793,8 +792,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: [next(it), next(it), next(it)]
                 [1, 2, 3]
             """
-            for x in self.tuple():
-                yield x
+            yield from self.tuple()
 
         def _iterator_from_next(self):
             """

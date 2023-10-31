@@ -61,7 +61,7 @@ cdef class NumberFieldEmbedding(Morphism):
         else:
             self._gen_image = R(gen_embedding)
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         A helper for pickling and copying.
 
@@ -92,7 +92,7 @@ cdef class NumberFieldEmbedding(Morphism):
         slots['_gen_image'] = self._gen_image
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         A helper for unpickling and copying.
 
@@ -118,7 +118,7 @@ cdef class NumberFieldEmbedding(Morphism):
         Morphism._update_slots(self, _slots)
         self._gen_image = _slots['_gen_image']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
 
@@ -321,7 +321,7 @@ cdef class EmbeddedNumberFieldConversion(Map):
         self.ambient_field = ambient_field
         Map.__init__(self, K, L)
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
 
@@ -343,7 +343,7 @@ cdef class EmbeddedNumberFieldConversion(Map):
         return gen_image
 
 
-cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None):
+cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None) noexcept:
     """
     Given a polynomial and a ``target``, choose the root that
     ``target`` best approximates as compared in ``ambient_field``.
@@ -406,7 +406,7 @@ cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None):
             ambient_field = ambient_field.to_prec(ambient_field.prec() * 2)
 
 
-cpdef closest(target, values, margin=1):
+cpdef closest(target, values, margin=1) noexcept:
     """
     This is a utility function that returns the item in ``values`` closest to
     target (with respect to the ``abs`` function). If ``margin`` is greater
@@ -625,7 +625,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
         self.ratio = L._log_gen(K.coerce_embedding()(K.gen()))
         self._gen_image = L.gen() ** self.ratio
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         A helper for pickling and copying.
 
@@ -656,7 +656,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
         slots['ratio'] = self.ratio
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         A helper for unpickling and copying.
 
@@ -683,7 +683,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
         self._gen_image = _slots['_gen_image']
         self.ratio = _slots['ratio']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
 
@@ -764,7 +764,7 @@ cdef class CyclotomicFieldConversion(Map):
         self.phi = L.hom([M.gen()**(n3//n2)])
         Map.__init__(self, K, L)
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Call a conversion map between cyclotomic fields.
 

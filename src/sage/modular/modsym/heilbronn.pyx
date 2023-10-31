@@ -46,7 +46,7 @@ from sage.matrix.matrix_cyclo_dense cimport Matrix_cyclo_dense
 
 ctypedef long long llong
 
-cdef int llong_prod_mod(int a, int b, int N):
+cdef int llong_prod_mod(int a, int b, int N) noexcept:
     cdef int c
     c = <int> (((<llong> a) * (<llong> b)) % (<llong> N))
     if c < 0:
@@ -83,10 +83,10 @@ cdef int list_append4(list* L, int a, int b, int c, int d) except -1:
     list_append(L, c)
     list_append(L, d)
 
-cdef void list_clear(list L):
+cdef void list_clear(list L) noexcept:
     sig_free(L.v)
 
-cdef void list_init(list* L):
+cdef void list_init(list* L) noexcept:
     L.n = 16
     L.i = 0
     L.v = expand(<int*>0, 0, L.n)
@@ -170,7 +170,7 @@ cdef class Heilbronn:
                       self.list.v[4*i+2], self.list.v[4*i+3]])
         return L
 
-    cdef apply_only(self, int u, int v, int N, int* a, int* b):
+    cdef apply_only(self, int u, int v, int N, int* a, int* b) noexcept:
         """
         INPUT:
 
@@ -210,7 +210,7 @@ cdef class Heilbronn:
                 b[i] = llong_prod_mod(u,self.list.v[4*i+1],N) + llong_prod_mod(v,self.list.v[4*i+3], N)
         sig_off()
 
-    cdef apply_to_polypart(self, fmpz_poly_t* ans, int i, int k):
+    cdef apply_to_polypart(self, fmpz_poly_t* ans, int i, int k) noexcept:
         r"""
         INPUT:
 
