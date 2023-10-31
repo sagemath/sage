@@ -5211,7 +5211,6 @@ class GenericGraph(GenericGraph_pyx):
                            [])
 
             from sage.graphs.graph import Graph
-            from itertools import pairwise
             T = Graph(self.min_spanning_tree(), multiedges=True, format='list_of_edges')
             H = self.copy()
             H.delete_edges(T.edge_iterator())
@@ -5235,7 +5234,8 @@ class GenericGraph(GenericGraph_pyx):
 
                 cycle = Q + P[-2::-1]
                 if output == 'edge':
-                    cycle = [e] + [(x, y, T.edge_label(x, y)[0]) for x, y in pairwise(cycle)]
+                    cycle = [e] + [(x, y, T.edge_label(x, y)[0])
+                                   for x, y in zip(cycle[:-1], cycle[1:])]
                 L.append(cycle)
             return L
 
