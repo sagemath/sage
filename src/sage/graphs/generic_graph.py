@@ -5149,14 +5149,14 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(0, 2, 'a'), (0, 2, 'b'), (0, 1, 'c'), (1, 2, 'd')],
             ....:           multiedges=True)
-            sage: G.cycle_basis()                                                       # needs networkx
-            [[0, 2], [2, 1, 0]]
-            sage: G.cycle_basis(output='edge')                                          # needs networkx
-            [[(0, 2, 'b'), (2, 0, 'a')], [(2, 1, 'd'), (1, 0, 'c'), (0, 2, 'a')]]
+            sage: G.cycle_basis()
+            [[2, 0], [2, 0, 1]]
+            sage: G.cycle_basis(output='edge')
+            [[(0, 2, 'b'), (2, 0, 'a')], [(1, 2, 'd'), (2, 0, 'a'), (0, 1, 'c')]]
             sage: H = Graph([(1, 2), (2, 3), (2, 3), (3, 4), (1, 4),
             ....:            (1, 4), (4, 5), (5, 6), (4, 6), (6, 7)], multiedges=True)
-            sage: H.cycle_basis()                                                       # needs networkx
-            [[1, 4], [2, 3], [4, 3, 2, 1], [6, 5, 4]]
+            sage: H.cycle_basis()
+            [[4, 1], [3, 2], [4, 1, 2, 3], [6, 4, 5]]
 
         Disconnected graph::
 
@@ -5168,19 +5168,19 @@ class GenericGraph(GenericGraph_pyx):
               ('Really ?', 'Wuuhuu', None),
               ('Wuuhuu', 'Hey', None)],
              [(0, 2, 'a'), (2, 0, 'b')],
-             [(0, 2, 'b'), (1, 0, 'c'), (2, 1, 'd')]]
+             [(0, 1, 'c'), (1, 2, 'd'), (2, 0, 'b')]]
 
         Graph that allows multiple edges but does not contain any::
 
             sage: G = graphs.CycleGraph(3)
             sage: G.allow_multiple_edges(True)
-            sage: G.cycle_basis()                                                       # needs networkx
-            [[2, 1, 0]]
+            sage: G.cycle_basis()
+            [[2, 0, 1]]
 
         Not yet implemented for directed graphs::
 
             sage: G = DiGraph([(0, 2, 'a'), (0, 1, 'c'), (1, 2, 'd')])
-            sage: G.cycle_basis()                                                       # needs networkx
+            sage: G.cycle_basis()
             Traceback (most recent call last):
             ...
             NotImplementedError: not implemented for directed graphs
@@ -5191,12 +5191,12 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(1, 2, 'a'), (2, 3, 'b'), (2, 3, 'c'),
             ....:            (3, 4, 'd'), (3, 4, 'e'), (4, 1, 'f')], multiedges=True)
-            sage: G.cycle_basis()                                                       # needs networkx
-            [[2, 3], [4, 3, 2, 1], [4, 3, 2, 1]]
-            sage: G.cycle_basis(output='edge')                                          # needs networkx
+            sage: G.cycle_basis()
+            [[3, 2], [4, 1, 2, 3], [4, 1, 2, 3]]
+            sage: G.cycle_basis(output='edge')
             [[(2, 3, 'c'), (3, 2, 'b')],
-             [(4, 3, 'd'), (3, 2, 'b'), (2, 1, 'a'), (1, 4, 'f')],
-             [(4, 3, 'e'), (3, 2, 'b'), (2, 1, 'a'), (1, 4, 'f')]]
+             [(3, 4, 'd'), (4, 1, 'f'), (1, 2, 'a'), (2, 3, 'b')],
+             [(3, 4, 'e'), (4, 1, 'f'), (1, 2, 'a'), (2, 3, 'b')]]
         """
         if output not in ['vertex', 'edge']:
             raise ValueError('output must be either vertex or edge')
@@ -5211,14 +5211,32 @@ class GenericGraph(GenericGraph_pyx):
                            [])
 
             from sage.graphs.graph import Graph
+            from itertools import pairwise
             T = Graph(self.min_spanning_tree(), multiedges=True, format='list_of_edges')
             H = self.copy()
             H.delete_edges(T.edge_iterator())
+            root = next(T.vertex_iterator())
+            rank = dict(T.breadth_first_search(root, report_distance=True))
+            parent = {v: u for u, v in T.breadth_first_search(root, edges=True)}
             L = []
             for e in H.edge_iterator():
-                T.add_edge(e)
-                L.append(T.is_tree(certificate=True, output=output)[1])
-                T.delete_edge(e)
+                # Search for the nearest common ancestor of e[0] and e[1] in T
+                P = [e[0]]
+                Q = [e[1]]
+                while P[-1] != Q[-1]:
+                    # If rank[P[-1]] > rank[Q[-1]], we extend the path P.
+                    # If rank[P[-1]] < rank[Q[-1]], we extend the path Q.
+                    # In case of equality, we extend both paths.
+                    diff = rank[P[-1]] - rank[Q[-1]]
+                    if diff >= 0:
+                        P.append(parent[P[-1]])
+                    if diff <= 0:
+                        Q.append(parent[Q[-1]])
+
+                cycle = Q + P[-2::-1]
+                if output == 'edge':
+                    cycle = [e] + [(x, y, T.edge_label(x, y)[0]) for x, y in pairwise(cycle)]
+                L.append(cycle)
             return L
 
         # second case: there are no multiple edges
@@ -5289,7 +5307,7 @@ class GenericGraph(GenericGraph_pyx):
         TESTS::
 
             sage: g = Graph([(0, 1, 1), (1, 2, 'a')])
-            sage: g.min_spanning_tree(by_weight=True)
+            sage: g.minimum_cycle_basis(by_weight=True)
             Traceback (most recent call last):
             ...
             ValueError: the weight function cannot find the weight of (1, 2, 'a')
@@ -11431,8 +11449,7 @@ class GenericGraph(GenericGraph_pyx):
             if not self.has_edge(vertex, vertex):
                 yield vertex
 
-        for u in self._backend.iterator_nbrs(vertex):
-            yield u
+        yield from self._backend.iterator_nbrs(vertex)
 
     def vertices(self, sort=False, key=None, degree=None, vertex_property=None):
         r"""

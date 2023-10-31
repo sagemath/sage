@@ -33,7 +33,7 @@ from sage.structure.element cimport Element
 
 from sage.structure.element import coerce_binop
 
-cdef inline long prec(Polynomial_complex_arb pol):
+cdef inline long prec(Polynomial_complex_arb pol) noexcept:
     return pol._parent._base._prec
 
 
@@ -87,7 +87,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         """
         acb_poly_clear(self._poly)
 
-    cdef Polynomial_complex_arb _new(self):
+    cdef Polynomial_complex_arb _new(self) noexcept:
         r"""
         Return a new polynomial with the same parent as this one.
         """
@@ -230,13 +230,13 @@ cdef class Polynomial_complex_arb(Polynomial):
         """
         return smallInteger(acb_poly_degree(self._poly))
 
-    cdef get_unsafe(self, Py_ssize_t n):
+    cdef get_unsafe(self, Py_ssize_t n) noexcept:
         cdef ComplexBall res = ComplexBall.__new__(ComplexBall)
         res._parent = self._parent._base
         acb_poly_get_coeff_acb(res.value, self._poly, n)
         return res
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         r"""
         Return the coefficient list of this polynomial.
 
@@ -270,7 +270,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
     # Ring and Euclidean arithmetic
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         r"""
         Return the sum of two polynomials.
 
@@ -290,7 +290,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         r"""
         Return the opposite of this polynomial.
 
@@ -306,7 +306,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         r"""
         Return the difference of two polynomials.
 
@@ -326,7 +326,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         r"""
         Return the product of two polynomials.
 
@@ -347,7 +347,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _lmul_(self, Element a):
+    cpdef _lmul_(self, Element a) noexcept:
         r"""
         TESTS::
 
@@ -367,7 +367,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _rmul_(self, Element a):
+    cpdef _rmul_(self, Element a) noexcept:
         r"""
         TESTS::
 
@@ -428,7 +428,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
     # Syntactic transformations
 
-    cpdef Polynomial truncate(self, long n):
+    cpdef Polynomial truncate(self, long n) noexcept:
         r"""
         Return the truncation to degree `n - 1` of this polynomial.
 
@@ -459,7 +459,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cdef _inplace_truncate(self, long n):
+    cdef _inplace_truncate(self, long n) noexcept:
         if n < 0:
             n = 0
         acb_poly_truncate(self._poly, n)
@@ -533,7 +533,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
     # Truncated and power series arithmetic
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial other, long n):
+    cpdef Polynomial _mul_trunc_(self, Polynomial other, long n) noexcept:
         r"""
         Return the product of ``self`` and ``other``, truncated before degree `n`.
 
@@ -561,7 +561,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef Polynomial inverse_series_trunc(self, long n):
+    cpdef Polynomial inverse_series_trunc(self, long n) noexcept:
         r"""
         Return the power series expansion at 0 of the inverse of this
         polynomial, truncated before degree `n`.
@@ -589,7 +589,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef Polynomial _power_trunc(self, unsigned long expo, long n):
+    cpdef Polynomial _power_trunc(self, unsigned long expo, long n) noexcept:
         r"""
         Return a power of this polynomial, truncated before degree `n`.
 

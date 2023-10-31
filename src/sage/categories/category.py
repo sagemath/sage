@@ -118,6 +118,7 @@ from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _f
 
 _join_cache = WeakValueDictionary()
 
+
 class Category(UniqueRepresentation, SageObject):
     r"""
     The base class for modeling mathematical categories, like for example:
@@ -448,7 +449,7 @@ class Category(UniqueRepresentation, SageObject):
             cls = cls.__base__
         return super().__classcall__(cls, *args, **options)
 
-    def __init__(self, s=None):
+    def __init__(self):
         """
         Initialize this category.
 
@@ -468,12 +469,10 @@ class Category(UniqueRepresentation, SageObject):
 
         .. NOTE::
 
-            Specifying the name of this category by passing a string
-            is deprecated. If the default name (built from the name of
-            the class) is not adequate, please use
+            If the default name of the category (built from the name of
+            the class) is not adequate, please implement
             :meth:`_repr_object_names` to customize it.
         """
-        assert s is None
         self.__class__ = dynamic_class("{}_with_category".format(self.__class__.__name__),
                                        (self.__class__, self.subcategory_class, ),
                                        cache=False, reduction=None,
@@ -491,35 +490,8 @@ class Category(UniqueRepresentation, SageObject):
 
         """
         t = str(self.__class__.__base__)
-        t = t[t.rfind('.')+1:]
+        t = t[t.rfind('.') + 1:]
         return t[:t.rfind("'")]
-
-    # TODO: move this code into the method _repr_object_names once passing a string is not accepted anymore
-    @lazy_attribute
-    def __repr_object_names(self):
-        """
-        Determine the name of the objects of this category
-        from its type, if it has not been explicitly given
-        at initialisation.
-
-        EXAMPLES::
-
-            sage: Rings()._Category__repr_object_names
-            'rings'
-            sage: PrincipalIdealDomains()._Category__repr_object_names
-            'principal ideal domains'
-
-            sage: Rings()
-            Category of rings
-        """
-        i = -1
-        s = self._label
-        while i < len(s)-1:
-            for i in range(len(s)):
-                if s[i].isupper():
-                    s = s[:i] + " " + s[i].lower() + s[i+1:]
-                    break
-        return s.lstrip()
 
     def _repr_object_names(self):
         """
@@ -531,8 +503,24 @@ class Category(UniqueRepresentation, SageObject):
             'finite groups'
             sage: AlgebrasWithBasis(QQ)._repr_object_names()
             'algebras with basis over Rational Field'
+
+        TESTS::
+
+            sage: Rings()
+            Category of rings
+            sage: Rings()._repr_object_names()
+            'rings'
+            sage: PrincipalIdealDomains()._repr_object_names()
+            'principal ideal domains'
         """
-        return self.__repr_object_names
+        i = -1
+        s = self._label
+        while i < len(s) - 1:
+            for i in range(len(s)):
+                if s[i].isupper():
+                    s = s[:i] + " " + s[i].lower() + s[i + 1:]
+                    break
+        return s.lstrip()
 
     def _short_name(self):
         """
@@ -1256,7 +1244,7 @@ class Category(UniqueRepresentation, SageObject):
         recursively from the result of :meth:`additional_structure`
         on the super categories of ``self``.
         """
-        result = { D for C in self.super_categories() for D in C.structure() }
+        result = {D for C in self.super_categories() for D in C.structure()}
         if self.additional_structure() is not None:
             result.add(self)
         return frozenset(result)
@@ -1319,8 +1307,7 @@ class Category(UniqueRepresentation, SageObject):
                 False
         """
         return self.is_subcategory(other) and \
-           len(self.structure()) == \
-           len(other.structure())
+            len(self.structure()) == len(other.structure())
 
     @cached_method
     def full_super_categories(self):
@@ -1446,27 +1433,26 @@ class Category(UniqueRepresentation, SageObject):
             Traceback (most recent call last):
             ...
             AssertionError: Category of my objects is not a subcategory of Objects()
-
         """
-        from sage.categories.objects    import Objects
+        from sage.categories.objects import Objects
         from sage.categories.sets_cat import Sets
         tester = self._tester(**options)
         tester.assertTrue(isinstance(self.super_categories(), list),
-                       "%s.super_categories() should return a list" % self)
+                          "%s.super_categories() should return a list" % self)
         tester.assertTrue(self.is_subcategory(Objects()),
-                       "%s is not a subcategory of Objects()" % self)
+                          "%s is not a subcategory of Objects()" % self)
         tester.assertTrue(isinstance(self.parent_class, type))
         tester.assertTrue(all(not isinstance(cat, JoinCategory) for cat in self._super_categories))
         if not isinstance(self, JoinCategory):
-            tester.assertTrue(all(self._cmp_key > cat._cmp_key      for cat in self._super_categories))
-        tester.assertTrue(self.is_subcategory( Category.join(self.super_categories()) )) # Not an obviously passing test with axioms
+            tester.assertTrue(all(self._cmp_key > cat._cmp_key for cat in self._super_categories))
+        tester.assertTrue(self.is_subcategory(Category.join(self.super_categories())))  # Not an obviously passing test with axioms
 
         for category in self._all_super_categories_proper:
             if self.is_full_subcategory(category):
                 tester.assertTrue(any(cat.is_subcategory(category)
-                                   for cat in self.full_super_categories()),
-                               "Every full super category should be a super category"
-                               "of some immediate full super category")
+                                      for cat in self.full_super_categories()),
+                                  "Every full super category should be a super category"
+                                  "of some immediate full super category")
 
         if self.is_subcategory(Sets()):
             tester.assertTrue(isinstance(self.parent_class, type))
@@ -1588,7 +1574,7 @@ class Category(UniqueRepresentation, SageObject):
             doccls = cls
         else:
             # Otherwise, check XXXMethods
-            assert inspect.isclass(method_provider_cls),\
+            assert inspect.isclass(method_provider_cls), \
                 "%s.%s should be a class" % (cls.__name__, method_provider)
             mro = inspect.getmro(method_provider_cls)
             if len(mro) > 2 or (len(mro) == 2 and mro[1] is not object):
@@ -1941,7 +1927,7 @@ class Category(UniqueRepresentation, SageObject):
           appropriate convention for A<B. Using subcategory calls
           for A<B, but the current meet and join call for A>B.
         """
-        if self is other: # useful? fast pathway
+        if self is other:  # useful? fast pathway
             return self
         elif self.is_subcategory(other):
             return other
@@ -2050,14 +2036,13 @@ class Category(UniqueRepresentation, SageObject):
                 return (axiom_attribute(self),)
             warn(("Expecting {}.{} to be a subclass of CategoryWithAxiom to"
                   " implement a category with axiom; got {}; ignoring").format(
-                    self.__class__.__base__.__name__, axiom, axiom_attribute))
+                      self.__class__.__base__.__name__, axiom, axiom_attribute))
 
         # self does not implement this axiom
-        result = (self, ) + \
-                 tuple(cat
-                       for category in self._super_categories
-                       for cat in category._with_axiom_as_tuple(axiom))
-        hook = getattr(self, axiom+"_extra_super_categories", None)
+        result = (self, ) + tuple(cat
+                                  for category in self._super_categories
+                                  for cat in category._with_axiom_as_tuple(axiom))
+        hook = getattr(self, axiom + "_extra_super_categories", None)
         if hook is not None:
             assert inspect.ismethod(hook)
             result += tuple(hook())
@@ -2593,6 +2578,7 @@ def is_Category(x):
     """
     return isinstance(x, Category)
 
+
 @cached_function
 def category_sample():
     r"""
@@ -2606,7 +2592,8 @@ def category_sample():
 
         sage: from sage.categories.category import category_sample
         sage: sorted(category_sample(), key=str)                                        # needs sage.groups
-        [Category of G-sets for Symmetric group of order 8! as a permutation group,
+        [Category of Coxeter groups,
+         Category of G-sets for Symmetric group of order 8! as a permutation group,
          Category of Hecke modules over Rational Field,
          Category of Lie algebras over Rational Field,
          Category of additive magmas, ...,
@@ -2900,6 +2887,7 @@ class CategoryWithParameters(Category):
             return False
         return Unknown
 
+
 #############################################################
 # Join of several categories
 #############################################################
@@ -2948,11 +2936,11 @@ class JoinCategory(CategoryWithParameters):
 
         INPUT:
 
-        - super_categories -- Categories to join.  This category will
+        - ``super_categories`` -- Categories to join. This category will
           consist of objects and morphisms that lie in all of these
           categories.
 
-        - name -- An optional name for this category.
+        - ``name`` -- ignored
 
         TESTS::
 
@@ -2960,17 +2948,13 @@ class JoinCategory(CategoryWithParameters):
             sage: C = JoinCategory((Groups(), CommutativeAdditiveMonoids())); C
             Join of Category of groups and Category of commutative additive monoids
             sage: TestSuite(C).run()
-
         """
         assert len(super_categories) >= 2
         assert all(not isinstance(category, JoinCategory) for category in super_categories)
         # Use __super_categories to not overwrite the lazy attribute Category._super_categories
         # Maybe this would not be needed if the flattening/sorting is does consistently?
         self.__super_categories = list(super_categories)
-        if 'name' in kwds:
-            Category.__init__(self, kwds['name'])
-        else:
-            Category.__init__(self)
+        Category.__init__(self)
 
     def _make_named_class_key(self, name):
         r"""

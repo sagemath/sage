@@ -101,13 +101,13 @@ from sage.data_structures.bitset_base cimport *
 
 # Functions
 
-cdef bint all_children_are_equivalent_trivial(PartitionStack *PS, void *S):
+cdef bint all_children_are_equivalent_trivial(PartitionStack *PS, void *S) noexcept:
     return 0
 
-cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     return 0
 
-cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
     cdef int i, j
@@ -199,7 +199,7 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
     sig_free(isomorphism)
     return x
 
-cdef dc_work_space *allocate_dc_work_space(int n):
+cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
     r"""
     Allocates work space for the double_coset function. It can be
     input to the function in which case it must be deallocated after the
@@ -249,7 +249,7 @@ cdef dc_work_space *allocate_dc_work_space(int n):
         return NULL
     return work_space
 
-cdef void deallocate_dc_work_space(dc_work_space *work_space):
+cdef void deallocate_dc_work_space(dc_work_space *work_space) noexcept:
     r"""
     Deallocates work space for the double_coset function.
     """
@@ -269,11 +269,11 @@ cdef void deallocate_dc_work_space(dc_work_space *work_space):
     sig_free(work_space)
 
 cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *ordering2,
-    int n, bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
+    int n, bint (*all_children_are_equivalent)(PartitionStack *PS, void *S) noexcept,
     int (*refine_and_return_invariant)(PartitionStack *PS, void *S,
-                                       int *cells_to_refine_by, int ctrb_len),
+                                       int *cells_to_refine_by, int ctrb_len) noexcept,
     int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2,
-                              int degree),
+                              int degree) noexcept,
     StabilizerChain *input_group,
     dc_work_space *work_space_prealloc, int *isom) except -1:
     """

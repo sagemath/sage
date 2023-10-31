@@ -190,7 +190,7 @@ cdef class FiniteZZsubmodule_iterator:
         """
         return self
 
-    cdef ModuleElement _iteration(FiniteZZsubmodule_iterator self):
+    cdef ModuleElement _iteration(FiniteZZsubmodule_iterator self) noexcept:
         """
         This is the core implementation of the iteration.
 

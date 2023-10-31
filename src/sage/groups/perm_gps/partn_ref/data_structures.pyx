@@ -40,7 +40,7 @@ from sage.arith.misc import is_prime as n_is_prime
 
 # OrbitPartition (OP)
 
-cdef inline OrbitPartition *OP_new(int n):
+cdef inline OrbitPartition *OP_new(int n) noexcept:
     """
     Allocate and return a pointer to a new OrbitPartition of degree n. Returns a
     null pointer in the case of an allocation failure.
@@ -61,12 +61,12 @@ cdef inline OrbitPartition *OP_new(int n):
     OP_clear(OP)
     return OP
 
-cdef inline void OP_dealloc(OrbitPartition *OP):
+cdef inline void OP_dealloc(OrbitPartition *OP) noexcept:
     if OP is not NULL:
         sig_free(OP.parent)
         sig_free(OP)
 
-cdef OP_string(OrbitPartition *OP):
+cdef OP_string(OrbitPartition *OP) noexcept:
     """
     Return a string representation of the OrbitPartition.
     """
@@ -179,7 +179,7 @@ def OP_represent(int n, merges, perm):
 
 # PartitionStack (PS)
 
-cdef inline PartitionStack *PS_new(int n, bint unit_partition):
+cdef inline PartitionStack *PS_new(int n, bint unit_partition) noexcept:
     """
     Allocate and return a pointer to a new PartitionStack of degree n. Returns a
     null pointer in the case of an allocation failure.
@@ -199,7 +199,7 @@ cdef inline PartitionStack *PS_new(int n, bint unit_partition):
         PS_unit_partition(PS)
     return PS
 
-cdef void PS_unit_partition(PartitionStack *PS):
+cdef void PS_unit_partition(PartitionStack *PS) noexcept:
     """
     Set partition stack to a single partition with a single cell.
     """
@@ -211,7 +211,7 @@ cdef void PS_unit_partition(PartitionStack *PS):
     PS.entries[n-1] = n - 1
     PS.levels[n-1] = -1
 
-cdef inline PartitionStack *PS_copy(PartitionStack *PS):
+cdef inline PartitionStack *PS_copy(PartitionStack *PS) noexcept:
     """
     Allocate and return a pointer to a copy of PartitionStack PS. Returns a null
     pointer in the case of an allocation failure.
@@ -230,12 +230,12 @@ cdef inline PartitionStack *PS_copy(PartitionStack *PS):
     PS_copy_from_to(PS, PS2)
     return PS2
 
-cdef inline void PS_dealloc(PartitionStack *PS):
+cdef inline void PS_dealloc(PartitionStack *PS) noexcept:
     if PS is not NULL:
         sig_free(PS.entries)
         sig_free(PS)
 
-cdef PartitionStack *PS_from_list(list L):
+cdef PartitionStack *PS_from_list(list L) noexcept:
     """
     Allocate and return a pointer to a PartitionStack representing L. Returns a
     null pointer in the case of an allocation failure.
@@ -260,7 +260,7 @@ cdef PartitionStack *PS_from_list(list L):
     PS.degree = n
     return PS
 
-cdef PS_print(PartitionStack *PS):
+cdef PS_print(PartitionStack *PS) noexcept:
     """
     Print a visual representation of PS.
     """
@@ -268,7 +268,7 @@ cdef PS_print(PartitionStack *PS):
     for i in range(PS.depth + 1):
         PS_print_partition(PS, i)
 
-cdef PS_print_partition(PartitionStack *PS, int k):
+cdef PS_print_partition(PartitionStack *PS, int k) noexcept:
     """
     Print the partition at depth k.
     """
@@ -282,7 +282,7 @@ cdef PS_print_partition(PartitionStack *PS, int k):
     s = s[:-1] + ')'
     print(s)
 
-cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL):
+cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL) noexcept:
     """
     Find the first occurrence of the smallest cell of size greater than one,
     which is admissible (checked by the function ``test_allowance``).
@@ -317,7 +317,7 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL)
     return PS.entries[location]
 
 
-cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr):
+cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr) noexcept:
     """
     Suppose a cell ``C`` was split into ``a`` components at ``PS.level``.
     Set the rows of the matrix ``nonsingletons_ptr`` to the first
@@ -381,7 +381,7 @@ cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
         i += 1
     return location
 
-cdef list PS_singletons(PartitionStack * part):
+cdef list PS_singletons(PartitionStack * part) noexcept:
     """
     Return the list of all singletons in the PartitionStack.
     """
@@ -550,7 +550,7 @@ cdef enum:
     default_num_gens = 8
     default_num_bits = 64
 
-cdef StabilizerChain *SC_new(int n, bint init_gens=True):
+cdef StabilizerChain *SC_new(int n, bint init_gens=True) noexcept:
     """
     Allocate and return a pointer to a new StabilizerChain of degree n. Returns
     a null pointer in the case of an allocation failure.
@@ -620,7 +620,7 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True):
 
     return SC
 
-cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size):
+cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size) noexcept:
     """
     Reallocate generator array at level `level` to size `size`.
 
@@ -642,7 +642,7 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size):
     SC.array_size[level] = size
     return 0
 
-cdef inline void SC_dealloc(StabilizerChain *SC):
+cdef inline void SC_dealloc(StabilizerChain *SC) noexcept:
     cdef int i, n
     if SC is not NULL:
         n =  SC.degree
@@ -657,7 +657,7 @@ cdef inline void SC_dealloc(StabilizerChain *SC):
         OP_dealloc(SC.OP_scratch)
         sig_free(SC)
 
-cdef StabilizerChain *SC_symmetric_group(int n):
+cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
     """
     Returns a stabilizer chain for the symmetric group on {0, 1, ..., n-1}.
 
@@ -698,7 +698,7 @@ cdef StabilizerChain *SC_symmetric_group(int n):
             memcpy(SC.gen_inverses[i] + n*j, SC.generators[i] + n*j, n * sizeof(int) )
     return SC
 
-cdef StabilizerChain *SC_alternating_group(int n):
+cdef StabilizerChain *SC_alternating_group(int n) noexcept:
     """
     Returns a stabilizer chain for the alternating group on {0, 1, ..., n-1}.
 
@@ -742,7 +742,7 @@ cdef StabilizerChain *SC_alternating_group(int n):
             SC_invert_perm(SC.gen_inverses[i] + n*j, SC.generators[i] + n*j, n)
     return SC
 
-cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size):
+cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size) noexcept:
     """
     If size is larger than current allocation, double the size of the bitsets
     until it is not.
@@ -776,7 +776,7 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size):
     memset(SC.gen_is_id.bits + (size_old >> index_shift) + 1, 0, (limbs - (size_old >> index_shift) - 1) * sizeof(unsigned long))
     return 0
 
-cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level):
+cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level) noexcept:
     """
     Creates a copy of the first `level` levels of SC. Must have 0 < level.
 
@@ -804,7 +804,7 @@ cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level):
     SC_copy_nomalloc(SCC, SC, level) # no chance for memory error here...
     return SCC
 
-cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level):
+cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level) noexcept:
     cdef int i, n = SC.degree
     level = min(level, SC.base_size)
     SC_dest.base_size = level
@@ -818,7 +818,7 @@ cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int lev
         memcpy(SC_dest.gen_inverses[i], SC.gen_inverses[i], SC.num_gens[i]*n * sizeof(int) )
     return 0
 
-cdef SC_print_level(StabilizerChain *SC, int level):
+cdef SC_print_level(StabilizerChain *SC, int level) noexcept:
     cdef int i, j, n = SC.degree
     if level < SC.base_size:
         print('/ level {}'.format(level))
@@ -839,7 +839,7 @@ cdef SC_print_level(StabilizerChain *SC, int level):
         print(r'\ base_size {}'.format(SC.base_size))
 
 
-cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len):
+cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len) noexcept:
     """
     Create a new stabilizer chain whose base starts with the given base, and
     which represents the same permutation group. Original StabilizerChain is
@@ -857,7 +857,7 @@ cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len):
         return NULL
     return NEW
 
-cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int *base, int base_len):
+cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int *base, int base_len) noexcept:
     cdef int i
     SC_dest.base_size = 0
     for i in range(base_len):
@@ -867,7 +867,7 @@ cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int
         return 1
     return 0
 
-cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level):
+cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level) noexcept:
     cdef mpz_t src_order, dst_order
     cdef int *perm = dest.perm_scratch
     mpz_init(src_order)
@@ -901,7 +901,7 @@ cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level):
     mpz_clear(dst_order)
     return 0
 
-cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p):
+cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p) noexcept:
     """
     Insert the point ``p`` as a base point on level ``level``. Return a new
     StabilizerChain with this new base. Original StabilizerChain is unmodified.
@@ -928,7 +928,7 @@ cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p
         return NULL
     return NEW
 
-cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level, int p):
+cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level, int p) noexcept:
     cdef int i, b
     SC_copy_nomalloc(SC_dest, SC, level)
     SC_add_base_point(SC_dest, p)
@@ -940,7 +940,7 @@ cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain
         return 1
     return 0
 
-cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
+cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x) noexcept:
     """
     Return values:
     0 - No errors.
@@ -981,7 +981,7 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
         i += 1
     return 0
 
-cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens, int *new_gens):
+cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens, int *new_gens) noexcept:
     """
     Apply Schreier's subgroup lemma[1] as follows. Given a level, a point x, and
     a generator s, find the coset traversal element r coming from x.
@@ -1027,7 +1027,7 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
         SC_mult_perms(perm, perm, perm_rep_inv, n)
     return SC_insert(SC, level+1, new_gens, num_gens)
 
-cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_perms, bint sift):
+cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_perms, bint sift) noexcept:
     cdef int i, j, b, n = SC.degree
     cdef int perm_gen_index
     if sift:
@@ -1134,7 +1134,7 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
             section += 1
     return 0
 
-cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t support):
+cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t support) noexcept:
     """
     Test whether the group generated by the input permutations is a giant, i.e.,
     the alternating or symmetric group.
@@ -1614,7 +1614,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
 
 # Functions
 
-cdef int sort_by_function(PartitionStack *PS, int start, int *degrees):
+cdef int sort_by_function(PartitionStack *PS, int start, int *degrees) noexcept:
     """
     A simple counting sort, given the degrees of vertices to a certain cell.
 
@@ -1658,7 +1658,7 @@ cdef int sort_by_function(PartitionStack *PS, int start, int *degrees):
         j += 1
     return max_location
 
-cdef int refine_by_orbits(PartitionStack *PS, StabilizerChain *SC, int *perm_stack, int *cells_to_refine_by, int *ctrb_len):
+cdef int refine_by_orbits(PartitionStack *PS, StabilizerChain *SC, int *perm_stack, int *cells_to_refine_by, int *ctrb_len) noexcept:
     """
     Given a stabilizer chain SC, refine the partition stack PS so that each cell
     contains elements from at most one orbit, and sort the refined cells by
@@ -1699,7 +1699,7 @@ cdef int refine_by_orbits(PartitionStack *PS, StabilizerChain *SC, int *perm_sta
     return invariant
 
 cdef int compute_relabeling(StabilizerChain *group, StabilizerChain *scratch_group,
-    int *permutation, int *relabeling):
+    int *permutation, int *relabeling) noexcept:
     """
     Technically, compute the INVERSE of the relabeling
     """

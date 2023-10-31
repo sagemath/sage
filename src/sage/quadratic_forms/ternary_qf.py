@@ -116,6 +116,20 @@ class TernaryQF(SageObject):
         """
         return self._a, self._b, self._c, self._r, self._s, self._t
 
+    def __hash__(self):
+        """
+        Returns a hash for self.
+
+        EXAMPLES::
+
+            sage: Q = TernaryQF([1, 2, 3, 4, 5, 6])
+            sage: Q.__hash__()
+            5881802312257552497  # 64-bit
+            1770036893           # 32-bit
+        """
+
+        return hash(self.coefficients())
+
     def coefficient(self, n):
         r"""
         Return the `n`-th coefficient of the ternary quadratic form.

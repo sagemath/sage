@@ -1,10 +1,6 @@
 r"""
 Sage Runtime Environment
 
-AUTHORS:
-
-- \R. Andrew Ohana (2012): Initial version.
-
 Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
 environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
 (see also :trac:`29446`)::
@@ -16,6 +12,11 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
     sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
     sage: out == repr((SAGE_ROOT, SAGE_LOCAL))                                        # long time
     True
+
+AUTHORS:
+
+- \R. Andrew Ohana (2012): initial version
+
 """
 
 # ****************************************************************************
@@ -200,7 +201,6 @@ ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
 GAP_LIB_DIR = var("GAP_LIB_DIR", join(SAGE_LOCAL, "lib", "gap"))
 GAP_SHARE_DIR = var("GAP_SHARE_DIR", join(SAGE_SHARE, "gap"))
-THEBE_DIR = var("THEBE_DIR", join(SAGE_SHARE, "thebe"))
 COMBINATORIAL_DESIGN_DATA_DIR = var("COMBINATORIAL_DESIGN_DATA_DIR", join(SAGE_SHARE, "combinatorial_designs"))
 CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR", join(SAGE_SHARE, "cremona"))
 CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR", join(SAGE_SHARE, "cremona"))
