@@ -24,6 +24,9 @@ on:
       - reopened
       # When a CI label is added
       - labeled
+    paths:
+      - 'build/pkgs/**'
+      - 'pkgs/**'
   workflow_dispatch:
 
 concurrency:

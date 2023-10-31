@@ -2209,7 +2209,7 @@ class Function_crootof(BuiltinFunction):
             sage: complex_root_of(x^8 - 1, 7).n(20)                                     # needs sage.symbolic
             0.70711 + 0.70711*I
         """
-        from sympy.core.evalf import prec_to_dps
+        from mpmath.libmp import prec_to_dps
         from sympy.polys import CRootOf, Poly
         try:
             prec = parent.precision()

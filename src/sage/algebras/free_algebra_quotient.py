@@ -65,7 +65,7 @@ from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientEleme
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
+class FreeAlgebraQuotient(UniqueRepresentation, Algebra):
     @staticmethod
     def __classcall__(cls, A, mons, mats, names):
         """

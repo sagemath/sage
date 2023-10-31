@@ -6,7 +6,7 @@ cdef extern from *:
     int unlikely(int) nogil  # defined by Cython
 
 
-cdef inline void* align(void* ptr, size_t alignment):
+cdef inline void* align(void* ptr, size_t alignment) noexcept:
     """
     Round up ``ptr`` to the nearest multiple of ``alignment``, which
     must be a power of 2

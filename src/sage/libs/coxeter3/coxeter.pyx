@@ -540,7 +540,7 @@ cdef class CoxGroup(SageObject):
         """
         return isFiniteType(self.x)
 
-    cpdef full_context(self):
+    cpdef full_context(self) noexcept:
         """
         Make all of the elements of a finite Coxeter group available.
 
@@ -741,7 +741,7 @@ cdef class CoxGroupElement:
 
     inverse = __invert__
 
-    cpdef CoxGroup parent_group(self):
+    cpdef CoxGroup parent_group(self) noexcept:
         """
         Return the parent Coxeter group for this element.
 
@@ -959,7 +959,7 @@ cdef class CoxGroupElement:
         cdef Generator ss = self._parent_group.in_ordering[s]
         return self.group.isDescent(self.word, s)
 
-    cdef CoxGroupElement _new(self):
+    cdef CoxGroupElement _new(self) noexcept:
         """
         Return a new copy of this element.
         """
@@ -1130,7 +1130,7 @@ cdef class CoxGroupElement:
         cdef CoxNbr y = self.group.extendContext(vv.word)
         return ZZ(self.group.mu(x,y))
 
-cdef LFlags_to_list(CoxGroup parent, LFlags f):
+cdef LFlags_to_list(CoxGroup parent, LFlags f) noexcept:
     """
     Return the right descent set of this element.
 

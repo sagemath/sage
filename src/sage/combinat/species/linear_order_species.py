@@ -77,7 +77,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: L = species.LinearOrderSpecies(); L
             Linear order species
         """
-        return super(LinearOrderSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """
