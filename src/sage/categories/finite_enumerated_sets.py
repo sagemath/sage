@@ -446,8 +446,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                     for j in range(stop):
                         yield next(it)
                     return
-                for x in self:
-                    yield x
+                yield from self
                 return
             if L is None:
                 L = self.tuple()

@@ -31,7 +31,7 @@ from cypari2.stack cimport new_gen
 from .convert_gmp cimport _new_GEN_from_mpz_t
 
 
-cdef inline GEN _new_GEN_from_fmpz_t(fmpz_t value):
+cdef inline GEN _new_GEN_from_fmpz_t(fmpz_t value) noexcept:
     r"""
     Create a new PARI ``t_INT`` from a ``fmpz_t``.
 
@@ -44,7 +44,7 @@ cdef inline GEN _new_GEN_from_fmpz_t(fmpz_t value):
         return stoi(value[0])
 
 
-cdef inline GEN _new_GEN_from_fmpq_t(fmpq_t value):
+cdef inline GEN _new_GEN_from_fmpq_t(fmpq_t value) noexcept:
     r"""
     Create a new PARI ``t_RAT`` from a ``fmpq_t``.
 
@@ -58,7 +58,7 @@ cdef inline GEN _new_GEN_from_fmpq_t(fmpq_t value):
     return mkfrac(num, denom)
 
 
-cdef GEN _new_GEN_from_fmpz_mat_t(fmpz_mat_t B):
+cdef GEN _new_GEN_from_fmpz_mat_t(fmpz_mat_t B) noexcept:
     r"""
     Create a new PARI ``t_MAT`` with ``nr`` rows and ``nc`` columns
     from a ``fmpz_mat_t``.
@@ -76,7 +76,7 @@ cdef GEN _new_GEN_from_fmpz_mat_t(fmpz_mat_t B):
     return A
 
 
-cdef GEN _new_GEN_from_fmpq_mat_t(fmpq_mat_t B):
+cdef GEN _new_GEN_from_fmpq_mat_t(fmpq_mat_t B) noexcept:
     cdef GEN x
     cdef GEN A = zeromatcopy(fmpq_mat_nrows(B), fmpq_mat_ncols(B))
     cdef Py_ssize_t i, j
@@ -86,7 +86,7 @@ cdef GEN _new_GEN_from_fmpq_mat_t(fmpq_mat_t B):
             set_gcoeff(A, i+1, j+1, x)  # A[i+1, j+1] = x (using 1-based indexing)
     return A
 
-cdef GEN _new_GEN_from_fmpz_mat_t_rotate90(fmpz_mat_t B):
+cdef GEN _new_GEN_from_fmpz_mat_t_rotate90(fmpz_mat_t B) noexcept:
     r"""
     Create a new PARI ``t_MAT`` with ``nr`` rows and ``nc`` columns
     from a ``fmpz_mat_t`` and rotate the matrix 90 degrees
@@ -106,7 +106,7 @@ cdef GEN _new_GEN_from_fmpz_mat_t_rotate90(fmpz_mat_t B):
     return A
 
 
-cdef GEN _new_GEN_from_fmpq_mat_t_rotate90(fmpq_mat_t B):
+cdef GEN _new_GEN_from_fmpq_mat_t_rotate90(fmpq_mat_t B) noexcept:
     r"""
     Create a new PARI ``t_MAT`` with ``nr`` rows and ``nc`` columns
     from a ``fmpq_mat_t`` and rotate the matrix 90 degrees
@@ -126,7 +126,7 @@ cdef GEN _new_GEN_from_fmpq_mat_t_rotate90(fmpq_mat_t B):
     return A
 
 
-cdef Gen integer_matrix(fmpz_mat_t B, bint rotate):
+cdef Gen integer_matrix(fmpz_mat_t B, bint rotate) noexcept:
     """
     EXAMPLES::
 
@@ -142,7 +142,7 @@ cdef Gen integer_matrix(fmpz_mat_t B, bint rotate):
     return new_gen(g)
 
 
-cdef Gen rational_matrix(fmpq_mat_t B, bint rotate):
+cdef Gen rational_matrix(fmpq_mat_t B, bint rotate) noexcept:
     """
     EXAMPLES::
 

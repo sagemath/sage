@@ -124,7 +124,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         """
         return p == self._parent.prime()
 
-    cdef cdigit_ptr _getdigit_relative(self, long i):
+    cdef cdigit_ptr _getdigit_relative(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th significant digit of this number.
 
@@ -140,7 +140,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         """
         pass
 
-    cdef cdigit_ptr _getdigit_absolute(self, long i):
+    cdef cdigit_ptr _getdigit_absolute(self, long i) noexcept:
         r"""
         Return a pointer on the digit in position `i` of
         this number.
@@ -157,7 +157,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         """
         pass
 
-    cdef void _getslice_relative(self, celement slice, long start, long length):
+    cdef void _getslice_relative(self, celement slice, long start, long length) noexcept:
         r"""
         Select a slice of the digits of this number.
 
@@ -178,7 +178,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         """
         pass
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -198,7 +198,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         """
         raise NotImplementedError("must be implemented in subclasses")
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Compute the digits of this number until the absolute precision ``prec``.
 
@@ -220,7 +220,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return ERROR_PRECISION
         return 0
 
-    cdef int _jump_relative_c(self, long prec, long halt):
+    cdef int _jump_relative_c(self, long prec, long halt) noexcept:
         r"""
         Compute the digits of this number until the relative precision
         ``prec``.
@@ -1318,7 +1318,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         ans._init_jump()
         return ans
 
-    cdef long valuation_c(self, long halt=-maxordp):
+    cdef long valuation_c(self, long halt=-maxordp) noexcept:
         r"""
         Return the best lower bound we have on the valuation of
         this element at the current stage of the computation.
@@ -1710,7 +1710,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         """
         return self.__rshift__(-s)
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         r"""
         Return the sum of this element with ``other``.
 
@@ -1729,7 +1729,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return self
         return element_class_add(self._parent, self, <RelaxedElement>other)
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         r"""
         Return the difference of this element and ``other``.
 
@@ -1751,7 +1751,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return self
         return element_class_sub(self._parent, self, <RelaxedElement>other)
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         r"""
         Return the opposite of this element.
 
@@ -1768,7 +1768,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return self
         return element_class_sub(self._parent, self._parent.zero(), self)
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         r"""
         Return the product of this element with ``other``.
 
@@ -1790,7 +1790,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return other
         return element_class_mul(self._parent, self, <RelaxedElement>other)
 
-    cpdef _div_(self, other):
+    cpdef _div_(self, other) noexcept:
         r"""
         Return the quotient if this element by ``other``.
 
@@ -2055,7 +2055,7 @@ cdef class RelaxedElement_abandon(RelaxedElement):
         """
         self._valuation = -maxordp
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this element.
 
@@ -2083,21 +2083,21 @@ cdef class RelaxedElementWithDigits(RelaxedElement):
         """
         element_clear(self._digits)
 
-    cdef cdigit_ptr _getdigit_relative(self, long i):
+    cdef cdigit_ptr _getdigit_relative(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th digit of this number
         in relative precision.
         """
         return element_get_digit(self._digits, i)
 
-    cdef cdigit_ptr _getdigit_absolute(self, long i):
+    cdef cdigit_ptr _getdigit_absolute(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th digit of this number
         in absolute precision.
         """
         return element_get_digit(self._digits, i - self._valuation)
 
-    cdef void _getslice_relative(self, celement slice, long start, long length):
+    cdef void _getslice_relative(self, celement slice, long start, long length) noexcept:
         r"""
         Select a slice of the sequence of digits of this element.
 
@@ -2171,21 +2171,21 @@ cdef class RelaxedElement_zero(RelaxedElement):
         """
         return self.__class__, (self._parent,)
 
-    cdef cdigit_ptr _getdigit_relative(self, long i):
+    cdef cdigit_ptr _getdigit_relative(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th digit of this number
         in relative precision.
         """
         return digit_zero
 
-    cdef cdigit_ptr _getdigit_absolute(self, long i):
+    cdef cdigit_ptr _getdigit_absolute(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th digit of this number
         in absolute precision.
         """
         return digit_zero
 
-    cdef void _getslice_relative(self, celement slice, long start, long length):
+    cdef void _getslice_relative(self, celement slice, long start, long length) noexcept:
         r"""
         Select a slice of the sequence of digits of this element.
 
@@ -2199,7 +2199,7 @@ cdef class RelaxedElement_zero(RelaxedElement):
         """
         element_init(slice)
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Compute the digits of this number until the absolute precision ``prec``.
 
@@ -2213,7 +2213,7 @@ cdef class RelaxedElement_zero(RelaxedElement):
         """
         return 0
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -2275,7 +2275,7 @@ cdef class RelaxedElement_one(RelaxedElementWithDigits):
         """
         return self.__class__, (self._parent,)
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Compute the digits of this number until the absolute precision ``prec``.
 
@@ -2291,7 +2291,7 @@ cdef class RelaxedElement_one(RelaxedElementWithDigits):
             self._precrel = prec
         return 0
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -2367,21 +2367,21 @@ cdef class RelaxedElement_bound(RelaxedElement):
         """
         return self.__class__, (self._parent, self._x, self._precbound)
 
-    cdef cdigit_ptr _getdigit_relative(self, long i):
+    cdef cdigit_ptr _getdigit_relative(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th digit of this number
         in relative precision.
         """
         return self._x._getdigit_relative(i)
 
-    cdef cdigit_ptr _getdigit_absolute(self, long i):
+    cdef cdigit_ptr _getdigit_absolute(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th digit of this number
         in absolute precision.
         """
         return self._x._getdigit_absolute(i)
 
-    cdef void _getslice_relative(self, celement slice, long start, long length):
+    cdef void _getslice_relative(self, celement slice, long start, long length) noexcept:
         r"""
         Select a slice of the digits of this number.
 
@@ -2402,7 +2402,7 @@ cdef class RelaxedElement_bound(RelaxedElement):
         """
         self._x._getslice_relative(slice, start, length)
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Jump to the absolute precision ``prec``.
 
@@ -2425,7 +2425,7 @@ cdef class RelaxedElement_bound(RelaxedElement):
         self._precrel = min(x._precrel, self._precbound - self._valuation)
         return error
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Jump to the next digit.
 
@@ -2508,7 +2508,7 @@ cdef class RelaxedElement_value(RelaxedElementWithDigits):
         """
         return self.__class__, (self._parent, self._value, self._shift, self._precbound)
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Compute the digits of this number until the absolute precision ``prec``.
 
@@ -2532,7 +2532,7 @@ cdef class RelaxedElement_value(RelaxedElementWithDigits):
             return ERROR_OVERFLOW
         return 0
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -2649,7 +2649,7 @@ cdef class RelaxedElement_random(RelaxedElementWithDigits):
         """
         return self.__class__, (self._parent, self._initialvaluation, self._precbound, self._seed)
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Generate the next digit of this number at random.
 
@@ -2747,14 +2747,14 @@ cdef class RelaxedElement_slice(RelaxedElement):
         """
         return self.__class__, (self._parent, self._x, self._start, self._stop, self._shift)
 
-    cdef cdigit_ptr _getdigit_relative(self, long i):
+    cdef cdigit_ptr _getdigit_relative(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th digit of this number
         in relative precision.
         """
         return self._getdigit_absolute(i + self._valuation)
 
-    cdef cdigit_ptr _getdigit_absolute(self, long i):
+    cdef cdigit_ptr _getdigit_absolute(self, long i) noexcept:
         r"""
         Return a pointer on the `i`-th digit of this number
         in absolute precision.
@@ -2765,7 +2765,7 @@ cdef class RelaxedElement_slice(RelaxedElement):
         else:
             return self._x._getdigit_absolute(j)
 
-    cdef void _getslice_relative(self, celement slice, long start, long length):
+    cdef void _getslice_relative(self, celement slice, long start, long length) noexcept:
         r"""
         Select a slice of the sequence of digits of this element.
 
@@ -2789,7 +2789,7 @@ cdef class RelaxedElement_slice(RelaxedElement):
         cdef long stop_absolute = min(self._stop, s + length)
         x._getslice_relative(slice, start_absolute - x._valuation, stop_absolute - start_absolute)
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Jump to the absolute precision ``prec``.
 
@@ -2821,7 +2821,7 @@ cdef class RelaxedElement_slice(RelaxedElement):
             self._precrel = prec - self._valuation
             return error
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Jump to the next digit.
 
@@ -2896,7 +2896,7 @@ cdef class RelaxedElement_add(RelaxedElementWithDigits):
         """
         return self.__class__, (self._parent, self._x, self._y)
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Compute the digits of this number until the absolute precision ``prec``.
 
@@ -2926,7 +2926,7 @@ cdef class RelaxedElement_add(RelaxedElementWithDigits):
             n += 1
         return error
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -3003,7 +3003,7 @@ cdef class RelaxedElement_sub(RelaxedElementWithDigits):
         """
         return self.__class__, (self._parent, self._x, self._y)
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Compute the digits of this number until the absolute precision ``prec``.
 
@@ -3033,7 +3033,7 @@ cdef class RelaxedElement_sub(RelaxedElementWithDigits):
             n += 1
         return error
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -3138,7 +3138,7 @@ cdef class RelaxedElement_mul(RelaxedElementWithDigits):
         """
         return self.__class__, (self._parent, self._x, self._y)
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -3192,7 +3192,7 @@ cdef class RelaxedElement_mul(RelaxedElementWithDigits):
         self._precrel += 1
         return 0
 
-    cdef int _update_last_digit(self):
+    cdef int _update_last_digit(self) noexcept:
         r"""
         Redo the computation of the last digit and update carries
         accordingly.
@@ -3260,7 +3260,7 @@ cdef class RelaxedElement_muldigit(RelaxedElementWithDigits):
         self._valuation = y._valuation
         self._init_jump()
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -3380,7 +3380,7 @@ cdef class RelaxedElement_div(RelaxedElementWithDigits):
         """
         return self.__class__, (self._parent, self._num, self._denom, self._valuation, self._precbound)
 
-    cdef int _bootstrap_c(self):
+    cdef int _bootstrap_c(self) noexcept:
         r"""
         Bootstrap the computation of the digits of this element, that is:
 
@@ -3426,7 +3426,7 @@ cdef class RelaxedElement_div(RelaxedElementWithDigits):
         self._definition = element_class_sub(parent, a, d)
         return 0
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -3525,7 +3525,7 @@ cdef class RelaxedElement_sqrt(RelaxedElementWithDigits):
         """
         return self.__class__, (self._parent, self._x)
 
-    cdef int _bootstrap_c(self):
+    cdef int _bootstrap_c(self) noexcept:
         r"""
         Bootstrap the computation of the digits of this element, that is:
 
@@ -3607,7 +3607,7 @@ cdef class RelaxedElement_sqrt(RelaxedElementWithDigits):
             self._definition = (y + c - u*u) / d
         return 0
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -3711,7 +3711,7 @@ cdef class RelaxedElement_teichmuller(RelaxedElementWithDigits):
         xbar = digit_get_sage(element_get_digit(self._digits, 0))
         return self.__class__, (self._parent, xbar)
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Compute the digits of this number until the absolute precision ``prec``.
 
@@ -3731,7 +3731,7 @@ cdef class RelaxedElement_teichmuller(RelaxedElementWithDigits):
             return 0
         return RelaxedElement._jump_c(<RelaxedElement>self, prec)
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -3838,7 +3838,7 @@ cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
             definition = self._definition
         return unpickle_unknown, (id(self), self.__class__, self._parent, self._initialvaluation, digits, definition)
 
-    cpdef set(self, RelaxedElement definition):
+    cpdef set(self, RelaxedElement definition) noexcept:
         r"""
         Set the recursive definition of this self-referent number.
 
@@ -3902,7 +3902,7 @@ cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
         self._init_jump()
         return eq
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Compute the next digit of this number.
 
@@ -3992,20 +3992,20 @@ cdef class RelaxedElement_zeroone(RelaxedElementWithDigits):
         RelaxedElement.__init__(self, parent)
         self._valuation = valuation
 
-    cdef void _setdigit_to_zero(self):
+    cdef void _setdigit_to_zero(self) noexcept:
         r"""
         Append `0` to the list of digits of this element.
         """
         self._precrel += 1
 
-    cdef void _setdigit_to_one(self):
+    cdef void _setdigit_to_one(self) noexcept:
         r"""
         Append `1` to the list of digits of this element.
         """
         element_set_digit_ui(self._digits, 1, self._precrel)
         self._precrel += 1
 
-    cdef int _jump_c(self, long prec):
+    cdef int _jump_c(self, long prec) noexcept:
         r"""
         Jump to the absolute precision ``prec``.
 
@@ -4021,7 +4021,7 @@ cdef class RelaxedElement_zeroone(RelaxedElementWithDigits):
             return ERROR_NOTDEFINED
         return 0
 
-    cdef int _next_c(self):
+    cdef int _next_c(self) noexcept:
         r"""
         Jump to the next digit.
 
@@ -4155,7 +4155,7 @@ cdef class ExpansionIter():
         """
         return self
 
-    cdef _next_simple(self):
+    cdef _next_simple(self) noexcept:
         r"""
         Return the next digit of this expansion (simple mode).
         """
@@ -4165,7 +4165,7 @@ cdef class ExpansionIter():
         self.current += 1
         return digit_get_sage(self.digit)
 
-    cdef _next_smallest(self):
+    cdef _next_smallest(self) noexcept:
         r"""
         Return the next digit of this expansion (smallest mode).
         """
@@ -4176,7 +4176,7 @@ cdef class ExpansionIter():
         self.current += 1
         return digit_get_sage(self.digit)
 
-    cdef _next_teichmuller(self):
+    cdef _next_teichmuller(self) noexcept:
         r"""
         Return the next digit of this expansion (Teichmüller mode).
         """

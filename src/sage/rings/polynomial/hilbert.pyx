@@ -57,7 +57,7 @@ cdef class Node:
         fmpz_poly_clear(self.RMult)
         fmpz_poly_clear(self.LeftFHS)
 
-cdef inline size_t median(list v):
+cdef inline size_t median(list v) noexcept:
     """
     Specialized version of :func:`from sage.stats.basic_stats.median`.
     """
@@ -74,7 +74,7 @@ cdef inline size_t median(list v):
 #   cdef functions related with lists of monomials
 ###
 
-cdef inline bint indivisible_in_list(ETuple m, list L, size_t i):
+cdef inline bint indivisible_in_list(ETuple m, list L, size_t i) noexcept:
     """
     Return if ``m`` divisible by any monomial in ``L[:i]``.
     """
@@ -84,7 +84,7 @@ cdef inline bint indivisible_in_list(ETuple m, list L, size_t i):
             return False
     return True
 
-cdef inline list interred(list L):
+cdef inline list interred(list L) noexcept:
     """
     Return interreduction of a list of monomials.
 
@@ -116,7 +116,7 @@ cdef inline list interred(list L):
             result.append(m)
     return result
 
-cdef list quotient(list L, ETuple m):
+cdef list quotient(list L, ETuple m) noexcept:
     """
     Return the quotient of the ideal represented by ``L`` and the
     monomial represented by ``m``.
@@ -127,7 +127,7 @@ cdef list quotient(list L, ETuple m):
         result.append((<ETuple>PyList_GET_ITEM(L,i)).divide_by_gcd(m))
     return interred(result)
 
-cdef list quotient_by_var(list L, size_t index):
+cdef list quotient_by_var(list L, size_t index) noexcept:
     """
     Return the quotient of the ideal represented by ``L`` and the
     variable number ``index``.
@@ -140,7 +140,7 @@ cdef list quotient_by_var(list L, size_t index):
             result.append((<ETuple> PyList_GET_ITEM(L, i)).divide_by_var(index))
     return interred(result)
 
-cdef ETuple sum_from_list(list L, size_t s, size_t l):
+cdef ETuple sum_from_list(list L, size_t s, size_t l) noexcept:
     """
     Compute the vector sum of the ETuples in ``L[s:s+l]`` in a balanced way.
     """
@@ -154,7 +154,7 @@ cdef ETuple sum_from_list(list L, size_t s, size_t l):
     m2 = sum_from_list(L, s+l2, l-l2)
     return m1.eadd(m2)
 
-cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w):
+cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) noexcept:
     """
     Try to compute the first Hilbert series of ``D.Id``, or return
     ``NotImplemented``.
@@ -286,7 +286,7 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w):
     # We are in a truly difficult case and give up for now...
     return False
 
-cdef make_children(Node D, tuple w):
+cdef make_children(Node D, tuple w) noexcept:
     """
     Create child nodes in ``D`` that allow to compute the first Hilbert
     series of ``D.Id``.

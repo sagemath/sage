@@ -160,7 +160,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         """
         return self.lift_c()
 
-    cdef lift_c(self):
+    cdef lift_c(self) noexcept:
         """
         Implementation of lift.
 
@@ -210,7 +210,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         """
         return self._to_gen()
 
-    cdef pari_gen _to_gen(self):
+    cdef pari_gen _to_gen(self) noexcept:
         """
         Convert this element to an equivalent pari element.
 

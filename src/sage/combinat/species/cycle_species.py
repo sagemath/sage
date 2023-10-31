@@ -113,7 +113,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: C = species.CycleSpecies(); C
             Cyclic permutation species
         """
-        return super(CycleSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """
