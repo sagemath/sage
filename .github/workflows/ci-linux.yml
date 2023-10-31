@@ -83,6 +83,9 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      # Make sure that all "standard-pre" jobs can start simultaneously,
+      # so that runners are available by the time that "default" starts.
+      max_parallel: 50
 
   standard:
     if: ${{ success() || failure() }}
