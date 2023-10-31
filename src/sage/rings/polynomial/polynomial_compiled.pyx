@@ -119,7 +119,7 @@ cdef class CompiledPolynomialFunction:
     def __call__(self, x):
         return self.eval(x)
 
-    cdef object eval(CompiledPolynomialFunction self, object x):
+    cdef object eval(CompiledPolynomialFunction self, object x) noexcept:
         cdef object temp
         try:
             pd_eval(self._dag, x, self._coeffs)  #see further down
@@ -130,7 +130,7 @@ cdef class CompiledPolynomialFunction:
             self._dag.reset()
             raise TypeError(msg)
 
-    cdef object _parse_structure(CompiledPolynomialFunction self):
+    cdef object _parse_structure(CompiledPolynomialFunction self) noexcept:
         """
         Loop through the coefficients of the polynomial, and collect
         coefficient gap widths.  Meanwhile, construct the evaluation
@@ -169,7 +169,7 @@ cdef class CompiledPolynomialFunction:
 
         return gaps, s
 
-    cdef generic_pd _get_gap(CompiledPolynomialFunction self, BinaryTree gaps, int gap):
+    cdef generic_pd _get_gap(CompiledPolynomialFunction self, BinaryTree gaps, int gap) noexcept:
         """
         Find an entry in the BinaryTree gaps, identified by the int gap.
         If such an entry does not exist, create it and put it in the tree.
@@ -184,7 +184,7 @@ cdef class CompiledPolynomialFunction:
             gaps.insert(gap,g)
             return g
 
-    cdef void _fill_gaps_binary(CompiledPolynomialFunction self, BinaryTree gaps):
+    cdef void _fill_gaps_binary(CompiledPolynomialFunction self, BinaryTree gaps) noexcept:
         """
         The desired gaps come in a tree, filled with dummy nodes (with the
         exception of the var node, which is not a dummy).  The nodes are
@@ -352,7 +352,7 @@ cdef inline int pd_eval(generic_pd pd, object vars, object coeffs) except -2:
         pd.eval(vars, coeffs)
     pd.hits += 1
 
-cdef inline void pd_clean(generic_pd pd):
+cdef inline void pd_clean(generic_pd pd) noexcept:
     if pd.hits >= pd.refs:
         pd.value = None
         pd.hits = 0
@@ -367,10 +367,10 @@ cdef class generic_pd:
     cdef int eval(generic_pd self, object vars, object coeffs) except -2:
         raise NotImplementedError
 
-    cdef generic_pd nodummies(generic_pd self):
+    cdef generic_pd nodummies(generic_pd self) noexcept:
         return self
 
-    cdef void reset(generic_pd self):
+    cdef void reset(generic_pd self) noexcept:
         self.hits = 0
         self.value = None
 
@@ -378,10 +378,10 @@ cdef class dummy_pd(generic_pd):
     def __init__(dummy_pd self, int label):
         self.label = label
 
-    cdef void fill(dummy_pd self, generic_pd link):
+    cdef void fill(dummy_pd self, generic_pd link) noexcept:
         self.link = link
 
-    cdef generic_pd nodummies(dummy_pd self):
+    cdef generic_pd nodummies(dummy_pd self) noexcept:
         #sorry guys, this is my stop
         self.link.refs = self.refs
         return self.link.nodummies()
@@ -417,7 +417,7 @@ cdef class coeff_pd(generic_pd):
     def __repr__(self):
         return "a%s" % (self.index)
 
-    cdef void reset(self):
+    cdef void reset(self) noexcept:
         pass
 
 cdef class unary_pd(generic_pd):
@@ -426,11 +426,11 @@ cdef class unary_pd(generic_pd):
         self.operand = operand
         self.operand.refs += 1
 
-    cdef generic_pd nodummies(self):
+    cdef generic_pd nodummies(self) noexcept:
         self.operand = self.operand.nodummies()
         return self
 
-    cdef void reset(self):
+    cdef void reset(self) noexcept:
         generic_pd.reset(self)
         self.operand.reset()
 
@@ -467,12 +467,12 @@ cdef class binary_pd(generic_pd):
         self.left.refs+= 1
         self.right.refs+= 1
 
-    cdef generic_pd nodummies(self):
+    cdef generic_pd nodummies(self) noexcept:
         self.left = self.left.nodummies()
         self.right = self.right.nodummies()
         return self
 
-    cdef void reset(self):
+    cdef void reset(self) noexcept:
         generic_pd.reset(self)
         self.left.reset()
         self.right.reset()

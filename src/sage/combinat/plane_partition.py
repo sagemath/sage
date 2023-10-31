@@ -1748,7 +1748,7 @@ class PlanePartitions_n(PlanePartitions):
             <class 'sage.combinat.plane_partition.PlanePartitions_n_with_category'>
             sage: TestSuite(PP).run()
         """
-        super(PlanePartitions_n, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._n = n
 
     def _repr_(self) -> str:

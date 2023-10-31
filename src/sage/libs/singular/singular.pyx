@@ -56,7 +56,7 @@ ctypedef struct fraction "fractionObject":
 
 _saved_options = (int(0),0,0)
 
-cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
+cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring) noexcept:
     """
     Create a sage rational number from a singular one.
 
@@ -128,7 +128,7 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
     mpq_clear(_z)
     return z
 
-cdef Integer si2sa_ZZ(number *n, ring *_ring):
+cdef Integer si2sa_ZZ(number *n, ring *_ring) noexcept:
     """
     Create a sage integer number from a singular one.
 
@@ -163,7 +163,7 @@ cdef Integer si2sa_ZZ(number *n, ring *_ring):
     z.set_from_mpz(<mpz_ptr>n)
     return z
 
-cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
+cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache) noexcept:
     """
     Create a sage element of a small finite field from a singular one.
 
@@ -218,7 +218,7 @@ cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
         z = <poly*>pNext(<poly*>z)
     return (<FFgivE>cache._zero_element)._new_c(ret)
 
-cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache):
+cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache) noexcept:
     """
     Create a sage element of a finite field of characteristic 2 from a
     singular one.
@@ -270,7 +270,7 @@ cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache):
         z = <poly*>pNext(<poly*>z)
     return ret
 
-cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
+cdef object si2sa_GFq_generic(number *n, ring *_ring, object base) noexcept:
     """
     Create a sage element of a generic finite field from a singular one.
 
@@ -332,7 +332,7 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
         z = <poly*>pNext(<poly*>z)
     return ret
 
-cdef object si2sa_transext_QQ(number *n, ring *_ring, object base):
+cdef object si2sa_transext_QQ(number *n, ring *_ring, object base) noexcept:
     """
     Create a sage element of a transcendental extension of ``QQ`` from a
     singular one.
@@ -421,7 +421,7 @@ cdef object si2sa_transext_QQ(number *n, ring *_ring, object base):
 
     return snumer/sdenom
 
-cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
+cdef object si2sa_transext_FF(number *n, ring *_ring, object base) noexcept:
     """
     Create a sage element of a transcendental extension of a prime field from a
     singular one.
@@ -504,7 +504,7 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
 
     return snumer/sdenom
 
-cdef object si2sa_NF(number *n, ring *_ring, object base):
+cdef object si2sa_NF(number *n, ring *_ring, object base) noexcept:
     """
     Create a sage element of a number field from a singular one.
 
@@ -570,7 +570,7 @@ cdef object si2sa_NF(number *n, ring *_ring, object base):
         z = <poly*>pNext(<poly*>z)
     return base(ret)
 
-cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base):
+cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base) noexcept:
     """
     Create a sage element of a ring of integers modulo n from a singular one.
 
@@ -632,7 +632,7 @@ cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base):
     return base(_ring.cf.cfInt(n,_ring.cf))
 
 
-cdef list singular_monomial_exponents(poly *p, ring *r):
+cdef list singular_monomial_exponents(poly *p, ring *r) noexcept:
     r"""
     Return the list of exponents of monomial ``p``.
     """
@@ -643,7 +643,7 @@ cdef list singular_monomial_exponents(poly *p, ring *r):
         ml[v-1] = p_GetExp(p, v, r)
     return ml
 
-cpdef list si2sa_resolution(Resolution res):
+cpdef list si2sa_resolution(Resolution res) noexcept:
     r"""
     Pull the data from Singular resolution ``res`` to construct a Sage
     resolution.
@@ -760,7 +760,7 @@ cpdef list si2sa_resolution(Resolution res):
 
     return res_mats
 
-cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees):
+cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees) noexcept:
     """
     Pull the data from Singular resolution ``res`` to construct a Sage
     resolution.
@@ -898,7 +898,7 @@ cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees):
     return (res_mats, res_degs)
 
 
-cdef number *sa2si_QQ(Rational r, ring *_ring):
+cdef number *sa2si_QQ(Rational r, ring *_ring) noexcept:
     """
     Create a singular number from a sage rational.
 
@@ -928,7 +928,7 @@ cdef number *sa2si_QQ(Rational r, ring *_ring):
     if _ring != currRing: rChangeCurrRing(_ring)
     return nlInit2gmp( mpq_numref(r.value), mpq_denref(r.value),_ring.cf )
 
-cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
+cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
     """
     Create a singular number in a small finite field.
 
@@ -995,7 +995,7 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
     _ring.cf.cfDelete(&a, _ring.cf)
     return n1
 
-cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring):
+cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a finite field of
     characteristic 2.
@@ -1061,7 +1061,7 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_GFq_generic(object elem, ring *_ring):
+cdef number *sa2si_GFq_generic(object elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a generic finite field.
 
@@ -1126,7 +1126,7 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_transext_QQ(object elem, ring *_ring):
+cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a transcendental extension
     of the rationals.
@@ -1276,7 +1276,7 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_transext_FF(object elem, ring *_ring):
+cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a transcendental extension
     of a prime field.
@@ -1377,7 +1377,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_NF(object elem, ring *_ring):
+cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a number field.
 
@@ -1469,7 +1469,7 @@ cdef number *sa2si_NF(object elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_ZZ(Integer d, ring *_ring):
+cdef number *sa2si_ZZ(Integer d, ring *_ring) noexcept:
     """
     Create a singular number from a sage Integer.
 
@@ -1500,7 +1500,7 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring):
     mpz_set(<mpz_ptr>n, d.value)
     return <number*>n
 
-cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring):
+cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a IntegerModRing.
 
@@ -1582,7 +1582,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring):
     else:
         raise ValueError
 
-cdef object si2sa(number *n, ring *_ring, object base):
+cdef object si2sa(number *n, ring *_ring, object base) noexcept:
     r"""
     Create a sage number from a singular one
 
@@ -1633,7 +1633,7 @@ cdef object si2sa(number *n, ring *_ring, object base):
     else:
         raise ValueError("cannot convert from SINGULAR number")
 
-cdef number *sa2si(Element elem, ring * _ring):
+cdef number *sa2si(Element elem, ring * _ring) noexcept:
     r"""
     Create a singular number from a sage one.
 
@@ -1681,7 +1681,7 @@ cdef number *sa2si(Element elem, ring * _ring):
 
     raise ValueError("cannot convert to SINGULAR number")
 
-cdef object si2sa_intvec(intvec *v):
+cdef object si2sa_intvec(intvec *v) noexcept:
     r"""
     create a sage tuple from a singular vector of integers
 
@@ -1744,7 +1744,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     if unlikely(e > _ring.bitmask):
         raise OverflowError("exponent overflow (%d)"%(e))
 
-cdef init_libsingular():
+cdef init_libsingular() noexcept:
     """
     This initializes the SINGULAR library. This is a hack to some
     extent.
@@ -1812,7 +1812,7 @@ saved_PATH = os.environ["PATH"]
 init_libsingular()
 os.environ["PATH"] = saved_PATH
 
-cdef void libsingular_error_callback(const_char_ptr s):
+cdef void libsingular_error_callback(const_char_ptr s) noexcept:
     _s = char_to_str(s)
     error_messages.append(_s)
 

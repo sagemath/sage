@@ -1,7 +1,7 @@
 # sage.doctest: needs sage.modules
 
 cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
-                  int i, side="both"):
+                  int i, side="both") noexcept:
     r"""
     Flip a facet.
 
@@ -57,10 +57,10 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     if j != i:
         t = R[min(r, r_minus)]
         for k in range(min(i, j) + 1, max(i, j) + 1):
-            extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k],side="left")
+            extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k], side="left")
     return j
 
-cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1):
+cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1) noexcept:
     r"""
     Return the list of facets of the subword complex associated to the
     word `Q` and the element `w` in a Coxeter group `W`.

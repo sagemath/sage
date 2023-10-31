@@ -232,7 +232,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         return self.dual().dynkin_diagram().dual()
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -268,9 +268,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             - :meth:`sage.combinat.root_system.type_C.CartanType._latex_dynkin_diagram`
             - :meth:`sage.combinat.root_system.type_BC_affine.CartanType._latex_dynkin_diagram`
         """
+        if label is None:
+            label = lambda i: i
         return self.dual()._latex_dynkin_diagram(label=label, node=node, node_dist=node_dist, dual=not dual)
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -289,6 +291,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O---O---O=<=O
             3   4   5   6   7
         """
+        if label is None:
+            label = lambda i: i
         return self.dual().ascii_art(label=label, node=node).replace("=>=", "=<=")
 
     def _default_folded_cartan_type(self):

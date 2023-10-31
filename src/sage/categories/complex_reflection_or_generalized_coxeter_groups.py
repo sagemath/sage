@@ -130,7 +130,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 sage: ComplexReflectionGroups().Irreducible()
                 Category of irreducible complex reflection groups
                 sage: CoxeterGroups().Irreducible()
-                Category of irreducible coxeter groups
+                Category of irreducible Coxeter groups
 
             TESTS::
 

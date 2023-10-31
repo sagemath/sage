@@ -7268,7 +7268,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             Symmetric group algebra of order 4 over Rational Field
 
             sage: A.category()                                                          # optional - sage.combinat sage.modules
-            Join of Category of coxeter group algebras over Rational Field
+            Join of Category of Coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
                 and Category of finite dimensional cellular algebras
                     with basis over Rational Field

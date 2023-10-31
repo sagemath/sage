@@ -227,7 +227,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         else:
             raise ValueError("context must be a power of the appropriate prime")
 
-    cdef ext_p_list_precs(self, bint pos, long prec):
+    cdef ext_p_list_precs(self, bint pos, long prec) noexcept:
         """
         Returns a list giving a series representation of ``self``.
 
@@ -621,7 +621,7 @@ def _test_preprocess_list(R, L):
     return preprocess_list(R(0), L)
 
 
-cdef preprocess_list(pAdicZZpXElement elt, L):
+cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
     """
     See the documentation for :func:`_test_preprocess_list`.
     """
@@ -736,7 +736,7 @@ def _find_val_aprec_test(R, L):
     """
     return find_val_aprec(R.prime_pow, L)
 
-cdef find_val_aprec(PowComputer_ext pp, L):
+cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
     r"""
     Given a list ``L``, finds the minimum valuation, minimum absolute
     precision and minimum common type of the elements.
@@ -841,7 +841,7 @@ def _test_get_val_prec(R, a):
     """
     return get_val_prec(R.prime_pow, a)
 
-cdef get_val_prec(PowComputer_ext pp, a):
+cdef get_val_prec(PowComputer_ext pp, a) noexcept:
     r"""
     Return valuation, absolute precision and type of an input element.
 
