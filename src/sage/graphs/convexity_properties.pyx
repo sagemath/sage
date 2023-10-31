@@ -230,20 +230,20 @@ cdef class ConvexityProperties:
         """
         binary_matrix_free(self._cache_hull_pairs)
 
-    cdef list _vertices_to_integers(self, vertices):
+    cdef list _vertices_to_integers(self, vertices) noexcept:
         r"""
         Converts a list of vertices to a list of integers with the cached data.
         """
         return [self._dict_vertices_to_integers[v] for v in vertices]
 
-    cdef list _integers_to_vertices(self, list integers):
+    cdef list _integers_to_vertices(self, list integers) noexcept:
         r"""
         Convert a list of integers to a list of vertices with the cached data.
         """
         cdef int i
         return [self._list_integers_to_vertices[i] for i in integers]
 
-    cdef _bitset_convex_hull(self, bitset_t hull):
+    cdef _bitset_convex_hull(self, bitset_t hull) noexcept:
         r"""
         Compute the convex hull of a list of vertices given as a bitset.
 
@@ -293,7 +293,7 @@ cdef class ConvexityProperties:
             # Otherwise, update and back to the loop
             count = tmp_count
 
-    cpdef hull(self, list vertices):
+    cpdef hull(self, list vertices) noexcept:
         r"""
         Return the convex hull of a set of vertices.
 
@@ -324,7 +324,7 @@ cdef class ConvexityProperties:
 
         return answer
 
-    cdef _greedy_increase(self, bitset_t bs):
+    cdef _greedy_increase(self, bitset_t bs) noexcept:
         r"""
         Given a bitset whose hull is not the whole set, greedily add vertices
         and stop before its hull is the whole set.
@@ -346,7 +346,7 @@ cdef class ConvexityProperties:
 
         bitset_free(tmp)
 
-    cpdef hull_number(self, value_only=True, verbose=False):
+    cpdef hull_number(self, value_only=True, verbose=False) noexcept:
         r"""
         Compute the hull number and a corresponding generating set.
 

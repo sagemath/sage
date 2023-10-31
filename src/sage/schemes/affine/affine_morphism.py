@@ -48,6 +48,8 @@ AUTHORS:
 
 import sys
 
+import sage.rings.abc
+
 from sage.calculus.functions import jacobian
 
 from sage.categories.homset import Hom, End
@@ -68,10 +70,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
-from sage.ext.fast_callable import fast_callable
-
 from sage.categories.number_fields import NumberFields
-from sage.rings.number_field.order import is_NumberFieldOrder
 
 _NumberFields = NumberFields()
 _Fields = Fields()
@@ -361,6 +360,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             1), ('load_arg', ...), ('ipow', 1), 'mul', 'add', ('load_const', 1),
             'add', 'return']]
         """
+        from sage.ext.fast_callable import fast_callable
+
         polys = self._polys
 
         R = self.domain().ambient_space().coordinate_ring()
@@ -800,7 +801,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             1.09861228866811
         """
         K = FractionField(self.domain().base_ring())
-        if K not in _NumberFields or is_NumberFieldOrder(K):
+        if K not in _NumberFields:
             raise TypeError("must be over a number field or a number field order")
         return max([K(c).local_height(v, prec=prec) for f in self for c in f.coefficients()])
 
@@ -848,7 +849,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             0.6931471805599453094172321214582
         """
         K = FractionField(self.domain().base_ring())
-        if K not in _NumberFields or is_NumberFieldOrder(K):
+        if K not in _NumberFields:
             raise TypeError("must be over a number field or a number field order")
 
         if K == QQ:
@@ -1068,7 +1069,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: H = End(A)
             sage: f = H([x^2 - y^2, y^2])
-            sage: f.weil_restriction()
+            sage: f.weil_restriction()                                                  # needs sage.libs.singular
             Scheme endomorphism of Affine Space of dimension 4 over Rational Field
               Defn: Defined on coordinates by sending (z0, z1, z2, z3) to
                     (z0^2 + 5*z1^2 - z2^2 - 5*z3^2, 2*z0*z1 - 2*z2*z3, z2^2 + 5*z3^2, 2*z2*z3)
@@ -1083,7 +1084,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: F = f.weil_restriction()
             sage: P = PS(2, 1)
             sage: Q = P.weil_restriction()
-            sage: f(P).weil_restriction() == F(Q)
+            sage: f(P).weil_restriction() == F(Q)                                       # needs sage.libs.singular
             True
         """
         if any(isinstance(f, FractionFieldElement) for f in self):

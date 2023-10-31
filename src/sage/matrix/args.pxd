@@ -33,7 +33,7 @@ cdef class SparseEntry:
     cdef public object entry
 
 
-cdef inline SparseEntry make_SparseEntry(long i, long j, entry):
+cdef inline SparseEntry make_SparseEntry(long i, long j, entry) noexcept:
     e = <SparseEntry>SparseEntry.__new__(SparseEntry)
     e.i = i
     e.j = j
@@ -53,18 +53,18 @@ cdef class MatrixArgs:
     cdef public dict kwds     # **kwds for MatrixSpace()
     cdef bint is_finalized
 
-    cpdef Matrix matrix(self, bint convert=?)
-    cpdef list list(self, bint convert=?)
-    cpdef dict dict(self, bint convert=?)
+    cpdef Matrix matrix(self, bint convert=?) noexcept
+    cpdef list list(self, bint convert=?) noexcept
+    cpdef dict dict(self, bint convert=?) noexcept
 
-    cdef inline bint ref_safe(self):
+    cdef inline bint ref_safe(self) noexcept:
         """
         Can we safely return self.entries without making a copy?
         A refcount of 1 means that self.entries is the only reference.
         """
         return (<PyObject*>self.entries).ob_refcnt == 1
 
-    cdef inline bint need_to_convert(self, x):
+    cdef inline bint need_to_convert(self, x) noexcept:
         """Is ``x`` not an element of ``self.base``?"""
         if not isinstance(x, Element):
             return True
@@ -119,4 +119,4 @@ cdef class MatrixArgs:
     cdef int set_seq_flat(self, entries) except -1
 
 
-cpdef MatrixArgs MatrixArgs_init(space, entries)
+cpdef MatrixArgs MatrixArgs_init(space, entries) noexcept

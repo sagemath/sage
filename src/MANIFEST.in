@@ -49,6 +49,7 @@ prune sage/graphs/bliss_cpp
 prune sage/libs/coxeter3
 exclude sage/graphs/mcqd.p*
 exclude sage/libs/meataxe.p*
+exclude sage/libs/sirocco.p*
 exclude sage/matrix/matrix_gfpn_dense.p*
 exclude sage/graphs/graph_decomposition/tdlib.p*
 
