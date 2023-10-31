@@ -1762,7 +1762,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         s = sum(a ** p for a in abs_self)
         return s**(__one__/p)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         EXAMPLES::
 
@@ -1842,7 +1842,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 raise IndexError("vector index out of range")
             return self.get_unsafe(n)
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         Cython function to get the `i`'th entry of this vector.
 
@@ -2484,7 +2484,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         else:
             return points(v, **kwds)
 
-    cpdef _dot_product_coerce_(left, Vector right):
+    cpdef _dot_product_coerce_(left, Vector right) noexcept:
         """
         Return the dot product of left and right.
 
@@ -3584,7 +3584,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         return self.is_dense_c()
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return self.parent().is_dense()
 
     def is_sparse(self):
@@ -3602,7 +3602,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         return self.is_sparse_c()
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return self.parent().is_sparse()
 
     def is_vector(self):
@@ -3760,7 +3760,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         return self.nonzero_positions()
 
-    cpdef int hamming_weight(self):
+    cpdef int hamming_weight(self) noexcept:
         """
         Return the number of positions ``i`` such that ``self[i] != 0``.
 
@@ -4227,7 +4227,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         sage: isinstance(hash(v), int)
         True
     """
-    cdef _new_c(self, object v):
+    cdef _new_c(self, object v) noexcept:
         """
         Create a new dense free module element with minimal overhead and
         no type checking.
@@ -4245,10 +4245,10 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         x._degree = self._degree
         return x
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
@@ -4371,7 +4371,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _add_(left, right):
+    cpdef _add_(left, right) noexcept:
         """
         Add left and right.
 
@@ -4388,7 +4388,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _sub_(left, right):
+    cpdef _sub_(left, right) noexcept:
         """
         Subtract right from left.
 
@@ -4406,7 +4406,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         v = [(<RingElement> a[i])._sub_(<RingElement> b[i]) for i in range(left._degree)]
         return left._new_c(v)
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         EXAMPLES::
 
@@ -4420,7 +4420,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             v = [left * x for x in self._entries]
         return self._new_c(v)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -4438,7 +4438,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _pairwise_product_(left, Vector right):
+    cpdef _pairwise_product_(left, Vector right) noexcept:
         """
         EXAMPLES::
 
@@ -4470,7 +4470,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         EXAMPLES::
 
@@ -4678,7 +4678,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         sage: (b-a).dict()
         {2: -1}
     """
-    cdef _new_c(self, object v):
+    cdef _new_c(self, object v) noexcept:
         """
         Create a new sparse free module element with minimal overhead and
         no type checking.
@@ -4696,10 +4696,10 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         x._degree = self._degree
         return x
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 0
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 1
 
     def __copy__(self):
@@ -4829,7 +4829,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 entries_dict = dict(entries_dict)  # make a copy/convert to dict
         self._entries = entries_dict
 
-    cpdef _add_(left, right):
+    cpdef _add_(left, right) noexcept:
         """
         Add left and right.
 
@@ -4851,7 +4851,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 v[i] = a
         return left._new_c(v)
 
-    cpdef _sub_(left, right):
+    cpdef _sub_(left, right) noexcept:
         """
         EXAMPLES::
 
@@ -4871,7 +4871,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 v[i] = -a
         return left._new_c(v)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -4887,7 +4887,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                     v[i] = prod
         return self._new_c(v)
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         EXAMPLES::
 
@@ -4903,7 +4903,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                     v[i] = prod
         return self._new_c(v)
 
-    cpdef _dot_product_coerce_(left, Vector right):
+    cpdef _dot_product_coerce_(left, Vector right) noexcept:
         """
         Return the dot product of left and right.
 
@@ -4955,7 +4955,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 z += a * e[i]
         return z
 
-    cpdef _pairwise_product_(left, Vector right):
+    cpdef _pairwise_product_(left, Vector right) noexcept:
         """
         EXAMPLES::
 
@@ -4973,7 +4973,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                     v[i] = prod
         return left._new_c(v)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare two sparse free module elements.
 
@@ -5104,7 +5104,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             raise IndexError("vector index out of range")
         return self.get_unsafe(n)
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         EXAMPLES::
 
@@ -5269,7 +5269,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         return sorted(self._entries)
 
-    cpdef int hamming_weight(self):
+    cpdef int hamming_weight(self) noexcept:
         """
         Returns the number of positions ``i`` such that ``self[i] != 0``.
 

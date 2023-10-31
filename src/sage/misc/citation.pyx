@@ -143,7 +143,7 @@ cdef extern from *:
         """
 
 
-cpdef inline bint cython_profile_enabled():
+cpdef inline bint cython_profile_enabled() noexcept:
     """
     Return whether Cython profiling is enabled.
 

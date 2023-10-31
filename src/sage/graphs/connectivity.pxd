@@ -16,9 +16,9 @@ cdef class _Component:
     cdef _LinkedList * edge_list
     cdef int component_type
 
-    cdef add_edge(self, Py_ssize_t e_index)
-    cdef finish_tric_or_poly(self, Py_ssize_t e_index)
-    cdef list get_edge_list(self)
+    cdef add_edge(self, Py_ssize_t e_index) noexcept
+    cdef finish_tric_or_poly(self, Py_ssize_t e_index) noexcept
+    cdef list get_edge_list(self) noexcept
 
 cdef class TriconnectivitySPQR:
     cdef MemoryAllocator mem
@@ -88,7 +88,7 @@ cdef class TriconnectivitySPQR:
 
     ### Methods ###
 
-    cdef inline __tstack_push(self, int h, int a, int b):
+    cdef inline __tstack_push(self, int h, int a, int b) noexcept:
         """
         Push ``(h, a, b)`` triple on ``Tstack``.
         """
@@ -97,26 +97,26 @@ cdef class TriconnectivitySPQR:
         self.t_stack_a[self.t_stack_top] = a
         self.t_stack_b[self.t_stack_top] = b
 
-    cdef inline __tstack_push_eos(self):
+    cdef inline __tstack_push_eos(self) noexcept:
         """
         Push end-of-stack marker on ``Tstack``.
         """
         self.t_stack_top += 1
         self.t_stack_a[self.t_stack_top] = -1
 
-    cdef inline bint __tstack_not_eos(self):
+    cdef inline bint __tstack_not_eos(self) noexcept:
         """
         Return ``True`` iff end-of-stack marker is not on top of ``Tstack``.
         """
         return self.t_stack_a[self.t_stack_top] != -1
 
-    cdef inline int __estack_pop(self):
+    cdef inline int __estack_pop(self) noexcept:
         """
         Pop from estack and return the popped element
         """
         return <int> self.e_stack.pop()
 
-    cdef inline __new_component(self, list edges, int type_c):
+    cdef inline __new_component(self, list edges, int type_c) noexcept:
         """
         Create a new component and add ``edges`` to it.
 
@@ -124,7 +124,7 @@ cdef class TriconnectivitySPQR:
         """
         self.components_list.append(_Component(edges, type_c))
 
-    cdef inline bint __is_virtual_edge(self, int e_index):
+    cdef inline bint __is_virtual_edge(self, int e_index) noexcept:
         """
         Return ``True`` if edge number ``e_index`` is a virtual edge.
 
@@ -134,7 +134,7 @@ cdef class TriconnectivitySPQR:
         """
         return e_index >= self.m
 
-    cdef inline int __edge_other_extremity(self, int e_index, int u):
+    cdef inline int __edge_other_extremity(self, int e_index, int u) noexcept:
         """
         Return the other extremity of the edge
         """
@@ -143,16 +143,16 @@ cdef class TriconnectivitySPQR:
         return self.edge_extremity_first[e_index]
 
 
-    cdef int __new_virtual_edge(self, int u, int v)
-    cdef _LinkedListNode * __new_LinkedListNode(self, Py_ssize_t e_index)
-    cdef Py_ssize_t __high(self, Py_ssize_t v)
-    cdef __del_high(self, int e_index)
-    cdef __split_multiple_edges(self)
-    cdef int __dfs1(self, int start, bint check=*)
-    cdef __build_acceptable_adj_struct(self)
-    cdef __path_finder(self, int start)
-    cdef __dfs2(self)
+    cdef int __new_virtual_edge(self, int u, int v) noexcept
+    cdef _LinkedListNode * __new_LinkedListNode(self, Py_ssize_t e_index) noexcept
+    cdef Py_ssize_t __high(self, Py_ssize_t v) noexcept
+    cdef __del_high(self, int e_index) noexcept
+    cdef __split_multiple_edges(self) noexcept
+    cdef int __dfs1(self, int start, bint check=*) noexcept
+    cdef __build_acceptable_adj_struct(self) noexcept
+    cdef __path_finder(self, int start) noexcept
+    cdef __dfs2(self) noexcept
     cdef int __path_search(self, int start) except -1
-    cdef __assemble_triconnected_components(self)
-    cdef __build_spqr_tree(self)
+    cdef __assemble_triconnected_components(self) noexcept
+    cdef __build_spqr_tree(self) noexcept
 

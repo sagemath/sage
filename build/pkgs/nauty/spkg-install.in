@@ -7,10 +7,10 @@ sdh_make
 
 # No install target so we resort to manual copy
 PROGRAMS="
-addedgeg amtog biplabg catg complg converseg copyg countg cubhamg deledgeg
-delptg directg dreadnaut dretodot dretog genbg genbgL geng genquarticg genrang
-genspecialg gentourng gentreeg hamheuristic labelg linegraphg listg multig
-newedgeg pickg planarg ranlabg shortg showg subdivideg twohamg vcolg
+addedgeg addptg amtog ancestorg assembleg biplabg catg complg converseg copyg countg cubhamg deledgeg
+delptg dimacs2g directg dreadnaut dretodot dretog edgetransg genbg genbgL geng gengL genposetg genquarticg genrang
+genspecialg gentourng gentreeg hamheuristic labelg linegraphg listg multig nbrhoodg
+newedgeg pickg planarg productg ranlabg shortg showg subdivideg twohamg underlyingg vcolg
 watercluster2 NRswitchg"
 sdh_install $PROGRAMS "$SAGE_LOCAL/bin"
 

@@ -506,7 +506,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     else:
         return tuple(return_tuple)
 
-cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     r"""
     Refine the input partition by checking degrees of vertices to the given
     cells.
@@ -643,7 +643,7 @@ cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, 
     else:
         return 0
 
-cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     r"""
     Compare gamma_1(S1) and gamma_2(S2).
 
@@ -674,7 +674,7 @@ cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degr
                 return -1
     return 0
 
-cdef bint all_children_are_equivalent(PartitionStack *PS, void *S):
+cdef bint all_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     """
     Return True if every refinement of the current partition results in the
     same structure.
@@ -712,7 +712,7 @@ cdef bint all_children_are_equivalent(PartitionStack *PS, void *S):
         return 1
     return 0
 
-cdef inline int degree(PartitionStack *PS, CGraph G, int entry, int cell_index, bint reverse):
+cdef inline int degree(PartitionStack *PS, CGraph G, int entry, int cell_index, bint reverse) noexcept:
     """
     Return the number of edges from the vertex corresponding to entry to
     vertices in the cell corresponding to cell_index.
@@ -1065,7 +1065,7 @@ from cpython.ref cimport *
 # * Seed objects are graphs with n vertices and no edges.
 # * Augmentations consist of adding a single edge, or a loop.
 
-cdef void *dg_edge_gen_next(void *data, int *degree, bint *mem_err):
+cdef void *dg_edge_gen_next(void *data, int *degree, bint *mem_err) noexcept:
     r"""
     The ``next`` function in an edge iterator. The iterator generates unique
     representatives under the action of the automorphism group of the parent
@@ -1099,7 +1099,7 @@ cdef void *dg_edge_gen_next(void *data, int *degree, bint *mem_err):
         mem_err[0] = 1
     return edge_candidate
 
-cdef void *allocate_degd(int degree):
+cdef void *allocate_degd(int degree) noexcept:
     r"""
     Allocate the data part of the iterator over edges to add to the graph.
     """
@@ -1116,7 +1116,7 @@ cdef void *allocate_degd(int degree):
     degd.edge_iterator = edge_iterator
     return degd
 
-cdef void deallocate_degd(void *data):
+cdef void deallocate_degd(void *data) noexcept:
     r"""
     Deallocate the data part of the iterator over edges to add to the graph.
     """
@@ -1124,7 +1124,7 @@ cdef void deallocate_degd(void *data):
     free_subset_gen(degd.edge_iterator)
     sig_free(degd)
 
-cdef int gen_children_dg_edge(void *S, aut_gp_and_can_lab *group, iterator *it):
+cdef int gen_children_dg_edge(void *S, aut_gp_and_can_lab *group, iterator *it) noexcept:
     r"""
     Setup an iterator over edges to be added.
     """
@@ -1136,7 +1136,7 @@ cdef int gen_children_dg_edge(void *S, aut_gp_and_can_lab *group, iterator *it):
         start_canonical_generator(group.group, NULL, n, edge_iterator)
     return (edge_iterator is NULL)
 
-cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err):
+cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err) noexcept:
     r"""
     Apply the augmentation to ``parent`` storing the result in ``child``. Here
     ``aug`` represents an edge to be added.
@@ -1161,7 +1161,7 @@ cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, 
     degree[0] = DG.num_verts
     return <void *> GS_child
 
-cdef void *allocate_dg_edge(int n, bint loops):
+cdef void *allocate_dg_edge(int n, bint loops) noexcept:
     r"""
     Allocates an object for this augmentation scheme.
     """
@@ -1185,7 +1185,7 @@ cdef void *allocate_dg_edge(int n, bint loops):
     GS.scratch = scratch
     return <void *> GS
 
-cdef void free_dg_edge(void *child):
+cdef void free_dg_edge(void *child) noexcept:
     r"""
     Deallocates an object for this augmentation scheme.
     """
@@ -1194,7 +1194,7 @@ cdef void free_dg_edge(void *child):
     Py_DECREF(GS.G)
     Py_DECREF(GS)
 
-cdef void *canonical_dg_edge_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err):
+cdef void *canonical_dg_edge_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept:
     r"""
     Applies ``permutation`` to ``child``, determines an arbitrary parent by
     deleting the lexicographically largest edge, applies the inverse of
@@ -1224,7 +1224,7 @@ cdef void *canonical_dg_edge_parent(void *child, void *parent, int *permutation,
     degree[0] = n
     return <void *> GS_par
 
-cdef iterator *allocate_dg_edge_gen(int degree, int depth, bint loops):
+cdef iterator *allocate_dg_edge_gen(int degree, int depth, bint loops) noexcept:
     r"""
     Allocates the iterator for generating graphs.
     """
@@ -1254,7 +1254,7 @@ cdef iterator *allocate_dg_edge_gen(int degree, int depth, bint loops):
     dg_edge_gen.next = canonical_generator_next
     return dg_edge_gen
 
-cdef void free_dg_edge_gen(iterator *dg_edge_gen):
+cdef void free_dg_edge_gen(iterator *dg_edge_gen) noexcept:
     r"""
     Deallocates the iterator for generating graphs.
     """
@@ -1394,7 +1394,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
 # * Augmentations consist of adding a single vertex connected to some subset of
 #   the previous vertices.
 
-cdef int gen_children_dg_vert(void *S, aut_gp_and_can_lab *group, iterator *it):
+cdef int gen_children_dg_vert(void *S, aut_gp_and_can_lab *group, iterator *it) noexcept:
     r"""
     Setup an iterator over subsets to join a new vertex to.
     """
@@ -1405,7 +1405,7 @@ cdef int gen_children_dg_vert(void *S, aut_gp_and_can_lab *group, iterator *it):
         start_canonical_generator(group.group, NULL, n, subset_iterator)
     return (subset_iterator is NULL)
 
-cdef void *apply_dg_vert_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err):
+cdef void *apply_dg_vert_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err) noexcept:
     r"""
     Apply the augmentation to ``parent`` storing the result in ``child``. Here
     ``aug`` represents a subset to join to a new vertex.
@@ -1429,7 +1429,7 @@ cdef void *apply_dg_vert_aug(void *parent, void *aug, void *child, int *degree, 
     degree[0] = n+1
     return <void *> GS_child
 
-cdef void *allocate_dg_vert(int n, int depth):
+cdef void *allocate_dg_vert(int n, int depth) noexcept:
     r"""
     Allocates an object for this augmentation scheme.
     """
@@ -1455,7 +1455,7 @@ cdef void *allocate_dg_vert(int n, int depth):
     GS.scratch = scratch
     return <void *> GS
 
-cdef void free_dg_vert(void *child):
+cdef void free_dg_vert(void *child) noexcept:
     r"""
     Deallocates an object for this augmentation scheme.
     """
@@ -1464,7 +1464,7 @@ cdef void free_dg_vert(void *child):
     Py_DECREF(GS.G)
     Py_DECREF(GS)
 
-cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err):
+cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept:
     r"""
     Applies ``permutation`` to ``child``, determines an arbitrary parent by
     deleting the lexicographically largest vertex, applies the inverse of
@@ -1486,7 +1486,7 @@ cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation,
     degree[0] = n
     return <void *> GS_par
 
-cdef iterator *allocate_dg_vert_gen(int degree, int depth):
+cdef iterator *allocate_dg_vert_gen(int degree, int depth) noexcept:
     r"""
     Allocates the iterator for generating graphs.
     """
@@ -1527,7 +1527,7 @@ cdef iterator *allocate_dg_vert_gen(int degree, int depth):
     dg_vert_gen.next = canonical_generator_next
     return dg_vert_gen
 
-cdef void free_dg_vert_gen(iterator *dg_vert_gen):
+cdef void free_dg_vert_gen(iterator *dg_vert_gen) noexcept:
     r"""
     Deallocates the iterator for generating graphs.
     """
@@ -1535,7 +1535,7 @@ cdef void free_dg_vert_gen(iterator *dg_vert_gen):
     deallocate_cgd(cgd)
     sig_free(dg_vert_gen)
 
-cdef void free_cgd_2(void *data):
+cdef void free_cgd_2(void *data) noexcept:
     r"""
     A simpler alternative to ``free_cgd``.
     """

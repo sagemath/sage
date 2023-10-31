@@ -843,8 +843,7 @@ class Projection(SageObject):
             if polyhedron.dim() < 3:
                 yield next(polyhedron.equation_generator())
             else:
-                for ineq in polyhedron.inequality_generator():
-                    yield ineq
+                yield from polyhedron.inequality_generator()
 
         faces = []
         face_inequalities = []

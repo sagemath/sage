@@ -131,7 +131,7 @@ from sage.cpython.string cimport char_to_str
 cdef long num = 1
 cdef bint little_endian = (<char*>(&num))[0]
 
-cdef inline celement_invert(celement a, celement n):
+cdef inline celement_invert(celement a, celement n) noexcept:
     """
     Invert the finite field element `a` modulo `n`.
     """
@@ -172,7 +172,7 @@ cdef inline bint linbox_is_zero(celement modulus, celement* entries, Py_ssize_t 
                 return 0
     return 1
 
-cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols):
+cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
     """
     Return the reduced row echelon form of this matrix.
     """
@@ -213,7 +213,7 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     del F
     return r, pivots
 
-cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols):
+cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
     # See trac #13878: This is to avoid sending invalid data to linbox,
     # which would yield a segfault in Sage's debug version. TODO: Fix
     # that bug upstream.
@@ -276,7 +276,7 @@ cdef inline int linbox_rank(celement modulus, celement* entries, Py_ssize_t nrow
     del F
     return r
 
-cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t n):
+cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t n) noexcept:
     """
     Return the determinant of this matrix.
     """
@@ -299,7 +299,7 @@ cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t 
     del F
     return d
 
-cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* ans, celement* A, celement* B, Py_ssize_t m, Py_ssize_t n, Py_ssize_t k) :
+cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* ans, celement* A, celement* B, Py_ssize_t m, Py_ssize_t n, Py_ssize_t k)  noexcept:
     """
     C = A*B
     """
@@ -327,7 +327,7 @@ cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* a
 
     del F
 
-cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, celement* A, celement* b, Py_ssize_t m, Py_ssize_t n, FFLAS_TRANSPOSE trans):
+cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, celement* A, celement* b, Py_ssize_t m, Py_ssize_t n, FFLAS_TRANSPOSE trans) noexcept:
     """
     C = A*v
     """
@@ -347,7 +347,7 @@ cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, cel
 
     del F
 
-cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries):
+cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries) noexcept:
     """
     Compute the minimal polynomial.
     """
@@ -368,7 +368,7 @@ cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries
     del F
     return l
 
-cdef inline linbox_charpoly(celement modulus, Py_ssize_t nrows, celement* entries):
+cdef inline linbox_charpoly(celement modulus, Py_ssize_t nrows, celement* entries) noexcept:
     """
     Compute the characteristic  polynomial.
     """
@@ -396,7 +396,7 @@ cdef inline linbox_charpoly(celement modulus, Py_ssize_t nrows, celement* entrie
     return l
 
 
-cpdef __matrix_from_rows_of_matrices(X):
+cpdef __matrix_from_rows_of_matrices(X) noexcept:
     """
     Return a matrix whose row ``i`` is constructed from the entries of
     matrix ``X[i]``.
@@ -802,7 +802,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _lmul_(self, Element left):
+    cpdef _lmul_(self, Element left) noexcept:
         """
         EXAMPLES::
 
@@ -856,7 +856,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         return A
 
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         r"""
         Add two dense matrices over `\Z/n\Z`
 
@@ -900,7 +900,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         return M
 
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         r"""
         Subtract two dense matrices over `\Z/n\Z`
 
@@ -936,7 +936,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         r"""
         Compare two dense matrices over `\Z/n\Z`.
 
@@ -988,7 +988,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         sig_off()
         return rich_to_bool(op, 0)
 
-    cdef _matrix_times_matrix_(self, Matrix right):
+    cdef _matrix_times_matrix_(self, Matrix right) noexcept:
         """
         return ``self*right``
 
@@ -1146,7 +1146,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         return ans
 
-    cdef _vector_times_matrix_(self, Vector v):
+    cdef _vector_times_matrix_(self, Vector v) noexcept:
         """
         ``v*self``
 
@@ -1203,7 +1203,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         sig_free(_c)
         return c
 
-    cdef _matrix_times_vector_(self, Vector v):
+    cdef _matrix_times_vector_(self, Vector v) noexcept:
         """
         ``self*v``
 
@@ -2283,7 +2283,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         else:
             return Matrix_dense.determinant(self)
 
-    cdef xgcd_eliminate(self, celement * row1, celement* row2, Py_ssize_t start_col):
+    cdef xgcd_eliminate(self, celement * row1, celement* row2, Py_ssize_t start_col) noexcept:
         r"""
         Reduces ``row1`` and ``row2`` by a unimodular transformation
         using the xgcd relation between their first coefficients ``a`` and
@@ -2325,7 +2325,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             row1[i] = tmp
         return g
 
-    cdef rescale_row_c(self, Py_ssize_t row, multiple, Py_ssize_t start_col):
+    cdef rescale_row_c(self, Py_ssize_t row, multiple, Py_ssize_t start_col) noexcept:
         """
         Rescale ``self[row]`` by ``multiple`` but only start at column
         index ``start_col``.
@@ -2376,7 +2376,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for i from start_col <= i < self._ncols:
             v[i] = (v[i]*<celement>multiple) % p
 
-    cdef rescale_col_c(self, Py_ssize_t col, multiple, Py_ssize_t start_row):
+    cdef rescale_col_c(self, Py_ssize_t col, multiple, Py_ssize_t start_row) noexcept:
         """
         EXAMPLES::
 
@@ -2419,7 +2419,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for i from start_row <= i < self._nrows:
             self._matrix[i][col] = (self._matrix[i][col]*<celement>multiple) % p
 
-    cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col):
+    cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col) noexcept:
         """
         Add ``multiple`` times ``self[row_from]`` to ``self[row_to]``
         statting in column ``start_col``.
@@ -2456,7 +2456,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for i from start_col <= i < nc:
             v_to[i] = ((<celement>multiple) * v_from[i] +  v_to[i]) % p
 
-    cdef add_multiple_of_column_c(self, Py_ssize_t col_to, Py_ssize_t col_from, multiple, Py_ssize_t start_row):
+    cdef add_multiple_of_column_c(self, Py_ssize_t col_to, Py_ssize_t col_from, multiple, Py_ssize_t start_row) noexcept:
         """
         Add ``multiple`` times ``self[row_from]`` to ``self[row_to]``
         statting in column ``start_col``.
@@ -2491,7 +2491,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for i from start_row <= i < self._nrows:
             m[i][col_to] = (m[i][col_to] + (<celement>multiple) * m[i][col_from]) %p
 
-    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
+    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2) noexcept:
         """
         EXAMPLES::
 
@@ -2509,7 +2509,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             r1[i] = r2[i]
             r2[i] = temp
 
-    cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2):
+    cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2) noexcept:
         """
         EXAMPLES::
 
@@ -2678,7 +2678,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         return 'Matrix(%s,%s,%s,StringToIntegerSequence("%s"))'%(
             s, self._nrows, self._ncols, self._export_as_string())
 
-    cpdef _export_as_string(self):
+    cpdef _export_as_string(self) noexcept:
         """
         Return space separated string of the entries in this matrix.
 
@@ -2830,7 +2830,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         return M
 
-    cdef _stack_impl(self, bottom):
+    cdef _stack_impl(self, bottom) noexcept:
         r"""
         Implementation of :meth:`stack` by returning a new matrix
         formed by appending the matrix ``bottom`` beneath ``self``.
@@ -3230,7 +3230,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     _matrix_from_rows_of_matrices = staticmethod(__matrix_from_rows_of_matrices)
 
-    cdef int _copy_row_to_mod_int_array(self, mod_int *to, Py_ssize_t i):
+    cdef int _copy_row_to_mod_int_array(self, mod_int *to, Py_ssize_t i) noexcept:
         cdef Py_ssize_t j
         cdef celement *_from = self._entries+(i*self._ncols)
         for j in range(self._ncols):

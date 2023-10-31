@@ -328,7 +328,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             latex_names = tuple(latex_names)
             keywords['latex_names'] = latex_names
 
-        return super(CombinatorialFreeModule, cls).__classcall__(cls,
+        return super().__classcall__(cls,
             base_ring, basis_keys, category=category, prefix=prefix, names=names,
             **keywords)
 
@@ -1674,7 +1674,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                     [vector_map[i](M.monomial(x[i]))
                      for i, M in enumerate(modules)]), codomain=self)
 
-            return super(CombinatorialFreeModule_Tensor, self)._coerce_map_from_(R)
+            return super()._coerce_map_from_(R)
 
 
 class CartesianProductWithFlattening():

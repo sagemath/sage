@@ -135,7 +135,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
         self.perm = perm
         self.alpha = alpha
 
-    cdef _new_c(self):
+    cdef _new_c(self) noexcept:
         # Create a copy of self.
         cdef SemimonomialTransformation x
         x = SemimonomialTransformation.__new__(SemimonomialTransformation)
@@ -173,7 +173,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
         """
         return hash(self.v) + hash(self.perm) + hash(self.get_autom())
 
-    cpdef _mul_(left, _right):
+    cpdef _mul_(left, _right) noexcept:
         r"""
         Multiplication of elements.
 
@@ -247,7 +247,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
         return "(%s; %s, %s)"%(self.v, self.perm.cycle_string(),
                                self.get_autom())
 
-    cpdef _richcmp_(left, _right, int op):
+    cpdef _richcmp_(left, _right, int op) noexcept:
         """
         Compare group elements ``self`` and ``right``.
 

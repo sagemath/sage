@@ -560,7 +560,7 @@ class R(ExtraTabCompletion, Interface):
         # cannot be used as input
         if isinstance(x, bool):
             return self('TRUE' if x else 'FALSE')
-        return super(R, self)._coerce_impl(x, use_special=use_special)
+        return super()._coerce_impl(x, use_special=use_special)
 
     def set_seed(self, seed=None):
         """

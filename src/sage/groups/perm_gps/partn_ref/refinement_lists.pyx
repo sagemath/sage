@@ -62,13 +62,13 @@ def is_isomorphic(self, other):
     sig_free(output)
     return output_py
 
-cdef bint all_list_children_are_equivalent(PartitionStack *PS, void *S):
+cdef bint all_list_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
 
-cdef int refine_list(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_list(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     return 0
 
-cdef int compare_lists(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_lists(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     r"""
     Compare two lists according to the lexicographic order.
     """

@@ -1510,7 +1510,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         """
         return iter(element.regenerated()
                     for element
-                    in super(RegularSequenceRing, self).some_elements(
+                    in super().some_elements(
                         allow_degenerated_sequence=True))
 
     def _element_constructor_(self, *args, **kwds):
@@ -1537,7 +1537,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             2-regular sequence 1, 3, 6, 9, 12, 18, 18, 27, 24, 36, ...
         """
         allow_degenerated_sequence = kwds.pop('allow_degenerated_sequence', False)
-        element = super(RegularSequenceRing, self)._element_constructor_(*args, **kwds)
+        element = super()._element_constructor_(*args, **kwds)
         if not allow_degenerated_sequence:
             element._error_if_degenerated_()
         return element

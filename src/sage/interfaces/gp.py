@@ -615,7 +615,7 @@ class Gp(ExtraTabCompletion, Expect):
         The vector of results is correctly resized when the stack has
         to be enlarged during this operation::
 
-            sage: g = Gp(stacksize=10^4,init_list_length=12000)  # long time
+            sage: g = Gp(stacksize=3*10^6,init_list_length=12000)  # long time
             sage: for n in [1..13000]:  # long time
             ....:     a = g(n)
             sage: g('length(sage)')     # long time
