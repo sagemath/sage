@@ -679,14 +679,15 @@ def is_geodetic(G):
 
     A graph `G` is *geodetic* if there exists only one shortest path between
     every pair of its vertices. This can be checked in time `O(nm)` in
-    unweighted (di)graphs. Examples of geodetic graphs are trees, cliques and
-    odd cycles. See the :wikipedia:`Geodetic_graph` for more details.
+    unweighted (di)graphs with `n` nodes and `m` edges. Examples of geodetic
+    graphs are trees, cliques and odd cycles. See the
+    :wikipedia:`Geodetic_graph` for more details.
 
     (Di)graphs with multiple edges are not considered geodetic.
 
     INPUT:
 
-    - ``G`` -- a Sage graph or digraph
+    - ``G`` -- a graph or a digraph
 
     EXAMPLES:
 
