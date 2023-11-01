@@ -92,7 +92,7 @@ below](#sagemath-docker-images)) or other virtualization solutions.
 
 If your Mac uses the Apple Silicon (M1, M2, arm64) architecture:
 
-- If you set up your Mac by transfering files from an older Mac, make sure
+- If you set up your Mac by transferring files from an older Mac, make sure
   that the directory ``/usr/local`` does not contain an old copy of Homebrew
   (or other software) for the x86_64 architecture that you may have copied
   over.  Note that Homebrew for the M1 is installed in ``/opt/homebrew``, not

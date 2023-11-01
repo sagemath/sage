@@ -147,7 +147,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         fmpq_mat_init(self._matrix, self._nrows, self._ncols)
         sig_off()
 
-    cdef inline Matrix_rational_dense _new_matrix(self, Py_ssize_t nrows, Py_ssize_t ncols):
+    cdef inline Matrix_rational_dense _new_matrix(self, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
         if nrows == self._nrows and ncols == self._ncols:
             parent = self._parent
         else:
@@ -255,10 +255,10 @@ cdef class Matrix_rational_dense(Matrix_dense):
                  tmp)
         fmpq_clear(tmp)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
         fmpq_set_mpq(fmpq_mat_entry(self._matrix, i, j), (<Rational> value).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         cdef Rational x
         x = Rational.__new__(Rational)
         fmpq_get_mpq(x.value, fmpq_mat_entry(self._matrix, i, j))
@@ -275,14 +275,14 @@ cdef class Matrix_rational_dense(Matrix_dense):
         """
         return fmpq_is_zero(fmpq_mat_entry(self._matrix, i,j))
 
-    cdef _add_ui_unsafe_assuming_int(self, Py_ssize_t i, Py_ssize_t j, unsigned long int n):
+    cdef _add_ui_unsafe_assuming_int(self, Py_ssize_t i, Py_ssize_t j, unsigned long int n) noexcept:
         # doesn't check immutability
         # doesn't do bounds checks.
         # assumes that self[i,j] is an integer.
         cdef fmpz * entry = fmpq_numref(fmpq_mat_entry(self._matrix, i, j))
         fmpz_add_ui(entry, entry, n)
 
-    cdef _sub_ui_unsafe_assuming_int(self, Py_ssize_t i, Py_ssize_t j, unsigned long int n):
+    cdef _sub_ui_unsafe_assuming_int(self, Py_ssize_t i, Py_ssize_t j, unsigned long int n) noexcept:
         # doesn't check immutability
         # doesn't do bounds checks.
         # assumes that self[i,j] is an integer.
@@ -298,10 +298,10 @@ cdef class Matrix_rational_dense(Matrix_dense):
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cdef _pickle_version0(self):
+    cdef _pickle_version0(self) noexcept:
         return self._export_as_string(32)
 
-    cpdef _export_as_string(self, int base=10):
+    cpdef _export_as_string(self, int base=10) noexcept:
         """
         Return space separated string of the entries in this matrix, in the
         given base. This is optimized for speed.
@@ -356,7 +356,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sig_free(s)
         return data
 
-    cdef _unpickle_version0(self, data):
+    cdef _unpickle_version0(self, data) noexcept:
         r"""
         TESTS::
 
@@ -398,7 +398,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
     #   * _dict -- sparse dictionary of underlying elements (need not be a copy)
     # #######################################################################
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -417,7 +417,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         fmpq_clear(x)
         return M
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two dense matrices over QQ.
 
@@ -440,7 +440,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         sig_off()
         return ans
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two dense matrices over QQ.
 
@@ -461,7 +461,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         sig_off()
         return ans
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         r"""
         TESTS::
 
@@ -502,7 +502,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
                         return rich_to_bool(op, -1)
         return rich_to_bool(op, 0)
 
-    cdef _vector_times_matrix_(self, Vector v):
+    cdef _vector_times_matrix_(self, Vector v) noexcept:
         r"""
         Return the vector times matrix product.
 
@@ -1127,7 +1127,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.cache('minpoly', g)
         return g
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right) noexcept:
         """
         EXAMPLES::
 
@@ -1809,7 +1809,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         fmpq_mat_swap(self._matrix, (<Matrix_rational_dense>E)._matrix)
         return pivots
 
-    cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2):
+    cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2) noexcept:
         """
         EXAMPLES::
 
@@ -1825,7 +1825,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             fmpq_swap(fmpq_mat_entry(self._matrix, r1, c),
                       fmpq_mat_entry(self._matrix, r2, c))
 
-    cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2):
+    cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2) noexcept:
         """
         EXAMPLES::
 
@@ -2947,7 +2947,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         return A.LLL(*args, **kwargs) / d
 
 
-cdef new_matrix_from_pari_GEN(parent, GEN d):
+cdef new_matrix_from_pari_GEN(parent, GEN d) noexcept:
     """
     Given a PARI GEN with ``t_INT`` or ``t_FRAC entries, create a
     :class:`Matrix_rational_dense` from it.

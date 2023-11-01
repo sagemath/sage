@@ -43,10 +43,10 @@ cdef class PyFunctionWrapper:
     cdef list lx
 
 cdef class compiled_integrand:
-    cdef int c_f(self, double t):  # void *params):
+    cdef int c_f(self, double t) noexcept:  # void *params):
         return 0
 
-cdef double c_f(double t, void *params):
+cdef double c_f(double t, void *params) noexcept:
     cdef double value
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
@@ -401,7 +401,7 @@ def numerical_integral(func, a, b=None,
     return result, abs_err
 
 
-cdef double c_monte_carlo_f(double *t, size_t dim, void *params):
+cdef double c_monte_carlo_f(double *t, size_t dim, void *params) noexcept:
     cdef double value
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
@@ -421,7 +421,7 @@ cdef double c_monte_carlo_f(double *t, size_t dim, void *params):
     return value
 
 
-cdef double c_monte_carlo_ff(double *x, size_t dim, void *params):
+cdef double c_monte_carlo_ff(double *x, size_t dim, void *params) noexcept:
     cdef double result
     (<Wrapper_rdf> params).call_c(x, &result)
     return result

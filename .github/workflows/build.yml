@@ -103,21 +103,30 @@ jobs:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
-      - name: Set up node to install pyright
-        if: always() && steps.worktree.outcome == 'success'
-        uses: actions/setup-node@v3
-        with:
-          node-version: '12'
-
-      - name: Install pyright
-        if: always() && steps.worktree.outcome == 'success'
-        # Fix to v232 due to bug https://github.com/microsoft/pyright/issues/3239
-        run: npm install -g pyright@1.1.232
-
       - name: Static code check with pyright
         if: always() && steps.worktree.outcome == 'success'
-        run: pyright
-        working-directory: ./worktree-image
+        uses: jakebailey/pyright-action@v1
+        with:
+          version: 1.1.332
+          # Many warnings issued by pyright are not yet helpful because there is not yet enough type information.
+          no-comments: true
+          working-directory: ./worktree-image
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192
+      
+      - name: Static code check with pyright (annotated)
+        if: always() && steps.worktree.outcome == 'success'
+        uses: jakebailey/pyright-action@v1
+        with:
+          version: 1.1.332
+          # Issue errors
+          no-comments: false
+          level: error
+          working-directory: ./worktree-image
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192
 
       - name: Clean (fallback to non-incremental)
         id: clean

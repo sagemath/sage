@@ -115,7 +115,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: P = species.PermutationSpecies(); P
             Permutation species
       """
-        return super(PermutationSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """

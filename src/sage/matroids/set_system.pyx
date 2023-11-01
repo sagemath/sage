@@ -202,14 +202,14 @@ cdef class SetSystem:
         """
         return "Iterator over a system of subsets"
 
-    cdef copy(self):
+    cdef copy(self) noexcept:
         cdef SetSystem S
         S = SetSystem(self._groundset, capacity=len(self))
         for i in range(len(self)):
             S._append(self._subsets[i])
         return S
 
-    cdef _relabel(self, l):
+    cdef _relabel(self, l) noexcept:
         """
         Relabel each element `e` of the ground set as `l(e)`, where `l` is a
         given injective map.
@@ -235,7 +235,7 @@ cdef class SetSystem:
         for i in range(self._groundset_size):
             self._idx[self._groundset[i]] = i
 
-    cpdef _complements(self):
+    cpdef _complements(self) noexcept:
         """
         Return a SetSystem containing the complements of each element in the
         groundset.
@@ -260,7 +260,7 @@ cdef class SetSystem:
             S._append(self._temp)
         return S
 
-    cdef inline resize(self, k=None):
+    cdef inline resize(self, k=None) noexcept:
         """
         Change the capacity of the SetSystem.
         """
@@ -273,7 +273,7 @@ cdef class SetSystem:
         self._subsets = <bitset_t*>check_reallocarray(self._subsets, k2, sizeof(bitset_t))
         self._capacity = k2
 
-    cdef inline _append(self, bitset_t X):
+    cdef inline _append(self, bitset_t X) noexcept:
         """
         Append subset in internal, bitset format
         """
@@ -283,7 +283,7 @@ cdef class SetSystem:
         bitset_copy(self._subsets[self._len], X)
         self._len += 1
 
-    cdef inline append(self, X):
+    cdef inline append(self, X) noexcept:
         """
         Append subset.
         """
@@ -295,13 +295,13 @@ cdef class SetSystem:
             bitset_add(self._subsets[self._len], <mp_bitcnt_t> self._idx[x])
         self._len += 1
 
-    cdef inline _subset(self, long k):
+    cdef inline _subset(self, long k) noexcept:
         """
         Return the k-th subset, in index format.
         """
         return bitset_list(self._subsets[k])
 
-    cdef subset(self, k):
+    cdef subset(self, k) noexcept:
         """
         Return the k-th subset.
         """
@@ -313,7 +313,7 @@ cdef class SetSystem:
             i = bitset_next(self._subsets[k], i + 1)
         return frozenset(F)
 
-    cpdef _get_groundset(self):
+    cpdef _get_groundset(self) noexcept:
         """
         Return the ground set of this SetSystem.
 
@@ -326,7 +326,7 @@ cdef class SetSystem:
         """
         return frozenset(self._groundset)
 
-    cpdef is_connected(self):
+    cpdef is_connected(self) noexcept:
         """
         Test if the :class:`SetSystem` is connected.
 
@@ -381,7 +381,7 @@ cdef class SetSystem:
 
     # isomorphism
 
-    cdef list _incidence_count(self, E):
+    cdef list _incidence_count(self, E) noexcept:
         """
         For the sub-collection indexed by ``E``, count how often each element
         occurs.
@@ -396,7 +396,7 @@ cdef class SetSystem:
                 i = bitset_next(self._subsets[e], i + 1)
         return cnt
 
-    cdef SetSystem _groundset_partition(self, SetSystem P, list cnt):
+    cdef SetSystem _groundset_partition(self, SetSystem P, list cnt) noexcept:
         """
         Helper method for partition methods below.
         """
@@ -437,7 +437,7 @@ cdef class SetSystem:
                         bitset_discard(P._subsets[i], v)
                     P._append(self._temp)
 
-    cdef long subset_characteristic(self, SetSystem P, long e):
+    cdef long subset_characteristic(self, SetSystem P, long e) noexcept:
         """
         Helper method for partition methods below.
         """
@@ -449,7 +449,7 @@ cdef class SetSystem:
             c += bitset_len(self._temp)
         return c
 
-    cdef subsets_partition(self, SetSystem P=None, E=None):
+    cdef subsets_partition(self, SetSystem P=None, E=None) noexcept:
         """
         Helper method for partition methods below.
         """
@@ -478,7 +478,7 @@ cdef class SetSystem:
         EP.append(ep)
         return EP, hash(tuple(eh))
 
-    cdef _distinguish(self, Py_ssize_t v):
+    cdef _distinguish(self, Py_ssize_t v) noexcept:
         """
         Helper method for partition methods below.
         """
@@ -493,7 +493,7 @@ cdef class SetSystem:
         return S
 
     # partition functions
-    cdef initial_partition(self, SetSystem P=None, E=None):
+    cdef initial_partition(self, SetSystem P=None, E=None) noexcept:
         """
         Helper method for partition methods below.
         """
@@ -508,7 +508,7 @@ cdef class SetSystem:
         self._groundset_partition(P, cnt)
         return P
 
-    cpdef _equitable_partition(self, SetSystem P=None, EP=None):
+    cpdef _equitable_partition(self, SetSystem P=None, EP=None) noexcept:
         r"""
         Return an equitable ordered partition of the ground set of the
         hypergraph whose edges are the subsets in this SetSystem.
@@ -589,7 +589,7 @@ cdef class SetSystem:
 
         return P, EP, h
 
-    cpdef _heuristic_partition(self, SetSystem P=None, EP=None):
+    cpdef _heuristic_partition(self, SetSystem P=None, EP=None) noexcept:
         """
         Return an heuristic ordered partition into singletons of the ground
         set of the hypergraph whose edges are the subsets in this SetSystem.
@@ -637,7 +637,7 @@ cdef class SetSystem:
                 return self._heuristic_partition(P._distinguish(bitset_first(P._subsets[i])), EP)
         return P, EP, h
 
-    cpdef _isomorphism(self, SetSystem other, SetSystem SP=None, SetSystem OP=None):
+    cpdef _isomorphism(self, SetSystem other, SetSystem SP=None, SetSystem OP=None) noexcept:
         """
         Return a groundset isomorphism between this SetSystem and an other.
 
@@ -697,7 +697,7 @@ cdef class SetSystem:
             return None
         return dict([(self._groundset[bitset_first(SP._subsets[i])], other._groundset[bitset_first(OP._subsets[i])]) for i in range(len(SP))])
 
-    cpdef _equivalence(self, is_equiv, SetSystem other, SetSystem SP=None, SetSystem OP=None):
+    cpdef _equivalence(self, is_equiv, SetSystem other, SetSystem SP=None, SetSystem OP=None) noexcept:
         """
         Return a groundset isomorphism that is an equivalence between this
         SetSystem and an other.

@@ -591,8 +591,7 @@ class ClassGroup(AbelianGroupWithValues_class):
             return
         gk = self.gen(k)
         for _ in range(self._gens_orders[k]):
-            for J in self._iter_inner(i0, k + 1):
-                yield J
+            yield from self._iter_inner(i0, k + 1)
             i0 = i0 * gk
         return
 

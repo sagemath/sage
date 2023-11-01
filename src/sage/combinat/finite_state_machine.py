@@ -949,7 +949,7 @@ from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
 
 
-def full_group_by(l, key=lambda x: x):
+def full_group_by(l, key=None):
     """
     Group iterable ``l`` by values of ``key``.
 
@@ -1003,6 +1003,8 @@ def full_group_by(l, key=lambda x: x):
     Here, the result ``r`` has been sorted in order to guarantee a
     consistent order for the doctest suite.
     """
+    if key is None:
+        key = lambda x: x
     elements = defaultdict(list)
     original_keys = {}
     for item in l:
@@ -5406,8 +5408,7 @@ class FiniteStateMachine(SageObject):
             [('1', '2'), ('2', '2')]
         """
         for state in self.iter_states():
-            for t in state.transitions:
-                yield t
+            yield from state.transitions
 
     def initial_states(self):
         """
@@ -6461,8 +6462,7 @@ class FiniteStateMachine(SageObject):
                                    "here." %
                                    (len(branch.outputs),))
 
-            for o in branch.outputs[0]:
-                yield o
+            yield from branch.outputs[0]
             branch.outputs[0] = []
             # Reset output so that in the next round
             # (of "for current in iterator") only new

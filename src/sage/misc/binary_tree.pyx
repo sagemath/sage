@@ -11,7 +11,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 
 from cpython.ref cimport PyObject, Py_INCREF, Py_XDECREF
 
-cdef binary_tree_node *BinaryTreeNode(int key, object value):
+cdef binary_tree_node *BinaryTreeNode(int key, object value) noexcept:
     cdef binary_tree_node *t
     t = <binary_tree_node *>sig_malloc(sizeof(binary_tree_node))
     t.key = key
@@ -21,18 +21,18 @@ cdef binary_tree_node *BinaryTreeNode(int key, object value):
     t.value = <void *>value
     return t
 
-cdef void free_binary_tree_node(binary_tree_node *self):
+cdef void free_binary_tree_node(binary_tree_node *self) noexcept:
     Py_XDECREF(<PyObject *>self.value)
     sig_free(self)
 
-cdef inline void binary_tree_dealloc(binary_tree_node *self):
+cdef inline void binary_tree_dealloc(binary_tree_node *self) noexcept:
     if self != NULL:
         binary_tree_dealloc(self.left)
         binary_tree_dealloc(self.right)
         free_binary_tree_node(self)
 
 
-cdef void binary_tree_insert(binary_tree_node *self, int key, object value):
+cdef void binary_tree_insert(binary_tree_node *self, int key, object value) noexcept:
     if self.key == key:
         return
     elif self.key > key:
@@ -46,7 +46,7 @@ cdef void binary_tree_insert(binary_tree_node *self, int key, object value):
         else:
             binary_tree_insert(self.right, key, value)
 
-cdef object binary_tree_get(binary_tree_node *self, int key):
+cdef object binary_tree_get(binary_tree_node *self, int key) noexcept:
     if self.key == key:
         return <object>self.value
     elif self.key > key:
@@ -60,7 +60,7 @@ cdef object binary_tree_get(binary_tree_node *self, int key):
         else:
             return binary_tree_get(self.right, key)
 
-cdef object binary_tree_delete(binary_tree_node *self, int key):
+cdef object binary_tree_delete(binary_tree_node *self, int key) noexcept:
     cdef object t
     if self.key > key:
         if self.left == NULL:
@@ -81,7 +81,7 @@ cdef object binary_tree_delete(binary_tree_node *self, int key):
         else:
             return binary_tree_delete(self.right, key)
 
-cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *left
     cdef binary_tree_node *cur
     if self.left == NULL:
@@ -99,7 +99,7 @@ cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self):
 
 
 
-cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *right
     cdef binary_tree_node *cur
     if self.right == NULL:
@@ -116,7 +116,7 @@ cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self):
     return right
 
 
-cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *cur
     cdef int right
     # We have a pointer we're about to free.  Chances are, we'll never
@@ -152,7 +152,7 @@ LIST_POSTORDER = 4
 LIST_KEYS = 8
 LIST_VALUES = 16
 
-cdef object binary_tree_list(binary_tree_node *cur, int behavior):
+cdef object binary_tree_list(binary_tree_node *cur, int behavior) noexcept:
     if behavior & LIST_KEYS:
         item = int(cur.key)
     else:

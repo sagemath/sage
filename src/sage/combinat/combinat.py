@@ -1938,8 +1938,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
             sage: list(C) # indirect doctest
             [1, 2, 3]
         """
-        for x in self.list():
-            yield x
+        yield from self.list()
 
     def __iter__(self):
         """
@@ -2574,8 +2573,7 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
             raise NotImplementedError
         i = 0
         while True:
-            for c in finite(i):
-                yield c
+            yield from finite(i)
             i += 1
 
 
