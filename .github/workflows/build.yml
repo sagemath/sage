@@ -26,6 +26,18 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Adapted from docker.yml
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-incremental"
+  LOGS_ARTIFACT_NAME:     "logs-commit-${{ github.sha }}-tox-docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}"
+  DOCKER_TARGETS:         "with-targets"
+  TARGETS_PRE:            "build/make/Makefile"
+  TARGETS:                "ci-build-with-fallback"
+  FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
+  FROM_DOCKER_TARGET:     "with-targets"
+  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
+  EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+  EXTRA_DOCKER_TAGS:      ci
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,110 +45,139 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
       - name: Merge CI fixes from sagemath/sage
+        # From docker.yml
+        # This step needs to happen after the commit sha is put in DOCKER_TAG
+        # so that multi-stage builds can work correctly.
         run: |
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Configure and build Sage distribution within a Docker container
+        # From docker.yml
+        run: |
+          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
 
       - name: Start container
         run: |
           docker run --name BUILD -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
-            ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}} /bin/sh
-
-      - name: Update system packages
-        id: prepare
-        run: |
-          export PATH="build/bin:$PATH"
-          eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git)
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
-
-      - name: Add prebuilt tree as a worktree
-        id: worktree
-        run: |
-          git config --global --add safe.directory $(pwd)
-          .ci/retrofit-worktree.sh worktree-image /sage
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
-
-      - name: Incremental build
-        id: incremental
-        run: |
-          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap
-          MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2 make build
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
-
-      - name: Build modularized distributions
-        if: (success() || failure()) && steps.worktree.outcome == 'success'
-        run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          make V=0 tox
-          make SAGE_CHECK=no pypi-wheels
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
-
-      - name: Clean (fallback to non-incremental)
-        id: clean
-        if: (success() || failure()) && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
-        run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
-
-      - name: Build
-        # This step is needed because building the modularized distributions installs some optional packages,
-        # so the editable install of sagelib needs to build the corresponding optional extension modules.
-        id: build
-        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
-        run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          make build
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
+            sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci /bin/sh
 
       # Testing
 
       - name: Test changed files (sage -t --new)
-        if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
           ./sage -t --new -p2
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+
+  modularized:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+      - name: Merge CI fixes from sagemath/sage
+        # From docker.yml
+        # This step needs to happen after the commit sha is put in DOCKER_TAG
+        # so that multi-stage builds can work correctly.
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Configure and build Sage distribution within a Docker container
+        # From docker.yml
+        run: |
+          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+
+      - name: Start container
+        run: |
+          docker run --name BUILD -dit \
+            --mount type=bind,src=$(pwd),dst=$(pwd) \
+            --workdir $(pwd) \
+            sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci /bin/sh
 
       - name: Test modularized distributions
-        if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           make V=0 tox && make pypi-wheels-check
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+
+  test-long:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+      - name: Merge CI fixes from sagemath/sage
+        # From docker.yml
+        # This step needs to happen after the commit sha is put in DOCKER_TAG
+        # so that multi-stage builds can work correctly.
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Configure and build Sage distribution within a Docker container
+        # From docker.yml
+        run: |
+          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+
+      - name: Start container
+        run: |
+          docker run --name BUILD -dit \
+            --mount type=bind,src=$(pwd),dst=$(pwd) \
+            --workdir $(pwd) \
+            sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci /bin/sh
 
       - name: Pytest
-        if: contains(github.ref, 'pytest')
+        if: (success() || failure()) && contains(github.ref, 'pytest')
         run: |
           ./sage -python -m pip install coverage pytest-xdist
           ./sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
         # Increase the length of the lines in the "short summary"
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image COLUMNS=120 {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage COLUMNS=120 {0}
 
       - name: Test all files (sage -t --all --long)
-        if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           ./sage -python -m pip install coverage
           ./sage -python -m coverage run src/bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Prepare coverage results
-        if: (success() || failure()) && steps.build.outcome == 'success'
+        if: success() || failure()
         run: |
           venv/bin/python3 -m coverage combine src/.coverage/
           mkdir -p ${{ github.workspace }}/coverage-report
           venv/bin/python3 -m coverage xml -o ${{ github.workspace }}/coverage-report/coverage.xml
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload coverage to codecov
-        if: (success() || failure()) && steps.build.outcome == 'success'
         uses: codecov/codecov-action@v3
         with:
           directory: ./coverage-report
