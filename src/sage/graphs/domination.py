@@ -1351,7 +1351,7 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
         ...
         ValueError: the graph must be connected
     """
-    # The MLN of a graph with less than 2 vertices is 0, while the 
+    # The MLN of a graph with less than 2 vertices is 0, while the
     # MLN of a connected graph with 2 or 3 vertices is 1 or 2 respectively.
     if G.order() <= 1:
         return 0
