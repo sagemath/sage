@@ -1022,16 +1022,17 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: R = QQ['q','t'].fraction_field()
             sage: (q,t) = R.gens()
-            sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()  # needs sage.modules
+            sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()
             ....:           for PF in ParkingFunctions(3)); cqf
             (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2]
              + (q^2+q*t+t^2+q+t)*F[2, 1] + F[3]
-            sage: s = SymmetricFunctions(R).s()                                         # needs sage.modules
-            sage: s(cqf.to_symmetric_function())                                        # needs sage.modules
+            sage: s = SymmetricFunctions(R).s()
+            sage: s(cqf.to_symmetric_function())
             (q^3+q^2*t+q*t^2+t^3+q*t)*s[1, 1, 1] + (q^2+q*t+t^2+q+t)*s[2, 1] + s[3]
-            sage: s(cqf.to_symmetric_function()).nabla(power=-1)                        # needs sage.modules
+            sage: s(cqf.to_symmetric_function()).nabla(power=-1)
             s[1, 1, 1]
 
         ::

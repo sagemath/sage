@@ -1111,8 +1111,9 @@ cdef class dancing_linksWrapper:
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_milp_solver('gurobi')        # optional - gurobi sage_numerical_backends_gurobi, needs sage.numerical.mip
-            sage: s in solutions                # optional - gurobi sage_numerical_backends_gurobi, needs sage.numerical.mip
+            sage: # optional - gurobi sage_numerical_backends_gurobi, needs sage.numerical.mip
+            sage: s = d.one_solution_using_milp_solver('gurobi')
+            sage: s in solutions
             True
 
         When no solution is found::

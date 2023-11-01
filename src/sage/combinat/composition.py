@@ -1293,14 +1293,15 @@ class Composition(CombinatorialElement):
         composition more than once since a composition can be a shuffle of two
         compositions in several ways. For example::
 
+            sage: # needs sage.combinat
             sage: w1 = Composition([1])
-            sage: S = w1.shuffle_product(w1); S                                         # needs sage.combinat
+            sage: S = w1.shuffle_product(w1); S
             Shuffle product of [1] and [1]
-            sage: S.list()                                                              # needs sage.combinat
+            sage: S.list()
             [[1, 1], [1, 1]]
-            sage: O = w1.shuffle_product(w1, overlap=True); O                           # needs sage.combinat
+            sage: O = w1.shuffle_product(w1, overlap=True); O
             Overlapping shuffle product of [1] and [1]
-            sage: O.list()                                                              # needs sage.combinat
+            sage: O.list()
             [[1, 1], [1, 1], [2]]
 
         TESTS::
