@@ -403,17 +403,18 @@ class Permutation(CombinatorialElement):
     From a pair of tableaux of the same shape. This uses the inverse
     of the Robinson-Schensted algorithm::
 
+        sage: # needs sage.combinat
         sage: p = [[1, 4, 7], [2, 5], [3], [6]]
         sage: q = [[1, 2, 5], [3, 6], [4], [7]]
-        sage: P = Tableau(p)                                                            # needs sage.combinat
-        sage: Q = Tableau(q)                                                            # needs sage.combinat
-        sage: Permutation( (p, q) )                                                     # needs sage.combinat
+        sage: P = Tableau(p)
+        sage: Q = Tableau(q)
+        sage: Permutation( (p, q) )
         [3, 6, 5, 2, 7, 4, 1]
-        sage: Permutation( [p, q] )                                                     # needs sage.combinat
+        sage: Permutation( [p, q] )
         [3, 6, 5, 2, 7, 4, 1]
-        sage: Permutation( (P, Q) )                                                     # needs sage.combinat
+        sage: Permutation( (P, Q) )
         [3, 6, 5, 2, 7, 4, 1]
-        sage: Permutation( [P, Q] )                                                     # needs sage.combinat
+        sage: Permutation( [P, Q] )
         [3, 6, 5, 2, 7, 4, 1]
 
     TESTS::
@@ -4265,15 +4266,15 @@ class Permutation(CombinatorialElement):
 
         TESTS::
 
-            sage: # needs sage.modules
-            sage: Permutation([]).right_permutohedron_interval(Permutation([]))         # needs sage.graphs
+            sage: # needs sage.graphs sage.modules
+            sage: Permutation([]).right_permutohedron_interval(Permutation([]))
             [[]]
-            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))       # needs sage.graphs
+            sage: Permutation([3, 1, 2]).right_permutohedron_interval(Permutation([3, 1, 2]))
             [[3, 1, 2]]
-            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))                     # needs sage.graphs
+            sage: Permutation([1, 3, 2, 4]).right_permutohedron_interval(Permutation([3, 4, 2, 1]))
             [[3, 1, 4, 2], [3, 4, 1, 2], [3, 4, 2, 1], [1, 3, 4, 2],
              [1, 3, 2, 4], [3, 2, 4, 1], [3, 2, 1, 4], [3, 1, 2, 4]]
-            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))               # needs sage.graphs
+            sage: Permutation([2, 1, 4, 5, 3]).right_permutohedron_interval(Permutation([2, 5, 4, 1, 3]))
             [[2, 4, 5, 1, 3], [2, 4, 1, 5, 3], [2, 1, 4, 5, 3],
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
             sage: Permutation([2, 5, 4, 1, 3]).right_permutohedron_interval(Permutation([2, 1, 4, 5, 3]))
@@ -4664,17 +4665,18 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([3,1,5,4,2]).permutation_poset().cover_relations()        # needs sage.combinat sage.graphs
+            sage: # needs sage.combinat sage.graphs
+            sage: Permutation([3,1,5,4,2]).permutation_poset().cover_relations()
             [[(2, 1), (5, 2)],
              [(2, 1), (3, 5)],
              [(2, 1), (4, 4)],
              [(1, 3), (3, 5)],
              [(1, 3), (4, 4)]]
-            sage: Permutation([]).permutation_poset().cover_relations()                 # needs sage.combinat sage.graphs
+            sage: Permutation([]).permutation_poset().cover_relations()
             []
-            sage: Permutation([1,3,2]).permutation_poset().cover_relations()            # needs sage.combinat sage.graphs
+            sage: Permutation([1,3,2]).permutation_poset().cover_relations()
             [[(1, 1), (2, 3)], [(1, 1), (3, 2)]]
-            sage: Permutation([1,2]).permutation_poset().cover_relations()              # needs sage.combinat sage.graphs
+            sage: Permutation([1,2]).permutation_poset().cover_relations()
             [[(1, 1), (2, 2)]]
             sage: P = Permutation([1,5,2,4,3])
 
@@ -5260,16 +5262,17 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: p = Permutation([3, 4, 6, 1, 5, 7, 2, 8])
-            sage: p.hyperoctahedral_double_coset_type()                                 # needs sage.combinat
+            sage: p.hyperoctahedral_double_coset_type()
             [3, 1]
-            sage: all(p.hyperoctahedral_double_coset_type() ==                          # needs sage.combinat
+            sage: all(p.hyperoctahedral_double_coset_type() ==
             ....:     p.inverse().hyperoctahedral_double_coset_type()
             ....:     for p in Permutations(4))
             True
-            sage: Permutation([]).hyperoctahedral_double_coset_type()                   # needs sage.combinat
+            sage: Permutation([]).hyperoctahedral_double_coset_type()
             []
-            sage: Permutation([3,1,2]).hyperoctahedral_double_coset_type()              # needs sage.combinat
+            sage: Permutation([3,1,2]).hyperoctahedral_double_coset_type()
             Traceback (most recent call last):
             ...
             ValueError: [3, 1, 2] is a permutation of odd size and has no coset-type
@@ -5346,17 +5349,18 @@ class Permutation(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Permutation([]).shifted_shuffle(Permutation([]))                      # needs sage.graphs
+            sage: # needs sage.graphs sage.modules
+            sage: Permutation([]).shifted_shuffle(Permutation([]))
             [[]]
-            sage: Permutation([1, 2, 3]).shifted_shuffle(Permutation([1]))              # needs sage.graphs sage.modules
+            sage: Permutation([1, 2, 3]).shifted_shuffle(Permutation([1]))
             [[4, 1, 2, 3], [1, 2, 3, 4], [1, 2, 4, 3], [1, 4, 2, 3]]
-            sage: Permutation([1, 2]).shifted_shuffle(Permutation([2, 1]))              # needs sage.graphs sage.modules
+            sage: Permutation([1, 2]).shifted_shuffle(Permutation([2, 1]))
             [[4, 1, 3, 2], [4, 3, 1, 2], [1, 4, 3, 2],
              [1, 4, 2, 3], [1, 2, 4, 3], [4, 1, 2, 3]]
-            sage: Permutation([1]).shifted_shuffle([1])                                 # needs sage.graphs sage.modules
+            sage: Permutation([1]).shifted_shuffle([1])
             [[2, 1], [1, 2]]
             sage: p = Permutation([3, 1, 5, 4, 2])
-            sage: len(p.shifted_shuffle(Permutation([2, 1, 4, 3])))                     # needs sage.graphs sage.modules
+            sage: len(p.shifted_shuffle(Permutation([2, 1, 4, 3])))
             126
 
         The shifted shuffle product is associative. We can test this on an
@@ -5918,14 +5922,16 @@ class Permutations_mset(Permutations):
          [2, 2, 1, 1, 2],
          [2, 2, 1, 2, 1],
          [2, 2, 2, 1, 1]]
-        sage: MS = MatrixSpace(GF(2), 2, 2)                                             # needs sage.modules
-        sage: A = MS([1,0,1,1])                                                         # needs sage.modules
-        sage: rows = A.rows()                                                           # needs sage.modules
-        sage: rows[0].set_immutable()                                                   # needs sage.modules
-        sage: rows[1].set_immutable()                                                   # needs sage.modules
-        sage: P = Permutations_mset(rows); P                                            # needs sage.modules
+
+        sage: # needs sage.modules
+        sage: MS = MatrixSpace(GF(2), 2, 2)
+        sage: A = MS([1,0,1,1])
+        sage: rows = A.rows()
+        sage: rows[0].set_immutable()
+        sage: rows[1].set_immutable()
+        sage: P = Permutations_mset(rows); P
         Permutations of the multi-set [(1, 0), (1, 1)]
-        sage: sorted(P)                                                                 # needs sage.modules
+        sage: sorted(P)
         [[(1, 0), (1, 1)], [(1, 1), (1, 0)]]
     """
     @staticmethod
@@ -6822,13 +6828,14 @@ class StandardPermutations_n_abstract(Permutations):
             sage: P([2,3,1])
             [2, 3, 1, 4, 5]
 
-            sage: G = SymmetricGroup(4)                                                 # needs sage.groups
+            sage: # needs sage.groups
+            sage: G = SymmetricGroup(4)
             sage: P = Permutations(4)
-            sage: x = G([4,3,1,2]); x                                                   # needs sage.groups
+            sage: x = G([4,3,1,2]); x
             (1,4,2,3)
-            sage: P(x)                                                                  # needs sage.groups
+            sage: P(x)
             [4, 3, 1, 2]
-            sage: G(P(x))                                                               # needs sage.groups
+            sage: G(P(x))
             (1,4,2,3)
 
             sage: # needs sage.groups

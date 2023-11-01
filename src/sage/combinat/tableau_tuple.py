@@ -1072,15 +1072,16 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: t = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]])
-            sage: rs = t.row_stabilizer()                                               # needs sage.groups
-            sage: rs.order()                                                            # needs sage.groups
+            sage: rs = t.row_stabilizer()
+            sage: rs.order()
             24
-            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs                        # needs sage.groups
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
             True
-            sage: PermutationGroupElement([(1,4)]) in rs                                # needs sage.groups
+            sage: PermutationGroupElement([(1,4)]) in rs
             False
-            sage: rs.one().domain()                                                     # needs sage.groups
+            sage: rs.one().domain()
             [1, 2, 3, 4, 5, 6, 7, 8, 9]
         """
         # Ensure that the permutations involve all elements of the
@@ -1101,13 +1102,14 @@ class TableauTuple(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: t = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]])
-            sage: cs = t.column_stabilizer()                                            # needs sage.groups
-            sage: cs.order()                                                            # needs sage.groups
+            sage: cs = t.column_stabilizer()
+            sage: cs.order()
             8
-            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs                        # needs sage.groups
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
             False
-            sage: PermutationGroupElement([(1,4)]) in cs                                # needs sage.groups
+            sage: PermutationGroupElement([(1,4)]) in cs
             True
         """
 
@@ -4322,8 +4324,9 @@ class StandardTableauTuples_all(StandardTableauTuples, DisjointUnionEnumeratedSe
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: stt = StandardTableauTuples()
-            sage: stt[0:8]                                                              # needs sage.libs.flint
+            sage: stt[0:8]
             [(),
              ([[1]]),
              ([], []),
@@ -4332,11 +4335,11 @@ class StandardTableauTuples_all(StandardTableauTuples, DisjointUnionEnumeratedSe
              ([[1]], []),
              ([], [[1]]),
              ([], [], [])]
-            sage: stt[5]                                                                # needs sage.libs.flint
+            sage: stt[5]
             ([[1]], [])
-            sage: stt[50]                                                               # needs sage.libs.flint
+            sage: stt[50]
             ([], [[1, 3], [2]])
-            sage: stt[47].parent() is stt                                               # needs sage.libs.flint
+            sage: stt[47].parent() is stt
             True
         """
         from sage.combinat.partition_tuple import PartitionTuples

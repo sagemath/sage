@@ -1884,18 +1884,19 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: p = Partition([3,3,1])
-            sage: Q = p.cell_poset(); Q                                                 # needs sage.graphs
+            sage: Q = p.cell_poset(); Q
             Finite poset containing 7 elements
-            sage: sorted(Q)                                                             # needs sage.graphs
+            sage: sorted(Q)
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0)]
-            sage: sorted(Q.maximal_elements())                                          # needs sage.graphs
+            sage: sorted(Q.maximal_elements())
             [(1, 2), (2, 0)]
-            sage: Q.minimal_elements()                                                  # needs sage.graphs
+            sage: Q.minimal_elements()
             [(0, 0)]
-            sage: sorted(Q.upper_covers((1, 0)))                                        # needs sage.graphs
+            sage: sorted(Q.upper_covers((1, 0)))
             [(1, 1), (2, 0)]
-            sage: Q.upper_covers((1, 1))                                                # needs sage.graphs
+            sage: Q.upper_covers((1, 1))
             [(1, 2)]
 
             sage: # needs sage.graphs
@@ -5071,16 +5072,17 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: part = Partition([3,2,1])
-            sage: jt = part.jacobi_trudi(); jt                                          # needs sage.modules
+            sage: jt = part.jacobi_trudi(); jt
             [h[3] h[1]    0]
             [h[4] h[2]  h[]]
             [h[5] h[3] h[1]]
-            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.modules
-            sage: h = SymmetricFunctions(QQ).homogeneous()                              # needs sage.modules
-            sage: h( s(part) )                                                          # needs sage.modules
+            sage: s = SymmetricFunctions(QQ).schur()
+            sage: h = SymmetricFunctions(QQ).homogeneous()
+            sage: h( s(part) )
             h[3, 2, 1] - h[3, 3] - h[4, 1, 1] + h[5, 1]
-            sage: jt.det()                                                              # needs sage.modules
+            sage: jt.det()
             h[3, 2, 1] - h[3, 3] - h[4, 1, 1] + h[5, 1]
         """
         return SkewPartition([ self, [] ]).jacobi_trudi()
@@ -5313,17 +5315,15 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: [Partition([5,4]).outline()(x=i) for i in range(-10,11)]              # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: [Partition([5,4]).outline()(x=i) for i in range(-10,11)]
             [10, 9, 8, 7, 6, 5, 6, 5, 6, 5, 4, 3, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-            sage: Partition([]).outline()                                               # needs sage.symbolic
+            sage: Partition([]).outline()
             abs(x)
-
-            sage: Partition([1]).outline()                                              # needs sage.symbolic
+            sage: Partition([1]).outline()
             abs(x + 1) + abs(x - 1) - abs(x)
-
-            sage: y = SR.var("y")                                                       # needs sage.symbolic
-            sage: Partition([6,5,1]).outline(variable=y)                                # needs sage.symbolic
+            sage: y = SR.var("y")
+            sage: Partition([6,5,1]).outline(variable=y)
             abs(y + 6) - abs(y + 5) + abs(y + 4) - abs(y + 3)
              + abs(y - 1) - abs(y - 2) + abs(y - 3)
 
@@ -5392,17 +5392,18 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: P = Partition([3,1,1])
-            sage: G = P.dual_equivalence_graph()                                        # needs sage.graphs
-            sage: G.edges(sort=True)                                                    # needs sage.graphs
+            sage: G = P.dual_equivalence_graph()
+            sage: G.edges(sort=True)
             [([[1, 2, 3], [4], [5]], [[1, 2, 4], [3], [5]], 3),
              ([[1, 2, 4], [3], [5]], [[1, 2, 5], [3], [4]], 4),
              ([[1, 2, 4], [3], [5]], [[1, 3, 4], [2], [5]], 2),
              ([[1, 2, 5], [3], [4]], [[1, 3, 5], [2], [4]], 2),
              ([[1, 3, 4], [2], [5]], [[1, 3, 5], [2], [4]], 4),
              ([[1, 3, 5], [2], [4]], [[1, 4, 5], [2], [3]], 3)]
-            sage: G = P.dual_equivalence_graph(directed=True)                           # needs sage.graphs
-            sage: G.edges(sort=True)                                                    # needs sage.graphs
+            sage: G = P.dual_equivalence_graph(directed=True)
+            sage: G.edges(sort=True)
             [([[1, 2, 4], [3], [5]], [[1, 2, 3], [4], [5]], 3),
              ([[1, 2, 5], [3], [4]], [[1, 2, 4], [3], [5]], 4),
              ([[1, 3, 4], [2], [5]], [[1, 2, 4], [3], [5]], 2),
@@ -5419,14 +5420,13 @@ class Partition(CombinatorialElement):
             sage: G = Partition([]).dual_equivalence_graph()
             sage: G.vertices(sort=False)
             [[]]
-
             sage: P = Partition([3,1,1])
-            sage: G = P.dual_equivalence_graph(coloring=lambda x: 'red')                # needs sage.graphs
-            sage: G2 = P.dual_equivalence_graph(coloring={2: 'black', 3: 'blue',        # needs sage.graphs
+            sage: G = P.dual_equivalence_graph(coloring=lambda x: 'red')
+            sage: G2 = P.dual_equivalence_graph(coloring={2: 'black', 3: 'blue',
             ....:                                         4: 'cyan', 5: 'grey'})
-            sage: G is G2                                                               # needs sage.graphs
+            sage: G is G2
             False
-            sage: G == G2                                                               # needs sage.graphs
+            sage: G == G2
             True
         """
         # We do some custom caching to not recreate the graph, but to make
@@ -5495,9 +5495,9 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: SM = Partition([2,2,1]).specht_module(QQ); SM                         # needs sage.modules
+            sage: SM = Partition([2,2,1]).specht_module(QQ); SM
             Specht module of [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0)] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.modules
+            sage: s = SymmetricFunctions(QQ).s()
             sage: s(SM.frobenius_image())                                               # needs sage.modules
             s[2, 2, 1]
         """
@@ -9025,32 +9025,33 @@ def number_of_partitions(n, algorithm='default'):
 
     TESTS::
 
+        sage: # needs sage.libs.flint
         sage: n = 500 + randint(0,500)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 1500 + randint(0,1500)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0                     # needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
         True
         sage: n = 100000000 + randint(0,100000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0     # long time (4s on sage.math, 2011), needs sage.libs.flint
+        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0     # long time (4s on sage.math, 2011)
         True
 
     """

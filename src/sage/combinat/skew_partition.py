@@ -844,18 +844,19 @@ class SkewPartition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: p = SkewPartition([[3,3,1], [2,1]])
-            sage: Q = p.cell_poset(); Q                                                 # needs sage.graphs
+            sage: Q = p.cell_poset(); Q
             Finite poset containing 4 elements
-            sage: sorted(Q)                                                             # needs sage.graphs
+            sage: sorted(Q)
             [(0, 2), (1, 1), (1, 2), (2, 0)]
-            sage: sorted(Q.maximal_elements())                                          # needs sage.graphs
+            sage: sorted(Q.maximal_elements())
             [(1, 2), (2, 0)]
-            sage: sorted(Q.minimal_elements())                                          # needs sage.graphs
+            sage: sorted(Q.minimal_elements())
             [(0, 2), (1, 1), (2, 0)]
-            sage: sorted(Q.upper_covers((1, 1)))                                        # needs sage.graphs
+            sage: sorted(Q.upper_covers((1, 1)))
             [(1, 2)]
-            sage: sorted(Q.upper_covers((0, 2)))                                        # needs sage.graphs
+            sage: sorted(Q.upper_covers((0, 2)))
             [(1, 2)]
 
             sage: # needs sage.graphs

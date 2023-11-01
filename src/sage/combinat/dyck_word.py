@@ -1694,25 +1694,26 @@ class DyckWord(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: dw = DyckWord([1,0])
-            sage: dw.to_binary_tree()                                                   # needs sage.graphs
+            sage: dw.to_binary_tree()
             [., .]
             sage: dw = DyckWord([])
-            sage: dw.to_binary_tree()                                                   # needs sage.graphs
+            sage: dw.to_binary_tree()
             .
             sage: dw = DyckWord([1,0,1,1,0,0])
-            sage: dw.to_binary_tree()                                                   # needs sage.graphs
+            sage: dw.to_binary_tree()
             [., [[., .], .]]
-            sage: dw.to_binary_tree("L1R0")                                             # needs sage.graphs
+            sage: dw.to_binary_tree("L1R0")
             [[., .], [., .]]
             sage: dw = DyckWord([1,0,1,1,0,0,1,1,1,0,1,0,0,0])
-            sage: dw.to_binary_tree() == dw.to_binary_tree("1R0L").left_right_symmetry()            # needs sage.graphs
+            sage: dw.to_binary_tree() == dw.to_binary_tree("1R0L").left_right_symmetry()
             True
-            sage: dw.to_binary_tree() == dw.to_binary_tree("L1R0").left_border_symmetry()           # needs sage.graphs
+            sage: dw.to_binary_tree() == dw.to_binary_tree("L1R0").left_border_symmetry()
             False
-            sage: dw.to_binary_tree("1R0L") == dw.to_binary_tree("L1R0").left_border_symmetry()     # needs sage.graphs
+            sage: dw.to_binary_tree("1R0L") == dw.to_binary_tree("L1R0").left_border_symmetry()
             True
-            sage: dw.to_binary_tree("R1L0") == dw.to_binary_tree("L1R0").left_right_symmetry()      # needs sage.graphs
+            sage: dw.to_binary_tree("R1L0") == dw.to_binary_tree("L1R0").left_right_symmetry()
             True
             sage: dw.to_binary_tree("R10L")
             Traceback (most recent call last):

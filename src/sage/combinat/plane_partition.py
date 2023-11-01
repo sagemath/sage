@@ -1161,12 +1161,14 @@ class PlanePartition(ClonableArray,
             Plane partition [[3, 1, 1, 1], [1]]
             sage: PP == PP.cyclically_rotate().cyclically_rotate().cyclically_rotate()
             True
-            sage: PP = PlanePartitions([4,3,2]).random_element()                        # needs sage.graphs sage.modules
-            sage: PP.cyclically_rotate().parent()                                       # needs sage.graphs sage.modules
+
+            sage: # needs sage.graphs sage.modules
+            sage: PP = PlanePartitions([4,3,2]).random_element()
+            sage: PP.cyclically_rotate().parent()
             Plane partitions inside a 2 x 4 x 3 box
-            sage: PP = PlanePartitions([3,4,2])([[2,2,2,2],[2,2,2,2],[2,2,2,2]])        # needs sage.graphs sage.modules
-            sage: PP_rotated = PP.cyclically_rotate(preserve_parent=True)               # needs sage.graphs sage.modules
-            sage: PP_rotated in PP_rotated.parent()                                     # needs sage.graphs sage.modules
+            sage: PP = PlanePartitions([3,4,2])([[2,2,2,2],[2,2,2,2],[2,2,2,2]])
+            sage: PP_rotated = PP.cyclically_rotate(preserve_parent=True)
+            sage: PP_rotated in PP_rotated.parent()
             False
         """
         b = self._max_y

@@ -108,9 +108,9 @@ It has 65 different solutions up to isometries::
 
 Showing one solution::
 
-    sage: solution = next(T.solve())                                  # long time
+    sage: solution = next(T.solve())                                    # long time
     sage: G = sum([piece.show2d() for piece in solution], Graphics())   # long time, needs sage.plot
-    sage: G.show(aspect_ratio=1, axes=False)    # long time                             # needs sage.plot
+    sage: G.show(aspect_ratio=1, axes=False)                            # long time, needs sage.plot
 
 1d Easy Example
 ---------------
@@ -154,20 +154,20 @@ By default, rotations are allowed and reflections are not. In this case,
 there are no solution for tiling a `8 \times 8` rectangular box::
 
     sage: T = TilingSolver(L, box=(8,8))
-    sage: T.number_of_solutions()                       # long time (2.5 s)
+    sage: T.number_of_solutions()                                       # long time (2.5s)
     0
 
 If reflections are allowed, there are solutions. Solve the puzzle and show
 one solution::
 
     sage: T = TilingSolver(L, box=(8,8), reflection=True)
-    sage: solution = next(T.solve())                                  # long time (7s)
+    sage: solution = next(T.solve())                                    # long time (7s)
     sage: G = sum([piece.show2d() for piece in solution], Graphics())   # long time (<1s), needs sage.plot
-    sage: G.show(aspect_ratio=1, axes=False)    # long time (2s)                        # needs sage.plot
+    sage: G.show(aspect_ratio=1, axes=False)                            # long time (2s),  needs sage.plot
 
 Compute the number of solutions::
 
-    sage: T.number_of_solutions()                         # long time (2.6s)
+    sage: T.number_of_solutions()                                       # long time (2.6s)
     328
 
 Create a animation of all the solutions::
@@ -197,13 +197,13 @@ The same thing done in 3d *without* allowing reflections this time::
 Solve the puzzle and show one solution::
 
     sage: T = TilingSolver(L, box=(8,8,1))
-    sage: solution = next(T.solve())                                   # long time (8s)
+    sage: solution = next(T.solve())                                    # long time (8s)
     sage: G = sum([p.show3d(size=0.85) for p in solution], Graphics())  # long time (<1s), needs sage.plot
-    sage: G.show(aspect_ratio=1, viewer='tachyon')      # long time (2s)                # needs sage.plot
+    sage: G.show(aspect_ratio=1, viewer='tachyon')                      # long time (2s),  needs sage.plot
 
 Let us compute the number of solutions::
 
-    sage: T.number_of_solutions()                              # long time (3s)
+    sage: T.number_of_solutions()                                       # long time (3s)
     328
 
 Donald Knuth example : the Y pentamino
@@ -219,7 +219,7 @@ Donald Knuth [Knuth1]_ considered the problem of packing 45 Y pentaminoes into a
     10
     sage: solution = next(T.solve())
     sage: G = sum([p.show2d() for p in solution], Graphics())                           # needs sage.plot
-    sage: G.show(aspect_ratio=1)                # long time (2s)                        # needs sage.plot
+    sage: G.show(aspect_ratio=1)                                        # long time (2s), needs sage.plot
 
 ::
 
@@ -240,15 +240,14 @@ Animation of the solutions::
     sage: from sage.combinat.tiling import Polyomino, TilingSolver
     sage: Y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='yellow')
     sage: T = TilingSolver([Y], box=(15,15), reusable=True, reflection=True)
-    sage: a = T.animate(stop=40); a             # long time, optional - imagemagick, needs sage.plot
+    sage: a = T.animate(stop=40); a                     # long time, optional - imagemagick, needs sage.plot
     Animation with 40 frames
 
 Incremental animation of the solutions (one piece is removed/added at a time)::
 
-    sage: a = T.animate('incremental', stop=40)         # long time, optional - imagemagick, needs sage.plot
-    sage: a                                     # long time, optional - imagemagick, needs sage.plot
+    sage: a = T.animate('incremental', stop=40); a      # long time, optional - imagemagick, needs sage.plot
     Animation with 40 frames
-    sage: a.show(delay=50, iterations=1)        # long time, optional - imagemagick, needs sage.plot
+    sage: a.show(delay=50, iterations=1)                # long time, optional - imagemagick, needs sage.plot
 
 5d Easy Example
 ---------------
@@ -2453,8 +2452,7 @@ class TilingSolver(SageObject):
 
         Limit the number of frames::
 
-            sage: a = T.animate('incremental', stop=13)         # not tested            # needs sage.plot
-            sage: a                             # not tested                            # needs sage.plot
+            sage: a = T.animate('incremental', stop=13); a      # not tested            # needs sage.plot
             Animation with 13 frames
         """
         dimension = self._box._dimension

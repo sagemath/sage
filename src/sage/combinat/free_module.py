@@ -348,16 +348,16 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
-            sage: A = Algebras(QQ).WithBasis().example(); A                             # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: A = Algebras(QQ).WithBasis().example(); A
             An example of an algebra with basis:
             the free algebra on the generators ('a', 'b', 'c') over Rational Field
-
-            sage: A.element_class.mro()                                                 # needs sage.combinat
+            sage: A.element_class.mro()
             [<class 'sage.categories.examples.algebras_with_basis.FreeAlgebra_with_category.element_class'>,
              <class 'sage.modules.with_basis.indexed_element.IndexedFreeModuleElement'>,
              ...]
-            sage: a,b,c = A.algebra_generators()                                        # needs sage.combinat
-            sage: a * b                                                                 # needs sage.combinat
+            sage: a,b,c = A.algebra_generators()
+            sage: a * b
             B[word: ab]
 
         TESTS::
