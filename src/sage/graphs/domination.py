@@ -1296,6 +1296,9 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
     minimum connected dominating set.
     See the :wikipedia:`Connected_dominating_set`.
 
+    The MLN of a graph with less than 2 vertices is 0, while the MLN of a connected
+    graph with 2 or 3 vertices is 1 or 2 respectively.
+
     INPUT:
 
     - ``G`` -- a Graph
@@ -1329,19 +1332,19 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
         sage: G.maximum_leaf_number()
         6
 
-    TESTS:
+    Tests:
 
     One vertex::
 
-        sage: G = graphs.Graph(1)
+        sage: G = Graph(1)
         sage: G.maximum_leaf_number()
-        1
+        0
 
     Two vertices::
 
         sage: G = graphs.PathGraph(2)
         sage: G.maximum_leaf_number()
-        2
+        1
 
     Unconnected graph::
 
@@ -1351,12 +1354,10 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
         ...
         ValueError: the graph must be connected
     """
-    # The MLN of a graph with less than 2 vertices is 0, while the
-    # MLN of a connected graph with 2 or 3 vertices is 1 or 2 respectively.
     if G.order() <= 1:
         return 0
-    elif not G.is_connected():
+    if not G.is_connected():
         raise ValueError('the graph must be connected')
-    elif G.order() <= 3:
+    if G.order() <= 3:
         return G.order() - 1
     return G.order() - dominating_set(G, connected=True, value_only=True, solver=solver, verbose=verbose, integrality_tolerance=integrality_tolerance)
