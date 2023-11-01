@@ -172,7 +172,7 @@ jobs:
               for block in diff_blocks:
                   match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
                   if match:
-                      path = 'html' + match.group(1)
+                      path = 'html/' + match.group(1)
                       out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&emsp;</p>\n<pre><code class="language-diff">' + html.escape(block).strip() + '</code></pre>')
               output_text = '\n'.join(out_blocks)
           with open('./docs/diff.html', 'w') as f:
