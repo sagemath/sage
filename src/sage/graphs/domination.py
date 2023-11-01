@@ -17,7 +17,7 @@ and more precisely:
     :meth:`~is_redundant` | Check whether a set of vertices has redundant vertices (with respect to domination).
     :meth:`~private_neighbors` | Return the private neighbors of a vertex with respect to other vertices.
     :meth:`~greedy_dominating_set` | Return a greedy distance-`k` dominating set of the graph.
-    :meth:`~max_leaf_number` | Return the maximum leaf number of the graph.
+    :meth:`~maximum_leaf_number` | Return the maximum leaf number of the graph.
 
 
 EXAMPLES:
@@ -1287,43 +1287,76 @@ def greedy_dominating_set(G, k=1, vertices=None, ordering=None, return_sets=Fals
         return list(dom)
 
 
-# ==============================================================================
-# Maximum leaf number
-# ==============================================================================
-
-def max_leaf_number(G):
+def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
     r"""
-    Return the maximum leaf number of the graph, i.e. the maximum possible number
-    of leaf nodes a tree produced from the graph can have.
+    Return the maximum leaf number of the graph.
+
+    The maximum leaf number is the maximum possible number of leaves of a
+    spanning tree of `G`. This is also the cardinality of the complement of a
+    minimum connected dominating set.
+    See the :wikipedia:`Connected_dominating_set`.
 
     INPUT:
 
     - ``G`` -- a Graph
+
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
 
     EXAMPLES:
 
     Empty graph::
 
         sage: G = Graph()
-        sage: G.max_leaf_number()
+        sage: G.maximum_leaf_number()
         0
 
     Petersen graph::
 
         sage: G = graphs.PetersenGraph()
-        sage: G.max_leaf_number()
+        sage: G.maximum_leaf_number()
         6
+
+    TESTS:
+
+    One vertex::
+
+        sage: G = graphs.Graph(1)
+        sage: G.maximum_leaf_number()
+        1
+
+    Two vertices::
+
+        sage: G = graphs.PathGraph(2)
+        sage: G.maximum_leaf_number()
+        2
 
     Unconnected graph::
 
-        sage: G = 2 * graphs.PetersenGraph()
-        sage: G.max_leaf_number()
+        sage: G = Graph(2)
+        sage: G.maximum_leaf_number()
         Traceback (most recent call last):
         ...
         ValueError: the graph must be connected
     """
-    if G.order() < 2:
+    # The MLN of a graph with less than 2 vertices is 0, while the 
+    # MLN of a connected graph with 2 or 3 vertices is 1 or 2 respectively.
+    if G.order() <= 1:
         return 0
     elif not G.is_connected():
         raise ValueError('the graph must be connected')
-    return G.order() - dominating_set(G, connected=True, value_only=True)
+    elif G.order() <= 3:
+        return G.order() - 1
+    return G.order() - dominating_set(G, connected=True, value_only=True, solver=solver, verbose=verbose, integrality_tolerance=integrality_tolerance)

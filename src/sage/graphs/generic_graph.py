@@ -315,7 +315,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.disjoint_routed_paths` | Return a set of disjoint routed paths.
     :meth:`~GenericGraph.dominating_set` | Return a minimum dominating set of the graph
     :meth:`~GenericGraph.greedy_dominating_set` | Return a greedy distance-`k` dominating set of the graph.
-    :meth:`~GenericGraph.max_leaf_number` | Return the maximum leaf number of the graph.
+    :meth:`~GenericGraph.maximum_leaf_number` | Return the maximum leaf number of the graph.
     :meth:`~GenericGraph.subgraph_search` | Return a copy of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_count` | Return the number of labelled occurrences of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_iterator` | Return an iterator over the labelled copies of ``G`` in ``self``.
@@ -24408,7 +24408,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.domination import dominating_sets
     from sage.graphs.domination import dominating_set
     from sage.graphs.domination import greedy_dominating_set
-    from sage.graphs.domination import max_leaf_number
+    from sage.graphs.domination import maximum_leaf_number
     from sage.graphs.base.static_dense_graph import connected_subgraph_iterator
     rooted_product = LazyImport('sage.graphs.graph_decompositions.graph_products', 'rooted_product')
     from sage.graphs.path_enumeration import shortest_simple_paths
