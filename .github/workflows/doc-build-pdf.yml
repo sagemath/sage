@@ -119,7 +119,7 @@ jobs:
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           mkdir -p ./docs
-          cp -r -L /sage/local/share/doc/sage/pdf/* ./docs
+          cp -r -L /sage/local/share/doc/sage/pdf ./docs
           # Zip everything for increased performance
           zip -r docs-pdf.zip docs
 
