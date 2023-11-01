@@ -4,6 +4,7 @@ from .list_of_faces             cimport ListOfFaces
 from .face_data_structure       cimport face_t
 from .face_iterator             cimport FaceIterator
 
+
 @cython.final
 cdef class CombinatorialFace(SageObject):
     cdef readonly bint _dual        # if 1, then iterate over dual Polyhedron

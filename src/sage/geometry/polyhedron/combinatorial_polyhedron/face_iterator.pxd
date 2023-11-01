@@ -80,9 +80,11 @@ cdef class FaceIterator_base(SageObject):
     cdef int only_subsets(self) except -1
     cdef int find_face(self, face_t face) except -1
 
+
 @cython.final
 cdef class FaceIterator(FaceIterator_base):
     pass
+
 
 @cython.final
 cdef class FaceIterator_geom(FaceIterator_base):

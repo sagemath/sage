@@ -6,6 +6,7 @@ from .list_of_faces                     cimport ListOfFaces
 from .face_data_structure               cimport face_t
 from .polyhedron_face_lattice           cimport PolyhedronFaceLattice
 
+
 @cython.final
 cdef class CombinatorialPolyhedron(SageObject):
     cdef public dict _cached_methods

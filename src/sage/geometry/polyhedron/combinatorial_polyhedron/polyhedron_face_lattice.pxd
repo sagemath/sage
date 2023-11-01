@@ -4,6 +4,7 @@ from .face_data_structure       cimport face_t
 from .face_list_data_structure  cimport face_list_t
 from .combinatorial_face        cimport CombinatorialFace
 
+
 @cython.final
 cdef class PolyhedronFaceLattice:
     cdef int dimension              # dimension of Polyhedron
