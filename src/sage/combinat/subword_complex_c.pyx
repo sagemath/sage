@@ -7,20 +7,21 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
 
     INPUT:
 
-    - W -- a Coxeter group
-    - positions -- the positions of the elements of the facet
-    - extended_root_conf_indices -- also attached to the facet ?
-    - i -- the position where to flip
-    - side -- optional, can be 'positive', 'negative' or 'both' (default)
+    - ``W`` -- a Coxeter group
+    - ``positions`` -- the positions of the elements of the facet
+    - ``extended_root_conf_indices`` -- also attached to the facet ?
+    - ``i`` -- the position where to flip
+    - ``side`` -- optional, can be ``'positive'``, ``'negative'`` or ``'both'`` (default)
 
     OUTPUT:
 
-    the new position j that has replaced i
+    the new position `j` that has replaced `i`
 
     EXAMPLES::
 
-        sage: # optional - gap3
         sage: from sage.combinat.subword_complex_c import _flip_c
+
+        sage: # optional - gap3
         sage: W = ReflectionGroup(['A',2])
         sage: w = W.from_reduced_word([1,2,1])
         sage: SC = SubwordComplex([1,2,1,2,1], w)
@@ -60,6 +61,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
         for k in range(min(i, j) + 1, max(i, j) + 1):
             extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k], side="left")
     return j
+
 
 cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1) noexcept:
     r"""
