@@ -2868,7 +2868,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
         EXAMPLES::
 
             sage: list(PlanePartitions([4,4,2], symmetry='SSCPP'))                      # needs sage.modules
-            [Plane partition [[2, 2, 2, 1], [2, 2, 1], [2, 1], [1]],
+            [Plane partition [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]],
              Plane partition [[2, 2, 2, 1], [2, 1, 1], [2, 1, 1], [1]],
              Plane partition [[2, 2, 1, 1], [2, 2, 1, 1], [1, 1], [1, 1]],
              Plane partition [[2, 2, 2, 1], [2, 2, 1], [2, 1], [1]],
