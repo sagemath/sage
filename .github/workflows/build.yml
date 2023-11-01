@@ -124,20 +124,19 @@ jobs:
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           ./sage -python -m pip install coverage
-          ./sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
+          ./sage -python -m coverage run src/bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
         shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Prepare coverage results
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
-          ./venv/bin/python3 -m coverage combine src/.coverage/
-          ./venv/bin/python3 -m coverage xml
-          mkdir -p coverage-report
-          mv coverage.xml coverage-report/
+          venv/bin/python3 -m coverage combine src/.coverage/
+          mkdir -p ${{ github.workspace }}/coverage-report
+          venv/bin/python3 -m coverage xml -o ${{ github.workspace }}/coverage-report/coverage.xml
         shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Upload coverage to codecov
         if: (success() || failure()) && steps.build.outcome == 'success'
         uses: codecov/codecov-action@v3
         with:
-          directory: ./worktree-image/coverage-report
+          directory: ./coverage-report
