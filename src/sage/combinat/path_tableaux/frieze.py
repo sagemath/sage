@@ -412,8 +412,9 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
     def change_ring(self, R):
         r"""
-        Return ``self`` as a frieze pattern with coefficients in ``R``
-        assuming there is a canonical coerce map from the base ring of ``self``
+        Return ``self`` as a frieze pattern with coefficients in ``R``.
+
+        This assumes that there is a canonical coerce map from the base ring of ``self``
         to ``R``.
 
         EXAMPLES::
@@ -422,8 +423,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
             sage: fp.change_ring(RealField())                                           # needs sage.rings.real_mpfr
             [0.000000000000000, 1.00000000000000, ...
              4.00000000000000, 1.00000000000000, 0.000000000000000]
-
-            sage: fp.FriezePattern([1,2,7,5,3,7,4,1]).change_ring(GF(7))                # needs sage.rings.finite_rings
+            sage: fp.change_ring(GF(7))
             Traceback (most recent call last):
             ...
             TypeError: no base extension defined
