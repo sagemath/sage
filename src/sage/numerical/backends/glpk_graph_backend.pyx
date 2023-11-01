@@ -230,7 +230,7 @@ cdef class GLPKGraphBackend():
         else:
             ValueError("Input data is not supported")
 
-    cpdef add_vertex(self, name=None):
+    cpdef add_vertex(self, name=None) noexcept:
         """
         Adds an isolated vertex to the graph.
 
@@ -284,7 +284,7 @@ cdef class GLPKGraphBackend():
             glp_set_vertex_name(self.graph, vn, str_to_bytes(s))
             return s
 
-    cpdef __add_vertices_sage(self, g):
+    cpdef __add_vertices_sage(self, g) noexcept:
         """
         Adds vertices to the GLPK Graph.
 
@@ -326,7 +326,7 @@ cdef class GLPKGraphBackend():
 
         glp_create_v_index(self.graph)
 
-    cpdef list add_vertices(self, vertices):
+    cpdef list add_vertices(self, vertices) noexcept:
         """
         Adds vertices from an iterable container of vertices.
 
@@ -378,7 +378,7 @@ cdef class GLPKGraphBackend():
         else:
             return None
 
-    cpdef set_vertex_demand(self, vertex, demand):
+    cpdef set_vertex_demand(self, vertex, demand) noexcept:
         """
         Sets the demand of the vertex in a mincost flow algorithm.
 
@@ -415,7 +415,7 @@ cdef class GLPKGraphBackend():
         cdef double val = demand
         (<c_v_data *>vert.data).rhs = val
 
-    cpdef set_vertices_demand(self, list pairs):
+    cpdef set_vertices_demand(self, list pairs) noexcept:
         """
         Sets the parameters of selected vertices.
 
@@ -443,7 +443,7 @@ cdef class GLPKGraphBackend():
             except KeyError:
                 pass
 
-    cpdef dict get_vertex(self, vertex):
+    cpdef dict get_vertex(self, vertex) noexcept:
         """
         Returns a specific vertex as a ``dict`` Object.
 
@@ -490,7 +490,7 @@ cdef class GLPKGraphBackend():
             "ls"  : vdata.ls
             }
 
-    cpdef dict get_vertices(self, verts):
+    cpdef dict get_vertices(self, verts) noexcept:
         """
         Returns a dictionary of the dictionaries associated to each vertex.
 
@@ -519,7 +519,7 @@ cdef class GLPKGraphBackend():
         vl = [(v, self.get_vertex(v)) for v in verts]
         return dict([(v, p) for v, p in vl if p is not None])
 
-    cpdef list vertices(self):
+    cpdef list vertices(self) noexcept:
         """
         Returns the list of all vertices
 
@@ -551,7 +551,7 @@ cdef class GLPKGraphBackend():
                 if self.graph.v[i+1].name is not NULL else None
                 for i in range(self.graph.nv)]
 
-    cpdef add_edge(self, u, v, dict params=None):
+    cpdef add_edge(self, u, v, dict params=None) noexcept:
         """
         Adds an edge between vertices ``u`` and ``v``.
 
@@ -615,7 +615,7 @@ cdef class GLPKGraphBackend():
                 glp_del_arc(self.graph, a)
                 raise TypeError("Invalid edge parameter.")
 
-    cpdef list add_edges(self, edges):
+    cpdef list add_edges(self, edges) noexcept:
         """
         Adds edges to the graph.
 
@@ -653,7 +653,7 @@ cdef class GLPKGraphBackend():
         for ed in edges:
             self.add_edge(*ed)
 
-    cpdef __add_edges_sage(self, g):
+    cpdef __add_edges_sage(self, g) noexcept:
         """
         Adds edges to the Graph.
 
@@ -708,7 +708,7 @@ cdef class GLPKGraphBackend():
                     if "low" in label:
                         (<c_a_data *>a.data).low = low
 
-    cpdef tuple get_edge(self, u, v):
+    cpdef tuple get_edge(self, u, v) noexcept:
         """
         Returns an edge connecting two vertices.
 
@@ -764,7 +764,7 @@ cdef class GLPKGraphBackend():
 
         return None
 
-    cpdef list edges(self):
+    cpdef list edges(self) noexcept:
         """
         Returns a ``list`` of all edges in the graph
 
@@ -813,7 +813,7 @@ cdef class GLPKGraphBackend():
             i += 1
         return edge_list
 
-    cpdef delete_vertex(self, vert):
+    cpdef delete_vertex(self, vert) noexcept:
         r"""
         Removes a vertex from the graph.
 
@@ -849,7 +849,7 @@ cdef class GLPKGraphBackend():
 
         glp_del_vertices(self.graph, ndel, num)
 
-    cpdef delete_vertices(self, list verts):
+    cpdef delete_vertices(self, list verts) noexcept:
         r"""
         Removes vertices from the graph.
 
@@ -893,7 +893,7 @@ cdef class GLPKGraphBackend():
 
         sig_free(num)
 
-    cpdef delete_edge(self, u, v, dict params=None):
+    cpdef delete_edge(self, u, v, dict params=None) noexcept:
         """
         Deletes an edge from the graph.
 
@@ -1005,7 +1005,7 @@ cdef class GLPKGraphBackend():
         for edge in edges:
             self.delete_edge(*edge)
 
-    cpdef int _find_vertex(self, name):
+    cpdef int _find_vertex(self, name) noexcept:
         """
         Returns the index of a vertex specified by a name
 
@@ -1032,7 +1032,7 @@ cdef class GLPKGraphBackend():
         glp_create_v_index(self.graph)
         return glp_find_vertex(self.graph, str_to_bytes(name)) - 1
 
-    cpdef int write_graph(self, fname):
+    cpdef int write_graph(self, fname) noexcept:
         r"""
         Writes the graph to a plain text file
 
@@ -1060,7 +1060,7 @@ cdef class GLPKGraphBackend():
         fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_graph(self.graph, fname)
 
-    cpdef int write_ccdata(self, fname):
+    cpdef int write_ccdata(self, fname) noexcept:
         r"""
         Writes the graph to a text file in DIMACS format.
 
@@ -1092,7 +1092,7 @@ cdef class GLPKGraphBackend():
         fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_ccdata(self.graph, 0, fname)
 
-    cpdef int write_mincost(self, fname):
+    cpdef int write_mincost(self, fname) noexcept:
         """
         Writes the mincost flow problem data to a text file in DIMACS format
 
@@ -1321,7 +1321,7 @@ cdef class GLPKGraphBackend():
 
         return graph_sol
 
-    cpdef double cpp(self):
+    cpdef double cpp(self) noexcept:
         r"""
         Solves the critical path problem of a project network.
 

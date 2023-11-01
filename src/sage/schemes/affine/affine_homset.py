@@ -393,7 +393,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.libs.singular sage.rings.number_field
             sage: K.<v> = QuadraticField(3)
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: X = A.subscheme([x^3 - v^2*y, y - v*x^2 + 3])

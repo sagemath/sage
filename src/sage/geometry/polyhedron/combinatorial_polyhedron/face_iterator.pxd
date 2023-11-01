@@ -70,7 +70,7 @@ cdef class FaceIterator_base(SageObject):
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
     cdef ListOfFaces atoms, coatoms, coatoms_coatom_rep
 
-    cdef inline CombinatorialFace next_face(self)
+    cdef inline CombinatorialFace next_face(self) noexcept
     cdef inline int next_dimension(self) except -1
     cdef inline int next_face_loop(self) except -1
     cdef size_t n_atom_rep(self) except -1
@@ -94,6 +94,6 @@ cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parall
 
 # Nogil definitions of crucial functions.
 
-cdef int next_dimension(iter_t structure, size_t parallelization_depth=?) nogil except -1
-cdef int next_face_loop(iter_t structure) nogil except -1
-cdef size_t n_atom_rep(iter_t structure) nogil except -1
+cdef int next_dimension(iter_t structure, size_t parallelization_depth=?) except -1 nogil
+cdef int next_face_loop(iter_t structure) except -1 nogil
+cdef size_t n_atom_rep(iter_t structure) except -1 nogil

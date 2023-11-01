@@ -195,7 +195,7 @@ cdef class DenseGraph(CGraph):
         sig_free(self.out_degrees)
         bitset_free(self.active_vertices)
 
-    cpdef realloc(self, int total_verts):
+    cpdef realloc(self, int total_verts) noexcept:
         """
         Reallocate the number of vertices to use, without actually adding any.
 
@@ -580,7 +580,7 @@ cdef class DenseGraphBackend(CGraphBackend):
         self.vertex_labels = {}
         self.vertex_ints = {}
 
-    cdef bint _delete_edge_before_adding(self):
+    cdef bint _delete_edge_before_adding(self) noexcept:
         """
         Return whether we should delete edges before adding any.
 

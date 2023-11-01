@@ -610,7 +610,7 @@ cdef class lazy_list_generic():
             return 1
         return 0
 
-    cpdef get(self, Py_ssize_t i):
+    cpdef get(self, Py_ssize_t i) noexcept:
         r"""
         Return the element at position ``i``.
 
@@ -880,7 +880,7 @@ cdef class lazy_list_generic():
             self.cache.extend(l)
         return 0
 
-    cpdef list _get_cache_(self):
+    cpdef list _get_cache_(self) noexcept:
         r"""
         Return the internal cache.
 
