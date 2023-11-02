@@ -55,6 +55,7 @@ jobs:
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build & Test workflow"
           .ci/retrofit-worktree.sh worktree-image /sage
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Incremental build
         id: incremental
@@ -69,7 +70,7 @@ jobs:
         if: (success() || failure()) && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          make sagelib-clean && git clean -fx src/sage && ./config.status && make build
+          make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
         shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Build docs (PDF)
@@ -77,8 +78,8 @@ jobs:
         if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
-        working-directory: ./worktree-image
+          make doc-clean doc-uninstall; make sagemath_doc_pdf-no-deps
+        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Copy docs
         id: copy
