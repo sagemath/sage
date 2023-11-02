@@ -9,6 +9,15 @@ on:
       - develop
   workflow_dispatch:
     # Allow to run manually
+    inputs:
+      platform:
+        description: 'Platform'
+        required: true
+        default: 'ubuntu-focal-standard'
+      docker_tag:
+        description: 'Docker tag'
+        required: true
+        default: 'dev'
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
@@ -79,6 +88,8 @@ jobs:
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
             ${{ env.BUILD_IMAGE }} /bin/sh
+
+      # Docs
 
       - name: Store old docs
         id: worktree

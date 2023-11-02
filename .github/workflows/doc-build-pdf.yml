@@ -20,65 +20,78 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Same as in build.yml
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-incremental"
+  BUILD_IMAGE:            "ghcr.io/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci"
+  FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
+  FROM_DOCKER_TARGET:     "with-targets"
+  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
+  EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+
 jobs:
   build-docs-pdf:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
       - name: Merge CI fixes from sagemath/sage
         run: |
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
 
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
+        run: |
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push:       false
+          load:       true
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=4
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=ci-build-with-fallback
+
       - name: Start container
         run: |
           docker run --name BUILD -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
-            ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}} /bin/sh
+            ${{ env.BUILD_IMAGE }} /bin/sh
 
-      - name: Update system packages
-        run: |
-          export PATH="build/bin:$PATH"
-          eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive)
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
-
-      - name: Add prebuilt tree as a worktree
-        id: worktree
-        run: |
-          git config --global --add safe.directory $(pwd)
-          git config --global user.email "ci-sage@example.com"
-          git config --global user.name "Build & Test workflow"
-          .ci/retrofit-worktree.sh worktree-image /sage
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
-
-      - name: Incremental build
-        id: incremental
-        run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap && make sagemath_doc_html-build-deps
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
-
-      - name: Build (fallback to non-incremental)
-        id: build
-        if: (success() || failure()) && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
-        run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
+      # Docs
 
       - name: Build docs (PDF)
         id: docbuild
-        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          make doc-clean doc-uninstall; make sagemath_doc_pdf-no-deps
+          make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
         shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Copy docs
