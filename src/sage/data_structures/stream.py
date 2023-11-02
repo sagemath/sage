@@ -365,8 +365,8 @@ class Stream_inexact(Stream):
         """
         self.__dict__ = d
         if not self._is_sparse:
+            self._cache = list()
             self._iter = self.iterate_coefficients()
-            self._cache = []
 
     def __getitem__(self, n):
         """
@@ -1397,7 +1397,7 @@ class Stream_uninitialized(Stream_inexact):
         return []
 
 
-class Stream_functional_equation(Stream_inexact):
+class Stream_functional_equation(Stream):
     r"""
     Coefficient stream defined by a functional equation `F = 0`.
 
@@ -1443,7 +1443,7 @@ class Stream_functional_equation(Stream_inexact):
             raise ValueError("the valuation must be specified for undefined series")
         if initial_values is None:
             initial_values = []
-        self._start = approximate_order
+
         for i, val in enumerate(initial_values):
             if val:
                 approximate_order += i
@@ -1453,17 +1453,72 @@ class Stream_functional_equation(Stream_inexact):
         else:
             approximate_order += len(initial_values)
             initial_values = []
-        super().__init__(False, true_order)
+        super().__init__(true_order)
+        self._is_sparse = False
         self._F = F
         self._base = R
         from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
-        self._P = InfinitePolynomialRing(self._base, names=('FESDUMMY',), implementation='sparse')
+        self._P = InfinitePolynomialRing(self._base, names=('FESDUMMY',),
+                                         implementation='sparse')
+        self._x = self._P.gen()
         self._PFF = self._P.fraction_field()
-        self._initial_values = initial_values
+        for i, v in enumerate(initial_values):
+            if v:
+                self._cache = initial_values[i:]
+                self._true_order = True
+                break
+            approximate_order += 1
+        else:
+            self._cache = []
         self._approximate_order = approximate_order
-        self._uninitialized = uninitialized
-        self._uninitialized._approximate_order = approximate_order
-        self._uninitialized._target = self
+        self._n = approximate_order + len(self._cache) - 1 # the largest index of a coefficient we know
+        self._uncomputed = True
+        self._last_eq_n = self._F._approximate_order - 1
+        uninitialized._target = self
+
+    def parent_streams(self):
+        r"""
+        Return the list of streams which are used to compute the
+        coefficients of ``self``.
+        """
+        return []
+
+    def __getitem__(self, n):
+        if n < self._approximate_order:
+            return ZZ.zero()
+
+        if self._n >= n:
+            return self._cache[n - self._approximate_order]
+
+        if self._uncomputed:
+            self._uncomputed = False
+            while not self._true_order and n >= self._approximate_order:
+                for k in range(self._n+1, n+1):
+                    v, val = self._compute()
+                    if val:
+                        self._true_order = True
+                        self._cache[-1] = val
+                    else:
+                        self._approximate_order += 1
+                        del self._cache[-1]
+                    self._subs_in_caches(self._F, v, val)
+                    self._n += 1
+
+            if self._true_order:
+                for k in range(self._n+1, n+1):
+                    v, val = self._compute()
+                    self._cache[-1] = val
+                    self._subs_in_caches(self._F, v, val)
+                    self._n += 1
+            self._uncomputed = True
+
+        if len(self._cache) == n - self._approximate_order + 1:
+            if n >= self._approximate_order:
+                return self._cache[n - self._approximate_order]
+            return ZZ.zero()
+
+        self._cache.append(self._x[n])
+        return self._cache[-1]
 
     def _subs_in_caches(self, s, var, val):
         if hasattr(s, "_cache"):
@@ -1483,40 +1538,10 @@ class Stream_functional_equation(Stream_inexact):
         for t in s.parent_streams():
             self._subs_in_caches(t, var, val)
 
-    def iterate_coefficients(self):
-        """
-        A generator for the coefficients of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized
-            sage: from sage.data_structures.stream import Stream_functional_equation
-            sage: from sage.data_structures.stream import Stream_derivative, Stream_sub
-            sage: C = Stream_uninitialized(0)
-            sage: D = Stream_derivative(C, 1, False)
-            sage: F = Stream_sub(D, C, False)
-            sage: S = Stream_functional_equation(0, F, C, [1], QQ)
-            sage: n = S.iterate_coefficients()
-            sage: [next(n) for _ in range(10)]
-            [1, 1, 1/2, 1/6, 1/24, 1/120, 1/720, 1/5040, 1/40320, 1/362880]
-        """
-        yield from self._initial_values
-        x = self._P.gen()
-        offset = self._approximate_order
-
-        def get_coeff(n):
-            n -= offset
-            if n < len(self._initial_values):
-                return self._initial_values[n]
-            return x[n]
-
-        sf = Stream_function(get_coeff, is_sparse=False, approximate_order=offset, true_order=True)
-        self._F = self._F.replace(self._uninitialized, sf)
-
-        n = self._F._approximate_order
-        m = len(self._initial_values)
+    def _compute(self):
         while True:
-            coeff = self._F[n]
+            self._last_eq_n += 1
+            coeff = self._F[self._last_eq_n]
             if coeff.parent() is self._PFF:
                 coeff = coeff.numerator()
             else:
@@ -1524,12 +1549,11 @@ class Stream_functional_equation(Stream_inexact):
             V = coeff.variables()
 
             if len(V) > 1:
-                raise ValueError(f"unable to determine a unique solution in degree {n}")
+                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}")
 
             if not V:
                 if coeff:
-                    raise ValueError(f"no solution in degree {n} as {coeff} != 0")
-                n += 1
+                    raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
                 continue
 
             # single variable to solve for
@@ -1539,16 +1563,11 @@ class Stream_functional_equation(Stream_inexact):
             else:
                 if set(hc) != set([0, 1]):
                     raise ValueError(f"unable to determine a unique solution in degree {n}")
-                if str(hc[1].lm()) != str(x[m]):
-                    raise ValueError(f"the solutions to the coefficients must be computed in order")
+#                if str(hc[1].lm()) != str(self._x[m]):
+#                    raise ValueError(f"the solutions to the coefficients must be computed in order")
                 val = self._base(-hc[0].lc() / hc[1].lc())
-            # Update the caches
-            self._subs_in_caches(sf, V[0], val)
-            self._subs_in_caches(self._F, V[0], val)
-            yield val
-            n += 1
-            m += 1
 
+            return V[0], val
 
 class Stream_unary(Stream_inexact):
     r"""

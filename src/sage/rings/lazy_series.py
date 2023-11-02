@@ -1679,6 +1679,17 @@ class LazyModuleElement(Element):
             sage: f
             0
 
+        We run into the same problem::
+
+            sage: f[1]
+            sage: f._coeff_stream._F._left._left.get_coefficient.__closure__[1].cell_contents.__dict__
+            {'_left': <sage.data_structures.stream.Stream_function object at 0x7f692f611fc0>,
+             '_right': <sage.data_structures.stream.Stream_cauchy_invert object at 0x7f692f611f90>,
+             '_true_order': True,
+             '_is_sparse': True,
+             '_cache': {0: FESDUMMY_1},
+             '_approximate_order': 0}
+
         """
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
             raise ValueError("series already defined")
