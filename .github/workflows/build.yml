@@ -31,8 +31,6 @@ env:
   TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-incremental"
   IMAGE:                  "sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci"
   LOGS_ARTIFACT_NAME:     "logs-commit-${{ github.sha }}-tox-docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}"
-  TARGETS_PRE:            "build/make/Makefile"
-  TARGETS:                "ci-build-with-fallback"
   FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
@@ -88,6 +86,8 @@ jobs:
           build-args: |
             NUMPROC=4
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=ci-build-with-fallback
 
       - name: Start container
         run: |
@@ -160,6 +160,8 @@ jobs:
           build-args: |
             NUMPROC=4
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=ci-build-with-fallback
 
       - name: Start container
         run: |
@@ -226,6 +228,8 @@ jobs:
           build-args: |
             NUMPROC=4
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=ci-build-with-fallback
 
       - name: Start container
         run: |
