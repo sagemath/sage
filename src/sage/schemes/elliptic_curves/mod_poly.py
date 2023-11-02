@@ -21,6 +21,7 @@ from cypari2.handle_error import PariError
 from sage.databases.db_modular_polynomials import ClassicalModularPolynomialDatabase
 _db = ClassicalModularPolynomialDatabase()
 
+_cache_bound = 100
 _cache = dict()
 
 def classical_modular_polynomial(l, j=None):
@@ -32,16 +33,17 @@ def classical_modular_polynomial(l, j=None):
 
     Generic polynomials are cached up to a certain size of `\ell`,
     which significantly accelerates subsequent invocations with the
-    same `\ell`. The default bound is `\ell \leq 150`, which can be
-    adjusted by setting ``classical_modular_polynomial.cache_bound``
-    to a different value. Beware that modular polynomials are very
-    large and the amount of memory consumed by the cache will grow
-    rapidly when the bound is set to a large value.
+    same `\ell`. The default bound is `\ell \leq 100`, which can be
+    adjusted using ``classical_modular_polynomial.set_cache_bound()``
+    with a different value. Beware that modular polynomials are very
+    big objects and the amount of memory consumed by the cache will
+    grow rapidly when the bound is set to a large value.
 
     INPUT:
 
     - ``l`` -- positive integer.
     - ``j`` -- either ``None`` or a ring element:
+
       * if ``None`` is given, the original modular polynomial
         is returned as an element of `\ZZ[X,Y]`
       * if a ring element `j \in R` is given, the evaluation
@@ -61,6 +63,20 @@ def classical_modular_polynomial(l, j=None):
         sage: j = Mod(1728, 419)
         sage: classical_modular_polynomial(3, j)
         Y^4 + 230*Y^3 + 84*Y^2 + 118*Y + 329
+
+    Increasing the cache size can be useful for repeated invocations::
+
+        sage: %timeit classical_modular_polynomial(101)  # random
+        6.11 s ± 1.21 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+        sage: %timeit classical_modular_polynomial(101, GF(65537).random_element())  # random
+        5.43 s ± 2.71 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+
+        sage: classical_modular_polynomial.set_cache_bound(150)
+        sage: %timeit classical_modular_polynomial(101)  # random
+        The slowest run took 10.35 times longer than the fastest. This could mean that an intermediate result is being cached.
+        1.84 µs ± 1.84 µs per loop (mean ± std. dev. of 7 runs, 1 loop each)
+        sage: %timeit classical_modular_polynomial(101, GF(65537).random_element())  # random
+        59.8 ms ± 29.4 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
     TESTS::
 
@@ -92,7 +108,7 @@ def classical_modular_polynomial(l, j=None):
             d = {(i, j): c for i,f in enumerate(pari_Phi) for j, c in enumerate(f)}
             Phi = ZZ['X,Y'](d)
 
-        if l <= classical_modular_polynomial.cache_bound:
+        if l <= _cache_bound:
             _cache[l] = Phi
 
         return Phi
@@ -109,7 +125,7 @@ def classical_modular_polynomial(l, j=None):
     except ValueError:
         pass
     else:
-        if l <= classical_modular_polynomial.cache_bound:
+        if l <= _cache_bound:
             _cache[l] = ZZ['X,Y'](Phi)
         return Phi(j, Y)
 
@@ -127,4 +143,7 @@ def classical_modular_polynomial(l, j=None):
     # and simply evaluating it.
     return classical_modular_polynomial(l)(j, Y)
 
-classical_modular_polynomial.cache_bound = 150
+def _set_cache_bound(bnd):
+    global _cache_bound
+    _cache_bound = bnd
+classical_modular_polynomial.set_cache_bound = _set_cache_bound
