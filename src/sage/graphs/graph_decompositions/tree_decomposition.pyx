@@ -499,14 +499,26 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
 
     The PetersenGraph has treewidth 4::
 
-        sage: graphs.PetersenGraph().treewidth()
+        sage: petersen = graphs.PetersenGraph()
+        sage: petersen.treewidth(algorithm='sage')
         4
-        sage: graphs.PetersenGraph().treewidth(certificate=True)
+        sage: petersen.treewidth(algorithm='sage', certificate=True)
         Tree decomposition: Graph on 6 vertices
 
-    Nice tree decomposition of the PetersenGraph has 28 nodes:
+    The PetersenGraph has treewidth 4 (with `tdlib`)::
 
-        sage: graphs.PetersenGraph().treewidth(certificate=True, nice=True)
+        sage: petersen = graphs.PetersenGraph()
+        sage: petersen.treewidth(algorithm='tdlib')
+        4
+        sage: petersen.treewidth(algorithm='tdlib', certificate=True)
+        Tree decomposition: Graph on 6 vertices
+
+    Nice tree decomposition of the PetersenGraph has 28 nodes::
+
+        sage: petersen = graphs.PetersenGraph()
+        sage: petersen.treewidth(algorithm='sage', certificate=True, nice=True)
+        Nice tree decomposition of Tree decomposition: Graph on 28 vertices
+        sage: petersen.treewidth(algorithm='tdlib', certificate=True, nice=True)
         Nice tree decomposition of Tree decomposition: Graph on 28 vertices
 
     The treewidth of a 2-dimensional grid is its smallest side::
