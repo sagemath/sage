@@ -30,7 +30,7 @@ echo "# to simplify writing scripts that customize this file"
 ADD="ADD $__CHOWN"
 RUN=RUN
 cat <<EOF
-ARG BASE_IMAGE
+ARG BASE_IMAGE=${FULL_BASE_IMAGE_AND_TAG}
 FROM \${BASE_IMAGE} as with-system-packages
 EOF
 case $SYSTEM in
@@ -144,7 +144,7 @@ EOF
                 ;;
             *)
                 cat <<EOF
-ARG USE_CONDARC=condarc.yml
+ARG USE_CONDARC=${USE_CONDARC-condarc.yml}
 ADD *condarc*.yml /tmp/
 RUN echo \${CONDARC}; cd /tmp && conda config --stdin < \${USE_CONDARC}
 RUN conda update -n base conda
@@ -247,13 +247,13 @@ RUN if [ -d /sage ]; then                                               \
     fi
 WORKDIR /sage
 
-ARG BOOTSTRAP=./bootstrap
+ARG BOOTSTRAP=${BOOTSTRAP-./bootstrap}
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
 
 FROM bootstrapped as configured
 #:configuring:
 RUN mkdir -p logs/pkgs; rm -f config.log; ln -s logs/pkgs/config.log config.log
-ARG EXTRA_CONFIGURE_ARGS=""
+ARG EXTRA_CONFIGURE_ARGS="${CONFIGURE_ARGS}"
 EOF
 if [ ${WITH_SYSTEM_SPKG} = "force" ]; then
     cat <<EOF
