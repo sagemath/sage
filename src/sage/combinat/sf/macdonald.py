@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Macdonald Polynomials
 
@@ -123,12 +124,12 @@ class Macdonald(UniqueRepresentation):
         self._name_suffix = ""
         if str(q) != 'q':
             self._name_suffix += " with q=%s" % q
-            if str(t) !='t':
+            if str(t) != 't':
                 self._name_suffix += " and "
-        if str(t) !='t':
-            if str(q) =='q':
+        if str(t) != 't':
+            if str(q) == 'q':
                 self._name_suffix += " with "
-            self._name_suffix += "t=%s"%t
+            self._name_suffix += "t=%s" % t
         self._name = "Macdonald polynomials"+self._name_suffix+" over "+repr(Sym.base_ring())
 
     def base_ring( self ):

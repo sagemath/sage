@@ -497,7 +497,7 @@ class FormsRing_abstract(Parent):
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
         else:
             (weight, ep) = degree
-            if (self.is_homogeneous() and (weight != self.weight() or ep!=self.ep())):
+            if (self.is_homogeneous() and (weight != self.weight() or ep != self.ep())):
                 analytic_type = self._analytic_type.reduce_to([])
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=weight, ep=ep)
 

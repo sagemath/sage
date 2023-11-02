@@ -102,7 +102,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
         """
         if self.is_principal():
             return 'Trivial principal fractional ideal class'
-        return 'Fractional ideal class %s'%self._value._repr_short()
+        return 'Fractional ideal class %s' % self._value._repr_short()
 
     def _mul_(self, other):
         r"""
@@ -301,7 +301,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
         K = Cl.number_field()
         from sage.rings.real_mpfr import RR
         for P in K.primes_of_bounded_norm_iter(RR(norm_bound)):
-            if Cl(P)==c:
+            if Cl(P) == c:
                 return P
         raise RuntimeError("No prime of norm less than %s found in class %s" % (norm_bound, c))
 
@@ -591,8 +591,7 @@ class ClassGroup(AbelianGroupWithValues_class):
             return
         gk = self.gen(k)
         for _ in range(self._gens_orders[k]):
-            for J in self._iter_inner(i0, k + 1):
-                yield J
+            yield from self._iter_inner(i0, k + 1)
             i0 = i0 * gk
         return
 
@@ -607,10 +606,10 @@ class ClassGroup(AbelianGroupWithValues_class):
             sage: C._repr_()
             'Class group of order 3 with structure C3 of Number Field in a with defining polynomial x^2 + 23'
         """
-        s = 'Class group of order %s '%self.order()
+        s = 'Class group of order %s ' % self.order()
         if self.order() > 1:
-            s += 'with structure %s '%self._group_notation(self.gens_orders())
-        s += 'of %s'%self.number_field()
+            s += 'with structure %s ' % self._group_notation(self.gens_orders())
+        s += 'of %s' % self.number_field()
         return s
 
     def number_field(self):

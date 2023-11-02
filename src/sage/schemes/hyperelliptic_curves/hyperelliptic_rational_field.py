@@ -27,7 +27,7 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
             f, h = self._hyperelliptic_polynomials
             y = self._printing_ring.gen()
             x = self._printing_ring.base_ring().gen()
-            return HyperellipticCurve(f.change_ring(R), h, "%s,%s"%(x,y))
+            return HyperellipticCurve(f.change_ring(R), h, "%s,%s" % (x,y))
 
         import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         if isinstance(p, (sage.rings.abc.pAdicField, sage.rings.abc.pAdicRing)):

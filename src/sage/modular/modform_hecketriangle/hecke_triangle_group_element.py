@@ -295,7 +295,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         S = self.parent().S()
         (L, sgn) = self._word_S_T_data()
 
-        M = [S if v[0]==0 else Tf(v[1]) for v in L]
+        M = [S if v[0] == 0 else Tf(v[1]) for v in L]
         if sgn > 0:
             sgn = self.parent().I()
         else:
@@ -1025,7 +1025,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         G = self.parent()
 
         if self.is_identity():
-            method="block"
+            method = "block"
 
         if self.is_elliptic():
             if self.parent().n() == infinity:

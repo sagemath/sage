@@ -27,7 +27,7 @@ cdef extern from "sage/libs/ntl/ntlwrap_impl.h":
     void ZZ_to_mpz(mpz_t output, ZZ_c* x)
     void mpz_to_ZZ(ZZ_c *output, mpz_srcptr x)
 
-cdef void PyLong_to_ZZ(ZZ_c* z, value):
+cdef void PyLong_to_ZZ(ZZ_c* z, value) noexcept:
     """
     Convert ``value`` (which must be a Python ``long``) to NTL.
     """

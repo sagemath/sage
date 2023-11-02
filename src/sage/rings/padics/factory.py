@@ -301,7 +301,7 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
         if not isinstance(print_ram_name, str):
             print_ram_name = str(print_ram_name)
         if names != print_ram_name:
-            raise ValueError("If both names (%s) and print_ram_name (%s) are specified, they must agree"%(names, print_ram_name))
+            raise ValueError("If both names (%s) and print_ram_name (%s) are specified, they must agree" % (names, print_ram_name))
         name = names
     else:
         if names is None:
@@ -311,7 +311,7 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
         else:
             name = str(names)
     if type not in valid_types:
-        raise ValueError("type must be %s"%(", ".join(valid_types)))
+        raise ValueError("type must be %s" % (", ".join(valid_types)))
     show_prec = _canonicalize_show_prec(type, print_mode, show_prec)
     key = (p, prec, type, print_mode, name, print_pos, print_sep, tuple(print_alphabet), print_max_terms, show_prec, label)
     return key
@@ -1343,7 +1343,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
         k = Integer(k)
 
     if check:
-        if not p.is_prime() or k <=0:
+        if not p.is_prime() or k <= 0:
             raise ValueError("q must be a prime power")
 
     if prec is not None and not isinstance(prec, Integer):
@@ -3231,10 +3231,9 @@ class pAdicExtension_class(UniqueFactory):
 
         sage: R = Zp(5,3)
         sage: S.<x> = ZZ[]
-        sage: W.<w> = pAdicExtension(R, x^4 - 15)
-        sage: W
+        sage: W.<w> = pAdicExtension(R, x^4 - 15); W                                    # needs sage.libs.ntl
         5-adic Eisenstein Extension Ring in w defined by x^4 - 15
-        sage: W.precision_cap()
+        sage: W.precision_cap()                                                         # needs sage.libs.ntl
         12
     """
     def create_key_and_extra_args(self, base, modulus, prec=None, print_mode=None,

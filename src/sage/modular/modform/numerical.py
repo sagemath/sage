@@ -28,7 +28,7 @@ from sage.structure.sage_object  import SageObject
 from sage.structure.sequence     import Sequence
 
 # This variable controls importing the SciPy library sparingly
-scipy=None
+scipy = None
 
 @richcmp_method
 class NumericalEigenforms(SageObject):
@@ -163,7 +163,7 @@ class NumericalEigenforms(SageObject):
             sage: n._repr_()
             'Numerical Hecke eigenvalues for Congruence Subgroup Gamma0(61) of weight 2'
         """
-        return "Numerical Hecke eigenvalues for %s of weight %s"%(
+        return "Numerical Hecke eigenvalues for %s of weight %s" % (
             self._group, self._weight)
 
     @cached_method

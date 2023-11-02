@@ -358,7 +358,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 + y + x^3)                                    # needs sage.rings.function_field
             sage: v = K.valuation(1/x)                                                  # needs sage.rings.function_field
-            sage: w = v.extension(L) # indirect doctest                                 # needs sage.rings.function_field
+            sage: w = v.extension(L)  # indirect doctest                                # needs sage.rings.function_field
 
         """
         from sage.categories.function_fields import FunctionFields
@@ -1118,7 +1118,7 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
         sage: K.<x> = FunctionField(QQ)
         sage: R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - (x^2 + x + 1))                                  # needs sage.rings.function_field
-        sage: v = K.valuation(x - 1) # indirect doctest                                 # needs sage.rings.function_field
+        sage: v = K.valuation(x - 1)  # indirect doctest                                # needs sage.rings.function_field
         sage: w = v.extension(L); w                                                     # needs sage.rings.function_field
         (x - 1)-adic valuation
 
@@ -1474,7 +1474,7 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
              [ Valuation at the infinite place, v(y - 1) = 2 ]-adic valuation]
 
         """
-        assert(self.domain().base() is not self.domain())
+        assert (self.domain().base() is not self.domain())
         if repr(self._base_valuation) == repr(self.restriction(self.domain().base())):
             return repr(self._base_valuation)
         return super()._repr_()

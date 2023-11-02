@@ -76,8 +76,8 @@ Cython functions::
     sage: sage_getdoc(sage.rings.rational.make_rational).lstrip()
     'Make a rational number ...'
 
-    sage: sage_getsource(sage.rings.rational.make_rational)[4:]
-    'make_rational(s):...'
+    sage: sage_getsource(sage.rings.rational.make_rational)
+    '@cython.binding(True)\ndef make_rational(s):...'
 
 Python functions::
 
@@ -602,7 +602,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             On Python 3 negative numbers are parsed first, for some reason, as
             a UnaryOp node.
         """
-        return node.n
+        return node.value
 
     def visit_Str(self, node):
         r"""
@@ -624,7 +624,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: [vis(s) for s in ['"abstract"', "'syntax'", r'''r"tr\ee"''']]
             ['abstract', 'syntax', 'tr\\ee']
         """
-        return node.s
+        return node.value
 
     def visit_List(self, node):
         """
@@ -1086,12 +1086,12 @@ def _split_syntactical_unit(s):
         tmp_group, s = _split_syntactical_unit(s)
         out.append(tmp_group)
         s = s.strip()
-        if tmp_group==stop:
+        if tmp_group == stop:
             return ''.join(out), s
         elif s.startswith(stop):
             out.append(stop)
             return ''.join(out), s[1:].strip()
-    raise SyntaxError("Syntactical group starting with %s did not end with %s"%(repr(start),repr(stop)))
+    raise SyntaxError("Syntactical group starting with %s did not end with %s" % (repr(start),repr(stop)))
 
 
 def _sage_getargspec_from_ast(source):
@@ -1263,7 +1263,7 @@ def _sage_getargspec_cython(source):
     nb_stars = 0
     varargs = None
     keywords = None
-    while (i<l):
+    while (i < l):
         unit = cy_units[i]
         if expect_default:
             if unit in ('=','*',','):
@@ -1271,13 +1271,13 @@ def _sage_getargspec_cython(source):
             while unit != ',':
                 py_units.append(unit)
                 i += 1
-                if i==l:
+                if i == l:
                     break
                 unit = cy_units[i]
             expect_default = False
             name = None
             if nb_stars:
-                raise SyntaxError("The %s argument has no default"%('varargs' if nb_stars==1 else 'keywords'))
+                raise SyntaxError("The %s argument has no default" % ('varargs' if nb_stars == 1 else 'keywords'))
             continue
         i += 1
         if unit == '*':
@@ -1300,14 +1300,14 @@ def _sage_getargspec_cython(source):
             expect_default = True
             name = None
             if nb_stars:
-                raise SyntaxError("The %s argument has no default"%('varargs' if nb_stars==1 else 'keywords'))
+                raise SyntaxError("The %s argument has no default" % ('varargs' if nb_stars == 1 else 'keywords'))
         else:
             name = unit
         if name is not None:
             # Is "name" part of a type definition?
             # If it is the last identifier before '=' or ',',
             # then it *is* a variable name,
-            if i==l or cy_units[i] in ('=',','):
+            if i == l or cy_units[i] in ('=',','):
                 if nb_stars == 0:
                     py_units.append(name)
                 elif nb_stars == 1:
@@ -1614,7 +1614,8 @@ def sage_getargspec(obj):
 
     The following was fixed in :trac:`16309`::
 
-        sage: cython(                                                                   # needs sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: cython(
         ....: '''
         ....: class Foo:
         ....:     @staticmethod
@@ -1809,10 +1810,10 @@ def formatannotation(annotation, base_module=None):
 def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        kwonlyargs=(), kwonlydefaults=None, annotations={},
                        formatarg=str,
-                       formatvarargs=lambda name: '*' + name,
-                       formatvarkw=lambda name: '**' + name,
-                       formatvalue=lambda value: '=' + repr(value),
-                       formatreturns=lambda text: ' -> ' + text,
+                       formatvarargs=None,
+                       formatvarkw=None,
+                       formatvalue=None,
+                       formatreturns=None,
                        formatannotation=formatannotation):
     """
     Format an argument spec from the values returned by getfullargspec.
@@ -1842,6 +1843,15 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         sage: sage_formatargspec(args, defaults=defaults)
         '(a, b, c=3)'
     """
+    if formatvarargs is None:
+        formatvarargs = lambda name: '*' + name
+    if formatvarkw is None:
+        formatvarkw = lambda name: '**' + name
+    if formatvalue is None:
+        formatvalue = lambda value: '=' + repr(value)
+    if formatreturns is None:
+        formatreturns = lambda text: ' -> ' + text
+
     def formatargandannotation(arg):
         result = formatarg(arg)
         if arg in annotations:
@@ -1919,7 +1929,7 @@ def sage_getdef(obj, obj_name=''):
         # change * to \*, and change ** to \**.
         return obj_name + '(' + s + ')'
     except (AttributeError, TypeError, ValueError):
-        return '%s( [noargspec] )'%obj_name
+        return '%s( [noargspec] )' % obj_name
 
 
 def _sage_getdoc_unformatted(obj):
@@ -2382,7 +2392,7 @@ def sage_getsourcelines(obj):
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
-         '    cpdef object pyobject(self):\n']
+         '    cpdef object pyobject(self) noexcept:\n']
         sage: lines[-1]    # last line                                                  # needs sage.symbolic
         '        return S\n'
 
@@ -2519,7 +2529,7 @@ def sage_getsourcelines(obj):
     # definition.
     first_line = source_lines[lineno-1]
     leading_blanks = len(first_line)-len(first_line.lstrip())
-    if first_line.lstrip().startswith('def ') and "__init__" in first_line and obj.__name__!='__init__':
+    if first_line.lstrip().startswith('def ') and "__init__" in first_line and obj.__name__ != '__init__':
         ignore = False
         double_quote = None
         for lnb in range(lineno, 0, -1):
@@ -2527,17 +2537,17 @@ def sage_getsourcelines(obj):
             nfl_strip = new_first_line.lstrip()
             if nfl_strip.startswith('"""'):
                 if double_quote is None:
-                    double_quote=True
+                    double_quote = True
                 if double_quote:
                     ignore = not ignore
             elif nfl_strip.startswith("'''"):
                 if double_quote is None:
-                    double_quote=False
+                    double_quote = False
                 if double_quote is False:
                     ignore = not ignore
             if ignore:
                 continue
-            if len(new_first_line)-len(nfl_strip)<leading_blanks and nfl_strip:
+            if len(new_first_line)-len(nfl_strip) < leading_blanks and nfl_strip:
                 # We are not inside a doc string. So, if the indentation
                 # is less than the indentation of the __init__ method
                 # then we must be at the class definition!

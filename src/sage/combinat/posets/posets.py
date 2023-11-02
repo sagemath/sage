@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 Finite posets
@@ -287,8 +286,8 @@ Classes and functions
 # ****************************************************************************
 from __future__ import annotations
 from collections import defaultdict
-from copy import copy, deepcopy
-from typing import List
+from copy import copy
+from itertools import product
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -680,7 +679,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         for the poset as it contains duplicate elements
     """
     # Avoiding some errors from the user when data should be a pair
-    if not(element_labels is None or isinstance(element_labels, (dict, list))):
+    if not (element_labels is None or isinstance(element_labels, (dict, list))):
         raise TypeError("element_labels should be a dict or a list if "
                         "different from None. (Did you intend data to be "
                         "equal to a pair ?)")
@@ -705,7 +704,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
     if data is None:  # type 0
         D = DiGraph()
     elif isinstance(data, DiGraph):  # type 4
-        D = deepcopy(data)
+        D = data.copy(immutable=True)
     elif isinstance(data, dict):  # type 3: dictionary of upper covers
         D = DiGraph(data, format="dict_of_lists")
     elif isinstance(data, (list, tuple)):  # types 1, 2, 3 (list/tuple)
@@ -1318,7 +1317,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if self._is_facade and element in self._element_to_vertex_dict:
             return element
-        return super(FinitePoset, self).__call__(element)
+        return super().__call__(element)
 
     def hasse_diagram(self):
         r"""
@@ -1373,8 +1372,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: print(P._latex_())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-            \node (node_...) at (5...bp,...bp) [draw,draw=none] {$...$};
-              \node (node_...) at (5...bp,...bp) [draw,draw=none] {$...$};
+            \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
               \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
             %
             \end{tikzpicture}
@@ -1402,7 +1401,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: M._repr_()
             'Finite meet-semilattice containing 3 elements'
         """
-        s = "%s containing %s elements" % (self._desc, self._hasse_diagram.order())
+        s = f"{self._desc} containing {self._hasse_diagram.order()} elements"
         if self._with_linear_extension:
             s += " with distinguished linear extension"
         return s
@@ -1443,13 +1442,13 @@ class FinitePoset(UniqueRepresentation, Parent):
                 return output
         # create text for non-graphical output
         if can_plot:
-            text = '{0} (use the .plot() method to plot)'.format(repr(self))
+            text = f'{repr(self)} (use the .plot() method to plot)'
         else:
             text = repr(self)
         # latex() produces huge tikz environment, override
         tp = display_manager.types
         if (prefs.text == 'latex' and tp.OutputLatex in display_manager.supported_output()):
-            return tp.OutputLatex(r'\text{{{0}}}'.format(text))
+            return tp.OutputLatex(fr'\text{{{text}}}')
         return tp.OutputPlainText(text)
 
     def __iter__(self):
@@ -2065,7 +2064,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         if cover_labels is not None:
             if callable(cover_labels):
-                for v, w in graph.edges(sort=True, labels=False):
+                for v, w in graph.edges(sort=False, labels=False):
                     graph.set_edge_label(v, w, cover_labels(v, w))
             elif isinstance(cover_labels, dict):
                 for v, w in cover_labels:
@@ -2453,7 +2452,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             min_elmt = d[0]
             max_elmt = d[3]
 
-            if len(H.neighbors_in(max_elmt)) != 2:
+            if H.in_degree(max_elmt) != 2:
                 # Top of a diamond cannot cover anything but the two side elements
                 return False
 
@@ -2469,7 +2468,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                         continue
                     for mx in potential_max:
                         if len(H.all_paths(mn, mx)) == 2:
-                            if len(H.neighbors_in(mx)) != 1:
+                            if H.in_degree(mx) != 1:
                                 # Max element covers something outside of double tailed diamond
                                 return False
                             # Success
@@ -2668,7 +2667,7 @@ class FinitePoset(UniqueRepresentation, Parent):
     # Maybe this should also be deprecated.
     intervals_number = relations_number
 
-    def linear_intervals_count(self) -> List[int]:
+    def linear_intervals_count(self) -> list[int]:
         """
         Return the enumeration of linear intervals w.r.t. their cardinality.
 
@@ -2798,10 +2797,10 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Q = Poset({0:[2], 1:[2], 2:[3], 3:[4], 4:[]})
             sage: Q.is_incomparable_chain_free(2, 20/10)
             True
-            sage: Q.is_incomparable_chain_free(2, pi)                                   # needs sage.symbolic
+            sage: Q.is_incomparable_chain_free(2, 1.5)
             Traceback (most recent call last):
             ...
-            TypeError: 2 and pi must be integers
+            TypeError: 2 and 1.5... must be integers
             sage: Q.is_incomparable_chain_free(2, -1)
             Traceback (most recent call last):
             ...
@@ -2849,9 +2848,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             try:
                 m, n = Integer(m), Integer(n)
             except TypeError:
-                raise TypeError("%s and %s must be integers" % (m, n))
+                raise TypeError(f"{m} and {n} must be integers")
             if m < 1 or n < 1:
-                raise ValueError("%s and %s must be positive integers" % (m, n))
+                raise ValueError(f"{m} and {n} must be positive integers")
             twochains = digraphs.TransitiveTournament(m) + digraphs.TransitiveTournament(n)
             if closure.subgraph_search(twochains, induced=True) is not None:
                 return False
@@ -3632,7 +3631,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         P = Poset(self._hasse_diagram)  # work on an int-labelled poset
         hasse_diagram = P.hasse_diagram()
         inc_graph = P.incomparability_graph()
-        inc_P = inc_graph.edges(sort=True, labels=False)
+        inc_P = inc_graph.edges(sort=False, labels=False)
 
         # cycles is the list of all cycles found during the execution of the
         # algorithm
@@ -5218,7 +5217,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             ...
             TypeError: the Rees product is defined only for graded posets
         """
-        if not(self.is_graded() and other.is_graded()):
+        if not (self.is_graded() and other.is_graded()):
             raise TypeError('the Rees product is defined only for graded posets')
 
         rk0 = self.rank_function()
@@ -5296,7 +5295,6 @@ class FinitePoset(UniqueRepresentation, Parent):
            Discrete Applied Mathematics 15 (1986) 105-110
            :doi:`10.1016/0166-218X(86)90023-5`
         """
-        from sage.misc.mrange import cartesian_product_iterator
         from sage.graphs.graph import Graph
         from sage.misc.flatten import flatten
         dg = self._hasse_diagram
@@ -5323,11 +5321,11 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         for i0, i1 in Subsets(factors_range, 2):
             for x in prod_dg:
-                neigh0 = [y for y in prod_dg.neighbors(x)
+                neigh0 = [y for y in prod_dg.neighbor_iterator(x)
                           if edge_color(x, y) == i0]
-                neigh1 = [z for z in prod_dg.neighbors(x)
+                neigh1 = [z for z in prod_dg.neighbor_iterator(x)
                           if edge_color(x, z) == i1]
-                for x0, x1 in cartesian_product_iterator([neigh0, neigh1]):
+                for x0, x1 in product(neigh0, neigh1):
                     x2 = list(x0)
                     x2[i1] = x1[i1]
                     x2 = tuple(x2)
@@ -6348,7 +6346,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             s += '"%s";' % v
         s += '\n'
         for u, v in self.cover_relations_iterator():
-            s += '"%s"%s"%s";' % (v, edge_string, u)
+            s += f'"{v}"{edge_string}"{u}";'
         s += "\n}"
         return s
 
@@ -7175,7 +7173,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         ineqs = [[0] + [ZZ(j == v) - ZZ(j == u) for j in self]
-                 for u, v, w in self.hasse_diagram().edges(sort=True)]
+                 for u, v in self.hasse_diagram().edges(sort=False, labels=False)]
         for i in self.maximal_elements():
             ineqs += [[1] + [-ZZ(j == i) for j in self]]
         for i in self.minimal_elements():
@@ -8152,9 +8150,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             try:
                 k = Integer(k)
             except TypeError:
-                raise TypeError("parameter 'k' must be an integer, not {0}".format(k))
+                raise TypeError(f"parameter 'k' must be an integer, not {k}")
             if k <= 0:
-                raise ValueError("parameter 'k' must be positive, not {0}".format(k))
+                raise ValueError(f"parameter 'k' must be positive, not {k}")
 
         if not self.is_bounded():
             raise ValueError("the poset is not bounded")
@@ -8369,7 +8367,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             pdict[(0, i)] = [(1, j) for j in self if self.ge(i, j)]
             pdict[(1, i)] = [(2, 0)]
         G = DiGraph(pdict, format="dict_of_lists")
-        a = {(u, v): 0 for (u, v, l) in G.edge_iterator()}
+        a = {e: 0 for e in G.edge_iterator(labels=False)}
         for i in self:
             a[((0, i), (1, i))] = 1
         return (G, a)
@@ -8825,7 +8823,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Poset().is_induced_subposet('junk')
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'subposet'
+            AttributeError: 'str' object has no attribute 'subposet'...
         """
         if (not self._is_facade or (isinstance(other, FinitePoset) and
                                     not other._is_facade)):
@@ -8880,7 +8878,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         H = self._hasse_diagram
         txt = 'needsPackage "Posets";'
         txt += "poset({%s},{" % ','.join(str(x) for x in H)
-        txt += ",".join("{%s,%s}" % (str(x), str(y))
+        txt += ",".join(f"{{{str(x)},{str(y)}}}"
                         for x, y in H.cover_relations_iterator())
         return txt + "})"
 
@@ -8993,8 +8991,7 @@ class FinitePosets_n(UniqueRepresentation, Parent):
                         68275077901156, 4483130665195087]
         if not from_iterator and self._n < len(known_values):
             return Integer(known_values[self._n])
-        else:
-            return super(FinitePosets_n, self).cardinality()
+        return super().cardinality()
 
 
 # For backward compatibility of pickles of the former Posets()
@@ -9108,19 +9105,19 @@ def _ford_fulkerson_chronicle(G, s, t, a):
         (11, 2)
     """
     # pi: potential function as a dictionary.
-    pi = {v: 0 for v in G.vertex_iterator()}
+    pi = {v: 0 for v in G}
     # p: value of the potential pi.
     p = 0
 
     # f: flow function as a dictionary.
-    f = {(u, v): 0 for (u, v, l) in G.edge_iterator()}
+    f = {edge: 0 for edge in G.edge_iterator(labels=False)}
     # val: value of the flow f. (Cannot call it v due to Python's asinine
     # handling of for loops.)
     val = 0
 
     # capacity: capacity function as a dictionary. Here, just the
     # indicator function of the set of arcs of G.
-    capacity = {(u, v): 1 for (u, v, l) in G.edge_iterator()}
+    capacity = {edge: 1 for edge in G.edge_iterator(labels=False)}
 
     while True:
 
@@ -9128,30 +9125,29 @@ def _ford_fulkerson_chronicle(G, s, t, a):
 
         # Gprime: directed graph G' from Britz-Fomin, Section 7.
         Gprime = DiGraph()
-        Gprime.add_vertices(G.vertices(sort=False))
-        for (u, v, l) in G.edge_iterator():
+        Gprime.add_vertices(G)
+        for u, v in G.edge_iterator(labels=False):
             if pi[v] - pi[u] == a[(u, v)]:
                 if f[(u, v)] < capacity[(u, v)]:
                     Gprime.add_edge(u, v)
                 elif f[(u, v)] > 0:
                     Gprime.add_edge(v, u)
 
-        # X: list of vertices of G' reachable from s, along with
-        # the shortest paths from s to them.
-        X = Gprime.shortest_paths(s)
+        # X: list of vertices of G' reachable from s
+        X = set(Gprime.depth_first_search(s))
         if t in X:
             # Step MC2a in Britz-Fomin, Algorithm 7.2.
-            shortest_path = X[t]
+            shortest_path = Gprime.shortest_path(s, t, by_weight=False)
             shortest_path_in_edges = zip(shortest_path[:-1], shortest_path[1:])
-            for (u, v) in shortest_path_in_edges:
-                if v in G.neighbors_out(u):
+            for u, v in shortest_path_in_edges:
+                if v in G.neighbor_out_iterator(u):
                     f[(u, v)] += 1
                 else:
                     f[(v, u)] -= 1
             val += 1
         else:
             # Step MC2b in Britz-Fomin, Algorithm 7.2.
-            for v in G.vertex_iterator():
+            for v in G:
                 if v not in X:
                     pi[v] += 1
             p += 1

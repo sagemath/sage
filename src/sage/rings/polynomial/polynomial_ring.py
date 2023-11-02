@@ -388,7 +388,7 @@ class PolynomialRing_general(ring.Algebra):
             sage: S(x)
             x
 
-        Throw a TypeError if any of the coefficients cannot be coerced
+        Throw a :class:`TypeError` if any of the coefficients cannot be coerced
         into the base ring (:trac:`6777`)::
 
             sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # needs sage.rings.real_mpfr
@@ -840,7 +840,7 @@ class PolynomialRing_general(ring.Algebra):
         from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
         if is_MPolynomialRing(P) and self.variable_name() in P.variable_names():
             P_ = P.remove_var(self.variable_name())
-            return self.base_ring()!=P_ and self.base_ring().has_coerce_map_from(P_)
+            return self.base_ring() != P_ and self.base_ring().has_coerce_map_from(P_)
 
     def _magma_init_(self, magma):
         """
@@ -889,7 +889,7 @@ class PolynomialRing_general(ring.Algebra):
         """
         B = magma(self.base_ring())
         Bref = B._ref()
-        s = 'PolynomialRing(%s)'%(Bref)
+        s = 'PolynomialRing(%s)' % (Bref)
         return magma._with_names(s, self.variable_names())
 
     def _gap_init_(self, gap=None):
@@ -927,7 +927,7 @@ class PolynomialRing_general(ring.Algebra):
             base_ring = gap(self.base_ring()).name()
         else:
             base_ring = self.base_ring()._gap_init_()
-        return 'PolynomialRing(%s, ["%s"])'%(base_ring, self.variable_name())
+        return 'PolynomialRing(%s, ["%s"])' % (base_ring, self.variable_name())
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -1009,7 +1009,7 @@ class PolynomialRing_general(ring.Algebra):
             return self._cached_repr
         except AttributeError:
             pass
-        s = "Univariate Polynomial Ring in %s over %s"%(
+        s = "Univariate Polynomial Ring in %s over %s" % (
                 self.variable_name(), self.base_ring())
         if self.is_sparse():
             s = "Sparse " + s
@@ -1024,7 +1024,7 @@ class PolynomialRing_general(ring.Algebra):
             sage: latex(S)
             \Bold{Z}[\alpha_{12}]
         """
-        return "%s[%s]"%(latex.latex(self.base_ring()), self.latex_variable_names()[0])
+        return "%s[%s]" % (latex.latex(self.base_ring()), self.latex_variable_names()[0])
 
     def base_extend(self, R):
         """
@@ -1202,7 +1202,7 @@ class PolynomialRing_general(ring.Algebra):
             x - 1
         """
         if n <= 0:
-            raise ArithmeticError("n=%s must be positive"%n)
+            raise ArithmeticError("n=%s must be positive" % n)
         elif n == 1:
             return self.gen() - 1
         else:
@@ -1712,7 +1712,7 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
     def __init__(self, base_ring, name=None, sparse=False, implementation=None,
                  element_class=None, category=None):
         if base_ring not in _CommutativeRings:
-            raise TypeError("Base ring %s must be a commutative ring."%repr(base_ring))
+            raise TypeError("Base ring %s must be a commutative ring." % repr(base_ring))
         # We trust that, if a category is given, that it is useful.
         if category is None:
             if base_ring.is_zero():
@@ -2799,7 +2799,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             - ``degree_bound`` -- the current degree bound
             - ``lvl`` -- the level in the recursion tree
             """
-            if k<=0:
+            if k <= 0:
                 return [ (self.zero(),0) ]
             elif degree_bound < 0:
                 # The only possible root of (current) p, if any, is y = 0

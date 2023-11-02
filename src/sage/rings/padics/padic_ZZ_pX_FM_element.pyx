@@ -197,7 +197,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         pAdicZZpXElement.__init__(self, parent)
         if empty:
             return
-        cdef mpz_t tmp
         cdef ZZ_c tmp_z
         cdef Integer tmp_Int
         cdef Py_ssize_t i
@@ -241,7 +240,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             poly = x.polynomial().list()
             x = sum([poly[i].lift() * (z ** i) for i in range(len(poly))], parent.zero())
         elif isinstance(x, ntl_ZZ_p):
-            ctx_prec = ZZ_remove(tmp_z, (<ntl_ZZ>x.modulus()).x, self.prime_pow.pow_ZZ_tmp(1)[0])
+            ZZ_remove(tmp_z, (<ntl_ZZ>x.modulus()).x, self.prime_pow.pow_ZZ_tmp(1)[0])
             if ZZ_IsOne(tmp_z):
                 x = x.lift()
                 tmp_Int = Integer.__new__(Integer)
@@ -416,7 +415,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         holder.x = self.value
         return make_ZZpXFMElement, (self.parent(), holder)
 
-    cdef pAdicZZpXFMElement _new_c(self):
+    cdef pAdicZZpXFMElement _new_c(self) noexcept:
         """
         Return a new element with the same parent as ``self``.
 
@@ -435,7 +434,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ans.prime_pow = self.prime_pow
         return ans
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         First compare valuations, then compare the values.
 
@@ -505,7 +504,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cdef pAdicZZpXFMElement _lshift_c(self, long n):
+    cdef pAdicZZpXFMElement _lshift_c(self, long n) noexcept:
         """
         Multiply ``self`` by the uniformizer raised to the power ``n``.
 
@@ -566,7 +565,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             return ans
         return self._lshift_c(mpz_get_si((<Integer>shift).value))
 
-    cdef pAdicZZpXFMElement _rshift_c(self, long n):
+    cdef pAdicZZpXFMElement _rshift_c(self, long n) noexcept:
         """
         Divide ``self`` by the uniformizer raised to the power ``n``.
 
@@ -613,12 +612,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         if n < 0:
             return self._lshift_c(-n)
-        elif n == 0:
+        if n == 0:
             return self
         cdef pAdicZZpXFMElement ans = self._new_c()
-        cdef Py_ssize_t i
-        cdef long topcut, rem
-        cdef ntl_ZZ holder
         if n < self.prime_pow.ram_prec_cap:
             if self.prime_pow.e == 1:
                 ZZ_pX_right_pshift(ans.value, self.value, self.prime_pow.pow_ZZ_tmp(n)[0], self.prime_pow.get_top_context().x)
@@ -660,7 +656,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             return ans
         return self._rshift_c(mpz_get_si((<Integer>shift).value))
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         Returns ``-self``.
 
@@ -751,7 +747,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sig_off()
         return ans
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Return ``self`` + ``right``.
 
@@ -770,7 +766,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_add(ans.value, self.value, (<pAdicZZpXFMElement>right).value)
         return ans
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Return the product of ``self`` and ``right``.
 
@@ -794,7 +790,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_MulMod_pre(ans.value, self.value, (<pAdicZZpXFMElement>right).value, self.prime_pow.get_top_modulus()[0])
         return ans
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Return the difference of ``self`` and ``right``.
 
@@ -817,7 +813,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_sub(ans.value, self.value, (<pAdicZZpXFMElement>right).value)
         return ans
 
-    cpdef _div_(self, _right):
+    cpdef _div_(self, _right) noexcept:
         """
         Returns the quotient of ``self`` by ``right``.
 
@@ -1034,9 +1030,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef ZZ_pX_Modulus_c* m = self.prime_pow.get_top_modulus()
         cdef ZZ_pX_c x
         ZZ_pX_SetX(x)
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         zero = int(0)
-        for i from 0 <= i < n:
+        for i in range(n):
             curlist = cur.list()
             L.extend(curlist + [zero]*(n - len(curlist)))
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
@@ -1209,7 +1205,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         S = R[var]
         return S(self._polynomial_list())
 
-    cdef ZZ_p_c _const_term(self):
+    cdef ZZ_p_c _const_term(self) noexcept:
         """
         Return the constant term of ``self.unit``.
 
@@ -1443,7 +1439,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef long ordp = self.valuation_c()
         cdef long rp = self.prime_pow.ram_prec_cap - ordp
         cdef long goal
-        if n is not None: goal = self.ram_prec_cap - n
+        if n is not None:
+            goal = self.ram_prec_cap - n
         cdef pAdicZZpXFMElement v
         if n is None:
             L = []
@@ -1454,15 +1451,18 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         else:
             v = self._new_c()
         cdef pAdicZZpXFMElement u = self.unit_part()
-        if u is self: u = self.__copy__()
+        if u is self:
+            u = self.__copy__()
         while u.valuation_c() < rp:
-            if n is None: v = self._new_c()
+            if n is None:
+                v = self._new_c()
             self.prime_pow.teichmuller_set_c(&v.value, &u.value, self.prime_pow.ram_prec_cap)
             if n is None:
                 L.append(v)
             elif rp == goal:
                 return v
-            if rp == 1: break
+            if rp == 1:
+                break
             ZZ_pX_sub(u.value, u.value, v.value)
             rp -= 1
             if self.prime_pow.e == 1:
@@ -1591,7 +1591,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         mpz_set_ui(ans.value, self.prime_pow.ram_prec_cap - self.valuation_c())
         return ans
 
-    cpdef pAdicZZpXFMElement unit_part(self):
+    cpdef pAdicZZpXFMElement unit_part(self) noexcept:
         """
         Return the unit part of ``self``, ie
         ``self / uniformizer^(self.valuation())``
@@ -1629,7 +1629,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         return self._rshift_c(self.valuation_c())
 
-    cdef long valuation_c(self):
+    cdef long valuation_c(self) noexcept:
         """
         Return the valuation of ``self``.
 
@@ -1663,7 +1663,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             else:
                 return index + valuation * self.prime_pow.e
 
-    cdef ext_p_list(self, bint pos):
+    cdef ext_p_list(self, bint pos) noexcept:
         r"""
         Return a list giving a series representation of ``self``.
 

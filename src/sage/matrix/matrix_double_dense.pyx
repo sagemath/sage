@@ -146,7 +146,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     # LEVEL 2 functionality
     #   * def _pickle
     #   * def _unpickle
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two matrices together.
 
@@ -169,7 +169,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         M._matrix_numpy = _left._matrix_numpy + _right._matrix_numpy
         return M
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Return self - right
 
@@ -220,7 +220,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     # def _pickle(self):                        #unsure how to implement
     # def _unpickle(self, data, int version):   # use version >= 0 #unsure how to implement
     ######################################################################
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right) noexcept:
         r"""
         Multiply ``self * right`` as matrices.
 
@@ -1375,7 +1375,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
                 location = None
                 best_fit = tol
                 for i in range(len(ev_group)):
-                    s, m, avg = ev_group[i]
+                    _, m, avg = ev_group[i]
                     d = numpy.abs(avg - e)
                     if d < best_fit:
                         best_fit = d
@@ -1739,14 +1739,13 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             import scipy
         import scipy.linalg
         X = self._new(self._ncols, B.ncols())
-        arr, resid, rank, s = scipy.linalg.lstsq(self._matrix_numpy, B.numpy())
+        arr = scipy.linalg.lstsq(self._matrix_numpy, B.numpy())[0]
         X._matrix_numpy = arr
         return X
 
-
     def determinant(self):
         """
-        Return the determinant of self.
+        Return the determinant of ``self``.
 
         ALGORITHM:
 
@@ -1808,7 +1807,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             []
             sage: m.log_determinant()
             0.0
-
         """
         global numpy
         cdef Matrix_double_dense U
@@ -1819,7 +1817,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
 
-        P, L, U = self.LU()
+        _, _, U = self.LU()
         if numpy is None:
             import numpy
 
@@ -2490,7 +2488,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             return True
         if numpy is None:
             import numpy
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         cdef Matrix_double_dense T
         # A matrix M is skew-hermitian iff I*M is hermitian
         T = self.__mul__(1j) if skew else self.__copy__()
@@ -2500,13 +2498,13 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         hermitian = T._is_lower_triangular(tol)
         if hermitian:
             for i in range(T._nrows):
-                if abs(T.get_unsafe(i,i).imag()) > tol:
+                if abs(T.get_unsafe(i, i).imag()) > tol:
                     hermitian = False
                     break
         self.cache(key, hermitian)
         return hermitian
 
-    def is_hermitian(self, tol = 1e-12, algorithm = "naive"):
+    def is_hermitian(self, tol=1e-12, algorithm = "naive"):
         r"""
         Return ``True`` if the matrix is equal to its conjugate-transpose.
 
@@ -3559,7 +3557,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             posdef = self.fetch(cache_str)
         return posdef
 
-    cdef _vector_times_matrix_(self,Vector v):
+    cdef _vector_times_matrix_(self,Vector v) noexcept:
         if self._nrows == 0 or self._ncols == 0:
             return self.row_ambient_module().zero_vector()
         global numpy
@@ -3572,7 +3570,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ans = numpy.dot(v_numpy,self._matrix_numpy)
         return M(ans)
 
-    cdef _matrix_times_vector_(self,Vector v):
+    cdef _matrix_times_vector_(self,Vector v) noexcept:
         if self._nrows == 0 or self._ncols == 0:
             return self.column_ambient_module().zero_vector()
 

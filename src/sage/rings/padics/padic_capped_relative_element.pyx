@@ -160,7 +160,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         """
         return self.lift_c()
 
-    cdef lift_c(self):
+    cdef lift_c(self) noexcept:
         """
         Implementation of lift.
 
@@ -210,7 +210,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         """
         return self._to_gen()
 
-    cdef pari_gen _to_gen(self):
+    cdef pari_gen _to_gen(self) noexcept:
         """
         Convert this element to an equivalent pari element.
 
@@ -575,6 +575,7 @@ def unpickle_pcre_v1(R, unit, ordp, relprec):
         2*5^2 + 3*5^3 + O(5^7)
     """
     return unpickle_cre_v2(pAdicCappedRelativeElement, R, unit, ordp, relprec)
+
 
 def base_p_list(Integer n, bint pos, PowComputer_class prime_pow):
     r"""

@@ -395,18 +395,18 @@ class Polynomial_generic_sparse(Polynomial):
                 if y.find("-") == 0:
                     y = y[1:]
                 if not atomic_repr and n > 0 and (y.find("+") != -1 or y.find("-") != -1):
-                    x = "(%s)"%x
+                    x = "(%s)" % x
                 if n > 1:
-                    var = "*%s^%s"%(name,n)
-                elif n==1:
-                    var = "*%s"%name
+                    var = "*%s^%s" % (name,n)
+                elif n == 1:
+                    var = "*%s" % name
                 else:
                     var = ""
-                s += "%s%s"%(x,var)
+                s += "%s%s" % (x,var)
         s = s.replace(" + -", " - ")
         s = s.replace(" 1*"," ")
         s = s.replace(" -1*", " -")
-        if s==" ":
+        if s == " ":
             return "0"
         return s[1:]
 
@@ -953,6 +953,17 @@ class Polynomial_generic_sparse(Polynomial):
             1
             sage: (6*x).gcd(9)
             3
+
+        Check that :trac:`36427` is fixed::
+
+            sage: P = PolynomialRing(ZZ, "q", sparse=True)
+            sage: q = P.gen()
+            sage: 2*q^-100
+            2/q^100
+            sage: gcd(1, q^100)
+            1
+            sage: gcd(q^0, q^100)
+            1
         """
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -962,22 +973,22 @@ class Polynomial_generic_sparse(Polynomial):
                 algorithm = "dense"
             else:
                 algorithm = "generic"
-        if algorithm=="dense":
+        if algorithm == "dense":
             S = self.parent()
             # FLINT is faster but a bug makes the conversion extremely slow,
             # so NTL is used in those cases where the conversion is too slow. Cf
             # <https://groups.google.com/d/msg/sage-devel/6qhW90dgd1k/Hoq3N7fWe4QJ>
             sd = self.degree()
             od = other.degree()
-            if max(sd,od)<100 or \
-               min(len(self.__coeffs)/sd, len(other.__coeffs)/od)>.06:
-                implementation="FLINT"
+            if ((sd < 100 or len(self.__coeffs)/sd > .06)
+                    and (od < 100 or len(other.__coeffs)/od > .06)):
+                implementation = "FLINT"
             else:
-                implementation="NTL"
+                implementation = "NTL"
             D = PolynomialRing(S.base_ring(),'x',implementation=implementation)
             g = D(self).gcd(D(other))
             return S(g)
-        elif algorithm=="generic":
+        elif algorithm == "generic":
             return Polynomial.gcd(self,other)
         else:
             raise ValueError("Unknown algorithm '%s'" % algorithm)
@@ -1002,7 +1013,7 @@ class Polynomial_generic_sparse(Polynomial):
         if degree is None:
             degree = self.degree()
         if not isinstance(degree, (int,Integer)):
-            raise ValueError("degree argument must be a nonnegative integer, got %s"%degree)
+            raise ValueError("degree argument must be a nonnegative integer, got %s" % degree)
         d = {degree-k: v for k,v in self.__coeffs.items() if degree >= k}
         return self.parent()(d, check=False)
 
@@ -1098,7 +1109,7 @@ class Polynomial_generic_field(Polynomial_singular_repr,
         Q = P.zero()
         while R.degree() >= B.degree():
             aaa = R.leading_coefficient()/B.leading_coefficient()
-            diff_deg=R.degree()-B.degree()
+            diff_deg = R.degree()-B.degree()
             Q += P(aaa).shift(diff_deg)
             # We know that S*B exactly cancels the leading coefficient of R.
             # Thus, we skip the computation of this leading coefficient.
@@ -1267,14 +1278,14 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         # Newton iteration
         # Todo: compute everything up to the adequate precision at each step
         b = ~dera
-        while(True):
+        while True:
             na = a - selfa * b
             if na == a:
                 return a
             a = na
             selfa = self(a)
             dera = der(a)
-            b *= 2 - dera*b
+            b *= 2 - dera * b
 
     def _factor_of_degree(self, deg):
         """

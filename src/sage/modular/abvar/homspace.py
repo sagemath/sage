@@ -148,14 +148,15 @@ of T in its saturation, which is 1 in this case.
 
 ::
 
-    sage: T = E.image_of_hecke_algebra()  # long time
-    sage: T.gens()  # long time
+    sage: # long time
+    sage: T = E.image_of_hecke_algebra()
+    sage: T.gens()
     (Abelian variety endomorphism of Abelian variety J0(33) of dimension 3,
      Abelian variety endomorphism of Abelian variety J0(33) of dimension 3,
      Abelian variety endomorphism of Abelian variety J0(33) of dimension 3)
-    sage: T.index_in(E)  # long time
+    sage: T.index_in(E)
     +Infinity
-    sage: T.index_in_saturation()  # long time
+    sage: T.index_in_saturation()
     1
 
 AUTHORS:
@@ -396,7 +397,7 @@ class Homspace(HomsetWithBase):
             sage: End(J)._repr_()
             'Endomorphism ring of Abelian variety J0(11) of dimension 1'
         """
-        return "Space of homomorphisms from %s to %s"%\
+        return "Space of homomorphisms from %s to %s" %\
                (self.domain(), self.codomain())
 
     def _get_matrix(self, g):
@@ -500,7 +501,7 @@ class Homspace(HomsetWithBase):
         """
         self.calculate_generators()
         if i > self.ngens():
-            raise ValueError("self only has %s generators"%self.ngens())
+            raise ValueError("self only has %s generators" % self.ngens())
         return self.element_class(self, self._gens[i])
 
     def ngens(self):

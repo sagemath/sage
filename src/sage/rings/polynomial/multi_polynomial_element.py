@@ -114,7 +114,7 @@ class MPolynomial_element(MPolynomial):
             sage: x + QQbar(sqrt(2) - 1/2*I)  # indirect doctest                        # needs sage.rings.number_field sage.symbolic
             x + 1.414213562373095? - 0.50000000000000000?*I
         """
-        return "%s"%self.__element
+        return "%s" % self.__element
 
     ####################
 
@@ -220,7 +220,7 @@ class MPolynomial_element(MPolynomial):
 
             sage: R.<x,y> = PolynomialRing(QQbar, 2)                                    # needs sage.rings.number_field
             sage: f = R.hom([y, x], R)                                                  # needs sage.rings.number_field
-            sage: f(x^2 + 3*y^5) # indirect doctest                                     # needs sage.rings.number_field
+            sage: f(x^2 + 3*y^5)  # indirect doctest                                    # needs sage.rings.number_field
             3*x^5 + y^2
 
         You can specify a map on the base ring::
@@ -1150,7 +1150,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, (sage.rings.abc.Order, IntegerRing_class))):
+        if K not in NumberFields():
             raise TypeError("must be over a Numberfield or a Numberfield order")
 
         return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
@@ -1199,7 +1199,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, (sage.rings.abc.Order, IntegerRing_class))):
+        if K not in NumberFields():
             return TypeError("must be over a Numberfield or a Numberfield Order")
 
         if K == QQ:
@@ -1455,7 +1455,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         variables = list(self.parent().gens())
         for i in range(0,len(variables)):
             if str(variables[i]) in kw:
-                variables[i]=kw[str(variables[i])]
+                variables[i] = kw[str(variables[i])]
             elif fixed and variables[i] in fixed:
                 variables[i] = fixed[variables[i]]
         return self(tuple(variables))

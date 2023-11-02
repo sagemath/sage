@@ -163,7 +163,7 @@ cdef class IntegerListsBackend():
             left.floor == right.floor and
             left.ceiling == right.ceiling)
         if equal:
-            return (op == Py_EQ or op == Py_LE or op == Py_GE)
+            return op == Py_EQ or op == Py_LE or op == Py_GE
         if op == Py_EQ:
             return False
         if op == Py_NE:
@@ -481,7 +481,7 @@ cdef class Envelope():
             left.min_slope == right.min_slope and
             left.max_slope == right.max_slope)
         if equal:
-            return (op == Py_EQ or op == Py_LE or op == Py_GE)
+            return op == Py_EQ or op == Py_LE or op == Py_GE
         if op == Py_EQ:
             return False
         if op == Py_NE:

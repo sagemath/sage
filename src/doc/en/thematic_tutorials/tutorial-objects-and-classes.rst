@@ -318,7 +318,7 @@ http://docs.python.org/library/ for a complete list. ::
         sage: e.__dict__
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__dict__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__dict__'...
 
         sage: id4 = SymmetricGroup(4).one()
         sage: type(id4)
@@ -326,7 +326,7 @@ http://docs.python.org/library/ for a complete list. ::
         sage: id4.__dict__
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement' object has no attribute '__dict__'
+        AttributeError: 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement' object has no attribute '__dict__'...
 
 .. note::
 

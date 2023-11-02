@@ -34,7 +34,7 @@ from sage.stats.time_series cimport TimeSeries
 
 
 
-cdef double random_normal(double mean, double std, randstate rstate):
+cdef double random_normal(double mean, double std, randstate rstate) noexcept:
     r"""
     Return a floating point number chosen from the normal distribution
     with given mean and standard deviation, using the given randstate.
@@ -282,7 +282,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         return self.c0._length
 
-    cpdef is_fixed(self, i=None):
+    cpdef is_fixed(self, i=None) noexcept:
         r"""
         Return whether or not this :class:`GaussianMixtureDistribution` is
         fixed when using Baum-Welch to update the corresponding HMM.
@@ -434,7 +434,7 @@ cdef class GaussianMixtureDistribution(Distribution):
                 T._values[i] = self._sample(rstate)
             return T
 
-    cdef double _sample(self, randstate rstate):
+    cdef double _sample(self, randstate rstate) noexcept:
         r"""
         Used internally to compute a sample from this distribution quickly.
 
@@ -459,7 +459,7 @@ cdef class GaussianMixtureDistribution(Distribution):
                 return random_normal(self.param._values[3*n+1], self.param._values[3*n+2], rstate)
         raise RuntimeError("invalid probability distribution")
 
-    cpdef double prob(self, double x):
+    cpdef double prob(self, double x) noexcept:
         r"""
         Return the probability of `x`.
 
@@ -495,7 +495,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             s += self.c0._values[n]*exp((x-mu)*(x-mu)*self.c1._values[n])
         return s
 
-    cpdef double prob_m(self, double x, int m):
+    cpdef double prob_m(self, double x, int m) noexcept:
         r"""
         Return the probability of `x` using just the `m`-th summand.
 

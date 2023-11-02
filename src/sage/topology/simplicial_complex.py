@@ -1141,7 +1141,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Compute the hash value of ``self``.
 
         If this simplicial complex is immutable, it computes the hash value
-        based upon the facets. Otherwise it raises a ``ValueError``.
+        based upon the facets. Otherwise it raises a :class`ValueError`.
 
         EXAMPLES::
 
@@ -1268,7 +1268,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
     def __call__(self, simplex):
         """
         If ``simplex`` is a simplex in this complex, return it.
-        Otherwise, raise a ``ValueError``.
+
+        Otherwise, this raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -1393,8 +1394,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if not increasing:
             dim_index = reversed(dim_index)
         for i in dim_index:
-            for F in Fs[i]:
-                yield F
+            yield from Fs[i]
 
     cells = faces
 
@@ -1993,7 +1993,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                                  rename_vertices=True)
         return self.suspension(1, is_mutable).suspension(int(n-1), is_mutable)
 
-    def disjoint_union(self, right, rename_vertices=True, is_mutable=True):
+    def disjoint_union(self, right, rename_vertices=None, is_mutable=True):
         """
         The disjoint union of this simplicial complex with another one.
 
@@ -2017,6 +2017,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S1.disjoint_union(S2).homology()                                      # needs sage.modules
             {0: Z, 1: Z, 2: Z}
         """
+        if rename_vertices is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(35907, 'the "rename_vertices" argument is deprecated')
+
         facets = []
         for f in self._facets:
             facets.append(tuple(["L" + str(v) for v in f]))
@@ -4173,29 +4177,16 @@ class SimplicialComplex(Parent, GenericCellComplex):
         from sage.groups.free_group import FreeGroup
         from sage.libs.gap.libgap import libgap as gap
         G = self.graph()
-        # If the vertices and edges of G are not sortable, e.g., a mix
-        # of str and int, Sage+Python 3 may raise a TypeError when
-        # trying to find the spanning tree. So create a graph
-        # isomorphic to G but with sortable vertices. Use a copy of G,
-        # because self.graph() is cached, and relabeling its vertices
-        # would relabel the cached version.
-        int_to_v = dict(enumerate(G.vertex_iterator()))
-        v_to_int = {v: i for i, v in int_to_v.items()}
-        G2 = G.copy(immutable=False)
-        G2.relabel(v_to_int)
-        spanning_tree = G2.min_spanning_tree()
-        gens = [(int_to_v[e[0]], int_to_v[e[1]])
-                for e in G2.edges(sort=True)
-                if e not in spanning_tree]
-        if len(gens) == 0:
-            return gap.TrivialGroup()
-
         # Edges in the graph may be sorted differently than in the
         # simplicial complex, so convert the edges to frozensets so we
         # don't have to worry about it. Convert spanning_tree to a set
         # to make lookup faster.
-        spanning_tree = set(frozenset((int_to_v[e[0]], int_to_v[e[1]]))
-                            for e in spanning_tree)
+        spanning_tree = set(frozenset((u, v)) for u, v, _ in G.min_spanning_tree())
+        gens = [e for e in G.edge_iterator(labels=False)
+                if frozenset(e) not in spanning_tree]
+        if not gens:
+            return gap.TrivialGroup()
+
         gens_dict = {frozenset(g): i for i, g in enumerate(gens)}
         FG = FreeGroup(len(gens), 'e')
         rels = []
@@ -4204,7 +4195,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             z = dict()
             for i in range(3):
                 x = frozenset(bdry[i])
-                if (x in spanning_tree):
+                if x in spanning_tree:
                     z[i] = FG.one()
                 else:
                     z[i] = FG.gen(gens_dict[x])
@@ -4854,10 +4845,22 @@ class SimplicialComplex(Parent, GenericCellComplex):
             F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
         return SimplicialComplex(F)
 
-    def bigraded_betti_numbers(self, base_ring=ZZ):
+    def bigraded_betti_numbers(self, base_ring=ZZ, verbose=False):
         r"""
         Return a dictionary of the bigraded Betti numbers of ``self``,
         with keys `(-a, 2b)`.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: ``ZZ``) the base ring used
+          when computing homology
+        - ``verbose`` -- (default: ``False``) if ``True``, print
+          messages during the computation, which indicate in which
+          subcomplexes non-trivial homologies appear
+
+        .. NOTE::
+
+            If ``verbose`` is ``True``, then caching is avoided.
 
         .. SEEALSO::
 
@@ -4867,12 +4870,56 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
             sage: X = SimplicialComplex([[0,1],[1,2],[1,3],[2,3]])
             sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
-            sage: sorted(X.bigraded_betti_numbers().items(), reverse=True)              # needs sage.modules
+            sage: sorted(X.bigraded_betti_numbers(base_ring=QQ).items(), reverse=True)
             [((0, 0), 1), ((-1, 6), 1), ((-1, 4), 2), ((-2, 8), 1), ((-2, 6), 1)]
-            sage: sorted(Y.bigraded_betti_numbers(base_ring=QQ).items(), reverse=True)  # needs sage.modules
+            sage: sorted(Y.bigraded_betti_numbers(verbose=True).items(), reverse=True)
+            (-1, 4): Non-trivial homology Z in dimension 0 of the full
+            subcomplex generated by a set of vertices (1, 5)
+            (-1, 4): Non-trivial homology Z in dimension 0 of the full
+            subcomplex generated by a set of vertices (2, 5)
+            (-1, 4): Non-trivial homology Z in dimension 0 of the full
+            subcomplex generated by a set of vertices (3, 4)
+            (-2, 6): Non-trivial homology Z in dimension 0 of the full
+            subcomplex generated by a set of vertices (1, 2, 5)
+            (-2, 8): Non-trivial homology Z in dimension 1 of the full
+            subcomplex generated by a set of vertices (1, 3, 4, 5)
+            (-2, 8): Non-trivial homology Z in dimension 1 of the full
+            subcomplex generated by a set of vertices (2, 3, 4, 5)
+            (-3, 10): Non-trivial homology Z in dimension 1 of the full
+            subcomplex generated by a set of vertices (1, 2, 3, 4, 5)
             [((0, 0), 1), ((-1, 4), 3), ((-2, 8), 2), ((-2, 6), 1), ((-3, 10), 1)]
+
+        If we wish to view them in a form of a table, it is
+        simple enough to create a function as such::
+
+            sage: def print_table(bbns):
+            ....:     max_a = max(-p[0] for p in bbns)
+            ....:     max_b = max(p[1] for p in bbns)
+            ....:     bbn_table = [[bbns.get((-a,b), 0) for a in range(max_a+1)]
+            ....:                                       for b in range(max_b+1)]
+            ....:     width = len(str(max(bbns.values()))) + 1
+            ....:     print(' '*width, end=' ')
+            ....:     for i in range(max_a+1):
+            ....:         print(f'{-i:{width}}', end=' ')
+            ....:     print()
+            ....:     for j in range(len(bbn_table)):
+            ....:         print(f'{j:{width}}', end=' ')
+            ....:         for r in bbn_table[j]:
+            ....:             print(f'{r:{width}}', end=' ')
+            ....:         print()
+            sage: print_table(X.bigraded_betti_numbers())
+                0 -1 -2
+             0  1  0  0
+             1  0  0  0
+             2  0  0  0
+             3  0  0  0
+             4  0  2  0
+             5  0  0  0
+             6  0  1  1
+             7  0  0  0
+             8  0  0  1
         """
-        if base_ring in self._bbn_all_computed:
+        if base_ring in self._bbn_all_computed and not verbose:
             return self._bbn[base_ring]
 
         from sage.homology.homology_group import HomologyGroup
@@ -4893,18 +4940,33 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         if ind not in B:
                             B[ind] = ZZ.zero()
                         B[ind] += len(H[j-k-1].gens())
+                        if verbose:
+                            print("{}: Non-trivial homology {} in dimension {} of the full subcomplex generated by a set of vertices {}".format(ind, H[j-k-1], j-k-1, x))
 
         self._bbn[base_ring] = B
         self._bbn_all_computed.add(base_ring)
 
         return B
 
-    def bigraded_betti_number(self, a, b, base_ring=ZZ):
+    def bigraded_betti_number(self, a, b, base_ring=ZZ, verbose=False):
         r"""
         Return the bigraded Betti number indexed in the form `(-a, 2b)`.
 
-        Bigraded Betti number with indices `(-a, 2b)` is defined as a sum of ranks
-        of `(b-a-1)`-th (co)homologies of full subcomplexes with exactly `b` vertices.
+        Bigraded Betti number with indices `(-a, 2b)` is defined as a
+        sum of ranks of `(b-a-1)`-th (co)homologies of full subcomplexes
+        with exactly `b` vertices.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: ``ZZ``) the base ring used
+          when computing homology
+        - ``verbose`` -- (default: ``False``) if ``True``, print
+          messages during the computation, which indicate in which
+          subcomplexes non-trivial homologies appear
+
+        .. NOTE::
+
+            If ``verbose`` is ``True``, then caching is avoided.
 
         EXAMPLES::
 
@@ -4924,12 +4986,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
             2
             sage: X.bigraded_betti_number(-1, 8)
             0
+            sage: Y = SimplicialComplex([[1,2,3],[1,2,4],[3,5],[4,5]])
+            sage: Y.bigraded_betti_number(-1, 4, verbose=True)
+            Non-trivial homology Z in dimension 0 of the full subcomplex
+            generated by a set of vertices (1, 5)
+            Non-trivial homology Z in dimension 0 of the full subcomplex
+            generated by a set of vertices (2, 5)
+            Non-trivial homology Z in dimension 0 of the full subcomplex
+            generated by a set of vertices (3, 4)
+            3
         """
         if b % 2:
             return ZZ.zero()
         if a == 0 and b == 0:
             return ZZ.one()
-        if base_ring in self._bbn:
+        if base_ring in self._bbn and not verbose:
             if base_ring in self._bbn_all_computed:
                 return self._bbn[base_ring].get((a, b), ZZ.zero())
             elif (a, b) in self._bbn[base_ring]:
@@ -4948,6 +5019,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             H = S.homology(base_ring=base_ring)
             if b+a-1 in H and H[b+a-1] != H0:
                 B += len(H[b+a-1].gens())
+                if verbose:
+                    print("Non-trivial homology {} in dimension {} of the full subcomplex generated by a set of vertices {}".format(H[b+a-1], b+a-1, x))
 
         B = ZZ(B)
 
@@ -4986,7 +5059,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         Return whether ``self`` is minimally non-Golod.
 
-        If a simplicial complex itself is not Golod, but deleting each vertex
+        If a simplicial complex itself is not Golod, but deleting any vertex
         gives us a full subcomplex that is Golod, then we say that a simplicial
         complex is minimally non-Golod.
 
@@ -5014,6 +5087,39 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return X.is_golod()
 
         return not self.is_golod() and all(test(v) for v in self.vertices())
+
+    def moment_angle_complex(self):
+        """
+        Return the moment-angle complex of ``self``.
+
+        A moment-angle complex is a topological space created
+        from this simplicial complex, which holds a lot of
+        information about the simplicial complex itself.
+
+        .. SEEALSO::
+
+            See :mod:`sage.topology.moment_angle_complex` for
+            more information on moment-angle complexes.
+
+        EXAMPLES::
+
+            sage: X = SimplicialComplex([[0,1,2,3], [1,4], [3,2,4]])
+            sage: X.moment_angle_complex()
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4) and facets {(1, 4), (2, 3, 4), (0, 1, 2, 3)}
+            sage: K = simplicial_complexes.KleinBottle()
+            sage: K.moment_angle_complex()
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4, 5, 6, 7) and 16 facets
+
+        We can also create it explicitly::
+
+            sage: Z = MomentAngleComplex(K); Z
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3, 4, 5, 6, 7) and 16 facets
+        """
+        from .moment_angle_complex import MomentAngleComplex
+        return MomentAngleComplex(self)
 
 # Miscellaneous utility functions.
 

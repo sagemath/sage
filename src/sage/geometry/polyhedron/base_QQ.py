@@ -38,7 +38,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p._is_zero(1/100000)
             False
         """
-        return x==0
+        return x == 0
 
     def _is_nonneg(self, x):
         """
@@ -60,7 +60,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p._is_nonneg(-1/100000)
             False
         """
-        return x>=0
+        return x >= 0
 
     def _is_positive(self, x):
         """
@@ -82,7 +82,7 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: p._is_positive(0)
             False
         """
-        return x>0
+        return x > 0
 
     _base_ring = QQ
 

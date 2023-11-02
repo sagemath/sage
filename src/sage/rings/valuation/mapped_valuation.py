@@ -657,7 +657,7 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         from .limit_valuation import MacLaneLimitValuation
         if isinstance(self._base_valuation, MacLaneLimitValuation):
             # print the minimal information that singles out this valuation from all approximants
-            assert(self._base_valuation._initial_approximation in self._approximants)
+            assert (self._base_valuation._initial_approximation in self._approximants)
             approximants = [v.augmentation_chain()[::-1] for v in self._approximants]
             augmentations = self._base_valuation._initial_approximation.augmentation_chain()[::-1]
             unique_approximant = None
@@ -665,7 +665,7 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
                 if len([a for a in approximants if a[:l + 1] == augmentations[:l + 1]]) == 1:
                     unique_approximant = augmentations[:l + 1]
                     break
-            assert(unique_approximant is not None)
+            assert (unique_approximant is not None)
             if unique_approximant[0].is_gauss_valuation():
                 unique_approximant[0] = unique_approximant[0].restriction(unique_approximant[0].domain().base_ring())
             if len(unique_approximant) == 1:

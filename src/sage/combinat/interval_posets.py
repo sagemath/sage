@@ -1229,7 +1229,7 @@ class TamariIntervalPoset(Element,
             sage: def test_equivalence(n):
             ....:     for T in TamariIntervalPosets(n):
             ....:         for i in range(1, n + 2):
-            ....:             if not (insert_alternative(T, i) == T.insertion(i)):
+            ....:             if insert_alternative(T, i) != T.insertion(i):
             ....:                 print(T, i)
             ....:                 return False
             ....:     return True

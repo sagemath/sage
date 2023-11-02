@@ -27,10 +27,10 @@ import sage.matrix.matrix_space
 
 cdef class Matrix_sparse(matrix.Matrix):
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 1
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 0
 
     def change_ring(self, ring):
@@ -301,7 +301,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         Left scalar multiplication. Internal usage only.
 
@@ -363,14 +363,14 @@ cdef class Matrix_sparse(matrix.Matrix):
         return data, version
 
     def _unpickle_generic(self, data, int version):
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         if version == -1:
-            for ij, x in data.iteritems():
-                self.set_unsafe(ij[0], ij[1], x)
+            for (i, j), x in data.iteritems():
+                self.set_unsafe(i, j, x)
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         """
         Rich comparison.
 
@@ -927,19 +927,18 @@ cdef class Matrix_sparse(matrix.Matrix):
         if not isinstance(columns, (list, tuple)):
             columns = list(columns)
 
-        cdef Py_ssize_t nrows, ncols,k,r,i,j
+        cdef Py_ssize_t nrows, ncols, k, i, j
 
-        r = 0
         ncols = PyList_GET_SIZE(columns)
         nrows = PyList_GET_SIZE(rows)
         cdef Matrix_sparse A = self.new_matrix(nrows = nrows, ncols = ncols)
 
-        tmp = [el for el in columns if el >= 0 and el < self._ncols]
+        tmp = [el for el in columns if 0 <= el < self._ncols]
         columns = tmp
         if ncols != PyList_GET_SIZE(columns):
             raise IndexError("column index out of range")
 
-        tmp = [el for el in rows if el >= 0 and el < self._nrows]
+        tmp = [el for el in rows if 0 <= el < self._nrows]
         rows = tmp
         if nrows != PyList_GET_SIZE(rows):
             raise IndexError("row index out of range")
@@ -963,13 +962,13 @@ cdef class Matrix_sparse(matrix.Matrix):
             i = get_ij(nz, k, 0)
             j = get_ij(nz, k, 1)
             if i in row_map and j in col_map:
-                entry = self.get_unsafe(i,j)
+                entry = self.get_unsafe(i, j)
                 for new_row in row_map[i]:
                     for new_col in col_map[j]:
                         A.set_unsafe(new_row, new_col, entry)
         return A
 
-    cdef _stack_impl(self, bottom):
+    cdef _stack_impl(self, bottom) noexcept:
         r"""
         Stack ``self`` on top of ``bottom``::
 
@@ -1120,7 +1119,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             Z._subdivide_on_augment(self, other)
         return Z
 
-    cdef _vector_times_matrix_(self, Vector v):
+    cdef _vector_times_matrix_(self, Vector v) noexcept:
         """
         Return the vector times matrix product.
 
@@ -1153,7 +1152,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             s[j] += v[i] * a
         return s
 
-    cdef _matrix_times_vector_(self, Vector v):
+    cdef _matrix_times_vector_(self, Vector v) noexcept:
         """
         Return the matrix times vector product.
 
@@ -1211,6 +1210,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 @cython.wraparound(False)
 # Return v[i][j] where v is a list of tuples.
 # No checking is done, make sure you feed it valid input!
-cdef inline Py_ssize_t get_ij(v, Py_ssize_t i, Py_ssize_t j):
+cdef inline Py_ssize_t get_ij(v, Py_ssize_t i, Py_ssize_t j) noexcept:
     t = (<list>v)[i]
     return (<tuple>t)[j]

@@ -257,7 +257,7 @@ class CalculusMethod(SageObject):
             sage: cm.simplify(f)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.symbolic.expression.Expression' object has no attribute 'combsimp'
+            AttributeError: 'sage.symbolic.expression.Expression' object has no attribute 'combsimp'...
 
         In the present case, one should either transform ``f`` to a SymPy
         object::

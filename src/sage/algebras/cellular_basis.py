@@ -233,7 +233,7 @@ class CellularBasis(CombinatorialFreeModule):
         sm = latex(m)
         if sm.find('\\text{\\textt') != -1:
             sm = str(m)
-        return "C^{%s}_{%s}"%(sla, sm)
+        return "C^{%s}_{%s}" % (sla, sm)
 
     def cellular_basis_of(self):
         """

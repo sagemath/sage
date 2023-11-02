@@ -227,7 +227,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         else:
             raise ValueError("context must be a power of the appropriate prime")
 
-    cdef ext_p_list_precs(self, bint pos, long prec):
+    cdef ext_p_list_precs(self, bint pos, long prec) noexcept:
         """
         Returns a list giving a series representation of ``self``.
 
@@ -284,7 +284,6 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         cdef Integer list_elt
         cdef ZZ_c halfp
         cdef Py_ssize_t i, j
-        cdef ZZ_p_c const_term_holder
         self.prime_pow.restore_top_context()
         ###ZZ_p_construct(&const_term_holder)
         cdef ntl_ZZ holder = ntl_ZZ()
@@ -621,7 +620,8 @@ def _test_preprocess_list(R, L):
     """
     return preprocess_list(R(0), L)
 
-cdef preprocess_list(pAdicZZpXElement elt, L):
+
+cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
     """
     See the documentation for :func:`_test_preprocess_list`.
     """
@@ -630,7 +630,6 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
     cdef ntl_ZZ_pContext_class ctx
     cdef ntl_ZZ pshift_z
     cdef Integer pshift_m
-    cdef long aprec
     cdef ntl_ZZ py_tmp
     if not isinstance(L, list):
         raise TypeError("L must be a list")
@@ -737,7 +736,7 @@ def _find_val_aprec_test(R, L):
     """
     return find_val_aprec(R.prime_pow, L)
 
-cdef find_val_aprec(PowComputer_ext pp, L):
+cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
     r"""
     Given a list ``L``, finds the minimum valuation, minimum absolute
     precision and minimum common type of the elements.
@@ -842,7 +841,7 @@ def _test_get_val_prec(R, a):
     """
     return get_val_prec(R.prime_pow, a)
 
-cdef get_val_prec(PowComputer_ext pp, a):
+cdef get_val_prec(PowComputer_ext pp, a) noexcept:
     r"""
     Return valuation, absolute precision and type of an input element.
 

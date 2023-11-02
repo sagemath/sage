@@ -124,7 +124,7 @@ def replace_parens(x):
     - If ``x`` is a closing parenthesis, replace ``x`` with the
       constant ``close_symbol``.
 
-    - Raise a ``ValueError`` if ``x`` is neither an opening nor a
+    - Raise a :class:`ValueError` if ``x`` is neither an opening nor a
       closing parenthesis.
 
     .. SEEALSO:: :func:`replace_symbols`
@@ -168,7 +168,7 @@ def replace_symbols(x):
     - If ``x`` is ``close_symbol``, replace ``x`` with ``')'``.
 
     - If ``x`` is neither ``open_symbol`` nor ``close_symbol``, a
-      ``ValueError`` is raised.
+      :class:`ValueError` is raised.
 
     .. SEEALSO:: :func:`replace_parens`
 
@@ -539,7 +539,7 @@ class DyckWord(CombinatorialElement):
                 final_fall = " "
             else:
                 final_fall = " _" + "__" * (length_of_final_fall - 1)
-            row = "  "*(n - alst[-1] - 1) + final_fall + "\n"
+            row = "  " * (n - alst[-1] - 1) + final_fall + "\n"
             for i in range(n - 1):
                 c = 0
                 row = row + "  "*(n-i-2-alst[-i-2])
@@ -1982,23 +1982,30 @@ class DyckWord_complete(DyckWord):
         from sage.arith.misc import multinomial
         return multinomial(self.rise_composition())
 
-    def list_parking_functions(self):
+    def list_parking_functions(self) -> list:
         r"""
         Return all parking functions whose supporting Dyck path is ``self``.
 
         EXAMPLES::
 
             sage: DyckWord([1,1,0,0,1,0]).list_parking_functions()
-            Permutations of the multi-set [1, 1, 3]
-            sage: DyckWord([1,1,1,0,0,0]).list_parking_functions()
-            Permutations of the multi-set [1, 1, 1]
-            sage: DyckWord([1,0,1,0,1,0]).list_parking_functions()
-            Standard permutations of 3
+            [[1, 1, 3], [1, 3, 1], [3, 1, 1]]
         """
+        return list(self.parking_functions())
+
+    def parking_functions(self):
+        r"""
+        Iterate over parking functions whose supporting Dyck path is ``self``.
+
+        EXAMPLES::
+
+            sage: list(DyckWord([1,1,0,1,0,0]).parking_functions())
+            [[1, 1, 2], [1, 2, 1], [2, 1, 1]]
+        """
+        from sage.combinat.parking_functions import ParkingFunction
         alist = self._area_sequence_iter()
-        return Permutations([i - ai + 1 for i, ai in enumerate(alist)])
-        # TODO: upon implementation of ParkingFunction class
-        # map(ParkingFunction, Permutations([i - alist[i]+1 for i in range(len(alist))]))
+        for pi in Permutations([i - ai + 1 for i, ai in enumerate(alist)]):
+            yield ParkingFunction(pi)
 
     def reading_permutation(self) -> Permutation:
         r"""

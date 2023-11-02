@@ -869,7 +869,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return tuple(self.new_variable() for i in range(n))
 
-    cpdef int number_of_constraints(self):
+    cpdef int number_of_constraints(self) noexcept:
         r"""
         Return the number of constraints assigned so far.
 
@@ -883,7 +883,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.nrows()
 
-    cpdef int number_of_variables(self):
+    cpdef int number_of_variables(self) noexcept:
         r"""
         Returns the number of variables used so far.
 
@@ -993,11 +993,11 @@ cdef class MixedIntegerLinearProgram(SageObject):
         cdef str s
         cdef GenericBackend b = self._backend
 
-        result = list()
+        result = []
 
         # If indices is None, we actually want to return all constraints
         if indices is None:
-            indices = list(xrange(b.nrows()))
+            indices = list(range(b.nrows()))
 
         # Only one constraint
         if isinstance(indices, (int, Integer)):
@@ -2878,7 +2878,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L):
+    cpdef sum(self, L) noexcept:
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements
@@ -3658,7 +3658,7 @@ cdef class MIPVariable(SageObject):
                 return NotImplemented
             return (<MIPVariable> right)._matrix_lmul_impl(left)
 
-    cdef _matrix_rmul_impl(self, m):
+    cdef _matrix_rmul_impl(self, m) noexcept:
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -3672,7 +3672,7 @@ cdef class MIPVariable(SageObject):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m):
+    cdef _matrix_lmul_impl(self, m) noexcept:
         """
         Implement the action of a matrix multiplying from the left.
         """

@@ -1,9 +1,3 @@
-.. comment:
-    ***************************************************************************
-    If you alter this document, please change the last line:
-    **This page was last updated in MONTH YEAR (Sage X.Y).**
-    ***************************************************************************
-
 .. HIGHLIGHT:: shell-session
 
 .. _sec-installation-from-sources:
@@ -11,27 +5,23 @@
 Install from Source Code
 ========================
 
-.. contents:: Table of contents
-   :depth: 2
-   :class: this-will-duplicate-information-and-it-is-still-useful-here
+Building Sage from the :wikipedia:`source code <Source_code>` has the major
+advantage that your install will be optimized for your particular computer and
+should therefore offer better performance and compatibility than a binary
+install.
 
-Some familiarity with the use of the Unix command line may be required to
-build Sage from the :wikipedia:`source code <Source_code>`.
-
-Building Sage from the source code has the major advantage that your install
-will be optimized for your particular computer and should therefore offer
-better performance and compatibility than a binary install.
-
-Moreover, it offers you full development capabilities:
-you can change absolutely any part of Sage or the programs on which it depends,
-and recompile the modified parts.
+Moreover, it offers you full development capabilities: you can change
+absolutely any part of Sage or the packages on which it depends, and recompile
+the modified parts.
 
 See the file `README.md <https://github.com/sagemath/sage/#readme>`_
 in ``SAGE_ROOT`` for information on supported platforms and
 step-by-step instructions.
 
-The following sections provide some additional details. Most users
-will not need to read them.
+The following sections provide some additional details. Most users will not
+need to read them. Some familiarity with the use of the Unix command line may
+be required to build Sage from the source code.
+
 
 .. _section-prereqs:
 
@@ -436,7 +426,6 @@ On other systems, check the documentation for your particular operating system.
 .. _section_conda_compilers:
 
 
-
 Notes on using conda
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -457,70 +446,12 @@ If you don't want conda to be used by sage, deactivate conda (for the current sh
   operating system, or its own compilers.
 
 
-Additional software
--------------------
-
-Recommended programs
-^^^^^^^^^^^^^^^^^^^^
-
-The following programs are recommended.
-They are not strictly required at build time or at run time,
-but provide additional capabilities:
-
-- **dvipng**.
-- **ffmpeg**.
-- **ImageMagick**.
-- **LaTeX**: highly recommended.
-
-It is highly recommended that you have
-:wikipedia:`LaTeX <LaTeX>`
-installed, but it is not required.
-The most popular packaging is `TeX Live <https://www.tug.org/texlive/>`_,
-which can be installed following the directions on their web site.
-On Linux systems you can alternatively install your distribution's
-texlive packages::
-
-    $ sudo apt-get install texlive       # debian
-    $ sudo yum install texlive           # redhat
-
-or similar commands. In addition to the base TeX Live install, you may
-need some optional TeX Live packages, for example
-country-specific babel packages for the localized Sage
-documentation.
-
-If you don't have either ImageMagick or ffmpeg, you won't be able to
-view animations.
-ffmpeg can produce animations in more different formats than ImageMagick,
-and seems to be faster than ImageMagick when creating animated GIFs.
-Either ImageMagick or dvipng is used for displaying some LaTeX output in the
-Sage notebook.
-
-On Debian/Ubuntu, the following system packages are recommended.
-
-- ``texlive-generic-extra`` (to generate pdf documentation)
-
-- ``texlive-xetex`` (to convert Jupyter notebooks to pdf)
-
-- ``latexmk`` (to generate pdf documentation)
-
-- ``pandoc`` (to convert Jupyter notebooks to pdf)
-
-- ``dvipng`` (to render text with LaTeX in Matplotlib)
-
-- ``default-jdk`` (to run the Jmol 3D viewer from the console and generate images for 3D plots in the documentation)
-
-- ``ffmpeg`` (to produce animations)
-
-- ``libavdevice-dev`` (to produce animations)
-
 Tcl/Tk
 ^^^^^^
 
-If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage,
-you need to install the Tcl/Tk and its development headers before building
-Sage.
-Sage's Python will then automatically recognize your system's install of
-Tcl/Tk.
+If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, you need
+to install the Tcl/Tk and its development headers before building Sage.  Sage's
+Python will then automatically recognize your system's install of Tcl/Tk.
 
 On Linux systems, these are usually provided by the **tk** and **tk-dev**
 (or **tk-devel**) packages which can be installed using::
@@ -548,13 +479,11 @@ If
 
 does not raise an :class:`ImportError`, then it worked.
 
+
 .. _build-from-source-step-by-step:
 
-Step-by-step installation procedure
------------------------------------
-
-General procedure
-^^^^^^^^^^^^^^^^^
+Installation steps
+------------------
 
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
@@ -936,23 +865,6 @@ Here are some of the more commonly used variables affecting the build process:
   Python-level profiling is always available; This option enables
   profiling in Cython modules.
 
-- :envvar:`SAGE_SPKG_INSTALL_DOCS` - if set to ``yes``, then install
-  package-specific documentation to
-  :file:`$SAGE_ROOT/local/share/doc/PACKAGE_NAME/` when an spkg is
-  installed.
-  This option may not be supported by all spkgs.
-  Some spkgs might also assume that certain programs are available on the
-  system (for example, ``latex`` or ``pdflatex``).
-
-- :envvar:`SAGE_DOCBUILD_OPTS` - the value of this variable is passed as an
-  argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
-  you run ``make``, ``make doc``, or ``make doc-pdf``.
-  For example, you can add ``--no-plot`` to this variable to avoid building
-  the graphics coming from the ``.. PLOT`` directive within the documentation,
-  or you can add ``--include-tests-blocks`` to include all "TESTS" blocks in the
-  reference manual. Run ``sage --docbuild help`` to see the full list
-  of options.
-
 - :envvar:`SAGE_BUILD_DIR` - the default behavior is to build each spkg in a
   subdirectory of :file:`$SAGE_ROOT/local/var/tmp/sage/build/`; for
   example, build version 7.27.0 of
@@ -1034,6 +946,67 @@ Here are some of the more commonly used variables affecting the build process:
   supports :envvar:`SAGE_SUDO`, into a root-owned installation
   hierarchy (:envvar:`SAGE_LOCAL`).
 
+Environment variables for documentation build:
+
+- :envvar:`SAGE_DOCBUILD_OPTS` - the value of this variable is passed as an
+  argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
+  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example, you can
+  add ``--no-plot`` to this variable to avoid building the graphics coming from
+  the ``.. PLOT`` directive within the documentation, or you can add
+  ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
+  manual. Run ``sage --docbuild help`` to see the full list of options.
+
+- :envvar:`SAGE_SPKG_INSTALL_DOCS` - if set to ``yes``, then install
+  package-specific documentation to
+  :file:`$SAGE_ROOT/local/share/doc/PACKAGE_NAME/` when an spkg is installed.
+  This option may not be supported by all spkgs. Some spkgs might also assume
+  that certain programs are available on the system (for example, ``latex`` or
+  ``pdflatex``).
+
+- :envvar:`SAGE_USE_CDNS` -- if set to ``yes``, then build the documentation
+  using CDNs (Content Distribution Networks) for scripts necessary for HTML
+  documentation, such as `MathJax <https://www.mathjax.org/>`_.
+
+- :envvar:`SAGE_LIVE_DOC` -- if set to ``yes``, then build live Sage
+  documentation. If the ``Make live`` button on any webpage of the live doc is
+  clicked, every example code gets a `CodeMirror <https://codemirror.net>`_
+  code cell runnable via `Thebe <https://thebe.readthedocs.io/en/stable/>`_.
+  Thebe is responsible in sending the code to the Sage computing environment
+  built by `Binder <https://mybinder.org/>`_ and showing the output result.
+  The Sage computing environment can be specified to either a Binder repo or a
+  local Jupyter server. The environment variable :envvar:`SAGE_JUPYTER_SERVER`
+  is used for this purpose.
+
+  :envvar:`SAGE_JUPYTER_SERVER` - set this to either ``binder``,
+  ``binder:repo`` with ``repo`` specifying a Binder repo or the URL to a local
+  Jupyter server.
+
+  - ``binder`` refers to `Sage's official Binder repo
+    <https://github.com/sagemath/sage-binder-env>`_. This is assumed if the
+    environment variable :envvar:`SAGE_JUPYTER_SERVER` is not set.
+
+  - ``binder:repo`` specifies a Binder repo with ``repo``, which is a GitHub
+    repository name, optionally added with a branch name with ``/`` separator.
+
+  - To use a local Jupyter server instead of Binder, then set the URL to
+    :envvar:`SAGE_JUPYTER_SERVER` and the secret token to environment variable
+    :envvar:`SAGE_JUPYTER_SERVER_TOKEN`, which can be left unset if the default
+    token  ``secret`` is used. If the live doc was built with
+    ``SAGE_JUPYTER_SERVER=http://localhost:8889``, run a local Jupyter server
+    by
+
+    .. CODE-BLOCK:: bash
+
+        ./sage --notebook=jupyterlab \
+               --ServerApp.token='secret' \
+               --ServerApp.allow_origin='null' \
+               --ServerApp.disable_check_xsrf=true \
+               --ServerApp.port=8889 \
+               --ServerApp.open_browser=false
+
+    before opening the Sage documentation webpage.
+
+
 Environment variables dealing with specific Sage packages:
 
 - :envvar:`SAGE_MATPLOTLIB_GUI` - if set to anything non-empty except ``no``,
@@ -1045,14 +1018,14 @@ Environment variables dealing with specific Sage packages:
   support (which is disabled by default). See the file
   :file:`build/pkgs/pari/spkg-install` for more information.
 
-- :envvar:`SAGE_TUNE_PARI`: If yes, enable PARI self-tuning. Note that
+- :envvar:`SAGE_TUNE_PARI` - if yes, enable PARI self-tuning. Note that
   this can be time-consuming. If you set this variable to "yes", you
   will also see this: ``WARNING: Tuning PARI/GP is unreliable. You may
   find your build of PARI fails, or PARI/GP does not work properly
   once built. We recommend to build this package with
   SAGE_CHECK="yes".``
 
-- :envvar:`PARI_MAKEFLAGS`: The value of this variable is passed as an
+- :envvar:`PARI_MAKEFLAGS` - The value of this variable is passed as an
   argument to the ``$MAKE`` command when compiling PARI.
 
 Some standard environment variables which are used by Sage:
@@ -1094,7 +1067,7 @@ Some standard environment variables which are used by Sage:
 - :envvar:`OPENBLAS_CONFIGURE` - adds additional configuration flags for
   the OpenBLAS package that gets added to the make command. (see :trac:`23272`)
 
-Variables dealing with doctesting:
+Environment variables dealing with doctesting:
 
 - :envvar:`SAGE_TIMEOUT` - used for Sage's doctesting: the number of seconds
   to allow a doctest before timing it out.
@@ -1105,7 +1078,7 @@ Variables dealing with doctesting:
   ``sage -t --long``.
   If this isn't set, the default is 1800 seconds (30 minutes).
 
-- :envvar:`SAGE_TEST_GLOBAL_ITER`, :envvar:`SAGE_TEST_ITER`: these can
+- :envvar:`SAGE_TEST_GLOBAL_ITER`, :envvar:`SAGE_TEST_ITER` - these can
   be used instead of passing the flags ``--global-iterations`` and
   ``--file-iterations``, respectively, to ``sage -t``. Indeed, these
   variables are only used if the flags are unset. Run ``sage -t -h``
@@ -1146,7 +1119,7 @@ see a list, execute ``sage.env.[TAB]`` while running Sage.
     ***************************************************************************
 
 
-Installation in a Multiuser Environment
+Installation in a multiuser environment
 ---------------------------------------
 
 This section addresses the question of how a system administrator can install
@@ -1183,4 +1156,54 @@ a single copy of Sage in a multi-user computer network.
        $ sudo chown -R root SAGE_LOCAL
 
 
-**This page was last updated in September 2022 (Sage 9.8).**
+Additional software
+-------------------
+
+The following programs are not strictly required at build time or at run time,
+but provide additional capabilities to Sage. We highly recommend a Sage user to
+install them.
+
+LaTeX
+^^^^^
+
+It is highly recommended that you have :wikipedia:`LaTeX <LaTeX>` installed,
+but it is not required. The most popular packaging is `TeX Live
+<https://www.tug.org/texlive/>`_, which can be installed following the
+directions on their web site. On Linux systems you can alternatively install
+your distribution's texlive packages::
+
+    $ sudo apt-get install texlive       # debian
+    $ sudo yum install texlive           # redhat
+
+or similar commands. In addition to the base TeX Live install, you may
+need some optional TeX Live packages, for example
+country-specific Babel packages for the localized Sage
+documentation.
+
+Additionally, the following system packages are recommended on Debian/Ubuntu:
+
+- ``texlive-generic-extra`` (to generate pdf documentation)
+
+- ``texlive-xetex`` (to convert Jupyter notebooks to pdf)
+
+- ``latexmk`` (to generate pdf documentation)
+
+- ``dvipng`` (to render text with LaTeX in Matplotlib)
+
+pandoc
+^^^^^^
+
+This is useful to convert Jupyter notebooks to pdf.
+
+ffmpeg, ImageMagick
+^^^^^^^^^^^^^^^^^^^
+
+If you don't have either ImageMagick or ffmpeg, you won't be able to view
+animations. ffmpeg can produce animations in more different formats than
+ImageMagick, and seems to be faster than ImageMagick when creating animated
+GIFs.
+
+``libavdevice-dev`` is a component of ffmpeg to produce animations, and
+recommended to install on Debian/Ubuntu.
+
+

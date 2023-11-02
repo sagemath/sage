@@ -93,10 +93,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             if z:
                 mpq_vector_set_entry(&self._matrix[se.i], se.j, z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
         mpq_vector_set_entry(&self._matrix[i], j, (<Rational> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         cdef Rational x
         x = Rational()
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
@@ -168,7 +168,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     #   * _list -- list of underlying elements (need not be a copy)
     #   * x _dict -- sparse dictionary of underlying elements (need not be a copy)
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right) noexcept:
         cdef Matrix_rational_sparse right, ans
         right = _right
 
@@ -303,13 +303,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 x = Rational()
                 mpq_set((<Rational>x).value, self._matrix[i].entries[j])
-                d[(int(i),int(self._matrix[i].positions[j]))] = x
+                d[(int(i), int(self._matrix[i].positions[j]))] = x
         self.cache('dict', d)
         return d
 
@@ -396,17 +396,15 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         return 0
 
     cdef int mpz_denom(self, mpz_t d) except -1:
-        mpz_set_si(d,1)
+        mpz_set_si(d, 1)
         cdef Py_ssize_t i, j
-        cdef mpq_vector *v
 
         sig_on()
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 mpz_lcm(d, d, mpq_denref(self._matrix[i].entries[j]))
         sig_off()
         return 0
-
 
     def denominator(self):
         """
@@ -414,7 +412,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         OUTPUT:
 
-            -- Sage Integer
+        - Sage Integer
 
         EXAMPLES::
 

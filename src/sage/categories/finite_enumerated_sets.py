@@ -446,8 +446,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                     for j in range(stop):
                         yield next(it)
                     return
-                for x in self:
-                    yield x
+                yield from self
                 return
             if L is None:
                 L = self.tuple()
@@ -524,7 +523,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: C._last_from_unrank()
                 3
             """
-            return self.unrank(self.cardinality() -1)
+            return self.unrank(self.cardinality() - 1)
 
         def _test_enumerated_set_iter_cardinality(self, **options):
             """

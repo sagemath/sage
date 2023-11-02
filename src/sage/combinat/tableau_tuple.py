@@ -4126,12 +4126,12 @@ class StandardTableauTuples(RowStandardTableauTuples):
                 raise ValueError('the shape must be a partition tuple')
 
             if level is None:
-                level=shape.level()
-            elif level!=shape.level():
+                level = shape.level()
+            elif level != shape.level():
                 raise ValueError('the shape and level must agree')
             if size is None:
-                size=shape.size()
-            elif size!=shape.size():
+                size = shape.size()
+            elif size != shape.size():
                 raise ValueError('the shape and size must agree')
 
         # now that the inputs appear to make sense, return the appropriate class
@@ -4235,8 +4235,8 @@ class StandardTableauTuples(RowStandardTableauTuples):
             if all(s in Tableaux() for s in t):
                 flatt = sorted(sum((list(row) for s in t for row in s), []))
                 return flatt == list(range(1, len(flatt)+1)) and all(len(x) == 0 or
-                  (all(row[i]<row[i+1] for row in x for i in range(len(row)-1))
-                      and all(x[r][c]<x[r+1][c] for c in range(len(x[0]))
+                  (all(row[i] < row[i+1] for row in x for i in range(len(row)-1))
+                      and all(x[r][c] < x[r+1][c] for c in range(len(x[0]))
                               for r in range(len(x)-1) if len(x[r+1]) > c)) for x in t)
             else:
                 return t in StandardTableaux()

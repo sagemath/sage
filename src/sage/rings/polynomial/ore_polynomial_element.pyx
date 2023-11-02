@@ -233,7 +233,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         AlgebraElement.__init__(self, parent)
 
-    cdef long _hash_c(self):
+    cdef long _hash_c(self) noexcept:
         raise NotImplementedError
 
     def __hash__(self):
@@ -251,7 +251,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self._hash_c()
 
-    cpdef Integer degree(self):
+    cpdef Integer degree(self) noexcept:
         r"""
         Return the degree of ``self``.
 
@@ -272,7 +272,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         raise NotImplementedError
 
-    cdef OrePolynomial _new_c(self, list coeffs, Parent P, char check=0):
+    cdef OrePolynomial _new_c(self, list coeffs, Parent P, char check=0) noexcept:
         r"""
         Fast creation of a new Ore polynomial
 
@@ -283,7 +283,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return P(coeffs)
 
-    cpdef OrePolynomial _new_constant_poly(self, RingElement a, Parent P, char check=0):
+    cpdef OrePolynomial _new_constant_poly(self, RingElement a, Parent P, char check=0) noexcept:
         r"""
         Fast creation of a new constant Ore polynomial
 
@@ -580,7 +580,7 @@ cdef class OrePolynomial(AlgebraElement):
             raise NotImplementedError("the leading coefficient is not a unit")
         return a * self
 
-    cpdef _mod_(self, other):
+    cpdef _mod_(self, other) noexcept:
         r"""
         Return the remainder in the *right* Euclidean division of
         ``self`` by ``other```.
@@ -602,7 +602,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self.right_quo_rem(other)[1]
 
-    cpdef _floordiv_(self, right):
+    cpdef _floordiv_(self, right) noexcept:
         r"""
         Return the quotient of the *right* Euclidean division of
         ``self`` by ``right``.
@@ -628,7 +628,7 @@ cdef class OrePolynomial(AlgebraElement):
         q, _ = self.right_quo_rem(right)
         return q
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         r"""
         Return the quotient of this Ore polynomial by ``right``
         in the fraction field.
@@ -940,7 +940,7 @@ cdef class OrePolynomial(AlgebraElement):
             V = V * lc
         return G, U, V
 
-    cdef _left_quo_rem(self, OrePolynomial other):
+    cdef _left_quo_rem(self, OrePolynomial other) noexcept:
         r"""
         Return the quotient and remainder of the left Euclidean
         division of ``self`` by ``other`` (C implementation).
@@ -1000,7 +1000,7 @@ cdef class OrePolynomial(AlgebraElement):
             raise ZeroDivisionError("division by zero is not valid")
         return self._left_quo_rem(other)
 
-    cdef _right_quo_rem(self, OrePolynomial other):
+    cdef _right_quo_rem(self, OrePolynomial other) noexcept:
         r"""
         Return the quotient and remainder of the right Euclidean
         division of ``self`` by ``other`` (C implementation).
@@ -1309,7 +1309,7 @@ cdef class OrePolynomial(AlgebraElement):
             A = A.left_monic()
         return A
 
-    cdef OrePolynomial _left_lcm_cofactor(self, OrePolynomial other):
+    cdef OrePolynomial _left_lcm_cofactor(self, OrePolynomial other) noexcept:
         r"""
         Return an Ore polynomial `U` such that `U P = c L`
         where `P` is this Ore polynomial (``self``), `L`
@@ -1387,7 +1387,7 @@ cdef class OrePolynomial(AlgebraElement):
             V1 = s * V1
         return L, V1, L // other
 
-    cdef OrePolynomial _right_lcm_cofactor(self, OrePolynomial other):
+    cdef OrePolynomial _right_lcm_cofactor(self, OrePolynomial other) noexcept:
         r"""
         Return an Ore polynomial `U` such that `P U = L c`
         where `P` is this Ore polynomial (``self``), `L`
@@ -1942,7 +1942,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self.is_term() and self.leading_coefficient() == 1
 
-    cpdef list coefficients(self, sparse=True):
+    cpdef list coefficients(self, sparse=True) noexcept:
         r"""
         Return the coefficients of the monomials appearing in ``self``.
 
@@ -2010,7 +2010,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self
 
-    cpdef bint is_zero(self):
+    cpdef bint is_zero(self) noexcept:
         r"""
         Return ``True`` if ``self`` is the zero polynomial.
 
@@ -2028,7 +2028,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self.degree() == -1
 
-    cpdef bint is_one(self):
+    cpdef bint is_one(self) noexcept:
         r"""
         Test whether this polynomial is `1`.
 
@@ -2190,7 +2190,7 @@ cdef class OrePolynomial(AlgebraElement):
         return self.parent().variable_name()
 
 
-cdef void lmul_gen(list A, Morphism m, d):
+cdef void lmul_gen(list A, Morphism m, d) noexcept:
     r"""
     If ``A`` is the list of coefficients of an Ore polynomial ``P``,
     replace it by the list of coefficients of ``X*P`` (where ``X``
@@ -2323,7 +2323,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         """
         return (self._parent, (self._coeffs,))
 
-    cdef long _hash_c(self):
+    cdef long _hash_c(self) noexcept:
         r"""
         This hash incorporates the name of the variable.
 
@@ -2354,7 +2354,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             return -2
         return result
 
-    cdef OrePolynomial _new_c(self, list coeffs, Parent P, char check=0):
+    cdef OrePolynomial _new_c(self, list coeffs, Parent P, char check=0) noexcept:
         r"""
         Fast creation of a new Ore polynomial given a list of coefficients.
 
@@ -2380,7 +2380,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             f._normalize()
         return f
 
-    cdef void _normalize(self):
+    cdef void _normalize(self) noexcept:
         r"""
         Remove higher order `0`-coefficients from the representation of ``self``.
 
@@ -2397,7 +2397,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             del x[n]
             n -= 1
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         r"""
         Compare the two Ore polynomials ``self`` and ``other``.
 
@@ -2463,7 +2463,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         except IndexError:
             return self.base_ring().zero()
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         r"""
         Return a list of the coefficients of ``self``.
 
@@ -2491,7 +2491,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         else:
             return (<OrePolynomial_generic_dense>self)._coeffs
 
-    cpdef dict dict(self):
+    cpdef dict dict(self) noexcept:
         r"""
         Return a dictionary representation of ``self``.
 
@@ -2513,7 +2513,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
                 X[i] = c
         return X
 
-    cpdef Integer degree(self):
+    cpdef Integer degree(self) noexcept:
         r"""
         Return the degree of ``self``.
 
@@ -2552,7 +2552,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         """
         return Integer(len(self._coeffs) - 1)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         r"""
         Add two polynomials.
 
@@ -2583,7 +2583,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             r = self._new_c([x[i] + y[i] for i in range(dx)], self._parent, 1)
         return r
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         r"""
         Subtract polynomial ``right`` from ``self``.
 
@@ -2615,7 +2615,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             r = self._new_c([x[i] - y[i] for i in range(dx)], self._parent, 1)
         return r
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         r"""
         Return the negative of ``self``.
 
@@ -2678,7 +2678,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         """
         return self._new_c(self._coeffs[:n], self._parent, 1)
 
-    cdef list _mul_list(self, list A):
+    cdef list _mul_list(self, list A) noexcept:
         r"""
         Return the list of coefficients of the product of this
         Ore polynomial by that whose coefficients are given by ``A``.
@@ -2699,7 +2699,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
                     BA[j] += coeff * A[j]
         return BA
 
-    cpdef _lmul_(self, Element s):
+    cpdef _lmul_(self, Element s) noexcept:
         r"""
         Return the product ``self * right``.
 
@@ -2718,7 +2718,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         cdef coeffs = self._mul_list([s])
         return self._new_c(coeffs, self._parent, 1)
 
-    cpdef _rmul_(self, Element s):
+    cpdef _rmul_(self, Element s) noexcept:
         r"""
         Return the product ``left * self``.
 
@@ -2746,7 +2746,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         """
         return self._new_c([s * c for c in self._coeffs], self._parent, 1)
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         r"""
         Return the product ``self * right``.
 
@@ -2785,7 +2785,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             coeffs = self._mul_list(coeffs)
         return self._new_c(coeffs, self._parent, 1)
 
-    cdef _left_quo_rem(self, OrePolynomial other):
+    cdef _left_quo_rem(self, OrePolynomial other) noexcept:
         r"""
         Return the quotient and remainder of the left Euclidean
         division of ``self`` by ``other`` (C implementation).
@@ -2814,7 +2814,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         quo.reverse()
         return self._new_c(quo, self._parent), self._new_c(A[:degB], self._parent, 1)
 
-    cdef _right_quo_rem(self, OrePolynomial other):
+    cdef _right_quo_rem(self, OrePolynomial other) noexcept:
         r"""
         Return the quotient and remainder of the right Euclidean
         division of ``self`` by ``other`` (C implementation).
@@ -2852,7 +2852,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         quo.reverse()
         return self._new_c(quo, self._parent), self._new_c(A[:degB], self._parent, 1)
 
-    cpdef list coefficients(self, sparse=True):
+    cpdef list coefficients(self, sparse=True) noexcept:
         r"""
         Return the coefficients of the monomials appearing in ``self``.
 
@@ -2988,7 +2988,7 @@ cdef class ConstantOrePolynomialSection(Map):
                   over Rational Field twisted by t |--> t + 1
             To:   Univariate Polynomial Ring in t over Rational Field
     """
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         r"""
         Return the corresponding element of the base ring if ``self`` is a
         constant Ore polynomial. Otherwise, it fails.
@@ -3096,7 +3096,7 @@ cdef class OrePolynomialBaseringInjection(Morphism):
         """
         return self._an_element
 
-    cpdef Element _call_(self, e):
+    cpdef Element _call_(self, e) noexcept:
         r"""
         Return the corresponding Ore polynomial to the element from the
         base ring according to ``self``.

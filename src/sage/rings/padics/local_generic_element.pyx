@@ -32,7 +32,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
     #cpdef _add_(self, right):
     #    raise NotImplementedError
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         r"""
         Returns the quotient of ``self`` by ``right``.
 
@@ -394,8 +394,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
         unramified_generator = self.parent()(self.parent().residue_field().gen()).lift_to_precision()
         for c in islice(self.expansion(lift_mode=lift_mode), int(start), int(stop), int(k)):
             genpow = 1
-            if not isinstance(c, list): c = [c] # relevant for the case of base-rings, or one-step
-                                                # eisenstein extensions
+            if not isinstance(c, list):
+                c = [c]  # relevant for the case of base-rings, or one-step
+                # Eisenstein extensions
             for d in c:
                 ans += d * genpow * ppow
                 genpow *= unramified_generator
@@ -432,7 +433,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
     #def __pow__(self, right):
     #    raise NotImplementedError
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         r"""
         Returns the difference between ``self`` and ``right``.
 

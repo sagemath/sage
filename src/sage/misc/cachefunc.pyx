@@ -50,7 +50,7 @@ be used::
     sage: cython('''cpdef test_funct(x): return -x''')
     sage: wrapped_funct = cached_function(test_funct, name='wrapped_funct')
     sage: wrapped_funct
-    Cached version of <built-in function test_funct>
+    Cached version of <cyfunction test_funct at ...>
     sage: wrapped_funct.__name__
     'wrapped_funct'
     sage: wrapped_funct(5)
@@ -82,9 +82,9 @@ approach is still needed for cpdef methods::
     sage: cython(os.linesep.join(cython_code))
     sage: O = MyClass()
     sage: O.direct_method
-    Cached version of <method 'direct_method' of '...MyClass' objects>
+    Cached version of <cyfunction MyClass.direct_method at ...>
     sage: O.wrapped_method
-    Cached version of <built-in function test_meth>
+    Cached version of <cyfunction test_meth at ...>
     sage: O.wrapped_method.__name__
     'wrapped_method'
     sage: O.wrapped_method(5)
@@ -270,6 +270,7 @@ Introspection works::
         "some doc for a wrapped cython method"
         return -x
     sage: print(sage_getsource(O.direct_method))
+    @cached_method
     def direct_method(self, x):
         "Some doc for direct method"
         return 2*x
@@ -534,7 +535,7 @@ cdef class NonpicklingDict(dict):
 
 cdef unhashable_key = object()
 
-cpdef inline dict_key(o):
+cpdef inline dict_key(o) noexcept:
     """
     Return a key to cache object ``o`` in a dict.
 
@@ -559,7 +560,7 @@ cpdef inline dict_key(o):
     return o
 
 
-cpdef inline cache_key(o):
+cpdef inline cache_key(o) noexcept:
     r"""
     Helper function to return a hashable key for ``o`` which can be used for
     caching.
@@ -599,7 +600,7 @@ cpdef inline cache_key(o):
     return o
 
 
-cdef cache_key_unhashable(o):
+cdef cache_key_unhashable(o) noexcept:
     """
     Return a key for caching an item which is unhashable.
     """
@@ -785,7 +786,7 @@ cdef class CachedFunction():
     def __module__(self):
         return self.__cached_module__
 
-    cdef get_key_args_kwds(self, tuple args, dict kwds):
+    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept:
         """
         Return the key in the cache to be used when ``args`` and
         ``kwds`` are passed in as parameters.
@@ -813,7 +814,7 @@ cdef class CachedFunction():
         self._argument_fixer = ArgumentFixer(self.f,
                 classmethod=self.is_classmethod)
 
-    cdef fix_args_kwds(self, tuple args, dict kwds):
+    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept:
         r"""
         Normalize parameters to obtain a key for the cache.
 
@@ -1840,7 +1841,7 @@ cdef class CachedMethodCaller(CachedFunction):
         """
         return self.f(self._instance, *args, **kwds)
 
-    cdef fix_args_kwds(self, tuple args, dict kwds):
+    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept:
         r"""
         Normalize parameters to obtain a key for the cache.
 
@@ -2504,7 +2505,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
     The only difference is that the instance is used as part of the
     key.
     """
-    cdef get_key_args_kwds(self, tuple args, dict kwds):
+    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept:
         """
         Return the key in the cache to be used when ``args`` and
         ``kwds`` are passed in as parameters.
@@ -2749,7 +2750,7 @@ cdef class CachedMethod():
         """
         return self.__get__(inst)(*args, **kwds)
 
-    cpdef _get_instance_cache(self, inst):
+    cpdef _get_instance_cache(self, inst) noexcept:
         """
         Return the cache dictionary.
 
@@ -3237,7 +3238,7 @@ cdef class CachedInParentMethod(CachedMethod):
         self._cache_name = '_cache__' + 'element_' + (name or f.__name__)
         self._cachedfunc = CachedFunction(f, classmethod=True, name=name, key=key, do_pickle=do_pickle)
 
-    cpdef _get_instance_cache(self, inst):
+    cpdef _get_instance_cache(self, inst) noexcept:
         """
         Return the cache dictionary, which is stored in the parent.
 
