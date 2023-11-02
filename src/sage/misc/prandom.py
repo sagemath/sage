@@ -426,7 +426,7 @@ def choices(population, weights=None, *, cum_weights=None, k=1):
 def randbytes(n):
     r"""
     Generate n random bytes
-    
+
     EXAMPLES::
 
         sage: randbytes(10) #random
@@ -441,7 +441,7 @@ def triangular(low=0.0, high=1.0, mode=None):
 
     Continuous distribution bounded by given lower and upper limits,
     and having a given mode value in-between.
-        
+    
     EXAMPLES::
 
         sage:  sample = [triangular(1.0, 5.0, 2.0) for i in range(1, 5)]; sample #random
