@@ -29,15 +29,14 @@ concurrency:
 env:
   # Adapted from docker.yml
   TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-incremental"
+  IMAGE:                  "sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci"
   LOGS_ARTIFACT_NAME:     "logs-commit-${{ github.sha }}-tox-docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}"
-  DOCKER_TARGETS:         "with-targets"
   TARGETS_PRE:            "build/make/Makefile"
   TARGETS:                "ci-build-with-fallback"
   FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
   EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
-  EXTRA_DOCKER_TAGS:      ci
   DOCKER_BUILDKIT:        1
 jobs:
   build:
@@ -61,17 +60,41 @@ jobs:
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Configure and build Sage distribution within a Docker container
+
+      # Building
+
+      - name: Generate Dockerfile
         # From docker.yml
         run: |
-          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--cache-from=type=gha --cache-to=type=gha,mode=max --build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push:       false
+          load:       true
+          context:    .
+          tags:       ${{ env.IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=4
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
 
       - name: Start container
         run: |
           docker run --name BUILD -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
-            sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci /bin/sh
+            ${{ env.IMAGE }} /bin/sh
 
       # Testing
 
@@ -109,17 +132,43 @@ jobs:
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Configure and build Sage distribution within a Docker container
+
+      # Building
+
+      - name: Generate Dockerfile
         # From docker.yml
         run: |
-          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--cache-from=type=gha --cache-to=type=gha,mode=max --build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push:       false
+          load:       true
+          context:    .
+          tags:       ${{ env.IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=4
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
 
       - name: Start container
         run: |
           docker run --name BUILD -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
-            sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci /bin/sh
+            ${{ env.IMAGE }} /bin/sh
+
+      # Testing
 
       - name: Test modularized distributions
         run: |
@@ -149,17 +198,43 @@ jobs:
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Configure and build Sage distribution within a Docker container
+
+      # Building
+
+      - name: Generate Dockerfile
         # From docker.yml
         run: |
-          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--cache-from=type=gha --cache-to=type=gha,mode=max --build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push:       false
+          load:       true
+          context:    .
+          tags:       ${{ env.IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=4
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
 
       - name: Start container
         run: |
           docker run --name BUILD -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
-            sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci /bin/sh
+            ${{ env.IMAGE }} /bin/sh
+
+      # Testing
 
       - name: Pytest
         if: (success() || failure()) && contains(github.ref, 'pytest')
