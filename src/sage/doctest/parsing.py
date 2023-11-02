@@ -1140,8 +1140,8 @@ class SageDocTestParser(doctest.DocTestParser):
 
         def check_and_clear_tag_counts():
             if (num_examples := tag_count_within_block['']) >= 4:
-                if overused_tags := set(tag for tag, count in tag_count_within_block.items()
-                                        if tag and count >= num_examples):
+                if overused_tags := {tag for tag, count in tag_count_within_block.items()
+                                        if tag and count >= num_examples}:
                     overused_tags.update(persistent_optional_tags)
                     overused_tags.difference_update(self.file_optional_tags)
                     suggested = unparse_optional_tags(overused_tags, prefix='sage: # ')
@@ -1210,10 +1210,10 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = set(tag
+                        extra = {tag
                                     for tag in optional_tags
                                     if (tag not in self.optional_tags
-                                        and tag not in available_software))
+                                        and tag not in available_software)}
                         if extra:
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
