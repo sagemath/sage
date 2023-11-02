@@ -134,8 +134,6 @@ jobs:
 
   minimal-pre:
     if: ${{ success() || failure() }}
-    # It does not really "need" it.
-    needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
@@ -145,6 +143,8 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      # Calibrated for clogging the job pipeline until the "default" job has finished
+      max_parallel: 20
 
   minimal:
     if: ${{ success() || failure() }}
