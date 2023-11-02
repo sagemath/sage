@@ -30,7 +30,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
       - name: Merge CI fixes from sagemath/sage
         run: |
           .ci/merge-fixes.sh
@@ -101,7 +107,6 @@ jobs:
 
       - name: Build docs
         id: docbuild
-        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
@@ -110,7 +115,7 @@ jobs:
           mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
           make doc-clean doc-uninstall
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
-          ./config.status && make sagemath_doc_html-no-deps
+          ./config.status && make sagemath_doc_html
         shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Copy docs
