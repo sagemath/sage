@@ -20,4 +20,17 @@ foreach name, pyx : extension_data
     )
 endforeach
 
+interpreters = custom_target(
+    'sage.ext.interpreters',
+    output: 'all.py',
+    input: '../../sage_setup/autogen/interpreters/__init__.py',
+    command: [py, '-m', 'sage_setup.autogen.interpreters', meson.current_source_dir() / 'interpreters'],
+    # This is actually against the Meson philosophy, which does not like in-source builds.
+    # So normally you would do something like the following (left for a follow-up)
+    # command: [py, '-m', 'sage_setup.autogen.interpreters','@OUTDIR@'],
+    env: ['PYTHONPATH=' + meson.current_source_dir() / '..' / '..'],
+    install: true,
+    install_dir: 'interpreters'
+)
+
 subdir('interpreters')
