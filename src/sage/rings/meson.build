@@ -1,4 +1,23 @@
+mpfi = declare_dependency(
+  dependencies: [
+    cc.find_library('mpfi'),
+  ]
+)
+gsl = dependency('gsl')
+# Cannot be found via pkg-config
+arb = declare_dependency(
+  dependencies: [
+    cc.find_library('arb'),
+  ]
+)
+mpc = declare_dependency(
+  dependencies: [
+    cc.find_library('mpc'),
+  ]
+)
+
 py.install_sources(
+    '__init__.py',
     'algebraic_closure_finite_field.py',
     'all.py',
     'all__sagemath_categories.py',
@@ -45,8 +64,6 @@ py.install_sources(
 
 extension_data = {
     'abc': files('abc.pyx'),
-    #'bernmm': files('bernmm.pyx'), - compilation error
-    #'bernoulli_mod_p': files('bernoulli_mod_p.pyx'), - compilation error
     'complex_arb': files('complex_arb.pyx'),
     'complex_conversion': files('complex_conversion.pyx'),
     'complex_double': files('complex_double.pyx'),
@@ -57,7 +74,6 @@ extension_data = {
     'factorint_flint': files('factorint_flint.pyx'),
     'factorint_pari': files('factorint_pari.pyx'),
     'fast_arith': files('fast_arith.pyx'),
-    #'fraction_field_FpT': files('fraction_field_FpT.pyx'), - needs finite rings
     'fraction_field_element': files('fraction_field_element.pyx'),
     'integer': files('integer.pyx'),
     'integer_ring': files('integer_ring.pyx'),
@@ -69,7 +85,6 @@ extension_data = {
     'power_series_poly': files('power_series_poly.pyx'),
     'power_series_ring_element': files('power_series_ring_element.pyx'),
     'puiseux_series_ring_element': files('puiseux_series_ring_element.pyx'),
-    'rational': files('rational.pyx'),
     'real_arb': files('real_arb.pyx'),
     'real_double': files('real_double.pyx'),
     'real_double_element_gsl': files('real_double_element_gsl.pyx'),
@@ -87,43 +102,41 @@ extension_data = {
     'tate_algebra_ideal': files('tate_algebra_ideal.pyx'),
 }
 
-mpfi = declare_dependency(
-  dependencies: [
-    cc.find_library('mpfi'),
-  ]
-)
-gsl = dependency('gsl')
-# Cannot be found by pkg-config
-flint = declare_dependency(
-  dependencies: [
-    cc.find_library('flint'),
-  ]
-)
-# Cannot be found via pkg-config
-arb = declare_dependency(
-  dependencies: [
-    cc.find_library('arb'),
-  ]
-)
-
 foreach name, pyx : extension_data
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/rings',
         install: true,
-        include_directories: [inc_cpython, inc_flint, inc_gsl, inc_arb],
-        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, mpfr, gmp, pari, gsl, flint, arb],
+        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_rings],
+        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, mpfr, gmp, pari, gsl, flint, arb, mpc],
+    )
+endforeach
+
+extension_data_cpp = {
+    'bernmm': files('bernmm.pyx'),
+    'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
+    'fraction_field_FpT': files('fraction_field_FpT.pyx'),
+    'rational': files('rational.pyx'),
+}
+
+foreach name, pyx : extension_data_cpp
+    py.extension_module(name,
+        sources: pyx,
+        subdir: 'sage/rings',
+        install: true,
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_rings, inc_ntl, inc_rings_finite],
+        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, mpfr, gmp, pari, gsl, flint, arb, mpc, ntl],
     )
 endforeach
 
 install_subdir('asymptotic', install_dir: sage_install_dir / 'rings')
-install_subdir('invariants', install_dir: sage_install_dir / 'rings')
-install_subdir('valuation', install_dir: sage_install_dir / 'rings')
-
 subdir('convert')
 subdir('finite_rings')
 subdir('function_field')
+install_subdir('invariants', install_dir: sage_install_dir / 'rings')
 subdir('number_field')
 subdir('padics')
 subdir('polynomial')
 subdir('semirings')
+install_subdir('valuation', install_dir: sage_install_dir / 'rings')

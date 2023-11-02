@@ -1,0 +1,30 @@
+py.install_sources(
+    'all.py',
+    'all_documented_functions.py',
+    'assigned_names.py',
+    'context_managers.py',
+    'gap_functions.py',
+    'gap_globals.py',
+    'operations.py',
+    'saved_workspace.py',
+    'test.py',
+    'test_long.py',
+    subdir: 'sage/libs/gap',
+)
+
+extension_data = {
+    'element': files('element.pyx'),
+    'libgap': files('libgap.pyx'),
+    'util': files('util.pyx'),
+}
+
+foreach name, pyx : extension_data
+    py.extension_module(name,
+        sources: pyx,
+        subdir: 'sage/libs/gap',
+        install: true,
+        include_directories: [inc_cpython, inc_rings],
+        dependencies: [py_dep, cysignals],
+    )
+endforeach
+

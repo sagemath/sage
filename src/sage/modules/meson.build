@@ -51,6 +51,10 @@ foreach name, pyx : extension_data
         subdir: 'sage/modules',
         install: true,
         include_directories: [inc_cpython, inc_numpy, inc_rings_finite, inc_ext],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
+
+install_subdir('fg_pid', install_dir: sage_install_dir / 'modules')
+install_subdir('fp_graded', install_dir: sage_install_dir / 'modules')
+subdir('with_basis')

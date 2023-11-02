@@ -145,7 +145,23 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/combinat',
         install: true,
-        include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals],
+        include_directories: [inc_cpython, inc_data_structures, inc_rings],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
+
+install_subdir('chas', install_dir: sage_install_dir / 'combinat')
+install_subdir('cluster_algebra_quiver', install_dir: sage_install_dir / 'combinat')
+subdir('crystals')
+subdir('designs')
+subdir('integer_lists')
+subdir('matrices')
+install_subdir('ncsf_qsym', install_dir: sage_install_dir / 'combinat')
+install_subdir('ncsym', install_dir: sage_install_dir / 'combinat')
+install_subdir('path_tableaux', install_dir: sage_install_dir / 'combinat')
+subdir('posets')
+subdir('rigged_configurations')
+subdir('root_system')
+install_subdir('sf', install_dir: sage_install_dir / 'combinat')
+install_subdir('species', install_dir: sage_install_dir / 'combinat')
+subdir('words')

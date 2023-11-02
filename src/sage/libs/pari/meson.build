@@ -20,6 +20,6 @@ foreach name, pyx : extension_data
         subdir: 'sage/libs/pari',
         install: true,
         include_directories: [inc_flint, inc_cpython],
-        dependencies: [py_dep, cypari2, cysignals, gmp],
+        dependencies: [py_dep, cypari2, cysignals, gmp, pari],
     )
 endforeach

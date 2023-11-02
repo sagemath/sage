@@ -145,7 +145,8 @@ from sage.rings.localization import Localization
 # c-finite sequences
 from sage.rings.cfinite_sequence import CFiniteSequence, CFiniteSequences
 
-from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
+# How is bernmm working? where are its source files?
+#from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
 
 from sage.rings.monomials import monomials
 

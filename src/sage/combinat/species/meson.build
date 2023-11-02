@@ -1,0 +1,23 @@
+py.install_sources(
+    'all.py',
+    'characteristic_species.py',
+    'composition_species.py',
+    'cycle_species.py',
+    'empty_species.py',
+    'functorial_composition_species.py',
+    'generating_series.py',
+    'library.py',
+    'linear_order_species.py',
+    'misc.py',
+    'partition_species.py',
+    'permutation_species.py',
+    'product_species.py',
+    'recursive_species.py',
+    'set_species.py',
+    'species.py',
+    'structure.py',
+    'subset_species.py',
+    'sum_species.py',
+    subdir: 'sage/combinat/species',
+)
+

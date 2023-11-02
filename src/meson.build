@@ -68,6 +68,13 @@ mpfr = declare_dependency(
   ]
 )
 
+# Cannot be found by pkg-config
+flint = declare_dependency(
+  dependencies: [
+    cc.find_library('flint'),
+  ]
+)
+
 # It's strange but cython cannot find its own include files
 # so we find them ourselves, and add them to the include path
 inc_cython = run_command(py,
@@ -108,6 +115,7 @@ inc_flint = include_directories('sage/libs/flint')
 inc_gsl = include_directories('sage/libs/gsl')
 inc_ntl = include_directories('sage/libs/ntl')
 inc_arb = include_directories('sage/libs/arb')
+inc_iml = include_directories('sage/libs')
 inc_data_structures = include_directories('sage/data_structures')
 inc_ext = include_directories('sage/ext')
 inc_src = include_directories('.')

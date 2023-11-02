@@ -70,6 +70,6 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_cpython, inc_ntl, inc_ext],
-        dependencies: [py_dep, cypari2, cysignals, gmp],
+        dependencies: [py_dep, cypari2, cysignals, gmp, ntl],
     )
 endforeach

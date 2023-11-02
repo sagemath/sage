@@ -36,7 +36,6 @@ py.install_sources(
     'toy_variety.py',
     subdir: 'sage/rings/polynomial',
 )
-install_subdir('padics', install_dir: sage_install_dir / 'polynomial')
 
 extension_data_cpp = {
     'evaluation_ntl': files('evaluation_ntl.pyx'),
@@ -82,7 +81,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/rings/polynomial',
         install: true,
         include_directories: [inc_cpython, inc_flint, inc_ntl, inc_rings, inc_numpy, inc_ext, inc_arb],
-        dependencies: [py_dep, cysignals, cypari2, gmp, mpfi, arb],
+        dependencies: [py_dep, cysignals, cypari2, gmp, mpfi, arb, flint],
     )
 endforeach
 
@@ -97,5 +96,6 @@ foreach name, pyx : extension_data_cpp
     )
 endforeach
 
+install_subdir('padics', install_dir: sage_install_dir / 'rings/polynomial')
 subdir('pbori')
 subdir('weil')

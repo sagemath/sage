@@ -42,3 +42,5 @@ foreach name, pyx : extension_data
         dependencies: [py_dep],
     )
 endforeach
+
+install_subdir('drinfeld_modules', install_dir: sage_install_dir / 'rings/function_field')

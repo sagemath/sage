@@ -18,6 +18,6 @@ foreach name, pyx : extension_data
         subdir: 'sage/libs/flint',
         install: true,
         include_directories: [inc_cpython, inc_src, inc_rings],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp, flint],
     )
 endforeach

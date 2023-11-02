@@ -85,7 +85,8 @@ from sage.rings.all      import *
 from sage.arith.all      import *
 from sage.matrix.all     import *
 
-from sage.symbolic.all   import *
+# Cannot find ginac (and I don't know where to look for it)
+#from sage.symbolic.all   import *
 from sage.modules.all    import *
 from sage.monoids.all    import *
 from sage.algebras.all   import *

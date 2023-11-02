@@ -1,3 +1,16 @@
+# Cannot be found via pkg-config
+meataxe = declare_dependency(
+  dependencies: [
+    cc.find_library('meataxe', required: false),
+  ]
+)
+iml = declare_dependency(
+  dependencies: [
+    cc.find_library('iml'),
+  ]
+)
+
+
 py.install_sources(
     'all.py',
     'all__sagemath_meataxe.py',
@@ -16,12 +29,6 @@ py.install_sources(
     subdir: 'sage/matrix',
 )
 
-# Cannot be found via pkg-config
-meataxe = declare_dependency(
-  dependencies: [
-    cc.find_library('meataxe', required: false),
-  ]
-)
 
 extension_data = {
     'action': files('action.pyx'),
@@ -74,8 +81,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/matrix',
         install: true,
-        include_directories: [inc_cpython, inc_numpy, inc_flint, inc_ext, inc_rings, inc_rings_finite, inc_arb, inc_ntl],
-        dependencies: [py_dep, cysignals, cypari2, gmp, mpfr],
+        include_directories: [inc_cpython, inc_numpy, inc_flint, inc_ext, inc_rings, inc_rings_finite, inc_arb, inc_ntl, inc_iml],
+        dependencies: [py_dep, cysignals, cypari2, gmp, mpfr, pari, flint, iml],
     )
 endforeach
 foreach name, pyx : extension_data_cpp
