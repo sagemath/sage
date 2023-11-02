@@ -1332,7 +1332,7 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
         sage: G.maximum_leaf_number()
         6
 
-    Tests:
+    TESTS:
 
     One vertex::
 
@@ -1360,4 +1360,6 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
         raise ValueError('the graph must be connected')
     if G.order() <= 3:
         return G.order() - 1
-    return G.order() - dominating_set(G, connected=True, value_only=True, solver=solver, verbose=verbose, integrality_tolerance=integrality_tolerance)
+    return G.order() - dominating_set(G, connected=True, value_only=True,
+                                      solver=solver, verbose=verbose,
+                                      integrality_tolerance=integrality_tolerance)
