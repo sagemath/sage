@@ -18,7 +18,7 @@ cdef extern from "Python.h":
     # Helper to get a pointer to an object's __dict__ slot, if any
     PyObject** _PyObject_GetDictPtr(obj)
 
-cdef extern from "sage/cpython/debugimpl.c":
+cdef extern from "debugimpl.c":
     void _type_debug(PyTypeObject*)
 
 from sage.cpython.getattr cimport AttributeErrorMessage

@@ -1,4 +1,4 @@
-from .matroid cimport Matroid
+from sage.matroids.matroid cimport Matroid
 
 cdef class MatroidUnion(Matroid):
     cdef list matroids
