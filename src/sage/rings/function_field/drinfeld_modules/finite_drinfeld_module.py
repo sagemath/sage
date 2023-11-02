@@ -332,8 +332,19 @@ class DrinfeldModule_finite(DrinfeldModule):
         By default, this method uses the so-called *crystalline*
         algorithm which computes the characteristic polynomial of the
         Frobenius acting on the crystalline cohomology of the Drinfeld
-        module. For further details, see [Ang1997]_. Other options
-        include the *motive* method.
+        module. For further details, see [Ang1997]_.
+
+        The available options for 'algorithm' are:
+
+        - `crystalline`   Computes the characteristic polynomial of the
+                          Frobenius endomorphism on the crystalline cohomology
+                          of a Drinfeld module.
+
+        - `motive`        Based on computing the characteristic polynomial of
+                          the Frobenius endomorphism on the motive of a
+                          Drinfeld module. This instantiates the Frobenius
+                          as a morphism object and calls its
+                          'characteristic_polynomial' method.
         """
         # Throw an error if the user asks for an unimplemented algorithm
         # even if the char poly has already been computed
