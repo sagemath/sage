@@ -17,7 +17,7 @@ else
         echo "::group::Merging PR https://github.com/$REPO/pull/$a"
         git tag -f test_head
         $GH pr checkout -b pr-$a $a
-        git fetch --unshallow --all
+        git fetch --unshallow --all > /dev/null 2>&1 && echo "Unshallowed."
         git checkout -q test_head
         if git merge --no-edit --squash -q pr-$a; then
             echo "::endgroup::"
