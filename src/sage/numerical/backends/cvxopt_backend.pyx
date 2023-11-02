@@ -18,7 +18,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.numerical.mip import MIPSolverException
-from .generic_backend cimport GenericBackend
+from sage.numerical.backends.generic_backend cimport GenericBackend
 from copy import copy
 
 

@@ -21,7 +21,7 @@ AUTHORS:
 
 from sage.numerical.sdp import SDPSolverException
 from sage.matrix.constructor import Matrix
-from .matrix_sdp_backend cimport MatrixSDPBackend
+from sage.numerical.backends.matrix_sdp_backend cimport MatrixSDPBackend
 
 
 cdef class CVXOPTSDPBackend(MatrixSDPBackend):
