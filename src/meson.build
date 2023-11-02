@@ -75,6 +75,110 @@ flint = declare_dependency(
   ]
 )
 
+cblas = dependency('cblas')
+gsl = dependency('gsl', fallback: ['gsl', 'gsl_dep'], version : '>=2.5', required: true)
+gd = declare_dependency(
+  dependencies: [
+    cc.find_library('gd'),
+  ]
+)
+iml = declare_dependency(
+  dependencies: [
+    cc.find_library('iml'),
+  ]
+)
+m = declare_dependency(
+  dependencies: [
+    cc.find_library('m'),
+  ]
+)
+m4ri = declare_dependency(
+  dependencies: [
+    cc.find_library('m4ri'),
+  ]
+)
+m4rie = declare_dependency(
+  dependencies: [
+    cc.find_library('m4rie'),
+  ]
+)
+mtx = declare_dependency(
+  dependencies: [
+    cc.find_library('mtx', required: false),
+  ]
+)
+png = declare_dependency(
+  dependencies: [
+    cc.find_library('png'),
+  ]
+)
+zlib = declare_dependency(
+  dependencies: [
+    cc.find_library('z'),
+  ]
+)
+intl = declare_dependency(
+  dependencies: [
+    cc.find_library('intl', required: false),
+  ]
+)
+curl = declare_dependency(
+  dependencies: [
+    cc.find_library('curl'),
+  ]
+)
+ec = declare_dependency(
+  dependencies: [
+    cc.find_library('ec'),
+  ]
+)
+ecm = declare_dependency(
+  dependencies: [
+    cc.find_library('ecm'),
+  ]
+)
+glpk = declare_dependency(
+  dependencies: [
+    cc.find_library('glpk'),
+  ]
+)
+ppl = declare_dependency(
+  dependencies: [
+    cc.find_library('ppl'),
+  ]
+)
+gmpxx = declare_dependency(
+  dependencies: [
+    cc.find_library('gmpxx'),
+  ]
+)
+readline = declare_dependency(
+  dependencies: [
+    cc.find_library('readline'),
+  ]
+)
+lfunction = declare_dependency(
+  dependencies: [
+    cc.find_library('Lfunction', required: false),
+  ]
+)
+fflas = declare_dependency(
+  dependencies: [
+    cc.find_library('fflas'),
+  ]
+)
+givaro = declare_dependency(
+  dependencies: [
+    cc.find_library('givaro'),
+  ]
+)
+linbox = declare_dependency(
+  dependencies: [
+    cc.find_library('linbox'),
+  ]
+)
+
+
 # It's strange but cython cannot find its own include files
 # so we find them ourselves, and add them to the include path
 inc_cython = run_command(py,

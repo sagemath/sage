@@ -37,23 +37,40 @@ def run(folder: Path):
         with open(path, 'r') as file:
             metadata = SimpleNamespace()
             metadata.path = path
-            metadata.is_cpp = any(line.startswith('# distutils: language = c++') for line in file)
-
             metadata.libraries = []
             for line in file:
                 if line.startswith('# distutils: libraries ='):
                     libraries = line.split('libraries =')[1].strip().split()
-                    libraries = [library.replace('NTL_LIBRARIES', 'ntl').replace('SINGULAR_LIBRARIES', 'singular') for library in libraries]
+                    libraries = [
+                        library
+                        .replace('ARB_LIBRARY', 'arb')
+                        .replace('NTL_LIBRARIES', 'ntl')
+                        .replace('SINGULAR_LIBRARIES', 'singular')
+                        .replace('LINBOX_LIBRARIES', 'linbox')
+                        .replace('FFLASFFPACK_LIBRARIES', 'fflas')
+                        .replace('GSL_LIBRARIES', 'gsl')
+                        .replace('M4RI_LIBRARIES', 'm4ri')
+                        .replace('GDLIB_LIBRARIES', 'gd')
+                        .replace('LIBPNG_LIBRARIES', 'png')
+                        .replace('CBLAS_LIBRARIES', 'cblas')
+                        .replace('ZLIB_LIBRARIES', 'zlib')
+                          for library in libraries]
                     metadata.libraries += libraries
 
             metadata.inc_dirs = []
             c_file = path.with_suffix('.c')
+            cpp_file = path.with_suffix('.cpp')
+            if cpp_file.exists():
+                metadata.is_cpp = True
+                c_file = cpp_file
+            else:
+                metadata.is_cpp = False
             if c_file.exists():
                 metadata.not_yet_on_conda = False
                 with open(c_file, 'r') as c_file:
                     contents = c_file.read()
                     known_inc_dirs = {
-                        'sage/cpython': 'inc_cpython',
+                        'sage/cpython/': 'inc_cpython',
                         'sage/rings': 'inc_rings',
                         'sage/rings/finite_rings': 'inc_rings_finite',
                         'sage/libs/flint': 'inc_flint',
@@ -61,11 +78,28 @@ def run(folder: Path):
                         'sage/libs/ntl': 'inc_ntl',
                         'sage/libs/arb': 'inc_arb',
                         'sage/data_structures': 'inc_data_structures',
-                        'sage/ext': 'inc_ext',
+                        'sage/ext/': 'inc_ext',
+                        'numpy/core/include/': 'inc_numpy',
                     }
                     for known_inc_dir in known_inc_dirs:
                         if known_inc_dir in contents:
                             metadata.inc_dirs.append(known_inc_dirs[known_inc_dir])
+                    known_libs = {
+                        'cypari2/': 'cypari2',
+                        'cysignals/': 'cysignals',
+                        '/gmp.h': 'gmp',
+                        '/iml.h': 'iml',
+                        '/m4ri/': 'm4ri',
+                        '/pari/': 'pari',
+                        '/flint/': 'flint',
+                        '/fflas-ffpack/': 'fflas',
+                        '/givaro/': 'givaro',
+                        '/gmp++/': 'gmpxx',
+                        '/linbox/': 'linbox',
+                    }
+                    for known_lib in known_libs:
+                        if known_lib in contents:
+                            metadata.libraries.append(known_libs[known_lib])
             else:
                 metadata.not_yet_on_conda = metadata.is_cpp is False
 
@@ -74,7 +108,7 @@ def run(folder: Path):
     cython_files = [get_metadata(file) for file in cython_files]
     cython_c_files = [file for file in cython_files if not file.is_cpp]
     cython_cpp_files = [file for file in cython_files if file.is_cpp]
-    all_libraries = sorted(set(library for file in cython_files for library in file.libraries))
+    all_libraries = sorted(set(library for file in cython_files for library in file.libraries) | {'gmp'})
     all_inc_dirs = sorted(set(inc_dir for file in cython_files for inc_dir in file.inc_dirs))
     subdirs = sorted(list(folder.glob('*/')))
 
@@ -106,7 +140,7 @@ def run(folder: Path):
             meson_build.write(f"        subdir: '{folder_rel_to_src}',\n")
             meson_build.write('        install: true,\n')
             meson_build.write(f"        include_directories: [{', '.join(all_inc_dirs)}],\n")
-            meson_build.write(f"        dependencies: [py_dep, cysignals, gmp{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
+            meson_build.write(f"        dependencies: [py_dep{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
             meson_build.write('    )\n')
             meson_build.write('endforeach\n')
         
@@ -127,7 +161,7 @@ def run(folder: Path):
             meson_build.write('        install: true,\n')
             meson_build.write('        override_options : [\'cython_language=cpp\'],\n')
             meson_build.write(f"        include_directories: [{', '.join(all_inc_dirs)}],\n")
-            meson_build.write(f"        dependencies: [py_dep, cysignals, gmp{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
+            meson_build.write(f"        dependencies: [py_dep{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
             meson_build.write('    )\n')
             meson_build.write('endforeach\n')
 
