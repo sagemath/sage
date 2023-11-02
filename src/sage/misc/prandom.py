@@ -398,6 +398,7 @@ def weibullvariate(alpha, beta):
     """
     return _pyrand().weibullvariate(alpha, beta)
 
+
 def choices(population, weights=None, *, cum_weights=None, k=1):
     r"""
     Return a k sized list of elements chosen from the population with
@@ -420,7 +421,8 @@ def choices(population, weights=None, *, cum_weights=None, k=1):
         [4, 2, 3, 2, 3, 3, 2, 4, 3, 3]
     """
     return _pyrand().choices(population, weights=weights, cum_weights=cum_weights, k=k)
-    
+
+
 def randbytes(n):
     r"""
     Generate n random bytes
@@ -431,6 +433,7 @@ def randbytes(n):
         b'we\xeb\xd3\x98w!\xa9\xcd\xbb'
     """
     return _pyrand().randbytes(n)
+
 
 def triangular(low=0.0, high=1.0, mode=None):
     r"""
