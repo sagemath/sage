@@ -8548,9 +8548,18 @@ cdef class Matrix(Matrix1):
             [5 4 3]
             [4 5 3]
             [1 0 2]
+            sage: M = matrix(ZZ, 0, 0, [])
+            sage: M.permutation_normal_form()                                           # needs sage.graphs
+            []
         """
         nrows = self.nrows()
         ncols = self.ncols()
+        if not nrows or not ncols:
+            if not check:
+                return self
+            from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+            return (self, (SymmetricGroup(nrows).one(),
+                           SymmetricGroup(ncols).one()))
 
         # A helper
         def new_sorted_matrix(m):
