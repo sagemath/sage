@@ -92,11 +92,9 @@ class Ideal_1poly_field(Ideal_pid):
 
         EXAMPLES::
 
-            sage: P.<x,y> = LaurentPolynomialRing(QQ, 2)
-            sage: I = P.ideal([x + y])
-            sage: Q.<x,y,z> = LaurentPolynomialRing(QQ, 3)
-            sage: I.change_ring(Q)
-            Ideal (x + y) of Multivariate Laurent Polynomial Ring in x, y, z
-             over Rational Field
+            sage: R.<q> = QQ[]
+            sage: I = R.ideal([q^2+q-1])
+            sage: I.change_ring(RR['q'])
+            Principal ideal (q^2 + q - 1.00000000000000) of Univariate Polynomial Ring in q over Real Field with 53 bits of precision
         """
         return R.ideal(self.gens())

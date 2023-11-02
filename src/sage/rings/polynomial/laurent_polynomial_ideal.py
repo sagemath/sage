@@ -23,6 +23,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.ideal import Ideal_generic
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing_univariate
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE
 from sage.arith.misc import GCD
 
@@ -193,28 +194,23 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: x + 3*y in I
             True
-            sage: P.__contains__(x + 3*y)
-            True
-            sage: I.gen(0).__reduce__()
-            (Multivariate Laurent Polynomial Ring in x, y over Rational Field,
-             (x^2*y + 3*x*y^2, (0, 0)))
+
+        We test that these changes allow to use this method in the inivariate case.
+
+        TESTS::
+
             sage: P.<x> = LaurentPolynomialRing(QQ)
             sage: I = P.ideal([x^2 + 3*x])
             sage: 1 + 3*x^-1 in I
             True
-            sage: P.__contains__(1 + 3*x^-1)
-            True
-            sage: I.gen(0).__reduce__()  # Check the differences of __reduce__ for distinct Laurent polynomial rings
-            (<class 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_univariate'>,
-             (Univariate Laurent Polynomial Ring in x over Rational Field, x + 3, 1))
         """
         if not f or f in self.gens():
             return True
         f = self.ring()(f)
-        if self.ring().ngens() > 1:
-            g = f.__reduce__()[1][0]
-        else:
+        if isinstance(self.ring(), LaurentPolynomialRing_univariate):
             g = f.__reduce__()[1][1]
+        else:
+            g = f.__reduce__()[1][0]
         return (g in self.polynomial_ideal())
 
     def gens_reduced(self):
@@ -356,7 +352,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         if forward_hint:
             R = self.ring()
-            apply_to_hint = lambda x, M=M, R=R: R(x).toric_coordinate_change(M).__reduce__()[1][0]
+            apply_to_hint = lambda x, M=M, R=R: R(x).toric_coordinate_change(M).monomial_reduction()[0]
         else:
             apply_to_hint = None
         return self.apply_map(lambda x, M=M: x.toric_coordinate_change(M),
@@ -443,7 +439,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         P = self.ring()
         Q = self._poly_ring
-        if len(P.gens()) == 1:
+        if isinstance(self.ring(), LaurentPolynomialRing_univariate):
             a = [Q(p.polynomial_construction()[0]) for p in self.gens()]
             if P.base_ring().is_field():
                 a = GCD(a)
