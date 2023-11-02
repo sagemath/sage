@@ -30,12 +30,11 @@ env:
   # Adapted from docker.yml
   TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-incremental"
   BUILD_IMAGE:            "ghcr.io/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci"
-  LOGS_ARTIFACT_NAME:     "logs-commit-${{ github.sha }}-tox-docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}"
   FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
   EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
-  DOCKER_BUILDKIT:        1
+
 jobs:
   build:
     runs-on: ubuntu-latest
