@@ -441,7 +441,7 @@ def triangular(low=0.0, high=1.0, mode=None):
 
     Continuous distribution bounded by given lower and upper limits,
     and having a given mode value in-between.
-    
+
     EXAMPLES::
 
         sage:  sample = [triangular(1.0, 5.0, 2.0) for i in range(1, 5)]; sample #random
