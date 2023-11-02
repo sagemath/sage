@@ -30,7 +30,7 @@ echo "# to simplify writing scripts that customize this file"
 ADD="ADD $__CHOWN"
 RUN=RUN
 cat <<EOF
-ARG BASE_IMAGE=${FULL_BASE_IMAGE_AND_TAG}
+ARG BASE_IMAGE=$(eval echo "${FULL_BASE_IMAGE_AND_TAG}")
 FROM \${BASE_IMAGE} as with-system-packages
 EOF
 case $SYSTEM in
