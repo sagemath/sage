@@ -6612,27 +6612,30 @@ class Partitions_n(Partitions):
             7
             sage: Partitions(5).cardinality(algorithm='gap')                            # needs sage.libs.gap
             7
-            sage: Partitions(5).cardinality(algorithm='pari')                           # needs sage.libs.pari
-            7
-            sage: number_of_partitions(5, algorithm='flint')                            # needs sage.libs.flint
-            7
 
         ::
 
-            sage: Partitions(10).cardinality()                                          # needs sage.libs.flint
-            42
-            sage: Partitions(3).cardinality()                                           # needs sage.libs.flint
+            sage: # needs sage.libs.flint
+            sage: Partitions(3).cardinality()
             3
-            sage: Partitions(10).cardinality()                                          # needs sage.libs.flint
+            sage: number_of_partitions(5, algorithm='flint')
+            7
+            sage: Partitions(10).cardinality()
             42
-            sage: Partitions(3).cardinality(algorithm='pari')                           # needs sage.libs.pari
-            3
-            sage: Partitions(10).cardinality(algorithm='pari')                          # needs sage.libs.pari
-            42
-            sage: Partitions(40).cardinality()                                          # needs sage.libs.flint
+            sage: Partitions(40).cardinality()
             37338
-            sage: Partitions(100).cardinality()                                         # needs sage.libs.flint
+            sage: Partitions(100).cardinality()
             190569292
+
+        ::
+
+            sage: # needs sage.libs.pari
+            sage: Partitions(3).cardinality(algorithm='pari')
+            3
+            sage: Partitions(5).cardinality(algorithm='pari')
+            7
+            sage: Partitions(10).cardinality(algorithm='pari')
+            42
 
         A generating function for `p_n` is given by the reciprocal of
         Euler's function:
@@ -7197,20 +7200,21 @@ class Partitions_parts_in(Partitions):
         Let's check the consistency of GAP's function and our own
         algorithm that actually generates the partitions::
 
+            sage: # needs sage.libs.gap
             sage: ps = Partitions(15, parts_in=[1,2,3])
-            sage: ps.cardinality() == len(ps.list())                                    # needs sage.libs.gap
+            sage: ps.cardinality() == len(ps.list())
             True
             sage: ps = Partitions(15, parts_in=[])
-            sage: ps.cardinality() == len(ps.list())                                    # needs sage.libs.gap
+            sage: ps.cardinality() == len(ps.list())
             True
             sage: ps = Partitions(3000, parts_in=[50,100,500,1000])
-            sage: ps.cardinality() == len(ps.list())                                    # needs sage.libs.gap
+            sage: ps.cardinality() == len(ps.list())
             True
             sage: ps = Partitions(10, parts_in=[3,6,9])
-            sage: ps.cardinality() == len(ps.list())                                    # needs sage.libs.gap
+            sage: ps.cardinality() == len(ps.list())
             True
             sage: ps = Partitions(0, parts_in=[1,2])
-            sage: ps.cardinality() == len(ps.list())                                    # needs sage.libs.gap
+            sage: ps.cardinality() == len(ps.list())
             True
         """
         # GAP complains if you give it an empty list
