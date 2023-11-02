@@ -1534,17 +1534,17 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
             sage: f = y / x + x^2 / y + 3 * x^4 * y^-2
             sage: f.monomial_reduction()
-            (3*x^5 + x^3*y + y^3, 1/(x*y^2))
+            (3*x^5 + x^3*y + y^3, x^-1*y^-2)
             sage: f = y * x + x^2 / y + 3 * x^4 * y^-2
             sage: f.monomial_reduction()
-             (3*x^3 + y^3 + x*y, x/y^2)
+             (3*x^3 + y^3 + x*y, x*y^-2)
             sage: x.monomial_reduction()
             (1, x)
             sage: (y^-1).monomial_reduction()
-            (1, 1/y)
+            (1, y^-1)
         """
         self._normalize()
-        ring = self._parent._R
+        ring = self._parent
         g = ring.gens()
         mon = ring.prod(g[i] ** j for i, j in enumerate(self._mon))
         return (self._poly, mon)
