@@ -4041,7 +4041,7 @@ class TensorField(ModuleElementWithMutability):
             return result
         if not isinstance(pos, (int, Integer)):
             raise TypeError("the argument 'pos' must be an integer")
-        if pos<0 or pos>=n_con:
+        if pos < 0 or pos >= n_con:
             print("pos = {}".format(pos))
             raise ValueError("position out of range")
         return non_degenerate_form.contract(0, self, pos)

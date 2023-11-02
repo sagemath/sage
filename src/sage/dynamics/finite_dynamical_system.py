@@ -240,7 +240,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
         sage: D.inverse_evolution()(4)
         Traceback (most recent call last):
         ...
-        AttributeError: 'DiscreteDynamicalSystem' object has no attribute 'inverse_evolution'
+        AttributeError: 'DiscreteDynamicalSystem' object has no attribute 'inverse_evolution'...
         sage: D.orbit(3)
         [3, 5, 1]
 
@@ -252,7 +252,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
         sage: D.inverse_evolution()(4)
         Traceback (most recent call last):
         ...
-        AttributeError: 'DiscreteDynamicalSystem' object has no attribute 'inverse_evolution'
+        AttributeError: 'DiscreteDynamicalSystem' object has no attribute 'inverse_evolution'...
         sage: D.orbit(3)
         [3, 5, 1]
 

@@ -37,6 +37,8 @@ EXAMPLES::
 
     sage: # needs sage.rings.real_mpfr
     sage: Fd = F.dual_group(names='ABCDE', base_ring=CC)
+    sage: Fd.category()
+    Category of commutative groups
     sage: A,B,C,D,E = Fd.gens()
     sage: A(a)    # abs tol 1e-8
     -1.00000000000000 + 0.00000000000000*I
@@ -64,7 +66,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-
+from sage.categories.groups import Groups
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.abelian_gps.dual_abelian_group_element import (
@@ -129,7 +131,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         self._group = G
         names = normalize_names(G.ngens(), names)
         self._assign_names(names)
-        AbelianGroupBase.__init__(self)  # TODO: category=CommutativeGroups()
+        AbelianGroupBase.__init__(self, category=Groups().Commutative())
 
     def group(self):
         """

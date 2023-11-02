@@ -86,7 +86,7 @@ def base_field(x):
         sage: R.base_field()
         Traceback (most recent call last):
         ...
-        AttributeError: 'PolynomialRing_dense_mod_p_with_category' object has no attribute 'base_field'
+        AttributeError: 'PolynomialRing_dense_mod_p_with_category' object has no attribute 'base_field'...
     """
     try:
         return x.base_field()

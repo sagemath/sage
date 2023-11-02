@@ -177,16 +177,17 @@ def load(filename, globals, attach=False):
     current working directory, i.e., ``'.'``.  But you can modify the
     path with :func:`load_attach_path`::
 
+        sage: import tempfile
         sage: sage.repl.attach.reset(); reset_load_attach_path()
         sage: load_attach_path()
         ['.']
-        sage: t_dir = tmp_dir()
-        sage: fname = 'test.py'
-        sage: fullpath = os.path.join(t_dir, fname)
-        sage: with open(fullpath, 'w') as f:
-        ....:     _ = f.write("print(37 * 3)")
-        sage: load_attach_path(t_dir, replace=True)
-        sage: attach(fname)
+        sage: with tempfile.TemporaryDirectory() as t_dir:
+        ....:     fname = 'test.py'
+        ....:     fullpath = os.path.join(t_dir, fname)
+        ....:     with open(fullpath, 'w') as f:
+        ....:         _ = f.write("print(37 * 3)")
+        ....:     load_attach_path(t_dir, replace=True)
+        ....:     attach(fname)
         111
         sage: sage.repl.attach.reset(); reset_load_attach_path() # clean up
 

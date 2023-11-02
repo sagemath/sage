@@ -287,7 +287,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             sage: w.is_positive_root()
             False
         """
-        return all( c >= 0 for c in self.coefficients() )
+        return all(c >= 0 for c in self.coefficients())
 
     @cached_in_parent_method
     def associated_coroot(self):
@@ -319,12 +319,11 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             alphacheck[1]
             sage: alpha[1].associated_coroot().parent()                                 # needs sage.graphs
             Coroot lattice of the Root system of type ['B', 3]
-
         """
-        #assert(self in self.parent().roots() is not False)
+        # assert self in self.parent().roots()
         scaled_coroot = self.parent().to_coroot_space_morphism()(self)
         s = self.scalar(scaled_coroot)
-        return scaled_coroot.map_coefficients(lambda c: (2*c) // s)
+        return scaled_coroot.map_coefficients(lambda c: (2 * c) // s)
 
     def quantum_root(self):
         r"""

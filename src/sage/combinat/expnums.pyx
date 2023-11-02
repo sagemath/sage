@@ -117,6 +117,7 @@ def expnums(int n, int aa):
 #     return bell[1];
 # end);
 
+
 def expnums2(n, aa):
     r"""
     A vanilla python (but compiled via Cython) implementation of

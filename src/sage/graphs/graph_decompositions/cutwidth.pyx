@@ -335,7 +335,7 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False,
     Comparison of algorithms::
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
-        sage: for i in range(2):  # long time
+        sage: for i in range(2):                # long time                             # needs sage.numerical.mip
         ....:     G = graphs.RandomGNP(7, 0.3)
         ....:     ve, le = cutwidth(G, algorithm="exponential")
         ....:     vm, lm = cutwidth(G, algorithm="MILP", solver='GLPK')
@@ -530,7 +530,7 @@ def cutwidth_dyn(G, lower_bound=0):
         sig_free(neighborhoods)
 
 
-cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S, int v, int k):
+cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S, int v, int k) noexcept:
     r"""
     Check whether an ordering with the given cost `k` exists, and updates data
     in the neighborhoods array at the same time. See the module's documentation.

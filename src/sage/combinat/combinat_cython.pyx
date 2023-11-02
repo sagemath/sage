@@ -28,7 +28,7 @@ set_partition_iterator_blocks = LazyImport('sage.combinat.set_partition_iterator
 linear_extension_iterator = LazyImport('sage.combinat.posets.linear_extension_iterator', 'linear_extension_iterator', deprecation=35741)
 
 
-cdef void mpz_addmul_alt(mpz_t s, mpz_t t, mpz_t u, unsigned long parity):
+cdef void mpz_addmul_alt(mpz_t s, mpz_t t, mpz_t u, unsigned long parity) noexcept:
     """
     Set s = s + t*u * (-1)^parity
     """
@@ -38,7 +38,7 @@ cdef void mpz_addmul_alt(mpz_t s, mpz_t t, mpz_t u, unsigned long parity):
         mpz_addmul(s, t, u)
 
 
-cdef mpz_stirling_s2(mpz_t s, unsigned long n, unsigned long k):
+cdef mpz_stirling_s2(mpz_t s, unsigned long n, unsigned long k) noexcept:
     """
     Set s = S(n,k) where S(n,k) denotes a Stirling number of the
     second kind.
@@ -134,6 +134,7 @@ cdef mpz_stirling_s2(mpz_t s, unsigned long n, unsigned long k):
         mpz_clear(t)
         mpz_clear(u)
 
+
 def _stirling_number2(n, k):
     """
     Python wrapper of mpz_stirling_s2.
@@ -148,8 +149,9 @@ def _stirling_number2(n, k):
     mpz_stirling_s2(s.value, n, k)
     return s
 
+
 #####################################################################
-## Lyndon word iterator
+#  Lyndon word iterator
 
 def lyndon_word_iterator(Py_ssize_t n, Py_ssize_t k):
     r"""
@@ -204,7 +206,8 @@ def lyndon_word_iterator(Py_ssize_t n, Py_ssize_t k):
         while a[i] == n - 1:
             i -= 1
 
-## Perfect matchings iterator
+
+#  Perfect matchings iterator
 
 def perfect_matchings_iterator(Py_ssize_t n):
     r"""
@@ -276,7 +279,8 @@ def perfect_matchings_iterator(Py_ssize_t n):
     sig_free(e)
     sig_free(f)
 
-cdef list convert(Py_ssize_t* f, Py_ssize_t n):
+
+cdef list convert(Py_ssize_t* f, Py_ssize_t n) noexcept:
     """
     Convert a list ``f`` representing a fixed-point free involution
     to a set partition.
@@ -288,8 +292,9 @@ cdef list convert(Py_ssize_t* f, Py_ssize_t n):
             ret.append((i, f[i]))
     return ret
 
+
 #####################################################################
-## Set partition composition
+#  Set partition composition
 
 def set_partition_composition(tuple sp1, tuple sp2):
     r"""

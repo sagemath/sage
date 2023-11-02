@@ -39,7 +39,7 @@ except ImportError:
 CommutativeMonoids = monoids.Monoids().Commutative()
 
 
-cdef inline bint element_is_scalar(Element x):
+cdef inline bint element_is_scalar(Element x) noexcept:
     """
     Should this element be considered a scalar (as opposed to a vector)?
     """
@@ -606,7 +606,7 @@ cdef class MatrixArgs:
         self.finalize()
         return self.nrows * self.ncols
 
-    cpdef Matrix matrix(self, bint convert=True):
+    cpdef Matrix matrix(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a Sage Matrix.
 
@@ -694,7 +694,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_MATRIX
         return M
 
-    cpdef list list(self, bint convert=True):
+    cpdef list list(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a flat list of scalars.
 
@@ -761,7 +761,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_SEQ_FLAT
         return L
 
-    cpdef dict dict(self, bint convert=True):
+    cpdef dict dict(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a dict. The keys of this
         dict are the non-zero positions ``(i,j)``. The corresponding
@@ -1360,7 +1360,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_SEQ
 
 
-cpdef MatrixArgs MatrixArgs_init(space, entries):
+cpdef MatrixArgs MatrixArgs_init(space, entries) noexcept:
     """
     Construct a :class:`MatrixArgs` object from a matrix space and
     entries. This is the typical use in a matrix constructor.
