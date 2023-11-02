@@ -114,7 +114,7 @@ jobs:
            (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
            (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
            git add -A && git commit --quiet -m "old")
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Build docs
         id: docbuild
@@ -127,7 +127,7 @@ jobs:
           make doc-clean doc-uninstall
           mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
           ./config.status && make sagemath_doc_html
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy docs
         id: copy
@@ -193,7 +193,7 @@ jobs:
           cp -r -L /sage/local/share/doc/sage/html/en/* ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload docs
         if: (success() || failure()) && steps.copy.outcome == 'success'

@@ -92,7 +92,7 @@ jobs:
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
-        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy docs
         id: copy
@@ -104,7 +104,7 @@ jobs:
           cp -r -L /sage/local/share/doc/sage/pdf/en/* ./docs
           # Zip everything for increased performance
           zip -r docs-pdf.zip docs
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload docs
         if: (success() || failure()) && steps.copy.outcome == 'success'
