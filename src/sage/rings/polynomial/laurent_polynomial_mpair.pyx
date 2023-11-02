@@ -1858,7 +1858,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
     @coerce_binop
     def divides(self, other):
         """
-        Check if ``self`` divides ``other``
+        Check if ``self`` divides ``other``.
 
         EXAMPLES::
 

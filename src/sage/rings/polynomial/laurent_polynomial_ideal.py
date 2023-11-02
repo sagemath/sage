@@ -193,14 +193,20 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: I = P.ideal([x^2*y + 3*x*y^2])
             sage: x + 3*y in I
             True
+            sage: P.__contains__(x + 3*y)
+            True
             sage: I.gen(0).__reduce__()
             (Multivariate Laurent Polynomial Ring in x, y over Rational Field,
              (x^2*y + 3*x*y^2, (0, 0)))
-            sage: P.<x> = LaurentPolynomialRing(QQ, 1)
+            sage: P.<x> = LaurentPolynomialRing(QQ)
             sage: I = P.ideal([x^2 + 3*x])
+            sage: 1 + 3*x^-1 in I
+            True
+            sage: P.__contains__(1 + 3*x^-1)
+            True
             sage: I.gen(0).__reduce__()  # Check the differences of __reduce__ for distinct Laurent polynomial rings
-            (Multivariate Laurent Polynomial Ring in x over Rational Field,
-             (x^2 + 3*x, (0,)))
+            (<class 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_univariate'>,
+             (Univariate Laurent Polynomial Ring in x over Rational Field, x + 3, 1))
         """
         if not f or f in self.gens():
             return True
