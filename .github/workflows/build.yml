@@ -82,9 +82,14 @@ jobs:
           ./sage -t --new -p2
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-  modularized:
+  mod:
     runs-on: ubuntu-latest
     needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        targets:
+          - sagemath_categories-check
     steps:
       - name: Checkout
         id: checkout
@@ -119,7 +124,7 @@ jobs:
       - name: Test modularized distributions
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          make V=0 tox && make pypi-wheels-check
+          make V=0 tox-ensure && make ${{ matrix.targets }}
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
   test-long:
