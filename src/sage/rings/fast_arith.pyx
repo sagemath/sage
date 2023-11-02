@@ -174,7 +174,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False) noexcept
                                  + str(real_error))
 
     if algorithm is None:
-        # if 'stop' is 'None', neEd to change it to an integer before comparing with 'start'
+        # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
         if max(start, stop or 0) <= small_prime_max:
             algorithm = "pari_primes"
         else:
@@ -275,18 +275,18 @@ cdef class arith_int:
         s = 1
         while b:
             c = a % b
-            quot = a/b
+            quot = a / b
             a = b
             b = c
-            new_r = p - quot*r
-            new_s = q - quot*s
+            new_r = p - quot * r
+            new_s = q - quot * s
             p = r
             q = s
             r = new_r
             s = new_s
 
-        ss[0] = p*psign
-        tt[0] = q*qsign
+        ss[0] = p * psign
+        tt[0] = q * qsign
 
         return a
 
@@ -343,10 +343,10 @@ cdef class arith_int:
         v1 = 1
         v2 = v
         while self.abs_int(v2) > bnd:
-            q = u2/v2   # floor is implicit
-            t0 = u0-q*v0
-            t1 = u1-q*v1
-            t2 = u2-q*v2
+            q = u2 / v2   # floor is implicit
+            t0 = u0 - q * v0
+            t1 = u1 - q * v1
+            t2 = u2 - q * v2
             u0 = v0
             u1 = v1
             u2 = v2
@@ -439,18 +439,18 @@ cdef class arith_llong:
         s = 1
         while b:
             c = a % b
-            quot = a/b
+            quot = a / b
             a = b
             b = c
-            new_r = p - quot*r
-            new_s = q - quot*s
+            new_r = p - quot * r
+            new_s = q - quot * s
             p = r
             q = s
             r = new_r
             s = new_s
 
-        ss[0] = p*psign
-        tt[0] = q*qsign
+        ss[0] = p * psign
+        tt[0] = q * qsign
 
         return a
 
@@ -501,10 +501,10 @@ cdef class arith_llong:
         v1 = 1
         v2 = v
         while self.abs_longlong(v2) > bnd:
-            q = u2/v2   # floor is implicit
-            t0 = u0-q*v0
-            t1 = u1-q*v1
-            t2 = u2-q*v2
+            q = u2 / v2   # floor is implicit
+            t0 = u0 - q * v0
+            t1 = u1 - q * v1
+            t2 = u2 - q * v2
             u0 = v0
             u1 = v1
             u2 = v2
