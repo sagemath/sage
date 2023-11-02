@@ -383,7 +383,11 @@ if [ -n "$PYTHONHOME" ]; then
 fi
 
 if [ -n "$SAGE_LOCAL" ]; then
-    LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    if [ "$UNAME" = "Darwin" ] && [ "$XCLT_VERSION" -ge 15 ]; then
+        LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-ld_classic,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    else
+        LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    fi
     if [ "$UNAME" = "Linux" ]; then
         LDFLAGS="-Wl,-rpath-link,$SAGE_LOCAL/lib $LDFLAGS"
     fi
