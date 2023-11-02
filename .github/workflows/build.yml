@@ -29,7 +29,7 @@ concurrency:
 env:
   # Adapted from docker.yml
   TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-incremental"
-  IMAGE:                  "sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci"
+  BUILD_IMAGE:            "ghcr.io/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:ci"
   LOGS_ARTIFACT_NAME:     "logs-commit-${{ github.sha }}-tox-docker-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}"
   FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
   FROM_DOCKER_TARGET:     "with-targets"
@@ -79,7 +79,7 @@ jobs:
           push:       false
           load:       true
           context:    .
-          tags:       ${{ env.IMAGE }}
+          tags:       ${{ env.BUILD_IMAGE }}
           target:     with-targets
           cache-from: type=gha
           cache-to:   type=gha,mode=max
@@ -94,7 +94,7 @@ jobs:
           docker run --name BUILD -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
-            ${{ env.IMAGE }} /bin/sh
+            ${{ env.BUILD_IMAGE }} /bin/sh
 
       # Testing
 
@@ -153,7 +153,7 @@ jobs:
           push:       false
           load:       true
           context:    .
-          tags:       ${{ env.IMAGE }}
+          tags:       ${{ env.BUILD_IMAGE }}
           target:     with-targets
           cache-from: type=gha
           cache-to:   type=gha,mode=max
@@ -168,7 +168,7 @@ jobs:
           docker run --name BUILD -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
-            ${{ env.IMAGE }} /bin/sh
+            ${{ env.BUILD_IMAGE }} /bin/sh
 
       # Testing
 
@@ -221,7 +221,7 @@ jobs:
           push:       false
           load:       true
           context:    .
-          tags:       ${{ env.IMAGE }}
+          tags:       ${{ env.BUILD_IMAGE }}
           target:     with-targets
           cache-from: type=gha
           cache-to:   type=gha,mode=max
@@ -236,7 +236,7 @@ jobs:
           docker run --name BUILD -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
-            ${{ env.IMAGE }} /bin/sh
+            ${{ env.BUILD_IMAGE }} /bin/sh
 
       # Testing
 
