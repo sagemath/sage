@@ -56,7 +56,7 @@ from sage.misc.superseded import experimental
 from sage.rings.polynomial import polynomial_ring_constructor
 
 
-cdef void matrix_to_acb_mat(acb_mat_t target, source):
+cdef void matrix_to_acb_mat(acb_mat_t target, source) noexcept:
     """
     Convert a matrix containing :class:`ComplexIntervalFieldElement` to an ``acb_mat_t``.
 
@@ -80,14 +80,14 @@ cdef void matrix_to_acb_mat(acb_mat_t target, source):
             ComplexIntervalFieldElement_to_acb(acb_mat_entry(target, r, c),
                                                source[r][c])
 
-cdef ComplexIntervalFieldElement _to_CIF(acb_t source, ComplexIntervalFieldElement template):
+cdef ComplexIntervalFieldElement _to_CIF(acb_t source, ComplexIntervalFieldElement template) noexcept:
     cdef ComplexIntervalFieldElement result
     result = template._new()
     acb_to_ComplexIntervalFieldElement(
         result, source)
     return result
 
-cdef Matrix_generic_dense acb_mat_to_matrix(acb_mat_t source, Parent CIF):
+cdef Matrix_generic_dense acb_mat_to_matrix(acb_mat_t source, Parent CIF) noexcept:
     """
     Convert an ``acb_mat_t`` to a matrix containing :class:`ComplexIntervalFieldElement`.
 
@@ -114,7 +114,7 @@ cdef Matrix_generic_dense acb_mat_to_matrix(acb_mat_t source, Parent CIF):
                     for c in range(ncols)]
                    for r in range(nrows)])
 
-cdef inline long prec(Matrix_complex_ball_dense mat):
+cdef inline long prec(Matrix_complex_ball_dense mat) noexcept:
     return mat._base_ring._prec
 
 cdef class Matrix_complex_ball_dense(Matrix_dense):
@@ -158,7 +158,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         """
         acb_mat_clear(self.value)
 
-    cdef Matrix_complex_ball_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols):
+    cdef Matrix_complex_ball_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
         r"""
         Return a new matrix over the same base ring.
         """
@@ -252,7 +252,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             z = <ComplexBall>se.entry
             acb_set(acb_mat_entry(self.value, se.i, se.j), z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x) noexcept:
         """
         Set position ``i``, ``j`` of this matrix to ``x``.
 
@@ -278,7 +278,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         """
         acb_set(acb_mat_entry(self.value, i, j), (<ComplexBall> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Return ``(i, j)`` entry of this matrix as a new ComplexBall.
 
@@ -307,7 +307,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         acb_set(z.value, acb_mat_entry(self.value, i, j))
         return z
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         r"""
         EXAMPLES::
 
@@ -401,7 +401,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         sig_off()
         return res
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         r"""
         TESTS::
 
@@ -414,7 +414,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         sig_off()
         return res
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         r"""
         TESTS::
 
@@ -427,7 +427,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         sig_off()
         return res
 
-    cpdef _lmul_(self, Element a):
+    cpdef _lmul_(self, Element a) noexcept:
         r"""
         TESTS::
 
@@ -440,7 +440,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         sig_off()
         return res
 
-    cpdef _rmul_(self, Element a):
+    cpdef _rmul_(self, Element a) noexcept:
         r"""
         TESTS::
 
@@ -449,7 +449,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         """
         return self._lmul_(a)
 
-    cdef _matrix_times_matrix_(self, Matrix other):
+    cdef _matrix_times_matrix_(self, Matrix other) noexcept:
         r"""
         TESTS::
 
@@ -462,7 +462,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         sig_off()
         return res
 
-    cpdef _pow_int(self, n):
+    cpdef _pow_int(self, n) noexcept:
         r"""
         Return the ``n``-th power of this matrix.
 
@@ -961,7 +961,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         sig_off()
         return res
 
-cdef _acb_vec_to_list(acb_ptr vec, long n, Parent parent):
+cdef _acb_vec_to_list(acb_ptr vec, long n, Parent parent) noexcept:
     cdef ComplexBall b
     res = []
     for i in range(n):

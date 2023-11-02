@@ -181,7 +181,7 @@ def set_stab_py(generators, sett, relab=False):
         return stab_gens, relabeling
     return stab_gens
 
-cdef aut_gp_and_can_lab *set_stab(StabilizerChain *supergroup, subset *sett, bint relab):
+cdef aut_gp_and_can_lab *set_stab(StabilizerChain *supergroup, subset *sett, bint relab) noexcept:
     r"""
     Computes the set stabilizer of ``sett`` within ``supergroup``. (Note that
     ``set`` is a reserved Python keyword.) If ``relab`` is specified then
@@ -439,10 +439,10 @@ cdef int sets_isom(StabilizerChain *supergroup, subset *set1, subset *set2, int 
     PS_dealloc(part)
     return x
 
-cdef bint all_set_children_are_equivalent(PartitionStack *PS, void *S):
+cdef bint all_set_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
 
-cdef int refine_set(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_set(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     """
     Given a set S, refine the partition stack PS so that each cell contains
     elements which are all either in the set or not in the set. If the depth is
@@ -466,10 +466,10 @@ cdef int refine_set(PartitionStack *PS, void *S, int *cells_to_refine_by, int ct
         start += i + 1
     return 0
 
-cdef inline int _bint_cmp(bint a, bint b):
+cdef inline int _bint_cmp(bint a, bint b) noexcept:
     return (<int> b) - (<int> a)
 
-cdef int compare_sets(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_sets(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     r"""
     Compare two sets according to the lexicographic order.
     """
@@ -484,7 +484,7 @@ cdef int compare_sets(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree
             return j
     return 0
 
-cdef void *allocate_subset(int n):
+cdef void *allocate_subset(int n) noexcept:
     r"""
     Allocates a subset struct of degree n.
     """
@@ -503,7 +503,7 @@ cdef void *allocate_subset(int n):
     set1.scratch = scratch
     return <void *> set1
 
-cdef void free_subset(void *child):
+cdef void free_subset(void *child) noexcept:
     r"""
     Deallocates a subset struct.
     """
@@ -513,7 +513,7 @@ cdef void free_subset(void *child):
         bitset_free(&set1.bits)
     sig_free(set1)
 
-cdef void *allocate_sgd(int degree):
+cdef void *allocate_sgd(int degree) noexcept:
     r"""
     Allocates the data part of an iterator which generates augmentations, i.e.,
     elements to add to the set.
@@ -525,7 +525,7 @@ cdef void *allocate_sgd(int degree):
         return NULL
     return <void *> sgd
 
-cdef void deallocate_sgd(void *data):
+cdef void deallocate_sgd(void *data) noexcept:
     r"""
     Deallocates the data part of the augmentation iterator.
     """
@@ -534,7 +534,7 @@ cdef void deallocate_sgd(void *data):
         OP_dealloc(sgd.orbits)
     sig_free(sgd)
 
-cdef void *subset_generator_next(void *data, int *degree, bint *mem_err):
+cdef void *subset_generator_next(void *data, int *degree, bint *mem_err) noexcept:
     r"""
     Returns the next element to consider adding to the set.
     """
@@ -550,7 +550,7 @@ cdef void *subset_generator_next(void *data, int *degree, bint *mem_err):
         return NULL
     return <void *> &sgd.cur_point
 
-cdef int generate_child_subsets(void *S, aut_gp_and_can_lab *group, iterator *child_iterator):
+cdef int generate_child_subsets(void *S, aut_gp_and_can_lab *group, iterator *child_iterator) noexcept:
     r"""
     Sets up an iterator of augmentations, i.e., elements to add to the given set.
     """
@@ -570,7 +570,7 @@ cdef int generate_child_subsets(void *S, aut_gp_and_can_lab *group, iterator *ch
     sgd.bits = subset1.bits
     return 0
 
-cdef void *apply_subset_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err):
+cdef void *apply_subset_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err) noexcept:
     r"""
     Adds the element represented by ``aug`` to ``parent``, storing the result to
     ``child``.
@@ -584,10 +584,10 @@ cdef void *apply_subset_aug(void *parent, void *aug, void *child, int *degree, b
     degree[0] = n
     return <void *> set1
 
-cdef void free_subset_aug(void *aug):
+cdef void free_subset_aug(void *aug) noexcept:
     return
 
-cdef void *canonical_set_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err):
+cdef void *canonical_set_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept:
     r"""
     Determines the canonical parent of the set ``child`` by applying
     ``permutation``, deleting the largest element in lexicographic order, and
@@ -617,7 +617,7 @@ cdef void *canonical_set_parent(void *child, void *parent, int *permutation, int
     degree[0] = n
     return <void *> par
 
-cdef iterator *allocate_subset_gen(int degree, int max_size):
+cdef iterator *allocate_subset_gen(int degree, int max_size) noexcept:
     r"""
     Allocates the generator of subsets.
     """
@@ -628,7 +628,7 @@ cdef iterator *allocate_subset_gen(int degree, int max_size):
             subset_gen = NULL
     return subset_gen
 
-cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it):
+cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it) noexcept:
     r"""
     Given an already allocated iterator, allocates the generator of subsets.
     """
@@ -654,7 +654,7 @@ cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it):
     it.next = canonical_generator_next
     return 0
 
-cdef void free_subset_gen(iterator *subset_gen):
+cdef void free_subset_gen(iterator *subset_gen) noexcept:
     r"""
     Frees the iterator of subsets.
     """
@@ -664,7 +664,7 @@ cdef void free_subset_gen(iterator *subset_gen):
     deallocate_cgd(cgd)
     sig_free(subset_gen)
 
-cdef iterator *setup_set_gen(iterator *subset_gen, int degree, int max_size):
+cdef iterator *setup_set_gen(iterator *subset_gen, int degree, int max_size) noexcept:
     r"""
     Initiates the iterator of subsets.
     """

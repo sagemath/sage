@@ -128,11 +128,11 @@ from .coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
 from .element cimport parent
 
 
-cdef _record_exception():
+cdef _record_exception() noexcept:
     coercion_model._record_exception()
 
 cdef object _Integer
-cdef bint is_Integer(x):
+cdef bint is_Integer(x) noexcept:
     global _Integer
     if _Integer is None:
         from sage.rings.integer import Integer as _Integer
@@ -157,7 +157,7 @@ def is_Parent(x):
     return isinstance(x, Parent)
 
 
-cdef bint guess_pass_parent(parent, element_constructor):
+cdef bint guess_pass_parent(parent, element_constructor) noexcept:
     # Returning True here is deprecated, see #26879
     if isinstance(element_constructor, MethodType):
         return False
@@ -171,7 +171,7 @@ from sage.structure.dynamic_class import dynamic_class
 Sets_parent_class = Sets().parent_class
 
 
-cdef inline bint good_as_coerce_domain(S):
+cdef inline bint good_as_coerce_domain(S) noexcept:
     """
     Determine whether the input can be the domain of a map.
 
@@ -197,7 +197,7 @@ cdef inline bint good_as_coerce_domain(S):
     return isinstance(S, (CategoryObject, type))
 
 
-cdef inline bint good_as_convert_domain(S):
+cdef inline bint good_as_convert_domain(S) noexcept:
     return isinstance(S, (SageObject, type))
 
 
@@ -1188,7 +1188,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         except (TypeError, ValueError, ArithmeticError):
             return False
 
-    cpdef coerce(self, x):
+    cpdef coerce(self, x) noexcept:
         """
         Return x as an element of self, if and only if there is a canonical
         coercion from the parent of x to self.
@@ -1604,7 +1604,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         except KeyError:
             pass
 
-    cpdef register_coercion(self, mor):
+    cpdef register_coercion(self, mor) noexcept:
         r"""
         Update the coercion model to use `mor : P \to \text{self}` to coerce
         from a parent ``P`` into ``self``.
@@ -1664,7 +1664,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         self._registered_domains.append(D)
         self._coerce_from_hash.set(D, mor)
 
-    cpdef register_action(self, action):
+    cpdef register_action(self, action) noexcept:
         r"""
         Update the coercion model to use ``action`` to act on self.
 
@@ -1728,7 +1728,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             raise ValueError("action must involve self")
         self._action_list.append(action)
 
-    cpdef register_conversion(self, mor):
+    cpdef register_conversion(self, mor) noexcept:
         r"""
         Update the coercion model to use `\text{mor} : P \to \text{self}` to convert
         from ``P`` into ``self``.
@@ -1763,7 +1763,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         else:
             raise TypeError("conversions must be parents or maps")
 
-    cpdef register_embedding(self, embedding):
+    cpdef register_embedding(self, embedding) noexcept:
         r"""
         Add embedding to coercion model.
 
@@ -1900,7 +1900,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return copy(self._embedding)  # It might be overkill to make a copy here
 
-    cpdef _generic_coerce_map(self, S):
+    cpdef _generic_coerce_map(self, S) noexcept:
         r"""
         Returns a default coercion map based on the data provided to
         :meth:`_populate_coercion_lists_`.
@@ -1931,7 +1931,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             category = self.category()._meet_(S.category())
         return self._generic_convert_map(S, category=category)
 
-    cpdef _generic_convert_map(self, S, category=None):
+    cpdef _generic_convert_map(self, S, category=None) noexcept:
         r"""
         Returns the default conversion map based on the data provided to
         :meth:`_populate_coercion_lists_`.
@@ -1989,7 +1989,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             method_name = self._convert_method_name
         return self.convert_method_map(S, method_name)
 
-    cdef convert_method_map(self, S, method_name):
+    cdef convert_method_map(self, S, method_name) noexcept:
         # Cython implementation of _convert_method_map()
         cdef Parent P
         if isinstance(S, Parent):
@@ -2090,7 +2090,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             return True
         return self._internal_coerce_map_from(S) is not None
 
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         """
         Override this method to specify coercions beyond those specified
         in coerce_list.
@@ -2107,7 +2107,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         except AttributeError:
             return None
 
-    cpdef coerce_map_from(self, S):
+    cpdef coerce_map_from(self, S) noexcept:
         """
         Return a :class:`Map` object to coerce from ``S`` to ``self`` if one
         exists, or ``None`` if no such coercion exists.
@@ -2145,7 +2145,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return copy(self._internal_coerce_map_from(S))
 
-    cpdef _internal_coerce_map_from(self, S):
+    cpdef _internal_coerce_map_from(self, S) noexcept:
         """
         Return the :class:`Map` object to coerce from ``S`` to ``self`` that
         is used internally by the coercion system if one exists, or ``None``
@@ -2267,7 +2267,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         finally:
             _unregister_pair(self, S, "coerce")
 
-    cdef discover_coerce_map_from(self, S):
+    cdef discover_coerce_map_from(self, S) noexcept:
         """
         Precedence for discovering a coercion S -> self goes as follows:
 
@@ -2444,7 +2444,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             if connecting is not None:
                 return (<Parent>S)._embedding.post_compose(connecting)
 
-    cpdef convert_map_from(self, S):
+    cpdef convert_map_from(self, S) noexcept:
         """
         This function returns a :class:`Map` from `S` to `self`,
         which may or may not succeed on all inputs.
@@ -2470,7 +2470,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return copy(self._internal_convert_map_from(S))
 
-    cpdef _internal_convert_map_from(self, S):
+    cpdef _internal_convert_map_from(self, S) noexcept:
         """
         This function returns a :class:`Map` from `S` to `self`,
         which may or may not succeed on all inputs.
@@ -2516,7 +2516,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 mor._make_weak_references()
             return mor
 
-    cdef discover_convert_map_from(self, S):
+    cdef discover_convert_map_from(self, S) noexcept:
 
         cdef map.Map mor = self._internal_coerce_map_from(S)
         if mor is not None:
@@ -2544,7 +2544,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         mor = self._generic_convert_map(S)
         return mor
 
-    cpdef _convert_map_from_(self, S):
+    cpdef _convert_map_from_(self, S) noexcept:
         """
         Override this method to provide additional conversions beyond those
         given in convert_list.
@@ -2558,7 +2558,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return None
 
-    cpdef get_action(self, S, op=operator.mul, bint self_on_left=True, self_el=None, S_el=None):
+    cpdef get_action(self, S, op=operator.mul, bint self_on_left=True, self_el=None, S_el=None) noexcept:
         """
         Returns an action of self on S or S on self.
 
@@ -2594,7 +2594,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         self._action_hash.set(S, op, self_on_left, action)
         return action
 
-    cdef discover_action(self, S, op, bint self_on_left, self_el=None, S_el=None):
+    cdef discover_action(self, S, op, bint self_on_left, self_el=None, S_el=None) noexcept:
         """
         TESTS::
 
@@ -2704,7 +2704,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 except TypeError:
                     _record_exception()
 
-    cpdef _get_action_(self, S, op, bint self_on_left):
+    cpdef _get_action_(self, S, op, bint self_on_left) noexcept:
         """
         Override this method to provide an action of self on S or S on self
         beyond what was specified in action_list.
@@ -2716,7 +2716,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     # TODO: remove once all parents in Sage will inherit properly from
     # Sets().ParentMethods.an_element
-    cpdef an_element(self):
+    cpdef an_element(self) noexcept:
         r"""
         Returns a (preferably typical) element of this parent.
 

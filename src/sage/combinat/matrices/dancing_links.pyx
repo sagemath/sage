@@ -67,7 +67,7 @@ There is also a method ``reinitialize`` to reinitialize the algorithm::
     sage: x.get_solution()
     [0, 1]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>
 #       Copyright (C) 2015-2018 Sébastien Labbé <slabqc@gmail.com>
 #
@@ -75,8 +75,8 @@ There is also a method ``reinitialize`` to reinitialize the algorithm::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
 from libcpp.vector cimport vector

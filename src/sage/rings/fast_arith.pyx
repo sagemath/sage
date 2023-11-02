@@ -40,7 +40,7 @@ from libc.math cimport sqrt
 
 from sage.rings.integer cimport Integer
 
-cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
+cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False) noexcept:
     r"""
     Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
 

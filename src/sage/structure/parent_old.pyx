@@ -34,7 +34,7 @@ from sage.sets.pythonclass cimport Set_PythonType, Set_PythonType_class
 from cpython.object cimport *
 from cpython.bool cimport *
 
-cdef inline check_old_coerce(Parent p):
+cdef inline check_old_coerce(Parent p) noexcept:
     if p._element_constructor is not None:
         raise RuntimeError("%s still using old coercion framework" % p)
 
@@ -79,7 +79,7 @@ cdef class Parent(parent.Parent):
     # New Coercion support functionality
     ##########################################################
 
-    cdef __coerce_map_from_c(self, S):
+    cdef __coerce_map_from_c(self, S) noexcept:
         """
         EXAMPLES:
 
@@ -143,7 +143,7 @@ cdef class Parent(parent.Parent):
 
         return mor
 
-    cdef __coerce_map_from_c_impl(self, S):
+    cdef __coerce_map_from_c_impl(self, S) noexcept:
         check_old_coerce(self)
         import sage.categories.morphism
         from sage.categories.map import Map
@@ -183,7 +183,7 @@ cdef class Parent(parent.Parent):
         check_old_coerce(self)
         return self._coerce_c(x)
 
-    cpdef _coerce_c(self, x):          # DO NOT OVERRIDE THIS (call it)
+    cpdef _coerce_c(self, x) noexcept:          # DO NOT OVERRIDE THIS (call it)
         if self._element_constructor is not None:
             from sage.misc.superseded import deprecation
             deprecation(33497, "_coerce_c is deprecated, use coerce instead")
@@ -200,7 +200,7 @@ cdef class Parent(parent.Parent):
         else:
             return self._coerce_c_impl(x)
 
-    cdef _coerce_c_impl(self, x):     # OVERRIDE THIS FOR CYTHON CLASSES
+    cdef _coerce_c_impl(self, x) noexcept:     # OVERRIDE THIS FOR CYTHON CLASSES
         """
         Canonically coerce x in assuming that the parent of x is not
         equal to self.
@@ -241,7 +241,7 @@ cdef class Parent(parent.Parent):
                 pass
         raise TypeError("no canonical coercion of element into self")
 
-    cdef __has_coerce_map_from_c(self, S):
+    cdef __has_coerce_map_from_c(self, S) noexcept:
         check_old_coerce(self)
         if self == S:
             return True
@@ -289,7 +289,7 @@ cdef class Parent(parent.Parent):
     ###############################################################
     # Coercion Compatibility Layer
     ###############################################################
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         if self._element_constructor is None:
             return self.__coerce_map_from_c(S)
         else:
@@ -303,7 +303,7 @@ cdef class Parent(parent.Parent):
         self._cache_an_element = self._an_element_impl()
         return self._cache_an_element
 
-    cpdef _generic_convert_map(self, S, category=None):
+    cpdef _generic_convert_map(self, S, category=None) noexcept:
         r"""
         Return a default conversion from ``S``.
 

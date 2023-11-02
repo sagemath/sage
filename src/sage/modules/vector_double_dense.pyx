@@ -81,7 +81,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         30.0
     """
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two vectors together.
 
@@ -101,7 +101,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(_left._vector_numpy + _right._vector_numpy)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Return self - right
 
@@ -121,7 +121,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(_left._vector_numpy - _right._vector_numpy)
 
-    cpdef _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right) noexcept:
         """
         Dot product of self and right.
 
@@ -145,7 +145,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._sage_dtype(numpy.dot(_left._vector_numpy, _right._vector_numpy))
 
-    cpdef _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right) noexcept:
         """
         Return the component-wise product of self and right.
 
@@ -168,7 +168,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(_left._vector_numpy * _right._vector_numpy)
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         Multiply a scalar and vector
 
@@ -184,7 +184,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(self._python_dtype(left)*self._vector_numpy)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         Multiply a scalar and vector
 

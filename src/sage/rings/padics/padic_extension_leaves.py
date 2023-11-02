@@ -483,7 +483,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
             from sage.rings.padics.qadic_flint_FP import pAdicCoercion_FP_frac_field
             return pAdicCoercion_FP_frac_field(R, self)
 
-        return super(UnramifiedExtensionFieldFloatingPoint, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
 class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
