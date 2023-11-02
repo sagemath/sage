@@ -27,7 +27,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/combinat/posets',
         install: true,
         include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, flint, gmp],
     )
 endforeach
 

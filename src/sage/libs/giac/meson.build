@@ -1,11 +1,16 @@
+giac = declare_dependency(
+  dependencies: [
+    cc.find_library('giac', required: false),
+  ]
+)
+
 py.install_sources(
     '__init__.py',
     subdir: 'sage/libs/giac',
 )
 
-
 extension_data_cpp = {
-    # 'giac': files('giac.pyx'), # not yet on conda
+    'giac': files('giac.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
@@ -14,8 +19,8 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/libs/giac',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [],
-        dependencies: [py_dep, cysignals],
+        include_directories: [inc_cpython, inc_ext, inc_rings],
+        dependencies: [py_dep, cysignals, giac, gmp],
     )
 endforeach
 

@@ -16,7 +16,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/libs/mpmath',
         install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, cysignals, cypari2, gmp, mpfr],
+        include_directories: [inc_cpython, inc_ext, inc_rings],
+        dependencies: [py_dep, cypari2, cysignals, gmp, mpfr],
     )
 endforeach
+

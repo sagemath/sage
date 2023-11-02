@@ -71,6 +71,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/interfaces',
         install: true,
         include_directories: [inc_cpython],
-        dependencies: [py_dep],
+        dependencies: [py_dep, gmp],
     )
 endforeach
+

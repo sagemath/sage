@@ -1,18 +1,6 @@
-mpfi = declare_dependency(
+pthread = declare_dependency(
   dependencies: [
-    cc.find_library('mpfi'),
-  ]
-)
-gsl = dependency('gsl')
-# Cannot be found via pkg-config
-arb = declare_dependency(
-  dependencies: [
-    cc.find_library('arb'),
-  ]
-)
-mpc = declare_dependency(
-  dependencies: [
-    cc.find_library('mpc'),
+    cc.find_library('pthread'),
   ]
 )
 
@@ -107,8 +95,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings',
         install: true,
-        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_rings],
-        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, mpfr, gmp, pari, gsl, flint, arb, mpc],
+        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
+        dependencies: [py_dep, arb, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
     )
 endforeach
 
@@ -125,8 +113,8 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/rings',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_rings, inc_ntl, inc_rings_finite],
-        dependencies: [py_dep, cysignals, gmpy2, cypari2, mpfi, mpfr, gmp, pari, gsl, flint, arb, mpc, ntl],
+        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
+        dependencies: [py_dep, arb, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
     )
 endforeach
 

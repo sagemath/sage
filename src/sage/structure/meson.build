@@ -20,7 +20,6 @@ py.install_sources(
     'unique_representation.py',
     subdir: 'sage/structure',
 )
-install_subdir('proof', install_dir: sage_install_dir / 'structure')
 
 extension_data = {
     'category_object': files('category_object.pyx'),
@@ -49,7 +48,9 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/structure',
         install: true,
-        include_directories: [inc_cpython, inc_rings, inc_src],
-        dependencies: [py_dep, gmpy2, cysignals, gmp],
+        include_directories: [inc_cpython, inc_ext, inc_rings],
+        dependencies: [py_dep, cysignals, gmp, gmpy2, mpc, mpfr],
     )
 endforeach
+
+install_subdir('proof', install_dir: sage_install_dir / 'structure')

@@ -6,20 +6,21 @@ py.install_sources(
     subdir: 'sage/libs/eclib',
 )
 
-extension_data = {
-    # 'homspace': files('homspace.pyx'), # not yet on conda
-    # 'mat': files('mat.pyx'), # not yet on conda
-    # 'mwrank': files('mwrank.pyx'), # not yet on conda
-    # 'newforms': files('newforms.pyx'), # not yet on conda
+extension_data_cpp = {
+    'homspace': files('homspace.pyx'),
+    'mat': files('mat.pyx'),
+    'mwrank': files('mwrank.pyx'),
+    'newforms': files('newforms.pyx'),
 }
 
-foreach name, pyx : extension_data
+foreach name, pyx : extension_data_cpp
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/libs/eclib',
         install: true,
-        include_directories: [],
-        dependencies: [py_dep, cysignals],
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
+        dependencies: [py_dep, cysignals, flint, gmp],
     )
 endforeach
 

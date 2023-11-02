@@ -33,8 +33,9 @@ foreach name, pyx : extension_data_cpp
         sources: pyx,
         subdir: 'sage/libs/ntl',
         install: true,
-        include_directories: [inc_cpython, inc_ext, inc_rings_finite],
-        override_options: ['cython_language=cpp'],
-        dependencies: [py_dep, cysignals, ntl],
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_cpython, inc_ext, inc_ntl, inc_rings, inc_rings_finite],
+        dependencies: [py_dep, cysignals, gmp, m, ntl],
     )
 endforeach
+

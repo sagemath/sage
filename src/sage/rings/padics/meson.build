@@ -21,15 +21,6 @@ py.install_sources(
     subdir: 'sage/rings/padics',
 )
 
-extension_data_cpp = {
-    'padic_ZZ_pX_CA_element': files('padic_ZZ_pX_CA_element.pyx'),
-    'padic_ZZ_pX_CR_element': files('padic_ZZ_pX_CR_element.pyx'),
-    'padic_ZZ_pX_FM_element': files('padic_ZZ_pX_FM_element.pyx'),
-    'padic_ZZ_pX_element': files('padic_ZZ_pX_element.pyx'),
-    'padic_ext_element': files('padic_ext_element.pyx'),
-    'pow_computer': files('pow_computer.pyx'),
-    'pow_computer_ext': files('pow_computer_ext.pyx'),
-}
 extension_data = {
     'common_conversion': files('common_conversion.pyx'),
     'local_generic_element': files('local_generic_element.pyx'),
@@ -39,11 +30,8 @@ extension_data = {
     'padic_fixed_mod_element': files('padic_fixed_mod_element.pyx'),
     'padic_floating_point_element': files('padic_floating_point_element.pyx'),
     'padic_generic_element': files('padic_generic_element.pyx'),
-    'padic_printing': files('padic_printing.pyx'),
-    #'padic_relaxed_element': files('padic_relaxed_element.pyx'), - compilation error (needs libs/linkages)
+    'padic_relaxed_element': files('padic_relaxed_element.pyx'),
     'padic_relaxed_errors': files('padic_relaxed_errors.pyx'),
-    'pow_computer_flint': files('pow_computer_flint.pyx'),
-    'pow_computer_relative': files('pow_computer_relative.pyx'),
     'qadic_flint_CA': files('qadic_flint_CA.pyx'),
     'qadic_flint_CR': files('qadic_flint_CR.pyx'),
     'qadic_flint_FM': files('qadic_flint_FM.pyx'),
@@ -59,17 +47,32 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings/padics',
         install: true,
-        include_directories: [inc_cpython, inc_ntl, inc_flint, inc_rings_finite, inc_ext],
-        dependencies: [py_dep, cypari2, cysignals, gmp],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings, inc_rings_finite, inc_src],
+        dependencies: [py_dep, cypari2, cysignals, flint, gmp, m, ntl],
     )
 endforeach
+
+extension_data_cpp = {
+    'padic_ZZ_pX_CA_element': files('padic_ZZ_pX_CA_element.pyx'),
+    'padic_ZZ_pX_CR_element': files('padic_ZZ_pX_CR_element.pyx'),
+    'padic_ZZ_pX_FM_element': files('padic_ZZ_pX_FM_element.pyx'),
+    'padic_ZZ_pX_element': files('padic_ZZ_pX_element.pyx'),
+    'padic_ext_element': files('padic_ext_element.pyx'),
+    'padic_printing': files('padic_printing.pyx'),
+    'pow_computer': files('pow_computer.pyx'),
+    'pow_computer_ext': files('pow_computer_ext.pyx'),
+    'pow_computer_flint': files('pow_computer_flint.pyx'),
+    'pow_computer_relative': files('pow_computer_relative.pyx'),
+}
+
 foreach name, pyx : extension_data_cpp
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/rings/padics',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ntl, inc_ext],
-        dependencies: [py_dep, cypari2, cysignals, gmp, ntl],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings, inc_rings_finite],
+        dependencies: [py_dep, cypari2, cysignals, flint, gmp, m, ntl],
     )
 endforeach
+

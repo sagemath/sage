@@ -13,7 +13,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/libs/glpk',
         install: true,
         include_directories: [inc_cpython],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 

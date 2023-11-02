@@ -7,7 +7,7 @@ py.install_sources(
 extension_data = {
     'dense_graph': files('dense_graph.pyx'),
     'graph_backends': files('graph_backends.pyx'),
-    #'sparse_graph': files('sparse_graph.pyx'), # compilation error
+    'sparse_graph': files('sparse_graph.pyx'),
     'static_dense_graph': files('static_dense_graph.pyx'),
     'static_sparse_backend': files('static_sparse_backend.pyx'),
 }
@@ -17,15 +17,15 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/graphs/base',
         install: true,
-        include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals],
+        include_directories: [inc_cpython, inc_data_structures, inc_rings],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 
 extension_data_cpp = {
     'boost_graph': files('boost_graph.pyx'),
     'c_graph': files('c_graph.pyx'),
-    #'static_sparse_graph': files('static_sparse_graph.pyx'), # compilation error
+    # 'static_sparse_graph': files('static_sparse_graph.pyx'), # compilation error
 }
 
 foreach name, pyx : extension_data_cpp
@@ -35,7 +35,7 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 

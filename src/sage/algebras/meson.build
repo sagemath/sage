@@ -52,16 +52,16 @@ foreach name, pyx : extension_data
         subdir: 'sage/algebras',
         install: true,
         include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 
 subdir('finite_dimensional_algebras')
 subdir('fusion_rings')
-subdir('hecke_algebras')
+install_subdir('hecke_algebras', install_dir: sage_install_dir / 'algebras')
 subdir('letterplace')
 subdir('lie_algebras')
-subdir('lie_conformal_algebras')
-subdir('quantum_groups')
+install_subdir('lie_conformal_algebras', install_dir: sage_install_dir / 'algebras')
+install_subdir('quantum_groups', install_dir: sage_install_dir / 'algebras')
 subdir('quatalg')
-subdir('steenrod')
+install_subdir('steenrod', install_dir: sage_install_dir / 'algebras')

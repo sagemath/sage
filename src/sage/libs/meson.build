@@ -1,3 +1,8 @@
+sirocco = declare_dependency(
+  dependencies: [
+    cc.find_library('sirocco', required: false),
+  ]
+)
 py.install_sources(
     'all.py',
     'all__sagemath_coxeter3.py',
@@ -7,21 +12,17 @@ py.install_sources(
     subdir: 'sage/libs',
 )
 
-extension_data_cpp = {
-    'braiding': files('braiding.pyx'),
-}
 extension_data = {
     'ecl': files('ecl.pyx'),
     'homfly': files('homfly.pyx'),
     'libecm': files('libecm.pyx'),
-    #'meataxe': files('meataxe.pyx'),# - need meataxe
+    #'meataxe': files('meataxe.pyx'), # not yet on conda - need meataxe
 }
 
-dependencies = [py_dep, cysignals, cypari2]
+dependencies = [py_dep, braiding, cysignals, ecm, gc, gmp, homfly, mtx, sirocco]
 
-sirocco = dependency('sirocco', required: false)
 if sirocco.found()
-    #extension_data['sirocco'] += files('sirocco.pxd')
+    #extension_data['sirocco'] += files('sirocco.pxd') # not yet on conda
     dependencies += [sirocco]
 endif
 
@@ -30,29 +31,29 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/libs',
         install: true,
-        include_directories: [inc_cpython],
+        include_directories: [inc_cpython, inc_rings],
         dependencies: dependencies,
     )
 endforeach
+
+extension_data_cpp = {
+    'braiding': files('braiding.pyx'),
+}
+
 foreach name, pyx : extension_data_cpp
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/libs',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython],
+        include_directories: [inc_cpython, inc_rings],
         dependencies: dependencies,
     )
 endforeach
 
-install_subdir('cremona', install_dir: sage_install_dir / 'libs')
-install_subdir('linkages', install_dir: sage_install_dir / 'libs')
-install_subdir('lrcalc', install_dir: sage_install_dir / 'libs')
-install_subdir('mwrank', install_dir: sage_install_dir / 'libs')
-install_subdir('pynac', install_dir: sage_install_dir / 'libs')
-
 subdir('arb')
 subdir('coxeter3')
+install_subdir('cremona', install_dir: sage_install_dir / 'libs')
 subdir('eclib')
 subdir('flint')
 subdir('gap')
@@ -62,8 +63,12 @@ subdir('gmp')
 subdir('gsl')
 subdir('lcalc')
 subdir('linbox')
+install_subdir('linkages', install_dir: sage_install_dir / 'libs')
+install_subdir('lrcalc', install_dir: sage_install_dir / 'libs')
 subdir('mpmath')
+install_subdir('mwrank', install_dir: sage_install_dir / 'libs')
 subdir('ntl')
 subdir('pari')
+install_subdir('pynac', install_dir: sage_install_dir / 'libs')
 subdir('singular')
 subdir('symmetrica')

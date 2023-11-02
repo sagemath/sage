@@ -54,7 +54,12 @@ def run(folder: Path):
                         .replace('LIBPNG_LIBRARIES', 'png')
                         .replace('CBLAS_LIBRARIES', 'cblas')
                         .replace('ZLIB_LIBRARIES', 'zlib')
+                        .replace('Lfunction', 'lfunction')
                           for library in libraries]
+                    try:
+                        libraries.remove('CYGWIN_SQLITE3_LIBS')
+                    except ValueError:
+                        pass
                     metadata.libraries += libraries
 
             metadata.inc_dirs = []
@@ -80,6 +85,10 @@ def run(folder: Path):
                         'sage/data_structures': 'inc_data_structures',
                         'sage/ext/': 'inc_ext',
                         'numpy/core/include/': 'inc_numpy',
+                        'sage/symbolic/ginac/': 'inc_ginac',
+                        'sage/symbolic/pynac_wrap.h': 'inc_pynac',
+                        'sage/groups/perm_gps/partn_ref2/': 'inc_partn_ref2',
+                        'sage/ext/interpreters/': 'inc_interpreters',
                     }
                     for known_inc_dir in known_inc_dirs:
                         if known_inc_dir in contents:
@@ -96,6 +105,13 @@ def run(folder: Path):
                         '/givaro/': 'givaro',
                         '/gmp++/': 'gmpxx',
                         '/linbox/': 'linbox',
+                        '/gsl/': 'gsl',
+                        'mpfr.h': 'mpfr',
+                        'sage/symbolic/ginac/': 'ginac',
+                        'arb.h': 'arb',
+                        'mpfi.h': 'mpfi',
+                        'mpc.h': 'mpc',
+                        'gmpy2/': 'gmpy2',
                     }
                     for known_lib in known_libs:
                         if known_lib in contents:

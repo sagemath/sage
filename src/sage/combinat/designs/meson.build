@@ -34,7 +34,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/combinat/designs',
         install: true,
         include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 

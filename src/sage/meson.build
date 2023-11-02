@@ -2,9 +2,19 @@ sage_install_dir = py.get_install_dir() / 'sage'
 
 # Packages that need no processing and can be installed directly
 no_processing = [
-    'repl',
+    'databases',
     'doctest',
+    'dynamics',
     'features',
+    'game_theory',
+    'homology',
+    'knots',
+    'logic',
+    'manifolds',
+    'parallel',
+    'repl',
+    'sandpiles',
+    'sat',
     'tensor',
     'topology',
     'typeset',
@@ -14,6 +24,7 @@ foreach package : no_processing
 endforeach
 
 py.install_sources(
+    '__init__.py',
     'all.py',
     'all__sagemath_bliss.py',
     'all__sagemath_categories.py',
@@ -35,20 +46,36 @@ subdir('cpython')
 subdir('libs')
 subdir('misc')
 subdir('structure')
-subdir('categories')
-subdir('sets')
-subdir('data_structures')
-subdir('rings')
-subdir('arith')
-subdir('combinat')
-subdir('modules')
-subdir('tests')
-subdir('ext')
-subdir('interfaces')
-subdir('groups')
-subdir('matrix')
-subdir('graphs')
 subdir('algebras')
+subdir('arith')
+subdir('calculus')
+subdir('categories')
+subdir('coding')
+subdir('combinat')
+subdir('crypto')
+subdir('data_structures')
+subdir('ext')
+subdir('functions')
+subdir('games')
+subdir('geometry')
+subdir('graphs')
+subdir('groups')
+subdir('interacts')
+subdir('interfaces')
+subdir('lfunctions')
+subdir('matrix')
+subdir('matroids')
+subdir('modular')
+subdir('modules')
 subdir('monoids')
-subdir('symbolic')
+subdir('numerical')
+subdir('plot')
+subdir('probability')
 subdir('quadratic_forms')
+subdir('quivers')
+subdir('rings')
+subdir('schemes')
+subdir('sets')
+subdir('stats')
+subdir('symbolic')
+subdir('tests')

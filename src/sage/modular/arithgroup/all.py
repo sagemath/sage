@@ -15,4 +15,6 @@ lazy_import('sage.modular.arithgroup.arithgroup_perm', 'ArithmeticSubgroup_Permu
 from .congroup import (degeneracy_coset_representatives_gamma0,
                             degeneracy_coset_representatives_gamma1)
 
-from .farey_symbol import Farey as FareySymbol
+# Cannot find FareySymbol (and I don't know where to look for it)
+#from .farey_symbol import Farey as FareySymbol
+FareySymbol = None

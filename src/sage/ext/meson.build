@@ -15,8 +15,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/ext',
         install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, cysignals, cypari2, gmp],
+        include_directories: [inc_cpython, inc_ext],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 

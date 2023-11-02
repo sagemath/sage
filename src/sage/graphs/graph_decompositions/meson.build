@@ -1,4 +1,14 @@
-tdlib = dependency('tdlib', required: false)
+tdlib = declare_dependency(
+  dependencies: [
+    cc.find_library('tdlib', required: false),
+  ]
+)
+# Cannot be found via pkg-config
+rw = declare_dependency(
+  dependencies: [
+    cc.find_library('rw'),
+  ]
+)
 
 py.install_sources(
     'all.py',
@@ -23,7 +33,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/graphs/graph_decompositions',
         install: true,
         include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp, rw],
     )
 endforeach
 
@@ -38,18 +48,19 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp, rw],
     )
 endforeach
 
 if tdlib.found()
-    py.extension_module('tdlib',
-        sources: 'tdlib.pyx',
-        subdir: 'sage/graphs/graph_decompositions',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals, tdlib],
-    )
+    # Still cannot find the tdlib headers
+    # py.extension_module('tdlib',
+    #     sources: 'tdlib.pyx',
+    #     subdir: 'sage/graphs/graph_decompositions',
+    #     install: true,
+    #     override_options : ['cython_language=cpp'],
+    #     include_directories: [inc_cpython, inc_data_structures],
+    #     dependencies: [py_dep, cysignals, tdlib],
+    # )
 endif
 

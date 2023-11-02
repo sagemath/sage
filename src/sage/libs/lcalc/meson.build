@@ -3,9 +3,8 @@ py.install_sources(
     subdir: 'sage/libs/lcalc',
 )
 
-
 extension_data_cpp = {
-    # 'lcalc_Lfunction': files('lcalc_Lfunction.pyx'), # not yet on conda
+    'lcalc_Lfunction': files('lcalc_Lfunction.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
@@ -14,8 +13,8 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/libs/lcalc',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [],
-        dependencies: [py_dep, cysignals],
+        include_directories: [inc_cpython, inc_rings],
+        dependencies: [py_dep, cypari2, cysignals, gmp, lfunction, m, mpfr, ntl],
     )
 endforeach
 

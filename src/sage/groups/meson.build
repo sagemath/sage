@@ -25,11 +25,6 @@ py.install_sources(
     'raag.py',
     subdir: 'sage/groups',
 )
-install_subdir('abelian_gps', install_dir: sage_install_dir / 'groups')
-install_subdir('additive_abelian', install_dir: sage_install_dir / 'groups')
-install_subdir('affine_gps', install_dir: sage_install_dir / 'groups')
-install_subdir('lie_gps', install_dir: sage_install_dir / 'groups')
-install_subdir('misc_gps', install_dir: sage_install_dir / 'groups')
 
 extension_data = {
     'group': files('group.pyx'),
@@ -43,6 +38,15 @@ foreach name, pyx : extension_data
         subdir: 'sage/groups',
         install: true,
         include_directories: [inc_cpython],
-        dependencies: [py_dep],
+        dependencies: [py_dep, gmp],
     )
 endforeach
+
+install_subdir('abelian_gps', install_dir: sage_install_dir / 'groups')
+install_subdir('additive_abelian', install_dir: sage_install_dir / 'groups')
+install_subdir('affine_gps', install_dir: sage_install_dir / 'groups')
+install_subdir('lie_gps', install_dir: sage_install_dir / 'groups')
+subdir('matrix_gps')
+install_subdir('misc_gps', install_dir: sage_install_dir / 'groups')
+subdir('perm_gps')
+subdir('semimonomial_transformations')

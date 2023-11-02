@@ -32,7 +32,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/algebras/lie_algebras',
         install: true,
         include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, gmp],
     )
 endforeach
 

@@ -42,7 +42,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/quadratic_forms',
         install: true,
         include_directories: [],
-        dependencies: [py_dep, cysignals, gmp],
+        dependencies: [py_dep, gmp],
     )
 endforeach
 

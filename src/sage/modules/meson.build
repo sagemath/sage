@@ -35,7 +35,6 @@ extension_data = {
     'vector_double_dense': files('vector_double_dense.pyx'),
     'vector_integer_dense': files('vector_integer_dense.pyx'),
     'vector_integer_sparse': files('vector_integer_sparse.pyx'),
-    'vector_mod2_dense': files('vector_mod2_dense.pyx'),
     'vector_modn_dense': files('vector_modn_dense.pyx'),
     'vector_modn_sparse': files('vector_modn_sparse.pyx'),
     'vector_numpy_dense': files('vector_numpy_dense.pyx'),
@@ -50,8 +49,23 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/modules',
         install: true,
-        include_directories: [inc_cpython, inc_numpy, inc_rings_finite, inc_ext],
-        dependencies: [py_dep, cysignals, gmp],
+        include_directories: [inc_cpython, inc_ext, inc_numpy, inc_rings, inc_rings_finite],
+        dependencies: [py_dep, cysignals, gd, gmp, m4ri, png],
+    )
+endforeach
+
+extension_data_cpp = {
+    'vector_mod2_dense': files('vector_mod2_dense.pyx'),
+}
+
+foreach name, pyx : extension_data_cpp
+    py.extension_module(name,
+        sources: pyx,
+        subdir: 'sage/modules',
+        install: true,
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_cpython, inc_ext, inc_numpy, inc_rings, inc_rings_finite],
+        dependencies: [py_dep, cysignals, gd, gmp, m4ri, png],
     )
 endforeach
 

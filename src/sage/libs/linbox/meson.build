@@ -3,17 +3,18 @@ py.install_sources(
     subdir: 'sage/libs/linbox',
 )
 
-extension_data = {
-    # 'linbox_flint_interface': files('linbox_flint_interface.pyx'), # not yet on conda
+extension_data_cpp = {
+    'linbox_flint_interface': files('linbox_flint_interface.pyx'),
 }
 
-foreach name, pyx : extension_data
+foreach name, pyx : extension_data_cpp
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/libs/linbox',
         install: true,
-        include_directories: [],
-        dependencies: [py_dep, cysignals],
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_flint],
+        dependencies: [py_dep, cblas, flint, givaro, gmp, gmpxx, linbox],
     )
 endforeach
 

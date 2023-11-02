@@ -24,7 +24,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/libs/gap',
         install: true,
         include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 

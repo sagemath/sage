@@ -22,7 +22,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/cpython',
         install: true,
-        include_directories: [inc_src],
-        dependencies: py_dep,
+        include_directories: [inc_cpython],
+        dependencies: [py_dep, gmp],
     )
 endforeach
+

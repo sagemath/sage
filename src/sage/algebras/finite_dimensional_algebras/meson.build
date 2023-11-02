@@ -16,7 +16,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/algebras/finite_dimensional_algebras',
         install: true,
         include_directories: [inc_cpython],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, gmp],
     )
 endforeach
 

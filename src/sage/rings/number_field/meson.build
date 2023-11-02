@@ -22,11 +22,6 @@ py.install_sources(
     subdir: 'sage/rings/number_field',
 )
 
-extension_data_cpp = {
-    'number_field_element': files('number_field_element.pyx'),
-    'number_field_element_quadratic': files('number_field_element_quadratic.pyx'),
-}
-
 extension_data = {
     'number_field_base': files('number_field_base.pyx'),
     'number_field_element_base': files('number_field_element_base.pyx'),
@@ -40,17 +35,24 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings/number_field',
         install: true,
-        include_directories: [inc_cpython, inc_ntl],
-        dependencies: [py_dep, cysignals, cypari2],
+        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
+        dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfi, mpfr, ntl],
     )
 endforeach
+
+extension_data_cpp = {
+    'number_field_element': files('number_field_element.pyx'),
+    'number_field_element_quadratic': files('number_field_element_quadratic.pyx'),
+}
+
 foreach name, pyx : extension_data_cpp
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/rings/number_field',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ntl, inc_arb, inc_flint],
-        dependencies: [py_dep, cysignals, cypari2, ntl, mpfi, arb],
+        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
+        dependencies: [py_dep, arb, cypari2, cysignals, flint, gmp, mpfi, mpfr, ntl],
     )
 endforeach
+

@@ -114,8 +114,9 @@ foreach name, pyx : extension_data
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/misc',
-        include_directories: [inc_cpython],
         install: true,
+        include_directories: [inc_cpython, inc_rings],
         dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
+

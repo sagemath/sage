@@ -20,7 +20,7 @@ py.install_sources(
 )
 
 extension_data = {
-    #'disjoint_set': files('disjoint_set.pyx'), Needs other imports
+    'disjoint_set': files('disjoint_set.pyx'),
     'finite_set_map_cy': files('finite_set_map_cy.pyx'),
     'pythonclass': files('pythonclass.pyx'),
     'recursively_enumerated_set': files('recursively_enumerated_set.pyx'),
@@ -31,7 +31,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/sets',
         install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, cysignals],
+        include_directories: [inc_cpython, inc_data_structures],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
+

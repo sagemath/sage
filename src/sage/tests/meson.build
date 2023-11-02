@@ -24,14 +24,8 @@ py.install_sources(
     subdir: 'sage/tests',
 )
 
-install_subdir('books', install_dir: sage_install_dir / 'tests')
-install_subdir('memcheck', install_dir: sage_install_dir / 'tests')
-
 extension_data = {
     'cython': files('cython.pyx'),
-}
-extension_data_cpp = {
-    'stl_vector': files('stl_vector.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -39,16 +33,25 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/tests',
         install: true,
-        dependencies: [py_dep],
+        include_directories: [inc_cpython, inc_rings],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
+
+extension_data_cpp = {
+    'stl_vector': files('stl_vector.pyx'),
+}
+
 foreach name, pyx : extension_data_cpp
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/tests',
         install: true,
-        include_directories: [inc_cpython],
         override_options : ['cython_language=cpp'],
-        dependencies: [py_dep, cysignals],
+        include_directories: [inc_cpython, inc_rings],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
+
+install_subdir('books', install_dir: sage_install_dir / 'tests')
+install_subdir('memcheck', install_dir: sage_install_dir / 'tests')

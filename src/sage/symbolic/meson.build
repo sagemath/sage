@@ -9,8 +9,11 @@ ginac = declare_dependency(
     cc.find_library('ginac', required: false),
   ],
 )
+inc_ginac = include_directories('ginac')
+inc_pynac = include_directories('.')
 
 py.install_sources(
+    '__init__.py',
     'all.py',
     'assumptions.py',
     'benchmark.py',
@@ -38,15 +41,13 @@ extension_data = {
     'ring': files('ring.pyx'),
 }
 
-inc_ginac = include_directories('ginac')
-
 foreach name, pyx : extension_data
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/symbolic',
         install: true,
-        include_directories: [inc_cpython, inc_rings, inc_ginac],
-        dependencies: [py_dep, cysignals, flint, gmp, singular],
+        include_directories: [inc_cpython, inc_ext, inc_ginac, inc_gsl, inc_pynac, inc_rings],
+        dependencies: [py_dep, cypari2, cysignals, flint, ginac, gmp, gsl, mpfr, pari, singular],
     )
 endforeach
 
@@ -59,10 +60,9 @@ foreach name, pyx : extension_data_cpp
         sources: pyx,
         subdir: 'sage/symbolic',
         install: true,
-        cython_args: ['-I', inc_numpy],
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_rings, inc_ext, inc_ginac],
-        dependencies: [py_dep, cysignals, flint, gmp, singular, cypari2, ginac],
+        include_directories: [inc_cpython, inc_ext, inc_ginac, inc_gsl, inc_pynac, inc_rings],
+        dependencies: [py_dep, cypari2, cysignals, flint, ginac, gmp, gsl, mpfr, pari, singular],
     )
 endforeach
 

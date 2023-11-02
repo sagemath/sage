@@ -38,8 +38,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings/function_field',
         install: true,
-        include_directories: [inc_cpython, inc_ntl],
-        dependencies: [py_dep],
+        include_directories: [inc_cpython, inc_rings],
+        dependencies: [py_dep, gmp],
     )
 endforeach
 

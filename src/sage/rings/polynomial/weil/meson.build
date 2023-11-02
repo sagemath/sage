@@ -12,7 +12,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings/polynomial/weil',
         install: true,
-        include_directories: [inc_flint, inc_src, inc_cpython],
-        dependencies: [py_dep, cysignals],
+        include_directories: [inc_cpython, inc_flint, inc_rings, inc_src],
+        dependencies: [py_dep, cysignals, flint, gmp],
     )
 endforeach
+

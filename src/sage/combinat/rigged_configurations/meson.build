@@ -34,7 +34,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/combinat/rigged_configurations',
         install: true,
         include_directories: [],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, gmp],
     )
 endforeach
 

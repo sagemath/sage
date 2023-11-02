@@ -7,7 +7,7 @@ py.install_sources(
 )
 
 extension_data_cpp = {
-    # 'dancing_links': files('dancing_links.pyx'), # not yet on conda
+    'dancing_links': files('dancing_links.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
@@ -17,7 +17,7 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 

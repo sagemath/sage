@@ -1,6 +1,20 @@
-bliss = dependency('bliss', required: false)
-mcqd = dependency('mcqd', required: false)
+bliss = declare_dependency(
+  dependencies: [
+    cc.find_library('bliss', required: false),
+  ]
+)
+mcqd = declare_dependency(
+  dependencies: [
+    cc.find_library('mcqd', required: false),
+  ]
+)
 
+# Cannot be found via pkg-config
+planarity = declare_dependency(
+  dependencies: [
+    cc.find_library('planarity'),
+  ]
+)
 py.install_sources(
     'all.py',
     'all__sagemath_bliss.py',
@@ -64,7 +78,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/graphs',
         install: true,
         include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, flint, gmp, planarity],
     )
 endforeach
 
@@ -82,26 +96,30 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, flint, gmp, planarity],
     )
 endforeach
 if bliss.found()
-    py.extension_module('bliss',
-        sources: files('bliss.pyx'),
-        subdir: 'sage/graphs',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, bliss],
-    )
+    # Still cannot find the bliss header
+    # py.extension_module('bliss',
+    #     sources: files('bliss.pyx'),
+    #     subdir: 'sage/graphs',
+    #     install: true,
+    #     override_options : ['cython_language=cpp'],
+    #     include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
+    #     dependencies: [py_dep, cysignals, bliss],
+    # )
 endif
 if mcqd.found()
-    py.extension_module('mcqd',
-        sources: files('mcqd.pyx'),
-        subdir: 'sage/graphs',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, mcqd],
-    )
+    # Still cannot find the mcqd header
+    # py.extension_module('mcqd',
+    #     sources: files('mcqd.pyx'),
+    #     subdir: 'sage/graphs',
+    #     install: true,
+    #     override_options : ['cython_language=cpp'],
+    #     include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
+    #     dependencies: [py_dep, cysignals, mcqd],
+    # )
 endif
 
 subdir('base')

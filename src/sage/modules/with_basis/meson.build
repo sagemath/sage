@@ -18,7 +18,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/modules/with_basis',
         install: true,
         include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, gmp],
     )
 endforeach
 

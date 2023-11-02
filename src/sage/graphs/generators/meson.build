@@ -23,7 +23,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/graphs/generators',
         install: true,
         include_directories: [],
-        dependencies: [py_dep, cysignals],
+        dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
 

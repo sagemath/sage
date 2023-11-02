@@ -13,16 +13,11 @@ py.install_sources(
     subdir: 'sage/rings/finite_rings',
 )
 
-extension_data_cpp = {
-    'element_givaro': files('element_givaro.pyx'),
-    'element_ntl_gf2e': files('element_ntl_gf2e.pyx'),
-    'hom_finite_field': files('hom_finite_field.pyx'),
-    'hom_finite_field_givaro': files('hom_finite_field_givaro.pyx'),
-}
 extension_data = {
     'element_base': files('element_base.pyx'),
     'element_pari_ffelt': files('element_pari_ffelt.pyx'),
     'finite_field_base': files('finite_field_base.pyx'),
+    'hom_finite_field': files('hom_finite_field.pyx'),
     'hom_prime_finite_field': files('hom_prime_finite_field.pyx'),
     'integer_mod': files('integer_mod.pyx'),
     'residue_field': files('residue_field.pyx'),
@@ -36,17 +31,25 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings/finite_rings',
         install: true,
-        include_directories: [inc_cpython, inc_ntl, inc_rings],
-        dependencies: [py_dep, cysignals, cypari2, gmp],
+        include_directories: [inc_cpython, inc_ext, inc_ntl, inc_rings, inc_rings_finite],
+        dependencies: [py_dep, cypari2, cysignals, givaro, gmp, m, ntl, pari],
     )
 endforeach
+
+extension_data_cpp = {
+    'element_givaro': files('element_givaro.pyx'),
+    'element_ntl_gf2e': files('element_ntl_gf2e.pyx'),
+    'hom_finite_field_givaro': files('hom_finite_field_givaro.pyx'),
+}
+
 foreach name, pyx : extension_data_cpp
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/rings/finite_rings',
         install: true,
-        override_options: ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ntl, inc_rings, inc_ext],
-        dependencies: [py_dep, cysignals, cypari2],
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_cpython, inc_ext, inc_ntl, inc_rings, inc_rings_finite],
+        dependencies: [py_dep, cypari2, cysignals, givaro, gmp, m, ntl, pari],
     )
 endforeach
+

@@ -1,4 +1,5 @@
 py.install_sources(
+    '__init__.py',
     'all.py',
     'mutable_poset.py',
     'stream.py',
@@ -6,11 +7,11 @@ py.install_sources(
 )
 
 extension_data = {
-    #'binary_search': files('binary_search.pyx'), compilation error
+    'binary_search': files('binary_search.pyx'),
     'bitset': files('bitset.pyx'),
     'bitset_base': files('bitset_base.pyx'),
     'blas_dict': files('blas_dict.pyx'),
-    #'bounded_integer_sequences': files('bounded_integer_sequences.pyx'), requires flint
+    'bounded_integer_sequences': files('bounded_integer_sequences.pyx'),
     'list_of_pairs': files('list_of_pairs.pyx'),
 }
 
@@ -19,7 +20,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/data_structures',
         install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, cysignals, gmp],
+        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
+        dependencies: [py_dep, cysignals, flint, gmp],
     )
 endforeach
+

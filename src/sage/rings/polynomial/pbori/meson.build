@@ -1,3 +1,14 @@
+brial = declare_dependency(
+  dependencies: [
+    cc.find_library('brial', required: false),
+  ]
+)
+brial_groebner = declare_dependency(
+  dependencies: [
+    cc.find_library('brial-groebner', required: false),
+  ]
+)
+
 py.install_sources(
     'PyPolyBoRi.py',
     '__init__.py',
@@ -25,19 +36,14 @@ extension_data_cpp = {
     'pbori': files('pbori.pyx'),
 }
 
-brial = declare_dependency(
-  dependencies: [
-    cc.find_library('brial', required: false),
-  ]
-)
-
 foreach name, pyx : extension_data_cpp
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/rings/polynomial/pbori',
         install: true,
-        include_directories: [inc_src, inc_cpython, inc_ext],
-        override_options: ['cython_language=cpp'],
-        dependencies: [py_dep, cysignals, brial],
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
+        dependencies: [py_dep, brial, brial_groebner, cysignals, gmp, m4ri, png],
     )
 endforeach
+

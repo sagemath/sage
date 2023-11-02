@@ -12,6 +12,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/libs/gsl',
         install: true,
-        dependencies: [py_dep, cysignals],
+        include_directories: [inc_gsl],
+        dependencies: [py_dep, cysignals, gmp, gsl],
     )
 endforeach
+

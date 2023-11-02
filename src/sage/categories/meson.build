@@ -1,4 +1,5 @@
 py.install_sources(
+    '__init__.py',
     'additive_groups.py',
     'additive_magmas.py',
     'additive_monoids.py',
@@ -207,8 +208,9 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/categories',
         install: true,
-        #cython_args: ['-I', inc_numpy, '-I', '/workspaces/sage/builddir'],
-        include_directories: [inc_cpython, inc_numpy],
-        dependencies: [py_dep],
+        include_directories: [inc_cpython, inc_ext],
+        dependencies: [py_dep, gmp],
     )
 endforeach
+
+subdir('examples')

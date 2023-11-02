@@ -177,7 +177,43 @@ linbox = declare_dependency(
     cc.find_library('linbox'),
   ]
 )
-
+braiding = declare_dependency(
+  dependencies: [
+    cc.find_library('braiding'),
+  ]
+)
+gc = declare_dependency(
+  dependencies: [
+    cc.find_library('gc'),
+  ]
+)
+homfly = declare_dependency(
+  dependencies: [
+    cc.find_library('homfly'),
+  ]
+)
+mpc = declare_dependency(
+  dependencies: [
+    cc.find_library('mpc'),
+  ]
+)
+# Cannot be found via pkg-config
+arb = declare_dependency(
+  dependencies: [
+    cc.find_library('arb'),
+  ]
+)
+mpfi = declare_dependency(
+  dependencies: [
+    cc.find_library('mpfi'),
+  ]
+)
+gsl = dependency('gsl')
+mpc = declare_dependency(
+  dependencies: [
+    cc.find_library('mpc'),
+  ]
+)
 
 # It's strange but cython cannot find its own include files
 # so we find them ourselves, and add them to the include path
@@ -222,6 +258,8 @@ inc_arb = include_directories('sage/libs/arb')
 inc_iml = include_directories('sage/libs')
 inc_data_structures = include_directories('sage/data_structures')
 inc_ext = include_directories('sage/ext')
+inc_interpreters = include_directories('sage/ext/interpreters')
+inc_partn_ref2 = include_directories('sage/groups/perm_gps/partn_ref2')
 inc_src = include_directories('.')
 
 # Submodules

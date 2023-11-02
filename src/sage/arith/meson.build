@@ -19,7 +19,8 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/arith',
         install: true,
-        include_directories: [inc_cpython, inc_rings, inc_ext],
+        include_directories: [inc_cpython, inc_ext, inc_rings],
         dependencies: [py_dep, cysignals, gmp],
     )
 endforeach
+
