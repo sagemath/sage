@@ -38,7 +38,7 @@ jobs:
           path: upstream
           name: upstream
 
-  build-docs:
+  build-doc:
     runs-on: ubuntu-latest
     container: ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets:dev
     needs: [get_ci_fixes]
@@ -108,7 +108,7 @@ jobs:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
-      - name: Build docs
+      - name: Build doc
         id: docbuild
         if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         # Always non-incremental because of the concern that
@@ -125,23 +125,23 @@ jobs:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
-      - name: Copy docs
+      - name: Copy doc
         id: copy
         if: always() && steps.docbuild.outcome == 'success'
         run: |
           set -ex
-          mkdir -p ./docs
+          mkdir -p ./doc
           (cd /sage/local/share/doc/sage/html/en && git commit -a -m 'new')
           # Wipe out chronic diffs between old doc and new doc
           (cd /sage/local/share/doc/sage/html/en && \
            find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create CHANGES.html
-          echo '<html>' > ./docs/CHANGES.html
-          echo '<head>' >> ./docs/CHANGES.html
-          echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/CHANGES.html
-          echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/CHANGES.html
-          echo '<script>hljs.highlightAll();</script>' >> ./docs/CHANGES.html
-          cat >> ./docs/CHANGES.html << EOF
+          echo '<html>' > ./doc/CHANGES.html
+          echo '<head>' >> ./doc/CHANGES.html
+          echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./doc/CHANGES.html
+          echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./doc/CHANGES.html
+          echo '<script>hljs.highlightAll();</script>' >> ./doc/CHANGES.html
+          cat >> ./doc/CHANGES.html << EOF
           <script>
           document.addEventListener('DOMContentLoaded', () => {
             const diffSite = 'https://pianomister.github.io/diffsite/'
@@ -160,12 +160,12 @@ jobs:
           });
           </script>
           EOF
-          echo '</head>' >> ./docs/CHANGES.html
-          echo '<body>' >> ./docs/CHANGES.html
-          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/diff.txt
+          echo '</head>' >> ./doc/CHANGES.html
+          echo '<body>' >> ./doc/CHANGES.html
+          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./doc/diff.txt
           /sage/sage -python - << EOF
           import re, html
-          with open('./docs/diff.txt', 'r') as f:
+          with open('./doc/diff.txt', 'r') as f:
               diff_text = f.read()
               diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
               out_blocks = []
@@ -175,27 +175,27 @@ jobs:
                       path = match.group(1)
                       out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&emsp;</p>\n<pre><code class="language-diff">' + html.escape(block).strip() + '</code></pre>')
               output_text = '\n'.join(out_blocks)
-          with open('./docs/diff.html', 'w') as f:
+          with open('./doc/diff.html', 'w') as f:
               f.write(output_text)
           EOF
-          cat ./docs/diff.html >> ./docs/CHANGES.html
-          echo '</body>' >> ./docs/CHANGES.html
-          echo '</html>' >>./docs/CHANGES.html
-          rm ./docs/diff.txt ./docs/diff.html
+          cat ./doc/diff.html >> ./doc/CHANGES.html
+          echo '</body>' >> ./doc/CHANGES.html
+          echo '</html>' >>./doc/CHANGES.html
+          rm ./doc/diff.txt ./doc/diff.html
           (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them
-          cp -r -L /sage/local/share/doc/sage/html/en/* ./docs
+          cp -r -L /sage/local/share/doc/sage/html/en/* ./doc
           # Zip everything for increased performance
-          zip -r docs.zip docs
+          zip -r doc.zip doc
 
-      - name: Upload docs
+      - name: Upload doc
         if: always() && steps.copy.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
-          name: docs
-          path: docs.zip
+          name: doc
+          path: doc.zip
 
       - name: Build live doc
         id: buildlivedoc
