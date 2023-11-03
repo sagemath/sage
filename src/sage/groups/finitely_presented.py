@@ -1703,12 +1703,18 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: g = FreeGroup(1) / []
             sage: g.abelian_alexander_matrix()
             ([], [])
+            sage: g.abelian_alexander_matrix()[0].base_ring()
+            Univariate Laurent Polynomial Ring in f1 over Rational Field
             sage: g = FreeGroup(0) / []
-            sage: g.abelian_alexander_matrix()
-            ([], [])
+            sage: A, ideal = g.abelian_alexander_matrix(); A
+            []
+            sage: A.base_ring()
+            Rational Field
         """
         ab, R, ideal, images = self.abelianization_to_algebra(ring=ring)
         A = self.alexander_matrix(im_gens=images)
+        if A.base_ring() != R:
+            A = A.change_ring(R)
         if simplified:
             n, m = A.dimensions()
             if n == 0 or m == 0:
@@ -1794,8 +1800,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: G.characteristic_varieties()
             {0: Ideal (0) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
              1: Ideal (-1 + 2*f2 - 2*f2^2 + f2^3) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
-             2: Ideal (1) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
-             3: Ideal (1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
+             2: Ideal (1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
             sage: G.characteristic_varieties(groebner=True)
             {0: [0], 1: [-1 + f2, 1 - f2 + f2^2], 2: []}
             sage: G = FreeGroup(2)/[3 * (1, ), 2 * (2, )]
@@ -1804,7 +1809,17 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: G = FreeGroup(2)/[2 * (2, )]
             sage: G.characteristic_varieties(groebner=True)
             {0: [(f1 + 1,), (f1 - 1,)], 1: [(f1 + 1,), (f1 - 1, f2 - 1)], 2: []}
+            sage: G = (FreeGroup(0) / [])
+            sage: G.characteristic_varieties()
+            {0: Principal ideal (0) of Rational Field,
+             1: Principal ideal (1) of Rational Field}
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [(0,)], 1: [(1,)]}
         """
+        if self.ngens() == 0:
+            if groebner:
+                return {j: [(ring(j),)] for j in (0, 1)}
+            return {j: ring.ideal(j) for j in (0, 1)}
         A, rels = self.abelian_alexander_matrix(ring=ring, simplified=True)
         R = A.base_ring()
         eval_1 = {x: ring(1) for x in R.gens()}
@@ -1816,7 +1831,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         K = R.base_ring()
         id_rels = R.ideal(rels)
         res = dict()
-        for j in range(n + 2):
+        bound = n + 1
+        for j in range(bound + 1):
             J = id_rels + A.fitting_ideal(j)
             # J = R.ideal(id_rels.gens() + A.fitting_ideal(j).gens())
             if j <= n1:
@@ -1824,14 +1840,17 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                 if J1:
                     J *= ideal_1
             res[j] = R.ideal(J.gens_reduced())
+            if R(1) in res[j].gens():
+                bound = j
+                break
         if not groebner or not ring.is_field():
             return res
         if R.ngens() == 1:
-            res = {j: gcd(S(p) for p in res[j].gens()) for j in range(n + 2)}
+            res = {j: gcd(S(p) for p in res[j].gens()) for j in range(bound + 1)}
             char_var = dict()
             strict = True
             j = 0
-            while strict and j <= n + 1:
+            while strict and j <= bound:
                 if res[j] == 0:
                     char_var[j] = [R(0)]
                 else:
@@ -1846,7 +1865,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         char_var = dict()
         strict = True
         j = 0
-        while strict and j <= n + 1:
+        while strict and j <= bound:
             LJ = res[j].minimal_associated_primes()
             fct = [id.groebner_basis() for id in LJ]
             char_var[j] = fct
