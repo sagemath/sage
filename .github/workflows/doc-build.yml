@@ -103,8 +103,8 @@ jobs:
           # mathjax path in new doc
           mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           new_version=$(docker exec BUILD cat src/VERSION.txt)
-          mkdir -p docs/html
-          docker cp BUILD:/sage/local/share/doc/sage/html docs/html
+          mkdir -p docs/
+          docker cp BUILD:/sage/local/share/doc/sage/html docs/
           # Wipe out chronic diffs between old doc and new doc
           (cd docs && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
@@ -133,8 +133,8 @@ jobs:
         if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
           set -ex
-          docker cp BUILD:/sage/local/share/doc/sage/html docs/html
-          docker cp BUILD:/sage/local/share/doc/sage/index.html docs/index.html
+          docker cp BUILD:/sage/local/share/doc/sage/html docs
+          docker cp BUILD:/sage/local/share/doc/sage/index.html docs
           (cd docs && git commit -a -m 'new')
           # Wipe out chronic diffs between old doc and new doc
           (cd docs && \
