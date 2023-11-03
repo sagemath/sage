@@ -9201,7 +9201,8 @@ cdef class Polynomial(CommutativePolynomial):
         is not a subring of the real numbers, as the notion is not defined in
         this case::
 
-            sage: Q.<y> = CC[]                                                          # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: Q.<y> = CC[]
             sage: q = y^2
             sage: q.is_lorentzian()
             Traceback (most recent call last):
