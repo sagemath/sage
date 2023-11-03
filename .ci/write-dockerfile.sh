@@ -44,6 +44,9 @@ case $SYSTEM in
         else
             unset SUDO
         fi
+        case $DOCKER_BUILDKIT in
+            1) SET_SOURCES="--mount=type=tmpfs,target=/var/cache/apt ";;
+        esac
         EXISTS="2>/dev/null >/dev/null apt-cache show"
         UPDATE="$SUDO apt-get update &&"
         INSTALL="$SUDO DEBIAN_FRONTEND=noninteractive apt-get install -qqq --no-install-recommends --yes"
