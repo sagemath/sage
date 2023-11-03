@@ -84,7 +84,7 @@ jobs:
 
       - name: Start container
         run: |
-          docker run --name BUILD -dit \
+          docker run --name BUILD --pull never -dit \
             --mount type=bind,src=$(pwd),dst=$(pwd) \
             --workdir $(pwd) \
             ${{ env.BUILD_IMAGE }} /bin/sh
