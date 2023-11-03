@@ -63,6 +63,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
+        id: image
         uses: docker/build-push-action@v5
         with:
           push:       false
@@ -80,13 +81,10 @@ jobs:
 
       - name: Start container
         run: |
-          while ! docker run --name BUILD --pull never -dit \
-                      --mount type=bind,src=$(pwd),dst=$(pwd) \
-                      --workdir $(pwd) \
-                      ${{ env.BUILD_IMAGE }} /bin/sh; \
-          do \
-              sleep 30; \
-          done
+          docker run --name BUILD --pull never -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ steps.image.outputs.imageid }} /bin/sh
 
       # Docs
 
