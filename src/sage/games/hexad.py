@@ -107,7 +107,7 @@ def view_list(L):
     return matrix(GF(2), 3, 3, lambda x, y: 1 if (x, y) in L else 0)
 
 
-def picture_set(A, L):
+def picture_set(A, L) -> set:
     """
     This is needed in the :meth:`Minimog.find_hexad` function below.
 
@@ -219,7 +219,7 @@ class Minimog:
         tets[9] = MS34_GF3([[0, 0, 0, 1], [0, 0, 1, 0], [1, 1, 0, 0]])
         self.tet = tets
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -231,7 +231,7 @@ class Minimog:
         """
         return "Minimog of type %s" % self.type
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         EXAMPLES::
 
@@ -555,31 +555,31 @@ class Minimog:
                                            MINIMOG[0][2], MINIMOG[2][1])
                 if H:   # must be type 3
                     return list(H), WHAT
-                if H == []:   # could be type 0
-                    H, WHAT = self.find_hexad0(LL - L2)
-                    if H:   # must be type 0
-                        return list(H), WHAT
+                # could be type 0
+                H, WHAT = self.find_hexad0(LL - L2)
+                if H:   # must be type 0
+                    return list(H), WHAT
             if (MINIMOG[2][1] in LL and MINIMOG[0][0] in LL):
                 H, WHAT = self.find_hexad3(LL - {MINIMOG[2][1], MINIMOG[0][0]},
                                            MINIMOG[2][1], MINIMOG[0][0])
                 if H:   # must be type 3
                     return list(H), WHAT
-                if H == []:   # could be type 0
-                    H, WHAT = self.find_hexad0(LL - L2)
-                    if H:   # must be type 0
-                        return list(H), WHAT
+                # could be type 0
+                H, WHAT = self.find_hexad0(LL - L2)
+                if H:   # must be type 0
+                    return list(H), WHAT
             if (MINIMOG[0][2] in LL and MINIMOG[0][0] in LL):
                 H, WHAT = self.find_hexad3(LL - {MINIMOG[0][2], MINIMOG[0][0]},
                                            MINIMOG[0][2], MINIMOG[0][0])
                 if H:   # must be type 3
                     return list(H), WHAT
-                if H == []:   # could be type 0
-                    H, WHAT = self.find_hexad0(LL - L2)
-                    if H:   # must be type 0
-                        return list(H), WHAT
+                # could be type 0
+                H, WHAT = self.find_hexad0(LL - L2)
+                if H:   # must be type 0
+                    return list(H), WHAT
         if len(L2) == 1:
             H, WHAT = self.find_hexad2(LL - L2, list(L2)[0])
-            if H == []:   # not a cross in picture at infinity
+            if not H:   # not a cross in picture at infinity
                 if list(L2)[0] == MINIMOG[2][1]:
                     L1 = LL - L2
                     H, WHAT = self.find_hexad3(L1, MINIMOG[0][0], MINIMOG[2][1])
