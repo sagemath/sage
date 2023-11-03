@@ -137,9 +137,9 @@ jobs:
           set -ex
           docker cp BUILD:/sage/local/share/doc/sage/html docs/html
           docker cp BUILD:/sage/local/share/doc/sage/index.html docs/index.html
-          (cd html && git commit -a -m 'new')
+          (cd docs && git commit -a -m 'new')
           # Wipe out chronic diffs between old doc and new doc
-          (cd html && \
+          (cd docs && \
            find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create CHANGES.html
           echo '<html>' > ./docs/CHANGES.html
