@@ -104,12 +104,12 @@ jobs:
           mathjax_path_to=$(SAGE_USE_CDNS=yes /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           new_version=$(cat src/VERSION.txt)
           # Wipe out chronic diffs between old doc and new doc
-          (cd /sage/local/share/doc/sage/html/en && \
+          (cd /sage/local/share/doc/sage/html && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
                                                 -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
                                                 -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create git repo from old doc
-          (cd /sage/local/share/doc/sage/html/en && \
+          (cd /sage/local/share/doc/sage/html && \
            git init && \
            (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
            (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
@@ -123,9 +123,9 @@ jobs:
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           export SAGE_USE_CDNS=yes
-          mv /sage/local/share/doc/sage/html/en/.git /sage/.git-doc
+          mv /sage/local/share/doc/sage/html/.git /sage/.git-doc
           make doc-clean doc-uninstall
-          mkdir -p /sage/local/share/doc/sage/html/en/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/en/.git
+          mkdir -p /sage/local/share/doc/sage/html/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/.git
           ./config.status && make sagemath_doc_html
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
@@ -135,9 +135,9 @@ jobs:
         run: |
           set -ex
           mkdir -p ./docs
-          (cd /sage/local/share/doc/sage/html/en && git commit -a -m 'new')
+          (cd /sage/local/share/doc/sage/html && git commit -a -m 'new')
           # Wipe out chronic diffs between old doc and new doc
-          (cd /sage/local/share/doc/sage/html/en && \
+          (cd /sage/local/share/doc/sage/html && \
            find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create CHANGES.html
           echo '<html>' > ./docs/CHANGES.html
@@ -166,7 +166,7 @@ jobs:
           EOF
           echo '</head>' >> ./docs/CHANGES.html
           echo '<body>' >> ./docs/CHANGES.html
-          (cd /sage/local/share/doc/sage/html/en && git diff HEAD^; rm -rf .git) > ./docs/diff.txt
+          (cd /sage/local/share/doc/sage/html && git diff HEAD^ -- *.html; rm -rf .git) > ./docs/diff.txt
           /sage/sage -python - << EOF
           import re, html
           with open('./docs/diff.txt', 'r') as f:
@@ -176,7 +176,7 @@ jobs:
               for block in diff_blocks:
                   match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
                   if match:
-                      path = match.group(1)
+                      path = 'html/' + match.group(1)
                       out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&emsp;</p>\n<pre><code class="language-diff">' + html.escape(block).strip() + '</code></pre>')
               output_text = '\n'.join(out_blocks)
           with open('./docs/diff.html', 'w') as f:
@@ -186,11 +186,12 @@ jobs:
           echo '</body>' >> ./docs/CHANGES.html
           echo '</html>' >>./docs/CHANGES.html
           rm ./docs/diff.txt ./docs/diff.html
-          (cd /sage/local/share/doc/sage/html/en && git reset --hard HEAD)
+          (cd /sage/local/share/doc/sage/html && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them
-          cp -r -L /sage/local/share/doc/sage/html/en/* ./docs
+          cp -r -L /sage/local/share/doc/sage/html ./docs
+          cp  /sage/local/share/doc/sage/index.html ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
