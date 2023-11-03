@@ -68,6 +68,9 @@ case $SYSTEM in
         esac
         ;;
     fedora*|redhat*|centos*)
+        case $DOCKER_BUILDKIT in
+            1) SET_SOURCES="--mount=type=tmpfs,target=/var/cache/dnf";;
+        esac
         EXISTS="2>/dev/null >/dev/null yum install -y --downloadonly"
         INSTALL="yum install -y"
         if [ -n "$DEVTOOLSET" ]; then
