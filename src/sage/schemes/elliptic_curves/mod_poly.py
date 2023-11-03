@@ -66,16 +66,16 @@ def classical_modular_polynomial(l, j=None):
 
     Increasing the cache size can be useful for repeated invocations::
 
-        sage: %timeit classical_modular_polynomial(101)  # random
+        sage: %timeit classical_modular_polynomial(101)                              # not tested
         6.11 s ± 1.21 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
-        sage: %timeit classical_modular_polynomial(101, GF(65537).random_element())  # random
+        sage: %timeit classical_modular_polynomial(101, GF(65537).random_element())  # not tested
         5.43 s ± 2.71 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
-        sage: classical_modular_polynomial.set_cache_bound(150)
-        sage: %timeit classical_modular_polynomial(101)  # random
+        sage: classical_modular_polynomial.set_cache_bound(150)                      # not tested
+        sage: %timeit classical_modular_polynomial(101)                              # not tested
         The slowest run took 10.35 times longer than the fastest. This could mean that an intermediate result is being cached.
         1.84 µs ± 1.84 µs per loop (mean ± std. dev. of 7 runs, 1 loop each)
-        sage: %timeit classical_modular_polynomial(101, GF(65537).random_element())  # random
+        sage: %timeit classical_modular_polynomial(101, GF(65537).random_element())  # not tested
         59.8 ms ± 29.4 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
     TESTS::
@@ -144,6 +144,23 @@ def classical_modular_polynomial(l, j=None):
     return classical_modular_polynomial(l)(j, Y)
 
 def _set_cache_bound(bnd):
+    r"""
+    Internal helper function to allow setting the caching cutoff for
+    :func:`classical_modular_polynomial`.
+
+    Exposed as ``classical_modular_polynomial.set_cache_bound()``.
+
+    EXAMPLES::
+
+        sage: import sage.schemes.elliptic_curves.mod_poly as m
+        sage: m._cache_bound
+        100
+        sage: m._set_cache_bound(123)
+        sage: m._cache_bound
+        123
+        sage: classical_modular_polynomial.set_cache_bound is m._set_cache_bound
+        True
+    """
     global _cache_bound
     _cache_bound = bnd
 classical_modular_polynomial.set_cache_bound = _set_cache_bound
