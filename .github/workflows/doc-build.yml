@@ -194,7 +194,6 @@ jobs:
           ##### cp -r -L /sage/local/share/doc/sage/html ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload docs
         if: (success() || failure()) && steps.copy.outcome == 'success'
