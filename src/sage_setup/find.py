@@ -151,7 +151,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
                     dirnames[:] = []
                     continue
                 # Ordinary package or namespace package.
-                if distributions is None or '' in distributions:
+                if distributions is None:
                     python_packages.append(package)
 
                 for filename in filenames:

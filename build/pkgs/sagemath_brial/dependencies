@@ -1,0 +1,1 @@
+$(PYTHON) cypari memory_allocator iml linbox m4ri m4rie brial | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig $(and $(SAGE_WHEELS), sagemath_categories)
