@@ -274,9 +274,9 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
     from sage.matrix.constructor import Matrix
 
-    d=int(b)
-    if d!=b or d%2==1 or d <= 0:
-        raise ValueError("b (%s) must be a positive even integer."%b)
+    d = int(b)
+    if d != b or d % 2 == 1 or d <= 0:
+        raise ValueError("b (%s) must be a positive even integer." % b)
     from .linear_code import LinearCode
     from .binary_code import BinaryCode, BinaryCodeClassifier
     if k < 1 or n < 2:

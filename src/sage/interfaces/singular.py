@@ -584,7 +584,7 @@ class Singular(ExtraTabCompletion, Expect):
         -  ``x`` - string (of code)
 
         -  ``allow_semicolon`` - default: False; if False then
-           raise a TypeError if the input line contains a semicolon.
+           raise a :class:`TypeError` if the input line contains a semicolon.
 
         -  ``strip`` - ignored
 
@@ -1398,7 +1398,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
 
         """
-        s = super(SingularElement, self)._repr_()
+        s = super()._repr_()
         if self._name in s:
             if self.get_custom_name() is None and self.type() == 'matrix':
                 s = self.parent().eval('pmat(%s,20)' % (self.name()))

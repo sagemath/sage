@@ -712,7 +712,7 @@ class RiemannSurface():
         combined_discriminant = lcm(discriminants)(*self._R.gens())
         self._differentials_branch_locus = []
         for x in combined_discriminant.factor():
-            if not x[0] in existing_factors:
+            if x[0] not in existing_factors:
                 self._differentials_branch_locus += self._CCz(
                     x[0](self._CCz.gen(), 0)
                 ).roots(multiplicities=False)

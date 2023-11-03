@@ -606,7 +606,7 @@ class GraphGenerators():
         sage: L = list(graphs(5, lambda G: G.size() <= 4))
         sage: len(L)
         14
-        sage: graphs_list.show_graphs(L) # long time
+        sage: graphs_list.show_graphs(L)        # long time                             # needs sage.plot
 
     Generate all graphs with up to 5 vertices and up to 4 edges.
 
@@ -615,7 +615,7 @@ class GraphGenerators():
         sage: L = list(graphs(5, lambda G: G.size() <= 4, augment='vertices'))
         sage: len(L)
         31
-        sage: graphs_list.show_graphs(L)              # long time
+        sage: graphs_list.show_graphs(L)        # long time                             # needs sage.plot
 
     Generate all graphs with degree at most 2, up to 6 vertices.
 
@@ -1192,7 +1192,7 @@ class GraphGenerators():
             G = BipartiteGraph(s[:-1], format='graph6', partition=partition)
             yield G
 
-    def cospectral_graphs(self, vertices, matrix_function=lambda g: g.adjacency_matrix(), graphs=None):
+    def cospectral_graphs(self, vertices, matrix_function=None, graphs=None):
         r"""
         Find all sets of graphs on ``vertices`` vertices (with
         possible restrictions) which are cospectral with respect to a
@@ -1280,7 +1280,7 @@ class GraphGenerators():
             ....:   for i in range(g.order()):
             ....:       A.rescale_row(i, 1 / len(A.nonzero_positions_in_row(i)))
             ....:   return A
-            sage: g = graphs.cospectral_graphs(5, matrix_function=DinverseA,            # needs sage.modules
+            sage: g = graphs.cospectral_graphs(5, matrix_function=DinverseA,            # needs sage.libs.pari sage.modules
             ....:                              graphs=lambda g: min(g.degree()) > 0)
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)       # needs sage.modules
             [['Dlg', 'Ds_']]
@@ -1288,6 +1288,9 @@ class GraphGenerators():
             ....:   == g[0][1].laplacian_matrix(normalized=True).charpoly())
             True
         """
+        if matrix_function is None:
+            matrix_function = lambda g: g.adjacency_matrix()
+
         from sage.graphs.graph_generators import graphs as graph_gen
         if graphs is None:
             graph_list = graph_gen(vertices, property=lambda _: True)
@@ -1521,8 +1524,7 @@ class GraphGenerators():
 
         sp.stdout.reconfigure(newline='')
 
-        for G in graphs._read_planar_code(sp.stdout):
-            yield(G)
+        yield from graphs._read_planar_code(sp.stdout)
 
     def fusenes(self, hexagon_count, benzenoids=False):
         r"""
@@ -1797,8 +1799,7 @@ class GraphGenerators():
         sp.stdout.reconfigure(newline='')
 
         try:
-            for G in graphs._read_planar_code(sp.stdout):
-                yield(G)
+            yield from graphs._read_planar_code(sp.stdout)
         except AssertionError:
             raise AttributeError("invalid options '{}'".format(options))
 

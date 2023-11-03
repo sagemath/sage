@@ -43,7 +43,7 @@ from sage.structure.richcmp cimport rich_to_bool
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 
 cdef class pAdicGenericElement(LocalGenericElement):
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         r"""
         First compare valuations, then compare normalized
         residue of unit part.
@@ -354,7 +354,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             raise ZeroDivisionError("cannot divide by zero")
         return self._floordiv_(right)
 
-    cpdef _floordiv_(self, right):
+    cpdef _floordiv_(self, right) noexcept:
         """
         Implements floor division.
 
@@ -464,7 +464,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         return ~self.parent().fraction_field()(self, relprec = self.precision_relative())
 
-    cpdef _mod_(self, right):
+    cpdef _mod_(self, right) noexcept:
         """
         If self is in a field, returns 0.  If in a ring, returns a
         p-adic integer such that
@@ -2093,7 +2093,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         mpz_set_si(ans.value, v)
         return ans
 
-    cdef long valuation_c(self):
+    cdef long valuation_c(self) noexcept:
         """
         This function is overridden in subclasses to provide an
         actual implementation of valuation.
@@ -2112,7 +2112,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
-    cpdef val_unit(self):
+    cpdef val_unit(self) noexcept:
         r"""
         Return ``(self.valuation(), self.unit_part())``. To be overridden in
         derived classes.
@@ -3995,7 +3995,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         return self.abs()
 
-    cpdef abs(self, prec=None):
+    cpdef abs(self, prec=None) noexcept:
         """
         Return the `p`-adic absolute value of ``self``.
 
@@ -4486,7 +4486,7 @@ def _compute_g(p, n, prec, terms):
         g[i+1] = -(g[i]/(v-v**2)).integral()
     return [x.truncate(terms) for x in g]
 
-cpdef dwork_mahler_coeffs(R, int bd=20):
+cpdef dwork_mahler_coeffs(R, int bd=20) noexcept:
     r"""
     Compute Dwork's formula for Mahler coefficients of `p`-adic Gamma.
 
@@ -4534,7 +4534,7 @@ cpdef dwork_mahler_coeffs(R, int bd=20):
                 v.append(R(x << i))
     return v
 
-cpdef evaluate_dwork_mahler(v, x, long long p, int bd, long long a):
+cpdef evaluate_dwork_mahler(v, x, long long p, int bd, long long a) noexcept:
     """
     Evaluate Dwork's Mahler series for `p`-adic Gamma.
 
@@ -4564,7 +4564,7 @@ cpdef evaluate_dwork_mahler(v, x, long long p, int bd, long long a):
     return -s
 
 cdef long long evaluate_dwork_mahler_long(array.array v, long long x, long long p, int bd,
-                                     long long a, long long q):
+                                     long long a, long long q) noexcept:
     cdef int k
     cdef long long a1, s, u
     bd -= 1
@@ -4578,7 +4578,7 @@ cdef long long evaluate_dwork_mahler_long(array.array v, long long x, long long 
         s = s % q
     return -s
 
-cpdef gauss_table(long long p, int f, int prec, bint use_longs):
+cpdef gauss_table(long long p, int f, int prec, bint use_longs) noexcept:
     r"""
     Compute a table of Gauss sums using the Gross-Koblitz formula.
 

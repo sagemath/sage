@@ -1,4 +1,5 @@
 # cython: binding=True
+# sage.doctest: needs sage.libs.flint sage.graphs
 """
 Matching polynomial
 
@@ -347,7 +348,7 @@ def complete_poly(n):
     return b
 
 
-cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol):
+cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol) noexcept:
     """
     Add matching polynomial to pol via recursion.
 

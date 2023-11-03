@@ -32,29 +32,29 @@ cdef struct subset:
     bitset_s bits
     int *scratch # must be of size 3*n + 1
 
-cdef int refine_set(PartitionStack *, void *, int *, int)
-cdef int compare_sets(int *, int *, void *, void *, int)
-cdef bint all_set_children_are_equivalent(PartitionStack *, void *)
+cdef int refine_set(PartitionStack *, void *, int *, int) noexcept
+cdef int compare_sets(int *, int *, void *, void *, int) noexcept
+cdef bint all_set_children_are_equivalent(PartitionStack *, void *) noexcept
 
-cdef void *allocate_subset(int)
+cdef void *allocate_subset(int) noexcept
 
 cdef struct subset_generator_data:
     OrbitPartition *orbits
     int cur_point
     bitset_s bits
 
-cdef void *allocate_sgd(int)
-cdef void deallocate_sgd(void *)
+cdef void *allocate_sgd(int) noexcept
+cdef void deallocate_sgd(void *) noexcept
 
-cdef void *subset_generator_next(void *, int *, bint *)
+cdef void *subset_generator_next(void *, int *, bint *) noexcept
 
-cdef int generate_child_subsets(void *S, aut_gp_and_can_lab *group, iterator *it)
-cdef void *apply_subset_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err)
-cdef void free_subset(void *child)
-cdef void free_subset_aug(void *)
-cdef void *canonical_set_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err)
+cdef int generate_child_subsets(void *S, aut_gp_and_can_lab *group, iterator *it) noexcept
+cdef void *apply_subset_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err) noexcept
+cdef void free_subset(void *child) noexcept
+cdef void free_subset_aug(void *) noexcept
+cdef void *canonical_set_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept
 
-cdef iterator *allocate_subset_gen(int degree, int max_size)
-cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it)
-cdef void free_subset_gen(iterator *subset_gen)
-cdef iterator *setup_set_gen(iterator *subset_gen, int degree, int max_size)
+cdef iterator *allocate_subset_gen(int degree, int max_size) noexcept
+cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it) noexcept
+cdef void free_subset_gen(iterator *subset_gen) noexcept
+cdef iterator *setup_set_gen(iterator *subset_gen, int degree, int max_size) noexcept

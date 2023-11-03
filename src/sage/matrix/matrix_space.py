@@ -677,9 +677,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Vector space of degree 125 and dimension 124 over Rational Field
             Basis matrix:
             124 x 125 dense matrix over Rational Field
-            sage: MatrixSpace(ZZ,20,20)(1) \ MatrixSpace(ZZ,20,1).random_element()
+            sage: MatrixSpace(ZZ,20,20)(1).solve_right(MatrixSpace(ZZ,20,1).random_element())
             20 x 1 dense matrix over Rational Field (use the '.str()' method to see the entries)
-            sage: MatrixSpace(ZZ,200,200)(1) \ MatrixSpace(ZZ,200,1).random_element()
+            sage: MatrixSpace(ZZ,200,200)(1).solve_right(MatrixSpace(ZZ,200,1).random_element())
             200 x 1 dense matrix over Rational Field (use the '.str()' method to see the entries)
             sage: A = MatrixSpace(RDF,1000,1000).random_element()
             sage: B = MatrixSpace(RDF,1000,1000).random_element()
@@ -1343,8 +1343,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
     def __len__(self):
         """
         Return number of elements of this matrix space if it fits in
-        an int; raise a TypeError if there are infinitely many
-        elements, and raise an OverflowError if there are finitely
+        an int; raise a :class:`TypeError` if there are infinitely many
+        elements, and raise an :class:`OverflowError` if there are finitely
         many but more than the size of an int.
 
         EXAMPLES::
@@ -1619,7 +1619,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MS[2]
             Traceback (most recent call last):
             ...
-            AttributeError: 'MatrixSpace_with_category' object has no attribute 'list'
+            AttributeError: 'MatrixSpace_with_category' object has no attribute 'list'...
         """
         if isinstance(x, (integer.Integer, int)):
             return self.list()[x]
@@ -2355,8 +2355,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             )
         """
         yield self.an_element()
-        for g in self.gens():
-            yield g
+        yield from self.gens()
 
     def _magma_init_(self, magma):
         r"""

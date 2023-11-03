@@ -24,17 +24,17 @@ cdef class BinaryCodeStruct:
     cdef int *alpha # length nwords + degree
     cdef int *scratch # length 3*nwords + 3*degree + 2
     cdef aut_gp_and_can_lab *output
-    cdef int (*ith_word)(BinaryCodeStruct self, int, bitset_s *)
+    cdef int (*ith_word)(BinaryCodeStruct self, int, bitset_s *) noexcept
 
 cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
     cdef bitset_s *basis
     cdef bitset_s *scratch_bitsets # length 2*dimension + 2
     cdef int dimension
-cdef int ith_word_linear(BinaryCodeStruct, int, bitset_s *)
+cdef int ith_word_linear(BinaryCodeStruct, int, bitset_s *) noexcept
 
 cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
     cdef bitset_s *words
     cdef bitset_s *scratch_bitsets # length 4*nwords + 1
-cdef int ith_word_nonlinear(BinaryCodeStruct, int, bitset_s *)
+cdef int ith_word_nonlinear(BinaryCodeStruct, int, bitset_s *) noexcept
 
-cdef int refine_by_bip_degree(PartitionStack *, void *, int *, int)
+cdef int refine_by_bip_degree(PartitionStack *, void *, int *, int) noexcept

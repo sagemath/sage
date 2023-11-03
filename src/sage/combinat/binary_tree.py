@@ -39,6 +39,7 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecated_function_alias
 
 
 class BinaryTree(AbstractClonableTree, ClonableArray,
@@ -914,7 +915,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         """
         self._require_mutable()
         child_lst = [self.__class__(self.parent(), x) for x in child_list]
-        if not(len(child_lst) == 2):
+        if len(child_lst) != 2:
             raise ValueError("the list must have length 2")
         self.__init__(self.parent(), child_lst, check=False)
 
@@ -1873,7 +1874,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         labelled = self in LabelledBinaryTrees()
         labels = []
         t = self
-        while(t):
+        while t:
             border.append(t[1].left_border_symmetry())
             if labelled:
                 labels.append(t.label())
@@ -3214,7 +3215,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
             sage: b1 = BinaryTree([[],[]])
             sage: b2 = BinaryTree([None,[]])
-            sage: ascii_art((b1, b2, b1 \ b2))
+            sage: ascii_art((b1, b2, b1.under(b2)))
             (   o  , o  ,     _o_   )
             (  / \    \      /   \  )
             ( o   o    o    o     o )
@@ -3276,7 +3277,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         else:
             return B([self.under(bt[0]), bt[1]])
 
-    _backslash_ = under
+    _backslash_ = deprecated_function_alias(36394, under)
 
     def under_decomposition(self):
         r"""

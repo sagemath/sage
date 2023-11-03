@@ -1474,7 +1474,7 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
              [ Valuation at the infinite place, v(y - 1) = 2 ]-adic valuation]
 
         """
-        assert(self.domain().base() is not self.domain())
+        assert (self.domain().base() is not self.domain())
         if repr(self._base_valuation) == repr(self.restriction(self.domain().base())):
             return repr(self._base_valuation)
         return super()._repr_()

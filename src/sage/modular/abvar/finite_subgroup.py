@@ -529,7 +529,7 @@ class FiniteSubgroup(Module):
             field = "QQ"
         else:
             field = str(K)
-        return "Finite subgroup %sover %s of %s"%(self._invariants_repr(), field, self.__abvar)
+        return "Finite subgroup %sover %s of %s" % (self._invariants_repr(), field, self.__abvar)
 
     def _invariants_repr(self):
         """
@@ -544,7 +544,7 @@ class FiniteSubgroup(Module):
             sage: J0(42).cuspidal_subgroup()._invariants_repr()
             'with invariants [2, 2, 12, 48] '
         """
-        return 'with invariants %s '%(self.invariants(), )
+        return 'with invariants %s ' % (self.invariants(), )
 
     def order(self):
         """

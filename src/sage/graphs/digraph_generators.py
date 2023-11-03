@@ -182,7 +182,7 @@ class DiGraphGenerators():
         sage: L = list(digraphs(4, lambda G: G.size() <= 3))
         sage: len(L)
         20
-        sage: graphs_list.show_graphs(L)  # long time
+        sage: graphs_list.show_graphs(L)        # long time                             # needs sage.plot
 
     Generate all digraphs with degree at most 2, up to 5 vertices::
 
@@ -371,7 +371,7 @@ class DiGraphGenerators():
         A Strongly Regular digraph satisfies the condition `AJ = JA = kJ` where
         `A` is the adjacency matrix::
 
-            sage: # needs sage.modules
+            sage: # needs sage.combinat sage.modules
             sage: g = digraphs.StronglyRegular(7); g
             Strongly regular digraph: Digraph on 7 vertices
             sage: A = g.adjacency_matrix()*ones_matrix(7)
@@ -383,7 +383,7 @@ class DiGraphGenerators():
 
         Wrong parameter::
 
-            sage: digraphs.StronglyRegular(73)                                          # needs sage.modules
+            sage: digraphs.StronglyRegular(73)                                          # needs sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             ValueError: strongly regular digraph with 73 vertices not yet implemented
@@ -516,7 +516,7 @@ class DiGraphGenerators():
 
             sage: T = digraphs.RandomTournament(10); T
             Random Tournament: Digraph on 10 vertices
-            sage: T.size() == binomial(10, 2)
+            sage: T.size() == binomial(10, 2)                                           # needs sage.symbolic
             True
             sage: T.is_tournament()
             True
@@ -1331,7 +1331,7 @@ class DiGraphGenerators():
 
         return D
 
-    def RandomDirectedGN(self, n, kernel=lambda x: x, seed=None):
+    def RandomDirectedGN(self, n, kernel=None, seed=None):
         r"""
         Return a random growing network (GN) digraph with `n` vertices.
 
@@ -1346,7 +1346,7 @@ class DiGraphGenerators():
 
         - ``n`` -- integer; number of vertices
 
-        - ``kernel`` -- the attachment kernel
+        - ``kernel`` -- the attachment kernel (default: identity function)
 
         - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the
           random number generator (default: ``None``)
@@ -1365,6 +1365,8 @@ class DiGraphGenerators():
             True
             sage: D.show()                      # long time
         """
+        if kernel is None:
+            kernel = lambda x: x
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)
         import networkx
@@ -1635,7 +1637,7 @@ class DiGraphGenerators():
 
             sage: SC = digraphs.RandomSemiComplete(10); SC
             Random Semi-Complete digraph: Digraph on 10 vertices
-            sage: SC.size() >= binomial(10, 2)
+            sage: SC.size() >= binomial(10, 2)                                          # needs sage.symbolic
             True
             sage: digraphs.RandomSemiComplete(-1)
             Traceback (most recent call last):

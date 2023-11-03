@@ -5,4 +5,4 @@ from .matrix_sparse cimport Matrix_sparse
 cdef class Matrix_integer_sparse(Matrix_sparse):
     cdef mpz_vector* _matrix
 
-    cdef _mod_int_c(self, mod_int p)
+    cdef _mod_int_c(self, mod_int p) noexcept

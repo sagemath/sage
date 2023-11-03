@@ -254,7 +254,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             raise NotImplementedError
 
-    cpdef base_extend(self, R):
+    cpdef base_extend(self, R) noexcept:
         """
         Return a copy of this power series but with coefficients in R.
 
@@ -311,7 +311,7 @@ cdef class PowerSeries(AlgebraElement):
         S = self._parent.change_ring(R)
         return S(self)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         r"""
         Comparison of self and ``right``.
 
@@ -813,7 +813,7 @@ cdef class PowerSeries(AlgebraElement):
         v = [a[i] for i in range(min(prec, len(a)))]
         return self._parent._poly_ring()(v)
 
-    cdef _inplace_truncate(self, long prec):
+    cdef _inplace_truncate(self, long prec) noexcept:
         return self.truncate(prec)
 
     def add_bigoh(self, prec):
@@ -917,7 +917,7 @@ cdef class PowerSeries(AlgebraElement):
             return self.prec()
         return min(self.prec(), f.prec())
 
-    cdef common_prec_c(self, PowerSeries f):
+    cdef common_prec_c(self, PowerSeries f) noexcept:
         if self._prec is infinity:
             return f._prec
         elif f._prec is infinity:
@@ -1048,7 +1048,7 @@ cdef class PowerSeries(AlgebraElement):
                     v[k-n] = x
         return self._parent(v, self.prec()-n)
 
-    cpdef _div_(self, denom_r):
+    cpdef _div_(self, denom_r) noexcept:
         """
         EXAMPLES::
 
@@ -1510,21 +1510,21 @@ cdef class PowerSeries(AlgebraElement):
 
         INPUT:
 
-          - ``prec`` - integer (default: None): if not None and the series
-            has infinite precision, truncates series at precision
-            prec.
+          - ``prec`` - integer (default: ``None``): if not ``None``
+            and the series has infinite precision, truncates series at
+            precision prec.
 
-          - ``extend`` - bool (default: False); if True, return a square
+          - ``extend`` - bool (default: ``False``); if ``True``, return a square
             root in an extension ring, if necessary. Otherwise, raise
-            a ValueError if the square root is not in the base power series
-            ring. For example, if ``extend`` is True the square root of a
-            power series with odd degree leading coefficient is
-            defined as an element of a formal extension ring.
+            a :class:`ValueError` if the square root is not in the
+            base power series ring. For example, if ``extend`` is ``True``
+            the square root of a power series with odd degree leading
+            coefficient is defined as an element of a formal extension ring.
 
-          - ``name`` - string; if ``extend`` is True, you must also specify the print
+          - ``name`` - string; if ``extend`` is ``True``, you must also specify the print
             name of the formal square root.
 
-          - ``all`` - bool (default: False); if True, return all square
+          - ``all`` - bool (default: ``False``); if ``True``, return all square
             roots of self, instead of just one.
 
         ALGORITHM: Newton's method

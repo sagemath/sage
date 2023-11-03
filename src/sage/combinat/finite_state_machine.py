@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Finite state machines, automata, transducers
 
@@ -949,7 +949,7 @@ from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
 
 
-def full_group_by(l, key=lambda x: x):
+def full_group_by(l, key=None):
     """
     Group iterable ``l`` by values of ``key``.
 
@@ -1003,6 +1003,8 @@ def full_group_by(l, key=lambda x: x):
     Here, the result ``r`` has been sorted in order to guarantee a
     consistent order for the doctest suite.
     """
+    if key is None:
+        key = lambda x: x
     elements = defaultdict(list)
     original_keys = {}
     for item in l:
@@ -1563,7 +1565,7 @@ class FSMState(SageObject):
             sage: A.is_final
             False
         """
-        return (self.final_word_out is not None)
+        return self.final_word_out is not None
 
     @is_final.setter
     def is_final(self, is_final):
@@ -1835,7 +1837,7 @@ class FSMState(SageObject):
             sage: T1.transitions
             Traceback (most recent call last):
             ...
-            AttributeError: 'FSMState' object has no attribute 'transitions'
+            AttributeError: 'FSMState' object has no attribute 'transitions'...
             sage: A1 = loads(dumps(A))
             sage: all(A.state(j) == A1.state(j) for j in [0, 1])
             True
@@ -5406,8 +5408,7 @@ class FiniteStateMachine(SageObject):
             [('1', '2'), ('2', '2')]
         """
         for state in self.iter_states():
-            for t in state.transitions:
-                yield t
+            yield from state.transitions
 
     def initial_states(self):
         """
@@ -6461,8 +6462,7 @@ class FiniteStateMachine(SageObject):
                                    "here." %
                                    (len(branch.outputs),))
 
-            for o in branch.outputs[0]:
-                yield o
+            yield from branch.outputs[0]
             branch.outputs[0] = []
             # Reset output so that in the next round
             # (of "for current in iterator") only new
@@ -9614,7 +9614,7 @@ class FiniteStateMachine(SageObject):
             return final_word_out
 
         for state in self.iter_states():
-            assert(not in_progress)
+            assert not in_progress
             # trailing_letters is an infinite iterator additionally
             # marking positions
             trailing_letters = itertools.cycle(enumerate(letters))

@@ -203,7 +203,7 @@ cdef class _LazyString():
         self.args = <tuple?>args
         self.kwargs = <dict?>kwargs
 
-    cdef val(self):
+    cdef val(self) noexcept:
         cdef f = self.func
         if isinstance(f, str):
             return f % self.args
@@ -503,7 +503,7 @@ cdef class _LazyString():
         except Exception:
             return '<%s broken>' % self.__class__.__name__
 
-    cpdef update_lazy_string(self, args, kwds):
+    cpdef update_lazy_string(self, args, kwds) noexcept:
         """
         Change this lazy string in-place.
 

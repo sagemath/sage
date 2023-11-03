@@ -345,6 +345,11 @@ def ellipse(center, r1, r2, angle=0, **options):
         E=ellipse((0,0),2,1,legend_label="My ellipse", legend_color='green')
         sphinx_plot(E)
 
+    TESTS:
+
+    Verify that :issue:`36153` does not arise::
+
+        sage: E = ellipse((0,0), 2, 1, legend_label="test")
     """
     from sage.plot.all import Graphics
     g = Graphics()

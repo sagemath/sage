@@ -684,7 +684,7 @@ class Scheme(Parent):
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
             sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
-            sage: X.count_points(2)                                                     # needs sage.rings.finite_rings
+            sage: X.count_points(2)                                                     # needs sage.libs.singular sage.rings.finite_rings
             [5, 17]
         """
         F = self.base_ring()
