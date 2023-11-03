@@ -79,7 +79,7 @@ doc-pdf-reference: doc-inventory-reference
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" doc-pdf--reference_top
 
 # other documentation, pdf
-doc-pdf-other: doc-html-reference
+doc-pdf-other: doc-pdf-reference
 	$(eval DOCS = $(shell sage --docbuild --all-documents all))
 	@if [ -z "$(DOCS)" ]; then echo "Error: 'sage --docbuild --all-documents' failed"; exit 1; fi
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(wordlist 2, 100, $(DOCS)), doc-pdf--$(subst /,-,$(doc)))
