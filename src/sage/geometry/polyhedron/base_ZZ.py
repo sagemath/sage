@@ -875,6 +875,11 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             M(-1,  0)
             in 2-d lattice M
 
+        Using ``permutation=True``::
+
+            sage: d.normal_form(permutation=True)                                       # needs sage.groups
+            ([(1, 0), (0, 1), (0, -1), (-1, 0)], ())
+
         It is not possible to compute normal forms for polytopes which do not
         span the space::
 
@@ -895,6 +900,13 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 2 rays
 
         See :issue:`15280` for proposed extensions to these cases.
+
+        TESTS::
+
+            sage: d.normal_form(algorithm="palp_fiction")
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be 'palp_native'
         """
         from sage.geometry.palp_normal_form import _palp_PM_max, _palp_canonical_order
 
