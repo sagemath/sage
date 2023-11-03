@@ -253,7 +253,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         r"""
         Return the order of this form class group (the *class number*).
 
-        ALGORITHM: :pari:`qfbclassno`
+        ALGORITHM: :func:`sage.rings.number_field.order.quadratic_order_class_number`.
 
         EXAMPLES::
 
@@ -272,7 +272,12 @@ class BQFClassGroup(Parent, UniqueRepresentation):
             sage: BQFClassGroup(-99999).order()
             224
         """
-        return ZZ(pari.qfbclassno(self._disc))
+        # Beware: If this code is ever generalized to positive
+        # discriminants, care must be taken to use the correct
+        # notion of class number. We may need the *narrow* class
+        # number here; see PARI's documentation for qfbclassno().
+        from sage.rings.number_field.order import quadratic_order_class_number
+        return quadratic_order_class_number(self._disc)
 
     cardinality = order
 
