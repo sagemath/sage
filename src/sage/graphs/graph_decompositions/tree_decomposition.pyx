@@ -76,6 +76,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
     :meth:`treewidth` | Compute the treewidth of `G` (and provide a decomposition).
     :meth:`treelength` | Compute the treelength of `G` (and provide a decomposition).
     :meth:`make_nice_tree_decomposition` | Return a *nice* tree decomposition (TD) of the TD `tree_decomp`.
+    :meth:`label_nice_tree_decomposition` | Return a nice tree decomposition with nodes labelled accordingly.
     :meth:`is_valid_tree_decomposition` | Check whether `T` is a valid tree-decomposition for `G`.
     :meth:`reduced_tree_decomposition` | Return a reduced tree-decomposition of `T`.
     :meth:`width_of_tree_decomposition` | Return the width of the tree decomposition `T` of `G`.
@@ -1009,6 +1010,46 @@ def make_nice_tree_decomposition(graph, tree_decomp):
     nice_tree_decomp.relabel(inplace=True, perm=relabeling)
 
     return nice_tree_decomp
+
+def label_nice_tree_decomposition(nice_TD):
+    r"""
+    Return a nice tree decomposition with nodes labelled accordingly.
+
+    INPUT:
+
+    - ``nice_TD`` -- a nice tree decomposition
+
+    OUTPUT:
+
+    A nice tree decomposition with nodes labelled.
+    """
+    directed_TD = DiGraph(nice_TD.breadth_first_search(start=root,
+                                                        edges=True),
+                            format='list_of_edges')
+
+    # The loop starts from the root node
+    # We assume the tree decomposition is valid and nice, hence saving time
+    # on checking.
+    for node in directed_TD:
+        in_deg = directed_TD.in_degree(node)
+        out_deg = directed_TD.out_degree(node)
+
+        if in_deg == 0:
+            directed_TD.set_vertex(node, 'root')
+        elif out_deg == 2:
+            directed_TD.set_vertex(node, 'join')
+        elif out_deg == 1:
+            current_bag = node[1]
+            child_bag = directed_TD.neighbors_out(node)[0][1]
+
+            if len(current_bag) == len(child_bag) + 1:
+                directed_TD.set_vertex(node, 'intro')
+            else:
+                directed_TD.set_vertex(node, 'forget')
+        else:
+            directed_TD.set_vertex(node, 'leaf')
+
+    return Graph(directed_TD, name=name)
 
 
 #
