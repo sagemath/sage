@@ -330,11 +330,12 @@ class LocalGeneric(CommutativeRing):
 
         and variable names::
 
-            sage: K.change(names='b')
+            sage: K.change(names='b')                                                   # needs sage.libs.flint
             5-adic Unramified Extension Field in b defined by x^3 + 3*x + 3
 
         and precision::
 
+            sage: # needs sage.libs.flint
             sage: Kup = K.change(prec=8); Kup
             5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
             sage: Kup.precision_cap()
@@ -344,6 +345,7 @@ class LocalGeneric(CommutativeRing):
 
         If you decrease the precision, the precision of the base stays the same::
 
+            sage: # needs sage.libs.flint
             sage: Kdown = K.change(prec=2); Kdown
             5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
             sage: Kdown.precision_cap()

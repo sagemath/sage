@@ -542,7 +542,8 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R.<w> = Zq(7^2,5)                                                     # needs sage.libs.ntl
+            sage: # needs sage.libs.ntl
+            sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)

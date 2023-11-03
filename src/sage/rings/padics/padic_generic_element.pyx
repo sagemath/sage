@@ -2306,7 +2306,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: zz = (1 + a*pi).log()
             sage: ww = pi.exp()                                                         # needs sage.symbolic
             sage: beta = P.hom([-pi], base_map=cc)
-            sage: beta(ww*zz) == beta(ww)*beta(zz)
+            sage: beta(ww*zz) == beta(ww)*beta(zz)                                      # needs sage.symbolic
             True
         """
         L = self.parent()
