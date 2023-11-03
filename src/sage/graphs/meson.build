@@ -1,13 +1,6 @@
-bliss = declare_dependency(
-  dependencies: [
-    cc.find_library('bliss', required: false),
-  ]
-)
-mcqd = declare_dependency(
-  dependencies: [
-    cc.find_library('mcqd', required: false),
-  ]
-)
+bliss = cc.find_library('bliss', required: false)
+mcqd = cc.find_library('mcqd', required: false)
+cliquer = cc.find_library('cliquer')
 
 # Cannot be found via pkg-config
 planarity = declare_dependency(
@@ -78,7 +71,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/graphs',
         install: true,
         include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, flint, gmp, planarity],
+        dependencies: [py_dep, cysignals, cliquer, flint, gmp, planarity],
     )
 endforeach
 
@@ -100,26 +93,24 @@ foreach name, pyx : extension_data_cpp
     )
 endforeach
 if bliss.found()
-    # Still cannot find the bliss header
-    # py.extension_module('bliss',
-    #     sources: files('bliss.pyx'),
-    #     subdir: 'sage/graphs',
-    #     install: true,
-    #     override_options : ['cython_language=cpp'],
-    #     include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-    #     dependencies: [py_dep, cysignals, bliss],
-    # )
+    py.extension_module('bliss',
+        sources: files('bliss.pyx'),
+        subdir: 'sage/graphs',
+        install: true,
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
+        dependencies: [py_dep, cysignals, bliss],
+    )
 endif
 if mcqd.found()
-    # Still cannot find the mcqd header
-    # py.extension_module('mcqd',
-    #     sources: files('mcqd.pyx'),
-    #     subdir: 'sage/graphs',
-    #     install: true,
-    #     override_options : ['cython_language=cpp'],
-    #     include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-    #     dependencies: [py_dep, cysignals, mcqd],
-    # )
+    py.extension_module('mcqd',
+        sources: files('mcqd.pyx'),
+        subdir: 'sage/graphs',
+        install: true,
+        override_options : ['cython_language=cpp'],
+        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
+        dependencies: [py_dep, cysignals, mcqd],
+    )
 endif
 
 subdir('base')

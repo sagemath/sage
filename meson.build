@@ -32,7 +32,7 @@ conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
 
 conf_data.set('SAGE_ARB_LIBRARY', 'arb')
 
-#ntl = dependency('ntl', required: true) doesn't work, so ask the compiler directly:
+# Cannot be found via pkg-config
 ntl = cc.find_library('ntl', required: true)
 # It can be found, so we don't have to set anything here:
 conf_data.set('NTL_INCDIR', '')

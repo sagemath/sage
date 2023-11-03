@@ -214,6 +214,8 @@ mpc = declare_dependency(
     cc.find_library('mpc'),
   ]
 )
+# Cannot be found via pkg-config
+gap = cc.find_library('gap')
 
 # It's strange but cython cannot find its own include files
 # so we find them ourselves, and add them to the include path
@@ -233,7 +235,6 @@ add_project_arguments('-I', inc_cython + 'Includes', language : 'cython')
 # have to add them manually.
 # https://github.com/mesonbuild/meson/issues/9562
 add_project_arguments('-I', meson.current_source_dir(), language : 'cython')
-#add_project_arguments('-I', py.get_path('include'), language : 'cython')
 
 # Add global compiler flags
 add_project_arguments('-X auto_pickle=False', language : 'cython')

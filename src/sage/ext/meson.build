@@ -30,7 +30,7 @@ interpreters = custom_target(
     # command: [py, '-m', 'sage_setup.autogen.interpreters','@OUTDIR@'],
     env: ['PYTHONPATH=' + meson.current_source_dir() / '..' / '..'],
     install: true,
-    install_dir: 'interpreters'
+    install_dir: sage_install_dir / 'ext' / 'interpreters'
 )
 
 subdir('interpreters')
