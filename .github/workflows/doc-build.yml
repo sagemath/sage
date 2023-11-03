@@ -200,7 +200,7 @@ jobs:
 
       - name: Build live doc
         id: buildlivedoc
-        if: always() && steps.copy.outcome == 'success' && github.ref == 'refs/heads/develop'
+        if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
         run: |
           set -ex
           export SAGE_USE_CDNS=yes
@@ -215,7 +215,7 @@ jobs:
 
       - name: Copy live doc
         id: copylivedoc
-        if: always() && steps.buildlivedoc.outcome == 'success'
+        if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
         run: |
           set -ex
           mkdir -p ./livedoc
@@ -224,7 +224,7 @@ jobs:
           zip -r livedoc.zip livedoc
 
       - name: Upload live doc
-        if: always() && steps.copylivedoc.outcome == 'success'
+        if: (success() || failure()) && steps.copylivedoc.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: livedoc
