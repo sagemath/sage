@@ -61,7 +61,9 @@ jobs:
 
       - name: Bootstrap
         shell: bash -l {0}
-        run: ./bootstrap
+        run: python -m sage_setup.autogen.interpreters src/sage/ext/interpreters
+        env:
+          PYTHONPATH: src
 
       - name: Build
         shell: bash -l {0}
