@@ -1322,7 +1322,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             return self
         cdef PermutationGroupElement prod = self._new_c()
         cdef int i
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
             prod.perm[i] = self.perm[i]
         if not self._parent._has_natural_domain():
             convert_dict = self._parent._domain_to_gap
