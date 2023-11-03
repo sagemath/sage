@@ -283,8 +283,9 @@ class AugmentedValuation_base(InductiveValuation):
 
     TESTS::
 
-        sage: TestSuite(w).run() # long time
-        sage: TestSuite(ww).run() # long time
+        sage: # needs sage.rings.number_field
+        sage: TestSuite(w).run()    # long time
+        sage: TestSuite(ww).run()   # long time
 
     """
     def __init__(self, parent, v, phi, mu):
