@@ -84,10 +84,13 @@ jobs:
 
       - name: Start container
         run: |
-          docker run --name BUILD --pull never -dit \
-            --mount type=bind,src=$(pwd),dst=$(pwd) \
-            --workdir $(pwd) \
-            ${{ env.BUILD_IMAGE }} /bin/sh
+          while ! docker run --name BUILD --pull never -dit \
+                      --mount type=bind,src=$(pwd),dst=$(pwd) \
+                      --workdir $(pwd) \
+                      ${{ env.BUILD_IMAGE }} /bin/sh; \
+          do \
+              sleep 30; \
+          done
 
       # Docs
 
