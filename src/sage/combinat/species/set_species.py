@@ -91,7 +91,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies(); E
             Set species
         """
-        return super(SetSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """

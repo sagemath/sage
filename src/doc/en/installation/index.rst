@@ -127,16 +127,17 @@ Linux
 In the cloud
 ============
 
-- `CoCalc <https://cocalc.com/>`_: an online service that provides SageMath and
+- `Sage Binder repo <https://github.com/sagemath/sage-binder-env>`_ provides a
+  Binder badge to launch JupyterLab environment with Sage.
+
+- `Sage Cell Server <https://sagecell.sagemath.org/>`_ is a free online service for
+  quick computations with Sage.
+
+- `CoCalc <https://cocalc.com/>`_ is an online commercial service that provides Sage and
   many other tools.
 
-- On any system that allows you to bring your own Docker images to run
-  in a container: Use the `Docker image sagemathinc/cocalc
-  <https://hub.docker.com/r/sagemathinc/cocalc>`_ or :trac:`another Docker
-  image providing SageMath <wiki/Distribution#Dockerimages>`.
-
-- `Sage Cell Server <https://sagecell.sagemath.org/>`_: an online service for
-  elementary SageMath computations.
+- `Docker image sagemathinc/cocalc
+  <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
 
 More information:

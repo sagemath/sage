@@ -1,4 +1,8 @@
+prune sage
+
 include VERSION.txt
+
+include sage/libs/sirocco.p*
 
 global-exclude *.c
 global-exclude *.cpp

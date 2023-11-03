@@ -129,7 +129,7 @@ from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 include "point_c.pxi"
 
 
-cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b):
+cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b) noexcept:
     if point_c_eq(vs[f.vertices[a]], vs[f.vertices[b]]):
         f.vertices[b] = f.vertices[a]
         f.n -= 1

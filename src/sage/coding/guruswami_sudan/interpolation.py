@@ -46,8 +46,7 @@ def _flatten_once(lstlst):
         [1, 2, 3, 4, 5, 6]
     """
     for lst in lstlst:
-        for e in lst:
-            yield e
+        yield from lst
 
 #*************************************************************
 #  Linear algebraic Interpolation algorithm, helper functions

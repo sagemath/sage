@@ -269,7 +269,7 @@ cdef class MatrixStruct:
         sig_free(output)
         return output_py
 
-cdef int refine_matrix(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_matrix(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     cdef MatrixStruct M = <MatrixStruct> S
     cdef int temp_inv, invariant = 1
     cdef bint changed = 1
@@ -282,7 +282,7 @@ cdef int refine_matrix(PartitionStack *PS, void *S, int *cells_to_refine_by, int
             changed = 0
     return invariant
 
-cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     cdef MatrixStruct MS1 = <MatrixStruct> S1
     cdef MatrixStruct MS2 = <MatrixStruct> S2
     M1 = MS1.matrix
@@ -299,7 +299,7 @@ cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int de
         return 0
     return -1 if rows1 < rows2 else 1
 
-cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S):
+cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
 
 def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_matrix=5, density_range=(.1,.9)):

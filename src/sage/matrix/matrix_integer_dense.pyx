@@ -163,7 +163,7 @@ cdef inline mpz_t * fmpz_mat_to_mpz_array(fmpz_mat_t m) except? NULL:
     return entries
 
 
-cdef inline void mpz_array_clear(mpz_t * a, size_t length):
+cdef inline void mpz_array_clear(mpz_t * a, size_t length) noexcept:
     cdef size_t i
     for i in range(length):
         mpz_clear(a[i])
@@ -311,7 +311,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             z = <Integer>se.entry
             fmpz_set_mpz(fmpz_mat_entry(self._matrix, se.i, se.j), z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x) noexcept:
         """
         Set position i,j of this matrix to ``x``.
 
@@ -337,7 +337,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         self.set_unsafe_mpz(i, j, (<Integer>x).value)
 
-    cdef void set_unsafe_mpz(self, Py_ssize_t i, Py_ssize_t j, const mpz_t value):
+    cdef void set_unsafe_mpz(self, Py_ssize_t i, Py_ssize_t j, const mpz_t value) noexcept:
         """
         Set position i,j of this matrix to ``value``.
 
@@ -362,19 +362,19 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         fmpz_set_mpz(fmpz_mat_entry(self._matrix,i,j), value)
 
-    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         """
         Set position i,j of this matrix to ``value``.
         """
         fmpz_set_si(fmpz_mat_entry(self._matrix,i,j), value)
 
-    cdef void set_unsafe_double(self, Py_ssize_t i, Py_ssize_t j, double value):
+    cdef void set_unsafe_double(self, Py_ssize_t i, Py_ssize_t j, double value) noexcept:
         """
         Set position i,j of this matrix to ``value``.
         """
         fmpz_set_d(fmpz_mat_entry(self._matrix,i,j), value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Return the (i, j) entry of self as a new Integer.
 
@@ -402,7 +402,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         self.get_unsafe_mpz(i, j, z.value)
         return z
 
-    cdef inline void get_unsafe_mpz(self, Py_ssize_t i, Py_ssize_t j, mpz_t value):
+    cdef inline void get_unsafe_mpz(self, Py_ssize_t i, Py_ssize_t j, mpz_t value) noexcept:
         """
         Copy entry i,j of the matrix ``self`` to ``value``.
 
@@ -428,7 +428,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         fmpz_get_mpz(value,fmpz_mat_entry(self._matrix, i, j))
 
-    cdef inline int get_unsafe_int(self, Py_ssize_t i, Py_ssize_t j):
+    cdef inline int get_unsafe_int(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Return the (i, j) entry of self as a new Integer.
 
@@ -439,7 +439,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         return fmpz_get_si(fmpz_mat_entry(self._matrix, i, j))
 
-    cdef inline double get_unsafe_double(self, Py_ssize_t i, Py_ssize_t j):
+    cdef inline double get_unsafe_double(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Return the (i, j) entry of self as a new Integer.
 
@@ -490,7 +490,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         return self._pickle_version0(), 0
 
-    cdef _pickle_version0(self):
+    cdef _pickle_version0(self) noexcept:
         """
         EXAMPLES::
 
@@ -500,7 +500,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         return str_to_bytes(self._export_as_string(32), 'ascii')
 
-    cpdef _export_as_string(self, int base=10):
+    cpdef _export_as_string(self, int base=10) noexcept:
         """
         Return space separated string of the entries in this matrix, in the
         given base. This is optimized for speed.
@@ -585,7 +585,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         else:
             raise RuntimeError("unknown matrix version (=%s)"%version)
 
-    cdef _unpickle_version0(self, data):
+    cdef _unpickle_version0(self, data) noexcept:
         cdef Py_ssize_t i, j, n, k
         data = data.split()
         n = self._nrows * self._ncols
@@ -611,7 +611,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
     # LEVEL 1 helpers:
     #   These function support the implementation of the level 1 functionality.
     ########################################################################
-    cdef Matrix_integer_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols):
+    cdef Matrix_integer_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
         """
         Return a new matrix over the integers from given parent
         All memory is allocated for this matrix, but its
@@ -820,7 +820,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         fmpz_clear(s)
         return M
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right) noexcept:
         cdef Matrix_integer_dense M
 
         if self._ncols != right._nrows:
@@ -833,7 +833,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -853,7 +853,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two dense matrices over ZZ.
 
@@ -878,7 +878,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two dense matrices over ZZ.
 
@@ -1018,7 +1018,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         r"""
         Compare ``self`` with ``right``, examining entries in
         lexicographic (row major) ordering.
@@ -1052,7 +1052,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return rich_to_bool(op, 0)
 
     # TODO: Implement better
-    cdef _vector_times_matrix_(self, Vector v):
+    cdef _vector_times_matrix_(self, Vector v) noexcept:
         """
         Return the vector times matrix product.
 
@@ -1577,7 +1577,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         else:
             return self._mod_int_c(modulus)
 
-    cdef _mod_two(self):
+    cdef _mod_two(self) noexcept:
         """
         TESTS:
 
@@ -1591,7 +1591,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         MS = matrix_space.MatrixSpace(GF(2), self._nrows, self._ncols)
         return Matrix_mod2_dense(MS, self, True, True)
 
-    cdef _mod_int_c(self, mod_int p):
+    cdef _mod_int_c(self, mod_int p) noexcept:
         from .matrix_modn_dense_float import MAX_MODULUS as MAX_MODULUS_FLOAT
         from .matrix_modn_dense_double import MAX_MODULUS as MAX_MODULUS_DOUBLE
 
@@ -1678,7 +1678,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_free(entry_list)
         return res
 
-    cpdef _echelon_in_place(self, str algorithm):
+    cpdef _echelon_in_place(self, str algorithm) noexcept:
         cdef Matrix_integer_dense E
         E = self.echelon_form()
         sig_on()
@@ -5245,7 +5245,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             fmpz_get_mpz(v._entries[j], fmpz_mat_entry(self._matrix, j, i))
         return v
 
-    cdef _stack_impl(self, bottom):
+    cdef _stack_impl(self, bottom) noexcept:
         r"""
         Return the matrix ``self`` on top of ``bottom``::
 
@@ -5946,7 +5946,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return ComputeMinimalPolynomials(self).integer_valued_polynomials_generators()
 
 
-cdef inline GEN pari_GEN(Matrix_integer_dense B):
+cdef inline GEN pari_GEN(Matrix_integer_dense B) noexcept:
     r"""
     Create the PARI GEN object on the stack defined by the integer
     matrix B. This is used internally by the function for conversion
@@ -5959,7 +5959,7 @@ cdef inline GEN pari_GEN(Matrix_integer_dense B):
     return A
 
 
-cdef extract_hnf_from_pari_matrix(Matrix_integer_dense self, Gen H, bint include_zero_rows):
+cdef extract_hnf_from_pari_matrix(Matrix_integer_dense self, Gen H, bint include_zero_rows) noexcept:
     cdef mpz_t tmp
     mpz_init(tmp)
 
@@ -5981,7 +5981,7 @@ cdef extract_hnf_from_pari_matrix(Matrix_integer_dense self, Gen H, bint include
     return B
 
 
-cdef _clear_columns(Matrix_integer_dense A, pivots, Py_ssize_t n):
+cdef _clear_columns(Matrix_integer_dense A, pivots, Py_ssize_t n) noexcept:
     # Clear all columns
     cdef Py_ssize_t i, k, p, l, m = A._ncols
     cdef fmpz_t c,t
@@ -6004,7 +6004,7 @@ cdef _clear_columns(Matrix_integer_dense A, pivots, Py_ssize_t n):
     sig_off()
 
 
-cpdef _lift_crt(Matrix_integer_dense M, residues, moduli=None):
+cpdef _lift_crt(Matrix_integer_dense M, residues, moduli=None) noexcept:
     """
     INPUT:
 

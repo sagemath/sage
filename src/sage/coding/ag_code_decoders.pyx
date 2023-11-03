@@ -1318,7 +1318,7 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
         return self._encode(self._decode(received_vector, **kwargs))
 
 
-cdef inline int pos_mod(int a, int b):
+cdef inline int pos_mod(int a, int b) noexcept:
     """
     Return ``a % b`` such that the result is positive.
 
@@ -1384,7 +1384,7 @@ cdef class Decoder_K():
         message_index = self.message_index
         return vector(sum([message[i]*code_basis[i] for i in range(len(message_index))]))
 
-    cdef inline int _degree(self, Polynomial f):
+    cdef inline int _degree(self, Polynomial f) noexcept:
         """
         Return the degree of polynomial ``f``
 
@@ -1395,7 +1395,7 @@ cdef class Decoder_K():
         else:
             return f.degree()
 
-    cdef void _exponents(self, int s, int *sk, int *si):
+    cdef void _exponents(self, int s, int *sk, int *si) noexcept:
         """
         Compute the exponents of the monomial with weighted degree ``s``.
 
@@ -1414,7 +1414,7 @@ cdef class Decoder_K():
 
     @cython.wraparound(False)
     @cython.boundscheck(False)
-    cdef void _substitution(self, FreeModuleElement vec, w, int k, Py_ssize_t i):
+    cdef void _substitution(self, FreeModuleElement vec, w, int k, Py_ssize_t i) noexcept:
         r"""
         Substitute ``z`` with ``(z + w*phi_s)``.
 
@@ -1740,7 +1740,7 @@ cdef class Decoder_K():
 
     @cython.wraparound(False)
     @cython.boundscheck(False)
-    cdef inline int _next(self, int s):
+    cdef inline int _next(self, int s) noexcept:
         """
         Return the next value after ``s`` in dRbar(dWbar).
         """
@@ -1757,7 +1757,7 @@ cdef class Decoder_K():
 
     @cython.wraparound(False)
     @cython.boundscheck(False)
-    cdef inline void _get_eta_basis(self, list basis, list vecs, int s0, mon_func):
+    cdef inline void _get_eta_basis(self, list basis, list vecs, int s0, mon_func) noexcept:
         """
         Compute a basis of J and h-functions via FGLM algorithm.
 
