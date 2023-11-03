@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-objects
+ */
 #include "Python.h"
 #include <stdbool.h>
 
