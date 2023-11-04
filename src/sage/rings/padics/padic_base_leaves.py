@@ -225,7 +225,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
 
         EXAMPLES::
 
-            sage: R = ZpCR(next_prime(10^60))  #indirect doctest
+            sage: R = ZpCR(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicRingCappedRelative_with_category'>
 
@@ -323,7 +323,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
 
         EXAMPLES::
 
-            sage: R = ZpCA(next_prime(10^60))  #indirect doctest
+            sage: R = ZpCA(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicRingCappedAbsolute_with_category'>
 
@@ -423,7 +423,7 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
 
         EXAMPLES::
 
-            sage: R = ZpFP(next_prime(10^60))  #indirect doctest
+            sage: R = ZpFP(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicRingFloatingPoint_with_category'>
 
@@ -517,7 +517,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
 
         EXAMPLES::
 
-            sage: R = ZpFM(next_prime(10^60))  #indirect doctest
+            sage: R = ZpFM(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicRingFixedMod_with_category'>
 
@@ -558,7 +558,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
         EXAMPLES::
 
             sage: K = ZpFM(17)
-            sage: K(1) + 1  #indirect doctest
+            sage: K(1) + 1  # indirect doctest
             2
             sage: K.has_coerce_map_from(ZZ)
             True
@@ -612,8 +612,8 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
     EXAMPLES::
 
-        sage: K = Qp(17, 1000000)  #indirect doctest
-        sage: K = Qp(101)  #indirect doctest
+        sage: K = Qp(17, 1000000)  # indirect doctest
+        sage: K = Qp(101)  # indirect doctest
 
     """
 
@@ -761,7 +761,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
         EXAMPLES::
 
-            sage: R = QpFP(next_prime(10^60))  #indirect doctest
+            sage: R = QpFP(next_prime(10^60))  # indirect doctest
             sage: type(R)
             <class 'sage.rings.padics.padic_base_leaves.pAdicFieldFloatingPoint_with_category'>
 
@@ -794,7 +794,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
         EXAMPLES::
 
             sage: K = QpFP(17)
-            sage: K(1) + 1  #indirect doctest
+            sage: K(1) + 1  # indirect doctest
             2
             sage: K.has_coerce_map_from(ZZ)
             True

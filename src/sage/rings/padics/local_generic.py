@@ -228,7 +228,7 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: latex(Zq(27,names='a'))  #indirect doctest                            # needs sage.libs.ntl
+            sage: latex(Zq(27,names='a'))  # indirect doctest                           # needs sage.libs.ntl
             \Bold{Z}_{3^{3}}
         """
         return self._repr_(do_latex=True)

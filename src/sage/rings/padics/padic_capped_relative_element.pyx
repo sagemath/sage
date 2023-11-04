@@ -201,7 +201,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R = Zp(17, 10); a = ~R(14); pari(a)  #indirect doctest
+            sage: R = Zp(17, 10); a = ~R(14); pari(a)  # indirect doctest
             11 + 3*17 + 17^2 + 6*17^3 + 13*17^4 + 15*17^5 + 10*17^6 + 3*17^7 + 17^8 + 6*17^9 + O(17^10)
             sage: pari(R(0))                                                            # needs sage.libs.pari
             0
@@ -216,7 +216,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
         EXAMPLES::
 
-            sage: R = Zp(5, 10); a = R(17); pari(a)  #indirect doctest
+            sage: R = Zp(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
             sage: pari(R(0))                                                            # needs sage.libs.pari
             0

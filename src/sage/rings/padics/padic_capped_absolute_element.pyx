@@ -117,7 +117,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         EXAMPLES::
 
             sage: R = ZpCA(5)
-            sage: pari(R(1777))  #indirect doctest                                      # needs sage.libs.pari
+            sage: pari(R(1777))  # indirect doctest                                     # needs sage.libs.pari
             2 + 5^2 + 4*5^3 + 2*5^4 + O(5^20)
             sage: pari(R(0,0))                                                          # needs sage.libs.pari
             O(5^0)
@@ -130,7 +130,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         EXAMPLES::
 
-            sage: R = ZpCA(5, 10); a = R(17); pari(a)  #indirect doctest
+            sage: R = ZpCA(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
             sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^5)

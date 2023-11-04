@@ -51,7 +51,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
-            sage: W.<w> = R.ext(f)  #indirect doctest
+            sage: W.<w> = R.ext(f)  # indirect doctest
         """
         #type checking done in factory
         self._given_poly = poly
@@ -74,7 +74,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
             sage: R = Zp(5); S.<x> = ZZ[]; f = x^5 + 25*x - 5; W.<w> = R.ext(f)
             sage: L = W.fraction_field()
-            sage: w + L(w)  #indirect doctest
+            sage: w + L(w)  # indirect doctest
             2*w + O(w^101)
             sage: w + R(5,2)
             w + w^5 + O(w^10)
@@ -143,7 +143,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             '\\Bold{Z}_{7^{3}}'
             sage: x = polygen(ZZ, 'x')
             sage: R2.<t> = R.ext(x^2 + 7)
-            sage: R2  #indirect doctest
+            sage: R2  # indirect doctest
             7-adic Eisenstein Extension Ring in t defined by x^2 + 7
             sage: R2._latex_()
             '\\Bold{Z}_{7}[t]'
@@ -157,7 +157,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: K1._latex_()
             '\\Bold{Q}_{7^{3}}'
             sage: K2.<t> = K.ext(x^2+7)
-            sage: K2  #indirect doctest
+            sage: K2  # indirect doctest
             7-adic Eisenstein Extension Field in t defined by x^2 + 7
             sage: K2._latex_()
             '\\Bold{Q}_{7}[t]'

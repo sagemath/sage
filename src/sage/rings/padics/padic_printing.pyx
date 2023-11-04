@@ -379,7 +379,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         TESTS::
 
-            sage: R = Qp(7, print_mode='bars', print_sep='&')  #indirect doctest
+            sage: R = Qp(7, print_mode='bars', print_sep='&')  # indirect doctest
 
             sage: R = Zp(5, print_mode='digits', print_max_terms=10)
             Traceback (most recent call last):
@@ -614,7 +614,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         EXAMPLES::
 
-            sage: Zp(5)._printer  #indirect doctest
+            sage: Zp(5)._printer  # indirect doctest
             series printer for 5-adic Ring with capped relative precision 20
         """
         return "%s printer for %s"%(self._print_mode(), self.ring)
@@ -830,7 +830,7 @@ cdef class pAdicPrinter_class(SageObject):
         EXAMPLES::
 
             sage: P = Zp(17)._printer
-            sage: P._base_p_list(1298734,True)  #indirect doctest
+            sage: P._base_p_list(1298734,True)  # indirect doctest
             [2, 15, 5, 9, 15]
             sage: P._base_p_list(1298734,False)
             [2, -2, 6, -8, -1, 1]
@@ -900,7 +900,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         EXAMPLES::
 
-            sage: R = Zp(7,4,'capped-rel','val-unit'); a = R(364); a  #indirect doctest
+            sage: R = Zp(7,4,'capped-rel','val-unit'); a = R(364); a  # indirect doctest
             7 * 52 + O(7^5)
             sage: print(a.str('terse'))
             364 + O(7^5)

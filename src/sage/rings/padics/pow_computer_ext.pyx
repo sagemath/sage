@@ -682,7 +682,7 @@ cdef class PowComputer_ext(PowComputer_class):
         EXAMPLES::
 
             sage: PC = PowComputer_ext_maker(5, 6, 6, 12, False, ntl.ZZ_pX([-5,0,1],5^6),'small', 'e',ntl.ZZ_pX([1],5^6))
-            sage: PC._pow_mpz_t_top_test()  #indirect doctest
+            sage: PC._pow_mpz_t_top_test()  # indirect doctest
             15625
         """
         ZZ_to_mpz(self.temp_m, &self.top_power)
@@ -918,7 +918,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         EXAMPLES::
 
             sage: PC = PowComputer_ext_maker(5, 5, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10))
-            sage: PC._restore_context_capdiv_test(8)  #indirect doctest
+            sage: PC._restore_context_capdiv_test(8)  # indirect doctest
         """
         cdef Integer _n = Integer(n)
         self.restore_context_capdiv(mpz_get_si(_n.value))
@@ -2098,7 +2098,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
         EXAMPLES::
 
             sage: PC = PowComputer_ext_maker(5, 5, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'big','e',ntl.ZZ_pX([1],5^10))
-            sage: PC._restore_top_context_test()  #indirect doctest
+            sage: PC._restore_top_context_test()  # indirect doctest
         """
         self.top_context.restore_c()
 
@@ -2158,7 +2158,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
             sage: A = PowComputer_ext_maker(5, 5, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'big','e',ntl.ZZ_pX([1],5^10))
             sage: a = ntl.ZZ_pX([129223,1231],5^10)
             sage: b = ntl.ZZ_pX([289741,323],5^10)
-            sage: A._get_top_modulus_test(a, b)  #indirect doctest
+            sage: A._get_top_modulus_test(a, b)  # indirect doctest
             [1783058 7785200]
         """
         return &self.top_mod
@@ -2307,7 +2307,7 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
 
             sage: from sage.rings.padics.pow_computer_ext import ZZ_pX_eis_shift_test
             sage: A = PowComputer_ext_maker(5, 10, 10, 40, False, ntl.ZZ_pX([-5,75,15,0,1],5^10), 'big', 'e',ntl.ZZ_pX([1,-15,-3],5^10))
-            sage: ZZ_pX_eis_shift_test(A, [0, 1], 1, 5)  #indirect doctest
+            sage: ZZ_pX_eis_shift_test(A, [0, 1], 1, 5)  # indirect doctest
             [1]
             sage: ZZ_pX_eis_shift_test(A, [0, 0, 1], 1, 5)
             [0 1]
