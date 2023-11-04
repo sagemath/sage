@@ -1803,6 +1803,16 @@ class DocTestDispatcher(SageObject):
         """
         opt = self.controller.options
 
+        job_client = None
+        try:
+            from gnumake_tokenpool import JobClient, NoJobServer
+            try:
+                job_client = JobClient()
+            except NoJobServer:
+                pass
+        except ImportError:
+            pass
+
         source_iter = iter(self.controller.sources)
 
         # If timeout was 0, simply set a very long time
@@ -1925,6 +1935,9 @@ class DocTestDispatcher(SageObject):
                             w.copied_pid = w.pid
                             w.close()
                             finished.append(w)
+                            if job_client:
+                                job_client.release()
+
                     workers = new_workers
 
                     # Similarly, process finished workers.
@@ -1959,28 +1972,25 @@ class DocTestDispatcher(SageObject):
                         break
 
                     # Start new workers if possible
-                    while source_iter is not None and len(workers) < opt.nthreads:
-                        try:
-                            source = next(source_iter)
-                        except StopIteration:
-                            source_iter = None
-                        else:
-                            # Start a new worker.
-                            import copy
-                            worker_options = copy.copy(opt)
-                            if target_endtime is not None:
-                                worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
-                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit])
-                            heading = self.controller.reporter.report_head(w.source)
-                            if not self.controller.options.only_errors:
-                                w.messages = heading + "\n"
-                            # Store length of heading to detect if the
-                            # worker has something interesting to report.
-                            w.heading_len = len(w.messages)
-                            w.start()  # This might take some time
-                            w.deadline = time.time() + opt.timeout
-                            workers.append(w)
-                            restart = True
+                    while ((source := next(source_iter, None)) is not None
+                           and len(workers) < opt.nthreads
+                           and (not job_client or job_client.acquire())):
+                        # Start a new worker.
+                        import copy
+                        worker_options = copy.copy(opt)
+                        if target_endtime is not None:
+                            worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
+                        w = DocTestWorker(source, options=worker_options, funclist=[sel_exit])
+                        heading = self.controller.reporter.report_head(w.source)
+                        if not self.controller.options.only_errors:
+                            w.messages = heading + "\n"
+                        # Store length of heading to detect if the
+                        # worker has something interesting to report.
+                        w.heading_len = len(w.messages)
+                        w.start()  # This might take some time
+                        w.deadline = time.time() + opt.timeout
+                        workers.append(w)
+                        restart = True
 
                     # Recompute state if needed
                     if restart:
@@ -2040,6 +2050,8 @@ class DocTestDispatcher(SageObject):
                         sleep(die_timeout)
                         for w in workers:
                             w.kill()
+                            if job_client:
+                                job_client.release()
                     finally:
                         os._exit(0)
 
