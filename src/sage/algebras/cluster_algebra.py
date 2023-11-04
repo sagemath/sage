@@ -301,7 +301,7 @@ to first disable F-polynomials and then recompute only the desired mutations::
     sage: # long time
     sage: A.reset_exploring_iterator(mutating_F=False)
     sage: v = (-1, 1, -2, 2, -1, 1, -1, 1, 1)
-    sage: seq = A.find_g_vector(v); seq
+    sage: seq = A.find_g_vector(v); seq             # random
     [1, 0, 2, 6, 5, 4, 3, 8, 1]
     sage: S = A.initial_seed().mutate(seq, inplace=False)
     sage: v in S.g_vectors()
