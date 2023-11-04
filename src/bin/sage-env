@@ -277,15 +277,6 @@ export UNAME=`uname | sed 's/CYGWIN.*/CYGWIN/' `
 # Mac OS X-specific setup
 if [ "$UNAME" = "Darwin" ]; then
     export MACOSX_VERSION=`uname -r | awk -F. '{print $1}'`
-    # Try to identify command-line tools version.
-    # See https://apple.stackexchange.com/q/180957/351985.
-    XCLT_VERSION=`pkgutil --pkg-info=com.apple.pkg.CLTools_Executables | awk '/version: / { print $NF }' | cut -d. -f-1`
-    # If this didn't produce an integer, set to 0.
-    case $XCLT_VERSION in
-        ''|*[!0-9]*) export XCLT_VERSION=0 ;; # bad
-        *) : ;; # good
-    esac
-    export XCLT_VERSION
     # Work around problems on recent OS X crashing with an error message
     # "... may have been in progress in another thread when fork() was called"
     # when objective-C functions are called after fork(). See Issue #25921.
@@ -383,7 +374,10 @@ if [ -n "$PYTHONHOME" ]; then
 fi
 
 if [ -n "$SAGE_LOCAL" ]; then
-    if [ "$UNAME" = "Darwin" ] && [ "$XCLT_VERSION" -ge 15 ]; then
+    # On OS X, test whether "ld-classic" is present in the installed
+    # version of the command-line tools. If so, we add "-ld_classic"
+    # to LD_FLAGS. See #36599.
+    if [ "$UNAME" = "Darwin" ] && [ -x "$(xcode-select -p)/usr/bin/ld-classic" ] ; then
         LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-ld_classic,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
     else
         LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
