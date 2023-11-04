@@ -368,7 +368,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[2,3],[1,3],[1,3]], multiedges=True)
             sage: MG = Matroid(G)
-            sage: sorted([sorted(c) for c in M.circuits()])
+            sage: sorted([sorted(c) for c in MG.circuits()])
             [[0, 1], [0, 2, 4], [0, 2, 5], [0, 3, 4],
              [0, 3, 5], [1, 2, 4], [1, 2, 5], [1, 3, 4],
              [1, 3, 5], [2, 3], [4, 5]]
