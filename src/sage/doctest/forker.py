@@ -1972,25 +1972,31 @@ class DocTestDispatcher(SageObject):
                         break
 
                     # Start new workers if possible
-                    while ((source := next(source_iter, None)) is not None
-                           and len(workers) < opt.nthreads
+                    while (source_iter is not None and len(workers) < opt.nthreads
                            and (not job_client or job_client.acquire())):
-                        # Start a new worker.
-                        import copy
-                        worker_options = copy.copy(opt)
-                        if target_endtime is not None:
-                            worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
-                        w = DocTestWorker(source, options=worker_options, funclist=[sel_exit])
-                        heading = self.controller.reporter.report_head(w.source)
-                        if not self.controller.options.only_errors:
-                            w.messages = heading + "\n"
-                        # Store length of heading to detect if the
-                        # worker has something interesting to report.
-                        w.heading_len = len(w.messages)
-                        w.start()  # This might take some time
-                        w.deadline = time.time() + opt.timeout
-                        workers.append(w)
-                        restart = True
+                        try:
+                            source = next(source_iter)
+                        except StopIteration:
+                            source_iter = None
+                            if job_client:
+                                job_client.release()
+                        else:
+                            # Start a new worker.
+                            import copy
+                            worker_options = copy.copy(opt)
+                            if target_endtime is not None:
+                                worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
+                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit])
+                            heading = self.controller.reporter.report_head(w.source)
+                            if not self.controller.options.only_errors:
+                                w.messages = heading + "\n"
+                            # Store length of heading to detect if the
+                            # worker has something interesting to report.
+                            w.heading_len = len(w.messages)
+                            w.start()  # This might take some time
+                            w.deadline = time.time() + opt.timeout
+                            workers.append(w)
+                            restart = True
 
                     # Recompute state if needed
                     if restart:
