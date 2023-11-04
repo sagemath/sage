@@ -2838,7 +2838,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: x = 1 - z
             sage: z.log().precision_absolute()
             -975
-
             sage: (x^5/5).precision_absolute()
             -570
             sage: (x^25/25).precision_absolute()
@@ -3706,22 +3705,22 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: elt in (elt^108).nth_root(108, all=True)
             True
 
-            sage: # needs sage.libs.flint
+            sage: # needs sage.libs.flint sage.libs.ntl
             sage: K.<a> = ZqCA(3^2)
-            sage: S.<x> = K[]                                                           # needs sage.libs.ntl
+            sage: S.<x> = K[]
             sage: Z = (1+x)^3 + 3*x^2
             sage: E = Z^2 + Z + 1
-            sage: L.<pi> = K.extension(E)                                               # needs sage.libs.ntl
-            sage: elt = L.random_element()                                              # needs sage.libs.ntl
-            sage: elt in (elt^9).nth_root(9, all=True)                                  # needs sage.libs.ntl
+            sage: L.<pi> = K.extension(E)
+            sage: elt = L.random_element()
+            sage: elt in (elt^9).nth_root(9, all=True)
             True
-            sage: elt = L.random_element()                                              # needs sage.libs.ntl
-            sage: try:                                                                  # needs sage.libs.ntl sage.rings.real_double
+            sage: elt = L.random_element()
+            sage: try:                                                                  # needs sage.rings.real_double
             ....:     assert elt in (elt^27).nth_root(27, all=True)
             ....: except sage.rings.padics.precision_error.PrecisionError:
             ....:     pass
-            sage: elt = L.random_element()                                              # needs sage.libs.ntl
-            sage: try:                                                                  # needs sage.libs.ntl sage.rings.real_double
+            sage: elt = L.random_element()
+            sage: try:                                                                  # needs sage.rings.real_double
             ....:     assert elt in (elt^108).nth_root(108, all=True)
             ....: except sage.rings.padics.precision_error.PrecisionError:
             ....:     pass
