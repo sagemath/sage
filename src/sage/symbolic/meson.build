@@ -1,7 +1,7 @@
 # cannot be found via pkg-config
 singular = declare_dependency(
   dependencies: [
-    cc.find_library('singular', required: false),
+    cc.find_library('Singular', required: false),
   ],
 )
 ginac = declare_dependency(
@@ -113,8 +113,9 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/symbolic',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ext, inc_ginac, inc_gsl, inc_pynac, inc_rings],
-        dependencies: [py_dep, cypari2, cysignals, flint, ginac, gmp, gsl, mpfr, pari, singular],
+        cpp_args : '-std=c++11',
+        include_directories: [inc_cpython, inc_ext, inc_ginac, inc_gsl, inc_pynac, inc_rings, include_directories('../libs/gmp')],
+        dependencies: [py_dep, cypari2, cysignals, gmp, gmpxx, flint, ginac, gsl, m, mpfr, pari, singular],
     )
 endforeach
 
