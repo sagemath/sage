@@ -459,17 +459,18 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCA(5,5)
             sage: S.<x> = ZZ[]
             sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = (2+3*w)^7
             sage: b = (6+w^3)^5
-            sage: a.trace()                                                             # needs sage.geometry.polyhedron
+            sage: a.trace()
             3*5 + 2*5^2 + 3*5^3 + 2*5^4 + O(5^5)
-            sage: a.trace() + b.trace()                                                 # needs sage.geometry.polyhedron
+            sage: a.trace() + b.trace()
             4*5 + 5^2 + 5^3 + 2*5^4 + O(5^5)
-            sage: (a+b).trace()                                                         # needs sage.geometry.polyhedron
+            sage: (a+b).trace()
             4*5 + 5^2 + 5^3 + 2*5^4 + O(5^5)
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
@@ -477,11 +478,11 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             sage: W.<w> = R.ext(f)
             sage: a = (2+3*w)^7
             sage: b = (6+w^3)^5
-            sage: a.trace()                                                             # needs sage.geometry.polyhedron
+            sage: a.trace()
             3*5 + 2*5^2 + 3*5^3 + 2*5^4
-            sage: a.trace() + b.trace()                                                 # needs sage.geometry.polyhedron
+            sage: a.trace() + b.trace()
             4*5 + 5^2 + 5^3 + 2*5^4
-            sage: (a+b).trace()                                                         # needs sage.geometry.polyhedron
+            sage: (a+b).trace()
             4*5 + 5^2 + 5^3 + 2*5^4
 
         TESTS:
