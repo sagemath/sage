@@ -451,7 +451,7 @@ class AugmentedValuation_base(InductiveValuation):
             sage: w = v.augmentation(x, 1)
             sage: w.augmentation_chain()
             [[ Gauss valuation induced by 2-adic valuation, v(x) = 1 ],
-                 Gauss valuation induced by 2-adic valuation]
+             Gauss valuation induced by 2-adic valuation]
 
         For performance reasons, (and to simplify the underlying
         implementation,) trivial augmentations might get dropped. You should
@@ -461,7 +461,7 @@ class AugmentedValuation_base(InductiveValuation):
             sage: ww = w.augmentation(x, 2)
             sage: ww.augmentation_chain()
             [[ Gauss valuation induced by 2-adic valuation, v(x) = 2 ],
-                 Gauss valuation induced by 2-adic valuation]
+             Gauss valuation induced by 2-adic valuation]
 
         """
         return [self] + self._base_valuation.augmentation_chain()
@@ -1394,7 +1394,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
             sage: w = v.augmentation(x^2 + x + u, 1/2)
             sage: y = w.residue_ring().gen()
             sage: u1 = w.residue_ring().base().gen()
-            sage: # needs sage.libs.ntl
             sage: w.lift(1)
             1 + O(2^10)
             sage: w.lift(0)
@@ -1799,7 +1798,11 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
             sage: v = F.valuation(v)
             sage: G = y^2 - 2*x^5 + 8*x^3 + 80*x^2 + 128*x + 192
             sage: v.mac_lane_approximants(G)
-            [[ Gauss valuation induced by Valuation on rational function field induced by [ Gauss valuation induced by 2-adic valuation, v(x) = 3/2, v(x^2 + 8) = 13/4, v(x^4 + 16*x^2 + 32*x + 64) = 20/3 ], v(y + 4*x + 8) = 31/8 ]]
+            [[ Gauss valuation induced by
+               Valuation on rational function field induced by
+                 [ Gauss valuation induced by 2-adic valuation, v(x) = 3/2,
+                   v(x^2 + 8) = 13/4, v(x^4 + 16*x^2 + 32*x + 64) = 20/3 ],
+               v(y + 4*x + 8) = 31/8 ]]
 
         """
         f = self.domain().coerce(f)
