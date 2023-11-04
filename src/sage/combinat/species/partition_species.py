@@ -141,7 +141,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
 
             sage: P = species.PartitionSpecies(); P
             Partition species
-       """
+        """
         return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
