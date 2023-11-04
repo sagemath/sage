@@ -1783,7 +1783,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
             (u + 1)*2^-1 + O(2^4)
 
         Check that :trac:`25607` has been resolved, i.e., the coefficients
-        in the following example are small::`
+        in the following example are small::
 
             sage: # needs sage.libs.ntl sage.rings.number_field
             sage: R.<x> = QQ[]
