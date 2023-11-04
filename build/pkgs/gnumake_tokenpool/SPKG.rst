@@ -18,4 +18,5 @@ MIT
 Upstream Contact
 ----------------
 
-https://github.com/milahu/gnumake-tokenpool
+- https://github.com/milahu/gnumake-tokenpool (upstream)
+- https://github.com/mkoeppe/gnumake-tokenpool (patch)
