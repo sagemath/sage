@@ -346,7 +346,7 @@ class WordMorphism(SageObject):
         The image of a letter can be a set, but the order is not
         preserved::
 
-            sage: WordMorphism({2:[4,5,6],3:set([4,1,8])}) #random results
+            sage: WordMorphism({2:[4,5,6],3:set([4,1,8])})  # random results
             WordMorphism: 2->456, 3->814
 
         If the image of a letter is not iterable, it is considered as a
@@ -1099,23 +1099,24 @@ class WordMorphism(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: fibo = WordMorphism('a->ab,b->a')
             sage: tm = WordMorphism('a->ab,b->ba')
-            sage: Mfibo = matrix(fibo); Mfibo     # indirect doctest                    # needs sage.modules
+            sage: Mfibo = matrix(fibo); Mfibo      # indirect doctest
             [1 1]
             [1 0]
-            sage: Mtm = matrix(tm); Mtm                                                 # needs sage.modules
+            sage: Mtm = matrix(tm); Mtm
             [1 1]
             [1 1]
-            sage: Mtm * Mfibo == matrix(tm*fibo)   # indirect doctest                   # needs sage.modules
+            sage: Mtm * Mfibo == matrix(tm*fibo)   # indirect doctest
             True
-            sage: Mfibo * Mtm == matrix(fibo*tm)   # indirect doctest                   # needs sage.modules
+            sage: Mfibo * Mtm == matrix(fibo*tm)   # indirect doctest
             True
-            sage: Mfibo.parent()                                                        # needs sage.modules
+            sage: Mfibo.parent()
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-            sage: p = Mfibo.charpoly(); p                                               # needs sage.modules
+            sage: p = Mfibo.charpoly(); p
             x^2 - x - 1
-            sage: p.roots(ring=RR, multiplicities=False)                                # needs sage.modules
+            sage: p.roots(ring=RR, multiplicities=False)
             [-0.618033988749895, 1.61803398874989]
         """
         if R is None:
@@ -1406,19 +1407,19 @@ class WordMorphism(SageObject):
         EXAMPLES::
 
             sage: m = WordMorphism('a->b,b->a')
-            sage: m.partition_of_domain_alphabet() #random ordering
+            sage: m.partition_of_domain_alphabet()  # random ordering
             ({'a'}, {'b'}, {})
             sage: m = WordMorphism('a->b,b->a,c->c')
-            sage: m.partition_of_domain_alphabet() #random ordering
+            sage: m.partition_of_domain_alphabet()  # random ordering
             ({'a'}, {'b'}, {'c'})
             sage: m = WordMorphism('a->a,b->b,c->c')
-            sage: m.partition_of_domain_alphabet() #random ordering
+            sage: m.partition_of_domain_alphabet()  # random ordering
             ({}, {}, {'a', 'c', 'b'})
             sage: m = WordMorphism('A->T,T->A,C->G,G->C')
-            sage: m.partition_of_domain_alphabet() #random ordering
+            sage: m.partition_of_domain_alphabet()  # random ordering
             ({'A', 'C'}, {'T', 'G'}, {})
             sage: I = WordMorphism({0:oo,oo:0,1:-1,-1:1,2:-2,-2:2,3:-3,-3:3})
-            sage: I.partition_of_domain_alphabet() #random ordering
+            sage: I.partition_of_domain_alphabet()  # random ordering
             ({0, -1, -3, -2}, {1, 2, 3, +Infinity}, {})
 
         TESTS::

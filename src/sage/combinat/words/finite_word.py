@@ -6824,18 +6824,19 @@ class FiniteWord_class(Word_class):
 
         EXAMPLES::
 
-            sage: Word(range(20)).colored_vector()                                      # needs sage.plot
+            sage: # needs sage.plot
+            sage: Word(range(20)).colored_vector()
             Graphics object consisting of 21 graphics primitives
-            sage: Word(range(100)).colored_vector(0,0,10,1)                             # needs sage.plot
+            sage: Word(range(100)).colored_vector(0,0,10,1)
             Graphics object consisting of 101 graphics primitives
-            sage: Words(range(100))(range(10)).colored_vector()                         # needs sage.plot
+            sage: Words(range(100))(range(10)).colored_vector()
             Graphics object consisting of 11 graphics primitives
             sage: w = Word('abbabaab')
-            sage: w.colored_vector()                                                    # needs sage.plot
+            sage: w.colored_vector()
             Graphics object consisting of 9 graphics primitives
-            sage: w.colored_vector(cmap='autumn')                                       # needs sage.plot
+            sage: w.colored_vector(cmap='autumn')
             Graphics object consisting of 9 graphics primitives
-            sage: Word(range(20)).colored_vector(label='Rainbow')                       # needs sage.plot
+            sage: Word(range(20)).colored_vector(label='Rainbow')
             Graphics object consisting of 23 graphics primitives
 
         When two words are defined under the same parent, same letters are
