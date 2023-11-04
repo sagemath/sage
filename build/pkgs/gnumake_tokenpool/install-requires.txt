@@ -1,1 +1,1 @@
-git+https://github.com/mkoeppe/gnumake-tokenpool@ba838b031da2f20af237159ad6e91ada038ef921#egg=gnumake_tokenpool
+gnumake-tokenpool
