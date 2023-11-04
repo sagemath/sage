@@ -1255,13 +1255,16 @@ class NumberField_relative(NumberField_generic):
             sage: R.<z> = PolynomialRing(K)
             sage: m1 = 3*z9^4 - 4*z9^3 - 4*z9^2 + 3*z9 - 8
             sage: L1 = K.extension(z^2 - m1, 'b1')
-            sage: G = K.galois_group(); gamma = G.gen()                                 # needs sage.groups
-            sage: m2 = (gamma^2)(m1)                                                    # needs sage.groups
-            sage: L2 = K.extension(z^2 - m2, 'b2')                                      # needs sage.groups
-            sage: L1.is_isomorphic_relative(L2)                                         # needs sage.groups
+
+            sage: # needs sage.groups
+            sage: G = K.galois_group(); gamma = G.gen()
+            sage: m2 = (gamma^2)(m1)
+            sage: L2 = K.extension(z^2 - m2, 'b2')
+            sage: L1.is_isomorphic_relative(L2)
             False
-            sage: L1.is_isomorphic(L2)                                                  # needs sage.groups
+            sage: L1.is_isomorphic(L2)
             True
+
             sage: L3 = K.extension(z^4 - m1, 'b3')
             sage: L1.is_isomorphic_relative(L3)
             False
@@ -1276,12 +1279,14 @@ class NumberField_relative(NumberField_generic):
             sage: L1cyc = Kcyc.extension(zcyc^2 - m1cyc, 'b1cyc')
             sage: L1.is_isomorphic_relative(L1cyc, base_isom=phi1)
             True
-            sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi1)                      # needs sage.groups
+
+            sage: # needs sage.groups
+            sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi1)
             False
-            sage: phi2 = K.hom([phi1((gamma^(-2))(z9))])                                # needs sage.groups
-            sage: L1.is_isomorphic_relative(L1cyc, base_isom=phi2)                      # needs sage.groups
+            sage: phi2 = K.hom([phi1((gamma^(-2))(z9))])
+            sage: L1.is_isomorphic_relative(L1cyc, base_isom=phi2)
             False
-            sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi2)                      # needs sage.groups
+            sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi2)
             True
 
         Omitting ``base_isom`` raises a :class:`ValueError` when the base fields are not identical::
