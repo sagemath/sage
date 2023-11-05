@@ -1011,7 +1011,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     return nice_tree_decomp
 
-def label_nice_tree_decomposition(nice_TD):
+def label_nice_tree_decomposition(nice_TD, root):
     r"""
     Return a nice tree decomposition with nodes labelled accordingly.
 
@@ -1019,17 +1019,42 @@ def label_nice_tree_decomposition(nice_TD):
 
     - ``nice_TD`` -- a nice tree decomposition
 
+    - ``root`` -- the root of the nice tree decomposition
+
     OUTPUT:
 
     A nice tree decomposition with nodes labelled.
+
+    EXAMPLES::
+
+        sage: bip_one_four = graphs.CompleteBipartiteGraph(1, 4)
+        sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
+        sage: nice_TD = make_nice_tree_decomposition(bip_one_four_TD)
+        sage: label_TD = label_nice_tree_decomposition(nice_TD)
+        sage: for node in label_TD:
+        ....:     print(node, label_TD.get_vertex(node))
+        (0, {}) root
+        (1, {0}) forget
+        (2, {0, 1}) intro
+        (3, {0}) forget
+        (4, {0, 4}) join
+        (5, {0, 4}) intro
+        (6, {0, 4}) intro
+        (7, {0}) forget
+        (8, {0}) forget
+        (9, {0, 3}) intro
+        (10, {0, 2}) intro
+        (11, {3}) intro
+        (12, {2}) intro
+        (13, {}) leaf
+        (14, {}) leaf
     """
-    directed_TD = DiGraph(nice_TD.breadth_first_search(start=root,
-                                                        edges=True),
-                            format='list_of_edges')
+    directed_TD = DiGraph(nice_TD.breadth_first_search(start=root, edges=True),
+                          format='list_of_edges')
 
     # The loop starts from the root node
-    # We assume the tree decomposition is valid and nice, hence saving time
-    # on checking.
+    # We assume the tree decomposition is valid and nice,
+    # hence saving time on checking.
     for node in directed_TD:
         in_deg = directed_TD.in_degree(node)
         out_deg = directed_TD.out_degree(node)
@@ -1049,7 +1074,7 @@ def label_nice_tree_decomposition(nice_TD):
         else:
             directed_TD.set_vertex(node, 'leaf')
 
-    return Graph(directed_TD, name=name)
+    return Graph(directed_TD, name=nice_TD.name())
 
 
 #
