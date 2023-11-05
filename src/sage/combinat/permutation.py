@@ -470,7 +470,7 @@ class Permutation(CombinatorialElement):
             return RSK_inverse(*l, output='permutation')
         elif isinstance(l, (tuple, list)) and len(l) == 2 and \
             all(isinstance(x, list) for x in l):
-            P,Q = [Tableau(_) for _ in l]
+            P,Q = (Tableau(_) for _ in l)
             return RSK_inverse(P, Q, 'permutation')
         # if it's a tuple or nonempty list of tuples, also assume cycle
         # notation

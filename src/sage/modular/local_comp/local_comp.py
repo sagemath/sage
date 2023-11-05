@@ -747,7 +747,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             if len(gs) == 1:
                 # This is always the case if p != 2
-                chi1, chi2 = [G.extend_character(n, self.central_character(), [x]) for x in gvals]
+                chi1, chi2 = (G.extend_character(n, self.central_character(), [x]) for x in gvals)
             else:
                 # 2-adic cases, conductor >= 64. Here life is complicated
                 # because the quotient (O_K* / p^n)^* / (image of Z_2^*) is not
@@ -871,7 +871,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             c1q, c2q = flatten([[x]*e for x,e in theta_poly.roots(G.base_ring())])
 
             if len(qs) == 1:
-                chi1, chi2 = [G.extend_character(n, self.central_character(), [x]) for x in [c1q, c2q]]
+                chi1, chi2 = (G.extend_character(n, self.central_character(), [x]) for x in [c1q, c2q])
 
             else:
                 assert p == 3
