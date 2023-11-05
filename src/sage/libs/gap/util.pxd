@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .gap_includes cimport Obj
+from sage.libs.gap.gap_includes cimport Obj
 
 ############################################################################
 ### Hooking into the GAP memory management #################################
