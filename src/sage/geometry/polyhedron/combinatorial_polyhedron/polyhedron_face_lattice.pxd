@@ -1,8 +1,8 @@
 cimport cython
-from .list_of_faces             cimport ListOfFaces
-from .face_data_structure       cimport face_t
-from .face_list_data_structure  cimport face_list_t
-from .combinatorial_face        cimport CombinatorialFace
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces             cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure  cimport face_list_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face        cimport CombinatorialFace
 
 
 @cython.final

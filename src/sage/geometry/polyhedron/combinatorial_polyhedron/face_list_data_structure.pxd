@@ -14,7 +14,7 @@ Inline cython methods for lists of faces.
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
 
-from .face_data_structure             cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure             cimport *
 from libc.string                      cimport memset
 from cysignals.signals                cimport sig_check
 from cysignals.memory                 cimport check_allocarray, check_calloc, sig_free

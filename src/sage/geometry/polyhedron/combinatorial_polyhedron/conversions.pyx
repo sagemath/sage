@@ -72,8 +72,8 @@ from memory_allocator                 cimport MemoryAllocator
 
 from sage.matrix.matrix_dense cimport Matrix_dense
 
-from .list_of_faces                   cimport ListOfFaces
-from .face_data_structure             cimport face_next_atom, face_add_atom_safe, facet_set_coatom, face_clear
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces                   cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure             cimport face_next_atom, face_add_atom_safe, facet_set_coatom, face_clear
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
