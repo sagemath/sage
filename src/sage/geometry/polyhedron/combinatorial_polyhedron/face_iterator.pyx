@@ -182,8 +182,8 @@ from memory_allocator cimport MemoryAllocator
 
 from sage.misc.lazy_import import LazyImport
 
-from sage.geometry.polyhedron.combinatorial_polyhedron.conversions              cimport bit_rep_to_Vrep_list
-from sage.geometry.polyhedron.combinatorial_polyhedron.base                     cimport CombinatorialPolyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.base cimport CombinatorialPolyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport bit_rep_to_Vrep_list
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 
 combinatorial_face_to_polyhedral_face = LazyImport('sage.geometry.polyhedron.face', 'combinatorial_face_to_polyhedral_face')

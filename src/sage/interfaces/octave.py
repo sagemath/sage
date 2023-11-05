@@ -515,7 +515,7 @@ class Octave(Expect):
         from sage.matrix.matrix_space import MatrixSpace
         from sage.rings.rational_field import QQ
         MS = MatrixSpace(QQ,m,1)
-        b  = MS(list(b)) # converted b to a "column vector"
+        b = MS(list(b)) # converted b to a "column vector"
         sA = self.sage2octave_matrix_string(A)
         sb = self.sage2octave_matrix_string(b)
         self.eval("a = " + sA )
@@ -524,7 +524,7 @@ class Octave(Expect):
         soln = soln.replace("\n\n ","[")
         soln = soln.rstrip() + "]"
         soln = soln.replace("\n",",")
-        sol  = soln[3:]
+        sol = soln[3:]
         return eval(sol)
 
     def sage2octave_matrix_string(self, A):

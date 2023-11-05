@@ -834,7 +834,7 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
         sage: a = R(9283732, 6); b = R(17^3*237, 7)
         sage: str(a)
         '...692AAF'
-        sage: str(a^b) # indirect doctest
+        sage: str(a^b)  # indirect doctest
         '...55GA0001'
         sage: str((a // R.teichmuller(15))^b)
         '...55GA0001'
@@ -907,7 +907,7 @@ cdef class ExpansionIter():
     EXAMPLES::
 
         sage: E = Zp(5,4)(373).expansion()
-        sage: I = iter(E) # indirect doctest
+        sage: I = iter(E)  # indirect doctest
         sage: type(I)
         <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
     """
@@ -1040,7 +1040,7 @@ cdef class ExpansionIterable():
 
     EXAMPLES::
 
-        sage: E = Zp(5,4)(373).expansion() # indirect doctest
+        sage: E = Zp(5,4)(373).expansion()  # indirect doctest
         sage: type(E)
         <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIterable'>
     """

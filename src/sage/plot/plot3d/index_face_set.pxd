@@ -1,6 +1,8 @@
 # sage_setup: distribution = sagemath-plot
+
 from sage.plot.plot3d.base cimport PrimitiveObject
 from sage.plot.plot3d.transform cimport point_c, face_c, color_c
+
 
 cdef class IndexFaceSet(PrimitiveObject):
     cdef bint enclosed
@@ -14,14 +16,17 @@ cdef class IndexFaceSet(PrimitiveObject):
     # array used as storage for _faces[i].vertices
     cdef int* face_indices
 
+
 cdef class FaceIter:
     cdef Py_ssize_t i
     cdef IndexFaceSet set
+
 
 cdef class EdgeIter:
     cdef Py_ssize_t i, j
     cdef object seen
     cdef IndexFaceSet set
+
 
 cdef class VertexIter:
     cdef Py_ssize_t i

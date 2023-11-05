@@ -70,7 +70,7 @@ cdef class PowComputer_flint(PowComputer_class):
 
             sage: from sage.rings.padics.pow_computer_flint import PowComputer_flint_maker
             sage: R.<x> = ZZ[]; f = x^3 - 8*x - 2
-            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel') # indirect doctest
+            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel')  # indirect doctest
             sage: TestSuite(A).run()
 
         """
@@ -104,8 +104,8 @@ cdef class PowComputer_flint(PowComputer_class):
 
             sage: from sage.rings.padics.pow_computer_flint import PowComputer_flint_maker
             sage: R.<x> = ZZ[]; f = x^3 - 8*x - 2
-            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel') # indirect doctest
-            sage: A._test_pickling() # indirect doctest
+            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel')  # indirect doctest
+            sage: A._test_pickling()  # indirect doctest
 
         """
         return PowComputer_flint_maker, (self.prime, self.cache_limit, self.prec_cap, self.ram_prec_cap, self.in_field, self.polynomial(), self._prec_type)

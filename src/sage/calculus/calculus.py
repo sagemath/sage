@@ -664,7 +664,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
         return result.sage()
 
     elif algorithm == 'sympy':
-        expression,v,a,b = [expr._sympy_() for expr in (expression, v, a, b)]
+        expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import summation
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -921,7 +921,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         return result.sage()
 
     elif algorithm == 'sympy':
-        expression,v,a,b = [expr._sympy_() for expr in (expression, v, a, b)]
+        expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import product as sproduct
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -1745,7 +1745,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         return ex.parent()(ex._maxima_().laplace(var(t), var(s)))
 
     elif algorithm == 'sympy':
-        ex_sy, t, s = [expr._sympy_() for expr in (ex, t, s)]
+        ex_sy, t, s = (expr._sympy_() for expr in (ex, t, s))
         from sympy import laplace_transform
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -1924,7 +1924,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
         return ex.parent()(ex._maxima_().ilt(var(s), var(t)))
 
     elif algorithm == 'sympy':
-        ex_sy, s, t = [expr._sympy_() for expr in (ex, s, t)]
+        ex_sy, s, t = (expr._sympy_() for expr in (ex, s, t))
         from sympy import inverse_laplace_transform
         from sage.interfaces.sympy import sympy_init
         sympy_init()

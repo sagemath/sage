@@ -2998,11 +2998,11 @@ class RealChart(Chart):
         performed for at most 3 coordinates, which must be specified via
         the argument ``ambient_coords``)::
 
-            sage: # long time, needs sage.plot
+            sage: # needs sage.plot
             sage: M = Manifold(4, 'M', structure='topological')
             sage: X.<t,x,y,z> = M.chart()
-            sage: g = X.plot(ambient_coords=(t,x,y))  # the coordinate z is not depicted
-            sage: g
+            sage: g = X.plot(ambient_coords=(t,x,y))  # the coordinate z is not depicted  # long time
+            sage: g                                                                       # long time
             Graphics3d Object
 
         .. PLOT::

@@ -1,6 +1,8 @@
 # sage_setup: distribution = sagemath-modules
-from sage.matrix.matrix_dense cimport Matrix_dense
+
 cimport numpy as cnumpy
+
+from sage.matrix.matrix_dense cimport Matrix_dense
 
 
 cdef class Matrix_numpy_dense(Matrix_dense):

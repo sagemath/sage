@@ -48,7 +48,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: R = Zp(7, 4, 'capped-rel', 'series'); R(3)/R(5)
             2 + 4*7 + 5*7^2 + 2*7^3 + O(7^4)
-            sage: R(2/3) / R(1/3) #indirect doctest
+            sage: R(2/3) / R(1/3)  # indirect doctest
             2 + O(7^4)
             sage: R(49) / R(7)
             7 + O(7^5)
@@ -418,7 +418,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         EXAMPLES::
 
             sage: R = Zp(5); a = R(17)
-            sage: latex(a) #indirect doctest
+            sage: latex(a)  # indirect doctest
             2 + 3 \cdot 5 + O(5^{20})
         """
         # TODO: add a bunch more documentation of latexing elements
@@ -444,7 +444,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: R = Zp(7, 4, 'capped-rel', 'series'); a = R(12); b = R(5); a - b
             7 + O(7^4)
-            sage: R(4/3) - R(1/3) #indirect doctest
+            sage: R(4/3) - R(1/3)  # indirect doctest
             1 + O(7^4)
         """
         # this doctest doesn't actually test this function, since _sub_ is overridden.

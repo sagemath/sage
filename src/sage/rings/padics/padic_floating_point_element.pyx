@@ -166,7 +166,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         TESTS::
 
-            sage: ZpFP(5)(0).lift()  #indirect doctest
+            sage: ZpFP(5)(0).lift()  # indirect doctest
             0
             sage: R = QpFP(5); R(0).lift()
             0
@@ -199,7 +199,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         EXAMPLES::
 
-            sage: R = ZpFP(17, 10); a = ~R(14); pari(a)  #indirect doctest
+            sage: R = ZpFP(17, 10); a = ~R(14); pari(a)  # indirect doctest
             11 + 3*17 + 17^2 + 6*17^3 + 13*17^4 + 15*17^5 + 10*17^6 + 3*17^7 + 17^8 + 6*17^9 + O(17^10)
             sage: pari(R(0))                                                            # needs sage.libs.pari
             0
@@ -212,7 +212,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         EXAMPLES::
 
-            sage: R = ZpFP(5, 10); a = R(17); pari(a)  #indirect doctest
+            sage: R = ZpFP(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
             sage: pari(R(0))                                                            # needs sage.libs.pari
             0
@@ -421,7 +421,8 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         EXAMPLES::
 
-            sage: R.<w> = Zq(7^2,5)                                                     # needs sage.libs.ntl
+            sage: # needs sage.libs.ntl
+            sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)

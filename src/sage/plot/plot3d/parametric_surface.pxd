@@ -1,6 +1,8 @@
 # sage_setup: distribution = sagemath-plot
+
 from sage.plot.plot3d.index_face_set cimport IndexFaceSet
 from sage.plot.plot3d.transform cimport point_c
+
 
 cdef class ParametricSurface(IndexFaceSet):
     cdef object f

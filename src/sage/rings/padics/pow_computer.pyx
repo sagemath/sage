@@ -558,7 +558,7 @@ cdef class PowComputer_base(PowComputer_class):
         EXAMPLES::
 
             sage: PC = PowComputer(3, 5, 10)
-            sage: PC._pow_mpz_t_top_test()  #indirect doctest
+            sage: PC._pow_mpz_t_top_test()  # indirect doctest
             59049
         """
         return self.top_power

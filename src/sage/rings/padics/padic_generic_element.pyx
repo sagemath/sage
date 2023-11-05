@@ -68,7 +68,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         ::
 
             sage: R = Zp(5); a = R(5, 6); b = R(5 + 5^6, 8)
-            sage: a == b  #indirect doctest
+            sage: a == b  # indirect doctest
             True
 
         ::
@@ -330,7 +330,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         EXAMPLES::
 
             sage: R = ZpCA(5); a = R(129378); b = R(2398125)
-            sage: a // b  #indirect doctest
+            sage: a // b  # indirect doctest
             1 + 2*5 + 2*5^3 + 4*5^4 + 5^6 + 5^7 + 5^8 + 4*5^9 + 2*5^10 + 4*5^11 + 4*5^12 + 2*5^13 + 3*5^14 + O(5^16)
             sage: a / b
             4*5^-4 + 3*5^-3 + 2*5^-2 + 5^-1 + 3 + 3*5 + 4*5^2 + 2*5^4 + 2*5^6 + 4*5^7 + 5^9 + 5^10 + 5^11 + O(5^12)
@@ -376,7 +376,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
             sage: R = Zp(7,4,'capped-rel','series'); a = R(1/3); a
             5 + 4*7 + 4*7^2 + 4*7^3 + O(7^4)
-            sage: a[0]  #indirect doctest
+            sage: a[0]  # indirect doctest
             doctest:warning
             ...
             DeprecationWarning: __getitem__ is changing to match the behavior of number fields. Please use expansion instead.
@@ -2111,7 +2111,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         ::
 
-            sage: Zp(5)(5).valuation()  #indirect doctest
+            sage: Zp(5)(5).valuation()  # indirect doctest
             1
         """
         raise NotImplementedError
@@ -2307,7 +2307,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: zz = (1 + a*pi).log()
             sage: ww = pi.exp()                                                         # needs sage.symbolic
             sage: beta = P.hom([-pi], base_map=cc)
-            sage: beta(ww*zz) == beta(ww)*beta(zz)
+            sage: beta(ww*zz) == beta(ww)*beta(zz)                                      # needs sage.symbolic
             True
         """
         L = self.parent()
@@ -2839,7 +2839,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: x = 1 - z
             sage: z.log().precision_absolute()
             -975
-
             sage: (x^5/5).precision_absolute()
             -570
             sage: (x^25/25).precision_absolute()
@@ -3707,22 +3706,22 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: elt in (elt^108).nth_root(108, all=True)
             True
 
-            sage: # needs sage.libs.flint
+            sage: # needs sage.libs.flint sage.libs.ntl
             sage: K.<a> = ZqCA(3^2)
-            sage: S.<x> = K[]                                                           # needs sage.libs.ntl
+            sage: S.<x> = K[]
             sage: Z = (1+x)^3 + 3*x^2
             sage: E = Z^2 + Z + 1
-            sage: L.<pi> = K.extension(E)                                               # needs sage.libs.ntl
-            sage: elt = L.random_element()                                              # needs sage.libs.ntl
-            sage: elt in (elt^9).nth_root(9, all=True)                                  # needs sage.libs.ntl
+            sage: L.<pi> = K.extension(E)
+            sage: elt = L.random_element()
+            sage: elt in (elt^9).nth_root(9, all=True)
             True
-            sage: elt = L.random_element()                                              # needs sage.libs.ntl
-            sage: try:                                                                  # needs sage.libs.ntl sage.rings.real_double
+            sage: elt = L.random_element()
+            sage: try:                                                                  # needs sage.rings.real_double
             ....:     assert elt in (elt^27).nth_root(27, all=True)
             ....: except sage.rings.padics.precision_error.PrecisionError:
             ....:     pass
-            sage: elt = L.random_element()                                              # needs sage.libs.ntl
-            sage: try:                                                                  # needs sage.libs.ntl sage.rings.real_double
+            sage: elt = L.random_element()
+            sage: try:                                                                  # needs sage.rings.real_double
             ....:     assert elt in (elt^108).nth_root(108, all=True)
             ....: except sage.rings.padics.precision_error.PrecisionError:
             ....:     pass

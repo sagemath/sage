@@ -853,7 +853,7 @@ class Projection(SageObject):
             face_inequalities.append(facet_equation)
             vertices = cyclic_sort_vertices_2d(vertices)
             if len(vertices) >= 3:
-                v0, v1, v2 = [vector(v) for v in vertices[:3]]
+                v0, v1, v2 = (vector(v) for v in vertices[:3])
                 normal = (v2 - v0).cross_product(v1 - v0)
                 if normal.dot_product(facet_equation.A()) < 0:
                     vertices.reverse()

@@ -901,6 +901,7 @@ class ManifoldPoint(Element):
         An example of plot via a mapping: plot of a point on a 2-sphere viewed
         in the 3-dimensional space ``M``::
 
+            sage: # needs sage.plot
             sage: S2 = Manifold(2, 'S^2', structure='topological')
             sage: U = S2.open_subset('U')  # the open set covered by spherical coord.
             sage: XS.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')

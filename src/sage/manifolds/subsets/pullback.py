@@ -145,6 +145,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(2, 'R^2', structure='topological')
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
@@ -606,6 +607,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
@@ -639,6 +641,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
@@ -686,6 +689,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron
             sage: from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
             sage: M = Manifold(3, 'R^3', structure='topological')
             sage: c_cart.<x,y,z> = M.chart() # Cartesian coordinates on R^3
@@ -773,11 +777,12 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         The pullback of a (closed convex) polyhedron under a chart is closed::
 
-            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P                  # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron
+            sage: P = Polyhedron(vertices=[[0, 0], [1, 2], [3, 4]]); P
             A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
-            sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP              # needs sage.geometry.polyhedron
+            sage: McP = ManifoldSubsetPullback(c_cart, P, name='McP'); McP
             Subset McP of the 2-dimensional topological manifold R^2
-            sage: McP.is_closed()                                                       # needs sage.geometry.polyhedron
+            sage: McP.is_closed()
             True
 
         The pullback of real vector subspaces under a chart is closed::

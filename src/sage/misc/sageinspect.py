@@ -1811,6 +1811,7 @@ def formatannotation(annotation, base_module=None):
         return annotation.__module__ + '.' + annotation.__qualname__
     return repr(annotation)
 
+_formatannotation = formatannotation
 
 def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        kwonlyargs=(), kwonlydefaults=None, annotations={},
@@ -1819,7 +1820,7 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        formatvarkw=None,
                        formatvalue=None,
                        formatreturns=None,
-                       formatannotation=formatannotation):
+                       formatannotation=None):
     """
     Format an argument spec from the values returned by getfullargspec.
 
@@ -1856,6 +1857,8 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         formatvalue = lambda value: '=' + repr(value)
     if formatreturns is None:
         formatreturns = lambda text: ' -> ' + text
+    if formatannotation is None:
+        formatannotation = _formatannotation
 
     def formatargandannotation(arg):
         result = formatarg(arg)

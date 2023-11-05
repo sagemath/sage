@@ -45,7 +45,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(27)  #indirect doctest                                     # needs sage.libs.ntl
+            sage: R.<a> = Zq(27)  # indirect doctest                                    # needs sage.libs.ntl
         """
         #base = poly.base_ring()
         #if base.is_field():

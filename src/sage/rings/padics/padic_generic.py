@@ -1837,7 +1837,7 @@ class ResidueLiftingMap(Morphism):
         EXAMPLES::
 
             sage: f = Zp(2).convert_map_from(Zmod(128))
-            sage: f(7, 5) # indirect doctest
+            sage: f(7, 5)  # indirect doctest
             1 + 2 + 2^2 + O(2^5)
         """
         R = self.codomain()

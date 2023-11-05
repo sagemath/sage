@@ -119,7 +119,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         EXAMPLES::
 
             sage: R = ZpCA(5)
-            sage: pari(R(1777))  #indirect doctest                                      # needs sage.libs.pari
+            sage: pari(R(1777))  # indirect doctest                                     # needs sage.libs.pari
             2 + 5^2 + 4*5^3 + 2*5^4 + O(5^20)
             sage: pari(R(0,0))                                                          # needs sage.libs.pari
             O(5^0)
@@ -132,7 +132,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         EXAMPLES::
 
-            sage: R = ZpCA(5, 10); a = R(17); pari(a)  #indirect doctest
+            sage: R = ZpCA(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
             sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^5)
@@ -479,7 +479,8 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         EXAMPLES::
 
-            sage: R.<w> = Zq(7^2,5)                                                     # needs sage.libs.ntl
+            sage: # needs sage.libs.ntl
+            sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)

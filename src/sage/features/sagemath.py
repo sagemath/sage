@@ -515,7 +515,7 @@ class sage__libs__m4ri(JoinFeature):
         JoinFeature.__init__(self, 'sage.libs.m4ri',
                              [PythonModule('sage.matrix.matrix_gf2e_dense'),
                               PythonModule('sage.matrix.matrix_mod2_dense')],
-                             spkg='sagemath_linbox', type='standard')
+                             spkg='sagemath_m4ri', type='standard')
 
 
 class sage__libs__ntl(JoinFeature):
@@ -949,8 +949,8 @@ class sage__rings__number_field(JoinFeature):
         sage: QQbar(-1)^(1/3)
         0.500000000000000? + 0.866025403784439?*I
 
-    On the other hand, use of the universal cyclotomic field should be marked
-    ``# needs sage.libs.gap``.
+    Use of the universal cyclotomic field should be marked
+    ``# needs sage.libs.gap sage.rings.number_field``.
 
         sage: # needs sage.libs.gap sage.rings.number_field
         sage: UCF = UniversalCyclotomicField(); UCF

@@ -1469,7 +1469,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         """
         n = self.ngens() + 1
         base_ring = self.base_ring()
-        u, v, w = [base_ring(para) for para in self._cubic_equation_parameters]
+        u, v, w = (base_ring(para) for para in self._cubic_equation_parameters)
         const = (u*~w - v) * self.one()
 
         gens = self.gens()
@@ -1523,7 +1523,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         from sage.interfaces.gap3 import gap3
         gap3_function = gap3(gap3_function_str)
-        na, nb, nc = ['\"%s\"' % indet for indet in self.extension_ring(generic=True).variable_names()]
+        na, nb, nc = ('\"%s\"' % indet for indet in self.extension_ring(generic=True).variable_names())
         return gap3_function(st_number, na, nb, nc)
 
     @cached_method

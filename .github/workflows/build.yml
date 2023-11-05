@@ -180,10 +180,11 @@ jobs:
         run: |
           ./venv/bin/python3 -m coverage combine src/.coverage/
           ./venv/bin/python3 -m coverage xml
-          find . -name *coverage*
+          mkdir -p coverage-report
+          mv coverage.xml coverage-report/
         working-directory: ./worktree-image
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./worktree-image/coverage.xml
+          directory: ./worktree-image/coverage-report

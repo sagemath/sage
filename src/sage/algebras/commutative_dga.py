@@ -3998,7 +3998,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         sage: CohomologyClass(3)
         [3]
         sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2,2,3,3))
-        sage: CohomologyClass(x^2+2*y*z, A)
+        sage: CohomologyClass(x^2 + 2*y*z, A)
         [2*y*z + x^2]
 
     TESTS:

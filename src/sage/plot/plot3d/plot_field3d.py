@@ -130,7 +130,7 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
         Graphics3d Object
     """
     (ff, gg, hh), ranges = setup_for_eval_on_grid(functions, [xrange, yrange, zrange], plot_points)
-    xpoints, ypoints, zpoints = [srange(*r, include_endpoint=True) for r in ranges]
+    xpoints, ypoints, zpoints = (srange(*r, include_endpoint=True) for r in ranges)
     points = [vector((i, j, k)) for i in xpoints for j in ypoints for k in zpoints]
     vectors = [vector((ff(*point), gg(*point), hh(*point))) for point in points]
 

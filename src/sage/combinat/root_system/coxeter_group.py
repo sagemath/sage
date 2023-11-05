@@ -74,7 +74,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
         Permutation Group with generators [(1,4)(2,3)(5,6), (1,3)(2,5)(4,6)]
         sage: W.category()                                                  # optional - gap3
         Join of Category of finite enumerated permutation groups
-            and Category of finite weyl groups
+            and Category of finite Weyl groups
             and Category of well generated finite irreducible complex reflection groups
 
         sage: W = CoxeterGroup(["A",2], implementation="matrix"); W                     # needs sage.libs.gap

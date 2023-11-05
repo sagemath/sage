@@ -484,7 +484,7 @@ class Polyhedron_base5(Polyhedron_base4):
             R = self.base_ring()
             a = (R(1),) + tuple(self.center())
             b = (R(-1),) + tuple(self.center())
-            c, d = [tuple(v) for v in cert]
+            c, d = (tuple(v) for v in cert)
             tester.assertEqual(sorted([a, b]), sorted([c, d]))
 
     def prism(self):

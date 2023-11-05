@@ -1,6 +1,8 @@
 # sage_setup: distribution = sagemath-modules
-from sage.modules.free_module_element cimport FreeModuleElement
+
 from sage.ext.mod_int cimport mod_int
+from sage.modules.free_module_element cimport FreeModuleElement
+
 
 cdef class Vector_modn_dense(FreeModuleElement):
     cdef mod_int* _entries
@@ -9,4 +11,3 @@ cdef class Vector_modn_dense(FreeModuleElement):
 
     cdef _new_c(self) noexcept
     cdef _init(self, Py_ssize_t degree, parent, mod_int p) noexcept
-

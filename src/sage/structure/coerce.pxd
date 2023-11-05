@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-objects
+
 from sage.structure.parent cimport Parent
 from sage.structure.coerce_dict cimport TripleDict
 

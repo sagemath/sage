@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-linbox
-# -*- coding: utf-8 -*-
 r"""
 Sparse matrices over `\ZZ/n\ZZ` for `n` small
 
@@ -110,6 +109,7 @@ from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix2 import Matrix as Matrix2
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.matrix_sparse cimport Matrix_sparse
 from sage.misc.verbose import verbose, get_verbose
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.modules.vector_integer_sparse cimport *

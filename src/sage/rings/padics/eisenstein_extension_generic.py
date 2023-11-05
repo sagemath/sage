@@ -33,7 +33,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
             sage: A = Zp(7,10)
             sage: S.<x> = A[]                                                           # needs sage.libs.ntl
-            sage: B.<t> = A.ext(x^2+7)  #indirect doctest                               # needs sage.libs.ntl sage.rings.padics
+            sage: B.<t> = A.ext(x^2+7)  # indirect doctest                              # needs sage.libs.ntl sage.rings.padics
         """
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
         #self._precompute()

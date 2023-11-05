@@ -1111,7 +1111,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
         """
 
-        x, y = [real(k.coordinates()) for k in self.ideal_endpoints()]
+        x, y = (real(k.coordinates()) for k in self.ideal_endpoints())
         if x == infinity:
             M = matrix([[1, -2*y], [0, -1]])
         elif y == infinity:
@@ -1189,8 +1189,8 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         opts = {'axes': False, 'aspect_ratio': 1}
         opts.update(self.graphics_options())
         opts.update(options)
-        end_1, end_2 = [CC(k.coordinates()) for k in self.endpoints()]
-        bd_1, bd_2 = [CC(k.coordinates()) for k in self.ideal_endpoints()]
+        end_1, end_2 = (CC(k.coordinates()) for k in self.endpoints())
+        bd_1, bd_2 = (CC(k.coordinates()) for k in self.ideal_endpoints())
         if (abs(real(end_1) - real(end_2)) < EPSILON) \
                 or CC(infinity) in [end_1, end_2]:  # on same vertical line
             # If one of the endpoints is infinity, we replace it with a
@@ -1225,7 +1225,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
                 # computations below compute the projection of the
                 # geodesic to the real line, and then draw a little
                 # to the left and right of the projection.
-                shadow_1, shadow_2 = [real(k) for k in [end_1, end_2]]
+                shadow_1, shadow_2 = (real(k) for k in [end_1, end_2])
                 midpoint = (shadow_1 + shadow_2)/2
                 length = abs(shadow_1 - shadow_2)
                 bd_dict = {'bd_min': midpoint - length, 'bd_max': midpoint +
@@ -1480,8 +1480,8 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         # Get endpoints and ideal endpoints
         i_start_1, i_end_1 = sorted(self.ideal_endpoints(), key=str)
         i_start_2, i_end_2 = sorted(other.ideal_endpoints(), key=str)
-        start_1, end_1 = [CC(x.coordinates()) for x in self.endpoints()]
-        start_2, end_2 = [CC(x.coordinates()) for x in other.endpoints()]
+        start_1, end_1 = (CC(x.coordinates()) for x in self.endpoints())
+        start_2, end_2 = (CC(x.coordinates()) for x in other.endpoints())
         # sort the geodesic endpoints according to start_1.real() < end_1.real() and if start_1.real() ==  end_1.real()
         # then start_1.imag() < end_1.imag()
         if start_1.real() > end_1.real():  # enforce
@@ -1935,8 +1935,8 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         if abs(a2 - a1) < EPSILON or abs(b2 - b1) < EPSILON:
             raise ValueError("intersecting geodesic is a point")
 
-        p1, p2 = [p.coordinates() for p in self.ideal_endpoints()]
-        q1, q2 = [p.coordinates() for p in other.ideal_endpoints()]
+        p1, p2 = (p.coordinates() for p in self.ideal_endpoints())
+        q1, q2 = (p.coordinates() for p in other.ideal_endpoints())
 
         # Check if both geodesics are lines. All lines intersect at
         # ``Infinity``, but the angle is always zero.
@@ -1980,7 +1980,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
             # Transform into a line.
             t = HyperbolicGeodesicUHP._crossratio_matrix(p1, (p1 + p2) / 2, p2)
-            q1, q2 = [moebius_transform(t, q) for q in [q1, q2]]
+            q1, q2 = (moebius_transform(t, q) for q in [q1, q2])
 
         # Calculate the angle.
         return arccos(abs(q1 + q2) / abs(q2 - q1))
@@ -2247,8 +2247,8 @@ class HyperbolicGeodesicPD(HyperbolicGeodesic):
         opts = {'axes': False, 'aspect_ratio': 1}
         opts.update(self.graphics_options())
         opts.update(options)
-        end_1, end_2 = [CC(k.coordinates()) for k in self.endpoints()]
-        bd_1, bd_2 = [CC(k.coordinates()) for k in self.ideal_endpoints()]
+        end_1, end_2 = (CC(k.coordinates()) for k in self.endpoints())
+        bd_1, bd_2 = (CC(k.coordinates()) for k in self.ideal_endpoints())
         # Check to see if it's a line
         if abs(bd_1 + bd_2) < EPSILON:
             pic = bezier_path([[(real(end_1), imag(end_1)), (real(end_2), imag(end_2))]], **opts)
@@ -2331,7 +2331,7 @@ class HyperbolicGeodesicKM(HyperbolicGeodesic):
             if pt in CC:
                 return CC(pt)
             return CC(*pt)
-        end_1, end_2 = [map_pt(k.coordinates()) for k in self.endpoints()]
+        end_1, end_2 = (map_pt(k.coordinates()) for k in self.endpoints())
         pic = bezier_path([[(real(end_1), imag(end_1)),
                             (real(end_2), imag(end_2))]], **opts)
         if boundary:
@@ -2393,7 +2393,7 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
         from sage.arith.srange import xsrange
 
         x = SR.var('x')
-        v1, u2 = [vector(k.coordinates()) for k in self.endpoints()]
+        v1, u2 = (vector(k.coordinates()) for k in self.endpoints())
         # Lorentzian Gram Shmidt.  The original vectors will be
         # u1, u2 and the orthogonal ones will be v1, v2.  Except
         # v1 = u1, and I don't want to declare another variable,
@@ -2437,7 +2437,7 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
         x = SR.var('x')
         opts = self.graphics_options()
         opts.update(graphics_options)
-        v1, u2 = [vector(k.coordinates()) for k in self.endpoints()]
+        v1, u2 = (vector(k.coordinates()) for k in self.endpoints())
         # Lorentzian Gram Shmidt.  The original vectors will be
         # u1, u2 and the orthogonal ones will be v1, v2.  Except
         # v1 = u1, and I don't want to declare another variable,

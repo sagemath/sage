@@ -944,12 +944,13 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # needs sympy
-            sage: SR(unsigned_infinity)._sympy_()                                       # needs sympy
+            sage: # needs sympy
+            sage: import sympy
+            sage: SR(unsigned_infinity)._sympy_()
             zoo
-            sage: gamma(-3)._sympy_() is sympy.factorial(-2)                            # needs sympy
+            sage: gamma(-3)._sympy_() is sympy.factorial(-2)
             True
-            sage: gamma(-3) is sympy.factorial(-2)._sage_()                             # needs sympy
+            sage: gamma(-3) is sympy.factorial(-2)._sage_()
             True
         """
         import sympy
@@ -1630,12 +1631,13 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # needs sympy
-            sage: bool(-oo == -sympy.oo)                                                # needs sympy
+            sage: # needs sympy
+            sage: import sympy
+            sage: bool(-oo == -sympy.oo)
             True
-            sage: bool(SR(-oo) == -sympy.oo)                                            # needs sympy
+            sage: bool(SR(-oo) == -sympy.oo)
             True
-            sage: bool((-oo)._sympy_() == -sympy.oo)                                    # needs sympy
+            sage: bool((-oo)._sympy_() == -sympy.oo)
             True
 
         """

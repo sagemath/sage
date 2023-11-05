@@ -392,7 +392,7 @@ class Link(SageObject):
             else:
                 raise ValueError("invalid input: data must be either a list or a braid")
 
-        self._mirror  = None  # set on invocation of :meth:`mirror_image`
+        self._mirror = None  # set on invocation of :meth:`mirror_image`
         self._reverse = None  # set on invocation of :meth:`reverse`
 
     def arcs(self, presentation='pd'):
@@ -3888,11 +3888,11 @@ class Link(SageObject):
 
         - :wikipedia:`Markov_theorem`
         """
-        sb      = self.braid()
-        sb_ind  = sb.strands()
+        sb = self.braid()
+        sb_ind = sb.strands()
 
-        ob      = braid
-        ob_ind  = ob.strands()
+        ob = braid
+        ob_ind = ob.strands()
 
         if sb_ind == ob_ind:
             return sb.is_conjugated(ob)
@@ -3949,8 +3949,8 @@ class Link(SageObject):
         """
         from sage.knots.knotinfo import KnotInfoSeries
         pd_code = self.pd_code()
-        cr  = len(pd_code)
-        co  = self.number_of_components()
+        cr = len(pd_code)
+        co = self.number_of_components()
 
         # set the limits for the KnotInfoSeries
         if cr > 11 and co > 1:
@@ -3958,7 +3958,7 @@ class Link(SageObject):
         if cr > 12:
             cr = 12
 
-        Hp  = self.homfly_polynomial(normalization='vz')
+        Hp = self.homfly_polynomial(normalization='vz')
 
         det = None
         if cr > 6:
@@ -3987,7 +3987,7 @@ class Link(SageObject):
             ln = Sn.lower_list(oriented=True, comp=co, det=det, homfly=Hp)
             l = sorted(list(set(la + ln)))
 
-        br  = self.braid()
+        br = self.braid()
         br_ind = br.strands()
 
         res = []

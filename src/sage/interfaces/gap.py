@@ -1699,7 +1699,7 @@ def gfq_gap_to_sage(x, F):
         return F(0)
     i1 = s.index("(")
     i2 = s.index(")")
-    q  = eval(s[i1+1:i2].replace('^','**'))
+    q = eval(s[i1+1:i2].replace('^','**'))
     if not F.cardinality().is_power_of(q):
         raise ValueError('%r has no subfield of size %r' % (F, q))
     if s.find(')^') == -1:

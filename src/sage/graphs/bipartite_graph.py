@@ -1762,7 +1762,7 @@ class BipartiteGraph(Graph):
             return None
 
         # read header information
-        num_cols, num_rows = [int(_) for _ in fi.readline().split()]
+        num_cols, num_rows = (int(_) for _ in fi.readline().split())
         # next are max_col_degree, max_row_degree, not used
         _ = [int(_) for _ in fi.readline().split()]
         col_degrees = [int(_) for _ in fi.readline().split()]

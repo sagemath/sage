@@ -389,7 +389,7 @@ class PadicValuationFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: ZZ.valuation(5) # indirect doctest
+            sage: ZZ.valuation(5)  # indirect doctest
             5-adic valuation
 
         """
@@ -873,7 +873,7 @@ class pAdicValuation_padic(pAdicValuation_base):
 
     EXAMPLES::
 
-        sage: v = Qp(2).valuation(); v  #indirect doctest
+        sage: v = Qp(2).valuation(); v  # indirect doctest
         2-adic valuation
 
     TESTS::

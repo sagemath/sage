@@ -7180,7 +7180,7 @@ cdef class Matrix(Matrix1):
 
         The second eigenvector is contained in the left kernel of `B`::
 
-            sage: (P[1, :] * B).norm() < 1e-14                                          # needs sage.rings.complex_double sage.symbolic
+            sage: (P[1, :] * B).norm() < 1e-14                                          # needs scipy sage.rings.complex_double sage.symbolic
             True
 
         .. SEEALSO::
@@ -8599,15 +8599,27 @@ cdef class Matrix(Matrix1):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: M = matrix(ZZ, [[3, 4, 5], [3, 4, 5], [3, 5, 4], [2, 0,1]])
-            sage: M.permutation_normal_form()                                           # needs sage.graphs
+            sage: M.permutation_normal_form()
             [5 4 3]
             [5 4 3]
             [4 5 3]
             [1 0 2]
+            sage: M = matrix(ZZ, 0, 0, [])
+            sage: M.permutation_normal_form()
+            []
+            sage: M.permutation_normal_form(check=True)
+            ([], ((), ()))
         """
         nrows = self.nrows()
         ncols = self.ncols()
+        if not nrows or not ncols:
+            if not check:
+                return self
+            from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+            return (self, (SymmetricGroup(nrows).one(),
+                           SymmetricGroup(ncols).one()))
 
         # A helper
         def new_sorted_matrix(m):

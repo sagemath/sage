@@ -420,8 +420,8 @@ def cython_aliases(required_modules=None,
         elif lib == 'ecl':
             try:
                 # Determine ecl-specific compiler arguments using the ecl-config script
-                ecl_cflags = subprocess.run([ECL_CONFIG, "--cflags"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True).stdout.split()
-                ecl_libs = subprocess.run([ECL_CONFIG, "--libs"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True).stdout.split()
+                ecl_cflags = subprocess.run([ECL_CONFIG, "--cflags"], check=True, capture_output=True, text=True).stdout.split()
+                ecl_libs = subprocess.run([ECL_CONFIG, "--libs"], check=True, capture_output=True, text=True).stdout.split()
             except subprocess.CalledProcessError:
                 if required:
                     raise

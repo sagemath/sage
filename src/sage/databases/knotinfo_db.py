@@ -350,18 +350,18 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
                                       'linkinfo_data_complete']>
         """
         # some constants
-        self._names_column      = 'name'
+        self._names_column = 'name'
         self._components_column = 'components'
-        self._knot_prefix       = 'K'
+        self._knot_prefix = 'K'
 
         self._knot_list = None
         self._link_list = None
-        self._demo      = None
+        self._demo = None
         self._num_knots = None
 
         from sage.features.databases import DatabaseKnotInfo
         from sage.env import DOT_SAGE
-        self._feature   = DatabaseKnotInfo()
+        self._feature = DatabaseKnotInfo()
         self._sobj_path = os.path.join(DOT_SAGE, 'knotinfo')
 
     def create_filecache(self, force=False):

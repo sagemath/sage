@@ -576,7 +576,7 @@ def package_systems():
         # Try to use scripts from SAGE_ROOT (or an installation of sage_bootstrap)
         # to obtain system package advice.
         try:
-            proc = run('sage-guess-package-system', shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True, check=True)
+            proc = run('sage-guess-package-system', shell=True, capture_output=True, text=True, check=True)
             system_name = proc.stdout.strip()
             if system_name != 'unknown':
                 _cache_package_systems = [PackageSystem(system_name)]

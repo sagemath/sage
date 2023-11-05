@@ -1948,7 +1948,7 @@ class SR_generic(MPolynomialSystemGenerator):
             si = Matrix(R, r*e, 1, self.vars("s", i-1, r, e))
 
             rc = Matrix(R, r*e, 1, self.phi([a**(i-1)] + [k(0)]*(r-1)) )
-            d  = Matrix(R, r*e, 1, self.phi([self.sbox_constant()]*r) )
+            d = Matrix(R, r*e, 1, self.phi([self.sbox_constant()]*r) )
 
             sbox = []
 
@@ -3124,8 +3124,8 @@ class SR_gf2(SR_generic):
             l.append( (Cw * x + o).list()[:-1] )
         else:
             l.append( (Cw * x + o).list() )
-        l.append( (Cw * S * x  + x).list() )
-        l.append( (Cx * S * w  + w).list() )
+        l.append( (Cw * S * x + x).list() )
+        l.append( (Cx * S * w + w).list() )
         if not biaffine_only:
             l.append( ((Cw * S**2 + Cx*S)*x).list() )
             l.append( ((Cx * S**2 + Cw*S)*w).list() )

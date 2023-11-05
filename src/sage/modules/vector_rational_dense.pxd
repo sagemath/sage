@@ -1,7 +1,9 @@
 # sage_setup: distribution = sagemath-modules
-from sage.modules.free_module_element cimport FreeModuleElement
+
 from sage.libs.gmp.types cimport mpq_t
+from sage.modules.free_module_element cimport FreeModuleElement
 from sage.structure.parent cimport Parent
+
 
 cdef class Vector_rational_dense(FreeModuleElement):
     cdef mpq_t* _entries

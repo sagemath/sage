@@ -1333,7 +1333,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     This example was suggested on sage-nt; see :trac:`18942`::
 
         sage: G = DirichletGroup(80)                                                    # needs sage.modular
-        sage: for chi in G:             # long time
+        sage: for chi in G:             # long time                                     # needs sage.modular
         ....:     D = ModularSymbols(chi, 2, -1).cuspidal_subspace().new_subspace().decomposition()
         ....:     for f in D:
         ....:         elt = f.q_eigenform(10, 'alpha')[3]
@@ -12081,7 +12081,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         self._standard_embedding = True
 
         # set the generator and element class
-        c, b, a = [QQ(t) for t in self.defining_polynomial().list()]
+        c, b, a = (QQ(t) for t in self.defining_polynomial().list())
         Dpoly = b*b - 4*a*c
         D = (Dpoly.numer() * Dpoly.denom()).squarefree_part(bound=10000)
         self._D = D

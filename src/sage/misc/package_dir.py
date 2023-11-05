@@ -133,7 +133,7 @@ def read_distribution(src_file):
                 break
             kind = "sage_setup:"
             if line.startswith(kind):
-                key, _, value = [s.strip() for s in line[len(kind):].partition('=')]
+                key, _, value = (s.strip() for s in line[len(kind):].partition('='))
                 if key == "distribution":
                     return value
     return ''
