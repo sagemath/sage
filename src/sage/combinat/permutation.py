@@ -5383,6 +5383,253 @@ class Permutation(CombinatorialElement):
         return self.shifted_concatenation(other, "right").\
         right_permutohedron_interval(self.shifted_concatenation(other, "left"))
 
+    def nth_roots(self, n):
+        r"""
+        Return all n-th roots of ``self`` (as a generator).
+
+        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+
+        Note that the number of n-th roots only depends on the cycle type of ``self``.
+
+        EXAMPLES::
+
+            sage: sigma = Permutations(5).identity()
+            sage: list(sigma.nth_roots(3))
+            [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1],
+             [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5],
+             [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
+
+            sage: sigma = Permutation('(1, 3)')
+            sage: list(sigma.nth_roots(2))
+            []
+
+        For n >= 6, this algorithm begins to be more efficient than naive search
+        (look at all permutations and test their n-th power).
+
+        .. SEEALSO::
+
+            * :meth:`has_nth_root`
+            * :meth:`number_of_nth_roots`
+
+        TESTS:
+
+        We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`)::
+
+            sage: [len(list(Permutations(n).identity().nth_roots(2))) for n in range(2,8)]
+            [2, 4, 10, 26, 76, 232]
+
+            sage: list(Permutation('(1)').nth_roots(2))
+            [[1]]
+
+            sage: list(Permutation('').nth_roots(2))
+            [[]]
+
+            sage: sigma = Permutations(6).random_element()
+            sage: list(sigma.nth_roots(1)) == [sigma]
+            True
+
+            sage: list(Permutations(4).identity().nth_roots(-1))
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be at least 1
+        """
+        from sage.combinat.partition import Partitions
+        from sage.combinat.set_partition import SetPartitions
+        from itertools import product
+        from sage.arith.misc import divisors, gcd
+
+        def merging_cycles(list_of_cycles):
+            """
+            Generate all l-cycles such that its n-th power is the product
+            of cycles in 'cycles' (which contains gcd(l, n) cycles of length l/gcd(l, n))
+            """
+            lC = len(list_of_cycles)
+            lperm = len(list_of_cycles[0])
+            l = lC*lperm
+            perm = [0] * l
+            for j in range(lperm):
+                perm[j*lC] = list_of_cycles[0][j]
+            for p in Permutations(lC-1):
+                for indices in product(*[range(lperm) for _ in range(lC-1)]):
+                    new_perm = list(perm)
+                    for i in range(lC-1):
+                        for j in range(lperm):
+                            new_perm[(p[i] + (indices[i]+j)*lC) % l] = list_of_cycles[i+1][j]
+                    yield Permutation(tuple(new_perm))
+
+        def rewind(L, n):
+            """
+            Construct the list M such that ``M[(j * n) % len(M)] == L[j]``.
+            """
+            M = [0] * len(L)
+            m = len(M)
+            for j in range(m):
+                M[(j * n) % m] = L[j]
+            return M
+
+        if n < 1:
+            raise ValueError('n must be at least 1')
+
+        P = Permutations(self.size())
+
+        # Creating dict {length: cycles of this length in the cycle decomposition of sigma}
+        cycles = {}
+        for c in self.cycle_tuples(singletons=True):
+            lc = len(c)
+            if lc not in cycles:
+                cycles[lc] = []
+            cycles[lc].append(c)
+
+        # for each length m, collects all product of cycles which n-th power gives the product prod(cycles[l])
+        possibilities = [[] for m in cycles]
+        for i, m in enumerate(cycles):
+            N = len(cycles[m])
+            parts = [x for x in divisors(n) if gcd(m*x, n) == x]
+            b = False
+            for X in Partitions(N, parts_in=parts):
+                for partition in SetPartitions(N, X):
+                    b = True
+                    poss = [P.identity()]
+                    for pa in partition:
+                            poss = [p*q for p in poss
+                                    for q in merging_cycles([rewind(cycles[m][i-1], n//len(pa)) for i in pa])]
+                    possibilities[i] += poss
+            if not b:
+                return
+
+        # Product of Possibilities (i.e. final result)
+        for L in product(*possibilities):
+            yield P.prod(L)
+
+    def has_nth_root(self, n) -> bool:
+        r"""
+        Decide if ``self`` has n-th roots.
+
+        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+
+        Note that the number of n-th roots only depends on the cycle type of ``self``.
+
+        EXAMPLES::
+
+            sage: sigma = Permutations(5).identity()
+            sage: sigma.has_nth_root(3)
+            True
+
+            sage: sigma = Permutation('(1, 3)')
+            sage: sigma.has_nth_root(2)
+            False
+
+        .. SEEALSO::
+
+            * :meth:`nth_roots`
+            * :meth:`number_of_nth_roots`
+
+        TESTS:
+
+        We compute the number of permutations that have square roots (i.e. squares in `S_n`, :oeis:`A003483`)::
+
+            sage: [len([p for p in Permutations(n) if p.has_nth_root(2)]) for n in range(2, 7)]
+            [1, 3, 12, 60, 270]
+
+            sage: Permutation('(1)').has_nth_root(2)
+            True
+
+            sage: Permutation('').has_nth_root(2)
+            True
+
+            sage: sigma = Permutations(6).random_element()
+            sage: sigma.has_nth_root(1)
+            True
+
+            sage: Permutations(4).identity().has_nth_root(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be at least 1
+        """
+        from sage.combinat.partition import Partitions
+        from sage.arith.misc import divisors, gcd
+
+        if n < 1:
+            raise ValueError('n must be at least 1')
+
+        cycles = self.cycle_type().to_exp_dict()
+
+        # for each length m, check if the number of m-cycles can come from a n-th power
+        # (i.e. if you can partition m*Cycles[m] into parts of size l with l = m*gcd(l, n))
+        for m, N in cycles.items():
+            parts = [x for x in divisors(n) if gcd(m*x, n) == x]
+            if Partitions(N, parts_in=parts).is_empty():
+                return False
+        return True
+
+    def number_of_nth_roots(self, n):
+        r"""
+        Return the number of n-th roots of ``self``.
+
+        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+
+        Note that the number of n-th roots only depends on the cycle type of ``self``.
+
+        EXAMPLES::
+
+            sage: Sigma = Permutations(5).identity()
+            sage: Sigma.number_of_nth_roots(3)
+            21
+
+            sage: Sigma = Permutation('(1, 3)')
+            sage: Sigma.number_of_nth_roots(2)
+            0
+
+        .. SEEALSO::
+
+            * :meth:`nth_roots`
+            * :meth:`has_nth_root`
+
+        TESTS:
+
+        We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`), then the number of cubic roots::
+
+            sage: [Permutations(n).identity().number_of_nth_roots(2) for n in range(2, 10)]
+            [2, 4, 10, 26, 76, 232, 764, 2620]
+
+            sage: [Permutations(n).identity().number_of_nth_roots(3) for n in range(2, 10)]
+            [1, 3, 9, 21, 81, 351, 1233, 5769]
+
+            sage: Permutation('(1)').number_of_nth_roots(2)
+            1
+
+            sage: Permutation('').number_of_nth_roots(2)
+            1
+
+            sage: Sigma = Permutations(6).random_element()
+            sage: Sigma.number_of_nth_roots(1)
+            1
+
+            sage: Permutations(4).identity().number_of_nth_roots(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be at least 1
+        """
+        from sage.combinat.partition import Partitions
+        from sage.combinat.set_partition import SetPartitions
+        from sage.arith.misc import divisors, gcd
+        from sage.misc.misc_c import prod
+
+        if n < 1:
+            raise ValueError('n must be at least 1')
+
+        cycles = self.cycle_type().to_exp_dict()
+        result = 1
+        for m, N in cycles.items():
+            parts = [x for x in divisors(n) if gcd(m*x, n) == x]
+            result *= sum(SetPartitions(N, pa).cardinality() *
+                          prod(factorial(x-1) * m**(x-1) for x in pa)
+                          for pa in Partitions(N, parts_in=parts))
+
+            if not result:
+                return 0
+
+        return result
 
 def _tableau_contribution(T):
     r"""
