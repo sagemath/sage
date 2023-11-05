@@ -63,7 +63,7 @@ class GenericBacktracker():
 
             sage: from sage.combinat.permutation import PatternAvoider
             sage: p = PatternAvoider(Permutations(4), [[1,3,2]])
-            sage: len(list(p))                                                          # optional - sage.combinat
+            sage: len(list(p))                                                          # needs sage.combinat
             14
         """
         # Initialize the stack of generators with the initial data.
