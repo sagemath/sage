@@ -142,7 +142,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: ZZ(RR['x,y'](0))  # indirect doctest
             0
-            sage: ZZ(RR['x,y'](0.5))
+            sage: ZZ(RR['x,y'](0.5))                                                    # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral RealNumber to Integer
@@ -433,7 +433,7 @@ cdef class MPolynomial(CommutativePolynomial):
             z *= var
         return ring(v)
 
-    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None):
+    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None) noexcept:
         r"""
         Return a ``dict`` of coefficient entries suitable for construction
         of a ``MPolynomial_polydict`` with the given variables.
@@ -812,7 +812,7 @@ cdef class MPolynomial(CommutativePolynomial):
                 d[e.unweighted_degree()][e] = c
         return {k: self._parent(d[k]) for k in d}
 
-    cpdef _mod_(self, other):
+    cpdef _mod_(self, other) noexcept:
         r"""
         EXAMPLES::
 
@@ -1047,21 +1047,22 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # optional - magma, needs sage.rings.finite_rings
             sage: k.<b> = GF(25); R.<x,y> = k[]
             sage: f = y*x^2*b + x*(b+1) + 1
             sage: magma = Magma()                       # so var names same below
-            sage: magma(f)                                      # optional - magma
+            sage: magma(f)
             b*x^2*y + b^22*x + 1
-            sage: f._magma_init_(magma)                         # optional - magma
+            sage: f._magma_init_(magma)
             '_sage_[...]!((_sage_[...]!(_sage_[...]))*_sage_[...]^2*_sage_[...]+(_sage_[...]!(_sage_[...] + 1))*_sage_[...]+(_sage_[...]!(1))*1)'
 
         A more complicated nested example::
 
+            sage: # optional - magma
             sage: R.<x,y> = QQ[]; S.<z,w> = R[]; f = (2/3)*x^3*z + w^2 + 5
-            sage: f._magma_init_(magma)                         # optional - magma
+            sage: f._magma_init_(magma)
             '_sage_[...]!((_sage_[...]!((1/1)*1))*_sage_[...]^2+(_sage_[...]!((2/3)*_sage_[...]^3))*_sage_[...]+(_sage_[...]!((5/1)*1))*1)'
-            sage: magma(f)                                      # optional - magma
+            sage: magma(f)
             w^2 + 2/3*x^3*z + 5
         """
         R = magma(self.parent())
@@ -1549,9 +1550,9 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
             sage: f.discriminant(y)                                                     # needs sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
-            sage: f.polynomial(y).discriminant()
+            sage: f.polynomial(y).discriminant()                                        # needs sage.libs.pari sage.modules
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
-            sage: f.discriminant(y).parent() == f.polynomial(y).discriminant().parent()             # needs sage.libs.singular
+            sage: f.discriminant(y).parent() == f.polynomial(y).discriminant().parent()             # needs sage.libs.singular sage.modules
             False
 
         TESTS:
@@ -1561,7 +1562,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
             sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
-            sage: f.discriminant(y)
+            sage: f.discriminant(y)                                                     # needs sage.libs.singular
             x^10 + 2*x^5 + 24*x^3 + 12*x^2 + 1
 
         AUTHOR: Miguel Marco
@@ -1790,10 +1791,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: R.<a,b,c> = RR[]                                                      # needs sage.rings.real_mpfr
-            sage: f = a + b + RR('0.3'); f                                              # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: R.<a,b,c> = RR[]
+            sage: f = a + b + RR('0.3'); f
             a + b + 0.300000000000000
-            sage: f.denominator()                                                       # needs sage.rings.real_mpfr
+            sage: f.denominator()
             1.00000000000000
 
         Check that the denominator is an element over the base whenever the base
@@ -2086,7 +2088,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: r = x*y*z*t + 1
             sage: p = r * (x - y + z - t + 1)
             sage: q = r * (x*z - y*t)
-            sage: gcd(p, q)
+            sage: gcd(p, q)                                                             # needs sage.libs.singular
             z*t*x*y + 1
             sage: _.parent()
             Multivariate Polynomial Ring in x, y over
@@ -2726,6 +2728,7 @@ cdef class MPolynomial(CommutativePolynomial):
         is not a subring of the real numbers, as the notion is not defined in
         this case::
 
+            sage: # needs sage.rings.real_mpfr
             sage: Q.<z,w> = CC[]
             sage: q = z^2 + w^2
             sage: q.is_lorentzian()
@@ -2891,7 +2894,7 @@ def _is_M_convex_(points):
     return True
 
 
-cdef remove_from_tuple(e, int ind):
+cdef remove_from_tuple(e, int ind) noexcept:
     w = list(e)
     del w[ind]
     if len(w) == 1:

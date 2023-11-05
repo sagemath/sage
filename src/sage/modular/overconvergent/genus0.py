@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari sage.rings.padics
 r"""
 Overconvergent `p`-adic modular forms for small primes
 
@@ -1657,7 +1657,7 @@ class OverconvergentModularFormElement(ModuleElement):
 
             sage: o = OverconvergentModularForms(3, 0, 1/2)
             sage: f = o.eigenfunctions(4)[1]
-            sage: f.valuation_plot()
+            sage: f.valuation_plot()                                                    # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.plot import plot

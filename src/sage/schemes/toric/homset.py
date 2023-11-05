@@ -621,6 +621,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
             sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
             sage: list(cubic.point_set())
@@ -641,6 +642,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
             sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
             sage: list(cubic.point_set())

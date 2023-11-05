@@ -19,12 +19,15 @@ EXAMPLES::
 # the License, or (at your option) any later version.
 # https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
+import sage.rings.abc
+
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.fraction_field import FractionField
-from sage.rings.qqbar import QQbar
+from sage.rings.integer_ring import ZZ
+from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
 _Fields = Fields()
 
 
@@ -460,14 +463,14 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             2.56494935746154
         """
         K = self.domain().base_ring()
-        if K in NumberFields() or is_NumberFieldOrder(K):
+        if K in NumberFields() or K == ZZ or isinstance(K, sage.rings.abc.Order):
             H = 0
             for i in range(self.domain().ambient_space().ngens()):
                 C = self[i].coefficients()
                 h = max(c.global_height(prec=prec) for c in C)
                 H = max(H, h)
             return H
-        elif K == QQbar:
+        elif isinstance(K, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("not implemented for QQbar")
         else:
             raise TypeError("Must be over a Numberfield or a Numberfield Order or QQbar")

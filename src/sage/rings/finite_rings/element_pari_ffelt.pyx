@@ -202,22 +202,22 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sage: F = FiniteField(2^3, 'a', impl='pari_ffelt')
         sage: a = F.multiplicative_generator(); a
         a
-        sage: b = gap(a^3); b
+        sage: b = gap(a^3); b                                                           # needs sage.libs.gap
         Z(2^3)^3
         sage: F(b)
         a + 1
         sage: a^3
         a + 1
 
-        sage: a = GF(13)(gap('0*Z(13)')); a
+        sage: a = GF(13)(gap('0*Z(13)')); a                                             # needs sage.libs.gap
         0
         sage: a.parent()
         Finite Field of size 13
 
         sage: F = FiniteField(2^4, 'a', impl='pari_ffelt')
-        sage: F(gap('Z(16)^3'))
+        sage: F(gap('Z(16)^3'))                                                         # needs sage.libs.gap
         a^3
-        sage: F(gap('Z(16)^2'))
+        sage: F(gap('Z(16)^2'))                                                         # needs sage.libs.gap
         a^2
 
     You can also call a finite extension field with a string
@@ -345,7 +345,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         if self.val is not NULL:
             gunclone_deep(self.val)
 
-    cdef FiniteFieldElement_pari_ffelt _new(self):
+    cdef FiniteFieldElement_pari_ffelt _new(self) noexcept:
         """
         Create an empty element with the same parent as ``self``.
         """
@@ -354,7 +354,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         x._parent = self._parent
         return x
 
-    cdef void construct(self, GEN g):
+    cdef void construct(self, GEN g) noexcept:
         """
         Initialise ``self`` to the FFELT ``g``, reset the PARI stack,
         and call sig_off().
@@ -599,7 +599,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         # immutable
         return self
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Comparison of finite field elements.
 
@@ -659,7 +659,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sig_off()
         return rich_to_bool(op, r)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Addition.
 
@@ -675,7 +675,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtraction.
 
@@ -691,7 +691,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiplication.
 
@@ -707,7 +707,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Division.
 
@@ -873,6 +873,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: F.<a> = GF(13^64, impl='pari_ffelt'); F
             Finite Field in a of size 13^64
             sage: x = F.random_element()
@@ -885,6 +886,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: x.pth_power(-1)**13 == x
             True
 
+            sage: # needs sage.modules
             sage: F.<a> = GF(127^16, impl='pari_ffelt'); F
             Finite Field in a of size 127^16
             sage: x = F.random_element()
@@ -1386,6 +1388,7 @@ def unpickle_FiniteFieldElement_pari_ffelt(parent, elem):
     """
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: k.<a> = GF(2^20, impl='pari_ffelt')
         sage: e = k.random_element()
         sage: f = loads(dumps(e)) # indirect doctest

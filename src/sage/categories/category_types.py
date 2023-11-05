@@ -170,6 +170,8 @@ class Category_over_base(CategoryWithParameters):
         r"""
         Initialize ``self``.
 
+        The ``name`` parameter is ignored.
+
         EXAMPLES::
 
             sage: S = Spec(ZZ)
@@ -182,7 +184,7 @@ class Category_over_base(CategoryWithParameters):
             sage: TestSuite(C).run()
         """
         self.__base = base
-        Category.__init__(self, name)
+        Category.__init__(self)
 
     def _test_category_over_bases(self, **options):
         """
@@ -527,13 +529,15 @@ class Category_in_ambient(Category):
         """
         Initialize ``self``.
 
+        The parameter ``name`` is ignored.
+
         EXAMPLES::
 
             sage: C = Ideals(IntegerRing())
             sage: TestSuite(C).run()
         """
         self.__ambient = ambient
-        Category.__init__(self, name)
+        Category.__init__(self)
 
     def ambient(self):
         """
