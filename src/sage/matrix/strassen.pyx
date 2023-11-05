@@ -15,7 +15,7 @@ multiplication algorithms.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .matrix_window cimport MatrixWindow
+from sage.matrix.matrix_window cimport MatrixWindow
 
 from cysignals.signals cimport sig_on, sig_off
 

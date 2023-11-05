@@ -879,6 +879,8 @@ cdef class PolyDict:
 
             sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])                    # needs sage.rings.finite_rings
             'x'
+
+            sage: # needs sage.modules
             sage: P.<x,y> = LaurentPolynomialRing(GF(2), 2)
             sage: P.gens()
             (x, y)

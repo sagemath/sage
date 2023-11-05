@@ -484,19 +484,19 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             Coercion map:
               From: Set of Python objects of class 'int'
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(GaussianIntegers())
+            sage: CIF.coerce_map_from(GaussianIntegers())                               # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(QQbar)
+            sage: CIF.coerce_map_from(QQbar)                                            # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Algebraic Field
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(AA)
+            sage: CIF.coerce_map_from(AA)                                               # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Algebraic Real Field
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(UniversalCyclotomicField())
+            sage: CIF.coerce_map_from(UniversalCyclotomicField())                       # needs sage.libs.gap sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Universal Cyclotomic Field
               To:   Complex Interval Field with 53 bits of precision
@@ -532,9 +532,9 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         EXAMPLES::
 
-            sage: ComplexIntervalField() # indirect doctest
+            sage: ComplexIntervalField()  # indirect doctest
             Complex Interval Field with 53 bits of precision
-            sage: ComplexIntervalField(100) # indirect doctest
+            sage: ComplexIntervalField(100)  # indirect doctest
             Complex Interval Field with 100 bits of precision
         """
         return "Complex Interval Field with %s bits of precision" % self._prec
