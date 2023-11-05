@@ -83,6 +83,9 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      # Make sure that all "standard-pre" jobs can start simultaneously,
+      # so that runners are available by the time that "default" starts.
+      max_parallel: 50
 
   standard:
     if: ${{ success() || failure() }}
@@ -101,6 +104,8 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      # Reduce from 30 to 25 because it runs in parallel with 'standard-sitepackages' below
+      max_parallel: 25
 
   standard-sitepackages:
     if: ${{ success() || failure() }}
@@ -164,6 +169,8 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      # Reduce from 30 to 25 because it may run in parallel with 'standard-sitepackages' above
+      max_parallel: 25
 
   minimal:
     if: ${{ success() || failure() }}
