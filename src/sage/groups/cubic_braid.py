@@ -141,7 +141,7 @@ def _reduce_tietze(tietze_list):
         if second is None:
             return None
         middle = tietze_list[1:i]
-        end    = tietze_list[i+1:l]
+        end = tietze_list[i+1:l]
         if first == second:
             return [-first] + middle + end
         else:
@@ -490,7 +490,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
                     if root[0] == 0:
                         continue
                     root_bur = root[0]
-                    if root[1]  == 1:
+                    if root[1] == 1:
                         break
                 return root_bur
 
@@ -747,7 +747,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             sage: U5 = AssionGroupU(5)       # indirect doctest
             sage: TestSuite(U5).run()        # long time
         """
-        n  = Integer(len(names))
+        n = Integer(len(names))
         if n < 1:
             raise ValueError("the number of strands must be an integer larger than one")
 
@@ -759,12 +759,12 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         free_group = FreeGroup(names)
         self._cbg_type = cbg_type
         self._nstrands = n + 1
-        self._ident  = self._cbg_type.value + self._nstrands.str()
+        self._ident = self._cbg_type.value + self._nstrands.str()
         self._braid_group = BraidGroup(names)
 
         # internal naming of elements for convenience
-        b  = [free_group([i]) for i in range(1, n+1)]
-        t  = [free_group([i,  i+1]) ** 3 for i in range(1, n)]
+        b = [free_group([i]) for i in range(1, n+1)]
+        t = [free_group([i,  i+1]) ** 3 for i in range(1, n)]
         ti = [free_group([-i, -i-1]) ** 3 for i in range(1, n)]
 
         # first the braid relation
@@ -796,12 +796,12 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         # the following global pointers to classical group realizations will be set in the private method
         # _create_classical_realization
         # ------------------------------------------------------------------------------------------------
-        self._classical_group             = None   # This is the classical Group returned by as_classical_group
-        self._classical_base_group        = None   # this only differs for special cases for Assion groups from the former
-        self._classical_invariant_form    = None   # invariant form of the classical base group
-        self._classical_embedding         = None   # if self._classical_group different from self._classical_base_group
-        self._centralizing_matrix         = None   # for Assion groups: element in classical base group commuting with self
-        self._centralizing_element        = None   # image under nat. map of the former one in the proj. classical group
+        self._classical_group = None   # This is the classical Group returned by as_classical_group
+        self._classical_base_group = None   # this only differs for special cases for Assion groups from the former
+        self._classical_invariant_form = None   # invariant form of the classical base group
+        self._classical_embedding = None   # if self._classical_group different from self._classical_base_group
+        self._centralizing_matrix = None   # for Assion groups: element in classical base group commuting with self
+        self._centralizing_element = None   # image under nat. map of the former one in the proj. classical group
         return
 
     def _repr_(self):
@@ -1095,7 +1095,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # ------------------------------------------------------------------------------
             # Setting the List of Braid Images
             # ------------------------------------------------------------------------------
-            im_gens  = [base_group(m) for m in transvec_matrices]
+            im_gens = [base_group(m) for m in transvec_matrices]
 
             # ------------------------------------------------------------------------------
             # By the work of Assion no check on the group homomorphism is needed, at all.
@@ -1109,7 +1109,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # ------------------------------------------------------------------------------
             # Do the projective group realization if needed
             # ------------------------------------------------------------------------------
-            embedding      = self._classical_embedding
+            embedding = self._classical_embedding
             classical_group = None
             if proj_group is None:
                 classical_group = base_group
@@ -1128,19 +1128,19 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                     nat_hom = base_group.hom(proj_group.gens(), check=check)
                     centralizing_element = nat_hom(centralizing_matrix)
                     classical_group_gens = [nat_hom(m) for m in transvec_matrices]
-                    classical_group     = proj_group.subgroup(classical_group_gens, canonicalize=False)
+                    classical_group = proj_group.subgroup(classical_group_gens, canonicalize=False)
                     hom_to_classic = self.hom(classical_group.gens(), check=check)
                     classical_group.register_conversion(hom_to_classic)
 
             # ------------------------------------------------------------------------------
             # register constructed items
             # ------------------------------------------------------------------------------
-            self._classical_group             = classical_group
-            self._classical_base_group        = base_group
-            self._classical_invariant_form    = base_group.invariant_form()
-            self._centralizing_matrix         = centralizing_matrix
-            self._centralizing_element        = centralizing_element
-            self._classical_embedding         = embedding
+            self._classical_group = classical_group
+            self._classical_base_group = base_group
+            self._classical_invariant_form = base_group.invariant_form()
+            self._centralizing_matrix = centralizing_matrix
+            self._centralizing_element = centralizing_element
+            self._classical_embedding = embedding
             return
 
         # -------------------------------------------------------------------------------
@@ -1211,7 +1211,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # ------------------------------------------------------------------------------
             centralizing_vector = xbas[mhalf-1]
             centralizing_matrix = base_group(transvec2mat(centralizing_vector, fact=1))
-            transvec_matrices   = [transvec2mat(v) for v in transvections]
+            transvec_matrices = [transvec2mat(v) for v in transvections]
 
             set_classical_realization(self, base_group, proj_group, centralizing_matrix, transvec_matrices)
             return
@@ -1273,9 +1273,9 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             for j in range(mthird):
                 pos = 3*(j+1)-1
                 transvections.append(xbas[pos-1])                             # t_{3i}   = x_{3i-1}
-                if pos + 1  < m:
+                if pos + 1 < m:
                     transvections.append(xbas[pos-1]+xbas[pos]+xbas[pos+1])   # t_{3i+1} = x_{3i-1} + x_{3i} + x_{3i+1}
-                if pos + 3  < m:
+                if pos + 3 < m:
                     transvections.append(xbas[pos+1]+xbas[pos+2]+xbas[pos+3]) # t_{3i+2} = x_{3i+1} + x_{3i+2} + x_{3i+3}
 
             # -----------------------------------------------------------
@@ -1294,7 +1294,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # ------------------------------------------------------------------------------
             centralizing_vector = xbas[m-2]+xbas[m-1]
             centralizing_matrix = base_group(transvec2mat(centralizing_vector, fact=1))
-            transvec_matrices   = [transvec2mat(v) for v in transvections]
+            transvec_matrices = [transvec2mat(v) for v in transvections]
 
             set_classical_realization(self, base_group, proj_group, centralizing_matrix, transvec_matrices)
             return
@@ -1314,13 +1314,13 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         # Setting the Classical group
         # -------------------------------------------------------------------------------
         if self._cbg_type == CubicBraidGroup.type.AssionS:
-            dim_sympl_group   = n-1              # S(n-1) = Sp(n-1, 3)
-            if n % 2  == 0:
-                dim_sympl_group   = n            # S(n-1) = subgroup of PSp(n, 3)
+            dim_sympl_group = n-1              # S(n-1) = Sp(n-1, 3)
+            if n % 2 == 0:
+                dim_sympl_group = n            # S(n-1) = subgroup of PSp(n, 3)
             create_sympl_realization(self,  dim_sympl_group)
         elif self._cbg_type == CubicBraidGroup.type.AssionU:
             dim_unitary_group = n-1              # U(n-1) = GU(n-1, 2)
-            if n % 3  == 0:
+            if n % 3 == 0:
                 dim_unitary_group = n            # U(n-1) = subgroup PGU(n, 3)
             create_unitary_realization(self, dim_unitary_group)
         else:
@@ -1344,11 +1344,11 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             UCF = UniversalCyclotomicField()
             z12 = UCF.gen(12)
             classical_group = self.as_matrix_group(root_bur=~z12, domain=UCF, reduced='unitary')
-            self._classical_group            = classical_group
-            self._classical_base_group       = classical_group
-            self._classical_embedding        = classical_group
+            self._classical_group = classical_group
+            self._classical_base_group = classical_group
+            self._classical_embedding = classical_group
             if self._classical_invariant_form is None:
-                self._classical_invariant_form  = classical_group.ambient().invariant_form()
+                self._classical_invariant_form = classical_group.ambient().invariant_form()
         return
 
     def _element_constructor_(self, x, **kwds):
