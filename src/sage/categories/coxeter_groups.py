@@ -1984,8 +1984,10 @@ class CoxeterGroups(Category_singleton):
                 sage: (s[3]*s[2]*s[1]).absolute_length()                                # needs sage.combinat sage.groups
                 3
             """
-            M = self.canonical_matrix()
-            return (M - 1).image().dimension()
+            if self.parent().is_finite():
+                M = self.canonical_matrix()
+                return (M - 1).image().dimension()
+            raise NotImplementedError
 
         def absolute_le(self, other):
             r"""
