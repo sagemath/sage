@@ -67,7 +67,7 @@ jobs:
           git config --global user.name "Build & Test workflow"
           .ci/retrofit-worktree.sh worktree-image /sage
           # Keep track of changes to built HTML
-          new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
+          new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
 
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
@@ -119,7 +119,7 @@ jobs:
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           mkdir -p ./docs
-          cp -r -L /sage/local/share/doc/sage/pdf/en/* ./docs
+          cp -r -L /sage/local/share/doc/sage/pdf ./docs
           # Zip everything for increased performance
           zip -r docs-pdf.zip docs
 
