@@ -4916,8 +4916,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             -q^3 + 2*q^2 - 2*q + 1
             sage: a.scalar_qt(a,5,7) # q=5 and t=7
             490/1539
-            sage: (x,y) = var('x,y')                                                    # optional - sage.symbolic
-            sage: a.scalar_qt(a, q=x, t=y)                                              # optional - sage.symbolic
+            sage: (x,y) = var('x,y')                                                    # needs sage.symbolic
+            sage: a.scalar_qt(a, q=x, t=y)                                              # needs sage.symbolic
             1/3*(x^3 - 1)/(y^3 - 1) + 2/3*(x - 1)^3/(y - 1)^3
             sage: Rn = QQ['q','t','y','z'].fraction_field()
             sage: (q,t,y,z) = Rn.gens()
@@ -6030,7 +6030,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         it is better to obtain an element of the symbolic ring::
 
             sage: h = SymmetricFunctions(QQ).h()
-            sage: (h[3]+h[2]).principal_specialization(q=var("q"))                      # optional - sage.symbolic
+            sage: (h[3]+h[2]).principal_specialization(q=var("q"))                      # needs sage.symbolic
             1/((q^2 - 1)*(q - 1)) - 1/((q^3 - 1)*(q^2 - 1)*(q - 1))
 
         In case ``q`` is in the base ring, it must be passed explicitly::
@@ -6291,11 +6291,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: x = m[3]+m[2,1]+m[1,1,1]
             sage: d = x.homogeneous_degree()
-            sage: var("q t")                                                            # optional - sage.symbolic
+            sage: var("q t")                                                            # needs sage.symbolic
             (q, t)
-            sage: factor((x.principal_specialization()*(1-q)^d*t^d))                    # optional - sage.symbolic
+            sage: factor((x.principal_specialization()*(1-q)^d*t^d))                    # needs sage.symbolic
             t^3/((q^2 + q + 1)*(q + 1))
-            sage: factor(x.exponential_specialization(q=q, t=t))                        # optional - sage.symbolic
+            sage: factor(x.exponential_specialization(q=q, t=t))                        # needs sage.symbolic
             t^3/((q^2 + q + 1)*(q + 1))
 
         TESTS::

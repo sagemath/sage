@@ -513,7 +513,7 @@ class SchemeMorphism(Element):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings sage.schemes
             sage: E = EllipticCurve(GF((17,2)), [1,2,3,4,5])
             sage: P = E.random_point()
             sage: P.base_ring()
@@ -1349,8 +1349,8 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: K2.<w> = NumberField(t**4 - 2)
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: phi = K.embeddings(K2)[0]
-            sage: f = DynamicalSystem_projective([x**2 + 3*y**2, y**2])
-            sage: f.change_ring(phi)
+            sage: f = DynamicalSystem_projective([x**2 + 3*y**2, y**2])                 # needs sage.schemes
+            sage: f.change_ring(phi)                                                    # needs sage.schemes
             Dynamical System of Projective Space of dimension 1 over
              Number Field in w with defining polynomial t^4 - 2
               Defn: Defined on coordinates by sending (x : y) to (x^2 + 3*y^2 : y^2)
@@ -1364,8 +1364,8 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             sage: K2.<w> = NumberField(t^8 - 2)
             sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: phi = K1.embeddings(K2)[0]
-            sage: f = DynamicalSystem_projective([x^2 + 3*y^2, y^2])
-            sage: f.change_ring(phi)
+            sage: f = DynamicalSystem_projective([x^2 + 3*y^2, y^2])                    # needs sage.schemes
+            sage: f.change_ring(phi)                                                    # needs sage.schemes
             Traceback (most recent call last):
             ...
             ValueError: no canonical coercion of base ring of morphism to domain of embedding

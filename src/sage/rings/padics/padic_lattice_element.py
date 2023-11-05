@@ -17,7 +17,7 @@ tests because they take a few minutes as of mid 2018, see :trac:`25431`::
     sage: R3 = QpLC(2)
     sage: R4 = QpLF(2)
 
-    sage: # long time
+    sage: # long time, needs sage.rings.padics
     sage: TestSuite(R1).run(skip=['_test_teichmuller', '_test_matrix_smith'])
     sage: TestSuite(R2).run(skip=['_test_teichmuller', '_test_matrix_smith'])
     sage: TestSuite(R3).run(skip=['_test_teichmuller', '_test_matrix_smith'])

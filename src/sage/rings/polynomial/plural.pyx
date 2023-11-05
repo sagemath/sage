@@ -573,7 +573,7 @@ cdef class NCPolynomialRing_plural(Ring):
                                       " as noncommutative polynomial")  # ???
         return new_NCP(self, _p)
 
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         """
         The only things that coerce into this ring are:
 
@@ -1474,7 +1474,7 @@ cdef class NCPolynomial_plural(RingElement):
         """
         return self._hash_c()
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare left and right.
 
@@ -1525,7 +1525,7 @@ cdef class NCPolynomial_plural(RingElement):
         cdef ring *r = (<NCPolynomialRing_plural>left._parent)._ring
         return rich_to_bool(op, singular_polynomial_cmp(p, q, r))
 
-    cpdef _add_(left, right):
+    cpdef _add_(left, right) noexcept:
         """
         Adds left and right.
 
@@ -1544,7 +1544,7 @@ cdef class NCPolynomial_plural(RingElement):
                                  (<NCPolynomialRing_plural>left._parent)._ring)
         return new_NCP((<NCPolynomialRing_plural>left._parent), _p)
 
-    cpdef _sub_(left, right):
+    cpdef _sub_(left, right) noexcept:
         """
         Subtract left and right.
 
@@ -1566,7 +1566,7 @@ cdef class NCPolynomial_plural(RingElement):
                                 _ring)
         return new_NCP((<NCPolynomialRing_plural>left._parent), _p)
 
-    cpdef _lmul_(self, Element left):
+    cpdef _lmul_(self, Element left) noexcept:
         """
         Multiply ``self`` with a base ring element.
 
@@ -1596,7 +1596,7 @@ cdef class NCPolynomial_plural(RingElement):
         singular_polynomial_rmul(&_p, self._poly, left, _ring)
         return new_NCP((<NCPolynomialRing_plural>self._parent),_p)
 
-    cpdef _mul_(left, right):
+    cpdef _mul_(left, right) noexcept:
         """
         Multiply left and right.
 
@@ -1627,7 +1627,7 @@ cdef class NCPolynomial_plural(RingElement):
                                  (<NCPolynomialRing_plural>left._parent)._ring)
         return new_NCP((<NCPolynomialRing_plural>left._parent),_p)
 
-    cpdef _div_(left, right):
+    cpdef _div_(left, right) noexcept:
         """
         Divide left by right
 
@@ -1808,7 +1808,7 @@ cdef class NCPolynomial_plural(RingElement):
         s = singular_polynomial_str(self._poly, _ring)
         return s
 
-    cpdef _repr_short_(self):
+    cpdef _repr_short_(self) noexcept:
         """
         This is a faster but less pretty way to print polynomials. If
         available it uses the short SINGULAR notation.
@@ -2274,7 +2274,7 @@ cdef class NCPolynomial_plural(RingElement):
         return sum(prod(im_gens[i]**val for i, val in enumerate(t))*base_map(d[t]) for t in d)
 
 
-    cdef long _hash_c(self):
+    cdef long _hash_c(self) noexcept:
         """
         See :meth:`__hash__`
         """
@@ -2586,7 +2586,7 @@ cdef class NCPolynomial_plural(RingElement):
         else:
             return (<NCPolynomialRing_plural>self._parent)._base._zero_element
 
-    cpdef is_constant(self):
+    cpdef is_constant(self) noexcept:
         """
         Return ``True`` if this polynomial is constant.
 
@@ -2811,7 +2811,7 @@ cdef class NCPolynomial_plural(RingElement):
 
 
 cdef inline NCPolynomial_plural new_NCP(NCPolynomialRing_plural parent,
-        poly *juice):
+        poly *juice) noexcept:
     """
     Construct NCPolynomial_plural from parent and SINGULAR poly.
 
@@ -2832,7 +2832,7 @@ cdef inline NCPolynomial_plural new_NCP(NCPolynomialRing_plural parent,
 
 
 
-cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
+cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring) noexcept:
     """
     Construct MPolynomialRing_libsingular from ringWrap, assuming the ground field to be base_ring
 
@@ -2904,7 +2904,7 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
     return self
 
 
-cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring):
+cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring) noexcept:
     """
     Construct NCPolynomialRing_plural from ringWrap, assuming the ground field to be base_ring
 
@@ -3127,7 +3127,7 @@ def ExteriorAlgebra(base_ring, names,order='degrevlex'):
     I = H.ideal([H.gen(i) * H.gen(i) for i in range(n)]).twostd()
     return H.quotient(I)
 
-cdef poly *addwithcarry(poly *tempvector, poly *maxvector, int pos, ring *_ring):
+cdef poly *addwithcarry(poly *tempvector, poly *maxvector, int pos, ring *_ring) noexcept:
     if p_GetExp(tempvector, pos, _ring) < p_GetExp(maxvector, pos, _ring):
         p_SetExp(tempvector, pos, p_GetExp(tempvector, pos, _ring)+1, _ring)
     else:

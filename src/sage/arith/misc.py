@@ -2688,6 +2688,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         Traceback (most recent call last):
         ...
         TypeError: unable to factor 'xyz'
+
+    Test that :issue:`35219` is fixed::
+
+        sage: len(factor(2^2203-1,proof=false))
+        1
     """
     try:
         m = n.factor

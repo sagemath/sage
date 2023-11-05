@@ -1467,10 +1467,8 @@ class Set_object_union(Set_object_binary):
             sage: [x for x in Set(GF(3)).union(Set(GF(2)))]
             [0, 1, 2, 0, 1]
         """
-        for x in self._X:
-            yield x
-        for y in self._Y:
-            yield y
+        yield from self._X
+        yield from self._Y
 
     def __contains__(self, x):
         """

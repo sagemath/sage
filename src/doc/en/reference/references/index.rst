@@ -246,6 +246,10 @@ REFERENCES:
               Symposium, Volume 51, page 20.
               Australian Computer Society, Inc. 2006.
 
+.. [Ang1997] B. Anglès. 1997. *On some characteristic polynomials attached to
+             finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
+             369–379. https://doi.org/10.1007/BF02677478
+
 .. [AP1986] \S. Arnborg, A. Proskurowski,
             *Characterization and Recognition of Partial 3-Trees*,
             SIAM Journal of Alg. and Discrete Methods,
@@ -4766,10 +4770,16 @@ REFERENCES:
             Int. Math. Res. Not. (2015).
             :doi:`10.1093/imrn/rnv194`, :arxiv:`1408.0320`.
 
-.. [MS2019] \Y. Musleh and \'E. Schost. Computing the characteristic polynomial
-            of a finite rank two Drinfeld module. In Proceedings of the 2019
+.. [MS2019] \Y. Musleh and \'E. Schost. *Computing the characteristic polynomial
+            of a finite rank two Drinfeld module*. In Proceedings of the 2019
             ACM on International Symposium on Symbolic and Algebraic
             Computation, pages 307–314. ACM, 2019.
+
+.. [MS2023] \Y. Musleh and \'E. Schost. *Computing the Characteristic Polynomial
+            of Endomorphisms of a finite Drinfeld Module using Crystalline
+            Cohomology*. In Proceedings of the 2023 ACM on International
+            Symposium on Symbolic and Algebraic Computation, pages 461–469.
+            ACM, 2023.
 
 .. [MSSY2001] Mateescu, A., Salomaa, A., Salomaa, K. and Yu, S., *A
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35

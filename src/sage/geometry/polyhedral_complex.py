@@ -415,8 +415,7 @@ class PolyhedralComplex(GenericCellComplex):
             dim_index = reversed(dim_index)
         for d in dim_index:
             if d in cells:
-                for c in cells[d]:
-                    yield c
+                yield from cells[d]
 
     def _n_cells_sorted(self, n, subcomplex=None):
         """
@@ -543,8 +542,7 @@ class PolyhedralComplex(GenericCellComplex):
             dim_index = reversed(dim_index)
         for d in dim_index:
             if d in maximal_cells:
-                for c in maximal_cells[d]:
-                    yield c
+                yield from maximal_cells[d]
 
     def n_maximal_cells(self, n):
         r"""
