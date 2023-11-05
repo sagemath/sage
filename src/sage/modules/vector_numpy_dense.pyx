@@ -29,7 +29,7 @@ AUTHORS:
 
 cimport numpy
 import numpy
-from .free_module_element import FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement
 
 # This is for the NumPy C API (the PyArray... functions) to work
 numpy.import_array()

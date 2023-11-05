@@ -99,7 +99,7 @@ from sage.arith.numerical_approx cimport digits_to_bits
 from copy import copy
 
 import sage.modules.free_module
-from . import berlekamp_massey
+from sage.matrix import berlekamp_massey
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.matrix.matrix_misc import permanental_minor_polynomial
 
@@ -8832,7 +8832,7 @@ cdef class Matrix(Matrix1):
         output_window = output.matrix_window()
 
 
-        from . import strassen
+        from sage.matrix import strassen
         strassen.strassen_window_multiply(output_window, self_window, right_window, cutoff)
         return output
 
@@ -8870,7 +8870,7 @@ cdef class Matrix(Matrix1):
             self._echelon_in_place_classical()
             return
 
-        from . import strassen
+        from sage.matrix import strassen
         pivots = strassen.strassen_echelon(self.matrix_window(), cutoff)
         self.cache('pivots', pivots)
         verbose('done with strassen', tm)
@@ -8909,7 +8909,7 @@ cdef class Matrix(Matrix1):
             ...
             IndexError: matrix window index out of range
         """
-        from . import matrix_window
+        from sage.matrix import matrix_window
         if nrows == -1:
             nrows = self._nrows - row
         if ncols == -1:
@@ -15117,7 +15117,7 @@ cdef class Matrix(Matrix1):
         except (OverflowError, TypeError):
             from sage.rings.real_mpfr import RealField
             # Try using MPFR, which handles large numbers much better, but is slower.
-            from .misc_mpfr import hadamard_row_bound_mpfr
+            from sage.matrix.misc_mpfr import hadamard_row_bound_mpfr
             R = RealField(53, rnd='RNDU')
             A = self.change_ring(R)
             m1 = hadamard_row_bound_mpfr(A)

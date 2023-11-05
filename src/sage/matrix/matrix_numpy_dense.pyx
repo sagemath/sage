@@ -40,7 +40,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 cimport sage.structure.element
 
 cimport numpy as cnumpy
