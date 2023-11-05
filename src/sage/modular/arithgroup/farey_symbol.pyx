@@ -43,7 +43,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp_not_equal
 
 
-cdef extern from "sage/modular/arithgroup/sl2z.hpp":
+cdef extern from "sl2z.hpp":
     cppclass cpp_SL2Z "SL2Z":
         mpz_class a, b, c, d
         cpp_SL2Z(int, int, int, int)
@@ -53,7 +53,7 @@ cdef extern from "sage/modular/arithgroup/sl2z.hpp":
         mpz_class c()
         mpz_class d()
 
-cdef extern from "sage/modular/arithgroup/farey.hpp":
+cdef extern from "farey.hpp":
     cppclass is_element_Gamma0:
         is_element_Gamma0(int)
     cppclass is_element_Gamma1:
