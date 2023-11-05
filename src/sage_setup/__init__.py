@@ -3,6 +3,27 @@ def sage_setup(distributions, *,
                required_modules=(), optional_modules=(),
                recurse_packages=(),
                package_data=None):
+    r"""
+    Replacement for :func:`setuptools.setup` for building distribution packages of the Sage library
+
+    INPUT:
+
+    - ``distributions`` -- (typically one-element) sequence of strings, the distribution names
+      shipped with this distribution package.
+
+    - ``interpreters`` -- sequence of strings, the interpreters to build with :mod:`sage_setup.autogen`.
+
+    - ``required_modules`` -- sequence of strings, pkgconfig modules that are required for the build.
+
+    - ``optional_modules`` -- sequence of strings, pkgconfig modules to checked for the build.
+
+    - ``package_data`` -- ``None`` or a dictionary mapping package names to lists of filename
+      glob patterns, the package data to install.
+
+      * If ``None``, all of ``package_data`` is taken from ``pyproject.toml``.
+
+      * If a dictionary, use it as package data and ignore ``package_data`` in ``pyproject.toml``.
+    """
     import time
 
     from distutils import log
@@ -38,9 +59,6 @@ def sage_setup(distributions, *,
     # ########################################################
     # ## Discovering Sources
     # ########################################################
-    if package_data is None:
-        package_data = {}
-
     if sdist:
         extensions = []
         python_modules = []
@@ -65,10 +83,11 @@ def sage_setup(distributions, *,
 
         python_packages += find_namespace_packages(where='.', include=recurse_packages)
 
-        package_data.update({"": [f
-                                  for pkg, files in extra_files.items()
-                                  for f in files]})
-        python_packages += list(package_data)
+        if package_data is not None:
+            package_data.update({"": [f
+                                      for pkg, files in extra_files.items()
+                                      for f in files]})
+            python_packages += list(package_data)
 
         log.debug('python_packages = {0}'.format(sorted(python_packages)))
         log.debug('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
