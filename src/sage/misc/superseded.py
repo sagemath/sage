@@ -363,10 +363,10 @@ class DeprecatedFunctionAlias():
         try:
             self.__dict__.update(func.__dict__)
         except AttributeError:
-            pass # Cython classes don't have __dict__
+            pass  # Cython classes don't have __dict__
         self.func = func
-        self.issue_number  = issue_number
-        self.instance = instance # for use with methods
+        self.issue_number = issue_number
+        self.instance = instance  # for use with methods
         self.unbound = unbound
         self.__module__ = module
         if isinstance(func, type(deprecation)):

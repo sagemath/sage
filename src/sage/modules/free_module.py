@@ -2443,7 +2443,7 @@ class FreeModule_generic(Module_free_ambient):
         iters = [iter(R) for _ in range(len(G))]
         for x in iters:
             next(x)     # put at 0
-        zero  = R(0)
+        zero = R.zero()
         v = [zero for _ in range(len(G))]
         n = 0
         z = self(0)
@@ -3873,11 +3873,11 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             V2 = self
         A1 = V1.basis_matrix()
         A2 = V2.basis_matrix()
-        S  = A1.stack(A2)
-        K  = S.integer_kernel(self.base_ring()).basis_matrix()
-        n  = int(V1.dimension())
+        S = A1.stack(A2)
+        K = S.integer_kernel(self.base_ring()).basis_matrix()
+        n = int(V1.dimension())
         K = K.matrix_from_columns(range(n))
-        B = K*A1
+        B = K * A1
         return self.span(B)
 
     def __and__(self, other):
@@ -5201,10 +5201,10 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         # Our algorithm is to note that D is determined if we just
         # replace both A and S by the submatrix got from their pivot
         # columns.
-        P  = A.pivots()
+        P = A.pivots()
         AA = A.matrix_from_columns(P)
         SS = S.matrix_from_columns(P)
-        D  = SS * AA**(-1)
+        D = SS * AA**(-1)
 
         # Compute the image of each basis vector for ``self`` under the
         # map "write an element of ``self`` in terms of the basis A" then
