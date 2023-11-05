@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 r"""
 The Victor Miller basis
 

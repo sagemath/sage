@@ -454,7 +454,7 @@ class OrthogonalFunction(BuiltinFunction):
                 self._maxima_name = conversions['maxima']
             except KeyError:
                 pass
-        super(OrthogonalFunction, self).__init__(name=name, nargs=nargs,
+        super().__init__(name=name, nargs=nargs,
                                                  latex_name=latex_name,
                                                  conversions=conversions)
 
@@ -529,7 +529,7 @@ class OrthogonalFunction(BuiltinFunction):
             kwds['hold'] = True
             return _maxima(self._eval_(*args, **kwds))._sage_()
 
-        return super(OrthogonalFunction, self).__call__(*args, **kwds)
+        return super().__call__(*args, **kwds)
 
 
 class ChebyshevFunction(OrthogonalFunction):
@@ -575,7 +575,7 @@ class ChebyshevFunction(OrthogonalFunction):
             except Exception:
                 pass
 
-        return super(ChebyshevFunction, self).__call__(n, *args, **kwds)
+        return super().__call__(n, *args, **kwds)
 
     def _eval_(self, n, x):
         """

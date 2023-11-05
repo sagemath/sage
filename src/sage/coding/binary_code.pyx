@@ -57,7 +57,7 @@ WORD_SIZE = sizeof(codeword) << 3
 cdef enum:
     chunk_size = 8
 
-cdef inline int min(int a, int b):
+cdef inline int min(int a, int b) noexcept:
     if a > b:
         return b
     else:
@@ -67,7 +67,7 @@ cdef inline int min(int a, int b):
 ## functions come without an underscore, and the def'd equivalents, which are
 ## essentially only for doctesting and debugging, have underscores.
 
-cdef int *hamming_weights():
+cdef int *hamming_weights() noexcept:
     cdef int *ham_wts
     cdef int i
     ham_wts = <int *> sig_malloc( 65536 * sizeof(int) )
@@ -279,7 +279,7 @@ def test_word_perms(t_limit=5.0):
         dealloc_word_perm(i)
     sig_free(arr)
 
-cdef WordPermutation *create_word_perm(object list_perm):
+cdef WordPermutation *create_word_perm(object list_perm) noexcept:
     r"""
     Create a word permutation from a Python list permutation L, i.e. such that
     `i \mapsto L[i]`.
@@ -330,7 +330,7 @@ cdef WordPermutation *create_word_perm(object list_perm):
                 image ^= images_i[1 << j]
     return word_perm
 
-cdef WordPermutation *create_array_word_perm(int *array, int start, int degree):
+cdef WordPermutation *create_array_word_perm(int *array, int start, int degree) noexcept:
     """
     Create a word permutation of a given degree from a C array, starting at start.
     """
@@ -379,7 +379,7 @@ cdef WordPermutation *create_array_word_perm(int *array, int start, int degree):
                 image ^= images_i[1 << j]
     return word_perm
 
-cdef WordPermutation *create_id_word_perm(int degree):
+cdef WordPermutation *create_id_word_perm(int degree) noexcept:
     """
     Create the identity word permutation of degree degree.
     """
@@ -427,7 +427,7 @@ cdef WordPermutation *create_id_word_perm(int degree):
                 image ^= images_i[1 << j]
     return word_perm
 
-cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation *h):
+cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation *h) noexcept:
     r"""
     Create the composition of word permutations `g \circ h`.
     """
@@ -478,7 +478,7 @@ cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation 
                 image ^= images_i[1 << j]
     return word_perm
 
-cdef WordPermutation *create_inv_word_perm(WordPermutation *g):
+cdef WordPermutation *create_inv_word_perm(WordPermutation *g) noexcept:
     r"""
     Create the inverse `g^{-1}` of the word permutation of `g`.
     """
@@ -496,7 +496,7 @@ cdef WordPermutation *create_inv_word_perm(WordPermutation *g):
     sig_free(array)
     return w
 
-cdef int dealloc_word_perm(WordPermutation *wp):
+cdef int dealloc_word_perm(WordPermutation *wp) noexcept:
     """
     Free the memory used by a word permutation.
     """
@@ -506,7 +506,7 @@ cdef int dealloc_word_perm(WordPermutation *wp):
     sig_free(wp.images)
     sig_free(wp)
 
-cdef codeword permute_word_by_wp(WordPermutation *wp, codeword word):
+cdef codeword permute_word_by_wp(WordPermutation *wp, codeword word) noexcept:
     """
     Return the codeword obtained by applying the permutation wp to word.
     """
@@ -574,7 +574,7 @@ def test_expand_to_ortho_basis(B=None):
         print(''.join(reversed(Integer(output[i]).binary().zfill(C.ncols))))
     sig_free(output)
 
-cdef codeword *expand_to_ortho_basis(BinaryCode B, int n):
+cdef codeword *expand_to_ortho_basis(BinaryCode B, int n) noexcept:
     r"""
     INPUT:
 
@@ -1073,7 +1073,7 @@ cdef class BinaryCode:
         """
         return self.is_one(word, col) != 0
 
-    cdef int is_one(self, int word, int column):
+    cdef int is_one(self, int word, int column) noexcept:
         return (self.words[word] & (<codeword> 1 << column)) >> column
 
     def _is_automorphism(self, col_gamma, word_gamma):
@@ -1121,7 +1121,7 @@ cdef class BinaryCode:
         sig_free(_word_gamma)
         return result
 
-    cdef int is_automorphism(self, int *col_gamma, int *word_gamma):
+    cdef int is_automorphism(self, int *col_gamma, int *word_gamma) noexcept:
         cdef int i, j, self_nwords = self.nwords, self_ncols = self.ncols
         i = 1
         while i < self_nwords:
@@ -1180,7 +1180,7 @@ cdef class BinaryCode:
         self._apply_permutation_to_basis(labeling)
         self._update_words_from_basis()
 
-    cdef void _apply_permutation_to_basis(self, object labeling):
+    cdef void _apply_permutation_to_basis(self, object labeling) noexcept:
         cdef WordPermutation *wp
         cdef int i
         wp = create_word_perm(labeling)
@@ -1188,7 +1188,7 @@ cdef class BinaryCode:
             self.basis[i] = permute_word_by_wp(wp, self.basis[i])
         dealloc_word_perm(wp)
 
-    cdef void _update_words_from_basis(self):
+    cdef void _update_words_from_basis(self) noexcept:
         cdef codeword word
         cdef int j, parity, combination
         word = 0
@@ -1206,7 +1206,7 @@ cdef class BinaryCode:
                 combination ^= (1 << j)
                 word ^= self.basis[j]
 
-    cpdef int put_in_std_form(self):
+    cpdef int put_in_std_form(self) noexcept:
         """
         Put the code in binary form, which is defined by an identity matrix on
         the left, augmented by a matrix of data.
@@ -1386,7 +1386,7 @@ cdef class OrbitPartition:
         """
         return self.wd_find(word)
 
-    cdef int wd_find(self, int word):
+    cdef int wd_find(self, int word) noexcept:
         if self.wd_parent[word] == word:
             return word
         else:
@@ -1421,7 +1421,7 @@ cdef class OrbitPartition:
         """
         self.wd_union(x, y)
 
-    cdef void wd_union(self, int x, int y):
+    cdef void wd_union(self, int x, int y) noexcept:
         cdef int x_root, y_root
         x_root = self.wd_find(x)
         y_root = self.wd_find(y)
@@ -1460,7 +1460,7 @@ cdef class OrbitPartition:
         """
         return self.col_find(col)
 
-    cdef int col_find(self, int col):
+    cdef int col_find(self, int col) noexcept:
         if self.col_parent[col] == col:
             return col
         else:
@@ -1495,7 +1495,7 @@ cdef class OrbitPartition:
         """
         self.col_union(x, y)
 
-    cdef void col_union(self, int x, int y):
+    cdef void col_union(self, int x, int y) noexcept:
         cdef int x_root, y_root
         x_root = self.col_find(x)
         y_root = self.col_find(y)
@@ -1558,7 +1558,7 @@ cdef class OrbitPartition:
         sig_free(_wd_gamma)
         return result
 
-    cdef int merge_perm(self, int *col_gamma, int *wd_gamma):
+    cdef int merge_perm(self, int *col_gamma, int *wd_gamma) noexcept:
         cdef int i, gamma_i_root
         cdef int j, gamma_j_root, return_value = 0
         cdef int *self_wd_parent = self.wd_parent
@@ -1906,7 +1906,7 @@ cdef class PartitionStack:
         """
         return self.is_discrete(k)
 
-    cdef int is_discrete(self, int k):
+    cdef int is_discrete(self, int k) noexcept:
         cdef int i, self_ncols = self.ncols, self_nwords = self.nwords
         cdef int *self_col_lvls = self.col_lvls
         cdef int *self_wd_lvls = self.wd_lvls
@@ -1942,7 +1942,7 @@ cdef class PartitionStack:
         """
         return self.num_cells(k)
 
-    cdef int num_cells(self, int k):
+    cdef int num_cells(self, int k) noexcept:
         cdef int i, j = 0
         cdef int *self_wd_lvls = self.wd_lvls
         cdef int *self_col_lvls = self.col_lvls
@@ -1982,7 +1982,7 @@ cdef class PartitionStack:
         """
         return self.sat_225(k)
 
-    cdef int sat_225(self, int k):
+    cdef int sat_225(self, int k) noexcept:
         cdef int i, n = self.nwords + self.ncols, in_cell = 0
         cdef int nontrivial_cells = 0, total_cells = self.num_cells(k)
         cdef int *self_wd_lvls = self.wd_lvls
@@ -2049,7 +2049,7 @@ cdef class PartitionStack:
 #                reps += (1 << i)
 #        return reps
 #
-    cdef void new_min_cell_reps(self, int k, unsigned int *Omega, int start):
+    cdef void new_min_cell_reps(self, int k, unsigned int *Omega, int start) noexcept:
         cdef int i, j
         cdef int *self_col_lvls = self.col_lvls
         cdef int *self_wd_lvls = self.wd_lvls
@@ -2109,7 +2109,7 @@ cdef class PartitionStack:
 #                fixed += (1 << i)
 #        return fixed & mcrs
 #
-    cdef void fixed_vertices(self, int k, unsigned int *Phi, unsigned int *Omega, int start):
+    cdef void fixed_vertices(self, int k, unsigned int *Phi, unsigned int *Omega, int start) noexcept:
         cdef int i, j, length, ell, fixed = 0
         cdef int radix = self.radix, nwords = self.nwords, ncols = self.ncols
         cdef int *self_col_lvls = self.col_lvls
@@ -2184,7 +2184,7 @@ cdef class PartitionStack:
 #        cell = (~0 << location) ^ (~0 << j+1)  # <-------            self.radix               ----->
 #        return cell                            # [0]*(radix-j-1) + [1]*(j-location+1) + [0]*location
 #
-    cdef int new_first_smallest_nontrivial(self, int k, unsigned int *W, int start):
+    cdef int new_first_smallest_nontrivial(self, int k, unsigned int *W, int start) noexcept:
         cdef int ell
         cdef int i = 0, j = 0, location = 0, min = self.ncols, nwords = self.nwords
         cdef int min_is_col = 1, radix = self.radix
@@ -2296,7 +2296,7 @@ cdef class PartitionStack:
         """
         self.col_percolate(start, end)
 
-    cdef void col_percolate(self, int start, int end):
+    cdef void col_percolate(self, int start, int end) noexcept:
         cdef int i, temp
         cdef int *self_col_ents = self.col_ents
         for i from end >= i > start:
@@ -2331,7 +2331,7 @@ cdef class PartitionStack:
         """
         self.wd_percolate(start, end)
 
-    cdef void wd_percolate(self, int start, int end):
+    cdef void wd_percolate(self, int start, int end) noexcept:
         cdef int i, temp
         cdef int *self_wd_ents = self.wd_ents
         for i from end >= i > start:
@@ -2430,7 +2430,7 @@ cdef class PartitionStack:
         """
         return self.split_vertex(v, k)
 
-    cdef int split_vertex(self, int v, int k):
+    cdef int split_vertex(self, int v, int k) noexcept:
         cdef int i = 0, j, flag = self.flag
         cdef int *ents
         cdef int *lvls
@@ -2496,7 +2496,7 @@ cdef class PartitionStack:
         """
         return self.col_degree(C, col, wd_ptr, k)
 
-    cdef int col_degree(self, BinaryCode CG, int col, int wd_ptr, int k):
+    cdef int col_degree(self, BinaryCode CG, int col, int wd_ptr, int k) noexcept:
         cdef int i = 0
         cdef int *self_wd_lvls = self.wd_lvls
         cdef int *self_wd_ents = self.wd_ents
@@ -2540,7 +2540,7 @@ cdef class PartitionStack:
         sig_free(ham_wts)
         return result
 
-    cdef int wd_degree(self, BinaryCode CG, int wd, int col_ptr, int k, int *ham_wts):
+    cdef int wd_degree(self, BinaryCode CG, int wd, int col_ptr, int k, int *ham_wts) noexcept:
 
         cdef int *self_col_lvls = self.col_lvls
         cdef int *self_col_ents = self.col_ents
@@ -2580,7 +2580,7 @@ cdef class PartitionStack:
             self.col_degs[i] = degrees[i]
         return self.sort_cols(start, k)
 
-    cdef int sort_cols(self, int start, int k):
+    cdef int sort_cols(self, int start, int k) noexcept:
         cdef int i, j, max, max_location, self_ncols = self.ncols
         cdef int self_nwords = self.nwords, ii
         cdef int *self_col_counts = self.col_counts
@@ -2650,7 +2650,7 @@ cdef class PartitionStack:
             self.wd_degs[i] = degrees[i]
         return self.sort_wds(start, k)
 
-    cdef int sort_wds(self, int start, int k):
+    cdef int sort_wds(self, int start, int k) noexcept:
         cdef int i, j, max, max_location, self_nwords = self.nwords
         cdef int ii, self_ncols = self.ncols
         cdef int *self_wd_counts = self.wd_counts
@@ -2755,7 +2755,7 @@ cdef class PartitionStack:
         sig_free(ham_wts)
         return result
 
-    cdef int refine(self, int k, int *alpha, int alpha_length, BinaryCode CG, int *ham_wts):
+    cdef int refine(self, int k, int *alpha, int alpha_length, BinaryCode CG, int *ham_wts) noexcept:
         cdef int q, r, s, t, flag = self.flag, self_ncols = self.ncols
         cdef int t_w, self_nwords = self.nwords, invariant = 0, i, j, m = 0
         cdef int *self_wd_degs = self.wd_degs
@@ -2858,7 +2858,7 @@ cdef class PartitionStack:
         """
         self.clear(k)
 
-    cdef void clear(self, int k):
+    cdef void clear(self, int k) noexcept:
         cdef int i, j = 0, nwords = self.nwords, ncols = self.ncols
         cdef int *wd_lvls = self.wd_lvls
         cdef int *col_lvls = self.col_lvls
@@ -2876,7 +2876,7 @@ cdef class PartitionStack:
                 self.col_percolate(j, i)
                 j = i + 1
 
-    cpdef int cmp(self, PartitionStack other, BinaryCode CG):
+    cpdef int cmp(self, PartitionStack other, BinaryCode CG) noexcept:
         """
         EXAMPLES::
 
@@ -2996,7 +2996,7 @@ cdef class PartitionStack:
         self.find_basis(ham_wts)
         sig_free(ham_wts)
 
-    cdef int find_basis(self, int *ham_wts):
+    cdef int find_basis(self, int *ham_wts) noexcept:
         cdef int i = 0, j, k, nwords = self.nwords, weight, basis_elts = 0, nrows = self.nrows
         cdef int *self_wd_ents = self.wd_ents
         if self.basis_locations is NULL:
@@ -3072,7 +3072,7 @@ cdef class PartitionStack:
         sig_free(col_g)
         return word_l, col_l
 
-    cdef void get_permutation(self, PartitionStack other, int *word_gamma, int *col_gamma):
+    cdef void get_permutation(self, PartitionStack other, int *word_gamma, int *col_gamma) noexcept:
         cdef int i
         cdef int *self_wd_ents = self.wd_ents
         cdef int *other_wd_ents = other.wd_ents
@@ -3159,7 +3159,7 @@ cdef class BinaryCodeClassifier:
         sig_free(self.labeling)
         sig_free(self.base)
 
-    cdef void record_automorphism(self, int *gamma, int ncols):
+    cdef void record_automorphism(self, int *gamma, int ncols) noexcept:
         cdef int i, j
         if self.aut_gp_index + ncols > self.aut_gens_size:
             self.aut_gens_size *= 2
@@ -3337,7 +3337,7 @@ cdef class BinaryCodeClassifier:
         aut_gp_size = self.aut_gp_size
         return py_aut_gp_gens, py_labeling, aut_gp_size, base
 
-    cdef void aut_gp_and_can_label(self, BinaryCode C, int verbosity):
+    cdef void aut_gp_and_can_label(self, BinaryCode C, int verbosity) noexcept:
 
         # declare variables:
         cdef int i, j, ii, jj, iii, jjj, iiii # local variables

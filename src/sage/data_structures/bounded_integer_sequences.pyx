@@ -142,7 +142,7 @@ cdef bint biseq_init(biseq_t R, mp_size_t l, mp_bitcnt_t itemsize) except -1:
     R.itembitsize = itemsize
     R.mask_item = limb_lower_bits_up(itemsize)
 
-cdef inline void biseq_dealloc(biseq_t S):
+cdef inline void biseq_dealloc(biseq_t S) noexcept:
     """
     Deallocate the memory used by ``S``.
     """
@@ -161,7 +161,7 @@ cdef bint biseq_init_copy(biseq_t R, biseq_t S) except -1:
 # Pickling
 #
 
-cdef tuple biseq_pickle(biseq_t S):
+cdef tuple biseq_pickle(biseq_t S) noexcept:
     return (bitset_pickle(S.data), S.itembitsize, S.length)
 
 cdef bint biseq_unpickle(biseq_t R, tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length) except -1:
@@ -199,10 +199,10 @@ cdef bint biseq_init_list(biseq_t R, list data, size_t bound) except -1:
         biseq_inititem(R, index, item_c)
         index += 1
 
-cdef inline Py_hash_t biseq_hash(biseq_t S):
+cdef inline Py_hash_t biseq_hash(biseq_t S) noexcept:
     return S.itembitsize*(<Py_hash_t>1073807360)+bitset_hash(S.data)
 
-cdef inline bint biseq_richcmp(biseq_t S1, biseq_t S2, int op):
+cdef inline bint biseq_richcmp(biseq_t S1, biseq_t S2, int op) noexcept:
     if S1.itembitsize != S2.itembitsize:
         return richcmp_not_equal(S1.itembitsize, S2.itembitsize, op)
     if S1.length != S2.length:
@@ -271,7 +271,7 @@ cdef mp_size_t biseq_index(biseq_t S, size_t item, mp_size_t start) except -2:
     return -1
 
 
-cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index):
+cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index) noexcept:
     """
     Get item ``S[index]``, without checking margins.
 
@@ -288,7 +288,7 @@ cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index):
         out |= (S.data.bits[limb_index+1]) << (GMP_LIMB_BITS - bit_index)
     return out & S.mask_item
 
-cdef biseq_getitem_py(biseq_t S, mp_size_t index):
+cdef biseq_getitem_py(biseq_t S, mp_size_t index) noexcept:
     """
     Get item ``S[index]`` as a Python ``int``, without
     checking margins.
@@ -297,7 +297,7 @@ cdef biseq_getitem_py(biseq_t S, mp_size_t index):
     cdef size_t out = biseq_getitem(S, index)
     return PyLong_FromSize_t(out)
 
-cdef inline void biseq_inititem(biseq_t S, mp_size_t index, size_t item):
+cdef inline void biseq_inititem(biseq_t S, mp_size_t index, size_t item) noexcept:
     """
     Set ``S[index] = item``, without checking margins.
 
@@ -314,7 +314,7 @@ cdef inline void biseq_inititem(biseq_t S, mp_size_t index, size_t item):
         # Our item is stored using 2 limbs, add the part from the upper limb
         S.data.bits[limb_index+1] |= (item >> (GMP_LIMB_BITS - bit_index))
 
-cdef inline void biseq_clearitem(biseq_t S, mp_size_t index):
+cdef inline void biseq_clearitem(biseq_t S, mp_size_t index) noexcept:
     """
     Set ``S[index] = 0``, without checking margins.
 
@@ -1041,7 +1041,7 @@ cdef class BoundedIntegerSequence:
             return False
         return biseq_contains(self.data, right.data, 0) >= 0
 
-    cpdef list list(self):
+    cpdef list list(self) noexcept:
         """
         Converts this bounded integer sequence to a list
 
@@ -1067,7 +1067,7 @@ cdef class BoundedIntegerSequence:
         cdef mp_size_t i
         return [biseq_getitem_py(self.data, i) for i in range(self.data.length)]
 
-    cpdef bint startswith(self, BoundedIntegerSequence other):
+    cpdef bint startswith(self, BoundedIntegerSequence other) noexcept:
         """
         Tells whether ``self`` starts with a given bounded integer sequence
 
@@ -1236,7 +1236,7 @@ cdef class BoundedIntegerSequence:
         biseq_init_concat(out.data, myself.data, right.data)
         return out
 
-    cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other):
+    cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other) noexcept:
         """
         Return ``self``'s maximal trailing sub-sequence that ``other`` starts with.
 
@@ -1355,7 +1355,7 @@ cdef class BoundedIntegerSequence:
             return 0
         return h
 
-cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length):
+cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length) noexcept:
     """
     Helper function for unpickling of :class:`BoundedIntegerSequence`.
 

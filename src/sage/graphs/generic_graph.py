@@ -185,6 +185,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.is_gallai_tree` | Return whether the current graph is a Gallai tree.
     :meth:`~GenericGraph.is_clique` | Check whether a set of vertices is a clique
     :meth:`~GenericGraph.is_cycle` | Check whether ``self`` is a (directed) cycle graph.
+    :meth:`~GenericGraph.is_geodetic` | Check whether the input (di)graph is geodetic.
     :meth:`~GenericGraph.is_independent_set` | Check whether ``vertices`` is an independent set of ``self``
     :meth:`~GenericGraph.is_transitively_reduced` | Test whether the digraph is transitively reduced.
     :meth:`~GenericGraph.is_equitable` | Check whether the given partition is equitable with respect to self.
@@ -315,6 +316,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.disjoint_routed_paths` | Return a set of disjoint routed paths.
     :meth:`~GenericGraph.dominating_set` | Return a minimum dominating set of the graph
     :meth:`~GenericGraph.greedy_dominating_set` | Return a greedy distance-`k` dominating set of the graph.
+    :meth:`~GenericGraph.maximum_leaf_number` | Return the maximum leaf number of the graph.
     :meth:`~GenericGraph.subgraph_search` | Return a copy of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_count` | Return the number of labelled occurrences of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_iterator` | Return an iterator over the labelled copies of ``G`` in ``self``.
@@ -5102,13 +5104,13 @@ class GenericGraph(GenericGraph_pyx):
         A cycle basis in Petersen's Graph ::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.cycle_basis()                                                       # needs networkx
+            sage: g.cycle_basis()                                                       # needs networkx, random (changes in networkx 3.2)
             [[1, 6, 8, 5, 0], [4, 9, 6, 8, 5, 0], [7, 9, 6, 8, 5],
              [4, 3, 8, 5, 0], [1, 2, 3, 8, 5, 0], [7, 2, 3, 8, 5]]
 
         One can also get the result as a list of lists of edges::
 
-            sage: g.cycle_basis(output='edge')                                          # needs networkx
+            sage: g.cycle_basis(output='edge')                                          # needs networkx, random (changes in networkx 3.2)
             [[(1, 6, None), (6, 8, None), (8, 5, None), (5, 0, None),
              (0, 1, None)], [(4, 9, None), (9, 6, None), (6, 8, None),
              (8, 5, None), (5, 0, None), (0, 4, None)], [(7, 9, None),
@@ -5149,14 +5151,14 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(0, 2, 'a'), (0, 2, 'b'), (0, 1, 'c'), (1, 2, 'd')],
             ....:           multiedges=True)
-            sage: G.cycle_basis()                                                       # needs networkx
-            [[0, 2], [2, 1, 0]]
-            sage: G.cycle_basis(output='edge')                                          # needs networkx
-            [[(0, 2, 'b'), (2, 0, 'a')], [(2, 1, 'd'), (1, 0, 'c'), (0, 2, 'a')]]
+            sage: G.cycle_basis()
+            [[2, 0], [2, 0, 1]]
+            sage: G.cycle_basis(output='edge')
+            [[(0, 2, 'b'), (2, 0, 'a')], [(1, 2, 'd'), (2, 0, 'a'), (0, 1, 'c')]]
             sage: H = Graph([(1, 2), (2, 3), (2, 3), (3, 4), (1, 4),
             ....:            (1, 4), (4, 5), (5, 6), (4, 6), (6, 7)], multiedges=True)
-            sage: H.cycle_basis()                                                       # needs networkx
-            [[1, 4], [2, 3], [4, 3, 2, 1], [6, 5, 4]]
+            sage: H.cycle_basis()
+            [[4, 1], [3, 2], [4, 1, 2, 3], [6, 4, 5]]
 
         Disconnected graph::
 
@@ -5168,19 +5170,19 @@ class GenericGraph(GenericGraph_pyx):
               ('Really ?', 'Wuuhuu', None),
               ('Wuuhuu', 'Hey', None)],
              [(0, 2, 'a'), (2, 0, 'b')],
-             [(0, 2, 'b'), (1, 0, 'c'), (2, 1, 'd')]]
+             [(0, 1, 'c'), (1, 2, 'd'), (2, 0, 'b')]]
 
         Graph that allows multiple edges but does not contain any::
 
             sage: G = graphs.CycleGraph(3)
             sage: G.allow_multiple_edges(True)
-            sage: G.cycle_basis()                                                       # needs networkx
-            [[2, 1, 0]]
+            sage: G.cycle_basis()
+            [[2, 0, 1]]
 
         Not yet implemented for directed graphs::
 
             sage: G = DiGraph([(0, 2, 'a'), (0, 1, 'c'), (1, 2, 'd')])
-            sage: G.cycle_basis()                                                       # needs networkx
+            sage: G.cycle_basis()
             Traceback (most recent call last):
             ...
             NotImplementedError: not implemented for directed graphs
@@ -5191,12 +5193,12 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(1, 2, 'a'), (2, 3, 'b'), (2, 3, 'c'),
             ....:            (3, 4, 'd'), (3, 4, 'e'), (4, 1, 'f')], multiedges=True)
-            sage: G.cycle_basis()                                                       # needs networkx
-            [[2, 3], [4, 3, 2, 1], [4, 3, 2, 1]]
-            sage: G.cycle_basis(output='edge')                                          # needs networkx
+            sage: G.cycle_basis()
+            [[3, 2], [4, 1, 2, 3], [4, 1, 2, 3]]
+            sage: G.cycle_basis(output='edge')
             [[(2, 3, 'c'), (3, 2, 'b')],
-             [(4, 3, 'd'), (3, 2, 'b'), (2, 1, 'a'), (1, 4, 'f')],
-             [(4, 3, 'e'), (3, 2, 'b'), (2, 1, 'a'), (1, 4, 'f')]]
+             [(3, 4, 'd'), (4, 1, 'f'), (1, 2, 'a'), (2, 3, 'b')],
+             [(3, 4, 'e'), (4, 1, 'f'), (1, 2, 'a'), (2, 3, 'b')]]
         """
         if output not in ['vertex', 'edge']:
             raise ValueError('output must be either vertex or edge')
@@ -5214,11 +5216,29 @@ class GenericGraph(GenericGraph_pyx):
             T = Graph(self.min_spanning_tree(), multiedges=True, format='list_of_edges')
             H = self.copy()
             H.delete_edges(T.edge_iterator())
+            root = next(T.vertex_iterator())
+            rank = dict(T.breadth_first_search(root, report_distance=True))
+            parent = {v: u for u, v in T.breadth_first_search(root, edges=True)}
             L = []
             for e in H.edge_iterator():
-                T.add_edge(e)
-                L.append(T.is_tree(certificate=True, output=output)[1])
-                T.delete_edge(e)
+                # Search for the nearest common ancestor of e[0] and e[1] in T
+                P = [e[0]]
+                Q = [e[1]]
+                while P[-1] != Q[-1]:
+                    # If rank[P[-1]] > rank[Q[-1]], we extend the path P.
+                    # If rank[P[-1]] < rank[Q[-1]], we extend the path Q.
+                    # In case of equality, we extend both paths.
+                    diff = rank[P[-1]] - rank[Q[-1]]
+                    if diff >= 0:
+                        P.append(parent[P[-1]])
+                    if diff <= 0:
+                        Q.append(parent[Q[-1]])
+
+                cycle = Q + P[-2::-1]
+                if output == 'edge':
+                    cycle = [e] + [(x, y, T.edge_label(x, y)[0])
+                                   for x, y in zip(cycle[:-1], cycle[1:])]
+                L.append(cycle)
             return L
 
         # second case: there are no multiple edges
@@ -5273,9 +5293,9 @@ class GenericGraph(GenericGraph_pyx):
             [[1, 2, 3], [1, 2, 3, 4], [5, 6, 7]]
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
-            sage: sorted(g.minimum_cycle_basis(by_weight=True, algorithm='NetworkX'))   # needs networkx
+            sage: sorted(g.minimum_cycle_basis(by_weight=True, algorithm='NetworkX'))   # needs networkx, random (changes in networkx 3.2)
             [[1, 2, 3], [1, 2, 3, 4], [5, 6, 7]]
-            sage: g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX')          # needs networkx
+            sage: g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX')          # needs networkx, random (changes in networkx 3.2)
             [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
 
         ::
@@ -5283,13 +5303,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = Graph([(1, 2), (2, 3), (3, 4), (4, 5), (5, 1), (5, 3)])
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3, 5], [3, 4, 5]]
-            sage: sorted(g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX'))  # needs networkx
+            sage: sorted(g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX'))  # needs networkx, random (changes in networkx 3.2)
             [[1, 2, 3, 5], [3, 4, 5]]
 
         TESTS::
 
             sage: g = Graph([(0, 1, 1), (1, 2, 'a')])
-            sage: g.min_spanning_tree(by_weight=True)
+            sage: g.minimum_cycle_basis(by_weight=True)
             Traceback (most recent call last):
             ...
             ValueError: the weight function cannot find the weight of (1, 2, 'a')
@@ -11431,8 +11451,7 @@ class GenericGraph(GenericGraph_pyx):
             if not self.has_edge(vertex, vertex):
                 yield vertex
 
-        for u in self._backend.iterator_nbrs(vertex):
-            yield u
+        yield from self._backend.iterator_nbrs(vertex)
 
     def vertices(self, sort=False, key=None, degree=None, vertex_property=None):
         r"""
@@ -24390,6 +24409,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.domination import dominating_sets
     from sage.graphs.domination import dominating_set
     from sage.graphs.domination import greedy_dominating_set
+    from sage.graphs.domination import maximum_leaf_number
     from sage.graphs.base.static_dense_graph import connected_subgraph_iterator
     rooted_product = LazyImport('sage.graphs.graph_decompositions.graph_products', 'rooted_product')
     from sage.graphs.path_enumeration import shortest_simple_paths
@@ -24398,6 +24418,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.traversals import lex_UP
     from sage.graphs.traversals import lex_DFS
     from sage.graphs.traversals import lex_DOWN
+    is_geodetic = LazyImport('sage.graphs.convexity_properties', 'is_geodetic')
 
     def katz_matrix(self, alpha, nonedgesonly=False, vertices=None):
         r"""

@@ -1,4 +1,5 @@
 # cython: binding=True
+# sage.doctest: needs sage.plot
 r"""
 Mandelbrot and Julia sets (Cython helper)
 
@@ -60,7 +61,7 @@ def _color_to_RGB(color):
 
 cpdef fast_mandelbrot_plot(double x_center, double y_center,
  double image_width, long max_iteration, long pixel_count,
- long level_sep, long color_num, base_color):
+ long level_sep, long color_num, base_color) noexcept:
     r"""
     Plots the Mandelbrot set in the complex plane for the map `Q_c(z) = z^2 + c`.
 
@@ -178,7 +179,7 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
 
 
 cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
- long pixel_count=500, double image_width=4, long prec=300):
+ long pixel_count=500, double image_width=4, long prec=300) noexcept:
     r"""
     Return a list of points that approximate the external ray for a given angle.
 
@@ -289,7 +290,7 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
     return c_list
 
 cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
- long number_of_pixels):
+ long number_of_pixels) noexcept:
     r"""
     Converts cartesian coordinates to pixels within a specified window.
 
@@ -333,7 +334,7 @@ cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
         pixel_list.append((x_pixel, y_pixel))
     return pixel_list
 
-cpdef get_line(start, end):
+cpdef get_line(start, end) noexcept:
     r"""
     Produces a list of pixel coordinates approximating a line from a starting
     point to an ending point using the Bresenham's Line Algorithm.
@@ -420,7 +421,7 @@ cpdef get_line(start, end):
 cpdef fast_julia_plot(double c_real, double c_imag,
   double x_center=0, double y_center=0, double image_width=4,
   long max_iteration=500, long pixel_count=500, long level_sep=2,
-  long color_num=40, base_color=[50, 50, 50]):
+  long color_num=40, base_color=[50, 50, 50]) noexcept:
     r"""
     Plots the Julia set for a given `c` value in the complex plane for the map `Q_c(z) = z^2 + c`.
 
@@ -539,7 +540,7 @@ cpdef fast_julia_plot(double c_real, double c_imag,
 cpdef julia_helper(double c_real, double c_imag, double x_center=0,
  double y_center=0, double image_width=4, long max_iteration=500,
  long pixel_count=500, long level_sep=2, long color_num=40,
- base_color=[50, 50, 50], point_color=[255, 0, 0]):
+ base_color=[50, 50, 50], point_color=[255, 0, 0]) noexcept:
     r"""
     Helper function that returns the image of a Julia set for a given
     `c` value side by side with the Mandelbrot set with a point denoting
@@ -630,7 +631,7 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
 
 cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
  double y_center=0, image_width=4, int max_iteration=50, int pixel_count=500,
- int level_sep=1, int color_num=30, base_color=Color('red')):
+ int level_sep=1, int color_num=30, base_color=Color('red')) noexcept:
     r"""
     Plots the Mandelbrot set in the complex plane for a family of polynomial maps.
 
@@ -933,7 +934,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
 
 cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
  int max_iteration=50, int pixel_count=500, int level_sep=1, int color_num=30,
- base_color=[50,50,50]):
+ base_color=[50,50,50]) noexcept:
     r"""
     Plots Julia sets for general polynomials.
 
