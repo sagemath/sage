@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 r"""
 Hecke operators and morphisms between modular abelian varieties
 

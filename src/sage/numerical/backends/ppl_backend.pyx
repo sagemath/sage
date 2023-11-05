@@ -1,3 +1,4 @@
+# sage.doctest: optional - pplpy
 """
 PPL Backend
 
@@ -23,7 +24,7 @@ from sage.numerical.mip import MIPSolverException
 from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from .generic_backend cimport GenericBackend
+from sage.numerical.backends.generic_backend cimport GenericBackend
 from copy import copy
 
 
@@ -61,7 +62,7 @@ cdef class PPLBackend(GenericBackend):
 
         Raise an error if a ``base_ring`` is requested that is not supported::
 
-            sage: p = MixedIntegerLinearProgram(solver = "PPL", base_ring=AA)
+            sage: p = MixedIntegerLinearProgram(solver="PPL", base_ring=AA)             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.

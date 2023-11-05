@@ -1171,7 +1171,7 @@ class GraphGenerators():
             for s in msg.split(' '):
                 if s.startswith('n='):
                     from sage.rings.integer import Integer
-                    n1, n2 = [Integer(t) for t in s[2:].split('+') if t.isdigit()]
+                    n1, n2 = (Integer(t) for t in s[2:].split('+') if t.isdigit())
                     partition = [set(range(n1)), set(range(n1, n1 + n2))]
                     break
             else:

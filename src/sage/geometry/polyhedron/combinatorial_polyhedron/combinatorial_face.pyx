@@ -68,13 +68,13 @@ from cysignals.memory           cimport check_allocarray, sig_free
 
 import numbers
 from sage.rings.integer         cimport smallInteger
-from .conversions               cimport bit_rep_to_Vrep_list
-from .base                      cimport CombinatorialPolyhedron
-from .face_iterator             cimport FaceIterator_base, FaceStatus
-from .polyhedron_face_lattice   cimport PolyhedronFaceLattice
-from .face_data_structure       cimport face_len_atoms, face_init, face_free, face_copy, face_issubset
-from .face_list_data_structure  cimport bit_rep_to_coatom_rep
-from .list_of_faces              cimport face_as_combinatorial_polyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.conversions               cimport bit_rep_to_Vrep_list
+from sage.geometry.polyhedron.combinatorial_polyhedron.base                      cimport CombinatorialPolyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator             cimport FaceIterator_base, FaceStatus
+from sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice   cimport PolyhedronFaceLattice
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_len_atoms, face_init, face_free, face_copy, face_issubset
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure  cimport bit_rep_to_coatom_rep
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces              cimport face_as_combinatorial_polyhedron
 
 
 cdef extern from "Python.h":

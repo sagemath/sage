@@ -176,14 +176,13 @@ AUTHOR:
 
 from cython.parallel cimport prange, threadid
 from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_check
 from memory_allocator cimport MemoryAllocator
 
-from cysignals.signals      cimport sig_check
-from .conversions           cimport bit_rep_to_Vrep_list
-from .base                  cimport CombinatorialPolyhedron
-
+from sage.geometry.polyhedron.combinatorial_polyhedron.base cimport CombinatorialPolyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport bit_rep_to_Vrep_list
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 from sage.geometry.polyhedron.face import combinatorial_face_to_polyhedral_face, PolyhedronFace
-from .face_list_data_structure cimport *
 
 
 cdef extern from "Python.h":

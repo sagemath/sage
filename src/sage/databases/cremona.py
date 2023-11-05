@@ -1623,7 +1623,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             curve_data = []
             class_data = []
             for L in open(ftpdata + "/" + F).readlines():
-                N, iso, num, eqn, rank, tor, cp, om, L, reg, sha  = L.split()
+                N, iso, num, eqn, rank, tor, cp, om, L, reg, sha = L.split()
                 if largest_conductor and int(N) > largest_conductor:
                     break
                 cls = N+iso
