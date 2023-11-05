@@ -1027,10 +1027,12 @@ def label_nice_tree_decomposition(nice_TD, root):
 
     EXAMPLES::
 
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition, label_nice_tree_decomposition
         sage: bip_one_four = graphs.CompleteBipartiteGraph(1, 4)
         sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
-        sage: nice_TD = make_nice_tree_decomposition(bip_one_four_TD)
-        sage: label_TD = label_nice_tree_decomposition(nice_TD)
+        sage: nice_TD = make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
+        sage: root = sorted(nice_TD.vertices())[0]
+        sage: label_TD = label_nice_tree_decomposition(nice_TD, root)
         sage: for node in label_TD:
         ....:     print(node, label_TD.get_vertex(node))
         (0, {}) root
@@ -1049,6 +1051,9 @@ def label_nice_tree_decomposition(nice_TD, root):
         (13, {}) leaf
         (14, {}) leaf
     """
+    from sage.graphs.digraph import DiGraph
+    from sage.graphs.graph import Graph
+
     directed_TD = DiGraph(nice_TD.breadth_first_search(start=root, edges=True),
                           format='list_of_edges')
 
