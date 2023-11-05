@@ -1152,9 +1152,9 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: k.<b> = GF(2^16)
             sage: b._gap_init_()
             'Z(65536)^1'
-            sage: k(gap('Z(2^16)^3+Z(2^16)^5'))
+            sage: k(gap('Z(2^16)^3+Z(2^16)^5'))                                         # needs sage.libs.gap
             b^5 + b^3
-            sage: k(libgap.Z(2^16)^3+libgap.Z(2^16)^5)
+            sage: k(libgap.Z(2^16)^3+libgap.Z(2^16)^5)                                  # needs sage.libs.gap
             b^5 + b^3
         """
         F = self._parent

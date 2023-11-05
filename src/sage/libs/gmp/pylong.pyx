@@ -30,7 +30,7 @@ from cpython.long cimport PyLong_FromLong
 from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
 from sage.cpython.pycore_long cimport (ob_digit, _PyLong_IsNegative,
     _PyLong_DigitCount, _PyLong_SetSignAndDigitCount)
-from .mpz cimport *
+from sage.libs.gmp.mpz cimport *
 
 cdef extern from *:
     """
