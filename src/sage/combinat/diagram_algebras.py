@@ -2498,22 +2498,20 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     Shorthands for working with basis elements are as follows::
 
+        sage: # needs sage.symbolic
         sage: S = SymmetricGroupAlgebra(ZZ, 3)
-        sage: A = PartitionAlgebra(3, x, SR)                                            # needs sage.symbolic
-
-        sage: A([[1,3],[-1],[-3]])  # pair up the omitted nodes as `{-i, i}`, if possible           # needs sage.symbolic
+        sage: A = PartitionAlgebra(3, x, SR)
+        sage: A([[1,3],[-1],[-3]])  # pair up the omitted nodes as `{-i, i}`, if possible
         P{{-3}, {-2, 2}, {-1}, {1, 3}}
-        sage: A([[1,3],[-1],[-3]]) == A[[1,3],[-1],[-3]]                                # needs sage.symbolic
+        sage: A([[1,3],[-1],[-3]]) == A[[1,3],[-1],[-3]]
         True
-
-        sage: A([[1,2]])                                                                # needs sage.symbolic
+        sage: A([[1,2]])
         P{{-3, 3}, {-2}, {-1}, {1, 2}}
-        sage: A([[1,2]]) == A[[1,2]]                                                    # needs sage.symbolic
+        sage: A([[1,2]]) == A[[1,2]]
         True
-
-        sage: A([2,3,1])  # permutations in one-line notation are imported as well      # needs sage.symbolic
+        sage: A([2,3,1])  # permutations in one-line notation are imported as well
         P{{-3, 2}, {-2, 1}, {-1, 3}}
-        sage: A([2,3,1]) == A(S([2,3,1]))                                               # needs sage.symbolic
+        sage: A([2,3,1]) == A(S([2,3,1]))
         True
     """
     @staticmethod

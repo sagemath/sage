@@ -3121,18 +3121,19 @@ def bernoulli_polynomial(x, n: Integer):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: y = QQ['y'].0
-        sage: bernoulli_polynomial(y, 5)                                                # needs sage.libs.flint
+        sage: bernoulli_polynomial(y, 5)
         y^5 - 5/2*y^4 + 5/3*y^3 - 1/6*y
-        sage: bernoulli_polynomial(y, 5)(12)                                            # needs sage.libs.flint
+        sage: bernoulli_polynomial(y, 5)(12)
         199870
-        sage: bernoulli_polynomial(12, 5)                                               # needs sage.libs.flint
+        sage: bernoulli_polynomial(12, 5)
         199870
-        sage: bernoulli_polynomial(y^2 + 1, 5)                                          # needs sage.libs.flint
+        sage: bernoulli_polynomial(y^2 + 1, 5)
         y^10 + 5/2*y^8 + 5/3*y^6 - 1/6*y^2
         sage: P.<t> = ZZ[]
-        sage: p = bernoulli_polynomial(t, 6)                                            # needs sage.libs.flint
-        sage: p.parent()                                                                # needs sage.libs.flint
+        sage: p = bernoulli_polynomial(t, 6)
+        sage: p.parent()
         Univariate Polynomial Ring in t over Rational Field
 
     We verify an instance of the formula which is the origin of

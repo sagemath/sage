@@ -1964,13 +1964,13 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
 
     INPUT:
 
-    - `Q` -- a word
-    - `w` -- an element in the Coxeter group
-    - side -- optional, either 'negative' (default) or 'positive'
-    - n -- an integer (optional, defaults to the length of Q)
-    - pos -- an integer (optional, default 0)
-    - l -- an integer (optional, defaults to the length of w)
-    - elems -- a list (optional)
+    - ``Q`` -- a word
+    - ``w`` -- an element in the Coxeter group
+    - ``side`` -- optional, either ``'negative'`` (default) or ``'positive'``
+    - ``n`` -- an integer (optional, defaults to the length of `Q`)
+    - ``pos`` -- an integer (optional, default 0)
+    - ``l`` -- an integer (optional, defaults to the length of `w`)
+    - ``elems`` -- a list (optional)
 
     OUTPUT:
 
@@ -1978,8 +1978,9 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
 
     EXAMPLES::
 
-        sage: # optional - gap3
         sage: from sage.combinat.subword_complex import _greedy_facet
+
+        sage: # optional - gap3
         sage: W = ReflectionGroup(['A',2])
         sage: Q = [1,2,1,2,1]
         sage: w = W.from_reduced_word([1, 2, 1])
@@ -2034,9 +2035,9 @@ def _extended_root_configuration_indices(W, Q, F):
 
     INPUT:
 
-    - `W` -- a Coxeter group
-    - `Q` -- a word representing an element of `W`
-    - `F` -- a facet of the subword complex
+    - ``W`` -- a Coxeter group
+    - ``Q`` -- a word representing an element of `W`
+    - ``F`` -- a facet of the subword complex
 
     OUTPUT:
 
@@ -2044,8 +2045,9 @@ def _extended_root_configuration_indices(W, Q, F):
 
     EXAMPLES::
 
-        sage: # optional - gap3
         sage: from sage.combinat.subword_complex import _extended_root_configuration_indices
+
+        sage: # optional - gap3
         sage: W = ReflectionGroup(['A',2])
         sage: w = W.from_reduced_word([1,2,1])
         sage: Q = [1,2,1,2,1]
@@ -2076,8 +2078,8 @@ def _greedy_flip_algorithm(Q, w):
     """
     INPUT:
 
-    - Q -- a word in a Coxeter group W
-    - w -- an element of W
+    - ``Q`` -- a word in a Coxeter group `W`
+    - ``w`` -- an element of `W`
 
     OUTPUT:
 
@@ -2085,8 +2087,9 @@ def _greedy_flip_algorithm(Q, w):
 
     EXAMPLES::
 
-        sage: # optional - gap3
         sage: from sage.combinat.subword_complex import _greedy_flip_algorithm
+
+        sage: # optional - gap3
         sage: W = ReflectionGroup(['A',2])
         sage: Q = [1,2,1,2,1]
         sage: w = W.from_reduced_word([1,2,1])

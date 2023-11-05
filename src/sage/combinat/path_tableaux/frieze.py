@@ -85,10 +85,11 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
     This constructs the examples from [HJ18]_::
 
+        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
-        sage: K.<sqrt3> = NumberField(x^2 - 3)                                          # needs sage.rings.number_field
-        sage: t = path_tableaux.FriezePattern([1,sqrt3,2,sqrt3,1,1], field=K)           # needs sage.rings.number_field
-        sage: path_tableaux.CylindricalDiagram(t)                                       # needs sage.rings.number_field
+        sage: K.<sqrt3> = NumberField(x^2 - 3)
+        sage: t = path_tableaux.FriezePattern([1, sqrt3, 2, sqrt3, 1, 1], field=K)
+        sage: path_tableaux.CylindricalDiagram(t)
         [        0,         1,     sqrt3,         2,     sqrt3,         1,         1,         0]
         [         ,         0,         1,     sqrt3,         2,     sqrt3, sqrt3 + 1,         1,         0]
         [         ,          ,         0,         1,     sqrt3,         2, sqrt3 + 2,     sqrt3,         1,         0]
@@ -97,13 +98,13 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         [         ,          ,          ,          ,          ,         0,         1,         1,     sqrt3,         2,     sqrt3,         1,         0]
         [         ,          ,          ,          ,          ,          ,         0,         1, sqrt3 + 1, sqrt3 + 2, sqrt3 + 2, sqrt3 + 1,         1,         0]
         [         ,          ,          ,          ,          ,          ,          ,         0,         1,     sqrt3,         2,     sqrt3,         1,         1,         0]
+        sage: TestSuite(t).run()
 
-        sage: TestSuite(t).run()                                                        # needs sage.rings.number_field
-
-        sage: K.<sqrt2> = NumberField(x^2 - 2)                                          # needs sage.rings.number_field
-        sage: t = path_tableaux.FriezePattern([1,sqrt2,1,sqrt2,3,2*sqrt2,5,3*sqrt2,1],  # needs sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<sqrt2> = NumberField(x^2 - 2)
+        sage: t = path_tableaux.FriezePattern([1, sqrt2, 1, sqrt2, 3, 2*sqrt2, 5, 3*sqrt2, 1],
         ....:                                 field=K)
-        sage: path_tableaux.CylindricalDiagram(t)                                       # needs sage.rings.number_field
+        sage: path_tableaux.CylindricalDiagram(t)
         [      0,       1,   sqrt2,       1,   sqrt2,       3, 2*sqrt2,       5, 3*sqrt2,       1,       0]
         [       ,       0,       1,   sqrt2,       3, 5*sqrt2,       7, 9*sqrt2,      11, 2*sqrt2,       1,       0]
         [       ,        ,       0,       1, 2*sqrt2,       7, 5*sqrt2,      13, 8*sqrt2,       3,   sqrt2,       1,       0]
@@ -115,8 +116,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         [       ,        ,        ,        ,        ,        ,        ,        ,       0,       1, 3*sqrt2,      11, 8*sqrt2,       5, 2*sqrt2,       3,   sqrt2,       1,       0]
         [       ,        ,        ,        ,        ,        ,        ,        ,        ,       0,       1, 2*sqrt2,       3,   sqrt2,       1,   sqrt2,       1,   sqrt2,       1,       0]
         [       ,        ,        ,        ,        ,        ,        ,        ,        ,        ,       0,       1,   sqrt2,       1,   sqrt2,       3, 2*sqrt2,       5, 3*sqrt2,       1,       0]
-
-        sage: TestSuite(t).run()                                                        # needs sage.rings.number_field
+        sage: TestSuite(t).run()
     """
     @staticmethod
     def __classcall_private__(cls, fp, field=QQ):
@@ -379,18 +379,17 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
+            sage: # needs sage.plot sage.symbolic
             sage: t = path_tableaux.FriezePattern([1,2,7,5,3,7,4,1])
-            sage: t.plot()                                                              # needs sage.plot sage.symbolic
+            sage: t.plot()
             Graphics object consisting of 18 graphics primitives
-
-            sage: t.plot(model='UHP')                                                   # needs sage.plot sage.symbolic
+            sage: t.plot(model='UHP')
             Graphics object consisting of 18 graphics primitives
-
-            sage: t.plot(model='PD')                                                    # needs sage.plot sage.symbolic
+            sage: t.plot(model='PD')
             Traceback (most recent call last):
             ...
             TypeError: '>' not supported between instances of 'NotANumber' and 'Pi'
-            sage: t.plot(model='KM')                                                    # needs sage.plot sage.symbolic
+            sage: t.plot(model='KM')
             Graphics object consisting of 18 graphics primitives
         """
         from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
@@ -414,8 +413,9 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
     def change_ring(self, R):
         r"""
-        Return ``self`` as a frieze pattern with coefficients in ``R``
-        assuming there is a canonical coerce map from the base ring of ``self``
+        Return ``self`` as a frieze pattern with coefficients in ``R``.
+
+        This assumes that there is a canonical coerce map from the base ring of ``self``
         to ``R``.
 
         EXAMPLES::
@@ -424,8 +424,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
             sage: fp.change_ring(RealField())                                           # needs sage.rings.real_mpfr
             [0.000000000000000, 1.00000000000000, ...
              4.00000000000000, 1.00000000000000, 0.000000000000000]
-
-            sage: fp.FriezePattern([1,2,7,5,3,7,4,1]).change_ring(GF(7))                # needs sage.rings.finite_rings
+            sage: fp.change_ring(GF(7))
             Traceback (most recent call last):
             ...
             TypeError: no base extension defined

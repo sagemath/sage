@@ -847,6 +847,7 @@ class SkewPartition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: p = SkewPartition([[3,3,1], [2,1]])
             sage: Q = p.cell_poset(); Q                                                 # needs sage.graphs
             Finite poset containing 4 elements

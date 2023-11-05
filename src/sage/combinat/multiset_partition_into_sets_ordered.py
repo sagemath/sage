@@ -3216,17 +3216,16 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: B = crystals.Minimaj(2,3,2)                                           # needs sage.modules
-            sage: TestSuite(B).run()                                                    # needs sage.modules
-
-            sage: B = crystals.Minimaj(3, 5, 2)                                         # needs sage.modules
-            sage: TestSuite(B).run()                                                    # needs sage.modules
-
-            sage: list(crystals.Minimaj(2,6,3))                                         # needs sage.modules
+            sage: # needs sage.modules
+            sage: B = crystals.Minimaj(2,3,2)
+            sage: TestSuite(B).run()
+            sage: B = crystals.Minimaj(3, 5, 2)
+            sage: TestSuite(B).run()
+            sage: list(crystals.Minimaj(2,6,3))
             [((1, 2), (2, 1), (1, 2))]
-            sage: list(crystals.Minimaj(2,5,2))  # blocks too fat for alphabet          # needs sage.modules
+            sage: list(crystals.Minimaj(2,5,2))  # blocks too fat for alphabet
             []
-            sage: list(crystals.Minimaj(4,2,3))  # more blocks than letters             # needs sage.modules
+            sage: list(crystals.Minimaj(4,2,3))  # more blocks than letters
             Traceback (most recent call last):
             ...
             ValueError: n (=4), ell (=2), and k (=3) must all be positive integers
@@ -3488,15 +3487,15 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: B = crystals.Minimaj(4,5,3)                                       # needs sage.modules
-                sage: b = B.an_element(); b                                             # needs sage.modules
+                sage: # needs sage.modules
+                sage: B = crystals.Minimaj(4,5,3)
+                sage: b = B.an_element(); b
                 ((2, 3, 1), (1,), (1,))
-                sage: b.to_tableaux_words()                                             # needs sage.modules
+                sage: b.to_tableaux_words()
                 [[1], [3], [2, 1, 1]]
-
-                sage: b = B([[1,3,4], [3], [3]]); b                                     # needs sage.modules
+                sage: b = B([[1,3,4], [3], [3]]); b
                 ((4, 1, 3), (3,), (3,))
-                sage: b.to_tableaux_words()                                             # needs sage.modules
+                sage: b.to_tableaux_words()
                 [[3, 1], [], [4, 3, 3]]
             """
             w, breaks = self.value

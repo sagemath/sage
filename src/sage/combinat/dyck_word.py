@@ -1698,6 +1698,7 @@ class DyckWord(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: dw = DyckWord([1,0])
             sage: dw.to_binary_tree()                                                   # needs sage.graphs
             [., .]
@@ -1791,6 +1792,7 @@ class DyckWord(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: dw = DyckWord([1, 1, 0, 1, 0, 0, 1, 0])
             sage: ip = dw.tamari_interval(DyckWord([1, 1, 1, 0, 0, 1, 0, 0])); ip       # needs sage.graphs
             The Tamari interval of size 4 induced by relations [(2, 4), (3, 4), (3, 1), (2, 1)]
@@ -2487,6 +2489,7 @@ class DyckWord_complete(DyckWord):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: D = DyckWord([1,1,0,0])
             sage: D.to_ordered_tree()                                                   # needs sage.graphs
             [[[]]]

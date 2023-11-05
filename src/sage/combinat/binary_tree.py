@@ -1280,14 +1280,15 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: bt = BinaryTree([[[], [[], None]], [[], []]])
-            sage: bt == bt.to_dyck_word().to_binary_tree()                              # needs sage.combinat
+            sage: bt == bt.to_dyck_word().to_binary_tree()
             True
-            sage: bt == bt.to_dyck_word("1R0L").to_binary_tree("1R0L")                  # needs sage.combinat
+            sage: bt == bt.to_dyck_word("1R0L").to_binary_tree("1R0L")
             True
-            sage: bt == bt.to_dyck_word("L1R0").to_binary_tree("L1R0")                  # needs sage.combinat
+            sage: bt == bt.to_dyck_word("L1R0").to_binary_tree("L1R0")
             True
-            sage: bt == bt.to_dyck_word("R1L0").to_binary_tree("R1L0")                  # needs sage.combinat
+            sage: bt == bt.to_dyck_word("R1L0").to_binary_tree("R1L0")
             True
         """
         from sage.combinat.dyck_word import DyckWord
@@ -2852,20 +2853,21 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         Let us get to a more interesting tree::
 
+            sage: # needs sage.combinat
             sage: b = BinaryTree([[[],[]],[[],None]]); b
             [[[., .], [., .]], [[., .], .]]
-            sage: b.q_hook_length_fraction()(q=1)                                       # needs sage.combinat
+            sage: b.q_hook_length_fraction()(q=1)
             20
-            sage: b.q_hook_length_fraction()                                            # needs sage.combinat
+            sage: b.q_hook_length_fraction()
             q^7 + 2*q^6 + 3*q^5 + 4*q^4 + 4*q^3 + 3*q^2 + 2*q + 1
-            sage: b.q_hook_length_fraction(q_factor=True)                               # needs sage.combinat
+            sage: b.q_hook_length_fraction(q_factor=True)
             q^10 + 2*q^9 + 3*q^8 + 4*q^7 + 4*q^6 + 3*q^5 + 2*q^4 + q^3
-            sage: b.q_hook_length_fraction(q=2)                                         # needs sage.combinat
+            sage: b.q_hook_length_fraction(q=2)
             465
-            sage: b.q_hook_length_fraction(q=2, q_factor=True)                          # needs sage.combinat
+            sage: b.q_hook_length_fraction(q=2, q_factor=True)
             3720
             sage: q = PolynomialRing(ZZ, 'q').gen()
-            sage: b.q_hook_length_fraction(q=q**2)                                      # needs sage.combinat
+            sage: b.q_hook_length_fraction(q=q**2)
             q^14 + 2*q^12 + 3*q^10 + 4*q^8 + 4*q^6 + 3*q^4 + 2*q^2 + 1
 
         Let us check the fact that `f_{q} (T)` is the generating function

@@ -204,47 +204,49 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
 
     Computing the matrix for `p_1=p_2=2+2+1`::
 
+        sage: # needs sage.combinat sage.modules
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [2,2,1]
         sage: p2 = [2,2,1]
-        sage: print(gale_ryser_theorem(p1, p2))         # not tested                    # needs sage.combinat sage.modules
+        sage: print(gale_ryser_theorem(p1, p2))         # not tested
         [1 1 0]
         [1 0 1]
         [0 1 0]
-        sage: A = gale_ryser_theorem(p1, p2)                                            # needs sage.combinat sage.modules
-        sage: rs = [sum(x) for x in A.rows()]                                           # needs sage.combinat sage.modules
-        sage: cs = [sum(x) for x in A.columns()]                                        # needs sage.combinat sage.modules
-        sage: p1 == rs; p2 == cs                                                        # needs sage.combinat sage.modules
+        sage: A = gale_ryser_theorem(p1, p2)
+        sage: rs = [sum(x) for x in A.rows()]
+        sage: cs = [sum(x) for x in A.columns()]
+        sage: p1 == rs; p2 == cs
         True
         True
 
     Or for a non-square matrix with `p_1=3+3+2+1` and `p_2=3+2+2+1+1`,
     using Ryser's algorithm::
 
+        sage: # needs sage.combinat sage.modules
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [3,3,1,1]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
         [1 1 1 0]
         [1 1 0 1]
         [1 0 0 0]
         [0 1 0 0]
         sage: p1 = [4,2,2]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
         [1 1 1 1]
         [1 1 0 0]
         [1 1 0 0]
         sage: p1 = [4,2,2,0]
         sage: p2 = [3,3,1,1,0,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
         [1 1 1 1 0 0]
         [1 1 0 0 0 0]
         [1 1 0 0 0 0]
         [0 0 0 0 0 0]
         sage: p1 = [3,3,2,1]
         sage: p2 = [3,2,2,1,1]
-        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))       # not tested, needs sage.combinat sage.modules
+        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))       # not tested
         [1 1 1 0 0]
         [1 1 0 0 1]
         [1 0 1 0 0]
