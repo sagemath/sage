@@ -3,10 +3,32 @@ def sage_setup(distributions, *,
                required_modules=(), optional_modules=(),
                recurse_packages=(),
                package_data=None):
+    r"""
+    Replacement for :func:`setuptools.setup` for building distribution packages of the Sage library
+
+    INPUT:
+
+    - ``distributions`` -- (typically one-element) sequence of strings, the distribution names
+      shipped with this distribution package.
+
+    - ``interpreters`` -- sequence of strings, the interpreters to build with :mod:`sage_setup.autogen`.
+
+    - ``required_modules`` -- sequence of strings, pkgconfig modules that are required for the build.
+
+    - ``optional_modules`` -- sequence of strings, pkgconfig modules to checked for the build.
+
+    - ``package_data`` -- ``None`` or a dictionary mapping package names to lists of filename
+      glob patterns, the package data to install.
+
+      * If ``None``, all of ``package_data`` is taken from ``pyproject.toml``.
+
+      * If a dictionary, use it as package data and ignore ``package_data`` in ``pyproject.toml``.
+    """
     import time
 
-    from distutils import log
     from setuptools import setup, find_namespace_packages
+    from distutils import log
+    from setuptools.dist import Distribution
     from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
     from sage_setup.cython_options import compiler_directives, compile_time_env_variables
     from sage_setup.extensions import create_extension
@@ -18,6 +40,22 @@ def sage_setup(distributions, *,
     if os.uname().sysname == 'Darwin':
         import multiprocessing
         multiprocessing.set_start_method('fork', force=True)
+
+    # setuptools plugins considered harmful:
+    # If build isolation is not in use and setuptools_scm is installed,
+    # then its file_finders entry point is invoked, which we don't need.
+    # Workaround from ​https://github.com/pypa/setuptools_scm/issues/190#issuecomment-351181286
+    try:
+        import setuptools_scm.integration
+        setuptools_scm.integration.find_files = lambda _: []
+    except ImportError:
+        pass
+
+    # And with setuptools_scm 8, we get more trouble:
+    # LookupError: pyproject.toml does not contain a tool.setuptools_scm section
+    # LookupError: setuptools-scm was unable to detect version ...
+    # We just remove all handling of "setuptools.finalize_distribution_options" entry points.
+    Distribution._removed = staticmethod(lambda ep: True)
 
     import sys
 
@@ -38,9 +76,6 @@ def sage_setup(distributions, *,
     # ########################################################
     # ## Discovering Sources
     # ########################################################
-    if package_data is None:
-        package_data = {}
-
     if sdist:
         extensions = []
         python_modules = []
@@ -65,10 +100,11 @@ def sage_setup(distributions, *,
 
         python_packages += find_namespace_packages(where='.', include=recurse_packages)
 
-        package_data.update({"": [f
-                                  for pkg, files in extra_files.items()
-                                  for f in files]})
-        python_packages += list(package_data)
+        if package_data is not None:
+            package_data.update({"": [f
+                                      for pkg, files in extra_files.items()
+                                      for f in files]})
+            python_packages += list(package_data)
 
         log.debug('python_packages = {0}'.format(sorted(python_packages)))
         log.debug('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
@@ -100,9 +136,14 @@ def sage_setup(distributions, *,
             log.warn(f"Exception while cythonizing source files: {repr(exception)}")
             raise
 
+    kwds = {}
+
+    if package_data is not None:
+        kwds['package_data'] = package_data
+
     setup(cmdclass=cmdclass,
           packages=python_packages,
           py_modules=python_modules,
           ext_modules=extensions,
-          package_data=package_data,
+          **kwds
     )
