@@ -184,7 +184,11 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
             sage: x,y,z = PolynomialRing(QQ, 3, names='x,y,z').gens()
             sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
-
+            sage: p1 = C(0, -1, 1)
+            sage: p2 = C(0, 0, 1)
+            sage: p3 = C(0, 1, 0)
+            sage: C.divisor([(1, p1), (-1, p2), (2, p3)])
+            (x, y + z) - (x, y) + 2*(x, z)
         """
         return Divisor_curve(v, check=check, reduce=reduce, parent=self.divisor_group(base_ring))
 

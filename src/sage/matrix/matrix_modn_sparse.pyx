@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Sparse matrices over `\ZZ/n\ZZ` for `n` small
 
@@ -109,6 +108,7 @@ from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix2 import Matrix as Matrix2
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.matrix_sparse cimport Matrix_sparse
 from sage.misc.verbose import verbose, get_verbose
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.modules.vector_integer_sparse cimport *
@@ -932,7 +932,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [0 2]
         """
         if check_rank and self.rank() < self.nrows():
-            from .matrix2 import NotFullRankError
+            from sage.matrix.matrix2 import NotFullRankError
             raise NotFullRankError
 
         if self.base_ring() != B.base_ring():
@@ -1111,7 +1111,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         if self._nrows == 0 or self._ncols == 0:
             raise ValueError("not implemented for nrows=0 or ncols=0")
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
         cdef Matrix_integer_dense B

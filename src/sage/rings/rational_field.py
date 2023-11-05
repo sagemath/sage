@@ -810,7 +810,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.hilbert_symbol_negative_at_S([5, 7], 2)                            # needs sage.libs.pari sage.modules
+            sage: QQ.hilbert_symbol_negative_at_S([5, 7], 2)                            # needs sage.libs.pari sage.modules sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: second argument must be a nonsquare with
@@ -1427,7 +1427,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QS2gens                                                               # needs sage.rings.number_field
             [-1]
 
-            sage: all(QQ.selmer_space([], p)[0].dimension() == 0                        # needs sage.libs.pari
+            sage: all(QQ.selmer_space([], p)[0].dimension() == 0                        # needs sage.libs.pari sage.rings.number_field
             ....:     for p in primes(3, 10))
             True
 

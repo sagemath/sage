@@ -62,7 +62,7 @@ AUTHOR:
 
 import operator
 
-from .matrix_space import MatrixSpace, is_MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace, is_MatrixSpace
 from sage.modules.free_module import FreeModule, is_FreeModule
 from sage.structure.coerce cimport coercion_model
 from sage.categories.homset import Hom, End

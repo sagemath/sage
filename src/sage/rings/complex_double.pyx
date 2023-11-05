@@ -796,11 +796,11 @@ cdef class ComplexDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: CDF(1.2) > CDF(i)
+            sage: CDF(1.2) > CDF(i)                                                     # needs sage.symbolic
             True
             sage: CDF(1) < CDF(2)
             True
-            sage: CDF(1 + i) > CDF(-1 - i)
+            sage: CDF(1 + i) > CDF(-1 - i)                                              # needs sage.symbolic
             True
 
         ::
@@ -2551,11 +2551,12 @@ cdef class ComplexToCDF(Morphism):
 
     EXAMPLES::
 
-        sage: import numpy                                                              # needs numpy
-        sage: f = CDF.coerce_map_from(numpy.complex_)                                   # needs numpy
-        sage: f(numpy.complex_(I))                                                      # needs numpy
+        sage: # needs numpy
+        sage: import numpy
+        sage: f = CDF.coerce_map_from(numpy.complex_)
+        sage: f(numpy.complex_(I))
         1.0*I
-        sage: f(numpy.complex_(I)).parent()                                             # needs numpy
+        sage: f(numpy.complex_(I)).parent()
         Complex Double Field
     """
     def __init__(self, R):
