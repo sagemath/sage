@@ -63,8 +63,8 @@ from sage.misc.temporary_file import tmp_filename
 from sage.misc.fast_methods cimport hash_by_id
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
-from .texture import Texture
-from .transform cimport Transformation, point_c, face_c
+from sage.plot.plot3d.texture import Texture
+from sage.plot.plot3d.transform cimport Transformation, point_c, face_c
 include "point_c.pxi"
 
 from sage.interfaces.tachyon import tachyon_rt
@@ -502,7 +502,7 @@ cdef class Graphics3d(SageObject):
             js_options['axesLabelsStyle'] = None
 
         if js_options['axesLabelsStyle'] is not None:
-            from .shapes import _validate_threejs_text_style
+            from sage.plot.plot3d.shapes import _validate_threejs_text_style
             style = js_options['axesLabelsStyle']
             if isinstance(style, dict):
                 style = _validate_threejs_text_style(style)
@@ -1552,7 +1552,7 @@ end_scene""".format(
         T = [xyz_min[i] - a_min[i] for i in range(3)]
         X = X.translate(T)
         if frame:
-            from .shapes2 import frame3d, frame_labels
+            from sage.plot.plot3d.shapes2 import frame3d, frame_labels
             F = frame3d(xyz_min, xyz_max, opacity=0.5, color=(0,0,0), thickness=thickness)
             if labels:
                 F += frame_labels(xyz_min, xyz_max, a_min_orig, a_max_orig)
@@ -1561,7 +1561,7 @@ end_scene""".format(
 
         if axes:
             # draw axes
-            from .shapes import arrow3d
+            from sage.plot.plot3d.shapes import arrow3d
             A = (arrow3d((min(0,a_min[0]),0, 0), (max(0,a_max[0]), 0,0),
                              thickness, color="blue"),
                  arrow3d((0,min(0,a_min[1]), 0), (0, max(0,a_max[1]), 0),
