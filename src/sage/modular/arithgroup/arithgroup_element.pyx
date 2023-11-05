@@ -334,12 +334,13 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         An example of g acting on a symbolic variable::
 
-            sage: z = var('z')
-            sage: g.acton(z)
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: g.acton(z)                                                            # needs sage.symbolic
             (z + 2)/(15*z + 31)
 
         An example involving the Gaussian numbers::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: g.acton(i)

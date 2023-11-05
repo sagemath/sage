@@ -152,7 +152,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
                     if latex:
                         superscript = r'\{' + superscript + r'\}'
                     else:
-                        superscript = '{' + superscript  + '}'
+                        superscript = '{' + superscript + '}'
                 if latex:
                     if len(superscript) != 1:
                         superscript = '{' + superscript + '}'

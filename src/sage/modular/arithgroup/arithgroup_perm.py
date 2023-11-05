@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Arithmetic subgroups defined by permutations of cosets
 
