@@ -73,7 +73,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
     r"""
     A dense polynomial over the integers, implemented via NTL.
     """
-    cdef Polynomial_integer_dense_ntl _new(self):
+    cdef Polynomial_integer_dense_ntl _new(self) noexcept:
         r"""
         Quickly creates a new initialized Polynomial_integer_dense_ntl
         with the correct parent and _is_gen == 0.
@@ -312,8 +312,8 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             1
 
             sage: p = x^3 - x^2 - x - 1
-            sage: r = p.roots(RIF, multiplicities=False)[0]
-            sage: p._eval_mpfi_(r)
+            sage: r = p.roots(RIF, multiplicities=False)[0]                             # needs sage.libs.linbox
+            sage: p._eval_mpfi_(r)                                                      # needs sage.libs.linbox
             0.?e-27
         """
         cdef RealIntervalFieldElement res = a._new()
@@ -338,7 +338,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         return Polynomial_integer_dense_ntl, \
                (self.parent(), self.list(), False, self.is_gen())
 
-    cdef get_unsafe(self, Py_ssize_t n):
+    cdef get_unsafe(self, Py_ssize_t n) noexcept:
         """
         Return the `n`-th coefficient of ``self``.
 
@@ -428,7 +428,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             name = self.parent().latex_variable_names()[0]
         return self._repr(name, latex=True)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         r"""
         Returns self plus right.
 
@@ -446,7 +446,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         return x
 
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         r"""
         Return self minus right.
 
@@ -464,7 +464,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         return x
 
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         r"""
         Returns negative of ``self``.
 
@@ -680,7 +680,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             return S(rr), ss, tt
 
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         r"""
         Returns self multiplied by right.
 
@@ -695,7 +695,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
                 (<Polynomial_integer_dense_ntl>right)._poly)
         return x
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         r"""
         Returns self multiplied by right, where right is a scalar (integer).
 
@@ -714,7 +714,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         ZZX_mul_ZZ(x._poly, self._poly, _right)
         return x
 
-    cpdef _rmul_(self, Element right):
+    cpdef _rmul_(self, Element right) noexcept:
         r"""
         Returns self multiplied by right, where right is a scalar (integer).
 
@@ -795,7 +795,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
             sage: f = 1 - x^2 - x^3 - x^4 + x^6
-            sage: f.real_root_intervals()
+            sage: f.real_root_intervals()                                               # needs sage.libs.linbox
             [((1/2, 3/4), 1), ((1, 3/2), 1)]
         """
 
@@ -1088,7 +1088,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         from sage.rings.polynomial.padics.polynomial_padic import _pari_padic_factorization_to_sage
         return _pari_padic_factorization_to_sage(G, R, self.leading_coefficient())
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         """
         Return a new copy of the list of the underlying
         elements of ``self``.

@@ -14,7 +14,7 @@ from sage.structure.list_clone cimport ClonableArray
 #####################################################################
 ######                    Timings functions                    ######
 #####################################################################
-cpdef ClonableArray cy_add1_internal(ClonableArray bla):
+cpdef ClonableArray cy_add1_internal(ClonableArray bla) noexcept:
     """
     TESTS::
 
@@ -34,7 +34,7 @@ cpdef ClonableArray cy_add1_internal(ClonableArray bla):
     return blo
 
 
-cpdef ClonableArray cy_add1_immutable(ClonableArray bla):
+cpdef ClonableArray cy_add1_immutable(ClonableArray bla) noexcept:
     """
     TESTS::
 
@@ -49,7 +49,7 @@ cpdef ClonableArray cy_add1_immutable(ClonableArray bla):
     for i in range(len(lbla)): lbla[i] += 1
     return bla.__class__(bla._parent, lbla)
 
-cpdef ClonableArray cy_add1_mutable(ClonableArray bla):
+cpdef ClonableArray cy_add1_mutable(ClonableArray bla) noexcept:
     """
     TESTS::
 
@@ -68,7 +68,7 @@ cpdef ClonableArray cy_add1_mutable(ClonableArray bla):
     return blo
 
 
-cpdef ClonableArray cy_add1_with(ClonableArray bla):
+cpdef ClonableArray cy_add1_with(ClonableArray bla) noexcept:
     """
     TESTS::
 

@@ -18,9 +18,9 @@ from sage.modules.vector_rational_sparse cimport *
 from sage.rings.integer cimport Integer
 from sage.rings.rational_field import QQ
 
-from .matrix0 cimport Matrix
-from .matrix_integer_sparse cimport Matrix_integer_sparse
-from .matrix_rational_sparse cimport Matrix_rational_sparse
+from sage.matrix.matrix0 cimport Matrix
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.matrix.matrix_rational_sparse cimport Matrix_rational_sparse
 
 matrix_integer_dense_rational_reconstruction = \
   LazyImport('sage.matrix.misc_flint', 'matrix_integer_dense_rational_reconstruction',

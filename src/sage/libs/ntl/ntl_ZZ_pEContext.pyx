@@ -122,7 +122,7 @@ cdef class ntl_ZZ_pEContext_class():
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         """
         Sets the global NTL modulus to be self.
 
@@ -148,7 +148,7 @@ cdef class ntl_ZZ_pEContext_class():
             sage: c.ZZ_pE([4,3])
             [4 3]
         """
-        from .ntl_ZZ_pE import ntl_ZZ_pE
+        from sage.libs.ntl.ntl_ZZ_pE import ntl_ZZ_pE
         return ntl_ZZ_pE(v,modulus=self)
 
     def ZZ_pEX(self, v = None):
@@ -161,7 +161,7 @@ cdef class ntl_ZZ_pEContext_class():
             sage: c.ZZ_pEX([4,3])
             [[4] [3]]
         """
-        from .ntl_ZZ_pEX import ntl_ZZ_pEX
+        from sage.libs.ntl.ntl_ZZ_pEX import ntl_ZZ_pEX
         return ntl_ZZ_pEX(v, modulus=self)
 
     cpdef void _assert_is_current_modulus(self) except *:

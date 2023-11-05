@@ -44,13 +44,13 @@ DEFAULT_LOGARITHMIC_CONTOUR_BASE = 2
 DEFAULT_LINEAR_CONTOUR_BASE = 10
 
 
-cdef inline ComplexDoubleElement new_CDF_element(double x, double y):
+cdef inline ComplexDoubleElement new_CDF_element(double x, double y) noexcept:
     z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
     GSL_SET_COMPLEX(&z._complex, x, y)
     return z
 
 
-cdef inline double mag_to_lightness(double r, double rate=0.5):
+cdef inline double mag_to_lightness(double r, double rate=0.5) noexcept:
     """
     Return a lightness for the given magnitude.
 
@@ -101,7 +101,7 @@ cdef inline double mag_to_lightness(double r, double rate=0.5):
         return atan(log(pow(r, rate)+1)) * (4/PI) - 1
 
 
-cdef inline double cyclic_logarithmic_mag_to_lightness(double r, double base=2):
+cdef inline double cyclic_logarithmic_mag_to_lightness(double r, double base=2) noexcept:
     r"""
     Return a lightness for the given magnitude.
 
@@ -152,7 +152,7 @@ cdef inline double cyclic_logarithmic_mag_to_lightness(double r, double base=2):
     return .15 - rem/2.
 
 
-cdef inline double cyclic_linear_mag_to_lightness(double r, double base=10):
+cdef inline double cyclic_linear_mag_to_lightness(double r, double base=10) noexcept:
     r"""
     Return a lightness for the given magnitude.
 
@@ -205,7 +205,7 @@ cdef inline double cyclic_linear_mag_to_lightness(double r, double base=10):
 
 
 cdef inline double mag_and_arg_to_lightness(double r, double arg,
-                                            double base=2, int nphases=10):
+                                            double base=2, int nphases=10) noexcept:
     r"""
     Return a lightness for the given magnitude and argument.
 
