@@ -1079,7 +1079,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         we can get different orderings::
 
             sage: factorizations2 = [ F for F in a.factorizations() ]
-            sage: factorizations == factorizations2
+            sage: factorizations == factorizations2  # random
             False
             sage: sorted(factorizations) == sorted(factorizations2)
             True
