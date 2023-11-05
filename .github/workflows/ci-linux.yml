@@ -34,39 +34,20 @@ permissions:
 
 jobs:
 
-  # standard-pre for the default platform (used by build.yml etc.)
-  default-pre:
+  # standard-pre and standard (without ptest) for the default platform (used by build.yml etc.)
+  default:
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
-      docker_targets: "with-system-packages configured with-targets-pre"
+      docker_targets: "with-system-packages configured with-targets-pre with-targets"
       # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
-      tox_system_factors: >-
-        ["ubuntu-focal"]
-      tox_packages_factors: >-
-        ["standard"]
-      docker_push_repository: ghcr.io/${{ github.repository }}/
-
-  # standard for the default platform (used by build.yml etc.)
-  default:
-    if: ${{ success() || failure() }}
-    needs: [default-pre]
-    uses: ./.github/workflows/docker.yml
-    with:
-      # Build incrementally from previous stage (pre)
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/${{ github.repository }}/
-      from_docker_target: "with-targets-pre"
-      docker_targets: "with-targets with-targets-optional"
-      # FIXME: duplicated from env.TARGETS
       targets: build doc-html
       targets_optional: ptest
       tox_system_factors: >-
         ["ubuntu-focal"]
       tox_packages_factors: >-
-          ["standard"]
+        ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
   # All platforms. This duplicates the default platform, but why not,
@@ -158,8 +139,6 @@ jobs:
 
   minimal-pre:
     if: ${{ success() || failure() }}
-    # It does not really "need" it.
-    needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
@@ -169,8 +148,9 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduce from 30 to 25 because it may run in parallel with 'standard-sitepackages' above
-      max_parallel: 25
+      # Reduced from 30 because it may run in parallel with 'standard-sitepackages' above.
+      # Calibrated for clogging the job pipeline until the "default" job has finished.
+      max_parallel: 20
 
   minimal:
     if: ${{ success() || failure() }}
