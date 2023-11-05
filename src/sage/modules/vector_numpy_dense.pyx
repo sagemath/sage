@@ -151,7 +151,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             (0.0, 0.0, 0.0, 0.0)
             sage: vector(RDF, 4)
             (0.0, 0.0, 0.0, 0.0)
-            sage: vector(CDF, [CDF(1+I)*j for j in range(4)])
+            sage: vector(CDF, [CDF(1+I)*j for j in range(4)])                           # needs sage.symbolic
             (0.0, 1.0 + 1.0*I, 2.0 + 2.0*I, 3.0 + 3.0*I)
             sage: vector(RDF, 4, range(4))
             (0.0, 1.0, 2.0, 3.0)
@@ -211,13 +211,13 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: v = vector(CDF, [1,CDF(3,2), -1]); v
+            sage: v = vector(CDF, [1, CDF(3,2), -1]); v
             (1.0, 3.0 + 2.0*I, -1.0)
             sage: v[1] = 2
-            sage: v[-1] = I
-            sage: v
+            sage: v[-1] = I                                                             # needs sage.symbolic
+            sage: v                                                                     # needs sage.symbolic
             (1.0, 2.0, 1.0*I)
-            sage: v[1:3] = [1, 1]; v
+            sage: v[1:3] = [1, 1]; v                                                    # needs sage.symbolic
             (1.0, 1.0, 1.0)
         """
         # We assume that Py_ssize_t is the same as npy_intp

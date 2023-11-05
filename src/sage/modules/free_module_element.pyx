@@ -416,8 +416,8 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     Complex numbers can be converted naturally to a sequence of length 2.  And
     then to a vector.  ::
 
-        sage: c = CDF(2 + 3*I)
-        sage: v = vector(c); v
+        sage: c = CDF(2 + 3*I)                                                          # needs sage.rings.complex_double sage.symbolic
+        sage: v = vector(c); v                                                          # needs sage.rings.complex_double sage.symbolic
         (2.0, 3.0)
 
     A generator, or other iterable, may also be supplied as input.  Anything
@@ -457,9 +457,9 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v.is_immutable()
         True
 
-        sage: # needs numpy
+        sage: # needs numpy sage.symbolic
         sage: import numpy as np
-        sage: w = np.array([1, 2, pi], float)                                           # needs sage.symbolic
+        sage: w = np.array([1, 2, pi], float)
         sage: v = vector(w, immutable=True)
         sage: v.is_immutable()
         True
@@ -3225,6 +3225,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         We test this by building a specialized vector space with a non-standard
         inner product, and constructing a test vector in this space. ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: V = VectorSpace(CDF, 2, inner_product_matrix=[[2,1],[1,5]])
             sage: v = vector(CDF, [2-3*I, 4+5*I])
             sage: w = V(v)
@@ -3435,8 +3436,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: R.<t> = ZZ[]
             sage: v = vector(R, [12, 24*t])
             sage: w = vector(QQ, [1/2, 1/3, 1/4])
-            sage: op = v.outer_product(w)
-            sage: op
+            sage: op = v.outer_product(w); op
             [   6    4    3]
             [12*t  8*t  6*t]
             sage: op.base_ring()
@@ -3451,7 +3451,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: w = vector(GF(5), [1,2])
             sage: v = vector(GF(7), [1,2,3,4])
-            sage: z = w.outer_product(v)                                                # needs sage.rings.finite_rings
+            sage: z = w.outer_product(v)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *:
@@ -3460,8 +3460,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         And some inputs don't make any sense at all. ::
 
-            sage: w=vector(QQ, [5,10])
-            sage: z=w.outer_product(6)
+            sage: w = vector(QQ, [5,10])
+            sage: z = w.outer_product(6)
             Traceback (most recent call last):
             ...
             TypeError: right operand in an outer product must be a vector,
@@ -3531,7 +3531,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         in each argument (with conjugation on the first scalar),
         and anti-commutative. ::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: alpha = CDF(5.0 + 3.0*I)
             sage: u = vector(CDF, [2+4*I, -3+5*I, 2-7*I])
             sage: v = vector(CDF, [-1+3*I, 5+4*I, 9-2*I])
@@ -3550,6 +3550,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         default for the :meth:`norm` method). The norm squared equals
         the Hermitian inner product of the vector with itself.  ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: v = vector(CDF, [-0.66+0.47*I, -0.60+0.91*I, -0.62-0.87*I, 0.53+0.32*I])
             sage: abs(v.norm()^2 - v.hermitian_inner_product(v)) < 1.0e-10
             True
@@ -3560,6 +3561,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         which allows for a wide variety of inputs.  Any error
         handling happens there. ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: v = vector(CDF, [2+3*I])
             sage: w = vector(CDF, [5+2*I, 3+9*I])
             sage: v.hermitian_inner_product(w)
