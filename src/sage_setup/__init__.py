@@ -136,9 +136,14 @@ def sage_setup(distributions, *,
             log.warn(f"Exception while cythonizing source files: {repr(exception)}")
             raise
 
+    kwds = {}
+
+    if package_data is not None:
+        kwds['package_data'] = package_data
+
     setup(cmdclass=cmdclass,
           packages=python_packages,
           py_modules=python_modules,
           ext_modules=extensions,
-          package_data=package_data,
+          **kwds
     )
