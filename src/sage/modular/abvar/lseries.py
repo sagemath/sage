@@ -107,9 +107,9 @@ class Lseries_complex(Lseries):
             0.24843186659059968120725033931
 
             sage: L = J0(389)[0].lseries()
-            sage: L(1)                          # long time (2s)                        # needs sage.symbolic
+            sage: L(1)                          # abstol 1e-10          # long time (2s), needs sage.symbolic
             -1.33139759782370e-19
-            sage: L(1, prec=100)                # long time (2s)                        # needs sage.symbolic
+            sage: L(1, prec=100)                # abstol 1e-20          # long time (2s), needs sage.symbolic
             6.0129758648142797032650287762e-39
             sage: L.rational_part()
             0
