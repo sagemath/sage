@@ -890,7 +890,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             """
             cfs = ch_algebra.cubic_equation(as_coefficients=True, generic=True)
             fac = - 1 / cfs[0]
-            cf0, cf1, cf2, cf3 = [original_base_ring(cf * fac) for cf in cfs]
+            cf0, cf1, cf2, cf3 = (original_base_ring(cf * fac) for cf in cfs)
 
             matri = cf1 * matr.parent().one()
             matri += cf2 * matr

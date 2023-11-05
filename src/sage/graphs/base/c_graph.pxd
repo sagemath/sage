@@ -6,7 +6,7 @@
 #**************************************************************************
 
 from sage.data_structures.bitset cimport bitset_t
-from .graph_backends cimport GenericGraphBackend
+from sage.graphs.base.graph_backends cimport GenericGraphBackend
 from libc.stdint cimport uint32_t
 
 cdef class CGraph:

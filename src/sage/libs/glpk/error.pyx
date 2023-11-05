@@ -14,7 +14,7 @@ Error handler for the GLPK library
 
 from cysignals.signals cimport sig_error
 
-from .env cimport *
+from sage.libs.glpk.env cimport *
 from cpython.exc cimport PyErr_SetObject
 from sage.cpython.string cimport char_to_str
 from sage.numerical.mip import MIPSolverException

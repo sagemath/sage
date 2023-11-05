@@ -301,7 +301,7 @@ to first disable F-polynomials and then recompute only the desired mutations::
     sage: # long time
     sage: A.reset_exploring_iterator(mutating_F=False)
     sage: v = (-1, 1, -2, 2, -1, 1, -1, 1, 1)
-    sage: seq = A.find_g_vector(v); seq             # random
+    sage: seq = A.find_g_vector(v); seq  # random
     [1, 0, 2, 6, 5, 4, 3, 8, 1]
     sage: S = A.initial_seed().mutate(seq, inplace=False)
     sage: v in S.g_vectors()
@@ -448,7 +448,7 @@ class ClusterAlgebraElement(ElementWrapper):
         """
         return self.lift() / other.lift()
 
-    def d_vector(self):
+    def d_vector(self) -> tuple:
         r"""
         Return the denominator vector of ``self`` as a tuple of integers.
 
@@ -464,7 +464,7 @@ class ClusterAlgebraElement(ElementWrapper):
         minimal = map(min, zip(*monomials))
         return tuple(-vector(minimal))[:self.parent().rank()]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -527,7 +527,7 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
             subs_dict[A.coefficient(i).lift()] = A._U.gen(i)
         return A._U(self.lift().substitute(subs_dict))
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a homogeneous element
         of ``self.parent()``.
@@ -543,7 +543,7 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
         """
         return getattr(self, '_is_homogeneous', len(self.homogeneous_components()) == 1)
 
-    def homogeneous_components(self):
+    def homogeneous_components(self) -> dict:
         r"""
         Return a dictionary of the homogeneous components of ``self``.
 
@@ -602,10 +602,10 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
         A = self.parent()
         B = A.b_matrix()
         U = A._U
-        out = dict()
+        out = {}
         zero_A = A(0)
         zero_U = U(0)
-        zero_t = (0,)*A.rank()
+        zero_t = (0,) * A.rank()
 
         components = self.homogeneous_components()
 
@@ -615,11 +615,12 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
             while f_poly != zero_U:
                 y_exp = min(f_poly.dict())
                 coeff = f_poly.dict()[y_exp]
-                g_theta = tuple(g_vect + B*vector(y_exp))
-                out[g_theta] = out.get(g_theta, zero_A) + A({zero_t + tuple(y_exp):coeff})
-                f_poly -= U({y_exp:coeff}) * A.theta_basis_F_polynomial(g_theta)
+                g_theta = tuple(g_vect + B * vector(y_exp))
+                out[g_theta] = out.get(g_theta, zero_A) + A({zero_t + tuple(y_exp): coeff})
+                f_poly -= U({y_exp: coeff}) * A.theta_basis_F_polynomial(g_theta)
 
         return out
+
 
 ##############################################################################
 # Seeds
@@ -724,7 +725,7 @@ class ClusterAlgebraSeed(SageObject):
                 self.parent() == other.parent() and
                 frozenset(self.g_vectors()) == frozenset(other.g_vectors()))
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         r"""
         Test whether ``element`` belong to ``self``.
 
@@ -773,7 +774,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return hash(frozenset(self.g_vectors()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -793,12 +794,11 @@ class ClusterAlgebraSeed(SageObject):
              and no coefficients over Integer Ring obtained from the initial
              by mutating along the sequence [0, 1]
         """
-        if self._path == []:
+        if not self._path:
             return "The initial seed of a %s" % str(self.parent())[2:]
-        elif len(self._path) == 1:
+        if len(self._path) == 1:
             return "The seed of a %s obtained from the initial by mutating in direction %s" % (str(self.parent())[2:], str(self._path[0]))
-        else:
-            return "The seed of a %s obtained from the initial by mutating along the sequence %s" % (str(self.parent())[2:], str(self._path))
+        return "The seed of a %s obtained from the initial by mutating along the sequence %s" % (str(self.parent())[2:], str(self._path))
 
     def parent(self):
         r"""
@@ -812,7 +812,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return self._parent
 
-    def depth(self):
+    def depth(self) -> int:
         r"""
         Return the length of a mutation sequence from the initial seed
          of :meth:`parent` to ``self``.
@@ -839,7 +839,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return len(self._path)
 
-    def path_from_initial_seed(self):
+    def path_from_initial_seed(self) -> list:
         r"""
         Return a mutation sequence from the initial seed of :meth:`parent`
         to ``self``.
@@ -895,7 +895,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return copy(self._C)
 
-    def c_vector(self, j):
+    def c_vector(self, j) -> tuple:
         r"""
         Return the ``j``-th c-vector of ``self``.
 
@@ -918,7 +918,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return tuple(self._C.column(j))
 
-    def c_vectors(self):
+    def c_vectors(self) -> list[tuple]:
         r"""
         Return all the c-vectors of ``self``.
 
@@ -946,7 +946,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return copy(self._G)
 
-    def g_vector(self, j):
+    def g_vector(self, j) -> tuple:
         r"""
         Return the ``j``-th g-vector of ``self``.
 
@@ -964,7 +964,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return tuple(self._G.column(j))
 
-    def g_vectors(self):
+    def g_vectors(self) -> list[tuple]:
         r"""
         Return all the g-vectors of ``self``.
 
@@ -995,7 +995,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return self.parent().F_polynomial(self.g_vector(j))
 
-    def F_polynomials(self):
+    def F_polynomials(self) -> list:
         r"""
         Return all the F-polynomials of ``self``.
 
@@ -1029,7 +1029,7 @@ class ClusterAlgebraSeed(SageObject):
         """
         return self.parent().cluster_variable(self.g_vector(j))
 
-    def cluster_variables(self):
+    def cluster_variables(self) -> list:
         r"""
         Return all the cluster variables of ``self``.
 
@@ -1108,7 +1108,7 @@ class ClusterAlgebraSeed(SageObject):
 
         for k in seq:
             if k not in range(n):
-                raise ValueError('cannot mutate in direction ' + str(k))
+                raise ValueError(f'cannot mutate in direction {k}')
 
             # store new mutation path
             if to_mutate._path and to_mutate._path[-1] == k:
@@ -1332,8 +1332,9 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         # kwargs['cluster_variable_prefix']+str(j) is not the name of an
         # initial cluster variable nor a coefficient. This will be used in
         # mutate_initial to name new cluster variables.
-        splitnames = map(lambda w: w.partition(kwargs['cluster_variable_prefix']),
-                kwargs['cluster_variable_names'] + kwargs['coefficient_names'])
+        splitnames = (w.partition(kwargs['cluster_variable_prefix'])
+                      for w in
+                      kwargs['cluster_variable_names'] + kwargs['coefficient_names'])
         nfi = 1 + max((int(v) for u, _, v in splitnames
                        if u == '' and v.isdigit()), default=-1)
         kwargs.setdefault('next_free_index', nfi)
@@ -1415,7 +1416,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         embedding = SetMorphism(Hom(self, self.ambient()), lambda x: x.lift())
         self._populate_coercion_lists_(embedding=embedding)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -1545,14 +1546,14 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             ...
             ValueError: the initial exchange matrix is not acyclic
         """
-        dg = DiGraph(self.b_matrix().apply_map(lambda x: ZZ(0) if x <= 0 else ZZ(1)))
+        dg = DiGraph(self.b_matrix().apply_map(lambda x: ZZ.zero() if x <= 0 else ZZ.one()))
         acyclic, coxeter = dg.is_directed_acyclic(certificate=True)
         if not acyclic:
             raise ValueError("the initial exchange matrix is not acyclic")
         return coxeter
 
     @cached_method
-    def is_acyclic(self):
+    def is_acyclic(self) -> bool:
         r"""
         Return ``True`` if the exchange matrix in the initial seed is acyclic, ``False`` otherwise.
 
@@ -1565,7 +1566,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.is_acyclic()
             False
         """
-        dg = DiGraph(self.b_matrix().apply_map(lambda x: ZZ(0) if x <= 0 else ZZ(1)))
+        dg = DiGraph(self.b_matrix().apply_map(lambda x: ZZ.zero() if x <= 0 else ZZ.one()))
         return dg.is_directed_acyclic()
 
     def rank(self):
@@ -1670,7 +1671,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         self.reset_current_seed()
         self.reset_exploring_iterator()
 
-    def contains_seed(self, seed):
+    def contains_seed(self, seed) -> bool:
         r"""
         Test if ``seed`` is a seed of ``self``.
 
@@ -1744,9 +1745,9 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         """
         if not self.is_acyclic():
             raise ValueError("the initial exchange matrix is not acyclic")
-        return 1 + self.b_matrix().apply_map(lambda x: min(ZZ(0), x))
+        return 1 + self.b_matrix().apply_map(lambda x: min(ZZ.zero(), x))
 
-    def d_vector_to_g_vector(self, d):
+    def d_vector_to_g_vector(self, d) -> tuple:
         r"""
         Return the g-vector of an element of ``self`` having d-vector ``d``
 
@@ -1768,11 +1769,11 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.d_vector_to_g_vector((1,0,-1))
             (-1, 1, 2)
         """
-        dm = vector(( x if x < 0 else 0 for x in d))
+        dm = vector((x if x < 0 else 0 for x in d))
         dp = vector(d) - dm
-        return tuple(- dm - self.euler_matrix()*dp)
+        return tuple(- dm - self.euler_matrix() * dp)
 
-    def g_vector_to_d_vector(self, g):
+    def g_vector_to_d_vector(self, g) -> tuple:
         r"""
         Return the d-vector of an element of ``self`` having g-vector ``g``
 
@@ -1800,8 +1801,8 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         g = vector(g)
         for i in c:
             dp[i] = -min(g[i], 0)
-            g += min(g[i],0)*E.column(i)
-        return tuple(-g+dp)
+            g += min(g[i], 0) * E.column(i)
+        return tuple(-g + dp)
 
     def g_vectors(self, mutating_F=True):
         r"""
@@ -1875,7 +1876,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         """
         return map(self.F_polynomial, self.g_vectors())
 
-    def g_vectors_so_far(self):
+    def g_vectors_so_far(self) -> list:
         r"""
         Return a list of the g-vectors of cluster variables encountered so far.
 
@@ -1889,7 +1890,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         """
         return list(self._path_dict)
 
-    def cluster_variables_so_far(self):
+    def cluster_variables_so_far(self) -> list:
         r"""
         Return a list of the cluster variables encountered so far.
 
@@ -1903,7 +1904,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         """
         return [self.cluster_variable(v) for v in self.g_vectors_so_far()]
 
-    def F_polynomials_so_far(self):
+    def F_polynomials_so_far(self) -> list:
         r"""
         Return a list of the F-polynomials encountered so far.
 
@@ -2123,7 +2124,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         return self.retract(self.base().gen(j))
 
     @cached_method
-    def coefficients(self):
+    def coefficients(self) -> tuple:
         r"""
         Return the list of coefficients of ``self``.
 
@@ -2141,7 +2142,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         else:
             return ()
 
-    def coefficient_names(self):
+    def coefficient_names(self) -> tuple:
         r"""
         Return the list of coefficient names.
 
@@ -2177,7 +2178,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         return self.retract(self.ambient().gen(j))
 
     @cached_method
-    def initial_cluster_variables(self):
+    def initial_cluster_variables(self) -> tuple:
         r"""
         Return the list of initial cluster variables of ``self``.
 
@@ -2189,7 +2190,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         """
         return tuple(map(self.retract, self.ambient().gens()[:self.rank()]))
 
-    def initial_cluster_variable_names(self):
+    def initial_cluster_variable_names(self) -> tuple:
         r"""
         Return the list of initial cluster variable names.
 
@@ -2664,17 +2665,17 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             raise NotImplementedError("currently only implemented for cluster algebras of rank 2")
 
         # extract the part of g_vector not coming from the initial cluster
-        d = tuple( max(x, 0) for x in self.g_vector_to_d_vector(g_vector) )
+        d = tuple(max(x, 0) for x in self.g_vector_to_d_vector(g_vector))
         g = self.d_vector_to_g_vector(d)
 
-        shifts = ((d[0]+g[0])/self._B0[0, 1], (d[1]+g[1])/self._B0[1, 0] )
+        shifts = ((d[0] + g[0]) / self._B0[0, 1], (d[1] + g[1]) / self._B0[1, 0])
         signs = (self._B0[0, 1].sign(), self._B0[1, 0].sign())
 
         u = list(self._U.gens())
         output = self._U.zero()
-        for p in range(0, d[1] + 1):
-            for q in range(0, d[0] + 1):
-                output += self._greedy_coefficient(d, p, q) * u[1] ** (signs[0]*p - shifts[0]) * u[0] ** (signs[1]*q - shifts[1])
+        for p in range(d[1] + 1):
+            for q in range(d[0] + 1):
+                output += self._greedy_coefficient(d, p, q) * u[1] ** (signs[0] * p - shifts[0]) * u[0] ** (signs[1] * q - shifts[1])
         return output
 
     @cached_method
@@ -2699,7 +2700,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         p = Integer(p)
         q = Integer(q)
         if p == 0 and q == 0:
-            return Integer(1)
+            return ZZ.one()
         sum1 = 0
         for k in range(1, p + 1):
             bino = 0
