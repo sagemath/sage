@@ -1589,7 +1589,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         return sum([isogenies_prime_degree(self, d) for d in L], [])
 
     def isogenies_degree(self, n):
-        """
+        r"""
         Return a list of all separable isogenies of given degree with domain
         equal to ``self``, which are defined over the base field of ``self``.
 
@@ -1613,6 +1613,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
                To:   Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 11]
 
+        ::
+
             sage: pol = PolynomialRing(QQ, 'x')([1, -3, 5, -5, 5, -3, 1])
             sage: L.<a> = NumberField(pol)
             sage: js = hilbert_class_polynomial(-23).roots(L, multiplicities=False)
@@ -1632,7 +1634,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         isos = [self.isogeny(self(0))]
 
         for p in prime_divisors:
-            if len(isos) == 0:
+            if not isos:
                 break
 
             new_isos = []
