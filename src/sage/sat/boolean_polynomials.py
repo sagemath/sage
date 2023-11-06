@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.rings.polynomial.pbori
+# sage.doctest: optional - pycryptosat, needs sage.modules sage.rings.polynomial.pbori
 """
 SAT Functions for Boolean Polynomials
 
@@ -72,8 +72,8 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     We construct a very small-scale AES system of equations::
 
-        sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                           # needs sage.modules sage.rings.finite_rings
-        sage: while True:  # workaround (see :trac:`31891`)                             # needs sage.modules sage.rings.finite_rings
+        sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
+        sage: while True:  # workaround (see :trac:`31891`)
         ....:     try:
         ....:         F, s = sr.polynomial_system()
         ....:         break
@@ -83,57 +83,56 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
     and pass it to a SAT solver::
 
         sage: from sage.sat.boolean_polynomials import solve as solve_sat
-        sage: s = solve_sat(F)                  # optional - pycryptosat                # needs sage.modules sage.rings.finite_rings
-        sage: F.subs(s[0])                      # optional - pycryptosat                # needs sage.modules sage.rings.finite_rings
+        sage: s = solve_sat(F)
+        sage: F.subs(s[0])
         Polynomial Sequence with 36 Polynomials in 0 Variables
 
     This time we pass a few options through to the converter and the solver::
 
-        sage: s = solve_sat(F, c_max_vars_sparse=4, c_cutting_number=8)         # optional - pycryptosat, needs sage.modules sage.rings.finite_rings
-        sage: F.subs(s[0])                      # optional - pycryptosat                # needs sage.modules sage.rings.finite_rings
+        sage: s = solve_sat(F, c_max_vars_sparse=4, c_cutting_number=8)
+        sage: F.subs(s[0])
         Polynomial Sequence with 36 Polynomials in 0 Variables
 
     We construct a very simple system with three solutions
     and ask for a specific number of solutions::
 
-        sage: # optional - pycryptosat, needs sage.modules
         sage: B.<a,b> = BooleanPolynomialRing()
         sage: f = a*b
         sage: l = solve_sat([f],n=1)
         sage: len(l) == 1, f.subs(l[0])
         (True, 0)
 
-        sage: l = solve_sat([a*b],n=2)          # optional - pycryptosat                # needs sage.modules
-        sage: len(l) == 2, f.subs(l[0]), f.subs(l[1])   # optional - pycryptosat        # needs sage.modules
+        sage: l = solve_sat([a*b],n=2)
+        sage: len(l) == 2, f.subs(l[0]), f.subs(l[1])
         (True, 0, 0)
 
-        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=3))       # optional - pycryptosat, needs sage.modules
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=3))
         [(0, 0), (0, 1), (1, 0)]
-        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=4))       # optional - pycryptosat, needs sage.modules
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=4))
         [(0, 0), (0, 1), (1, 0)]
-        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=infinity))        # optional - pycryptosat, needs sage.modules
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=infinity))
         [(0, 0), (0, 1), (1, 0)]
 
     In the next example we see how the ``target_variables`` parameter works::
 
         sage: from sage.sat.boolean_polynomials import solve as solve_sat
-        sage: R.<a,b,c,d> = BooleanPolynomialRing()     # optional - pycryptosat        # needs sage.modules
-        sage: F = [a + b, a + c + d]            # optional - pycryptosat                # needs sage.modules
+        sage: R.<a,b,c,d> = BooleanPolynomialRing()
+        sage: F = [a + b, a + c + d]
 
     First the normal use case::
 
-        sage: sorted((D[a], D[b], D[c], D[d])   # optional - pycryptosat                # needs sage.modules
+        sage: sorted((D[a], D[b], D[c], D[d])
         ....:        for D in solve_sat(F, n=infinity))
         [(0, 0, 0, 0), (0, 0, 1, 1), (1, 1, 0, 1), (1, 1, 1, 0)]
 
     Now we are only interested in the solutions of the variables a and b::
 
-        sage: solve_sat(F, n=infinity, target_variables=[a,b])  # optional - pycryptosat, needs sage.modules
+        sage: solve_sat(F, n=infinity, target_variables=[a,b])
         [{b: 0, a: 0}, {b: 1, a: 1}]
 
     Here, we generate and solve the cubic equations of the AES SBox (see :trac:`26676`)::
 
-        sage: # long time, optional - pycryptosat, needs sage.modules
+        sage: # long time
         sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         sage: from sage.sat.boolean_polynomials import solve as solve_sat
         sage: sr = sage.crypto.mq.SR(1, 4, 4, 8,
@@ -145,7 +144,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         sage: variables = ",".join(variables)
         sage: R = BooleanPolynomialRing(16, variables)
         sage: eqs = [R(eq) for eq in eqs]
-        sage: sls_aes = solve_sat(eqs, n = infinity)
+        sage: sls_aes = solve_sat(eqs, n=infinity)
         sage: len(sls_aes)
         256
 
@@ -168,7 +167,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         ....:     k9 + k28,
         ....:     k11 + k20]
         sage: from sage.sat.boolean_polynomials import solve as solve_sat
-        sage: solve_sat(keqs, n=1, solver=SAT('cryptominisat'))             # optional - pycryptosat
+        sage: solve_sat(keqs, n=1, solver=SAT('cryptominisat'))
         [{k28: 0,
           k26: 1,
           k24: 0,
@@ -342,16 +341,16 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
 
     EXAMPLES::
 
-       sage: from sage.sat.boolean_polynomials import learn as learn_sat # optional - pycryptosat
+        sage: from sage.sat.boolean_polynomials import learn as learn_sat
 
     We construct a simple system and solve it::
 
-       sage: set_random_seed(2300)
-       sage: sr = mq.SR(1, 2, 2, 4, gf2=True, polybori=True)    # optional - pycryptosat, needs sage.modules sage.rings.finite_rings
-       sage: F,s = sr.polynomial_system()       # optional - pycryptosat                # needs sage.modules sage.rings.finite_rings
-       sage: H = learn_sat(F)                   # optional - pycryptosat                # needs sage.modules sage.rings.finite_rings
-       sage: H[-1]                              # optional - pycryptosat                # needs sage.modules sage.rings.finite_rings
-       k033 + 1
+        sage: set_random_seed(2300)
+        sage: sr = mq.SR(1, 2, 2, 4, gf2=True, polybori=True)
+        sage: F,s = sr.polynomial_system()
+        sage: H = learn_sat(F)
+        sage: H[-1]
+        k033 + 1
     """
     try:
         len(F)
