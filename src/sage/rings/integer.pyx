@@ -4073,7 +4073,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 0.support()
             Traceback (most recent call last):
             ...
-            ArithmeticError: Support of 0 not defined
+            ArithmeticError: support of 0 not defined
         """
         if self.is_zero():
             raise ArithmeticError("Support of 0 not defined")
