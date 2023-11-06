@@ -184,10 +184,10 @@ To create the ring of arbitrary types modular forms, one passes the
 keyword argument ``has_type=True``::
 
     sage: M = DrinfeldModularForms(K, 4, has_type=True)
-    sage: M.gens
-    [g1, g2, g3, h]
-    sage: h = M.3
-    sage: h.weight()
+    sage: M.gens()
+    [g1, g2, g3, h4]
+    sage: h4 = M.3
+    sage: h4.weight()
     40
 
 .. RUBRIC:: Coefficients forms
@@ -218,8 +218,8 @@ To access a single coefficient form, use the method
     g1
     sage: M.coefficient_form(2, T^2 + 1)
     g1^6 + (T^25 + T)*g2
-    sage: M.coefficient_form(3)  # h^(q - 1) = g3
-    h^4
+    sage: M.coefficient_form(3)  # h3^(q - 1) = g3
+    h3^4
 
 .. RUBRIC:: References
 

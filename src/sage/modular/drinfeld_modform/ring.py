@@ -85,12 +85,12 @@ One can also consider the ring Drinfeld modular forms of arbitrary type::
     sage: K.<T> = Frac(A)
     sage: M = DrinfeldModularForms(K, 4, has_type=True)
     sage: M.inject_variables()
-    Defining g1, g2, g3, h
-    sage: h.weight()
+    Defining g1, g2, g3, h4
+    sage: h4.weight()
     400
-    sage: h.type_m()
+    sage: h4.type_m()
     1
-    sage: (g1*h^4).type_m()
+    sage: (g1*h4^4).type_m()
     4
 
 The last generator is known as Gekeler's `h` function.
@@ -187,7 +187,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         sage: DrinfeldModularForms(Frac(GF(2)['T']), names=1)
         Traceback (most recent call last):
         ...
-        TypeError: names must be a string
+        TypeError: names must be None or a comma seperated string
         sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names='f1, f2, f3, f4')
         Traceback (most recent call last):
         ...
@@ -232,8 +232,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             raise TypeError("names must be None or a comma seperated string")
         return cls.__classcall__(cls, base_ring, rank, group, has_type, names)
 
-    def __init__(self, base_ring, rank=2, group=None, has_type=False,
-                 names='g'):
+    def __init__(self, base_ring, rank, group, has_type, names):
         self._has_type = has_type
         self._rank = rank
         self._base_ring = base_ring
@@ -307,7 +306,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             sage: M._generator_coefficient_form(2)
             g2
             sage: M._generator_coefficient_form(3)
-            h^2
+            h3^2
         """
         if self._has_type and i == self.rank():
             q = self._base_ring.base_ring().cardinality()
@@ -397,9 +396,9 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             sage: M.coefficient_form(1)
             g1
             sage: M.coefficient_form(2)
-            h^2
+            h2^2
             sage: M.coefficient_form(2, T^3 + T^2 + T)
-            (T^9 + T^3 + T + 1)*g1^4 + (T^18 + T^10 + T^9 + T^2 + T + 1)*h^2
+            (T^9 + T^3 + T + 1)*g1^4 + (T^18 + T^10 + T^9 + T^2 + T + 1)*h2^2
 
         TESTS::
 

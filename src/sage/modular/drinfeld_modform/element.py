@@ -350,11 +350,11 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: A = GF(11)['T']; K = Frac(A)
             sage: M = DrinfeldModularForms(K, 2, has_type=True)
             sage: M.inject_variables()
-            Defining g1, h
-            sage: F = g1*h^9
+            Defining g1, h2
+            sage: F = g1*h2^9
             sage: F.type_m()
             9
-            sage: (h^11).type_m()
+            sage: (h2^11).type_m()
             1
             sage: g1.type_m()
             0
