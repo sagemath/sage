@@ -1120,7 +1120,7 @@ class CoxeterGroups(Category_singleton):
                 Digraph on 120 vertices
 
                 sage: # needs sage.combinat sage.graphs sage.groups
-                sage: W = CoxeterGroup(['A', 2, 1])
+                sage: W = CoxeterGroup(['A', 3])
                 sage: s1, s2, s3 = W.simple_reflections()
                 sage: W.bruhat_graph(s1, s1*s3*s2*s3)
                 Digraph on 6 vertices
