@@ -198,7 +198,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     @staticmethod
     def __classcall_private__(cls, base_ring, rank=2, group=None,
-                              has_type=False, names='g'):
+                              has_type=False, names=None):
         rank = ZZ(rank)  # check the type of rank
         if not isinstance(base_ring, FractionField_generic):
             raise TypeError("base ring must be a fraction field of a "
@@ -215,22 +215,21 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         if group is not None:  # placeholder
             raise NotImplementedError("Drinfeld modular forms are currently "
                                       "only implemented for the full group")
-        if not isinstance(names, str):
-            raise TypeError("names must be a string")
-        nb_names = len(names.split())
-        if nb_names == 1:
-            n0 = names
-            names += "1, "
+        if names is None: # default names
+            names = f"g1, "
             for i in range(2, rank, 1):
-                names += n0 + str(i) + ", "
+                names += f"g{i}, "
             if has_type:
-                names += 'h'
+                names += f"h{rank}"
             else:
-                names += n0 + str(rank)
-        else:
+                names += f"g{rank}"
+        elif isinstance(names, str):
+            nb_names = len(names.split())
             if nb_names != rank:
                 raise ValueError("the number of generators "
                                  f"must be equal to the rank (={rank})")
+        else:
+            raise TypeError("names must be None or a comma seperated string")
         if rank == 2:
             return DrinfeldModularForms_rank_two(base_ring, group,
                                                  has_type, names)
