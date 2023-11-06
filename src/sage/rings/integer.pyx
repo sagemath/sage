@@ -4076,7 +4076,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ArithmeticError: support of 0 not defined
         """
         if self.is_zero():
-            raise ArithmeticError("Support of 0 not defined")
+            raise ArithmeticError("support of 0 not defined")
         return sage.arith.all.prime_factors(self)
 
     def coprime_integers(self, m):
