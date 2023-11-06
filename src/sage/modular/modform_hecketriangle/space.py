@@ -327,7 +327,7 @@ class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
                 ambient_space = self.graded_ring().reduce_type("holo", degree=(gens[0].weight(), gens[0].ep()))
                 subspace = ambient_space.subspace(gens)
                 vector_part_in_subspace = subspace(parts[r])
-                coord_part = [v for v in vector_part_in_subspace.coordinate_vector()]
+                coord_part = list(vector_part_in_subspace.coordinate_vector())
                 coord_vector += coord_part
 
         return self._module(vector(self.coeff_ring(), coord_vector))
@@ -499,7 +499,7 @@ class QuasiCuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
                 ambient_space = self.graded_ring().reduce_type("cusp", degree=(gens[0].weight(), gens[0].ep()))
                 subspace = ambient_space.subspace(gens)
                 vector_part_in_subspace = subspace(parts[r])
-                coord_part = [v for v in vector_part_in_subspace.coordinate_vector()]
+                coord_part = list(vector_part_in_subspace.coordinate_vector())
                 coord_vector += coord_part
 
         return self._module(vector(self.coeff_ring(), coord_vector))

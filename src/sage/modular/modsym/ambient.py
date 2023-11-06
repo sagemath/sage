@@ -2260,7 +2260,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         # The attribute _mod2term is set by self.compute_presentation().
         # It is a list of pairs (n, c), such that the ith element of the list
         # is equivalent to c times the n-th basis Manin symbol.
-        G = set([i for i, _ in self._mod2term])
+        G = {i for i, _ in self._mod2term}
 
         # Now G is a set of integer i such that these integers gives
         # indices of Manin symbols that together generate the integral

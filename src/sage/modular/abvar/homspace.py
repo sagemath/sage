@@ -570,7 +570,7 @@ class Homspace(HomsetWithBase):
             return
 
         if (self.domain() == self.codomain()) and (self.domain().dimension() == 1):
-            self._gens = tuple([ identity_matrix(ZZ,2) ])
+            self._gens = ( identity_matrix(ZZ,2), )
             return
 
         phi = self.domain()._isogeny_to_product_of_powers()

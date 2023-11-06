@@ -146,7 +146,7 @@ def _normalize_H(H, level):
     for h in H:
         if gcd(h, level) > 1:
             raise ArithmeticError('The generators %s must be units modulo %s' % (H, level))
-    H = set(u for u in H if u > 1)
+    H = {u for u in H if u > 1}
     final_H = set()
     for h in H:
         inv_h = h.inverse_mod(level)
@@ -1140,7 +1140,7 @@ class GammaH_class(CongruenceSubgroup):
         c = ZZ(0)
         for d in (d for d in N.divisors() if d**2 <= N):
             Nd = lcm(d, N // d)
-            Hd = set([x % Nd for x in H])
+            Hd = {x % Nd for x in H}
             lenHd = len(Hd)
             if Nd - 1 not in Hd:
                 lenHd *= 2
@@ -1182,7 +1182,7 @@ class GammaH_class(CongruenceSubgroup):
         c = ZZ(0)
         for d in (d for d in divisors(N) if d**2 <= N):
             Nd = lcm(d, N // d)
-            Hd = set([x % Nd for x in H])
+            Hd = {x % Nd for x in H}
             if Nd - 1 not in Hd:
                 summand = euler_phi(d) * euler_phi(N // d) // (2 * len(Hd))
                 if d**2 == N:
@@ -1395,7 +1395,7 @@ def _list_subgroup(N, gens):
         sage: sage.modular.arithgroup.congroup_gammaH._list_subgroup(11, [3])
         [1, 3, 4, 5, 9]
     """
-    H = set([1])
+    H = {1}
     N = int(N)
     for g in gens:
         if gcd(g, N) != 1:
@@ -1405,7 +1405,7 @@ def _list_subgroup(N, gens):
         while not (gk in H):
             gk = (gk * g) % N
             sbgrp.append(gk)
-        H = set([(x * h) % N for x in sbgrp for h in H])
+        H = {(x * h) % N for x in sbgrp for h in H}
     return sorted(H)
 
 

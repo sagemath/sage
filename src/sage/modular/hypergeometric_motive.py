@@ -661,7 +661,7 @@ class HypergeometricData():
             [2, 3, 5]
         """
         gamma = self.gamma_array()
-        return sorted(set([p for n in gamma.keys() for (p, _) in n.factor()]))
+        return sorted({p for n in gamma.keys() for (p, _) in n.factor()})
 
     def zigzag(self, x, flip_beta=False):
         r"""

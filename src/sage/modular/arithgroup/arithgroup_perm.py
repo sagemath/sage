@@ -1798,7 +1798,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         inv = self.S2()**2
         L = self.L()
-        cusps = set(c[0] for c in L.cycle_tuples(singletons=True))
+        cusps = {c[0] for c in L.cycle_tuples(singletons=True)}
         if exp:
             widths = {}
         else:
@@ -2603,7 +2603,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         s3 = PermutationConstructor([x + tuple(y + n for y in x) for x in s3cycs])
         H = ArithmeticSubgroup_Permutation(S2=s2,S3=s3)
 
-        bucket = set([H])
+        bucket = {H}
         res = [H]
         # We use a set *and* a list since checking whether an element is in a
         # set is very fast, but on the other hand we want the order the results
