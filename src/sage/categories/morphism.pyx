@@ -467,7 +467,7 @@ cdef class CallMorphism(Morphism):
 cdef class IdentityMorphism(Morphism):
 
     def __init__(self, parent):
-        from .homset import Homset, Hom
+        from sage.categories.homset import Homset, Hom
         if not isinstance(parent, Homset):
             parent = Hom(parent, parent)
         Morphism.__init__(self, parent)

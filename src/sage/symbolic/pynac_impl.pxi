@@ -70,7 +70,7 @@ cdef ex_to_pyExpression(GEx juice) noexcept:
     cdef Expression nex
     nex = <Expression>Expression.__new__(Expression)
     nex._gobj = GEx(juice)
-    from .ring import SR
+    from sage.symbolic.ring import SR
     nex._parent = SR
     return nex
 
@@ -189,7 +189,7 @@ cdef GEx pyExpression_to_ex(res) except *:
     """
     if res is None:
         raise TypeError("function returned None, expected return value of type sage.symbolic.expression.Expression")
-    from .ring import SR
+    from sage.symbolic.ring import SR
     try:
         t = SR.coerce(res)
     except TypeError as err:
@@ -1156,7 +1156,7 @@ cdef bint py_is_integer(x) noexcept:
     if not isinstance(x, Element):
         return False
     P = (<Element>x)._parent
-    from .ring import SymbolicRing
+    from sage.symbolic.ring import SymbolicRing
     return (isinstance(P, SymbolicRing) or P.is_exact()) and x in ZZ
 
 
@@ -1246,7 +1246,7 @@ cdef bint py_is_exact(x) noexcept:
     if not isinstance(x, Element):
         return False
     P = (<Element>x)._parent
-    from .ring import SymbolicRing
+    from sage.symbolic.ring import SymbolicRing
     return isinstance(P, SymbolicRing) or P.is_exact()
 
 
@@ -1553,7 +1553,7 @@ cdef py_step(n) noexcept:
     """
     Return step function of n.
     """
-    from .ring import SR
+    from sage.symbolic.ring import SR
     if n < 0:
         return SR(0)
     elif n > 0:
@@ -2466,7 +2466,7 @@ def init_pynac_I():
     from sage.rings.number_field.number_field import GaussianField
     pynac_I = GaussianField().gen()
     ginac_pyinit_I(pynac_I)
-    from .ring import SR
+    from sage.symbolic.ring import SR
     return new_Expression_from_GEx(SR, g_I)
 
 

@@ -46,11 +46,11 @@ from sage.misc.sage_eval import sage_eval
 
 import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
-from . import infinity
-from .integer cimport Integer
+from sage.rings import infinity
+from sage.rings.integer cimport Integer
 
-from .complex_double cimport ComplexDoubleElement
-from .real_mpfr cimport RealNumber
+from sage.rings.complex_double cimport ComplexDoubleElement
+from sage.rings.real_mpfr cimport RealNumber
 from sage.libs.gsl.complex cimport *
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
@@ -97,8 +97,8 @@ def late_import():
         QQbar = sage.rings.qqbar.QQbar
         import sage.symbolic.ring
         SR = sage.symbolic.ring.SR
-        from .real_lazy import CLF, RLF
-        from .complex_double import CDF
+        from sage.rings.real_lazy import CLF, RLF
+        from sage.rings.complex_double import CDF
 
 cdef object numpy_complex_interface = {'typestr': '=c16'}
 cdef object numpy_object_interface = {'typestr': '|O'}
@@ -367,7 +367,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         try:
             return self.__real_field
         except AttributeError:
-            from .real_mpfr import RealField
+            from sage.rings.real_mpfr import RealField
             self.__real_field = RealField(self._prec)
             return self.__real_field
 
@@ -2926,7 +2926,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         if base is None:
             return ComplexNumber(self._parent, rho.log(), theta)
         else:
-            from .real_mpfr import RealField
+            from sage.rings.real_mpfr import RealField
             return ComplexNumber(self._parent, rho.log()/RealNumber(RealField(self.prec()),base).log(), theta/RealNumber(RealField(self.prec()),base).log())
 
     def additive_order(self):

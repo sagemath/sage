@@ -66,12 +66,12 @@ from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 from sage.structure.element cimport FieldElement
 from sage.structure.parent cimport Parent
-from .complex_mpfr cimport ComplexNumber
+from sage.rings.complex_mpfr cimport ComplexNumber
 from sage.rings.integer cimport Integer
 cimport sage.rings.real_mpfi as real_mpfi
-from .real_mpfr cimport RealNumber
-from .convert.mpfi cimport mpfi_set_sage
-from .infinity import infinity
+from sage.rings.real_mpfr cimport RealNumber
+from sage.rings.convert.mpfi cimport mpfi_set_sage
+from sage.rings.infinity import infinity
 
 
 def is_ComplexIntervalFieldElement(x):
@@ -1914,7 +1914,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             0.500000000000000? + 3.39927010637040?*I
         """
         if not self:
-            from .real_mpfi import RIF
+            from sage.rings.real_mpfi import RIF
             return RIF(0).log()
         re = abs(self).log()
         im = self.argument()
@@ -2291,6 +2291,6 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
     #else:
     #    bits = max(int(math.log(base,2)*len(s_imag)),int(math.log(base,2)*len(s_imag)))
 
-    from .complex_interval_field import ComplexIntervalField
+    from sage.rings.complex_interval_field import ComplexIntervalField
     C = ComplexIntervalField(prec=max(bits+pad, min_prec))
     return ComplexIntervalFieldElement(C, s_real, s_imag)

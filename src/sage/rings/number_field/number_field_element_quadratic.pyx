@@ -520,7 +520,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         - Craig Citro (reworked for quadratic elements)
         """
         if check:
-            from .number_field import NumberField_cyclotomic
+            from sage.rings.number_field.number_field import NumberField_cyclotomic
             if not isinstance(self.number_field(), NumberField_cyclotomic) \
                    or not isinstance(new_parent, NumberField_cyclotomic):
                 raise TypeError("The field and the new parent field must both be cyclotomic fields.")
@@ -1918,10 +1918,10 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         else:
             # avoid circular import
             if self._parent._embedding is None:
-                from .number_field import NumberField
+                from sage.rings.number_field.number_field import NumberField
                 K = NumberField(QQ['x'].gen()**2 - negD, 'sqrt%s' % negD)
             else:
-                from .number_field import QuadraticField
+                from sage.rings.number_field.number_field import QuadraticField
                 K = QuadraticField(negD, 'sqrt%s' % negD)
             q = (<NumberFieldElement_quadratic> K._zero_element)._new()
             mpz_set(q.denom, self.denom)

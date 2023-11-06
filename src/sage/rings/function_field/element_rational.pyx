@@ -302,7 +302,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: (1/x^2).valuation(p)                                                  # needs sage.libs.pari
             -2
         """
-        from .place import FunctionFieldPlace
+        from sage.rings.function_field.place import FunctionFieldPlace
 
         if not isinstance(place, FunctionFieldPlace):
             # place is an irreducible polynomial

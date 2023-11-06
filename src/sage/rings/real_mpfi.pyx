@@ -269,11 +269,11 @@ from sage.structure.element cimport have_same_parent
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
 
-from .convert.mpfi cimport mpfi_set_sage
-from .real_mpfr cimport RealField_class, RealNumber, RealField
-from .integer cimport Integer
-from .integer_ring import ZZ
-from .rational_field import QQ
+from sage.rings.convert.mpfi cimport mpfi_set_sage
+from sage.rings.real_mpfr cimport RealField_class, RealNumber, RealField
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 cimport sage.rings.abc
 
