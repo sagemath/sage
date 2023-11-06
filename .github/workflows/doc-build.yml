@@ -162,7 +162,7 @@ jobs:
           EOF
           echo '</head>' >> ./docs/CHANGES.html
           echo '<body>' >> ./docs/CHANGES.html
-          (cd /sage/local/share/doc/sage/html && git diff HEAD^ -- *.html; rm -rf .git) > ./docs/diff.txt
+          (cd /sage/local/share/doc/sage/html && git diff HEAD^ -- *.html) > ./docs/diff.txt
           /sage/sage -python - << EOF
           import re, html
           with open('./docs/diff.txt', 'r') as f:
@@ -182,7 +182,6 @@ jobs:
           echo '</body>' >> ./docs/CHANGES.html
           echo '</html>' >>./docs/CHANGES.html
           rm ./docs/diff.txt ./docs/diff.html
-          (cd /sage/local/share/doc/sage/html && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them
