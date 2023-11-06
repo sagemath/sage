@@ -201,6 +201,7 @@ jobs:
       - name: Build live doc
         id: buildlivedoc
         if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
+        continue-on-error: true
         run: |
           set -ex
           export SAGE_USE_CDNS=yes
