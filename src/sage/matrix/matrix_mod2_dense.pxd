@@ -1,4 +1,4 @@
-from .matrix_dense cimport Matrix_dense
+from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.libs.m4ri cimport *
 
 cdef class Matrix_mod2_dense(Matrix_dense):
