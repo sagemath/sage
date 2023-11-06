@@ -191,6 +191,9 @@ jobs:
               echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
               echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
             fi
+
+      - name: Determine Docker tags to use
+        run: |
             # This line needs to be run before the step "Merge CI fixes from sagemath/sage".
             DOCKER_TAG="$(git describe --dirty --always)"
             echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
