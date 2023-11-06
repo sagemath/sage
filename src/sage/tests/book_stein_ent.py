@@ -50,12 +50,14 @@ sage: prime_pi(100)
 25
 sage: prime_pi(3000000)
 216816
-sage: plot(prime_pi, 1,1000, rgbcolor=(0,0,1))                                          # needs sage.plot
+
+sage: # needs sage.plot sage.symbolic
+sage: plot(prime_pi, 1,1000, rgbcolor=(0,0,1))
 Graphics object consisting of 1 graphics primitive
-sage: P = plot(Li, 2,10000, rgbcolor='purple')                                          # needs sage.plot
-sage: Q = plot(prime_pi, 2,10000, rgbcolor='black')                                     # needs sage.plot
-sage: R = plot(sqrt(x)*log(x),2,10000,rgbcolor='red')                                   # needs sage.plot
-sage: show(P+Q+R,xmin=0, figsize=[8,3])                                                 # needs sage.plot
+sage: P = plot(Li, 2,10000, rgbcolor='purple')
+sage: Q = plot(prime_pi, 2,10000, rgbcolor='black')
+sage: R = plot(sqrt(x)*log(x), 2,10000, rgbcolor='red')
+sage: show(P + Q + R, xmin=0, figsize=[8,3])
 
 sage: R = Integers(3)
 sage: list(R)
