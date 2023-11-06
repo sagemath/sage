@@ -2870,7 +2870,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 return elog
 
         from sage.functions.log import function_log
-        return function_log(self,dont_call_method_on_arg=True)/\
+        return function_log(self, dont_call_method_on_arg=True)/\
             function_log(m, dont_call_method_on_arg=True)
 
     def exp(self, prec=None):
