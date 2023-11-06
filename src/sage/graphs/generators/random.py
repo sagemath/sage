@@ -1500,7 +1500,7 @@ def RandomKTree(n, k, seed=None):
         sage: G.show() # not tested 
     """    
     if n < k + 1:
-        raise ValueError("n must be greater than `k + 1`")
+        raise ValueError("n must be greater than k + 1")
 
     if seed is not None:
         set_random_seed(seed)
@@ -1565,7 +1565,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # Check that x doesn't delete too many edges
     # This formula calculates how many edges are in `k`-tree with `n` nodes
-    if x > ((n*(n - 1)) / 2) + (n - k - 1) * k:
+    if x > (k^2 + k) / 2 + (n - k - 1) * k:
         raise ValueError("x must be less than the number of edges in the `k`-tree with `n` nodes")
 
     from sage.misc.prandom import shuffle
