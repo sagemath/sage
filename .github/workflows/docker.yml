@@ -86,12 +86,6 @@ on:
         required: false
         type: string
       #
-      # Exporting images as artifacts
-      #
-      image_artifact:
-        required: false
-        type: string
-      #
       # Incremental builds
       #
       docker_targets:
@@ -141,7 +135,6 @@ jobs:
     env:
       TOX_ENV:            "docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}${{ inputs.incremental && '-incremental' || '' }}"
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
-      IMAGE_ARTIFACT_NAME: ${{ inputs.image_artifact }}-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
       DOCKER_TARGETS:     ${{ inputs.docker_targets }}
       TARGETS_PRE:        ${{ inputs.targets_pre }}
       TARGETS:            ${{ inputs.targets }}
@@ -253,13 +246,3 @@ jobs:
              cat .tox/$TOX_ENV/Dockertags
           fi
         if: always()
-      - name: Save docker images as a tar archive
-        if: ${{ inputs.image_artifact }}
-        run: |
-          docker save $(cat .tox/$TOX_ENV/Dockertags) -o images.tar.gz
-      - name: Upload docker image archive as an artifact
-        if: ${{ inputs.image_artifact }}
-        uses: actions/upload-artifact@v3
-        with:
-          path: images.tar.gz
-          name: ${{ env.IMAGE_ARTIFACT_NAME }}
