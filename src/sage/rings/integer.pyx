@@ -207,8 +207,7 @@ new_gen_from_integer = None
 cdef extern from *:
     int unlikely(int) nogil  # Defined by Cython
 
-cdef object numpy_long_interface = {'typestr': '=i4' if sizeof(long) == 4
-                                    else '=i8'}
+cdef object numpy_long_interface = {'typestr': '=i4' if sizeof(long) == 4 else '=i8'}
 cdef object numpy_int64_interface = {'typestr': '=i8'}
 cdef object numpy_object_interface = {'typestr': '|O'}
 
@@ -5274,8 +5273,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (self, zero) if get_data else False
 
     _small_primes_table[:] = [
-        0,1,1,1,0,1,1,0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,1,0,  # 001, 03,..., 49
-        0,1,0,0,1,1,0,0,1,0,1,1,0,0,1,0,1,0,0,1,0,0,0,1,0,  # 051, 53,..., 99
+        0,1,1,1,0,1,1,0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,1,0,  # 1,3,...,49
+        0,1,0,0,1,1,0,0,1,0,1,1,0,0,1,0,1,0,0,1,0,0,0,1,0,  # 51,53,...,99
         1,1,0,1,1,0,1,0,0,0,0,0,0,1,0,1,0,0,1,1,0,0,0,0,1,  # 101,103,...,149
         1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,1,0,0,0,0,1,1,0,1,1,  # 151,153,...,199
         0,0,0,0,0,1,0,0,0,0,0,1,0,1,1,0,1,0,0,1,1,0,0,0,0,  # 201,203,...,249
