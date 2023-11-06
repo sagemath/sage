@@ -3823,7 +3823,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         else:
             # self is big -- it doesn't fit in unsigned long.
             if start <= 2 and mpz_even_p(self.value):
-                mpz_set_ui(x.value,2)
+                mpz_set_ui(x.value, 2)
                 return x
             if start <= 3 and mpz_divisible_ui_p(self.value,3):
                 mpz_set_ui(x.value,3)
