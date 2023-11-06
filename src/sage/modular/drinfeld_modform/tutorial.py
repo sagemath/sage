@@ -12,9 +12,9 @@ Sage reference manual about this topic :ref:`Drinfeld modules`.
 .. RUBRIC:: Preliminary notations
 
 Let `q` be a prime power and let `A` be the ring of functions of
-`\mathbb{P}^1/\mathbb{F}_q` which are regular outside `\infty`. This
-ring is the polynomial ring `\mathbb{F}_q[T]`. We denote by
-`K := \mathbb{F}_q(T)` its fraction field. We endow `K` with the
+`\mathbb{P}^1/\mathbb{F}_q` which are regular outside a closed point
+`\infty`. This ring is the polynomial ring `\mathbb{F}_q[T]`. We denote
+by `K := \mathbb{F}_q(T)` its fraction field. We endow `K` with the
 `1/T`-adic valuation and let `K_{\infty} := \mathbb{F}_q((1/T))` be the
 completion of `K`. Next, we define `\mathbb{C}_{\infty}` to
 be the completion of an algebraic closure of `K_{\infty}`. Lastly, We
@@ -95,8 +95,7 @@ image `\phi^w_a` for any `a\in A` are called the *coefficient forms at*
 `a` and they are an algebraic combination of the coefficient forms at
 `T`.
 
-In the rank two case, this expansion at
-infinity is of the form
+In the rank two case, the expansion at infinity is of the form
 
 .. MATH::
 
@@ -223,5 +222,7 @@ To access a single coefficient form, use the method
 
 .. RUBRIC:: References
 
-See [BRP2018]_, [Gek1988]_.
+A good introduction of Drinfeld modular forms of rank 2, see Gekeler's
+paper [Gek1988]_. See also [BRP2018]_ for a detailed exposition of the
+arbitrary rank theory.
 """
