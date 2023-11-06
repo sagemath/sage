@@ -3826,9 +3826,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 mpz_set_ui(x.value, 2)
                 return x
             if start <= 3 and mpz_divisible_ui_p(self.value, 3):
-                mpz_set_ui(x.value,3)
+                mpz_set_ui(x.value, 3)
                 return x
-            if start <= 5 and mpz_divisible_ui_p(self.value,5):
+            if start <= 5 and mpz_divisible_ui_p(self.value, 5):
                 mpz_set_ui(x.value, 5)
                 return x
 
