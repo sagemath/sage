@@ -119,13 +119,13 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.misc.lazy_string cimport _LazyString
 from sage.sets.pythonclass cimport Set_PythonType_class
-from .category_object import CategoryObject
-from .coerce cimport coercion_model
-from .coerce cimport parent_is_integers
-from .coerce_exceptions import CoercionException
-from .coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
+from sage.structure.category_object import CategoryObject
+from sage.structure.coerce cimport coercion_model
+from sage.structure.coerce cimport parent_is_integers
+from sage.structure.coerce_exceptions import CoercionException
+from sage.structure.coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
-from .element cimport parent
+from sage.structure.element cimport parent
 
 
 cdef _record_exception() noexcept:

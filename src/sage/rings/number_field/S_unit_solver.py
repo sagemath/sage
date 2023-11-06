@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field sage.rings.padics
 r"""
 Solve S-unit equation x + y = 1
 
@@ -104,7 +105,7 @@ def column_Log(SUK, iota, U, prec=106):
         sage: phi_complex = K.places()[1]
         sage: v_fin = S[0]
         sage: U = [phi_complex, v_fin]
-        sage: column_Log(SUK, xi^2, U) # abs tol 1e-29
+        sage: column_Log(SUK, xi^2, U)  # abs tol 1e-29
         [1.464816384890812968648768625966, -2.197224577336219382790490473845]
 
     REFERENCES:
@@ -787,10 +788,10 @@ def c11_func(SUK, v, A, prec=106):
         sage: phi_complex = K.places()[1]
         sage: A = K.roots_of_unity()
 
-        sage: c11_func(SUK, phi_real, A) # abs tol 1e-29
+        sage: c11_func(SUK, phi_real, A)  # abs tol 1e-29
         3.255848343572896153455615423662
 
-        sage: c11_func(SUK, phi_complex, A) # abs tol 1e-29
+        sage: c11_func(SUK, phi_complex, A)  # abs tol 1e-29
         6.511696687145792306911230847323
 
     REFERENCES:
@@ -827,10 +828,10 @@ def c13_func(SUK, v, prec=106):
         sage: phi_real = K.places()[0]
         sage: phi_complex = K.places()[1]
 
-        sage: c13_func(SUK, phi_real) # abs tol 1e-29
+        sage: c13_func(SUK, phi_real)  # abs tol 1e-29
         0.4257859134798034746197327286726
 
-        sage: c13_func(SUK, phi_complex) # abs tol 1e-29
+        sage: c13_func(SUK, phi_complex)  # abs tol 1e-29
         0.2128929567399017373098663643363
 
     It is an error to input a finite place. ::
@@ -968,7 +969,7 @@ def minimal_vector(A, y, prec=106):
         [ 1  1 -2]
         [ 6  1 -1]
         sage: y = vector([1, 2, 100])
-        sage: minimal_vector(B, y) # random
+        sage: minimal_vector(B, y)  # random
         15/28
     """
     if A.is_singular():

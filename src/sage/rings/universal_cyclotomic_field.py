@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Universal cyclotomic field
 
@@ -576,7 +577,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             [   E(3)    E(4)]
             [   E(5) -E(3)^2]
 
-            sage: Matrix(CyclotomicField(60),M) # indirect doctest
+            sage: Matrix(CyclotomicField(60),M)  # indirect doctest
             [zeta60^10 - 1     zeta60^15]
             [    zeta60^12     zeta60^10]
 
@@ -699,7 +700,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             2.41421356237310?
             sage: (1 + E(8) - E(8,3))._eval_complex_(CC)
             2.41421356237309
-            sage: (1 + E(8) - E(8,3))._eval_complex_(CDF) # abs tol 1e-14
+            sage: (1 + E(8) - E(8,3))._eval_complex_(CDF)  # abs tol 1e-14
             2.414213562373095
         """
         if self._obj.IsRat():
@@ -1331,7 +1332,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
 
         This method is needed to make the following work::
 
-            sage: UCF.<E> = UniversalCyclotomicField() # indirect doctest
+            sage: UCF.<E> = UniversalCyclotomicField()  # indirect doctest
         """
         if n == 1:
             return (self.gen,)

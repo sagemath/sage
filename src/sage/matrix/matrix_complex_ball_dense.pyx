@@ -19,8 +19,8 @@ TESTS::
     [8.000000000000000 11.00000000000000]
     [22.00000000000000 41.00000000000000]
 
-    sage: mat = matrix(ComplexBallField(20), 2, 2, list(range(4)))*i/3
-    sage: loads(dumps(mat)).identical(mat)
+    sage: mat = matrix(ComplexBallField(20), 2, 2, list(range(4)))*i/3                  # needs sage.symbolic
+    sage: loads(dumps(mat)).identical(mat)                                              # needs sage.symbolic
     True
 """
 # ****************************************************************************
@@ -40,7 +40,7 @@ from sage.libs.arb.acb cimport *
 from sage.libs.arb.acb_mat cimport *
 from sage.libs.gmp.mpz cimport mpz_fits_ulong_p, mpz_get_ui
 from sage.matrix.constructor import matrix
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.rings.complex_interval cimport ComplexIntervalFieldElement
 from sage.rings.complex_arb cimport (
     ComplexBall,
