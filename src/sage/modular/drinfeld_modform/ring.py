@@ -123,7 +123,7 @@ from sage.rings.integer_ring import ZZ
 
 from sage.structure.unique_representation import UniqueRepresentation
 
-from .element import DrinfeldModularFormsElement, DrinfeldModularFormsElement_rank_two
+from .element import DrinfeldModularFormsElement
 
 class DrinfeldModularForms(Parent, UniqueRepresentation):
     r"""
@@ -230,9 +230,6 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                                  f"must be equal to the rank (={rank})")
         else:
             raise TypeError("names must be None or a comma seperated string")
-        if rank == 2:
-            return DrinfeldModularForms_rank_two(base_ring, group,
-                                                 has_type, names)
         return cls.__classcall__(cls, base_ring, rank, group, has_type, names)
 
     def __init__(self, base_ring, rank=2, group=None, has_type=False,
@@ -655,23 +652,3 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             8
         """
         return self._poly_ring
-
-
-class DrinfeldModularForms_rank_two(DrinfeldModularForms):
-
-    Element = DrinfeldModularFormsElement_rank_two
-
-    def __init__(self, base_ring, group, has_type, names):
-        super().__init__(base_ring, 2, group, has_type, names)
-
-    def from_expansion(self, expansion, weight):
-        return
-
-    def from_petrov_expansion(self, k, n, name='t'):
-        return
-
-    def sturm_bound(self, weight):
-        return
-
-    def eisenstein_series(self, weight):
-        return
