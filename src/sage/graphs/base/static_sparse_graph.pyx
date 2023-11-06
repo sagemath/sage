@@ -191,8 +191,8 @@ from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.c_graph cimport CGraph
-from .static_sparse_backend cimport StaticSparseCGraph
-from .static_sparse_backend cimport StaticSparseBackend
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 
 
 cdef extern from "fenv.h":

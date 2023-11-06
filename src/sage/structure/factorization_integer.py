@@ -69,9 +69,9 @@ class IntegerFactorization(Factorization):
             else:
                 self._Factorization__unit = unit
 
-            self._Factorization__x        = x
+            self._Factorization__x = x
             self._Factorization__universe = ZZ
-            self._Factorization__cr       = cr
+            self._Factorization__cr = cr
 
             if sort:
                 self.sort()
