@@ -245,17 +245,18 @@ class TensorField(ModuleElementWithMutability):
     The vectors can be defined only on subsets of `S^2`, the domain of the
     result is then the common subset::
 
-        sage: s = t(a.restrict(U), b) ; s  # long time
+        sage: # long time
+        sage: s = t(a.restrict(U), b) ; s
         Scalar field t(a,b) on the Open subset U of the 2-dimensional
          differentiable manifold S^2
-        sage: s.display()  # long time
+        sage: s.display()
         t(a,b): U → ℝ
            (x, y) ↦ -2*x*y - y^2 - 3*x
         on W: (u, v) ↦ -(3*u^3 + (3*u + 1)*v^2 + 2*u*v)/(u^4 + 2*u^2*v^2 + v^4)
-        sage: s = t(a.restrict(U), b.restrict(W)) ; s  # long time
+        sage: s = t(a.restrict(U), b.restrict(W)) ; s
         Scalar field t(a,b) on the Open subset W of the 2-dimensional
          differentiable manifold S^2
-        sage: s.display()  # long time
+        sage: s.display()
         t(a,b): W → ℝ
            (x, y) ↦ -2*x*y - y^2 - 3*x
            (u, v) ↦ -(3*u^3 + (3*u + 1)*v^2 + 2*u*v)/(u^4 + 2*u^2*v^2 + v^4)

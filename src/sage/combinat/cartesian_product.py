@@ -51,27 +51,27 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
         sage: F1 = ['a', 'b']
         sage: F2 = [1, 2, 3, 4]
-        sage: F3 = Permutations(3)                                                      # optional - sage.combinat
+        sage: F3 = Permutations(3)
         sage: from sage.combinat.cartesian_product import CartesianProduct_iters
-        sage: C = CartesianProduct_iters(F1, F2, F3)                                    # optional - sage.combinat
-        sage: c = cartesian_product([F1, F2, F3])                                       # optional - sage.combinat
+        sage: C = CartesianProduct_iters(F1, F2, F3)
+        sage: c = cartesian_product([F1, F2, F3])
 
-        sage: type(C.an_element())                                                      # optional - sage.combinat
+        sage: type(C.an_element())
         <class 'list'>
-        sage: type(c.an_element())                                                      # optional - sage.combinat
+        sage: type(c.an_element())
         <class 'sage.sets.cartesian_product.CartesianProduct_with_category.element_class'>
 
-        sage: l = ['a', 1, Permutation([3,2,1])]                                        # optional - sage.combinat
-        sage: l in C                                                                    # optional - sage.combinat
+        sage: l = ['a', 1, Permutation([3,2,1])]
+        sage: l in C
         True
-        sage: l in c                                                                    # optional - sage.combinat
+        sage: l in c
         False
-        sage: elt = c(l)                                                                # optional - sage.combinat
-        sage: elt                                                                       # optional - sage.combinat
+        sage: elt = c(l)
+        sage: elt
         ('a', 1, [3, 2, 1])
-        sage: elt in c                                                                  # optional - sage.combinat
+        sage: elt in c
         True
-        sage: elt.parent() is c                                                         # optional - sage.combinat
+        sage: elt.parent() is c
         True
     """
 
