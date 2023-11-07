@@ -69,8 +69,8 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             sage: QSym = QuasiSymmetricFunctions(QQ)
             sage: BasesOfQSymOrNCSF(QSym).super_categories()
             [Category of realizations of Quasisymmetric functions over the Rational Field,
-             Category of graded hopf algebras with basis over Rational Field,
-             Join of Category of realizations of hopf algebras over Rational Field
+             Category of graded Hopf algebras with basis over Rational Field,
+             Join of Category of realizations of Hopf algebras over Rational Field
               and Category of graded algebras over Rational Field
               and Category of graded coalgebras over Rational Field]
         """
@@ -1051,7 +1051,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f(2*Psi[[]] + 3 * Psi[1,3,2] + Psi[2,4] )
             2*Psi[] - 3*Psi[1, 3, 2] + Psi[2, 4]
             sage: f.category()
-            Category of endsets of hopf algebras over Rational Field and graded modules over Rational Field
+            Category of endsets of Hopf algebras over Rational Field and graded modules over Rational Field
 
         If ``anti`` is true, this returns an anti-algebra morphism::
 

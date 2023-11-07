@@ -43,7 +43,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
       It should be a map from the base ring of the domain to the
       base ring of the codomain.
       Note that if base_map is nontrivial then the result will
-      not be a morphism in the category of lie algebras over
+      not be a morphism in the category of Lie algebras over
       the base ring.
     - ``check`` -- whether to run checks on the validity of the defining data
 
@@ -380,7 +380,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
       It should be a map from the base ring of the domain to the
       base ring of the codomain.
       Note that if base_map is nontrivial then the result will
-      not be a morphism in the category of lie algebras over
+      not be a morphism in the category of Lie algebras over
       the base ring.
     - ``check`` -- (default: ``True``) boolean; if ``False`` the
       values  on the Lie brackets implied by ``on_generators`` will

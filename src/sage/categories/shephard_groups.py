@@ -36,6 +36,6 @@ class ShephardGroups(Category_singleton):
 
             sage: from sage.categories.shephard_groups import ShephardGroups
             sage: ShephardGroups().super_categories()
-            [Category of finite generalized coxeter groups]
+            [Category of finite generalized Coxeter groups]
         """
         return [GeneralizedCoxeterGroups().Finite()]

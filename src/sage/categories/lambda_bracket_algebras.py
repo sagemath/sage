@@ -91,7 +91,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: LieConformalAlgebras(QQ).FinitelyGenerated()
-                Category of finitely generated lie conformal algebras over Rational Field
+                Category of finitely generated Lie conformal algebras over Rational Field
             """
             return self._with_axiom("FinitelyGeneratedAsLambdaBracketAlgebra")
 
@@ -102,7 +102,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: LieConformalAlgebras(QQ).FinitelyGenerated()
-                Category of finitely generated lie conformal algebras over Rational Field
+                Category of finitely generated Lie conformal algebras over Rational Field
             """
             return self._with_axiom("FinitelyGeneratedAsLambdaBracketAlgebra")
 

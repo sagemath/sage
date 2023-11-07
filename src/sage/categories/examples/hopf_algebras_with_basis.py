@@ -29,7 +29,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: from sage.categories.examples.hopf_algebras_with_basis import MyGroupAlgebra
             sage: A = MyGroupAlgebra(QQ, DihedralGroup(6))
             sage: A.category()
-            Category of finite dimensional hopf algebras with basis over Rational Field
+            Category of finite dimensional Hopf algebras with basis over Rational Field
             sage: TestSuite(A).run()
         """
         self._group = G

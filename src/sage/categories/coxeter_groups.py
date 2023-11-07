@@ -43,7 +43,7 @@ class CoxeterGroups(Category_singleton):
         sage: C = CoxeterGroups(); C
         Category of Coxeter groups
         sage: C.super_categories()
-        [Category of generalized coxeter groups]
+        [Category of generalized Coxeter groups]
 
         sage: W = C.example(); W
         The symmetric group on {0, ..., 3}
@@ -105,7 +105,7 @@ class CoxeterGroups(Category_singleton):
         EXAMPLES::
 
             sage: CoxeterGroups().super_categories()
-            [Category of generalized coxeter groups]
+            [Category of generalized Coxeter groups]
         """
         return [GeneralizedCoxeterGroups()]
 
@@ -127,17 +127,6 @@ class CoxeterGroups(Category_singleton):
 
     Finite = LazyImport('sage.categories.finite_coxeter_groups', 'FiniteCoxeterGroups')
     Algebras = LazyImport('sage.categories.coxeter_group_algebras', 'CoxeterGroupAlgebras')
-
-    def _repr_object_names(self):
-        """
-        Return the name of the objects of this category.
-
-        EXAMPLES::
-
-            sage: CoxeterGroups().Finite()
-            Category of finite Coxeter groups
-        """
-        return "Coxeter groups"
 
     class ParentMethods:
         @abstract_method

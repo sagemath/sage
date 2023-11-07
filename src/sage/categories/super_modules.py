@@ -46,7 +46,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
         EXAMPLES::
 
             sage: HopfAlgebras(ZZ).WithBasis().FiniteDimensional().Super()  # indirect doctest
-            Category of finite dimensional super hopf algebras with basis over Integer Ring
+            Category of finite dimensional super Hopf algebras with basis over Integer Ring
         """
         axioms = axiom_whitelist.intersection(category.axioms())
         C = super().default_super_categories(category, *args)

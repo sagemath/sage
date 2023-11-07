@@ -78,11 +78,11 @@ def Realizations(self):
          The subset algebra of {1, 2, 3} over Rational Field
 
         sage: C = GradedHopfAlgebrasWithBasis(QQ).Realizations(); C
-        Join of Category of graded hopf algebras with basis over Rational Field
-            and Category of realizations of hopf algebras over Rational Field
+        Join of Category of graded Hopf algebras with basis over Rational Field
+            and Category of realizations of Hopf algebras over Rational Field
         sage: C.super_categories()
-        [Category of graded hopf algebras with basis over Rational Field,
-         Category of realizations of hopf algebras over Rational Field]
+        [Category of graded Hopf algebras with basis over Rational Field,
+         Category of realizations of Hopf algebras over Rational Field]
 
         sage: TestSuite(C).run()
 

@@ -74,17 +74,6 @@ class WeylGroups(Category_singleton):
         """
         return None
 
-    def _repr_object_names(self):
-        """
-        Return the name of the objects of this category.
-
-        EXAMPLES::
-
-            sage: WeylGroups().Finite()
-            Category of finite Weyl groups
-        """
-        return "Weyl groups"
-
     Finite = LazyImport('sage.categories.finite_weyl_groups', 'FiniteWeylGroups')
 
     class ParentMethods:

@@ -25,7 +25,7 @@ class HopfAlgebras(Category_over_base_ring):
     EXAMPLES::
 
         sage: HopfAlgebras(QQ)
-        Category of hopf algebras over Rational Field
+        Category of Hopf algebras over Rational Field
         sage: HopfAlgebras(QQ).super_categories()
         [Category of bialgebras over Rational Field]
 
@@ -53,11 +53,11 @@ class HopfAlgebras(Category_over_base_ring):
 
             sage: C = HopfAlgebras(QQ)
             sage: C.dual()
-            Category of hopf algebras over Rational Field
+            Category of Hopf algebras over Rational Field
         """
         return self
 
-    WithBasis = LazyImport('sage.categories.hopf_algebras_with_basis',  'HopfAlgebrasWithBasis')
+    WithBasis = LazyImport('sage.categories.hopf_algebras_with_basis', 'HopfAlgebrasWithBasis')
 
     class ElementMethods:
 
@@ -89,12 +89,12 @@ class HopfAlgebras(Category_over_base_ring):
             # return operator.antipode(self)
 
     class ParentMethods:
-        #def __setup__(self): # Check the conventions for _setup_ or __setup__
+        # def __setup__(self): # Check the conventions for _setup_ or __setup__
         #    if self.implements("antipode"):
         #        coercion.declare(operator.antipode, [self], self.antipode)
         #
-        #@lazy_attribute
-        #def antipode(self):
+        # @lazy_attribute
+        # def antipode(self):
         #    # delegates to the overloading mechanism but
         #    # guarantees that the result is in self
         #    compose(self, operator.antipode, domain=self)
@@ -126,7 +126,7 @@ class HopfAlgebras(Category_over_base_ring):
 
                 sage: C = HopfAlgebras(QQ).Super()
                 sage: C.dual()
-                Category of super hopf algebras over Rational Field
+                Category of super Hopf algebras over Rational Field
             """
             return self
 
@@ -155,9 +155,9 @@ class HopfAlgebras(Category_over_base_ring):
 
                 sage: C = HopfAlgebras(QQ).TensorProducts()
                 sage: C.extra_super_categories()
-                [Category of hopf algebras over Rational Field]
+                [Category of Hopf algebras over Rational Field]
                 sage: sorted(C.super_categories(), key=str)
-                [Category of hopf algebras over Rational Field,
+                [Category of Hopf algebras over Rational Field,
                  Category of tensor products of algebras over Rational Field,
                  Category of tensor products of coalgebras over Rational Field]
             """
@@ -165,8 +165,8 @@ class HopfAlgebras(Category_over_base_ring):
 
         class ParentMethods:
             # TODO: enable when tensor product of morphisms will be implemented
-            #@lazy_attribute
-            #def antipode(self):
+            # @lazy_attribute
+            # def antipode(self):
             #    return tensor([module.antipode for module in self.modules])
             pass
 
@@ -179,8 +179,8 @@ class HopfAlgebras(Category_over_base_ring):
         """
 
         class ParentMethods:
-            #@lazy_attribute
-            #def antipode(self):
+            # @lazy_attribute
+            # def antipode(self):
             #    self.dual().antipode.dual() # Check that this is the correct formula
             pass
 

@@ -29,10 +29,10 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
     EXAMPLES::
 
         sage: C = LieAlgebras(ZZ).WithBasis().FiniteDimensional().Graded(); C
-        Category of finite dimensional graded lie algebras with basis over Integer Ring
+        Category of finite dimensional graded Lie algebras with basis over Integer Ring
         sage: C.super_categories()
-        [Category of graded lie algebras with basis over Integer Ring,
-         Category of finite dimensional lie algebras with basis over Integer Ring]
+        [Category of graded Lie algebras with basis over Integer Ring,
+         Category of finite dimensional Lie algebras with basis over Integer Ring]
 
         sage: C is LieAlgebras(ZZ).WithBasis().FiniteDimensional().Graded()
         True
@@ -120,7 +120,7 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
             sage: C = LieAlgebras(QQ).WithBasis().Graded().Stratified().FiniteDimensional()
             sage: C
-            Category of finite dimensional stratified lie algebras with basis over Rational Field
+            Category of finite dimensional stratified Lie algebras with basis over Rational Field
 
         A finite-dimensional stratified Lie algebra is nilpotent::
 
