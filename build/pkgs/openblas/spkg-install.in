@@ -35,7 +35,7 @@ fi
 echo "Building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
 
 # Do not emit "-j" options
-export MAKE_NB_JOBS=0
+OPENBLAS_CONFIGURE+=" MAKE_NB_JOBS=0"
 
 # Ensure USE_TLS=1 ; see https://github.com/sagemath/sage/issues/27256
 OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_TLS=1"
