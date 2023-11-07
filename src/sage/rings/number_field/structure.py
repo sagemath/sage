@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Helper classes for structural embeddings and isomorphisms of number fields
 

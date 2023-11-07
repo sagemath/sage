@@ -93,7 +93,7 @@ class DIMACS(SatSolver):
         else:
             self._command = self.__class__.command
 
-        self._tail  = open(tmp_filename(),'w')
+        self._tail = open(tmp_filename(), 'w')
         self._var = 0
         self._lit = 0
 

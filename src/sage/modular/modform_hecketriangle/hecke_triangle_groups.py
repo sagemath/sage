@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Hecke triangle groups
 

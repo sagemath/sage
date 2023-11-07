@@ -24,7 +24,7 @@ class WeylGroups(Category_singleton):
     EXAMPLES::
 
         sage: WeylGroups()
-        Category of weyl groups
+        Category of Weyl groups
         sage: WeylGroups().super_categories()
         [Category of Coxeter groups]
 
@@ -73,6 +73,17 @@ class WeylGroups(Category_singleton):
             sage: WeylGroups().additional_structure()
         """
         return None
+
+    def _repr_object_names(self):
+        """
+        Return the name of the objects of this category.
+
+        EXAMPLES::
+
+            sage: WeylGroups().Finite()
+            Category of finite Weyl groups
+        """
+        return "Weyl groups"
 
     Finite = LazyImport('sage.categories.finite_weyl_groups', 'FiniteWeylGroups')
 
@@ -276,13 +287,13 @@ class WeylGroups(Category_singleton):
             NPR = lattice.nonparabolic_positive_roots(index_set)
             NPR_sum = sum(NPR)
             NPR_data = {}
-            double_rho = lattice.sum(lattice.positive_roots()) # = 2 * \rho
+            double_rho = lattice.sum(lattice.positive_roots())  # = 2 * \rho
             for alpha in NPR:
                 ref = alpha.associated_reflection()
                 alphacheck = alpha.associated_coroot()
-                NPR_data[alpha] = [self.from_reduced_word(ref), # the element
-                                   len(ref) == double_rho.scalar(alphacheck) - 1, # is_quantum
-                                   NPR_sum.scalar(alphacheck)] # the scalar
+                NPR_data[alpha] = [self.from_reduced_word(ref),  # the element
+                                   len(ref) == double_rho.scalar(alphacheck) - 1,  # is_quantum
+                                   NPR_sum.scalar(alphacheck)]  # the scalar
             # We also create a temporary cache of lengths as they are
             #   relatively expensive to compute and needed frequently
             visited = {}
@@ -493,14 +504,14 @@ class WeylGroups(Category_singleton):
             W = self.parent()
             pieri_factors = W.pieri_factors()
             from sage.rings.rational_field import QQ
-            R = QQ[','.join('x%s' % l for l in range(1, pieri_factors.max_length()+1))]
+            R = QQ[','.join('x%s' % l for l in range(1, pieri_factors.max_length() + 1))]
             x = R.gens()
             if self.is_one():
                 return R.one()
 
-            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
-                           for (u, v) in self.left_pieri_factorizations(max_length)
-                           if u != W.one()))
+            return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u)) * x[u.length() - 1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
+                         for (u, v) in self.left_pieri_factorizations(max_length)
+                         if u != W.one()))
 
         def stanley_symmetric_function(self):
             r"""
