@@ -195,9 +195,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: x + 3*y in I
             True
 
-        We test that these changes allow to use this method in the inivariate case.
-
-        TESTS::
+        This also works in the univariate case::
 
             sage: P.<x> = LaurentPolynomialRing(QQ)
             sage: I = P.ideal([x^2 + 3*x])
@@ -215,7 +213,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
     def gens_reduced(self):
         """
-        A reduced system of generators.
+        Return a reduced system of generators.
 
         EXAMPLES::
 
