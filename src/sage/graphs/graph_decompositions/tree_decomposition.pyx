@@ -1033,7 +1033,7 @@ def label_nice_tree_decomposition(nice_TD, root):
         sage: nice_TD = make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
         sage: root = sorted(nice_TD.vertices())[0]
         sage: label_TD = label_nice_tree_decomposition(nice_TD, root)
-        sage: for node in label_TD:
+        sage: for node in sorted(label_TD):
         ....:     print(node, label_TD.get_vertex(node))
         (0, {}) root
         (1, {0}) forget
