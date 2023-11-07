@@ -3540,7 +3540,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         .. [SchaThi1994] Thomas Scharf, Jean-Yves Thibon.
            *A Hopf-algebra approach to inner plethysm*.
            Advances in Mathematics 104 (1994), pp. 30-58.
-           ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_Hopf_algebra_approach_to_inner_plethysm.ps.gz
+           ftp://ftp.mathe2.uni-bayreuth.de/axel/papers/scharf:a_hopf_algebra_approach_to_inner_plethysm.ps.gz
 
         INPUT:
 
