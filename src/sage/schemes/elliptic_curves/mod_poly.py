@@ -163,4 +163,5 @@ def _set_cache_bound(bnd):
     """
     global _cache_bound
     _cache_bound = bnd
+
 classical_modular_polynomial.set_cache_bound = _set_cache_bound
