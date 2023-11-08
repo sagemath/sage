@@ -1,0 +1,23 @@
+{
+    "sage_setup.clean": {
+        "failed": true
+    },
+    "sage.groups.matrix_gps.finitely_generated_gap": {
+        "failed": true
+    },
+    "sage.libs.singular.singular": {
+        "failed": true
+    },
+    "sage.misc.lazy_import": {
+        "failed": true
+    },
+    "sage.rings.polynomial.multi_polynomial_ideal": {
+        "failed": true
+    },
+    "sage.rings.polynomial.multi_polynomial_libsingular": {
+        "failed": true
+    },
+    "sage.tests.gap_packages": {
+        "failed": true
+    }
+}
