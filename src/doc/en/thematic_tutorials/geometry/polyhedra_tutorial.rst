@@ -199,11 +199,12 @@ It is also possible to define a polyhedron over algebraic numbers.
 
 ::
 
-    sage: sqrt_2 = AA(2)^(1/2)                                                          # needs sage.rings.number_field
-    sage: cbrt_2 = AA(2)^(1/3)                                                          # needs sage.rings.number_field
-    sage: timeit('Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]])')                   # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: sqrt_2 = AA(2)^(1/2)
+    sage: cbrt_2 = AA(2)^(1/3)
+    sage: timeit('Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]])')
     5 loops, best of 3: 43.2 ms per loop
-    sage: P4 = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]]); P4                    # needs sage.rings.number_field
+    sage: P4 = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]]); P4
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -212,11 +213,12 @@ There is another way to create a polyhedron over algebraic numbers:
 
 ::
 
-    sage: K.<a> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))                          # needs sage.rings.number_field
-    sage: L.<b> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))                          # needs sage.rings.number_field
-    sage: timeit('Polyhedron(vertices = [[a, 0], [0, b]])')                             # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: K.<a> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))
+    sage: L.<b> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))
+    sage: timeit('Polyhedron(vertices = [[a, 0], [0, b]])')
     5 loops, best of 3: 39.9 ms per loop
-    sage: P5 = Polyhedron(vertices = [[a, 0], [0, b]]); P5                              # needs sage.rings.number_field
+    sage: P5 = Polyhedron(vertices = [[a, 0], [0, b]]); P5
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -691,13 +693,14 @@ backend :code:`field` is called.
 
 ::
 
-    sage: P4.parent()                                                                   # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: P4.parent()
     Polyhedra in AA^2
-    sage: P5.parent()                                                                   # needs sage.rings.number_field
+    sage: P5.parent()
     Polyhedra in AA^2
-    sage: type(P4)                                                                      # needs sage.rings.number_field
+    sage: type(P4)
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
-    sage: type(P5)                                                                      # needs sage.rings.number_field
+    sage: type(P5)
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
 
 .. end of output
@@ -709,13 +712,14 @@ The fourth backend is :code:`normaliz` and is an optional Sage package.
 
 ::
 
-    sage: P1_normaliz = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='normaliz')  # optional - pynormaliz
-    sage: type(P1_normaliz)                                                                           # optional - pynormaliz
+    sage: # optional - pynormaliz
+    sage: P1_normaliz = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='normaliz')
+    sage: type(P1_normaliz)
     <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_normaliz_with_category.element_class'>
-    sage: P2_normaliz = Polyhedron(vertices = [[1/2, 0, 0], [0, 1/2, 0]],                             # optional - pynormaliz
+    sage: P2_normaliz = Polyhedron(vertices = [[1/2, 0, 0], [0, 1/2, 0]],
     ....:                 rays = [[1, 1, 0]],
     ....:                 lines = [[0, 0, 1]], backend='normaliz')
-    sage: type(P2_normaliz)                                                                           # optional - pynormaliz
+    sage: type(P2_normaliz)
     <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_normaliz_with_category.element_class'>
 
 .. end of output
@@ -753,12 +757,13 @@ The backend :code:`normaliz` provides other methods such as
 
 ::
 
-    sage: P6 = Polyhedron(vertices = [[0, 0], [3/2, 0], [3/2, 3/2], [0, 3]], backend='normaliz')  # optional - pynormaliz
-    sage: IH = P6.integral_hull(); IH                                                             # optional - pynormaliz
+    sage: # optional - pynormaliz
+    sage: P6 = Polyhedron(vertices = [[0, 0], [3/2, 0], [3/2, 3/2], [0, 3]], backend='normaliz')
+    sage: IH = P6.integral_hull(); IH
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
-    sage: P6.plot(color='blue')+IH.plot(color='red')                                              # optional - pynormaliz
+    sage: P6.plot(color='blue')+IH.plot(color='red')
     Graphics object consisting of 12 graphics primitives
-    sage: P1_normaliz.integral_hull()                                                             # optional - pynormaliz
+    sage: P1_normaliz.integral_hull()
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
 
 .. end of output
