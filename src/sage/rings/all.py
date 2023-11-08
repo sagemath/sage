@@ -12,157 +12,33 @@ Rings
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from .all__sagemath_categories import *
+from .all__sagemath_combinat import *
+from .all__sagemath_flint import *
+from .all__sagemath_modules import *
 
-# Ring base classes
-from .ring import (Ring, Field, CommutativeRing, IntegralDomain,
-    DedekindDomain, PrincipalIdealDomain, EuclideanDomain)
-
-# Ring element base classes
-from sage.structure.element import (CommutativeAlgebraElement,
-        RingElement, CommutativeRingElement, IntegralDomainElement,
-        DedekindDomainElement, PrincipalIdealDomainElement,
-        EuclideanDomainElement, FieldElement)
-
-# Ideals
-from .ideal import Ideal
-ideal = Ideal
-
-# Quotient
-from .quotient_ring import QuotientRing
-
-# Infinities
-from .infinity import infinity, Infinity, InfinityRing, unsigned_infinity, UnsignedInfinityRing
-
-# Rational integers.
-from .integer_ring import IntegerRing, ZZ, crt_basis
-from .integer import Integer
-
-# Rational numbers
-from .rational_field import RationalField, QQ
-from .rational import Rational
-Rationals = RationalField
-
-# Integers modulo n.
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing, Zmod
-from sage.rings.finite_rings.integer_mod import IntegerMod, Mod, mod
-Integers = IntegerModRing
+try:
+    from .all__sagemath_symbolics import *
+except ImportError:
+    pass
 
 # Finite fields
 from .finite_rings.all import *
 
-# Number field
-from .number_field.all import *
-
 # Function field
 from .function_field.all import *
-
-# Finite residue fields
-from .finite_rings.residue_field import ResidueField
-
-# p-adic field
-from .padics.all import *
-from .padics.padic_printing import _printer_defaults as padic_printing
-
-# valuations
-from .valuation.all import *
-
-# Semirings
-from .semirings.all import *
-
-# Real numbers
-from .real_mpfr import (RealField, RR,
-                       create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
-Reals = RealField
-
-from .real_double import RealDoubleField, RDF, RealDoubleElement
-
-from .real_lazy import RealLazyField, RLF, ComplexLazyField, CLF
-
-from sage.rings.real_arb import RealBallField, RBF
 
 # Polynomial Rings and Polynomial Quotient Rings
 from .polynomial.all import *
 
-
-# Algebraic numbers
-from .qqbar import (AlgebraicRealField, AA,
-                   AlgebraicReal,
-                   AlgebraicField, QQbar,
-                   AlgebraicNumber,
-                   number_field_elements_from_algebraics)
-from .universal_cyclotomic_field import UniversalCyclotomicField, E
-
-# Intervals
-from .real_mpfi import (RealIntervalField,
-                       RIF,
-                       RealInterval)
-
-# Complex numbers
-from .complex_mpfr import ComplexField
-from .complex_mpfr import create_ComplexNumber as ComplexNumber
-Complexes = ComplexField
-from .complex_interval_field import ComplexIntervalField
-from .complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
-
-from .complex_double import ComplexDoubleField, ComplexDoubleElement, CDF
-
-from .complex_mpc import MPComplexField
-
-from sage.rings.complex_arb import ComplexBallField, CBF
-
-lazy_import("sage.rings.imaginary_unit", "I")
-
-# Power series rings
-from .power_series_ring import PowerSeriesRing
-
-# Laurent series ring in one variable
-from .laurent_series_ring import LaurentSeriesRing
-
-# Lazy Laurent series ring
-lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
-                                            'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
-
-# Tate algebras
-from .tate_algebra import TateAlgebra
-
-# Puiseux series ring
-from .puiseux_series_ring import PuiseuxSeriesRing
-
-# Pseudo-ring of PARI objects.
-from .pari_ring import PariRing, Pari
-
-# Big-oh notation
-from .big_oh import O
-
-# Fraction field
-from .fraction_field import FractionField
-Frac = FractionField
-
-# Localization
-from .localization import Localization
-
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
 
-from .bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
-
-from .monomials import monomials
-
-from .cc import CC
-from .cif import CIF
-
-# invariant theory
-from .invariants.all import *
-
 from .fast_arith import prime_range
 
-# continued fractions
-from sage.rings.continued_fraction import (continued_fraction,
-                                           continued_fraction_list)
-
 # asymptotic ring
-from .asymptotic.all import *
+#from .asymptotic.all import *
+lazy_import('sage.rings.asymptotic.asymptotic_ring', 'AsymptoticRing')
+lazy_import('sage.rings.asymptotic.asymptotic_expansion_generators', 'asymptotic_expansions')
 
 # Register classes in numbers abc
 from . import numbers_abc

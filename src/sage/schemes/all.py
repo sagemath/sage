@@ -20,6 +20,8 @@ all.py -- export of schemes to Sage
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from .all__sagemath_categories import *
+
 from .jacobians.all import *
 
 from .hyperelliptic_curves.all import *
@@ -31,16 +33,6 @@ from .plane_conics.all import *
 from .elliptic_curves.all import *
 
 from .plane_quartics.all import *
-
-from .generic.all import *
-
-from .toric.all import *
-
-from .affine.all import *
-
-from .projective.all import *
-
-from .product_projective.all import *
 
 from .cyclic_covers.all import *
 
