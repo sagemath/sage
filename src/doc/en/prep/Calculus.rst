@@ -1,4 +1,4 @@
-.. sage-doctest: optional - sage.plot sage.symbolic
+.. sage-doctest: needs sage.plot sage.symbolic
 
 .. linkall
 
