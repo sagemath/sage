@@ -46,9 +46,7 @@ lazy_import('sage.combinat.partition_kleshchev', ['KleshchevPartitions'])
 lazy_import('sage.combinat.skew_partition', ['SkewPartition', 'SkewPartitions'])
 
 # Partition algebra
-lazy_import('sage.combinat.partition_algebra', ['SetPartitionsAk', 'SetPartitionsPk', 'SetPartitionsTk',
-                                                'SetPartitionsIk', 'SetPartitionsBk', 'SetPartitionsSk',
-                                                'SetPartitionsRk', 'SetPartitionsPRk'])
+from .partition_algebra import SetPartitionsAk, SetPartitionsPk, SetPartitionsTk, SetPartitionsIk, SetPartitionsBk, SetPartitionsSk, SetPartitionsRk, SetPartitionsPRk
 
 # Raising operators
 lazy_import('sage.combinat.partition_shifting_algebras', 'ShiftingOperatorAlgebra')

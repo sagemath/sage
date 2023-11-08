@@ -2,8 +2,8 @@ from sage.misc.lazy_import import lazy_import
 
 
 # Algebra base classes
-lazy_import('sage.algebras.free_algebra', 'FreeAlgebra')
-lazy_import('sage.algebras.free_algebra_quotient', 'FreeAlgebraQuotient')
+from sage.algebras.free_algebra import FreeAlgebra
+from sage.algebras.free_algebra_quotient import FreeAlgebraQuotient
 
 from sage.algebras.steenrod.all import *
 from sage.algebras.quantum_groups.all import *
