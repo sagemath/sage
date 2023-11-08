@@ -17,7 +17,7 @@ Exported elliptic curves functionality
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .constructor import (EllipticCurve,
+from sage.schemes.elliptic_curves.constructor import (EllipticCurve,
                          EllipticCurve_from_c4c6,
                          EllipticCurve_from_j,
                          EllipticCurve_from_cubic,
@@ -29,19 +29,15 @@ lazy_import('sage.schemes.elliptic_curves.jacobian', 'Jacobian')
 lazy_import('sage.schemes.elliptic_curves.ell_rational_field',
             ['cremona_curves', 'cremona_optimal_curves'])
 
-lazy_import('sage.schemes.elliptic_curves.ell_finite_field', 'special_supersingular_curve')
-
-from .cm import ( cm_orders,
+from sage.schemes.elliptic_curves.cm import ( cm_orders,
                  cm_j_invariants,
                  cm_j_invariants_and_orders,
                  hilbert_class_polynomial )
 
 lazy_import('sage.schemes.elliptic_curves.ec_database', 'elliptic_curves')
 
-from .kodaira_symbol import KodairaSymbol
+from sage.schemes.elliptic_curves.kodaira_symbol import KodairaSymbol
 
-from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
+from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
 
-lazy_import('sage.schemes.elliptic_curves.mod_poly', 'classical_modular_polynomial')
-
-from .heegner import heegner_points, heegner_point
+from sage.schemes.elliptic_curves.heegner import heegner_points, heegner_point

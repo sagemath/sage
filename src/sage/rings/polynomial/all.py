@@ -18,8 +18,8 @@ Polynomials
 
 from sage.misc.lazy_import import lazy_import
 
-from .all__sagemath_categories import *
-from .all__sagemath_modules import *
+from sage.rings.polynomial.all__sagemath_categories import *
+from sage.rings.polynomial.all__sagemath_modules import *
 
 # Generic convolution
 from sage.rings.polynomial.convolution import convolution

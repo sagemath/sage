@@ -1,12 +1,12 @@
 
 # Pseudo-ring of PARI objects.
-from .pari_ring import PariRing, Pari
+from sage.rings.pari_ring import PariRing, Pari
 
 # p-adic field
-from .padics.all__sagemath_pari import *
+from sage.rings.padics.all__sagemath_pari import *
 
 # valuations
-from .valuation.all import *
+from sage.rings.valuation.all import *
 
 # Tate algebras
-from .tate_algebra import TateAlgebra
+from sage.rings.tate_algebra import TateAlgebra

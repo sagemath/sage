@@ -15,18 +15,11 @@
 
 from sage.modules.free_module import FreeModule, VectorSpace, span
 
-from sage.modules.free_quadratic_module import (
-    FreeQuadraticModule,
-    QuadraticSpace,
-    InnerProductSpace,
-)
+from sage.modules.free_quadratic_module import (FreeQuadraticModule, QuadraticSpace,
+                                   InnerProductSpace)
 
-from sage.modules.free_module_element import (
-    vector,
-    free_module_element,
-    zero_vector,
-    random_vector,
-)
+from sage.modules.free_module_element import (vector, free_module_element, zero_vector,
+                                 random_vector)
 
 from sage.modules.vector_space_morphism import linear_transformation
 

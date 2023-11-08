@@ -33,13 +33,13 @@ from sage.misc.cachefunc import CachedFunction, cached_function, cached_method, 
 
 from sage.misc.abstract_method import abstract_method
 
-from .randstate import seed, set_random_seed, initial_seed, current_randstate
+from sage.misc.randstate import seed, set_random_seed, initial_seed, current_randstate
 
-from .prandom import *
+from sage.misc.prandom import *
 
-from .timing import walltime, cputime
+from sage.misc.timing import walltime, cputime
 
-from .sage_timeit_class import timeit
+from sage.misc.sage_timeit_class import timeit
 
-from .session import load_session, save_session, show_identifiers
-from .reset import reset, restore
+from sage.misc.session import load_session, save_session, show_identifiers
+from sage.misc.reset import reset, restore

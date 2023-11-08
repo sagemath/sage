@@ -20,4 +20,4 @@ all.py -- export of projective schemes to Sage
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
