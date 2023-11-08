@@ -30,6 +30,7 @@ def sage_setup(distributions, *,
     from distutils import log
     from setuptools.dist import Distribution
     from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
+    from sage_setup.command.sage_build_py import sage_build_py
     from sage_setup.cython_options import compiler_directives, compile_time_env_variables
     from sage_setup.extensions import create_extension
     from sage_setup.find import find_python_sources, find_extra_files
@@ -69,7 +70,8 @@ def sage_setup(distributions, *,
     sage.env.default_required_modules = required_modules
     sage.env.default_optional_modules = optional_modules
 
-    cmdclass = dict(build_ext=sage_build_ext_minimal)
+    cmdclass = dict(build_ext=sage_build_ext_minimal,
+                    build_py=sage_build_py)
 
     sdist = len(sys.argv) > 1 and (sys.argv[1] in ["sdist", "egg_info", "dist_info"])
 
