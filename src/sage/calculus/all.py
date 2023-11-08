@@ -1,20 +1,10 @@
+from .all__sagemath_modules import *
+
+from sage.misc.lazy_import import lazy_import
 
 from .calculus import maxima as maxima_calculus
 from .calculus import (laplace, inverse_laplace,
                        limit, lim)
-
-from .integration import numerical_integral, monte_carlo_integral
-integral_numerical = numerical_integral
-
-from .interpolation import spline, Spline
-
-from .functional import (diff, derivative,
-                         expand,
-                         taylor, simplify)
-
-from .functions import (wronskian, jacobian)
-
-from .ode import ode_solver, ode_system
 
 from .desolvers import (desolve, desolve_laplace, desolve_system,
                         eulers_method, eulers_method_2x2,
@@ -23,15 +13,8 @@ from .desolvers import (desolve, desolve_laplace, desolve_system,
 
 from .var import (var, function, clear_vars)
 
-from .transforms.all import *
-
-# We lazy_import the following modules since they import numpy which slows down sage startup
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.calculus.riemann", ["Riemann_Map"])
-lazy_import("sage.calculus.interpolators", ["polygon_spline", "complex_cubic_spline"])
-
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
+lazy_import('sage.modules.free_module_element', ['vector', 'FreeModuleElement'])
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 def symbolic_expression(x):
@@ -68,6 +51,7 @@ def symbolic_expression(x):
 
     Note that equations exist in the symbolic ring::
 
+        sage: # needs sage.schemes
         sage: E = EllipticCurve('15a'); E
         Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10 over Rational Field
         sage: symbolic_expression(E)
@@ -188,21 +172,20 @@ def symbolic_expression(x):
         TypeError: unable to convert <function function_with_keyword_only_arg at 0x...>
         to a symbolic expression
     """
+    from sage.structure.element import is_Matrix
     from sage.symbolic.expression import Expression
     from sage.symbolic.ring import SR
-    from sage.modules.free_module_element import is_FreeModuleElement
-    from sage.structure.element import is_Matrix
 
     if isinstance(x, Expression):
         return x
     elif hasattr(x, '_symbolic_'):
         return x._symbolic_(SR)
-    elif isinstance(x, (tuple, list)) or is_FreeModuleElement(x):
+    elif isinstance(x, (tuple, list, FreeModuleElement)):
         expressions = [symbolic_expression(item) for item in x]
         if not expressions:
             # Make sure it is symbolic also when length is 0
             return vector(SR, 0)
-        if is_FreeModuleElement(expressions[0]):
+        if isinstance(expressions[0], FreeModuleElement):
             return matrix(expressions)
         return vector(expressions)
     elif is_Matrix(x):
