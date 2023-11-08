@@ -163,22 +163,22 @@ The following example demonstrates the limitations of :code:`RDF`.
 
 ::
 
-    sage: D = polytopes.dodecahedron()                                        # optional - sage.rings.number_field
-    sage: D                                                                   # optional - sage.rings.number_field
+    sage: D = polytopes.dodecahedron()                                                  # needs sage.rings.number_field
+    sage: D                                                                             # needs sage.rings.number_field
     A 3-dimensional polyhedron
      in (Number Field in sqrt5 with defining polynomial x^2 - 5
          with sqrt5 = 2.236067977499790?)^3
      defined as the convex hull of 20 vertices
 
-    sage: vertices_RDF = [n(v.vector(),digits=6) for v in D.vertices()]       # optional - sage.rings.number_field
-    sage: D_RDF = Polyhedron(vertices=vertices_RDF, base_ring=RDF)            # optional - sage.rings.number_field
+    sage: vertices_RDF = [n(v.vector(),digits=6) for v in D.vertices()]                 # needs sage.rings.number_field
+    sage: D_RDF = Polyhedron(vertices=vertices_RDF, base_ring=RDF)                      # needs sage.rings.number_field
     doctest:warning
     ...
     UserWarning: This polyhedron data is numerically complicated; cdd
     could not convert between the inexact V and H representation
     without loss of data. The resulting object might show
     inconsistencies.
-    sage: D_RDF = Polyhedron(vertices=sorted(vertices_RDF), base_ring=RDF)    # optional - sage.rings.number_field
+    sage: D_RDF = Polyhedron(vertices=sorted(vertices_RDF), base_ring=RDF)              # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
     ValueError: *Error: Numerical inconsistency is found.  Use the GMP exact arithmetic.
@@ -199,11 +199,11 @@ It is also possible to define a polyhedron over algebraic numbers.
 
 ::
 
-    sage: sqrt_2 = AA(2)^(1/2)                                                # optional - sage.rings.number_field
-    sage: cbrt_2 = AA(2)^(1/3)                                                # optional - sage.rings.number_field
-    sage: timeit('Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]])')         # optional - sage.rings.number_field  # random
+    sage: sqrt_2 = AA(2)^(1/2)                                                          # needs sage.rings.number_field
+    sage: cbrt_2 = AA(2)^(1/3)                                                          # needs sage.rings.number_field
+    sage: timeit('Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]])')                   # needs sage.rings.number_field
     5 loops, best of 3: 43.2 ms per loop
-    sage: P4 = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]]); P4          # optional - sage.rings.number_field
+    sage: P4 = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]]); P4                    # needs sage.rings.number_field
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -212,11 +212,11 @@ There is another way to create a polyhedron over algebraic numbers:
 
 ::
 
-    sage: K.<a> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))                # optional - sage.rings.number_field
-    sage: L.<b> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))                # optional - sage.rings.number_field
-    sage: timeit('Polyhedron(vertices = [[a, 0], [0, b]])')                   # optional - sage.rings.number_field  # random
+    sage: K.<a> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))                          # needs sage.rings.number_field
+    sage: L.<b> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))                          # needs sage.rings.number_field
+    sage: timeit('Polyhedron(vertices = [[a, 0], [0, b]])')                             # needs sage.rings.number_field
     5 loops, best of 3: 39.9 ms per loop
-    sage: P5 = Polyhedron(vertices = [[a, 0], [0, b]]); P5                    # optional - sage.rings.number_field
+    sage: P5 = Polyhedron(vertices = [[a, 0], [0, b]]); P5                              # needs sage.rings.number_field
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -225,10 +225,10 @@ If the base ring is known it may be a good option to use the proper :meth:`sage.
 
 ::
 
-    sage: J = K.composite_fields(L)[0]                                        # optional - sage.rings.number_field
-    sage: timeit('Polyhedron(vertices = [[J(a), 0], [0, J(b)]])')             # optional - sage.rings.number_field  # random
+    sage: J = K.composite_fields(L)[0]                                                  # needs sage.rings.number_field
+    sage: timeit('Polyhedron(vertices = [[J(a), 0], [0, J(b)]])')                       # needs sage.rings.number_field
     25 loops, best of 3: 9.8 ms per loop
-    sage: P5_comp = Polyhedron(vertices = [[J(a), 0], [0, J(b)]]); P5_comp    # optional - sage.rings.number_field
+    sage: P5_comp = Polyhedron(vertices = [[J(a), 0], [0, J(b)]]); P5_comp              # needs sage.rings.number_field
     A 1-dimensional polyhedron
      in (Number Field in ab with defining polynomial
          x^6 - 6*x^4 - 4*x^3 + 12*x^2 - 24*x - 4
@@ -242,9 +242,9 @@ It is not possible to define a polyhedron over it:
 
 ::
 
-    sage: sqrt_2s = sqrt(2)                                                   # optional - sage.symbolic
-    sage: cbrt_2s = 2^(1/3)                                                   # optional - sage.symbolic
-    sage: Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]])                 # optional - sage.symbolic
+    sage: sqrt_2s = sqrt(2)                                                             # needs sage.symbolic
+    sage: cbrt_2s = 2^(1/3)                                                             # needs sage.symbolic
+    sage: Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]])                           # needs sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: no default backend for computations with Symbolic Ring
@@ -577,12 +577,12 @@ but not algebraic or symbolic values:
 
 ::
 
-    sage: P4_cdd = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]], backend='cdd')            # optional - sage.rings.number_field
+    sage: P4_cdd = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]], backend='cdd')     # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=cdd) implemented for given basering (=Algebraic Real Field).
 
-    sage: P5_cdd = Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]], backend='cdd')          # optional - sage.symbolic
+    sage: P5_cdd = Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]], backend='cdd')   # needs sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=cdd) implemented for given basering (=Symbolic Ring).
@@ -656,8 +656,8 @@ An example with quadratic field:
 
 ::
 
-    sage: V = polytopes.dodecahedron().vertices_list()                                    # optional - sage.rings.number_field
-    sage: Polyhedron(vertices=V, backend='polymake')               # optional - jupymake  # optional - sage.rings.number_field
+    sage: V = polytopes.dodecahedron().vertices_list()                                  # needs sage.rings.number_field
+    sage: Polyhedron(vertices=V, backend='polymake')    # optional - jupymake           # needs sage.rings.number_field
     A 3-dimensional polyhedron
      in (Number Field in sqrt5 with defining polynomial x^2 - 5
      with sqrt5 = 2.236067977499790?)^3
@@ -681,7 +681,7 @@ examples.
 
 ::
 
-    sage: type(D)                                                                         # optional - sage.rings.number_field
+    sage: type(D)                                                                       # needs sage.rings.number_field
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
 
 .. end of output
@@ -691,13 +691,13 @@ backend :code:`field` is called.
 
 ::
 
-    sage: P4.parent()                                                                     # optional - sage.rings.number_field
+    sage: P4.parent()                                                                   # needs sage.rings.number_field
     Polyhedra in AA^2
-    sage: P5.parent()                                                                     # optional - sage.rings.number_field
+    sage: P5.parent()                                                                   # needs sage.rings.number_field
     Polyhedra in AA^2
-    sage: type(P4)                                                                        # optional - sage.rings.number_field
+    sage: type(P4)                                                                      # needs sage.rings.number_field
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
-    sage: type(P5)                                                                        # optional - sage.rings.number_field
+    sage: type(P5)                                                                      # needs sage.rings.number_field
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
 
 .. end of output
@@ -788,7 +788,7 @@ polytope is already defined!
 
 ::
 
-    sage: A = polytopes.buckyball(); A  # can take long                       # optional - sage.rings.number_field
+    sage: A = polytopes.buckyball(); A  # can take long                                 # needs sage.rings.number_field
     A 3-dimensional polyhedron
      in (Number Field in sqrt5 with defining polynomial x^2 - 5
          with sqrt5 = 2.236067977499790?)^3
