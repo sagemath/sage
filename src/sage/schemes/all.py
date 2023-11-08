@@ -21,6 +21,7 @@ all.py -- export of schemes to Sage
 #*****************************************************************************
 
 from sage.schemes.all__sagemath_categories import *
+from sage.schemes.all__sagemath_polyhedra import *
 
 from sage.schemes.jacobians.all import *
 

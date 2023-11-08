@@ -14,6 +14,7 @@ from sage.misc.lazy_import import lazy_import
 
 from sage.rings.all__sagemath_combinat import *
 from sage.rings.all__sagemath_flint import *
+from sage.rings.all__sagemath_gap import *
 from sage.rings.all__sagemath_modules import *
 
 try:
