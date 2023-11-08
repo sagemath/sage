@@ -713,12 +713,13 @@ The fourth backend is :code:`normaliz` and is an optional Sage package.
 ::
 
     sage: # optional - pynormaliz
-    sage: P1_normaliz = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='normaliz')
+    sage: P1_normaliz = Polyhedron(vertices=[[1, 0], [0, 1]], rays=[[1, 1]],
+    ....:                          backend='normaliz')
     sage: type(P1_normaliz)
     <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_normaliz_with_category.element_class'>
-    sage: P2_normaliz = Polyhedron(vertices = [[1/2, 0, 0], [0, 1/2, 0]],
-    ....:                 rays = [[1, 1, 0]],
-    ....:                 lines = [[0, 0, 1]], backend='normaliz')
+    sage: P2_normaliz = Polyhedron(vertices=[[1/2, 0, 0], [0, 1/2, 0]],
+    ....:                          rays=[[1, 1, 0]],
+    ....:                          lines=[[0, 0, 1]], backend='normaliz')
     sage: type(P2_normaliz)
     <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_normaliz_with_category.element_class'>
 
@@ -728,7 +729,7 @@ This backend does not work with :code:`RDF` or other inexact fields.
 
 ::
 
-    sage: P3_normaliz = Polyhedron(vertices = [[0.5, 0], [0, 0.5]], backend='normaliz')             # optional - pynormaliz
+    sage: P3_normaliz = Polyhedron(vertices=[[0.5, 0], [0, 0.5]], backend='normaliz')   # optional - pynormaliz
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=normaliz) implemented for given basering (=Real Double Field).
@@ -742,12 +743,14 @@ the computation is done using an embedded number field.
 
 ::
 
-    sage: P4_normaliz = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]], backend='normaliz')       # optional - pynormaliz
-    sage: P4_normaliz                                                                               # optional - pynormaliz
+    sage: # optional - pynormaliz
+    sage: P4_normaliz = Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]],
+    ....:                          backend='normaliz')
+    sage: P4_normaliz
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
-
-    sage: P5_normaliz = Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]], backend='normaliz')     # optional - pynormaliz
-    sage: P5_normaliz                                                                               # optional - pynormaliz
+    sage: P5_normaliz = Polyhedron(vertices=[[sqrt_2s, 0], [0, cbrt_2s]],
+    ....:                          backend='normaliz')
+    sage: P5_normaliz
     A 1-dimensional polyhedron in (Symbolic Ring)^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -758,10 +761,11 @@ The backend :code:`normaliz` provides other methods such as
 ::
 
     sage: # optional - pynormaliz
-    sage: P6 = Polyhedron(vertices = [[0, 0], [3/2, 0], [3/2, 3/2], [0, 3]], backend='normaliz')
+    sage: P6 = Polyhedron(vertices=[[0, 0], [3/2, 0], [3/2, 3/2], [0, 3]],
+    ....:                 backend='normaliz')
     sage: IH = P6.integral_hull(); IH
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
-    sage: P6.plot(color='blue')+IH.plot(color='red')
+    sage: P6.plot(color='blue') + IH.plot(color='red')
     Graphics object consisting of 12 graphics primitives
     sage: P1_normaliz.integral_hull()
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
