@@ -18,4 +18,4 @@ Finite Fields
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .all__sagemath_categories import *
+from sage.rings.finite_rings.all__sagemath_categories import *

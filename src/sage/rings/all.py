@@ -12,12 +12,12 @@ Rings
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from .all__sagemath_combinat import *
-from .all__sagemath_flint import *
-from .all__sagemath_modules import *
+from sage.rings.all__sagemath_combinat import *
+from sage.rings.all__sagemath_flint import *
+from sage.rings.all__sagemath_modules import *
 
 try:
-    from .all__sagemath_symbolics import *
+    from sage.rings.all__sagemath_symbolics import *
 except ImportError:
     pass
 
@@ -33,10 +33,10 @@ from sage.rings.polynomial.all import *
 # c-finite sequences
 from sage.rings.cfinite_sequence import CFiniteSequence, CFiniteSequences
 
-from .fast_arith import prime_range
+from sage.rings.fast_arith import prime_range
 
 # asymptotic ring
-#from .asymptotic.all import *
+#from sage.rings.asymptotic.all import *
 lazy_import('sage.rings.asymptotic.asymptotic_ring', 'AsymptoticRing')
 lazy_import('sage.rings.asymptotic.asymptotic_expansion_generators', 'asymptotic_expansions')
 

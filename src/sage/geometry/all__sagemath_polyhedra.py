@@ -1,6 +1,6 @@
-from .all__sagemath_modules import *
+from sage.geometry.all__sagemath_modules import *
 
-from .polyhedron.all import *
+from sage.geometry.polyhedron.all import *
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.geometry.polyhedral_complex', 'PolyhedralComplex')

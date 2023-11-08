@@ -45,14 +45,14 @@ install_doc(__package__, __doc__)
 
 from sage.misc.lazy_import import lazy_import
 
-from .alphabet import Alphabet, build_alphabet
-from .morphism import WordMorphism
+from sage.combinat.words.alphabet import Alphabet, build_alphabet
+from sage.combinat.words.morphism import WordMorphism
 lazy_import('sage.combinat.words.paths', 'WordPaths')
-from .word import Word
-from .word_options import WordOptions
-from .word_generators import words
-from .words import Words, FiniteWords, InfiniteWords
-from .lyndon_word import LyndonWord, LyndonWords, StandardBracketedLyndonWords
+from sage.combinat.words.word import Word
+from sage.combinat.words.word_options import WordOptions
+from sage.combinat.words.word_generators import words
+from sage.combinat.words.words import Words, FiniteWords, InfiniteWords
+from sage.combinat.words.lyndon_word import LyndonWord, LyndonWords, StandardBracketedLyndonWords
 
 del install_doc
 del lazy_import
