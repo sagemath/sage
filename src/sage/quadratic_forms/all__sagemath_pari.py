@@ -1,5 +1,5 @@
 
-from .special_values import (gamma__exact, zeta__exact, QuadraticBernoulliNumber,
+from sage.quadratic_forms.special_values import (gamma__exact, zeta__exact, QuadraticBernoulliNumber,
                              quadratic_L_function__exact, quadratic_L_function__numerical)
 
-from .genera.genus import Genus
+from sage.quadratic_forms.genera.genus import Genus

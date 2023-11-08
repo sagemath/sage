@@ -20,5 +20,5 @@ all.py -- export of abelian groups to Sage
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .all__sagemath_modules import *
-from .all__sagemath_gap import *
+from sage.groups.abelian_gps.all__sagemath_modules import *
+from sage.groups.abelian_gps.all__sagemath_gap import *

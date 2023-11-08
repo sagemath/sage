@@ -6,26 +6,26 @@ from sage.misc.lazy_import import lazy_import
 # in initializing the category system.
 import sage.structure.category_object    # imports sage.categories.category
 
-# Small part of "from .basic import *":
-from .objects import Objects
-from .sets_cat import Sets, EmptySetError
+# Small part of "from sage.categories.basic import *":
+from sage.categories.objects import Objects
+from sage.categories.sets_cat import Sets, EmptySetError
 
 
-from .category import Category
+from sage.categories.category import Category
 
-from .category_types import Elements
+from sage.categories.category_types import Elements
 
-from .cartesian_product import cartesian_product
+from sage.categories.cartesian_product import cartesian_product
 
-from .functor  import (ForgetfulFunctor,
+from sage.categories.functor  import (ForgetfulFunctor,
                       IdentityFunctor)
 
-from .homset   import (Hom, hom,
+from sage.categories.homset   import (Hom, hom,
                       End, end,
                       Homset, HomsetWithBase)
 
-from .morphism import Morphism
+from sage.categories.morphism import Morphism
 
-from .realizations import Realizations
+from sage.categories.realizations import Realizations
 
-from .sets_with_partial_maps import SetsWithPartialMaps
+from sage.categories.sets_with_partial_maps import SetsWithPartialMaps

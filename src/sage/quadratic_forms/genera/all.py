@@ -5,4 +5,4 @@
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .genus import Genus, LocalGenusSymbol, is_GlobalGenus
+from sage.quadratic_forms.genera.genus import Genus, LocalGenusSymbol, is_GlobalGenus

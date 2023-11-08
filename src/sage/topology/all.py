@@ -1,11 +1,11 @@
 # sage.doctest: needs sage.graphs
-from .simplicial_complex import SimplicialComplex, Simplex
+from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 
-from .simplicial_complex_morphism import SimplicialComplexMorphism
+from sage.topology.simplicial_complex_morphism import SimplicialComplexMorphism
 
-from .delta_complex import DeltaComplex, delta_complexes
+from sage.topology.delta_complex import DeltaComplex, delta_complexes
 
-from .cubical_complex import CubicalComplex, cubical_complexes
+from sage.topology.cubical_complex import CubicalComplex, cubical_complexes
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.topology.filtered_simplicial_complex', 'FilteredSimplicialComplex')

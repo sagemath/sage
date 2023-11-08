@@ -13,17 +13,17 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .free_module import FreeModule, VectorSpace, span
+from sage.modules.free_module import FreeModule, VectorSpace, span
 
-from .free_quadratic_module import (FreeQuadraticModule, QuadraticSpace,
+from sage.modules.free_quadratic_module import (FreeQuadraticModule, QuadraticSpace,
                                    InnerProductSpace)
 
-from .free_module_element import (vector, free_module_element, zero_vector,
+from sage.modules.free_module_element import (vector, free_module_element, zero_vector,
                                  random_vector)
 
-from .vector_space_morphism import linear_transformation
+from sage.modules.vector_space_morphism import linear_transformation
 
-from .with_basis.all import *
+from sage.modules.with_basis.all import *
 
 from sage.misc.lazy_import import lazy_import
 

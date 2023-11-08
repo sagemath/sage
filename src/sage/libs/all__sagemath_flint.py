@@ -1,11 +1,11 @@
 
 try:
-    from .all__sagemath_pari import *
+    from sage.libs.all__sagemath_pari import *
 except ImportError:
     pass
 
 try:
-    from .all__sagemath_ntl import *
+    from sage.libs.all__sagemath_ntl import *
 except ImportError:
     pass
 

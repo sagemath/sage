@@ -35,11 +35,11 @@ Tests for deprecations of imports in global namespace from :trac:`28064`::
 """
 from sage.misc.lazy_import import lazy_import
 
-from .constructor import HyperellipticCurve
-from .kummer_surface import KummerSurface
+from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+from sage.schemes.hyperelliptic_curves.kummer_surface import KummerSurface
 lazy_import('sage.schemes.hyperelliptic_curves.invariants',
             ['igusa_clebsch_invariants', 'absolute_igusa_invariants_kohel',
              'absolute_igusa_invariants_wamelen', 'clebsch_invariants'],
             deprecation=28064)
-from .mestre import (Mestre_conic, HyperellipticCurve_from_invariants)
-from . import monsky_washnitzer
+from sage.schemes.hyperelliptic_curves.mestre import (Mestre_conic, HyperellipticCurve_from_invariants)
+from sage.schemes.hyperelliptic_curves import monsky_washnitzer

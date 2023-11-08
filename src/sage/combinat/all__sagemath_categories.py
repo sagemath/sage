@@ -1,10 +1,10 @@
 # Integer lists
-from .matrices.all__sagemath_categories import *
+from sage.combinat.matrices.all__sagemath_categories import *
 
-from .integer_lists import IntegerListsLex
-from .integer_vector import IntegerVectors
+from sage.combinat.integer_lists import IntegerListsLex
+from sage.combinat.integer_vector import IntegerVectors
 
-from .combinat import (CombinatorialClass, CombinatorialObject,
+from sage.combinat.combinat import (CombinatorialClass, CombinatorialObject,
                        MapCombinatorialClass,
                        bell_number, bell_polynomial, bernoulli_polynomial,
                        catalan_number, euler_number,
@@ -19,11 +19,11 @@ lazy_import('sage.combinat.combinat',
              'FilteredCombinatorialClass'),
             deprecation=(31545, 'this class is deprecated, do not use'))
 
-from .combination import Combinations
-from .composition import Composition, Compositions
-from .permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
-from .subset import Subsets, subsets, powerset, uniq
-from .tuple import Tuples, UnorderedTuples
+from sage.combinat.combination import Combinations
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
+from sage.combinat.subset import Subsets, subsets, powerset, uniq
+from sage.combinat.tuple import Tuples, UnorderedTuples
 
 
-from .dlx import DLXMatrix, AllExactCovers, OneExactCover
+from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover

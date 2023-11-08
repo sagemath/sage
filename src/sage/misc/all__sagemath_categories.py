@@ -1,21 +1,21 @@
 
-from .all__sagemath_objects import *
+from sage.misc.all__sagemath_objects import *
 
-from .html import html, pretty_print_default
+from sage.misc.html import html, pretty_print_default
 
-from .mathml import mathml
+from sage.misc.mathml import mathml
 
-from .table import table
+from sage.misc.table import table
 
-from .map_threaded import map_threaded
+from sage.misc.map_threaded import map_threaded
 
-from .mrange import xmrange, mrange, xmrange_iter, mrange_iter, cartesian_product_iterator
+from sage.misc.mrange import xmrange, mrange, xmrange_iter, mrange_iter, cartesian_product_iterator
 
-from .defaults import (set_default_variable_name,
+from sage.misc.defaults import (set_default_variable_name,
                        series_precision, set_series_precision)
 
 
-from .functional import (additive_order,
+from sage.misc.functional import (additive_order,
                         base_ring,
                         base_field,
                         basis,
@@ -73,8 +73,8 @@ from .functional import (additive_order,
                         symbolic_prod as product,
                         transpose)
 
-from .latex import LatexExpr, latex, view
+from sage.misc.latex import LatexExpr, latex, view
 
-from .fpickle import pickle_function, unpickle_function
+from sage.misc.fpickle import pickle_function, unpickle_function
 
-from .persist import unpickle_global
+from sage.misc.persist import unpickle_global

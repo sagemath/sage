@@ -59,7 +59,7 @@ import math
 
 ################ end setup warnings ###############################
 
-from .all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
+from sage.all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
 
 ###################################################################
 

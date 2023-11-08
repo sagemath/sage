@@ -50,12 +50,12 @@ from sage.misc.namespace_package import install_doc, install_dict
 install_doc(__package__, __doc__)
 
 # install modules quickref and tutorial to the containing package
-from . import quickref, tutorial
+from sage.combinat import quickref, tutorial
 install_dict(__package__, {'quickref': quickref, 'tutorial': tutorial})
 del quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
 
-from .all__sagemath_combinat import *
-from .all__sagemath_modules import *
-from .all__sagemath_graphs import *
+from sage.combinat.all__sagemath_combinat import *
+from sage.combinat.all__sagemath_modules import *
+from sage.combinat.all__sagemath_graphs import *

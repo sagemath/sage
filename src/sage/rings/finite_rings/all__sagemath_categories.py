@@ -1,8 +1,8 @@
-from .finite_field_constructor import FiniteField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 GF = FiniteField
 
-from .conway_polynomials import conway_polynomial, exists_conway_polynomial
+from sage.rings.finite_rings.conway_polynomials import conway_polynomial, exists_conway_polynomial
 
 # Finite residue fields
-from .residue_field import ResidueField
+from sage.rings.finite_rings.residue_field import ResidueField

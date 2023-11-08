@@ -1,1 +1,1 @@
-from .point_configuration import PointConfiguration
+from sage.geometry.triangulation.point_configuration import PointConfiguration

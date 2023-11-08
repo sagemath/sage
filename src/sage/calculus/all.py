@@ -1,17 +1,17 @@
-from .all__sagemath_modules import *
+from sage.calculus.all__sagemath_modules import *
 
 from sage.misc.lazy_import import lazy_import
 
-from .calculus import maxima as maxima_calculus
-from .calculus import (laplace, inverse_laplace,
+from sage.calculus.calculus import maxima as maxima_calculus
+from sage.calculus.calculus import (laplace, inverse_laplace,
                        limit, lim)
 
-from .desolvers import (desolve, desolve_laplace, desolve_system,
+from sage.calculus.desolvers import (desolve, desolve_laplace, desolve_system,
                         eulers_method, eulers_method_2x2,
                         eulers_method_2x2_plot, desolve_rk4, desolve_system_rk4,
                         desolve_odeint, desolve_mintides, desolve_tides_mpfr)
 
-from .var import (var, function, clear_vars)
+from sage.calculus.var import (var, function, clear_vars)
 
 lazy_import('sage.modules.free_module_element', ['vector', 'FreeModuleElement'])
 lazy_import('sage.matrix.constructor', 'matrix')
@@ -213,4 +213,4 @@ def symbolic_expression(x):
     return SR(x)
 
 
-from . import desolvers
+from sage.calculus import desolvers
