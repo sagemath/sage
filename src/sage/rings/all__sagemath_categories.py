@@ -72,7 +72,3 @@ from sage.rings.continued_fraction import (continued_fraction,
 
 # Lazy reals
 from sage.rings.real_lazy import RealLazyField, RLF, ComplexLazyField, CLF
-
-# Preliminary version of real numbers for doctesting without sage.rings.real_mpfr.
-# sage.rings.all redefines it.
-RealNumber = RR = RDF             # used by the preparser to wrap real literals
