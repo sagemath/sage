@@ -4,11 +4,11 @@ Assume we're starting from a clean repo and a fully set up conda environment::
     ./bootstrap-conda
     mamba env create --file src/environment-dev-3.11.yml --name sage-dev
     conda activate sage-dev
-    ./bootstrap
     ```
 
 (Note, that in the codespace environment you first have to delete the
 already compiled files, e.g. with ``shopt -s globstar`` followed by ``rm src/**/*.so``
+or ``for f in src/**/*.so ; do mv "$f" "$f.old"; done``
 )
 
 To compile and install the project in editable install, just use
