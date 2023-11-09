@@ -2122,7 +2122,8 @@ def point_of_order(E, n):
     if not m:
         raise NotImplementedError('only prime-power orders are currently supported')
 
-    xpoly = E.division_polynomial(n) // E.division_polynomial(n//l)
+    xpoly = E.division_polynomial(n).radical()
+    xpoly //= E.division_polynomial(n//l).radical()
     if xpoly.degree() < 1:  # supersingular and l == p
         raise ValueError('curve does not have any points of the specified order')
 
