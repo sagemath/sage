@@ -20,3 +20,10 @@ lazy_import('sage.misc.dist', 'install_scripts', deprecation=34259)
 from sage.misc.classgraph import class_graph
 
 lazy_import('sage.repl.interpreter', 'logstr', deprecation=34259)
+
+# Following will go to all__sagemath_objects.py in #36566
+from sage.misc.randstate import seed, set_random_seed, initial_seed, current_randstate
+from sage.misc.prandom import *
+from sage.misc.sage_timeit_class import timeit
+from sage.misc.session import load_session, save_session, show_identifiers
+from sage.misc.reset import reset, restore
