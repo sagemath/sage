@@ -1,9 +1,5 @@
 # cannot be found via pkg-config
-singular = declare_dependency(
-  dependencies: [
-    cc.find_library('Singular', required: false),
-  ],
-)
+singular = dependency('Singular')
 ginac = declare_dependency(
   dependencies: [
     cc.find_library('ginac', required: false),
