@@ -91,7 +91,7 @@ and some rays.
 
 ::
 
-    sage: P1 = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]])
+    sage: P1 = Polyhedron(vertices=[[1, 0], [0, 1]], rays=[[1, 1]])
     sage: P1
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
 
@@ -118,9 +118,9 @@ We can also add a lineality space.
 
 ::
 
-    sage: P2 = Polyhedron(vertices = [[1/2, 0, 0], [0, 1/2, 0]],
-    ....:                 rays = [[1, 1, 0]],
-    ....:                 lines = [[0, 0, 1]])
+    sage: P2 = Polyhedron(vertices=[[1/2, 0, 0], [0, 1/2, 0]],
+    ....:                 rays=[[1, 1, 0]],
+    ....:                 lines=[[0, 0, 1]])
     sage: P2
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 2 vertices, 1 ray, 1 line
     sage: P2.plot()
@@ -144,7 +144,7 @@ The chosen ring depends on the input format.
 
 ::
 
-    sage: P3 = Polyhedron(vertices = [[0.5, 0], [0, 0.5]])
+    sage: P3 = Polyhedron(vertices=[[0.5, 0], [0, 0.5]])
     sage: P3
     A 1-dimensional polyhedron in RDF^2 defined as the convex hull of 2 vertices
     sage: P3.parent()
@@ -202,9 +202,9 @@ It is also possible to define a polyhedron over algebraic numbers.
     sage: # needs sage.rings.number_field
     sage: sqrt_2 = AA(2)^(1/2)
     sage: cbrt_2 = AA(2)^(1/3)
-    sage: timeit('Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]])')
+    sage: timeit('Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]])')
     5 loops, best of 3: 43.2 ms per loop
-    sage: P4 = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]]); P4
+    sage: P4 = Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]]); P4
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -218,7 +218,7 @@ There is another way to create a polyhedron over algebraic numbers:
     sage: L.<b> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))
     sage: timeit('Polyhedron(vertices=[[a, 0], [0, b]])')               # random
     5 loops, best of 3: 39.9 ms per loop
-    sage: P5 = Polyhedron(vertices = [[a, 0], [0, b]]); P5
+    sage: P5 = Polyhedron(vertices=[[a, 0], [0, b]]); P5
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -247,7 +247,7 @@ It is not possible to define a polyhedron over it:
 
     sage: sqrt_2s = sqrt(2)                                                             # needs sage.symbolic
     sage: cbrt_2s = 2^(1/3)                                                             # needs sage.symbolic
-    sage: Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]])                           # needs sage.symbolic
+    sage: Polyhedron(vertices=[[sqrt_2s, 0], [0, cbrt_2s]])                             # needs sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: no default backend for computations with Symbolic Ring
@@ -392,7 +392,7 @@ inequalities and equalities as objects.
 
 ::
 
-    sage: P3_QQ = Polyhedron(vertices = [[0.5, 0], [0, 0.5]], base_ring=QQ)
+    sage: P3_QQ = Polyhedron(vertices=[[0.5, 0], [0, 0.5]], base_ring=QQ)
     sage: HRep = P3_QQ.Hrepresentation()
     sage: H1 = HRep[0]; H1
     An equation (2, 2) x - 1 == 0
@@ -530,7 +530,7 @@ In order to use a specific backend, we specify the :code:`backend` parameter.
 
 ::
 
-    sage: P1_cdd = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='cdd')
+    sage: P1_cdd = Polyhedron(vertices=[[1, 0], [0, 1]], rays=[[1, 1]], backend='cdd')
     sage: P1_cdd
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
 
@@ -570,7 +570,7 @@ The :code:`cdd` backend accepts also entries in :code:`RDF`:
 
 ::
 
-    sage: P3_cdd = Polyhedron(vertices = [[0.5, 0], [0, 0.5]], backend='cdd')
+    sage: P3_cdd = Polyhedron(vertices=[[0.5, 0], [0, 0.5]], backend='cdd')
     sage: P3_cdd
     A 1-dimensional polyhedron in RDF^2 defined as the convex hull of 2 vertices
 
@@ -580,12 +580,12 @@ but not algebraic or symbolic values:
 
 ::
 
-    sage: P4_cdd = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]], backend='cdd')     # needs sage.rings.number_field
+    sage: P4_cdd = Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]], backend='cdd')       # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=cdd) implemented for given basering (=Algebraic Real Field).
 
-    sage: P5_cdd = Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]], backend='cdd')   # needs sage.symbolic
+    sage: P5_cdd = Polyhedron(vertices=[[sqrt_2s, 0], [0, cbrt_2s]], backend='cdd')     # needs sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=cdd) implemented for given basering (=Symbolic Ring).
