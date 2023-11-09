@@ -1308,6 +1308,7 @@ def sage_getfile(obj):
         sage: from sage.misc.sageinspect import sage_getfile
         sage: sage_getfile(sage.rings.rational)
         '...sage/rings/rational.pyx'
+        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile(Sq)                                                          # needs sage.combinat sage.modules
         '...sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile(x)                                                           # needs sage.symbolic
@@ -1386,6 +1387,7 @@ def sage_getfile_relative(obj):
         sage: from sage.misc.sageinspect import sage_getfile_relative
         sage: sage_getfile_relative(sage.rings.rational)
         'sage/rings/rational.pyx'
+        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile_relative(x)                                                  # needs sage.symbolic
@@ -2265,9 +2267,8 @@ def sage_getsourcelines(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines
-
-        sage: # needs sage.modules
-        sage: sage_getsourcelines(matrix)[1]
+        sage: from sage.matrix.constructor import matrix                                # needs sage.modules
+        sage: sage_getsourcelines(matrix)[1]                                            # needs sage.modules
         21
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
