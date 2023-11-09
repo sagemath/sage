@@ -214,22 +214,7 @@ class Stream():
         """
         return False
 
-    def replace(self, stream, sub):
-        """
-        Return ``self`` except with ``stream`` replaced by ``sub``.
-
-        The default is to return ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_zero
-            sage: zero = Stream_zero()
-            sage: zero.replace(zero, zero) is zero
-            True
-        """
-        return self
-
-    def parent_streams(self):
+    def input_streams(self):
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``.
@@ -238,7 +223,7 @@ class Stream():
 
             sage: from sage.data_structures.stream import Stream_zero
             sage: z = Stream_zero()
-            sage: z.parent_streams()
+            sage: z.input_streams()
             []
         """
         return []
@@ -991,6 +976,8 @@ class Stream_function(Stream_inexact):
     - ``is_sparse`` -- boolean; specifies whether the stream is sparse
     - ``approximate_order`` -- integer; a lower bound for the order
       of the stream
+    - ``input_streams`` -- optional, a list of streams that are
+      involved in the computation of the coefficients of ``self``
 
     .. NOTE::
 
@@ -1014,8 +1001,9 @@ class Stream_function(Stream_inexact):
         sage: f = Stream_function(lambda n: n, True, 0)
         sage: f[4]
         4
+
     """
-    def __init__(self, function, is_sparse, approximate_order, true_order=False):
+    def __init__(self, function, is_sparse, approximate_order, true_order=False, input_streams=[]):
         """
         Initialize.
 
@@ -1028,6 +1016,14 @@ class Stream_function(Stream_inexact):
         self.get_coefficient = function
         super().__init__(is_sparse, true_order)
         self._approximate_order = approximate_order
+        self._input_streams = input_streams
+
+    def input_streams(self):
+        r"""
+        Return the list of streams which are used to compute the
+        coefficients of ``self``, as provided.
+        """
+        return self._input_streams
 
     def __hash__(self):
         """
@@ -1329,52 +1325,7 @@ class Stream_uninitialized(Stream_inexact):
         self._initializing = False
         return result
 
-    def replace(self, stream, sub):
-        r"""
-        Return ``self`` except with ``stream`` replaced by ``sub``.
-
-        .. WARNING::
-
-            This does not update the approximate order or the cache.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_shift, Stream_function
-            sage: U = Stream_uninitialized(0)
-            sage: F = Stream_function(lambda n: 1, False, 0)
-            sage: X = Stream_function(lambda n: n, False, 0)
-            sage: S = Stream_shift(F, -3)
-            sage: U.replace(X, F) is U
-            True
-            sage: U._target = S
-            sage: Up = U.replace(S, X)
-            sage: Up == U
-            False
-            sage: [Up[i] for i in range(5)]
-            [0, 1, 2, 3, 4]
-            sage: Upp = U.replace(F, X)
-            sage: Upp == U
-            False
-            sage: [Upp[i] for i in range(5)]
-            [3, 4, 5, 6, 7]
-            sage: [U[i] for i in range(5)]
-            [1, 1, 1, 1, 1]
-        """
-        if self._target is None:
-            return self
-        if self._target == stream:
-            ret = copy(self)
-            ret._target = sub
-        else:
-            temp = self._target.replace(stream, sub)
-            if temp == self._target:
-                ret = self
-            else:
-                ret = copy(self)
-                ret._target = temp
-        return ret
-
-    def parent_streams(self):
+    def input_streams(self):
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``.
@@ -1384,12 +1335,12 @@ class Stream_uninitialized(Stream_inexact):
             sage: from sage.data_structures.stream import Stream_uninitialized, Stream_function
             sage: h = Stream_function(lambda n: n, False, 1)
             sage: M = Stream_uninitialized(0)
-            sage: M.parent_streams()
+            sage: M.input_streams()
             []
             sage: M._target = h
             sage: [h[i] for i in range(5)]
             [0, 1, 2, 3, 4]
-            sage: M.parent_streams()
+            sage: M.input_streams()
             [<sage.data_structures.stream.Stream_function object at ...>]
         """
         if self._target is not None:
@@ -1476,13 +1427,6 @@ class Stream_functional_equation(Stream):
         self._last_eq_n = self._F._approximate_order - 1
         uninitialized._target = self
 
-    def parent_streams(self):
-        r"""
-        Return the list of streams which are used to compute the
-        coefficients of ``self``.
-        """
-        return []
-
     def __getitem__(self, n):
         if n < self._approximate_order:
             return ZZ.zero()
@@ -1535,7 +1479,7 @@ class Stream_functional_equation(Stream):
                         s._cache[i] = self._base(num/den)
                     elif c.parent() is self._P:
                         s._cache[i] = self._base(c.subs({var: val}))
-        for t in s.parent_streams():
+        for t in s.input_streams():
             self._subs_in_caches(t, var, val)
 
     def _compute(self):
@@ -1660,49 +1604,7 @@ class Stream_unary(Stream_inexact):
         """
         return self._series.is_uninitialized()
 
-    def replace(self, stream, sub):
-        r"""
-        Return ``self`` except with ``stream`` replaced by ``sub``.
-
-        .. WARNING::
-
-            This does not update the approximate order or the cache.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_shift, Stream_neg, Stream_function
-            sage: F = Stream_function(lambda n: 1, False, 0)
-            sage: X = Stream_function(lambda n: n, False, 0)
-            sage: S = Stream_shift(F, -3)
-            sage: N = Stream_neg(S, False)
-            sage: N.replace(X, F) is N
-            True
-            sage: Np = N.replace(F, X)
-            sage: Np == N
-            False
-            sage: [Np[i] for i in range(5)]
-            [-3, -4, -5, -6, -7]
-            sage: Npp = N.replace(S, X)
-            sage: Npp == N
-            False
-            sage: [Npp[i] for i in range(5)]
-            [0, -1, -2, -3, -4]
-            sage: [N[i] for i in range(5)]
-            [-1, -1, -1, -1, -1]
-        """
-        if self._series == stream:
-            ret = copy(self)
-            ret._series = sub
-        else:
-            temp = self._series.replace(stream, sub)
-            if temp == self._series:
-                ret = self
-            else:
-                ret = copy(self)
-                ret._series = temp
-        return ret
-
-    def parent_streams(self):
+    def input_streams(self):
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``.
@@ -1712,7 +1614,7 @@ class Stream_unary(Stream_inexact):
             sage: from sage.data_structures.stream import Stream_function, Stream_neg
             sage: h = Stream_function(lambda n: n, False, 1)
             sage: M = Stream_neg(h, False)
-            sage: M.parent_streams()
+            sage: M.input_streams()
             [<sage.data_structures.stream.Stream_function object at ...>]
         """
         return [self._series]
@@ -1822,83 +1724,7 @@ class Stream_binary(Stream_inexact):
         """
         return self._left.is_uninitialized() or self._right.is_uninitialized()
 
-    def replace(self, stream, sub):
-        r"""
-        Return ``self`` except with ``stream`` replaced by ``sub``.
-
-        .. WARNING::
-
-            This does not update the approximate order or the cache.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_neg, Stream_sub, Stream_function
-            sage: L = Stream_function(lambda n: 1, False, 0)
-            sage: R = Stream_function(lambda n: n, False, 0)
-            sage: NL = Stream_neg(L, False)
-            sage: NR = Stream_neg(R, False)
-            sage: S = Stream_sub(NL, NR, False)
-            sage: S.replace(Stream_function(lambda n: n^2, False, 0), R) is S
-            True
-            sage: Sp = S.replace(L, R)
-            sage: Sp == S
-            False
-            sage: [Sp[i] for i in range(5)]
-            [0, 0, 0, 0, 0]
-
-        Because we have computed some values of the cache for ``NR`` (which
-        is copied), we get the following wrong result::
-
-            sage: Sp = S.replace(R, L)
-            sage: Sp == S
-            False
-            sage: [Sp[i] for i in range(5)]
-            [-1, 0, 0, 0, 0]
-
-        With fresh caches::
-
-            sage: NL = Stream_neg(L, False)
-            sage: NR = Stream_neg(R, False)
-            sage: S = Stream_sub(NL, NR, False)
-            sage: Sp = S.replace(R, L)
-            sage: [Sp[i] for i in range(5)]
-            [0, 0, 0, 0, 0]
-
-        The replacements here do not affect the relevant caches::
-
-            sage: Sp = S.replace(NL, L)
-            sage: Sp == S
-            False
-            sage: [Sp[i] for i in range(5)]
-            [1, 2, 3, 4, 5]
-            sage: Sp = S.replace(NR, R)
-            sage: Sp == S
-            False
-            sage: [Sp[i] for i in range(5)]
-            [-1, -2, -3, -4, -5]
-        """
-        if self._left == stream:
-            ret = copy(self)
-            ret._left = sub
-        else:
-            temp = self._left.replace(stream, sub)
-            if temp == self._left:
-                ret = self
-            else:
-                ret = copy(self)
-                ret._left = temp
-        # It is possible that both the left and right are the same stream
-        if self._right == stream:
-            ret = copy(ret)
-            ret._right = sub
-        else:
-            temp = ret._right.replace(stream, sub)
-            if not (temp == self._right):
-                ret = copy(ret)
-                ret._right = temp
-        return ret
-
-    def parent_streams(self):
+    def input_streams(self):
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``.
@@ -1909,7 +1735,7 @@ class Stream_binary(Stream_inexact):
             sage: l = Stream_function(lambda n: n, False, 1)
             sage: r = Stream_function(lambda n: n^2, False, 1)
             sage: M = Stream_add(l, r, False)
-            sage: M.parent_streams()
+            sage: M.input_streams()
             [<sage.data_structures.stream.Stream_function object at ...>,
              <sage.data_structures.stream.Stream_function object at ...>]
         """
@@ -2839,7 +2665,7 @@ class Stream_plethysm(Stream_binary):
 
         return self._basis.zero()
 
-    def parent_streams(self):
+    def input_streams(self):
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``.
@@ -2852,14 +2678,14 @@ class Stream_plethysm(Stream_binary):
             sage: f = Stream_function(lambda n: s[n], True, 1)
             sage: g = Stream_function(lambda n: s[n-1,1], True, 2)
             sage: h = Stream_plethysm(f, g, True, p)
-            sage: h.parent_streams()
+            sage: h.input_streams()
             [<sage.data_structures.stream.Stream_map_coefficients object at ...>]
             sage: [h[i] for i in range(1, 5)]
             [0,
              1/2*p[1, 1] - 1/2*p[2],
              1/3*p[1, 1, 1] - 1/3*p[3],
              1/4*p[1, 1, 1, 1] + 1/4*p[2, 2] - 1/2*p[4]]
-            sage: h.parent_streams()
+            sage: h.input_streams()
             [<sage.data_structures.stream.Stream_map_coefficients object at ...>,
              <sage.data_structures.stream.Stream_cauchy_mul object at ...>]
         """
@@ -3665,48 +3491,6 @@ class Stream_shift(Stream):
             True
         """
         return self._series.is_uninitialized()
-
-    def replace(self, stream, sub):
-        r"""
-        Return ``self`` except with ``stream`` replaced by ``sub``.
-
-        .. WARNING::
-
-            This does not update the approximate order.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_shift, Stream_function
-            sage: F = Stream_function(lambda n: 1, False, 0)
-            sage: X = Stream_function(lambda n: n, False, 0)
-            sage: S = Stream_shift(F, -3)
-            sage: S.replace(X, F) is S
-            True
-            sage: Sp = S.replace(F, X)
-            sage: Sp == S
-            False
-            sage: [Sp[i] for i in range(5)]
-            [3, 4, 5, 6, 7]
-            sage: U = Stream_uninitialized(0)
-            sage: U._target = F
-            sage: S = Stream_shift(U, -3)
-            sage: Sp = S.replace(F, X)
-            sage: Sp == S
-            False
-            sage: [Sp[i] for i in range(5)]
-            [3, 4, 5, 6, 7]
-        """
-        if self._series == stream:
-            ret = copy(self)
-            ret._series = sub
-        else:
-            temp = self._series.replace(stream, sub)
-            if temp == self._series:
-                ret = self
-            else:
-                ret = copy(self)
-                ret._series = temp
-        return ret
 
 
 class Stream_truncated(Stream_unary):

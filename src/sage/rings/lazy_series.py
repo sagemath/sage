@@ -1679,17 +1679,20 @@ class LazyModuleElement(Element):
             sage: f
             0
 
-        We run into the same problem::
-
+            sage: f = L.undefined(0)
+            sage: fp = f.derivative()
+            sage: g = L(lambda n: 0 if n < 10 else 1, 0)
+            sage: f.define_implicitly(f.derivative() * g + f)
+            sage: f[0]
+            0
+            sage: fp[0]
+            0
+            sage: fp[1]
+            0
+            sage: fp[2]
+            0
             sage: f[1]
-            sage: f._coeff_stream._F._left._left.get_coefficient.__closure__[1].cell_contents.__dict__
-            {'_left': <sage.data_structures.stream.Stream_function object at 0x7f692f611fc0>,
-             '_right': <sage.data_structures.stream.Stream_cauchy_invert object at 0x7f692f611f90>,
-             '_true_order': True,
-             '_is_sparse': True,
-             '_cache': {0: FESDUMMY_1},
-             '_approximate_order': 0}
-
+            0
         """
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
             raise ValueError("series already defined")
@@ -3805,7 +3808,8 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # of the product are of the form sum_{k=1}^n a_k a_{n+1-k}.
         d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
         int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
-                                       False, 0)
+                                       False, 0,
+                                       input_streams=[d_self_f])
         f._coeff_stream._target = int_d_self_f
         return f
 
@@ -3859,7 +3863,8 @@ class LazyCauchyProductSeries(LazyModuleElement):
                                                         coeff_stream_inverse,
                                                         P.is_sparse())
         int_d_self_quo_self = Stream_function(lambda n: d_self_quo_self[n-1] / R(n),
-                                              P.is_sparse(), 1)
+                                              P.is_sparse(), 1,
+                                              input_streams=[d_self_quo_self])
         return P.element_class(P, int_d_self_quo_self)
 
 
