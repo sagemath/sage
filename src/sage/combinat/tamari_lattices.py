@@ -207,7 +207,7 @@ def GeneralizedTamariLattice(a, b, m=1, check=True):
 
     TESTS::
 
-        sage: P.coxeter_transformation()**18 == 1
+        sage: P.coxeter_transformation()**18 == 1                                       # needs sage.libs.flint
         True
 
     REFERENCES:

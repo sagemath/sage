@@ -81,7 +81,7 @@ def dict_difference(self, other):
         sage: dict_difference(D2.__dict__, D1.__dict__)
         {'foobar': 'hello', 'timeout': 100}
     """
-    D = dict()
+    D = {}
     for k, v in self.items():
         try:
             if other[k] == v:
@@ -275,8 +275,8 @@ class RecordingDict(dict):
             sage: D.start(); D.set
             set()
         """
-        self.set = set([])
-        self.got = set([])
+        self.set = set()
+        self.got = set()
 
     def __getitem__(self, name):
         """
