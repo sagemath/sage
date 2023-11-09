@@ -1253,6 +1253,59 @@ class CohomologyRing(CombinatorialFreeModule):
 
         return res
 
+    def cup_length(self):
+        """
+        Return the cup length of ``self``.
+
+        The cup length of a cohomology ring is defined as the maximal
+        number of elements whose product is non-trivial.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[0], [1], [2]])
+            sage: H = Z.cohomology_ring(GF(2))
+            sage: H.cup_length()
+            1
+            sage: Z = MomentAngleComplex([[1,2], [2,3], [3,4], [4,5], [5,1]])
+            sage: H = Z.cohomology_ring()
+            sage: H.cup_length()
+            2
+        """
+        # It suffices to check this for base elements
+        elements = set(self.basis())
+        elements.remove(self.one())
+        # We create a dictionary, in which the keys are
+        # base elements, and values are lists, which
+        # represent the elements whose product with
+        # the key gives us zero
+        memo = {}
+        for base_element in elements:
+            memo[base_element] = set()
+            for x in elements:
+                if base_element * x == self.zero():
+                    memo[base_element].add(x)
+
+        max_length = 1
+        # The multiplication is commutative up to a sign,
+        # so we will not worry about the order in which
+        # we multiply the elements
+        for base_element in elements:
+            prod = base_element
+            length = 1
+            # We will avoid the elements which give us zero
+            avoid = memo[base_element]
+            for x in elements:
+                if x not in avoid and prod * x != self.zero():
+                    prod = prod * x
+                    length = length + 1
+                    # We further restrict the possible elements
+                    avoid = avoid.union(memo[x])
+
+            if length > max_length:
+                max_length = length
+
+        return max_length
+
     class Element(CombinatorialFreeModule.Element):
         def to_cycle(self):
             r"""
