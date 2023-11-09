@@ -202,7 +202,7 @@ It is also possible to define a polyhedron over algebraic numbers.
     sage: # needs sage.rings.number_field
     sage: sqrt_2 = AA(2)^(1/2)
     sage: cbrt_2 = AA(2)^(1/3)
-    sage: timeit('Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]])')
+    sage: timeit('Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]])')     # random
     5 loops, best of 3: 43.2 ms per loop
     sage: P4 = Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]]); P4
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
