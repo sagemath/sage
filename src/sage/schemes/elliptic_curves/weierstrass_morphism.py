@@ -849,21 +849,6 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         """
         return self._poly_ring(1)
 
-    def is_separable(self):
-        r"""
-        Determine whether or not this isogeny is separable.
-
-        Since :class:`WeierstrassIsomorphism` only implements
-        isomorphisms, this method always returns ``True``.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(31337), [0,1])                                   # needs sage.rings.finite_rings
-            sage: {f.is_separable() for f in E.automorphisms()}                         # needs sage.rings.finite_rings
-            {True}
-        """
-        return True
-
     def dual(self):
         """
         Return the dual isogeny of this isomorphism.
@@ -955,6 +940,20 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         the tuple `(u,r,s,t)` defining the isomorphism.
         """
         return self.u
+
+    def inseparable_degree(self):
+        r"""
+        Return the inseparable degree of this Weierstrass isomorphism.
+
+        For isomorphisms, this method always returns one.
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: WeierstrassIsomorphism.inseparable_degree(None)
+            1
+        """
+        return Integer(1)
 
 
 def identity_morphism(E):

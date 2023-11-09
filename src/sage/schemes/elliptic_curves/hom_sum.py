@@ -257,25 +257,17 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             raise ValueError('zero morphism cannot be written as a composition of isogenies')
 
         p = self.base_ring().characteristic()
-        insep = 0
+        insep = self.inseparable_degree().valuation(p) if p else 0
+
         scalar = 1  #TODO Can we detect scalar factors earlier to save some extensions below?
 
         ker = []
         for l,m in deg.factor():
             if l == p:  # possibly inseparable
-                try:
-                    P = point_of_order(self.domain(), l**m)
-                except ValueError:
-                    # supersingular; every p-isogeny is purely inseparable
-                    insep = m
-                    continue
-                Q = self._eval(P)
-                u = order_from_multiple(Q, l**m).valuation(l)
-                if u < m:
-                    pt = l**u * P
-                    pt.set_order(l**(m-u))
-                    ker.append(pt)
-                insep = u
+                if insep < m:
+                    # kernel of the separable p-power part is unique
+                    P = point_of_order(self.domain(), p**(m-insep))
+                    ker.append(P)
                 continue
 
 #            F = self.domain().division_field(l**m)  #FIXME this can be used once #35936 is done; workaround below
@@ -616,29 +608,59 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         psi.dual.set_cache(self)
         return psi
 
-    def is_separable(self):
+    @cached_method
+    def inseparable_degree(self):
         r"""
-        Test whether this sum morphism is a separable isogeny.
+        Compute the inseparable degree of this sum morphism.
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(5^2), [0,1])
-            sage: m2 = E.scalar_multiplication(2)
+            sage: E = EllipticCurve(GF(7), [0,1])
             sage: m3 = E.scalar_multiplication(3)
-            sage: m2.is_separable()
-            True
-            sage: E.frobenius()
-            -5
-            sage: (m2 + m3).is_separable()
-            False
-            sage: (m2 - m2).is_separable()
-            Traceback (most recent call last):
-            ...
-            ValueError: zero morphism is not an isogeny
+            sage: m3.inseparable_degree()
+            1
+            sage: m4 = E.scalar_multiplication(4)
+            sage: m7 = m3 + m4; m7
+            Sum morphism:
+              From: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
+              To:   Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
+              Via:  (Scalar-multiplication endomorphism [3] of Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7, Scalar-multiplication endomorphism [4] of Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7)
+            sage: m7.degree()
+            49
+            sage: m7.inseparable_degree()
+            7
+
+        A supersingular example::
+
+            sage: E = EllipticCurve(GF(7), [1,0])
+            sage: m3 = E.scalar_multiplication(3)
+            sage: m3.inseparable_degree()
+            1
+            sage: m4 = E.scalar_multiplication(4)
+            sage: m7 = m3 + m4; m7
+            Sum morphism:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
+              To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
+              Via:  (Scalar-multiplication endomorphism [3] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7, Scalar-multiplication endomorphism [4] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7)
+            sage: m7.inseparable_degree()
+            49
         """
-        deg = self.degree()
-        if deg.is_zero():
+        if self.is_zero():
             raise ValueError('zero morphism is not an isogeny')
-        if not self.domain().base_field().characteristic().divides(deg):
-            return True
-        return self.to_isogeny_chain().is_separable()
+
+        p = self.base_ring().characteristic()
+        if not p:
+            return ZZ.one()
+
+        m = self.degree().valuation(p)
+        if not m:
+            return ZZ.one()
+
+        try:
+            P = point_of_order(self.domain(), p**m)
+        except ValueError:
+            # supersingular; every p-isogeny is purely inseparable
+            return p**m
+
+        Q = self._eval(P)
+        return order_from_multiple(Q, p**m)

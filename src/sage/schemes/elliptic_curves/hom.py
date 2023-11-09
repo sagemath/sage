@@ -674,41 +674,115 @@ class EllipticCurveHom(Morphism):
 
         ALGORITHM: We check if :meth:`scaling_factor` returns `1`.
         """
-        return self.scaling_factor() == 1
+        return self.scaling_factor().is_one()
 
-    def is_separable(self):
+    def inseparable_degree(self):
         r"""
-        Determine whether or not this morphism is separable.
+        Return the inseparable degree of this isogeny.
 
         Implemented by child classes. For examples, see:
 
-        - :meth:`EllipticCurveIsogeny.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.is_separable`
+        - :meth:`EllipticCurveIsogeny.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.inseparable_degree`
 
         TESTS::
 
             sage: from sage.schemes.elliptic_curves.hom import EllipticCurveHom
-            sage: EllipticCurveHom.is_separable(None)
+            sage: EllipticCurveHom.inseparable_degree(None)
             Traceback (most recent call last):
             ...
             NotImplementedError: ...
         """
         raise NotImplementedError('children must implement')
 
+    def is_separable(self):
+        r"""
+        Determine whether or not this morphism is a separable isogeny.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = EllipticCurveIsogeny(E,  E((0,0)))
+            sage: phi.is_separable()
+            True
+
+        ::
+
+            sage: E = EllipticCurve('11a1')
+            sage: phi = EllipticCurveIsogeny(E, E.torsion_points())
+            sage: phi.is_separable()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(31337), [0,1])                                   # needs sage.rings.finite_rings
+            sage: {f.is_separable() for f in E.automorphisms()}                         # needs sage.rings.finite_rings
+            {True}
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: E = EllipticCurve(GF(7^2), [3,2])
+            sage: P = E.lift_x(1)
+            sage: phi = EllipticCurveHom_composite(E, P); phi
+            Composite morphism of degree 7 = 7:
+              From: Elliptic Curve defined by y^2 = x^3 + 3*x + 2
+                    over Finite Field in z2 of size 7^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 3*x + 2
+                    over Finite Field in z2 of size 7^2
+            sage: phi.is_separable()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(11), [4,4])
+            sage: E.scalar_multiplication(11).is_separable()
+            False
+            sage: E.scalar_multiplication(-11).is_separable()
+            False
+            sage: E.scalar_multiplication(777).is_separable()
+            True
+            sage: E.scalar_multiplication(-1).is_separable()
+            True
+            sage: E.scalar_multiplication(77).is_separable()
+            False
+            sage: E.scalar_multiplication(121).is_separable()
+            False
+
+        ::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: E = EllipticCurve(GF(11), [1,1])
+            sage: pi = EllipticCurveHom_frobenius(E)
+            sage: pi.degree()
+            11
+            sage: pi.is_separable()
+            False
+            sage: pi = EllipticCurveHom_frobenius(E, 0)
+            sage: pi.degree()
+            1
+            sage: pi.is_separable()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = E.isogeny(E((1,2)), algorithm='velusqrt')
+            sage: phi.is_separable()
+            True
+        """
+        if self.is_zero():
+            raise ValueError('constant zero map is not an isogeny')
+        return self.inseparable_degree().is_one()
+
     def is_surjective(self):
         r"""
         Determine whether or not this morphism is surjective.
-
-        .. NOTE::
-
-            This method currently always returns ``True``, since a
-            non-constant map of algebraic curves must be surjective,
-            and Sage does not yet implement the constant zero map.
-            This will probably change in the future.
 
         EXAMPLES::
 
@@ -741,6 +815,9 @@ class EllipticCurveHom(Morphism):
         r"""
         Determine whether or not this morphism has trivial kernel.
 
+        The kernel is trivial if and only if this morphism is a
+        purely inseparable isogeny.
+
         EXAMPLES::
 
             sage: E = EllipticCurve('11a1')
@@ -763,21 +840,58 @@ class EllipticCurveHom(Morphism):
             sage: phi = EllipticCurveIsogeny(E, E(0))
             sage: phi.is_injective()
             True
+
+        ::
+
+            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: E = EllipticCurve([1,0])
+            sage: phi = EllipticCurveHom_composite(E, E(0,0))
+            sage: phi.is_injective()
+            False
+            sage: E = EllipticCurve_from_j(GF(3).algebraic_closure()(0))
+            sage: nu = EllipticCurveHom_composite.from_factors(E.automorphisms())
+            sage: nu
+            Composite morphism of degree 1 = 1^12:
+              From: Elliptic Curve defined by y^2 = x^3 + x
+                    over Algebraic closure of Finite Field of size 3
+              To:   Elliptic Curve defined by y^2 = x^3 + x
+                    over Algebraic closure of Finite Field of size 3
+            sage: nu.is_injective()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(23), [1,0])
+            sage: E.scalar_multiplication(4).is_injective()
+            False
+            sage: E.scalar_multiplication(5).is_injective()
+            False
+            sage: E.scalar_multiplication(1).is_injective()
+            True
+            sage: E.scalar_multiplication(-1).is_injective()
+            True
+            sage: E.scalar_multiplication(23).is_injective()
+            True
+            sage: E.scalar_multiplication(-23).is_injective()
+            True
+            sage: E.scalar_multiplication(0).is_injective()
+            False
+
+        ::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: E = EllipticCurve(GF(11), [1,1])
+            sage: pi = EllipticCurveHom_frobenius(E, 5)
+            sage: pi.is_injective()
+            True
         """
-        if not self.is_separable():
-            # TODO: should implement .separable_degree() or similar
-            raise NotImplementedError
-        return self.degree() == 1
+        if self.is_zero():
+            return False
+        return self.inseparable_degree() == self.degree()
 
     def is_zero(self):
         r"""
         Check whether this elliptic-curve morphism is the zero map.
-
-        .. NOTE::
-
-            This function currently always returns ``True`` as Sage
-            does not yet implement the constant zero morphism. This
-            will probably change in the future.
 
         EXAMPLES::
 
