@@ -1329,8 +1329,8 @@ class GraphLatex(SageObject):
             sage: C = [[0,1], [2]]
             sage: kwds = dict(subgraph_clusters=C,color_by_label=True,prog='dot',format='dot2tex')
             sage: opts = G_with_labels.latex_options()
-            sage: opts.set_options(edge_labels=True, **kwds) # optional - dot2tex graphviz
-            sage: latex(G_with_labels)                       # optional - dot2tex graphviz
+            sage: opts.set_options(edge_labels=True, **kwds)  # optional - dot2tex graphviz
+            sage: latex(G_with_labels)                        # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
             \begin{scope}
@@ -1388,7 +1388,7 @@ class GraphLatex(SageObject):
             sage: G = DiGraph()
             sage: G.add_edge(3333, 88, 'my_label')
             sage: G.set_latex_options(edge_labels=True)
-            sage: print(G.latex_options().dot2tex_picture()) # optional - dot2tex graphviz
+            sage: print(G.latex_options().dot2tex_picture())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
             \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
@@ -1404,7 +1404,7 @@ class GraphLatex(SageObject):
 
             sage: G = Graph([(0,1)])
             sage: G.set_latex_options(edge_colors = {(0,1): 'red'})
-            sage: print(G.latex_options().dot2tex_picture()) # optional - dot2tex graphviz
+            sage: print(G.latex_options().dot2tex_picture())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             ...
             \draw [red,] (node_0) ... (node_1);
