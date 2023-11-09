@@ -7907,8 +7907,7 @@ class GenericGraph(GenericGraph_pyx):
 
           * ``"MILP"`` returns an exact answer.
 
-          * ``"backtrack"`` will be renamed ``"heuristic"`` in the future. A
-            warning is raised when used.
+          * ``"backtrack"`` is renamed ``"heuristic"`` (:issue:`36574`).
 
           * ``"heuristic"`` is a randomized heuristic for finding a long path in
             an unweighted (di)graph. This heuristic does not take into account
@@ -8064,39 +8063,38 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = graphs.PathGraph(3)
             sage: P = G.longest_path(algorithm='backtrack')
-            doctest:...: FutureWarning: algorithm 'backtrack' will be renamed 'heuristic' in the future.
+            doctest:...: DeprecationWarning: algorithm 'backtrack' is deprecated.
+             Use algorithm 'heuristic' instead.
             See https://github.com/sagemath/sage/issues/36574 for details.
             sage: G.longest_path(algorithm='heuristic', s=0)
             Traceback (most recent call last):
             ...
             ValueError: parameters s, t, and use_edge_labels can not be used in
-                        combination with algorithms 'backtrack' and 'heuristic'
+                        combination with algorithm 'heuristic'
             sage: G.longest_path(algorithm='heuristic', t=2)
             Traceback (most recent call last):
             ...
             ValueError: parameters s, t, and use_edge_labels can not be used in
-                        combination with algorithms 'backtrack' and 'heuristic'
+                        combination with algorithm 'heuristic'
             sage: G.longest_path(algorithm='heuristic', use_edge_labels=True)
             Traceback (most recent call last):
             ...
             ValueError: parameters s, t, and use_edge_labels can not be used in
-                        combination with algorithms 'backtrack' and 'heuristic'
+                        combination with algorithm 'heuristic'
         """
         self._scream_if_not_simple()
 
         if algorithm not in ("backtrack", "heuristic", "MILP"):
             raise ValueError("algorithm must be either 'backtrack', 'heuristic' or 'MILP'")
         if algorithm == "backtrack":
-            from sage.misc.superseded import warning
-            warning(36574,
-                    "algorithm 'backtrack' will be renamed 'heuristic' in the future.",
-                    FutureWarning)
+            from sage.misc.superseded import deprecation
+            deprecation(36574, "algorithm 'backtrack' is deprecated. "
+                               "Use algorithm 'heuristic' instead.")
             algorithm = 'heuristic'
         if algorithm == 'heuristic':
             if s is not None or t is not None or use_edge_labels:
                 raise ValueError("parameters s, t, and use_edge_labels can not "
-                                 "be used in combination with algorithms "
-                                 "'backtrack' and 'heuristic'")
+                                 "be used in combination with algorithm 'heuristic'")
 
         # Quick improvement
         if not self.is_connected():
