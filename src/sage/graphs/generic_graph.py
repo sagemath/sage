@@ -8070,17 +8070,17 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: parameters s, t, and use_edge_labels can not be used in
-                        combinaiton with algorithms 'backtrack' and 'heuristic'
+                        combination with algorithms 'backtrack' and 'heuristic'
             sage: G.longest_path(algorithm='heuristic', t=2)
             Traceback (most recent call last):
             ...
             ValueError: parameters s, t, and use_edge_labels can not be used in
-                        combinaiton with algorithms 'backtrack' and 'heuristic'
+                        combination with algorithms 'backtrack' and 'heuristic'
             sage: G.longest_path(algorithm='heuristic', use_edge_labels=True)
             Traceback (most recent call last):
             ...
             ValueError: parameters s, t, and use_edge_labels can not be used in
-                        combinaiton with algorithms 'backtrack' and 'heuristic'
+                        combination with algorithms 'backtrack' and 'heuristic'
         """
         self._scream_if_not_simple()
 
@@ -8095,7 +8095,7 @@ class GenericGraph(GenericGraph_pyx):
         if algorithm == 'heuristic':
             if s is not None or t is not None or use_edge_labels:
                 raise ValueError("parameters s, t, and use_edge_labels can not "
-                                 "be used in combinaiton with algorithms "
+                                 "be used in combination with algorithms "
                                  "'backtrack' and 'heuristic'")
 
         # Quick improvement
