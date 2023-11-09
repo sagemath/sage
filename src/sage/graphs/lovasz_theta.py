@@ -46,9 +46,9 @@ def lovasz_theta(graph):
     EXAMPLES::
 
           sage: C = graphs.PetersenGraph()
-          sage: C.lovasz_theta()                             # optional csdp
+          sage: C.lovasz_theta()                             # optional - csdp
           4.0
-          sage: graphs.CycleGraph(5).lovasz_theta()          # optional csdp
+          sage: graphs.CycleGraph(5).lovasz_theta()          # optional - csdp
           2.236068
 
     TESTS::
