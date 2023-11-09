@@ -3036,7 +3036,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         # (with infinite precision) and then trim back to RR or CC.
 
         x = RC(v_inf(self[0]))
-        b2, b4, b6, b8 = [RC(v_inf(b)) for b in E.b_invariants()]
+        b2, b4, b6, b8 = (RC(v_inf(b)) for b in E.b_invariants())
 
         # The following comes from Silverman Theorem 4.2.  Silverman
         # uses decimal precision d, so his term (5/3)d =

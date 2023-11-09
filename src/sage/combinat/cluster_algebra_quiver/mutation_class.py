@@ -76,10 +76,10 @@ def _digraph_mutate(dg, k, frozen=None):
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_mutate
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-        sage: dg = ClusterQuiver(['A',4]).digraph()
-        sage: dg.edges(sort=True)
+        sage: dg = ClusterQuiver(['A',4]).digraph()                                     # needs sage.modules
+        sage: dg.edges(sort=True)                                                       # needs sage.modules
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -1))]
-        sage: _digraph_mutate(dg,2).edges(sort=True)
+        sage: _digraph_mutate(dg,2).edges(sort=True)                                    # needs sage.modules
         [(0, 1, (1, -1)), (1, 2, (1, -1)), (3, 2, (1, -1))]
 
     TESTS::
@@ -208,31 +208,31 @@ def _dg_canonical_form(dg, frozen=None):
     EXAMPLES::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _dg_canonical_form
-        sage: dg = ClusterQuiver(['B',4]).digraph(); dg.edges(sort=True)
+        sage: dg = ClusterQuiver(['B',4]).digraph(); dg.edges(sort=True)                # needs sage.modules
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -2))]
-        sage: _dg_canonical_form(dg); dg.edges(sort=True)
+        sage: _dg_canonical_form(dg); dg.edges(sort=True)                               # needs sage.modules
         ({0: 0, 1: 3, 2: 1, 3: 2}, [[0], [3], [1], [2]])
         [(0, 3, (1, -1)), (1, 2, (1, -2)), (1, 3, (1, -1))]
 
     TESTS::
 
-        sage: dg2 = ClusterQuiver(DiGraph({0:[1,2]})).digraph()
-        sage: _dg_canonical_form(dg2); dg2.edges(sort=True)
+        sage: dg2 = ClusterQuiver(DiGraph({0:[1,2]})).digraph()                         # needs sage.modules
+        sage: _dg_canonical_form(dg2); dg2.edges(sort=True)                             # needs sage.modules
         ({0: 0, 1: 1, 2: 2}, [[0], [1, 2]])
         [(0, 1, (1, -1)), (0, 2, (1, -1))]
 
-        sage: dg2 = ClusterQuiver(DiGraph({0:[1,2]})).digraph()
-        sage: _dg_canonical_form(dg2, frozen=[0]); dg2.edges(sort=True)
+        sage: dg2 = ClusterQuiver(DiGraph({0:[1,2]})).digraph()                         # needs sage.modules
+        sage: _dg_canonical_form(dg2, frozen=[0]); dg2.edges(sort=True)                 # needs sage.modules
         ({0: 2, 1: 0, 2: 1}, [[2], [0, 1]])
         [(2, 0, (1, -1)), (2, 1, (1, -1))]
 
-        sage: dg3 = ClusterQuiver(DiGraph({0:[1,2],1:[3]})).digraph()
-        sage: _dg_canonical_form(dg3, frozen=[0,3]); dg3.edges(sort=True)
+        sage: dg3 = ClusterQuiver(DiGraph({0:[1,2],1:[3]})).digraph()                   # needs sage.modules
+        sage: _dg_canonical_form(dg3, frozen=[0,3]); dg3.edges(sort=True)               # needs sage.modules
         ({0: 2, 1: 1, 2: 0, 3: 3}, [[2], [1], [0], [3]])
         [(1, 3, (1, -1)), (2, 0, (1, -1)), (2, 1, (1, -1))]
 
-        sage: dg3 = ClusterQuiver(DiGraph({2:[1,3],1:[0],3:[4]})).digraph()
-        sage: _dg_canonical_form(dg3, frozen=[4,0]); dg3.edges(sort=True)
+        sage: dg3 = ClusterQuiver(DiGraph({2:[1,3],1:[0],3:[4]})).digraph()             # needs sage.modules
+        sage: _dg_canonical_form(dg3, frozen=[4,0]); dg3.edges(sort=True)               # needs sage.modules
         ({0: 4, 1: 1, 2: 0, 3: 2, 4: 3}, [[4, 3], [1, 2], [0]])
         [(0, 1, (1, -1)), (0, 2, (1, -1)), (1, 4, (1, -1)), (2, 3, (1, -1))]
     """
@@ -292,6 +292,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _mutation_class_iter
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['A',[1,2],1]).digraph()
@@ -392,8 +393,8 @@ def _digraph_to_dig6( dg, hashable=False ):
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_to_dig6
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-        sage: dg = ClusterQuiver(['A',4]).digraph()
-        sage: _digraph_to_dig6(dg)
+        sage: dg = ClusterQuiver(['A',4]).digraph()                                     # needs sage.modules
+        sage: _digraph_to_dig6(dg)                                                      # needs sage.modules
         ('COD?', {})
     """
     dig6 = dg.dig6_string()
@@ -416,6 +417,7 @@ def _dig6_to_digraph( dig6 ):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_to_dig6
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _dig6_to_digraph
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
@@ -451,8 +453,8 @@ def _dig6_to_matrix( dig6 ):
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_to_dig6, _dig6_to_matrix
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-        sage: dg = ClusterQuiver(['A',4]).digraph()
-        sage: data = _digraph_to_dig6(dg)
+        sage: dg = ClusterQuiver(['A',4]).digraph()                                     # needs sage.modules
+        sage: data = _digraph_to_dig6(dg)                                               # needs sage.modules
         sage: _dig6_to_matrix(data)                                                     # needs sage.modules
         [ 0  1  0  0]
         [-1  0 -1  0]
@@ -474,14 +476,15 @@ def _dg_is_sink_source( dg, v ):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _dg_is_sink_source
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['A',[1,2],1]).digraph()
-        sage: _dg_is_sink_source(dg, 0 )
+        sage: _dg_is_sink_source(dg, 0)
         True
-        sage: _dg_is_sink_source(dg, 1 )
+        sage: _dg_is_sink_source(dg, 1)
         True
-        sage: _dg_is_sink_source(dg, 2 )
+        sage: _dg_is_sink_source(dg, 2)
         False
     """
     in_edges = [ edge for edge in dg._backend.iterator_in_edges([v],True) ]
@@ -504,9 +507,9 @@ def _graph_without_edge_labels(dg, vertices):
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _graph_without_edge_labels
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-        sage: dg = ClusterQuiver(['B',4]).digraph(); dg.edges(sort=True)
+        sage: dg = ClusterQuiver(['B',4]).digraph(); dg.edges(sort=True)                # needs sage.modules
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 3, (1, -2))]
-        sage: _graph_without_edge_labels(dg, range(4)); dg.edges(sort=True)
+        sage: _graph_without_edge_labels(dg, range(4)); dg.edges(sort=True)             # needs sage.modules
         ([[4]], ((1, -2),))
         [(0, 1, (1, -1)), (2, 1, (1, -1)), (2, 4, (1, -1)), (4, 3, (1, -1))]
     """
@@ -542,10 +545,10 @@ def _has_two_cycles( dg ):
     EXAMPLES::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _has_two_cycles
-        sage: _has_two_cycles( DiGraph([[0,1],[1,0]]))
+        sage: _has_two_cycles(DiGraph([[0,1],[1,0]]))
         True
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-        sage: _has_two_cycles( ClusterQuiver(['A',3]).digraph() )
+        sage: _has_two_cycles(ClusterQuiver(['A',3]).digraph())                         # needs sage.modules
         False
     """
     edge_set = dg.edges(sort=True, labels=False)

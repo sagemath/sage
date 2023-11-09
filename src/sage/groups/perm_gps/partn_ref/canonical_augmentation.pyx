@@ -169,7 +169,7 @@ REFERENCE:
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from .data_structures cimport*
+from sage.groups.perm_gps.partn_ref.data_structures cimport*
 
 
 cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_err) noexcept:

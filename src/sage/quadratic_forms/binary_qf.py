@@ -144,7 +144,7 @@ class BinaryQF(SageObject):
             elif (isinstance(a, MPolynomial) and a.is_homogeneous() and a.base_ring() == ZZ
                   and a.degree() == 2 and a.parent().ngens() == 2):
                 x, y = a.parent().gens()
-                a, b, c = [a.monomial_coefficient(mon) for mon in [x**2, x*y, y**2]]
+                a, b, c = (a.monomial_coefficient(mon) for mon in [x**2, x*y, y**2])
             elif isinstance(a, pari_gen) and a.type() in ('t_QFI', 't_QFR', 't_QFB'):
                 # a has 3 or 4 components
                 a, b, c = a[0], a[1], a[2]

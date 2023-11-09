@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.combinat sage.modules
+# sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
 Specht Modules
 

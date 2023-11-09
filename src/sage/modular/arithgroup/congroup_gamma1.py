@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Congruence subgroup `\Gamma_1(N)`
 """
@@ -357,10 +357,10 @@ class Gamma1_class(GammaH_class):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43,K).0^2
             sage: G = Gamma1(7*43)
-
             sage: G.dimension_modular_forms(2, eps)
             32
             sage: G.dimension_modular_forms(2, eps, algorithm="Quer")
@@ -370,6 +370,7 @@ class Gamma1_class(GammaH_class):
 
         Check that :trac:`18436` is fixed::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 1)
             sage: G = DirichletGroup(13, base_ring=K)
@@ -386,7 +387,7 @@ class Gamma1_class(GammaH_class):
 
     def dimension_cusp_forms(self, k=2, eps=None, algorithm="CohenOesterle"):
         r"""
-        Return the dimension of the space of cusp forms for self, or the
+        Return the dimension of the space of cusp forms for ``self``, or the
         dimension of the subspace corresponding to the given character if one
         is supplied.
 
@@ -409,18 +410,19 @@ class Gamma1_class(GammaH_class):
 
         We compute the same dimension in two different ways ::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43,K).0^2
             sage: G = Gamma1(7*43)
 
         Via Cohen--Oesterle::
 
-            sage: Gamma1(7*43).dimension_cusp_forms(2, eps)
+            sage: Gamma1(7*43).dimension_cusp_forms(2, eps)                             # needs sage.rings.number_field
             28
 
         Via Quer's method::
 
-            sage: Gamma1(7*43).dimension_cusp_forms(2, eps, algorithm="Quer")
+            sage: Gamma1(7*43).dimension_cusp_forms(2, eps, algorithm="Quer")           # needs sage.rings.number_field
             28
 
         Some more examples::

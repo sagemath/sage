@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Testing arithmetic subgroup
 """

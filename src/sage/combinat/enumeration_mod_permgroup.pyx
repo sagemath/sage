@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Tools for enumeration modulo the action of a permutation group
 """

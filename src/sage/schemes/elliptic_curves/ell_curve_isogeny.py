@@ -1745,7 +1745,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         # calculate the isomorphism as a rational map.
 
-        u, r, s, t = [self.__base_field(c) for c in isomorphism.tuple()]
+        u, r, s, t = (self.__base_field(c) for c in isomorphism.tuple())
         uinv = 1/u
         uinv2 = uinv**2
         uinv3 = uinv*uinv2
@@ -1787,7 +1787,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         # calculate the isomorphism as a rational map.
 
-        u, r, s, t = [self.__base_field(c) for c in isomorphism.tuple()]
+        u, r, s, t = (self.__base_field(c) for c in isomorphism.tuple())
         uinv = 1/u
         uinv2 = uinv**2
         uinv3 = uinv*uinv2
