@@ -45,8 +45,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 
-from sage.arith.misc import integer_floor, gcd
-from sage.functions.other import sqrt
+from sage.arith.misc import gcd
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
@@ -325,24 +324,24 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
     # EllipticCurveHom methods
 
-    def _degree_bound(self):
+    def _degree_bounds(self):
         r"""
-        Return an upper bound on the degree of this sum morphism.
-
-        ALGORITHM: Induction using the bound
-        `|\deg(f+g) - \deg(f) - \deg(g)| \leq 2\sqrt{\deg(f)\cdot\deg(g)}`;
-        see for instance Lemma V.1.2 of [Sil2009]_.
+        Return a lower and upper bound on the degree of this sum morphism.
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(101), [5,5])
-            sage: phi = E.isogenies_prime_degree(7)[0]
-            sage: (phi + phi)._degree_bound()
-            28
-            sage: (phi + phi).degree()
-            28
-            sage: (phi - phi)._degree_bound()
-            28
+            sage: E = EllipticCurve(GF(307), [5,5])
+            sage: phi = E.isogenies_prime_degree(3)[0]; phi
+            Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 307 to Elliptic Curve defined by y^2 = x^3 + 227*x + 163 over Finite Field of size 307
+            sage: psi = next(iso*psi for psi in E.isogenies_prime_degree(43)
+            ....:                    for iso in psi.codomain().isomorphisms(phi.codomain())); psi
+            Isogeny of degree 43 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 307 to Elliptic Curve defined by y^2 = x^3 + 227*x + 163 over Finite Field of size 307
+            sage: (phi + psi)._degree_bounds()
+            (24, 68)
+            sage: (phi + psi).degree()
+            61
+            sage: (phi - phi)._degree_bounds()
+            (0, 12)
             sage: (phi - phi).degree()
             0
 
@@ -351,15 +350,25 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: E = EllipticCurve(GF(443), [1,1])
             sage: pi = E.frobenius_endomorphism()
             sage: m1 = E.scalar_multiplication(1)
-            sage: (pi - m1)._degree_bound()
-            486
+            sage: (pi - m1)._degree_bounds()
+            (402, 486)
+            sage: (pi - m1)._degree_bounds() == Hasse_bounds(443)
+            True
             sage: (pi - m1).degree()
             433
+
+        ALGORITHM: Repeated application of the Cauchy-Schwarz inequality,
+        here in the form
+        `|\deg(f+g) - \deg(f) - \deg(g)| \leq 2\sqrt{\deg(f)\cdot\deg(g)}`.
+        See for instance Lemma V.1.2 of [Sil2009]_.
         """
-        B = ZZ(0)
+        lo, hi = ZZ.zero(), ZZ.zero()
         for phi in self._phis:
-            B += phi.degree() + 2*sqrt(B * phi.degree())
-        return integer_floor(B)
+            m = (hi * phi.degree()).isqrt()
+            hi += phi.degree() + 2*m
+            lo += phi.degree() - 2*m
+            lo = max(lo, 0)
+        return lo, hi
 
     def _compute_degree(self):
         r"""
@@ -406,10 +415,11 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             # compute the kernel polynomial using the addition formulas?
             from sage.rings.finite_rings.integer_mod import Mod
 
-            M = self._degree_bound() + 1
-            deg = Mod(0,1)
+            lo, hi = self._degree_bounds()
+            M = hi - lo + 1
+            rem = Mod(0,1)
             for l in Primes():
-                if deg.modulus() >= M:
+                if rem.modulus() >= M:
                     break
                 try:
                     P = point_of_order(self._domain, l)
@@ -418,9 +428,9 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
                 Q = self.dual()._eval(self._eval(P))
                 d = discrete_log(Q, P, ord=l, operation='+')
-                deg = deg.crt(Mod(d, l))
+                rem = rem.crt(Mod(d-lo, l))
 
-            self._degree = ZZ(deg)
+            self._degree = lo + rem.lift()
             self.dual()._degree = self._degree
 
     @staticmethod
