@@ -258,8 +258,10 @@ copy of the integers::
 
 import copy
 
+from sage.matrix.special import identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
+from sage.misc.flatten import flatten
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -3936,6 +3938,97 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                                 check=check)
         return ChainComplex(differentials, degree_of_differential=-1,
                             check=check)
+
+    def twisted_homology(self, n):
+        r"""
+        The `n`-th twisted homology module of the simplicial set with respect to
+        the abelianization of the fundamental_group.
+
+        It is a module over a Laurent
+        polynomial ring, that, if the fundamental group is abelian, coincides
+        with the homology of the universal cover.
+
+        INPUT:
+
+        - ``n`` - a positive integer.
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        G, d = self._universal_cover_dict()
+        abelG = G.abelianization_map().codomain()
+        abelinv = abelG.abelian_invariants()
+        RP = PolynomialRing(ZZ, 'x', 2 * len(abelinv))
+        I = RP.ideal([RP.gen(i)**j-1 for i,j in enumerate(abelinv)])
+        J = RP.ideal([RP.gen(2*a)*RP.gen(2*a+1) - 1 for a in range(RP.ngens()//2)])
+        GB = (I+J).groebner_basis()
+        GBI = RP.ideal(GB)
+        def reduce_laurent(a):
+            return a._singular_().reduce(GBI)._sage_()
+        def group_to_polynomial(el, RP):
+            res = RP.one()
+            for a in el.Tietze():
+                if a > 0:
+                    res *= RP.gen(2*a-2)
+                else:
+                    res*= RP.gen(-2*a-1)
+            return res
+        nd = {a:group_to_polynomial(G.abelianization_map()(b), RP) for a,b in d.items()}
+        CC = self.twisted_chain_complex(nd)
+        def mkernel(M):
+            if M.nrows() == 0 or M.ncols() == 0:
+                return M
+            res = M
+            n = res.ncols()
+            for g in (I+J).gens():
+                res = res.stack(g*identity_matrix(n))
+            syz = res.T._singular_().syz()._sage_()
+            trimmed = syz.T.submatrix(0,0,syz.ncols(),M.nrows())
+            trimmed = trimmed.apply_map(reduce_laurent)
+            to_delete = [i for (i,r) in enumerate(trimmed.rows()) if not r]
+            return trimmed.delete_rows(to_delete)
+        def lift_to_submodule(S, M):
+            if S.nrows() == 0 or S.ncols() == 0:
+                return S
+            res = M
+            for g in GB:
+                res = res.stack(g*identity_matrix(M.ncols()))
+            singres = res.T._singular_().lift(S.T._singular_())._sage_()
+            return singres.submatrix(0,0,M.nrows(),S.nrows())
+        def mgb(M):
+            if M.nrows() == 0 or M.ncols() == 0:
+                return M
+            res = M
+            for g in GB:
+                res = res.stack(g*identity_matrix(M.ncols()))
+            sres = res.T._singular_().std()._sage_().T
+            to_delete = [i for i, r in enumerate(sres.apply_map(reduce_laurent)) if not r]
+            return sres.delete_rows(to_delete)
+            M2 = border_matrix(n+1)
+        M1 = CC.differential(n).T
+        M2 = CC.differential(n + 1).T
+        if M1.nrows() == 0:
+            return (RP**0).quotient_module([])
+        K = mkernel(M1)
+        DK = mkernel(K)
+        if M2.nrows() > 0:
+            S = lift_to_submodule(M2, K)
+            if S.nrows() > 0 and S.ncols() > 0:
+                res = mgb(DK.stack(S.T))
+            else:
+                res = DK
+        else:
+            res = mgb(DK.T)
+        resmat = mgb(res.apply_map(reduce_laurent))
+        L = LaurentPolynomialRing(ZZ, 'x', len(abelinv))
+        h = RP.hom(flatten([[g, g**-1] for g in L.gens()]),codomain = L)
+        laumat = resmat.apply_map(h)
+        laumat = laumat.change_ring(L)
+        if laumat.ncols() > 0:
+            for g in I.gens():
+                laumat = laumat.stack(h(g)*identity_matrix(L, laumat.ncols()))
+        AM = L ** K.nrows()
+        SM = AM.submodule(laumat)
+        return AM.quotient_module(SM)
 
     @cached_method
     def algebraic_topological_model(self, base_ring=None):
