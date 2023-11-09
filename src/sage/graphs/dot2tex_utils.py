@@ -21,7 +21,7 @@ def have_dot2tex():
 
     EXAMPLES::
 
-        sage: sage.graphs.dot2tex_utils.have_dot2tex() # optional - dot2tex graphviz
+        sage: sage.graphs.dot2tex_utils.have_dot2tex()  # optional - dot2tex graphviz
         True
         sage: sage.graphs.dot2tex_utils.have_dot2tex() in [True, False]
         True
@@ -41,7 +41,7 @@ def assert_have_dot2tex():
 
     EXAMPLES::
 
-        sage: sage.graphs.dot2tex_utils.assert_have_dot2tex() # optional - dot2tex graphviz
+        sage: sage.graphs.dot2tex_utils.assert_have_dot2tex()  # optional - dot2tex graphviz
     """
     check_error_string = """
 An error occurs while testing the dot2tex installation.
