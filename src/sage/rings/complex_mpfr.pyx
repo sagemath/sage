@@ -40,7 +40,7 @@ from sage.structure.element cimport RingElement, Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.structure.parent import Parent
-from sage.structure.parent_gens import ParentWithGens
+from sage.rings.ring import Ring
 
 from sage.misc.sage_eval import sage_eval
 
@@ -277,7 +277,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         """
         self._prec = int(prec)
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite().Metric().Complete())
+        Ring.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_(coerce_list=[RRtoCC(self._real_field(), self)],
                 convert_method_name='_complex_mpfr_')
 
