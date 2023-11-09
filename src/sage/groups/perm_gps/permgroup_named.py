@@ -236,7 +236,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         {1, 2, 3, 4}
         sage: G.category()
         Join of Category of finite enumerated permutation groups and
-        Category of finite weyl groups and
+        Category of finite Weyl groups and
         Category of well generated finite irreducible complex reflection groups
 
     TESTS::
@@ -640,7 +640,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         We illustrate the choice of the category::
 
             sage: A.category()                                                          # needs sage.combinat
-            Join of Category of coxeter group algebras over Rational Field
+            Join of Category of Coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
                 and Category of finite dimensional cellular algebras with basis
                      over Rational Field

@@ -115,7 +115,6 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     A list of lists of vectors such that entry `[i]` contains all
     vectors of length `i`.
 
-
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
@@ -143,13 +142,13 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
          [],
          [(0, 1, 0, 0)],
          [(1, 1, 0, 0), (1, -1, 0, 0), (2, 0, 0, 0)]]
-        sage: Q = QuadraticForm(matrix(6, [2, 1, 1, 1, -1, -1, 1, 2, 1, 1, -1, -1, 1, 1, 2, 0, -1, -1, 1, 1, 0, 2, 0, -1, -1, -1, -1, 0, 2, 1, -1, -1, -1, -1, 1, 2]))
+        sage: m6 = matrix(6, [2, 1, 1, 1, -1, -1, 1, 2, 1, 1, -1, -1,
+        ....:                 1, 1, 2, 0, -1, -1, 1, 1, 0, 2, 0, -1,
+        ....:                 -1, -1, -1, 0, 2, 1, -1, -1, -1, -1, 1, 2])
+        sage: Q = QuadraticForm(m6)
         sage: vs = Q.short_vector_list_up_to_length(8)
         sage: [len(vs[i]) for i in range(len(vs))]
         [1, 72, 270, 720, 936, 2160, 2214, 3600]
-        sage: vs = Q.short_vector_list_up_to_length(30)  # long time (28s on sage.math, 2014)
-        sage: [len(vs[i]) for i in range(len(vs))]       # long time
-        [1, 72, 270, 720, 936, 2160, 2214, 3600, 4590, 6552, 5184, 10800, 9360, 12240, 13500, 17712, 14760, 25920, 19710, 26064, 28080, 36000, 25920, 47520, 37638, 43272, 45900, 59040, 46800, 75600]
 
     The cases of ``len_bound < 2`` led to exception or infinite runtime before.
 

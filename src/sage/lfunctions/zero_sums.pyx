@@ -1066,7 +1066,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
                                        double logq,
                                        double thetaq,
                                        double sqrtq,
-                                       double z):
+                                       double z) noexcept:
         r"""
         Private cdef method to compute the logarithmic derivative
         summand for the sinc^2 sum at prime values for when
@@ -1096,7 +1096,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
                                        double t,
                                        int ap,
                                        double p,
-                                       double logp):
+                                       double logp) noexcept:
         r"""
         Private cdef method to compute the logarithmic derivative
         summand for the sinc^2 sum at prime values for when
@@ -1109,7 +1109,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         logp = c_log(p)
         return -(t - logp) * (logp / p) * ap
 
-    cpdef _zerosum_sincsquared_fast(self, Delta=1, bad_primes=None):
+    cpdef _zerosum_sincsquared_fast(self, Delta=1, bad_primes=None) noexcept:
         r"""
         A faster cythonized implementation of self._zerosum_sincsquared().
 

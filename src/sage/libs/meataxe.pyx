@@ -71,7 +71,7 @@ cdef Matrix_t *rawMatrix(int Field, list entries) except NULL:
 
 from sage.cpython.string cimport str_to_bytes, char_to_str
 
-cdef void sage_meataxe_error_handler(const MtxErrorRecord_t *err):
+cdef void sage_meataxe_error_handler(const MtxErrorRecord_t *err) noexcept:
     sig_block()
     ErrText  = char_to_str(err.Text)
     BaseName = char_to_str(err.FileInfo.BaseName)
@@ -79,7 +79,7 @@ cdef void sage_meataxe_error_handler(const MtxErrorRecord_t *err):
     PyErr_SetObject(ErrMsg.get(ErrText.split(': ')[-1], RuntimeError), f"{ErrText} in file {BaseName} (line {LineNo})")
     sig_unblock()
 
-cdef inline meataxe_init():
+cdef inline meataxe_init() noexcept:
     ## Assign to a variable that enables MeatAxe to find
     ## its multiplication tables.
     global MtxLibDir

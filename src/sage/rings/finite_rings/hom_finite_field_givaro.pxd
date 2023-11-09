@@ -11,7 +11,7 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
     cdef long _power
     cdef Cache_givaro _codomain_cache
 
-    cpdef Element _call_(self, x)
+    cpdef Element _call_(self, x) noexcept
 
 
 cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
@@ -20,7 +20,7 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
     cdef long _power
     cdef Cache_givaro _codomain_cache
 
-    cpdef Element _call_(self, x)
+    cpdef Element _call_(self, x) noexcept
 
 
 cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
