@@ -2209,6 +2209,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
             sage: C._nonsingular_model
             (Function field in z defined by z^3 + 10*x,
