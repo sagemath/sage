@@ -548,17 +548,17 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import copy
-import sys
-import random
-import queue
 import ctypes
 import logging
 import multiprocessing as mp
+import queue
+import random
+import sys
 from collections import deque
 from threading import Thread
 
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
 
 logger = logging.getLogger(__name__)
 logger.__doc__ = ("""
@@ -1895,8 +1895,8 @@ class RESetMPExample(RESetMapReduce):
             <sage.parallel.map_reduce.RESetMPExample object at 0x...>
         """
         RESetMapReduce.__init__(self)
-        from sage.rings.polynomial.polynomial_ring import polygen
         from sage.rings.integer_ring import ZZ
+        from sage.rings.polynomial.polynomial_ring import polygen
         self.x = polygen(ZZ, 'x')
         self.maxl = maxl
 
