@@ -2,7 +2,9 @@
 # Merge open PRs from sagemath/sage labeled "blocker".
 REPO="sagemath/sage"
 GH="gh -R $REPO"
-PRs="$($GH pr list --label "p: blocker / 1" --json number --jq '.[].number')"
+mkdir -p upstream
+PRs="$($GH pr list --label "p: blocker / 1" --json number --jq '.[].number' | tee upstream/ci-fixes.txt)"
+date -u +"%Y-%m-%dT%H:%M:%SZ" > upstream/ci-fixes.date  # Record the date, for future reference
 if [ -z "$PRs" ]; then
     echo 'Nothing to do: Found no open PRs with "blocker" status.'
 else
@@ -14,22 +16,38 @@ else
     git tag -f test_base
     git commit -q -m "Uncommitted changes" --no-allow-empty -a
     for a in $PRs; do
-        git fetch --unshallow --all > /dev/null 2>&1 && echo "Unshallowed."
-        echo "::group::Merging PR https://github.com/$REPO/pull/$a"
+        echo "::group::Applying PR https://github.com/$REPO/pull/$a as a patch"
         git tag -f test_head
-        $GH pr checkout -b pr-$a $a
-        git checkout -q test_head
-        if git merge --no-edit --squash -q pr-$a; then
+        # We used to pull the branch and merge it (after unshallowing), but when run on PRs that are
+        # based on older releases, it has the side effect of updating to this release,
+        # which may be confusing.
+        #
+        # Here, we obtain the "git am"-able patch of the PR branch.
+        # This also makes it unnecessary to unshallow the repository.
+        #
+        # Considered alternative: Use https://github.com/$REPO/pull/$a.diff,
+        # which squashes everything into one diff without commit metadata.
+        PATH=build/bin:$PATH build/bin/sage-download-file "https://github.com/$REPO/pull/$a.patch" upstream/$a.patch
+        date -u +"%Y-%m-%dT%H:%M:%SZ" > upstream/$a.date  # Record the date, for future reference
+        if git am --empty=keep < upstream/$a.patch; then
+            echo "Applied patch"
+            cat upstream/$a.patch
             echo "::endgroup::"
-            if git commit -q -m "Merge https://github.com/$REPO/pull/$a" -a --no-allow-empty; then
-                echo "Merged #$a"
-            else
-                echo "Empty, skipped"
-            fi
+            echo "Applied #$a as a patch"
+        elif git am --abort \
+                && if git fetch --unshallow --all > /dev/null 2>&1; then echo "Unshallowed"; fi \
+                && echo "Retrying with 3-way merge" \
+                && git am --empty=keep --3way < upstream/$a.patch; then
+            echo "Applied patch"
+            cat upstream/$a.patch
+            echo "::endgroup::"
+            echo "Applied #$a as a patch"
         else
+            echo "Failure applying patch"
+            git am --show-current-patch=diff
             echo "::endgroup::"
-            echo "Failure merging #$a, resetting"
-            git reset --hard
+            echo "Failure applying #$a as a patch, resetting"
+            git am --abort
         fi
     done
     git log test_base..HEAD
