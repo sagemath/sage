@@ -258,7 +258,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
 
 @cython.cdivision(True)
-cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height):
+cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height) noexcept:
     r"""
     Find a locally optimal layout for this graph, according to the
     constraints that neighboring nodes want to be a fixed distance
@@ -388,7 +388,7 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
 
 
 @cython.cdivision(True)
-cdef inline double sqrt_approx(double x, double y, double xx, double yy):
+cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcept:
     r"""
     Approximation of `\sqrt(x^2+y^2)`.
 
@@ -400,7 +400,7 @@ cdef inline double sqrt_approx(double x, double y, double xx, double yy):
         ....:    y = abs(y)
         ....:    return max(x,y) + min(x,y)**2/(2*max(x,y))
 
-        sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))              # optional - sage.plot
+        sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))              # needs sage.plot
         Graphics object consisting of 2 graphics primitives
     """
     if xx < yy:
@@ -487,11 +487,10 @@ def small_integer_to_graph6(n):
     """
     if n < 63:
         return chr(n + 63)
-    else:
-        # get 18-bit rep of n
-        n = int_to_binary_string(n)
-        n = '0'*(18 - len(n)) + n
-        return chr(126) + binary_string_to_graph6(n)
+    # get 18-bit rep of n
+    n = int_to_binary_string(n)
+    n = '0'*(18 - len(n)) + n
+    return chr(126) + binary_string_to_graph6(n)
 
 
 def length_and_string_from_graph6(s):
@@ -651,7 +650,7 @@ cdef class SubgraphSearch:
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.subgraph_search(graphs.CycleGraph(5))                               # optional - sage.modules
+            sage: g.subgraph_search(graphs.CycleGraph(5))                               # needs sage.modules
             Subgraph of (Petersen graph): Graph on 5 vertices
 
         TESTS:
@@ -661,11 +660,11 @@ cdef class SubgraphSearch:
         computations with it::
 
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
-            sage: SubgraphSearch(Graph(5), Graph(1))                                    # optional - sage.modules
+            sage: SubgraphSearch(Graph(5), Graph(1))                                    # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: searched graph should have at least 2 vertices
-            sage: SubgraphSearch(Graph(5), Graph(2))                                    # optional - sage.modules
+            sage: SubgraphSearch(Graph(5), Graph(2))                                    # needs sage.modules
             <sage.graphs.generic_graph_pyx.SubgraphSearch ...>
         """
         if H.order() <= 1:
@@ -691,8 +690,8 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
-            sage: for p in S:                                                           # optional - sage.modules
+            sage: S = SubgraphSearch(g, h)                                              # needs sage.modules
+            sage: for p in S:                                                           # needs sage.modules
             ....:     print(p)
             [0, 1, 2]
             [1, 2, 3]
@@ -722,8 +721,8 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
-            sage: S.cardinality()                                                       # optional - sage.modules
+            sage: S = SubgraphSearch(g, h)                                              # needs sage.modules
+            sage: S.cardinality()                                                       # needs sage.modules
             6
 
         Check that the method is working even when vertices or edges are of
@@ -734,8 +733,8 @@ cdef class SubgraphSearch:
             sage: G.add_cycle(['A', 1, 2, 3, ('a', 1)])
             sage: H = Graph()
             sage: H.add_path("xyz")
-            sage: S = SubgraphSearch(G, H)                                              # optional - sage.modules
-            sage: S.cardinality()                                                       # optional - sage.modules
+            sage: S = SubgraphSearch(G, H)                                              # needs sage.modules
+            sage: S.cardinality()                                                       # needs sage.modules
             10
         """
         if self.nh > self.ng:
@@ -769,18 +768,18 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
-            sage: S.__next__()                                                          # optional - sage.modules
+            sage: S = SubgraphSearch(g, h)                                              # needs sage.modules
+            sage: S.__next__()                                                          # needs sage.modules
             [0, 1, 2]
-            sage: S._initialization()                                                   # optional - sage.modules
-            sage: S.__next__()                                                          # optional - sage.modules
+            sage: S._initialization()                                                   # needs sage.modules
+            sage: S.__next__()                                                          # needs sage.modules
             [0, 1, 2]
 
         TESTS:
 
         Check that :trac:`21828` is fixed::
 
-            sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # optional - sage.modules
+            sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # needs sage.modules
             True
         """
         cdef int i
@@ -815,7 +814,7 @@ cdef class SubgraphSearch:
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.subgraph_search(graphs.CycleGraph(5))                               # optional - sage.modules
+            sage: g.subgraph_search(graphs.CycleGraph(5))                               # needs sage.modules
             Subgraph of (Petersen graph): Graph on 5 vertices
         """
         self.mem = MemoryAllocator()
@@ -904,8 +903,8 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
-            sage: S.__next__()                                                          # optional - sage.modules
+            sage: S = SubgraphSearch(g, h)                                              # needs sage.modules
+            sage: S.__next__()                                                          # needs sage.modules
             [0, 1, 2]
         """
         if not self.ng:
@@ -980,7 +979,7 @@ cdef class SubgraphSearch:
         sig_off()
         raise StopIteration
 
-cdef inline bint vectors_equal(int n, int *a, int *b):
+cdef inline bint vectors_equal(int n, int *a, int *b) noexcept:
     r"""
     Tests whether the two given vectors are equal. Two integer vectors
     `a = (a_1, a_2, \dots, a_n)` and `b = (b_1, b_2, \dots, b_n)` are equal
@@ -1003,7 +1002,7 @@ cdef inline bint vectors_equal(int n, int *a, int *b):
             return False
     return True
 
-cdef inline bint vectors_inferior(int n, int *a, int *b):
+cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
     r"""
     Tests whether the second vector of integers is inferior to the first. Let
     `u = (u_1, u_2, \dots, u_k)` and `v = (v_1, v_2, \dots, v_k)` be two
@@ -1158,7 +1157,7 @@ def _test_vectors_equal_inferior():
 
 
 cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
-                             long backtrack_bound=1000, find_path=False):
+                             long backtrack_bound=1000, find_path=False) noexcept:
     r"""
     Randomized backtracking for finding Hamiltonian cycles and paths.
 

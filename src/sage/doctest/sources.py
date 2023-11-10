@@ -84,8 +84,10 @@ def get_basename(path):
         sage: from sage.doctest.sources import get_basename
         sage: from sage.env import SAGE_SRC
         sage: import os
-        sage: get_basename(os.path.join(SAGE_SRC,'sage','doctest','sources.py'))
+        sage: get_basename(os.path.join(SAGE_SRC, 'sage', 'doctest', 'sources.py'))
         'sage.doctest.sources'
+        sage: get_basename(os.path.join(SAGE_SRC, 'sage', 'structure', 'element.pxd'))
+        'sage.structure.element.pxd'
     """
     if path is None:
         return None
@@ -111,10 +113,14 @@ def get_basename(path):
         # it goes.
         while is_package_or_sage_namespace_package_dir(root):
             root = os.path.dirname(root)
-    fully_qualified_path = os.path.splitext(path[len(root) + 1:])[0]
+    fully_qualified_path, ext = os.path.splitext(path[len(root) + 1:])
     if os.path.split(path)[1] == '__init__.py':
         fully_qualified_path = fully_qualified_path[:-9]
-    return fully_qualified_path.replace(os.path.sep, '.')
+    basename = fully_qualified_path.replace(os.path.sep, '.')
+    if ext in ['.pxd', '.pxi']:
+        # disambiguate from .pyx with the same basename
+        basename += ext
+    return basename
 
 
 class DocTestSource():
@@ -159,7 +165,7 @@ class DocTestSource():
             sage: FDS == FDS2
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return self.__dict__ == other.__dict__
 
@@ -227,7 +233,7 @@ class DocTestSource():
         new_doctests = self.parse_docstring(docstring, namespace, start)
         sig_on_count_doc_doctest = "sig_on_count() # check sig_on/off pairings (virtual doctest)\n"
         for dt in new_doctests:
-            if len(dt.examples) > 0 and not (hasattr(dt.examples[-1],'sage_source')
+            if len(dt.examples) > 0 and not (hasattr(dt.examples[-1], 'sage_source')
                                              and dt.examples[-1].sage_source == sig_on_count_doc_doctest):
                 # Line number refers to the end of the docstring
                 sigon = doctest.Example(sig_on_count_doc_doctest, "0\n", lineno=docstring.count("\n"))
@@ -299,7 +305,7 @@ class DocTestSource():
             False
         """
         if tab_okay is None:
-            tab_okay = isinstance(self,TexSource)
+            tab_okay = isinstance(self, TexSource)
         self._init()
         self.line_shift = 0
         self.parser = SageDocTestParser(self.options.optional,
@@ -365,9 +371,9 @@ class DocTestSource():
         if unparsed_doc:
             self._process_doc(doctests, doc, namespace, start)
 
-        extras = dict(tab=not tab_okay and tab_locations,
-                      line_number=contains_line_number,
-                      optionals=self.parser.optionals)
+        extras = {"tab": not tab_okay and tab_locations,
+                  "line_number": contains_line_number,
+                  "optionals": self.parser.optionals}
         if self.options.randorder is not None and self.options.randorder is not False:
             # we want to randomize even when self.randorder = 0
             random.seed(self.options.randorder)
@@ -563,13 +569,13 @@ class FileDocTestSource(DocTestSource):
             base, ext = os.path.splitext(path)
         valid_code_ext = ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx')
         if ext in valid_code_ext:
-            self.__class__ = dynamic_class('PythonFileSource',(FileDocTestSource,PythonSource))
+            self.__class__ = dynamic_class('PythonFileSource', (FileDocTestSource, PythonSource))
             self.encoding = "utf-8"
         elif ext == '.tex':
-            self.__class__ = dynamic_class('TexFileSource',(FileDocTestSource,TexSource))
+            self.__class__ = dynamic_class('TexFileSource', (FileDocTestSource, TexSource))
             self.encoding = "utf-8"
         elif ext == '.rst' or ext == '.rst.txt':
-            self.__class__ = dynamic_class('RestFileSource',(FileDocTestSource,RestSource))
+            self.__class__ = dynamic_class('RestFileSource', (FileDocTestSource, RestSource))
             self.encoding = "utf-8"
         else:
             valid_ext = ", ".join(valid_code_ext + ('.tex', '.rst', '.rst.txt'))
@@ -949,6 +955,7 @@ class SourceLanguage:
         return [self.parser.get_doctest(docstring, namespace, str(self.qualified_name),
                                         self.printpath, start + 1)]
 
+
 class PythonSource(SourceLanguage):
     """
     This class defines the functions needed for the extraction of doctests from python sources.
@@ -1245,6 +1252,7 @@ class PythonSource(SourceLanguage):
                     in_docstring = True
                 neutralized.append(" "*reindent + line)
         return "".join(neutralized)
+
 
 class TexSource(SourceLanguage):
     """
@@ -1621,6 +1629,7 @@ class RestSource(SourceLanguage):
                                                 str(self.qualified_name),
                                                 self.printpath, start + 1)
         return [outer_doctest] + inner_doctests
+
 
 class DictAsObject(dict):
     """

@@ -149,7 +149,7 @@ cdef class ntl_ZZ_pE():
             self.c = <ntl_ZZ_pEContext_class>ntl_ZZ_pEContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_ZZ_pE _new(self):
+    cdef ntl_ZZ_pE _new(self) noexcept:
         cdef ntl_ZZ_pE r
         self.c.restore_c()
         r = ntl_ZZ_pE.__new__(ntl_ZZ_pE)
@@ -268,7 +268,7 @@ cdef class ntl_ZZ_pE():
         return r
 
 
-    cdef ntl_ZZ_pX get_as_ZZ_pX(ntl_ZZ_pE self):
+    cdef ntl_ZZ_pX get_as_ZZ_pX(ntl_ZZ_pE self) noexcept:
         r"""
         Returns value as ntl_ZZ_pX.
         """
@@ -294,7 +294,7 @@ cdef class ntl_ZZ_pE():
         """
         return self.get_as_ZZ_pX()
 
-    cdef void set_from_ZZ_pX(ntl_ZZ_pE self, ntl_ZZ_pX value):
+    cdef void set_from_ZZ_pX(ntl_ZZ_pE self, ntl_ZZ_pX value) noexcept:
         r"""
         Sets the value from a ZZ_pX.
         """

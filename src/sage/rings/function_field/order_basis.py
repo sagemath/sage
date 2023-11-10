@@ -93,7 +93,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
         R = V.base_field().maximal_order()
         self._module = V.span([to_V(b) for b in basis], base_ring=R)
 
-        self._from_module= from_V
+        self._from_module = from_V
         self._to_module = to_V
         self._basis = tuple(basis)
         self._ring = field.polynomial_ring()

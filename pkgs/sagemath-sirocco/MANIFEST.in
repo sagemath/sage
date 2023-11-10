@@ -1,9 +1,14 @@
-global-include all__sagemath_sirocco.py
+prune sage
 
 include VERSION.txt
 
+include sage/libs/sirocco.p*
+
 global-exclude *.c
 global-exclude *.cpp
+
+global-exclude all__sagemath_*.*
+global-include all__sagemath_sirocco.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Conjectural slopes of Hecke polynomials
 

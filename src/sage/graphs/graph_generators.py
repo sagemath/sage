@@ -606,7 +606,7 @@ class GraphGenerators():
         sage: L = list(graphs(5, lambda G: G.size() <= 4))
         sage: len(L)
         14
-        sage: graphs_list.show_graphs(L) # long time
+        sage: graphs_list.show_graphs(L)        # long time                             # needs sage.plot
 
     Generate all graphs with up to 5 vertices and up to 4 edges.
 
@@ -615,7 +615,7 @@ class GraphGenerators():
         sage: L = list(graphs(5, lambda G: G.size() <= 4, augment='vertices'))
         sage: len(L)
         31
-        sage: graphs_list.show_graphs(L)              # long time
+        sage: graphs_list.show_graphs(L)        # long time                             # needs sage.plot
 
     Generate all graphs with degree at most 2, up to 6 vertices.
 
@@ -651,9 +651,9 @@ class GraphGenerators():
     except for appropriately inheritable properties::
 
         sage: property = lambda G: G.is_vertex_transitive()
-        sage: len(list(graphs(4, property)))
+        sage: len(list(graphs(4, property)))                                            # needs sage.groups
         1
-        sage: sum(1 for g in graphs(4) if property(g))
+        sage: sum(1 for g in graphs(4) if property(g))                                  # needs sage.groups
         4
 
         sage: property = lambda G: G.is_bipartite()
@@ -1171,7 +1171,7 @@ class GraphGenerators():
             for s in msg.split(' '):
                 if s.startswith('n='):
                     from sage.rings.integer import Integer
-                    n1, n2 = [Integer(t) for t in s[2:].split('+') if t.isdigit()]
+                    n1, n2 = (Integer(t) for t in s[2:].split('+') if t.isdigit())
                     partition = [set(range(n1)), set(range(n1, n1 + n2))]
                     break
             else:
@@ -1192,7 +1192,7 @@ class GraphGenerators():
             G = BipartiteGraph(s[:-1], format='graph6', partition=partition)
             yield G
 
-    def cospectral_graphs(self, vertices, matrix_function=lambda g: g.adjacency_matrix(), graphs=None):
+    def cospectral_graphs(self, vertices, matrix_function=None, graphs=None):
         r"""
         Find all sets of graphs on ``vertices`` vertices (with
         possible restrictions) which are cospectral with respect to a
@@ -1231,15 +1231,16 @@ class GraphGenerators():
 
         EXAMPLES::
 
-            sage: g=graphs.cospectral_graphs(5)
-            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
+            sage: g = graphs.cospectral_graphs(5)                                       # needs sage.modules
+            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)       # needs sage.modules
             [['Dr?', 'Ds_']]
-            sage: g[0][1].am().charpoly()==g[0][1].am().charpoly()
+            sage: g[0][1].am().charpoly()==g[0][1].am().charpoly()                      # needs sage.modules
             True
 
         There are two sets of cospectral graphs on six vertices with no isolated vertices::
 
-            sage: g=graphs.cospectral_graphs(6, graphs=lambda x: min(x.degree())>0)
+            sage: # needs sage.modules
+            sage: g = graphs.cospectral_graphs(6, graphs=lambda x: min(x.degree())>0)
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Ep__', 'Er?G'], ['ExGg', 'ExoG']]
             sage: g[0][1].am().charpoly()==g[0][1].am().charpoly()
@@ -1249,16 +1250,17 @@ class GraphGenerators():
 
         There is one pair of cospectral trees on eight vertices::
 
-            sage: g=graphs.cospectral_graphs(6, graphs=graphs.trees(8))
-            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
+            sage: g = graphs.cospectral_graphs(6, graphs=graphs.trees(8))               # needs sage.modules
+            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)       # needs sage.modules
             [['GiPC?C', 'GiQCC?']]
-            sage: g[0][1].am().charpoly()==g[0][1].am().charpoly()
+            sage: g[0][1].am().charpoly()==g[0][1].am().charpoly()                      # needs sage.modules
             True
 
         There are two sets of cospectral graphs (with respect to the
         Laplacian matrix) on six vertices::
 
-            sage: g=graphs.cospectral_graphs(6, matrix_function=lambda g: g.laplacian_matrix())
+            sage: # needs sage.modules
+            sage: g = graphs.cospectral_graphs(6, matrix_function=lambda g: g.laplacian_matrix())
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Edq_', 'ErcG'], ['Exoo', 'EzcG']]
             sage: g[0][1].laplacian_matrix().charpoly()==g[0][1].laplacian_matrix().charpoly()
@@ -1278,12 +1280,17 @@ class GraphGenerators():
             ....:   for i in range(g.order()):
             ....:       A.rescale_row(i, 1 / len(A.nonzero_positions_in_row(i)))
             ....:   return A
-            sage: g = graphs.cospectral_graphs(5, matrix_function=DinverseA, graphs=lambda g: min(g.degree()) > 0)
-            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
+            sage: g = graphs.cospectral_graphs(5, matrix_function=DinverseA,            # needs sage.libs.pari sage.modules
+            ....:                              graphs=lambda g: min(g.degree()) > 0)
+            sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)       # needs sage.modules
             [['Dlg', 'Ds_']]
-            sage: g[0][1].laplacian_matrix(normalized=True).charpoly()==g[0][1].laplacian_matrix(normalized=True).charpoly()  # optional - sage.symbolic
+            sage: (g[0][1].laplacian_matrix(normalized=True).charpoly()                 # needs sage.modules sage.symbolic
+            ....:   == g[0][1].laplacian_matrix(normalized=True).charpoly())
             True
         """
+        if matrix_function is None:
+            matrix_function = lambda g: g.adjacency_matrix()
+
         from sage.graphs.graph_generators import graphs as graph_gen
         if graphs is None:
             graph_list = graph_gen(vertices, property=lambda _: True)
@@ -1461,11 +1468,12 @@ class GraphGenerators():
         The unique fullerene graph on 20 vertices is isomorphic to the dodecahedron
         graph. ::
 
-            sage: gen = graphs.fullerenes(20)  # optional buckygen
-            sage: g = next(gen)  # optional buckygen
-            sage: g.is_isomorphic(graphs.DodecahedralGraph()) # optional buckygen
+            sage: # optional - buckygen
+            sage: gen = graphs.fullerenes(20)
+            sage: g = next(gen)
+            sage: g.is_isomorphic(graphs.DodecahedralGraph())
             True
-            sage: g.get_embedding()  # optional buckygen
+            sage: g.get_embedding()
             {1: [2, 3, 4],
              2: [1, 5, 6],
              3: [1, 7, 8],
@@ -1486,7 +1494,7 @@ class GraphGenerators():
              18: [12, 20, 13],
              19: [14, 20, 15],
              20: [17, 19, 18]}
-            sage: g.plot3d(layout='spring')  # optional buckygen
+            sage: g.plot3d(layout='spring')
             Graphics3d Object
         """
         # number of vertices should be positive
@@ -1516,8 +1524,7 @@ class GraphGenerators():
 
         sp.stdout.reconfigure(newline='')
 
-        for G in graphs._read_planar_code(sp.stdout):
-            yield(G)
+        yield from graphs._read_planar_code(sp.stdout)
 
     def fusenes(self, hexagon_count, benzenoids=False):
         r"""
@@ -1739,12 +1746,13 @@ class GraphGenerators():
         (usually inside a loop). Or it can be used to create an entire list all
         at once if there is sufficient memory to contain it::
 
-            sage: gen = graphs.plantri_gen("6")  # optional plantri
-            sage: next(gen)                      # optional plantri
+            sage: # optional - plantri
+            sage: gen = graphs.plantri_gen("6")
+            sage: next(gen)
             Graph on 6 vertices
-            sage: next(gen)                      # optional plantri
+            sage: next(gen)
             Graph on 6 vertices
-            sage: next(gen)                      # optional plantri
+            sage: next(gen)
             Traceback (most recent call last):
             ...
             StopIteration
@@ -1791,8 +1799,7 @@ class GraphGenerators():
         sp.stdout.reconfigure(newline='')
 
         try:
-            for G in graphs._read_planar_code(sp.stdout):
-                yield(G)
+            yield from graphs._read_planar_code(sp.stdout)
         except AssertionError:
             raise AttributeError("invalid options '{}'".format(options))
 
@@ -1913,13 +1920,14 @@ class GraphGenerators():
 
         Specifying lower and upper bounds on the number of edges::
 
-            sage: len(list(graphs.planar_graphs(4)))  # optional plantri
+            sage: # optional - plantri
+            sage: len(list(graphs.planar_graphs(4)))
             6
-            sage: len(list(graphs.planar_graphs(4, minimum_edges=4)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, minimum_edges=4)))
             4
-            sage: len(list(graphs.planar_graphs(4, maximum_edges=4)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, maximum_edges=4)))
             4
-            sage: len(list(graphs.planar_graphs(4, minimum_edges=4, maximum_edges=4)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, minimum_edges=4, maximum_edges=4)))
             2
 
         Specifying the maximum size of a face::
@@ -1934,11 +1942,12 @@ class GraphGenerators():
         The number of edges in a planar graph is equal to the number of edges in
         its dual::
 
-            sage: planar      = list(graphs.planar_graphs(5,dual=True))  # optional -- plantri
-            sage: dual_planar = list(graphs.planar_graphs(5,dual=False)) # optional -- plantri
-            sage: planar_sizes      = [g.size() for g in planar]         # optional -- plantri
-            sage: dual_planar_sizes = [g.size() for g in dual_planar]    # optional -- plantri
-            sage: planar_sizes == dual_planar_sizes                      # optional -- plantri
+            sage: # optional - plantri
+            sage: planar      = list(graphs.planar_graphs(5,dual=True))
+            sage: dual_planar = list(graphs.planar_graphs(5,dual=False))
+            sage: planar_sizes      = [g.size() for g in planar]
+            sage: dual_planar_sizes = [g.size() for g in dual_planar]
+            sage: planar_sizes == dual_planar_sizes
             True
         """
         if order < 0:
@@ -2260,11 +2269,12 @@ class GraphGenerators():
 
         The cube is the only 3-connected planar quadrangulation on 8 vertices::
 
-            sage: gen = graphs.quadrangulations(8, minimum_connectivity=3)  # optional plantri
-            sage: g = next(gen)                                            # optional plantri
-            sage: g.is_isomorphic(graphs.CubeGraph(3))                      # optional plantri
+            sage: # optional - plantri
+            sage: gen = graphs.quadrangulations(8, minimum_connectivity=3)
+            sage: g = next(gen)
+            sage: g.is_isomorphic(graphs.CubeGraph(3))
             True
-            sage: next(gen)                                                # optional plantri
+            sage: next(gen)
             Traceback (most recent call last):
             ...
             StopIteration

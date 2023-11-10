@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Word paths
 
@@ -332,7 +332,7 @@ def WordPaths(alphabet, steps=None):
         elif alphabet.cardinality() == 6:
             steps = 'hexagonal_grid'
         else:
-            raise TypeError("Unable to make a class WordPaths from %s"%alphabet)
+            raise TypeError("Unable to make a class WordPaths from %s" % alphabet)
 
     #Returns the class of WordPaths according to the given type of paths
     if isinstance(steps, str):
@@ -455,7 +455,7 @@ class WordPaths_all(FiniteWords):
             sage: W1 == W3
             False
         """
-        return self is other or (type(self) == type(other) and
+        return self is other or (type(self) is type(other) and
             self.alphabet() == other.alphabet() and
             self.vector_space() == other.vector_space() and
             self.letters_to_steps() == other.letters_to_steps())

@@ -5,14 +5,14 @@ from sage.libs.gsl.complex cimport GSL_SET_COMPLEX
 
 cdef class CCtoCDF(Map):
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
             sage: from sage.rings.complex_conversion import CCtoCDF
             sage: f = CCtoCDF(CC, CDF) # indirect doctest
             sage: f(CC.0)
             1.0*I
-            sage: f(exp(pi*CC.0/4))
+            sage: f(exp(pi*CC.0/4))                                                     # needs sage.symbolic
             0.7071067811865476 + 0.7071067811865475*I
         """
         z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)

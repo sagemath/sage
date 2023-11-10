@@ -122,7 +122,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         return r'\text{SR}'
 
-    cpdef _coerce_map_from_(self, R):
+    cpdef _coerce_map_from_(self, R) noexcept:
         """
         EXAMPLES::
 
@@ -1159,24 +1159,24 @@ cdef class NumpyToSRMorphism(Morphism):
 
     We check that :trac:`8949` and :trac:`9769` are fixed (see also :trac:`18076`)::
 
-        sage: import numpy
+        sage: import numpy                                                              # needs numpy
         sage: f(x) = x^2
-        sage: f(numpy.int8('2'))
+        sage: f(numpy.int8('2'))                                                        # needs numpy
         4
-        sage: f(numpy.int32('3'))
+        sage: f(numpy.int32('3'))                                                       # needs numpy
         9
 
     Note that the answer is a Sage integer and not a numpy type::
 
-        sage: a = f(numpy.int8('2')).pyobject()
-        sage: type(a)
+        sage: a = f(numpy.int8('2')).pyobject()                                         # needs numpy
+        sage: type(a)                                                                   # needs numpy
         <class 'sage.rings.integer.Integer'>
 
     This behavior also applies to standard functions::
 
         sage: cos(int('2'))
         cos(2)
-        sage: numpy.cos(int('2'))
+        sage: numpy.cos(int('2'))                                                       # needs numpy
         -0.4161468365471424
     """
     cdef _intermediate_ring
@@ -1192,6 +1192,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: import numpy
             sage: from sage.symbolic.ring import NumpyToSRMorphism
             sage: f = NumpyToSRMorphism(numpy.float64)
@@ -1200,7 +1201,7 @@ cdef class NumpyToSRMorphism(Morphism):
             sage: _.parent()
             Symbolic Ring
 
-            sage: NumpyToSRMorphism(str)
+            sage: NumpyToSRMorphism(str)                                                # needs numpy
             Traceback (most recent call last):
             ...
             TypeError: <... 'str'> is not a numpy number type
@@ -1220,24 +1221,23 @@ cdef class NumpyToSRMorphism(Morphism):
         else:
             raise TypeError("{} is not a numpy number type".format(numpy_type))
 
-    cpdef Element _call_(self, a):
+    cpdef Element _call_(self, a) noexcept:
         """
         EXAMPLES:
 
         This should be called when coercing or converting a NumPy
         float or complex to the Symbolic Ring::
 
+            sage: # needs numpy
             sage: import numpy
             sage: SR(numpy.int32('1')).pyobject().parent()
             Integer Ring
             sage: SR(numpy.int64('-2')).pyobject().parent()
             Integer Ring
-
             sage: SR(numpy.float16('1')).pyobject().parent()
             Real Double Field
             sage: SR(numpy.float64('2.0')).pyobject().parent()
             Real Double Field
-
             sage: SR(numpy.complex64(1jr)).pyobject().parent()
             Complex Double Field
         """
@@ -1252,6 +1252,7 @@ cdef class UnderscoreSageMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sympy
             sage: import sympy
             sage: from sage.symbolic.ring import UnderscoreSageMorphism
             sage: b = sympy.var('b')
@@ -1267,16 +1268,16 @@ cdef class UnderscoreSageMorphism(Morphism):
         from sage.interfaces.sympy import sympy_init
         sympy_init()
 
-    cpdef Element _call_(self, a):
+    cpdef Element _call_(self, a) noexcept:
         """
         EXAMPLES:
 
         This should be called when coercing or converting a SymPy
         object to the Symbolic Ring::
 
-            sage: import sympy
-            sage: b = sympy.var('b')
-            sage: bool(SR(b) == SR(b._sage_()))
+            sage: import sympy                                                          # needs sympy
+            sage: b = sympy.var('b')                                                    # needs sympy
+            sage: bool(SR(b) == SR(b._sage_()))                                         # needs sympy
             True
         """
         return self.codomain()(a._sage_())
@@ -1298,33 +1299,6 @@ def the_SymbolicRing():
         True
     """
     return SR
-
-
-def is_SymbolicExpressionRing(R):
-    """
-    Return True if ``R`` is the symbolic expression ring.
-
-    This function is deprecated.  Instead, either use ``R is SR`` (to
-    test whether ``R`` is the unique symbolic ring ``SR``); or
-    ``isinstance`` with :class:`~sage.rings.abc.SymbolicRing`
-    (when also symbolic subrings and callable symbolic rings should
-    be accepted).
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.ring import is_SymbolicExpressionRing
-        sage: is_SymbolicExpressionRing(ZZ)
-        doctest:warning...
-        DeprecationWarning: is_SymbolicExpressionRing is deprecated;
-        use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead
-        See https://github.com/sagemath/sage/issues/32665 for details.
-        False
-        sage: is_SymbolicExpressionRing(SR)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32665, 'is_SymbolicExpressionRing is deprecated; use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead')
-    return R is SR
 
 
 def var(name, **kwds):

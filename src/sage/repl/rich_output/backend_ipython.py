@@ -17,6 +17,7 @@ This module defines the IPython backends for
 
 import os
 import sys
+import html
 from IPython.display import publish_display_data
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
@@ -362,7 +363,7 @@ class BackendIPythonCommandline(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: from sage.repl.rich_output.output_graphics3d import OutputSceneJmol
-            sage: backend.launch_jmol(OutputSceneJmol.example(), 'Graphics3d object')
+            sage: backend.launch_jmol(OutputSceneJmol.example(), 'Graphics3d object')   # needs sage.plot
             'Launched jmol viewer for Graphics3d object'
         """
         from sage.doctest import DOCTEST_MODE
@@ -410,7 +411,7 @@ class BackendIPythonCommandline(BackendIPython):
 
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
-            sage: backend.threejs_offline_scripts()
+            sage: backend.threejs_offline_scripts()                                     # needs sage.plot
             '...<script ...</script>...'
         """
         from sage.env import THREEJS_DIR
@@ -574,7 +575,7 @@ class BackendIPythonNotebook(BackendIPython):
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
-            escaped_html = rich_output.html.get_str().replace('"', '&quot;')
+            escaped_html = html.escape(rich_output.html.get_str())
             iframe = IFRAME_TEMPLATE.format(
                 escaped_html=escaped_html,
                 width='100%',
@@ -598,7 +599,7 @@ class BackendIPythonNotebook(BackendIPython):
 
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
-            sage: backend.threejs_offline_scripts()
+            sage: backend.threejs_offline_scripts()                                     # needs sage.plot
             '...<script src="/nbextensions/threejs-sage/r.../three.min.js...<\\/script>...'
         """
         from sage.repl.rich_output import get_display_manager

@@ -62,14 +62,14 @@ from sage.plot.colors import Color, float_to_integer
 from sage.plot.plot3d.base import Graphics3dGroup
 from sage.plot.plot3d.texture import Texture
 
-from .transform cimport Transformation
+from sage.plot.plot3d.transform cimport Transformation
 
 
 # --------------------------------------------------------------------
 # Fast routines for generating string representations of the polygons.
 # --------------------------------------------------------------------
 
-cdef inline format_tachyon_texture(color_c rgb):
+cdef inline format_tachyon_texture(color_c rgb) noexcept:
     cdef char rs[200]
     cdef Py_ssize_t cr = sprintf_3d(rs,
                                    "TEXTURE\n AMBIENT 0.3 DIFFUSE 0.7 SPECULAR 0 OPACITY 1.0\n COLOR %g %g %g \n TEXFUNC 0",
@@ -77,7 +77,7 @@ cdef inline format_tachyon_texture(color_c rgb):
     return bytes_to_str(PyBytes_FromStringAndSize(rs, cr))
 
 
-cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R):
+cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R) noexcept:
     cdef char ss[250]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_9d(ss,
@@ -88,22 +88,22 @@ cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R):
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 
-cdef inline format_json_vertex(point_c P):
+cdef inline format_json_vertex(point_c P) noexcept:
     cdef char ss[100]
     cdef Py_ssize_t r = sprintf_3d(ss, '{"x":%g,"y":%g,"z":%g}', P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_json_face(face_c face):
+cdef inline format_json_face(face_c face) noexcept:
     s = "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
     return s
 
-cdef inline format_obj_vertex(point_c P):
+cdef inline format_obj_vertex(point_c P) noexcept:
     cdef char ss[100]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_3d(ss, "v %g %g %g", P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_obj_face(face_c face, int off):
+cdef inline format_obj_face(face_c face, int off) noexcept:
     cdef char ss[100]
     cdef Py_ssize_t r, i
     if face.n == 3:
@@ -115,7 +115,7 @@ cdef inline format_obj_face(face_c face, int off):
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_obj_face_back(face_c face, int off):
+cdef inline format_obj_face_back(face_c face, int off) noexcept:
     cdef char ss[100]
     cdef Py_ssize_t r, i
     if face.n == 3:
@@ -126,13 +126,13 @@ cdef inline format_obj_face_back(face_c face, int off):
         return "f " + " ".join(str(face.vertices[i] + off) for i from face.n > i >= 0)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_pmesh_vertex(point_c P):
+cdef inline format_pmesh_vertex(point_c P) noexcept:
     cdef char ss[100]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_3d(ss, "%g %g %g", P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_pmesh_face(face_c face, int has_color):
+cdef inline format_pmesh_face(face_c face, int has_color) noexcept:
     cdef char ss[100]
     cdef Py_ssize_t r, i
     cdef int color
@@ -248,7 +248,8 @@ def cut_edge_by_bisection(pointa, pointb, condition, eps=1.0e-6, N=100):
     EXAMPLES::
 
         sage: from sage.plot.plot3d.index_face_set import cut_edge_by_bisection
-        sage: cut_edge_by_bisection((0.0,0.0,0.0),(1.0,1.0,0.0),( (lambda x,y,z: x**2+y**2+z**2<1) ),eps=1.0E-12)
+        sage: cut_edge_by_bisection((0.0,0.0,0.0), (1.0,1.0,0.0),
+        ....:                       lambda x,y,z: x**2+y**2+z**2 < 1, eps=1.0E-12)
         (0.7071067811864395, 0.7071067811864395, 0.0)
     """
     cdef point_c a, b
@@ -302,9 +303,10 @@ cdef class IndexFaceSet(PrimitiveObject):
     EXAMPLES::
 
         sage: from sage.plot.plot3d.index_face_set import IndexFaceSet
-        sage: S = IndexFaceSet([[(1,0,0),(0,1,0),(0,0,1)],[(1,0,0),(0,1,0),(0,0,0)]])
+        sage: S = IndexFaceSet([[(1,0,0),(0,1,0),(0,0,1)], [(1,0,0),(0,1,0),(0,0,0)]])
         sage: S.face_list()
-        [[(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)], [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 0.0)]]
+        [[(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 0.0)]]
         sage: S.vertex_list()
         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0), (0.0, 0.0, 0.0)]
 
@@ -317,13 +319,13 @@ cdef class IndexFaceSet(PrimitiveObject):
         sage: S = IndexFaceSet(face_list, point_list, color='red')
         sage: S.face_list()
         [[(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 0.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 2.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 3.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 4.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 5.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 6.0)],
-        [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 7.0)]]
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 2.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 3.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 4.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 5.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 6.0)],
+         [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 7.0)]]
         sage: S.show()
 
     A simple example of colored IndexFaceSet (:trac:`12212`)::
@@ -396,15 +398,18 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: var('x,y,z')
             (x, y, z)
-            sage: G = implicit_plot3d(x^2+y^2+z^2 - 1, (x, -2, 2), (y, -2, 2), (z, -2, 2), plot_points=6)
+            sage: G = implicit_plot3d(x^2+y^2+z^2 - 1,
+            ....:                     (x, -2, 2), (y, -2, 2), (z, -2, 2), plot_points=6)
             sage: G.triangulate()  # indirect doctest
             sage: len(G.face_list())
             44
             sage: len(G.vertex_list())
             132
-            sage: G = implicit_plot3d(x^2+y^2+z^2 - 100, (x, -2, 2), (y, -2, 2), (z, -2, 2), plot_points=6)
+            sage: G = implicit_plot3d(x^2+y^2+z^2 - 100,
+            ....:                     (x, -2, 2), (y, -2, 2), (z, -2, 2), plot_points=6)
             sage: G.triangulate()  # indirect doctest
             sage: len(G.face_list())
             0
@@ -698,13 +703,13 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: point_list = [(2,0,0),(0,2,0),(0,0,2),(0,1,1),(1,0,1),(1,1,0)]
             sage: face_list = [[0,4,5],[3,4,5],[2,3,4],[1,3,5]]
             sage: col = rainbow(10, 'rgbtuple')
-            sage: t_list=[Texture(col[i]) for i in range(10)]
+            sage: t_list = [Texture(col[i]) for i in range(10)]
             sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
             sage: S.index_faces_with_colors()
             [([0, 4, 5], '#ff0000'),
-            ([3, 4, 5], '#ff9900'),
-            ([2, 3, 4], '#cbff00'),
-            ([1, 3, 5], '#33ff00')]
+             ([3, 4, 5], '#ff9900'),
+             ([2, 3, 4], '#cbff00'),
+             ([1, 3, 5], '#33ff00')]
 
         When the texture is global, an error is raised::
 
@@ -847,7 +852,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: point_list = [(2,0,0),(0,2,0),(0,0,2),(0,1,1),(1,0,1),(1,1,0)]
             sage: face_list = [[0,4,5],[3,4,5],[2,3,4],[1,3,5]]
             sage: col = rainbow(10, 'rgbtuple')
-            sage: t_list=[Texture(col[i]) for i in range(10)]
+            sage: t_list = [Texture(col[i]) for i in range(10)]
             sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
             sage: print(S.x3d_geometry())
             <BLANKLINE>
@@ -896,9 +901,9 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         EXAMPLES::
 
-            sage: x,y = var('x,y')
-            sage: p = plot3d(sqrt(sin(x)*sin(y)), (x,0,2*pi),(y,0,2*pi))
-            sage: p.bounding_box()
+            sage: x,y = var('x,y')                                                      # needs sage.symbolic
+            sage: p = plot3d(sqrt(sin(x)*sin(y)), (x,0,2*pi), (y,0,2*pi))               # needs sage.symbolic
+            sage: p.bounding_box()                                                      # needs sage.symbolic
             ((0.0, 0.0, 0.0), (6.283185307179586, 6.283185307179586, 0.9991889981715697))
         """
         if self.vcount == 0:
@@ -931,7 +936,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             sage: from sage.plot.plot3d.shapes import *
             sage: S = Box(1,2,3)
-            sage: len(S.partition(lambda x,y,z : floor(x+y+z)))
+            sage: len(S.partition(lambda x,y,z: floor(x+y+z)))
             6
         """
         cdef Py_ssize_t i, j, ix, face_ix
@@ -1006,12 +1011,12 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         EXAMPLES::
 
-            sage: var('x,y,z')
+            sage: var('x,y,z')                                                          # needs sage.symbolic
             (x, y, z)
-            sage: P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))
+            sage: P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))                       # needs sage.symbolic
             sage: def condi(x,y,z):
             ....:     return bool(x*x+y*y+z*z <= Integer(1))
-            sage: R = P.add_condition(condi,20);R
+            sage: R = P.add_condition(condi, 20); R                                     # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -1028,8 +1033,9 @@ cdef class IndexFaceSet(PrimitiveObject):
             ....:     return bool(x*x+y*y <= 1.1)
             sage: cm = colormaps.hsv
             sage: cf = lambda x,y,z: float(x+y) % 1
-            sage: P = implicit_plot3d(x**2+y**2+z**2-1-x**2*z+y**2*z,(-2,2),(-2,2),(-2,2),color=(cm,cf))
-            sage: R = P.add_condition(condi,40); R
+            sage: P = implicit_plot3d(x**2+y**2+z**2-1-x**2*z+y**2*z,                   # needs sage.symbolic
+            ....:                     (-2,2),(-2,2),(-2,2),color=(cm,cf))
+            sage: R = P.add_condition(condi,40); R                                      # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -1044,10 +1050,11 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         An example with transparency::
 
-            sage: P = implicit_plot3d(x**4+y**4+z**2-4,(x,-2,2),(y,-2,2),(z,-2,2),alpha=0.3)
+            sage: P = implicit_plot3d(x**4+y**4+z**2-4, (x,-2,2), (y,-2,2), (z,-2,2),   # needs sage.symbolic
+            ....:                     alpha=0.3)
             sage: def cut(a,b,c):
             ....:     return a*a+c*c > 2
-            sage: Q = P.add_condition(cut,40); Q
+            sage: Q = P.add_condition(cut,40); Q                                        # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -1060,11 +1067,11 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         A sombrero with quadrilaterals::
 
-            sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y),(x,-2,2),(y,-2,2),
-            ....:     color='gold')
+            sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y), (x,-2,2), (y,-2,2),       # needs sage.symbolic
+            ....:            color='gold')
             sage: def cut(x,y,z):
             ....:     return x*x+y*y < 1
-            sage: Q = P.add_condition(cut);Q
+            sage: Q = P.add_condition(cut);Q                                            # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -1079,6 +1086,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         One test for preservation of transparency :trac:`28783`::
 
+            sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: P = plot3d(cos(x*y),(x,-2,2),(y,-2,2),color='red',opacity=0.1)
             sage: def condi(x,y,z):
@@ -1093,7 +1101,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: p = polygon3d([[2,0,0], [0,2,0], [0,0,3]])
             sage: def f(x,y,z):
             ....:     return bool(x*x+y*y+z*z<=5)
-            sage: cut = p.add_condition(f,60,1.0e-12); cut.face_list()
+            sage: cut = p.add_condition(f,60,1.0e-12); cut.face_list()                  # needs sage.symbolic
             [[(0.556128491210302, 0.0, 2.165807263184547),
             (2.0, 0.0, 0.0),
             (0.0, 2.0, 0.0),
@@ -1214,7 +1222,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: point_list = [(2,0,0),(0,2,0),(0,0,2),(0,1,1),(1,0,1),(1,1,0)]
             sage: face_list = [[0,4,5],[3,4,5],[2,3,4],[1,3,5]]
             sage: col = rainbow(10, 'rgbtuple')
-            sage: t_list=[Texture(col[i]) for i in range(10)]
+            sage: t_list = [Texture(col[i]) for i in range(10)]
             sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
             sage: S.tachyon_repr(S.default_render_params())
             ['TRI V0 2 0 0 V1 1 0 1 V2 1 1 0',
@@ -1542,7 +1550,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                str(self.fcount + extra_faces),
                faces]
 
-        from .base import flatten_list
+        from sage.plot.plot3d.base import flatten_list
         name = render_params.unique_name('obj')
         all = flatten_list(all)
         if render_params.output_archive:
@@ -1714,14 +1722,13 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: S = B.stickers(['red','yellow','blue'], 0.1, 0.05)
             sage: S.show()
             sage: (S+B).show()
-
         """
         all = []
         n = self.fcount
         ct = len(colors)
         for k in range(len(colors)):
             if colors[k]:
-                all.append(self.sticker(list(xrange(k, n, ct)), width, hover,
+                all.append(self.sticker(list(range(k, n, ct)), width, hover,
                                         texture=colors[k]))
         return Graphics3dGroup(all)
 

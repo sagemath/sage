@@ -131,6 +131,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
         if a in ZZ and (a % p == 0):
             return w
 
+
 def find_p_neighbor_from_vec(self, p, y):
     r"""
     Return the `p`-neighbor of ``self`` defined by ``y``.
@@ -151,7 +152,7 @@ def find_p_neighbor_from_vec(self, p, y):
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: v = vector([0,2,1,1])
-        sage: X = Q.find_p_neighbor_from_vec(3, v); X                               # optional - sage.libs.pari
+        sage: X = Q.find_p_neighbor_from_vec(3, v); X                                   # needs sage.libs.pari
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 1 0 0 0 ]
         [ * 1 4 4 ]
@@ -164,7 +165,7 @@ def find_p_neighbor_from_vec(self, p, y):
 
         sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = vector([1,1,1,1])
-        sage: Q.find_p_neighbor_from_vec(2, v)                                      # optional - sage.libs.pari
+        sage: Q.find_p_neighbor_from_vec(2, v)                                          # needs sage.libs.pari
         Quadratic form in 4 variables over Rational Field with coefficients:
         [ 1/2 1 1 1 ]
         [ * 1 1 2 ]
@@ -173,7 +174,7 @@ def find_p_neighbor_from_vec(self, p, y):
     """
     p = ZZ(p)
     if not p.divides(self(y)):
-        raise ValueError("y=%s must be of square divisible by p=%s"%(y,p))
+        raise ValueError("y=%s must be of square divisible by p=%s" % (y, p))
     if self.base_ring() not in [ZZ, QQ]:
         raise NotImplementedError("the base ring of this form must be the integers or the rationals")
 
@@ -197,14 +198,14 @@ def find_p_neighbor_from_vec(self, p, y):
                 z = (ZZ**n).gen(k)
                 break
         else:
-            raise ValueError("either y is not primitive or self is not maximal at %s"%p)
+            raise ValueError("either y is not primitive or self is not maximal at %s" % p)
         z *= (2*y*G*z).inverse_mod(p)
         y = y - b*z
         # assert y*G*y % p^2 == 0
     if p == 2:
         val = b.valuation(p)
         if val <= 1:
-            raise ValueError("y=%s must be of square divisible by 2"%y)
+            raise ValueError("y=%s must be of square divisible by 2" % y)
         if val == 2 and not odd:
             # modify it to have square 4
             for k in range(n):
@@ -262,28 +263,30 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
         sage: Q.det()
         46
-        sage: mass = Q.conway_mass()                                                # optional - sage.symbolic
-        sage: g1 = neighbor_iteration([Q], 3,                          # long time  # optional - sage.symbolic
+
+        sage: # needs sage.symbolic
+        sage: mass = Q.conway_mass()
+        sage: g1 = neighbor_iteration([Q], 3,   # long time
         ....:                         mass=mass, algorithm='random')
-        sage: g2 = neighbor_iteration([Q], 3, algorithm='exhaustion')  # long time
-        sage: g3 = neighbor_iteration([Q], 3, algorithm='orbits')                   # optional - sage.libs.gap
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g1)   # long time  # optional - sage.symbolic
+        sage: g2 = neighbor_iteration([Q], 3, algorithm='exhaustion')   # long time
+        sage: g3 = neighbor_iteration([Q], 3, algorithm='orbits')                       # needs sage.libs.gap
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g1)    # long time
         True
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g2)   # long time  # optional - sage.symbolic
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g2)    # long time
         True
-        sage: mass == sum(1/q.number_of_automorphisms() for q in g3)                # optional - sage.libs.gap sage.symbolic
+        sage: mass == sum(1/q.number_of_automorphisms() for q in g3)                    # needs sage.libs.gap
         True
 
     TESTS::
 
         sage: from sage.quadratic_forms.quadratic_form__neighbors import neighbor_iteration
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
-        sage: g = neighbor_iteration([Q], 3, mass=Q.conway_mass(), max_classes=2)   # optional - sage.symbolic
+        sage: g = neighbor_iteration([Q], 3, mass=Q.conway_mass(), max_classes=2)       # needs sage.symbolic
         ...
         UserWarning: reached the maximum number of isometry classes=2.
         Increase the optional argument max_classes to obtain more.
         Warning: not all classes in the genus were found
-        sage: neighbor_iteration([Q], 3,                                            # optional - sage.symbolic
+        sage: neighbor_iteration([Q], 3,                                                # needs sage.symbolic
         ....:                    mass=Q.conway_mass(), max_neighbors=0, algorithm='random')
         Warning: not all classes in the genus were found
         []
@@ -346,13 +349,14 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
                     break
 
     if len(isom_classes) >= max_classes:
-        warn("reached the maximum number of isometry classes=%s. Increase the optional argument max_classes to obtain more." %max_classes)
+        warn("reached the maximum number of isometry classes=%s. Increase the optional argument max_classes to obtain more." % max_classes)
 
     if mass is not None:
         assert mass_count <= mass
         if mass_count < mass:
             print("Warning: not all classes in the genus were found")
     return isom_classes
+
 
 def orbits_lines_mod_p(self, p):
     r"""
@@ -369,14 +373,14 @@ def orbits_lines_mod_p(self, p):
 
         sage: from sage.quadratic_forms.quadratic_form__neighbors import orbits_lines_mod_p
         sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
-        sage: Q.orbits_lines_mod_p(2)                                               # optional - sage.libs.gap sage.libs.pari
+        sage: Q.orbits_lines_mod_p(2)                                                   # needs sage.libs.gap sage.libs.pari
         [(0, 0, 1),
-        (0, 1, 0),
-        (0, 1, 1),
-        (1, 0, 0),
-        (1, 0, 1),
-        (1, 1, 0),
-        (1, 1, 1)]
+         (0, 1, 0),
+         (0, 1, 1),
+         (1, 0, 0),
+         (1, 0, 1),
+         (1, 1, 0),
+         (1, 1, 1)]
     """
     from sage.libs.gap.libgap import libgap
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -385,8 +389,7 @@ def orbits_lines_mod_p(self, p):
     # but in gap we act from the right!! --> transpose
     gens = self.automorphism_group().gens()
     gens = [g.matrix().transpose().change_ring(GF(p)) for g in gens]
-    orbs = libgap.function_factory(
-    """function(gens, p)
+    orbs = libgap.function_factory("""function(gens, p)
         local one, G, reps, V, n, orb;
         one:= One(GF(p));
         G:=Group(List(gens, g -> g*one));

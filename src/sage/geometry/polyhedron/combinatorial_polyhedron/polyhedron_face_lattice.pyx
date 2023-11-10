@@ -64,11 +64,11 @@ from .conversions \
         import facets_tuple_to_bit_rep_of_facets, \
                facets_tuple_to_bit_rep_of_Vrep
 
-from .conversions cimport bit_rep_to_Vrep_list
+from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport bit_rep_to_Vrep_list
 
-from .base                     cimport CombinatorialPolyhedron
-from .face_iterator            cimport FaceIterator
-from .face_list_data_structure cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.base                     cimport CombinatorialPolyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator            cimport FaceIterator
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 
 
 cdef extern from "Python.h":
@@ -100,7 +100,7 @@ cdef class PolyhedronFaceLattice:
         sage: P = polytopes.Birkhoff_polytope(3)
         sage: C = CombinatorialPolyhedron(P)
         sage: C._record_all_faces()  # indirect doctests
-        sage: C.face_lattice()                                                          # optional - sage.combinat
+        sage: C.face_lattice()                                                          # needs sage.combinat
         Finite lattice containing 50 elements
 
     ALGORITHM:
@@ -215,7 +215,7 @@ cdef class PolyhedronFaceLattice:
             sage: P = polytopes.cube()
             sage: C = CombinatorialPolyhedron(P)
             sage: C._record_all_faces() # indirect doctests
-            sage: C.face_lattice()                                                      # optional - sage.combinat
+            sage: C.face_lattice()                                                      # needs sage.combinat
             Finite lattice containing 28 elements
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice.PolyhedronFaceLattice).run()
@@ -315,7 +315,7 @@ cdef class PolyhedronFaceLattice:
 
         return find_face(face, self.faces[dimension+1])
 
-    cpdef CombinatorialFace get_face(self, int dimension, size_t index):
+    cpdef CombinatorialFace get_face(self, int dimension, size_t index) noexcept:
         r"""
         Return the face of dimension ``dimension`` and index ``index``.
 
@@ -401,7 +401,7 @@ cdef class PolyhedronFaceLattice:
         cdef face_t face = self.faces[dimension+1].faces[index]
         return bit_rep_to_Vrep_list(face, self.atom_rep)
 
-    cdef void incidence_init(self, int dimension_one, int dimension_two):
+    cdef void incidence_init(self, int dimension_one, int dimension_two) noexcept:
         r"""
         Initialize the :class:`PolyhedronFaceLattice` to give incidences between
         ``dimension_one`` and ``dimension_two``.
@@ -454,7 +454,7 @@ cdef class PolyhedronFaceLattice:
         self.incidence_counter_two = 0
         self.is_incidence_initialized = 1
 
-    cdef inline bint next_incidence(self, size_t *one, size_t *two):
+    cdef inline bint next_incidence(self, size_t *one, size_t *two) noexcept:
         r"""
         Set ``one[0]`` and ``two[0]`` to be the next incidence. Return ``True``
         unless there are no more incidences, then return `0`.
@@ -484,7 +484,7 @@ cdef class PolyhedronFaceLattice:
 
         return result
 
-    cdef inline bint next_incidence_loop(self, size_t *one, size_t *two):
+    cdef inline bint next_incidence_loop(self, size_t *one, size_t *two) noexcept:
         r"""
         Set ``one[0]`` and ``two[0]`` to be the next incidence. Return ``True``
         on success and ``False`` otherwise.
@@ -534,7 +534,7 @@ cdef class PolyhedronFaceLattice:
         if self.is_incidence_initialized == 0:
             return 0
 
-    cdef inline bint next_trivial_incidence(self, size_t *one, size_t *two):
+    cdef inline bint next_trivial_incidence(self, size_t *one, size_t *two) noexcept:
         r"""
         Handling the case where ``dimension_one`` is dimension of polyhedron.
 
@@ -551,7 +551,7 @@ cdef class PolyhedronFaceLattice:
 
         return (two[0] < self.f_vector[self.incidence_dim_two + 1])
 
-    cdef inline bint next_trivial_incidence2(self, size_t *one, size_t *two):
+    cdef inline bint next_trivial_incidence2(self, size_t *one, size_t *two) noexcept:
         r"""
         Handling the case where ``dimension_two`` is `-1`.
 

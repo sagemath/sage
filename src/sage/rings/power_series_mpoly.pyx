@@ -65,7 +65,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
 
     def __reduce__(self):
         # do *not* delete old versions.
-        return make_powerseries_mpoly_v0, (self._parent, self.__f, self._prec, self.__is_gen)
+        return make_powerseries_mpoly_v0, (self._parent, self.__f, self._prec, self._is_gen)
 
     def __call__(self, *args, **kwds):
         if len(kwds) == 0 and len(args) == 1:
@@ -92,15 +92,15 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return self.__list
 
     def polynomial(self):
-        if self.__poly is None:
+        if self._poly is None:
             S = self.parent()._mpoly_ring()
-            self.__poly = self.__f.polynomial(S.gens()[-1])
-        return self.__poly
+            self._poly = self.__f.polynomial(S.gens()[-1])
+        return self._poly
 
     def _mpoly(self):
         return self.__f
 
-    cpdef _mul_(self, right_r):
+    cpdef _mul_(self, right_r) noexcept:
         """
         Return the product of two power series.
         """
@@ -124,7 +124,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, -self.__f,
                                          self._prec, check=False)
 
-    cpdef _add_(self, right_m):
+    cpdef _add_(self, right_m) noexcept:
         """
         EXAMPLES:
         """
@@ -132,7 +132,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, self.__f + right.__f,
                                  self.common_prec_c(right), check=True)
 
-    cpdef _sub_(self, right_m):
+    cpdef _sub_(self, right_m) noexcept:
         """
         Return difference of two power series.
 
@@ -142,11 +142,11 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, self.__f - right.__f,
                                  self.common_prec_c(right), check=True)
 
-    cpdef _rmul_(self, Element c):
+    cpdef _rmul_(self, Element c) noexcept:
         return PowerSeries_mpoly(self._parent, self.__f._rmul_(c),
                                  self._prec, check=False)
 
-    cpdef _lmul_(self, Element c):
+    cpdef _lmul_(self, Element c) noexcept:
         return PowerSeries_mpoly(self._parent, self.__f._lmul_(c),
                                  self._prec, check=False)
 

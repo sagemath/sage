@@ -94,7 +94,7 @@ def RIFtol(*args):
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
 
 special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
-tag_with_explanation_regex = fr'((?:\w|[.])+)\s*(?:\((.*?)\))?'
+tag_with_explanation_regex = r'((?:\w|[.])+)\s*(?:\((.*?)\))?'
 optional_regex = re.compile(fr'(?P<cmd>{special_optional_regex})\s*(?:\((?P<cmd_explanation>.*?)\))?|'
                             fr'[^ a-z]\s*(optional|needs)(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)',
                             re.IGNORECASE)
@@ -204,6 +204,9 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
             return {}
 
     first_line_sans_comments, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
+    if not first_line_sans_comments.endswith("  ") and not first_line_sans_comments.rstrip().endswith("sage:"):
+        # Enforce two spaces before comment
+        first_line_sans_comments = first_line_sans_comments.rstrip() + "  "
 
     if return_string_sans_tags:
         # skip non-tag comments that precede the first tag comment
@@ -230,7 +233,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
     if return_string_sans_tags:
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
-        return tags, (first_line + '\n' + rest%literals if rest is not None
+        return tags, (first_line + '\n' + rest % literals if rest is not None
                       else first_line), is_persistent
     else:
         return tags
@@ -467,7 +470,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         |                                                V       V       V       V       V   V   v           v                   v                                       v
         |    sage: # optional - magma, needs sage.symbolic
     """
-    if not (m := re.match('( *sage: *)(.*)', line)):
+    if not re.match('( *sage: *)(.*)', line):
         raise ValueError(f'line must start with a sage: prompt, got: {line}')
 
     current_tags, line_sans_tags, is_persistent = parse_optional_tags(line.rstrip(), return_string_sans_tags=True)
@@ -1071,6 +1074,28 @@ class SageDocTestParser(doctest.DocTestParser):
             '',
             (None, '5 # optional guava\n', 'Integer(5) # optional guava\n'),
             '']
+
+        TESTS::
+
+            sage: parse("::\n\n    sage: # needs sage.combinat\n    sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \\\n    ....:         import incidence_matrix_to_bit_rep_of_Vrep\n    sage: P = polytopes.associahedron(['A',3])\n\n")
+            ['::\n\n',
+            '',
+            (None,
+            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n',
+            'from sage.geometry.polyhedron.combinatorial_polyhedron.conversions import incidence_matrix_to_bit_rep_of_Vrep\n'),
+            '',
+            (None,
+            "P = polytopes.associahedron(['A',3])\n",
+            "P = polytopes.associahedron(['A',Integer(3)])\n"),
+            '\n']
+
+            sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm="guava")  # optional - guava\n        ...\n        24\n\n'
+            sage: parsed4 = DTP.parse(example4)
+            sage: dte = parsed4[1]
+            sage: dte.sage_source
+            'C.minimum_distance(algorithm="guava")  # optional - guava\n'
+            sage: dte.want
+            '...\n24\n'
         """
         # Regular expressions
         find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
@@ -1078,7 +1103,7 @@ class SageDocTestParser(doctest.DocTestParser):
         find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
         python_prompt = re.compile(r"^(\s*)>>>", re.M)
         backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
-\ *(((\.){4}:)|((\.){3}))?\ *""")
+\ *((\.){4}:)?\ *""")
 
         # The following are used to allow ... at the beginning of output
         ellipsis_tag = "<TEMP_ELLIPSIS_TAG>"
@@ -1087,13 +1112,8 @@ class SageDocTestParser(doctest.DocTestParser):
         # doctest system.
         m = backslash_replacer.search(string)
         while m is not None:
-            next_prompt = find_sage_prompt.search(string, m.end())
             g = m.groups()
-            if next_prompt:
-                future = string[m.end():next_prompt.start()] + '\n' + string[next_prompt.start():]
-            else:
-                future = string[m.end():]
-            string = string[:m.start()] + g[0] + "sage:" + g[1] + future
+            string = string[:m.start()] + g[0] + "sage:" + g[1] + string[m.end():]
             m = backslash_replacer.search(string, m.start())
 
         replace_ellipsis = not python_prompt.search(string)
@@ -1120,8 +1140,8 @@ class SageDocTestParser(doctest.DocTestParser):
 
         def check_and_clear_tag_counts():
             if (num_examples := tag_count_within_block['']) >= 4:
-                if overused_tags := set(tag for tag, count in tag_count_within_block.items()
-                                        if tag and count >= num_examples):
+                if overused_tags := {tag for tag, count in tag_count_within_block.items()
+                                     if tag and count >= num_examples}:
                     overused_tags.update(persistent_optional_tags)
                     overused_tags.difference_update(self.file_optional_tags)
                     suggested = unparse_optional_tags(overused_tags, prefix='sage: # ')
@@ -1190,13 +1210,19 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = set(tag
-                                    for tag in optional_tags
-                                    if (tag not in self.optional_tags
-                                        and tag not in available_software))
+                        extra = {tag
+                                 for tag in optional_tags
+                                 if (tag not in self.optional_tags
+                                     and tag not in available_software)}
                         if extra:
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
+                                continue
+                            if any(tag in ['webbrowser'] for tag in extra):
+                                # never probe
+                                continue
+                            if any(tag in ['got', 'expected', 'nameerror'] for tag in extra):
+                                # never probe special tags added by sage-fixdoctests
                                 continue
                             if all(tag in persistent_optional_tags for tag in extra):
                                 # don't probe if test is only conditional
@@ -1614,6 +1640,17 @@ class SageOutputChecker(doctest.OutputChecker):
             got = ld_pie_warning_regex.sub('', got)
             did_fixup = True
 
+        if "Overriding pythran description" in got:
+            # Some signatures changed in numpy-1.25.x that may yet be
+            # reverted, but which pythran would otherwise warn about.
+            # Pythran has a special case for numpy.random that hides
+            # the warning -- I guess until we know if the changes will
+            # be reverted -- but only in v0.14.0 of pythran. Ignoring
+            # This warning allows us to support older pythran with e.g.
+            # numpy-1.25.2.
+            pythran_numpy_warning_regex = re.compile(r'WARNING: Overriding pythran description with argspec information for: numpy\.random\.[a-z_]+')
+            got = pythran_numpy_warning_regex.sub('', got)
+            did_fixup = True
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):

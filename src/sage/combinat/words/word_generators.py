@@ -1499,13 +1499,13 @@ class WordGenerator():
         from sage.combinat.words.morphism import WordMorphism
         W = FiniteWords([0,1,2,3])
         bar = WordMorphism({0:0,1:3,3:1,2:2},codomain=W)
-        if n==0:
+        if n == 0:
             a = [] if q_0 is None else [q_0]
             return W(a)
-        elif n==1:
+        elif n == 1:
             b = [] if q_1 is None else [q_1]
             return W(b)
-        elif n%3 == 2:
+        elif n % 3 == 2:
             u = self._fibonacci_tile(n-1,q_0,q_1)
             v = self._fibonacci_tile(n-2,q_0,q_1)
             return u * v
@@ -1649,10 +1649,9 @@ class WordGenerator():
         yield precedent_letter
         for (i,(m,a)) in enumerate(zip(sequence, letters)):
             if not precedent_letter == m(a)[0]:
-                raise ValueError("the hypothesis of the algorithm used is not satisfied; the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)"%(i+1,a,i+1,m,i,precedent_letter))
+                raise ValueError("the hypothesis of the algorithm used is not satisfied; the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)" % (i+1,a,i+1,m,i,precedent_letter))
             w = p(m(a)[1:])
-            for b in w:
-                yield b
+            yield from w
             p = p * m
             precedent_letter = a
 

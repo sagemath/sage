@@ -39,11 +39,12 @@ Obtain the facets of a polyhedron::
 
 Obtain the Vrepresentation of a polyhedron as facet-incidences::
 
+    sage: # needs sage.combinat
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
-    sage: P = polytopes.associahedron(['A',3])                                   # optional - sage.combinat
-    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())  # optional - sage.combinat
-    sage: face_list.compute_dimension()                                          # optional - sage.combinat
+    sage: P = polytopes.associahedron(['A',3])
+    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())
+    sage: face_list.compute_dimension()
     3
 
 Obtain the facets of a polyhedron as :class:`ListOfFaces` from a facet list::
@@ -91,7 +92,7 @@ AUTHOR:
 
 from sage.matrix.matrix_dense  cimport Matrix_dense
 
-from .face_list_data_structure cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -177,7 +178,7 @@ cdef class ListOfFaces:
         """
         assert face_list_check_alignment(self.data)
 
-    cpdef ListOfFaces __copy__(self):
+    cpdef ListOfFaces __copy__(self) noexcept:
         r"""
         Return a copy of self.
 
@@ -302,7 +303,7 @@ cdef class ListOfFaces:
         # by calculating dimension of one of its faces.
         return new_faces.compute_dimension() + 1
 
-    cpdef ListOfFaces pyramid(self):
+    cpdef ListOfFaces pyramid(self) noexcept:
         r"""
         Return the list of faces of the pyramid.
 
@@ -380,7 +381,7 @@ cdef class ListOfFaces:
 
         return copy
 
-    cdef ListOfFaces delete_atoms_unsafe(self, bint *delete, face_t face):
+    cdef ListOfFaces delete_atoms_unsafe(self, bint *delete, face_t face) noexcept:
         r"""
         Return a copy of ``self`` where bits in ``delete`` have been
         removed/contracted.
@@ -420,7 +421,7 @@ cdef class ListOfFaces:
 
         return output
 
-    cdef void delete_faces_unsafe(self, bint *delete, face_t face):
+    cdef void delete_faces_unsafe(self, bint *delete, face_t face) noexcept:
         r"""
         Deletes face ``i`` if and only if ``delete[i]``.
 
@@ -438,7 +439,7 @@ cdef class ListOfFaces:
         else:
             face_list_delete_faces_by_face(self.data, face)
 
-    cdef void get_not_inclusion_maximal_unsafe(self, bint *not_inclusion_maximal):
+    cdef void get_not_inclusion_maximal_unsafe(self, bint *not_inclusion_maximal) noexcept:
         r"""
         Get all faces that are not inclusion maximal.
 
@@ -457,7 +458,7 @@ cdef class ListOfFaces:
         for i in range(self.n_faces()):
             not_inclusion_maximal[i] = is_not_maximal_fused(self.data, i, <standard> 0, not_inclusion_maximal)
 
-    cdef void get_faces_all_set_unsafe(self, bint *all_set):
+    cdef void get_faces_all_set_unsafe(self, bint *all_set) noexcept:
         r"""
         Get the faces that have all ``bits`` set.
 
@@ -517,7 +518,7 @@ cdef class ListOfFaces:
         M.set_immutable()
         return M
 
-cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual):
+cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual) noexcept:
     r"""
     Obtain facets and Vrepresentation of ``face`` as new combinatorial polyhedron.
 

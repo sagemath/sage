@@ -68,7 +68,7 @@ class MPolynomialSystemGenerator(SageObject):
 
             sage: from sage.crypto.mq.mpolynomialsystemgenerator import MPolynomialSystemGenerator
             sage: msg = MPolynomialSystemGenerator()
-            sage: msg.varstrs('K', i)
+            sage: msg.varstrs('K', i)                                                   # needs sage.all
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -156,7 +156,7 @@ class MPolynomialSystemGenerator(SageObject):
             sage: msg.sbox()
             Traceback (most recent call last):
             ...
-            AttributeError: '<class 'sage.crypto.mq.mpolynomialsystemgenerator.MPolynomialSystemGenerator'>' object has no attribute '_sbox'
+            AttributeError: '<class 'sage.crypto.mq.mpolynomialsystemgenerator.MPolynomialSystemGenerator'>' object has no attribute '_sbox'...
         """
         return self._sbox
 

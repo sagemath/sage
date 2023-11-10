@@ -177,7 +177,7 @@ def get_basis_name(basis, p, generic=None):
         if basis.find('long') >= 0:
             result = result + '_long'
     else:
-        gencase = " for the generic Steenrod algebra" if p==2 and generic else ""
+        gencase = " for the generic Steenrod algebra" if p == 2 and generic else ""
         raise ValueError("%s is not a recognized basis%s at the prime %s" % (basis, gencase, p))
     return result
 

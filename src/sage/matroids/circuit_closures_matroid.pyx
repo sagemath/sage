@@ -67,9 +67,9 @@ Methods
 # ****************************************************************************
 
 from sage.structure.richcmp cimport rich_to_bool, richcmp
-from .matroid cimport Matroid
-from .set_system cimport SetSystem
-from .utilities import setprint_s
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.set_system cimport SetSystem
+from sage.matroids.utilities import setprint_s
 from cpython.object cimport Py_EQ, Py_NE
 
 
@@ -165,7 +165,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                 self._circuit_closures[k] = frozenset([frozenset(X) for X in circuit_closures[k]])
         self._matroid_rank = self.rank(self._groundset)
 
-    cpdef groundset(self):
+    cpdef groundset(self) noexcept:
         """
         Return the groundset of the matroid.
 
@@ -183,7 +183,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return frozenset(self._groundset)
 
-    cpdef _rank(self, X):
+    cpdef _rank(self, X) noexcept:
         """
         Return the rank of a set ``X``.
 
@@ -207,7 +207,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         return len(self._max_independent(X))
 
     # OPTIONAL, OPTIMIZED FOR THIS CLASS
-    cpdef full_rank(self):
+    cpdef full_rank(self) noexcept:
         r"""
         Return the rank of the matroid.
 
@@ -228,7 +228,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._matroid_rank
 
-    cpdef _is_independent(self, F):
+    cpdef _is_independent(self, F) noexcept:
         """
         Test if input is independent.
 
@@ -259,7 +259,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                     return False
         return True
 
-    cpdef _max_independent(self, F):
+    cpdef _max_independent(self, F) noexcept:
         """
         Compute a maximal independent subset.
 
@@ -296,7 +296,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
         return frozenset(I)
 
-    cpdef _circuit(self, F):
+    cpdef _circuit(self, F) noexcept:
         """
         Return a minimal dependent subset.
 
@@ -329,7 +329,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                     return frozenset(S)
         raise ValueError("no circuit in independent set")
 
-    cpdef circuit_closures(self):
+    cpdef circuit_closures(self) noexcept:
         """
         Return the list of closures of circuits of the matroid.
 
@@ -363,7 +363,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._circuit_closures
 
-    cpdef _is_isomorphic(self, other, certificate=False):
+    cpdef _is_isomorphic(self, other, certificate=False) noexcept:
         """
         Test if ``self`` is isomorphic to ``other``.
 
@@ -513,8 +513,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         N._groundset = self._groundset
         N._circuit_closures = self._circuit_closures
         N._matroid_rank = self._matroid_rank
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo=None):
@@ -539,8 +538,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = CircuitClosuresMatroid(groundset=deepcopy(self._groundset, memo), circuit_closures=deepcopy(self._circuit_closures, memo))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -570,7 +568,7 @@ cdef class CircuitClosuresMatroid(Matroid):
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
         import sage.matroids.unpickling
-        data = (self._groundset, self._circuit_closures, getattr(self, '__custom_name'))
+        data = (self._groundset, self._circuit_closures, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_circuit_closures_matroid, (version, data)
 

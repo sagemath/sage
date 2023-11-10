@@ -232,7 +232,7 @@ class sage__graphs(JoinFeature):
         sage: M = Matroid(Matrix(QQ, [[1, 0, 0, 0, 1, 1, 1],
         ....:                         [0, 1, 0, 1, 0, 1, 1],
         ....:                         [0, 0, 1, 1, 1, 0, 1]]))
-        sage: N = M / [2] \ [3, 4]
+        sage: N = (M / [2]).delete([3, 4])
         sage: sorted(N.groundset())
         [0, 1, 5, 6]
 
@@ -389,16 +389,85 @@ class sage__libs__gap(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.gap',
                              [PythonModule('sage.libs.gap.libgap'),
-                              PythonModule('sage.interfaces.gap')])
+                              PythonModule('sage.interfaces.gap'),
+                              PythonModule('sage.groups.matrix_gps.finitely_generated_gap'),
+                              PythonModule('sage.groups.matrix_gps.group_element_gap'),
+                              PythonModule('sage.groups.matrix_gps.heisenberg'),
+                              PythonModule('sage.groups.matrix_gps.isometries'),
+                              PythonModule('sage.groups.matrix_gps.linear_gap'),
+                              PythonModule('sage.groups.matrix_gps.matrix_group_gap'),
+                              PythonModule('sage.groups.matrix_gps.named_group_gap'),
+                              PythonModule('sage.groups.matrix_gps.orthogonal_gap'),
+                              PythonModule('sage.groups.matrix_gps.symplectic_gap'),
+                              PythonModule('sage.groups.matrix_gps.unitary_gap'),
+                              PythonModule('sage.matrix.matrix_gap'),
+                              PythonModule('sage.rings.universal_cyclotomic_field')])
+
+
+class sage__libs__linbox(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.linbox`
+    and other modules depending on Givaro, FFLAS-FFPACK, LinBox.
+
+    In addition to the modularization purposes that this tag serves, it also provides attribution
+    to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__linbox
+        sage: sage__libs__linbox().is_present()                                         # needs sage.libs.linbox
+        FeatureTestResult('sage.libs.linbox', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__linbox
+            sage: isinstance(sage__libs__linbox(), sage__libs__linbox)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.linbox',
+                             [PythonModule('sage.rings.finite_rings.element_givaro'),
+                              PythonModule('sage.matrix.matrix_modn_dense_float'),
+                              PythonModule('sage.matrix.matrix_modn_dense_double')],
+                             spkg='sagemath_linbox', type='standard')
+
+
+class sage__libs__m4ri(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of Cython modules
+    depending on the M4RI and/or M4RIe libraries.
+
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__m4ri
+        sage: sage__libs__m4ri().is_present()                                           # needs sage.libs.m4ri
+        FeatureTestResult('sage.libs.m4ri', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__m4ri
+            sage: isinstance(sage__libs__m4ri(), sage__libs__m4ri)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.m4ri',
+                             [PythonModule('sage.matrix.matrix_gf2e_dense'),
+                              PythonModule('sage.matrix.matrix_mod2_dense')],
+                             spkg='sagemath_m4ri', type='standard')
 
 
 class sage__libs__ntl(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.ntl`
-    and other modules depending on NTL and arb.
+    and other modules depending on NTL.
 
-    In addition to the modularization purposes that this tag serves, it also provides attribution
-    to the upstream project.
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
 
     TESTS::
 
@@ -423,11 +492,12 @@ class sage__libs__pari(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
 
-    SageMath uses the :ref:`PARI <spkg_pari>` library (via :ref:`cypari2 <spkg_cypari>`) for numerous purposes.
-    Doctests that involves such features should be marked ``# needs sage.libs.pari``.
+    SageMath uses the :ref:`PARI <spkg_pari>` library (via :ref:`cypari2
+    <spkg_cypari>`) for numerous purposes.  Doctests that involves such features
+    should be marked ``# needs sage.libs.pari``.
 
-    In addition to the modularization purposes that this tag serves, it also provides attribution
-    to the upstream project.
+    In addition to the modularization purposes that this tag serves, it also
+    provides attribution to the upstream project.
 
     EXAMPLES::
 
@@ -653,7 +723,8 @@ class sage__rings__finite_rings(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.finite_rings',
                              [PythonModule('sage.rings.finite_rings.element_pari_ffelt'),
-                              PythonModule('sage.rings.algebraic_closure_finite_field')],
+                              PythonModule('sage.rings.algebraic_closure_finite_field'),
+                              sage__libs__pari()],
                              type='standard')
 
 
@@ -729,8 +800,8 @@ class sage__rings__number_field(JoinFeature):
         sage: CC(zeta)
         0.913545457642601 + 0.406736643075800*I
 
-    Doctests that make use of the algebraic field ``QQbar``, the algebraic real field ``AA``,
-    or the universal cyclotomic field should be marked likewise::
+    Doctests that make use of the algebraic field ``QQbar`` or the algebraic real field ``AA``
+    should be marked likewise::
 
         sage: # needs sage.rings.number_field
         sage: AA(-1)^(1/3)
@@ -738,7 +809,10 @@ class sage__rings__number_field(JoinFeature):
         sage: QQbar(-1)^(1/3)
         0.500000000000000? + 0.866025403784439?*I
 
-        sage: # needs sage.rings.number_field
+    Use of the universal cyclotomic field should be marked
+    ``# needs sage.libs.gap sage.rings.number_field``.
+
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: UCF = UniversalCyclotomicField(); UCF
         Universal Cyclotomic Field
         sage: E = UCF.gen
@@ -1005,6 +1079,8 @@ def all_features():
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),
+            sage__libs__linbox(),
+            sage__libs__m4ri(),
             sage__libs__ntl(),
             sage__libs__pari(),
             sage__libs__singular(),

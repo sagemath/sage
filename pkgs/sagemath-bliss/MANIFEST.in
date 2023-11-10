@@ -1,11 +1,15 @@
-global-include all__sagemath_bliss.py
+prune sage
 
 include VERSION.txt
 
 graft sage/graphs/bliss_cpp
+include sage/graphs/bliss.p*
 
 global-exclude *.c
 global-exclude *.cpp
+
+global-exclude all__sagemath_*.*
+global-include all__sagemath_bliss.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

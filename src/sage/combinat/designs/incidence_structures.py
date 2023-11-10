@@ -357,18 +357,18 @@ class IncidenceStructure():
 
             sage: str="I had a dream of a time when a 3-lines patch does not kill one hour"
             sage: sets = Subsets(str.split(), 4)
-            sage: IS = IncidenceStructure(sets) # a complete 4-uniform hypergraph
+            sage: IS = IncidenceStructure(sets)  # a complete 4-uniform hypergraph
             sage: ["I", "dream", "of", "one"] in IS
             True
             sage: ["does", "patch", "kill", "dream"] in IS
             True
             sage: ["Am", "I", "finally", "done ?"] in IS
             False
-            sage: IS = designs.ProjectiveGeometryDesign(3, 1, GF(2),                    # needs sage.rings.finite_rings
+            sage: IS = designs.ProjectiveGeometryDesign(3, 1, GF(2),                    # needs sage.combinat
             ....:                                       point_coordinates=False)
-            sage: [3,8,7] in IS                                                         # needs sage.rings.finite_rings
+            sage: [3,8,7] in IS                                                         # needs sage.combinat
             True
-            sage: [3,8,9] in IS
+            sage: [3,8,9] in IS                                                         # needs sage.combinat
             False
         """
         try:
@@ -721,7 +721,7 @@ class IncidenceStructure():
 
         blocks = [int_points.intersection(S) for S in self._blocks]
         if min_size:
-            blocks = [S for S in blocks if len(S)>=min_size]
+            blocks = [S for S in blocks if len(S) >= min_size]
         if not multiset:
             blocks = set(blocks)
         IS = IncidenceStructure(blocks)
@@ -835,7 +835,7 @@ class IncidenceStructure():
             if self._point_to_index:
                 p = self._point_to_index.get(p,-1)
             else:
-                p = p if (p>=0 and p<len(self._points)) else -1
+                p = p if (p >= 0 and p < len(self._points)) else -1
             return sum((p in b) for b in self._blocks) if p != -1 else 0
 
         # degree of a set
@@ -843,7 +843,7 @@ class IncidenceStructure():
             if self._point_to_index:
                 p = set(self._point_to_index.get(x,-1) for x in p)
             else:
-                p = set(p) if all(x>=0 and x<len(self._points) for x in p) else set([-1])
+                p = set(p) if all(x >= 0 and x < len(self._points) for x in p) else set([-1])
 
             return sum(p.issubset(b) for b in self._blocks) if -1 not in p else 0
 
@@ -896,7 +896,7 @@ class IncidenceStructure():
             d = {t:0 for t in combinations(range(self.num_points()),size)}
             for b in self._blocks:
                 for s in combinations(b,size):
-                    d[s]+=1
+                    d[s] += 1
             if self._point_to_index:
                 return {tuple([self._points[x] for x in s]):v for s,v in d.items()}
             else:
@@ -1075,7 +1075,7 @@ class IncidenceStructure():
         EXAMPLES::
 
             sage: D = IncidenceStructure(4, [[0,2],[1,2,3],[2,3]])
-            sage: D._libgap_()                # optional - gap_packages
+            sage: D._libgap_()                # optional - gap_package_design
             rec( blocks := [ [ 1, 3 ], [ 2, 3, 4 ], [ 3, 4 ] ],
             isBlockDesign := true, v := 4 )
         """
@@ -1310,9 +1310,9 @@ class IncidenceStructure():
             from itertools import combinations
             for B in combinations(range(self.num_points()),k):
                 B = list(B)
-                while i<num_blocks and self._blocks[i] < B:
+                while i < num_blocks and self._blocks[i] < B:
                     i += 1
-                if i<num_blocks and self._blocks[i] == B:
+                if i < num_blocks and self._blocks[i] == B:
                     i += 1
                     continue
                 blocks.append(B)
@@ -1513,10 +1513,10 @@ class IncidenceStructure():
             sage: BD.is_t_design(0,6,3,7) or BD.is_t_design(0,7,4,7) or BD.is_t_design(0,7,3,8)
             False
 
-            sage: BD = designs.AffineGeometryDesign(3, 1, GF(2))                        # needs sage.rings.finite_rings
-            sage: BD.is_t_design(1)
+            sage: BD = designs.AffineGeometryDesign(3, 1, GF(2))                        # needs sage.combinat
+            sage: BD.is_t_design(1)                                                     # needs sage.combinat
             True
-            sage: BD.is_t_design(2)
+            sage: BD.is_t_design(2)                                                     # needs sage.combinat
             True
 
         Steiner triple and quadruple systems are other names for `2-(v,3,1)` and
@@ -1538,13 +1538,14 @@ class IncidenceStructure():
 
         Some examples of Witt designs that need the gap database::
 
-            sage: BD = designs.WittDesign(9)         # optional - gap_packages
-            sage: BD.is_t_design(2,9,3,1)            # optional - gap_packages
+            sage: # optional - gap_package_design
+            sage: BD = designs.WittDesign(9)
+            sage: BD.is_t_design(2,9,3,1)
             True
-            sage: W12 = designs.WittDesign(12)       # optional - gap_packages
-            sage: W12.is_t_design(5,12,6,1)          # optional - gap_packages
+            sage: W12 = designs.WittDesign(12)
+            sage: W12.is_t_design(5,12,6,1)
             True
-            sage: W12.is_t_design(4)                 # optional - gap_packages
+            sage: W12.is_t_design(4)
             True
 
         Further examples::
@@ -1618,14 +1619,14 @@ class IncidenceStructure():
             return (False, (0,0,0,0)) if return_parameters else False
 
         # Trivial case t>k
-        if (t is not None and t>k):
+        if (t is not None and t > k):
             if (l is None or l == 0):
                 return (True, (t,v,k,0)) if return_parameters else True
             else:
                 return (False, (0,0,0,0)) if return_parameters else False
 
         # Trivial case k=0
-        if k==0:
+        if k == 0:
             if (l is None or l == 0):
                 return (True, (0,v,k,b)) if return_parameters else True
             else:
@@ -1664,8 +1665,8 @@ class IncidenceStructure():
 
             ll = b*binomial(k,tt) // binomial(v,tt)
 
-        if ((t is not None and t!=tt) or
-            (l is not None and l!=ll)):
+        if ((t is not None and t != tt) or
+            (l is not None and l != ll)):
             return (False, (0,0,0,0)) if return_parameters else False
         else:
             if tt == 0:
@@ -1763,8 +1764,8 @@ class IncidenceStructure():
         if parameters:
             s = self.is_uniform()
             t = self.is_regular()
-            s = s-1 if (s is not False and s>=2) else False
-            t = t-1 if (t is not False and t>=2) else False
+            s = s-1 if (s is not False and s >= 2) else False
+            t = t-1 if (t is not False and t >= 2) else False
             return (s,t)
         else:
             return True
@@ -1797,12 +1798,12 @@ class IncidenceStructure():
             Incidence structure with 4 points and 3 blocks
             sage: D.dual()                                                              # needs sage.modules
             Incidence structure with 3 points and 4 blocks
-            sage: print(D.dual(algorithm="gap"))            # optional - gap_packages
+            sage: print(D.dual(algorithm="gap"))            # optional - gap_package_design
             Incidence structure with 3 points and 4 blocks
             sage: blocks = [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]]
             sage: BD = IncidenceStructure(7, blocks, name="FanoPlane"); BD
             Incidence structure with 7 points and 7 blocks
-            sage: print(BD.dual(algorithm="gap"))           # optional - gap_packages
+            sage: print(BD.dual(algorithm="gap"))           # optional - gap_package_design
             Incidence structure with 7 points and 7 blocks
             sage: BD.dual()                                                             # needs sage.modules
             Incidence structure with 7 points and 7 blocks
@@ -1867,11 +1868,11 @@ class IncidenceStructure():
                                              list(range(n,n+self.num_blocks()))])
 
         if self._point_to_index:
-            gens = [[tuple([self._points[i] for i in cycle if (not cycle or cycle[0]<n)])
+            gens = [[tuple([self._points[i] for i in cycle if (not cycle or cycle[0] < n)])
                      for cycle in g.cycle_tuples()]
                     for g in ag.gens()]
         else:
-            gens = [[tuple(cycle) for cycle in g.cycle_tuples() if (not cycle or cycle[0]<n)]
+            gens = [[tuple(cycle) for cycle in g.cycle_tuples() if (not cycle or cycle[0] < n)]
                     for g in ag.gens()]
 
         return PermutationGroup(gens, domain=self._points)
@@ -1924,8 +1925,8 @@ class IncidenceStructure():
             sage: TD.is_resolvable()
             True
 
-            sage: AG = designs.AffineGeometryDesign(3,1,GF(2))                          # needs sage.rings.finite_rings
-            sage: AG.is_resolvable()                                                    # needs sage.rings.finite_rings
+            sage: AG = designs.AffineGeometryDesign(3,1,GF(2))                          # needs sage.combinat
+            sage: AG.is_resolvable()                                                    # needs sage.combinat
             True
 
         Their classes::
@@ -1936,10 +1937,11 @@ class IncidenceStructure():
             sage: cls # random
             [[[0, 3], [1, 2]], [[1, 3], [0, 2]]]
 
-            sage: b, cls = AG.is_resolvable(True)                                       # needs sage.rings.finite_rings
+            sage: # needs sage.combinat
+            sage: b, cls = AG.is_resolvable(True)
             sage: b
             True
-            sage: cls # random
+            sage: cls  # random
             [[[6, 7], [4, 5], [0, 1], [2, 3]],
              [[5, 7], [0, 4], [3, 6], [1, 2]],
              [[0, 2], [4, 7], [1, 3], [5, 6]],
@@ -1958,9 +1960,10 @@ class IncidenceStructure():
 
         TESTS::
 
-            sage: _, cls1 = AG.is_resolvable(certificate=True)                          # needs sage.rings.finite_rings
-            sage: _, cls2 = AG.is_resolvable(certificate=True)                          # needs sage.rings.finite_rings
-            sage: cls1 is cls2                                                          # needs sage.rings.finite_rings
+            sage: # needs sage.combinat
+            sage: _, cls1 = AG.is_resolvable(certificate=True)
+            sage: _, cls2 = AG.is_resolvable(certificate=True)
+            sage: cls1 is cls2
             False
         """
         if self._classes is None:
@@ -2261,12 +2264,12 @@ class IncidenceStructure():
 
         # Prints each set with its color
         for s,i in colored_sets:
-            current_color = colors[i%len(colors)]
+            current_color = colors[i % len(colors)]
 
             if len(s) == 2:
                 s = list(s)
-                tex += ("\\draw[color="+str(current_color)+","+
-                        "line width=.1cm,opacity = .6] "+
+                tex += ("\\draw[color="+str(current_color)+"," +
+                        "line width=.1cm,opacity = .6] " +
                         str(pos[s[0]])+" -- "+str(pos[s[1]])+";\n")
                 continue
 

@@ -1,4 +1,4 @@
-global-include all__sagemath_tdlib.py
+prune sage
 
 include VERSION.txt
 
@@ -6,6 +6,10 @@ global-exclude *.c
 global-exclude *.cpp
 
 include sage/graphs/graph_decompositions/sage_tdlib.cpp
+include sage/graphs/graph_decompositions/tdlib.p*
+
+global-exclude all__sagemath_*.*
+global-include all__sagemath_tdlib.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

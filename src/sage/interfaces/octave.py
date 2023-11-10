@@ -294,18 +294,18 @@ class Octave(Expect):
             return ''
         if self._expect is None:
             self._start()
-        if allow_use_file and len(line)>3000:
+        if allow_use_file and len(line) > 3000:
             return self._eval_line_using_file(line)
         try:
             E = self._expect
             # debug
             # self._synchronize(cmd='1+%s\n')
-            verbose("in = '%s'"%line,level=3)
+            verbose("in = '%s'" % line,level=3)
             E.sendline(line)
             E.expect(self._prompt)
             out = bytes_to_str(E.before)
             # debug
-            verbose("out = '%s'"%out,level=3)
+            verbose("out = '%s'" % out,level=3)
         except EOF:
             if self._quit_string() in line:
                 return ''
@@ -321,7 +321,7 @@ class Octave(Expect):
             return ''
 
     def _keyboard_interrupt(self):
-        print("CntrlC: Interrupting %s..."%self)
+        print("CntrlC: Interrupting %s..." % self)
         if self._restart_on_ctrlc:
             try:
                 self._expect.close(force=1)
@@ -411,7 +411,7 @@ class Octave(Expect):
         cmd = '%s=%s;' % (var, value)
         out = self.eval(cmd)
         if out.find("error") != -1 or out.find("Error") != -1:
-            raise TypeError("Error executing code in Octave\nCODE:\n\t%s\nOctave ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Octave\nCODE:\n\t%s\nOctave ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         """
@@ -423,7 +423,7 @@ class Octave(Expect):
             sage: octave.get('x') # optional - octave
             ' 2'
         """
-        s = self.eval('%s'%var)
+        s = self.eval('%s' % var)
         i = s.find('=')
         return s[i+1:]
 
@@ -511,7 +511,7 @@ class Octave(Expect):
         from sage.matrix.matrix_space import MatrixSpace
         from sage.rings.rational_field import QQ
         MS = MatrixSpace(QQ,m,1)
-        b  = MS(list(b)) # converted b to a "column vector"
+        b = MS(list(b)) # converted b to a "column vector"
         sA = self.sage2octave_matrix_string(A)
         sb = self.sage2octave_matrix_string(b)
         self.eval("a = " + sA )
@@ -520,7 +520,7 @@ class Octave(Expect):
         soln = soln.replace("\n\n ","[")
         soln = soln.rstrip() + "]"
         soln = soln.replace("\n",",")
-        sol  = soln[3:]
+        sol = soln[3:]
         return eval(sol)
 
     def sage2octave_matrix_string(self, A):
@@ -578,11 +578,11 @@ class Octave(Expect):
         """
         eqn1 = f[0].replace('x','x(1)').replace('y','x(2)')
         eqn2 = f[1].replace('x','x(1)').replace('y','x(2)')
-        fcn = "function xdot = f(x,t) xdot(1) = %s; xdot(2) = %s; endfunction"%(eqn1, eqn2)
+        fcn = "function xdot = f(x,t) xdot(1) = %s; xdot(2) = %s; endfunction" % (eqn1, eqn2)
         self.eval(fcn)
-        x0_eqn = "x0 = [%s; %s]"%(ics[0], ics[1])
+        x0_eqn = "x0 = [%s; %s]" % (ics[0], ics[1])
         self.eval(x0_eqn)
-        t_eqn = "t = linspace(%s, %s, 200)'"%(trange[0], trange[1])
+        t_eqn = "t = linspace(%s, %s, 200)'" % (trange[0], trange[1])
         self.eval(t_eqn)
         x_eqn = 'x = lsode("f",x0,t);'
         self.eval(x_eqn)
@@ -807,6 +807,7 @@ class OctaveElement(ExpectElement):
             return self._matrix_()
         else:
             raise NotImplementedError('octave type is not recognized')
+
 
 # An instance
 octave = Octave()

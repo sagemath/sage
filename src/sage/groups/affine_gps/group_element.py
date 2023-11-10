@@ -78,13 +78,13 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
     EXAMPLES::
 
-        sage: G = AffineGroup(2, GF(3))                                                             # optional - sage.rings.finite_rings
-        sage: g = G.random_element()                                                                # optional - sage.rings.finite_rings
-        sage: type(g)                                                                               # optional - sage.rings.finite_rings
+        sage: G = AffineGroup(2, GF(3))
+        sage: g = G.random_element()
+        sage: type(g)
         <class 'sage.groups.affine_gps.affine_group.AffineGroup_with_category.element_class'>
-        sage: G(g.matrix()) == g                                                                    # optional - sage.rings.finite_rings
+        sage: G(g.matrix()) == g
         True
-        sage: G(2)                                                                                  # optional - sage.rings.finite_rings
+        sage: G(2)
               [2 0]     [0]
         x |-> [0 2] x + [0]
 
@@ -108,9 +108,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         TESTS::
 
-            sage: G = AffineGroup(4, GF(5))                                                         # optional - sage.rings.finite_rings
-            sage: g = G.random_element()                                                            # optional - sage.rings.finite_rings
-            sage: TestSuite(g).run()                                                                # optional - sage.rings.finite_rings
+            sage: G = AffineGroup(4, GF(5))
+            sage: g = G.random_element()
+            sage: TestSuite(g).run()
         """
         try:
             A = A.matrix()
@@ -181,29 +181,29 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(3, GF(7))                                                         # optional - sage.rings.finite_rings
-            sage: g = G([1,2,3,4,5,6,7,8,0], [10,11,12])                                            # optional - sage.rings.finite_rings
-            sage: g                                                                                 # optional - sage.rings.finite_rings
+            sage: G = AffineGroup(3, GF(7))
+            sage: g = G([1,2,3,4,5,6,7,8,0], [10,11,12])
+            sage: g
                   [1 2 3]     [3]
             x |-> [4 5 6] x + [4]
                   [0 1 0]     [5]
-            sage: g.matrix()                                                                        # optional - sage.rings.finite_rings
+            sage: g.matrix()
             [1 2 3|3]
             [4 5 6|4]
             [0 1 0|5]
             [-----+-]
             [0 0 0|1]
-            sage: parent(g.matrix())                                                                # optional - sage.rings.finite_rings
+            sage: parent(g.matrix())
             Full MatrixSpace of 4 by 4 dense matrices over Finite Field of size 7
-            sage: g.matrix() == matrix(g)                                                           # optional - sage.rings.finite_rings
+            sage: g.matrix() == matrix(g)
             True
 
         Composition of affine group elements equals multiplication of
         the matrices::
 
-            sage: g1 = G.random_element()                                                           # optional - sage.rings.finite_rings
-            sage: g2 = G.random_element()                                                           # optional - sage.rings.finite_rings
-            sage: g1.matrix() * g2.matrix() == (g1*g2).matrix()                                     # optional - sage.rings.finite_rings
+            sage: g1 = G.random_element()
+            sage: g2 = G.random_element()
+            sage: g1.matrix() * g2.matrix() == (g1*g2).matrix()
             True
         """
         A = self._A
@@ -332,13 +332,13 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(2, GF(3))                                                         # optional - sage.rings.finite_rings
-            sage: g = G([1,1, 0,1], [0,1])                                                          # optional - sage.rings.finite_rings
-            sage: h = G([1,1, 0,1], [1,2])                                                          # optional - sage.rings.finite_rings
-            sage: g*h                                                                               # optional - sage.rings.finite_rings
+            sage: G = AffineGroup(2, GF(3))
+            sage: g = G([1,1, 0,1], [0,1])
+            sage: h = G([1,1, 0,1], [1,2])
+            sage: g*h
                   [1 2]     [0]
             x |-> [0 1] x + [0]
-            sage: g.matrix() * h.matrix() == (g*h).matrix()                                         # optional - sage.rings.finite_rings
+            sage: g.matrix() * h.matrix() == (g*h).matrix()
             True
         """
         parent = self.parent()
@@ -395,8 +395,8 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: M = matrix(3, [-1, -2, 0, 0, 0, 1, -2, 1, -1])
             sage: v = vector(QQ,(1,2,3))
             sage: f = F(M, v)
-            sage: cube = polytopes.cube()
-            sage: f(cube)
+            sage: cube = polytopes.cube()                                               # needs sage.geometry.polyhedron
+            sage: f(cube)                                                               # needs sage.geometry.polyhedron
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 8 vertices
 
         """
@@ -432,16 +432,16 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(2, GF(3))                                                         # optional - sage.rings.finite_rings
-            sage: g = G([1,2,3,4], [5,6])                                                           # optional - sage.rings.finite_rings
-            sage: g                                                                                 # optional - sage.rings.finite_rings
+            sage: G = AffineGroup(2, GF(3))
+            sage: g = G([1,2,3,4], [5,6])
+            sage: g
                   [1 2]     [2]
             x |-> [0 1] x + [0]
-            sage: v = vector(GF(3), [1,-1]); v                                                      # optional - sage.rings.finite_rings
+            sage: v = vector(GF(3), [1,-1]); v
             (1, 2)
-            sage: g*v                                                                               # optional - sage.rings.finite_rings
+            sage: g*v
             (1, 2)
-            sage: g*v == g.A() * v + g.b()                                                          # optional - sage.rings.finite_rings
+            sage: g*v == g.A() * v + g.b()
             True
         """
         if self_on_left:
@@ -455,18 +455,18 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: G = AffineGroup(2, GF(3))                                                         # optional - sage.rings.finite_rings
-            sage: g = G([1,2,3,4], [5,6])                                                           # optional - sage.rings.finite_rings
-            sage: g                                                                                 # optional - sage.rings.finite_rings
+            sage: G = AffineGroup(2, GF(3))
+            sage: g = G([1,2,3,4], [5,6])
+            sage: g
                   [1 2]     [2]
             x |-> [0 1] x + [0]
-            sage: ~g                                                                                # optional - sage.rings.finite_rings
+            sage: ~g
                   [1 1]     [1]
             x |-> [0 1] x + [0]
-            sage: g * g.inverse()   # indirect doctest                                              # optional - sage.rings.finite_rings
+            sage: g * g.inverse()   # indirect doctest
                   [1 0]     [0]
             x |-> [0 1] x + [0]
-            sage: g * g.inverse() == g.inverse() * g == G(1)                                        # optional - sage.rings.finite_rings
+            sage: g * g.inverse() == g.inverse() * g == G(1)
             True
         """
         parent = self.parent()

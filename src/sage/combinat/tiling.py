@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Tiling Solver
 
@@ -108,9 +108,9 @@ It has 65 different solutions up to isometries::
 
 Showing one solution::
 
-    sage: solution = next(T.solve())                                  # long time
-    sage: G = sum([piece.show2d() for piece in solution], Graphics()) # long time       # optional - sage.plot
-    sage: G.show(aspect_ratio=1, axes=False)                          # long time       # optional - sage.plot
+    sage: solution = next(T.solve())                                    # long time
+    sage: G = sum([piece.show2d() for piece in solution], Graphics())   # long time, needs sage.plot
+    sage: G.show(aspect_ratio=1, axes=False)                            # long time, needs sage.plot
 
 1d Easy Example
 ---------------
@@ -154,20 +154,20 @@ By default, rotations are allowed and reflections are not. In this case,
 there are no solution for tiling a `8 \times 8` rectangular box::
 
     sage: T = TilingSolver(L, box=(8,8))
-    sage: T.number_of_solutions()                       # long time (2.5 s)
+    sage: T.number_of_solutions()                                       # long time (2.5s)
     0
 
 If reflections are allowed, there are solutions. Solve the puzzle and show
 one solution::
 
     sage: T = TilingSolver(L, box=(8,8), reflection=True)
-    sage: solution = next(T.solve())                                  # long time (7s)
-    sage: G = sum([piece.show2d() for piece in solution], Graphics()) # long time (<1s) # optional - sage.plot
-    sage: G.show(aspect_ratio=1, axes=False)                          # long time (2s)  # optional - sage.plot
+    sage: solution = next(T.solve())                                    # long time (7s)
+    sage: G = sum([piece.show2d() for piece in solution], Graphics())   # long time (<1s), needs sage.plot
+    sage: G.show(aspect_ratio=1, axes=False)                            # long time (2s),  needs sage.plot
 
 Compute the number of solutions::
 
-    sage: T.number_of_solutions()                         # long time (2.6s)
+    sage: T.number_of_solutions()                                       # long time (2.6s)
     328
 
 Create a animation of all the solutions::
@@ -197,13 +197,13 @@ The same thing done in 3d *without* allowing reflections this time::
 Solve the puzzle and show one solution::
 
     sage: T = TilingSolver(L, box=(8,8,1))
-    sage: solution = next(T.solve())                                   # long time (8s)
-    sage: G = sum([p.show3d(size=0.85) for p in solution], Graphics()) # long time (<1s)
-    sage: G.show(aspect_ratio=1, viewer='tachyon')                     # long time (2s)
+    sage: solution = next(T.solve())                                    # long time (8s)
+    sage: G = sum([p.show3d(size=0.85) for p in solution], Graphics())  # long time (<1s), needs sage.plot
+    sage: G.show(aspect_ratio=1, viewer='tachyon')                      # long time (2s),  needs sage.plot
 
 Let us compute the number of solutions::
 
-    sage: T.number_of_solutions()                              # long time (3s)
+    sage: T.number_of_solutions()                                       # long time (3s)
     328
 
 Donald Knuth example : the Y pentamino
@@ -218,8 +218,8 @@ Donald Knuth [Knuth1]_ considered the problem of packing 45 Y pentaminoes into a
     sage: T.number_of_solutions()
     10
     sage: solution = next(T.solve())
-    sage: G = sum([p.show2d() for p in solution], Graphics())                           # optional - sage.plot
-    sage: G.show(aspect_ratio=1)                       # long time (2s)                 # optional - sage.plot
+    sage: G = sum([p.show2d() for p in solution], Graphics())                           # needs sage.plot
+    sage: G.show(aspect_ratio=1)                                        # long time (2s), needs sage.plot
 
 ::
 
@@ -240,15 +240,14 @@ Animation of the solutions::
     sage: from sage.combinat.tiling import Polyomino, TilingSolver
     sage: Y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='yellow')
     sage: T = TilingSolver([Y], box=(15,15), reusable=True, reflection=True)
-    sage: a = T.animate(stop=40); a              # long time  # optional -- ImageMagick sage.plot
+    sage: a = T.animate(stop=40); a                     # long time, optional - imagemagick, needs sage.plot
     Animation with 40 frames
 
 Incremental animation of the solutions (one piece is removed/added at a time)::
 
-    sage: a = T.animate('incremental', stop=40)  # long time  # optional -- ImageMagick sage.plot
-    sage: a                                      # long time  # optional -- ImageMagick sage.plot
+    sage: a = T.animate('incremental', stop=40); a      # long time, optional - imagemagick, needs sage.plot
     Animation with 40 frames
-    sage: a.show(delay=50, iterations=1)         # long time  # optional -- ImageMagick sage.plot
+    sage: a.show(delay=50, iterations=1)                # long time, optional - imagemagick, needs sage.plot
 
 5d Easy Example
 ---------------
@@ -930,11 +929,11 @@ class Polyomino(SageObject):
             sage: (p + (3,4,5)).canonical()
             Polyomino: [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 2, 0)], Color: deeppink
         """
-        minxyz, maxxyz = self.bounding_box()
+        minxyz, _ = self.bounding_box()
         return self - minxyz
 
     def canonical_isometric_copies(self, orientation_preserving=True,
-            mod_box_isometries=False):
+                                   mod_box_isometries=False):
         r"""
         Return the list of image of ``self`` under isometries of the `n`-cube
         where the coordinates are all nonnegative and minimal.
@@ -1387,7 +1386,7 @@ class Polyomino(SageObject):
 
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,1,1)], color='blue')
-            sage: p.show3d()                # long time (2s)                            # optional -- sage.plot
+            sage: p.show3d()                    # long time (2s)                        # needs sage.plot
             Graphics3d Object
         """
         assert self._dimension == 3, "Dimension of the polyomino must be 3."
@@ -1420,7 +1419,7 @@ class Polyomino(SageObject):
 
             sage: from sage.combinat.tiling import Polyomino
             sage: p = Polyomino([(0,0),(1,0),(1,1),(1,2)], color='deeppink')
-            sage: p.show2d()              # long time (0.5s)                            # optional -- sage.plot
+            sage: p.show2d()                    # long time (0.5s)                      # needs sage.plot
             Graphics object consisting of 17 graphics primitives
         """
         assert self._dimension == 2, "Dimension of the polyomino must be 2."
@@ -1471,12 +1470,12 @@ class Polyomino(SageObject):
             ....: (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (2, 0), (2, 2),
             ....: (2, 3), (2, 5), (2, 6), (2, 8)])
             sage: solution = H.self_surrounding(8)
-            sage: G = sum([p.show2d() for p in solution], Graphics())                   # optional - sage.plot
+            sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
 
         ::
 
             sage: solution = H.self_surrounding(8, remove_incomplete_copies=False)
-            sage: G = sum([p.show2d() for p in solution], Graphics())                   # optional - sage.plot
+            sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
 
         """
         # Define the box to tile
@@ -2423,38 +2422,37 @@ class TilingSolver(SageObject):
             sage: from sage.combinat.tiling import Polyomino, TilingSolver
             sage: y = Polyomino([(0,0),(1,0),(2,0),(3,0),(2,1)], color='cyan')
             sage: T = TilingSolver([y], box=(5,10), reusable=True, reflection=True)
-            sage: a = T.animate()                                                       # optional - sage.plot
-            sage: a          # optional -- ImageMagick    # long time                   # optional - sage.plot
+            sage: a = T.animate()                                                       # needs sage.plot
+            sage: a                             # long time, optional - imagemagick, needs sage.plot
             Animation with 10 frames
 
         Include partial solutions (common prefix between two consecutive
         solutions)::
 
-            sage: a = T.animate('common_prefix')                                        # optional - sage.plot
-            sage: a          # optional -- ImageMagick    # long time                   # optional - sage.plot
+            sage: a = T.animate('common_prefix')                                        # needs sage.plot
+            sage: a                             # long time, optional - imagemagick, needs sage.plot
             Animation with 19 frames
 
         Incremental solutions (one piece removed or added at a time)::
 
-            sage: a = T.animate('incremental')      # long time (2s)                    # optional - sage.plot
-            sage: a                                 # long time (2s)  # optional -- ImageMagick sage.plot
+            sage: a = T.animate('incremental')  # long time (2s)                        # needs sage.plot
+            sage: a                             # long time (2s), optional - imagemagick, needs sage.plot
             Animation with 123 frames
 
         ::
 
-            sage: a.show()           # optional -- ImageMagick   # long time            # optional - sage.plot
+            sage: a.show()                      # long time, optional - imagemagick, needs sage.plot
 
         The ``show`` function takes arguments to specify the delay between
         frames (measured in hundredths of a second, default value 20) and
         the number of iterations (default value 0, which means to iterate
         forever). To iterate 4 times with half a second between each frame::
 
-            sage: a.show(delay=50, iterations=4)  # optional -- ImageMagick # long time # optional - sage.plot
+            sage: a.show(delay=50, iterations=4)        # long time, optional - imagemagick, needs sage.plot
 
         Limit the number of frames::
 
-            sage: a = T.animate('incremental', stop=13)     # not tested                # optional - sage.plot
-            sage: a                                         # not tested                # optional - sage.plot
+            sage: a = T.animate('incremental', stop=13); a      # not tested            # needs sage.plot
             Animation with 13 frames
         """
         dimension = self._box._dimension

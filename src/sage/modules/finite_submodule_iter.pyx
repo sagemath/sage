@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Iterators over finite submodules of a `\ZZ`-module
 
@@ -189,7 +190,7 @@ cdef class FiniteZZsubmodule_iterator:
         """
         return self
 
-    cdef ModuleElement _iteration(FiniteZZsubmodule_iterator self):
+    cdef ModuleElement _iteration(FiniteZZsubmodule_iterator self) noexcept:
         """
         This is the core implementation of the iteration.
 

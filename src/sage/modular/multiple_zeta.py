@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat
 r"""
 Algebra of motivic multiple zeta values
 
@@ -168,11 +168,11 @@ REFERENCES:
 from __future__ import annotations
 import numbers
 from typing import Iterator
+from itertools import product
 
 from sage.misc.fast_methods import Singleton
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.element import parent
-from sage.categories.cartesian_product import cartesian_product
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.rings import Rings
 from sage.categories.domains import Domains
@@ -184,16 +184,19 @@ from sage.combinat.words.finite_word import FiniteWord_class
 from sage.combinat.words.word import Word
 from sage.combinat.words.words import Words
 from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2 as shuffle
-from sage.libs.pari.all import pari
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modular.multiple_zeta_F_algebra import F_algebra
 from sage.modules.free_module import VectorSpace
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.positive_integers import PositiveIntegers
+
+lazy_import('sage.libs.pari.all', 'pari')
+
 
 # multiplicative generators for weight <= 17
 # using the following convention
@@ -575,7 +578,7 @@ def extend_multiplicative_basis(B, n) -> Iterator:
         [((7,),), ((5,), (2,)), ((3,), (2,), (2,))]
     """
     for pi in Partitions(n, min_part=2):
-        yield from cartesian_product([B[i] for i in pi])
+        yield from product(*[B[i] for i in pi])
 
 
 # several classes for the algebra of MZV

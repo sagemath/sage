@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Local components of modular forms
 
@@ -23,13 +24,15 @@ from sage.structure.sage_object     import SageObject
 from sage.rings.integer_ring        import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar               import QQbar
 from sage.misc.abstract_method      import abstract_method
 from sage.misc.cachefunc            import cached_method
+from sage.misc.lazy_import          import lazy_import
 from sage.misc.verbose              import verbose
 from sage.misc.flatten              import flatten
 from sage.modular.modform.element   import Newform
 from sage.structure.sequence        import Sequence
+
+lazy_import('sage.rings.qqbar', 'QQbar')
 
 from .type_space                    import TypeSpace
 from .smoothchar                    import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
@@ -79,8 +82,10 @@ def LocalComponent(f, p, twist_factor=None):
         'Supercuspidal'
         sage: Pi.characters()
         [
-        Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0), of level 1, mapping s |--> -d, 7 |--> 1,
-        Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0), of level 1, mapping s |--> d, 7 |--> 1
+        Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0),
+          of level 1, mapping s |--> -d, 7 |--> 1,
+        Character of unramified extension Q_7(s)* (s^2 + 6*s + 3 = 0),
+          of level 1, mapping s |--> d, 7 |--> 1
         ]
     """
     p = ZZ(p)
@@ -641,8 +646,10 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             sage: Pi = LocalComponent(f, 5)
             sage: chars = Pi.characters(); chars
             [
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -d - 1, 5 |--> 1,
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> d, 5 |--> 1
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0),
+              of level 1, mapping s |--> -d - 1, 5 |--> 1,
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0),
+              of level 1, mapping s |--> d, 5 |--> 1
             ]
             sage: chars[0].base_ring()
             Number Field in d with defining polynomial x^2 + x + 1
@@ -659,8 +666,10 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             sage: Pi = LocalComponent(f, 5)
             sage: Pi.characters()
             [
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> 1/3*j0^2*d - 1/3*j0^3, 5 |--> 5,
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -1/3*j0^2*d, 5 |--> 5
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0),
+              of level 1, mapping s |--> 1/3*j0^2*d - 1/3*j0^3, 5 |--> 5,
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0),
+              of level 1, mapping s |--> -1/3*j0^2*d, 5 |--> 5
             ]
             sage: Pi.characters()[0].base_ring()
             Number Field in d with defining polynomial x^2 - j0*x + 1/3*j0^2 over its base field
@@ -678,21 +687,27 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             q + j0*q^2 + q^4 - j0*q^5 + O(q^6)
             sage: LocalComponent(f, 3).characters()  # long time (12s on sage.math, 2012)
             [
-            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> -2*d + j0, 4 |--> 1, 3*s + 1 |--> -j0*d + 1, 3 |--> 1,
-            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> 2*d - j0, 4 |--> 1, 3*s + 1 |--> j0*d - 2, 3 |--> 1
+            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0),
+              of level 2, mapping -2*s |--> -2*d + j0, 4 |--> 1, 3*s + 1 |--> -j0*d + 1, 3 |--> 1,
+            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0),
+              of level 2, mapping -2*s |--> 2*d - j0, 4 |--> 1, 3*s + 1 |--> j0*d - 2, 3 |--> 1
             ]
 
         Some ramified examples::
 
             sage: Newform('27a').local_component(3).characters()
             [
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 2, mapping 2 |--> 1, s + 1 |--> -d, s |--> -1,
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 2, mapping 2 |--> 1, s + 1 |--> d - 1, s |--> -1
+            Character of ramified extension Q_3(s)* (s^2 - 6 = 0),
+              of level 2, mapping 2 |--> 1, s + 1 |--> -d, s |--> -1,
+            Character of ramified extension Q_3(s)* (s^2 - 6 = 0),
+              of level 2, mapping 2 |--> 1, s + 1 |--> d - 1, s |--> -1
             ]
             sage: LocalComponent(Newform('54a'), 3, twist_factor=4).characters()
             [
-            Character of ramified extension Q_3(s)* (s^2 - 3 = 0), of level 2, mapping 2 |--> 1, s + 1 |--> -1/9*d, s |--> -9,
-            Character of ramified extension Q_3(s)* (s^2 - 3 = 0), of level 2, mapping 2 |--> 1, s + 1 |--> 1/9*d - 1, s |--> -9
+            Character of ramified extension Q_3(s)* (s^2 - 3 = 0),
+              of level 2, mapping 2 |--> 1, s + 1 |--> -1/9*d, s |--> -9,
+            Character of ramified extension Q_3(s)* (s^2 - 3 = 0),
+              of level 2, mapping 2 |--> 1, s + 1 |--> 1/9*d - 1, s |--> -9
             ]
 
         A 2-adic non-example::
@@ -707,13 +722,17 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             sage: Newforms(DirichletGroup(64, QQ).1, 2, names='a')[0].local_component(2).characters() # long time, random
             [
-            Character of unramified extension Q_2(s)* (s^2 + s + 1 = 0), of level 3, mapping s |--> 1, 2*s + 1 |--> 1/2*a0, 4*s + 1 |--> 1, -1 |--> 1, 2 |--> 1,
-            Character of unramified extension Q_2(s)* (s^2 + s + 1 = 0), of level 3, mapping s |--> 1, 2*s + 1 |--> 1/2*a0, 4*s + 1 |--> -1, -1 |--> 1, 2 |--> 1
+            Character of unramified extension Q_2(s)* (s^2 + s + 1 = 0), of level 3,
+              mapping s |--> 1, 2*s + 1 |--> 1/2*a0, 4*s + 1 |--> 1, -1 |--> 1, 2 |--> 1,
+            Character of unramified extension Q_2(s)* (s^2 + s + 1 = 0), of level 3,
+              mapping s |--> 1, 2*s + 1 |--> 1/2*a0, 4*s + 1 |--> -1, -1 |--> 1, 2 |--> 1
             ]
             sage: Newform('243a',names='a').local_component(3).characters() # long time
             [
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> -d - 1, 4 |--> 1, 3*s + 1 |--> -d - 1, s |--> 1,
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> d, 4 |--> 1, 3*s + 1 |--> d, s |--> 1
+            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4,
+              mapping -2*s - 1 |--> -d - 1, 4 |--> 1, 3*s + 1 |--> -d - 1, s |--> 1,
+            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4,
+              mapping -2*s - 1 |--> d, 4 |--> 1, 3*s + 1 |--> d, s |--> 1
             ]
         """
         T = self.type_space()
@@ -745,7 +764,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             if len(gs) == 1:
                 # This is always the case if p != 2
-                chi1, chi2 = [G.extend_character(n, self.central_character(), [x]) for x in gvals]
+                chi1, chi2 = (G.extend_character(n, self.central_character(), [x]) for x in gvals)
             else:
                 # 2-adic cases, conductor >= 64. Here life is complicated
                 # because the quotient (O_K* / p^n)^* / (image of Z_2^*) is not
@@ -869,7 +888,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             c1q, c2q = flatten([[x]*e for x,e in theta_poly.roots(G.base_ring())])
 
             if len(qs) == 1:
-                chi1, chi2 = [G.extend_character(n, self.central_character(), [x]) for x in [c1q, c2q]]
+                chi1, chi2 = (G.extend_character(n, self.central_character(), [x]) for x in [c1q, c2q])
 
             else:
                 assert p == 3

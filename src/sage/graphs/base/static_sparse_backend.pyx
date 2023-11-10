@@ -43,7 +43,7 @@ from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
                                                    has_edge,
                                                    free_short_digraph,
                                                    edge_label)
-from .c_graph cimport CGraphBackend
+from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.data_structures.bitset cimport FrozenBitset
 from libc.stdint cimport uint32_t
 from sage.data_structures.bitset_base cimport *
@@ -196,7 +196,7 @@ cdef class StaticSparseCGraph(CGraph):
         """
         self.add_vertex_unsafe(k)
 
-    cpdef del_vertex(self, int k):
+    cpdef del_vertex(self, int k) noexcept:
         r"""
         Remove a vertex from the graph. No way.
 
@@ -211,7 +211,7 @@ cdef class StaticSparseCGraph(CGraph):
         """
         self.del_vertex_unsafe(k)
 
-    cpdef list verts(self):
+    cpdef list verts(self) noexcept:
         r"""
         Returns the list of vertices
 
@@ -318,7 +318,7 @@ cdef class StaticSparseCGraph(CGraph):
             neighbors[i] = self.g_rev.neighbors[u][i]
         return -1 if size < degree else degree
 
-    cpdef list out_neighbors(self, int u):
+    cpdef list out_neighbors(self, int u) noexcept:
         r"""
         List the out-neighbors of a vertex
 
@@ -343,7 +343,7 @@ cdef class StaticSparseCGraph(CGraph):
         cdef int i
         return [<int> self.g.neighbors[u][i] for i in range(out_degree(self.g, u))]
 
-    cpdef list in_neighbors(self, int u):
+    cpdef list in_neighbors(self, int u) noexcept:
         r"""
         Return the in-neighbors of a vertex
 
@@ -446,17 +446,18 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         ::
 
-            sage: g = DiGraph(digraphs.DeBruijn(4, 3), data_structure="static_sparse")  # optional - sage.combinat
-            sage: gi = DiGraph(g, data_structure="static_sparse")                       # optional - sage.combinat
-            sage: gi.edges(sort=True)[0]                                                # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: g = DiGraph(digraphs.DeBruijn(4, 3), data_structure="static_sparse")
+            sage: gi = DiGraph(g, data_structure="static_sparse")
+            sage: gi.edges(sort=True)[0]
             ('000', '000', '0')
-            sage: sorted(gi.edges_incident('111'))                                      # optional - sage.combinat
+            sage: sorted(gi.edges_incident('111'))
             [('111', '110', '0'),
             ('111', '111', '1'),
             ('111', '112', '2'),
             ('111', '113', '3')]
 
-            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))                 # optional - sage.combinat
+            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))                 # needs sage.combinat
             True
 
         ::
@@ -555,7 +556,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         return v in self._vertex_to_int
 
-    cpdef add_edge(self, object u, object v, object l, bint directed):
+    cpdef add_edge(self, object u, object v, object l, bint directed) noexcept:
         r"""
         Set edge label. No way.
 
@@ -600,7 +601,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         raise ValueError("graph is immutable; please change a copy instead (use function copy())")
 
-    cpdef del_edge(self, object u, object v, object l, bint directed):
+    cpdef del_edge(self, object u, object v, object l, bint directed) noexcept:
         r"""
         Set edge label. No way.
 
@@ -671,10 +672,10 @@ cdef class StaticSparseBackend(CGraphBackend):
         ::
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
-            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))                      # optional - sage.combinat
-            sage: g.has_edge('00', '01', '1')                                           # optional - sage.combinat
+            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))                      # needs sage.combinat
+            sage: g.has_edge('00', '01', '1')                                           # needs sage.combinat
             True
-            sage: g.has_edge('00', '01', '0')                                           # optional - sage.combinat
+            sage: g.has_edge('00', '01', '0')                                           # needs sage.combinat
             False
         """
         try:
@@ -697,7 +698,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             return self._all_edge_labels(u, v, edge)
         return edge_label(cg.g, edge)
 
-    cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL):
+    cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL) noexcept:
         """
         Gives the labels of all arcs from ``u`` to ``v``.
 

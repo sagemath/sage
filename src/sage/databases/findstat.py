@@ -259,23 +259,24 @@ from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.colored_permutations import SignedPermutation, SignedPermutations
 from sage.combinat.plane_partition import PlanePartition
 from sage.combinat.decorated_permutation import DecoratedPermutation, DecoratedPermutations
+from sage.combinat.set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
 
 ######################################################################
 # the FindStat URLs
-FINDSTAT_URL                = 'https://www.findstat.org/'
-FINDSTAT_API                = FINDSTAT_URL + "api/"
-FINDSTAT_API_COLLECTIONS    = FINDSTAT_API + 'CollectionsDatabase/'
-FINDSTAT_API_STATISTICS     = FINDSTAT_API + 'StatisticsDatabase/'
-FINDSTAT_API_MAPS           = FINDSTAT_API + 'MapsDatabase/'
+FINDSTAT_URL = 'https://www.findstat.org/'
+FINDSTAT_API = FINDSTAT_URL + "api/"
+FINDSTAT_API_COLLECTIONS = FINDSTAT_API + 'CollectionsDatabase/'
+FINDSTAT_API_STATISTICS = FINDSTAT_API + 'StatisticsDatabase/'
+FINDSTAT_API_MAPS = FINDSTAT_API + 'MapsDatabase/'
 
-FINDSTAT_URL_LOGIN          = FINDSTAT_URL + "?action=login"
-FINDSTAT_URL_COLLECTIONS    = FINDSTAT_URL + 'CollectionsDatabase/'
-FINDSTAT_URL_STATISTICS     = FINDSTAT_URL + 'StatisticsDatabase/'
+FINDSTAT_URL_LOGIN = FINDSTAT_URL + "?action=login"
+FINDSTAT_URL_COLLECTIONS = FINDSTAT_URL + 'CollectionsDatabase/'
+FINDSTAT_URL_STATISTICS = FINDSTAT_URL + 'StatisticsDatabase/'
 FINDSTAT_URL_EDIT_STATISTIC = FINDSTAT_URL + 'EditStatistic/'
-FINDSTAT_URL_NEW_STATISTIC  = FINDSTAT_URL + 'NewStatistic/'
-FINDSTAT_URL_MAPS           = FINDSTAT_URL + 'MapsDatabase/'
-FINDSTAT_URL_EDIT_MAP       = FINDSTAT_URL + 'EditMap/'
-FINDSTAT_URL_NEW_MAP        = FINDSTAT_URL + 'NewMap/'
+FINDSTAT_URL_NEW_STATISTIC = FINDSTAT_URL + 'NewStatistic/'
+FINDSTAT_URL_MAPS = FINDSTAT_URL + 'MapsDatabase/'
+FINDSTAT_URL_EDIT_MAP = FINDSTAT_URL + 'EditMap/'
+FINDSTAT_URL_NEW_MAP = FINDSTAT_URL + 'NewMap/'
 
 ######################################################################
 # the number of values FindStat allows to search for at most
@@ -296,9 +297,9 @@ FINDSTAT_MAP_SEPARATOR = "o"
 FINDSTAT_STATISTIC_REGEXP = '^St[0-9]{6}$'
 FINDSTAT_MAP_REGEXP = '^Mp[0-9]{5}$'
 FINDSTAT_COLLECTION_REGEXP = '^Cc[0-9]{4}$'
-FINDSTAT_STATISTIC_PADDED_IDENTIFIER  = "St%06d"
-FINDSTAT_MAP_PADDED_IDENTIFIER  = "Mp%05d"
-FINDSTAT_COLLECTION_PADDED_IDENTIFIER  = "Cc%04d"
+FINDSTAT_STATISTIC_PADDED_IDENTIFIER = "St%06d"
+FINDSTAT_MAP_PADDED_IDENTIFIER = "Mp%05d"
+FINDSTAT_COLLECTION_PADDED_IDENTIFIER = "Cc%04d"
 
 ######################################################################
 
@@ -332,7 +333,7 @@ class FindStat(UniqueRepresentation, SageObject):
             The Combinatorial Statistic Finder (https://www.findstat.org/)
         """
         # user credentials if provided
-        self._user_name  = ""
+        self._user_name = ""
         self._user_email = ""
         self._allow_execution = False
 
@@ -383,7 +384,7 @@ class FindStat(UniqueRepresentation, SageObject):
             raise ValueError("the given name (%s) should be a string" % name)
         if not isinstance(email, str):
             raise ValueError("the given email (%s) should be a string" % email)
-        self._user_name  = name
+        self._user_name = name
         self._user_email = email
 
     def user_name(self):
@@ -1556,11 +1557,12 @@ class FindStatFunction(SageObject):
 
         Check that new statistics and maps cannot be reset::
 
-            sage: q = findstat([(d, randint(1, 1000)) for d in DyckWords(4)])   # optional -- internet
-            sage: q.set_description("Random values on Dyck paths.")             # optional -- internet
-            sage: print(q.description())                                        # optional -- internet
+            sage: # optional - internet
+            sage: q = findstat([(d, randint(1, 1000)) for d in DyckWords(4)])
+            sage: q.set_description("Random values on Dyck paths.")
+            sage: print(q.description())
             Random values on Dyck paths.
-            sage: q.reset()                                                     # optional -- internet
+            sage: q.reset()
             Traceback (most recent call last):
             ...
             ValueError: cannot reset values of St000000: a new statistic on Dyck paths
@@ -2373,14 +2375,14 @@ class FindStatStatistic(Element,
         """
         args = {}
         args["OriginalStatistic"] = self.id_str()
-        args["Domain"]            = self.domain().id_str()
-        args["Values"]            = self.first_terms_str(max_values=max_values)
-        args["Description"]       = self.description()
-        args["References"]        = self.references_raw()
-        args["Code"]              = self.code()
-        args["SageCode"]          = self.sage_code()
-        args["CurrentAuthor"]     = FindStat().user_name()
-        args["CurrentEmail"]      = FindStat().user_email()
+        args["Domain"] = self.domain().id_str()
+        args["Values"] = self.first_terms_str(max_values=max_values)
+        args["Description"] = self.description()
+        args["References"] = self.references_raw()
+        args["Code"] = self.code()
+        args["SageCode"] = self.sage_code()
+        args["CurrentAuthor"] = FindStat().user_name()
+        args["CurrentEmail"] = FindStat().user_email()
 
         if not self.id():
             url = FINDSTAT_NEWSTATISTIC_FORM_HEADER % FINDSTAT_URL_NEW_STATISTIC
@@ -3210,16 +3212,16 @@ class FindStatMap(Element,
             sage: s.reset()                                                     # optional -- internet
         """
         args = dict()
-        args["OriginalMap"]        = self.id_str()
-        args["Domain"]             = self.domain().id_str()
-        args["Codomain"]           = self.codomain().id_str()
-        args["Name"]               = self.name()
-        args["Description"]        = self.description()
-        args["References"]         = self.references_raw()
-        args["Properties"]         = self.properties_raw()
-        args["SageCode"]           = self.sage_code()
-        args["CurrentAuthor"]      = FindStat().user_name()
-        args["CurrentEmail"]       = FindStat().user_email()
+        args["OriginalMap"] = self.id_str()
+        args["Domain"] = self.domain().id_str()
+        args["Codomain"] = self.codomain().id_str()
+        args["Name"] = self.name()
+        args["Description"] = self.description()
+        args["References"] = self.references_raw()
+        args["Properties"] = self.properties_raw()
+        args["SageCode"] = self.sage_code()
+        args["CurrentAuthor"] = FindStat().user_name()
+        args["CurrentEmail"] = FindStat().user_email()
 
         if not self.id():
             url = FINDSTAT_NEWMAP_FORM_HEADER % FINDSTAT_URL_NEW_MAP
@@ -3280,14 +3282,15 @@ class FindStatMap(Element,
 
         EXAMPLES::
 
-            sage: from sage.databases.findstat import FindStatMap               # optional -- internet
-            sage: FindStatMap(61).set_properties_raw('surjective')             # optional -- internet
-            sage: FindStatMap(61).properties_raw()                              # optional -- internet
+            sage: # optional - internet
+            sage: from sage.databases.findstat import FindStatMap
+            sage: FindStatMap(61).set_properties_raw('surjective')
+            sage: FindStatMap(61).properties_raw()
             'surjective'
-            sage: FindStatMap(61)                                               # optional -- internet
+            sage: FindStatMap(61)
             Mp00061(modified): to increasing tree
-            sage: FindStatMap(61).reset()                                       # optional -- internet
-            sage: FindStatMap(61)                                               # optional -- internet
+            sage: FindStatMap(61).reset()
+            sage: FindStatMap(61)
             Mp00061: to increasing tree
         """
         if value != self.properties_raw():
@@ -3927,7 +3930,7 @@ def _finite_irreducible_cartan_types_by_rank(n):
         sage: _finite_irreducible_cartan_types_by_rank(2)
         [['A', 2], ['B', 2], ['G', 2]]
     """
-    cartan_types      = [CartanType(['A',n])]
+    cartan_types = [CartanType(['A',n])]
     if n >= 2:
         cartan_types += [CartanType(['B',n])]
     if n >= 3:
@@ -4283,13 +4286,14 @@ class FindStatCollection(Element,
 
         EXAMPLES::
 
+            sage: # optional - internet
             sage: from sage.databases.findstat import FindStatCollection
-            sage: c = FindStatCollection("GelfandTsetlinPatterns")              # optional -- internet
-            sage: c.in_range(GelfandTsetlinPattern([[2, 1], [1]]))              # optional -- internet
+            sage: c = FindStatCollection("GelfandTsetlinPatterns")
+            sage: c.in_range(GelfandTsetlinPattern([[2, 1], [1]]))
             True
-            sage: c.in_range(GelfandTsetlinPattern([[3, 1], [1]]))              # optional -- internet
+            sage: c.in_range(GelfandTsetlinPattern([[3, 1], [1]]))
             True
-            sage: c.in_range(GelfandTsetlinPattern([[7, 1], [1]]))              # optional -- internet
+            sage: c.in_range(GelfandTsetlinPattern([[7, 1], [1]]))
             False
 
         TESTS::
@@ -4512,6 +4516,7 @@ class FindStatCollection(Element,
             return self._data["NamePlural"]
         raise ValueError("argument 'style' (=%s) must be 'singular' or 'plural'" % style)
 
+
 from collections import namedtuple
 _SupportedFindStatCollection = namedtuple("SupportedFindStatCollection",
                                           ["string_to_element",
@@ -4670,7 +4675,13 @@ _SupportedFindStatCollections = {
                                                            for i, v in enumerate(x, 1))) + "]",
                                  DecoratedPermutations,
                                  lambda x: x.size(),
-                                 lambda x: isinstance(x, DecoratedPermutation))}
+                                 lambda x: isinstance(x, DecoratedPermutation)),
+    "OrderedSetPartitions":
+    _SupportedFindStatCollection(lambda x: OrderedSetPartition(literal_eval(x.replace('{','[').replace('}',']'))),
+                                 str,
+                                 OrderedSetPartitions,
+                                 lambda x: x.size(),
+                                 lambda x: isinstance(x, OrderedSetPartition))}
 
 
 class FindStatCollections(UniqueRepresentation, Parent):

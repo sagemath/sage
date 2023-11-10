@@ -32,9 +32,9 @@ class Ideal_1poly_field(Ideal_pid):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(5)[]                                                       # optional - sage.rings.finite_rings
-            sage: P = R.ideal(t^4 + t + 1)                                              # optional - sage.rings.finite_rings
-            sage: P.residue_class_degree()                                              # optional - sage.rings.finite_rings
+            sage: R.<t> = GF(5)[]
+            sage: P = R.ideal(t^4 + t + 1)
+            sage: P.residue_class_degree()
             4
         """
         return self.gen().degree()
@@ -45,8 +45,8 @@ class Ideal_1poly_field(Ideal_pid):
 
         EXAMPLES::
 
-            sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + 2*t + 9)                          # optional - sage.rings.finite_rings
-            sage: k.<a> = P.residue_field(); k                                          # optional - sage.rings.finite_rings
+            sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + 2*t + 9)
+            sage: k.<a> = P.residue_field(); k                                          # needs sage.rings.finite_rings
             Residue field in a of Principal ideal (t^3 + 2*t + 9) of
              Univariate Polynomial Ring in t over Finite Field of size 17
         """
@@ -54,7 +54,7 @@ class Ideal_1poly_field(Ideal_pid):
             if not self.ring().base_ring().is_finite():
                 raise TypeError("residue fields only supported for polynomial rings over finite fields.")
             if not self.is_prime():
-                raise ValueError("%s is not a prime ideal"%self)
+                raise ValueError("%s is not a prime ideal" % self)
 
         from sage.rings.finite_rings.residue_field import ResidueField
         return ResidueField(self, names, check=False)
@@ -75,11 +75,11 @@ class Ideal_1poly_field(Ideal_pid):
 
             sage: R.<x> = QQ[]
             sage: I = R.ideal([x^2 - 1, x^3 - 1])
-            sage: G = I.groebner_basis(); G                                             # optional - sage.libs.singular
+            sage: G = I.groebner_basis(); G
             [x - 1]
-            sage: type(G)                                                               # optional - sage.libs.singular
+            sage: type(G)
             <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>
-            sage: list(G)                                                               # optional - sage.libs.singular
+            sage: list(G)
             [x - 1]
         """
         gb = self.gens_reduced()

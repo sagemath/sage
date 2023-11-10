@@ -5,22 +5,22 @@ This implements powering of arbitrary objects using a
 square-and-multiply algorithm.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_check
 
 from .long cimport integer_check_long
 
 
-cpdef generic_power(a, n):
+cpdef generic_power(a, n) noexcept:
     """
     Return `a^n`.
 
@@ -88,7 +88,7 @@ cpdef generic_power(a, n):
     return generic_power_pos(a, n)
 
 
-cdef generic_power_long(a, long n):
+cdef generic_power_long(a, long n) noexcept:
     """
     As ``generic_power`` but where ``n`` is a C long.
     """
@@ -102,7 +102,7 @@ cdef generic_power_long(a, long n):
     return generic_power_pos(a, u)
 
 
-cdef generic_power_pos(a, ulong_or_object n):
+cdef generic_power_pos(a, ulong_or_object n) noexcept:
     """
     Return `a^n` where `n > 0`.
     """

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Hecke triangle groups
 
@@ -17,23 +18,25 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import divisors
-from sage.functions.gamma import psi1
-from sage.functions.log import exp
-from sage.functions.trig import sec
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import AA, AlgebraicField
-from sage.rings.universal_cyclotomic_field import E
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.symbolic.constants import pi
+
+lazy_import("sage.functions.log", "exp")
+lazy_import("sage.functions.gamma", "psi1")
+lazy_import("sage.functions.trig", "sec")
+lazy_import("sage.rings.number_field.number_field", "NumberField")
+lazy_import("sage.rings.qqbar", ["AA", "AlgebraicField"])
+lazy_import("sage.rings.universal_cyclotomic_field", "E")
+lazy_import("sage.symbolic.constants", "pi")
 
 from .hecke_triangle_group_element import HeckeTriangleGroupElement, cyclic_representative, coerce_AA
 
@@ -143,7 +146,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         - ``method``  -- If ``method=None`` (default) the current default representation
                          method is returned. Otherwise the default method is set to ``method``.
-                         If ``method`` is not available a ValueError is raised. Possible methods are:
+                         If ``method`` is not available a :class:`ValueError` is raised. Possible methods are:
 
                          ``default``: Use the usual representation method for matrix group elements.
 

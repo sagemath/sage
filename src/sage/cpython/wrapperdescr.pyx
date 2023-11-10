@@ -68,8 +68,9 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
         54
         sage: wrapperdescr_call(Element.__mul__, 7/5, 9)
         63/5
-        sage: from sage.numerical.mip import MixedIntegerLinearProgram
-        sage: wrapperdescr_call(type.__call__, MixedIntegerLinearProgram, maximization=False)
+        sage: from sage.numerical.mip import MixedIntegerLinearProgram                  # needs sage.numerical.mip
+        sage: wrapperdescr_call(type.__call__,                                          # needs sage.numerical.mip
+        ....:                   MixedIntegerLinearProgram, maximization=False)
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
 
     TESTS::
@@ -86,7 +87,7 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
     return wrapperdescr_fastcall(slotwrapper, self, args, kwds)
 
 
-cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds):
+cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds) noexcept:
     # Cython implementation of wrapperdescr_call
     cdef wrapperbase* slotdef = slotwrapper.d_base
 

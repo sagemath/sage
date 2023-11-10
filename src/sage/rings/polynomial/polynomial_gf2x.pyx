@@ -16,7 +16,7 @@ AUTHOR:
 # to make sure the function get_cparent is found since it is used in
 # 'polynomial_template.pxi'.
 
-cdef inline cparent get_cparent(parent):
+cdef inline cparent get_cparent(parent) noexcept:
     return 0
 
 # first we include the definitions
@@ -70,7 +70,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             pass
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         Return the `i`-th coefficient of ``self``.
 

@@ -27,10 +27,10 @@ include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
-from .ntl_ZZ import unpickle_class_args
-from .ntl_GF2EContext import ntl_GF2EContext
-from .ntl_GF2EContext cimport ntl_GF2EContext_class
-from .ntl_GF2E cimport ntl_GF2E
+from sage.libs.ntl.ntl_ZZ import unpickle_class_args
+from sage.libs.ntl.ntl_GF2EContext import ntl_GF2EContext
+from sage.libs.ntl.ntl_GF2EContext cimport ntl_GF2EContext_class
+from sage.libs.ntl.ntl_GF2E cimport ntl_GF2E
 
 ##############################################################################
 #
@@ -85,14 +85,14 @@ cdef class ntl_GF2EX():
             self.c = <ntl_GF2EContext_class>ntl_GF2EContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_GF2E _new_element(self):
+    cdef ntl_GF2E _new_element(self) noexcept:
         cdef ntl_GF2E r
         self.c.restore_c()
         r = ntl_GF2E.__new__(ntl_GF2E)
         r.c = self.c
         return r
 
-    cdef ntl_GF2EX _new(self):
+    cdef ntl_GF2EX _new(self) noexcept:
         cdef ntl_GF2EX r
         self.c.restore_c()
         r = ntl_GF2EX.__new__(ntl_GF2EX)

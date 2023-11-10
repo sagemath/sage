@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Elements of modular forms spaces
 
@@ -35,10 +35,10 @@ AUTHORS:
 from sage.arith.functions import lcm
 from sage.arith.misc import divisors, moebius, sigma, factor, crt
 from sage.arith.srange import xsrange
-from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.matrix.constructor import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.modular.dirichlet import DirichletGroup
@@ -51,12 +51,14 @@ from sage.rings.fast_arith import prime_range
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.morphism import RingHomomorphism
-from sage.rings.number_field.number_field_morphisms import NumberFieldEmbedding
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.structure.element import coercion_model, ModuleElement, Element
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
+
+lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
+lazy_import('sage.rings.number_field.number_field_morphisms', 'NumberFieldEmbedding')
 
 import sage.modular.hecke.element as element
 from . import defaults
@@ -2313,13 +2315,14 @@ class Newform(ModularForm_abstract):
             sage: f.twist(chi, level=11) == g
             True
 
-            sage: f = Newforms(575, 2, names='a')[4]    # long time
-            sage: g, chi = f.minimal_twist(5)           # long time
-            sage: g                                     # long time
+            sage: # long time
+            sage: f = Newforms(575, 2, names='a')[4]
+            sage: g, chi = f.minimal_twist(5)
+            sage: g
             q + a*q^2 - a*q^3 - 2*q^4 + (1/2*a + 2)*q^5 + O(q^6)
-            sage: chi                                   # long time
+            sage: chi
             Dirichlet character modulo 5 of conductor 5 mapping 2 |--> 1/2*a
-            sage: f.twist(chi, level=g.level()) == g    # long time
+            sage: f.twist(chi, level=g.level()) == g
             True
         """
         if p is None:
@@ -3234,7 +3237,7 @@ class GradedModularFormElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Modular Forms space of dimension 1 for Modular Group SL(2,Z) of weight 4 over Rational Field to Rational Field
-            sage: M([E4, x])
+            sage: M([E4, x])                                                            # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Symbolic Ring to Rational Field
@@ -3544,18 +3547,26 @@ class GradedModularFormElement(ModuleElement):
         TESTS::
 
             sage: M = ModularFormsRing(1)
-            sage: f4 = ModularForms(1, 4).0; f6 = ModularForms(1, 6).0;
-            sage: F4 = M(f4); F6 = M(f6);
+            sage: F4 = M.0; F6 = M.1;
             sage: F4*F6 # indirect doctest
             1 - 264*q - 135432*q^2 - 5196576*q^3 - 69341448*q^4 - 515625264*q^5 + O(q^6)
+
+        This shows that the issue at :issue:`35932` is fixed::
+
+            sage: (F4 + M(1))^2
+            4 + 960*q + 66240*q^2 + 1063680*q^3 + 7961280*q^4 + 37560960*q^5 + O(q^6)
         """
+        from collections import defaultdict
+
         GM = self.__class__
         f_self = self._forms_dictionary
         f_other = other._forms_dictionary
-        f_mul = {}
+        f_mul = defaultdict(int)
+
         for k_self in f_self.keys():
             for k_other in f_other.keys():
-                f_mul[k_self + k_other] = f_self[k_self]*f_other[k_other]
+                f_mul[k_self + k_other] += f_self[k_self] * f_other[k_other]
+
         return GM(self.parent(), f_mul)
 
     def _lmul_(self, c):

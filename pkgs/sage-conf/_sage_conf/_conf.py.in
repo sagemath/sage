@@ -50,7 +50,7 @@ SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"
 SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@".replace('$SAGE_LOCAL', SAGE_LOCAL)
 
 # Used in sage.repl.ipython_kernel.install
-MATHJAX_DIR = SAGE_LOCAL + "/share/mathjax"
+MATHJAX_DIR = "@SAGE_MATHJAX_DIR@".replace('${prefix}', SAGE_LOCAL)
 THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 
 # OpenMP flags, if available.

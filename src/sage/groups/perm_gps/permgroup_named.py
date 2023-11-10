@@ -3,65 +3,64 @@ r"""
 
 You can construct the following permutation groups:
 
--- SymmetricGroup, `S_n` of order `n!` (n can also be a list `X` of distinct
-                   positive integers, in which case it returns `S_X`)
+-  :class:`SymmetricGroup`, `S_n` of order `n!` (`n` can also be a list `X` of distinct
+   positive integers, in which case it returns `S_X`)
 
--- AlternatingGroup, `A_n` of order `n!/2` (n can also be a list `X`
-                   of distinct positive integers, in which case it returns
-                   `A_X`)
+-  :class:`AlternatingGroup`, `A_n` of order `n!/2` (n can also be a list `X`
+   of distinct positive integers, in which case it returns `A_X`)
 
--- DihedralGroup, `D_n` of order `2n`
+-  :class:`DihedralGroup`, `D_n` of order `2n`
 
--- GeneralDihedralGroup, `Dih(G)`, where G is an abelian group
+-  :class:`GeneralDihedralGroup`, `Dih(G)`, where `G` is an abelian group
 
--- CyclicPermutationGroup, `C_n` of order `n`
+-  :class:`CyclicPermutationGroup`, `C_n` of order `n`
 
--- DiCyclicGroup, nonabelian groups of order `4m` with a unique element of order 2
+-  :class:`DiCyclicGroup`, nonabelian groups of order `4m` with a unique element of order 2
 
--- TransitiveGroup, `n^{th}` transitive group of degree `d`
-                      from the GAP tables of transitive groups
+-  :class:`TransitiveGroup`, `n`-th` transitive group of degree `d`
+   from the GAP tables of transitive groups
 
--- TransitiveGroups(d), TransitiveGroups(), set of all of the above
+-  ``TransitiveGroups(d)``, ``TransitiveGroups()``, set of all of the above
 
--- PrimitiveGroup, `n^{th}` primitive group of degree `d`
-                      from the GAP tables of primitive groups
+-  :class:`PrimitiveGroup`, `n`-th` primitive group of degree `d`
+   from the GAP tables of primitive groups
 
--- PrimitiveGroups(d), PrimitiveGroups(), set of all of the above
+-  ``PrimitiveGroups(d)``, ``PrimitiveGroups()``, set of all of the above
 
--- MathieuGroup(degree), Mathieu group of degree 9, 10, 11, 12, 21, 22, 23, or 24.
+-  ``MathieuGroup(degree)``, Mathieu group of degree 9, 10, 11, 12, 21, 22, 23, or 24.
 
--- KleinFourGroup, subgroup of `S_4` of order `4` which is not `C_2 \times C_2`
+-  :class:`KleinFourGroup`, subgroup of `S_4` of order `4` which is not `C_2 \times C_2`
 
--- QuaternionGroup, non-abelian group of order `8`, `\{\pm 1, \pm I, \pm J, \pm K\}`
+-  :class:`QuaternionGroup`, non-abelian group of order `8`, `\{\pm 1, \pm I, \pm J, \pm K\}`
 
--- SplitMetacyclicGroup, nonabelian groups of order `p^m` with cyclic
-subgroups of index p
+-  :class:`SplitMetacyclicGroup`, nonabelian groups of order `p^m` with cyclic
+   subgroups of index p
 
--- SemidihedralGroup, nonabelian 2-groups with cyclic subgroups of index 2
+-  :class:`SemidihedralGroup`, nonabelian 2-groups with cyclic subgroups of index 2
 
--- PGL(n,q), projective general linear group of `n\times n` matrices over
-             the finite field GF(q)
+-  ``PGL(n,q)``, projective general linear group of `n\times n` matrices over
+   the finite field `\GF(q)`
 
--- PSL(n,q), projective special linear group of `n\times n` matrices over
-             the finite field GF(q)
+-  ``PSL(n,q)``, projective special linear group of `n\times n` matrices over
+   the finite field `\GF(q)`
 
--- PSp(2n,q), projective symplectic linear group of `2n\times 2n` matrices
-              over the finite field GF(q)
+-  ``PSp(2n,q)``, projective symplectic linear group of `2n\times 2n` matrices
+   over the finite field `\GF(q)`
 
--- PSU(n,q), projective special unitary group of `n \times n` matrices having
-             coefficients in the finite field `GF(q^2)` that respect a
-             fixed nondegenerate sesquilinear form, of determinant 1.
+-  ``PSU(n,q)``, projective special unitary group of `n \times n` matrices having
+   coefficients in the finite field `\GF(q^2)` that respect a
+   fixed nondegenerate sesquilinear form, of determinant 1.
 
--- PGU(n,q), projective general unitary group of `n\times n` matrices having
-             coefficients in the finite field `GF(q^2)` that respect a
-             fixed nondegenerate sesquilinear form, modulo the centre.
+-  ``PGU(n,q)``, projective general unitary group of `n\times n` matrices having
+   coefficients in the finite field `\GF(q^2)` that respect a
+   fixed nondegenerate sesquilinear form, modulo the centre.
 
--- SuzukiGroup(q), Suzuki group over GF(q), `^2 B_2(2^{2k+1}) = Sz(2^{2k+1})`.
+-  ``SuzukiGroup(q)``, Suzuki group over `\GF(q)`, `^2 B_2(2^{2k+1}) = Sz(2^{2k+1})`.
 
--- ComplexReflectionGroup, the complex reflection group `G(m, p, n)` or
-                           the exceptional complex reflection group `G_m`
+-  :class:`ComplexReflectionGroup`, the complex reflection group `G(m, p, n)` or
+   the exceptional complex reflection group `G_m`
 
--- SmallPermutationGroup, a permutation realization of an group specified by its GAP id.
+-  :class:`SmallPermutationGroup`, a permutation realization of a group specified by its GAP id.
 
 AUTHOR:
 
@@ -134,7 +133,7 @@ class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: SymmetricGroup(['a','b']).domain() #indirect doctest
+            sage: SymmetricGroup(['a','b']).domain()  # indirect doctest
             {'a', 'b'}
         """
         domain = kwds.pop('domain', None)
@@ -148,7 +147,7 @@ class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
 class PermutationGroup_symalt(PermutationGroup_unique):
     """
     This is a class used to factor out some of the commonality
-    in the SymmetricGroup and AlternatingGroup classes.
+    in the :class:`SymmetricGroup` and :class:`AlternatingGroup` classes.
     """
 
     @staticmethod
@@ -237,13 +236,19 @@ class SymmetricGroup(PermutationGroup_symalt):
         {1, 2, 3, 4}
         sage: G.category()
         Join of Category of finite enumerated permutation groups and
-        Category of finite weyl groups and
+        Category of finite Weyl groups and
         Category of well generated finite irreducible complex reflection groups
 
     TESTS::
 
         sage: groups.permutation.Symmetric(4)
         Symmetric group of order 4! as a permutation group
+        sage: groups.permutation.Symmetric(1).gens()
+        ()
+
+    Check for :issue:`36204`::
+
+        sage: h = SymmetricGroup(1).hom(SymmetricGroup(2))
     """
     def __init__(self, domain=None):
         """
@@ -251,9 +256,9 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         TESTS::
 
-            sage: TestSuite(SymmetricGroup(0)).run()
-            sage: TestSuite(SymmetricGroup(1)).run()
-            sage: TestSuite(SymmetricGroup(3)).run()
+            sage: TestSuite(SymmetricGroup(0)).run()                                    # needs sage.rings.number_field
+            sage: TestSuite(SymmetricGroup(1)).run()                                    # needs sage.rings.number_field
+            sage: TestSuite(SymmetricGroup(3)).run()                                    # needs sage.rings.number_field
         """
         from sage.categories.finite_weyl_groups import FiniteWeylGroups
         from sage.categories.finite_permutation_groups import FinitePermutationGroups
@@ -262,7 +267,8 @@ class SymmetricGroup(PermutationGroup_symalt):
         # Note that we skip the call to the superclass initializer in order to
         # avoid infinite recursion since SymmetricGroup is called by
         # PermutationGroupElement
-        cat = Category.join([FinitePermutationGroups(), FiniteWeylGroups().Irreducible()])
+        cat = Category.join([FinitePermutationGroups(),
+                             FiniteWeylGroups().Irreducible()])
         super(PermutationGroup_generic, self).__init__(category=cat)
 
         self._domain = domain
@@ -271,11 +277,14 @@ class SymmetricGroup(PermutationGroup_symalt):
         self._domain_from_gap = {i+1: key for i, key in enumerate(self._domain)}
 
         # Create the generators for the symmetric group
-        gens = [tuple(self._domain)]
-        if len(self._domain) > 2:
-            gens.append(tuple(self._domain[:2]))
-        self._gens = tuple([self.element_class(g, self, check=False)
-                            for g in gens])
+        if self._deg <= 1:
+            self._gens = ()
+        else:
+            gens = [tuple(self._domain)]
+            if self._deg > 2:
+                gens.append(tuple(self._domain[:2]))
+            self._gens = tuple([self.element_class(g, self, check=False)
+                                for g in gens])
 
     def _gap_init_(self, gap=None):
         """
@@ -339,14 +348,14 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         EXAMPLES::
 
-            sage: J3 = groups.misc.Cactus(3)
+            sage: J3 = groups.misc.Cactus(3)                                            # needs sage.rings.number_field
             sage: S5 = SymmetricGroup(5)
-            sage: S5.coerce_map_from(J3)
+            sage: S5.coerce_map_from(J3)                                                # needs sage.rings.number_field
             Conversion via _from_cactus_group_element map:
               From: Cactus Group with 3 fruit
               To:   Symmetric group of order 5! as a permutation group
             sage: S2 = SymmetricGroup(2)
-            sage: S2._coerce_map_from_(J3) is None
+            sage: S2._coerce_map_from_(J3) is None                                      # needs sage.rings.number_field
             True
         """
         from sage.groups.cactus_group import CactusGroup
@@ -360,6 +369,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: J3 = groups.misc.Cactus(3)
             sage: s12,s13,s23 = J3.gens()
             sage: elt = s12*s23*s13
@@ -392,7 +402,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         EXAMPLES::
 
-            sage: A = SymmetricGroup([2,3,7,'a']); A.coxeter_matrix()
+            sage: A = SymmetricGroup([2,3,7,'a']); A.coxeter_matrix()                   # needs sage.graphs
             [1 3 2]
             [3 1 3]
             [2 3 1]
@@ -401,7 +411,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
     def simple_reflection(self, i):
         r"""
-        For `i` in the index set of ``self``, this returns the
+        For `i` in the index set of ``self``, return the
         elementary transposition `s_i = (i,i+1)`.
 
         EXAMPLES::
@@ -439,11 +449,13 @@ class SymmetricGroup(PermutationGroup_symalt):
             sage: S = SymmetricGroup(8)
             sage: c = Composition([2,2,2,2])
             sage: S.young_subgroup(c)
-            Subgroup generated by [(7,8), (5,6), (3,4), (1,2)] of (Symmetric group of order 8! as a permutation group)
+            Subgroup generated by [(7,8), (5,6), (3,4), (1,2)] of
+             (Symmetric group of order 8! as a permutation group)
 
             sage: S = SymmetricGroup(['a','b','c'])
             sage: S.young_subgroup([2,1])
-            Subgroup generated by [('a','b')] of (Symmetric group of order 3! as a permutation group)
+            Subgroup generated by [('a','b')] of
+             (Symmetric group of order 3! as a permutation group)
 
             sage: Y = S.young_subgroup([2,2,2,2,2])
             Traceback (most recent call last):
@@ -483,10 +495,10 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: S4 = SymmetricGroup(4)
-            sage: S4.major_index()
+            sage: S4.major_index()                                                      # needs sage.combinat
             q^6 + 3*q^5 + 5*q^4 + 6*q^3 + 5*q^2 + 3*q + 1
             sage: K.<t> = QQ[]
-            sage: S4.major_index(t)
+            sage: S4.major_index(t)                                                     # needs sage.combinat
             t^6 + 3*t^5 + 5*t^4 + 6*t^3 + 5*t^2 + 3*t + 1
         """
         from sage.combinat.q_analogues import q_factorial
@@ -505,14 +517,14 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: G.conjugacy_classes_representatives()
+            sage: G.conjugacy_classes_representatives()                                 # needs sage.combinat
             [(), (1,2), (1,2)(3,4), (1,2,3), (1,2,3)(4,5),
              (1,2,3,4), (1,2,3,4,5)]
 
         ::
 
             sage: S = SymmetricGroup(['a','b','c'])
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # needs sage.combinat
             [(), ('a','b'), ('a','b','c')]
 
         TESTS:
@@ -520,10 +532,10 @@ class SymmetricGroup(PermutationGroup_symalt):
         Check some border cases::
 
             sage: S = SymmetricGroup(0)
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # needs sage.combinat
             [()]
             sage: S = SymmetricGroup(1)
-            sage: S.conjugacy_classes_representatives()
+            sage: S.conjugacy_classes_representatives()                                 # needs sage.combinat
             [()]
         """
         from sage.combinat.partition import Partitions_n
@@ -539,7 +551,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()
+            sage: list(G.conjugacy_classes_iterator()) == G.conjugacy_classes()         # needs sage.combinat
             True
         """
         from sage.combinat.partition import Partitions_n
@@ -555,7 +567,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: G.conjugacy_classes()
+            sage: G.conjugacy_classes()                                                 # needs sage.combinat
             [Conjugacy class of cycle type [1, 1, 1, 1, 1] in
                  Symmetric group of order 5! as a permutation group,
              Conjugacy class of cycle type [2, 1, 1, 1] in
@@ -590,7 +602,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
             sage: G = SymmetricGroup(5)
             sage: g = G((1,2,3,4))
-            sage: G.conjugacy_class(g)
+            sage: G.conjugacy_class(g)                                                  # needs sage.combinat
             Conjugacy class of cycle type [4, 1] in
              Symmetric group of order 5! as a permutation group
         """
@@ -614,37 +626,37 @@ class SymmetricGroup(PermutationGroup_symalt):
         EXAMPLES::
 
             sage: S4 = SymmetricGroup(4)
-            sage: S4.algebra(QQ)
+            sage: S4.algebra(QQ)                                                        # needs sage.combinat
             Symmetric group algebra of order 4 over Rational Field
 
             sage: S3 = SymmetricGroup([1,2,3])
-            sage: A = S3.algebra(QQ); A
+            sage: A = S3.algebra(QQ); A                                                 # needs sage.combinat
             Symmetric group algebra of order 3 over Rational Field
             sage: a = S3.an_element(); a
             (2,3)
-            sage: A(a)
+            sage: A(a)                                                                  # needs sage.combinat
             (2,3)
 
         We illustrate the choice of the category::
 
-            sage: A.category()
-            Join of Category of coxeter group algebras over Rational Field
+            sage: A.category()                                                          # needs sage.combinat
+            Join of Category of Coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
                 and Category of finite dimensional cellular algebras with basis
                      over Rational Field
-            sage: A = S3.algebra(QQ, category=Semigroups())
-            sage: A.category()
+            sage: A = S3.algebra(QQ, category=Semigroups())                             # needs sage.combinat
+            sage: A.category()                                                          # needs sage.combinat
             Category of finite dimensional unital cellular semigroup algebras
              over Rational Field
 
         In the following case, a usual group algebra is returned::
 
             sage: S = SymmetricGroup([2,3,5])
-            sage: S.algebra(QQ)
+            sage: S.algebra(QQ)                                                         # needs sage.combinat
             Algebra of Symmetric group of order 3! as a permutation group over Rational Field
             sage: a = S.an_element(); a
             (3,5)
-            sage: S.algebra(QQ)(a)
+            sage: S.algebra(QQ)(a)                                                      # needs sage.combinat
             (3,5)
         """
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
@@ -679,7 +691,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             Alternating group of order 6!/2 as a permutation group
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
             sage: G = AlternatingGroup([1,2,4,5])
             sage: G
@@ -704,7 +716,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             sage: A = AlternatingGroup([2,3,7]); A
             Alternating group of order 3!/2 as a permutation group
         """
-        return "Alternating group of order %s!/2 as a permutation group"%self.degree()
+        return "Alternating group of order %s!/2 as a permutation group" % self.degree()
 
     def _gap_init_(self, gap=None):
         """
@@ -725,11 +737,11 @@ class AlternatingGroup(PermutationGroup_symalt):
 class CyclicPermutationGroup(PermutationGroup_unique):
     def __init__(self, n):
         """
-        A cyclic group of order n, as a permutation group.
+        A cyclic group of order `n`, as a permutation group.
 
         INPUT:
 
-        n -- a positive integer
+        - ``n`` -- a positive integer
 
         .. note::
 
@@ -770,11 +782,11 @@ class CyclicPermutationGroup(PermutationGroup_unique):
             sage: CyclicPermutationGroup(8)
             Cyclic group of order 8 as a permutation group
         """
-        return "Cyclic group of order %s as a permutation group"%self.order()
+        return "Cyclic group of order %s as a permutation group" % self.order()
 
     def is_commutative(self):
         """
-        Return True if this group is commutative.
+        Return ``True`` if this group is commutative.
 
         EXAMPLES::
 
@@ -786,7 +798,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
 
     def is_abelian(self):
         """
-        Return True if this group is abelian.
+        Return ``True`` if this group is abelian.
 
         EXAMPLES::
 
@@ -798,7 +810,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
 
     def as_AbelianGroup(self):
         """
-        Returns the corresponding Abelian Group instance.
+        Return the corresponding :class:`AbelianGroup` instance.
 
         EXAMPLES::
 
@@ -819,7 +831,7 @@ class DiCyclicGroup(PermutationGroup_unique):
 
     INPUT:
 
-    - n -- a positive integer, two or greater
+    - ``n`` -- a positive integer, two or greater
 
     OUTPUT:
 
@@ -963,7 +975,7 @@ class DiCyclicGroup(PermutationGroup_unique):
 
         # Representation of  x
         # Four-cycles that will conjugate the generator  a  properly
-        x = [(i+1, (-i) % halfr + halfr + 1, (fourthr+i) % halfr + 1, (-fourthr-i)%halfr + halfr + 1)
+        x = [(i+1, (-i) % halfr + halfr + 1, (fourthr+i) % halfr + 1, (-fourthr-i) % halfr + halfr + 1)
              for i in range(0, fourthr)]
         # With an odd part, transpositions will conjugate the m-cycle to create inverse
         if m > 1:
@@ -978,7 +990,7 @@ class DiCyclicGroup(PermutationGroup_unique):
             sage: DiCyclicGroup(12)
             Dicyclic group of order 48 as a permutation group
         """
-        return "Dicyclic group of order %s as a permutation group"%self.order()
+        return "Dicyclic group of order %s as a permutation group" % self.order()
 
     def is_commutative(self):
         r"""
@@ -1063,14 +1075,15 @@ class JankoGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            sage: G = groups.permutation.Janko(1); G                            # optional - gap_package_atlasrep internet
             Janko group J1 of order 175560 as a permutation group
 
         TESTS::
 
-            sage: G.category() # optional - gap_packages internet
+            sage: G.category()                                                  # optional - gap_package_atlasrep internet
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains",       # optional - gap_package_atlasrep internet
+            ....:                        "_test_enumerated_set_iter_list"])
         """
         if n not in [1, 2, 3]:
             raise ValueError("n must belong to {1,2,3}")
@@ -1083,7 +1096,7 @@ class JankoGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = groups.permutation.Janko(1); G # optional - gap_packages internet
+            sage: G = groups.permutation.Janko(1); G                            # optional - gap_package_atlasrep internet
             Janko group J1 of order 175560 as a permutation group
         """
         return "Janko group J%s of order %s as a permutation group" % (self._n, self.order())
@@ -1096,14 +1109,15 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_packages internet
+            sage: G = groups.permutation.SuzukiSporadic(); G                    # optional - gap_package_atlasrep internet
             Sporadic Suzuki group acting on 1782 points
 
         TESTS::
 
-            sage: G.category() # optional - gap_packages internet
+            sage: G.category() # optional - gap_package_atlasrep internet
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
+            sage: TestSuite(G).run(skip=["_test_enumerated_set_contains",       # optional - gap_package_atlasrep internet
+            ....:                        "_test_enumerated_set_iter_list"])
         """
         libgap.load_package("atlasrep")
         PermutationGroup_generic.__init__(self, gap_group='AtlasGroup("Suz")')
@@ -1112,7 +1126,7 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = groups.permutation.SuzukiSporadic(); G # optional - gap_packages internet
+            sage: G = groups.permutation.SuzukiSporadic(); G                    # optional - gap_package_atlasrep internet
             Sporadic Suzuki group acting on 1782 points
         """
         return "Sporadic Suzuki group acting on 1782 points"
@@ -1125,7 +1139,7 @@ class QuaternionGroup(DiCyclicGroup):
     OUTPUT:
 
     The quaternion group of order 8, as a permutation group.
-    See the ``DiCyclicGroup`` class for a generalization of this
+    See the :class:`DiCyclicGroup` class for a generalization of this
     construction.
 
     .. note::
@@ -1196,7 +1210,7 @@ class GeneralDihedralGroup(PermutationGroup_generic):
 
     INPUT:
 
-    - ``factors`` - a list of the sizes of the cyclic factors of the
+    - ``factors`` -- a list of the sizes of the cyclic factors of the
       abelian group being dihedralized (this will be sorted once
       entered)
 
@@ -1264,7 +1278,7 @@ class GeneralDihedralGroup(PermutationGroup_generic):
     If two nonidentical input lists generate isomorphic abelian
     groups, then they will generate identical groups (with each direct
     factor broken up into its prime factors), but they will still have
-    distinct descriptions. Note that If `gcd(n,m)=1`, then `C_n \times
+    distinct descriptions. Note that if `\gcd(n,m)=1`, then `C_n \times
     C_m \cong C_{nm}`, while the general dihedral groups
     generated by isomorphic abelian groups should be themselves
     isomorphic. ::
@@ -1431,7 +1445,8 @@ class DihedralGroup(PermutationGroup_unique):
             sage: DihedralGroup(5).gens()
             ((1,2,3,4,5), (1,5)(2,4))
             sage: sorted(DihedralGroup(5))
-            [(), (2,5)(3,4), (1,2)(3,5), (1,2,3,4,5), (1,3)(4,5), (1,3,5,2,4), (1,4)(2,3), (1,4,2,5,3), (1,5,4,3,2), (1,5)(2,4)]
+            [(), (2,5)(3,4), (1,2)(3,5), (1,2,3,4,5), (1,3)(4,5), (1,3,5,2,4),
+             (1,4)(2,3), (1,4,2,5,3), (1,5,4,3,2), (1,5)(2,4)]
 
             sage: G = DihedralGroup(6)
             sage: G.order()
@@ -1642,7 +1657,7 @@ class SemidihedralGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``m`` - a positive integer; the power of 2 that is the
+        - ``m`` -- a positive integer; the power of 2 that is the
           group's order
 
         OUTPUT:
@@ -1752,11 +1767,11 @@ class MathieuGroup(PermutationGroup_unique):
 
         INPUT:
 
-        n -- a positive integer in  {9, 10, 11, 12, 21, 22, 23, 24}.
+        - ``n`` -- a positive integer in  {9, 10, 11, 12, 21, 22, 23, 24}.
 
         OUTPUT:
 
-        the Mathieu group of degree n, as a permutation group
+        the Mathieu group of degree `n`, as a permutation group
 
         .. note::
 
@@ -1764,8 +1779,7 @@ class MathieuGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: G = MathieuGroup(12)
-            sage: G
+            sage: G = MathieuGroup(12); G
             Mathieu group of degree 12 and order 95040 as a permutation group
 
         TESTS::
@@ -1795,7 +1809,7 @@ class MathieuGroup(PermutationGroup_unique):
             sage: G = MathieuGroup(12); G
             Mathieu group of degree 12 and order 95040 as a permutation group
         """
-        return "Mathieu group of degree %s and order %s as a permutation group"%(self._n, self.order())
+        return "Mathieu group of degree %s and order %s as a permutation group" % (self._n, self.order())
 
 
 class TransitiveGroup(PermutationGroup_unique):
@@ -1805,13 +1819,13 @@ class TransitiveGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - d -- non-negative integer; the degree
-        - n -- positive integer; the index of the group in the GAP database,
+        - ``d`` -- non-negative integer; the degree
+        - ``n`` -- positive integer; the index of the group in the GAP database,
           starting at 1
 
         OUTPUT:
 
-        the n-th transitive group of degree d
+        the `n`-th transitive group of degree `d`
 
         .. note::
 
@@ -1845,7 +1859,8 @@ class TransitiveGroup(PermutationGroup_unique):
             sage: TransitiveGroup(32,1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: only the transitive groups of degree at most 31 are available in GAP's database
+            NotImplementedError: only the transitive groups of degree at most 31
+            are available in GAP's database
 
         TESTS::
 
@@ -1904,7 +1919,7 @@ class TransitiveGroup(PermutationGroup_unique):
             sage: G = TransitiveGroup(1,1); G
             Transitive group number 1 of degree 1
         """
-        return "Transitive group number %s of degree %s"%(self._n, self._d)
+        return "Transitive group number %s of degree %s" % (self._n, self._d)
 
 
 def TransitiveGroups(d=None):
@@ -1913,7 +1928,7 @@ def TransitiveGroups(d=None):
 
     - ``d`` -- an integer (optional)
 
-    Returns the set of all transitive groups of a given degree
+    Return the set of all transitive groups of a given degree
     ``d`` up to isomorphisms. If ``d`` is not specified, it returns the set of all
     transitive groups up to isomorphisms.
 
@@ -1935,16 +1950,17 @@ def TransitiveGroups(d=None):
         sage: TransitiveGroups(32).cardinality()
         Traceback (most recent call last):
         ...
-        NotImplementedError: only the transitive groups of degree at most 31 are available in GAP's database
+        NotImplementedError: only the transitive groups of degree at most 31
+        are available in GAP's database
 
     """
     if d is None:
         return TransitiveGroupsAll()
-    else:
-        d = Integer(d)
-        if d < 0:
-            raise ValueError("a transitive group acts on a non negative integer number of positions")
-        return TransitiveGroupsOfDegree(d)
+
+    d = Integer(d)
+    if d < 0:
+        raise ValueError("a transitive group acts on a non negative integer number of positions")
+    return TransitiveGroupsOfDegree(d)
 
 
 class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
@@ -1987,7 +2003,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         TESTS::
 
-            sage: TransitiveGroups() # indirect doctest
+            sage: TransitiveGroups()  # indirect doctest
             Transitive Groups
         """
         return "Transitive Groups"
@@ -2101,7 +2117,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: list(TransitiveGroups(5)) # indirect doctest
+            sage: list(TransitiveGroups(5))  # indirect doctest
             [Transitive group number 1 of degree 5,
              Transitive group number 2 of degree 5,
              Transitive group number 3 of degree 5,
@@ -2165,7 +2181,8 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
                 sage: TransitiveGroups(32).cardinality()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: only the transitive groups of degree at most 31 are available in GAP's database
+                NotImplementedError: only the transitive groups of degree at most 31
+                are available in GAP's database
 
         TESTS::
 
@@ -2375,7 +2392,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
     The following test is broken, see :trac:`22576`::
 
-        sage: TestSuite(PrimitiveGroups()).run() # known bug # long time
+        sage: TestSuite(PrimitiveGroups()).run()  # known bug, long time
     """
     def __init__(self):
         """
@@ -2399,7 +2416,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
         TESTS::
 
-            sage: PrimitiveGroups() # indirect doctest
+            sage: PrimitiveGroups()  # indirect doctest
             Primitive Groups
         """
         return "Primitive Groups"
@@ -2479,7 +2496,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: PrimitiveGroups(6)
             Primitive Groups of degree 6
         """
-        return "Primitive Groups of degree %s"%(self._degree)
+        return "Primitive Groups of degree %s" % (self._degree)
 
     def __contains__(self, G):
         r"""
@@ -2533,7 +2550,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: list(PrimitiveGroups(5)) # indirect doctest
+            sage: list(PrimitiveGroups(5))  # indirect doctest
             [C(5), D(2*5), AGL(1, 5), A(5), S(5)]
         """
         for n in range(1, self.cardinality() + 1):
@@ -2615,18 +2632,18 @@ class PermutationGroup_plg(PermutationGroup_unique):
 
 class PGL(PermutationGroup_plg):
     def __init__(self, n, q, name='a'):
-        """
-        The projective general linear groups over GF(q).
+        r"""
+        The projective general linear groups over `\GF(q)`.
 
         INPUT:
 
-        - n -- positive integer; the degree
-        - q -- prime power; the size of the ground field
-        - name -- (default: 'a') variable name of indeterminate of finite field GF(q)
+        - ``n`` -- positive integer; the degree
+        - ``q`` -- prime power; the size of the ground field
+        - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
         OUTPUT:
 
-        PGL(n,q)
+        PGL(`n`, `q`)
 
         .. note::
 
@@ -2643,14 +2660,14 @@ class PGL(PermutationGroup_plg):
             sage: G.order()
             24
 
-            sage: G = PGL(2, 9, 'b'); G
+            sage: G = PGL(2, 9, 'b'); G                                                 # needs sage.rings.finite_rings
             Permutation Group with generators [(3,10,9,8,4,7,6,5), (1,2,4)(5,6,8)(7,9,10)]
             sage: G.base_ring()
             Finite Field in b of size 3^2
 
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
         TESTS::
 
@@ -2672,23 +2689,23 @@ class PGL(PermutationGroup_plg):
             sage: print(G)
             The projective general linear group of degree 2 over Finite Field of size 3
         """
-        return "The projective general linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective general linear group of degree %s over %s" % (self._n, self.base_ring())
 
 
 class PSL(PermutationGroup_plg):
     def __init__(self, n, q, name='a'):
-        """
-        The projective special linear groups over GF(q).
+        r"""
+        The projective special linear groups over `\GF(q)`.
 
         INPUT:
 
-        - n -- positive integer; the degree
-        - q -- either a prime power (the size of the ground field) or a finite field
-        - name -- (default: 'a') variable name of indeterminate of finite field GF(q)
+        - ``n`` -- positive integer; the degree
+        - ``q`` -- either a prime power (the size of the ground field) or a finite field
+        - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
         OUTPUT:
 
-        the group PSL(n,q)
+        the group PSL(`n`, `q`)
 
         .. note::
 
@@ -2707,18 +2724,18 @@ class PSL(PermutationGroup_plg):
 
         We create two groups over nontrivial finite fields::
 
-            sage: G = PSL(2, 4, 'b'); G
+            sage: G = PSL(2, 4, 'b'); G                                                 # needs sage.rings.finite_rings
             Permutation Group with generators [(3,4,5), (1,2,3)]
             sage: G.base_ring()
             Finite Field in b of size 2^2
-            sage: G = PSL(2, 8); G
+            sage: G = PSL(2, 8); G                                                      # needs sage.rings.finite_rings
             Permutation Group with generators [(3,8,6,4,9,7,5), (1,2,3)(4,7,5)(6,9,8)]
             sage: G.base_ring()
             Finite Field in a of size 2^3
 
             sage: G.category()
             Category of finite enumerated permutation groups
-            sage: TestSuite(G).run() # long time
+            sage: TestSuite(G).run()  # long time
 
         TESTS::
 
@@ -2759,12 +2776,12 @@ class PSL(PermutationGroup_plg):
             sage: print(G)
             The projective special linear group of degree 2 over Finite Field of size 3
         """
-        return "The projective special linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective special linear group of degree %s over %s" % (self._n, self.base_ring())
 
     def ramification_module_decomposition_hurwitz_curve(self):
         r"""
         Helps compute the decomposition of the ramification module
-        for the Hurwitz curves X (over CC say) with automorphism group
+        for the Hurwitz curves X (over `\CC` say) with automorphism group
         G = PSL(2,q), q a "Hurwitz prime" (ie, p is `\pm 1 \pmod 7`).
         Using this computation and Borne's formula helps determine the
         G-module structure of the RR spaces of equivariant
@@ -2777,14 +2794,16 @@ class PSL(PermutationGroup_plg):
         Here IrrRepns(G) = [pi_1,...,pi_n] (in the order listed in the
         output of self.character_table()).
 
-        REFERENCE: David Joyner, Amy Ksir, Roger Vogeler,
-                   "Group representations on Riemann-Roch spaces of some
-                   Hurwitz curves," preprint, 2006.
+        REFERENCE:
+
+        David Joyner, Amy Ksir, Roger Vogeler,
+        "Group representations on Riemann-Roch spaces of some
+        Hurwitz curves," preprint, 2006.
 
         EXAMPLES::
 
             sage: G = PSL(2,13)
-            sage: G.ramification_module_decomposition_hurwitz_curve() # random, optional - gap_packages
+            sage: G.ramification_module_decomposition_hurwitz_curve()  # random, optional - gap_packages
             [0, 7, 7, 12, 12, 12, 13, 15, 14]
 
         This means, for example, that the trivial representation does not
@@ -2811,7 +2830,7 @@ class PSL(PermutationGroup_plg):
         return mults.sage()
 
     def ramification_module_decomposition_modular_curve(self):
-        """
+        r"""
         Helps compute the decomposition of the ramification module
         for the modular curve X(p) (over CC say) with automorphism group G = PSL(2,q),
         q a prime > 5. Using this computation and Borne's formula helps determine the
@@ -2834,7 +2853,7 @@ class PSL(PermutationGroup_plg):
         EXAMPLES::
 
             sage: G = PSL(2,7)
-            sage: G.ramification_module_decomposition_modular_curve() # random, optional - gap_packages
+            sage: G.ramification_module_decomposition_modular_curve()  # random, optional - gap_packages
             [0, 4, 3, 6, 7, 8]
 
         This means, for example, that the trivial representation does not
@@ -2857,18 +2876,18 @@ class PSL(PermutationGroup_plg):
 
 class PSp(PermutationGroup_plg):
     def __init__(self, n, q, name='a'):
-        """
-        The projective symplectic linear groups over GF(q).
+        r"""
+        The projective symplectic linear groups over `\GF(q)`.
 
         INPUT:
 
-        - n -- positive integer; the degree
-        - q -- prime power; the size of the ground field
-        - name -- (default: 'a') variable name of indeterminate of finite field GF(q)
+        - ``n`` -- positive integer; the degree
+        - ``q`` -- prime power; the size of the ground field
+        - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
         OUTPUT:
 
-        PSp(n,q)
+        PSp(`n`, `q`)
 
         .. note::
 
@@ -2889,7 +2908,7 @@ class PSp(PermutationGroup_plg):
             sage: G.base_ring()
             Finite Field of size 3
 
-            sage: G = PSp(2, 8, name='alpha'); G
+            sage: G = PSp(2, 8, name='alpha'); G                                        # needs sage.rings.finite_rings
             Permutation Group with generators [(3,8,6,4,9,7,5), (1,2,3)(4,7,5)(6,9,8)]
             sage: G.base_ring()
             Finite Field in alpha of size 2^3
@@ -2916,7 +2935,7 @@ class PSp(PermutationGroup_plg):
             sage: print(G)
             The projective symplectic linear group of degree 4 over Finite Field of size 3
         """
-        return "The projective symplectic linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective symplectic linear group of degree %s over %s" % (self._n, self.base_ring())
 
 
 PSP = PSp
@@ -2927,7 +2946,7 @@ class PermutationGroup_pug(PermutationGroup_plg):
         """
         EXAMPLES::
 
-            sage: PSU(2,3).field_of_definition()
+            sage: PSU(2,3).field_of_definition()                                        # needs sage.rings.finite_rings
             Finite Field in a of size 3^2
         """
         return self._field_of_definition
@@ -2935,8 +2954,8 @@ class PermutationGroup_pug(PermutationGroup_plg):
 
 class PSU(PermutationGroup_pug):
     def __init__(self, n, q, name='a'):
-        """
-        The projective special unitary groups over GF(q).
+        r"""
+        The projective special unitary groups over `\GF(q)`.
 
         INPUT:
 
@@ -2954,17 +2973,17 @@ class PSU(PermutationGroup_pug):
 
         EXAMPLES::
 
-            sage: PSU(2,3)
+            sage: PSU(2,3)                                                              # needs sage.rings.finite_rings
             The projective special unitary group of degree 2 over Finite Field of size 3
 
-            sage: G = PSU(2, 8, name='alpha'); G
+            sage: G = PSU(2, 8, name='alpha'); G                                        # needs sage.rings.finite_rings
             The projective special unitary group of degree 2 over Finite Field in alpha of size 2^3
-            sage: G.base_ring()
+            sage: G.base_ring()                                                         # needs sage.rings.finite_rings
             Finite Field in alpha of size 2^3
 
         TESTS::
 
-            sage: groups.permutation.PSU(2, 3)
+            sage: groups.permutation.PSU(2, 3)                                          # needs sage.rings.finite_rings
             The projective special unitary group of degree 2 over Finite Field of size 3
         """
         id = 'PSU(%s,%s)' % (n, q)
@@ -2978,7 +2997,7 @@ class PSU(PermutationGroup_pug):
         """
         EXAMPLES::
 
-            sage: PSU(2,3)
+            sage: PSU(2,3)                                                              # needs sage.rings.finite_rings
             The projective special unitary group of degree 2 over Finite Field of size 3
 
         """
@@ -2987,18 +3006,18 @@ class PSU(PermutationGroup_pug):
 
 class PGU(PermutationGroup_pug):
     def __init__(self, n, q, name='a'):
-        """
-        The projective general unitary groups over GF(q).
+        r"""
+        The projective general unitary groups over `\GF(q)`.
 
         INPUT:
 
-        - n -- positive integer; the degree
-        - q -- prime power; the size of the ground field
-        - name -- (default: 'a') variable name of indeterminate of finite field GF(q)
+        - ``n`` -- positive integer; the degree
+        - ``q`` -- prime power; the size of the ground field
+        - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
         OUTPUT:
 
-        PGU(n,q)
+        PGU(`n`, `q`)
 
         .. note::
 
@@ -3006,17 +3025,18 @@ class PGU(PermutationGroup_pug):
 
         EXAMPLES::
 
-            sage: PGU(2,3)
+            sage: PGU(2,3)                                                              # needs sage.rings.finite_rings
             The projective general unitary group of degree 2 over Finite Field of size 3
 
-            sage: G = PGU(2, 8, name='alpha'); G
-            The projective general unitary group of degree 2 over Finite Field in alpha of size 2^3
-            sage: G.base_ring()
+            sage: G = PGU(2, 8, name='alpha'); G                                        # needs sage.rings.finite_rings
+            The projective general unitary group of degree 2
+             over Finite Field in alpha of size 2^3
+            sage: G.base_ring()                                                         # needs sage.rings.finite_rings
             Finite Field in alpha of size 2^3
 
         TESTS::
 
-            sage: groups.permutation.PGU(2, 3)
+            sage: groups.permutation.PGU(2, 3)                                          # needs sage.rings.finite_rings
             The projective general unitary group of degree 2 over Finite Field of size 3
         """
         id = 'PGU(%s,%s)' % (n, q)
@@ -3030,32 +3050,32 @@ class PGU(PermutationGroup_pug):
         """
         EXAMPLES::
 
-            sage: PGU(2,3)
+            sage: PGU(2,3)                                                              # needs sage.rings.finite_rings
             The projective general unitary group of degree 2 over Finite Field of size 3
 
         """
-        return "The projective general unitary group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective general unitary group of degree %s over %s" % (self._n, self.base_ring())
 
 
 class SuzukiGroup(PermutationGroup_unique):
     def __init__(self, q, name='a'):
         r"""
-        The Suzuki group over GF(q),
+        The Suzuki group over `\GF(q)`,
         `^2 B_2(2^{2k+1}) = Sz(2^{2k+1})`.
 
-        A wrapper for the GAP function SuzukiGroup.
+        A wrapper for the GAP function ``SuzukiGroup``.
 
         INPUT:
 
-        - q -- 2^n, an odd power of 2; the size of the ground
-          field. (Strictly speaking, n should be greater than 1, or
-          else this group os not simple.)
-        - name -- (default: 'a') variable name of indeterminate of
-          finite field GF(q)
+        - ``q`` -- `2^n`, an odd power of 2; the size of the ground
+          field. (Strictly speaking, `n` should be greater than 1, or
+          else this group is not simple.)
+        - ``name`` -- (default: ``'a'``) variable name of indeterminate of
+          finite field `\GF(q)`
 
         OUTPUT:
 
-        - A Suzuki group.
+        A Suzuki group.
 
         .. note::
 
@@ -3063,12 +3083,13 @@ class SuzukiGroup(PermutationGroup_unique):
 
         EXAMPLES::
 
-            sage: SuzukiGroup(8)
+            sage: SuzukiGroup(8)                                                        # needs sage.rings.finite_rings
             Permutation Group with generators [(1,2)(3,10)(4,42)(5,18)(6,50)(7,26)(8,58)(9,34)(12,28)(13,45)(14,44)(15,23)(16,31)(17,21)(19,39)(20,38)(22,25)(24,61)(27,60)(29,65)(30,55)(32,33)(35,52)(36,49)(37,59)(40,54)(41,62)(43,53)(46,48)(47,56)(51,63)(57,64),
             (1,28,10,44)(3,50,11,42)(4,43,53,64)(5,9,39,52)(6,36,63,13)(7,51,60,57)(8,33,37,16)(12,24,55,29)(14,30,48,47)(15,19,61,54)(17,59,22,62)(18,23,34,31)(20,38,49,25)(21,26,45,58)(27,32,41,65)(35,46,40,56)]
-            sage: print(SuzukiGroup(8))
+            sage: print(SuzukiGroup(8))                                                 # needs sage.rings.finite_rings
             The Suzuki group over Finite Field in a of size 2^3
 
+            sage: # needs sage.rings.finite_rings
             sage: G = SuzukiGroup(32, name='alpha')
             sage: G.order()
             32537600
@@ -3079,7 +3100,7 @@ class SuzukiGroup(PermutationGroup_unique):
 
         TESTS::
 
-            sage: groups.permutation.Suzuki(8)
+            sage: groups.permutation.Suzuki(8)                                          # needs sage.rings.finite_rings
             Permutation Group with generators [(1,2)(3,10)(4,42)(5,18)(6,50)(7,26)(8,58)(9,34)(12,28)(13,45)(14,44)(15,23)(16,31)(17,21)(19,39)(20,38)(22,25)(24,61)(27,60)(29,65)(30,55)(32,33)(35,52)(36,49)(37,59)(40,54)(41,62)(43,53)(46,48)(47,56)(51,63)(57,64),
             (1,28,10,44)(3,50,11,42)(4,43,53,64)(5,9,39,52)(6,36,63,13)(7,51,60,57)(8,33,37,16)(12,24,55,29)(14,30,48,47)(15,19,61,54)(17,59,22,62)(18,23,34,31)(20,38,49,25)(21,26,45,58)(27,32,41,65)(35,46,40,56)]
 
@@ -3100,8 +3121,8 @@ class SuzukiGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = SuzukiGroup(32, name='alpha')
-            sage: G.base_ring()
+            sage: G = SuzukiGroup(32, name='alpha')                                     # needs sage.rings.finite_rings
+            sage: G.base_ring()                                                         # needs sage.rings.finite_rings
             Finite Field in alpha of size 2^5
         """
         return self._base_ring
@@ -3110,8 +3131,8 @@ class SuzukiGroup(PermutationGroup_unique):
         """
         EXAMPLES::
 
-            sage: G = SuzukiGroup(32, name='alpha')
-            sage: print(G)
+            sage: G = SuzukiGroup(32, name='alpha')                                     # needs sage.rings.finite_rings
+            sage: print(G)                                                              # needs sage.rings.finite_rings
             The Suzuki group over Finite Field in alpha of size 2^5
 
         """
@@ -3438,6 +3459,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         ret.append((self._n-1)*self._m - self._n)
         return tuple(sorted(ret, reverse=True))
 
+
 class SmallPermutationGroup(PermutationGroup_generic):
     r"""
     A GAP SmallGroup, returned as a permutation group.
@@ -3467,9 +3489,9 @@ class SmallPermutationGroup(PermutationGroup_generic):
         Group of order 12 and GAP Id 4 as a permutation group
         sage: G.gens()
         ((1,2)(3,5)(4,10)(6,8)(7,12)(9,11),
-        (1,3)(2,5)(4,7)(6,9)(8,11)(10,12),
-        (1,4,8)(2,6,10)(3,7,11)(5,9,12))
-        sage: G.character_table()
+         (1,3)(2,5)(4,7)(6,9)(8,11)(10,12),
+         (1,4,8)(2,6,10)(3,7,11)(5,9,12))
+        sage: G.character_table()                                                       # needs sage.rings.number_field
         [ 1  1  1  1  1  1]
         [ 1 -1 -1  1  1 -1]
         [ 1 -1  1  1 -1  1]
@@ -3477,15 +3499,19 @@ class SmallPermutationGroup(PermutationGroup_generic):
         [ 2  0 -2 -1  0  1]
         [ 2  0  2 -1  0 -1]
         sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
-        sage: all(SmallPermutationGroup(n,k).id()==[n,k] for n in [1..64] for k in [1..numgps(n)])
+        sage: all(SmallPermutationGroup(n,k).id() == [n,k]
+        ....:     for n in [1..64] for k in [1..numgps(n)])
         True
         sage: H = SmallPermutationGroup(6,1)
         sage: H.is_abelian()
         False
         sage: [H.centralizer(g) for g in H.conjugacy_classes_representatives()]
-        [Subgroup generated by [(1,2)(3,6)(4,5), (1,3,5)(2,4,6)] of (Group of order 6 and GAP Id 1 as a permutation group),
-        Subgroup generated by [(1,2)(3,6)(4,5)] of (Group of order 6 and GAP Id 1 as a permutation group),
-        Subgroup generated by [(1,3,5)(2,4,6), (1,5,3)(2,6,4)] of (Group of order 6 and GAP Id 1 as a permutation group)]
+        [Subgroup generated by [(1,2)(3,6)(4,5), (1,3,5)(2,4,6)] of
+          (Group of order 6 and GAP Id 1 as a permutation group),
+         Subgroup generated by [(1,2)(3,6)(4,5)] of
+          (Group of order 6 and GAP Id 1 as a permutation group),
+         Subgroup generated by [(1,3,5)(2,4,6), (1,5,3)(2,6,4)] of
+          (Group of order 6 and GAP Id 1 as a permutation group)]
     """
 
     def __init__(self, order, gap_id):
@@ -3498,7 +3524,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         """
         self._n = order
         self._gap_id = gap_id
-        self._gap_small_group = libgap.SmallGroup(order,gap_id)
+        self._gap_small_group = libgap.SmallGroup(order, gap_id)
         gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
         PermutationGroup_generic.__init__(self, gap_group=gap_permutation_group)
 
@@ -3509,7 +3535,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
             sage: G = SmallPermutationGroup(12,4); G
             Group of order 12 and GAP Id 4 as a permutation group
         """
-        return "Group of order %s and GAP Id %s as a permutation group"%(self._n, self._gap_id)
+        return "Group of order %s and GAP Id %s as a permutation group" % (self._n, self._gap_id)
 
     def order(self):
         """
@@ -3526,10 +3552,10 @@ class SmallPermutationGroup(PermutationGroup_generic):
         r"""
         Return the GAP small group object corresponding to ``self``.
 
-        GAP realizes some small groups as PermutationGroup, others as PcGroups
+        GAP realizes some small groups as ``PermutationGroup``, others as ``PcGroups``
         (polycyclic groups). The :class:`SmallPermutationGroup` class always
-        returns a PermutationGroup, but in the process of creating this group
-        a GAP SmallGroup is generated. This method returns that group.
+        returns a ``PermutationGroup``, but in the process of creating this group
+        a GAP ``SmallGroup`` is generated. This method returns that group.
 
         EXAMPLES::
 

@@ -28,8 +28,8 @@ About this pip-installable source distribution
 This pip-installable source distribution ``sagemath-meataxe`` is a small
 optional distribution for use with ``sagemath-standard``.
 
-This distribution provides the SageMath modules :mod:`sage.libs.meataxe`
-and :mod:`sage.matrix.matrix_gfpn_dense`.
+This distribution provides the SageMath modules ``sage.libs.meataxe``
+and ``sage.matrix.matrix_gfpn_dense``.
 
 It provides a specialized implementation of matrices over the finite field F_q, where
 q <= 255, using the `SharedMeatAxe <http://users.minet.uni-jena.de/~king/SharedMeatAxe/>`

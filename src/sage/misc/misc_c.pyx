@@ -147,7 +147,7 @@ def prod(x, z=None, Py_ssize_t recursion_cutoff=5):
     return prod
 
 
-cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff):
+cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff) noexcept:
     """
     INPUT:
 
@@ -182,7 +182,7 @@ cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutof
         return balanced_list_prod(L, offset, k, cutoff) * balanced_list_prod(L, offset + k, count - k, cutoff)
 
 
-cpdef iterator_prod(L, z=None):
+cpdef iterator_prod(L, z=None) noexcept:
     """
     Attempt to do a balanced product of an arbitrary and unknown length
     sequence (such as a generator). Intermediate multiplications are always
@@ -397,7 +397,7 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
 
     return sum
 
-cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff):
+cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff) noexcept:
     """
     INPUT:
 
@@ -432,7 +432,7 @@ cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff
         return balanced_list_sum(L, offset, k, cutoff) + balanced_list_sum(L, offset + k, count - k, cutoff)
 
 
-cpdef list normalize_index(object key, int size):
+cpdef list normalize_index(object key, int size) noexcept:
     """
     Normalize an index key and return a valid index or list of indices
     within the range(0, size).
@@ -585,7 +585,7 @@ cpdef list normalize_index(object key, int size):
             raise IndexError("index out of range")
         return [index]
     elif isinstance(key, slice):
-        return list(xrange(*key.indices(size)))
+        return list(range(*key.indices(size)))
     elif type(key) is tuple:
         index_tuple = key
     elif type(key) is list:
@@ -743,7 +743,7 @@ def cyflush():
     EXAMPLES::
 
         sage: R.<t> = QQ[]
-        sage: t^(sys.maxsize//2)
+        sage: t^(sys.maxsize//2)                                                        # needs sage.libs.flint
         Traceback (most recent call last):
         ...
         RuntimeError: FLINT exception

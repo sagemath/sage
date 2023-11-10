@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Dense matrices using a NumPy backend
 
@@ -39,7 +40,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 cimport sage.structure.element
 
 cimport numpy as cnumpy
@@ -133,7 +134,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             [0.0 1.0 2.0]
             [3.0 4.0 5.0]
             [6.0 7.0 8.0]
-            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])
+            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])                        # needs sage.symbolic
             [        0.0 1.0 + 1.0*I]
             [2.0 + 2.0*I 3.0 + 3.0*I]
         """
@@ -144,7 +145,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             for j in range(ma.ncols):
                 self.set_unsafe(i, j, next(it))
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object value) noexcept:
         """
         Set the (i,j) entry to value without any bounds checking,
         mutability checking, etc.
@@ -168,7 +169,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
                         self._python_dtype(value))
         #TODO: Throw an error if status == -1
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Get the (i,j) entry without any bounds checking, etc.
         """
@@ -176,7 +177,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
         return self._sage_dtype(cnumpy.PyArray_GETITEM(self._matrix_numpy,
                                                 cnumpy.PyArray_GETPTR2(self._matrix_numpy, i, j)))
 
-    cdef Matrix_numpy_dense _new(self, int nrows=-1, int ncols=-1):
+    cdef Matrix_numpy_dense _new(self, int nrows=-1, int ncols=-1) noexcept:
         """
         Return a new uninitialized matrix with same parent as ``self``.
 
@@ -307,8 +308,8 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         Complex entries are supported (:trac:`27831`).  ::
 
-            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])
-            sage: a.is_symmetric()
+            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])             # needs sage.symbolic
+            sage: a.is_symmetric()                                                      # needs sage.symbolic
             False
         """
         cdef Py_ssize_t i, j

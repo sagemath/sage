@@ -51,13 +51,13 @@ def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
     else:
         pad_noun = ""
     if pad_number:
-        number_str = ("%%%sd"%pad_number)%number
+        number_str = ("%%%sd" % pad_number) % number
     else:
-        number_str = "%d"%number
+        number_str = "%d" % number
     if number == 1:
-        return "%s %s%s"%(number_str, noun, pad_noun)
+        return "%s %s%s" % (number_str, noun, pad_noun)
     else:
-        return "%s %s"%(number_str, plural)
+        return "%s %s" % (number_str, plural)
 
 
 def dict_difference(self, other):
@@ -81,7 +81,7 @@ def dict_difference(self, other):
         sage: dict_difference(D2.__dict__, D1.__dict__)
         {'foobar': 'hello', 'timeout': 100}
     """
-    D = dict()
+    D = {}
     for k, v in self.items():
         try:
             if other[k] == v:
@@ -275,8 +275,8 @@ class RecordingDict(dict):
             sage: D.start(); D.set
             set()
         """
-        self.set = set([])
-        self.got = set([])
+        self.set = set()
+        self.got = set()
 
     def __getitem__(self, name):
         """

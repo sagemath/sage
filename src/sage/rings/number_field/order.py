@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.linbox
 """
 Orders in Number Fields
 
@@ -1064,25 +1065,33 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         EXAMPLES::
 
-            sage: ZZ[2^(1/3)].class_number()
+            sage: ZZ[2^(1/3)].class_number()                                            # needs sage.symbolic
             1
-            sage: QQ[sqrt(-23)].maximal_order().class_number()
+            sage: QQ[sqrt(-23)].maximal_order().class_number()                          # needs sage.symbolic
             3
-            sage: ZZ[120*sqrt(-23)].class_number()
+            sage: ZZ[120*sqrt(-23)].class_number()                                      # needs sage.symbolic
             288
 
         Note that non-maximal orders are only supported in quadratic fields::
 
-            sage: ZZ[120*sqrt(-23)].class_number()
+            sage: ZZ[120*sqrt(-23)].class_number()                                      # needs sage.symbolic
             288
-            sage: ZZ[100*sqrt(3)].class_number()
+            sage: ZZ[100*sqrt(3)].class_number()                                        # needs sage.symbolic
             4
-            sage: ZZ[11*2^(1/3)].class_number()
+            sage: ZZ[11*2^(1/3)].class_number()                                         # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: computation of class numbers of non-maximal orders
             not in quadratic fields is not implemented
 
+        TESTS:
+
+        Test for PARI bug #2466::
+
+            sage: x = polygen(ZZ)
+            sage: R.<t> = EquationOrder(x^2 - 8461)
+            sage: R.class_number()
+            3
         """
         if not self.is_maximal():
             K = self.number_field()
@@ -1554,7 +1563,7 @@ class Order_absolute(Order):
         (see :trac:`10017`)::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^3-10)
+            sage: K.<a> = NumberField(x^3 - 10)
             sage: ZK = K.ring_of_integers()
             sage: ZK.basis()
             [1/3*a^2 + 1/3*a + 1/3, a, a^2]
@@ -1665,7 +1674,7 @@ class Order_absolute(Order):
 
         OUTPUT:
 
-        a MagmaElement, the magma version of this absolute order
+        a :class:`MagmaElement`, the magma version of this absolute order
 
         EXAMPLES::
 

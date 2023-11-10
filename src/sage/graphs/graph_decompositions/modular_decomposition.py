@@ -610,7 +610,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
     decompositions. ::
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import permute_decomposition
-        sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)                 # optional - sage.groups
+        sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)                 # needs sage.groups
     """
     if graph.is_directed():
         raise ValueError("Graph must be undirected")

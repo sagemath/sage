@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field sage.rings.padics
 r"""
 Solve S-unit equation x + y = 1
 
@@ -104,7 +105,7 @@ def column_Log(SUK, iota, U, prec=106):
         sage: phi_complex = K.places()[1]
         sage: v_fin = S[0]
         sage: U = [phi_complex, v_fin]
-        sage: column_Log(SUK, xi^2, U) # abs tol 1e-29
+        sage: column_Log(SUK, xi^2, U)  # abs tol 1e-29
         [1.464816384890812968648768625966, -2.197224577336219382790490473845]
 
     REFERENCES:
@@ -278,7 +279,7 @@ def mus(SUK, v):
     """
     betas = SUK.fundamental_units()
     beta_and_ns = [[beta,beta.valuation(v)] for beta in betas]
-    if all(pair[1]==0 for pair in beta_and_ns):
+    if all(pair[1] == 0 for pair in beta_and_ns):
         return betas
     else:
         good_pair = beta_k(beta_and_ns)
@@ -397,7 +398,7 @@ def Yu_a1_kappa1_c1(p, dK, ep):
             c1 = 1473
         else:
             c1 = 319
-    elif p%4 == 1:
+    elif p % 4 == 1:
         if ep == 1:
             c1 = 1473
         else:
@@ -461,10 +462,10 @@ def Yu_condition_115(K, v):
     if q == 2:
         if p**f % 4 == 1:
             return True
-        if w%4 == 0:
+        if w % 4 == 0:
             return True
     else:
-        if w%3 == 0:
+        if w % 3 == 0:
             return True
 
     return False
@@ -787,10 +788,10 @@ def c11_func(SUK, v, A, prec=106):
         sage: phi_complex = K.places()[1]
         sage: A = K.roots_of_unity()
 
-        sage: c11_func(SUK, phi_real, A) # abs tol 1e-29
+        sage: c11_func(SUK, phi_real, A)  # abs tol 1e-29
         3.255848343572896153455615423662
 
-        sage: c11_func(SUK, phi_complex, A) # abs tol 1e-29
+        sage: c11_func(SUK, phi_complex, A)  # abs tol 1e-29
         6.511696687145792306911230847323
 
     REFERENCES:
@@ -827,10 +828,10 @@ def c13_func(SUK, v, prec=106):
         sage: phi_real = K.places()[0]
         sage: phi_complex = K.places()[1]
 
-        sage: c13_func(SUK, phi_real) # abs tol 1e-29
+        sage: c13_func(SUK, phi_real)  # abs tol 1e-29
         0.4257859134798034746197327286726
 
-        sage: c13_func(SUK, phi_complex) # abs tol 1e-29
+        sage: c13_func(SUK, phi_complex)  # abs tol 1e-29
         0.2128929567399017373098663643363
 
     It is an error to input a finite place. ::
@@ -968,7 +969,7 @@ def minimal_vector(A, y, prec=106):
         [ 1  1 -2]
         [ 6  1 -1]
         sage: y = vector([1, 2, 100])
-        sage: minimal_vector(B, y) # random
+        sage: minimal_vector(B, y)  # random
         15/28
     """
     if A.is_singular():
@@ -982,11 +983,12 @@ def minimal_vector(A, y, prec=106):
     ALLLinv = ALLL.inverse()
     ybrace = [ abs(R(a-a.round())) for a in y * ALLLinv if (a-a.round()) != 0]
 
+    v = ALLL.rows()[0]
     if len(ybrace) == 0:
-        return (ALLL.rows()[0].norm())**2 / c1
+        return v.dot_product(v) / c1
     else:
         sigma = ybrace[len(ybrace)-1]
-        return ((ALLL.rows()[0].norm())**2 * sigma) / c1
+        return v.dot_product(v) * sigma / c1
 
 
 def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
@@ -1341,7 +1343,7 @@ def log_p_series_part(a, prime, prec):
 
     divisor = q.divisors()
     order = min(d for d in divisor if (a**d - 1).valuation(prime) > 0)
-    gamma= a**order
+    gamma = a**order
     t = 0
     while (gamma-1).valuation(prime) <= e:
         t += 1
@@ -2460,7 +2462,7 @@ def compatible_vectors(a, m0, m1, g):
         27
     """
     # recall that the 0th entry must be an exact match.
-    ranges = [[a[0]]] + [range(a[i]%g, (a[i]%g) + m1, g) for i in range(1, len(a))]
+    ranges = [[a[0]]] + [range(a[i] % g, (a[i] % g) + m1, g) for i in range(1, len(a))]
     return itertools.product(*ranges)
 
 

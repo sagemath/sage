@@ -13,7 +13,7 @@ TESTS:
 
 This came up in some subtle bug once::
 
-    sage: gp(2) + gap(3)                                                                # optional - sage.libs.gap sage.libs.pari
+    sage: gp(2) + gap(3)                                                                # needs sage.libs.gap sage.libs.pari
     5
 """
 
@@ -27,14 +27,14 @@ This came up in some subtle bug once::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.superseded import deprecation
-from .coerce cimport py_scalar_parent
+from sage.structure.coerce cimport py_scalar_parent
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.sets.pythonclass cimport Set_PythonType, Set_PythonType_class
 
 from cpython.object cimport *
 from cpython.bool cimport *
 
-cdef inline check_old_coerce(Parent p):
+cdef inline check_old_coerce(Parent p) noexcept:
     if p._element_constructor is not None:
         raise RuntimeError("%s still using old coercion framework" % p)
 
@@ -46,19 +46,22 @@ cdef class Parent(parent.Parent):
 
     TESTS::
 
-        sage: V = VectorSpace(GF(2,'a'), 2)                                             # optional - sage.modules sage.rings.finite_rings
-        sage: V.list()                                                                  # optional - sage.modules sage.rings.finite_rings
+        sage: # needs sage.modules
+        sage: V = VectorSpace(GF(2,'a'), 2)
+        sage: V.list()
         [(0, 0), (1, 0), (0, 1), (1, 1)]
-        sage: MatrixSpace(GF(3), 1, 1).list()                                           # optional - sage.modules sage.rings.finite_rings
+        sage: MatrixSpace(GF(3), 1, 1).list()
         [[0], [1], [2]]
-        sage: DirichletGroup(3).list()                                                  # optional - sage.groups
+        sage: DirichletGroup(3).list()                                                  # needs sage.modular
         [Dirichlet character modulo 3 of conductor 1 mapping 2 |--> 1,
          Dirichlet character modulo 3 of conductor 3 mapping 2 |--> -1]
-        sage: K = GF(7^6,'a')                                                           # optional - sage.rings.finite_rings
-        sage: K.list()[:10]  # long time                                                # optional - sage.rings.finite_rings
+
+        sage: # needs sage.rings.finite_rings
+        sage: K = GF(7^6,'a')
+        sage: K.list()[:10]                     # long time
         [0, 1, 2, 3, 4, 5, 6, a, a + 1, a + 2]
-        sage: K.<a> = GF(4)                                                             # optional - sage.rings.finite_rings
-        sage: K.list()                                                                  # optional - sage.rings.finite_rings
+        sage: K.<a> = GF(4)
+        sage: K.list()
         [0, a, a + 1, 1]
     """
 
@@ -76,7 +79,7 @@ cdef class Parent(parent.Parent):
     # New Coercion support functionality
     ##########################################################
 
-    cdef __coerce_map_from_c(self, S):
+    cdef __coerce_map_from_c(self, S) noexcept:
         """
         EXAMPLES:
 
@@ -140,7 +143,7 @@ cdef class Parent(parent.Parent):
 
         return mor
 
-    cdef __coerce_map_from_c_impl(self, S):
+    cdef __coerce_map_from_c_impl(self, S) noexcept:
         check_old_coerce(self)
         import sage.categories.morphism
         from sage.categories.map import Map
@@ -180,7 +183,7 @@ cdef class Parent(parent.Parent):
         check_old_coerce(self)
         return self._coerce_c(x)
 
-    cpdef _coerce_c(self, x):          # DO NOT OVERRIDE THIS (call it)
+    cpdef _coerce_c(self, x) noexcept:          # DO NOT OVERRIDE THIS (call it)
         if self._element_constructor is not None:
             from sage.misc.superseded import deprecation
             deprecation(33497, "_coerce_c is deprecated, use coerce instead")
@@ -197,7 +200,7 @@ cdef class Parent(parent.Parent):
         else:
             return self._coerce_c_impl(x)
 
-    cdef _coerce_c_impl(self, x):     # OVERRIDE THIS FOR CYTHON CLASSES
+    cdef _coerce_c_impl(self, x) noexcept:     # OVERRIDE THIS FOR CYTHON CLASSES
         """
         Canonically coerce x in assuming that the parent of x is not
         equal to self.
@@ -218,11 +221,12 @@ cdef class Parent(parent.Parent):
         Given a list v of rings, try to coerce x canonically into each
         one in turn.  Return the __call__ coercion of the result into
         self of the first canonical coercion that succeeds.  Raise a
-        TypeError if none of them succeed.
+        :class:`TypeError` if none of them succeed.
 
         INPUT:
-             x -- Python object
-             v -- parent object or list (iterator) of parent objects
+
+        - x -- Python object
+        - v -- parent object or list (iterator) of parent objects
         """
         deprecation(33464, "usage of _coerce_try is deprecated")
         check_old_coerce(self)
@@ -237,7 +241,7 @@ cdef class Parent(parent.Parent):
                 pass
         raise TypeError("no canonical coercion of element into self")
 
-    cdef __has_coerce_map_from_c(self, S):
+    cdef __has_coerce_map_from_c(self, S) noexcept:
         check_old_coerce(self)
         if self == S:
             return True
@@ -285,7 +289,7 @@ cdef class Parent(parent.Parent):
     ###############################################################
     # Coercion Compatibility Layer
     ###############################################################
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         if self._element_constructor is None:
             return self.__coerce_map_from_c(S)
         else:
@@ -299,7 +303,7 @@ cdef class Parent(parent.Parent):
         self._cache_an_element = self._an_element_impl()
         return self._cache_an_element
 
-    cpdef _generic_convert_map(self, S, category=None):
+    cpdef _generic_convert_map(self, S, category=None) noexcept:
         r"""
         Return a default conversion from ``S``.
 

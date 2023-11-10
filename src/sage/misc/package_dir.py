@@ -124,7 +124,7 @@ def read_distribution(src_file):
             line = line[1:].lstrip()
             kind = "sage_setup:"
             if line.startswith(kind):
-                key, _, value = [s.strip() for s in line[len(kind):].partition('=')]
+                key, _, value = (s.strip() for s in line[len(kind):].partition('='))
                 if key == "distribution":
                     return value
     return ''
@@ -177,9 +177,9 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     Not a package::
 
-        sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory
+        sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory   # needs sage.symbolic
         '.../sage/symbolic/ginac'
-        sage: is_package_or_sage_namespace_package_dir(directory)
+        sage: is_package_or_sage_namespace_package_dir(directory)                       # needs sage.symbolic
         False
     """
     if os.path.exists(os.path.join(path, '__init__.py')):                # ordinary package

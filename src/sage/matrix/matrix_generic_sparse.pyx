@@ -4,8 +4,9 @@ Sparse Matrices over a general ring
 EXAMPLES::
 
     sage: R.<x> = PolynomialRing(QQ)
-    sage: M = MatrixSpace(QQ['x'],2,3,sparse=True); M
-    Full MatrixSpace of 2 by 3 sparse matrices over Univariate Polynomial Ring in x over Rational Field
+    sage: M = MatrixSpace(QQ['x'], 2, 3, sparse=True); M
+    Full MatrixSpace of 2 by 3 sparse matrices over
+     Univariate Polynomial Ring in x over Rational Field
     sage: a = M(range(6)); a
     [0 1 2]
     [3 4 5]
@@ -15,7 +16,7 @@ EXAMPLES::
     sage: a * b.transpose()
     [            2*x^2 + x           2*x^5 + x^4]
     [      5*x^2 + 4*x + 3 5*x^5 + 4*x^4 + 3*x^3]
-    sage: pari(a)*pari(b.transpose())
+    sage: pari(a)*pari(b.transpose())                                                   # needs sage.libs.pari
     [2*x^2 + x, 2*x^5 + x^4; 5*x^2 + 4*x + 3, 5*x^5 + 4*x^4 + 3*x^3]
     sage: c = copy(b); c
     [  1   x x^2]
@@ -54,7 +55,7 @@ EXAMPLES::
 """
 cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.structure.element
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 
 cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
@@ -186,7 +187,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         """
         return bool(self._entries)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
         if not value:
             try:
                 del self._entries[(i,j)]
@@ -195,7 +196,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         else:
             self._entries[(i,j)] = value
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         return self._entries.get((i,j), self._zero)
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
@@ -246,7 +247,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     # x  * _dict -- copy of the sparse dictionary of underlying elements
     ########################################################################
 
-    cpdef _add_(self, _other):
+    cpdef _add_(self, _other) noexcept:
         """
         EXAMPLES::
 
@@ -450,7 +451,7 @@ def Matrix_sparse_from_rows(X):
     if not X:
         raise ArithmeticError("X must be nonempty")
 
-    from . import matrix_space
+    from sage.matrix import matrix_space
     entries = {}
     R = X[0].base_ring()
     ncols = X[0].degree()

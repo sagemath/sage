@@ -112,7 +112,7 @@ def hermite_constant(n):
 
     return gamma
 
-cdef double eval_seq_as_poly(int *f, int n, double x):
+cdef double eval_seq_as_poly(int *f, int n, double x) noexcept:
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
@@ -129,7 +129,7 @@ cdef double eval_seq_as_poly(int *f, int n, double x):
         s = s * x + f[i]
     return s
 
-cdef double newton(int *f, int *df, int n, double x0, double eps):
+cdef double newton(int *f, int *df, int n, double x0, double eps) noexcept:
     r"""
     Find the real root x of f (with derivative df) near x0
     with provable precision eps, i.e. |x-z| < eps where z is the actual
@@ -174,7 +174,7 @@ cdef double newton(int *f, int *df, int n, double x0, double eps):
     return x
 
 cdef void newton_in_intervals(int *f, int *df, int n, double *beta,
-                              double eps, double *rts):
+                              double eps, double *rts) noexcept:
     r"""
     Find the real roots of f in the intervals specified by beta:
 
@@ -192,7 +192,7 @@ cdef void newton_in_intervals(int *f, int *df, int n, double *beta,
     for i from 0 <= i < n:
         rts[i] = newton(f, df, n, (beta[i]+beta[i+1])/2, eps)
 
-cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
+cpdef lagrange_degree_3(int n, int an1, int an2, int an3) noexcept:
     r"""
     Private function.  Solves the equations which arise in the Lagrange multiplier
     for degree 3: for each `1 \leq r \leq n-2`, we solve
@@ -346,7 +346,7 @@ def int_has_small_square_divisor(sage.rings.integer.Integer d):
 
     return asq
 
-cdef int eval_seq_as_poly_int(int *f, int n, int x):
+cdef int eval_seq_as_poly_int(int *f, int n, int x) noexcept:
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
@@ -366,7 +366,7 @@ eps_abs = 10.**(-12)
 phi = 0.618033988749895
 sqrt2 = 1.41421356237310
 
-cdef int easy_is_irreducible(int *a, int n):
+cdef int easy_is_irreducible(int *a, int n) noexcept:
     r"""
     Very often, polynomials have roots in {+/-1, +/-2, +/-phi, sqrt2}, so we rule
     these out quickly.  Returns 0 if reducible, 1 if inconclusive.
@@ -635,7 +635,7 @@ cdef class tr_data:
 
         return g
 
-    cdef void incr(self, int *f_out, int verbose, int haltk, int phc):
+    cdef void incr(self, int *f_out, int verbose, int haltk, int phc) noexcept:
         r"""
         This function 'increments' the totally real data to the next
         value which satisfies the bounds essentially given by Rolle's

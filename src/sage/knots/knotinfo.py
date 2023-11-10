@@ -988,13 +988,13 @@ class KnotInfoBase(Enum):
 
         h = self.homfly_polynomial()
         v, z = h.parent().gens()
-        hm  = h.subs(v=~v, z=-z)
+        hm = h.subs(v=~v, z=-z)
         if h != hm:
             return False
 
         k = self.kauffman_polynomial()
         a, z = k.parent().gens()
-        km  = k.subs(a=~a)
+        km = k.subs(a=~a)
         if k != km:
             return False
 
@@ -1488,15 +1488,15 @@ class KnotInfoBase(Enum):
 
         if skein_normalization:
             if not variab:
-                variab='A'
+                variab = 'A'
             from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
             R = LaurentPolynomialRing(ZZ, variab)
         else:
             if not variab:
                 if use_sqrt or self.is_knot() or puiseux:
-                    variab='t'
+                    variab = 't'
                 else:
-                    variab='x'
+                    variab = 'x'
             if puiseux:
                 from sage.rings.puiseux_series_ring import PuiseuxSeriesRing  # since PuiseuxPolynomial is not available, so far
                 R = PuiseuxSeriesRing(ZZ, variab)
@@ -1913,7 +1913,7 @@ class KnotInfoBase(Enum):
           the target of the conversion is the ``pip`` installable
           package `SnapPy <https://snappy.math.uic.edu/index.html>`__
           (explicitely, ``spherogram.links.invariants.Link``).
-          If SnapPy is not installed an ``ImportError`` is raised. To
+          If SnapPy is not installed an :class:`ImportError` is raised. To
           install SnapPy use ``sage -pip install snappy``.
 
         .. NOTE::
@@ -2008,7 +2008,7 @@ class KnotInfoBase(Enum):
             s^-5
         """
         if not isinstance(use_item, KnotInfoColumns):
-            raise TypeError('%s must be an instance of %s' %(use_item, KnotInfoColumns))
+            raise TypeError('%s must be an instance of %s' % (use_item, KnotInfoColumns))
 
         if snappy:
             try:
@@ -2036,7 +2036,7 @@ class KnotInfoBase(Enum):
             elif use_item == self.items.gauss_notation:
                 return Knots().from_gauss_code(self.gauss_notation())
 
-        raise ValueError('Link construction using %s not possible' %use_item)
+        raise ValueError('Link construction using %s not possible' % use_item)
 
     @cached_method
     def is_unique(self):
@@ -2067,7 +2067,7 @@ class KnotInfoBase(Enum):
         # on such series
         if self.is_knot():
             return True
-        S  = self.series(oriented=True)
+        S = self.series(oriented=True)
         hp = self.homfly_polynomial()
         Sl = S.list(homfly=hp)
         if len(Sl) == 1:
@@ -2343,10 +2343,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             sage: L6a = KnotInfoSeries(6, False, True); L6a
             Series of links L6a
         """
-        self._crossing_number   = crossing_number
-        self._is_knot           = is_knot
-        self._is_alternating    = is_alternating
-        self._name_unoriented   = name_unoriented
+        self._crossing_number = crossing_number
+        self._is_knot = is_knot
+        self._is_alternating = is_alternating
+        self._name_unoriented = name_unoriented
 
     @cached_method
     def list(self, oriented=False, comp=None, det=None, homfly=None):
@@ -2405,10 +2405,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return [L for L in l if L.num_components() == comp]
 
         # default case
-        is_knot  = self._is_knot
+        is_knot = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   = self._is_alternating
-        n_unori  = self._name_unoriented
+        is_alt = self._is_alternating
+        n_unori = self._name_unoriented
 
         res = []
         curr_n_unori = None
@@ -2425,10 +2425,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             else:
                 this_n_unori = K.name_unoriented()
                 if n_unori:
-                    if this_n_unori  != n_unori:
+                    if this_n_unori != n_unori:
                         continue
                     res.append(K)
-                elif this_n_unori  != curr_n_unori:
+                elif this_n_unori != curr_n_unori:
                     if curr_n_unori:
                         res.append(KnotInfoSeries(cross_nr, is_knot, is_alt, curr_n_unori))
                     curr_n_unori = this_n_unori
@@ -2496,9 +2496,9 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             'Series of knots K6'
         """
         if self._is_knot:
-            return 'Series of knots %s' %(self._name())
+            return 'Series of knots %s' % (self._name())
         else:
-            return 'Series of links %s' %(self._name())
+            return 'Series of links %s' % (self._name())
 
     def __getitem__(self, item):
         r"""
@@ -2551,7 +2551,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             True
         """
         if self._name_unoriented:
-            if type(item) == str:
+            if isinstance(item, str):
                 # allow input as dual number according to naming
                 item = int(item, 2)
             return self[item]
@@ -2576,10 +2576,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             sage: KnotInfoSeries(6, True, True)._name()
             'K6'
         """
-        is_knot  = self._is_knot
+        is_knot = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   = self._is_alternating
-        n_unori  = self._name_unoriented
+        is_alt = self._is_alternating
+        n_unori = self._name_unoriented
 
         alt = 'a'
         if not is_alt:
@@ -2587,13 +2587,13 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         if is_knot:
             if cross_nr > 10:
-                res = 'K%s%s' %(cross_nr, alt)
+                res = 'K%s%s' % (cross_nr, alt)
             else:
-                res = 'K%s' %(cross_nr)
+                res = 'K%s' % (cross_nr)
         elif n_unori:
-            res = '%s' %(n_unori)
+            res = '%s' % (n_unori)
         else:
-            res = 'L%s%s' %(cross_nr, alt)
+            res = 'L%s%s' % (cross_nr, alt)
         return res
 
     def is_recoverable(self, unique=True, max_samples=8):

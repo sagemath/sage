@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 """
 Base class for finite field elements
 
@@ -268,6 +268,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: F,t = GF(random_prime(99)^randrange(2,99), 't').objgen()
             sage: a = F.random_element()
             sage: all(a[i] == a.polynomial()[i] for i in range(F.degree()))
@@ -290,7 +291,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         EXAMPLES::
 
             sage: x = polygen(GF(71))
-            sage: F.<u> = GF(71^7, modulus=x^7+x+1)
+            sage: F.<u> = GF(71^7, modulus=x^7 + x + 1)
             sage: a = 3 + u + 3*u^2 + 3*u^3 + 7*u^4
             sage: a.list()
             [3, 1, 3, 3, 7, 0, 0]
@@ -308,6 +309,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: R.<x> = GF(17)[]
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
@@ -351,6 +353,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: F = GF(random_prime(333)^randrange(111,999),'t')
             sage: a = F.random_element()
             sage: list(a) == a.list()  # implicit doctest
@@ -358,6 +361,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         ::
 
+            sage: # needs sage.modules
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
             sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
@@ -365,7 +369,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         ::
 
-            sage: F.<t> = GF((2^127-1)^10, 't')
+            sage: # needs sage.modules
+            sage: F.<t> = GF((2^127 - 1)^10, 't')
             sage: a = F.random_element()
             sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
             True
@@ -431,6 +436,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: k.<a> = GF(2^4)
             sage: b = k.random_element()
             sage: vector(a*b) == a.matrix() * vector(b)
@@ -557,18 +563,18 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     def charpoly(self, var='x', algorithm='pari'):
         """
-        Return the characteristic polynomial of self as a polynomial with given variable.
+        Return the characteristic polynomial of ``self`` as a polynomial with given variable.
 
         INPUT:
 
         - ``var`` -- string (default: 'x')
 
-        - ``algorithm`` -- string (default: 'pari')
+        - ``algorithm`` -- string (default: ``'pari'``)
 
-          - 'pari' -- use pari's charpoly
+          - ``'pari'`` -- use pari's charpoly
 
-          - 'matrix' -- return the charpoly computed from the matrix of
-            left multiplication by self
+          - ``'matrix'`` -- return the charpoly computed from the matrix of
+            left multiplication by ``self``
 
         The result is not cached.
 
@@ -578,10 +584,10 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: k.<a> = FiniteField(19^2)
             sage: parent(a)
             Finite Field in a of size 19^2
-            sage: b=a**20
-            sage: p=FinitePolyExtElement.charpoly(b,"x", algorithm="pari")
-            sage: q=FinitePolyExtElement.charpoly(b,"x", algorithm="matrix")
-            sage: q == p
+            sage: b = a**20
+            sage: p = FinitePolyExtElement.charpoly(b, "x", algorithm="pari")
+            sage: q = FinitePolyExtElement.charpoly(b, "x", algorithm="matrix")   # needs sage.modules
+            sage: q == p                                                          # needs sage.modules
             True
             sage: p
             x^2 + 15*x + 4
@@ -711,23 +717,23 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(9, impl='givaro', modulus='primitive')
-            sage: a.is_square()
+            sage: k.<a> = FiniteField(9, impl='givaro', modulus='primitive')            # needs sage.libs.linbox
+            sage: a.is_square()                                                         # needs sage.libs.linbox
             False
-            sage: (a**2).is_square()
+            sage: (a**2).is_square()                                                    # needs sage.libs.linbox
             True
-            sage: k.<a> = FiniteField(4, impl='ntl', modulus='primitive')
-            sage: (a**2).is_square()
+            sage: k.<a> = FiniteField(4, impl='ntl', modulus='primitive')               # needs sage.libs.ntl
+            sage: (a**2).is_square()                                                    # needs sage.libs.ntl
             True
-            sage: k.<a> = FiniteField(17^5, impl='pari_ffelt', modulus='primitive')
-            sage: a.is_square()
+            sage: k.<a> = FiniteField(17^5, impl='pari_ffelt', modulus='primitive')     # needs sage.libs.pari
+            sage: a.is_square()                                                         # needs sage.libs.pari
             False
-            sage: (a**2).is_square()
+            sage: (a**2).is_square()                                                    # needs sage.libs.pari
             True
 
         ::
 
-            sage: k(0).is_square()
+            sage: k(0).is_square()                                                      # needs sage.libs.linbox
             True
         """
         K = self.parent()
@@ -998,6 +1004,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         Check that :trac:`26761` is fixed::
 
+            sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)
             sage: g1, g2 = G32.gens()
             sage: m1 = g1.matrix()
@@ -1049,6 +1056,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: p = random_prime(2^99)
             sage: k = randrange(2,10)
             sage: F.<t> = GF((p, k))
@@ -1076,7 +1084,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
     integer_representation = deprecated_function_alias(33941, to_integer)
 
 cdef class Cache_base(SageObject):
-    cpdef FinitePolyExtElement fetch_int(self, number):
+    cpdef FinitePolyExtElement fetch_int(self, number) noexcept:
         r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns
@@ -1086,7 +1094,7 @@ cdef class Cache_base(SageObject):
         EXAMPLES::
 
             sage: k.<a> = GF(2^48)
-            sage: k._cache.fetch_int(2^33 + 2 + 1)
+            sage: k._cache.fetch_int(2^33 + 2 + 1)                                      # needs sage.libs.ntl
             a^33 + a + 1
         """
         raise NotImplementedError("this must be implemented by subclasses")

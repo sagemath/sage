@@ -1,3 +1,4 @@
+# sage.doctest: needs scipy sage.graphs sage.groups
 r"""
 Riemann matrices and endomorphism rings of algebraic Riemann surfaces
 
@@ -124,6 +125,7 @@ from sage.matrix.special import block_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.functional import numerical_approx
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_integer import IntegerLattice
@@ -134,11 +136,12 @@ from sage.rings.function_field.divisor import FunctionFieldDivisor
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
 import sage.libs.mpmath.all as mpall
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 
 def voronoi_ghost(cpoints, n=6, CC=CDF):
@@ -279,7 +282,7 @@ def numerical_inverse(C):
     with mpall.workprec(prec):
         Cmp = mpall.matrix([mpall.sage_to_mpmath(list(c), prec) for c in C])
         PLU = mpall.lu(Cmp)
-    P, L, U = [R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU]
+    P, L, U = (R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU)
     return U.inverse() * L.inverse() * P
 
 
@@ -709,7 +712,7 @@ class RiemannSurface():
         combined_discriminant = lcm(discriminants)(*self._R.gens())
         self._differentials_branch_locus = []
         for x in combined_discriminant.factor():
-            if not x[0] in existing_factors:
+            if x[0] not in existing_factors:
                 self._differentials_branch_locus += self._CCz(
                     x[0](self._CCz.gen(), 0)
                 ).roots(multiplicities=False)
@@ -2372,7 +2375,8 @@ class RiemannSurface():
         easier to test.::
 
             sage: parent(M)
-            Full MatrixSpace of 3 by 6 dense matrices over Complex Field with 30 bits of precision
+            Full MatrixSpace of 3 by 6 dense matrices
+             over Complex Field with 30 bits of precision
             sage: M.rank()
             3
 
@@ -2438,7 +2442,7 @@ class RiemannSurface():
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(y^2 - x^3 - x)
-            sage: S.plot_paths()
+            sage: S.plot_paths()                                                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d
@@ -2474,8 +2478,8 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
-            sage: S = RiemannSurface(y^2-x^3-x)
-            sage: S.plot_paths3d()
+            sage: S = RiemannSurface(y^2 - x^3 - x)
+            sage: S.plot_paths3d()                                                      # needs sage.plot
             Graphics3d Object
         """
         from sage.plot.graphics import Graphics
@@ -2955,7 +2959,7 @@ class RiemannSurface():
             sage: s = sign(w_start)
             sage: u_edge = ((z_start, w_start), z_end)
             sage: J, _ = S._integrate_differentials_iteratively(u_edge)
-            sage: bool(J[0]+s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2)<1e-10)
+            sage: bool(J[0] + s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2) < 1e-10)        # needs sage.symbolic
             True
 
         .. NOTE::
