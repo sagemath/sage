@@ -555,6 +555,34 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             for exp, coeff in self._poly.iterator_exp_coeff():
                 yield (coeff, P.element_class(P, one, exp.eadd(self._mon)))
 
+    def _as_extended_polynomial(self):
+        """
+        This Laurent polynomial seen as a polynomial in twice as many variables,
+        where half of the variables are the inverses of the other half.
+
+        EXAMPLES::
+
+            sage: L.<t1,t2> = LaurentPolynomialRing(QQ)
+            sage: f = t1-t2^-2
+            sage: f
+            t1 - t2^-2
+            sage: f._as_extended_polynomial()
+            -t2inv^2 + t1
+            sage: _.parent()
+            Multivariate Polynomial Ring in t1, t1inv, t2, t2inv over Rational Field
+
+        """
+        dres = {}
+        for (e, c) in self.dict().items():
+            exps = []
+            for t in e:
+                if t > 0 :
+                    exps += [t, 0]
+                else:
+                    exps += [0, -t]
+            dres [tuple(exps)] = c
+        return self.parent()._extended_ring(dres)
+
     def iterator_exp_coeff(self):
         """
         Iterate over ``self`` as pairs of (ETuple, coefficient).

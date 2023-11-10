@@ -1988,3 +1988,26 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             0
         """
         return self.__u[-self.__n]
+
+    def _as_extended_polynomial(self):
+        """
+        This Laurent polynomial seen as a polynomial in twice as many variables,
+        where half of the variables are the inverses of the other half.
+
+        EXAMPLES::
+
+            sage: L.<t> = LaurentPolynomialRing(QQ)
+            sage: f = t-t^-2
+            sage: f._as_extended_polynomial()
+            -tinv^2 + t
+            sage: _.parent()
+            Multivariate Polynomial Ring in t, tinv over Rational Field
+
+        """
+        dres = {}
+        for (e, c) in self.dict().items():
+            if e > 0 :
+                dres[(e,0)] = c
+            else:
+                dres[(0,-e)] = c
+        return self.parent()._extended_ring(dres)
