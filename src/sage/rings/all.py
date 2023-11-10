@@ -12,15 +12,7 @@ Rings
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from sage.rings.all__sagemath_combinat import *
-from sage.rings.all__sagemath_flint import *
-from sage.rings.all__sagemath_gap import *
-from sage.rings.all__sagemath_modules import *
-
-try:
-    from sage.rings.all__sagemath_symbolics import *
-except ImportError:
-    pass
+from sage.rings.all__sagemath_categories import *
 
 ### Following will go to all__sagemath_categories.py in #36566
 
@@ -49,6 +41,16 @@ Integers = IntegerModRing
 
 # Finite fields
 from sage.rings.finite_rings.all import *
+
+from sage.rings.all__sagemath_combinat import *
+from sage.rings.all__sagemath_flint import *
+from sage.rings.all__sagemath_gap import *
+from sage.rings.all__sagemath_modules import *
+
+try:
+    from sage.rings.all__sagemath_symbolics import *
+except ImportError:
+    pass
 
 # Function field
 from sage.rings.function_field.all import *
