@@ -503,7 +503,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
     def inseparable_degree(self):
         """
-        Return the degree of this Frobenius isogeny.
+        Return the inseparable degree of this Frobenius isogeny.
 
         Since this class implements only purely inseparable isogenies,
         the inseparable degree equals the degree.

@@ -202,8 +202,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
     def to_isogeny_chain(self):
         r"""
         Convert this formal sum of elliptic-curve morphisms into a
-        :class:`EllipticCurveHom_composite` object representing the
-        same morphism.
+        :class:`~sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite`
+        object representing the same morphism.
 
         EXAMPLES::
 
@@ -466,7 +466,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         r"""
         Return the degree of this sum morphism.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: E = EllipticCurve(GF(101), [5,5])
             sage: phi = E.isogenies_prime_degree(7)[0]
