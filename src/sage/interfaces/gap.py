@@ -1428,6 +1428,15 @@ class Gap(Gap_generic):
         """
         return GapElement
 
+    def _an_element_(self):
+        """
+        EXAMPLES::
+
+            sage: gap._an_element_()
+            0
+        """
+        return self(0)
+
     def _function_element_class(self):
         """
         Returns the GapFunctionElement class.
