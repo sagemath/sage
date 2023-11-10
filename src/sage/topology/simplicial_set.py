@@ -258,11 +258,13 @@ copy of the integers::
 
 import copy
 
+from sage.functions.generalized import sign
 from sage.matrix.special import identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.flatten import flatten
 from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -296,6 +298,7 @@ class AbstractSimplex_class(SageObject):
     Users should not call this directly, but instead use
     :func:`AbstractSimplex`. See that function for more documentation.
     """
+
     def __init__(self, dim, degeneracies=(), underlying=None, name=None,
                  latex_name=None):
         """
@@ -3204,6 +3207,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         sage: X
         Y
     """
+
     def __init__(self, data, base_point=None, name=None, check=True,
                  category=None, latex_name=None):
         r"""
@@ -3774,10 +3778,44 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         return ChainComplex(differentials, degree_of_differential=-1,
                             check=check)
 
+    def _canonical_twisting_operator(self):
+        r"""
+        The canonical twisting operator corresponds to the abelianization of the fundamental
+        group. It assigns each edge to the corresponding element in the algebra of the
+        abelianization of the fundamental group, which is a quotient of a Laurent polynomial
+        ring.
 
-    def twisted_chain_complex(self, twisting_operator, dimensions=None, augmented=False,
-                      cochain=False, verbose=False, subcomplex=None,
-                      check=False):
+        EXAMPLES::
+
+            sage: X = simplicial_sets.Torus()
+            sage: d = X._canonical_twisting_operator()
+            sage: d
+            {(sigma_1, sigma_1): f2, (sigma_1, s_0 v_0): f3, (s_0 v_0, sigma_1): f2*f3^-1}
+            sage: list(d.values())[0].parent()
+            Multivariate Laurent Polynomial Ring in f2, f3 over Rational Field
+            sage: Y = simplicial_sets.RealProjectiveSpace(2)
+            sage: Y._canonical_twisting_operator()
+            {f: F1bar}
+            sage: d2 = Y._canonical_twisting_operator()
+            sage: d2
+            {f: F1bar}
+            sage: list(d2.values())[0].parent()
+            Quotient of Univariate Laurent Polynomial Ring in F1 over Rational Field by the ideal (-1 + F1^2)
+
+        """
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+        G, d = self._universal_cover_dict()
+        phi = G.abelianization_map()
+        abelG, R, I, images = G.abelianization_to_algebra(ZZ)
+        QRP = R.quotient_ring(I)
+        res = dict()
+        for s, el in d.items():
+            res[s] = QRP(prod(images[abs(a)-1]**sign(a) for a in phi(el).Tietze()))
+        return res
+
+    def twisted_chain_complex(self, twisting_operator=None, dimensions=None, augmented=False,
+                              cochain=False, verbose=False, subcomplex=None,
+                              check=False):
         r"""
         Return the normalized chain complex twisted by some operator.
 
@@ -3787,7 +3825,9 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         INPUT:
 
         - ``twisting_operator`` -- a dictionary, associating the twist of each
-          simplex.
+          simplex. If it is not given, the canonical one (associated to the
+          laurent polynomial ring abelianization of the fundamental group, ignoring
+          torsion) is used.
 
         - ``dimensions`` -- if ``None``, compute the chain complex in all
           dimensions.  If a list or tuple of integers, compute the
@@ -3830,18 +3870,51 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             sage: ChC.differential(2)
             [0]
 
+        ::
+
+            sage: X = simplicial_sets.Torus()
+            sage: C = X.twisted_chain_complex()
+            sage: C.differential(1)
+            [f2*f3^-1 - 1       f3 - 1       f2 - 1]
+            sage: C.differential(2)
+            [       1       f3]
+            [f2*f3^-1        1]
+            [      -1       -1]
+            sage: C.differential(3)
+            []
+
+        ::
+
+            sage: Y = simplicial_sets.RealProjectiveSpace(2)
+            sage: C = Y.twisted_chain_complex()
+            sage: C.differential(1)
+            [-1 + F1]
+            sage: C.differential(2)
+            [1 + F1]
+            sage: C.differential(3)
+            []
+
         """
         from sage.homology.chain_complex import ChainComplex
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
 
+        if twisting_operator:
+            twop = twisting_operator
+        else:
+            di = self._canonical_twisting_operator()
+            if hasattr(list(di.values())[0], "lift"):
+                twop = {a: b.lift() for a, b in di.items()}
+            else:
+                twop = di
+
         def twist(s):
-            if s in twisting_operator:
-                return twisting_operator[s]
+            if s in twop:
+                return twop[s]
             if s.dimension() > 1:
                 return twist(self.face_data()[s][-1])
             return 1
-        base_ring = cm.common_parent(*twisting_operator.values())
+        base_ring = cm.common_parent(*twop.values())
 
         if dimensions is None:
             if not self.cells():  # Empty
@@ -3913,7 +3986,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                         sign = 1
                         twists = len(face_data[sigma]) * [1]
                         twists[0] = twist(sigma)
-                        for (ch,tau) in zip(twists,face_data[sigma]):
+                        for (ch, tau) in zip(twists, face_data[sigma]):
                             if tau.is_nondegenerate():
                                 row = faces[tau]
                                 if (row, col) in matrix_data:
@@ -3952,28 +4025,40 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
 
         - ``n`` - a positive integer.
         """
+        CC = self.twisted_chain_complex(ZZ)
+        M1 = CC.differential(n).T
+        M2 = CC.differential(n + 1).T
+        RL = CC.base_ring()
+        RP = PolynomialRing(ZZ, 'x', 2 * RL.ngens())
+        def convert_to_polynomial(p):
+
+        D = self._canonical_twisting_operator()
+
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
         G, d = self._universal_cover_dict()
         abelG = G.abelianization_map().codomain()
         abelinv = abelG.abelian_invariants()
         RP = PolynomialRing(ZZ, 'x', 2 * len(abelinv))
-        I = RP.ideal([RP.gen(i)**j-1 for i,j in enumerate(abelinv)])
+        I = RP.ideal([RP.gen(i)**j-1 for i, j in enumerate(abelinv)])
         J = RP.ideal([RP.gen(2*a)*RP.gen(2*a+1) - 1 for a in range(RP.ngens()//2)])
         GB = (I+J).groebner_basis()
         GBI = RP.ideal(GB)
+
         def reduce_laurent(a):
             return a._singular_().reduce(GBI)._sage_()
+
         def group_to_polynomial(el, RP):
             res = RP.one()
             for a in el.Tietze():
                 if a > 0:
                     res *= RP.gen(2*a-2)
                 else:
-                    res*= RP.gen(-2*a-1)
+                    res *= RP.gen(-2*a-1)
             return res
-        nd = {a:group_to_polynomial(G.abelianization_map()(b), RP) for a,b in d.items()}
+        nd = {a: group_to_polynomial(G.abelianization_map()(b), RP) for a, b in d.items()}
         CC = self.twisted_chain_complex(nd)
+
         def mkernel(M):
             if M.nrows() == 0 or M.ncols() == 0:
                 return M
@@ -3982,10 +4067,11 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             for g in (I+J).gens():
                 res = res.stack(g*identity_matrix(n))
             syz = res.T._singular_().syz()._sage_()
-            trimmed = syz.T.submatrix(0,0,syz.ncols(),M.nrows())
+            trimmed = syz.T.submatrix(0, 0, syz.ncols(), M.nrows())
             trimmed = trimmed.apply_map(reduce_laurent)
-            to_delete = [i for (i,r) in enumerate(trimmed.rows()) if not r]
+            to_delete = [i for (i, r) in enumerate(trimmed.rows()) if not r]
             return trimmed.delete_rows(to_delete)
+
         def lift_to_submodule(S, M):
             if S.nrows() == 0 or S.ncols() == 0:
                 return S
@@ -3993,7 +4079,8 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             for g in GB:
                 res = res.stack(g*identity_matrix(M.ncols()))
             singres = res.T._singular_().lift(S.T._singular_())._sage_()
-            return singres.submatrix(0,0,M.nrows(),S.nrows())
+            return singres.submatrix(0, 0, M.nrows(), S.nrows())
+
         def mgb(M):
             if M.nrows() == 0 or M.ncols() == 0:
                 return M
@@ -4020,7 +4107,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             res = mgb(DK.T)
         resmat = mgb(res.apply_map(reduce_laurent))
         L = LaurentPolynomialRing(ZZ, 'x', len(abelinv))
-        h = RP.hom(flatten([[g, g**-1] for g in L.gens()]),codomain = L)
+        h = RP.hom(flatten([[g, g**-1] for g in L.gens()]), codomain=L)
         laumat = resmat.apply_map(h)
         laumat = laumat.change_ring(L)
         if laumat.ncols() > 0:
