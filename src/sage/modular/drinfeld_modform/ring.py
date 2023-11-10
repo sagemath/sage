@@ -452,8 +452,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         INPUT:
 
         - ``a`` -- (default: ``None``) an element in the ring of regular
-        functions. If `a` is ``None``, then the method returns the
-        coefficients forms at `a = T`.
+          functions. If `a` is ``None``, then the method returns the
+          coefficients forms at `a = T`.
 
         OUTPUT: a list of Drinfeld modular forms. The `i`-th element of
         that list corresponds to the `(i+1)`-th coefficient form at `a`.
