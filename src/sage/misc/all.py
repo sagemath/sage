@@ -13,12 +13,35 @@ from sage.misc.misc import (BackslashOperator,
 lazy_import('sage.misc.misc', 'union',
             deprecation=32096)
 
+from sage.misc.dev_tools import import_statements
+
+from sage.misc.edit_module import edit
+
 from sage.misc.remote_file import get_remote_file
 
-lazy_import('sage.misc.dist', 'install_scripts', deprecation=34259)
+lazy_import('sage.misc.pager', 'pager')
 
 from sage.misc.classgraph import class_graph
 
+lazy_import("sage.misc.cython", "cython_lambda")
+lazy_import("sage.misc.cython", "cython_compile", "cython")
+
+# Following will go to all__sagemath_repl.py in #36566
+from sage.misc.explain_pickle import explain_pickle, unpickle_newobj, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
+
+lazy_import('sage.misc.inline_fortran', 'fortran')
+
+lazy_import('sage.misc.banner', 'banner', deprecation=34259)
+lazy_import('sage.misc.dev_tools', 'runsnake', deprecation=34259)
+lazy_import('sage.misc.edit_module', 'set_edit_template', deprecation=34259)
+lazy_import('sage.misc.profiler', 'Profiler', deprecation=34259)
+lazy_import('sage.misc.dist', 'install_scripts', deprecation=34259)
+lazy_import('sage.misc.trace', 'trace', deprecation=34259)
+lazy_import('sage.misc.package', ('installed_packages', 'is_package_installed',
+                                  'standard_packages', 'optional_packages',
+                                  'experimental_packages', 'package_versions'),
+            deprecation=34259)
+lazy_import('sage.misc.benchmark', 'benchmark', deprecation=34259)
 lazy_import('sage.repl.interpreter', 'logstr', deprecation=34259)
 
 # Following will go to all__sagemath_objects.py in #36566
