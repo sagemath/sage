@@ -50,6 +50,8 @@ cpdef aurifeuillian(n, m, F=None, bint check=True) noexcept:
     EXAMPLES::
 
         sage: from sage.rings.factorint import aurifeuillian
+
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: aurifeuillian(2, 2)
         [5, 13]
         sage: aurifeuillian(2, 2^5)
@@ -58,6 +60,8 @@ cpdef aurifeuillian(n, m, F=None, bint check=True) noexcept:
         [1471, 2851]
         sage: aurifeuillian(15, 1)
         [19231, 142111]
+
+        sage: # needs sage.libs.pari
         sage: aurifeuillian(12, 3)
         Traceback (most recent call last):
         ...
@@ -76,8 +80,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True) noexcept:
         There is no need to set `F`. It's only for increasing speed
         of :meth:`factor_aurifeuillian()`.
     """
-    from sage.arith.misc import euler_phi
-    from sage.rings.real_mpfi import RealIntervalField
     if check:
         if not n.is_squarefree():
             raise ValueError("n has to be square-free")
@@ -85,6 +87,10 @@ cpdef aurifeuillian(n, m, F=None, bint check=True) noexcept:
             raise ValueError("n has to be greater than 1")
         if m < 1:
             raise ValueError("m has to be positive")
+
+    from sage.arith.misc import euler_phi
+    from sage.rings.real_mpfi import RealIntervalField
+
     x = m**2*n
     cdef Py_ssize_t y = euler_phi(2*n)//2
     if F is None:
@@ -129,7 +135,7 @@ cpdef factor_aurifeuillian(n, check=True) noexcept:
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
         sage: fa(2^6 + 1)
         [5, 13]
@@ -148,7 +154,8 @@ cpdef factor_aurifeuillian(n, check=True) noexcept:
 
     TESTS::
 
-        sage: for n in [2,3,5,6,30,31,33]:                                              # needs sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
+        sage: for n in [2,3,5,6,30,31,33]:
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1
         ....:         y = (m^2*n)^n + s

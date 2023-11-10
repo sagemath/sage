@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Modular forms for `\Gamma_0(N)` over `\QQ`
 
@@ -39,7 +40,8 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
         EXAMPLES::
 
             sage: m = ModularForms(Gamma0(11),4); m
-            Modular Forms space of dimension 4 for Congruence Subgroup Gamma0(11) of weight 4 over Rational Field
+            Modular Forms space of dimension 4 for Congruence Subgroup Gamma0(11)
+             of weight 4 over Rational Field
             sage: type(m)
             <class 'sage.modular.modform.ambient_g0.ModularFormsAmbient_g0_Q_with_category'>
         """
@@ -73,7 +75,8 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
 
             sage: m = ModularForms(Gamma0(33),4)
             sage: s = m.cuspidal_submodule(); s
-            Cuspidal subspace of dimension 10 of Modular Forms space of dimension 14 for Congruence Subgroup Gamma0(33) of weight 4 over Rational Field
+            Cuspidal subspace of dimension 10 of Modular Forms space of dimension 14
+             for Congruence Subgroup Gamma0(33) of weight 4 over Rational Field
             sage: type(s)
             <class 'sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_g0_Q_with_category'>
         """
@@ -92,7 +95,8 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
 
             sage: m = ModularForms(Gamma0(389),6)
             sage: m.eisenstein_submodule()
-            Eisenstein subspace of dimension 2 of Modular Forms space of dimension 163 for Congruence Subgroup Gamma0(389) of weight 6 over Rational Field
+            Eisenstein subspace of dimension 2 of Modular Forms space of dimension 163
+             for Congruence Subgroup Gamma0(389) of weight 6 over Rational Field
         """
         return eisenstein_submodule.EisensteinSubmodule_g0_Q(self)
 

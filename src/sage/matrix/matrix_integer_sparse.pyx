@@ -53,15 +53,15 @@ from sage.libs.gmp.mpz cimport *
 
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
-from .matrix cimport Matrix
+from sage.matrix.matrix cimport Matrix
 
-from .args cimport SparseEntry, MatrixArgs_init
-from .matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_get_mpz
 from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, fmpz_poly_set_coeff_mpz, _fmpz_poly_set_length
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
-from .matrix_modn_sparse cimport Matrix_modn_sparse
+from sage.matrix.matrix_modn_sparse cimport Matrix_modn_sparse
 from sage.structure.element cimport Element
 
 import sage.matrix.matrix_space as matrix_space
@@ -421,7 +421,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             ...
             ZeroDivisionError: The modulus cannot be zero
         """
-        from .misc import matrix_integer_sparse_rational_reconstruction
+        from sage.matrix.misc import matrix_integer_sparse_rational_reconstruction
         return matrix_integer_sparse_rational_reconstruction(self, N)
 
     def _right_kernel_matrix(self, **kwds):
@@ -1037,7 +1037,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 2]
         """
         if check_rank and self.rank() < self.nrows():
-            from .matrix2 import NotFullRankError
+            from sage.matrix.matrix2 import NotFullRankError
             raise NotFullRankError
 
         if self.base_ring() != B.base_ring():
@@ -1230,7 +1230,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         if self._nrows == 0 or self._ncols == 0:
             raise ValueError("not implemented for nrows=0 or ncols=0")
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
         cdef Matrix_integer_dense B
