@@ -699,6 +699,28 @@ class EllipticCurveHom(Morphism):
         """
         raise NotImplementedError('children must implement')
 
+    def separable_degree(self):
+        r"""
+        Return the separable degree of this isogeny.
+
+        The separable degree is the result of dividing the :meth:`degree`
+        by the :meth:`inseparable_degree`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(11), [5,5])
+            sage: E.is_supersingular()
+            False
+            sage: E.scalar_multiplication(-77).separable_degree()
+            539
+            sage: E = EllipticCurve(GF(11), [5,0])
+            sage: E.is_supersingular()
+            True
+            sage: E.scalar_multiplication(-77).separable_degree()
+            49
+        """
+        return self.degree() // self.inseparable_degree()
+
     def is_separable(self):
         r"""
         Determine whether or not this morphism is a separable isogeny.
@@ -887,7 +909,7 @@ class EllipticCurveHom(Morphism):
         """
         if self.is_zero():
             return False
-        return self.inseparable_degree() == self.degree()
+        return self.separable_degree().is_one()
 
     def is_zero(self):
         r"""
