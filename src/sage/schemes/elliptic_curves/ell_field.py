@@ -977,7 +977,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: K.<i> = NumberField(x^2 + 1)
             sage: E = EllipticCurve([0,0,0,0,i])
             sage: L,emb = E.division_field(6, names='b', map=True); L
-            Number Field in b with defining polynomial x^24 + 12*x^23 + 66*x^22 - 504*x^21 + 92415*x^20 + 1372020*x^19 + 9791248*x^18 + 9161712*x^17 + 2248687014*x^16 + 39282444252*x^15 + 319379172870*x^14 + 1647604458936*x^13 + 6124888492503*x^12 + 17596271352348*x^11 + 40654930682496*x^10 + 76552797892176*x^9 + 116296878586974*x^8 + 139157022368196*x^7 + 127681305928690*x^6 + 87539428627680*x^5 + 43598049444279*x^4 + 15182945758692*x^3 + 3479289119772*x^2 + 468890060424*x + 28234163953
+            Number Field in b with defining polynomial x^24 + 12*x^23 + ...
             sage: E.change_ring(emb).torsion_subgroup().invariants()
             (6, 6)
 
