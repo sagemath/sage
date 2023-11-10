@@ -2,6 +2,7 @@ from sage.calculus.all__sagemath_modules import *
 
 from sage.misc.lazy_import import lazy_import
 
+from sage.calculus import desolvers
 from sage.calculus.calculus import maxima as maxima_calculus
 from sage.calculus.calculus import (laplace, inverse_laplace,
                        limit, lim)
@@ -211,6 +212,3 @@ def symbolic_expression(x):
                 else:
                     return SR(result).function(*vars)
     return SR(x)
-
-
-from sage.calculus import desolvers
