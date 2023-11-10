@@ -1049,7 +1049,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         verbose("Adjoining X-coordinates of %s-torsion points" % n)
 
         F = self.base_ring()
-        f = self.division_polynomial(n)
+        f = self.division_polynomial(n).radical()
 
         if n == 2 or f.is_constant():
             # For n = 2, the division field is the splitting field of
