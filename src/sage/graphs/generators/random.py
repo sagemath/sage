@@ -1497,7 +1497,7 @@ def RandomKTree(n, k, seed=None):
         sage: G = graphs.RandomKTree(50, 5)
         sage: G.treewidth()
         5
-        sage: G.show() # not tested 
+        sage: G.show()  # not tested 
     """    
     if n < k + 1:
         raise ValueError("n must be greater than k + 1")
@@ -1556,12 +1556,12 @@ def RandomPartialKTree(n, k, x, seed=None):
         sage: G = graphs.RandomPartialKTree(50,5,5)
         sage: G.treewidth()
         5
-        sage: G.show()
+        sage: G.show()  # not tested
     """
     if seed is not None:
         set_random_seed(seed)
 
-    g = RandomKTree(n,k,seed)
+    g = RandomKTree(n, k, seed)
 
     # Check that x doesn't delete too many edges
     # This formula calculates how many edges are in `k`-tree with `n` nodes
