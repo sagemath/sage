@@ -43,3 +43,4 @@ from sage.modular.btquotients.all import *
 from sage.modular.pollack_stevens.all import *
 
 from sage.modular.quasimodform.all import *
+del lazy_import

@@ -10,3 +10,4 @@ lazy_import("sage.stats.r", "ttest")
 
 lazy_import("sage.stats.time_series", ["TimeSeries", "autoregressive_fit"])
 lazy_import("sage.stats.intlist", ["IntList"])
+del lazy_import

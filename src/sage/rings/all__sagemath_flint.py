@@ -32,3 +32,4 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.rings.imaginary_unit", "I")
 
 from sage.rings.cif import CIF
+del lazy_import

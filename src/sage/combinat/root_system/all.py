@@ -140,3 +140,4 @@ from sage.combinat.root_system.branching_rules import BranchingRule, branching_r
 
 lazy_import('sage.combinat.root_system.non_symmetric_macdonald_polynomials', 'NonSymmetricMacdonaldPolynomials')
 lazy_import('sage.combinat.root_system.integrable_representations', 'IntegrableRepresentation')
+del lazy_import

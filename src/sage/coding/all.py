@@ -10,3 +10,4 @@ _lazy_import("sage.coding.linear_code", "LinearCode")
 
 _lazy_import('sage.coding', 'codes_catalog', 'codes')
 _lazy_import('sage.coding', 'channels_catalog', 'channels')
+del lazy_import

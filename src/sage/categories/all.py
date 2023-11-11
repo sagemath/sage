@@ -155,3 +155,4 @@ lazy_import('sage.categories.polyhedra', 'PolyhedralSets')
 
 # lie conformal algebras
 lazy_import('sage.categories.lie_conformal_algebras', 'LieConformalAlgebras')
+del lazy_import

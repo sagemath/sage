@@ -19,3 +19,4 @@ from sage.plot.plot3d.shapes            import arrow3d
 #from shapes import Box, ColorCube, Cone, Cylinder, LineSegment, Arrow, Sphere, Torus, Text as Text3D
 #from parametric_surface import ParametricSurface, MoebiusStrip
 #from plot3d import plot3d, axes as axes3d
+del lazy_import

@@ -45,3 +45,4 @@ lazy_import('sage.combinat.sf.kfpoly', 'KostkaFoulkesPolynomial')
 lazy_import('sage.combinat.sf.ns_macdonald', ['NonattackingFillings',
                                               'AugmentedLatticeDiagramFilling',
                                               'LatticeDiagram'])
+del lazy_import

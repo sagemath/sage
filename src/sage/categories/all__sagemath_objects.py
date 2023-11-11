@@ -29,3 +29,4 @@ from sage.categories.morphism import Morphism
 from sage.categories.realizations import Realizations
 
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+del lazy_import

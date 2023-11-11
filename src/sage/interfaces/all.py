@@ -48,3 +48,4 @@ interfaces = ['gap', 'gap3', 'giac', 'gp', 'mathematica', 'gnuplot',
               'kash', 'magma', 'macaulay2', 'maple', 'maxima',
               'mathematica', 'mwrank', 'octave', 'r', 'singular',
               'sage0', 'sage']
+del lazy_import

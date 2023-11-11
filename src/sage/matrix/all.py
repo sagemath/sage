@@ -5,3 +5,4 @@ from sage.matrix.constructor import (matrix, Matrix, column_matrix, random_matri
                          block_diagonal_matrix, jordan_block, zero_matrix,
                          ones_matrix, elementary_matrix, companion_matrix)
 Mat = MatrixSpace
+del lazy_import

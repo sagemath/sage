@@ -29,3 +29,4 @@ lazy_import('sage.combinat.finite_state_machine',
             ['Automaton', 'Transducer', 'FiniteStateMachine'])
 lazy_import('sage.combinat.finite_state_machine_generators',
             ['automata', 'transducers'])
+del lazy_import

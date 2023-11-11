@@ -26,3 +26,4 @@ from sage.modular.modform.numerical import NumericalEigenforms as numerical_eige
 from sage.modular.modform.element import delta_lseries
 
 from sage.modular.modform.ring import ModularFormsRing
+del lazy_import

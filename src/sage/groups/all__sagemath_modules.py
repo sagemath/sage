@@ -8,3 +8,4 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.groups.affine_gps.affine_group', 'AffineGroup')
 lazy_import('sage.groups.affine_gps.euclidean_group', 'EuclideanGroup')
+del lazy_import

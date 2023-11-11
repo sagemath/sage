@@ -91,3 +91,4 @@ from sage.functions.gamma import (gamma, psi, beta, log_gamma,
 Γ = gamma
 ψ = psi
 ζ = zeta
+del lazy_import

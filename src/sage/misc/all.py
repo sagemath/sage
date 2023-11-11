@@ -50,3 +50,4 @@ from sage.misc.prandom import *
 from sage.misc.sage_timeit_class import timeit
 from sage.misc.session import load_session, save_session, show_identifiers
 from sage.misc.reset import reset, restore
+del lazy_import

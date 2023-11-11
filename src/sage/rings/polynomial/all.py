@@ -33,3 +33,4 @@ lazy_import('sage.rings.polynomial.omega', 'MacMahonOmega')
 # Integer-valued Univariate Polynomial Ring
 lazy_import('sage.rings.polynomial.integer_valued_polynomials',
             'IntegerValuedPolynomialRing')
+del lazy_import

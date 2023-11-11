@@ -13,3 +13,4 @@ from sage.modular.modsym.p1list_nf import P1NFList, MSymbol
 from sage.modular.modsym.ghlist import GHlist
 
 from sage.modular.modsym.g1list import G1list
+del lazy_import

@@ -41,3 +41,4 @@ from sage.schemes.elliptic_curves.kodaira_symbol import KodairaSymbol
 from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
 
 from sage.schemes.elliptic_curves.heegner import heegner_points, heegner_point
+del lazy_import

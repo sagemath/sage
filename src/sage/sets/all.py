@@ -13,3 +13,4 @@ from sage.sets.family import Family
 from sage.sets.disjoint_set import DisjointSet
 from sage.sets.condition_set import ConditionSet
 from sage.sets.finite_set_maps import FiniteSetMaps
+del lazy_import
