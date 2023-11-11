@@ -820,10 +820,10 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return self.domain().get_geodesic(pt(p_1), pt(p_2))
 
         try:
-            p, q = [M.eigenvectors_right()[k][1][0] for k in range(2)]
+            p, q = (M.eigenvectors_right()[k][1][0] for k in range(2))
         except IndexError:
             M = M.change_ring(RDF)
-            p, q = [M.eigenvectors_right()[k][1][0] for k in range(2)]
+            p, q = (M.eigenvectors_right()[k][1][0] for k in range(2))
 
         pts = []
         if p[1] == 0:

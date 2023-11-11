@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Quotients of the Bruhat-Tits tree
 
@@ -539,8 +539,8 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: x = Zp(3)(-17)
-                sage: lift(x)
+                sage: x = Zp(3)(-17)                                                    # needs sage.rings.padics
+                sage: lift(x)                                                           # needs sage.rings.padics
                 3486784384
             """
             try:
@@ -600,6 +600,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: p = 5
             sage: T = BruhatTitsTree(p)
@@ -961,6 +962,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: T = BruhatTitsTree(5)
             sage: K.<a> = Qq(5^2,20)
@@ -976,9 +978,9 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         affinoid. That is, it is a `p`-adic unit and its reduction
         modulo `p` is not in `\GF{p}`::
 
-            sage: gz = (v[0,0]*z+v[0,1])/(v[1,0]*z+v[1,1]); gz
+            sage: gz = (v[0,0]*z+v[0,1])/(v[1,0]*z+v[1,1]); gz                          # needs sage.rings.padics
             (a + 1) + O(5^19)
-            sage: gz.valuation() == 0
+            sage: gz.valuation() == 0                                                   # needs sage.rings.padics
             True
         """
         # Assume z belongs to some extension of QQp.
@@ -1062,6 +1064,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: p = 3
             sage: K.<a> = Qq(p^2)
@@ -2127,7 +2130,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot()
+            sage: X.plot()                                                              # needs sage.plot
             Graphics object consisting of 17 graphics primitives
         """
         S = self.get_graph()
@@ -2160,7 +2163,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot_fundom()
+            sage: X.plot_fundom()                                                       # needs sage.plot
             Graphics object consisting of 88 graphics primitives
         """
         S = self.get_fundom_graph()
