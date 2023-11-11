@@ -6,7 +6,7 @@ py.install_sources(
 )
 
 extension_data_cpp = {
-    'base': files('base.pyx'),
+    'base': files('base.pyx', 'functions.cc', 'data.cc', 'triangulations.cc'),
 }
 
 foreach name, pyx : extension_data_cpp
