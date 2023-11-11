@@ -1,4 +1,3 @@
-# cannot be found via pkg-config
 singular = dependency('Singular')
 ginac = declare_dependency(
   dependencies: [
