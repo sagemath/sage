@@ -34,4 +34,3 @@ from sage.misc.cachefunc import CachedFunction, cached_function, cached_method, 
 from sage.misc.abstract_method import abstract_method
 
 from sage.misc.timing import walltime, cputime
-del lazy_import

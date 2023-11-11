@@ -263,4 +263,3 @@ def sage_globals():
         False
     """
     return globals()
-del lazy_import

@@ -30,4 +30,3 @@ del pkg
 lazy_import('sage.interfaces.maxima_abstract', 'maxima_console')
 
 sage.misc.session.init()
-del lazy_import
