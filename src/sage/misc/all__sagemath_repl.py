@@ -12,4 +12,3 @@ lazy_import('sage.misc.sagedoc', ['browse_sage_doc',
         'constructions', 'help'])
 
 lazy_import('pydoc', 'help', 'python_help')
-del lazy_import
