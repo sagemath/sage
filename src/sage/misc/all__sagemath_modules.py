@@ -2,7 +2,6 @@
 # and deprecated functionality
 
 from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
-from sage.misc.lazy_import import lazy_import
 
 from sage.misc.all__sagemath_categories import *
 
@@ -19,4 +18,3 @@ from sage.misc.temporary_file import tmp_dir, tmp_filename  # Depends on sage.en
 from sage.misc.mathml import mathml
 
 from sage.misc.func_persist import func_persist
-del lazy_import

@@ -1,6 +1,8 @@
-# Integer lists
 from sage.combinat.matrices.all__sagemath_categories import *
 
+from sage.misc.lazy_import import lazy_import
+
+# Integer lists
 from sage.combinat.integer_lists import IntegerListsLex
 from sage.combinat.integer_vector import IntegerVectors
 
@@ -27,4 +29,5 @@ from sage.combinat.tuple import Tuples, UnorderedTuples
 
 
 from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
+
 del lazy_import

@@ -24,4 +24,3 @@ from sage.algebras.quatalg.all import *
 from sage.algebras.fusion_rings.all import *
 from sage.algebras.lie_algebras.all import *
 from sage.algebras.lie_conformal_algebras.all import *
-del lazy_import
