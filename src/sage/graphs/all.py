@@ -37,3 +37,4 @@ sage.graphs.cliquer are deprecated from the global namespace (:issue:`26200`)::
     ...
     NameError: name 'clique_number' is not defined
 """
+del lazy_import

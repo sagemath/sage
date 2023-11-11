@@ -52,3 +52,4 @@ lazy_import('sage.combinat.designs.covering_design',
             ['CoveringDesign', 'schonheim', 'trivial_covering_design'])
 
 from sage.combinat.designs import design_catalog as designs
+del lazy_import

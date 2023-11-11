@@ -27,3 +27,4 @@ from sage.combinat.tuple import Tuples, UnorderedTuples
 
 
 from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
+del lazy_import

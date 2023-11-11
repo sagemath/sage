@@ -193,3 +193,4 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 
 # Bijectionist
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
+del lazy_import

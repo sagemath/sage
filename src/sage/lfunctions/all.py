@@ -4,3 +4,4 @@ _lazy_import_("sage.lfunctions.dokchitser", "Dokchitser")
 _lazy_import_("sage.lfunctions.sympow", "sympow")
 _lazy_import_("sage.lfunctions.zero_sums", "LFunctionZeroSum")
 _lazy_import_("sage.lfunctions.lcalc", "lcalc")
+del lazy_import

@@ -6,3 +6,4 @@ lazy_import('sage.algebras.steenrod.steenrod_algebra', ['SteenrodAlgebra', 'Sq']
 lazy_import('sage.algebras.steenrod.steenrod_algebra_bases',
             'steenrod_algebra_basis',
             deprecation=(32647, 'removed from namespace'))
+del lazy_import

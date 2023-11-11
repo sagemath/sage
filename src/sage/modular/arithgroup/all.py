@@ -16,3 +16,4 @@ from sage.modular.arithgroup.congroup import (degeneracy_coset_representatives_g
                             degeneracy_coset_representatives_gamma1)
 
 from sage.modular.arithgroup.farey_symbol import Farey as FareySymbol
+del lazy_import
