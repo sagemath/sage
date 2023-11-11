@@ -59,3 +59,4 @@ from sage.misc.lazy_import import lazy_import
 from sage.combinat.all__sagemath_combinat import *
 from sage.combinat.all__sagemath_modules import *
 from sage.combinat.all__sagemath_graphs import *
+del lazy_import

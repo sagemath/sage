@@ -114,3 +114,4 @@ lazy_import('sage.rings.asymptotic.asymptotic_expansion_generators', 'asymptotic
 
 # Register classes in numbers abc
 from sage.rings import numbers_abc
+del lazy_import

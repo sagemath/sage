@@ -37,3 +37,4 @@ from sage.plot.step import plot_step_function
 lazy_import("sage.plot.hyperbolic_arc", "hyperbolic_arc")
 lazy_import("sage.plot.hyperbolic_polygon", ["hyperbolic_triangle", "hyperbolic_polygon"])
 lazy_import("sage.plot.hyperbolic_regular_polygon", "hyperbolic_regular_polygon")
+del lazy_import

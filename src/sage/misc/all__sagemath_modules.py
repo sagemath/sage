@@ -19,3 +19,4 @@ from sage.misc.temporary_file import tmp_dir, tmp_filename  # Depends on sage.en
 from sage.misc.mathml import mathml
 
 from sage.misc.func_persist import func_persist
+del lazy_import

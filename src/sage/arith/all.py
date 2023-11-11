@@ -41,3 +41,4 @@ from sage.arith.srange import xsrange, srange, ellipsis_iter, ellipsis_range
 sxrange = xsrange
 
 σ = sigma
+del lazy_import

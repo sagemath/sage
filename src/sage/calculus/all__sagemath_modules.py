@@ -15,3 +15,4 @@ lazy_import("sage.calculus.riemann", ["Riemann_Map"])
 lazy_import("sage.calculus.interpolators", ["polygon_spline","complex_cubic_spline"])
 
 from sage.calculus.transforms.all import *
+del lazy_import

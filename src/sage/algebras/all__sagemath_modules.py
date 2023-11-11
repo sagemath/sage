@@ -9,3 +9,4 @@ from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
 lazy_import('sage.algebras.octonion_algebra', 'OctonionAlgebra')
 
 import sage.algebras.catalog as algebras
+del lazy_import

@@ -36,3 +36,4 @@ lazy_import('sage.dynamics.finite_dynamical_system',
             ['DiscreteDynamicalSystem'])
 
 lazy_import('sage.dynamics', 'finite_dynamical_system_catalog', 'finite_dynamical_systems')
+del lazy_import
