@@ -690,9 +690,6 @@ class ReferenceTopBuilder(DocBuilder):
         html = re.sub(r'<a href="(.*)">Sage(.*)Documentation</a>',
                       r'<a href="../../../html/en/index.html">Sage\2Documentation</a>',
                       html)
-        html = re.sub(r'<a href="">Reference Manual</a>',
-                      r'<a href="">Reference Manual (PDF version)</a>',
-                      html)
         html = re.sub(r'<li class="right"(.*)>', r'<li class="right" style="display: none" \1>',
                       html)
         html = re.sub(r'<div class="sphinxsidebar"(.*)>', r'<div class="sphinxsidebar" style="display: none" \1>',
@@ -730,7 +727,7 @@ class ReferenceTopBuilder(DocBuilder):
         rst = re.sub(r'`([^<\n]*)\s+<(.*)>`_',
                      r'<a href="\2">\1</a>', rst)
         rst = re.sub(r':doc:`([^<]*?)\s+<(.*)/index>`',
-                     r'<a href="\2/\2.pdf"><img src="_static/pdf.png"/> \1</a>', rst)
+                     r'<a href="../../../pdf/en/reference/\2/\2.pdf"><img src="_static/pdf.png"/></a>&nbsp;<a href="\2/index.html">\1</a> ', rst)
         # Body: add paragraph <p> markup.
         start = rst.rfind('*\n') + 1
         end = rst.find('\nUser Interfaces')
@@ -750,24 +747,12 @@ class ReferenceTopBuilder(DocBuilder):
         # now write the file.
         with open(os.path.join(output_dir, 'index-pdf.html'), 'w') as new_index:
             new_index.write(html[:html_end_preamble])
-            new_index.write('<h1>Sage Reference Manual (PDF version)</h1>')
+            new_index.write('<h1>Sage Reference Manual</h1>')
             new_index.write(rst_body)
             new_index.write('<ul>')
             new_index.write(rst_toc)
             new_index.write('</ul>\n\n')
             new_index.write(html[html_bottom:])
-        logger.warning('''
-PDF documents have been created in subdirectories of
-
-  %s
-
-Alternatively, you can open
-
-  %s
-
-for a webpage listing all of the documents.''' % (output_dir,
-                                                  os.path.join(output_dir,
-                                                               'index.html')))
 
 
 class ReferenceSubBuilder(DocBuilder):
