@@ -16,7 +16,6 @@ else
     git tag -f test_base
     git commit -q -m "Uncommitted changes" --no-allow-empty -a
     for a in $PRs; do
-        echo "::group::Applying PR https://github.com/$REPO/pull/$a as a patch"
         git tag -f test_head
         # We used to pull the branch and merge it (after unshallowing), but when run on PRs that are
         # based on older releases, it has the side effect of updating to this release,
@@ -29,26 +28,30 @@ else
         # which squashes everything into one diff without commit metadata.
         PATH=build/bin:$PATH build/bin/sage-download-file "https://github.com/$REPO/pull/$a.patch" upstream/$a.patch
         date -u +"%Y-%m-%dT%H:%M:%SZ" > upstream/$a.date  # Record the date, for future reference
-        if git am --empty=keep < upstream/$a.patch; then
-            echo "Applied patch"
+        LAST_SHA=$(sed -n -E '/^From [0-9a-f]{40}/s/^From ([0-9a-f]{40}).*/\1/p' upstream/$a.patch | tail -n 1)
+        echo "::group::Applying PR https://github.com/$REPO/pull/$a @ https://github.com/$REPO/commit/$LAST_SHA as a patch"
+        export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME applying https://github.com/$REPO/pull/$a @ https://github.com/$REPO/commit/$LAST_SHA"
+        if git am --signoff --empty=keep < upstream/$a.patch; then
+            echo "---- Applied patch ------------------------------------------------------------"
             cat upstream/$a.patch
+            echo "--------------------------------------------------------------------8<---------"
             echo "::endgroup::"
-            echo "Applied #$a as a patch"
         elif git am --abort \
                 && if git fetch --unshallow --all > /dev/null 2>&1; then echo "Unshallowed"; fi \
                 && echo "Retrying with 3-way merge" \
                 && git am --empty=keep --3way < upstream/$a.patch; then
-            echo "Applied patch"
+            echo "---- Applied patch ------------------------------------------------------------"
             cat upstream/$a.patch
+            echo "--------------------------------------------------------------------8<---------"
             echo "::endgroup::"
-            echo "Applied #$a as a patch"
         else
-            echo "Failure applying patch"
-            git am --show-current-patch=diff
+            echo "---- Failure applying patch ---------------------------------------------------"
+            git am --signoff --show-current-patch=diff
+            echo "--------------------------------------------------------------------8<---------"
             echo "::endgroup::"
             echo "Failure applying #$a as a patch, resetting"
-            git am --abort
+            git am --signoff --abort
         fi
     done
-    git log test_base..HEAD
+    #git log test_base..HEAD
 fi
