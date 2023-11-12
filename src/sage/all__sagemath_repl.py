@@ -1,4 +1,5 @@
-############ setup warning filters before importing Sage stuff ####
+# Set up warning filters before importing Sage stuff
+
 import sys
 import warnings
 

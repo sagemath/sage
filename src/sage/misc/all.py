@@ -27,7 +27,9 @@ lazy_import("sage.misc.cython", "cython_lambda")
 lazy_import("sage.misc.cython", "cython_compile", "cython")
 
 # Following will go to all__sagemath_repl.py in #36566
-from sage.misc.explain_pickle import explain_pickle, unpickle_newobj, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
+from sage.misc.explain_pickle import (explain_pickle, unpickle_newobj, unpickle_build,
+                                      unpickle_instantiate, unpickle_persistent,
+                                      unpickle_extension, unpickle_appends)
 
 lazy_import('sage.misc.inline_fortran', 'fortran')
 
