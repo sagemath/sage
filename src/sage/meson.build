@@ -4,7 +4,6 @@ sage_install_dir = py.get_install_dir() / 'sage'
 no_processing = [
     'databases',
     'doctest',
-    'dynamics',
     'features',
     'game_theory',
     'homology',
@@ -79,3 +78,4 @@ subdir('sets')
 subdir('stats')
 subdir('symbolic')
 subdir('tests')
+subdir('dynamics')
