@@ -11,12 +11,12 @@ from sage.modular.ssmod.all import *
 from sage.modular.abvar.all import *
 
 from sage.modular.dirichlet import (DirichletGroup,
-                        kronecker_character, kronecker_character_upside_down,
-                        trivial_character)
+                                    kronecker_character, kronecker_character_upside_down,
+                                    trivial_character)
 
 from sage.modular.arithgroup.all import (Gamma0, Gamma1, GammaH, Gamma, SL2Z,
-                             ArithmeticSubgroup_Permutation,
-                             CongruenceSubgroup, FareySymbol)
+                                         ArithmeticSubgroup_Permutation,
+                                         CongruenceSubgroup, FareySymbol)
 
 from sage.modular.cusps import Cusp, Cusps
 
@@ -28,7 +28,7 @@ lazy_import('sage.modular.dims', ('dimension_cusp_forms',
             deprecation=(32647, 'removed from main namespace'))
 
 from sage.modular.etaproducts import (EtaGroup, EtaProduct, EtaGroupElement,
-                          AllCusps, CuspFamily)
+                                      AllCusps, CuspFamily)
 
 lazy_import('sage.modular.multiple_zeta', ['Multizeta', 'Multizetas'])
 

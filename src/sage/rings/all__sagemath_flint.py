@@ -13,19 +13,20 @@ from sage.rings.monomials import monomials
 
 # Algebraic numbers
 from sage.rings.qqbar import (AlgebraicRealField, AA,
-                   AlgebraicReal,
-                   AlgebraicField, QQbar,
-                   AlgebraicNumber,
-                   number_field_elements_from_algebraics)
+                              AlgebraicReal,
+                              AlgebraicField, QQbar,
+                              AlgebraicNumber,
+                              number_field_elements_from_algebraics)
 
 # Intervals
 from sage.rings.real_mpfi import (RealIntervalField,
-                       RIF,
-                       RealInterval)
+                                  RIF,
+                                  RealInterval)
 
 # Complex numbers
 from sage.rings.complex_interval_field import ComplexIntervalField
-from sage.rings.complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
+from sage.rings.complex_interval import (
+    create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
 
 from sage.misc.lazy_import import lazy_import
 

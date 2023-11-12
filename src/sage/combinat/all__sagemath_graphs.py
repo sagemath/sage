@@ -7,12 +7,13 @@ from sage.combinat.posets.all import *
 
 # Trees and Tamari interval posets
 from sage.combinat.ordered_tree import (OrderedTree, OrderedTrees,
-                          LabelledOrderedTree, LabelledOrderedTrees)
+                                        LabelledOrderedTree, LabelledOrderedTrees)
 from sage.combinat.binary_tree import (BinaryTree, BinaryTrees,
-                         LabelledBinaryTree, LabelledBinaryTrees)
+                                       LabelledBinaryTree, LabelledBinaryTrees)
 lazy_import('sage.combinat.rooted_tree', ('RootedTree', 'RootedTrees',
-                         'LabelledRootedTree', 'LabelledRootedTrees'))
-lazy_import('sage.combinat.interval_posets', ['TamariIntervalPoset', 'TamariIntervalPosets'])
+                                          'LabelledRootedTree', 'LabelledRootedTrees'))
+lazy_import('sage.combinat.interval_posets', [
+            'TamariIntervalPoset', 'TamariIntervalPosets'])
 
 from sage.combinat.graph_path import GraphPaths
 

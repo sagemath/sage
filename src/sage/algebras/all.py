@@ -15,7 +15,6 @@ Algebras
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.misc.lazy_import import lazy_import
 
 from sage.algebras.all__sagemath_modules import *
 from sage.algebras.all__sagemath_combinat import *
