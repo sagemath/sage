@@ -1,4 +1,4 @@
-# optional - sage.combinat sage.modules sage.groups
+# sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
 Symmetric Group Algebra
 """
@@ -25,8 +25,11 @@ from sage.rings.rational_field import QQ
 from sage.arith.misc import factorial
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.misc.lazy_import import lazy_import
 from sage.misc.persist import register_unpickle_override
+
+lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
+
 
 # TODO: Remove this function and replace it with the class
 # TODO: Create parents for other bases (such as the seminormal basis)

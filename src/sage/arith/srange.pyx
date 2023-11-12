@@ -84,7 +84,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
     EXAMPLES::
 
         sage: xsrange(10)
-        <generator object at 0x...>
+        <...generator object at 0x...>
         sage: for i in xsrange(1,5):
         ....:     print(i)
         1

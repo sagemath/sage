@@ -375,10 +375,10 @@ def SAT(solver=None, *args, **kwds):
         DIMACS Solver: 'kissat -q {input}'
     """
     if solver is None:
-        import pkgutil
-        if pkgutil.find_loader('pycryptosat') is not None:
+        from importlib.util import find_spec
+        if find_spec('pycryptosat') is not None:
             solver = "cryptominisat"
-        elif pkgutil.find_loader('pycosat') is not None:
+        elif find_spec('pycosat') is not None:
             solver = "picosat"
         else:
             solver = "LP"

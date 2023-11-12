@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.groups sage.rings.number_field
 """
 Galois Groups of Number Fields
 
@@ -1291,6 +1291,7 @@ class GaloisGroupElement(PermutationGroupElement):
         gens = self.parent().number_field().ring_of_integers().ring_generators()
         w = [(self(g) - g).valuation(P) for g in gens]
         return min(w)
+
 
 GaloisGroup_v2.Element = GaloisGroupElement
 GaloisGroup_v2.Subgroup = GaloisGroup_subgroup

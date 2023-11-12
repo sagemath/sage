@@ -25,7 +25,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
-cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg):
+cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg) noexcept:
     """
     Return the number of monomials possible up to a given
     degree.
@@ -268,7 +268,7 @@ cdef class SBox(SageObject):
         """
         return not self.__eq__(other)
 
-    cpdef list to_bits(self, x, n=None):
+    cpdef list to_bits(self, x, n=None) noexcept:
         """
         Return bitstring of length ``n`` for integer ``x``. The
         returned bitstring is guaranteed to have length ``n``.
@@ -333,7 +333,7 @@ cdef class SBox(SageObject):
 
         return ZZ(self._rpad(x, n), 2)
 
-    cdef list _rpad(self, list x, Py_ssize_t n=-1):
+    cdef list _rpad(self, list x, Py_ssize_t n=-1) noexcept:
         """
         Right pads ``x`` such that ``len(x) == n``.
 
@@ -417,7 +417,7 @@ cdef class SBox(SageObject):
             sage: all([x == id(x) for x in k])
             True
 
-        Some examples for inputs that throw an ``TypeError``::
+        Some examples for inputs that throw an :class:`TypeError`::
 
             sage: S([1]*10^6)
             Traceback (most recent call last):
@@ -639,6 +639,54 @@ cdef class SBox(SageObject):
             [0 0 2 2 2 2 0 0]
             [0 2 2 0 0 2 2 0]
             [0 0 0 0 2 2 2 2]
+            sage: S = SBox(7,4,8,6)
+            sage: S.difference_distribution_table()
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [0 0 0 2 0 0 0 0 0 0 0 0 0 0 2 0]
+            [0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 2]
+            [0 2 0 0 0 0 0 0 0 0 0 0 2 0 0 0]
+
+        TESTS::
+
+        Testing square SBoxes::
+
+            sage: from sage.crypto.sbox import SBox
+            sage: S = SBox(7,6,0,4,2,5,1,3)
+            sage: S.difference_distribution_table()
+            [8 0 0 0 0 0 0 0]
+            [0 2 2 0 2 0 0 2]
+            [0 0 2 2 0 0 2 2]
+            [0 2 0 2 2 0 2 0]
+            [0 2 0 2 0 2 0 2]
+            [0 0 2 2 2 2 0 0]
+            [0 2 2 0 0 2 2 0]
+            [0 0 0 0 2 2 2 2]
+
+        Testing non-square SBoxes::
+
+            sage: from sage.crypto.sbox import SBox
+            sage: S = SBox(8,8,8,8)
+            sage: S.difference_distribution_table()
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            sage: S = SBox(7,4,8,6)
+            sage: S.difference_distribution_table()
+            [4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+            [0 0 0 2 0 0 0 0 0 0 0 0 0 0 2 0]
+            [0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 2]
+            [0 2 0 0 0 0 0 0 0 0 0 0 2 0 0 0]
+            sage: S = SBox(0,0,0,1,0,0,1,3)
+            sage: S.difference_distribution_table()
+            [8 0 0 0]
+            [4 2 2 0]
+            [2 4 0 2]
+            [2 4 0 2]
+            [4 2 2 0]
+            [6 0 0 2]
+            [2 4 0 2]
+            [2 4 0 2]
         """
         cdef Py_ssize_t nrows = 1 << self.m
         cdef Py_ssize_t ncols = 1 << self.n
@@ -649,7 +697,7 @@ cdef class SBox(SageObject):
         for i in range(nrows):
             si = self._S_list[i]
             for di in range(nrows):
-                L[di*nrows + si ^ self._S_list[i ^ di]] += 1
+                L[di*ncols + si ^ self._S_list[i ^ di]] += 1
 
         A = matrix(ZZ, nrows, ncols, L)
         A.set_immutable()
@@ -1015,7 +1063,7 @@ cdef class SBox(SageObject):
         field is of degree ``m``.
 
         If the output length does not match the input length then a
-        ``TypeError`` is raised.
+        :class:`TypeError` is raised.
 
         INPUT:
 
@@ -1749,7 +1797,7 @@ cdef class SBox(SageObject):
         Return the inverse of this S-Box.
 
         Note that the S-Box must be invertible, otherwise it will raise
-        a ``TypeError``.
+        a :class:`TypeError`.
 
         EXAMPLES::
 
@@ -1872,7 +1920,7 @@ cdef class SBox(SageObject):
         return self == self.inverse()
 
 
-cdef Py_ssize_t feistel_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes):
+cdef Py_ssize_t feistel_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes) noexcept:
     """
     Compute a Feistel output using the given sboxes.
 
@@ -1899,7 +1947,7 @@ cdef Py_ssize_t feistel_substitute(Py_ssize_t x, Py_ssize_t input_size, list sbo
     return (xl << input_size) | xr
 
 
-cdef Py_ssize_t misty_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes):
+cdef Py_ssize_t misty_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes) noexcept:
     """
     Compute a Misty output using the given sboxes.
 
@@ -1926,10 +1974,10 @@ cdef Py_ssize_t misty_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxe
     return (xl << input_size) | xr
 
 
-ctypedef Py_ssize_t (*_SBOX_CONSTR) (Py_ssize_t, Py_ssize_t, list)
+ctypedef Py_ssize_t (*_SBOX_CONSTR) (Py_ssize_t, Py_ssize_t, list) noexcept
 
 
-cdef sbox_construction(_SBOX_CONSTR construction, list args):
+cdef sbox_construction(_SBOX_CONSTR construction, list args) noexcept:
     """
     Construct an Sbox from the given input sboxes that has a twice
     as big input size.

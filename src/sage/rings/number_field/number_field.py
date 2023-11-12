@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.linbox
 r"""
 Number Fields
 
@@ -127,7 +127,7 @@ from sage.rings.finite_rings.integer_mod import mod
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import is_odd, lift
-
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.categories.number_fields import NumberFields
@@ -161,6 +161,10 @@ from sage.modules.free_module_element import vector
 from sage.rings.real_mpfr import RR
 
 from sage.interfaces.abc import GapElement
+
+lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
+lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
+
 
 _NumberFields = NumberFields()
 
@@ -199,7 +203,7 @@ def is_NumberFieldHomsetCodomain(codomain):
     Caveat: Gap objects are not (yet) in :class:`Fields`, and therefore
     not accepted as number field homset codomains::
 
-        sage: is_NumberFieldHomsetCodomain(gap.Rationals)
+        sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
     """
     from sage.categories.fields import Fields
@@ -400,7 +404,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: K.<a> = NumberField(x^3-2, embedding=CC.gen()-0.6)
         sage: CC(a)
         -0.629960524947436 + 1.09112363597172*I
-        sage: L = Qp(5)
+        sage: L = Qp(5)                                                                 # needs sage.rings.padics
         sage: f = polygen(L)^3 - 2
         sage: K.<a> = NumberField(x^3-2, embedding=f.roots()[0][0])
         sage: a + L(1)
@@ -781,7 +785,7 @@ def NumberFieldTower(polynomials, names, check=True, embeddings=None, latex_name
 
     The Galois group is a product of 3 groups of order 2::
 
-        sage: k.absolute_field(names='c').galois_group()
+        sage: k.absolute_field(names='c').galois_group()                                # needs sage.groups
         Galois group 8T3 (2[x]2[x]2) with order 8 of x^8 + 36*x^6 + 302*x^4 + 564*x^2 + 121
 
     Repeatedly calling base_field allows us to descend the internally
@@ -1056,39 +1060,6 @@ def is_AbsoluteNumberField(x):
     return isinstance(x, NumberField_absolute)
 
 
-def is_QuadraticField(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is of the quadratic *number* field type.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.NumberField_quadratic` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field import is_QuadraticField
-        sage: is_QuadraticField(QuadraticField(5,'a'))
-        doctest:warning...
-        DeprecationWarning: is_QuadraticField is deprecated;
-        use isinstance(..., sage.rings.abc.NumberField_quadratic instead
-        See https://github.com/sagemath/sage/issues/32660 for details.
-        True
-        sage: x = polygen(ZZ, 'x')
-        sage: is_QuadraticField(NumberField(x^2 - 5, 'b'))
-        True
-        sage: is_QuadraticField(NumberField(x^3 - 5, 'b'))
-        False
-
-    A quadratic field specially refers to a number field, not a finite
-    field::
-
-        sage: is_QuadraticField(GF(9,'a'))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32660, 'is_QuadraticField is deprecated; use isinstance(..., sage.rings.abc.NumberField_quadratic instead')
-    return isinstance(x, NumberField_quadratic)
-
-
 class CyclotomicFieldFactory(UniqueFactory):
     r"""
     Return the `n`-th cyclotomic field, where n is a positive integer,
@@ -1237,7 +1208,7 @@ class CyclotomicFieldFactory(UniqueFactory):
 
         TESTS::
 
-            sage: CyclotomicField.create_object(None, (0, None, True))
+            sage: CyclotomicField.create_object(None, (0, None, True))                  # needs sage.libs.gap
             Universal Cyclotomic Field
         """
         n, names, embedding = key
@@ -1249,40 +1220,6 @@ class CyclotomicFieldFactory(UniqueFactory):
 
 
 CyclotomicField = CyclotomicFieldFactory("sage.rings.number_field.number_field.CyclotomicField")
-
-
-def is_CyclotomicField(x) -> bool:
-    """
-    Return ``True`` if x is a cyclotomic field, i.e., of the special
-    cyclotomic field class. This function does not return ``True`` for a
-    number field that just happens to be isomorphic to a cyclotomic
-    field.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.NumberField_cyclotomic` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field import is_CyclotomicField
-        sage: x = polygen(ZZ, 'x')
-        sage: is_CyclotomicField(NumberField(x^2 + 1,'zeta4'))
-        doctest:warning...
-        DeprecationWarning: is_CyclotomicField is deprecated;
-        use isinstance(..., sage.rings.abc.NumberField_cyclotomic instead
-        See https://github.com/sagemath/sage/issues/32660 for details.
-        False
-        sage: is_CyclotomicField(CyclotomicField(4))
-        True
-        sage: is_CyclotomicField(CyclotomicField(1))
-        True
-        sage: is_CyclotomicField(QQ)
-        False
-        sage: is_CyclotomicField(7)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32660, 'is_CyclotomicField is deprecated; use isinstance(..., sage.rings.abc.NumberField_cyclotomic instead')
-    return isinstance(x, NumberField_cyclotomic)
 
 
 from . import number_field_base
@@ -1396,8 +1333,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     This example was suggested on sage-nt; see :trac:`18942`::
 
-        sage: G = DirichletGroup(80)
-        sage: for chi in G:             # long time
+        sage: G = DirichletGroup(80)                                                    # needs sage.modular
+        sage: for chi in G:             # long time                                     # needs sage.modular
         ....:     D = ModularSymbols(chi, 2, -1).cuspidal_subspace().new_subspace().decomposition()
         ....:     for f in D:
         ....:         elt = f.q_eigenform(10, 'alpha')[3]
@@ -1783,13 +1720,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Check that :trac:`30961` is fixed::
 
+            sage: # needs sage.symbolic
             sage: QQi = i.parent()
-            sage: x = SR.var('x')                                                       # needs sage.symbolic
-            sage: QQi((x, x))                                                           # needs sage.symbolic
+            sage: x = SR.var('x')
+            sage: QQi((x, x))
             Traceback (most recent call last):
             ...
             TypeError: unable to convert x to a rational
-
             sage: QQi(("1", "2"))
             2*I + 1
             sage: QQi((RR(1), RR(2)))
@@ -2906,7 +2843,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         # Return cached answer if available
         try:
             return self.__is_CM
-        except(AttributeError):
+        except (AttributeError):
             pass
 
         # Then, deal with simple cases
@@ -2992,7 +2929,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         # Return cached answer if available
         try:
             return self.__complex_conjugation
-        except(AttributeError):
+        except (AttributeError):
             pass
 
         # Then, deal with simple cases
@@ -3023,7 +2960,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         # In the remaining case, self.is_CM() should have cached __max_tot_real_sub
         try:
             F, phi = self.__max_tot_real_sub
-        except(AttributeError):
+        except (AttributeError):
             F, phi = self.maximal_totally_real_subfield()
         if self.is_absolute():
             K_rel = self.relativize(phi, self.variable_name() * 2)
@@ -3128,7 +3065,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         try:
             return self.__max_tot_real_sub
-        except(AttributeError):
+        except (AttributeError):
             pass
 
         if isinstance(
@@ -3516,29 +3453,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                     H.append(chi)
         return H
 
-    def latex_variable_name(self, name=None):
-        """
-        Return the latex representation of the variable name for this
-        number field.
-
-        EXAMPLES::
-
-            sage: x = polygen(QQ, 'x')
-            sage: NumberField(x^2 + 3, 'a').latex_variable_name()
-            doctest:...: DeprecationWarning: This method is replaced by ...
-            See https://github.com/sagemath/sage/issues/30372 for details.
-            'a'
-            sage: NumberField(x^3 + 3, 'theta3').latex_variable_name()
-            '\\theta_{3}'
-            sage: CyclotomicField(5).latex_variable_name()
-            '\\zeta_{5}'
-        """
-        deprecation(30372, 'This method is replaced by the method latex_variable_names')
-        if name is None:
-            return self._latex_names[0]
-        else:
-            self._latex_names = (name,)
-
     def _repr_(self):
         """
         Return string representation of this number field.
@@ -3913,7 +3827,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.prime_above(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'...
         """
         if degree is not None:
             degree = ZZ(degree)
@@ -4007,7 +3921,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.prime_above(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'...
 
         """
         ids = self.primes_above(x, degree)
@@ -5175,9 +5089,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         else:
             return gens
 
-    # For backwards compatibility:
-    selmer_group = deprecated_function_alias(31345, selmer_generators)
-
     def selmer_group_iterator(self, S, m, proof=True):
         r"""
         Return an iterator through elements of the finite group `K(S,m)`.
@@ -6019,7 +5930,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: L.factor(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'factor'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'factor'...
 
         AUTHORS:
 
@@ -9427,6 +9338,7 @@ class NumberField_absolute(NumberField_generic):
 
         We embed a cubic field in the complex numbers::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: K.embeddings(CC)
             [
@@ -11442,14 +11354,11 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                 return NumberField_absolute._element_constructor_(self, x)
         elif isinstance(x, pari_gen):
             return NumberField_absolute._element_constructor_(self, x, check=check)
-        elif isinstance(x, (sage.libs.gap.element.GapElement, GapElement)):
+        elif isinstance(x, (LibGapElement, GapElement)):
             return self._coerce_from_gap(x)
         elif isinstance(x, str):
             return self._convert_from_str(x)
-
-        # late import because of speed
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicFieldElement
-        if isinstance(x, UniversalCyclotomicFieldElement):
+        elif isinstance(x, UniversalCyclotomicFieldElement):
             return x.to_cyclotomic_field(self)
         else:
             return self._convert_non_number_field_element(x)
@@ -12148,7 +12057,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         self._standard_embedding = True
 
         # set the generator and element class
-        c, b, a = [QQ(t) for t in self.defining_polynomial().list()]
+        c, b, a = (QQ(t) for t in self.defining_polynomial().list())
         Dpoly = b*b - 4*a*c
         D = (Dpoly.numer() * Dpoly.denom()).squarefree_part(bound=10000)
         self._D = D
@@ -12791,7 +12700,7 @@ def is_real_place(v):
         sage: is_real_place(v_fin)
         Traceback (most recent call last):
         ...
-        AttributeError: 'NumberFieldFractionalIdeal' object has no attribute 'im_gens'
+        AttributeError: 'NumberFieldFractionalIdeal' object has no attribute 'im_gens'...
 
     """
     RR = sage.rings.real_mpfr.RealField(53)
@@ -12817,12 +12726,12 @@ def _splitting_classes_gens_(K, m, d):
         sage: L = K.subfields(20)[0][0]
         sage: L.conductor()
         101
-        sage: _splitting_classes_gens_(L,101,20)
+        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap
         [95]
 
         sage: K = CyclotomicField(44)
         sage: L = K.subfields(4)[0][0]
-        sage: _splitting_classes_gens_(L,44,4)
+        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap
         [37]
 
         sage: K = CyclotomicField(44)
@@ -12834,7 +12743,7 @@ def _splitting_classes_gens_(K, m, d):
          with zeta44_0 = 3.837971894457990?
         sage: L.conductor()
         11
-        sage: _splitting_classes_gens_(L,11,5)
+        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap
         [10]
 
     """

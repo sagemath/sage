@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 #
 # All these methods are imported in EllipticCurve_rational_field,
 # so there is no reason to add this module to the documentation.
@@ -643,7 +643,7 @@ def _multiple_to_make_good_reduction(E):
         li = []
         for p in ps:
             np = u.valuation(p)
-            if Emin.discriminant() %p != 0:
+            if Emin.discriminant() % p != 0:
                 li.append(Emin.Np(p) * p**(np-1))
             elif Emin.has_additive_reduction(p):
                 li.append(E.tamagawa_number(p) * p**np)
@@ -652,7 +652,7 @@ def _multiple_to_make_good_reduction(E):
             else: # non split
                 li.append(E.tamagawa_number(p) * (p+1) * p**(np-1))
         otherbad = Integer(Emin.discriminant()).prime_divisors()
-        otherbad = [p for p in otherbad if u%p != 0 ]
+        otherbad = [p for p in otherbad if u % p != 0 ]
         li += [E.tamagawa_number(p) for p in otherbad]
         n2 = LCM(li)
     return n2
@@ -1107,12 +1107,13 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
 
     Test that it returns consistent results over a range of precision::
 
-        sage: max_N = 30   # get up to at least p^2         # long time
-        sage: E = EllipticCurve([1, 1, 1, 1, 1])            # long time
-        sage: p = 5                                         # long time
-        sage: E2 = E.padic_E2(5, max_N)                     # long time
-        sage: max_sigma = E.padic_sigma(p, max_N, E2=E2)    # long time
-        sage: for N in range(3, max_N):                     # long time
+        sage: # long time
+        sage: max_N = 30   # get up to at least p^2
+        sage: E = EllipticCurve([1, 1, 1, 1, 1])
+        sage: p = 5
+        sage: E2 = E.padic_E2(5, max_N)
+        sage: max_sigma = E.padic_sigma(p, max_N, E2=E2)
+        sage: for N in range(3, max_N):
         ....:    sigma = E.padic_sigma(p, N, E2=E2)
         ....:    assert sigma == max_sigma
     """

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fully commutative elements of Coxeter groups
 
@@ -247,7 +248,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         EXAMPLES::
 
             sage: FC = CoxeterGroup(['B', 5]).fully_commutative_elements()
-            sage: FC([3,2,4,3,1]).plot_heap()                                           # optional - sage.plot
+            sage: FC([3,2,4,3,1]).plot_heap()                                           # needs sage.plot
             Graphics object consisting of 15 graphics primitives
 
         .. PLOT::
@@ -799,7 +800,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         True
 
     Attempting to create an element from an input that is not the reduced word
-    of a fully commutative element throws a ``ValueError``::
+    of a fully commutative element throws a :class:`ValueError`::
 
         sage: FC([1,2,1])
         Traceback (most recent call last):

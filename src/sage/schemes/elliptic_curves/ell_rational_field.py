@@ -49,6 +49,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
+from itertools import product
 
 from . import constructor
 from . import BSD
@@ -2306,7 +2307,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.gens(algorithm="pari")    # random output
             [(5/4 : 5/8 : 1), (0 : 0 : 1)]
             sage: E = EllipticCurve([0,2429469980725060,0,275130703388172136833647756388,0])
-            sage: len(E.gens(algorithm="pari"))
+            sage: len(E.gens(algorithm="pari"))  # not tested (takes too long)
             14
 
         A non-integral example::
@@ -3055,12 +3056,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         try:
             return self.__selmer_rank
         except AttributeError:
-            if algorithm=="pari":
+            if algorithm == "pari":
                 ep = self.pari_curve()
                 lower, upper, s, pts = ep.ellrank()
                 tor = self.two_torsion_rank()
                 return upper + tor + s
-            elif algorithm=="mwrank":
+            elif algorithm == "mwrank":
                 C = self.mwrank_curve()
                 self.__selmer_rank = C.selmer_rank()
                 return self.__selmer_rank
@@ -3110,11 +3111,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         try:
             return self.__rank_bound
         except AttributeError:
-            if algorithm=="pari":
+            if algorithm == "pari":
                 ep = self.pari_curve()
                 lower, upper, s, pts = ep.ellrank()
                 return upper
-            elif algorithm=="mwrank":
+            elif algorithm == "mwrank":
                 C = self.mwrank_curve()
                 self.__rank_bound = C.rank_bound()
                 return self.__rank_bound
@@ -4160,22 +4161,22 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a1')
-            sage: E.reduction(2)                                                        # optional - sage.rings.finite_rings
+            sage: E.reduction(2)
             Elliptic Curve defined by y^2 + y = x^3 + x^2 over Finite Field of size 2
-            sage: E.reduction(3)                                                        # optional - sage.rings.finite_rings
+            sage: E.reduction(3)
             Elliptic Curve defined by y^2 + y = x^3 + x^2 + x over Finite Field of size 3
-            sage: E.reduction(5)                                                        # optional - sage.rings.finite_rings
+            sage: E.reduction(5)
             Elliptic Curve defined by y^2 + y = x^3 + x^2 + 3*x over Finite Field of size 5
-            sage: E.reduction(38)                                                       # optional - sage.rings.finite_rings
+            sage: E.reduction(38)
             Traceback (most recent call last):
             ...
             AttributeError: p must be prime.
-            sage: E.reduction(389)                                                      # optional - sage.rings.finite_rings
+            sage: E.reduction(389)
             Traceback (most recent call last):
             ...
             AttributeError: The curve must have good reduction at p.
             sage: E = EllipticCurve([5^4, 5^6])
-            sage: E.reduction(5)                                                        # optional - sage.rings.finite_rings
+            sage: E.reduction(5)
             Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
         """
         p = Integer(p)
@@ -4513,7 +4514,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         If we extend scalars to a field in which the discriminant is a
         square, the CM becomes rational::
 
-            sage: E.has_rational_cm(QuadraticField(-3))                                 # optional - sage.rings.number_field
+            sage: E.has_rational_cm(QuadraticField(-3))                                 # needs sage.rings.number_field
             True
 
             sage: E = EllipticCurve(j=8000)
@@ -4527,7 +4528,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         Again, we may extend scalars to a field in which the
         discriminant is a square, where the CM becomes rational::
 
-            sage: E.has_rational_cm(QuadraticField(-2))                                 # optional - sage.rings.number_field
+            sage: E.has_rational_cm(QuadraticField(-2))                                 # needs sage.rings.number_field
             True
 
         The field need not be a number field provided that it is an
@@ -4541,7 +4542,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         An error is raised if a field is given which is not an
         extension of `\QQ`, i.e., not of characteristic `0`::
 
-            sage: E.has_rational_cm(GF(2))                                              # optional - sage.rings.finite_rings
+            sage: E.has_rational_cm(GF(2))
             Traceback (most recent call last):
             ...
             ValueError: Error in has_rational_cm: Finite Field of size 2
@@ -4986,7 +4987,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         if not is_EllipticCurve(other):
             raise ValueError("Second argument is not an Elliptic Curve.")
-        if not other.base_field() is QQ:
+        if other.base_field() is not QQ:
             raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")
 
         if self.is_isomorphic(other):
@@ -5229,7 +5230,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             6 Elliptic Curve defined by y^2 + x*y  = x^3 - 8125*x - 282568 over Rational Field
             7 Elliptic Curve defined by y^2 + x*y  = x^3 - 7930*x - 296725 over Rational Field
             8 Elliptic Curve defined by y^2 + x*y  = x^3 - 130000*x - 18051943 over Rational Field
-            sage: G.plot(edge_labels=True)
+            sage: G.plot(edge_labels=True)                                              # needs sage.plot
             Graphics object consisting of 23 graphics primitives
         """
         return self.isogeny_class(order=order).graph()
@@ -6814,7 +6815,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 # denom_maxpa is a list of pairs (d,q) where d runs
                 # through possible denominators, and q=p^a is the
                 # maximum prime power divisor of d:
-                denom_maxpa = [(prod(tmp),max(tmp)) for tmp in cartesian_product_iterator(p_pow_alpha)]
+                denom_maxpa = [(prod(tmp), max(tmp)) for tmp in product(*p_pow_alpha)]
 #               The maximum denominator is this (not used):
 #                denom = [prod([pp[-1] for pp in p_pow_alpha],1)]
                 for de,maxpa in denom_maxpa:
@@ -6840,12 +6841,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 return set(xs)
         # -------------------------------------------------------------------
         # End internal functions ############################################
-        from sage.misc.mrange import cartesian_product_iterator
 
         E = self
         tors_points = E.torsion_points()
 
-        if (r == 0):#only Torsionpoints to consider
+        if (r == 0):  # only Torsionpoints to consider
             int_points = [P for P in tors_points if not P.is_zero()]
             int_points = [P for P in int_points if P[0].is_S_integral(S)]
             if not both_signs:

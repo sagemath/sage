@@ -69,7 +69,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
     We plot a random graph on 12 nodes with probability `p = .71`::
 
         sage: gnp = graphs.RandomGNP(12,.71)
-        sage: gnp.show() # long time
+        sage: gnp.show()                        # long time                             # needs sage.plot
 
     We view many random graphs using a graphics array::
 
@@ -1359,7 +1359,7 @@ def RandomTree(n, seed=None):
         sage: G = graphs.RandomTree(10)
         sage: G.is_tree()
         True
-        sage: G.show() # long time
+        sage: G.show()                          # long time                             # needs sage.plot
 
     TESTS:
 
@@ -1957,7 +1957,7 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
         word2 = rotate_word_to_next_occurrence(word)
         if len(word2) >= 5:
             word = [word2[0]] + word2[4:]
-            in1, in2, in3 = [u[1] for u in word2[:3]]
+            in1, in2, in3 = (u[1] for u in word2[:3])
             edges.append([in1, in3])  # edge 'in1,in3'
             idx = embedding[in1].index(in2)
             embedding[in1].insert(idx, in3)

@@ -21,7 +21,7 @@ AUTHOR:
 # ****************************************************************************
 
 
-cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
+cpdef list C3_algorithm(object start, str bases, str attribute, bint proper) noexcept:
     """
     An implementation of the C3 algorithm.
 

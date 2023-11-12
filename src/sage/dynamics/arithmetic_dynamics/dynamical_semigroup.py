@@ -9,15 +9,15 @@ AUTHORS:
  - Dang Phan (August 6th, 2023): initial implementation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Dang Phan <dang8phan@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from collections.abc import Collection
 from sage.categories.fields import Fields
@@ -32,6 +32,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
+
 
 class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
     r"""
@@ -50,13 +51,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: DynamicalSemigroup(([x, y], [x^2, y^2]))
-        Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-        Dynamical System of Projective Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Projective Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Projective Space of dimension 1 over Rational Field
+         defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
     ::
 
@@ -64,23 +64,22 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem([x, y], P)
         sage: g = DynamicalSystem([x^2, y^2], P)
         sage: DynamicalSemigroup((f, g))
-        Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-        Dynamical System of Projective Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Projective Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Projective Space of dimension 1 over Rational Field
+         defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
     ::
 
         sage: A.<x> = AffineSpace(QQ, 1)
         sage: f = DynamicalSystem_affine(x, A)
         sage: DynamicalSemigroup(f)
-        Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 1 dynamical system:
-        Dynamical System of Affine Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x) to
-                (x)
+        Dynamical semigroup over Affine Space of dimension 1 over Rational Field
+         defined by 1 dynamical system:
+          Dynamical System of Affine Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x) to (x)
 
     ::
 
@@ -88,13 +87,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem(x, A)
         sage: g = DynamicalSystem(x^2, A)
         sage: DynamicalSemigroup((f, g))
-        Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-        Dynamical System of Affine Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x) to
-                (x)
-        Dynamical System of Affine Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x) to
-                (x^2)
+        Dynamical semigroup over Affine Space of dimension 1 over Rational Field
+         defined by 2 dynamical systems:
+          Dynamical System of Affine Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x) to (x)
+          Dynamical System of Affine Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x) to (x^2)
 
     ::
 
@@ -103,32 +101,32 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem_projective([x, y], X)
         sage: g = DynamicalSystem_projective([x^2, y^2], X)
         sage: DynamicalSemigroup_projective([f, g])
-        Dynamical semigroup over Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
-          x - y defined by 2 dynamical systems:
-        Dynamical System of Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
-          x - y
-        Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
-          x - y
-        Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Closed subscheme of Projective Space of dimension 1
+         over Rational Field defined by: x - y
+         defined by 2 dynamical systems:
+          Dynamical System of Closed subscheme of Projective Space of dimension 1
+           over Rational Field defined by: x - y
+             Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Closed subscheme of Projective Space of dimension 1
+           over Rational Field defined by: x - y
+             Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
-    If a dynamical semigroup is built from dynamical systems with different base rings, all systems will be coerced
-    to the largest base ring::
+    If a dynamical semigroup is built from dynamical systems with different base rings,
+    all systems will be coerced to the largest base ring::
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: Q.<z,w> = ProjectiveSpace(RR, 1)
         sage: f = DynamicalSystem([x, y], P)
         sage: g = DynamicalSystem([z^2, w^2], Q)
         sage: DynamicalSemigroup((f, g))
-        Dynamical semigroup over Projective Space of dimension 1 over Real Field with 53 bits of precision defined by 2 dynamical systems:
-        Dynamical System of Projective Space of dimension 1 over Real Field with 53 bits of precision
-          Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Projective Space of dimension 1 over Real Field with 53 bits of precision
-          Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Projective Space of dimension 1 over
+         Real Field with 53 bits of precision defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1
+           over Real Field with 53 bits of precision
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Projective Space of dimension 1
+           over Real Field with 53 bits of precision
+            Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
     ::
 
@@ -137,17 +135,19 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem(x, A)
         sage: g = DynamicalSystem(y^2, B)
         sage: DynamicalSemigroup((f, g))
-        Dynamical semigroup over Affine Space of dimension 1 over Real Field with 53 bits of precision defined by 2 dynamical systems:
-        Dynamical System of Affine Space of dimension 1 over Real Field with 53 bits of precision
-          Defn: Defined on coordinates by sending (x) to
-                (x)
-        Dynamical System of Affine Space of dimension 1 over Real Field with 53 bits of precision
-          Defn: Defined on coordinates by sending (x) to
-                (x^2)
+        Dynamical semigroup over Affine Space of dimension 1 over
+         Real Field with 53 bits of precision defined by 2 dynamical systems:
+          Dynamical System of Affine Space of dimension 1 over
+           Real Field with 53 bits of precision
+            Defn: Defined on coordinates by sending (x) to (x)
+          Dynamical System of Affine Space of dimension 1 over
+           Real Field with 53 bits of precision
+            Defn: Defined on coordinates by sending (x) to (x^2)
 
     If a dynamical semigroup is built from dynamical systems over number fields, a composite number field is created
     and all systems will be coerced to it. This composite number field contains all of the initial number fields::
 
+        sage: # needs sage.rings.number_field
         sage: R.<r> = QQ[]
         sage: K.<k> = NumberField(r^2 - 2)
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
@@ -155,16 +155,18 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem([x, y], P)
         sage: g = DynamicalSystem([z^2, w^2], Q)
         sage: DynamicalSemigroup((f, g))
-        Dynamical semigroup over Projective Space of dimension 1 over Number Field in k with defining polynomial r^2 - 2 defined by 2 dynamical systems:
-        Dynamical System of Projective Space of dimension 1 over Number Field in k with defining polynomial r^2 - 2
-          Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Projective Space of dimension 1 over Number Field in k with defining polynomial r^2 - 2
-          Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Projective Space of dimension 1 over
+         Number Field in k with defining polynomial r^2 - 2 defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over
+           Number Field in k with defining polynomial r^2 - 2
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Projective Space of dimension 1 over
+           Number Field in k with defining polynomial r^2 - 2
+            Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: R.<r> = QQ[]
         sage: K.<k> = NumberField(r^2 - 2)
         sage: L.<l> = NumberField(r^2 - 3)
@@ -173,16 +175,19 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem([x, y], P)
         sage: g = DynamicalSystem([z^2, w^2], Q)
         sage: DynamicalSemigroup((f, g))
-        Dynamical semigroup over Projective Space of dimension 1 over Number Field in kl with defining polynomial r^4 - 10*r^2 + 1 defined by 2 dynamical systems:
-        Dynamical System of Projective Space of dimension 1 over Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
-          Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Projective Space of dimension 1 over Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
-          Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Projective Space of dimension 1 over
+         Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
+         defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over
+           Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Projective Space of dimension 1 over
+           Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
+            Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: R.<r> = QQ[]
         sage: K.<k> = NumberField(r^2 - 2)
         sage: L.<l> = NumberField(r^2 - 3)
@@ -191,102 +196,107 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         sage: f = DynamicalSystem(x, P)
         sage: g = DynamicalSystem(y^2, Q)
         sage: DynamicalSemigroup((f, g))
-        Dynamical semigroup over Affine Space of dimension 1 over Number Field in kl with defining polynomial r^4 - 10*r^2 + 1 defined by 2 dynamical systems:
-        Dynamical System of Affine Space of dimension 1 over Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
-          Defn: Defined on coordinates by sending (x) to
-                (x)
-        Dynamical System of Affine Space of dimension 1 over Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
-          Defn: Defined on coordinates by sending (x) to
-                (x^2)
+        Dynamical semigroup over Affine Space of dimension 1 over
+         Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
+         defined by 2 dynamical systems:
+          Dynamical System of Affine Space of dimension 1 over
+           Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
+            Defn: Defined on coordinates by sending (x) to (x)
+          Dynamical System of Affine Space of dimension 1 over
+           Number Field in kl with defining polynomial r^4 - 10*r^2 + 1
+            Defn: Defined on coordinates by sending (x) to (x^2)
 
     A dynamical semigroup may contain dynamical systems over function fields::
 
-            sage: R.<r> = QQ[]
-            sage: P.<x,y> = ProjectiveSpace(R, 1)
-            sage: f = DynamicalSystem([r * x, y], P)
-            sage: g = DynamicalSystem([x, r * y], P)
-            sage: DynamicalSemigroup((f, g))
-            Dynamical semigroup over Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (r*x : y)
-            Dynamical System of Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x : r*y)
+        sage: R.<r> = QQ[]
+        sage: P.<x,y> = ProjectiveSpace(R, 1)
+        sage: f = DynamicalSystem([r * x, y], P)
+        sage: g = DynamicalSystem([x, r * y], P)
+        sage: DynamicalSemigroup((f, g))
+        Dynamical semigroup over Projective Space of dimension 1 over Univariate
+         Polynomial Ring in r over Rational Field defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over
+           Univariate Polynomial Ring in r over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (r*x : y)
+          Dynamical System of Projective Space of dimension 1 over
+           Univariate Polynomial Ring in r over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x : r*y)
 
-        ::
+    ::
 
-            sage: R.<r> = QQ[]
-            sage: P.<x,y> = ProjectiveSpace(R, 1)
-            sage: f = DynamicalSystem([r * x, y], P)
-            sage: g = DynamicalSystem([x, y], P)
-            sage: DynamicalSemigroup((f, g))
-            Dynamical semigroup over Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (r*x : y)
-            Dynamical System of Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x : y)
+        sage: R.<r> = QQ[]
+        sage: P.<x,y> = ProjectiveSpace(R, 1)
+        sage: f = DynamicalSystem([r * x, y], P)
+        sage: g = DynamicalSystem([x, y], P)
+        sage: DynamicalSemigroup((f, g))
+        Dynamical semigroup over Projective Space of dimension 1 over Univariate
+         Polynomial Ring in r over Rational Field defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over
+           Univariate Polynomial Ring in r over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (r*x : y)
+          Dynamical System of Projective Space of dimension 1 over
+           Univariate Polynomial Ring in r over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
 
-        ::
+    ::
 
-            sage: R.<r,s> = QQ[]
-            sage: P.<x,y> = ProjectiveSpace(R, 1)
-            sage: f = DynamicalSystem([r * x, y], P)
-            sage: g = DynamicalSystem([s * x, y], P)
-            sage: DynamicalSemigroup((f, g))
-            Dynamical semigroup over Projective Space of dimension 1 over Multivariate Polynomial Ring in r, s over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Multivariate Polynomial Ring in r, s over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (r*x : y)
-            Dynamical System of Projective Space of dimension 1 over Multivariate Polynomial Ring in r, s over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (s*x : y)
+        sage: R.<r,s> = QQ[]
+        sage: P.<x,y> = ProjectiveSpace(R, 1)
+        sage: f = DynamicalSystem([r * x, y], P)
+        sage: g = DynamicalSystem([s * x, y], P)
+        sage: DynamicalSemigroup((f, g))
+        Dynamical semigroup over Projective Space of dimension 1 over Multivariate
+         Polynomial Ring in r, s over Rational Field defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over
+           Multivariate Polynomial Ring in r, s over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (r*x : y)
+          Dynamical System of Projective Space of dimension 1 over
+           Multivariate Polynomial Ring in r, s over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (s*x : y)
 
-        ::
+    ::
 
-            sage: R.<r,s> = QQ[]
-            sage: P.<x,y> = ProjectiveSpace(R, 1)
-            sage: f = DynamicalSystem([r * x, s * y], P)
-            sage: g = DynamicalSystem([s * x, r * y], P)
-            sage: DynamicalSemigroup((f, g))
-            Dynamical semigroup over Projective Space of dimension 1 over Multivariate Polynomial Ring in r, s over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Multivariate Polynomial Ring in r, s over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (r*x : s*y)
-            Dynamical System of Projective Space of dimension 1 over Multivariate Polynomial Ring in r, s over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (s*x : r*y)
+        sage: R.<r,s> = QQ[]
+        sage: P.<x,y> = ProjectiveSpace(R, 1)
+        sage: f = DynamicalSystem([r * x, s * y], P)
+        sage: g = DynamicalSystem([s * x, r * y], P)
+        sage: DynamicalSemigroup((f, g))
+        Dynamical semigroup over Projective Space of dimension 1 over
+         Multivariate Polynomial Ring in r, s over Rational Field
+         defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over
+           Multivariate Polynomial Ring in r, s over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (r*x : s*y)
+          Dynamical System of Projective Space of dimension 1 over
+           Multivariate Polynomial Ring in r, s over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (s*x : r*y)
 
     A dynamical semigroup may contain dynamical systems over finite fields::
 
         sage: F = FiniteField(5)
         sage: P.<x,y> = ProjectiveSpace(F, 1)
         sage: DynamicalSemigroup(([x, y], [x^2, y^2]))
-        Dynamical semigroup over Projective Space of dimension 1 over Finite Field of size 5 defined by 2 dynamical systems:
-        Dynamical System of Projective Space of dimension 1 over Finite Field of size 5
-          Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Projective Space of dimension 1 over Finite Field of size 5
-          Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Projective Space of dimension 1 over
+         Finite Field of size 5 defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over Finite Field of size 5
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Projective Space of dimension 1 over Finite Field of size 5
+            Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
-    If a dynamical semigroup is built from dynamical systems over both projective and affine spaces, all systems
-    will be homogenized to dynamical systems over projective space::
+    If a dynamical semigroup is built from dynamical systems over both projective and
+    affine spaces, all systems will be homogenized to dynamical systems over projective space::
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: A.<z> = AffineSpace(QQ, 1)
         sage: f = DynamicalSystem([x, y], P)
         sage: g = DynamicalSystem(z^2, A)
         sage: DynamicalSemigroup((f, g))
-        Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-        Dynamical System of Projective Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Projective Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Projective Space of dimension 1 over Rational Field
+         defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
     TESTS::
 
@@ -298,6 +308,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: R.<r> = QQ[]
         sage: K.<k> = NumberField(r^2 - 2)
         sage: P.<x,y> = ProjectiveSpace(RR, 1)
@@ -442,13 +453,14 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f.change_ring(RR)
-            Dynamical semigroup over Projective Space of dimension 1 over Real Field with 53 bits of precision defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Real Field with 53 bits of precision
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x : y)
-            Dynamical System of Projective Space of dimension 1 over Real Field with 53 bits of precision
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x^2 : y^2)
+            Dynamical semigroup over Projective Space of dimension 1 over
+             Real Field with 53 bits of precision defined by 2 dynamical systems:
+              Dynamical System of Projective Space of dimension 1 over
+               Real Field with 53 bits of precision
+                Defn: Defined on coordinates by sending (x : y) to (x : y)
+              Dynamical System of Projective Space of dimension 1 over
+               Real Field with 53 bits of precision
+                Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
         """
         new_systems = []
         for ds in self.defining_systems():
@@ -515,11 +527,9 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: f = DynamicalSemigroup(([x, y], [x^2, y^2]))
             sage: f.defining_systems()
             (Dynamical System of Projective Space of dimension 1 over Rational Field
-               Defn: Defined on coordinates by sending (x : y) to
-                     (x : y),
+               Defn: Defined on coordinates by sending (x : y) to (x : y),
              Dynamical System of Projective Space of dimension 1 over Rational Field
-               Defn: Defined on coordinates by sending (x : y) to
-                     (x^2 : y^2))
+               Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2))
         """
         return tuple(self._dynamical_systems)
 
@@ -759,13 +769,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: g = DynamicalSystem([x, r * y], P)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.specialization({r:2})
-            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (2*x : y)
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x : 2*y)
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field
+             defined by 2 dynamical systems:
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x : y) to (2*x : y)
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x : y) to (x : 2*y)
 
         ::
 
@@ -775,13 +784,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: g = DynamicalSystem([x, y], P)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.specialization({r:2})
-            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (2*x : y)
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x : y)
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field
+             defined by 2 dynamical systems:
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x : y) to (2*x : y)
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x : y) to (x : y)
 
         ::
 
@@ -791,13 +799,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: g = DynamicalSystem([s * x, y], P)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.specialization({r:2, s:3})
-            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (2*x : y)
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (3*x : y)
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field
+             defined by 2 dynamical systems:
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x : y) to (2*x : y)
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x : y) to (3*x : y)
 
         ::
 
@@ -807,13 +814,15 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: g = DynamicalSystem([s * x, r * y], P)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.specialization({s:3})
-            Dynamical semigroup over Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (r*x : 3*y)
-            Dynamical System of Projective Space of dimension 1 over Univariate Polynomial Ring in r over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (3*x : r*y)
+            Dynamical semigroup over Projective Space of dimension 1 over
+             Univariate Polynomial Ring in r over Rational Field
+             defined by 2 dynamical systems:
+              Dynamical System of Projective Space of dimension 1 over
+               Univariate Polynomial Ring in r over Rational Field
+                Defn: Defined on coordinates by sending (x : y) to (r*x : 3*y)
+              Dynamical System of Projective Space of dimension 1 over
+               Univariate Polynomial Ring in r over Rational Field
+                Defn: Defined on coordinates by sending (x : y) to (3*x : r*y)
         """
         specialized_systems = []
         for ds in self.defining_systems():
@@ -959,16 +968,15 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             Traceback (most recent call last):
             ...
             ValueError: left dynamical semigroup's domain must equal right dynamical semigroup's codomain
-
         """
-        if type(self) != type(other_dynamical_semigroup):
+        if type(self) is not type(other_dynamical_semigroup):
             raise TypeError("can only multiply dynamical semigroups with other dynamical semigroups of the same type")
         if self.domain() != other_dynamical_semigroup.codomain():
             raise ValueError("left dynamical semigroup's domain must equal right dynamical semigroup's codomain")
         composite_systems = []
         for f in self.defining_systems():
             for g in other_dynamical_semigroup.defining_systems():
-                composite_systems.append(DynamicalSystem(f*g))
+                composite_systems.append(DynamicalSystem(f * g))
         return DynamicalSemigroup(composite_systems)
 
     def __pow__(self, n):
@@ -982,7 +990,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         OUTPUT: :class:`DynamicalSemigroup`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A.<x> = AffineSpace(QQ, 1)
             sage: f = DynamicalSystem(x^2, A)
@@ -1200,11 +1208,12 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         """
         if isinstance(other, DynamicalSemigroup):
             if any(ds.degree() == 1 for ds in self.defining_systems()) or \
-                any(ds.degree() == 1 for ds in other.defining_systems()):
+                    any(ds.degree() == 1 for ds in other.defining_systems()):
                 raise NotImplementedError("cannot compare dynamical semigroups with at least one generator of degree 1")
             return all(ds in other.defining_systems() for ds in self.defining_systems()) and \
                 all(ds in self.defining_systems() for ds in other.defining_systems())
         return False
+
 
 class DynamicalSemigroup_projective(DynamicalSemigroup):
     r"""
@@ -1221,13 +1230,12 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
         sage: DynamicalSemigroup_projective(([x, y], [x^2, y^2]))
-        Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-        Dynamical System of Projective Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x : y) to
-                (x : y)
-        Dynamical System of Projective Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x : y) to
-                (x^2 : y^2)
+        Dynamical semigroup over Projective Space of dimension 1 over
+         Rational Field defined by 2 dynamical systems:
+          Dynamical System of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x : y)
+          Dynamical System of Projective Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
     """
 
     @staticmethod
@@ -1248,7 +1256,7 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
                         raise ValueError(str(ds_datum) + " does not define a 'DynamicalSystem_projective' object")
         else:
             if isinstance(ds_data, DynamicalSystem_projective):
-                    systems.append(ds_data)
+                systems.append(ds_data)
             else:
                 try:
                     systems.append(DynamicalSystem_projective(ds_data))
@@ -1281,13 +1289,12 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             sage: g = DynamicalSystem([x^2, y^2], P)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.dehomogenize(0)
-            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (y) to
-                    (y)
-            Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (y) to
-                    (y^2)
+            Dynamical semigroup over Affine Space of dimension 1 over
+             Rational Field defined by 2 dynamical systems:
+              Dynamical System of Affine Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (y) to (y)
+              Dynamical System of Affine Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (y) to (y^2)
 
         ::
 
@@ -1296,13 +1303,12 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             sage: g = DynamicalSystem([x^2, y^2], P)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.dehomogenize(1)
-            Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (x)
-            Dynamical System of Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (x^2)
+            Dynamical semigroup over Affine Space of dimension 1 over
+             Rational Field defined by 2 dynamical systems:
+              Dynamical System of Affine Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x) to (x)
+              Dynamical System of Affine Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x) to (x^2)
 
         TESTS::
 
@@ -1316,8 +1322,8 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             ValueError: Scheme morphism:
               From: Affine Space of dimension 1 over Rational Field
               To:   Affine Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x) to
-                    (1/x) is not a `DynamicalSystem_affine` object
+              Defn: Defined on coordinates by sending (x) to (1/x)
+            is not a `DynamicalSystem_affine` object
         """
         new_systems = []
         for ds in self.defining_systems():
@@ -1327,11 +1333,14 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
             new_systems.append(new_system)
         return DynamicalSemigroup_affine(new_systems)
 
+
 class DynamicalSemigroup_projective_field(DynamicalSemigroup_projective):
     pass
 
+
 class DynamicalSemigroup_projective_finite_field(DynamicalSemigroup_projective_field):
     pass
+
 
 class DynamicalSemigroup_affine(DynamicalSemigroup):
     r"""
@@ -1350,13 +1359,12 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
         sage: f = DynamicalSystem(x, A)
         sage: g = DynamicalSystem(x^2, A)
         sage: DynamicalSemigroup_affine((f, g))
-        Dynamical semigroup over Affine Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-        Dynamical System of Affine Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x) to
-                (x)
-        Dynamical System of Affine Space of dimension 1 over Rational Field
-          Defn: Defined on coordinates by sending (x) to
-                (x^2)
+        Dynamical semigroup over Affine Space of dimension 1 over
+         Rational Field defined by 2 dynamical systems:
+          Dynamical System of Affine Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x) to (x)
+          Dynamical System of Affine Space of dimension 1 over Rational Field
+            Defn: Defined on coordinates by sending (x) to (x^2)
     """
 
     @staticmethod
@@ -1374,7 +1382,7 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
                         raise ValueError(str(ds_datum) + " does not define a 'DynamicalSystem_affine' object")
         else:
             if isinstance(ds_data, DynamicalSystem_affine):
-                    systems.append(ds_data)
+                systems.append(ds_data)
             else:
                 try:
                     systems.append(DynamicalSystem_affine(ds_data))
@@ -1407,13 +1415,12 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
             sage: g = DynamicalSystem(x^2, A)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.homogenize(1)
-            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x0 : x1) to
-                    (x0 + x1 : x1)
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x0 : x1) to
-                    (x0^2 : x1^2)
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field
+             defined by 2 dynamical systems:
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x0 : x1) to (x0 + x1 : x1)
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x0 : x1) to (x0^2 : x1^2)
 
         ::
 
@@ -1422,24 +1429,26 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
             sage: g = DynamicalSystem(x^2, A)
             sage: d = DynamicalSemigroup((f, g))
             sage: d.homogenize((1, 0))
-            Dynamical semigroup over Projective Space of dimension 1 over Rational Field defined by 2 dynamical systems:
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x0 : x1) to
-                    (x1 : x0 + x1)
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x0 : x1) to
-                    (x1^2 : x0^2)
+            Dynamical semigroup over Projective Space of dimension 1 over Rational Field
+             defined by 2 dynamical systems:
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x0 : x1) to (x1 : x0 + x1)
+              Dynamical System of Projective Space of dimension 1 over Rational Field
+                Defn: Defined on coordinates by sending (x0 : x1) to (x1^2 : x0^2)
         """
         new_systems = []
         for ds in self.defining_systems():
             new_systems.append(ds.homogenize(n))
         return DynamicalSemigroup_projective(new_systems)
 
+
 class DynamicalSemigroup_affine_field(DynamicalSemigroup_affine):
     pass
 
+
 class DynamicalSemigroup_affine_finite_field(DynamicalSemigroup_affine_field):
     pass
+
 
 def _standardize_domains_of_(systems):
     r"""
@@ -1459,11 +1468,9 @@ def _standardize_domains_of_(systems):
         sage: g = DynamicalSystem(x^2, B)
         sage: sage.dynamics.arithmetic_dynamics.dynamical_semigroup._standardize_domains_of_([f, g])
         [Dynamical System of Affine Space of dimension 1 over Real Field with 53 bits of precision
-           Defn: Defined on coordinates by sending (x) to
-             (x),
+           Defn: Defined on coordinates by sending (x) to (x),
          Dynamical System of Affine Space of dimension 1 over Real Field with 53 bits of precision
-           Defn: Defined on coordinates by sending (x) to
-             (x^2)]
+           Defn: Defined on coordinates by sending (x) to (x^2)]
     """
     identical_domains = True
     for ds in systems:
@@ -1509,7 +1516,7 @@ def _standardize_domains_of_(systems):
 
     for i in range(len(systems)):
         if systems[i].base_ring() != biggest_ring:
-                systems[i] = systems[i].change_ring(biggest_ring)
+            systems[i] = systems[i].change_ring(biggest_ring)
 
     domain = systems[0].domain()
 

@@ -398,6 +398,7 @@ def ReflexivePolytope(dim, n):
     else:
         raise NotImplementedError("only 2- and 3-dimensional reflexive polytopes are available!")
 
+
 # Sequences of reflexive polytopes
 _rp = [None] * 4
 
@@ -3238,7 +3239,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                                            * permutations[n_s][1]
                 if d == 0:
                     d = (PM[k, permutations[n_s][1](i+1) - 1]
-                        -permutations[0][1](first_row)[i])
+                        - permutations[0][1](first_row)[i])
                     if d < 0:
                         break
             if d < 0:
@@ -3308,7 +3309,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                         if d < 0:
                             # We move to the next line
                             continue
-                        elif d==0:
+                        elif d == 0:
                             # Maximal values agree, so possible symmetry
                             if s != l:
                                 permutations_bar[n_p][0] = S_f((l + 1, s + 1), check=False) * permutations_bar[n_p][0]
@@ -5544,6 +5545,7 @@ def all_polars(polytopes):
         p._read_equations(result)
     result.close()
     os.remove(result_name)
+
 
 # Synonym for the above function
 all_facet_equations = all_polars

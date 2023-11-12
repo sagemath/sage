@@ -26,7 +26,7 @@ Check that operations with numpy elements work well (see :trac:`18076` and
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from cpython.int cimport PyInt_AS_LONG
+from cpython.long cimport PyLong_AsLong
 from cpython.float cimport PyFloat_AS_DOUBLE
 
 from sage.structure.parent cimport Parent
@@ -116,7 +116,7 @@ cdef class PolynomialRealDense(Polynomial):
         Polynomial.__init__(self, parent, is_gen=is_gen)
         self._base_ring = parent._base
         cdef Py_ssize_t i, degree
-        cdef int prec = self._base_ring.__prec
+        cdef int prec = self._base_ring._prec
         cdef mpfr_rnd_t rnd = self._base_ring.rnd
         if x is None:
             self._coeffs = <mpfr_t*>check_allocarray(1, sizeof(mpfr_t)) # degree zero
@@ -151,7 +151,7 @@ cdef class PolynomialRealDense(Polynomial):
                 if type(a) is RealNumber:
                     mpfr_set(coeffs[i], (<RealNumber>a).value, rnd)
                 elif type(a) is int:
-                    mpfr_set_si(coeffs[i], PyInt_AS_LONG(a), rnd)
+                    mpfr_set_si(coeffs[i], PyLong_AsLong(a), rnd)
                 elif type(a) is float:
                     mpfr_set_d(coeffs[i], PyFloat_AS_DOUBLE(a), rnd)
                 elif type(a) is Integer:
@@ -184,7 +184,7 @@ cdef class PolynomialRealDense(Polynomial):
         """
         return make_PolynomialRealDense, (self._parent, self.list())
 
-    cdef _normalize(self):
+    cdef _normalize(self) noexcept:
         """
         Remove all leading 0's.
         """
@@ -197,7 +197,7 @@ cdef class PolynomialRealDense(Polynomial):
             self._coeffs = <mpfr_t*>check_reallocarray(self._coeffs, i+1, sizeof(mpfr_t))
             self._degree = i
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -225,9 +225,9 @@ cdef class PolynomialRealDense(Polynomial):
         mpfr_set(r.value, self._coeffs[i], self._base_ring.rnd)
         return r
 
-    cdef PolynomialRealDense _new(self, Py_ssize_t degree):
+    cdef PolynomialRealDense _new(self, Py_ssize_t degree) noexcept:
         cdef Py_ssize_t i
-        cdef int prec = self._base_ring.__prec
+        cdef int prec = self._base_ring._prec
         cdef PolynomialRealDense f = <PolynomialRealDense>PolynomialRealDense.__new__(PolynomialRealDense)
         f._parent = self._parent
         f._base_ring = self._base_ring
@@ -257,7 +257,7 @@ cdef class PolynomialRealDense(Polynomial):
         """
         return smallInteger(self._degree)
 
-    cpdef Polynomial truncate(self, long n):
+    cpdef Polynomial truncate(self, long n) noexcept:
         r"""
         Returns the polynomial of degree `< n` which is equivalent to self
         modulo `x^n`.
@@ -310,7 +310,7 @@ cdef class PolynomialRealDense(Polynomial):
                 return self.truncate(i+1)
         return self._new(-1)
 
-    cpdef shift(self, Py_ssize_t n):
+    cpdef shift(self, Py_ssize_t n) noexcept:
         r"""
         Returns this polynomial multiplied by the power `x^n`. If `n`
         is negative, terms below `x^n` will be discarded. Does not
@@ -351,7 +351,7 @@ cdef class PolynomialRealDense(Polynomial):
                 mpfr_set(f._coeffs[i], self._coeffs[i-n], self._base_ring.rnd)
         return f
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         """
         EXAMPLES::
 
@@ -386,7 +386,7 @@ cdef class PolynomialRealDense(Polynomial):
             mpfr_neg(f._coeffs[i], self._coeffs[i], rnd)
         return f
 
-    cpdef _add_(left, _right):
+    cpdef _add_(left, _right) noexcept:
         """
         EXAMPLES::
 
@@ -419,7 +419,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef _sub_(left, _right):
+    cpdef _sub_(left, _right) noexcept:
         """
         EXAMPLES::
 
@@ -450,7 +450,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef _lmul_(self, Element c):
+    cpdef _lmul_(self, Element c) noexcept:
         """
         EXAMPLES::
 
@@ -472,7 +472,7 @@ cdef class PolynomialRealDense(Polynomial):
             mpfr_mul(f._coeffs[i], self._coeffs[i], a.value, rnd)
         return f
 
-    cpdef _mul_(left, _right):
+    cpdef _mul_(left, _right) noexcept:
         """
         Here we use the naive `O(n^2)` algorithm, as asymptotically faster algorithms such
         as Karatsuba can have very inaccurate results due to intermediate rounding errors.
@@ -501,7 +501,7 @@ cdef class PolynomialRealDense(Polynomial):
         else:
             f = left._new(left._degree + right._degree)
         sig_on()
-        mpfr_init2(tmp, left._base_ring.__prec)
+        mpfr_init2(tmp, left._base_ring._prec)
         for i from 0 <= i <= f._degree:
             # Yes, we could make this more efficient by initializing with
             # a multiple of left rather than all zeros...
@@ -661,7 +661,7 @@ cdef class PolynomialRealDense(Polynomial):
         q = self._new(self._degree - other._degree)
         # This is the standard division algorithm
         sig_on()
-        mpfr_init2(tmp, self._base_ring.__prec)
+        mpfr_init2(tmp, self._base_ring._prec)
         for i from self._degree >= i >= other._degree:
             mpfr_set(q._coeffs[i-other._degree], r._coeffs[i], rnd)
             for j from 0 <= j < other._degree:
@@ -725,7 +725,7 @@ cdef class PolynomialRealDense(Polynomial):
         cdef RealNumber x = <RealNumber>xx
         cdef RealNumber res
 
-        if (<RealField_class>x._parent).__prec < self._base_ring.__prec:
+        if (<RealField_class>x._parent)._prec < self._base_ring._prec:
             res = RealNumber(x._parent)
         else:
             res = RealNumber(self._base_ring)

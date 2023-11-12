@@ -127,6 +127,7 @@ class Function_abs(GinacFunction):
                                                 giac='abs',
                                                 fricas='abs'))
 
+
 abs = abs_symbolic = Function_abs()
 
 
@@ -410,7 +411,7 @@ class Function_ceil(BuiltinFunction):
             sage: latex(ceil(x))  # indirect doctest                                    # needs sage.symbolic
             \left \lceil x \right \rceil
         """
-        return r"\left \lceil %s \right \rceil"%latex(x)
+        return r"\left \lceil %s \right \rceil" % latex(x)
 
     #FIXME: this should be moved to _eval_
     def __call__(self, x, **kwds):
@@ -465,6 +466,7 @@ class Function_ceil(BuiltinFunction):
             elif isinstance(x, (float, complex)):
                 return Integer(math.ceil(x))
         return None
+
 
 ceil = Function_ceil()
 
@@ -578,7 +580,7 @@ class Function_floor(BuiltinFunction):
             sage: latex(floor(x))                                                       # needs sage.symbolic
             \left \lfloor x \right \rfloor
         """
-        return r"\left \lfloor %s \right \rfloor"%latex(x)
+        return r"\left \lfloor %s \right \rfloor" % latex(x)
 
     #FIXME: this should be moved to _eval_
     def __call__(self, x, **kwds):
@@ -633,6 +635,7 @@ class Function_floor(BuiltinFunction):
             elif isinstance(x, (float, complex)):
                 return Integer(math.floor(x))
         return None
+
 
 floor = Function_floor()
 
@@ -697,6 +700,7 @@ class Function_Order(GinacFunction):
         # else there are no roots, e.g. O(1), so we leave arg unchanged
         import sympy
         return sympy.O(*sympy.sympify(arg, evaluate=False))
+
 
 Order = Function_Order()
 
@@ -770,6 +774,7 @@ class Function_frac(BuiltinFunction):
                 if not hasattr(ret, "operator") or not ret.operator() == floor:
                     return x - ret
         return None
+
 
 frac = Function_frac()
 
@@ -955,6 +960,7 @@ class Function_real_nth_root(BuiltinFunction):
         """
         return 1/exp * self(base, exp)**(1-exp)
 
+
 real_nth_root = Function_real_nth_root()
 
 
@@ -1107,7 +1113,8 @@ class Function_arg(BuiltinFunction):
 
         return parent(x).arg()
 
-arg=Function_arg()
+
+arg = Function_arg()
 
 
 ############################
@@ -1205,6 +1212,7 @@ class Function_real_part(GinacFunction):
             return x.real
         else:
             return GinacFunction.__call__(self, x, **kwargs)
+
 
 real = real_part = Function_real_part()
 
@@ -1891,6 +1899,7 @@ class Function_prod(BuiltinFunction):
         import sympy
         return sympy.Product(term, (k, a, n))
 
+
 symbolic_product = Function_prod()
 
 
@@ -1995,6 +2004,7 @@ class Function_limit(BuiltinFunction):
             dir_str = ''
         return r"\lim_{{{} \to {}{}}}\, {}".format(latex(var),
                 latex(to), dir_str, latex(ex))
+
 
 symbolic_limit = Function_limit()
 
@@ -2199,7 +2209,7 @@ class Function_crootof(BuiltinFunction):
             sage: complex_root_of(x^8 - 1, 7).n(20)                                     # needs sage.symbolic
             0.70711 + 0.70711*I
         """
-        from sympy.core.evalf import prec_to_dps
+        from mpmath.libmp import prec_to_dps
         from sympy.polys import CRootOf, Poly
         try:
             prec = parent.precision()
@@ -2207,6 +2217,7 @@ class Function_crootof(BuiltinFunction):
             prec = 53
         sobj = CRootOf(Poly(poly._sympy_()), int(index))
         return parent(sobj.n(1 + prec_to_dps(prec))._sage_())
+
 
 complex_root_of = Function_crootof()
 
@@ -2281,5 +2292,6 @@ class Function_elementof(BuiltinFunction):
             x \in \left\{8, 4, 6\right\}
         """
         return r"{} \in {}".format(latex(ex), latex(s))
+
 
 element_of = Function_elementof()

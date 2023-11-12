@@ -66,8 +66,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
     Let `X` and `Y` be two modules with basis. We can build `Hom(X,Y)`::
 
-        sage: X = CombinatorialFreeModule(QQ, [1,2]); X.__custom_name = "X"             # needs sage.modules
-        sage: Y = CombinatorialFreeModule(QQ, [3,4]); Y.__custom_name = "Y"             # needs sage.modules
+        sage: X = CombinatorialFreeModule(QQ, [1,2]); X.rename("X")                     # needs sage.modules
+        sage: Y = CombinatorialFreeModule(QQ, [3,4]); Y.rename("Y")                     # needs sage.modules
         sage: H = Hom(X, Y); H                                                          # needs sage.modules
         Set of Morphisms from X to Y
          in Category of finite dimensional vector spaces with basis over Rational Field
@@ -173,7 +173,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if M.base_ring() != self.base_ring():
                 M = M.change_ring(self.base_ring())
         except (TypeError, AttributeError) as msg:
-            raise TypeError("%s\nunable to coerce x (=%s) into %s"%(msg,x,self))
+            raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg,x,self))
         return M
 
     def is_abelian(self):
@@ -1494,7 +1494,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             # that can be turned on or off
             C = self.parent().basis().keys()
             # TODO: This should raise a ValueError - TS
-            assert m in C, "%s should be an element of %s"%(m, C)
+            assert m in C, "%s should be an element of %s" % (m, C)
             if hasattr(C, "element_class") and not isinstance(m, C.element_class):
                 m = C(m)
             return self[m]
@@ -2456,7 +2456,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: tensor([a, b]).apply_multilinear_morphism(f)                  # needs sage.modules
                     Traceback (most recent call last):
                     ...
-                    AttributeError: 'int' object has no attribute 'parent'
+                    AttributeError: 'int' object has no attribute 'parent'...
 
                 Here we consider an example where the codomain is a
                 module with basis with a different base ring::

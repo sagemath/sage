@@ -85,8 +85,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             raise ValueError("Multivariate Polynomial Rings must "
                              "have more than 0 variables.")
         order = TermOrder(order, n)
-        self.__ngens = n
-        self.__term_order = order
+        self._ngens = n
+        self._term_order = order
         self._has_singular = False  # cannot convert to Singular by default
         self._magma_cache = {}
         # Ring.__init__ already does assign the names.
@@ -591,7 +591,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         else:
             return self._generic_coerce_map(self.base_ring())
 
-    cdef _coerce_c_impl(self, x):
+    cdef _coerce_c_impl(self, x) noexcept:
         """
         Return the canonical coercion of x to this multivariate
         polynomial ring, if one is defined, or raise a TypeError.
@@ -676,12 +676,12 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         lft = <MPolynomialRing_base>left
         other = <MPolynomialRing_base>right
 
-        lx = (lft.base_ring(), lft.__ngens,
+        lx = (lft.base_ring(), lft._ngens,
               lft.variable_names(),
-              lft.__term_order)
-        rx = (other.base_ring(), other.__ngens,
+              lft._term_order)
+        rx = (other.base_ring(), other._ngens,
               other.variable_names(),
-              other.__term_order)
+              other._term_order)
         return richcmp(lx, rx, op)
 
     def _repr_(self):
@@ -886,7 +886,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         return False
 
     def term_order(self):
-        return self.__term_order
+        return self._term_order
 
     def characteristic(self):
         """
@@ -904,7 +904,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         return self.base_ring().characteristic()
 
     def gen(self, n=0):
-        if n < 0 or n >= self.__ngens:
+        if n < 0 or n >= self._ngens:
             raise ValueError("Generator not defined.")
         return self._gens[int(n)]
 
@@ -964,7 +964,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         return self.base_ring().krull_dimension() + self.ngens()
 
     def ngens(self):
-        return self.__ngens
+        return self._ngens
 
     def _monomial_order_function(self):
         raise NotImplementedError

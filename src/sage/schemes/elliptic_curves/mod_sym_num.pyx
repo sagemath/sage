@@ -200,7 +200,7 @@ fa = sage.rings.fast_arith.arith_llong()
 cdef llong llgcd(llong a, llong b) except -1:
     return fa.gcd_longlong(a,b)
 
-cdef llong llinvmod(llong a, llong m):
+cdef llong llinvmod(llong a, llong m) noexcept:
     return fa.inverse_mod_longlong(a, m)
 
 DEF TWOPI = 6.28318530717958647
@@ -602,7 +602,7 @@ cdef class _CuspsForModularSymbolNumerical:
         # from sage.modular.cusps import Cusp
         # Cusp.__init__(self, a,m)
 
-    cdef public int is_unitary(self):
+    cdef public int is_unitary(self) noexcept:
         r"""
         Return whether the cusp is unitary,
         i.e. whether there exists an Atkin-
@@ -730,7 +730,7 @@ cdef class ModularSymbolNumerical:
         double _eps_plus, _eps_minus, _eps_unitary_plus, _eps_unitary_minus
         public RealNumber _om1, _om2
         object _E, _epsQs, _Mt, _Epari
-        public dict __cached_methods
+        public dict _cached_methods
         Rational _twist_q
         Integer _D
         int _global_sign
@@ -785,7 +785,7 @@ cdef class ModularSymbolNumerical:
         self._set_epsQs()
         self._initialise_an_coefficients()
         self._set_den_bounds()
-        self.__cached_methods = {}
+        self._cached_methods = {}
 
         # self.nc_sums = Integer(0)
         # self.nc_direct = Integer(0)
@@ -1357,7 +1357,7 @@ cdef class ModularSymbolNumerical:
             sage: M(0)
             1/5
         """
-        cadi = self.__cached_methods
+        cadi = self._cached_methods
         for me in cadi:
             cadi[me].clear_cache()
 
@@ -1437,7 +1437,7 @@ cdef class ModularSymbolNumerical:
 
     # the version using double is 70-80 times faster it seems.
     cdef complex _integration_to_tau_double(self, complex tau,
-                                            int number_of_terms):
+                                            int number_of_terms) noexcept:
         r"""
         Given a point `\tau` in the upper half plane
         this returns a complex number that is a close
@@ -1833,7 +1833,7 @@ cdef class ModularSymbolNumerical:
 
         # if called with a previous (m,z,eps) but a larger eps,
         # return the cached value
-        cac = self.__cached_methods['_kappa'].cache
+        cac = self._cached_methods['_kappa'].cache
         for ke in cac:
             mm, zz, eeps = ke[0]
             if mm == m and zz == z:
@@ -2014,7 +2014,7 @@ cdef class ModularSymbolNumerical:
                                      Integer epsQ, Integer epsQQ,
                                     llong* wQ, llong* wQQ,
                                     int T, int prec, double eps,
-                                    int use_partials=2):
+                                    int use_partials=2) noexcept:
         r"""
         This is just a helper function for _from_r_to_rr_approx. In case
         the integral is evaluated directly this function is called.
@@ -2746,16 +2746,16 @@ cdef class ModularSymbolNumerical:
             sage: ms = ModularSymbolNumerical(E)
             sage: ms.manin_symbol(4,17)
             1
-            sage: ms.__cached_methods["_manin_symbol_with_cache"].cache # random
+            sage: ms._cached_methods["_manin_symbol_with_cache"].cache # random
             {((1, 5, 1), ()): 1,
             ((1, 15, 1), ()): -1,
             ((1, 22, 1), ()): -1,
             ((1, 32, 1), ()): 1}
-            sage: ms.__cached_methods["_manin_symbol_with_cache"].cache[(1,15,1),()]
+            sage: ms._cached_methods["_manin_symbol_with_cache"].cache[(1,15,1),()]
             -1
             sage: ms.manin_symbol(4+17,-4)
             0
-            sage: ms.__cached_methods["_manin_symbol_with_cache"].cache # random
+            sage: ms._cached_methods["_manin_symbol_with_cache"].cache # random
             {((1, 4, 1), ()): 0,
             ((1, 5, 1), ()): 1,
             ((1, 8, 1), ()): 1,
@@ -2768,7 +2768,7 @@ cdef class ModularSymbolNumerical:
             ((1, 29, 1), ()): 1,
             ((1, 32, 1), ()): 1,
             ((1, 33, 1), ()): 0}
-            sage: ms.__cached_methods["_manin_symbol_with_cache"].cache[ (1,23,1), () ]
+            sage: ms._cached_methods["_manin_symbol_with_cache"].cache[ (1,23,1), () ]
             -1
         """
         cdef:
@@ -2903,7 +2903,7 @@ cdef class ModularSymbolNumerical:
         #        "(%s :%s)"%(un, vn), level=3)
 
         # is it already in the cache ?
-        c = self.__cached_methods
+        c = self._cached_methods
         if "_manin_symbol_with_cache" in c:
             c = c["_manin_symbol_with_cache"]
             if c.is_in_cache(un,vn,sign):
@@ -2919,7 +2919,7 @@ cdef class ModularSymbolNumerical:
         # we get for free additional values of Manin
         # symbols that we cache, too.
         # This sets 6 values in average
-        c = self.__cached_methods["_manin_symbol_with_cache"]
+        c = self._cached_methods["_manin_symbol_with_cache"]
 
         # (-v:u) = - (u:v)
         oi = proj_normalise(self._N_E, -v, u, &un, &vn)

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 
 Cyclic covers over a finite field
@@ -733,8 +733,8 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 targets[2 * l] = self._p * l
                 targets[2 * l + 1] = self._p * (l + 1) - d - 1
             (m0, m1), (M0, M1) = self._horizontal_matrix_reduction(s)
-            M0, M1 = [elt.change_ring(self._Zq0) for elt in [M0, M1]]
-            D0, D1 = [matrix(self._Zq0, [elt]) for elt in [m0, m1]]
+            M0, M1 = (elt.change_ring(self._Zq0) for elt in [M0, M1])
+            D0, D1 = (matrix(self._Zq0, [elt]) for elt in [m0, m1])
             MH = interval_products(M0, M1, targets)
             DH = [elt[0, 0] for elt in interval_products(D0, D1, targets)]
             if L > N:  # Vandermonde interpolation

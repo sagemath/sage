@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat
 r"""
 Algebra of motivic multiple zeta values
 
@@ -168,11 +168,11 @@ REFERENCES:
 from __future__ import annotations
 import numbers
 from typing import Iterator
+from itertools import product
 
 from sage.misc.fast_methods import Singleton
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.element import parent
-from sage.categories.cartesian_product import cartesian_product
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.rings import Rings
 from sage.categories.domains import Domains
@@ -578,7 +578,7 @@ def extend_multiplicative_basis(B, n) -> Iterator:
         [((7,),), ((5,), (2,)), ((3,), (2,), (2,))]
     """
     for pi in Partitions(n, min_part=2):
-        yield from cartesian_product([B[i] for i in pi])
+        yield from product(*[B[i] for i in pi])
 
 
 # several classes for the algebra of MZV

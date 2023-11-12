@@ -251,7 +251,7 @@ class Word_class(SageObject):
         """
         L = self.length()
         if L is None or L is Infinity:
-            msg = "Python len method cannot return a non integer value (=%s): "%L
+            msg = "Python len method cannot return a non integer value (=%s): " % L
             msg += "use length method instead."
             raise TypeError(msg)
         return int(L)
@@ -632,7 +632,7 @@ class Word_class(SageObject):
         """
         from sage.combinat.words.words import FiniteWords, InfiniteWords
         if use_parent_alphabet and\
-            isinstance(self.parent(), (FiniteWords, InfiniteWords)):
+                isinstance(self.parent(), (FiniteWords, InfiniteWords)):
             A = self.parent().alphabet()
             for letter in self:
                 yield A.rank(letter)
@@ -641,7 +641,7 @@ class Word_class(SageObject):
             mapping = {}
             next_value = 0
             for letter in self:
-                if not(letter in mapping):
+                if letter not in mapping:
                     mapping[letter] = next_value
                     next_value += 1
                 yield mapping[letter]
@@ -900,8 +900,7 @@ class Word_class(SageObject):
             w = (w*par([letter])).palindromic_closure(f=f)
             length_after = w.length()
             d = length_after - length_before
-            for a in w[-d:]:
-                yield a
+            yield from w[-d:]
 
     def _iterated_right_palindromic_closure_recursive_iterator(self, f=None):
         r"""
@@ -991,8 +990,7 @@ class Word_class(SageObject):
             else:
                 to_append = ipcw[lengths[pos]:]
             ipcw += to_append
-            for a in to_append:
-                yield a
+            yield from to_append
 
     def iterated_right_palindromic_closure(self, f=None, algorithm='recursive'):
         r"""

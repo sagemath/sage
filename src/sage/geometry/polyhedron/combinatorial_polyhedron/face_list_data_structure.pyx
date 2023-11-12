@@ -11,7 +11,7 @@ Sorting of a list of faces.
 #                  https://www.gnu.org/licenses/
 #****************************************************************************
 
-cdef void sort_faces_list(face_list_t faces):
+cdef void sort_faces_list(face_list_t faces) noexcept:
     r"""
     Sorts faces in place.
     """
@@ -23,7 +23,7 @@ cdef void sort_faces_list(face_list_t faces):
     # Sort the faces using merge sort.
     _sort_faces_loop(faces.faces, faces.faces, extra_mem, faces.n_faces)
 
-cdef void _sort_faces_loop(face_t* inp, face_t* out, face_t* extra_mem, size_t n_faces):
+cdef void _sort_faces_loop(face_t* inp, face_t* out, face_t* extra_mem, size_t n_faces) noexcept:
     """
     This is merge sort.
 

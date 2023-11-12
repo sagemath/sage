@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Hadamard matrices
 
@@ -30,21 +31,23 @@ matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
 The module below implements constructions of Hadamard and skew Hadamard matrices
-for all known orders `\le 1000`, plus some more greater than `1000`. It also
+for all known orders `\le 1200`, plus some more greater than `1200`. It also
 allows you to pull a Hadamard matrix from the database at [SloaHada]_.
 
 The following code will test that a construction for all known orders `\le 4k`
-is implemented. The assertion above can be verified by setting ``k=250``
+is implemented. The assertion above can be verified by setting ``k=300``
 (note that it will take a long time to run)::
 
     sage: from sage.combinat.matrices.hadamard_matrix import (hadamard_matrix,
     ....:                               skew_hadamard_matrix, is_hadamard_matrix,
     ....:                               is_skew_hadamard_matrix)
     sage: k = 20
-    sage: unknown_hadamard = [668, 716, 892]
+    sage: unknown_hadamard = [668, 716, 892, 1132]
     sage: unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
     ....:                         764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
-    ....:                         932, 940, 952, 980, 996]
+    ....:                         932, 940, 952, 980, 996, 1004, 1012, 1028, 1036,
+    ....:                         1044, 1060, 1076, 1100, 1108, 1132, 1140, 1148,
+    ....:                         1156, 1180, 1192, 1196]
     sage: for n in range(1, k+1):
     ....:   if 4*n not in unknown_hadamard:
     ....:       H = hadamard_matrix(4*n, check=False)
@@ -57,7 +60,7 @@ AUTHORS:
 
 - David Joyner (2009-05-17): initial version
 - Matteo Cati (2023-03-18): implemented more constructions for Hadamard and skew
-  Hadamard matrices, to cover all known orders up to 1000.
+  Hadamard matrices, to cover all known orders up to 1200.
 
 REFERENCES:
 
@@ -66,6 +69,8 @@ REFERENCES:
 - [HadaWiki]_
 
 - [Hora]_
+
+- [CP2023]_
 """
 
 # *****************************************************************************
@@ -993,12 +998,12 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
         sage: hadamard_matrix_from_sds(14)
         Traceback (most recent call last):
         ...
-        ValueError: n must be a positive multiple of four.
+        ValueError: n must be a positive multiple of four
     """
     from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
 
     if n <= 0 or n % 4 != 0:
-        raise ValueError(f'n must be a positive multiple of four.')
+        raise ValueError('n must be a positive multiple of four')
     t = n // 4
 
     if existence:
@@ -1640,8 +1645,8 @@ def hadamard_matrix(n, existence=False, check=True):
     r"""
     Tries to construct a Hadamard matrix using the available methods.
 
-    Currently all orders `\le 1000` for which a construction is
-    known are implemented. For `n > 1000`, only some orders are available.
+    Currently all orders `\le 1200` for which a construction is
+    known are implemented. For `n > 1200`, only some orders are available.
 
     INPUT:
 
@@ -3054,8 +3059,8 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
     Tries to construct a skew Hadamard matrix.
 
     A Hadamard matrix `H` is called skew if `H=S-I`, for `I` the identity matrix
-    and `-S=S^\top`. Currently all orders `\le 1000` for which a construction is
-    known are implemented. For `n > 1000`, only some orders are available.
+    and `-S=S^\top`. Currently all orders `\le 1200` for which a construction is
+    known are implemented. For `n > 1200`, only some orders are available.
 
     INPUT:
 

@@ -736,12 +736,12 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             sage: list( Polyhedron()._subpoly_parallel_facets() )
             [The empty polyhedron in ZZ^0]
         """
-        if self.dim()>2 or not self.is_compact():
+        if self.dim() > 2 or not self.is_compact():
             raise NotImplementedError('only implemented for bounded polygons')
         from sage.geometry.polyhedron.plot import cyclic_sort_vertices_2d
         vertices = cyclic_sort_vertices_2d(self.vertices())
         n = len(vertices)
-        if n==1:  # single point
+        if n == 1:  # single point
             yield self
             return
         edge_vectors = []
@@ -759,7 +759,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             for e in edges:
                 point += e
                 v.append(point)
-            if point!=origin:   # does not close up, not a subpolygon
+            if point != origin:   # does not close up, not a subpolygon
                 continue
             yield parent([v, [], []], None)
 

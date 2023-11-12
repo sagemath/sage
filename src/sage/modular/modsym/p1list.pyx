@@ -723,10 +723,10 @@ cdef class P1List():
         self.__N = N
         if N <= 46340:
             self.__list = p1list_int(N)
-            self.__normalize = c_p1_normalize_int
+            self._normalize = c_p1_normalize_int
         elif N <= 2147483647:
             self.__list = p1list_llong(N)
-            self.__normalize = c_p1_normalize_llong
+            self._normalize = c_p1_normalize_llong
         else:
             raise OverflowError("p1list not defined for such large N.")
         self.__list.sort()
@@ -921,7 +921,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, -u, v, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -954,7 +954,7 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, -v, u, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
@@ -987,11 +987,11 @@ cdef class P1List():
         """
         cdef int u, v, uu, vv, ss
         u,v = self.__list[i]
-        self.__normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, v, -u-v, &uu, &vv, &ss, 0)
         _, j = search(self.__list, (uu,vv))
         return j
 
-    cpdef index(self, int u, int v):
+    cpdef index(self, int u, int v) noexcept:
         r"""
         Return the index of the class of `(u,v)` in the fixed list
         of representatives of
@@ -1034,7 +1034,7 @@ cdef class P1List():
         except KeyError:
             return -1
 
-    cdef index_and_scalar(self, int u, int v, int* i, int* s):
+    cdef index_and_scalar(self, int u, int v, int* i, int* s) noexcept:
         r"""
         Compute the index of the class of `(u,v)` in the fixed list
         of representatives of `\mathbb{P}^1(\ZZ/N\ZZ)` and scalar s
@@ -1153,7 +1153,7 @@ cdef class P1List():
             True
         """
         cdef int uu, vv, ss
-        self.__normalize(self.__N, u, v, &uu, &vv, &ss, 0)
+        self._normalize(self.__N, u, v, &uu, &vv, &ss, 0)
         return (uu,vv)
 
     def normalize_with_scalar(self, int u, int v):
@@ -1186,7 +1186,7 @@ cdef class P1List():
             True
         """
         cdef int uu, vv, ss
-        self.__normalize(self.__N, u, v, &uu, &vv, &ss, 1)
+        self._normalize(self.__N, u, v, &uu, &vv, &ss, 1)
         return (uu, vv, ss)
 
     def N(self):
@@ -1371,8 +1371,8 @@ def lift_to_sl2z(c, d, N):
         sage: lift_to_sl2z(2,3,6000000)
         [1, 1, 2, 3]
 
-    You will get a ValueError exception if the input is invalid.  Note
-    that here gcd(15,6,24)=3::
+    You will get a :class:`ValueError` exception if the input is invalid.
+    Note that here gcd(15,6,24)=3::
 
         sage: lift_to_sl2z(15,6,24)
         Traceback (most recent call last):

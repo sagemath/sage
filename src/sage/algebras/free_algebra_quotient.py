@@ -65,7 +65,7 @@ from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientEleme
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
+class FreeAlgebraQuotient(UniqueRepresentation, Algebra):
     @staticmethod
     def __classcall__(cls, A, mons, mats, names):
         """
@@ -211,7 +211,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: H.gen(2)
             k
 
-        An IndexError is raised if an invalid generator is requested::
+        An :class:`IndexError` is raised if an invalid generator is requested::
 
             sage: H.gen(3)
             Traceback (most recent call last):

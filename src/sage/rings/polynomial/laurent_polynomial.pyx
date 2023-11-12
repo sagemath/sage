@@ -21,7 +21,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
     """
     Base class for Laurent polynomials.
     """
-    cdef LaurentPolynomial _new_c(self):
+    cdef LaurentPolynomial _new_c(self) noexcept:
         """
         Return a new Laurent polynomial.
 
@@ -37,7 +37,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         ans._parent = self._parent
         return ans
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         Abstract addition method
 
@@ -52,7 +52,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         raise NotImplementedError
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         """
         Abstract multiplication method
 
@@ -67,7 +67,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         raise NotImplementedError
 
-    cpdef _floordiv_(self, other):
+    cpdef _floordiv_(self, other) noexcept:
         """
         Abstract floor division method
 
@@ -182,9 +182,10 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         Check that :trac:`22277` is fixed::
 
-            sage: R.<x, y> = LaurentPolynomialRing(QQ)                                  # needs sage.modules
-            sage: a = 2*x^2 + 3*x^3 + 4*x^-1                                            # needs sage.modules
-            sage: a.change_ring(GF(3))                                                  # needs sage.modules
+            sage: # needs sage.modules
+            sage: R.<x, y> = LaurentPolynomialRing(QQ)
+            sage: a = 2*x^2 + 3*x^3 + 4*x^-1
+            sage: a.change_ring(GF(3))
             -x^2 + x^-1
         """
         return self._parent.change_ring(R)(self)
@@ -220,7 +221,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         return self.number_of_terms()
 
-    cpdef dict dict(self):
+    cpdef dict dict(self) noexcept:
         """
         Abstract ``dict`` method.
 
@@ -259,9 +260,9 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             sage: f = x*a + a
             sage: f.map_coefficients(lambda a: a + 1)
             (a + 1) + (a + 1)*x
-            sage: R.<x,y> = LaurentPolynomialRing(k, 2)
-            sage: f = x*a + 2*x^3*y*a + a
-            sage: f.map_coefficients(lambda a: a + 1)
+            sage: R.<x,y> = LaurentPolynomialRing(k, 2)                                 # needs sage.modules
+            sage: f = x*a + 2*x^3*y*a + a                                               # needs sage.modules
+            sage: f.map_coefficients(lambda a: a + 1)                                   # needs sage.modules
             (2*a + 1)*x^3*y + (a + 1)*x + a + 1
 
         Examples with different base ring::
@@ -366,7 +367,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         # self is that t^n * u:
         self.__u = f
         self.__n = n
-        self.__normalize()
+        self._normalize()
 
     def __reduce__(self):
         """
@@ -531,7 +532,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             u = u.map_coefficients(base_map)
         return codomain(u(x) * x**self.__n)
 
-    cpdef __normalize(self):
+    cpdef _normalize(self) noexcept:
         r"""
         A Laurent series is a pair `(u(t), n)`, where either `u = 0`
         (to some precision) or `u` is a unit. This pair corresponds to
@@ -763,7 +764,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             ret = <LaurentPolynomial_univariate> self._new_c()
             ret.__u = f
             ret.__n = self.__n
-            ret.__normalize()
+            ret._normalize()
             return ret
 
         return self.__u[i - self.__n]
@@ -840,7 +841,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         d = {repr(g): R.var(g) for g in self._parent.gens()}
         return self.subs(**d)
 
-    cpdef dict dict(self):
+    cpdef dict dict(self) noexcept:
         """
         Return a dictionary representing ``self``.
 
@@ -895,7 +896,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         raise IndexError("Laurent polynomials are immutable")
 
-    cpdef _unsafe_mutate(self, i, value):
+    cpdef _unsafe_mutate(self, i, value) noexcept:
         r"""
         Sage assumes throughout that commutative ring elements are
         immutable. This is relevant for caching, etc. But sometimes you
@@ -919,9 +920,9 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 R = self._parent.base_ring()
                 coeffs = [value] + [R.zero() for _ in range(1,-j)] + self.__u.list()
                 self.__u = self.__u._parent(coeffs)
-        self.__normalize()
+        self._normalize()
 
-    cpdef _add_(self, right_m):
+    cpdef _add_(self, right_m) noexcept:
         """
         Add two Laurent polynomials with the same parent.
 
@@ -972,10 +973,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> (f1 + f2)
         ret.__n = m
-        ret.__normalize()
+        ret._normalize()
         return ret
 
-    cpdef _sub_(self, right_m):
+    cpdef _sub_(self, right_m) noexcept:
         """
         Subtract two Laurent polynomials with the same parent.
 
@@ -1012,7 +1013,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> (f1 - f2)
         ret.__n = m
-        ret.__normalize()
+        ret._normalize()
         return ret
 
     def degree(self):
@@ -1048,7 +1049,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         # No need to normalize
         return ret
 
-    cpdef _mul_(self, right_r):
+    cpdef _mul_(self, right_r) noexcept:
         """
         EXAMPLES::
 
@@ -1063,10 +1064,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> (self.__u * right.__u)
         ret.__n = self.__n + right.__n
-        ret.__normalize()
+        ret._normalize()
         return ret
 
-    cpdef _rmul_(self, Element c):
+    cpdef _rmul_(self, Element c) noexcept:
         """
         EXAMPLES::
 
@@ -1079,10 +1080,10 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> self.__u._rmul_(c)
         ret.__n = self.__n
-        ret.__normalize()
+        ret._normalize()
         return ret
 
-    cpdef _lmul_(self, Element c):
+    cpdef _lmul_(self, Element c) noexcept:
         """
         EXAMPLES::
 
@@ -1095,7 +1096,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> self.__u._lmul_(c)
         ret.__n = self.__n
-        ret.__normalize()
+        ret._normalize()
         return ret
 
     def is_monomial(self):
@@ -1152,7 +1153,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             c = self._parent._R(self.__u.leading_coefficient() ** right)
             return self._parent.element_class(self._parent, c, self.__n*right)
 
-    cpdef _floordiv_(self, rhs):
+    cpdef _floordiv_(self, rhs) noexcept:
         """
         Perform division with remainder and return the quotient.
 
@@ -1175,7 +1176,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> (self.__u // right.__u)
         ret.__n = self.__n - right.__n
-        ret.__normalize()
+        ret._normalize()
         return ret
 
     def shift(self, k):
@@ -1240,7 +1241,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         # No need to normalize
         return ret
 
-    cpdef _div_(self, rhs):
+    cpdef _div_(self, rhs) noexcept:
         """
         EXAMPLES::
 
@@ -1287,7 +1288,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             if self.__u.is_unit():
                 ret.__u = self.__u.inverse_of_unit()
                 ret.__n = -self.__n
-                ret.__normalize()
+                ret._normalize()
                 return ret
             # Enlarge the ring so we can divide by the coefficient
             R = self._parent.base_ring().fraction_field()
@@ -1362,7 +1363,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = self.__u.gcd(b.__u)
         ret.__n = min(self.__n, b.__n)
-        ret.__normalize()
+        ret._normalize()
         return ret
 
     @coerce_binop
@@ -1408,14 +1409,14 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ql = <LaurentPolynomial_univariate> self._new_c()
         ql.__u = <ModuleElement> q
         ql.__n = self.__n - right.__n
-        ql.__normalize()
+        ql._normalize()
         qr = <LaurentPolynomial_univariate> self._new_c()
         qr.__u = <ModuleElement> r
         qr.__n = self.__n
-        qr.__normalize()
+        qr._normalize()
         return ql, qr
 
-    cpdef _richcmp_(self, right_r, int op):
+    cpdef _richcmp_(self, right_r, int op) noexcept:
         r"""
         Comparison of ``self`` and ``right_r``.
 
@@ -1519,7 +1520,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> self.__u.truncate(n - self.__n)
         ret.__n = self.__n
-        ret.__normalize()
+        ret._normalize()
         return ret
 
     def variable_name(self):
@@ -1570,6 +1571,25 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             (3*x^5 + x^3 + 1, -1)
         """
         return (self.__u, self.__n)
+
+    def monomial_reduction(self):
+        """
+        Return the decomposition as a polynomial and a power of the variable.
+        Constructed for compatibility with the multivariate case.
+
+        OUTPUT:
+
+        A tuple ``(u, t^n)`` where ``u`` is the underlying polynomial and ``n``
+        is the power of the exponent shift.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentPolynomialRing(QQ)
+            sage: f = 1/x + x^2 + 3*x^4
+            sage: f.monomial_reduction()
+            (3*x^5 + x^3 + 1, x^-1)
+        """
+        return (self.__u, self._parent.gen(0) ** self.__n)
 
     def is_constant(self):
         """
@@ -1777,7 +1797,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 ret = <LaurentPolynomial_univariate> self._new_c()
                 ret.__u = <ModuleElement> self._parent._R(u)
                 ret.__n = self.__n
-                ret.__normalize()
+                ret._normalize()
                 return ret
             except AttributeError:
                 raise ValueError('cannot differentiate with respect to {}'.format(var))
@@ -1792,7 +1812,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> self._parent._R(a)
         ret.__n = self.__n - 1
-        ret.__normalize()
+        ret._normalize()
         return ret
 
     def integral(self):
@@ -1857,7 +1877,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret = <LaurentPolynomial_univariate> self._new_c()
         ret.__u = <ModuleElement> u
         ret.__n = n + 1
-        ret.__normalize()
+        ret._normalize()
         return ret
 
     def __call__(self, *x, **kwds):
@@ -1919,14 +1939,14 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         u = <LaurentPolynomial_univariate> self._new_c()
         u.__u = pf.unit()
         u.__n = self.__n
-        u.__normalize()
+        u._normalize()
 
         f = []
         for t in pf:
             d = <LaurentPolynomial_univariate> self._new_c()
             d.__u = t[0]
             d.__n = 0
-            d.__normalize()
+            d._normalize()
             if d.is_unit():
                 u *= d ** t[1]
             else:

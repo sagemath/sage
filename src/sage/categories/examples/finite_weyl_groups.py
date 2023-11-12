@@ -1,18 +1,19 @@
 r"""
 Examples of finite Weyl groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class SymmetricGroup(UniqueRepresentation, Parent):
     r"""
@@ -30,7 +31,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         sage: S
         The symmetric group on {0, ..., 3}
         sage: S.category()
-        Category of finite irreducible weyl groups
+        Category of finite irreducible Weyl groups
 
     The elements of this group are permutations of the set `\{0,\ldots,3\}`::
 
@@ -91,7 +92,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             The symmetric group on {0, ..., 3}
 
         """
-        return "The symmetric group on {0, ..., %s}"%(self.n-1)
+        return "The symmetric group on {0, ..., %s}" % (self.n-1)
 
     @cached_method
     def one(self):

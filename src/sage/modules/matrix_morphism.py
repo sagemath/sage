@@ -188,7 +188,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             if parent(x) is not self.domain():
                 x = self.domain()(x)
         except TypeError:
-            raise TypeError("%s must be coercible into %s"%(x,self.domain()))
+            raise TypeError("%s must be coercible into %s" % (x,self.domain()))
         if self.domain().is_ambient():
             x = x.element()
         else:
@@ -212,13 +212,15 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr sage.symbolic
             sage: V = RR^2
             sage: f = V.hom(V.gens())
             sage: f._matrix *= I         # f is now invalid
             sage: f((1, 0))
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0.000000000000000]) to coefficients in Real Field with 53 bits of precision
+            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0.000000000000000])
+            to coefficients in Real Field with 53 bits of precision
             sage: f((1, 0), coerce=False)
             (1.00000000000000*I, 0.000000000000000)
 

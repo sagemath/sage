@@ -127,7 +127,7 @@ Note that the letterplace implementation can only be used if the corresponding
     NotImplementedError: polynomials over Free Algebra on 2 generators (a, b) over Integer Ring are not supported in Singular
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #       Copyright (C) 2005,2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
@@ -136,8 +136,8 @@ Note that the letterplace implementation can only be used if the corresponding
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.categories.rings import Rings
@@ -240,9 +240,9 @@ class FreeAlgebraFactory(UniqueFactory):
         a*b^2*c^3
     """
     def create_key(self, base_ring, arg1=None, arg2=None,
-            sparse=None, order=None,
-            names=None, name=None,
-            implementation=None, degrees=None):
+                   sparse=None, order=None,
+                   names=None, name=None,
+                   implementation=None, degrees=None):
         """
         Create the key under which a free algebra is stored.
 
@@ -268,7 +268,7 @@ class FreeAlgebraFactory(UniqueFactory):
             # this is used for pickling
             if degrees is None:
                 return (base_ring,)
-            return tuple(degrees),base_ring
+            return tuple(degrees), base_ring
         # test if we can use libSingular/letterplace
         if implementation == "letterplace":
             if order is None:
@@ -321,7 +321,6 @@ class FreeAlgebraFactory(UniqueFactory):
             Free Associative Unital Algebra on 2 generators (x, y) over Rational Field
             sage: FreeAlgebra.create_object('4.7.1', (QQ['x','y'],)) is FreeAlgebra(QQ,['x','y'])
             False
-
         """
         if len(key) == 1:
             from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
@@ -331,10 +330,11 @@ class FreeAlgebraFactory(UniqueFactory):
             return FreeAlgebra_letterplace(key[1], degrees=key[0])
         return FreeAlgebra_generic(key[0], len(key[1]), key[1])
 
+
 FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
 
 
-def is_FreeAlgebra(x):
+def is_FreeAlgebra(x) -> bool:
     """
     Return True if x is a free algebra; otherwise, return False.
 
@@ -351,10 +351,9 @@ def is_FreeAlgebra(x):
         True
         sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace', degrees=list(range(1,11))))
         True
-
     """
     from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
-    return isinstance(x, (FreeAlgebra_generic,FreeAlgebra_letterplace))
+    return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
 
 
 class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
@@ -382,8 +381,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
 
     TESTS:
 
-    Free algebras commute with their base ring.
-    ::
+    Free algebras commute with their base ring::
 
         sage: K.<a,b> = FreeAlgebra(QQ)
         sage: K.is_commutative()
@@ -462,9 +460,11 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         """
         return self._indices.one()
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
-        Return True if this Free Algebra is a field, which is only if the
+        Return ``True`` if this Free Algebra is a field.
+
+        This happens only if the
         base ring is a field and there are no generators
 
         EXAMPLES::
@@ -480,9 +480,9 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             return self.base_ring().is_field(proof)
         return False
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
-        Return True if this free algebra is commutative.
+        Return ``True`` if this free algebra is commutative.
 
         EXAMPLES::
 
@@ -495,7 +495,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         """
         return self.__ngens <= 1 and self.base_ring().is_commutative()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Text representation of this free algebra.
 
@@ -513,7 +513,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         return "Free Algebra on {} generators {} over {}".format(
             self.__ngens, self.gens(), self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -587,9 +587,9 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
                 return x
             if P is not self.base_ring():
                 return self.element_class(self, x)
-        elif hasattr(x,'letterplace_polynomial'):
+        elif hasattr(x, 'letterplace_polynomial'):
             P = x.parent()
-            if self.has_coerce_map_from(P): # letterplace versus generic
+            if self.has_coerce_map_from(P):  # letterplace versus generic
                 ngens = P.ngens()
                 M = self._indices
 
@@ -597,14 +597,15 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
                     out = []
                     for i in range(len(T)):
                         if T[i]:
-                            out.append((i%ngens,T[i]))
+                            out.append((i % ngens, T[i]))
                     return M(out)
-                return self.element_class(self, {exp_to_monomial(T):c for T,c in x.letterplace_polynomial().dict().items()})
+                return self.element_class(self, {exp_to_monomial(T): c
+                                                 for T, c in x.letterplace_polynomial().dict().items()})
         # ok, not a free algebra element (or should not be viewed as one).
         if isinstance(x, str):
             from sage.misc.sage_eval import sage_eval
             G = self.gens()
-            d = {str(v): G[i] for i,v in enumerate(self.variable_names())}
+            d = {str(v): G[i] for i, v in enumerate(self.variable_names())}
             return self(sage_eval(x, locals=d))
         R = self.base_ring()
         # coercion from free monoid
@@ -618,7 +619,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         # Check if it's a factorization
         from sage.structure.factorization import Factorization
         if isinstance(x, Factorization):
-            return self.prod(f**i for f,i in x)
+            return self.prod(f**i for f, i in x)
 
         # coercion via base ring
         x = R(x)
@@ -848,38 +849,50 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: (x,y,z) = G.gens()
             sage: y*x
             -x*y + z
+
+        TESTS::
+
+            sage: S = FractionField(QQ['t'])
+            sage: t = S.gen()
+            sage: F.<x,y> = FreeAlgebra(S)
+            sage: K = F.g_algebra({y*x:-x*y+1+y})
+            sage: x,y = K.gens()
+            sage: 1+t*y*x
+            (-t)*x*y + t*y + (t + 1)
         """
         from sage.matrix.constructor import Matrix
 
         base_ring = self.base_ring()
+        polynomial_ring = PolynomialRing(base_ring, self.gens())
         n = self.__ngens
         cmat = Matrix(base_ring, n)
-        dmat = Matrix(self, n)
+        dmat = Matrix(polynomial_ring, n)
         for i in range(n):
             for j in range(i + 1, n):
-                cmat[i,j] = 1
-        for (to_commute,commuted) in relations.items():
-            #This is dirty, coercion is broken
-            assert isinstance(to_commute, FreeAlgebraElement), to_commute.__class__
+                cmat[i, j] = 1
+        for to_commute, commuted in relations.items():
+            # This is dirty, coercion is broken
+            assert isinstance(to_commute, FreeAlgebraElement), to_commute
             assert isinstance(commuted, FreeAlgebraElement), commuted
-            ((v1,e1),(v2,e2)) = list(list(to_commute)[0][0])
+            (v1, e1), (v2, e2) = next(iter(to_commute))[0]
             assert e1 == 1
             assert e2 == 1
             assert v1 > v2
             c_coef = None
             d_poly = None
+            reverse_monomial = v2 * v1
             for m, c in commuted:
-                if list(m) == [(v2,1),(v1,1)]:
+                if m == reverse_monomial:
                     c_coef = c
                     # buggy coercion workaround
-                    d_poly = commuted - self(c) * self(m)
+                    d_poly = commuted - c * self.monomial(m)
                     break
-            assert c_coef is not None, list(m)
+            assert c_coef is not None, m
             v2_ind = self.gens().index(v2)
             v1_ind = self.gens().index(v1)
-            cmat[v2_ind,v1_ind] = c_coef
+            cmat[v2_ind, v1_ind] = c_coef
             if d_poly:
-                dmat[v2_ind,v1_ind] = d_poly
+                dmat[v2_ind, v1_ind] = polynomial_ring(d_poly)
         from sage.rings.polynomial.plural import g_Algebra
         return g_Algebra(base_ring, cmat, dmat,
                          names=names or self.variable_names(),
@@ -919,18 +932,18 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             return PBW.zero()
 
         l = {}
-        while elt: # != 0
+        while elt:  # != 0
             lst = list(elt)
             support = [i[0].to_word() for i in lst]
             min_elt = support[0]
-            for word in support[1:len(support)-1]:
+            for word in support[1:len(support) - 1]:
                 if min_elt.lex_less(word):
                     min_elt = word
             coeff = lst[support.index(min_elt)][1]
             min_elt = min_elt.to_monoid_element()
             l[min_elt] = l.get(min_elt, 0) + coeff
             elt = elt - coeff * self.lie_polynomial(min_elt)
-        return PBW.sum_of_terms([(k, v) for k,v in l.items() if v != 0], distinct=True)
+        return PBW.sum_of_terms([(k, v) for k, v in l.items() if v != 0], distinct=True)
 
     def lie_polynomial(self, w):
         """
@@ -999,10 +1012,10 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             if len(factor) == 1:
                 ret = ret * self(M(factor))
                 continue
-            x,y = factor.standard_factorization()
+            x, y = factor.standard_factorization()
             x = self.lie_polynomial(M(x))
             y = self.lie_polynomial(M(y))
-            ret = ret * (x*y - y*x)
+            ret = ret * (x * y - y * x)
         return ret
 
 

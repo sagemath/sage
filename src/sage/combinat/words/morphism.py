@@ -2295,13 +2295,13 @@ class WordMorphism(SageObject):
         c = []
         m = self
         c.append(m)
-        while(m.has_left_conjugate()):
+        while m.has_left_conjugate():
             m = m.conjugate(1)
             if m == self:
                 break
             c.append(m)
         m = self
-        while(m.has_right_conjugate()):
+        while m.has_right_conjugate():
             m = m.conjugate(-1)
             if m == self:
                 break
@@ -3687,7 +3687,7 @@ class WordMorphism(SageObject):
         r"""
         If this morphism is simplifiable, return morphisms `h` and `k` such that
         this morphism is simplifiable with respect to `h` and `k`, otherwise
-        raise  ``ValueError``.
+        raise :class:`ValueError`.
 
         This method is quite fast if this morphism is non-injective, but very
         slow if it is injective.

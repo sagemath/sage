@@ -560,7 +560,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     ::
 
-        sage: Partitions(2, max_slope=-1, length=2).list()                              # optional - sage.combinat
+        sage: Partitions(2, max_slope=-1, length=2).list()                              # needs sage.combinat
         []
         sage: list(IntegerListsLex(0, floor=ConstantFunction(1), min_slope=0))
         [[]]
@@ -862,7 +862,7 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
         ``None`` if this method finds a proof that there
         exists an upper bound on the length. Otherwise a
-        ``ValueError`` is raised.
+        :class:`ValueError` is raised.
 
         EXAMPLES::
 

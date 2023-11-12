@@ -593,7 +593,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
     [direct_sum, phi] = IntegralLatticeDirectSum(Lattices, return_embeddings=True)
     N = len(Lattices)
     for g in glue:
-        if not len(g)==N:
+        if not len(g) == N:
             raise ValueError("the lengths of the lists do not match")
     for i in range(N):
         ALi = Lattices[i].discriminant_group()
@@ -692,7 +692,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         B = self.basis_matrix()
         B = other * B if switch_sides else B * other
         # check whether it is integral
-        if other in ZZ or other.denominator()==1:
+        if other in ZZ or other.denominator() == 1:
             return self.sublattice(B.rows())
         else:
             return self.span(B.rows())
@@ -1037,7 +1037,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
+            sage: # needs sage.graphs sage.libs.pari
             sage: L = IntegralLattice("A4").twist(25*89)
             sage: L.maximal_overlattice().determinant()
             5
@@ -1048,7 +1048,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         TESTS::
 
-            sage: # needs sage.libs.flint (otherwise timeout)
+            sage: # needs sage.libs.flint (otherwise timeout) sage.libs.pari
             sage: L = IntegralLattice(matrix.diagonal([2,4,4,8]))
             sage: L.maximal_overlattice().is_even()
             True
@@ -1058,7 +1058,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         # it might speed up things to use the algorithms given in
         # https://arxiv.org/abs/1208.2481
         # and trac:11940
-        if not self.is_even() and (p is None or p==2):
+        if not self.is_even() and (p is None or p == 2):
             raise ValueError("this lattice must be even to admit an even overlattice")
         from sage.rings.finite_rings.finite_field_constructor import GF
         L = self
@@ -1306,7 +1306,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
                               invariant_quotient_module=D)
         return G
 
-    automorphisms=orthogonal_group
+    automorphisms = orthogonal_group
 
     def genus(self):
         r"""
@@ -1441,7 +1441,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice('A2')                                             # needs sage.graphs
             sage: L.maximum()                                                           # needs sage.graphs
             +Infinity
-            sage: L.twist(-1).maximum()                                                 # needs sage.graphs
+            sage: L.twist(-1).maximum()                                                 # needs sage.graphs sage.libs.pari
             -2
         """
         if self.rank() == 0:
@@ -1463,7 +1463,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         EXAMPLES::
 
             sage: L = IntegralLattice('A2')                                             # needs sage.graphs
-            sage: L.lll() == L                                                          # needs sage.graphs
+            sage: L.lll() == L                                                          # needs sage.graphs sage.libs.pari
             True
 
             sage: G = matrix(ZZ, 3, [0,1,0, 1,0,0, 0,0,7])
@@ -1481,7 +1481,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             from sage.libs.pari import pari
             m = self.gram_matrix().__pari__()
             gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
-            m = gp.eval('qflllgram_indefgoon(%s)'%m)
+            m = gp.eval('qflllgram_indefgoon(%s)' % m)
             # convert the output string to sage
             G, U = pari(m).sage()
             U = U.T
@@ -1511,9 +1511,9 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         EXAMPLES::
 
             sage: A2 = IntegralLattice('A2')                                            # needs sage.graphs
-            sage: A2.short_vectors(3)                                                   # needs sage.graphs
+            sage: A2.short_vectors(3)                                                   # needs sage.graphs sage.libs.pari
             [[(0, 0)], [], [(1, 1), (-1, -1), (0, 1), (0, -1), (1, 0), (-1, 0)]]
-            sage: A2.short_vectors(3,up_to_sign_flag=True)                              # needs sage.graphs
+            sage: A2.short_vectors(3, up_to_sign_flag=True)                             # needs sage.graphs sage.libs.pari
             [[(0, 0)], [], [(1, 1), (0, 1), (1, 0)]]
         """
         p, m = self.signature_pair()
@@ -1572,7 +1572,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             s = self.base_ring()(s)
         except TypeError:
             raise ValueError("the scaling factor must be an element of the base ring.")
-        if s==0:
+        if s == 0:
             raise ValueError("the scaling factor must be non zero")
         if discard_basis:
             return IntegralLattice(s * self.gram_matrix())
@@ -1602,7 +1602,7 @@ def local_modification(M, G, p, check=True):
 
     EXAMPLES::
 
-        sage: # needs sage.graphs
+        sage: # needs sage.graphs sage.libs.pari
         sage: from sage.modules.free_quadratic_module_integer_symmetric import local_modification
         sage: L = IntegralLattice("A3").twist(15)
         sage: M = L.maximal_overlattice()

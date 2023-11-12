@@ -423,7 +423,7 @@ class ChainComplexMorphism(Morphism):
             [2]
 
         Before :trac:`19065`, the following multiplication produced a
-        ``KeyError`` because `f` was not explicitly defined in degree 2::
+        :class:`KeyError` because `f` was not explicitly defined in degree 2::
 
             sage: C0 = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
             sage: C1 = ChainComplex({1: zero_matrix(ZZ, 0, 1)})

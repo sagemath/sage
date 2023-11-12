@@ -1555,7 +1555,6 @@ class ClusterSeed(SageObject):
             sage: [S.g_vector(k) for k in range(3)]
             [(1, 0, 0), (0, 0, -1), (0, -1, 0)]
         """
-
         if not (self._is_principal or self._use_g_vec or (self._use_fpolys and self._cluster)):
             raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
         if k not in range(self._n):
@@ -1823,8 +1822,6 @@ class ClusterSeed(SageObject):
             [1 1 1 1]
             [1 0 1 1]
             [0 0 0 1]
-
-
         """
         if not (self._use_d_vec or self._use_fpolys or self._track_mut):
             # raise ValueError("No d-vectors initialized.")
@@ -3881,8 +3878,7 @@ class ClusterSeed(SageObject):
             ]
         """
         Q = self.quiver()
-        for M in Q.mutation_class_iter(depth=depth, up_to_equivalence=up_to_equivalence, data_type='matrix'):
-            yield M
+        yield from Q.mutation_class_iter(depth=depth, up_to_equivalence=up_to_equivalence, data_type='matrix')
 
     def b_matrix_class(self, depth=infinity, up_to_equivalence=True):
         r"""
@@ -4345,7 +4341,7 @@ class ClusterSeed(SageObject):
                     j = i.mutate(k, inplace=False)
                     Varj = tuple(sorted(j.cluster()))
                     covers.append((Vari, Varj))
-                    if not(Varj in known_clusters):
+                    if Varj not in known_clusters:
                         known_clusters += [Varj]
                         stack.append(j)
 
@@ -4456,7 +4452,7 @@ class ClusterSeed(SageObject):
                 new_gen_found = False
                 i = 0
                 M_gens = M.gens()
-                while (not new_gen_found) and i < len(M_gens):
+                while not new_gen_found and i < len(M_gens):
                     f = initial_product_ideal.reduce(M_gens[i])
                     if f != 0:
                         rels.append('z' + str(len(gens) - 2 * rank - 1) + '*' + initial_product + '-(' + str(f) + ')')
@@ -4466,7 +4462,7 @@ class ClusterSeed(SageObject):
                             print('')
                     i += 1
 
-    def get_upper_cluster_algebra_element(self,a):
+    def get_upper_cluster_algebra_element(self, a):
         r"""
         Compute an element in the upper cluster algebra of `B` corresponding to the vector `a \in \ZZ^n`.
 
@@ -4508,13 +4504,13 @@ class ClusterSeed(SageObject):
             sage: C.get_upper_cluster_algebra_element([1,1,1])
             x0^4*x1^2*x2^3 + x0^2*x1^3*x2^4
         """
-        B=self.b_matrix()
+        B = self.b_matrix()
         # Checks if the length of the
         if len(a) != B.ncols():
             raise ValueError('The length of the input vector must be the same as the number of columns of B.')
         # Runs helper functions.
-        v=_vector_decomposition(a,B.nrows())
-        c=self._compute_compatible_vectors(v)
+        v = _vector_decomposition(a,B.nrows())
+        c = self._compute_compatible_vectors(v)
         return self._produce_upper_cluster_algebra_element(v,c)
 
     def LLM_gen_set(self, size_limit=-1):
@@ -4556,7 +4552,7 @@ class ClusterSeed(SageObject):
                 break
             a = aSet[i]
             genSet.append(self.get_upper_cluster_algebra_element(a))
-        return (genSet)
+        return genSet
 
     def _compute_compatible_vectors(self, vd):
         r"""

@@ -53,11 +53,13 @@ from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.quotient_ring import QuotientRing_generic
 
 from sage.structure.category_object import normalize_names
+from sage.structure.coerce_maps import DefaultConvertMap_unique
 from sage.structure.factory import UniqueFactory
 
 from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
 
 from sage.structure.richcmp import richcmp
+
 
 class PolynomialQuotientRingFactory(UniqueFactory):
     r"""
@@ -546,7 +548,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         try:
             return self.element_class(self, self.__ring(x), check=False)
         except TypeError:
-            raise TypeError("unable to convert %r to an element of %s"%(x, self))
+            raise TypeError("unable to convert %r to an element of %s" % (x, self))
 
     def _coerce_map_from_(self, R):
         r"""
@@ -768,11 +770,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         modulus = S(self.modulus()) # should live in Rpoly
         Rtmp = S(self.polynomial_ring().change_var(self.variable_name()))
         Rtmp.set_ring()
-        self.__singular = S("ideal(fetch(%s,%s))"%(Rpoly.name(),modulus.name()),"qring")
+        self.__singular = S("ideal(fetch(%s,%s))" % (Rpoly.name(),modulus.name()),"qring")
         return self.__singular
 
     def _repr_(self):
-        return "Univariate Quotient Polynomial Ring in %s over %s with modulus %s"%(
+        return "Univariate Quotient Polynomial Ring in %s over %s with modulus %s" % (
             self.variable_name(), self.base_ring(), self.modulus())
 
     def construction(self):
@@ -1087,6 +1089,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         EXAMPLES::
 
             sage: R.<z> = PolynomialRing(ZZ)
+
             sage: S = R.quotient(z^2 - z)
             sage: S.is_integral_domain()
             False
@@ -1096,12 +1099,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: U = R.quotient(-1)
             sage: U.is_integral_domain()
             False
+
+            sage: # needs sage.libs.singular
             sage: R2.<y> = PolynomialRing(R)
             sage: S2 = R2.quotient(z^2 - y^3)
-            sage: S2.is_integral_domain()                                               # needs sage.libs.singular
+            sage: S2.is_integral_domain()
             True
             sage: S3 = R2.quotient(z^2 - 2*y*z + y^2)
-            sage: S3.is_integral_domain()                                               # needs sage.libs.singular
+            sage: S3.is_integral_domain()
             False
 
             sage: R.<z> = PolynomialRing(ZZ.quotient(4))
@@ -1458,7 +1463,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         `x^2 + 31` from 12 to 2, i.e. we lose a generator of order 6 (this was
         fixed in :trac:`14489`)::
 
-            sage: S.S_class_group([K.ideal(a)])  # representation varies    # not tested, needs sage.rings.number_field
+            sage: S.S_class_group([K.ideal(a)])  # representation varies        # not tested, needs sage.rings.number_field
             [((1/4*xbar^2 + 31/4, (-1/8*a + 1/8)*xbar^2 - 31/8*a + 31/8,
                1/16*xbar^3 + 1/16*xbar^2 + 31/16*xbar + 31/16,
                -1/16*a*xbar^3 + (1/16*a + 1/8)*xbar^2 - 31/16*a*xbar + 31/16*a + 31/8),
@@ -1913,7 +1918,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: K.<x> = FunctionField(l)
             sage: R.<t> = K[]
             sage: F = t * x
-            sage: F.factor(proof=False)
+            sage: F.factor(proof=False)                                                 # needs sage.modules
             (x) * t
 
         """
@@ -1943,9 +1948,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: R.<T> = M[]
             sage: R(y).factor()  # indirect doctest
             y
-            sage: (T^2 + T + x).factor()  # indirect doctest
+            sage: (T^2 + T + x).factor()  # indirect doctest                            # needs sage.modules
             (T + y) * (T + y + 1)
-            sage: (y*T^2 + y*T + y*x).factor()  # indirect doctest
+            sage: (y*T^2 + y*T + y*x).factor()  # indirect doctest                      # needs sage.modules
             (y) * (T + y) * (T + y + 1)
 
         """
@@ -1986,7 +1991,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: K.<a> = GF(4)
             sage: R.<b> = K[]
             sage: L.<b> = K.extension(b^2 + b + a); L
@@ -1994,14 +1999,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
              over Finite Field in a of size 2^2 with modulus b^2 + b + a
             sage: from_M, to_M, M = L._isomorphic_ring(); M
             Finite Field in z4 of size 2^4
-
-            sage: R.<c> = L[]                                                           # needs sage.rings.finite_rings
-            sage: M.<c> = L.extension(c^2 + b*c + b); M                                 # needs sage.rings.finite_rings
+            sage: R.<c> = L[]
+            sage: M.<c> = L.extension(c^2 + b*c + b); M
             Univariate Quotient Polynomial Ring in c
              over Univariate Quotient Polynomial Ring in b
               over Finite Field in a of size 2^2 with modulus b^2 + b + a
               with modulus c^2 + b*c + b
-            sage: from_N, to_N, N = M._isomorphic_ring(); N                             # needs sage.rings.finite_rings
+            sage: from_N, to_N, N = M._isomorphic_ring(); N
             Finite Field in z8 of size 2^8
 
             sage: R.<x> = QQ[]
@@ -2097,10 +2101,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             basis = [self.gen()**i*self.base_ring().gen()**j
                 for i in range(self.degree())
                 for j in range(self.base_ring().degree())]
-            assert(len(basis) == isomorphic_ring.degree())
+            assert (len(basis) == isomorphic_ring.degree())
             from sage.matrix.constructor import matrix
             A = matrix([to_isomorphic_ring(b)._vector_() for b in basis])
-            assert(A.is_square())
+            assert (A.is_square())
             # solve x*A = (0,1,0,…,0)
             x = A.solve_left(A.column_space().basis()[1])
             primitive_element = sum(c*b for c,b in zip(x.list(), basis))
@@ -2125,7 +2129,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 to_isomorphic_ring = self.hom([isomorphic_ring.gen()])
                 return from_isomorphic_ring, to_isomorphic_ring, isomorphic_ring
 
-        raise NotImplementedError("cannot rewrite %r as an isomorphic ring"%(self,))
+        raise NotImplementedError("cannot rewrite %r as an isomorphic ring" % (self,))
 
     def _test_isomorphic_ring(self, **options):
         r"""
@@ -2133,7 +2137,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: K.<a> = GF(4)
             sage: R.<b> = K[]
             sage: L.<b> = K.extension(b^2 + b + a)
@@ -2167,7 +2171,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             tester.assertIn(y, ring)
             tester.assertEqual(from_isomorphic_ring(y), x)
 
-from sage.structure.coerce_maps import DefaultConvertMap_unique
+
 class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
     r"""
     A coercion map from a :class:`PolynomialQuotientRing` to a
@@ -2360,12 +2364,12 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
             sage: F, g, h = S.field_extension('b')                                      # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            AttributeError: 'PolynomialQuotientRing_generic_with_category' object has no attribute 'field_extension'
+            AttributeError: 'PolynomialQuotientRing_generic_with_category' object has no attribute 'field_extension'...
 
         Over a finite field, the corresponding field extension is not a
         number field::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: R.<x> = GF(25, 'a')['x']
             sage: S.<a> = R.quo(x^3 + 2*x + 1)
             sage: F, g, h = S.field_extension('b')

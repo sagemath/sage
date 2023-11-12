@@ -67,6 +67,7 @@ def Mwrank(options="", server=None, server_tmpdir=None):
     instances[options] = weakref.ref(X)
     return X
 
+
 import re
 # regex matching '[a1,a2,a3,a4,a6]', no spaces, each ai a possibly signed integer
 AINVS_LIST_RE = re.compile(r'\[[+-]?(\d+)(,[+-]?\d+){4}]')
@@ -87,7 +88,8 @@ def validate_mwrank_input(s):
 
     OUTPUT:
 
-    For valid input, a string of the form '[a1,a2,a3,a4,a6]'.  For invalid input a ValueError is raised.
+    For valid input, a string of the form '[a1,a2,a3,a4,a6]'.
+    For invalid input a :class:`ValueError` is raised.
 
     EXAMPLES:
 
@@ -124,7 +126,7 @@ def validate_mwrank_input(s):
     """
     if isinstance(s,(list,tuple)):
         from sage.rings.integer_ring import ZZ
-        if len(s)!=5:
+        if len(s) != 5:
             raise ValueError("%s is not valid input to mwrank (should have 5 entries)" % s)
         try:
             ai = [ZZ(a) for a in s]
@@ -292,7 +294,7 @@ class Mwrank_class(Expect):
 
         .. NOTE::
 
-           If a RuntimeError exception is raised, then the mwrank
+           If a :class:`RuntimeError` exception is raised, then the mwrank
            interface is restarted and the command is retried once.
 
         EXAMPLES::

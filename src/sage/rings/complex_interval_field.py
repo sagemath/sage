@@ -49,27 +49,6 @@ from .complex_mpfr import ComplexField
 from sage.misc.cachefunc import cached_method
 
 
-def is_ComplexIntervalField(x):
-    """
-    Check if ``x`` is a :class:`ComplexIntervalField`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.complex_interval_field import is_ComplexIntervalField as is_CIF
-        sage: is_CIF(CIF)
-        doctest:warning...
-        DeprecationWarning: is_ComplexIntervalField is deprecated;
-        use isinstance(..., sage.rings.abc.ComplexIntervalField) instead
-        See https://github.com/sagemath/sage/issues/32612 for details.
-        True
-        sage: is_CIF(CC)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32612, 'is_ComplexIntervalField is deprecated; use isinstance(..., sage.rings.abc.ComplexIntervalField) instead')
-    return isinstance(x, ComplexIntervalField_class)
-
-
 cache = {}
 def ComplexIntervalField(prec=53, names=None):
     """
@@ -304,7 +283,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
             sage: magma(ComplexIntervalField(100)) # optional - magma # indirect doctest
             Complex field of precision 30
-            sage: floor(RR(log(2**100, 10)))
+            sage: floor(RR(log(2**100, 10)))                                            # needs sage.symbolic
             30
         """
         return "ComplexField(%s : Bits := true)" % self.prec()
@@ -445,7 +424,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             TypeError: unable to convert '1+I' to real interval
             sage: CIF(2,3)
             2 + 3*I
-            sage: CIF(pi, e)
+            sage: CIF(pi, e)                                                            # needs sage.symbolic
             3.141592653589794? + 2.718281828459046?*I
             sage: ComplexIntervalField(100)(CIF(RIF(2,3)))
             3.?
@@ -505,19 +484,19 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             Coercion map:
               From: Set of Python objects of class 'int'
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(GaussianIntegers())
+            sage: CIF.coerce_map_from(GaussianIntegers())                               # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(QQbar)
+            sage: CIF.coerce_map_from(QQbar)                                            # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Algebraic Field
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(AA)
+            sage: CIF.coerce_map_from(AA)                                               # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Algebraic Real Field
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(UniversalCyclotomicField())
+            sage: CIF.coerce_map_from(UniversalCyclotomicField())                       # needs sage.libs.gap sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Universal Cyclotomic Field
               To:   Complex Interval Field with 53 bits of precision
@@ -553,12 +532,12 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         EXAMPLES::
 
-            sage: ComplexIntervalField() # indirect doctest
+            sage: ComplexIntervalField()  # indirect doctest
             Complex Interval Field with 53 bits of precision
-            sage: ComplexIntervalField(100) # indirect doctest
+            sage: ComplexIntervalField(100)  # indirect doctest
             Complex Interval Field with 100 bits of precision
         """
-        return "Complex Interval Field with %s bits of precision"%self._prec
+        return "Complex Interval Field with %s bits of precision" % self._prec
 
     def _latex_(self):
         r"""

@@ -58,7 +58,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     is not found, then ``None`` will be returned. If ``proof=True`` then
     the result is returned only if it can be proved correct (i.e. the
     only possible minimal polynomial satisfying the height bound, or no
-    such polynomial exists). Otherwise a ``ValueError`` is raised
+    such polynomial exists). Otherwise a :class:`ValueError` is raised
     indicating that higher precision is required.
 
     ALGORITHM: Uses LLL for real/complex inputs, PARI C-library
@@ -377,21 +377,17 @@ def bernoulli(n, algorithm='default', num_threads=1):
             warn("flint is known to not be accurate for large Bernoulli numbers")
         from sage.libs.flint.arith import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
-    elif algorithm == 'pari':
+    elif algorithm == 'pari' or algorithm == 'gp':
         from sage.libs.pari.all import pari
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
     elif algorithm == 'gap':
-        import sage.interfaces.gap
-        x = sage.interfaces.gap.gap('Bernoulli(%s)' % n)
+        from sage.libs.gap.libgap import libgap
+        x = libgap.Bernoulli(n).sage()
         return Rational(x)
     elif algorithm == 'magma':
         import sage.interfaces.magma
         x = sage.interfaces.magma.magma('Bernoulli(%s)' % n)
-        return Rational(x)
-    elif algorithm == 'gp':
-        import sage.interfaces.gp
-        x = sage.interfaces.gp.gp('bernfrac(%s)' % n)
         return Rational(x)
     elif algorithm == 'bernmm':
         import sage.rings.bernmm
@@ -448,11 +444,9 @@ def factorial(n, algorithm='gmp'):
         sage: factorial(mpz(4))
         24
 
-
     PERFORMANCE: This discussion is valid as of April 2006. All timings
     below are on a Pentium Core Duo 2Ghz MacBook Pro running Linux with
     a 2.6.16.1 kernel.
-
 
     -  It takes less than a minute to compute the factorial of
        `10^7` using the GMP algorithm, and the factorial of
@@ -482,7 +476,7 @@ def factorial(n, algorithm='gmp'):
         raise ValueError('unknown algorithm')
 
 
-def is_prime(n):
+def is_prime(n) -> bool:
     r"""
     Determine whether `n` is a prime element of its parent ring.
 
@@ -2694,6 +2688,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
         Traceback (most recent call last):
         ...
         TypeError: unable to factor 'xyz'
+
+    Test that :issue:`35219` is fixed::
+
+        sage: len(factor(2^2203-1,proof=false))
+        1
     """
     try:
         m = n.factor
@@ -4282,7 +4281,7 @@ def primitive_root(n, check=True):
     """
     Return a positive integer that generates the multiplicative group
     of integers modulo `n`, if one exists; otherwise, raise a
-    ``ValueError``.
+    :class:`ValueError`.
 
     A primitive root exists if `n=4` or `n=p^k` or `n=2p^k`, where `p`
     is an odd prime and `k` is a nonnegative number.
@@ -5336,7 +5335,7 @@ def integer_trunc(i):
 def two_squares(n):
     """
     Write the integer `n` as a sum of two integer squares if possible;
-    otherwise raise a ``ValueError``.
+    otherwise raise a :class:`ValueError`.
 
     INPUT:
 
@@ -5458,7 +5457,7 @@ def two_squares(n):
 def three_squares(n):
     """
     Write the integer `n` as a sum of three integer squares if possible;
-    otherwise raise a ``ValueError``.
+    otherwise raise a :class:`ValueError`.
 
     INPUT:
 
@@ -5679,7 +5678,7 @@ def four_squares(n):
 def sum_of_k_squares(k, n):
     """
     Write the integer `n` as a sum of `k` integer squares if possible;
-    otherwise raise a ``ValueError``.
+    otherwise raise a :class:`ValueError`.
 
     INPUT:
 
