@@ -5,7 +5,7 @@ This file gathers together all the tables in Sage.
 
     * CremonaDatabase() - Cremona's tables of elliptic curves and related data.
 
-    * findstat -- The FindStat database (http://www.findstat.org/).
+    * findstat -- The FindStat database (https://www.findstat.org/).
 
     * JonesDatabase() -- returns the John Jones table of number fields
       with bounded ramification and degree <= 6.
