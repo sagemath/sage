@@ -12,7 +12,7 @@ Coxeter Groups
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('from sage.combinat.root_system.reflection_group_real', 'ReflectionGroup')
+lazy_import('sage.combinat.root_system.reflection_group_real', 'ReflectionGroup')
 lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
