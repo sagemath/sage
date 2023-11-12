@@ -13,7 +13,6 @@ no_processing = [
     'parallel',
     'repl',
     'sandpiles',
-    'sat',
     'tensor',
     'topology',
     'typeset',
@@ -79,3 +78,4 @@ subdir('stats')
 subdir('symbolic')
 subdir('tests')
 subdir('dynamics')
+subdir('sat')
