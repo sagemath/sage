@@ -1860,5 +1860,13 @@ class MatrixPolynomialAction(Action):
         substitution_dict = {v: s for v, s in zip(self._poly_vars, vars_to_sub_ring_context)}
         return polynomial.subs(substitution_dict)
     
+    def __eq__(self, other):
+        if isinstance(other, MatrixPolynomialAction):
+            return self.MS == other.MS and self.PR == other.PR
+        return False
+
+    def __hash__(self):
+        return hash((self.MS, self.PR))
+        
     def __reduce__(self):
         return (type(self), (self.MS, self.PR))
