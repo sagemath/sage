@@ -15,7 +15,7 @@ export CPPFLAGS="$CPPFLAGS -DDISABLE_COMMENTATOR"
 
 # If SAGE_FAT_BINARY is set, disable dependency that be discovered on the building system.
 if [ "$SAGE_FAT_BINARY" = yes ]; then
-    LINBOX_CONFIGURE="--disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse41 --disable-sse42 --disable-fma --disable-fma4 --disable-avx --disable-avx2 --without-ocl $LINBOX_CONFIGURE"
+    LINBOX_CONFIGURE="--disable-sse3 --disable-ssse3 --disable-sse41 --disable-sse42 --disable-fma --disable-fma4 --disable-avx --disable-avx2 --without-ocl $LINBOX_CONFIGURE"
 fi
 
 # Disable fplll as version 5.x is not supported by linbox <= 1.5.0.
