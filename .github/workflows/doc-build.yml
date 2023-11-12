@@ -206,7 +206,7 @@ jobs:
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html-no-deps
+          ./config.status && make doc-html && make doc-pdf
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
