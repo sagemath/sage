@@ -13,7 +13,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.modular.arithgroup.arithgroup_perm', 'ArithmeticSubgroup_Permutation')
 
 from sage.modular.arithgroup.congroup import (degeneracy_coset_representatives_gamma0,
-                            degeneracy_coset_representatives_gamma1)
+                                              degeneracy_coset_representatives_gamma1)
 
 from sage.modular.arithgroup.farey_symbol import Farey as FareySymbol
 del lazy_import

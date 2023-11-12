@@ -6,12 +6,12 @@ from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
 from sage.misc.all__sagemath_categories import *
 
 from sage.misc.misc import (BackslashOperator,               # Depends on sage.env -- can lower to sagemath-objects after splitting this module
-                  exists, forall, is_iterator,
-                  random_sublist,
-                  pad_zeros,
-                  SAGE_DB,
-                   newton_method_sizes, compose,
-                  nest)
+                            exists, forall, is_iterator,
+                            random_sublist,
+                            pad_zeros,
+                            SAGE_DB,
+                            newton_method_sizes, compose,
+                            nest)
 
 from sage.misc.temporary_file import tmp_dir, tmp_filename  # Depends on sage.env
 

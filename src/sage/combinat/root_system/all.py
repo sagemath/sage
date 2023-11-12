@@ -138,6 +138,8 @@ lazy_import('sage.combinat.root_system.weyl_characters', ['WeylCharacterRing',
                                                           'WeightRing'])
 from sage.combinat.root_system.branching_rules import BranchingRule, branching_rule_from_plethysm, branching_rule
 
-lazy_import('sage.combinat.root_system.non_symmetric_macdonald_polynomials', 'NonSymmetricMacdonaldPolynomials')
-lazy_import('sage.combinat.root_system.integrable_representations', 'IntegrableRepresentation')
+lazy_import('sage.combinat.root_system.non_symmetric_macdonald_polynomials',
+            'NonSymmetricMacdonaldPolynomials')
+lazy_import('sage.combinat.root_system.integrable_representations',
+            'IntegrableRepresentation')
 del lazy_import

@@ -5,7 +5,7 @@ from sage.sets.integer_range import IntegerRange
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.positive_integers import PositiveIntegers
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-lazy_import('sage.sets.recursively_enumerated_set','RecursivelyEnumeratedSet')
+lazy_import('sage.sets.recursively_enumerated_set', 'RecursivelyEnumeratedSet')
 from sage.sets.totally_ordered_finite_set import TotallyOrderedFiniteSet
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.primes import Primes

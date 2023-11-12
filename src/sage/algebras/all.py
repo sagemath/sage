@@ -1,7 +1,8 @@
 """
 Algebras
 """
-# ****************************************************************************
+
+# *****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,7 +15,7 @@ Algebras
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.algebras.all__sagemath_modules import *
 from sage.algebras.all__sagemath_combinat import *

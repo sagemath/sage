@@ -4,7 +4,7 @@ from sage.interfaces.sage0 import sage0, sage0_version, Sage
 from sage.interfaces.gap import gap, gap_reset_workspace, Gap
 from sage.interfaces.gp import gp, gp_version, Gp
 # import problems
-#from maxima_lib import maxima_lib
+# from maxima_lib import maxima_lib
 from sage.interfaces.maxima import maxima, Maxima
 from sage.interfaces.singular import singular, singular_version, Singular
 

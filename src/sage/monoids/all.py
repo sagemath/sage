@@ -1,7 +1,7 @@
 
 from sage.monoids.free_monoid import FreeMonoid
 from sage.monoids.string_monoid import (BinaryStrings, OctalStrings, HexadecimalStrings,
-                            Radix64Strings, AlphabeticStrings)
+                                        Radix64Strings, AlphabeticStrings)
 
 from sage.monoids.free_abelian_monoid import FreeAbelianMonoid
 
