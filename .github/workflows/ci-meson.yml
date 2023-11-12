@@ -70,7 +70,11 @@ jobs:
         run: |
           pip install --no-build-isolation --config-settings=builddir=builddir --editable .
 
-      - name: Test
-        if: success() || failure()
+      - name: Test import
         shell: bash -l {0}
+        continue-on-error: true
         run: ./sage -python -m pytest -c src/tox.ini --doctest-modules src
+
+      - name: Test
+        shell: bash -l {0}
+        run: ./sage -t --all -p0
