@@ -2,7 +2,7 @@
 all.py -- export of schemes to Sage
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -18,7 +18,7 @@ all.py -- export of schemes to Sage
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.schemes.all__sagemath_categories import *
 from sage.schemes.all__sagemath_polyhedra import *

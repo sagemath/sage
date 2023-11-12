@@ -2,7 +2,7 @@
 all.py -- export of affine to Sage
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -18,7 +18,7 @@ all.py -- export of affine to Sage
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.affine.affine_rational_point import enum_affine_rational_field, enum_affine_finite_field

@@ -29,12 +29,12 @@ from sage.libs.ntl.ntl_ZZ import (
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext as ZZ_pContext
 
 from sage.libs.ntl.ntl_ZZ_p import (
-                 ntl_ZZ_p as ZZ_p,
-                 ntl_ZZ_p_random_element as ZZ_p_random )
+    ntl_ZZ_p as ZZ_p,
+    ntl_ZZ_p_random_element as ZZ_p_random)
 
 from sage.libs.ntl.ntl_ZZX import (
-                 ntl_ZZX as ZZX,
-                 zero_ZZX, one_ZZX )
+    ntl_ZZX as ZZX,
+    zero_ZZX, one_ZZX)
 
 from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX as ZZ_pX
 

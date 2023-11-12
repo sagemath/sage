@@ -1,30 +1,30 @@
-#from symmetrica import *
+# from symmetrica import *
 
 from sage.libs.symmetrica.symmetrica import start
 
-#kostka
+# kostka
 from sage.libs.symmetrica.symmetrica import kostka_number_symmetrica as kostka_number
 from sage.libs.symmetrica.symmetrica import kostka_tab_symmetrica as kostka_tab
 from sage.libs.symmetrica.symmetrica import kostka_tafel_symmetrica as kostka_tafel
 
 
-#sab
+# sab
 from sage.libs.symmetrica.symmetrica import dimension_symmetrization_symmetrica as dimension_symmetrization
 from sage.libs.symmetrica.symmetrica import bdg_symmetrica as bdg
 from sage.libs.symmetrica.symmetrica import sdg_symmetrica as sdg
 from sage.libs.symmetrica.symmetrica import odg_symmetrica as odg
 from sage.libs.symmetrica.symmetrica import specht_dg_symmetrica as specht_dg
 from sage.libs.symmetrica.symmetrica import ndg_symmetrica as ndg
-#from symmetrica import glmndg_symmetrica as glmndg
+# from symmetrica import glmndg_symmetrica as glmndg
 
 
-#sc
+# sc
 from sage.libs.symmetrica.symmetrica import chartafel_symmetrica as chartafel
 from sage.libs.symmetrica.symmetrica import charvalue_symmetrica as charvalue
 from sage.libs.symmetrica.symmetrica import kranztafel_symmetrica as kranztafel
-#from symmetrica import c_ijk_sn_symmetrica  as c_ijk_sn
+# from symmetrica import c_ijk_sn_symmetrica  as c_ijk_sn
 
-#part
+# part
 from sage.libs.symmetrica.symmetrica import strict_to_odd_part_symmetrica as strict_to_odd_part
 from sage.libs.symmetrica.symmetrica import odd_to_strict_part_symmetrica as odd_to_strict
 from sage.libs.symmetrica.symmetrica import q_core_symmetrica as q_core
@@ -33,7 +33,7 @@ from sage.libs.symmetrica.symmetrica import gupta_tafel_symmetrica as gupta_tafe
 from sage.libs.symmetrica.symmetrica import random_partition_symmetrica as random_partition
 
 
-#schur
+# schur
 from sage.libs.symmetrica.symmetrica import outerproduct_schur_symmetrica as outerproduct_schur
 from sage.libs.symmetrica.symmetrica import dimension_schur_symmetrica as dimension_schur
 from sage.libs.symmetrica.symmetrica import part_part_skewschur_symmetrica as part_part_skewschur
@@ -84,11 +84,11 @@ from sage.libs.symmetrica.symmetrica import t_POLYNOM_MONOMIAL_symmetrica as t_P
 
 from sage.libs.symmetrica.symmetrica import scalarproduct_schur_symmetrica as scalarproduct_schur
 
-#plet
+# plet
 from sage.libs.symmetrica.symmetrica import plethysm_symmetrica as plethysm
 from sage.libs.symmetrica.symmetrica import schur_schur_plet_symmetrica as schur_schur_plet
 
-#sb
+# sb
 from sage.libs.symmetrica.symmetrica import mult_schubert_schubert_symmetrica as mult_schubert_schubert
 from sage.libs.symmetrica.symmetrica import t_SCHUBERT_POLYNOM_symmetrica as t_SCHUBERT_POLYNOM
 from sage.libs.symmetrica.symmetrica import t_POLYNOM_SCHUBERT_symmetrica as t_POLYNOM_SCHUBERT

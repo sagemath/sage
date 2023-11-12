@@ -41,6 +41,7 @@ lazy_import('sage.schemes.hyperelliptic_curves.invariants',
             ['igusa_clebsch_invariants', 'absolute_igusa_invariants_kohel',
              'absolute_igusa_invariants_wamelen', 'clebsch_invariants'],
             deprecation=28064)
-from sage.schemes.hyperelliptic_curves.mestre import (Mestre_conic, HyperellipticCurve_from_invariants)
+from sage.schemes.hyperelliptic_curves.mestre import (
+    Mestre_conic, HyperellipticCurve_from_invariants)
 from sage.schemes.hyperelliptic_curves import monsky_washnitzer
 del lazy_import

@@ -13,8 +13,10 @@ from sage.combinat.debruijn_sequence import DeBruijnSequences
 
 lazy_import('sage.combinat.schubert_polynomial', 'SchubertPolynomialRing')
 lazy_import('sage.combinat.key_polynomial', 'KeyPolynomialBasis', as_='KeyPolynomials')
-lazy_import('sage.combinat.symmetric_group_algebra', ['SymmetricGroupAlgebra', 'HeckeAlgebraSymmetricGroupT'])
-lazy_import('sage.combinat.symmetric_group_representations', ['SymmetricGroupRepresentation', 'SymmetricGroupRepresentations'])
+lazy_import('sage.combinat.symmetric_group_algebra', [
+            'SymmetricGroupAlgebra', 'HeckeAlgebraSymmetricGroupT'])
+lazy_import('sage.combinat.symmetric_group_representations', [
+            'SymmetricGroupRepresentation', 'SymmetricGroupRepresentations'])
 
 # Permutations
 lazy_import('sage.combinat.affine_permutation', 'AffinePermutationGroup')
@@ -28,7 +30,8 @@ lazy_import('sage.combinat.baxter_permutations', ['BaxterPermutations'])
 from sage.combinat.rsk import RSK, RSK_inverse, robinson_schensted_knuth, robinson_schensted_knuth_inverse, InsertionRules
 
 # HillmanGrassl
-lazy_import("sage.combinat.hillman_grassl", ["WeakReversePlanePartition", "WeakReversePlanePartitions"])
+lazy_import("sage.combinat.hillman_grassl", [
+            "WeakReversePlanePartition", "WeakReversePlanePartitions"])
 
 # PerfectMatchings
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
@@ -38,8 +41,8 @@ from sage.combinat.composition_signed import SignedCompositions
 
 # Partitions
 from sage.combinat.partition import (Partition, Partitions, PartitionsInBox,
-                        OrderedPartitions, PartitionsGreatestLE,
-                        PartitionsGreatestEQ, number_of_partitions)
+                                     OrderedPartitions, PartitionsGreatestLE,
+                                     PartitionsGreatestEQ, number_of_partitions)
 
 lazy_import('sage.combinat.partition_tuple', ['PartitionTuple', 'PartitionTuples'])
 lazy_import('sage.combinat.partition_kleshchev', ['KleshchevPartitions'])
@@ -139,7 +142,8 @@ lazy_import('sage.combinat.fqsym', 'FreeQuasisymmetricFunctions')
 from sage.combinat.matrices.all import *
 
 lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
-lazy_import('sage.combinat.integer_vectors_mod_permgroup', 'IntegerVectorsModPermutationGroup')
+lazy_import('sage.combinat.integer_vectors_mod_permgroup',
+            'IntegerVectorsModPermutationGroup')
 
 lazy_import('sage.combinat.q_analogues', ['gaussian_binomial', 'q_binomial'])
 

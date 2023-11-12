@@ -22,9 +22,11 @@ lazy_import('sage.groups.cubic_braid', 'AssionGroupS')
 lazy_import('sage.groups.artin', 'ArtinGroup')
 lazy_import('sage.groups.raag', 'RightAngledArtinGroup')
 
-lazy_import('sage.groups.semimonomial_transformations.semimonomial_transformation_group', 'SemimonomialTransformationGroup')
+lazy_import('sage.groups.semimonomial_transformations.semimonomial_transformation_group',
+            'SemimonomialTransformationGroup')
 
 lazy_import('sage.groups.group_exp', ['GroupExp', 'GroupExp_Class', 'GroupExpElement'])
 
-lazy_import('sage.groups.group_semidirect_product', ['GroupSemidirectProduct', 'GroupSemidirectProductElement'])
+lazy_import('sage.groups.group_semidirect_product', [
+            'GroupSemidirectProduct', 'GroupSemidirectProductElement'])
 del lazy_import
