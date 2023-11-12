@@ -374,7 +374,14 @@ if [ -n "$PYTHONHOME" ]; then
 fi
 
 if [ -n "$SAGE_LOCAL" ]; then
-    LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    # On OS X, test whether "ld-classic" is present in the installed
+    # version of the command-line tools. If so, we add "-ld_classic"
+    # to LD_FLAGS. See #36599.
+    if [ "$UNAME" = "Darwin" ] && [ -x "$(xcode-select -p)/usr/bin/ld-classic" ] ; then
+        LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-ld_classic,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    else
+        LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    fi
     if [ "$UNAME" = "Linux" ]; then
         LDFLAGS="-Wl,-rpath-link,$SAGE_LOCAL/lib $LDFLAGS"
     fi

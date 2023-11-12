@@ -1,5 +1,5 @@
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
-
+# sage.doctest: needs sage.libs.pari
 r"""
 Farey symbol for arithmetic subgroups of `\PSL_2(\ZZ)`
 
@@ -731,6 +731,7 @@ cdef class Farey:
 
         The unique index 2 even subgroup and index 4 odd subgroup each get handled correctly::
 
+            sage: # needs sage.groups
             sage: FareySymbol(ArithmeticSubgroup_Permutation(S2="(1,2)", S3="()")).generators()
             [
             [ 0  1]  [-1  1]
@@ -876,6 +877,7 @@ cdef class Farey:
 
         Reduce 11/17 to a cusp of for HsuExample10()::
 
+            sage: # needs sage.groups
             sage: from sage.modular.arithgroup.arithgroup_perm import HsuExample10
             sage: f = FareySymbol(HsuExample10())
             sage: f.reduce_to_cusp(11/17)
@@ -932,7 +934,7 @@ cdef class Farey:
         For example, to plot the fundamental domain of `\Gamma_0(11)`
         with pairings use the following command::
 
-            sage: FareySymbol(Gamma0(11)).fundamental_domain()
+            sage: FareySymbol(Gamma0(11)).fundamental_domain()                          # needs sage.plot sage.symbolic
             Graphics object consisting of 54 graphics primitives
 
         indicating that side 1 is paired with side 3 and side 2 is
@@ -941,18 +943,20 @@ cdef class Farey:
         To plot the fundamental domain of `\Gamma(3)` without pairings
         use the following command::
 
-            sage: FareySymbol(Gamma(3)).fundamental_domain(show_pairing=False)
+            sage: FareySymbol(Gamma(3)).fundamental_domain(show_pairing=False)          # needs sage.plot sage.symbolic
             Graphics object consisting of 48 graphics primitives
 
         Plot the fundamental domain of `\Gamma_0(23)` showing the left
         coset representatives::
 
-            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset')
+            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset')       # needs sage.plot sage.symbolic
             Graphics object consisting of 58 graphics primitives
 
         The same as above but with a custom linestyle::
 
-            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset', linestyle=':', thickness='2')
+            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset',       # needs sage.plot sage.symbolic
+            ....:                                            linestyle=':',
+            ....:                                            thickness='2')
             Graphics object consisting of 58 graphics primitives
         """
         from sage.plot.all import Graphics

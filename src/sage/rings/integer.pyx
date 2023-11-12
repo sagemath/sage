@@ -14,7 +14,7 @@ Add 2 integers::
 
 Add an integer and a real number::
 
-    sage: a + 4.0
+    sage: a + 4.0                                                                       # needs sage.rings.real_mpfr
     7.00000000000000
 
 Add an integer and a rational number::
@@ -24,7 +24,8 @@ Add an integer and a rational number::
 
 Add an integer and a complex number::
 
-    sage: b = ComplexField().0 + 1.5                                                    # needs sage.rings.real_mpfr
+    sage: # needs sage.rings.real_mpfr
+    sage: b = ComplexField().0 + 1.5
     sage: loads((a + b).dumps()) == a + b
     True
 
@@ -1468,10 +1469,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         ::
 
             sage: n=3^100000
-            sage: n.digits(base=10)[-1]  # slightly slower than str
+            sage: n.digits(base=10)[-1]  # slightly slower than str                     # needs sage.rings.real_interval_field
             1
             sage: n=10^10000
-            sage: n.digits(base=10)[-1]  # slightly faster than str
+            sage: n.digits(base=10)[-1]  # slightly faster than str                     # needs sage.rings.real_interval_field
             1
 
         AUTHORS:
@@ -1710,13 +1711,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.ndigits(2)
             4
             sage: n = 1000**1000000+1
-            sage: n.ndigits()
+            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
             3000001
             sage: n = 1000**1000000-1
-            sage: n.ndigits()
+            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
             3000000
             sage: n = 10**10000000-10**9999990
-            sage: n.ndigits()
+            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
             10000000
         """
         cdef Integer temp
@@ -2139,7 +2140,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: 2^x                # symbolic x                                       # needs sage.symbolic
             2^x
-            sage: 2^1.5              # real number
+            sage: 2^1.5              # real number                                      # needs sage.rings.real_mpfr
             2.82842712474619
             sage: 2^float(1.5)       # python float  abs tol 3e-16
             2.8284271247461903
@@ -2525,9 +2526,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: Integer(125)._exact_log_mpfi_log(3)
+            sage: Integer(125)._exact_log_mpfi_log(3)                                   # needs sage.rings.real_interval_field
             4
-            sage: Integer(5^150)._exact_log_mpfi_log(5)
+            sage: Integer(5^150)._exact_log_mpfi_log(5)                                 # needs sage.rings.real_interval_field
             150
         """
         cdef int i
@@ -2637,7 +2638,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: Integer(178^1700+1).exact_log(178)
             1700
             sage: # we need to exercise the large base code path too
-            sage: Integer(1780^1700-1).exact_log(1780)
+            sage: Integer(1780^1700-1).exact_log(1780)                                  # needs sage.rings.real_interval_field
             1699
 
             sage: # The following are very very fast.
@@ -2784,7 +2785,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         For extremely large numbers, this works::
 
             sage: x = 3^100000
-            sage: log(x, 3)
+            sage: log(x, 3)                                                             # needs sage.rings.real_interval_field
             100000
 
         Also ``log(x)``, giving a symbolic output,
@@ -3447,10 +3448,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: divmod(1, sys.maxsize+1r)  # should not raise OverflowError: Python int too large to convert to C long
             (0, 1)
 
-            sage: import mpmath                                                         # needs mpmath
-            sage: mpmath.mp.prec = 1000                                                 # needs mpmath
-            sage: root = mpmath.findroot(lambda x: x^2 - 3, 2)                          # needs mpmath
-            sage: len(str(root))                                                        # needs mpmath
+            sage: # needs mpmath
+            sage: import mpmath
+            sage: mpmath.mp.prec = 1000
+            sage: root = mpmath.findroot(lambda x: x^2 - 3, 2)
+            sage: len(str(root))
             301
         """
         cdef Integer q = PY_NEW(Integer)
@@ -6229,6 +6231,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: numpy.array([1, 2, 3]).dtype
             dtype('int32')                         # 32-bit
             dtype('int64')                         # 64-bit
+
+            sage: # needs numpy (this has to be repeated until #36099 is fixed)
+            sage: import numpy
             sage: numpy.array(2**40).dtype
             dtype('int64')
             sage: numpy.array(2**400).dtype
@@ -6733,7 +6738,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             128
             sage: int(32) << 2
             128
-            sage: 1 << 2.5
+            sage: 1 << 2.5                                                              # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for <<: 1, 2.5000...
@@ -6766,7 +6771,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             8
             sage: int(32) >> 2
             8
-            sage: 1 >> 2.5
+            sage: 1 >> 2.5                                                              # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for >>: 1, 2.5000...

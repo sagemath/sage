@@ -41,11 +41,13 @@ corresponding affine parameter::
 Numerically integrate the geodesic (see :meth:`~IntegratedCurve.solve` for
 all possible options, including the choice of the numerical algorithm)::
 
-    sage: sol = c.solve()
+    sage: sol = c.solve()                                                               # needs scipy
 
 Plot the geodesic after interpolating the solution ``sol``::
 
     sage: interp = c.interpolate()
+
+    sage: # needs sage.plot
     sage: graph = c.plot_integrated()
     sage: p_plot = p.plot(size=30, label_offset=-0.07, fontsize=20)
     sage: v_plot = v.plot(label_offset=0.05, fontsize=20)
@@ -116,11 +118,14 @@ from sage.manifolds.differentiable.tangent_vector import TangentVector
 from sage.calculus.interpolation import Spline
 from sage.misc.decorators import options
 from sage.misc.functional import numerical_approx
+from sage.misc.lazy_import import lazy_import
 from sage.arith.srange import srange
 from sage.ext.fast_callable import fast_callable
 from sage.symbolic.ring import SR
-from scipy.integrate import ode
 from random import shuffle
+
+lazy_import('scipy.integrate', 'ode')
+
 
 class IntegratedCurve(DifferentiableCurve):
     r"""
@@ -227,7 +232,7 @@ class IntegratedCurve(DifferentiableCurve):
     Generate a solution of the system and an interpolation of this
     solution::
 
-        sage: sol = c.solve(step=0.2,
+        sage: sol = c.solve(step=0.2,                                                   # needs scipy
         ....:         parameters_values={B_0:1, m:1, q:1, L:10, T:1},
         ....:         solution_key='carac time 1', verbose=True)
         Performing numerical integration with method 'odeint'...
@@ -239,7 +244,7 @@ class IntegratedCurve(DifferentiableCurve):
         The resulting list of points was associated with the key
          'carac time 1' (if this key already referred to a former
          numerical solution, such a solution was erased).
-        sage: interp = c.interpolate(solution_key='carac time 1',
+        sage: interp = c.interpolate(solution_key='carac time 1',                       # needs scipy
         ....:                interpolation_key='interp 1', verbose=True)
         Performing cubic spline interpolation by default...
         Interpolation completed and associated with the key 'interp 1'
@@ -249,6 +254,7 @@ class IntegratedCurve(DifferentiableCurve):
     Such an interpolation is required to evaluate the curve and the
     vector tangent to the curve for any value of the curve parameter::
 
+        sage: # needs scipy
         sage: p = c(1.9, verbose=True)
         Evaluating point coordinates from the interpolation associated
          with the key 'interp 1' by default...
@@ -268,7 +274,7 @@ class IntegratedCurve(DifferentiableCurve):
     Plotting a numerical solution (with or without its tangent vector
     field) also requires the solution to be interpolated at least once::
 
-        sage: c_plot_2d_1 = c.plot_integrated(ambient_coords=[x1, x2],
+        sage: c_plot_2d_1 = c.plot_integrated(ambient_coords=[x1, x2],                  # needs scipy
         ....:               interpolation_key='interp 1', thickness=2.5,
         ....:               display_tangent=True, plot_points=200,
         ....:               plot_points_tangent=10, scale=0.5,
@@ -277,7 +283,7 @@ class IntegratedCurve(DifferentiableCurve):
         A tiny final offset equal to 0.000251256281407035 was introduced
          for the last point in order to safely compute it from the
          interpolation.
-        sage: c_plot_2d_1
+        sage: c_plot_2d_1                                                               # needs scipy sage.plot
         Graphics object consisting of 11 graphics primitives
 
     .. PLOT::
@@ -307,22 +313,23 @@ class IntegratedCurve(DifferentiableCurve):
     An instance of :class:`IntegratedCurve` may store several numerical
     solutions and interpolations::
 
+        sage: # needs scipy
         sage: sol = c.solve(step=0.2,
         ....:         parameters_values={B_0:1, m:1, q:1, L:10, T:100},
         ....:         solution_key='carac time 100')
         sage: interp = c.interpolate(solution_key='carac time 100',
         ....:                            interpolation_key='interp 100')
-        sage: c_plot_3d_100 = c.plot_integrated(interpolation_key='interp 100',
+        sage: c_plot_3d_100 = c.plot_integrated(interpolation_key='interp 100',         # needs sage.plot
         ....:                   thickness=2.5, display_tangent=True,
         ....:                   plot_points=200, plot_points_tangent=10,
         ....:                   scale=0.5, color='green',
         ....:                   color_tangent='orange')
-        sage: c_plot_3d_1 = c.plot_integrated(interpolation_key='interp 1',
+        sage: c_plot_3d_1 = c.plot_integrated(interpolation_key='interp 1',             # needs sage.plot
         ....:                   thickness=2.5, display_tangent=True,
         ....:                   plot_points=200, plot_points_tangent=10,
         ....:                   scale=0.5, color='blue',
         ....:                   color_tangent='red')
-        sage: c_plot_3d_1 + c_plot_3d_100
+        sage: c_plot_3d_1 + c_plot_3d_100                                               # needs sage.plot
         Graphics3d Object
 
     .. PLOT::
@@ -1001,7 +1008,7 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
-            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},         # needs scipy
             ....:               verbose=True)
             Performing numerical integration with method 'odeint'...
             Resulting list of points will be associated with the key
@@ -1017,38 +1024,38 @@ class IntegratedCurve(DifferentiableCurve):
 
         The first 3 points of the solution, in the form ``[t, x1, x2, x3]``::
 
-            sage: sol[:3]  # abs tol 1e-12
+            sage: sol[:3]  # abs tol 1e-12                                              # needs scipy
             [[0.0, 0.0, 0.0, 0.0],
              [0.05, 0.04999999218759271, -2.083327338392213e-05, 0.05],
              [0.1, 0.09999975001847655, -0.00016666146190783666, 0.1]]
 
         The default is ``verbose=False``::
 
-            sage: sol_mute = c.solve(parameters_values={B_0:1, m:1, q:1,
+            sage: sol_mute = c.solve(parameters_values={B_0:1, m:1, q:1,                # needs scipy
             ....:                                       L:10, T:1})
-            sage: sol_mute == sol
+            sage: sol_mute == sol                                                       # needs scipy
             True
 
         Specifying the relative and absolute error tolerance parameters to
         be used in :func:`~sage.calculus.desolvers.desolve_odeint`::
 
-            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},         # needs scipy
             ....:               rtol=1e-12, atol=1e-12)
 
         Using a numerical method different from the default one::
 
-            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},         # needs scipy
             ....:               method='rk8pd')
 
 
         TESTS::
 
-            sage: sol = c.solve(parameters_values={m:1, q:1, L:10, T:1})
+            sage: sol = c.solve(parameters_values={m:1, q:1, L:10, T:1})                # needs scipy
             Traceback (most recent call last):
             ...
             ValueError: numerical values should be provided for each of
              the parameters [B_0, L, T, m, q]
-            sage: sol = c.solve(method='my method',
+            sage: sol = c.solve(method='my method',                                     # needs scipy
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
             Traceback (most recent call last):
             ...
@@ -1489,9 +1496,9 @@ class IntegratedCurve(DifferentiableCurve):
         mapping::
 
             sage: phi = M.diff_map(M, {(C,C): [x, y], (P,C): [r*cos(th), r*sin(th)]})
-            sage: fig = P.plot(number_values=9, chart=C, mapping=phi,
+            sage: fig = P.plot(number_values=9, chart=C, mapping=phi,                   # needs sage.plot
             ....:              color='grey', ranges= {r:(2, 6), th:(0,2*pi)})
-            sage: fig += C.plot(number_values=13, chart=C, mapping=phi,
+            sage: fig += C.plot(number_values=13, chart=C, mapping=phi,                 # needs sage.plot
             ....:               color='grey', ranges= {x:(-3, 3), y:(-3, 3)})
 
         There is a clear non-empty intersection between the two
@@ -1559,9 +1566,9 @@ class IntegratedCurve(DifferentiableCurve):
         :meth:`plot_integrated` again on each part.
         Finally, ``color`` can be a list, which will be cycled through::
 
-            sage: fig += c.plot_integrated(mapping=phi, color=["green","red"],
+            sage: fig += c.plot_integrated(mapping=phi, color=["green","red"],          # needs sage.plot
             ....: thickness=3, plot_points=100, across_charts=True)
-            sage: fig
+            sage: fig                                                                   # needs sage.plot
             Graphics object consisting of 43 graphics primitives
 
         .. PLOT::
@@ -1856,6 +1863,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
             sage: sol_bis = c.solution(verbose=True)
@@ -1928,6 +1937,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
@@ -2057,6 +2068,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
@@ -2131,6 +2144,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
@@ -2213,6 +2228,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
@@ -2327,6 +2344,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,6), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve()
             sage: interp = c.interpolate()
             sage: c_plot_2d = c.plot_integrated(ambient_coords=[x1, x2],
@@ -3756,6 +3775,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
     Solve, interpolate and prepare the plot for the solutions
     corresponding to the three initial conditions previously set::
 
+        sage: # needs scipy sage.plot
         sage: graph3D_embedded_geods = Graphics()
         sage: for key in dict_params:
         ....:     sol = c.solve(solution_key='sol-'+key,
@@ -3770,6 +3790,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
     Plot the resulting geodesics on the grid of polar coordinates lines
     on `\mathbb{S}^{2}` and check that these are great circles::
 
+        sage: # needs scipy sage.plot
         sage: graph3D_embedded_polar_coords = polar.plot(chart=cart,
         ....:                          mapping=euclid_embedding,
         ....:                          number_values=15, color='yellow')

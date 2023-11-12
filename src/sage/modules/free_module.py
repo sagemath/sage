@@ -261,7 +261,7 @@ class FreeModuleFactory(UniqueFactory):
         base_ring, rank, sparse, inner_product_matrix = key
 
         if inner_product_matrix is not None:
-            from .free_quadratic_module import FreeQuadraticModule
+            from sage.modules.free_quadratic_module import FreeQuadraticModule
             return FreeQuadraticModule(base_ring, rank, inner_product_matrix=inner_product_matrix, sparse=sparse)
 
         if not isinstance(sparse,bool):
@@ -1792,7 +1792,7 @@ class Module_free_ambient(Module):
                 sub = self.submodule(sub)
             except (TypeError, ArithmeticError):
                 raise ArithmeticError("sub must be a subspace of self")
-        from .quotient_module import QuotientModule_free_ambient
+        from sage.modules.quotient_module import QuotientModule_free_ambient
         return QuotientModule_free_ambient(self, sub)
 
     def __truediv__(self, sub):
@@ -2007,7 +2007,7 @@ class FreeModule_generic(Module_free_ambient):
     # Should there be a category for free modules accepting it as hom space?
     # See similar method for FreeModule_generic_field class
     def _Hom_(self, Y, category):
-        from .free_module_homspace import FreeModuleHomspace
+        from sage.modules.free_module_homspace import FreeModuleHomspace
         return FreeModuleHomspace(self, Y, category)
 
     def dense_module(self):
@@ -4100,7 +4100,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
         if base_ring is None or base_ring == self.base_ring():
             try:
                 if self.is_dense():
-                    from .free_module_integer import (
+                    from sage.modules.free_module_integer import (
                         FreeModule_submodule_with_basis_integer,
                     )
                     return FreeModule_submodule_with_basis_integer(self.ambient_module(),
@@ -4317,7 +4317,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             except (TypeError, ArithmeticError):
                 raise ArithmeticError("sub must be a subspace of self")
         if self.base_ring() == sage.rings.integer_ring.ZZ:
-            from .fg_pid.fgp_module import FGP_Module
+            from sage.modules.fg_pid.fgp_module import FGP_Module
             return FGP_Module(self, sub, check=False, **kwds)
 
         raise NotImplementedError("quotients of modules over rings other than fields or ZZ is not fully implemented")
@@ -4394,9 +4394,9 @@ class FreeModule_generic_field(FreeModule_generic_pid):
               (number fields and quotient fields and metric spaces)
         """
         if Y.base_ring().is_field():
-            from . import vector_space_homspace
+            from sage.modules import vector_space_homspace
             return vector_space_homspace.VectorSpaceHomspace(self, Y, category)
-        from . import free_module_homspace
+        from sage.modules import free_module_homspace
         return free_module_homspace.FreeModuleHomspace(self, Y, category)
 
     def scale(self, other):
@@ -5145,7 +5145,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             except (TypeError, ArithmeticError):
                 raise ArithmeticError("sub must be a subspace of self")
         A, L = self.__quotient_matrices(sub)
-        from . import quotient_module
+        from sage.modules import quotient_module
         return quotient_module.FreeModule_ambient_field_quotient(self, sub, A, L)
 
     def __quotient_matrices(self, sub):
@@ -5750,7 +5750,7 @@ class FreeModule_ambient(FreeModule_generic):
         """
         if self.base_ring() is R:
             return self
-        from .free_quadratic_module import is_FreeQuadraticModule
+        from sage.modules.free_quadratic_module import is_FreeQuadraticModule
         if is_FreeQuadraticModule(self):
             return FreeModule(R, self.rank(),
                               inner_product_matrix=self.inner_product_matrix(),
@@ -8198,21 +8198,21 @@ def element_class(R, is_sparse):
     """
     import sage.rings.integer_ring
     if sage.rings.integer_ring.is_IntegerRing(R) and not is_sparse:
-        from .vector_integer_dense import Vector_integer_dense
+        from sage.modules.vector_integer_dense import Vector_integer_dense
         return Vector_integer_dense
     elif sage.rings.rational_field.is_RationalField(R) and not is_sparse:
-        from .vector_rational_dense import Vector_rational_dense
+        from sage.modules.vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
     elif isinstance(R, sage.rings.abc.IntegerModRing) and not is_sparse:
         if R.order() == 2:
             try:
-                from .vector_mod2_dense import Vector_mod2_dense
+                from sage.modules.vector_mod2_dense import Vector_mod2_dense
             except ImportError:
                 pass
             else:
                 return Vector_mod2_dense
         try:
-            from .vector_modn_dense import MAX_MODULUS, Vector_modn_dense
+            from sage.modules.vector_modn_dense import MAX_MODULUS, Vector_modn_dense
         except ImportError:
             pass
         else:
