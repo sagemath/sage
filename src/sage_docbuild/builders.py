@@ -431,11 +431,17 @@ class WebsiteBuilder(DocBuilder):
     def html(self):
         """
         After we have finished building the website index page, we copy
-        everything one directory up.
+        everything one directory up, that is, to the base diectory ``html/en``.
 
         In addition, an index file is installed into the root doc directory.
+
+        Thus we have three index.html files:
+
+            html/en/website/index.html  (not used)
+            html/en/index.html  (base directory)
+            index.html  (root doc directory)
         """
-        DocBuilder.html(self)
+        super().html()
         html_output_dir = self._output_dir('html')
         for f in os.listdir(html_output_dir):
             src = os.path.join(html_output_dir, f)
@@ -449,6 +455,23 @@ class WebsiteBuilder(DocBuilder):
         root_index_file = os.path.join(html_output_dir, '../../../index.html')
         shutil.copy2(os.path.join(SAGE_DOC_SRC, self.lang, 'website', 'root_index.html'),
                      root_index_file)
+
+    def pdf(self):
+        """
+        Build the website hosting pdf docs.
+        """
+        super().pdf()
+
+        # If the website exists, update it.
+
+        from sage.env import SAGE_DOC
+        website_dir = os.path.join(SAGE_DOC, 'html', 'en', 'website')
+
+        if os.path.exists(os.path.join(website_dir, 'index.html')):
+            # Rebuild WITHOUT --no-pdf-links, which is translated to
+            # "-A hide_pdf_links=1" Sphinx argument. Thus effectively
+            # the index page SHOWS links to pdf docs.
+            self.html()
 
     def clean(self):
         """
@@ -643,7 +666,7 @@ class ReferenceTopBuilder(DocBuilder):
 
         from sage.env import SAGE_DOC
         reference_dir = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
-        output_dir = self._output_dir('pdf')
+        output_dir = self._output_dir('html')
 
         # Check if the top reference index.html exists.
         try:
@@ -707,7 +730,7 @@ class ReferenceTopBuilder(DocBuilder):
         rst = re.sub(r'`([^<\n]*)\s+<(.*)>`_',
                      r'<a href="\2">\1</a>', rst)
         rst = re.sub(r':doc:`([^<]*?)\s+<(.*)/index>`',
-                     r'<a href="\2/\2.pdf">\1 <img src="_static/pdf.png"/></a>', rst)
+                     r'<a href="\2/\2.pdf"><img src="_static/pdf.png"/> \1</a>', rst)
         # Body: add paragraph <p> markup.
         start = rst.rfind('*\n') + 1
         end = rst.find('\nUser Interfaces')
@@ -725,7 +748,7 @@ class ReferenceTopBuilder(DocBuilder):
         rst_toc = re.sub(r'\n([A-Z][a-zA-Z, ]*)\n[-]*\n',
                          r'</ul>\n\n\n<h3>\1</h3>\n\n<ul>\n', rst_toc)
         # now write the file.
-        with open(os.path.join(output_dir, 'index.html'), 'w') as new_index:
+        with open(os.path.join(output_dir, 'index-pdf.html'), 'w') as new_index:
             new_index.write(html[:html_end_preamble])
             new_index.write('<h1>Sage Reference Manual (PDF version)</h1>')
             new_index.write(rst_body)
