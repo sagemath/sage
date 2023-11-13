@@ -29,8 +29,7 @@ on:
            ["latest", "",             "homebrew-macos-usrlocal-maximal"],
            ["latest", "",             "homebrew-macos-usrlocal-python3_xcode-standard"],
            ["latest", "",             "conda-forge-macos-minimal"],
-           ["latest", "",             "conda-forge-macos-standard"],
-           ["latest", "",             "conda-forge-macos-maximal"]]
+           ["latest", "",             "conda-forge-macos-standard"]]
         type: string
       extra_sage_packages:
         description: 'Extra Sage packages to install as system packages'
