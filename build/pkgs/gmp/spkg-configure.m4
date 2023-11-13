@@ -2,8 +2,10 @@ SAGE_SPKG_CONFIGURE([gmp], [
            sage_spkg_install_gmp=no
             AC_CHECK_HEADER(gmp.h, [], [sage_spkg_install_gmp=yes])
             AC_CHECK_HEADER(gmpxx.h, [], [sage_spkg_install_gmp=yes])
-            dnl mpq_cmp_z appeared in GMP 6.1.0 and is used by pynac
-            AC_SEARCH_LIBS([__gmpq_cmp_z], [gmp], [],
+            dnl mpn_gcd_11 appeared in GMP 6.2.1
+            dnl It is undocumented but is used by Flint when built with default
+            dnl flags.
+            AC_SEARCH_LIBS([__gmpn_gcd_11], [gmp], [],
                 [sage_spkg_install_gmp=yes])
 ], [], [], [
     if test x$sage_spkg_install_gmp = xyes; then
