@@ -4890,62 +4890,6 @@ class Graph(GenericGraph):
 
         return repr
 
-    @doc_index("Basic methods")
-    def power_of_graph(self, k):
-        r"""
-        Compute the kth power graph of an undirected, unweighted graph based on
-        shortest distances between nodes using BFS.
-
-        INPUT:
-        - graph: An undirected, unweighted graph.
-        - k: The maximum path length for considering edges in the power graph.
-
-        OUTPUT:
-        - The kth power graph based on shortest distances between nodes.
-
-        EXAMPLE:
-
-        sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
-        sage: k = 2
-        sage: PG = power_graph_with_shortest_distances(G, k)
-        sage: PG.edges()
-        [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (2, 0), (2, 1), (2, 3), (2, 4), (3, 0), (3, 1), (3, 2), (3, 4), (4, 0), (4, 1), (4, 2), (4, 3), (5, 4), (4, 5)]
-
-        """
-        n = self.order()
-        all_distances = {}  # Dictionary to store shortest distances between all pairs of nodes
-
-        from collections import deque
-        
-        # Step 1: Compute shortest distances using BFS
-        for u in self.vertices():
-            distances = {}  # Dictionary to store distances from u to all other nodes
-            visited = {v: False for v in self.vertices()}
-            queue = deque()
-
-            visited[u] = True
-            distances[u] = 0
-            queue.append(u)
-
-            while queue:
-                v = queue.popleft()
-                for neighbor in self.neighbors(v):
-                    if not visited[neighbor]:
-                        visited[neighbor] = True
-                        distances[neighbor] = distances[v] + 1
-                        queue.append(neighbor)
-
-            all_distances[u] = distances
-
-        # Step 2: Create the kth power graph based on distances
-        PG = Graph()
-        for u in self.vertices():
-            for v in self.vertices():
-                if u != v and all_distances[u].get(v, float('inf')) <= k:
-                    PG.add_edge(u, v)
-
-        return PG
-
     @doc_index("Algorithmically hard stuff")
     def minor(self, H, solver=None, verbose=0, induced=False, *, integrality_tolerance=1e-3):
         r"""

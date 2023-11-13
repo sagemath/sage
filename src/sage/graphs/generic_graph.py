@@ -15726,6 +15726,41 @@ class GenericGraph(GenericGraph_pyx):
                                             algorithm=algorithm,
                                             weight_function=weight_function,
                                             check_weight=check_weight)[0]
+                                
+    def power(self, k):
+        r"""
+        Compute the kth power graph of an undirected, unweighted graph based on
+        shortest distances between nodes using BFS.
+
+        INPUT:
+        - graph: An undirected, unweighted graph.
+        - k: The maximum path length for considering edges in the power graph.
+
+        OUTPUT:
+        - The kth power graph based on shortest distances between nodes.
+
+        EXAMPLE:
+
+        sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
+        sage: k = 2
+        sage: PG = G.power(k)
+        sage: PG.edges()
+        [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (2, 0), (2, 1), (2, 3), (2, 4), (3, 0), (3, 1), (3, 2), (3, 4), (4, 0), (4, 1), (4, 2), (4, 3), (5, 4), (4, 5)]
+
+        sage: G = DiGraph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
+        sage: k = 3
+        sage: PG = g.power(k)
+        sage: PG.edges()
+        [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (1, 0, None), (1, 2, None), (1, 3, None), (1, 4, None), (1, 5, None), (2, 0, None), (2, 1, None), (2, 3, None), (2, 4, None), (2, 5, None), (3, 0, None), (3, 1, None), (3, 2, None), (4, 5, None)]
+
+        """
+        power_of_graph = self.copy() 
+        for u in self:
+            for v in self.breadth_first_search(u, distance=k):
+                if u != v:
+                    power_of_graph.add_edge(u, v)
+        
+        return power_of_graph 
 
     def girth(self, certificate=False):
         """
