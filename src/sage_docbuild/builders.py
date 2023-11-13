@@ -720,14 +720,14 @@ class ReferenceTopBuilder(DocBuilder):
         #
         # Change the third form to
         #
-        #   <a href="module/module.pdf">blah <img src="_static/pdf.png" /></a>
+        #   <a href="module/module.pdf"><img src="_static/pdf.png">blah</a>
         #
         rst = re.sub(r'`([^`\n]*)`__.*\n\n__ (.*)',
                      r'<a href="\2">\1</a>.', rst)
         rst = re.sub(r'`([^<\n]*)\s+<(.*)>`_',
                      r'<a href="\2">\1</a>', rst)
         rst = re.sub(r':doc:`([^<]*?)\s+<(.*)/index>`',
-                     r'<a href="../../../pdf/en/reference/\2/\2.pdf"><img src="_static/pdf.png"/></a>&nbsp;<a href="\2/index.html">\1</a> ', rst)
+                     r'<a title="PDF" class="pdf" href="../../../pdf/en/reference/\2/\2.pdf"><img src="_static/pdf.png"></a><a href="\2/index.html">\1</a> ', rst)
         # Body: add paragraph <p> markup.
         start = rst.rfind('*\n') + 1
         end = rst.find('\nUser Interfaces')
