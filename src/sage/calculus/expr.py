@@ -3,6 +3,9 @@ Constructor for symbolic expressions
 """
 
 from sage.misc.lazy_import import lazy_import
+from sage.structure.element import is_Matrix
+from sage.symbolic.expression import Expression
+from sage.symbolic.ring import SR
 
 lazy_import('sage.modules.free_module_element', ['vector', 'FreeModuleElement'])
 lazy_import('sage.matrix.constructor', 'matrix')
@@ -163,10 +166,6 @@ def symbolic_expression(x):
         TypeError: unable to convert <function function_with_keyword_only_arg at 0x...>
         to a symbolic expression
     """
-    from sage.structure.element import is_Matrix
-    from sage.symbolic.expression import Expression
-    from sage.symbolic.ring import SR
-
     if isinstance(x, Expression):
         return x
     elif hasattr(x, '_symbolic_'):
