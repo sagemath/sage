@@ -1,57 +1,82 @@
 #!/bin/sh
-# Merge open PRs from sagemath/sage labeled "blocker".
-REPO="sagemath/sage"
-GH="gh -R $REPO"
+# Apply open PRs labeled "blocker" from sagemath/sage as patches.
+# This script is invoked by various workflows in .github/workflows
+#
+# The repository secret SAGE_CI_FIXES_FROM_REPOS can be set
+# to customize this for CI runs in forks:
+#
+# - If set to a whitespace-separated list of repositories, use them instead of sagemath/sage.
+# - If set to "none", do not apply any PRs.
+#
+# https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
+export GIT_AUTHOR_NAME="ci-sage workflow"
+export GIT_AUTHOR_EMAIL="ci-sage@example.com"
+export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 mkdir -p upstream
-PRs="$($GH pr list --label "p: blocker / 1" --json number --jq '.[].number' | tee upstream/ci-fixes.txt)"
-date -u +"%Y-%m-%dT%H:%M:%SZ" > upstream/ci-fixes.date  # Record the date, for future reference
-if [ -z "$PRs" ]; then
-    echo 'Nothing to do: Found no open PRs with "blocker" status.'
-else
-    echo "Found PRs: " $PRs
-    export GIT_AUTHOR_NAME="ci-sage workflow"
-    export GIT_AUTHOR_EMAIL="ci-sage@example.com"
-    export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
-    export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
-    git tag -f test_base
-    git commit -q -m "Uncommitted changes" --no-allow-empty -a
-    for a in $PRs; do
-        git tag -f test_head
-        # We used to pull the branch and merge it (after unshallowing), but when run on PRs that are
-        # based on older releases, it has the side effect of updating to this release,
-        # which may be confusing.
-        #
-        # Here, we obtain the "git am"-able patch of the PR branch.
-        # This also makes it unnecessary to unshallow the repository.
-        #
-        # Considered alternative: Use https://github.com/$REPO/pull/$a.diff,
-        # which squashes everything into one diff without commit metadata.
-        PATH=build/bin:$PATH build/bin/sage-download-file "https://github.com/$REPO/pull/$a.patch" upstream/$a.patch
-        date -u +"%Y-%m-%dT%H:%M:%SZ" > upstream/$a.date  # Record the date, for future reference
-        LAST_SHA=$(sed -n -E '/^From [0-9a-f]{40}/s/^From ([0-9a-f]{40}).*/\1/p' upstream/$a.patch | tail -n 1)
-        echo "::group::Applying PR https://github.com/$REPO/pull/$a @ https://github.com/$REPO/commits/$LAST_SHA as a patch"
-        export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME applying https://github.com/$REPO/pull/$a @ https://github.com/$REPO/commits/$LAST_SHA"
-        if git am --signoff --empty=keep < upstream/$a.patch; then
-            echo "---- Applied patch ------------------------------------------------------------"
-            cat upstream/$a.patch
-            echo "--------------------------------------------------------------------8<---------"
-            echo "::endgroup::"
-        elif git am --abort \
-                && if git fetch --unshallow --all > /dev/null 2>&1; then echo "Unshallowed"; fi \
-                && echo "Retrying with 3-way merge" \
-                && git am --empty=keep --3way < upstream/$a.patch; then
-            echo "---- Applied patch ------------------------------------------------------------"
-            cat upstream/$a.patch
-            echo "--------------------------------------------------------------------8<---------"
-            echo "::endgroup::"
-        else
-            echo "---- Failure applying patch ---------------------------------------------------"
-            git am --signoff --show-current-patch=diff
-            echo "--------------------------------------------------------------------8<---------"
-            echo "::endgroup::"
-            echo "Failure applying #$a as a patch, resetting"
-            git am --signoff --abort
-        fi
-    done
-    #git log test_base..HEAD
-fi
+for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
+    case $REPO in
+        none)
+            echo "Nothing to do for 'none' in SAGE_CI_FIXES_FROM_REPOSITORIES"
+            ;;
+        */*)
+            echo "Getting open PRs with 'blocker' status from https://github.com/$REPO/pulls?q=is%3Aopen+label%3A%22p%3A+blocker+%2F+1%22"
+            GH="gh -R $REPO"
+            REPO_FILE="upstream/ci-fixes-${REPO%%/*}-${REPO##*/}"
+            PRs="$($GH pr list --label "p: blocker / 1" --json number --jq '.[].number' | tee $REPO_FILE)"
+            date -u +"%Y-%m-%dT%H:%M:%SZ" > $REPO_FILE.date  # Record the date, for future reference
+            if [ -z "$PRs" ]; then
+                echo "Nothing to do: Found no open PRs with 'blocker' status in $REPO."
+            else
+                echo "Found open PRs with 'blocker' status in $REPO: $(echo $PRs)"
+                git tag -f test_base
+                git commit -q -m "Uncommitted changes" --no-allow-empty -a
+                for a in $PRs; do
+                    # We used to pull the branch and merge it (after unshallowing), but when run on PRs that are
+                    # based on older releases, it has the side effect of updating to this release,
+                    # which may be confusing.
+                    #
+                    # Here, we obtain the "git am"-able patch of the PR branch.
+                    # This also makes it unnecessary to unshallow the repository.
+                    #
+                    # Considered alternative: Use https://github.com/$REPO/pull/$a.diff,
+                    # which squashes everything into one diff without commit metadata.
+                    PULL_URL="https://github.com/$REPO/pull/$a"
+                    PULL_FILE=upstream/ci-fixes-${REPO%%/*}-${REPO##*/}
+                    PATH=build/bin:$PATH build/bin/sage-download-file --quiet "$PULL_URL.patch" $PULL_FILE.patch
+                    date -u +"%Y-%m-%dT%H:%M:%SZ" > $PULL_FILE.date  # Record the date, for future reference
+                    LAST_SHA=$(sed -n -E '/^From [0-9a-f]{40}/s/^From ([0-9a-f]{40}).*/\1/p' $PULL_FILE.patch | tail -n 1)
+                    COMMITS_URL="https://github.com/$REPO/commits/$LAST_SHA"
+                    echo "::group::Applying PR $PULL_URL @ $COMMITS_URL as a patch"
+                    export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME applying $PULL_URL @ $COMMITS_URL"
+                    if git am --signoff --empty=keep < $PULL_FILE.patch; then
+                        echo "---- Applied patch --------------------------------------------------------------------------------"
+                        cat $PULL_FILE.patch
+                        echo "--------------------------------------------------------------------8<-----------------------------"
+                        echo "::endgroup::"
+                    elif git am --abort \
+                            && if git fetch --unshallow --all > /dev/null 2>&1; then echo "Unshallowed"; fi \
+                            && echo "Retrying with 3-way merge" \
+                            && git am --empty=keep --3way < $PULL_FILE.patch; then
+                        echo "---- Applied patch --------------------------------------------------------------------------------"
+                        cat $PULL_FILE.patch
+                        echo "--------------------------------------------------------------------8<-----------------------------"
+                        echo "::endgroup::"
+                    else
+                        echo "---- Failure applying patch -----------------------------------------------------------------------"
+                        git am --signoff --show-current-patch=diff
+                        echo "--------------------------------------------------------------------8<-----------------------------"
+                        echo "::endgroup::"
+                        echo "Failure applying $PULL_URL as a patch, resetting"
+                        git am --signoff --abort
+                    fi
+                done
+            fi
+            ;;
+        *)
+            echo "Repository secret SAGE_CI_FIXES_FROM_REPOSITORIES, if set, should be a whitespace-separated list of repositories or 'none'"
+            echo "Got: $SAGE_CI_FIXES_FROM_REPOSITORIES"
+            exit 1
+            ;;
+    esac
+done
