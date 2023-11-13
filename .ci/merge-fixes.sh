@@ -29,8 +29,8 @@ else
         PATH=build/bin:$PATH build/bin/sage-download-file "https://github.com/$REPO/pull/$a.patch" upstream/$a.patch
         date -u +"%Y-%m-%dT%H:%M:%SZ" > upstream/$a.date  # Record the date, for future reference
         LAST_SHA=$(sed -n -E '/^From [0-9a-f]{40}/s/^From ([0-9a-f]{40}).*/\1/p' upstream/$a.patch | tail -n 1)
-        echo "::group::Applying PR https://github.com/$REPO/pull/$a @ https://github.com/$REPO/commit/$LAST_SHA as a patch"
-        export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME applying https://github.com/$REPO/pull/$a @ https://github.com/$REPO/commit/$LAST_SHA"
+        echo "::group::Applying PR https://github.com/$REPO/pull/$a @ https://github.com/$REPO/commits/$LAST_SHA as a patch"
+        export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME applying https://github.com/$REPO/pull/$a @ https://github.com/$REPO/commits/$LAST_SHA"
         if git am --signoff --empty=keep < upstream/$a.patch; then
             echo "---- Applied patch ------------------------------------------------------------"
             cat upstream/$a.patch
