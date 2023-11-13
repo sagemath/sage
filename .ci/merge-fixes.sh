@@ -42,7 +42,7 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
                     # Considered alternative: Use https://github.com/$REPO/pull/$a.diff,
                     # which squashes everything into one diff without commit metadata.
                     PULL_URL="https://github.com/$REPO/pull/$a"
-                    PULL_FILE=upstream/ci-fixes-${REPO%%/*}-${REPO##*/}
+                    PULL_FILE="$REPO_FILE-$a"
                     PATH=build/bin:$PATH build/bin/sage-download-file --quiet "$PULL_URL.patch" $PULL_FILE.patch
                     date -u +"%Y-%m-%dT%H:%M:%SZ" > $PULL_FILE.date  # Record the date, for future reference
                     LAST_SHA=$(sed -n -E '/^From [0-9a-f]{40}/s/^From ([0-9a-f]{40}).*/\1/p' $PULL_FILE.patch | tail -n 1)
