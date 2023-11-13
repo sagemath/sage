@@ -60,4 +60,5 @@ from sage.combinat.all__sagemath_combinat import *
 from sage.combinat.all__sagemath_modules import *
 from sage.combinat.all__sagemath_graphs import *
 del lazy_import
+del install_dict
 del install_doc
