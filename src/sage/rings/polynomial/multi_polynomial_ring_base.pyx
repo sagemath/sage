@@ -1835,12 +1835,15 @@ def unpickle_MPolynomialRing_generic(base_ring, n, names, order):
 class MatrixPolynomialAction(Action):
     def __init__(self, MS, PR):
         """
-        Initialize ``self``.
+        Initialize a MatrixPolynomialAction object.
 
-        EXAMPLES ::
+        Parameters:
+        MS: The matrix space for the action.
+        PR: The polynomial ring where the action takes place.
 
-            sage: G = groups.matrix.Sp(4,GF(2))
-            sage: R.<w,x,y,z>=GF(2)[]
+        Examples:
+        sage: G = groups.matrix.Sp(4,GF(2))
+        sage: R.<w,x,y,z>=GF(2)[]
         sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
         sage: g=G.1
         sage: from operator import matmul
@@ -1854,6 +1857,25 @@ class MatrixPolynomialAction(Action):
         super().__init__(MS, PR, op=matmul)
 
     def _act_(self, mat, polynomial):
+        """
+        Perform the action of a matrix on a polynomial.
+
+        Parameters:
+        mat: The matrix to act on the polynomial.
+        polynomial: The polynomial to be acted upon.
+
+        Returns:
+        Polynomial: The result of the action.
+
+        Examples:
+        sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+        sage: R.<x, y, z> = PolynomialRing(GF(2), 3)
+        sage: M = Matrix(GF(2), [[1, 1, 0], [0, 1, 1], [1, 0, 1]])
+        sage: p = x*y + y*z + z^2
+        sage: A = MatrixPolynomialAction(M.parent(), R)  # using M.parent() to get the matrix space
+        sage: A._act_(M, p)
+        x^2 + y^2
+        """
         assert mat.base_ring() == polynomial.base_ring()
         vars_to_sub_module_context = mat * self._vars_vector
         vars_to_sub_ring_context = map(PolynomialRing(mat.base_ring(), self._poly_vars), vars_to_sub_module_context)
@@ -1861,12 +1883,61 @@ class MatrixPolynomialAction(Action):
         return polynomial.subs(substitution_dict)
     
     def __eq__(self, other):
+        """
+        Check if another object is equal to this MatrixPolynomialAction.
+
+        Parameters:
+        other: The object to compare with.
+
+        Returns:
+        bool: True if equal, False otherwise.
+
+        Examples:
+        sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+        sage: M = MatrixSpace(GF(2), 2)
+        sage: R = PolynomialRing(GF(2), 2, 'x')
+        sage: A1 = MatrixPolynomialAction(M, R)
+        sage: A2 = MatrixPolynomialAction(M, R)
+        sage: A1 == A2
+        True
+        """        
         if isinstance(other, MatrixPolynomialAction):
             return self.MS == other.MS and self.PR == other.PR
         return False
 
     def __hash__(self):
+        """
+        Generate a hash for the MatrixPolynomialAction.
+
+        Returns:
+        int: The hash value.
+
+        Examples:
+        sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+        sage: M = MatrixSpace(GF(2), 2)
+        sage: R = PolynomialRing(GF(2), 2, 'x')
+        sage: A1 = MatrixPolynomialAction(M, R)
+        sage: A2 = MatrixPolynomialAction(M, R)
+        sage: hash(A1)==hash(A2)
+        True
+        """        
         return hash((self.MS, self.PR))
         
     def __reduce__(self):
+        """
+        Reduce the object for serialization.
+
+        Returns:
+        tuple: The callable and its arguments to recreate the object.
+
+        Examples:
+        sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+        sage: M = MatrixSpace(GF(2), 2)
+        sage: R = PolynomialRing(GF(2), 2, 'x')
+        sage: A = MatrixPolynomialAction(M, R)
+        sage: A.__reduce__()
+        (<class 'sage.rings.polynomial.multi_polynomial_ring_base.MatrixPolynomialAction'>,
+            (Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 2,
+            Multivariate Polynomial Ring in x0, x1 over Finite Field of size 2))
+        """        
         return (type(self), (self.MS, self.PR))
