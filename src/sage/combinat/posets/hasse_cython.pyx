@@ -30,7 +30,7 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
     - ``positions`` -- a list of sets of integers describing the poset,
       as given by the lazy attribute ``_leq_storage`` of Hasse diagrams.
 
-    - ``constructor`` -- used to determine the type of chains,
+    - ``element_constructor`` -- used to determine the type of chains,
       for example :class:`list` or :class:`tuple`
 
     - ``exclude`` -- list of integers that should not belong to the chains
@@ -50,7 +50,7 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
         sage: list(D)
         [[], [0], [0, 1], [1]]
     """
-    def __init__(self, list positions, constructor,
+    def __init__(self, list positions, element_constructor,
                  list exclude, conversion=None):
         """
         The enumerated set of increasing chains.
@@ -71,7 +71,7 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
             self._greater_than = positions
             self._vertices = list(range(n))
 
-        self._constructor = constructor
+        self._constructor = element_constructor
         self._conversion = conversion
         if conversion is not None:
             self._from_poset = {elt: i for i, elt in enumerate(conversion)}
@@ -133,7 +133,7 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
         If ``conversion`` was provided, it first converts elements of the
         chain to elements of this list.
 
-        Then the given ``constructor`` is applied to the chain.
+        Then the given ``element_constructor`` is applied to the chain.
 
         EXAMPLES::
 
