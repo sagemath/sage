@@ -85,7 +85,7 @@ jobs:
         run: |
           git config --global user.email "nobody@example.com"
           git config --global user.name "Sage GitHub CI"
-          SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(git describe) || echo "(ignoring error)"
+          SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(git describe --tags) || echo "(ignoring error)"
       - name: make dist
         run: |
           ./configure --enable-download-from-upstream-url && make dist
