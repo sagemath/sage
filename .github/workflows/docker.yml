@@ -51,14 +51,13 @@ on:
            "almalinux-9-python3.11",
            "gentoo-python3.10",
            "gentoo-python3.11",
-           "gentoo-python3.12",
            "archlinux-latest",
            "opensuse-15.3-gcc_11-python3.9",
            "opensuse-15.4-gcc_11-python3.10",
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "opensuse-tumbleweed",
-           "conda-forge",
+           "conda-forge-python3.11",
            "ubuntu-bionic-gcc_8-i386",
            "debian-bullseye-i386",
            ]
@@ -191,6 +190,9 @@ jobs:
               echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
               echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
             fi
+
+      - name: Determine Docker tags to use
+        run: |
             # This line needs to be run before the step "Merge CI fixes from sagemath/sage".
             DOCKER_TAG="$(git describe --dirty --always)"
             echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
