@@ -195,7 +195,6 @@ jobs:
           echo '</body>' >> ./docs/CHANGES.html
           echo '</html>' >>./docs/CHANGES.html
           rm ./docs/diff.txt ./docs/diff.html
-          (cd docs && git reset --hard HEAD)
           # We also need to replace the symlinks because netlify is not following them
           # CHECK IF STILL NEEDED
           ##### cp -r -L /sage/local/share/doc/sage/html ./docs
@@ -213,26 +212,28 @@ jobs:
         id: buildlivedoc
         if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
         run: |
-          set -ex
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
+          export PATH="build/bin:$PATH"
+          eval $(sage-print-system-package-command auto update)
+          eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive)
           export SAGE_USE_CDNS=yes
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html-no-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
+        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Copy live doc
         id: copylivedoc
         if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
         run: |
-          set -ex
           mkdir -p ./livedoc
           cp -r -L /sage/local/share/doc/sage/html ./livedoc
+          cp -r -L /sage/local/share/doc/sage/pdf ./livedoc
           cp  /sage/local/share/doc/sage/index.html ./livedoc
           zip -r livedoc.zip livedoc
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Upload live doc
         if: (success() || failure()) && steps.copylivedoc.outcome == 'success'
