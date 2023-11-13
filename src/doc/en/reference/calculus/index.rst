@@ -66,6 +66,7 @@ Internal functionality supporting calculus
 
    sage/symbolic/expression
    sage/symbolic/callable
+   sage/calculus/expr
    sage/symbolic/assumptions
    sage/symbolic/relation
    sage/calculus/calculus
