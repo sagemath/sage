@@ -85,8 +85,9 @@ jobs:
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduce from 30 to 25 because it runs in parallel with 'standard-sitepackages' below
-      max_parallel: 25
+      # Reduce from 30 to 20 because it runs in parallel with 'standard-sitepackages'
+      # and 'minimal-pre' below
+      max_parallel: 20
 
   standard-sitepackages:
     if: ${{ success() || failure() }}
@@ -135,7 +136,7 @@ jobs:
          "opensuse-tumbleweed",
          "debian-bullseye-i386"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      max_parallel: 10
+      max_parallel: 8
 
   minimal-pre:
     if: ${{ success() || failure() }}
@@ -148,9 +149,9 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduced from 30 because it may run in parallel with 'standard-sitepackages' above.
+      # Reduced from 30 because it may run in parallel with 'standard' and 'standard-sitepackages' above.
       # Calibrated for clogging the job pipeline until the "default" job has finished.
-      max_parallel: 20
+      max_parallel: 24
 
   minimal:
     if: ${{ success() || failure() }}
@@ -169,6 +170,7 @@ jobs:
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 24
 
   maximal-pre:
     if: ${{ success() || failure() }}
