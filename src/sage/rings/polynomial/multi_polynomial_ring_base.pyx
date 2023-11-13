@@ -1849,8 +1849,8 @@ class MatrixPolynomialAction(Action):
         """
         self._poly_vars = PR.gens()
         self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
-        self.MS=MS
-        self.PR=PR
+        self.MS = MS
+        self.PR = PR
         super().__init__(MS, PR, op=matmul)
 
     def _act_(self, mat, polynomial):
