@@ -11,3 +11,4 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.matroids.constructor', 'Matroid')
 lazy_import('sage.matroids', 'matroids_catalog', 'matroids')
 del lazy_import
+del install_doc
