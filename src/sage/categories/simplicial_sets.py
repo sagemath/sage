@@ -17,7 +17,6 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.sets_cat import Sets
 from sage.categories.homsets import HomsetsCategory
 from sage.matrix.constructor import matrix
-from sage.misc.flatten import flatten
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
@@ -393,7 +392,7 @@ class SimplicialSets(Category_singleton):
                             z[i] = FG.one()
                     rels.append(z[0]*z[1].inverse()*z[2])
                 G = FG.quotient(rels)
-                char = {g : G.gen(i) for i,g in enumerate(gens)}
+                char = {g: G.gen(i) for i, g in enumerate(gens)}
                 for e in edges:
                     if e not in gens:
                         char[e] = G.one()
@@ -514,7 +513,7 @@ class SimplicialSets(Category_singleton):
                                     grelems.append(cells_dict[(f.nondegenerate(), g)].apply_degeneracies(*f.degeneracies()))
                                 faces_dict[cell] = grelems
                 cover = SimplicialSet(faces_dict, base_point=cells_dict[(self.base_point(), G.one())])
-                cover_map_data = {c : s[0] for (s,c) in cells_dict.items()}
+                cover_map_data = {c: s[0] for (s, c) in cells_dict.items()}
                 return SimplicialSetMorphism(data=cover_map_data, domain=cover, codomain=self)
 
             def cover(self, character):
@@ -607,7 +606,6 @@ class SimplicialSets(Category_singleton):
                     Quotient of Univariate Laurent Polynomial Ring in F1 over Integer Ring by the ideal (-1 + F1^2)
 
                 """
-                from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
                 G, d = self._universal_cover_dict()
                 phi = G.abelianization_map()
                 abelG, R, I, images = G.abelianization_to_algebra(ZZ)
@@ -618,8 +616,8 @@ class SimplicialSets(Category_singleton):
                 return res
 
             def twisted_chain_complex(self, twisting_operator=None, dimensions=None, augmented=False,
-                                    cochain=False, verbose=False, subcomplex=None,
-                                    check=False):
+                                      cochain=False, verbose=False, subcomplex=None,
+                                      check=False):
                 r"""
                 Return the normalized chain complex twisted by some operator.
 
@@ -629,31 +627,31 @@ class SimplicialSets(Category_singleton):
                 INPUT:
 
                 - ``twisting_operator`` -- a dictionary, associating the twist of each
-                simplex. If it is not given, the canonical one (associated to the
-                laurent polynomial ring abelianization of the fundamental group, ignoring
-                torsion) is used.
+                  simplex. If it is not given, the canonical one (associated to the
+                  laurent polynomial ring abelianization of the fundamental group, ignoring
+                  torsion) is used.
 
                 - ``dimensions`` -- if ``None``, compute the chain complex in all
-                dimensions.  If a list or tuple of integers, compute the
-                chain complex in those dimensions, setting the chain groups
-                in all other dimensions to zero.
+                  dimensions.  If a list or tuple of integers, compute the
+                  chain complex in those dimensions, setting the chain groups
+                  in all other dimensions to zero.
 
                 - ``augmented`` (optional, default ``False``) -- if ``True``,
-                return the augmented chain complex (that is, include a class
-                in dimension `-1` corresponding to the empty cell).
+                  return the augmented chain complex (that is, include a class
+                  in dimension `-1` corresponding to the empty cell).
 
                 - ``cochain`` (optional, default ``False``) -- if ``True``,
-                return the cochain complex (that is, the dual of the chain
-                complex).
+                  return the cochain complex (that is, the dual of the chain
+                  complex).
 
                 - ``verbose`` (optional, default ``False``) -- ignored.
 
                 - ``subcomplex`` (optional, default ``None``) -- if present,
-                compute the chain complex relative to this subcomplex.
+                  compute the chain complex relative to this subcomplex.
 
                 - ``check`` (optional, default ``False``) -- If ``True``, make
-                sure that the chain complex is actually a chain complex:
-                the differentials are composable and their product is zero.
+                  sure that the chain complex is actually a chain complex:
+                  the differentials are composable and their product is zero.
 
                 The normalized chain complex of a simplicial set is isomorphic
                 to the chain complex obtained by modding out by degenerate
@@ -768,7 +766,7 @@ class SimplicialSets(Category_singleton):
                 if augmented and first == 0:
                     differentials[first-1] = matrix(base_ring, 0, 1)
                     differentials[first] = matrix(base_ring, 1, rank,
-                                                [1] * rank)
+                                                  [1] * rank)
                 else:
                     differentials[first] = matrix(base_ring, 0, rank)
 
@@ -800,7 +798,7 @@ class SimplicialSets(Category_singleton):
                                     sign *= -1
 
                             differentials[d] = matrix(base_ring, old_rank,
-                                                    rank, matrix_data)
+                                                      rank, matrix_data)
 
                     else:
                         rank = 0
@@ -884,6 +882,7 @@ class SimplicialSets(Category_singleton):
                 CC = self.twisted_chain_complex()
                 M1 = CC.differential(n).T
                 M2 = CC.differential(n + 1).T
+
                 def convert_to_polynomial(p):
                     if hasattr(p, "lift"):
                         return p.lift()._as_extended_polynomial()
