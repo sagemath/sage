@@ -58,7 +58,6 @@ jobs:
           eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
           eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive)
 
-
       - name: Add prebuilt tree as a worktree
         id: worktree
         run: |
