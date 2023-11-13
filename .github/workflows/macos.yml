@@ -23,7 +23,7 @@ on:
         default: >-
           [["latest", "",             "homebrew-macos-usrlocal-minimal"],
            ["latest", "",             "homebrew-macos-usrlocal-standard"],
-           ["11",     "xcode_13.2.1", "homebrew-macos-usrlocal-standard"],
+           ["11",     "xcode_13.2.1", "homebrew-macos-usrlocal-minimal],
            ["12",     "",             "homebrew-macos-usrlocal-standard"],
            ["13",     "xcode_15.0",   "homebrew-macos-usrlocal-standard"],
            ["latest", "",             "homebrew-macos-usrlocal-maximal"],
