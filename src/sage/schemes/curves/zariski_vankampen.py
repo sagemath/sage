@@ -287,7 +287,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
     - ``circuit`` --  a circuit in the graph of a Voronoi Diagram, given
       by a list of edges
 
-    - ``convex`` -- boolean (default: `False`), if set to ``True`` a simpler
+    - ``convex`` -- boolean (default: ``False``), if set to ``True`` a simpler
       computation is made
 
     -  ``precision`` -- bits of precision (default: 53)
@@ -383,7 +383,7 @@ def voronoi_cells(V, vertical_lines=[]):
 
     - ``V`` -- a corrected Voronoi diagram
 
-    - ``vertical_lines`` -- list (default: `[]`) indices of the vertical lines
+    - ``vertical_lines`` -- list (default: ``[]``) indices of the vertical lines
 
     OUTPUT:
 
@@ -1348,7 +1348,7 @@ def conjugate_positive_form(braid):
 
     INPUT:
 
-    - ``braid`` -- a braid ``\sigma``.
+    - ``braid`` -- a braid `\sigma`.
 
     OUTPUT:
 

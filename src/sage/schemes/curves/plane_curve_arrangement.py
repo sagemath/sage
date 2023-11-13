@@ -3,7 +3,7 @@ r"""
 Affine Plane Curve Arrangements
 
 We create an :class:`OrderedAffinePlaneCurveArrangements`
-object following the properties of :class:`HyperplaneArrangements`
+object following the properties of :class:`HyperplaneArrangements`::
 
     sage: H.<x, y> = OrderedAffinePlaneCurveArrangements(QQ)
     sage: C = H(3*x + 2*y - x^2 + y^3 - 7);  C
@@ -14,8 +14,8 @@ The individual curves will be in  :class:`AffinePlaneCurve`::
     sage: C[0].parent()
     <class 'sage.schemes.curves.affine_curve.IntegralAffinePlaneCurve_with_category'>
 
-The default base field is `\QQ`, the rational numbers.
-Number fields are also possible (also with fixed embeddings in ``QQbar``)::
+The default base field is `\mathbb{Q}`, the rational numbers.
+Number fields are also possible (also with fixed embeddings in `\overline{\mathbb{Q}}`)::
 
     sage: # needs sage.rings.number_field
     sage: x = polygen(QQ, 'x')
@@ -66,12 +66,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 class OrderedAffinePlaneCurveArrangementsElement(Element):
     """
     An ordered affine plane curve arrangement.
-    #
-    # .. WARNING::
-    #
-    #     You should never create
-    #     :class:`HyperplaneArrangementElement` instances directly,
-    #     always use the parent.
     """
 
     def __init__(self, parent, curves, check=True):
@@ -410,7 +404,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
     def fundamental_group(self, simplified=True, vertical=False):
         r"""
-        It computes the fundamental group of the complement of the union
+        The fundamental group of the complement of the union
         of affine plane curves in `\mathbb{C}^2`.
 
         INPUT:

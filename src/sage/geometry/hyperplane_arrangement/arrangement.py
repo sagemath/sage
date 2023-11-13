@@ -3766,7 +3766,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         It computes the fundamental group of the complement of an affine
         hyperplane arrangement in `\mathbb{C}^n`, or a projective hyperplane
         arrangement in `\mathbb{CP}^n`, `n=1,2`, whose equations have
-        coefficients in a subfield of ``QQbar``
+        coefficients in a subfield of `\overline{\mathbb{Q}}``
 
         INPUT:
 
@@ -3869,7 +3869,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         It computes the fundamental group of the complement of an affine
         hyperplane arrangement in `\mathbb{C}^n`, or a projective hyperplane
         arrangement in `\mathbb{CP}^n`, whose equations have
-        coefficients in a subfield of ``QQbar``
+        coefficients in a subfield of `\overline{\mathbb{Q}`
 
         INPUT:
 
@@ -4268,7 +4268,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
 
 class OrderedHyperplaneArrangements(HyperplaneArrangements):
     """
-    Hyperplane arrangements.
+    Ordered Hyperplane arrangements.
 
     For more information on hyperplane arrangements, see
     :mod:`sage.geometry.hyperplane_arrangement.arrangement`.
