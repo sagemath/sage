@@ -2,13 +2,13 @@
 # Apply open PRs labeled "blocker" from sagemath/sage as patches.
 # This script is invoked by various workflows in .github/workflows
 #
-# The repository secret SAGE_CI_FIXES_FROM_REPOS can be set
+# The repository variable SAGE_CI_FIXES_FROM_REPOS can be set
 # to customize this for CI runs in forks:
 #
 # - If set to a whitespace-separated list of repositories, use them instead of sagemath/sage.
 # - If set to "none", do not apply any PRs.
 #
-# https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository
+# https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
 export GIT_AUTHOR_NAME="ci-sage workflow"
 export GIT_AUTHOR_EMAIL="ci-sage@example.com"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
@@ -74,7 +74,7 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
             fi
             ;;
         *)
-            echo "Repository secret SAGE_CI_FIXES_FROM_REPOSITORIES, if set, should be a whitespace-separated list of repositories or 'none'"
+            echo "Repository variable SAGE_CI_FIXES_FROM_REPOSITORIES, if set, should be a whitespace-separated list of repositories or 'none'"
             echo "Got: $SAGE_CI_FIXES_FROM_REPOSITORIES"
             exit 1
             ;;
