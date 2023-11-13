@@ -54,3 +54,4 @@ lazy_import('sage.combinat.designs.covering_design',
 
 from sage.combinat.designs import design_catalog as designs
 del lazy_import
+del install_doc

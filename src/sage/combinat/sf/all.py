@@ -46,3 +46,4 @@ lazy_import('sage.combinat.sf.ns_macdonald', ['NonattackingFillings',
                                               'AugmentedLatticeDiagramFilling',
                                               'LatticeDiagram'])
 del lazy_import
+del install_doc

@@ -143,3 +143,4 @@ lazy_import('sage.combinat.root_system.non_symmetric_macdonald_polynomials',
 lazy_import('sage.combinat.root_system.integrable_representations',
             'IntegrableRepresentation')
 del lazy_import
+del install_doc
