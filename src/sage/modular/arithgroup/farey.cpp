@@ -29,7 +29,7 @@
 #include <Python.h>
 
 #include "farey.hpp"
-#include "farey_symbol.h"
+#include "sage/modular/arithgroup/farey_symbol.h"
 
 
 using namespace std;
