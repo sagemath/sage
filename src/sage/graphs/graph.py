@@ -4476,6 +4476,82 @@ class Graph(GenericGraph):
         # The graph is factor critical if all vertices are marked even
         return len(even) == self.order()
 
+    def is_valid_hom(G, H, hom):
+    r"""
+    Check if `hom` is a valid homomorphism from `G` to `H`.
+
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``H`` -- a Sage graph, as target of the homomorphism
+
+    - ``hom`` -- a graph homomorphism
+
+    OUTPUT:
+
+    - `True` if `hom` is a valid homomorphism from `G` to `H`, `False` otherwise
+
+    EXAMPLES::
+
+        sage: Petersen = graphs.PetersenGraph()
+        sage: K3 = graphs.CompleteGraph(3)
+        sage: hom = Petersen.has_homomorphism_to(K3); hom
+        {0: 0, 1: 1, 2: 2, 3: 0, 4: 2, 5: 1, 6: 0, 7: 0, 8: 2, 9: 1}
+        sage: is_valid_hom(P, K3, hom)
+        True
+    """
+    if not isinstance(G, Graph):
+        raise ValueError("the first argument must be a sage Graph")
+    if not isinstance(H, Graph):
+        raise ValueError("the second argument must be a sage Graph")
+
+    G._scream_if_not_simple()
+    H._scream_if_not_simple()
+
+    return all(H.has_edge(hom[u], hom[v]) for (u, v) in G.edges(labels=False))
+
+    def enum_homs(bag, target_graph): # TODO ask better approach or algo
+        r"""
+        Enumerate all graph homomorphisms from vertices of `bag` to `target_graph`
+        """
+        homs = deque()
+
+        sorted_H = sorted(target_graph)
+
+        for bag_vtx in bag:
+            hom_pairs = []
+            for target_vtx in sorted_H:
+                hom_pairs.append({bag_vtx, target_vtx})
+
+            homs.append(hom_pairs)
+
+        return homs
+
+    # def enumerate_functions(vertices, g):
+    #     # Initialize a queue to store partial and complete mappings from 'vertices' to 'g'
+    #     mappings_queue = deque([[]])
+
+    #     # Iterate through each vertex in the input set 'vertices'
+    #     for vertex in vertices:
+    #         for _ in range(len(mappings_queue)):
+    #             current_mapping = mappings_queue.popleft()
+
+    #             # For each vertex in 'g', create a new mapping by pairing it with 'vertex'
+    #             for target_vertex in range(g.num_verts()):
+    #                 extended_mapping = current_mapping + [(vertex, target_vertex)]
+    #                 mappings_queue.append(extended_mapping)
+
+    #     # Convert all the mappings in the queue to a list of mappings (or functions)
+    #     functions = list(mappings_queue)
+
+    #     return functions
+
+    # # Example usage
+    # G = graphs.CompleteGraph(3)
+    # vertices = [0, 1, 2]
+    # functions = enumerate_functions(vertices, G)
+
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
                             *, integrality_tolerance=1e-3):
