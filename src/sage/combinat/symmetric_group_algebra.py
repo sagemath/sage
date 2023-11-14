@@ -686,7 +686,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         from sage.combinat.posets.posets import Poset
         from sage.combinat.partition import Partitions
-        return Poset([Partitions(self.n), lambda x, y: x.dominates(y)])
+        return Poset([Partitions(self.n), lambda x, y: y.dominates(x)])
 
     def cell_module_indices(self, la):
         r"""
@@ -713,25 +713,65 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: S = SymmetricGroupAlgebra(QQ, 3)
             sage: C = S.cellular_basis()
             sage: [S._from_cellular_index(i) for i in C.basis().keys()]
-            [1/6*[1, 2, 3] + 1/6*[1, 3, 2] + 1/6*[2, 1, 3]
-                 + 1/6*[2, 3, 1] + 1/6*[3, 1, 2] + 1/6*[3, 2, 1],
+            [1/6*[1, 2, 3] - 1/6*[1, 3, 2] - 1/6*[2, 1, 3] + 1/6*[2, 3, 1]
+                 + 1/6*[3, 1, 2] - 1/6*[3, 2, 1],
              1/3*[1, 2, 3] + 1/6*[1, 3, 2] - 1/3*[2, 1, 3] - 1/6*[2, 3, 1]
                  - 1/6*[3, 1, 2] + 1/6*[3, 2, 1],
              1/3*[1, 3, 2] + 1/3*[2, 3, 1] - 1/3*[3, 1, 2] - 1/3*[3, 2, 1],
              1/4*[1, 3, 2] - 1/4*[2, 3, 1] + 1/4*[3, 1, 2] - 1/4*[3, 2, 1],
              1/3*[1, 2, 3] - 1/6*[1, 3, 2] + 1/3*[2, 1, 3] - 1/6*[2, 3, 1]
                  - 1/6*[3, 1, 2] - 1/6*[3, 2, 1],
-             1/6*[1, 2, 3] - 1/6*[1, 3, 2] - 1/6*[2, 1, 3] + 1/6*[2, 3, 1]
-                 + 1/6*[3, 1, 2] - 1/6*[3, 2, 1]]
+             1/6*[1, 2, 3] + 1/6*[1, 3, 2] + 1/6*[2, 1, 3]
+                 + 1/6*[2, 3, 1] + 1/6*[3, 1, 2] + 1/6*[3, 2, 1]]
+
+            sage: S = SymmetricGroupAlgebra(GF(3), 3)
+            sage: C = S.cellular_basis()
+            sage: [S._from_cellular_index(i) for i in C.basis().keys()]
+            [[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1],
+             [1, 2, 3] + [2, 1, 3],
+             [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [3, 1, 2],
+             [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1],
+             [1, 2, 3] + [1, 3, 2],
+             [1, 2, 3]]
+            sage: TestSuite(C).run()
         """
+        if ~factorial(self.n) not in self.base_ring():
+            from sage.combinat.rsk import RSK_inverse
+            from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+            G = self.basis().keys()
+            one = self.base_ring().one()
+            # check if the KL polynomials can be computed using ``coxeter3``
+            try:
+                from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
+            except ImportError:
+                # Falback to using the KL polynomial
+                from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
+                q = PolynomialRing(self.base_ring(), 'q').gen()
+                KLG = SymmetricGroup(self.n)
+                self._cellular_KL = KazhdanLusztigPolynomial(KLG, q)
+                polyfunc = self._cellular_KL.P
+            else:
+                self._cellular_KL = Coxeter3Group(['A', self.n+1])
+                KLG = self._cellular_KL
+                polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
+
+            def func(S, T, mult=None):
+                w = KLG.from_reduced_word(RSK_inverse(T, S, output="permutation").reduced_word())
+                bruhat = RecursivelyEnumeratedSet([w], lambda u: u.bruhat_lower_covers(), structure='graded')
+                return self.element_class(self, {G.from_reduced_word(v.reduced_word()): c(q=one)
+                                                 for v in bruhat if (c := polyfunc(v, w))})
+
+        else:
+            func = self.epsilon_ik
+
         SGA = SymmetricGroupAlgebra(self.base_ring(), self.n)
         P = self.basis().keys()
         if SGA.basis().keys() is P:  # Indexed by permutations
-            return self.epsilon_ik(x[1], x[2])
+            return func(x[1], x[2])
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         if P == SymmetricGroup(self.n):
-            return self.epsilon_ik(x[1], x[2])
-        ret = SGA.epsilon_ik(x[1], x[2], mult='r2l')
+            return func(x[1], x[2])
+        ret = func(x[1], x[2], mult='r2l')
         try:
             return self(ret)
         except TypeError:

@@ -321,7 +321,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             basis to the `(T_w)_{w\in W}` of the Hecke algebra of `W` with
             parameters `q` and `q^{-1}`:
 
-                .. MATH:: C_w = \sum_u  P_{u,w} T_w
+                .. MATH:: C_w = \sum_u  P_{u,w} T_u.
 
             In particular, `P_{u,u}=1`::
 
