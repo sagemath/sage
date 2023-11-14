@@ -35,7 +35,7 @@ farey_symbol_header = custom_target(
   input : 'farey_symbol.pyx',
   install: true,
   install_dir: '.',
-  command : ['cython', '--cplus', '@INPUT@', '-o', '@OUTPUT@'],
+  command : ['cython', '--cplus', '@INPUT@', '-o', '@OUTPUT@', '-I', '../../../'],
 )
 
 extension_data_cpp = {
