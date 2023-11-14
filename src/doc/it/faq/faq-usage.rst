@@ -81,15 +81,16 @@ Come posso far riconoscere la mia attuale installazione di Tcl/Tk all'interprete
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Potresti avere la libreria Tcl/Tk installata e l'interprete Python del
-tuo sistema la riconosce ma l'interprete Python di Sage no.
-Per risolvere questo ti basta installare la libreria di sviluppo
-Tcl/Tk. Su Ubuntu lancia, da riga di comando::
+tuo sistema la riconosce ma l'interprete Python di Sage no. Ad oggi (2023)
+solitamente non c'è bisogno di compilare l'interprete Python di Sage, ma se ne
+hai bisogno, segui queste istruzioni. Controlla di aver installato la libreria
+di sviluppp Tcl/Tk. Su Ubuntu lancia, da riga di comando::
 
     sudo apt-get install tk8.5-dev
 
 o qualcosa di simile. Poi reinstalla l'interprete Python di Sage con::
 
-    sage -f python
+    make python3-clean python3-uninstall && make python3
 
 Questo aggancerà automaticamente la libreria Tcl/Tk.
 Dopo aver reinstallato correttamente l'interprete Python di Sage,
