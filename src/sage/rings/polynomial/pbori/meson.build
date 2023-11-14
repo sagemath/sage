@@ -3,11 +3,8 @@ brial = declare_dependency(
     cc.find_library('brial', required: false),
   ]
 )
-brial_groebner = declare_dependency(
-  dependencies: [
-    cc.find_library('brial-groebner', required: false),
-  ]
-)
+# Cannot be found via pkg-config
+brial_groebner = cc.find_library('brial_groebner')
 
 py.install_sources(
     'PyPolyBoRi.py',

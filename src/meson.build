@@ -127,6 +127,7 @@ curl = declare_dependency(
     cc.find_library('curl'),
   ]
 )
+# Cannot be found via pkg-config
 ec = declare_dependency(
   dependencies: [
     cc.find_library('ec'),

@@ -41,6 +41,6 @@ endforeach
 
 install_subdir('hyperbolic_space', install_dir: sage_install_dir / 'geometry')
 install_subdir('hyperplane_arrangement', install_dir: sage_install_dir / 'geometry')
-install_subdir('polyhedron', install_dir: sage_install_dir / 'geometry')
+subdir('polyhedron')
 install_subdir('riemannian_manifolds', install_dir: sage_install_dir / 'geometry')
 subdir('triangulation')

@@ -101,7 +101,7 @@ foreach name, pyx : extension_data
 endforeach
 
 extension_data_cpp = {
-    'bernmm': files('bernmm.pyx'),
+    'bernmm': files('bernmm.pyx', 'bernmm/bern_modp.cpp', 'bernmm/bern_modp_util.cpp'),#, 'bernmm/bern_rat.cpp'), - TODO: Compilation error
     'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
     'fraction_field_FpT': files('fraction_field_FpT.pyx'),
     'rational': files('rational.pyx'),

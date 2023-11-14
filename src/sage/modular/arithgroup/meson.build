@@ -28,7 +28,7 @@ foreach name, pyx : extension_data
 endforeach
 
 extension_data_cpp = {
-    'farey_symbol': files('farey_symbol.pyx'),
+    'farey_symbol': files('farey_symbol.pyx', 'sl2z.cpp', 'farey.cpp'),
 }
 
 foreach name, pyx : extension_data_cpp

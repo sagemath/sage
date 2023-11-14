@@ -20,7 +20,7 @@ py.install_sources(
 )
 
 extension_data_cpp = {
-    'hypellfrob': files('hypellfrob.pyx'),
+    'hypellfrob': files('hypellfrob.pyx', 'hypellfrob/hypellfrob.cpp', 'hypellfrob/recurrences_ntl.cpp'),
 }
 
 foreach name, pyx : extension_data_cpp
