@@ -1,8 +1,3 @@
-ginac = declare_dependency(
-  dependencies: [
-    cc.find_library('ginac', required: false),
-  ],
-)
 inc_ginac = include_directories('ginac')
 inc_pynac = include_directories('.')
 
@@ -41,7 +36,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/symbolic',
         install: true,
         include_directories: [inc_cpython, inc_ext, inc_ginac, inc_gsl, inc_pynac, inc_rings],
-        dependencies: [py_dep, cypari2, cysignals, flint, ginac, gmp, gsl, mpfr, pari, singular],
+        dependencies: [py_dep, cypari2, cysignals, flint, gmp, gsl, mpfr, pari, singular],
     )
 endforeach
 
@@ -109,7 +104,7 @@ foreach name, pyx : extension_data_cpp
         override_options : ['cython_language=cpp'],
         cpp_args : '-std=c++11',
         include_directories: [inc_cpython, inc_ext, inc_ginac, inc_gsl, inc_pynac, inc_rings, include_directories('../libs/gmp')],
-        dependencies: [py_dep, cypari2, cysignals, gmp, flint, ginac, gsl, m, mpfr, pari, singular],
+        dependencies: [py_dep, cypari2, cysignals, gmp, flint, gsl, m, mpfr, pari, singular],
     )
 endforeach
 
