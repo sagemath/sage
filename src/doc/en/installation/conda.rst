@@ -139,11 +139,8 @@ Here we assume that you are using a git checkout.
   - Bootstrap the source tree and install the build prerequisites and the Sage library::
 
       $ ./bootstrap
-      $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_meson ./pkgs/sage-setup
+      $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_conda ./pkgs/sage-setup
       $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
-
-    In case of errors, try to use ``sage-conf_conda`` instead of ``sage-conf_meson``,
-    and please report the problem by opening an issue on GitHub.
 
   - Verify that Sage has been installed::
 
