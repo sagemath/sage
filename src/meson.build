@@ -218,6 +218,8 @@ mpc = declare_dependency(
 # Cannot be found via pkg-config
 gap = cc.find_library('gap')
 
+singular = dependency('Singular')
+
 # It's strange but cython cannot find its own include files
 # so we find them ourselves, and add them to the include path
 inc_cython = run_command(py,

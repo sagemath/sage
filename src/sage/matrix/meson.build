@@ -94,7 +94,7 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, arb, cblas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, zlib],
+        dependencies: [py_dep, arb, cblas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, singular, zlib],
     )
 endforeach
 

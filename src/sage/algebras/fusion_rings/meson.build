@@ -33,7 +33,7 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_cpython, inc_ntl, inc_numpy, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
+        dependencies: [py_dep, cysignals, gmp, singular],
     )
 endforeach
 

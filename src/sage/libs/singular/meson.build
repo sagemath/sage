@@ -21,7 +21,7 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_cpython, inc_ntl, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, cysignals, givaro, gmp],
+        dependencies: [py_dep, cysignals, givaro, gmp, singular],
     )
 endforeach
 

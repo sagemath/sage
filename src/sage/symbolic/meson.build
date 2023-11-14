@@ -1,4 +1,3 @@
-singular = dependency('Singular')
 ginac = declare_dependency(
   dependencies: [
     cc.find_library('ginac', required: false),
