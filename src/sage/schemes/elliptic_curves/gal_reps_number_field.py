@@ -435,7 +435,7 @@ class GaloisRepresentation(SageObject):
             True
             sage: E = EllipticCurve('121a1')
             sage: G = GaloisRepresentation(E)
-            sage: G.is_borel(11)
+            sage: G.is_borel(11) # long time
             True
             sage: E = EllipticCurve('147c1')
             sage: G = GaloisRepresentation(E)

@@ -10,7 +10,7 @@ One major difference to elliptic curves over `\QQ` is that there might
 not exist a global minimal equation over `K`, when `K` does not have
 class number one.  When a minimal model does exist the method
 :meth:`global_minimal_model()` will compute it, and otherwise compute
-a model which is miniaml at all primes except one.  Another difference
+a model which is minimal at all primes except one.  Another difference
 is the relative lack of understanding of modularity for elliptic
 curves over general number fields; the method :meth:`is_modular()`
 does implement recent methods to prove modularity of elliptic curves,
@@ -4075,8 +4075,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         return [E(pt) for pt in Curve(self).rational_points(**kwds)]
 
     def is_modular(self, verbose=False):
-        r"""
-        Return ``True`` if the base field is totally real or imaginary
+        r"""Return ``True`` if the base field is totally real or imaginary
         quadratic and modularity of this curve can be proved,
         otherwise ``False``.
 
@@ -4114,8 +4113,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         This is based on code provided by S. Siksek for the totally
         real case, and relies on theorems in the following papers:
-        [Chen1996]_, [FLHS2015]_, [Thorne2016]_, [CarNew2023]_,
-        [DNS2020]_, [Box2022]_.
+        [Wiles1995]_, [Breuil2001]_, [Chen1996]_, [FLHS2015]_,
+        [Thorne2016]_, [CarNew2023]_, [DNS2020]_, [Box2022]_.
 
         It relies on checking that the images of the mod-`p` Galois
         representation attached to the elliptic curve for `p=3,5,7`
@@ -4123,6 +4122,35 @@ class EllipticCurve_number_field(EllipticCurve_field):
         `\QQ`, real quadratic, totally real cubic, or totally real quartic
         not containing `\sqrt{5}`) where theoretical results show this to
         be impossible.
+
+        Over `\QQ`: all curves are modular with no further checks
+        needed, by [Wiles1995]_ and [Breuil2001]_.
+
+        Over real quadratic fields:  all curves are modular with no further checks
+        needed, by [FLHS2015]_.
+
+        Over totally real cubic fields:  all curves are modular with no further checks
+        needed, by [DNS2020]_.
+
+        Over totally real quartic fields not containing `\sqrt{5}`:
+        all curves are modular with no further checks needed, by
+        [Box2022]_.
+
+        Over other totally real fields: modularity is implied by
+        conditions on the mod-`\ell` representations for `\ell=3,5,7`
+        by [FLHS2015]_.  It is sufficient for one of the following to
+        hold: (1) the image of the mod-3 representation is not
+        contained in either a Borel or the normaliser of a split
+        Cartan subgroup; (2) image of the mod-5 representation is
+        irreducible, and either 5 is not square in the field, or the
+        image is not contained in the normaliser of either a split or
+        nonsplt Cartan subgroup; (3) the image of the mod-7
+        representation is be not contained in either a Borel or the
+        normaliser of a split or nonsplt Cartan subgroup.
+
+        Over imaginary quadratic fields: by [CarNew2023]_, it is
+        sufficient for the mod-3 or mod-5 images to satisfy conditions
+        (1) or (2) above, respectively.
 
         EXAMPLES:
 
@@ -4168,7 +4196,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.is_modular(verbose=True)
             Modularity not established: this curve has small image at 3 and 5
             False
-            sage: EllipticCurve('15a1').change_ring(K).rank()
+            sage: EllipticCurve('15a1').change_ring(K).rank() # long time
             1
 
         Nevertheless, over the same field, most curves pass::
@@ -4189,11 +4217,12 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.is_modular(verbose=True)
             Unable to determine modularity except over totally real and imaginary quadratic fields
             False
+
         """
         K = self.base_field()
         d = K.degree()
 
-        if d == 1: # base field QQ
+        if d == 1: # base field QQ: [Wiles1995], [Breuil2001]
             if verbose:
                 print("All elliptic curves over QQ are modular")
             return True

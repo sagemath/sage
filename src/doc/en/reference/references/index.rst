@@ -1171,6 +1171,10 @@ REFERENCES:
 .. [Bre1997] \T. Breuer "Integral bases for subfields of cyclotomic
              fields" AAECC 8, 279--289 (1997).
 
+.. [Breuil2001] Breuil, Christophe, Brian Conrad, Fred Diamond, and Richard Taylor.
+                *On the modularity of elliptic curves over Q: wild 3-adic exercises*.
+                Journal of the American Mathematical Society 14, no. 4 (2001): 843-940.
+
 .. [Bre2000] Enno Brehm, *3-Orientations and Schnyder 3-Tree-Decompositions*,
              2000.
              https://page.math.tu-berlin.de/~felsner/Diplomarbeiten/brehm.ps.gz
@@ -6211,6 +6215,10 @@ REFERENCES:
 
 .. [Wie2000] \B. Wieland. *A large dihedral symmetry of the set of
              alternating sign matrices*. Electron. J. Combin. 7 (2000).
+
+.. [Wiles1995] Andrew Wiles.
+               *Modular elliptic curves and Fermat's last theorem*.
+               Annals of mathematics, 141(3), 443-551.
 
 .. [Wilson2008] Steve Wilson. *Rose Window Graphs*. Ars Mathematica
                 Contemporanea 1(1):7-19, 2008.
