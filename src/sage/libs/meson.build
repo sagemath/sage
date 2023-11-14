@@ -3,6 +3,9 @@ sirocco = declare_dependency(
     cc.find_library('sirocco', required: false),
   ]
 )
+# cannot be found via pkg-config
+ecl = cc.find_library('ecl')
+
 py.install_sources(
     'all.py',
     'all__sagemath_coxeter3.py',
@@ -19,7 +22,7 @@ extension_data = {
     #'meataxe': files('meataxe.pyx'), # not yet on conda - need meataxe
 }
 
-dependencies = [py_dep, braiding, cysignals, ecm, gc, gmp, homfly, mtx, sirocco]
+dependencies = [py_dep, braiding, cysignals, ecl, ecm, gc, gmp, homfly, mtx, sirocco]
 
 if sirocco.found()
     #extension_data['sirocco'] += files('sirocco.pxd') # not yet on conda
