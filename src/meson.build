@@ -209,7 +209,6 @@ mpfi = declare_dependency(
     cc.find_library('mpfi'),
   ]
 )
-gsl = dependency('gsl')
 mpc = declare_dependency(
   dependencies: [
     cc.find_library('mpc'),
