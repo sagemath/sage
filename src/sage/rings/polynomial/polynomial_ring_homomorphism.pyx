@@ -36,7 +36,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
                   To:   Rational Field
 
     """
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Evaluate the homomorphism ``self`` at ``x``.
 
@@ -55,7 +55,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: g = QQ.hom(RR)
             sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)
             sage: G(A.gen()^1000000)
-            1.00000000000000*x^1000000
+            1.0...*x^1000000
 
         """
         P = self.codomain()
@@ -65,7 +65,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
         else:
             return P([f(b) for b in x])
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
         """
         Evaluate ``self`` at ``x`` with additional (keyword) arguments.
 
@@ -76,9 +76,10 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: S = GF(5)['x']
             sage: f = ZZ.hom(GF(5))
             sage: F = PolynomialRingHomomorphism_from_base(R.Hom(S), f)
-            sage: F(2*x, check=True)
+            sage: F(2 * x, check=True)
             2*x
 
+            sage: # needs sage.rings.finite_rings
             sage: k = GF(49, 'z')
             sage: A = PolynomialRing(GF(7), 'x', sparse=True)
             sage: B = PolynomialRing(k, 'x', sparse=True)

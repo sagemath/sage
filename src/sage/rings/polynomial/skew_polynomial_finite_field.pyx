@@ -22,11 +22,10 @@ AUTHOR::
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
 
 from sage.structure.element cimport parent
-from sage.rings.ring cimport Ring
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.matrix.matrix_space import MatrixSpace
@@ -34,11 +33,8 @@ from sage.matrix.matrix2 import NotFullRankError
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial as SkewPolynomial
 from sage.rings.polynomial.skew_polynomial_finite_order cimport SkewPolynomial_finite_order_dense
 
-from sage.combinat.permutation import Permutation, Permutations
-from sage.combinat.partition import Partition
 from sage.structure.factorization import Factorization
 from sage.misc.mrange import xmrange_iter
 from sage.misc.prandom import sample
@@ -47,7 +43,7 @@ from sage.combinat.q_analogues import q_jordan
 
 
 cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
-    cdef inline _reduced_norm_factored(self):
+    cdef inline _reduced_norm_factored(self) noexcept:
         """
         Return the reduced norm of this polynomial factorized in the center.
         """
@@ -216,7 +212,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
     # Finding divisors
     # ----------------
 
-    cdef SkewPolynomial_finite_field_dense _rdivisor_c(self, N):
+    cdef SkewPolynomial_finite_field_dense _rdivisor_c(self, N) noexcept:
         r"""
         Return a right divisor of this skew polynomial whose
         reduced norm is `N`.
@@ -633,7 +629,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^4 + 2*t*x^3 + 3*t^2*x^2 + (t^2 + t + 1)*x + 4*t + 3
             sage: iter = a.right_irreducible_divisors(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)   # random
             x + 2*t^2 + 4*t + 4
             sage: next(iter)   # random
@@ -668,7 +664,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^4 + 2*t*x^3 + 3*t^2*x^2 + (t^2 + t + 1)*x + 4*t + 3
             sage: iter = a.left_irreducible_divisors(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)  # random
             x + 3*t + 3
             sage: next(iter)  # random
@@ -751,7 +747,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
     # Finding factorizations
     # ----------------------
 
-    cdef _factor_c(self):
+    cdef _factor_c(self) noexcept:
         r"""
         Compute a factorization of ``self``.
 
@@ -822,7 +818,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         factors.reverse()
         return Factorization(factors, sort=False, unit=unit)
 
-    cdef _factor_uniform_c(self):
+    cdef _factor_uniform_c(self) noexcept:
         r"""
         Compute a uniformly distributed factorization of ``self``.
 
@@ -1040,9 +1036,9 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             count /= factorial(m)
         return count * factorial(summ)
 
-
     # Not optimized:
     # many calls to reduced_norm, reduced_norm_factor, _rdivisor_c, which are slow
+
     def factorizations(self):
         r"""
         Return an iterator over all factorizations (as a product
@@ -1056,7 +1052,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             sage: S.<x> = k['x',Frob]
             sage: a = x^3 + (t^2 + 1)*x^2 + (2*t + 3)*x + t^2 + t + 2
             sage: iter = a.factorizations(); iter
-            <generator object at 0x...>
+            <...generator object at 0x...>
             sage: next(iter)   # random
             (x + 3*t^2 + 4*t) * (x + 2*t^2) * (x + 4*t^2 + 4*t + 2)
             sage: next(iter)   # random
@@ -1083,7 +1079,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         we can get different orderings::
 
             sage: factorizations2 = [ F for F in a.factorizations() ]
-            sage: factorizations == factorizations2
+            sage: factorizations == factorizations2  # random
             False
             sage: sorted(factorizations) == sorted(factorizations2)
             True

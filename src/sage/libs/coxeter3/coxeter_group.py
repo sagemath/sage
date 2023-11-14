@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-coxeter3
+
 """
 Coxeter Groups implemented with Coxeter3
 """
@@ -15,7 +16,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.richcmp import richcmp
-from sage.categories.all import CoxeterGroups
+from sage.categories.coxeter_groups import CoxeterGroups
 from sage.structure.parent import Parent
 
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
@@ -37,7 +38,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1} implemented by Coxeter3
 
         """
-        from sage.combinat.all import CartanType
+        from sage.combinat.root_system.cartan_type import CartanType
         ct = CartanType(cartan_type)
         return super().__classcall__(cls, ct, *args, **options)
 
@@ -71,7 +72,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W = CoxeterGroup(['A', 3, 1], implementation='coxeter3'); W   # optional - coxeter3
             Coxeter group of type ['A', 3, 1] implemented by Coxeter3
         """
-        return "Coxeter group of type %s implemented by Coxeter3"%(self.cartan_type())
+        return "Coxeter group of type %s implemented by Coxeter3" % (self.cartan_type())
 
     def __iter__(self):
         """

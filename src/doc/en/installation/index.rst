@@ -1,8 +1,8 @@
 .. _installation-guide:
 
-=======================================
-Welcome to the Sage Installation Guide!
-=======================================
+==================================
+Welcome to Sage Installation Guide
+==================================
 
 If you are reading this manual at https://doc.sagemath.org/, note that
 it was built at the time the most recent stable release of SageMath
@@ -25,7 +25,7 @@ macOS
 
     Obtain the SageMath sources via ``git`` as described in `The Sage
     Developer's Guide
-    <https://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
+    <https://doc.sagemath.org/html/en/developer/walkthrough.html#chapter-walkthrough>`_.
 
     - Then build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
@@ -62,6 +62,8 @@ Windows
     `official WSL setup guide
     <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
     sure to do the steps to install WSL2 and set it as default.
+    Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
+    2GB might not allow you to build some packages.
     Then go to the Microsoft Store and install Ubuntu (or another
     Linux distribution). Start Ubuntu from the start menu.
 
@@ -73,6 +75,8 @@ Windows
       `official WSL setup guide
       <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
       sure to do the steps to install WSL2 and set it as default.
+      Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
+      2GB might not allow you to build some packages.
       Then go to the Microsoft Store and install Ubuntu (or another
       Linux distribution). Start Ubuntu from the start menu.
 
@@ -89,7 +93,7 @@ Linux
 
     Obtain the SageMath sources via ``git`` as described in `The Sage
     Developer's Guide
-    <https://doc.sagemath.org/html/en/developer/walk_through.html#chapter-walkthrough>`_.
+    <https://doc.sagemath.org/html/en/developer/walkthrough.html#chapter-walkthrough>`_.
 
     - Then build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
@@ -123,16 +127,17 @@ Linux
 In the cloud
 ============
 
-- `CoCalc <https://cocalc.com/>`_: an online service that provides SageMath and
+- `Sage Binder repo <https://github.com/sagemath/sage-binder-env>`_ provides a
+  Binder badge to launch JupyterLab environment with Sage.
+
+- `Sage Cell Server <https://sagecell.sagemath.org/>`_ is a free online service for
+  quick computations with Sage.
+
+- `CoCalc <https://cocalc.com/>`_ is an online commercial service that provides Sage and
   many other tools.
 
-- On any system that allows you to bring your own Docker images to run
-  in a container: Use the `Docker image sagemathinc/cocalc
-  <https://hub.docker.com/r/sagemathinc/cocalc>`_ or :trac:`another Docker
-  image providing SageMath <wiki/Distribution#Dockerimages>`.
-
-- `Sage Cell Server <https://sagecell.sagemath.org/>`_: an online service for
-  elementary SageMath computations.
+- `Docker image sagemathinc/cocalc
+  <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
 
 More information:

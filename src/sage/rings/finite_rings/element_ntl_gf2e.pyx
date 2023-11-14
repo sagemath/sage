@@ -15,18 +15,18 @@ AUTHORS:
 - Martin Albrecht <malb@informatik.uni-bremen.de> (2007-10)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 include "sage/libs/ntl/decl.pxi"
@@ -34,11 +34,9 @@ from cypari2.paridecl cimport *
 
 from sage.structure.richcmp cimport (richcmp,
                                      richcmp_not_equal, rich_to_bool)
-from sage.structure.element cimport Element, ModuleElement, RingElement
 
 from sage.structure.parent cimport Parent
-
-from sage.rings.ring cimport Ring
+from sage.structure.element cimport Vector
 
 from sage.rings.finite_rings.finite_field_base cimport FiniteField
 
@@ -46,27 +44,17 @@ from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
-from sage.misc.randstate import current_randstate
-from sage.arith.long cimport pyobject_to_long
-
 from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
 from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.interfaces.abc import GapElement
 
 
 cdef object is_IntegerMod
-cdef object IntegerModRing_generic
 cdef object Integer
 cdef object Rational
-cdef object is_Polynomial
-cdef object ConwayPolynomials
-cdef object conway_polynomial
 cdef object MPolynomial
 cdef object Polynomial
-cdef object FreeModuleElement
 cdef object GF
 cdef object GF2, GF2_0, GF2_1
 
@@ -77,15 +65,10 @@ cdef int late_import() except -1:
     imports.
     """
     global is_IntegerMod, \
-           IntegerModRing_generic, \
            Integer, \
            Rational, \
-           is_Polynomial, \
-           ConwayPolynomials, \
-           conway_polynomial, \
            MPolynomial, \
            Polynomial, \
-           FreeModuleElement, \
            GF, \
            GF2, GF2_0, GF2_1
 
@@ -95,29 +78,14 @@ cdef int late_import() except -1:
     import sage.rings.finite_rings.integer_mod
     is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
 
-    import sage.rings.finite_rings.integer_mod_ring
-    IntegerModRing_generic = sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic
-
     import sage.rings.rational
     Rational = sage.rings.rational.Rational
-
-    import sage.rings.polynomial.polynomial_element
-    is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
-
-    import sage.databases.conway
-    ConwayPolynomials = sage.databases.conway.ConwayPolynomials
-
-    import sage.rings.finite_rings.conway_polynomials
-    conway_polynomial = sage.rings.finite_rings.conway_polynomials.conway_polynomial
 
     import sage.rings.polynomial.multi_polynomial_element
     MPolynomial = sage.rings.polynomial.multi_polynomial_element.MPolynomial
 
     import sage.rings.polynomial.polynomial_element
     Polynomial = sage.rings.polynomial.polynomial_element.Polynomial
-
-    import sage.modules.free_module_element
-    FreeModuleElement = sage.modules.free_module_element.FreeModuleElement
 
     import sage.rings.finite_rings.finite_field_constructor
     GF = sage.rings.finite_rings.finite_field_constructor.FiniteField
@@ -128,10 +96,10 @@ cdef int late_import() except -1:
 cdef extern from "arpa/inet.h":
     unsigned int htonl(unsigned int)
 
-cdef little_endian():
+cdef little_endian() noexcept:
     return htonl(1) != 1
 
-cdef unsigned int switch_endianess(unsigned int i):
+cdef unsigned int switch_endianess(unsigned int i) noexcept:
     cdef size_t j
     cdef unsigned int ret = 0
     for j in range(sizeof(int)):
@@ -237,7 +205,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         mod_poly = GF2XModulus_GF2X(modulus)
         print(ccrepr(mod_poly))
 
-    cdef FiniteField_ntl_gf2eElement _new(self):
+    cdef FiniteField_ntl_gf2eElement _new(self) noexcept:
         """
         Return a new element in ``self``. Use this method to construct
         'empty' elements.
@@ -321,7 +289,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         elif isinstance(e, str):
             return self._parent(eval(e.replace("^","**"),self._parent.gens_dict()))
 
-        elif isinstance(e, FreeModuleElement):
+        elif isinstance(e, Vector):
             if self._parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ztmp = Integer(e.list(),2)
@@ -406,7 +374,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         raise ValueError("Cannot coerce element %s to this field." % e)
 
-    cpdef FiniteField_ntl_gf2eElement fetch_int(self, number):
+    cpdef FiniteField_ntl_gf2eElement fetch_int(self, number) noexcept:
         r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns
@@ -540,7 +508,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             self._parent = parent
             (<Cache_ntl_gf2e>self._parent._cache).F.restore()
 
-    cdef FiniteField_ntl_gf2eElement _new(FiniteField_ntl_gf2eElement self):
+    cdef FiniteField_ntl_gf2eElement _new(FiniteField_ntl_gf2eElement self) noexcept:
         cdef FiniteField_ntl_gf2eElement y
         (<Cache_ntl_gf2e>self._parent._cache).F.restore()
         y = FiniteField_ntl_gf2eElement.__new__(FiniteField_ntl_gf2eElement)
@@ -686,7 +654,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         else:
             return a
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two elements.
 
@@ -702,7 +670,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_add(r.x, (<FiniteField_ntl_gf2eElement>self).x, (<FiniteField_ntl_gf2eElement>right).x)
         return r
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply two elements.
 
@@ -718,7 +686,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_mul(r.x, (<FiniteField_ntl_gf2eElement>self).x, (<FiniteField_ntl_gf2eElement>right).x)
         return r
 
-    cpdef _div_(self, other):
+    cpdef _div_(self, other) noexcept:
         """
         Divide two elements.
 
@@ -741,7 +709,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_div(r.x, self.x, o.x)
         return r
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two elements.
 
@@ -790,7 +758,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         cdef FiniteField_ntl_gf2eElement o = self._parent._cache._one_element
         return o._div_(self)
 
-    cdef _pow_long(self, long n):
+    cdef _pow_long(self, long n) noexcept:
         """
         EXAMPLES::
 
@@ -829,7 +797,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_power(r.x, self.x, n)
         return r
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Comparison of finite field elements.
 
@@ -1004,8 +972,8 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: e.polynomial()
             a^15 + a^13 + a^11 + a^10 + a^9 + a^8 + a^7 + a^6 + a^4 + a + 1
 
-            sage: from sage.rings.polynomial.polynomial_element import is_Polynomial
-            sage: is_Polynomial(e.polynomial())
+            sage: from sage.rings.polynomial.polynomial_element import Polynomial
+            sage: isinstance(e.polynomial(), Polynomial)
             True
 
             sage: e.polynomial('x')
@@ -1184,9 +1152,9 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: k.<b> = GF(2^16)
             sage: b._gap_init_()
             'Z(65536)^1'
-            sage: k(gap('Z(2^16)^3+Z(2^16)^5'))
+            sage: k(gap('Z(2^16)^3+Z(2^16)^5'))                                         # needs sage.libs.gap
             b^5 + b^3
-            sage: k(libgap.Z(2^16)^3+libgap.Z(2^16)^5)
+            sage: k(libgap.Z(2^16)^3+libgap.Z(2^16)^5)                                  # needs sage.libs.gap
             b^5 + b^3
         """
         F = self._parent

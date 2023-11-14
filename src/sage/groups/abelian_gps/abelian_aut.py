@@ -55,8 +55,8 @@ or create subgroups and do the same for them::
 
 Only automorphism groups of finite abelian groups are supported::
 
-    sage: G = AbelianGroupGap([0,2])        # optional gap_packages
-    sage: autG = G.aut()                    # optional gap_packages
+    sage: G = AbelianGroupGap([0,2])        # optional - gap_package_polycyclic
+    sage: autG = G.aut()                    # optional - gap_package_polycyclic
     Traceback (most recent call last):
     ...
     ValueError: only finite abelian groups are supported
@@ -298,7 +298,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
             # Also conversions between the domains use the smith gens.
             if x.domain().invariants() != self.domain().gens_orders():
                 raise ValueError("invariants of domains must agree")
-            if not x.domain()==x.codomain():
+            if not x.domain() == x.codomain():
                 raise ValueError("domain and codomain do not agree")
             if not x.kernel().invariants() == ():
                 raise ValueError("not an automorphism")

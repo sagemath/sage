@@ -165,7 +165,7 @@ class Submodule_free_ambient(Module_free_ambient):
         """
         from sage.matrix.matrix_space import MatrixSpace
         MAT = MatrixSpace(self.base_ring(), len(self.gens()), self.degree(),
-                          sparse = self.is_sparse())
+                          sparse=self.is_sparse())
         A = MAT(self.gens())
         A.set_immutable()
         return A

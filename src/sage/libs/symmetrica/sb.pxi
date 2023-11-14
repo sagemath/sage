@@ -12,7 +12,7 @@ cdef extern from 'symmetrica/def.h':
     INT mult_schubert_polynom(OP a,OP b,OP c)
 
 
-cdef object _check_schubert(object a, OP ca):
+cdef object _check_schubert(object a, OP ca) noexcept:
     if a in Permutations():
         if isinstance(a, builtinlist):
             a = Permutation(a)
@@ -111,7 +111,7 @@ def t_POLYNOM_SCHUBERT_symmetrica(a):
 
     cdef OP ca = callocobject(), cres = callocobject()
 
-    if not is_MPolynomial(a):
+    if not isinstance(a, MPolynomial):
         freeall(ca)
         freeall(cres)
         raise TypeError("a (= %s) must be a multivariate polynomial")

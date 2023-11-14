@@ -172,6 +172,7 @@ class Composition(CombinatorialElement):
         """
         TESTS::
 
+            sage: # needs sage.combinat
             sage: ascii_art(Compositions(4).list())
             [ *                                  ]
             [ *  **   *        *                 ]
@@ -192,6 +193,7 @@ class Composition(CombinatorialElement):
         """
         TESTS::
 
+            sage: # needs sage.combinat
             sage: unicode_art(Compositions(4).list())
             ⎡ ┌┐                                         ⎤
             ⎢ ├┤  ┌┬┐   ┌┐         ┌┐                    ⎥
@@ -254,7 +256,7 @@ class Composition(CombinatorialElement):
         The ribbon shape of the conjugate of `I` is the conjugate of
         the ribbon shape of `I`::
 
-            sage: all( I.conjugate().to_skew_partition()
+            sage: all( I.conjugate().to_skew_partition()                                # needs sage.combinat
             ....:      == I.to_skew_partition().conjugate()
             ....:      for I in Compositions(4) )
             True
@@ -1178,11 +1180,11 @@ class Composition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Composition([2,1,3]).to_partition()
+            sage: Composition([2,1,3]).to_partition()                                   # needs sage.combinat
             [3, 2, 1]
-            sage: Composition([4,2,2]).to_partition()
+            sage: Composition([4,2,2]).to_partition()                                   # needs sage.combinat
             [4, 2, 2]
-            sage: Composition([]).to_partition()
+            sage: Composition([]).to_partition()                                        # needs sage.combinat
             []
         """
         from sage.combinat.partition import Partition
@@ -1202,6 +1204,7 @@ class Composition(CombinatorialElement):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: Composition([3,4,1]).to_skew_partition()
             [6, 6, 3] / [5, 2]
             sage: Composition([3,4,1]).to_skew_partition(overlap=0)
@@ -1264,24 +1267,33 @@ class Composition(CombinatorialElement):
 
             sage: alph = Composition([2,2])
             sage: beta = Composition([1,1,3])
-            sage: S = alph.shuffle_product(beta); S
+            sage: S = alph.shuffle_product(beta); S                                     # needs sage.combinat
             Shuffle product of [2, 2] and [1, 1, 3]
-            sage: S.list()
-            [[2, 2, 1, 1, 3], [2, 1, 2, 1, 3], [2, 1, 1, 2, 3], [2, 1, 1, 3, 2], [1, 2, 2, 1, 3], [1, 2, 1, 2, 3], [1, 2, 1, 3, 2], [1, 1, 2, 2, 3], [1, 1, 2, 3, 2], [1, 1, 3, 2, 2]]
+            sage: S.list()                                                              # needs sage.combinat
+            [[2, 2, 1, 1, 3], [2, 1, 2, 1, 3], [2, 1, 1, 2, 3], [2, 1, 1, 3, 2],
+             [1, 2, 2, 1, 3], [1, 2, 1, 2, 3], [1, 2, 1, 3, 2], [1, 1, 2, 2, 3],
+             [1, 1, 2, 3, 2], [1, 1, 3, 2, 2]]
 
         The *overlapping* shuffle product of `[2,2]` and `[1,1,3]`::
 
             sage: alph = Composition([2,2])
             sage: beta = Composition([1,1,3])
-            sage: O = alph.shuffle_product(beta, overlap=True); O
+            sage: O = alph.shuffle_product(beta, overlap=True); O                       # needs sage.combinat
             Overlapping shuffle product of [2, 2] and [1, 1, 3]
-            sage: O.list()
-            [[2, 2, 1, 1, 3], [2, 1, 2, 1, 3], [2, 1, 1, 2, 3], [2, 1, 1, 3, 2], [1, 2, 2, 1, 3], [1, 2, 1, 2, 3], [1, 2, 1, 3, 2], [1, 1, 2, 2, 3], [1, 1, 2, 3, 2], [1, 1, 3, 2, 2], [3, 2, 1, 3], [2, 3, 1, 3], [3, 1, 2, 3], [2, 1, 3, 3], [3, 1, 3, 2], [2, 1, 1, 5], [1, 3, 2, 3], [1, 2, 3, 3], [1, 3, 3, 2], [1, 2, 1, 5], [1, 1, 5, 2], [1, 1, 2, 5], [3, 3, 3], [3, 1, 5], [1, 3, 5]]
+            sage: O.list()                                                              # needs sage.combinat
+            [[2, 2, 1, 1, 3], [2, 1, 2, 1, 3], [2, 1, 1, 2, 3], [2, 1, 1, 3, 2],
+             [1, 2, 2, 1, 3], [1, 2, 1, 2, 3], [1, 2, 1, 3, 2], [1, 1, 2, 2, 3],
+             [1, 1, 2, 3, 2], [1, 1, 3, 2, 2],
+             [3, 2, 1, 3], [2, 3, 1, 3], [3, 1, 2, 3], [2, 1, 3, 3], [3, 1, 3, 2],
+             [2, 1, 1, 5], [1, 3, 2, 3], [1, 2, 3, 3], [1, 3, 3, 2], [1, 2, 1, 5],
+             [1, 1, 5, 2], [1, 1, 2, 5],
+             [3, 3, 3], [3, 1, 5], [1, 3, 5]]
 
         Note that the shuffle product of two compositions can include the same
         composition more than once since a composition can be a shuffle of two
         compositions in several ways. For example::
 
+            sage: # needs sage.combinat
             sage: w1 = Composition([1])
             sage: S = w1.shuffle_product(w1); S
             Shuffle product of [1] and [1]
@@ -1295,7 +1307,7 @@ class Composition(CombinatorialElement):
         TESTS::
 
             sage: empty = Composition([])
-            sage: empty.shuffle_product(empty).list()
+            sage: empty.shuffle_product(empty).list()                                   # needs sage.combinat
             [[]]
         """
         if overlap:
@@ -1385,6 +1397,48 @@ class Composition(CombinatorialElement):
             0
         """
         return sum(i == n for i in self)
+
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: SM = Composition([1,2,2]).specht_module(QQ); SM                       # needs sage.combinat sage.modules
+            Specht module of [(0, 0), (1, 0), (1, 1), (2, 0), (2, 1)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.combinat sage.modules
+            sage: s(SM.frobenius_image())                                               # needs sage.combinat sage.modules
+            s[2, 2, 1]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        cells = []
+        for i, row in enumerate(self):
+            for j in range(row):
+                cells.append((i, j))
+        return SpechtModule(R, cells)
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: Composition([1,2,2]).specht_module_dimension()                        # needs sage.combinat sage.modules
+            5
+            sage: Composition([1,2,2]).specht_module_dimension(GF(2))                   # needs sage.combinat sage.modules sage.rings.finite_rings
+            5
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
 
 
 Sequence.register(Composition)
@@ -1635,7 +1689,7 @@ class Compositions(UniqueRepresentation, Parent):
         """
         if n is None:
             if kwargs:
-                raise ValueError("Incorrect number of arguments")
+                raise ValueError("incorrect number of arguments")
             return Compositions_all()
         else:
             if not kwargs:

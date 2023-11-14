@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Non-Commutative Symmetric Functions
 """
@@ -409,8 +409,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: NCSF2 = NonCommutativeSymmetricFunctions(Integers(23))
             sage: TestSuite(NonCommutativeSymmetricFunctions(QQ)).run()
         """
-        # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings())  # side effect of this statement assures MRO exists for R
+        # change the line below to assert R in Rings() once MRO issues from #15536, #15475 are resolved
+        assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
         self._base = R  # Won't be needed once CategoryObject won't override base_ring
         cat = GradedHopfAlgebras(R).WithRealizations().Cocommutative()
         Parent.__init__(self, category=cat)
@@ -2208,7 +2208,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     h[1, 1, 1, 1] - 3*h[2, 1, 1] + 3*h[3, 1]
                 """
                 codom = self.to_symmetric_function_on_generators(1).parent()
-                return self.algebra_morphism(self.to_symmetric_function_on_generators, codomain = codom)
+                return self.algebra_morphism(self.to_symmetric_function_on_generators, codomain=codom)
 
             @lazy_attribute
             def antipode(self):
@@ -2232,7 +2232,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     Generic endomorphism of Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
                 """
                 if hasattr(self, "antipode_on_generators"):
-                    return self.algebra_morphism(self.antipode_on_generators, codomain = self, anti = True)
+                    return self.algebra_morphism(self.antipode_on_generators, codomain=self, anti=True)
                 else:
                     return NotImplemented
 
@@ -2254,9 +2254,9 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                       From: Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
                       To:   Non-Commutative Symmetric Functions over the Rational Field in the Complete basis # Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
                 """
-                from sage.categories.all import tensor
+                from sage.categories.tensor import tensor
                 if hasattr(self, "coproduct_on_generators"):
-                    return self.algebra_morphism(self.coproduct_on_generators, codomain = tensor([self, self]))
+                    return self.algebra_morphism(self.coproduct_on_generators, codomain=tensor([self, self]))
                 else:
                     return NotImplemented
 
@@ -2500,7 +2500,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 if i < 1:
                     raise ValueError("Not a positive integer: {}".format(i))
                 x = self.algebra_generators()[i]
-                from sage.categories.all import tensor
+                from sage.categories.tensor import tensor
                 return tensor([self.one(), x]) + tensor([x, self.one()])
 
     class Ribbon(CombinatorialFreeModule, BindableClass):
@@ -4521,15 +4521,15 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             S = NCSF.complete()
             Psi = NCSF.Psi()
             to_S = self.module_morphism(
-                    on_basis = self._to_complete_on_basis,
-                    codomain = S,
-                    category = category)
+                    on_basis=self._to_complete_on_basis,
+                    codomain=S,
+                    category=category)
             to_S.register_as_coercion()
 
             from_psi = Psi.module_morphism(
-                        on_basis = self._from_psi_on_basis,
-                        codomain = self,
-                        category = category)
+                        on_basis=self._from_psi_on_basis,
+                        codomain=self,
+                        category=category)
             from_psi.register_as_coercion()
 
         def _to_complete_on_basis(self, I):
@@ -4680,15 +4680,15 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             category = self.category()
             S = self.realization_of().complete()
             to_S = self.module_morphism(
-                    on_basis = self._to_complete_on_basis,
-                    codomain = S,
-                    category = category)
+                    on_basis=self._to_complete_on_basis,
+                    codomain=S,
+                    category=category)
             to_S.register_as_coercion()
 
             from_S = S.module_morphism(
-                        on_basis = self._from_complete_on_basis,
-                        codomain = self,
-                        category = category)
+                        on_basis=self._from_complete_on_basis,
+                        codomain=self,
+                        category=category)
             from_S.register_as_coercion()
 
         def _realization_name(self):
@@ -4968,15 +4968,15 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             category = self.category()
             self._S = self.realization_of().complete()
             to_S = self.module_morphism(
-                    on_basis = self._to_complete_on_basis,
-                    codomain = self._S,
-                    category = category)
+                    on_basis=self._to_complete_on_basis,
+                    codomain=self._S,
+                    category=category)
             to_S.register_as_coercion()
 
             from_S = self._S.module_morphism(
-                        on_basis = self._from_complete_on_basis,
-                        codomain = self,
-                        category = category)
+                        on_basis=self._from_complete_on_basis,
+                        codomain=self,
+                        category=category)
             from_S.register_as_coercion()
 
         def _realization_name(self):

@@ -45,6 +45,7 @@ Laurent Polynomials
 .. toctree::
    :maxdepth: 1
 
+   sage/rings/polynomial/laurent_polynomial_ring_base
    sage/rings/polynomial/laurent_polynomial_ring
    sage/rings/polynomial/laurent_polynomial
    sage/rings/polynomial/omega
@@ -64,9 +65,11 @@ Infinite Polynomial Rings
 Boolean Polynomials
 -------------------
 
-.. toctree::
-   :maxdepth: 1
+.. ONLY:: feature_sage_rings_polynomial_pbori
 
-   sage/rings/polynomial/pbori/pbori
+   .. toctree::
+      :maxdepth: 1
+
+      sage/rings/polynomial/pbori/pbori
 
 .. include:: ../footer.txt

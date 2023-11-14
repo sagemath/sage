@@ -16,7 +16,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
                     'Linear_Expression', 'line', 'ray', 'point'],
-                    feature=PythonModule("ppl", spkg="pplpy"))
+                    feature=PythonModule("ppl", spkg="pplpy", type="standard"))
 
 
 #########################################################################
@@ -281,8 +281,8 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0,1/2),(2,0),(4,5/6)],
-            ....:                backend='ppl')  # indirect doctest
+            sage: p = Polyhedron(vertices=[(0,1/2), (2,0), (4,5/6)],  # indirect doctest
+            ....:                backend='ppl')
             sage: p.Hrepresentation()
             (An inequality (1, 4) x - 2 >= 0,
              An inequality (1, -12) x + 6 >= 0,
@@ -321,8 +321,8 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         EXAMPLES::
 
-            sage: p = Polyhedron(vertices=[(0,1/2),(2,0),(4,5/6)],
-            ....:                backend='ppl')  # indirect doctest
+            sage: p = Polyhedron(vertices=[(0,1/2), (2,0), (4,5/6)],  # indirect doctest
+            ....:                backend='ppl')
             sage: p.Hrepresentation()
             (An inequality (1, 4) x - 2 >= 0,
              An inequality (1, -12) x + 6 >= 0,
@@ -537,7 +537,6 @@ class Polyhedron_ppl(Polyhedron_mutable):
         for eqn in eqns:
             cs.insert(Polyhedron_ppl._convert_constraint_to_ppl(eqn, EQUATION))
         return cs
-
 
 
 #########################################################################

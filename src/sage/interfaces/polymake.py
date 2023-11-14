@@ -341,7 +341,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         except NotImplementedError:
             pass
 
-        return super(PolymakeAbstract, self)._coerce_impl(x, use_special=use_special)
+        return super()._coerce_impl(x, use_special=use_special)
 
     def console(self):
         """
@@ -1587,7 +1587,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
             from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
             return Polyhedron_polymake._from_polymake_polytope(None, self)
         else:
-            return super(PolymakeElement, self)._sage_()
+            return super()._sage_()
 
     def _sage_doc_(self):
         """

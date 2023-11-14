@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 r"""
 Atkin/Hecke series for overconvergent modular forms
 
@@ -74,7 +75,7 @@ from sage.functions.other import floor, ceil
 from sage.matrix.constructor import matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.functional import dimension, transpose, charpoly
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose
 from sage.modular.dims import dimension_modular_forms
 from sage.modular.modform.all import ModularForms, ModularFormsRing, delta_qexp, eisenstein_series_qexp
@@ -925,8 +926,8 @@ def katz_expansions(k0, p, ellp, mdash, n):
     S = Zmod(p ** mdash)
 
     Ep1 = eisenstein_series_qexp(p - 1, ellp, K=S, normalization="constant")
-    E4 =  eisenstein_series_qexp(4, ellp, K=S, normalization="constant")
-    E6 =  eisenstein_series_qexp(6, ellp, K=S, normalization="constant")
+    E4 = eisenstein_series_qexp(4, ellp, K=S, normalization="constant")
+    E6 = eisenstein_series_qexp(6, ellp, K=S, normalization="constant")
 
     delta = delta_qexp(ellp, K=S)
     h = delta / E6 ** 2
@@ -1004,14 +1005,14 @@ def level1_UpGj(p, klist, m, extra_data=False):
     e, Ep1 = katz_expansions(k0, p, ellp, mdash, n)
 
     verbose("done steps 2+3", t)
-    t=cputime()
+    t = cputime()
     # Step 4
 
     G = compute_G(p, Ep1)
     Alist = []
 
     verbose("done step 4a", t)
-    t=cputime()
+    t = cputime()
     for k in klist:
         k = ZZ(k) # convert to sage integer
         kdiv = k // (p - 1)

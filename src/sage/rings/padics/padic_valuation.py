@@ -8,9 +8,9 @@ EXAMPLES::
     2-adic valuation
     sage: QQ.valuation(3)
     3-adic valuation
-    sage: CyclotomicField(5).valuation(5)
+    sage: CyclotomicField(5).valuation(5)                                               # needs sage.rings.number_field
     5-adic valuation
-    sage: GaussianIntegers().valuation(7)
+    sage: GaussianIntegers().valuation(7)                                               # needs sage.rings.number_field
     7-adic valuation
     sage: Zp(11).valuation()
     11-adic valuation
@@ -21,7 +21,7 @@ in the completion of a ring::
     sage: v = ZZ.valuation(2)
     sage: R.<x> = ZZ[]
     sage: f = x^5 + x^4 + x^3 + x^2 + x - 1
-    sage: v.montes_factorization(f, required_precision=20)
+    sage: v.montes_factorization(f, required_precision=20)                              # needs sage.geometry.polyhedron
     (x + 676027) * (x^4 + 372550*x^3 + 464863*x^2 + 385052*x + 297869)
 
 AUTHORS:
@@ -92,6 +92,7 @@ class PadicValuationFactory(UniqueFactory):
     quotient of a polynomial ring (since number field extensions always compute
     an absolute polynomial defining the extension which can be very costly)::
 
+        sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]
         sage: K.<a> = NumberField(x^2 + 1)
         sage: R.<x> = K[]
@@ -115,14 +116,14 @@ class PadicValuationFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: QQ.valuation(2) # indirect doctest
+            sage: QQ.valuation(2)  # indirect doctest
             2-adic valuation
 
         """
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
         from sage.rings.padics.padic_generic import pAdicGeneric
-        from sage.rings.number_field.number_field import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
 
         if R.characteristic() != 0:
@@ -133,10 +134,10 @@ class PadicValuationFactory(UniqueFactory):
             return self.create_key_for_integers(R, prime), {}
         elif isinstance(R, pAdicGeneric):
             return self.create_key_for_local_ring(R, prime), {}
-        elif is_NumberField(R.fraction_field()) or is_PolynomialQuotientRing(R):
+        elif isinstance(R.fraction_field(), NumberField) or is_PolynomialQuotientRing(R):
             return self.create_key_and_extra_args_for_number_field(R, prime, approximants=approximants)
         else:
-            raise NotImplementedError("p-adic valuations not implemented for %r"%(R,))
+            raise NotImplementedError("p-adic valuations not implemented for %r" % (R,))
 
     def create_key_for_integers(self, R, prime):
         r"""
@@ -145,7 +146,7 @@ class PadicValuationFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: QQ.valuation(2) # indirect doctest
+            sage: QQ.valuation(2)  # indirect doctest
             2-adic valuation
 
         """
@@ -156,7 +157,7 @@ class PadicValuationFactory(UniqueFactory):
         if isinstance(prime, DiscretePseudoValuation):
             prime = prime.uniformizer()
         if prime not in ZZ or not ZZ(prime).is_prime():
-            raise ValueError("prime must be a prime in the integers but %s is not"%(prime,))
+            raise ValueError("prime must be a prime in the integers but %s is not" % (prime,))
         return R, prime
 
     def create_key_for_local_ring(self, R, prime):
@@ -166,7 +167,7 @@ class PadicValuationFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: Qp(2).valuation() # indirect doctest
+            sage: Qp(2).valuation()  # indirect doctest
             2-adic valuation
 
         """
@@ -188,7 +189,7 @@ class PadicValuationFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: GaussianIntegers().valuation(2) # indirect doctest
+            sage: GaussianIntegers().valuation(2)  # indirect doctest                   # needs sage.rings.number_field
             2-adic valuation
 
         """
@@ -218,7 +219,7 @@ class PadicValuationFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: GaussianIntegers().valuation(ZZ.valuation(2)) # indirect doctest
+            sage: GaussianIntegers().valuation(ZZ.valuation(2))  # indirect doctest     # needs sage.rings.number_field
             2-adic valuation
 
         TESTS:
@@ -227,10 +228,10 @@ class PadicValuationFactory(UniqueFactory):
 
             sage: R.<x> = ZZ[]
             sage: S = R.quo(x^2 + 1)
-            sage: v = valuations.pAdicValuation(S, 2)
+            sage: v = valuations.pAdicValuation(S, 2)                                   # needs sage.geometry.polyhedron
             sage: R.<x> = QQ[]
             sage: S = R.quo(x^2 + 1)
-            sage: v = valuations.pAdicValuation(S, v)
+            sage: v = valuations.pAdicValuation(S, v)                                   # needs sage.geometry.polyhedron
 
         """
         K, L, G = self._normalize_number_field_data(R)
@@ -254,10 +255,9 @@ class PadicValuationFactory(UniqueFactory):
             # v is defined on a ring whose field of fractions is L
             v = v._base_valuation._initial_approximation.change_domain(G.parent())
         else:
-            raise NotImplementedError("cannot rewrite %r which is defined on %r as a pseudo-valuation on %r"%(v, v.domain(), G.parent()))
+            raise NotImplementedError("cannot rewrite %r which is defined on %r as a pseudo-valuation on %r" % (v, v.domain(), G.parent()))
 
-
-        assert(v.domain() is G.parent())
+        assert (v.domain() is G.parent())
 
         # To obtain uniqueness of p-adic valuations, we need a canonical
         # description of v. We consider all extensions of vK to L and select
@@ -283,13 +283,15 @@ class PadicValuationFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: GaussianIntegers().valuation(GaussianIntegers().ideal(2)) # indirect doctest
+            sage: # needs sage.rings.number_field
+            sage: GaussianIntegers().valuation(GaussianIntegers().number_field().fractional_ideal(2))  # indirect doctest
             2-adic valuation
 
         TESTS:
 
         Verify that :trac:`28976` has been resolved::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^6 - 18*x^4 - 24*x^3 + 27*x^2 + 36*x - 6)
             sage: I = K.fractional_ideal((2, -7/44*a^5 + 19/44*a^4 + 87/44*a^3 - 87/44*a^2 - 5/2*a + 39/22))
@@ -302,6 +304,7 @@ class PadicValuationFactory(UniqueFactory):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: K.<a, b> = NumberField([x^2 - 2, x^2 + x + 1])
             sage: K.valuation(2)
             2-adic valuation
@@ -316,7 +319,7 @@ class PadicValuationFactory(UniqueFactory):
         p = I.relative_norm()
         F = p.factor()
         if len(F) != 1:
-            raise ValueError("%r does not lie over a single prime of %r"%(I, K))
+            raise ValueError("%r does not lie over a single prime of %r" % (I, K))
         vK = K.valuation(F[0][0])
         approximants = vK.mac_lane_approximants(G, require_incomparability=True)
 
@@ -337,7 +340,7 @@ class PadicValuationFactory(UniqueFactory):
             match = [i for (i, v) in enumerate(candidates) if v and all(v(g) > 0 for g in gens)]
 
             if len(match) > 1:
-                raise ValueError("%s does not single out a unique extension of %s to %s"%(prime, vK, L))
+                raise ValueError("%s does not single out a unique extension of %s to %s" % (prime, vK, L))
             if len(match) == 1:
                 return (R, approximants[match[0]]), {'approximants': approximants}
 
@@ -362,15 +365,15 @@ class PadicValuationFactory(UniqueFactory):
 
         """
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        from sage.rings.number_field.number_field import is_NumberField
-        if is_NumberField(R.fraction_field()):
+        from sage.rings.number_field.number_field_base import NumberField
+        if isinstance(R.fraction_field(), NumberField):
             L = R.fraction_field()
             G = L.relative_polynomial()
             K = L.base_ring()
         elif is_PolynomialQuotientRing(R):
             from sage.categories.number_fields import NumberFields
             if R.base_ring().fraction_field() not in NumberFields():
-                raise NotImplementedError("cannot normalize quotients over %r"%(R.base_ring(),))
+                raise NotImplementedError("cannot normalize quotients over %r" % (R.base_ring(),))
             L = R.fraction_field()
             K = R.base_ring().fraction_field()
             G = R.modulus().change_ring(K)
@@ -379,14 +382,13 @@ class PadicValuationFactory(UniqueFactory):
 
         return K, L, G
 
-
     def create_object(self, version, key, **extra_args):
         r"""
         Create a `p`-adic valuation from ``key``.
 
         EXAMPLES::
 
-            sage: ZZ.valuation(5) # indirect doctest
+            sage: ZZ.valuation(5)  # indirect doctest
             5-adic valuation
 
         """
@@ -395,22 +397,22 @@ class PadicValuationFactory(UniqueFactory):
         from sage.rings.padics.padic_generic import pAdicGeneric
         from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        from sage.rings.number_field.number_field import is_NumberField
+        from sage.rings.number_field.number_field_base import NumberField
         R = key[0]
         parent = DiscretePseudoValuationSpace(R)
         if isinstance(R, pAdicGeneric):
-            assert(len(key)==1)
+            assert (len(key) == 1)
             return parent.__make_element_class__(pAdicValuation_padic)(parent)
         elif R is ZZ or R is QQ:
             prime = key[1]
-            assert(len(key)==2)
+            assert (len(key) == 2)
             return parent.__make_element_class__(pAdicValuation_int)(parent, prime)
         else:
             v = key[1]
             approximants = extra_args['approximants']
             parent = DiscretePseudoValuationSpace(R)
             K = R.fraction_field()
-            if is_NumberField(K):
+            if isinstance(K, NumberField):
                 G = K.relative_polynomial()
             elif is_PolynomialQuotientRing(R):
                 G = R.modulus()
@@ -418,7 +420,9 @@ class PadicValuationFactory(UniqueFactory):
                 raise NotImplementedError
             return parent.__make_element_class__(pAdicFromLimitValuation)(parent, v, G.change_ring(R.base_ring()), approximants)
 
+
 pAdicValuation = PadicValuationFactory("sage.rings.padics.padic_valuation.pAdicValuation")
+
 
 class pAdicValuation_base(DiscreteValuation):
     r"""
@@ -439,7 +443,7 @@ class pAdicValuation_base(DiscreteValuation):
         sage: QQ.valuation(5)
         5-adic valuation
 
-     For `p`-adic rings, ``p`` has to match the `p` of the ring.
+     For `p`-adic rings, ``p`` has to match the `p` of the ring. ::
 
         sage: v = valuations.pAdicValuation(Zp(3), 2); v
         Traceback (most recent call last):
@@ -448,9 +452,9 @@ class pAdicValuation_base(DiscreteValuation):
 
     TESTS::
 
-        sage: TestSuite(ZZ.valuation(3)).run() # long time
-        sage: TestSuite(QQ.valuation(5)).run() # long time
-        sage: TestSuite(Zp(5).valuation()).run() # long time
+        sage: TestSuite(ZZ.valuation(3)).run()  # long time                             # needs sage.geometry.polyhedron
+        sage: TestSuite(QQ.valuation(5)).run()  # long time                             # needs sage.geometry.polyhedron
+        sage: TestSuite(Zp(5).valuation()).run()        # long time                     # needs sage.geometry.polyhedron
 
     """
     def __init__(self, parent, p):
@@ -473,7 +477,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         EXAMPLES::
 
-            sage: GaussianIntegers().valuation(2).p()
+            sage: GaussianIntegers().valuation(2).p()                                   # needs sage.rings.number_field
             2
 
         """
@@ -562,7 +566,7 @@ class pAdicValuation_base(DiscreteValuation):
         However, even if ``G`` factors, it might define an unramified
         extension::
 
-            sage: v.is_unramified(x^2 + 2*x + 4)
+            sage: v.is_unramified(x^2 + 2*x + 4)                                        # needs sage.geometry.polyhedron
             True
 
         """
@@ -592,7 +596,7 @@ class pAdicValuation_base(DiscreteValuation):
                 break
 
             next = v.mac_lane_step(G, assume_squarefree=True)
-            if len(next)>1:
+            if len(next) > 1:
                 ret = False
                 break
             steps.append(next[0])
@@ -626,11 +630,12 @@ class pAdicValuation_base(DiscreteValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: k = Qp(5,4)
             sage: v = k.valuation()
             sage: R.<x> = k[]
             sage: G = x^2 + 1
-            sage: v.is_totally_ramified(G)
+            sage: v.is_totally_ramified(G)                                              # needs sage.geometry.polyhedron
             False
             sage: G = x + 1
             sage: v.is_totally_ramified(G)
@@ -639,9 +644,9 @@ class pAdicValuation_base(DiscreteValuation):
             sage: v.is_totally_ramified(G)
             False
             sage: G = x^2 + 5
-            sage: v.is_totally_ramified(G)
+            sage: v.is_totally_ramified(G)                                              # needs sage.geometry.polyhedron
             True
-            sage: v.is_totally_ramified(G, include_steps=True)
+            sage: v.is_totally_ramified(G, include_steps=True)                          # needs sage.geometry.polyhedron
             (True, [Gauss valuation induced by 5-adic valuation, [ Gauss valuation induced by 5-adic valuation, v((1 + O(5^4))*x) = 1/2 ]])
 
         We consider an extension as totally ramified if its ramification index
@@ -659,7 +664,7 @@ class pAdicValuation_base(DiscreteValuation):
             sage: R = ZpFM(3, 20)
             sage: S.<x> = R[]
             sage: f = x^9 + 9*x^2 + 3
-            sage: R.valuation().is_totally_ramified(f)
+            sage: R.valuation().is_totally_ramified(f)                                  # needs sage.geometry.polyhedron
             True
 
         """
@@ -689,7 +694,7 @@ class pAdicValuation_base(DiscreteValuation):
                 break
 
             next = v.mac_lane_step(G, assume_squarefree=True)
-            if len(next)>1:
+            if len(next) > 1:
                 ret = False
                 break
             steps.append(next[0])
@@ -734,12 +739,14 @@ class pAdicValuation_base(DiscreteValuation):
         EXAMPLES::
 
             sage: v = ZZ.valuation(2)
-            sage: v.extensions(GaussianIntegers())
+            sage: v.extensions(GaussianIntegers())                                      # needs sage.rings.number_field
             [2-adic valuation]
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = QQ.extension(x^3 - 2)
             sage: R.<b> = L[]
             sage: M.<b> = L.extension(b^2 + 2*b + a)
@@ -748,6 +755,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         Check that we can extend to a field written as a quotient::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = QQ.extension(x^2 + 1)
             sage: R.<y> = K[]
@@ -758,6 +766,7 @@ class pAdicValuation_base(DiscreteValuation):
         A case where there was at some point an internal error in the
         approximants code::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: L.<a> = NumberField(x^4 + 2*x^3 + 2*x^2 + 8)
             sage: QQ.valuation(2).extensions(L)
@@ -766,6 +775,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         A case where the extension was incorrect at some point::
 
+            sage: # needs sage.rings.number_field
             sage: v = QQ.valuation(2)
             sage: L.<a> = NumberField(x^2 + 2)
             sage: M.<b> = L.extension(x^2 + 1)
@@ -775,6 +785,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         A case where the extensions could not be separated at some point::
 
+            sage: # needs sage.rings.number_field
             sage: v = QQ.valuation(2)
             sage: R.<x> = QQ[]
             sage: F = x^48 + 120*x^45 + 56*x^42 + 108*x^36 + 32*x^33 + 40*x^30 + 48*x^27 + 80*x^24 + 112*x^21 + 96*x^18 + 96*x^15 + 24*x^12 + 96*x^9 + 16*x^6 + 96*x^3 + 68
@@ -803,8 +814,8 @@ class pAdicValuation_base(DiscreteValuation):
                         return self._extensions_to_quotient(ring)
                 elif self.domain().is_subring(ring.base_ring()):
                     return sum([w.extensions(ring) for w in self.extensions(ring.base_ring())], [])
-            from sage.rings.number_field.number_field import is_NumberField
-            if is_NumberField(ring.fraction_field()):
+            from sage.rings.number_field.number_field_base import NumberField
+            if isinstance(ring.fraction_field(), NumberField):
                 if ring.base_ring().fraction_field() is self.domain().fraction_field():
                     approximants = self.mac_lane_approximants(ring.fraction_field().relative_polynomial().change_ring(self.domain()), assume_squarefree=True, require_incomparability=True)
                     return [pAdicValuation(ring, approximant, approximants) for approximant in approximants]
@@ -818,8 +829,8 @@ class pAdicValuation_base(DiscreteValuation):
 
         EXAMPLES::
 
-            sage: v = GaussianIntegers().valuation(2)
-            sage: v.restriction(ZZ)
+            sage: v = GaussianIntegers().valuation(2)                                   # needs sage.rings.number_field
+            sage: v.restriction(ZZ)                                                     # needs sage.rings.number_field
             2-adic valuation
 
         """
@@ -827,7 +838,7 @@ class pAdicValuation_base(DiscreteValuation):
             return self
 
         if not ring.is_subring(self.domain()):
-            raise ValueError("ring must be a subring of the domain of this valuation but %r is not a subring of %r"%(ring, self.domain()))
+            raise ValueError("ring must be a subring of the domain of this valuation but %r is not a subring of %r" % (ring, self.domain()))
 
         return pAdicValuation(ring, self.p())
 
@@ -838,8 +849,8 @@ class pAdicValuation_base(DiscreteValuation):
 
         EXAMPLES::
 
-            sage: v = GaussianIntegers().valuation(2)
-            sage: v.value_semigroup()
+            sage: v = GaussianIntegers().valuation(2)                                   # needs sage.rings.number_field
+            sage: v.value_semigroup()                                                   # needs sage.rings.number_field
             Additive Abelian Semigroup generated by 1/2
 
         """
@@ -861,12 +872,12 @@ class pAdicValuation_padic(pAdicValuation_base):
 
     EXAMPLES::
 
-        sage: v = Qp(2).valuation(); v #indirect doctest
+        sage: v = Qp(2).valuation(); v  # indirect doctest
         2-adic valuation
 
     TESTS::
 
-        sage: TestSuite(v).run() # long time
+        sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
 
     """
     def __init__(self, parent):
@@ -951,6 +962,7 @@ class pAdicValuation_padic(pAdicValuation_base):
             sage: v.element_with_valuation(3)
             3^3 + O(3^23)
 
+            sage: # needs sage.libs.ntl
             sage: K = Qp(3)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 + 3*y + 3)
@@ -962,7 +974,7 @@ class pAdicValuation_padic(pAdicValuation_base):
         from sage.rings.rational_field import QQ
         v = QQ(v)
         if v not in self.value_semigroup():
-            raise ValueError("%r is not in the value semigroup of %r"%(v, self))
+            raise ValueError("%r is not in the value semigroup of %r" % (v, self))
         v = ZZ(v * self.domain().absolute_e())
         return self.domain().one() << v
 
@@ -976,7 +988,7 @@ class pAdicValuation_padic(pAdicValuation_base):
             '3-adic valuation'
 
         """
-        return "%s-adic valuation"%(self.p())
+        return "%s-adic valuation" % (self.p())
 
     def _call_(self, x):
         r"""
@@ -985,9 +997,9 @@ class pAdicValuation_padic(pAdicValuation_base):
         EXAMPLES::
 
             sage: K = Qp(3)
-            sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - 3)
-            sage: L.valuation()(3)
+            sage: R.<y> = K[]                                                           # needs sage.libs.ntl
+            sage: L.<y> = K.extension(y^2 - 3)                                          # needs sage.libs.ntl
+            sage: L.valuation()(3)                                                      # needs sage.libs.ntl
             1
 
         """
@@ -999,7 +1011,7 @@ class pAdicValuation_padic(pAdicValuation_base):
 
         EXAMPLES::
 
-            sage: Qq(9, names='a').valuation().residue_ring()
+            sage: Qq(9, names='a').valuation().residue_ring()                           # needs sage.libs.ntl
             Finite Field in a0 of size 3^2
 
         """
@@ -1026,6 +1038,7 @@ class pAdicValuation_padic(pAdicValuation_base):
             sage: v.shift(R.one(), -1)
             O(2^19)
 
+            sage: # needs sage.libs.ntl sage.rings.padics
             sage: S.<y> = R[]
             sage: S.<y> = R.extension(y^3 - 2)
             sage: v = S.valuation()
@@ -1088,7 +1101,7 @@ class pAdicValuation_int(pAdicValuation_base):
 
     TESTS::
 
-        sage: TestSuite(v).run() # long time
+        sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
 
     """
     def _repr_(self):
@@ -1101,7 +1114,7 @@ class pAdicValuation_int(pAdicValuation_base):
             '3-adic valuation'
 
         """
-        return "%s-adic valuation"%(self.p())
+        return "%s-adic valuation" % (self.p())
 
     def _call_(self, x):
         """
@@ -1280,7 +1293,7 @@ class pAdicValuation_int(pAdicValuation_base):
                     if self._relative_size(rational) < self._relative_size(best):
                         best = rational
 
-        assert(self(x-best)>error)
+        assert (self(x-best) > error)
 
         return best
 
@@ -1342,17 +1355,17 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
 
     EXAMPLES::
 
-        sage: v = GaussianIntegers().valuation(3); v
+        sage: v = GaussianIntegers().valuation(3); v                                    # needs sage.rings.number_field
         3-adic valuation
 
     TESTS::
 
-        sage: TestSuite(v).run(skip='_test_shift') # long time
+        sage: TestSuite(v).run(skip='_test_shift')  # long time                         # needs sage.rings.number_field
 
     The ``_test_shift`` test fails because the parent of the shift is
     incorrect, see :trac:`23971`::
 
-        sage: v.shift(1, -1).parent()
+        sage: v.shift(1, -1).parent()                                                   # needs sage.rings.number_field
         Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
     """
@@ -1360,9 +1373,9 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
         r"""
         TESTS::
 
-            sage: v = GaussianIntegers().valuation(3)
+            sage: v = GaussianIntegers().valuation(3)                                   # needs sage.rings.number_field
             sage: from sage.rings.padics.padic_valuation import pAdicFromLimitValuation
-            sage: isinstance(v, pAdicFromLimitValuation)
+            sage: isinstance(v, pAdicFromLimitValuation)                                # needs sage.rings.number_field
             True
 
         """
@@ -1376,16 +1389,18 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
 
         EXAMPLES::
 
-            sage: v = GaussianIntegers().valuation(3)
-            sage: I = GaussianIntegers().fraction_field().gen()
-            sage: v._to_base_domain(I)
+            sage: v = GaussianIntegers().valuation(3)                                   # needs sage.rings.number_field
+            sage: I = GaussianIntegers().fraction_field().gen()                         # needs sage.rings.number_field
+            sage: v._to_base_domain(I)                                                  # needs sage.rings.number_field
             x
 
         TESTS:
 
         Check that this also works for relative extensions::
 
+            sage: # needs sage.rings.number_field
             sage: v = QQ.valuation(2)
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a> = NumberField(x^2 + 2)
             sage: M.<b> = L.extension(x^2 + 1)
             sage: w = v.extension(L).extension(M)
@@ -1403,8 +1418,8 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
 
         EXAMPLES::
 
-            sage: v = GaussianIntegers().valuation(3)
-            sage: v._from_base_domain(v._base_valuation.domain().gen())
+            sage: v = GaussianIntegers().valuation(3)                                   # needs sage.rings.number_field
+            sage: v._from_base_domain(v._base_valuation.domain().gen())                 # needs sage.rings.number_field
             I
 
         """
@@ -1416,8 +1431,8 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
 
         EXAMPLES::
 
-            sage: v = GaussianIntegers().valuation(3)
-            sage: v.extensions(v.domain().fraction_field())
+            sage: v = GaussianIntegers().valuation(3)                                   # needs sage.rings.number_field
+            sage: v.extensions(v.domain().fraction_field())                             # needs sage.rings.number_field
             [3-adic valuation]
 
         """
@@ -1426,7 +1441,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
                 G = ring.relative_polynomial()
                 approximant = self._base_valuation.change_domain(G.parent())._initial_approximation
                 return [pAdicValuation(ring, approximant)]
-        return super(pAdicFromLimitValuation, self).extensions(ring)
+        return super().extensions(ring)
 
 def _fraction_field(ring):
     r"""

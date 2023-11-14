@@ -45,26 +45,13 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #****************************************************************************
-
-import re
 from cysignals.signals cimport sig_check
 
-from sage.rings.infinity import infinity
-from sage.structure.factorization import Factorization
-from sage.structure.element cimport Element, RingElement, AlgebraElement, ModuleElement
-from sage.structure.parent cimport Parent
-from sage.structure.parent_gens cimport ParentWithGens
-from sage.misc.abstract_method import abstract_method
-from sage.categories.homset import Hom
-from sage.categories.fields import Fields
+from sage.structure.element cimport Element, RingElement, ModuleElement
 from sage.rings.integer cimport Integer
-from cpython.object cimport PyObject_RichCompare
-from sage.categories.map cimport Map
-from sage.rings.morphism cimport Morphism, RingHomomorphism
-from sage.rings.polynomial.polynomial_element cimport _dict_to_list
-from sage.structure.element import coerce_binop
+from sage.rings.morphism cimport RingHomomorphism
 from sage.misc.superseded import experimental
 
 from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial
@@ -76,7 +63,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
     Generic implementation of dense skew polynomial supporting any valid base
     ring and twisting morphism.
     """
-    cpdef left_power_mod(self, exp, modulus):
+    cpdef left_power_mod(self, exp, modulus) noexcept:
         r"""
         Return the remainder of ``self**exp`` in the left euclidean division
         by ``modulus``.
@@ -138,7 +125,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             _, r = r._left_quo_rem(modulus)
         return r
 
-    cpdef right_power_mod(self, exp, modulus):
+    cpdef right_power_mod(self, exp, modulus) noexcept:
         r"""
         Return the remainder of ``self**exp`` in the right euclidean division
         by ``modulus``.
@@ -339,7 +326,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         """
         return self.operator_eval(eval_pt)
 
-    cpdef operator_eval(self, eval_pt):
+    cpdef operator_eval(self, eval_pt) noexcept:
         r"""
         Evaluate ``self`` at ``eval_pt`` by the operator evaluation
         method.
@@ -466,7 +453,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         """
         return [ self(e) for e in eval_pts ]
 
-    cpdef ModuleElement _lmul_(self, Element right):
+    cpdef ModuleElement _lmul_(self, Element right) noexcept:
         r"""
         Return the product ``self * right``.
 
@@ -495,7 +482,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
                         self._parent, 0)
         return r
 
-    cpdef ModuleElement _rmul_(self, Element left):
+    cpdef ModuleElement _rmul_(self, Element left) noexcept:
         r"""
         Return the product ``left * self``.
 
@@ -522,7 +509,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         r = self._new_c([ left*x[i] for i from 0 <= i < len(x) ], self._parent, 0)
         return r
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         r"""
         Return the product ``self * right``.
 
@@ -573,7 +560,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         r = self._new_c(coeffs, parent, 0)
         return r
 
-    cdef void _inplace_rmul(self, SkewPolynomial_generic_dense right):
+    cdef void _inplace_rmul(self, SkewPolynomial_generic_dense right) noexcept:
         r"""
         Replace ``self`` by ``self*right`` (only for internal use).
 
@@ -609,7 +596,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
                     sum += x[i] * parent.twisting_morphism(i)(y[k-i])
                 x[k] = sum
 
-    cdef void _inplace_pow(self, Py_ssize_t n):
+    cdef void _inplace_pow(self, Py_ssize_t n) noexcept:
         r"""
         Replace ``self`` by ``self**n`` (only for internal use).
 
@@ -634,7 +621,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
                 self._inplace_rmul(selfpow)
             n = n >> 1
 
-    cdef _left_quo_rem(self, OrePolynomial other):
+    cdef _left_quo_rem(self, OrePolynomial other) noexcept:
         r"""
         Return the quotient and remainder of the left euclidean
         division of ``self`` by ``other`` (C implementation).
@@ -663,7 +650,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         q.reverse()
         return (self._new_c(q, parent), self._new_c(a[:db], parent, 1))
 
-    cdef _right_quo_rem(self, OrePolynomial other):
+    cdef _right_quo_rem(self, OrePolynomial other) noexcept:
         r"""
         Return the quotient and remainder of the right euclidean
         division of ``self`` by ``other`` (C implementation).

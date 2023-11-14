@@ -3,7 +3,7 @@
 TESTS::
 
     sage: from sage.symbolic.integration.external import sympy_integrator
-    sage: sympy_integrator(sin(x), x)
+    sage: sympy_integrator(sin(x), x)                                                   # needs sympy
     -cos(x)
 """
 from sage.symbolic.expression import Expression
@@ -54,9 +54,9 @@ def sympy_integrator(expression, v, a=None, b=None):
     EXAMPLES::
 
         sage: from sage.symbolic.integration.external import sympy_integrator
-        sage: sympy_integrator(sin(x), x)
+        sage: sympy_integrator(sin(x), x)                                               # needs sympy
         -cos(x)
-        sage: sympy_integrator(cos(x), x)
+        sage: sympy_integrator(cos(x), x)                                               # needs sympy
         sin(x)
     """
     import sympy
@@ -117,7 +117,8 @@ def mma_free_integrator(expression, v, a=None, b=None):
         input = "Integrate[{},{}]".format(math_expr, variable)
     elif a is not None and b is not None:
         input = "Integrate[{},{{{},{},{}}}]".format(math_expr, variable,
-                    a._mathematica_init_(), b._mathematica_init_())
+                                                    a._mathematica_init_(),
+                                                    b._mathematica_init_())
     else:
         raise ValueError('a(={}) and b(={}) should be both None'
                          ' or both defined'.format(a, b))
@@ -135,14 +136,15 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.integration.external import fricas_integrator  # optional - fricas
-        sage: fricas_integrator(sin(x), x)                                      # optional - fricas
+        sage: # optional - fricas
+        sage: from sage.symbolic.integration.external import fricas_integrator
+        sage: fricas_integrator(sin(x), x)
         -cos(x)
-        sage: fricas_integrator(cos(x), x)                                      # optional - fricas
+        sage: fricas_integrator(cos(x), x)
         sin(x)
-        sage: fricas_integrator(1/(x^2-2), x, 0, 1)                             # optional - fricas
+        sage: fricas_integrator(1/(x^2-2), x, 0, 1)
         -1/8*sqrt(2)*(log(2) - log(-24*sqrt(2) + 34))
-        sage: fricas_integrator(1/(x^2+6), x, -oo, oo)                          # optional - fricas
+        sage: fricas_integrator(1/(x^2+6), x, -oo, oo)
         1/6*sqrt(6)*pi
 
     TESTS:
@@ -252,8 +254,8 @@ def giac_integrator(expression, v, a=None, b=None):
         result = ex.integrate(v._giac_(), a._giac_(), b._giac_())
     if 'integrate' in format(result) or 'integration' in format(result):
         return expression.integrate(v, a, b, hold=True)
-    else:
-        return result._sage_()
+    return result._sage_()
+
 
 def libgiac_integrator(expression, v, a=None, b=None):
     r"""

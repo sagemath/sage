@@ -35,8 +35,9 @@ coerce maps. In previous versions of Sage, the cache was by strong
 references and resulted in a memory leak in the following example.
 However, this leak was fixed by :trac:`715`, using weak references::
 
+    sage: # needs sage.combinat sage.modules sage.rings.finite_rings
     sage: K.<t> = GF(2^55)
-    sage: for i in range(50):
+    sage: for i in range(20):
     ....:     a = K.random_element()
     ....:     E = EllipticCurve(j=a)
     ....:     P = E.random_point()
@@ -78,7 +79,7 @@ cdef extern from "sage/cpython/pyx_visit.h":
 cdef type KeyedRef, ref
 from weakref import KeyedRef, ref
 
-cdef inline bint is_dead_keyedref(x):
+cdef inline bint is_dead_keyedref(x) noexcept:
     """
     Check whether ``x`` is a ``KeyedRef`` which is dead.
     """
@@ -92,7 +93,7 @@ cdef object dummy = object()
 cdef PyObject* deleted_key = <PyObject*>dummy
 
 
-cdef inline bint valid(PyObject* obj):
+cdef inline bint valid(PyObject* obj) noexcept:
     """
     Check whether ``obj`` points to a valid object
     """
@@ -109,7 +110,7 @@ cdef class ObjectWrapper:
     cdef PyObject* obj
 
 
-cdef inline ObjectWrapper wrap(obj):
+cdef inline ObjectWrapper wrap(obj) noexcept:
     """
     Wrap a given Python object in an :class:`ObjectWrapper`.
     """
@@ -125,7 +126,7 @@ cdef inline PyObject* unwrap(w) except? NULL:
     return (<ObjectWrapper?>w).obj
 
 
-cdef extract_mono_cell(mono_cell* cell):
+cdef extract_mono_cell(mono_cell* cell) noexcept:
     """
     Take the refcounted components from a mono_cell, put them in a
     tuple and return it. The mono_cell itself is marked as "freed".
@@ -150,7 +151,7 @@ cdef extract_mono_cell(mono_cell* cell):
     return t
 
 
-cdef extract_triple_cell(triple_cell* cell):
+cdef extract_triple_cell(triple_cell* cell) noexcept:
     # See extract_mono_cell for documentation
     assert valid(cell.key_id1)
     t = PyTuple_New(4)
@@ -404,17 +405,18 @@ cdef class MonoDict:
         sage: import gc
         sage: def count_type(T):
         ....:     return len([c for c in gc.get_objects() if isinstance(c,T)])
-        sage: _ = gc.collect()
+        sage: gc.freeze()  # so that gc.collect() only deals with our trash
         sage: N = count_type(MonoDict)
         sage: for i in range(100):
         ....:     V = [MonoDict({"id":j+100*i}) for j in range(100)]
-        ....:     n= len(V)
-        ....:     for i in range(n): V[i][V[(i+1)%n]]=(i+1)%n
+        ....:     n = len(V)
+        ....:     for i in range(n): V[i][V[(i+1)%n]] = (i+1)%n
         ....:     del V
         ....:     _ = gc.collect()
         ....:     assert count_type(MonoDict) == N
         sage: count_type(MonoDict) == N
         True
+        sage: gc.unfreeze()
 
     AUTHORS:
 
@@ -423,7 +425,7 @@ cdef class MonoDict:
     - Simon King (2013-02)
     - Nils Bruin (2013-11)
     """
-    cdef mono_cell* lookup(self, PyObject* key):
+    cdef mono_cell* lookup(self, PyObject* key) noexcept:
         """
         Return a pointer to where ``key`` should be stored in this
         :class:`MonoDict`.
@@ -642,7 +644,7 @@ cdef class MonoDict:
         """
         return self.get(k)
 
-    cdef get(self, k):
+    cdef get(self, k) noexcept:
         cdef mono_cell* cursor = self.lookup(<PyObject*>k)
         if not valid(cursor.key_id):
             raise KeyError(k)
@@ -775,7 +777,7 @@ cdef class MonoDict:
             sage: L[1] = None
             sage: L[2] = True
             sage: L.items()
-            <generator object at ...>
+            <...generator object at ...>
             sage: sorted(L.items())
             [(1, None), (2, True)]
         """
@@ -842,7 +844,7 @@ cdef class MonoDict:
 # and we have to replicate here) is the "eraser" which in its closure
 # stores a reference back to the dictionary itself (meaning that
 # MonoDicts only disappear on cyclic GC).
-cdef int MonoDict_traverse(MonoDict self, visitproc visit, void* arg):
+cdef int MonoDict_traverse(MonoDict self, visitproc visit, void* arg) noexcept:
     if not self.mask:
         return 0
     Py_VISIT3(<PyObject*>self.eraser, visit, arg)
@@ -854,7 +856,7 @@ cdef int MonoDict_traverse(MonoDict self, visitproc visit, void* arg):
             Py_VISIT3(cursor.value, visit, arg)
 
 
-cdef int MonoDict_clear(MonoDict self):
+cdef int MonoDict_clear(MonoDict self) noexcept:
     """
     We clear a monodict by taking first taking away the table before
     dereffing its contents. That shortcuts callbacks, so we deref the
@@ -1121,7 +1123,7 @@ cdef class TripleDict:
 
     - Nils Bruin, 2013-11
     """
-    cdef triple_cell* lookup(self, PyObject* key1, PyObject* key2, PyObject* key3):
+    cdef triple_cell* lookup(self, PyObject* key1, PyObject* key2, PyObject* key3) noexcept:
         """
         Return a pointer to where ``(key1, key2, key3)`` should be
         stored in this :class:`MonoDict`.
@@ -1318,7 +1320,7 @@ cdef class TripleDict:
             raise KeyError(k)
         return self.get(k1, k2, k3)
 
-    cdef get(self, k1, k2, k3):
+    cdef get(self, k1, k2, k3) noexcept:
         cdef triple_cell* cursor = self.lookup(<PyObject*>k1, <PyObject*>k2, <PyObject*>k3)
         if not valid(cursor.key_id1):
             raise KeyError((k1, k2, k3))
@@ -1450,7 +1452,7 @@ cdef class TripleDict:
             sage: L = TripleDict()
             sage: L[1,2,3] = None
             sage: L.items()
-            <generator object at ...>
+            <...generator object at ...>
             sage: list(L.items())
             [((1, 2, 3), None)]
         """
@@ -1522,7 +1524,7 @@ cdef class TripleDict:
 # and we have to replicate here) is the "eraser" which in its closure
 # stores a reference back to the dictionary itself (meaning that
 # TripleDicts only disappear on cyclic GC).
-cdef int TripleDict_traverse(TripleDict self, visitproc visit, void* arg):
+cdef int TripleDict_traverse(TripleDict self, visitproc visit, void* arg) noexcept:
     if not self.mask:
         return 0
     Py_VISIT3(<PyObject*>self.eraser, visit, arg)
@@ -1536,7 +1538,7 @@ cdef int TripleDict_traverse(TripleDict self, visitproc visit, void* arg):
             Py_VISIT3(cursor.value, visit, arg)
 
 
-cdef int TripleDict_clear(TripleDict self):
+cdef int TripleDict_clear(TripleDict self) noexcept:
     if not self.mask:
         return 0
     cdef size_t mask = self.mask

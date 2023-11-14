@@ -70,7 +70,6 @@ class sage_build_ext(build_ext):
             print("self.compiler.linker_so (after fixing library dirs):")
             print(self.compiler.linker_so)
 
-
         # First, sanity-check the 'extensions' list
         self.check_extensions_list(self.extensions)
 
@@ -129,7 +128,7 @@ class sage_build_ext(build_ext):
             try:
                 os.makedirs(path)
             except OSError as e:
-                assert e.errno==errno.EEXIST, 'Cannot create %s.' % path
+                assert e.errno == errno.EEXIST, 'Cannot create %s.' % path
         depends = sources + ext.depends
         if not (self.force or newer_group(depends, ext_filename, 'newer')):
             log.debug("skipping '%s' extension (up-to-date)", ext.name)

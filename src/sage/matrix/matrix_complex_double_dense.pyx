@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Dense matrices over the Complex Double Field using NumPy
 
@@ -16,6 +17,7 @@ We deal with the case of zero rows or zero columns::
 
 TESTS::
 
+    sage: # needs sage.symbolic
     sage: a = matrix(CDF,2,[i+(4-i)*I for i in range(4)], sparse=False)
     sage: TestSuite(a).run()
     sage: Mat(CDF,0,0).zero_matrix().inverse()
@@ -52,6 +54,7 @@ cdef class Matrix_complex_double_dense(Matrix_double_dense):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: m = Matrix(CDF, [[1,2*I],[3+I,4]])
         sage: m**2
         [-1.0 + 6.0*I       10.0*I]
@@ -64,7 +67,7 @@ cdef class Matrix_complex_double_dense(Matrix_double_dense):
     :meth:`~.Matrix_double_dense.left_eigenvectors` or
     :meth:`~.Matrix_double_dense.right_eigenvectors`::
 
-        sage: p,e = m.right_eigenvectors()
+        sage: p,e = m.right_eigenvectors()                                              # needs sage.symbolic
 
     The result is a pair ``(p,e)``, where ``p`` is a diagonal matrix of
     eigenvalues and ``e`` is a matrix whose columns are the
@@ -73,8 +76,8 @@ cdef class Matrix_complex_double_dense(Matrix_double_dense):
     To solve a linear system `Ax = b` where ``A = [[1,2*I],[3+I,4]]`` and
     ``b = [5,6]``::
 
-        sage: b = vector(CDF,[5,6])
-        sage: m.solve_right(b)  # abs tol 1e-14
+        sage: b = vector(CDF,[5,6])                                                     # needs sage.symbolic
+        sage: m.solve_right(b)  # abs tol 1e-14                                         # needs sage.symbolic
         (2.6666666666666665 + 0.6666666666666669*I, -0.3333333333333333 - 1.1666666666666667*I)
 
     See the methods :meth:`~.Matrix_double_dense.QR`,

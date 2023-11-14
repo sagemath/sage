@@ -64,17 +64,17 @@ class ComplexReflectionGroups(Category_singleton):
 
     An example of a reflection group::
 
-        sage: W = ComplexReflectionGroups().example(); W
+        sage: W = ComplexReflectionGroups().example(); W                                # needs sage.combinat
         5-colored permutations of size 3
 
     ``W`` is in the category of complex reflection groups::
 
-        sage: W in ComplexReflectionGroups()
+        sage: W in ComplexReflectionGroups()                                            # needs sage.combinat
         True
 
     TESTS::
 
-        sage: TestSuite(W).run()
+        sage: TestSuite(W).run()                                                        # needs sage.combinat
         sage: TestSuite(ComplexReflectionGroups()).run()
     """
 
@@ -115,7 +115,7 @@ class ComplexReflectionGroups(Category_singleton):
         EXAMPLES::
 
             sage: from sage.categories.complex_reflection_groups import ComplexReflectionGroups
-            sage: ComplexReflectionGroups().example()
+            sage: ComplexReflectionGroups().example()                                   # needs sage.combinat
             5-colored permutations of size 3
         """
         from sage.combinat.colored_permutations import ColoredPermutations

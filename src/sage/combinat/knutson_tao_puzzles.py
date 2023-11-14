@@ -1195,7 +1195,7 @@ class PuzzleFilling():
             sage: puzzle.is_completed()
             True
         """
-        (i, j) = self.kink_coordinates()
+        i, _ = self.kink_coordinates()
         return i == self._n + 1
 
     def south_labels(self):
@@ -1225,7 +1225,7 @@ class PuzzleFilling():
             sage: P.add_piece(piece); P
             {(1, 4): 1/0\0}
         """
-        (i, j) = self.kink_coordinates()
+        i, j = self.kink_coordinates()
         self._squares[i, j] = piece
         if isinstance(piece, DeltaPiece):
             i += 1
@@ -1253,7 +1253,7 @@ class PuzzleFilling():
             sage: P
             {(1, 4): 1/0\0, (2, 4): 1/0\0}
         """
-        (i, j) = self.kink_coordinates()
+        i, j = self.kink_coordinates()
         for piece in pieces:
             self._squares[i, j] = piece
             if isinstance(piece, DeltaPiece):
@@ -2178,7 +2178,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         queue = [PuzzleFilling(lamda, mu)]
         while queue:
             PP = queue.pop()
-            (i, j) = PP.kink_coordinates()
+            i, _ = PP.kink_coordinates()
 
             # grab nw labels
             if i == 1:

@@ -146,7 +146,7 @@ Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from libc.string cimport memset
@@ -157,8 +157,6 @@ from memory_allocator cimport MemoryAllocator
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.data_structures.bitset import Bitset
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
@@ -238,7 +236,7 @@ def _my_subgraph(G, vertices, relabel=False, return_map=False):
 # Building blocks
 ######################################################################
 
-cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d):
+cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d) noexcept:
     """
     Return the hyperbolicity of the given 4-tuple.
     """
@@ -265,7 +263,7 @@ cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d):
 
 cdef tuple hyperbolicity_basic_algorithm(int N,
                                          unsigned short** distances,
-                                         verbose):
+                                         verbose) noexcept:
     """
     Return **twice** the hyperbolicity of a graph, and a certificate.
 
@@ -329,8 +327,7 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
     # Last, we return the computed value and the certificate
     if h_LB != -1:
         return (h_LB, certificate)
-    else:
-        return (-1, [])
+    return (-1, [])
 
 
 ######################################################################
@@ -371,7 +368,7 @@ def _greedy_dominating_set(H, verbose=False):
 cdef inline distances_and_far_apart_pairs(gg,
                                           unsigned short* distances,
                                           unsigned short* far_apart_pairs,
-                                          list int_to_vertex):
+                                          list int_to_vertex) noexcept:
     """
     Compute both distances between all pairs and far-apart pairs.
 
@@ -485,7 +482,7 @@ cdef inline pair** sort_pairs(uint32_t N,
                               unsigned short** values,
                               unsigned short** to_include,
                               uint32_t* nb_p,
-                              uint32_t* nb_pairs_of_length):
+                              uint32_t* nb_pairs_of_length) noexcept:
     """
     Return an array of unordered pairs {i,j} in increasing order of values.
 
@@ -586,7 +583,7 @@ cdef tuple hyperbolicity_BCCM(int N,
                               int h_LB,
                               float approximation_factor,
                               float additive_gap,
-                              verbose=False):
+                              verbose=False) noexcept:
     """
     Return the hyperbolicity of a graph.
 
@@ -827,10 +824,10 @@ cdef tuple hyperbolicity_BCCM(int N,
     # Last, we return the computed value and the certificate
     if not certificate:
         return (-1, [], h_UB)
-    else:
-        # When using far-apart pairs, the loops may end before improving the
-        # upper-bound
-        return (h, certificate, h_UB)
+
+    # When using far-apart pairs, the loops may end before improving the
+    # upper-bound
+    return (h, certificate, h_UB)
 
 
 ######################################################################
@@ -844,7 +841,7 @@ cdef tuple hyperbolicity_CCL(int N,
                              int h_LB,
                              float approximation_factor,
                              float additive_gap,
-                             verbose=False):
+                             verbose=False) noexcept:
     """
     Return the hyperbolicity of a graph.
 
@@ -1045,10 +1042,10 @@ cdef tuple hyperbolicity_CCL(int N,
     # Last, we return the computed value and the certificate
     if not certificate:
         return (-1, [], h_UB)
-    else:
-        # When using far-apart pairs, the loops may end before improving the
-        # upper-bound
-        return (h, certificate, h_UB if GOTO_RETURN else h)
+
+    # When using far-apart pairs, the loops may end before improving the
+    # upper-bound
+    return (h, certificate, h_UB if GOTO_RETURN else h)
 
 
 def hyperbolicity(G,
@@ -1190,7 +1187,7 @@ def hyperbolicity(G,
     Comparison of results::
 
         sage: from sage.graphs.hyperbolicity import hyperbolicity
-        sage: for i in range(10): # long time
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:     G = graphs.RandomBarabasiAlbert(100,2)
         ....:     d1,_,_ = hyperbolicity(G, algorithm='basic')
         ....:     d2,_,_ = hyperbolicity(G, algorithm='CCL')
@@ -1204,7 +1201,7 @@ def hyperbolicity(G,
         sage: from sage.graphs.hyperbolicity import hyperbolicity
         sage: import random
         sage: random.seed()
-        sage: for i in range(10): # long time
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:     n = random.randint(2, 20)
         ....:     m = random.randint(0, n*(n-1) / 2)
         ....:     G = graphs.RandomGNM(n, m)
@@ -1288,6 +1285,8 @@ def hyperbolicity(G,
     elif approximation_factor == 1.0:
         pass
     elif algorithm in ['CCL', 'CCL+FA', 'BCCM']:
+        from sage.rings.real_mpfr import RR
+
         if approximation_factor not in RR or approximation_factor < 1.0:
             raise ValueError("the approximation factor must be >= 1.0")
     else:
@@ -1298,6 +1297,8 @@ def hyperbolicity(G,
     elif additive_gap == 0.0:
         pass
     elif algorithm in ['CCL', 'CCL+FA', 'BCCM']:
+        from sage.rings.real_mpfr import RR
+
         if additive_gap not in RR or additive_gap < 0.0:
             raise ValueError("the additive gap must be a real positive number")
     else:
@@ -1464,7 +1465,7 @@ def hyperbolicity(G,
 # Distribution of the hyperbolicity of 4-tuples
 ######################################################################
 
-cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances):
+cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances) noexcept:
     """
     Return the distribution of the hyperbolicity of the 4-tuples of the graph.
 
@@ -1525,7 +1526,7 @@ cdef extern from "stdlib.h":
     void c_libc_srandom "srandom"(unsigned int seed)
 
 
-cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size):
+cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size) noexcept:
     """
     Return a sampling of the hyperbolicity distribution of the graph.
 

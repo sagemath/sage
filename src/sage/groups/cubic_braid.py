@@ -80,19 +80,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from enum import Enum
+
+import sage.rings.abc
+
 from sage.categories.groups import Groups
 from sage.categories.shephard_groups import ShephardGroups
-from sage.misc.cachefunc import cached_method
-from sage.libs.gap.element import GapElement
 from sage.groups.free_group import FreeGroup
 from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
 from sage.groups.braid import BraidGroup
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-from sage.rings.number_field.number_field import CyclotomicField
-from sage.rings.finite_rings.finite_field_constructor import GF
 
-from enum import Enum
+try:
+    from sage.libs.gap.element import GapElement
+except ImportError:
+    GapElement = ()
 
 
 ##############################################################################
@@ -153,7 +156,6 @@ def _reduce_tietze(tietze_list):
             start = tietze_list[:i]
             return start + _reduce_tietze(tietze_list_red)
     return tietze_list
-
 
 
 ##############################################################################
@@ -387,13 +389,15 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
             sage: C3.<c1, c2> = CubicBraidGroup(3)
             sage: ele = c1*c2*c1
+
+            sage: # needs sage.rings.number_field
             sage: BuMa = ele.burau_matrix(); BuMa
             [  -zeta3         1     zeta3]
             [  -zeta3 zeta3 + 1         0]
             [       1         0         0]
             sage: BuMa.base_ring()
             Cyclotomic Field of order 3 and degree 2
-            sage: BuMa == ele.burau_matrix(characteristic = 0)
+            sage: BuMa == ele.burau_matrix(characteristic=0)
             True
             sage: BuMa = ele.burau_matrix(domain=QQ); BuMa
             [-t + 1      1  t - 1]
@@ -401,18 +405,21 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             [     1      0      0]
             sage: BuMa.base_ring()
             Number Field in t with defining polynomial t^2 - t + 1
-            sage: BuMa = ele.burau_matrix(domain = QQ[I, sqrt(3)]); BuMa
+            sage: BuMa = ele.burau_matrix(domain = QQ[I, sqrt(3)]); BuMa                # needs sage.symbolic
             [ 1/2*sqrt3*I + 1/2                  1 -1/2*sqrt3*I - 1/2]
             [ 1/2*sqrt3*I + 1/2 -1/2*sqrt3*I + 1/2                  0]
             [                 1                  0                  0]
-            sage: BuMa.base_ring()
+            sage: BuMa.base_ring()                                                      # needs sage.symbolic
             Number Field in I with defining polynomial x^2 + 1 over its base field
+
             sage: BuMa = ele.burau_matrix(characteristic=7); BuMa
             [3 1 4]
             [3 5 0]
             [1 0 0]
             sage: BuMa.base_ring()
             Finite Field of size 7
+
+            sage: # needs sage.rings.finite_rings
             sage: BuMa = ele.burau_matrix(characteristic=2); BuMa
             [t + 1     1 t + 1]
             [t + 1     t     0]
@@ -432,6 +439,8 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             [      1       0       0]
             sage: BuMa.base_ring()
             Finite Field in t of size 5^2
+
+            sage: # needs sage.rings.number_field
             sage: BuMa, BuMaAd, H = ele.burau_matrix(reduced='unitary'); BuMa
             [       0 zeta12^3]
             [zeta12^3        0]
@@ -439,10 +448,11 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             True
             sage: BuMa.base_ring()
             Cyclotomic Field of order 12 and degree 4
-            sage: BuMa, BuMaAd, H  = ele.burau_matrix(domain = QQ[I, sqrt(3)], reduced='unitary'); BuMa
+            sage: BuMa, BuMaAd, H = ele.burau_matrix(domain=QQ[I, sqrt(3)],             # needs sage.symbolic
+            ....:                                    reduced='unitary'); BuMa
             [0 I]
             [I 0]
-            sage: BuMa.base_ring()
+            sage: BuMa.base_ring()                                                      # needs sage.symbolic
             Number Field in I with defining polynomial x^2 + 1 over its base field
         """
         braid = self.braid()
@@ -461,8 +471,8 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             burau_ori, burau_ori_adj, herm_form_ori = burau_ori
 
         if domain is not None:
-            if isinstance(domain, UniversalCyclotomicField):
-                if  root_bur is None:
+            if isinstance(domain, sage.rings.abc.UniversalCyclotomicField):
+                if root_bur is None:
                     if unitary:
                         root_bur = domain.gen(12)
                     else:
@@ -484,7 +494,6 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
                         break
                 return root_bur
 
-
             if domain is None:
                 if characteristic is None:
                     # --------------------------------------------------------------------
@@ -503,14 +512,16 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
                 except ValueError:
                     raise ValueError('characteristic must be in integer')
 
-                if  not characteristic.is_zero()  and not characteristic.is_prime():
+                if not characteristic.is_zero()  and not characteristic.is_prime():
                     raise ValueError('characteristic must be a prime')
                 if characteristic.is_zero():
+                    from sage.rings.number_field.number_field import CyclotomicField
                     if unitary:
                         domain = CyclotomicField(12)
                     else:
                         domain = CyclotomicField(3)
                 else:
+                    from sage.rings.finite_rings.finite_field_constructor import GF
                     domain = GF(characteristic)
                 root_bur = find_root(domain)
                 domain = root_bur.parent()
@@ -547,7 +558,6 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             return burau_mat, burau_mat_adj, herm_form
 
         return burau_mat
-
 
 
 ##############################################################################
@@ -631,13 +641,15 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         #I  Forcing finiteness test
         True
         sage: U3.as_classical_group()
-        Subgroup generated by [(1,7,6)(3,19,14)(4,15,10)(5,11,18)(12,16,20), (1,12,13)(2,15,19)(4,9,14)(5,18,8)(6,21,16)]
+        Subgroup generated by [(1,7,6)(3,19,14)(4,15,10)(5,11,18)(12,16,20),
+                               (1,12,13)(2,15,19)(4,9,14)(5,18,8)(6,21,16)]
          of (The projective general unitary group of degree 3 over Finite Field of size 2)
         sage: C3.as_classical_group()
         Subgroup with 2 generators (
         [  E(3)^2        0]  [       1 -E(12)^7]
         [-E(12)^7        1], [       0   E(3)^2]
-        ) of General Unitary Group of degree 2 over Universal Cyclotomic Field with respect to positive definite hermitian form
+        ) of General Unitary Group of degree 2 over Universal Cyclotomic Field
+        with respect to positive definite hermitian form
         [-E(12)^7 + E(12)^11                  -1]
         [                 -1 -E(12)^7 + E(12)^11]
 
@@ -673,7 +685,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         Coxeter = 'C'
         AssionS = 'S'
         AssionU = 'U'
-
 
     ###########################################################################################
     # private methods
@@ -793,7 +804,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         self._centralizing_element        = None   # image under nat. map of the former one in the proj. classical group
         return
 
-
     def _repr_(self):
         r"""
         Return a string representation.
@@ -810,9 +820,9 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             Assion group on 2 strands of type U
         """
         if self._cbg_type == CubicBraidGroup.type.Coxeter:
-            return "Cubic Braid group on %s strands"%(self.strands())
+            return "Cubic Braid group on %s strands" % (self.strands())
         else:
-            return "Assion group on %s strands of type %s"%(self.strands() ,self._cbg_type.value)
+            return "Assion group on %s strands of type %s" % (self.strands() ,self._cbg_type.value)
 
     def index_set(self):
         r"""
@@ -906,7 +916,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         elem = self.an_element()
         att_grp_elem = attached_group(elem)
         if self.is_finite() and self.strands() <= 7: # not realistic for larger number of strands
-            att_grp_elem_back= self(att_grp_elem)
+            att_grp_elem_back = self(att_grp_elem)
             tester.assertEqual(att_grp_elem_back, elem)
         return
 
@@ -968,12 +978,19 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             sage: CBG2._test_matrix_group()
         """
         tester = self._tester(**options)
+
+        MatDEF = self.as_matrix_group()
+        self._internal_test_attached_group(MatDEF, tester)
+
+        try:
+            from sage.rings.finite_rings.finite_field_constructor import GF
+        except ImportError:
+            return
+
         F3 = GF(3)
         r63 = F3(2)
         F4 = GF(4)
         r64 = F4.gen()
-        MatDEF = self.as_matrix_group()
-        self._internal_test_attached_group(MatDEF, tester)
 
         if self._cbg_type != CubicBraidGroup.type.AssionU or self.strands() < 5: # not well defined else-wise
             matrix_grpF3 = self.as_matrix_group(root_bur=r63)
@@ -991,7 +1008,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             self._internal_test_attached_group(matrix_grpF7, tester)
         return
 
-
     def _test_reflection_group(self, **options):
         r"""
         Check the reflection group properties.
@@ -1007,14 +1023,13 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             sage: CBG2 = CubicBraidGroup(2)
             sage: CBG2._test_reflection_group()
         """
-        if self._cbg_type == CubicBraidGroup.type.Coxeter and self.is_finite() and  self.strands() > 2:
+        if self._cbg_type == CubicBraidGroup.type.Coxeter and self.is_finite() and self.strands() > 2:
             from sage.combinat.root_system.reflection_group_real import is_chevie_available
             if is_chevie_available():
                 tester = self._tester(**options)
                 reflgrp = self.as_reflection_group()
                 self._internal_test_attached_group(reflgrp, tester)
         return
-
 
     # -------------------------------------------------------------------------------
     # -------------------------------------------------------------------------------
@@ -1168,14 +1183,14 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # computing a hyperbolic decomposition basis with respect
             # to the invariant bilinear form.
             # -----------------------------------------------------------
-            xbas =[bas[mhalf -i -1] for i in range(mhalf)]
-            ybas =[bas[mhalf +i]    for i in range(mhalf)]
+            xbas = [bas[mhalf - i - 1] for i in range(mhalf)]
+            ybas = [bas[mhalf + i]    for i in range(mhalf)]
 
             # -----------------------------------------------------------
             # computing the List of transvection vectors according to
             # the Assion paper, page 292.
             # -----------------------------------------------------------
-            transvections =[xbas[0]]                                   # t_1      = x_1
+            transvections = [xbas[0]]                                   # t_1      = x_1
             for i in range(mhalf-1):
                 transvections.append(ybas[i])                          # t_{2i}   = y_i
                 transvections.append(xbas[i] + xbas[i+1])              # t_{2i+1} = x_j + x_(j+1)
@@ -1241,26 +1256,26 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # computing a orthonormal basis with respect
             # to the invariant bilinear form.
             # -----------------------------------------------------------
-            xbas =[]
+            xbas = []
             for i in range(m):
                 if 2*i == m-1:
                     xbas.append(bas[i])
                 else:
-                    xbas.append(a*bas[i] + a.frobenius()*bas[m-1 -i])
+                    xbas.append(a*bas[i] + a.frobenius()*bas[m-1 - i])
 
             # -----------------------------------------------------------
             # computing the List of transvection vectors according to
             # Assion paper, page 293.
             # -----------------------------------------------------------
-            transvections =[xbas[0]]                                          # t_1 = x_1
+            transvections = [xbas[0]]                                          # t_1 = x_1
             if m > 1:
                 transvections.append(xbas[0]+xbas[1]+xbas[2])                 # t_2 = x_1 + x_2 + x_3
             for j in range(mthird):
                 pos = 3*(j+1)-1
                 transvections.append(xbas[pos-1])                             # t_{3i}   = x_{3i-1}
-                if  pos +1  < m:
+                if pos + 1  < m:
                     transvections.append(xbas[pos-1]+xbas[pos]+xbas[pos+1])   # t_{3i+1} = x_{3i-1} + x_{3i} + x_{3i+1}
-                if  pos +3  < m:
+                if pos + 3  < m:
                     transvections.append(xbas[pos+1]+xbas[pos+2]+xbas[pos+3]) # t_{3i+2} = x_{3i+1} + x_{3i+2} + x_{3i+3}
 
             # -----------------------------------------------------------
@@ -1271,7 +1286,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             def transvec2mat(v, bas=bas, bform=bform, fact=a):
                 # note x does not change under conjugation, since it belongs to standard basis
-                t = [x + fact *(x * bform * v.conjugate()) * v for x in bas]
+                t = [x + fact * (x * bform * v.conjugate()) * v for x in bas]
                 return matrix(F, t)
 
             # ------------------------------------------------------------------------------
@@ -1324,6 +1339,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # now 1 + 2*cos(\pi/6)*i\theta = 1 + sqrt(3)*(-sqrt(3)/2 + I/2) = 1- 3/2 + sqrt(3)I/2 = z12^4 = - ~z12^2
             # finally: Coxeter's Realization is the unitary Burau representation of Squier for s = ~z12
             # -----------------------------------------------------------------------------------------------
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+
             UCF = UniversalCyclotomicField()
             z12 = UCF.gen(12)
             classical_group = self.as_matrix_group(root_bur=~z12, domain=UCF, reduced='unitary')
@@ -1400,7 +1417,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         """
         return self._nstrands
 
-
     # ----------------------------------------------------------------------------------
     # braid_group
     # ----------------------------------------------------------------------------------
@@ -1445,7 +1461,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         """
         return self._braid_group
 
-
     # ----------------------------------------------------------------------------------
     # as_matrix_group
     # ----------------------------------------------------------------------------------
@@ -1473,6 +1488,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: C5 = CubicBraidGroup(5)
             sage: C5Mch5 = C5.as_matrix_group(characteristic=5); C5Mch5
             Matrix group over Finite Field in t of size 5^2 with 4 generators (
@@ -1543,10 +1559,10 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                 self._classical_invariant_form = herm_form
 
         if unitary:
-            from sage.rings.finite_rings.finite_field_base import is_FiniteField
+            from sage.rings.finite_rings.finite_field_base import FiniteField
             from sage.groups.matrix_gps.unitary import GU
             d, d = herm_form.dimensions()
-            if is_FiniteField(domain):
+            if isinstance(domain, FiniteField):
                 base_group = GU(d, domain, var=domain.gen(), invariant_form=herm_form)
             else:
                 base_group = GU(d, domain, invariant_form=herm_form)
@@ -1567,7 +1583,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             raise ValueError("Burau representation does not factor through the relations")
         matrix_group.register_conversion(hom_to_mat)
         return matrix_group
-
 
     # ----------------------------------------------------------------------------------
     # Although this method is available for finitely presented group
@@ -1651,10 +1666,12 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: U3 = AssionGroupU(3)
             sage: U3Cl = U3.as_classical_group(); U3Cl
-            Subgroup generated by [(1,7,6)(3,19,14)(4,15,10)(5,11,18)(12,16,20), (1,12,13)(2,15,19)(4,9,14)(5,18,8)(6,21,16)]
-             of (The projective general unitary group of degree 3 over Finite Field of size 2)
+            Subgroup generated by [(1,7,6)(3,19,14)(4,15,10)(5,11,18)(12,16,20),
+                                   (1,12,13)(2,15,19)(4,9,14)(5,18,8)(6,21,16)] of
+             (The projective general unitary group of degree 3 over Finite Field of size 2)
             sage: U3Clemb = U3.as_classical_group(embedded=True); U3Clemb
             Subgroup with 2 generators (
             [0 0 a]  [a + 1     a     a]
@@ -1678,6 +1695,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             General Unitary Group of degree 3 over Finite Field in a of size 2^2
             sage: U3Clemb.ambient() == U4Cl
             True
+
+            sage: # needs sage.rings.number_field
             sage: C4 = CubicBraidGroup(4)
             sage: C4Cl = C4.as_classical_group(); C4Cl
             Subgroup with 3 generators (
@@ -1688,7 +1707,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             [       1        0        0]
             [       0        1 -E(12)^7]
             [       0        0   E(3)^2]
-            ) of General Unitary Group of degree 3 over Universal Cyclotomic Field with respect to positive definite hermitian form
+            ) of General Unitary Group of degree 3 over Universal Cyclotomic Field
+            with respect to positive definite hermitian form
             [-E(12)^7 + E(12)^11                  -1                   0]
             [                 -1 -E(12)^7 + E(12)^11                  -1]
             [                  0                  -1 -E(12)^7 + E(12)^11]
@@ -1717,7 +1737,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         raise ValueError("no classical embedding defined")
 
-
     # ----------------------------------------------------------------------------------
     # as_refection_group
     # ----------------------------------------------------------------------------------
@@ -1737,27 +1756,29 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         EXAMPLES::
 
-           sage: C3.<c1,c2> = CubicBraidGroup(3)           # optional - gap3
-           sage: R3 = C3.as_reflection_group(); R3         # optional - gap3
+           sage: # optional - gap3
+           sage: C3.<c1,c2> = CubicBraidGroup(3)
+           sage: R3 = C3.as_reflection_group(); R3
            Irreducible complex reflection group of rank 2 and type ST4
-           sage: R3.cartan_matrix()                        # optional - gap3
+           sage: R3.cartan_matrix()
            [-2*E(3) - E(3)^2           E(3)^2]
            [        -E(3)^2 -2*E(3) - E(3)^2]
-           sage: R3.simple_roots()                         # optional - gap3
+           sage: R3.simple_roots()
            Finite family {1: (0, -2*E(3) - E(3)^2), 2: (2*E(3)^2, E(3)^2)}
-           sage: R3.simple_coroots()                       # optional - gap3
+           sage: R3.simple_coroots()
            Finite family {1: (0, 1), 2: (1/3*E(3) - 1/3*E(3)^2, 1/3*E(3) - 1/3*E(3)^2)}
 
        Conversion maps::
 
-           sage: r = R3.an_element()                       # optional - gap3
-           sage: cr = C3(r); cr                            # optional - gap3
+           sage: # optional - gap3
+           sage: r = R3.an_element()
+           sage: cr = C3(r); cr
            c1*c2
-           sage: mr = r.matrix(); mr                       # optional - gap3
+           sage: mr = r.matrix(); mr
            [ 1/3*E(3) - 1/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
            [-2/3*E(3) + 2/3*E(3)^2  2/3*E(3) + 1/3*E(3)^2]
-           sage: C3Cl = C3.as_classical_group()            # optional - gap3
-           sage: C3Cl(cr)                                  # optional - gap3
+           sage: C3Cl = C3.as_classical_group()
+           sage: C3Cl(cr)
            [ E(3)^2    -E(4)]
            [-E(12)^7        0]
 
@@ -1767,13 +1788,14 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         the classical group due to different hermitian forms for the unitary
         groups they live in::
 
-           sage: C4 = CubicBraidGroup(4)                   # optional - gap3
-           sage: R4 = C4.as_reflection_group()             # optional - gap3
-           sage: R4.invariant_form()                       # optional - gap3
+           sage: # optional - gap3
+           sage: C4 = CubicBraidGroup(4)
+           sage: R4 = C4.as_reflection_group()
+           sage: R4.invariant_form()
            [1 0 0]
            [0 1 0]
            [0 0 1]
-           sage: _ == C4.classical_invariant_form()        # optional - gap3
+           sage: _ == C4.classical_invariant_form()
            False
         """
         # -------------------------------------------------------------------------------
@@ -1797,8 +1819,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         from sage.combinat.root_system.reflection_group_real import ReflectionGroup
 
-        if   self.strands() == 2:
-            reflection_group = ReflectionGroup([2 ,1 ,1])
+        if self.strands() == 2:
+            reflection_group = ReflectionGroup([2, 1, 1])
         elif self.strands() == 3:
             reflection_group = ReflectionGroup(4)
         elif self.strands() == 4:
@@ -1809,7 +1831,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         hom_to_refl = self.hom(reflection_group.gens())
         reflection_group.register_conversion(hom_to_refl)
         return reflection_group
-
 
     # ----------------------------------------------------------------------------------
     # classical invariant form returns the invariant form of the classical realization
@@ -1875,7 +1896,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         return self._classical_invariant_form
 
-
     # ----------------------------------------------------------------------------------
     # centralizing element in the classical symplectic resp. unitary group
     # ----------------------------------------------------------------------------------
@@ -1908,7 +1928,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             sage: U3 = AssionGroupU(3);  U3
             Assion group on 3 strands of type U
             sage: U3Cl = U3.as_classical_group(); U3Cl
-            Subgroup generated by [(1,7,6)(3,19,14)(4,15,10)(5,11,18)(12,16,20), (1,12,13)(2,15,19)(4,9,14)(5,18,8)(6,21,16)]
+            Subgroup generated by [(1,7,6)(3,19,14)(4,15,10)(5,11,18)(12,16,20),
+                                   (1,12,13)(2,15,19)(4,9,14)(5,18,8)(6,21,16)]
              of (The projective general unitary group of degree 3 over Finite Field of size 2)
             sage: c = U3.centralizing_element(); c
             (1,16)(2,9)(3,10)(4,19)(6,12)(7,20)(13,21)(14,15)
@@ -1944,7 +1965,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                 return self._centralizing_matrix
             else:
                 return self._centralizing_element
-
 
     # ----------------------------------------------------------------------------------
     # calculating the order by formula

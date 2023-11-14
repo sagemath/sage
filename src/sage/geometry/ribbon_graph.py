@@ -956,19 +956,19 @@ class RibbonGraph(SageObject, UniqueRepresentation):
              [[25, 26]],
              [[27, 28]]]
         """
-        aux_sigma = [list(x) for  x in self._sigma.cycle_tuples(singletons=True)]
+        aux_sigma = [list(x) for x in self._sigma.cycle_tuples(singletons=True)]
 
         basis = [[list(x)] for x in self.reduced()._rho.cycle_tuples()]
 
-        #Now we define center as the set of edges that were contracted
-        #in reduced() this set is contractible and can be define as the
-        #complement of reduced_rho in rho
+        # Now we define center as the set of edges that were contracted
+        # in reduced() this set is contractible and can be define as the
+        # complement of reduced_rho in rho
 
         center = [list(x) for x in self._rho.cycle_tuples()
                   if (x not in self.reduced()._rho.cycle_tuples())]
 
-        #We define an auxiliary list 'vertices' that will contain the
-        #vertices (cycles of sigma) corresponding to each half edge.
+        # We define an auxiliary list 'vertices' that will contain the
+        # vertices (cycles of sigma) corresponding to each half edge.
 
         vertices = []
 
@@ -988,7 +988,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
                     del vertices[i][2*m:2*m+2]
                     k = 0
                 else:
-                    k+=1
+                    k += 1
 
         for i in range(len(basis)):
             for j in range(1, len(basis[i])):
@@ -1074,9 +1074,9 @@ class RibbonGraph(SageObject, UniqueRepresentation):
                 pos_sigma = _find(aux_sigma,aux_val)
 
                 #Now we set the found positions to the new normalized value
-                darts_rho[pos_darts]=i+1
-                aux_sigma[pos_sigma[0]][pos_sigma[1]]=i+1
-                aux_rho[pos_rho[0]][pos_rho[1]]=i+1
+                darts_rho[pos_darts] = i+1
+                aux_sigma[pos_sigma[0]][pos_sigma[1]] = i+1
+                aux_rho[pos_rho[0]][pos_rho[1]] = i+1
 
         return RibbonGraph(
                         PermutationConstructor([tuple(x) for x in aux_sigma]),
@@ -1213,7 +1213,7 @@ def bipartite_ribbon_graph(p, q):
         aux_tuple = [i*q + j + 1  for j in range(q)]
         sigma += [aux_tuple]
     for i in range(q):
-        aux_tuple = [p*q + i*p + j +1  for j in range(p)]
+        aux_tuple = [p*q + i*p + j + 1  for j in range(p)]
         sigma += [aux_tuple]
     for i in range(p*q):
         if (i+1) % q == 0:
@@ -1221,9 +1221,9 @@ def bipartite_ribbon_graph(p, q):
         elif (i+1) % q != 0:
             k = (i+1) % q
         t = 0
-        if (i+1) %  q != 0:
+        if (i+1) % q != 0:
             t = 1
-        aux_edge = [i+1, p*q + k*p - ((i+1 + t*q)/q).floor() +1]
+        aux_edge = [i+1, p*q + k*p - ((i+1 + t*q)/q).floor() + 1]
         rho += [aux_edge]
     return RibbonGraph(
                        PermutationConstructor([tuple(x) for x in sigma]),

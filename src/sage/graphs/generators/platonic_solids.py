@@ -39,15 +39,16 @@ def TetrahedralGraph():
     Construct and show a Tetrahedral graph::
 
         sage: g = graphs.TetrahedralGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     The following example requires networkx::
 
-        sage: import networkx as NX
+        sage: import networkx as NX                                                     # needs networkx
 
     Compare this Tetrahedral, Wheel(4), Complete(4), and the Tetrahedral plotted
     with the spring-layout algorithm below in a Sage graphics array::
 
+        sage: # needs networkx sage.plot
         sage: tetra_pos = graphs.TetrahedralGraph()
         sage: tetra_spring = Graph(NX.tetrahedral_graph())
         sage: wheel = graphs.WheelGraph(4)
@@ -60,7 +61,7 @@ def TetrahedralGraph():
         ....:         n.append(g[i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
         sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G.show()                          # long time
     """
     edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
     pos = {0: (0, 0),
@@ -88,11 +89,12 @@ def HexahedralGraph():
     Construct and show a Hexahedral graph::
 
         sage: g = graphs.HexahedralGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several hexahedral graphs in a Sage graphics array. They will be
     drawn differently due to the use of the spring-layout algorithm::
 
+        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -104,7 +106,7 @@ def HexahedralGraph():
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
         sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G.show()                          # long time
     """
     adj = {0: [1, 3, 4], 1: [2, 5], 2: [3, 6], 3: [7], 4: [5, 7], 5: [6], 6: [7]}
     pos = {
@@ -140,11 +142,12 @@ def OctahedralGraph():
     Construct and show an Octahedral graph::
 
         sage: g = graphs.OctahedralGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several octahedral graphs in a Sage graphics array They will be drawn
     differently due to the use of the spring-layout algorithm::
 
+        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -156,7 +159,7 @@ def OctahedralGraph():
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
         sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G.show()                          # long time
     """
     adj = {0: [1, 2, 3, 4], 1: [2, 3, 5], 2: [4, 5], 3: [4, 5], 4: [5]}
     G = Graph(adj, format='dict_of_lists', name="Octahedron")
@@ -184,11 +187,12 @@ def IcosahedralGraph():
     Construct and show an Octahedral graph::
 
         sage: g = graphs.IcosahedralGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several icosahedral graphs in a Sage graphics array. They will be
     drawn differently due to the use of the spring-layout algorithm::
 
+        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -200,7 +204,7 @@ def IcosahedralGraph():
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
         sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G.show()                          # long time
     """
     adj = {0: [1, 5, 7, 8, 11], 1: [2, 5, 6, 8], 2: [3, 6, 8, 9],
            3: [4, 6, 9, 10], 4: [5, 6, 10, 11], 5: [6, 11],
@@ -228,11 +232,12 @@ def DodecahedralGraph():
     Construct and show a Dodecahedral graph::
 
         sage: g = graphs.DodecahedralGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several dodecahedral graphs in a Sage graphics array They will be
     drawn differently due to the use of the spring-layout algorithm::
 
+        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -244,7 +249,7 @@ def DodecahedralGraph():
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
         sage: G = graphics_array(j)
-        sage: G.show()  # long time
+        sage: G.show()                          # long time
     """
     adj = {0: [1, 10, 19], 1: [2, 8], 2: [3, 6], 3: [4, 19], 4: [5, 17],
            5: [6, 15], 6: [7], 7: [8, 14], 8: [9], 9: [10, 13], 10: [11],

@@ -1,14 +1,20 @@
 cimport cython
 from sage.structure.sage_object cimport SageObject
-from .list_of_faces             cimport ListOfFaces
-from .face_data_structure       cimport face_t
-from .face_list_data_structure  cimport face_list_t
-from .combinatorial_face        cimport CombinatorialFace
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces             cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure  cimport face_list_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face        cimport CombinatorialFace
+
+cdef enum FaceStatus:
+    NOT_INITIALIZED
+    INITIALIZED
+    IGNORE_SUBSETS
+    ONLY_VISIT_SUBSETS
 
 cdef struct iter_s:
     bint dual                  # if 1, then iterate over dual Polyhedron
     face_t face                # the current face of the iterator
-    int face_status            # 0 not initialized, 1 initialized, 2 added to visited_all, 3 only visit subsets
+    FaceStatus face_status
     size_t *atom_rep           # a place where atom-representaion of face will be stored
     size_t *coatom_rep         # a place where coatom-representaion of face will be stored
     int current_dimension      # dimension of current face, dual dimension if ``dual``
@@ -64,7 +70,7 @@ cdef class FaceIterator_base(SageObject):
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
     cdef ListOfFaces atoms, coatoms, coatoms_coatom_rep
 
-    cdef inline CombinatorialFace next_face(self)
+    cdef inline CombinatorialFace next_face(self) noexcept
     cdef inline int next_dimension(self) except -1
     cdef inline int next_face_loop(self) except -1
     cdef size_t n_atom_rep(self) except -1
@@ -88,6 +94,6 @@ cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parall
 
 # Nogil definitions of crucial functions.
 
-cdef int next_dimension(iter_t structure, size_t parallelization_depth=?) nogil except -1
-cdef int next_face_loop(iter_t structure) nogil except -1
-cdef size_t n_atom_rep(iter_t structure) nogil except -1
+cdef int next_dimension(iter_t structure, size_t parallelization_depth=?) except -1 nogil
+cdef int next_face_loop(iter_t structure) except -1 nogil
+cdef size_t n_atom_rep(iter_t structure) except -1 nogil

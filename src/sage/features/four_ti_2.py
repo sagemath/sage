@@ -8,7 +8,7 @@ from .join_feature import JoinFeature
 
 class FourTi2Executable(Executable):
     r"""
-    A :class:`~sage.features.Feature` for the 4ti2 executables.
+    A :class:`~sage.features.Feature` for the :ref:`4ti2 <spkg_4ti2>` executables.
     """
     def __init__(self, name):
         r"""
@@ -27,7 +27,7 @@ class FourTi2Executable(Executable):
 
 class FourTi2(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the ``4ti2`` executables.
+    A :class:`~sage.features.Feature` describing the presence of all :ref:`4ti2 <spkg_4ti2>` executables.
 
     EXAMPLES::
 

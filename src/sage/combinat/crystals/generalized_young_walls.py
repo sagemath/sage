@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystals of Generalized Young Walls
 
@@ -392,9 +392,9 @@ class GeneralizedYoungWall(CombinatorialElement):
             r = new[i]
             if r == [] or r in new[i+1:]:
                 new.pop(i)
-            elif r[0] == n and len(r)%(n+1) == 0:
+            elif r[0] == n and len(r) % (n+1) == 0:
                 for j in range(n+1):
-                    temp = [k%(n+1) for k in range(j+len(r)/(n+1)-1,j-1,-1)]
+                    temp = [k % (n+1) for k in range(j+len(r)/(n+1)-1,j-1,-1)]
                     if temp not in new:
                         new.insert(i+1, temp)
                 new.pop(i)
@@ -425,7 +425,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             15
         """
         n = self.parent().cartan_type().rank() - 1
-        m = lambda i: len([1 for r in self.data if r and r[0] == (i-1)%(n+1)])
+        m = lambda i: len([1 for r in self.data if r and r[0] == (i-1) % (n+1)])
         for r in self.data:
             if r and r[0] == n:
                 raise ValueError('Statistic only valid for generalized Young walls in Y_0')
@@ -452,7 +452,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         """
         signature = self.generate_signature(i)
         raw_signature = signature[0]
-        lastminus  = signature[1].rfind('-')
+        lastminus = signature[1].rfind('-')
         newdata = []
         if lastminus > -1:
             deletionrow = raw_signature[lastminus][1]
@@ -562,8 +562,8 @@ class GeneralizedYoungWall(CombinatorialElement):
             for i in r:
                 W.append(-1*alpha[i])
         if not root_lattice:
-            return E(sum(w for w in W))
-        return L(sum(w for w in W))
+            return E(sum(W))
+        return L(sum(W))
 
     def epsilon(self, i):
         r"""
@@ -725,7 +725,7 @@ class GeneralizedYoungWall(CombinatorialElement):
                 else:
                     p_not_found = True
                     for p in index_set:
-                        if (j+k) % (n+1)  == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
+                        if (j+k) % (n+1) == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
                             p_not_found = False
                             continue
                         else:

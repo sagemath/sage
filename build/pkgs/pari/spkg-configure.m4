@@ -67,6 +67,25 @@ SAGE_SPKG_CONFIGURE([pari], [
             AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
             sage_spkg_install_pari=yes
         fi
+
+        AC_MSG_CHECKING([whether factor() bug 2469 of pari 2.15.3 is fixed])
+        result=`echo "f=factor(2^2203-1); print(\"ok\")" | timeout 1 $GP -qf`
+        if test x"$result" = xok; then
+          AC_MSG_RESULT([yes])
+        else
+           AC_MSG_RESULT([no; cannot use system pari/GP with known bug])
+           sage_spkg_install_pari=yes
+        fi
+
+        AC_MSG_CHECKING([whether qfbclassno() bug 2466 of pari 2.15.3 is fixed])
+        result=`echo "qfbclassno(33844)" | $GP -qf`
+        if test x"$result" = x3; then
+          AC_MSG_RESULT([yes])
+        else
+           AC_MSG_RESULT([no; cannot use system pari/GP with known bug])
+           sage_spkg_install_pari=yes
+        fi
+
     fi dnl end GP test
 
       if test x$sage_spkg_install_pari = xno; then dnl main PARI test

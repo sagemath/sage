@@ -218,7 +218,7 @@ class HyperbolicIsometry(Morphism):
         if self.domain().is_isometry_group_projective():
             # Special care must be taken for projective groups
             m = matrix(self._matrix.nrows(),
-                       [abs(x) for x in  self._matrix.list()])
+                       [abs(x) for x in self._matrix.list()])
             m.set_immutable()
         else:
             m = self._matrix
@@ -820,10 +820,10 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return self.domain().get_geodesic(pt(p_1), pt(p_2))
 
         try:
-            p, q = [M.eigenvectors_right()[k][1][0] for k in range(2)]
+            p, q = (M.eigenvectors_right()[k][1][0] for k in range(2))
         except IndexError:
             M = M.change_ring(RDF)
-            p, q = [M.eigenvectors_right()[k][1][0] for k in range(2)]
+            p, q = (M.eigenvectors_right()[k][1][0] for k in range(2))
 
         pts = []
         if p[1] == 0:

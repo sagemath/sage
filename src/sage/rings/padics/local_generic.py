@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.padics
 r"""
 Local Generic
 
@@ -35,15 +36,15 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: R = Zp(5) #indirect doctest
+            sage: R = Zp(5)  # indirect doctest
             sage: R.precision_cap()
             20
 
         In :trac:`14084`, the category framework has been implemented for p-adic rings::
 
-            sage: TestSuite(R).run()
+            sage: TestSuite(R).run()                                                    # needs sage.geometry.polyhedron
             sage: K = Qp(7)
-            sage: TestSuite(K).run()
+            sage: TestSuite(K).run()                                                    # needs sage.geometry.polyhedron
 
         TESTS::
 
@@ -227,10 +228,10 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: latex(Zq(27,names='a')) #indirect doctest
+            sage: latex(Zq(27,names='a'))  # indirect doctest                           # needs sage.libs.ntl
             \Bold{Z}_{3^{3}}
         """
-        return self._repr_(do_latex = True)
+        return self._repr_(do_latex=True)
 
     def change(self, **kwds):
         r"""
@@ -263,18 +264,18 @@ class LocalGeneric(CommutativeRing):
         The following arguments have special behavior:
 
         - ``prec`` -- integer.  If the precision is increased on an extension ring,
-                       the precision on the base is increased as necessary (respecting ramification).
-                       If the precision is decreased, the precision of the base is unchanged.
+          the precision on the base is increased as necessary (respecting ramification).
+          If the precision is decreased, the precision of the base is unchanged.
 
         - ``field`` -- bool.  If ``True``, switch to a tower of fields via the fraction field.
-                        If False, switch to a tower of rings of integers.
+          If False, switch to a tower of rings of integers.
 
         - ``q`` -- prime power.  Replace the initial unramified extension of `\QQ_p` or `\ZZ_p`
-                    with an unramified extension of residue cardinality `q`.
-                    If the initial extension is ramified, add in an unramified extension.
+          with an unramified extension of residue cardinality `q`.
+          If the initial extension is ramified, add in an unramified extension.
 
         - ``base`` -- ring or field. Use a specific base ring instead of recursively
-                       calling :meth:`change` down the tower.
+          calling :meth:`change` down the tower.
 
         See the :mod:`constructors <sage.rings.padics.factory>` for more details on the
         meaning of these arguments.
@@ -309,6 +310,7 @@ class LocalGeneric(CommutativeRing):
 
         Changing print mode to 'digits' works for Eisenstein extensions::
 
+            sage: # needs sage.libs.ntl
             sage: S.<x> = ZZ[]
             sage: W.<w> = Zp(3).extension(x^4 + 9*x^2 + 3*x - 3)
             sage: W.print_mode()
@@ -318,6 +320,7 @@ class LocalGeneric(CommutativeRing):
 
         You can change extensions::
 
+            sage: # needs sage.libs.flint
             sage: K.<a> = QqFP(125, prec=4)
             sage: K.change(q=64)
             2-adic Unramified Extension Field in a defined by x^6 + x^4 + x^3 + x + 1
@@ -327,11 +330,12 @@ class LocalGeneric(CommutativeRing):
 
         and variable names::
 
-            sage: K.change(names='b')
+            sage: K.change(names='b')                                                   # needs sage.libs.flint
             5-adic Unramified Extension Field in b defined by x^3 + 3*x + 3
 
         and precision::
 
+            sage: # needs sage.libs.flint
             sage: Kup = K.change(prec=8); Kup
             5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
             sage: Kup.precision_cap()
@@ -341,6 +345,7 @@ class LocalGeneric(CommutativeRing):
 
         If you decrease the precision, the precision of the base stays the same::
 
+            sage: # needs sage.libs.flint
             sage: Kdown = K.change(prec=2); Kdown
             5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
             sage: Kdown.precision_cap()
@@ -350,6 +355,7 @@ class LocalGeneric(CommutativeRing):
 
         Changing the prime works for extensions::
 
+            sage: # needs sage.libs.ntl
             sage: x = polygen(ZZ)
             sage: R.<a> = Zp(5).extension(x^2 + 2)
             sage: S = R.change(p=7)
@@ -363,6 +369,7 @@ class LocalGeneric(CommutativeRing):
 
         ::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(5^3)
             sage: S = R.change(prec=50)
             sage: S.defining_polynomial(exact=True)
@@ -375,6 +382,27 @@ class LocalGeneric(CommutativeRing):
             37-adic Ring with lattice-cap precision (label: change)
             sage: S.change(label = "new")
             37-adic Ring with lattice-cap precision (label: new)
+
+
+        TESTS:
+
+        The `secure` attribute for relaxed type is copied::
+
+            sage: # needs sage.libs.flint
+            sage: R = ZpER(5, secure=True); R
+            5-adic Ring handled with relaxed arithmetics
+            sage: K = R.change(field=True); K
+            5-adic Field handled with relaxed arithmetics
+            sage: K.is_secure()
+            True
+
+        The `check=False` option works for relaxed type::
+
+            sage: # needs sage.libs.flint
+            sage: R = ZpER(5) ; R
+            5-adic Ring handled with relaxed arithmetics
+            sage: K = R.change(field=True, check=False) ; K
+            5-adic Field handled with relaxed arithmetics
         """
         # We support both print_* and * for *=mode, pos, sep, alphabet
         for atr in ('print_mode', 'print_pos', 'print_sep', 'print_alphabet'):
@@ -432,7 +460,7 @@ class LocalGeneric(CommutativeRing):
             functor.extras = copy(functor.extras)
             functor.extras['print_mode'] = copy(functor.extras['print_mode'])
             if 'type' in kwds and kwds['type'] not in functor._dvr_types:
-                raise ValueError("completion type must be one of %s"%(", ".join(functor._dvr_types[1:])))
+                raise ValueError("completion type must be one of %s" % (", ".join(functor._dvr_types[1:])))
             if 'field' in kwds:
                 field = kwds.pop('field')
                 if field:
@@ -473,7 +501,7 @@ class LocalGeneric(CommutativeRing):
                 if atr in kwds:
                     functor.extras['print_mode'][atr] = kwds.pop(atr)
             if kwds:
-                raise ValueError("Extra arguments received: %s"%(", ".join(kwds.keys())))
+                raise ValueError("Extra arguments received: %s" % (", ".join(kwds.keys())))
             if q is not None:
                 # Create an unramified extension
                 base = functor(ring)
@@ -682,19 +710,19 @@ class LocalGeneric(CommutativeRing):
         """
         return self
 
-
     def absolute_degree(self):
         r"""
         Return the degree of this extension over the prime p-adic field/ring.
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.absolute_degree()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.absolute_degree()                                                   # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_degree()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.absolute_degree()                                                   # needs sage.libs.ntl
             2
         """
         return self.absolute_e() * self.absolute_f()
@@ -705,12 +733,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.relative_degree()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.relative_degree()                                                   # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.relative_degree()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.relative_degree()                                                   # needs sage.libs.ntl
             2
         """
         return self.absolute_degree() // self.base_ring().absolute_degree()
@@ -723,12 +752,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.degree()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.degree()                                                            # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.degree()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.degree()                                                            # needs sage.libs.ntl
             2
         """
         if self.base_ring().absolute_degree() == 1:
@@ -736,19 +766,19 @@ class LocalGeneric(CommutativeRing):
         else:
             raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
 
-
     def absolute_e(self):
         r"""
         Return the absolute ramification index of this ring/field.
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.absolute_e()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.absolute_e()                                                        # needs sage.libs.ntl
             1
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_e()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.absolute_e()                                                        # needs sage.libs.ntl
             2
         """
         # Override this in subclasses (if appropriate)
@@ -763,12 +793,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.absolute_ramification_index()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.absolute_ramification_index()                                       # needs sage.libs.ntl
             1
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_ramification_index()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.absolute_ramification_index()                                       # needs sage.libs.ntl
             2
         """
         return self.absolute_e()
@@ -779,12 +810,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.relative_e()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.relative_e()                                                        # needs sage.libs.ntl
             1
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.relative_e()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.relative_e()                                                        # needs sage.libs.ntl
             2
         """
         return self.absolute_e() // self.base_ring().absolute_e()
@@ -795,12 +827,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.relative_ramification_index()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.relative_ramification_index()                                       # needs sage.libs.ntl
             1
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.relative_ramification_index()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.relative_ramification_index()                                       # needs sage.libs.ntl
             2
         """
         return self.relative_e()
@@ -813,12 +846,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.e()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.e()                                                                 # needs sage.libs.ntl
             1
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.e()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.e()                                                                 # needs sage.libs.ntl
             2
         """
         if self.base_ring().absolute_degree() == 1:
@@ -834,16 +868,16 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.ramification_index()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.ramification_index()                                                # needs sage.libs.ntl
             1
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.ramification_index()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.ramification_index()                                                # needs sage.libs.ntl
             2
         """
         return self.e()
-
 
     def absolute_f(self):
         r"""
@@ -852,12 +886,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.absolute_f()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.absolute_f()                                                        # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_f()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.absolute_f()                                                        # needs sage.libs.ntl
             1
         """
         # Override this in subclasses (if appropriate)
@@ -873,12 +908,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.absolute_inertia_degree()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.absolute_inertia_degree()                                           # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_inertia_degree()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.absolute_inertia_degree()                                           # needs sage.libs.ntl
             1
         """
         return self.absolute_f()
@@ -889,12 +925,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.relative_f()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.relative_f()                                                        # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.relative_f()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.relative_f()                                                        # needs sage.libs.ntl
             1
         """
         return self.absolute_f() // self.base_ring().absolute_f()
@@ -905,12 +942,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.relative_inertia_degree()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.relative_inertia_degree()                                           # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.relative_inertia_degree()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.relative_inertia_degree()                                           # needs sage.libs.ntl
             1
         """
         return self.relative_f()
@@ -923,12 +961,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.f()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.f()                                                                 # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.f()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.f()                                                                 # needs sage.libs.ntl
             1
         """
         if self.base_ring().absolute_degree() == 1:
@@ -944,12 +983,13 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.inertia_degree()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.inertia_degree()                                                    # needs sage.libs.ntl
             5
 
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.inertia_degree()
+            sage: R.<x> = QQ[]
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.inertia_degree()                                                    # needs sage.libs.ntl
             1
         """
         return self.f()
@@ -1010,9 +1050,9 @@ class LocalGeneric(CommutativeRing):
             sage: R.uniformiser()
             5 + O(5^21)
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
-            sage: B.uniformiser()
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2+7)                                                  # needs sage.libs.ntl
+            sage: B.uniformiser()                                                       # needs sage.libs.ntl
             t + O(t^21)
         """
         return self.uniformizer()
@@ -1031,14 +1071,14 @@ class LocalGeneric(CommutativeRing):
 
     def ext(self, *args, **kwds):
         r"""
-        Construct an extension of self.  See :meth:`extension` for more details.
+        Construct an extension of ``self``.  See :meth:`extension` for more details.
 
         EXAMPLES::
 
             sage: A = Zp(7,10)
-            sage: S.<x> = A[]
-            sage: B.<t> = A.ext(x^2+7)
-            sage: B.uniformiser()
+            sage: S.<x> = A[]                                                           # needs sage.libs.ntl
+            sage: B.<t> = A.ext(x^2 + 7)                                                # needs sage.libs.ntl
+            sage: B.uniformiser()                                                       # needs sage.libs.ntl
             t + O(t^21)
         """
         return self.extension(*args, **kwds)
@@ -1172,7 +1212,6 @@ class LocalGeneric(CommutativeRing):
                 M[i,j] <<= s
         return shift_rows, shift_cols
 
-
     def _matrix_smith_form(self, M, transformation, integral, exact):
         r"""
         Return the Smith normal form of the matrix `M`.
@@ -1263,7 +1302,7 @@ class LocalGeneric(CommutativeRing):
         TESTS::
 
             sage: A = ZpCR(5, prec=10)
-            sage: M = zero_matrix(A, 2)
+            sage: M = zero_matrix(A, 2)                                                 # needs sage.geometry.polyhedron
             sage: M.smith_form(transformation=False)  # indirect doctest
             [0 0]
             [0 0]
@@ -1452,7 +1491,7 @@ class LocalGeneric(CommutativeRing):
 
         EXAMPLES::
 
-            sage: ZpCA(5, 15)._test_matrix_smith()
+            sage: ZpCA(5, 15)._test_matrix_smith()                                      # needs sage.geometry.polyhedron
 
         """
         tester = self._tester(**options)
@@ -1546,12 +1585,14 @@ class LocalGeneric(CommutativeRing):
             O(5^70)
             O(5^80)
 
+            sage: # needs sage.geometry.polyhedron
             sage: A = random_matrix(Qp(5),4)
             sage: B = random_matrix(Qp(5),4)
             sage: (A*B).det() == A.det()*B.det()
             True
             sage: A.change_ring(QQ).det() == A.det()
             True
+
             sage: matrix(Qp(37),[0]).determinant()
             0
             sage: matrix(Qp(37),[O(37)]).determinant()

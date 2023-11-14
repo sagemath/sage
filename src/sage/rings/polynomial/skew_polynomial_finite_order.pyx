@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Univariate dense skew polynomials over a field with a finite order automorphism
 
@@ -18,12 +19,7 @@ AUTHOR::
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
-import copy
-import cysignals
 from sage.rings.ring cimport Ring
-from sage.rings.polynomial.polynomial_element cimport Polynomial
-from sage.rings.integer cimport Integer
 from sage.structure.element cimport RingElement
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.skew_polynomial_element cimport SkewPolynomial_generic_dense
@@ -75,7 +71,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         self._optbound = None
 
 
-    cdef _matphir_c(self):
+    cdef _matphir_c(self) noexcept:
         r"""
         Return the matrix of the multiplication by `X^r` on
         the quotient `K[X,\sigma] / K[X,\sigma]*self`.
@@ -126,7 +122,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             phir.append(line)
         return matrix(k, phir)
 
-    cdef _matmul_c(self):
+    cdef _matmul_c(self) noexcept:
         r"""
         Return the matrix of the multiplication by ``self`` on
         `K[X,\sigma]` considered as a free module over `K[X^r]`

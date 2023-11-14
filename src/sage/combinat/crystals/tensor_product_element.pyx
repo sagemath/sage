@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Tensor Products of Crystal Elements
 
@@ -30,7 +30,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #****************************************************************************
 
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from sage.structure.parent cimport Parent
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
@@ -74,7 +73,7 @@ cdef class ImmutableListWithParent(ClonableArray):
         self._is_immutable = True
         self._hash = 0
 
-    cpdef _set_index(self, k, value):
+    cpdef _set_index(self, k, value) noexcept:
         r"""
         Return a sibling of ``self`` obtained by setting the
         `k^{th}` entry of self to value.
@@ -574,7 +573,7 @@ cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement)
                 height = height - minus + plus
         return height
 
-    cpdef position_of_last_unmatched_minus(self, i):
+    cpdef position_of_last_unmatched_minus(self, i) noexcept:
         """
         Return the position of the last unmatched `-` or ``None`` if
         there is no unmatched `-`.
@@ -600,7 +599,7 @@ cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement)
                 height = height - minus + plus
         return unmatched_minus
 
-    cpdef position_of_first_unmatched_plus(self, i):
+    cpdef position_of_first_unmatched_plus(self, i) noexcept:
         """
         Return the position of the first unmatched `+` or ``None`` if
         there is no unmatched `+`.
@@ -1159,7 +1158,7 @@ cdef class InfinityCrystalOfTableauxElementTypeD(InfinityCrystalOfTableauxElemen
         return ret
 
 #####################################################################
-## BKK crystal elements
+#  BKK crystal elements
 
 cdef class TensorProductOfSuperCrystalsElement(TensorProductOfRegularCrystalsElement):
     r"""
@@ -1406,7 +1405,7 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         return Tableau(tab).conjugate()
 
 #####################################################################
-## Queer crystal elements
+#  Queer crystal elements
 
 cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrystalsElement):
     r"""
@@ -1642,7 +1641,7 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
 
 
 cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrystalsElement):
-    def __init__(self, parent, list, row_lengths=[]):
+    def __init__(self, parent, list, row_lengths=None):
         """
         Initialize ``self``.
 
@@ -1654,6 +1653,8 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
             [[4, 4, 4, 4, 2, 1], [3, 3, 3], [2, 2], [1]]
             sage: TestSuite(t).run()
         """
+        if row_lengths is None:
+            row_lengths = []
         if not row_lengths and list and not isinstance(list[0], parent.letters.element_class):
             ret = []
             L = parent.letters
@@ -1857,7 +1858,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
         ret -= L(1).weight()  # From the 1 on the bottom row
         return ret
 
-cdef Py_ssize_t count_leading(list row, letter):
+cdef Py_ssize_t count_leading(list row, letter) noexcept:
     cdef Py_ssize_t i
     for i in range(len(row)-1,-1,-1):
         if row[i] != letter:

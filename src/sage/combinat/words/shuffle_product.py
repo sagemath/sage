@@ -22,7 +22,7 @@ Shuffle product of words
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.combinat.words.word import Word_class, Word
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.composition import Composition

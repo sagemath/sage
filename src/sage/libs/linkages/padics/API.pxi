@@ -201,8 +201,8 @@ cdef inline long cremove(celement out, celement a, long prec, PowComputer_class 
     - ``a`` -- the element whose valuation and unit are desired.
     - ``prec`` -- a long, used if `a = 0`.
     - ``prime_pow`` -- the PowComputer for the ring.
-    - ``reduce_relative`` -- a bint: whether the final result 
-      should be reduced at precision ``prec`` (case ``False``) 
+    - ``reduce_relative`` -- a bint: whether the final result
+      should be reduced at precision ``prec`` (case ``False``)
       or ``prec - valuation`` (case ``True``)
 
     OUTPUT:
@@ -469,7 +469,7 @@ cdef inline long chash(celement a, long ordp, long prec, PowComputer_class prime
 
 # the expansion_mode enum is defined in padic_template_element_header.pxi
 cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
-    """
+    r"""
     Return the next digit in a `\pi`-adic expansion of ``value``.
 
     INPUT:
@@ -483,7 +483,7 @@ cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, 
     pass
 
 cdef inline cexpansion_getitem(celement value, long m, PowComputer_ prime_pow):
-    """
+    r"""
     Return the `m`th `\pi`-adic digit in the ``simple_mode`` expansion.
 
     INPUT:
@@ -512,7 +512,7 @@ cdef list ccoefficients(celement x, long valshift, PowComputer_class prime_pow):
     pass
 
 cdef int cteichmuller(celement out, celement value, long prec, PowComputer_class prime_pow) except -1:
-    """
+    r"""
     Teichmuller lifting.
 
     INPUT:

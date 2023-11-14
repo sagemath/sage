@@ -55,13 +55,13 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: f = CartanType(['F', 4, 1]).dynkin_diagram()
-            sage: f
+            sage: f = CartanType(['F', 4, 1]).dynkin_diagram(); f                       # needs sage.graphs
             O---O---O=>=O---O
             0   1   2   3   4
             F4~
-            sage: f.edges(sort=True)
-            [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
+            sage: f.edges(sort=True)                                                    # needs sage.graphs
+            [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 1),
+             (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
 
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -72,7 +72,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         g.add_edge(0, 1)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -95,15 +95,17 @@ class CartanType(CartanType_standard_untwisted_affine):
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%node_dist
-        ret += "{\n\\pgftransformxshift{%s cm}\n"%node_dist
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % node_dist
+        ret += "{\n\\pgftransformxshift{%s cm}\n" % node_dist
         ret += self.classical()._latex_dynkin_diagram(label, node, node_dist, dual)
         ret += "}\n" + node(0, 0, label(0))
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Returns a ascii art representation of the extended Dynkin diagram
 
@@ -113,6 +115,8 @@ class CartanType(CartanType_standard_untwisted_affine):
             O---O---O=>=O---O
             2   3   4   5   6
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         ret = "{}---{}---{}=>={}---{}\n".format(node(label(0)), node(label(1)),

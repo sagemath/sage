@@ -32,17 +32,17 @@ AUTHORS:
 - Jeroen Demeyer
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017-2018 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from cpython.object cimport Py_TYPE, PyTypeObject
+from cpython.object cimport PyTypeObject
 from sage.cpython.wrapperdescr cimport get_slotdef, wrapperbase, PyDescr_NewWrapper
 
 cdef extern from *:
@@ -68,7 +68,7 @@ richcmp_slotdef[Py_LE] = get_slotdef(bytes.__le__)
 richcmp_slotdef[Py_GE] = get_slotdef(bytes.__ge__)
 
 
-cpdef richcmp_item(x, y, int op):
+cpdef richcmp_item(x, y, int op) noexcept:
     """
     This function is meant to implement lexicographic rich comparison
     of sequences (lists, vectors, polynomials, ...).
@@ -266,7 +266,7 @@ cpdef richcmp_item(x, y, int op):
     return NotImplemented
 
 
-cdef slot_tp_richcompare(self, other, int op):
+cdef slot_tp_richcompare(self, other, int op) noexcept:
     """
     Function to put in the ``tp_richcompare`` slot.
     """

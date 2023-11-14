@@ -36,9 +36,9 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import factorial
+from sage.arith.misc import factorial
 from sage.rings.infinity import PlusInfinity
-from sage.matrix.all import zero_matrix
+from sage.matrix.special import zero_matrix
 
 from sage.structure.list_clone import ClonableList
 from sage.combinat.partition import Partition
@@ -148,11 +148,11 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 
-        A Boolean.
+        A boolean.
 
         TESTS::
 
@@ -160,6 +160,10 @@ class SkewTableau(ClonableList,
             sage: t == 0
             False
             sage: t == SkewTableaux()([[None,1,2]])
+            True
+            sage: t == [(None,1,2)]
+            True
+            sage: t == [[None,1,2]]
             True
 
             sage: s = SkewTableau([[1,2]])
@@ -171,7 +175,7 @@ class SkewTableau(ClonableList,
         if isinstance(other, (Tableau, SkewTableau)):
             return list(self) == list(other)
         else:
-            return list(self) == other
+            return list(self) == other or list(list(row) for row in self) == other
 
     def __ne__(self, other):
         r"""
@@ -181,22 +185,33 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 
-        A Boolean.
+        A boolean.
 
         TESTS::
 
-            sage: t = Tableau([[2,3],[1]])
+            sage: t = SkewTableau([[None,1,2]])
             sage: t != []
             True
         """
-        if isinstance(other, (Tableau, SkewTableau)):
-            return list(self) != list(other)
-        else:
-            return list(self) != other
+        return not (self == other)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES:
+
+        Check that :trac:`35137` is fixed::
+
+            sage: t = SkewTableau([[None,1,2]])
+            sage: hash(t) == hash(tuple(t))
+            True
+        """
+        return hash(tuple(self))
 
     def check(self):
         r"""
@@ -590,7 +605,7 @@ class SkewTableau(ClonableList,
             sage: by_word(t) == t.weight()
             True
             sage: SST = SemistandardTableaux(shape=[3,1,1])
-            sage: all(by_word(t) == SkewTableau(t).weight() for t in SST)
+            sage: all(by_word(t) == SkewTableau(t).weight() for t in SST)               # needs sage.modules
             True
         """
         if (not self) or all(c is None for row in self for c in row):
@@ -1093,10 +1108,11 @@ class SkewTableau(ClonableList,
 
         if algorithm == 'jdt':
             rect = self
-            for i in range(mu_size):
+            for _ in range(mu_size):
                 rect = rect.slide()
         elif algorithm == 'schensted':
-            w = [x for row in reversed(self) for x in row if x is not None]
+            w = [x for row in reversed(self) for x in row
+                 if x is not None]
             rect = Tableau([]).insert_word(w)
         else:
             raise ValueError("algorithm must be 'jdt', 'schensted', or None")
@@ -1272,8 +1288,9 @@ class SkewTableau(ClonableList,
         Standard skew tableaux are fixed under standardization::
 
             sage: p = Partition([4,3,3,2])
-            sage: q = Partitions(3).random_element()
-            sage: all((t == t.standardization() for t in StandardSkewTableaux([p, q])))
+            sage: q = Partitions(3).random_element()                                    # needs sage.libs.flint
+            sage: all(t == t.standardization()                                          # needs sage.libs.flint
+            ....:     for t in StandardSkewTableaux([p, q]))
             True
 
         The reading word of the standardization is the
@@ -1935,11 +1952,12 @@ class StandardSkewTableaux(SkewTableaux):
 
         sage: S = StandardSkewTableaux(2); S
         Standard skew tableaux of size 2
-        sage: S.cardinality()
+        sage: S.cardinality()                                                           # needs sage.modules
         4
 
     ::
 
+        sage: # needs sage.graphs sage.modules
         sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()
         [[[None, 2, 3], [None, 4], [1]],
          [[None, 1, 2], [None, 3], [4]],
@@ -1969,7 +1987,7 @@ class StandardSkewTableaux(SkewTableaux):
         elif skp in SkewPartitions():
             return StandardSkewTableaux_shape(skp)
         else:
-            raise TypeError("Invalid argument")
+            raise TypeError("invalid argument")
 
     def __contains__(self, x):
         """
@@ -2000,7 +2018,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
         EXAMPLES::
 
             sage: s = StandardSkewTableaux()
-            sage: TestSuite(s).run()
+            sage: TestSuite(s).run()                                                    # needs sage.graphs
         """
         StandardSkewTableaux.__init__(self, category=InfiniteEnumeratedSets())
 
@@ -2021,6 +2039,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.modules
             sage: it = StandardSkewTableaux().__iter__()
             sage: [next(it) for x in range(10)]
             [[],
@@ -2044,6 +2063,7 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         """
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.modules
             sage: S = StandardSkewTableaux(3)
             sage: TestSuite(S).run()
         """
@@ -2063,6 +2083,7 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         """
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: StandardSkewTableaux(1).cardinality()
             1
             sage: StandardSkewTableaux(2).cardinality()
@@ -2086,9 +2107,9 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.modules
             sage: StandardSkewTableaux(2).list()
             [[[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]]]
-
             sage: StandardSkewTableaux(3).list()
             [[[1, 2, 3]],
              [[1, 2], [3]], [[1, 3], [2]],
@@ -2133,6 +2154,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
         """
         TESTS::
 
+            sage: # needs sage.graphs sage.modules
             sage: S = StandardSkewTableaux([[3, 2, 1], [1, 1]])
             sage: TestSuite(S).run()
         """
@@ -2158,7 +2180,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).cardinality()
+            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).cardinality()               # needs sage.modules
             8
         """
         outer, inner = self.skp
@@ -2185,6 +2207,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.modules
             sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()
             [[[None, 2, 3], [None, 4], [1]],
              [[None, 1, 2], [None, 3], [4]],
@@ -2318,7 +2341,7 @@ class SemistandardSkewTableaux(SkewTableaux):
         if p is None:
             if mu is None:
                 return SemistandardSkewTableaux_all(max_entry)
-            raise ValueError("You must specify either a size or a shape")
+            raise ValueError("you must specify either a size or a shape")
 
         if isinstance(p, (int, Integer)):
             if mu is None:
@@ -2332,7 +2355,7 @@ class SemistandardSkewTableaux(SkewTableaux):
             else:
                 return SemistandardSkewTableaux_shape_weight(p, mu)
 
-        raise ValueError("Invalid input")
+        raise ValueError("invalid input")
 
     def __contains__(self, x):
         """

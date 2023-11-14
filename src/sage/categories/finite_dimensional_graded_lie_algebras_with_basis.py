@@ -53,6 +53,7 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: C = LieAlgebras(QQ).WithBasis().Graded()
                 sage: C = C.FiniteDimensional().Stratified().Nilpotent()
                 sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}},
@@ -96,9 +97,9 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
                 sage: C = LieAlgebras(QQ).WithBasis().Graded()
                 sage: C = C.FiniteDimensional().Stratified().Nilpotent()
-                sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}},
+                sage: L = LieAlgebra(QQ, {('x','y'): {'z': 1}},                         # needs sage.combinat sage.modules
                 ....:                     nilpotent=True, category=C)
-                sage: L.homogeneous_component_as_submodule(2)
+                sage: L.homogeneous_component_as_submodule(2)                           # needs sage.combinat sage.modules
                 Sparse vector space of degree 3 and dimension 1 over Rational Field
                 Basis matrix:
                 [0 0 1]
@@ -147,12 +148,12 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
                     sage: C = LieAlgebras(QQ).WithBasis().Graded()
                     sage: C = C.FiniteDimensional().Stratified().Nilpotent()
                     sage: sc = {('x','y'): {'z': 1}}
-                    sage: L.<x,y,z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)
-                    sage: L._test_generated_by_degree_one()
+                    sage: L.<x,y,z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)                # needs sage.combinat sage.modules
+                    sage: L._test_generated_by_degree_one()                                         # needs sage.combinat sage.modules
 
                     sage: sc = {('x','y'): {'z': 1}, ('a','b'): {'c':1}, ('z','c'): {'m':1}}
-                    sage: L.<a,b,c,m,x,y,z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)
-                    sage: L._test_generated_by_degree_one()
+                    sage: L.<a,b,c,m,x,y,z> = LieAlgebra(QQ, sc, nilpotent=True, category=C)        # needs sage.combinat sage.modules
+                    sage: L._test_generated_by_degree_one()                                         # needs sage.combinat sage.modules
                     Traceback (most recent call last):
                     ...
                     AssertionError: [a, b, x, y] does not generate Nilpotent Lie algebra
@@ -196,6 +197,7 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: C = LieAlgebras(QQ).WithBasis().Graded()
                     sage: C = C.FiniteDimensional().Stratified().Nilpotent()
                     sage: sc = {('X','Y'): {'Z': 1}}

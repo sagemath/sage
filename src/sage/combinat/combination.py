@@ -28,7 +28,7 @@ import itertools
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.arith.all import binomial
+from sage.arith.misc import binomial
 from .integer_vector import IntegerVectors
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
@@ -148,15 +148,15 @@ def Combinations(mset, k=None):
 
     It is possible to take combinations of Sage objects::
 
-        sage: Combinations([vector([1,1]), vector([2,2]), vector([3,3])], 2).list()
+        sage: Combinations([vector([1,1]), vector([2,2]), vector([3,3])], 2).list()     # needs sage.modules
         [[(1, 1), (2, 2)], [(1, 1), (3, 3)], [(2, 2), (3, 3)]]
 
     TESTS:
 
     We check that the code works even for non mutable objects::
 
-        sage: l = [vector((0,0)), vector((0,1))]
-        sage: Combinations(l).list()
+        sage: l = [vector((0,0)), vector((0,1))]                                        # needs sage.modules
+        sage: Combinations(l).list()                                                    # needs sage.modules
         [[], [(0, 0)], [(0, 1)], [(0, 0), (0, 1)]]
     """
     # Check to see if everything in mset is unique
@@ -242,7 +242,7 @@ class Combinations_mset(Parent):
             sage: c != Combinations([1,2,3,3])
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def __repr__(self):
         """
@@ -269,7 +269,7 @@ class Combinations_mset(Parent):
 
             sage: Combinations([1,2,3]).cardinality()
             8
-            sage: Combinations(['a','a','b']).cardinality()
+            sage: Combinations(['a','a','b']).cardinality()                             # needs sage.libs.gap
             6
         """
         c = 0
@@ -395,7 +395,7 @@ class Combinations_msetk(Parent):
             sage: c != Combinations((1,2,2,3), 2)
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def __repr__(self):
         """
@@ -431,7 +431,7 @@ class Combinations_msetk(Parent):
         EXAMPLES::
 
             sage: mset = [1,1,2,3,4,4,5]
-            sage: Combinations(mset,2).cardinality()
+            sage: Combinations(mset,2).cardinality()                                    # needs sage.libs.gap
             12
         """
         from sage.libs.gap.libgap import libgap
@@ -656,7 +656,7 @@ def from_rank(r, n, k):
         ....:     for i in range(k):
         ....:         comb[i] = (n - 1) - comb[i]
         ....:     return tuple(comb)
-        sage: all(from_rank(r, n, k) == from_rank_comb_largest(r, n, k)
+        sage: all(from_rank(r, n, k) == from_rank_comb_largest(r, n, k)                 # needs sage.symbolic
         ....:     for n in range(10) for k in range(n+1) for r in range(binomial(n,k)))
         True
     """

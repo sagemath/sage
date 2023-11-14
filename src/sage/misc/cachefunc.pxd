@@ -1,18 +1,18 @@
 from .function_mangling cimport ArgumentFixer
 
-cpdef dict_key(o)
-cpdef cache_key(o)
+cpdef dict_key(o) noexcept
+cpdef cache_key(o) noexcept
 
 cdef class CachedFunction():
     cdef public str __name__
-    cdef public str __module__
+    cdef public str __cached_module__
     cdef ArgumentFixer _argument_fixer
     cdef public f
     cdef public cache  # not always of type <dict>
     cdef bint is_classmethod
     cdef int argfix_init(self) except -1
-    cdef get_key_args_kwds(self, tuple args, dict kwds)
-    cdef fix_args_kwds(self, tuple args, dict kwds)
+    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept
+    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept
     cdef empty_key
     cdef key
     cdef bint do_pickle
@@ -20,10 +20,10 @@ cdef class CachedFunction():
 cdef class CachedMethod():
     cdef str _cache_name
     cdef public str __name__
-    cdef public str __module__
+    cdef public str __cached_module__
     cdef CachedFunction _cachedfunc
     cdef Py_ssize_t nargs
-    cpdef _get_instance_cache(self, inst)
+    cpdef _get_instance_cache(self, inst) noexcept
 
 cdef class CacheDict(dict):
     pass

@@ -21,22 +21,22 @@ AUTHORS:
 # ****************************************************************************
 
 from cysignals.signals cimport sig_check
-from sage.libs.gmp.mpz cimport mpz_sizeinbase, mpz_setbit, mpz_tstbit, mpz_cmp_si, mpz_sgn
-from sage.data_structures.bitset_base cimport (bitset_t, bitset_init, bitset_first,
+from sage.libs.gmp.mpz cimport mpz_sizeinbase, mpz_setbit, mpz_tstbit, mpz_sgn
+from sage.data_structures.bitset_base cimport (bitset_init, bitset_first,
                                                bitset_next, bitset_set_to, bitset_len)
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 from sage.data_structures.blas_dict cimport iaxpy
 from copy import copy
 
-cdef inline long degree(FrozenBitset X):
+cdef inline long degree(FrozenBitset X) noexcept:
     """
     Compute the degree of ``X``.
     """
     return bitset_len(X._bitset)
 
 
-cdef inline CliffordAlgebraElement build_monomial(Parent E, FrozenBitset supp):
+cdef inline CliffordAlgebraElement build_monomial(Parent E, FrozenBitset supp) noexcept:
     """
     Helper function for the fastest way to build a monomial.
     """
@@ -129,14 +129,14 @@ cdef class GroebnerStrategy:
         else:
             self.side = 2
 
-    cdef inline FrozenBitset leading_support(self, CliffordAlgebraElement f):
+    cdef inline FrozenBitset leading_support(self, CliffordAlgebraElement f) noexcept:
         """
         Return the leading support of the exterior algebra element ``f``.
         """
         cdef dict mc = <dict> f._monomial_coefficients
         return self.int_to_bitset(max(self.bitset_to_int(k) for k in mc))
 
-    cdef inline partial_S_poly_left(self, GBElement f, GBElement g):
+    cdef inline partial_S_poly_left(self, GBElement f, GBElement g) noexcept:
         r"""
         Compute one half of the `S`-polynomial for ``f`` and ``g``.
 
@@ -153,7 +153,7 @@ cdef class GroebnerStrategy:
             ret.elt._monomial_coefficients[k] *= inv
         return ret
 
-    cdef inline partial_S_poly_right(self, GBElement f, GBElement g):
+    cdef inline partial_S_poly_right(self, GBElement f, GBElement g) noexcept:
         r"""
         Compute one half of the `S`-polynomial for ``f`` and ``g``.
 
@@ -170,17 +170,17 @@ cdef class GroebnerStrategy:
             ret.elt._monomial_coefficients[k] *= inv
         return ret
 
-    cdef inline GBElement build_elt(self, CliffordAlgebraElement f):
+    cdef inline GBElement build_elt(self, CliffordAlgebraElement f) noexcept:
         """
         Convert ``f`` into a ``GBElement``.
         """
         cdef dict mc = <dict> f._monomial_coefficients
-        #if not mc:
-        #    return GBElement(f, FrozenBitset(), -1)
+        # if not mc:
+        #     return GBElement(f, FrozenBitset(), -1)
         cdef Integer r = <Integer> max(self.bitset_to_int(k) for k in mc)
         return GBElement(f, self.int_to_bitset(r), r)
 
-    cdef inline GBElement prod_GB_term(self, GBElement f, FrozenBitset t):
+    cdef inline GBElement prod_GB_term(self, GBElement f, FrozenBitset t) noexcept:
         """
         Return the GBElement corresponding to ``f * t``.
 
@@ -192,7 +192,7 @@ cdef class GroebnerStrategy:
         cdef FrozenBitset ls = <FrozenBitset> f.ls._union(t)
         return GBElement(<CliffordAlgebraElement> ret, ls, self.bitset_to_int(ls))
 
-    cdef inline GBElement prod_term_GB(self, FrozenBitset t, GBElement f):
+    cdef inline GBElement prod_term_GB(self, FrozenBitset t, GBElement f) noexcept:
         """
         Return the GBElement corresponding to ``t * f``.
 
@@ -204,7 +204,7 @@ cdef class GroebnerStrategy:
         cdef FrozenBitset ls = <FrozenBitset> f.ls._union(t)
         return GBElement(<CliffordAlgebraElement> ret, ls, self.bitset_to_int(ls))
 
-    cdef inline bint build_S_poly(self, GBElement f, GBElement g):
+    cdef inline bint build_S_poly(self, GBElement f, GBElement g) noexcept:
         r"""
         Check to see if we should build the `S`-polynomial.
 
@@ -219,7 +219,7 @@ cdef class GroebnerStrategy:
 
         return (<FrozenBitset> f.ls.intersection(g.ls)).isempty()
 
-    cdef inline set preprocessing(self, list P, list G):
+    cdef inline set preprocessing(self, list P, list G) noexcept:
         """
         Perform the preprocessing step.
         """
@@ -232,7 +232,7 @@ cdef class GroebnerStrategy:
                 if self.build_S_poly(f0, f1):
                     L.add(self.partial_S_poly_right(f0, f1))
                     L.add(self.partial_S_poly_right(f1, f0))
-        else: # We compute a left Gröbner basis for two-sided ideals
+        else:  # We compute a left Gröbner basis for two-sided ideals
             for f0, f1 in P:
                 if self.build_S_poly(f0, f1):
                     L.add(self.partial_S_poly_left(f0, f1))
@@ -265,21 +265,21 @@ cdef class GroebnerStrategy:
                     break
         return L
 
-    cdef inline list reduction(self, list P, list G):
+    cdef inline list reduction(self, list P, list G) noexcept:
         """
         Perform the reduction of ``P`` mod ``G`` in ``E``.
         """
         cdef set L = self.preprocessing(P, G)
         cdef Py_ssize_t i
         from sage.matrix.constructor import matrix
-        cdef Integer r = Integer(2) ** self.rank - Integer(1) # r for "rank" or "reverso"
+        cdef Integer r = Integer(2) ** self.rank - Integer(1)  # r for "rank" or "reverso"
         M = matrix({(i, r - self.bitset_to_int(<FrozenBitset> m)): c
-                    for i,f in enumerate(L)
-                    for m,c in (<GBElement> f).elt._monomial_coefficients.items()},
+                    for i, f in enumerate(L)
+                    for m, c in (<GBElement> f).elt._monomial_coefficients.items()},
                    sparse=True)
         M.echelonize()  # Do this in place
         lead_supports = set((<GBElement> f).lsi for f in L)
-        return [GBElement(self.E.element_class(self.E, {self.int_to_bitset(r - Integer(j)): c for j,c in M[i].iteritems()}),
+        return [GBElement(self.E.element_class(self.E, {self.int_to_bitset(r - Integer(j)): c for j, c in M[i].iteritems()}),
                           self.int_to_bitset(Integer(r - p)),
                           Integer(r - p))
                 for i, p in enumerate(M.pivots())
@@ -309,8 +309,7 @@ cdef class GroebnerStrategy:
         """
         cdef FrozenBitset p0, p1
         cdef long deg
-        cdef Py_ssize_t i, j, k
-        cdef set additions
+        cdef Py_ssize_t i, j
         cdef GBElement f0, f1
         cdef list G = [], Gp
         cdef dict constructed = {}
@@ -321,7 +320,7 @@ cdef class GroebnerStrategy:
                 continue
             f0 = self.build_elt(f)
             if f0.lsi in constructed:
-                if f0 in constructed[f0.lsi]: # Already there
+                if f0 in constructed[f0.lsi]:  # Already there
                     continue
                 constructed[f0.lsi].add(f0)
             else:
@@ -338,7 +337,7 @@ cdef class GroebnerStrategy:
                         continue
                     f1 = self.build_elt(f)
                     if f1.lsi in constructed:
-                        if f1 in constructed[f1.lsi]: # Already there
+                        if f1 in constructed[f1.lsi]:  # Already there
                             continue
                         constructed[f1.lsi].add(f1)
                     else:
@@ -367,7 +366,7 @@ cdef class GroebnerStrategy:
             # Add the elements Gp to G when a new element is found
             for f0 in Gp:
                 if f0.lsi in constructed:
-                    if f0 in constructed[f0.lsi]: # Already there
+                    if f0 in constructed[f0.lsi]:  # Already there
                         continue
                     constructed[f0.lsi].add(f0)
                 else:
@@ -402,20 +401,16 @@ cdef class GroebnerStrategy:
         cdef GBElement f0, f1
 
         # Now that we have a Gröbner basis, we make this into a reduced Gröbner basis
-        cdef tuple supp
-        cdef bint did_reduction
-        cdef FrozenBitset lm, s
-        cdef Integer r
         cdef Py_ssize_t num_zeros = 0
         cdef Py_ssize_t n = len(G)
         cdef set pairs = set((i, j) for i in range(n) for j in range(n) if i != j)
 
         while pairs:
             sig_check()
-            i,j = pairs.pop()
+            i, j = pairs.pop()
             f0 = <GBElement> G[i]
             f1 = <GBElement> G[j]
-            assert f0.elt._monomial_coefficients is not f1.elt._monomial_coefficients, (i,j)
+            assert f0.elt._monomial_coefficients is not f1.elt._monomial_coefficients, (i, j)
             # We perform the classical reduction algorithm here on each pair
             # TODO: Make this faster by using the previous technique?
             if self.reduce_single(f0.elt, f1.elt):
@@ -455,7 +450,7 @@ cdef class GroebnerStrategy:
         cdef list G = [self.build_elt(f) for f in self.groebner_basis]
         self.reduced_gb(G)
 
-    cpdef CliffordAlgebraElement reduce(self, CliffordAlgebraElement f):
+    cpdef CliffordAlgebraElement reduce(self, CliffordAlgebraElement f) noexcept:
         """
         Reduce ``f`` modulo the ideal with Gröbner basis ``G``.
 
@@ -500,7 +495,6 @@ cdef class GroebnerStrategy:
         """
         cdef FrozenBitset lm = self.leading_support(g), s, t
         cdef bint did_reduction = True, was_reduced=False
-        cdef tuple supp
         cdef CliffordAlgebraElement gp
 
         one = self.E._base.one()
@@ -521,11 +515,10 @@ cdef class GroebnerStrategy:
                 iaxpy(-coeff, gp._monomial_coefficients, f._monomial_coefficients)
         return was_reduced
 
-
-    cdef Integer bitset_to_int(self, FrozenBitset X):
+    cdef Integer bitset_to_int(self, FrozenBitset X) noexcept:
         raise NotImplementedError
 
-    cdef FrozenBitset int_to_bitset(self, Integer n):
+    cdef FrozenBitset int_to_bitset(self, Integer n) noexcept:
         raise NotImplementedError
 
     def sorted_monomials(self, as_dict=False):
@@ -604,7 +597,7 @@ cdef class GroebnerStrategyNegLex(GroebnerStrategy):
     """
     Gröbner basis strategy implementing neglex ordering.
     """
-    cdef inline Integer bitset_to_int(self, FrozenBitset X):
+    cdef inline Integer bitset_to_int(self, FrozenBitset X) noexcept:
         """
         Convert ``X`` to an :class:`Integer`.
         """
@@ -615,7 +608,7 @@ cdef class GroebnerStrategyNegLex(GroebnerStrategy):
             elt = bitset_next(X._bitset, elt + 1)
         return ret
 
-    cdef inline FrozenBitset int_to_bitset(self, Integer n):
+    cdef inline FrozenBitset int_to_bitset(self, Integer n) noexcept:
         """
         Convert a nonnegative integer ``n`` to a :class:`FrozenBitset`.
         """
@@ -635,7 +628,7 @@ cdef class GroebnerStrategyDegRevLex(GroebnerStrategy):
     """
     Gröbner basis strategy implementing degree revlex ordering.
     """
-    cdef inline Integer bitset_to_int(self, FrozenBitset X):
+    cdef inline Integer bitset_to_int(self, FrozenBitset X) noexcept:
         """
         Convert ``X`` to an :class:`Integer`.
         """
@@ -654,12 +647,10 @@ cdef class GroebnerStrategyDegRevLex(GroebnerStrategy):
             elt = bitset_next(X._bitset, elt + 1)
         return Integer(sum(n.binomial(i) for i in range(deg+1)) - t - 1)
 
-    cdef inline FrozenBitset int_to_bitset(self, Integer n):
+    cdef inline FrozenBitset int_to_bitset(self, Integer n) noexcept:
         """
         Convert a nonnegative integer ``n`` to a :class:`FrozenBitset`.
         """
-        cdef size_t i
-
         if mpz_sgn(n.value) == 0:
             return FrozenBitset()
 
@@ -678,7 +669,7 @@ cdef class GroebnerStrategyDegLex(GroebnerStrategy):
     """
     Gröbner basis strategy implementing degree lex ordering.
     """
-    cdef inline Integer bitset_to_int(self, FrozenBitset X):
+    cdef inline Integer bitset_to_int(self, FrozenBitset X) noexcept:
         """
         Convert ``X`` to an :class:`Integer`.
         """
@@ -697,12 +688,10 @@ cdef class GroebnerStrategyDegLex(GroebnerStrategy):
             elt = bitset_next(X._bitset, elt + 1)
         return Integer(sum(n.binomial(i) for i in range(deg+1)) - t - 1)
 
-    cdef inline FrozenBitset int_to_bitset(self, Integer n):
+    cdef inline FrozenBitset int_to_bitset(self, Integer n) noexcept:
         """
         Convert a nonnegative integer ``n`` to a :class:`FrozenBitset`.
         """
-        cdef size_t i
-
         if mpz_sgn(n.value) == 0:
             return FrozenBitset()
 

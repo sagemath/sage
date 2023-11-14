@@ -30,17 +30,16 @@ AUTHORS:
 - Burcin Erocal (2008-11) initial implementation
 - Martin Albrecht (2009-01) another initial implementation
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009-2010 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2009 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.libs.ntl.ntl_lzz_pX import ntl_zz_pX
-from sage.structure.factorization import Factorization
 from sage.structure.element cimport parent
 from sage.structure.element import coerce_binop
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
@@ -111,7 +110,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             return
         elif isinstance(x, Polynomial_integer_dense_flint):
             Polynomial_template.__init__(self, parent, 0, check, is_gen, construct)
-            self._set_fmpz_poly((<Polynomial_integer_dense_flint>x).__poly)
+            self._set_fmpz_poly((<Polynomial_integer_dense_flint>x)._poly)
             return
         else:
             if isinstance(x, ntl_zz_pX):
@@ -123,7 +122,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
                 pass
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef Polynomial_template _new(self):
+    cdef Polynomial_template _new(self) noexcept:
         """
         EXAMPLES::
 
@@ -138,7 +137,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         e._cparent = self._cparent
         return e
 
-    cpdef Polynomial _new_constant_poly(self, x, Parent P):
+    cpdef Polynomial _new_constant_poly(self, x, Parent P) noexcept:
         r"""
         Quickly creates a new constant polynomial with value x in parent P.
 
@@ -182,7 +181,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         EXAMPLES::
 
-            sage: P.<a>=GF(7)[]
+            sage: P.<a> = GF(7)[]
             sage: P([2^60,0,1])
             a^2 + 1
             sage: P([])
@@ -245,7 +244,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         sig_off()
         return 0
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -329,12 +328,12 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
     @coerce_binop
     def resultant(self, Polynomial_zmod_flint other):
         """
-        Returns the resultant of self and other, which must lie in the same
+        Return the resultant of ``self`` and ``other``, which must lie in the same
         polynomial ring.
 
         INPUT:
 
-        - other -- a polynomial
+        - ``other`` -- a polynomial
 
         OUTPUT: an element of the base ring of the polynomial ring
 
@@ -388,8 +387,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         INPUT:
 
-        - n -- degree
-        - value -- coefficient
+        - ``n`` -- degree
+        - ``value`` -- coefficient
 
         .. warning::
 
@@ -413,7 +412,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         else:
             raise IndexError("Polynomial coefficient index must be nonnegative.")
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
         """
         Return the product of this polynomial and other truncated to the
         given length `n`.
@@ -425,7 +424,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         EXAMPLES::
 
-            sage: P.<a>=GF(7)[]
+            sage: P.<a> = GF(7)[]
             sage: a = P(range(10)); b = P(range(5, 15))
             sage: a._mul_trunc_(b, 5)
             4*a^4 + 6*a^3 + 2*a^2 + 5*a
@@ -446,7 +445,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     _mul_short = _mul_trunc_
 
-    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n):
+    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n) noexcept:
         """
         Return the product of this polynomial and other ignoring the least
         significant `n` terms of the result which may be set to anything.
@@ -457,7 +456,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         EXAMPLES::
 
-            sage: P.<a>=GF(7)[]
+            sage: P.<a> = GF(7)[]
             sage: b = P(range(10)); c = P(range(5, 15))
             sage: b._mul_trunc_opposite(c, 10)
             5*a^17 + 2*a^16 + 6*a^15 + 4*a^14 + 4*a^13 + 5*a^10 + 2*a^9 + 5*a^8 + 4*a^5 + 4*a^4 + 6*a^3 + 2*a^2 + 5*a
@@ -483,7 +482,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     _mul_short_opposite = _mul_trunc_opposite
 
-    cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
+    cpdef Polynomial _power_trunc(self, unsigned long n, long prec) noexcept:
         r"""
         TESTS::
 
@@ -520,9 +519,9 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         nmod_poly_pow_trunc(&ans.x, &self.x, n, prec)
         return ans
 
-    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0):
+    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0) noexcept:
         """
-        Construct a rational function n/d such that `p*d` is equivalent to `n`
+        Construct a rational function `n/d` such that `p*d` is equivalent to `n`
         modulo `m` where `p` is this polynomial.
 
         EXAMPLES::
@@ -594,7 +593,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: (s^2).is_irreducible()
             Traceback (most recent call last):
             ...
-            NotImplementedError: checking irreducibility of polynomials over rings with composite characteristic is not implemented
+            NotImplementedError: checking irreducibility of polynomials
+            over rings with composite characteristic is not implemented
 
         TESTS::
 
@@ -610,7 +610,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: S(2).is_irreducible()
             Traceback (most recent call last):
             ...
-            NotImplementedError: checking irreducibility of polynomials over rings with composite characteristic is not implemented
+            NotImplementedError: checking irreducibility of polynomials
+            over rings with composite characteristic is not implemented
 
         Test that caching works::
 
@@ -639,7 +640,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     def squarefree_decomposition(self):
         """
-        Returns the squarefree decomposition of this polynomial.
+        Return the squarefree decomposition of this polynomial.
 
         EXAMPLES::
 
@@ -665,7 +666,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     def factor(self):
         """
-        Returns the factorization of the polynomial.
+        Return the factorization of the polynomial.
 
         EXAMPLES::
 
@@ -689,6 +690,16 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             Traceback (most recent call last):
             ...
             NotImplementedError: factorization of polynomials over rings with composite characteristic is not implemented
+
+        Test that factorization can be interrupted::
+
+            sage: R.<x> = PolynomialRing(GF(65537), implementation="FLINT")
+            sage: f = R.random_element(9973) * R.random_element(10007)
+            sage: alarm(0.5); f.factor()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+
         """
         R = self.base_ring()
 
@@ -710,13 +721,13 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         Return this polynomial divided by its leading coefficient.
 
-        Raises ValueError if the leading coefficient is not invertible in the
+        Raises :class:`ValueError` if the leading coefficient is not invertible in the
         base ring.
 
         EXAMPLES::
 
             sage: R.<x> = GF(5)[]
-            sage: (2*x^2+1).monic()
+            sage: (2*x^2 + 1).monic()
             x^2 + 3
 
         TESTS::
@@ -727,7 +738,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             ValueError: leading coefficient must be invertible
         """
-        if self.base_ring().characteristic().gcd(\
+        if self.base_ring().characteristic().gcd(
                 self.leading_coefficient().lift()) != 1:
             raise ValueError("leading coefficient must be invertible")
         cdef Polynomial_zmod_flint res = self._new()
@@ -738,7 +749,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         Return a polynomial with the coefficients of this polynomial reversed.
 
-        If an optional degree argument is given the coefficient list will be
+        If the optional argument ``degree`` is given, the coefficient list will be
         truncated or zero padded as necessary before computing the reverse.
 
         EXAMPLES::
@@ -809,7 +820,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     def revert_series(self, n):
         r"""
-        Return a polynomial `f` such that `f(self(x)) = self(f(x)) = x mod x^n`.
+        Return a polynomial `f` such that ``f(self(x)) = self(f(x)) = x`` (mod `x^n`).
 
         EXAMPLES::
 
@@ -862,7 +873,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: R.<x> = GF(127)[]
             sage: type(x)
             <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
-            sage: (x^5-3).minpoly_mod(x^3+5*x-1)
+            sage: (x^5 - 3).minpoly_mod(x^3 + 5*x - 1)
             x^3 + 34*x^2 + 125*x + 95
         """
         parent = self.parent()

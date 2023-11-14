@@ -246,7 +246,7 @@ class SemistandardPathTableau(PathTableau):
         """
         return bool(self[0])
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         """
         Return ``True`` if all entries are non-negative integers.
 
@@ -259,7 +259,7 @@ class SemistandardPathTableau(PathTableau):
             sage: path_tableaux.SemistandardPathTableau([[],[3],[3,-2]]).is_integral()
             False
         """
-        return all(all(i in NN for i in a) for a in self)
+        return all(i in NN for a in self for i in a)
 
     def local_rule(self, i):
         r"""
@@ -393,8 +393,9 @@ class SemistandardPathTableau(PathTableau):
 
         TESTS::
 
-            sage: SST = SemistandardTableaux(shape=[5,5,3],eval=[2,2,3,4,2])
-            sage: all(st == path_tableaux.SemistandardPathTableau(st).to_tableau() for st in SST)
+            sage: SST = SemistandardTableaux(shape=[5,5,3], eval=[2,2,3,4,2])
+            sage: all(st == path_tableaux.SemistandardPathTableau(st).to_tableau()      # needs sage.modules
+            ....:     for st in SST)
             True
         """
         from sage.combinat.tableau import from_chain

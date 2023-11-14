@@ -12,7 +12,8 @@ del _zlib
 # Monkey-patch ExtensionFileLoader to allow IPython to find the sources
 # of Cython files. See https://github.com/sagemath/sage/issues/24681
 from importlib.machinery import ExtensionFileLoader as _ExtensionFileLoader
-del _ExtensionFileLoader.get_source
+if hasattr(_ExtensionFileLoader, 'get_source'):
+    del _ExtensionFileLoader.get_source
 del _ExtensionFileLoader
 
 # Work around a Cygwin-specific bug caused by sqlite3; see
@@ -40,7 +41,7 @@ if _sys.platform == 'cygwin':
             if fix_for_ticket_30157():
                 raise RuntimeError(
                     'patch for Github issue #30157 failed; please report this '
-                    'bug to https://trac.sagemath.org')
+                    'bug to https://github.com/sagemath/sage/issues')
 
             # Undo the monkey-patch
             try:

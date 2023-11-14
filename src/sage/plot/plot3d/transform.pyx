@@ -54,7 +54,7 @@ cdef class Transformation:
         # this raw data is used for optimized transformations
         m_data = self.matrix.list()
         cdef int i
-        for i from 0 <= i < 12:
+        for i in range(12):
             self._matrix_data[i] = m_data[i]
 
     def get_matrix(self):
@@ -75,19 +75,19 @@ cdef class Transformation:
         len_a = a.dot_product(a)
         return max([abs(len_a - b.dot_product(b)) for b in basis]) < eps
 
-    cpdef transform_point(self, x):
+    cpdef transform_point(self, x) noexcept:
         cdef point_c res, P
         P.x, P.y, P.z = x
         point_c_transform(&res, self._matrix_data, P)
         return res.x, res.y, res.z
 
-    cpdef transform_vector(self, v):
+    cpdef transform_vector(self, v) noexcept:
         cdef point_c res, P
         P.x, P.y, P.z = v
         point_c_stretch(&res, self._matrix_data, P)
         return res.x, res.y, res.z
 
-    cpdef transform_bounding_box(self, box):
+    cpdef transform_bounding_box(self, box) noexcept:
         cdef point_c lower, upper, res, temp
         cdef point_c bounds[2]
         bounds[0].x, bounds[0].y, bounds[0].z = box[0]
@@ -95,7 +95,7 @@ cdef class Transformation:
         point_c_transform(&lower, self._matrix_data, bounds[0])
         point_c_transform(&upper, self._matrix_data, bounds[0])
         cdef int i
-        for i from 1 <= i < 8:
+        for i in range(1, 8):
             temp.x = bounds[ i & 1      ].x
             temp.y = bounds[(i & 2) >> 1].y
             temp.z = bounds[(i & 4) >> 2].z
@@ -105,10 +105,10 @@ cdef class Transformation:
         return (lower.x, lower.y, lower.z), (upper.x, upper.y, upper.z)
 
 
-    cdef void transform_point_c(self, point_c* res, point_c P):
+    cdef void transform_point_c(self, point_c* res, point_c P) noexcept:
         point_c_transform(res, self._matrix_data, P)
 
-    cdef void transform_vector_c(self, point_c* res, point_c P):
+    cdef void transform_vector_c(self, point_c* res, point_c P) noexcept:
         point_c_stretch(res, self._matrix_data, P)
 
     def __mul__(Transformation self, Transformation other):

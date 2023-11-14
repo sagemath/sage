@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Hidden Markov Models -- Utility functions
 
@@ -21,7 +22,7 @@ cdef class HMM_Util:
     """
     A class used in order to share cdef's methods between different files.
     """
-    cpdef normalize_probability_TimeSeries(self, TimeSeries T, Py_ssize_t i, Py_ssize_t j):
+    cpdef normalize_probability_TimeSeries(self, TimeSeries T, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         This function is used internally by the Hidden Markov Models code.
 
@@ -33,13 +34,13 @@ cdef class HMM_Util:
 
         INPUT:
 
-            - T -- a TimeSeries
-            - i -- nonnegative integer
-            - j -- nonnegative integer
+        - ``T`` -- a :class:`TimeSeries`
+        - ``i`` -- nonnegative integer
+        - ``j`` -- nonnegative integer
 
         OUTPUT:
 
-            - T is modified
+        - ``T`` is modified
 
         EXAMPLES::
 
@@ -85,21 +86,22 @@ cdef class HMM_Util:
 
 
 
-    cpdef TimeSeries initial_probs_to_TimeSeries(self, pi, bint normalize):
+    cpdef TimeSeries initial_probs_to_TimeSeries(self, pi, bint normalize) noexcept:
         """
         This function is used internally by the __init__ methods of
         various Hidden Markov Models.
 
         INPUT:
 
-            - pi -- vector, list, or TimeSeries
-            - normalize -- if True, replace negative entries by 0 and
-              rescale to ensure that the sum of the entries in each row is
-              equal to 1.  If the sum of the entries in a row is 0, replace them
-              all by 1/N.
+        - ``pi`` -- vector, list, or :class:`TimeSeries`
+        - ``normalize`` -- if ``True``, replace negative entries by 0 and
+          rescale to ensure that the sum of the entries in each row is
+          equal to 1.  If the sum of the entries in a row is 0, replace them
+          all by `1/N`.
 
         OUTPUT:
-            - a TimeSeries of length N
+
+        - a :class:`TimeSeries` of length `N`
 
         EXAMPLES::
 
@@ -123,24 +125,24 @@ cdef class HMM_Util:
         return T
 
 
-    cpdef TimeSeries state_matrix_to_TimeSeries(self, A, int N, bint normalize):
+    cpdef TimeSeries state_matrix_to_TimeSeries(self, A, int N, bint normalize) noexcept:
         """
-        This function is used internally by the __init__ methods of
-        Hidden Markov Models to make a transition matrix from A.
+        This function is used internally by the ``__init__`` methods of
+        Hidden Markov Models to make a transition matrix from ``A``.
 
 
         INPUT:
 
-            - A -- matrix, list, list of lists, or TimeSeries
-            - N -- number of states
-            - normalize -- if True, replace negative entries by 0 and
-              rescale to ensure that the sum of the entries in each row is
-              equal to 1.  If the sum of the entries in a row is 0, replace them
-              all by 1/N.
+        - ``A`` -- matrix, list, list of lists, or :class:`TimeSeries`
+        - ``N`` -- number of states
+        - ``normalize`` -- if ``True``, replace negative entries by 0 and
+          rescale to ensure that the sum of the entries in each row is
+          equal to 1.  If the sum of the entries in a row is 0, replace them
+          all by `1/N`.
 
         OUTPUT:
 
-            - a TimeSeries
+        - a :class:`TimeSeries`
 
         EXAMPLES::
 

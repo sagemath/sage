@@ -43,7 +43,7 @@ AUTHORS:
    clisp.
 
 If the string "error" (case insensitive) occurs in the output of
-anything from axiom, a RuntimeError exception is raised.
+anything from axiom, a :class:`RuntimeError` exception is raised.
 
 EXAMPLES: We evaluate a very simple expression in axiom.
 
@@ -275,8 +275,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
         # For some reason this trivial comp
         # keeps certain random freezes from occurring.  Do not remove this.
         # The space before the \n is also important.
-        return ')read %s \n'%filename
-
+        return ')read %s \n' % filename
 
     def _quit_string(self):
         """
@@ -320,7 +319,6 @@ class PanAxiom(ExtraTabCompletion, Expect):
         j = s.find(end)
         s = s[i+len(start):j].split()
         return s
-
 
     def _tab_completion(self, verbose=True, use_disk_cache=True):
         """
@@ -386,12 +384,11 @@ class PanAxiom(ExtraTabCompletion, Expect):
             '2'
 
         """
-        cmd = '%s := %s'%(var, value)
+        cmd = '%s := %s' % (var, value)
         out = self._eval_line(cmd, reformat=False)
 
         if out.find("error") != -1:
-            raise TypeError("Error executing code in Axiom\nCODE:\n\t%s\nAxiom ERROR:\n\t%s"%(cmd, out))
-
+            raise TypeError("Error executing code in Axiom\nCODE:\n\t%s\nAxiom ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         r"""
@@ -568,7 +565,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         """
         self._check_valid()
         P = self.parent()
-        return P('%s(%s)'%(self.name(), x))
+        return P('%s(%s)' % (self.name(), x))
 
     def _richcmp_(self, other, op):
         """
@@ -604,11 +601,11 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
         """
         P = self.parent()
-        if 'true' in P.eval("(%s = %s) :: Boolean"%(self.name(),other.name())):
+        if 'true' in P.eval("(%s = %s) :: Boolean" % (self.name(),other.name())):
             return rich_to_bool(op, 0)
-        elif 'true' in P.eval("(%s < %s) :: Boolean"%(self.name(), other.name())):
+        elif 'true' in P.eval("(%s < %s) :: Boolean" % (self.name(), other.name())):
             return rich_to_bool(op, -1)
-        elif 'true' in P.eval("(%s > %s) :: Boolean"%(self.name(),other.name())):
+        elif 'true' in P.eval("(%s > %s) :: Boolean" % (self.name(),other.name())):
             return rich_to_bool(op, 1)
 
         return NotImplemented
@@ -638,7 +635,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             6
         """
         P = self._check_valid()
-        s = P.eval('# %s '%self.name())
+        s = P.eval('# %s ' % self.name())
         i = s.rfind('Type')
         return int(s[:i-1])
 
@@ -670,9 +667,9 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             raise IndexError("index out of range")
         P = self._check_valid()
         if not isinstance(n, tuple):
-            return P.new('%s(%s)'%(self._name, n))
+            return P.new('%s(%s)' % (self._name, n))
         else:
-            return P.new('%s(%s)'%(self._name, str(n)[1:-1]))
+            return P.new('%s(%s)' % (self._name, str(n)[1:-1]))
 
     def comma(self, *args):
         """
@@ -687,14 +684,13 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             [2,3,4]
             sage: _.type()        #optional - axiom
             Tuple PositiveInteger
-
         """
         P = self._check_valid()
         args = list(args)
         for i, arg in enumerate(args):
             if not isinstance(arg, AxiomElement) or arg.parent() is not P:
                 args[i] = P(arg)
-        cmd = "(" + ",".join([x.name() for x in [self]+args]) + ")"
+        cmd = "(" + ",".join(x.name() for x in [self] + args) + ")"
         return P(cmd)
 
     def _latex_(self):
@@ -737,7 +733,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         """
         P = self._check_valid()
         type = P(type)
-        return P.new("%s :: %s"%(self.name(), type.name()))
+        return P.new("%s :: %s" % (self.name(), type.name()))
 
     def unparsed_input_form(self):
         """
@@ -754,7 +750,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
         """
         P = self._check_valid()
-        s = P.eval('unparse(%s::InputForm)'%self._name)
+        s = P.eval('unparse(%s::InputForm)' % self._name)
         if 'translation error' in s or 'Cannot convert' in s:
             raise NotImplementedError
         s = multiple_replace({'\r\n':'', # fix stupid Fortran-ish
@@ -767,7 +763,6 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             return r.groups(0)[0]
         else:
             return s
-
 
     def _sage_(self):
         """
@@ -836,7 +831,8 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             return self._sage_domain()
 
         if type == "Float":
-            from sage.rings.all import RealField, ZZ
+            from sage.rings.real_mpfr import RealField
+            from sage.rings.integer_ring import ZZ
             prec = max(self.mantissa().length()._sage_(), 53)
             R = RealField(prec)
             x,e,b = self.unparsed_input_form().lstrip('float(').rstrip(')').split(',')
@@ -859,14 +855,13 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
          #If all else fails, try using the unparsed input form
         try:
             import sage.misc.sage_eval
-            vars=sage.symbolic.ring.var(str(self.variables())[1:-1])
+            vars = sage.symbolic.ring.var(str(self.variables())[1:-1])
             if isinstance(vars,tuple):
                 return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(), locals={str(x):x for x in vars})
             else:
                 return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(), locals={str(vars):vars})
         except Exception:
             raise NotImplementedError
-
 
     def _sage_domain(self):
         """
@@ -921,6 +916,7 @@ class PanAxiomFunctionElement(FunctionElement):
             name = name[:-2] + "!"
         FunctionElement.__init__(self, object, name)
 
+
 AxiomFunctionElement = PanAxiomFunctionElement
 
 
@@ -940,6 +936,7 @@ class PanAxiomExpectFunction(ExpectFunction):
         elif name.endswith("_e"):
             name = name[:-2] + "!"
         ExpectFunction.__init__(self, parent, name)
+
 
 AxiomExpectFunction = PanAxiomExpectFunction
 

@@ -22,18 +22,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.arith.functions import lcm
-from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.interfaces.gap3 import gap3
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
-from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_c import reduced_word_c, reduce_in_coset
-from sage.matrix.all import Matrix, identity_matrix
+from sage.matrix.constructor import Matrix
+from sage.matrix.special import identity_matrix
 
 
 cdef class ComplexReflectionGroupElement(PermutationGroupElement):
@@ -74,15 +70,16 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         Check that :trac:`34912` is fixed::
 
-            sage: G4 = ReflectionGroup(4)                           # optional - gap3
-            sage: g0, g1 = G4.gens()                                # optional - gap3
-            sage: elt = g0^2 * g1 * g0^2 * g1                       # optional - gap3
-            sage: elt                                               # optional - gap3
+            sage: # optional - gap3
+            sage: G4 = ReflectionGroup(4)
+            sage: g0, g1 = G4.gens()
+            sage: elt = g0^2 * g1 * g0^2 * g1
+            sage: elt
             (1,12)(2,24)(3,19)(4,22)(5,17)(6,20)(7,23)(8,9)(10,21)(11,13)(14,18)(15,16)
-            sage: y = (elt * G4.gen(1)) * G4.gen(1) * G4.gen(1)     # optional - gap3
-            sage: elt == y                                          # optional - gap3
+            sage: y = (elt * G4.gen(1)) * G4.gen(1) * G4.gen(1)
+            sage: elt == y
             True
-            sage: hash(elt) == hash(y)                              # optional - gap3
+            sage: hash(elt) == hash(y)
             True
         """
         return hash(self._parent) | super().__hash__()
@@ -118,7 +115,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         gens = [W.simple_reflection(j) for j in W._index_set]
         return _gap_factorization(self, gens)
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def reduced_word_in_reflections(self):
         r"""
         Return a word in the reflections to obtain ``self``.
@@ -183,7 +180,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         """
         return ZZ(len(self.reduced_word()))
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def to_matrix(self, on_space="primal"):
         r"""
         Return ``self`` as a matrix acting on the underlying vector
@@ -196,11 +193,11 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup((3,1,2))            # optional - gap3
+            sage: W = ReflectionGroup((3,1,2))                                          # optional - gap3
             sage: data = {w: [w.to_matrix(), w.to_matrix(on_space="dual")] for w in W}  # optional - gap3
-            sage: for w in W.iteration_tracking_words():  # optional - gap3
-            ....:     w.reduced_word()                    # optional - gap3
-            ....:     mats = [w.to_matrix(), w.to_matrix(on_space="dual")]  # optional - gap3
+            sage: for w in W.iteration_tracking_words():                                # optional - gap3
+            ....:     w.reduced_word()
+            ....:     mats = [w.to_matrix(), w.to_matrix(on_space="dual")]
             ....:     mats
             ....:     assert data[w] == mats
             []
@@ -350,7 +347,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         mat.set_immutable()
         return mat
 
-    cpdef action(self, vec, on_space="primal"):
+    cpdef action(self, vec, on_space="primal") noexcept:
         r"""
         Return the image of ``vec`` under the action of ``self``.
 
@@ -368,14 +365,14 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             sage: W = ReflectionGroup((3,1,2))                      # optional - gap3
             sage: w = W.from_reduced_word([1, 2, 1, 1, 2])          # optional - gap3
             sage: for alpha in W.independent_roots():               # optional - gap3
-            ....:     print("%s -> %s"%(alpha,w.action(alpha)))     # optional - gap3
+            ....:     print("%s -> %s"%(alpha,w.action(alpha)))
             (1, 0) -> (E(3), 0)
             (-1, 1) -> (-E(3), E(3)^2)
         """
         mat = self.matrix(on_space=on_space)
         return vec * mat
 
-    cpdef _act_on_(self, vec, bint self_on_left):
+    cpdef _act_on_(self, vec, bint self_on_left) noexcept:
         r"""
         Defines the action of ``self`` as a linear transformation
         on the vector space, in the basis given by the simple
@@ -391,7 +388,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             sage: W = ReflectionGroup((3,1,2))                      # optional - gap3
             sage: w = W.from_reduced_word([1, 2, 1, 1, 2])          # optional - gap3
             sage: for alpha in W.independent_roots():               # optional - gap3
-            ....:     print("%s -> %s"%(alpha, w * alpha))          # optional - gap3
+            ....:     print("%s -> %s"%(alpha, w * alpha))
             (1, 0) -> (E(3), 0)
             (-1, 1) -> (-E(3), E(3)^2)
         """
@@ -399,7 +396,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             return (~self).action(vec)
         return self.action(vec)
 
-    cpdef action_on_root_indices(self, i):
+    cpdef action_on_root_indices(self, i) noexcept:
         """
         Return the right action on the set of roots.
 
@@ -409,16 +406,18 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])           # optional - gap3
-            sage: w = W.w0                               # optional - gap3
-            sage: N = len(W.roots())                     # optional - gap3
-            sage: [w.action_on_root_indices(i) for i in range(N)]    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: w = W.w0
+            sage: N = len(W.roots())
+            sage: [w.action_on_root_indices(i) for i in range(N)]
             [8, 7, 6, 10, 9, 11, 2, 1, 0, 4, 3, 5]
 
-            sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])   # optional - gap3
-            sage: w = W.w0                               # optional - gap3
-            sage: N = len(W.roots())                     # optional - gap3
-            sage: [w.action_on_root_indices(i) for i in range(N)]    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])
+            sage: w = W.w0
+            sage: N = len(W.roots())
+            sage: [w.action_on_root_indices(i) for i in range(N)]
             [4, 3, 5, 1, 0, 2]
 
         TESTS::
@@ -443,8 +442,8 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
             sage: W = ReflectionGroup(['A',2])                      # optional - gap3
             sage: for w in W:                                       # optional - gap3
-            ....:     print("%s %s"%(w.reduced_word(),              # optional - gap3
-            ....:           [w.action_on_root(beta,side="left") for beta in W.positive_roots()]))  # optional - gap3
+            ....:     print("%s %s"%(w.reduced_word(),
+            ....:           [w.action_on_root(beta,side="left") for beta in W.positive_roots()]))
             [] [(1, 0), (0, 1), (1, 1)]
             [2] [(1, 1), (0, -1), (1, 0)]
             [1] [(-1, 0), (1, 1), (0, 1)]
@@ -482,7 +481,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         W = self._parent
         return PermutationGroupElement(self, W)
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def fix_space(self):
         r"""
         Return the fix space of ``self``.
@@ -494,8 +493,8 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
             sage: W = ReflectionGroup((1,1,3))                      # optional - gap3
             sage: for w in W:                                       # optional - gap3
-            ....:     w.reduced_word()                              # optional - gap3
-            ....:     w.fix_space()                                 # optional - gap3
+            ....:     w.reduced_word()
+            ....:     w.fix_space()
             []
             Vector space of degree 2 and dimension 2 over Rational Field
             Basis matrix:
@@ -532,7 +531,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         I = identity_matrix(QQ, self._parent.rank())
         return (self.to_matrix() - I).right_kernel()
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def reflection_eigenvalues(self, is_class_representative=False):
         r"""
         Return the reflection eigenvalues of ``self``.
@@ -579,7 +578,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         """
         return self._parent.reflection_eigenvalues(self, is_class_representative=is_class_representative)
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def galois_conjugates(self):
         r"""
         Return all Galois conjugates of ``self``.
@@ -684,8 +683,8 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         """
         rk = self._parent.rank()
         M = self.to_matrix().list()
-        m = lcm([x.conductor() if hasattr(x,"conductor") else 1 for x in M])
-        cdef list M_gals = [x.galois_conjugates(m) if hasattr(x,"galois_conjugates") else [x] for x in M]
+        m = lcm([x.conductor() if hasattr(x, "conductor") else 1 for x in M])
+        cdef list M_gals = [x.galois_conjugates(m) if hasattr(x, "galois_conjugates") else [x] for x in M]
         cdef list conjugates = []
         cdef int i
         for i in range(len(M_gals[0])):
@@ -754,7 +753,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
             sage: W = ReflectionGroup(['A',2])                      # optional - gap3
             sage: for w in W:                                       # optional - gap3
-            ....:     print("%s %s"%(w.reduced_word(), w.length())) # optional - gap3
+            ....:     print("%s %s"%(w.reduced_word(), w.length()))
             [] 0
             [2] 1
             [1] 1
@@ -764,7 +763,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         """
         return ZZ(len(self._reduced_word))
 
-    cpdef bint has_left_descent(self, i):
+    cpdef bint has_left_descent(self, i) noexcept:
         r"""
         Return whether ``i`` is a left descent of ``self``.
 
@@ -773,18 +772,19 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(["A",3])                      # optional - gap3
-            sage: s = W.simple_reflections()                        # optional - gap3
-            sage: (s[1]*s[2]).has_left_descent(1)                   # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(["A",3])
+            sage: s = W.simple_reflections()
+            sage: (s[1]*s[2]).has_left_descent(1)
             True
-            sage: (s[1]*s[2]).has_left_descent(2)                   # optional - gap3
+            sage: (s[1]*s[2]).has_left_descent(2)
             False
         """
         W = self._parent
         # we also check == because 0-based indexing
         return self.perm[W._index_set_inverse[i]] >= W.number_of_reflections()
 
-    cpdef bint has_descent(self, i, side="left", positive=False):
+    cpdef bint has_descent(self, i, side="left", positive=False) noexcept:
         r"""
         Return whether ``i`` is a descent (or ascent) of ``self``.
 
@@ -799,18 +799,19 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(["A",3])                      # optional - gap3
-            sage: s = W.simple_reflections()                        # optional - gap3
-            sage: (s[1]*s[2]).has_descent(1)                        # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(["A",3])
+            sage: s = W.simple_reflections()
+            sage: (s[1]*s[2]).has_descent(1)
             True
-            sage: (s[1]*s[2]).has_descent(2)                        # optional - gap3
+            sage: (s[1]*s[2]).has_descent(2)
             False
         """
         if not isinstance(positive, bool):
-            raise TypeError("%s is not a boolean"%(bool))
+            raise TypeError("%s is not a boolean" % (bool))
 
         if i not in self._parent.index_set():
-            raise ValueError("the given index %s is not in the index set"%i)
+            raise ValueError("the given index %s is not in the index set" % i)
 
         negative = not positive
 
@@ -884,8 +885,8 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
             sage: W = ReflectionGroup(['A',2])           # optional - gap3
             sage: for w in W:                            # optional - gap3
-            ....:     w.reduced_word()                   # optional - gap3
-            ....:     [w.to_matrix(), w.to_matrix(on_space="dual")] # optional - gap3
+            ....:     w.reduced_word()
+            ....:     [w.to_matrix(), w.to_matrix(on_space="dual")]
             []
             [
             [1 0]  [1 0]
@@ -956,7 +957,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
     matrix = to_matrix
 
-    cpdef action(self, vec, side="right", on_space="primal"):
+    cpdef action(self, vec, side="right", on_space="primal") noexcept:
         r"""
         Return the image of ``vec`` under the action of ``self``.
 
@@ -976,8 +977,8 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
             sage: W = ReflectionGroup(['A',2])                      # optional - gap3
             sage: for w in W:                                       # optional - gap3
-            ....:     print("%s %s"%(w.reduced_word(),              # optional - gap3
-            ....:           [w.action(weight,side="left") for weight in W.fundamental_weights()]))  # optional - gap3
+            ....:     print("%s %s"%(w.reduced_word(),
+            ....:           [w.action(weight,side="left") for weight in W.fundamental_weights()]))
             [] [(2/3, 1/3), (1/3, 2/3)]
             [2] [(2/3, 1/3), (1/3, -1/3)]
             [1] [(-1/3, 1/3), (1/3, 2/3)]
@@ -989,10 +990,10 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
             sage: W = ReflectionGroup(['B',3])                      # optional - gap3
             sage: all(w.action(alpha,side="right") == w.action_on_root(alpha,side="right")  # optional - gap3
-            ....:     for w in W for alpha in W.simple_roots())     # optional - gap3
+            ....:     for w in W for alpha in W.simple_roots())
             True
             sage: all(w.action(alpha,side="left") == w.action_on_root(alpha,side="left")  #optional - gap3
-            ....:     for w in W for alpha in W.simple_roots())     # optional - gap3
+            ....:     for w in W for alpha in W.simple_roots())
             True
         """
         W = self._parent
@@ -1019,7 +1020,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         else:
             raise ValueError('on_space must be "primal" or "dual"')
 
-    cpdef _act_on_(self, vec, bint self_on_left):
+    cpdef _act_on_(self, vec, bint self_on_left) noexcept:
         r"""
         Give the action of ``self`` as a linear transformation on
         the vector space, in the basis given by the simple roots.
@@ -1036,23 +1037,22 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
             sage: W = ReflectionGroup(['A',2])           # optional - gap3
             sage: w = W.from_reduced_word([1,2])         # optional - gap3
             sage: for root in W.positive_roots():        # optional - gap3
-            ....:     print("%s -> %s"%(root, w*root))   # optional - gap3
+            ....:     print("%s -> %s"%(root, w*root))
             (1, 0) -> (0, 1)
             (0, 1) -> (-1, -1)
             (1, 1) -> (-1, 0)
 
             sage: for root in W.positive_roots():        # optional - gap3
-            ....:     print("%s -> %s"%(root, root*w))   # optional - gap3
+            ....:     print("%s -> %s"%(root, root*w))
             (1, 0) -> (-1, -1)
             (0, 1) -> (1, 0)
             (1, 1) -> (0, -1)
         """
         if self_on_left:
-            return self.action(vec,side="left")
-        else:
-            return self.action(vec,side="right")
+            return self.action(vec, side="left")
+        return self.action(vec, side="right")
 
-    cpdef action_on_root_indices(self, i, side="right"):
+    cpdef action_on_root_indices(self, i, side="right") noexcept:
         """
         Return the action on the set of roots.
 
@@ -1065,16 +1065,18 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])           # optional - gap3
-            sage: w = W.w0                               # optional - gap3
-            sage: N = len(W.roots())                     # optional - gap3
-            sage: [w.action_on_root_indices(i,side="left") for i in range(N)]    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: w = W.w0
+            sage: N = len(W.roots())
+            sage: [w.action_on_root_indices(i,side="left") for i in range(N)]
             [8, 7, 6, 10, 9, 11, 2, 1, 0, 4, 3, 5]
 
-            sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])   # optional - gap3
-            sage: w = W.w0                               # optional - gap3
-            sage: N = len(W.roots())                     # optional - gap3
-            sage: [w.action_on_root_indices(i,side="left") for i in range(N)]    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2], reflection_index_set=['A','B','C'])
+            sage: w = W.w0
+            sage: N = len(W.roots())
+            sage: [w.action_on_root_indices(i,side="left") for i in range(N)]
             [4, 3, 5, 1, 0, 2]
         """
         cdef RealReflectionGroupElement w
@@ -1101,8 +1103,8 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
             sage: W = ReflectionGroup(['A',2])           # optional - gap3
             sage: for w in W:                            # optional - gap3
-            ....:     print("%s %s"%(w.reduced_word(),   # optional - gap3
-            ....:           [w.action_on_root(beta,side="left") for beta in W.positive_roots()]))  # optional - gap3
+            ....:     print("%s %s"%(w.reduced_word(),
+            ....:           [w.action_on_root(beta,side="left") for beta in W.positive_roots()]))
             [] [(1, 0), (0, 1), (1, 1)]
             [2] [(1, 1), (0, -1), (1, 0)]
             [1] [(-1, 0), (1, 1), (0, 1)]
@@ -1112,8 +1114,8 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
             sage: W = ReflectionGroup(['A',2])           # optional - gap3
             sage: for w in W:                            # optional - gap3
-            ....:     print("%s %s"%(w.reduced_word(),   # optional - gap3
-            ....:           [w.action_on_root(beta,side="right") for beta in W.positive_roots()]))  # optional - gap3
+            ....:     print("%s %s"%(w.reduced_word(),
+            ....:           [w.action_on_root(beta,side="right") for beta in W.positive_roots()]))
             [] [(1, 0), (0, 1), (1, 1)]
             [2] [(1, 1), (0, -1), (1, 0)]
             [1] [(-1, 0), (1, 1), (0, 1)]
@@ -1135,7 +1137,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
             sage: W = ReflectionGroup(['A',2])                      # optional - gap3
             sage: for w in W:                                       # optional - gap3
-            ....:     print("%s %s"%(w.reduced_word(), w.inversion_set()))  # optional - gap3
+            ....:     print("%s %s"%(w.reduced_word(), w.inversion_set()))
             [] []
             [2] [(0, 1)]
             [1] [(1, 0)]
@@ -1172,10 +1174,13 @@ def _gap_factorization(w, gens):
         sage: [_gap_factorization(w,gens) for w in W]                   # optional - gap3
         [[], [1], [0], [0, 1], [1, 0], [0, 1, 0]]
     """
-    gap3.execute('W := GroupWithGenerators(%s)'%str(gens))
+    from sage.interfaces.gap3 import gap3
+
+    gap3.execute('W := GroupWithGenerators(%s)' % str(gens))
     gap3.execute(_gap_factorization_code)
-    fac = gap3('MinimalWord(W,%s)'%str(w)).sage()
+    fac = gap3('MinimalWord(W,%s)' % str(w)).sage()
     return [i-1 for i in fac]
+
 
 _gap_factorization_code = r"""
 # MinimalWord(G,w)
@@ -1227,6 +1232,7 @@ MinimalWord:=function(G,w)
   od;
 end;"""
 
+
 def _gap_return(S, coerce_obj='self'):
     r"""
     Return the string ``S`` after a few modifications are done.
@@ -1240,6 +1246,6 @@ def _gap_return(S, coerce_obj='self'):
         sage: _gap_return("[ (), (1,4)(2,3)(5,6), (1,6,2)(3,5,4) ]")    # optional - gap3
         "[self('()',check=False),self('(1,4)(2,3)(5,6)',check=False),self('(1,6,2)(3,5,4)',check=False)]"
     """
-    S = S.replace(' ','').replace('\n','')
-    S = S.replace(',(','\',check=False),%s(\'('%coerce_obj).replace('[','[%s(\''%coerce_obj).replace(']','\',check=False)]')
+    S = S.replace(' ', '').replace('\n', '')
+    S = S.replace(',(', '\',check=False),%s(\'(' % coerce_obj).replace('[', '[%s(\'' % coerce_obj).replace(']', '\',check=False)]')
     return S

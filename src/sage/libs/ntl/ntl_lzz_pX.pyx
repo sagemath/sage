@@ -34,7 +34,6 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp, IntegerMod_int, IntegerMod_int64
 
@@ -109,17 +108,17 @@ cdef class ntl_zz_pX():
             a = ls[i]
 
             if isinstance(a, IntegerMod_int):
-                if (self.c.p == (<IntegerMod_int>a).__modulus.int32): ## this is slow
+                if (self.c.p == (<IntegerMod_int>a)._modulus.int32): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, (<IntegerMod_int>a).ivalue)
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, IntegerMod_int64):
-                if (self.c.p == (<IntegerMod_int64>a).__modulus.int64): ## this is slow
+                if (self.c.p == (<IntegerMod_int64>a)._modulus.int64): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, (<IntegerMod_int64>a).ivalue)
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, IntegerMod_gmp):
-                if (p_sage == (<IntegerMod_gmp>a).__modulus.sageInteger): ## this is slow
+                if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, mpz_get_si((<IntegerMod_gmp>a).value))
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
@@ -233,7 +232,7 @@ cdef class ntl_zz_pX():
         zz_pX_SetCoeff_long(self.x, i, val)
         return
 
-    cdef ntl_zz_pX _new(self):
+    cdef ntl_zz_pX _new(self) noexcept:
         """
         Quick and dirty method for creating a new object with the
         same zz_pContext as self.

@@ -63,7 +63,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
             sage: a.automorphism_group()
             Symmetric group of order 1! as a permutation group
         """
-        from sage.groups.all import SymmetricGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         return SymmetricGroup(1)
 
 
@@ -77,7 +77,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: L = species.LinearOrderSpecies(); L
             Linear order species
         """
-        return super(LinearOrderSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """

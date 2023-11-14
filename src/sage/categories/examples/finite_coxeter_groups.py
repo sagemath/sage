@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Examples of finite Coxeter groups
 """

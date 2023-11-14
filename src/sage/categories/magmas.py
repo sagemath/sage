@@ -296,11 +296,13 @@ class Magmas(Category_singleton):
                 sage: Magmas().Distributive()
                 Traceback (most recent call last):
                 ...
-                ValueError: The distributive axiom only makes sense on a magma which is simultaneously an additive magma
+                ValueError: The distributive axiom only makes sense on a magma
+                which is simultaneously an additive magma
                 sage: Semigroups().Distributive()
                 Traceback (most recent call last):
                 ...
-                ValueError: The distributive axiom only makes sense on a magma which is simultaneously an additive magma
+                ValueError: The distributive axiom only makes sense on a magma
+                which is simultaneously an additive magma
 
             TESTS::
 
@@ -331,7 +333,8 @@ class Magmas(Category_singleton):
 
                 sage: Magmas().JTrivial()
                 Category of j trivial magmas
-                sage: (Semigroups().RTrivial() & Semigroups().LTrivial()) is Semigroups().JTrivial()
+                sage: C = Semigroups().RTrivial() & Semigroups().LTrivial()
+                sage: C is Semigroups().JTrivial()
                 True
             """
             return self._with_axiom('JTrivial')
@@ -349,19 +352,22 @@ class Magmas(Category_singleton):
             """
             EXAMPLES::
 
-                sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
+                sage: MCA = Magmas().Commutative().Algebras(QQ)
+                sage: MCA.extra_super_categories()
                 [Category of commutative magmas]
 
             This implements the fact that the algebra of a commutative
             magma is commutative::
 
-                sage: Magmas().Commutative().Algebras(QQ).super_categories()
-                [Category of magma algebras over Rational Field, Category of commutative magmas]
+                sage: MCA.super_categories()
+                [Category of magma algebras over Rational Field,
+                 Category of commutative magmas]
 
             In particular, commutative monoid algebras are
             commutative algebras::
 
-                sage: Monoids().Commutative().Algebras(QQ).is_subcategory(Algebras(QQ).Commutative())
+                sage: MoCA = Monoids().Commutative().Algebras(QQ)
+                sage: MoCA.is_subcategory(Algebras(QQ).Commutative())
                 True
             """
             from sage.categories.magmatic_algebras import MagmaticAlgebras
@@ -377,11 +383,11 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: SymmetricGroup(1).algebra(QQ).is_field()
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.groups
                     True
-                    sage: SymmetricGroup(1).algebra(ZZ).is_field()
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.groups
                     False
-                    sage: SymmetricGroup(2).algebra(QQ).is_field()
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.groups
                     False
                 """
                 if not self.base_ring().is_field(proof):
@@ -397,7 +403,7 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: Parent(QQ,category=CommutativeRings()).is_commutative()
+                    sage: Parent(QQ, category=CommutativeRings()).is_commutative()
                     True
                 """
                 return True
@@ -408,20 +414,22 @@ class Magmas(Category_singleton):
                 """
                 EXAMPLES::
 
-                    sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
+                    sage: MCA = Magmas().Commutative().Algebras(QQ)
+                    sage: MCA.extra_super_categories()
                     [Category of commutative magmas]
 
                 This implements the fact that the algebra of a commutative
                 magma is commutative::
 
-                    sage: Magmas().Commutative().Algebras(QQ).super_categories()
+                    sage: MCA.super_categories()
                     [Category of magma algebras over Rational Field,
                      Category of commutative magmas]
 
                 In particular, commutative monoid algebras are
                 commutative algebras::
 
-                    sage: Monoids().Commutative().Algebras(QQ).is_subcategory(Algebras(QQ).Commutative())
+                    sage: MoCA = Monoids().Commutative().Algebras(QQ)
+                    sage: MoCA.is_subcategory(Algebras(QQ).Commutative())
                     True
                 """
                 return [Magmas().Commutative()]
@@ -480,7 +488,8 @@ class Magmas(Category_singleton):
                 EXAMPLES::
 
                     sage: M = Monoids().example(); M
-                    An example of a monoid: the free monoid generated by ('a', 'b', 'c', 'd')
+                    An example of a monoid:
+                     the free monoid generated by ('a', 'b', 'c', 'd')
                     sage: M.one()
                     ''
                 """
@@ -531,8 +540,8 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S = SymmetricGroup(2)
-                    sage: S.is_empty()
+                    sage: S = SymmetricGroup(2)                                         # needs sage.groups
+                    sage: S.is_empty()                                                  # needs sage.groups
                     False
 
                     sage: M = Monoids().example()
@@ -541,7 +550,7 @@ class Magmas(Category_singleton):
 
                 TESTS::
 
-                    sage: S.is_empty.__module__
+                    sage: S.is_empty.__module__                                         # needs sage.groups
                     'sage.categories.magmas'
                     sage: M.is_empty.__module__
                     'sage.categories.magmas'
@@ -629,7 +638,7 @@ class Magmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: cartesian_product([QQ, ZZ, RR]).one()
+                        sage: cartesian_product([QQ, ZZ, RR]).one()                     # needs sage.rings.real_mpfr
                         (1, 1, 1.00000000000000)
                     """
                     return self._cartesian_product_of_elements(
@@ -657,9 +666,9 @@ class Magmas(Category_singleton):
                     EXAMPLES::
 
                         sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])
-                        sage: c = C([2,-1,2,2]); c
+                        sage: c = C([2,-1,2,2]); c                                      # needs sage.rings.real_mpfr
                         (2, -1, 2.00000000000000, 2)
-                        sage: ~c
+                        sage: ~c                                                        # needs sage.rings.real_mpfr
                         (1/2, -1, 0.500000000000000, 3)
 
                     This fails as soon as one of the entries is not
@@ -670,7 +679,7 @@ class Magmas(Category_singleton):
                         ...
                         ZeroDivisionError: rational division by zero
 
-                        sage: ~C([2,2,2,2])
+                        sage: ~C([2,2,2,2])                                             # needs sage.rings.real_mpfr
                         (1/2, 1/2, 0.500000000000000, 3)
                     """
                     # variant without coercion:
@@ -684,20 +693,22 @@ class Magmas(Category_singleton):
                 """
                 EXAMPLES::
 
-                    sage: Magmas().Commutative().Algebras(QQ).extra_super_categories()
+                    sage: MCA = Magmas().Commutative().Algebras(QQ)
+                    sage: MCA.extra_super_categories()
                     [Category of commutative magmas]
 
                 This implements the fact that the algebra of a
                 commutative magma is commutative::
 
-                    sage: Magmas().Commutative().Algebras(QQ).super_categories()
+                    sage: MCA.super_categories()
                     [Category of magma algebras over Rational Field,
                      Category of commutative magmas]
 
                 In particular, commutative monoid algebras are
                 commutative algebras::
 
-                    sage: Monoids().Commutative().Algebras(QQ).is_subcategory(Algebras(QQ).Commutative())
+                    sage: MoCA = Monoids().Commutative().Algebras(QQ)
+                    sage: MoCA.is_subcategory(Algebras(QQ).Commutative())
                     True
                 """
                 return [Magmas().Unital()]
@@ -711,6 +722,9 @@ class Magmas(Category_singleton):
                     r"""
                     Return the unit element of ``self``.
 
+                    EXAMPLES::
+
+                        sage: # needs sage.combinat sage.groups
                         sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup
                         sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()
                         sage: PvW0 in Magmas().Unital().Realizations()
@@ -756,7 +770,8 @@ class Magmas(Category_singleton):
             Currently, ``S.product`` is just a bound method::
 
                 sage: bin
-                <bound method FreeSemigroup.product of An example of a semigroup: the free semigroup generated by ('a', 'b', 'c', 'd')>
+                <bound method FreeSemigroup.product of An example of a semigroup:
+                 the free semigroup generated by ('a', 'b', 'c', 'd')>
 
             When Sage will support multivariate morphisms, it will be
             possible, and in fact recommended, to enrich ``S.product``
@@ -870,8 +885,8 @@ class Magmas(Category_singleton):
             The default is to represent elements as lowercase
             ASCII letters.  ::
 
-                sage: G = CyclicPermutationGroup(5)
-                sage: G.multiplication_table()
+                sage: G = CyclicPermutationGroup(5)                                     # needs sage.groups
+                sage: G.multiplication_table()                                          # needs sage.groups
                 *  a b c d e
                  +----------
                 a| a b c d e
@@ -888,10 +903,10 @@ class Magmas(Category_singleton):
 
                 sage: from sage.categories.examples.finite_semigroups import LeftRegularBand
                 sage: L = LeftRegularBand(('a', 'b'))
-                sage: T = L.multiplication_table(names='digits')
-                sage: T.column_keys()
+                sage: T = L.multiplication_table(names='digits')                        # needs sage.modules
+                sage: T.column_keys()                                                   # needs sage.modules
                 ('a', 'ab', 'b', 'ba')
-                sage: T
+                sage: T                                                                 # needs sage.modules
                 *  0 1 2 3
                  +--------
                 0| 0 1 1 1
@@ -904,7 +919,7 @@ class Magmas(Category_singleton):
 
                 sage: L = LeftRegularBand(('a', 'b', 'c'))
                 sage: elts = sorted(L.list())
-                sage: L.multiplication_table(elements=elts)
+                sage: L.multiplication_table(elements=elts)                             # needs sage.modules
                 *  a b c d e f g h i j k l m n o
                  +------------------------------
                 a| a b c d e b b c c c d d e e e
@@ -933,7 +948,7 @@ class Magmas(Category_singleton):
 
                 sage: L = LeftRegularBand(('a','b','c'))
                 sage: elts=['a', 'c', 'ac', 'ca']
-                sage: L.multiplication_table(names='elements', elements=elts)
+                sage: L.multiplication_table(names='elements', elements=elts)           # needs sage.modules
                    *   'a'  'c' 'ac' 'ca'
                     +--------------------
                  'a'|  'a' 'ac' 'ac' 'ac'
@@ -946,6 +961,7 @@ class Magmas(Category_singleton):
             :class:`~sage.matrix.operation_table.OperationTable` for more
             comprehensive documentation. ::
 
+                sage: # needs sage.groups sage.modules
                 sage: G = AlternatingGroup(3)
                 sage: T = G.multiplication_table()
                 sage: T.column_keys()
@@ -997,7 +1013,8 @@ class Magmas(Category_singleton):
             EXAMPLES::
 
                 sage: S = Semigroups().example("free"); S
-                An example of a semigroup: the free semigroup generated by ('a', 'b', 'c', 'd')
+                An example of a semigroup:
+                 the free semigroup generated by ('a', 'b', 'c', 'd')
                 sage: a = S('a')
                 sage: a^2
                 'aa'
@@ -1069,6 +1086,7 @@ class Magmas(Category_singleton):
                     sage: x * x
                     (1/4, 1, 1)
 
+                    sage: # needs sage.groups sage.modules
                     sage: A = SymmetricGroupAlgebra(QQ, 3)
                     sage: x = cartesian_product([A([1,3,2]), A([2,3,1])])
                     sage: y = cartesian_product([A([1,3,2]), A([2,3,1])])
@@ -1123,9 +1141,9 @@ class Magmas(Category_singleton):
 
                 Here is a more elaborate example involving a sub algebra::
 
-                    sage: Z = SymmetricGroup(5).algebra(QQ).center()
-                    sage: B = Z.basis()
-                    sage: B[3] * B[2]
+                    sage: Z = SymmetricGroup(5).algebra(QQ).center()                    # needs sage.groups
+                    sage: B = Z.basis()                                                 # needs sage.groups
+                    sage: B[3] * B[2]                                                   # needs sage.groups
                     4*B[2] + 6*B[3] + 5*B[6]
                 """
                 assert x in self
@@ -1147,10 +1165,14 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: Out = Sets().WithRealizations().example().Out(); Out
-                    The subset algebra of {1, 2, 3} over Rational Field in the Out basis
+                    The subset algebra of {1, 2, 3} over Rational Field
+                     in the Out basis
                     sage: Out.product
-                    <bound method Magmas.Realizations.ParentMethods.product_by_coercion of The subset algebra of {1, 2, 3} over Rational Field in the Out basis>
+                    <bound method Magmas.Realizations.ParentMethods.product_by_coercion
+                     of The subset algebra of {1, 2, 3} over Rational Field
+                      in the Out basis>
                     sage: Out.product.__module__
                     'sage.categories.magmas'
                     sage: x = Out.an_element()

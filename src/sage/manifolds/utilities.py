@@ -323,9 +323,9 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
                 if x.has(abs_symbolic(sin(w0))) or x.has(abs_symbolic(cos(w0))):
                     x = self(x)  # treatment of nested abs(sin_or_cos(...))
                 # Simplifications for values of x in the range [-pi, 2*pi]:
-                if x>=0 and x<=pi:
+                if x >= 0 and x <= pi:
                     ex = sin(x)
-                elif (x>pi and x<=2*pi) or (x>=-pi and x<0):
+                elif (x > pi and x <= 2*pi) or (x >= -pi and x < 0):
                     ex = -sin(x)
                 return ex
             if argum.operator() is cos:
@@ -335,9 +335,9 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
                 if x.has(abs_symbolic(sin(w0))) or x.has(abs_symbolic(cos(w0))):
                     x = self(x)  # treatment of nested abs(sin_or_cos(...))
                 # Simplifications for values of x in the range [-pi, 2*pi]:
-                if (x>=-pi/2 and x<=pi/2) or (x>=3*pi/2 and x<=2*pi):
+                if (x >= -pi/2 and x <= pi/2) or (x >= 3*pi/2 and x <= 2*pi):
                     ex = cos(x)
-                elif (x>pi/2 and x<=3*pi/2) or (x>=-pi and x<-pi/2):
+                elif (x > pi/2 and x <= 3*pi/2) or (x >= -pi and x < -pi/2):
                     ex = -cos(x)
                 return ex
         # If no pattern is found, we default to ExpressionTreeWalker:
@@ -983,11 +983,11 @@ class ExpressionNice(Expression):
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
             occ = dict((i, strv[i] + "^" + str(diffargs.count(i))
-                       if (diffargs.count(i)>1) else strv[i])
+                       if (diffargs.count(i) > 1) else strv[i])
                        for i in diffargs)
 
             res = "d" + str(numargs) + "(" + str(funcname) + ")/d" + "d".join(
-                               [i for i in occ.values()])
+                occ.values())
 
             # str representation of the operator
             s = self._parent._repr_element_(m[0])
@@ -1040,7 +1040,7 @@ class ExpressionNice(Expression):
             sage: latex(ExpressionNice(fun))
             \frac{\partial\,f_{x}}{\partial y}
 
-        If latex_name, it should be used in LaTeX output:
+        If latex_name, it should be used in LaTeX output::
 
             sage: f = function('f_x', latex_name=r"{\cal F}")(x,y)
             sage: fun = f.diff(y)
@@ -1270,6 +1270,7 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
 
     EXAMPLES::
 
+        sage: # needs sage.plot
         sage: g = sphere()
         sage: g.all
         [Graphics3d Object]
@@ -1356,5 +1357,6 @@ def exterior_derivative(form):
 
     """
     return form.exterior_derivative()
+
 
 xder = exterior_derivative

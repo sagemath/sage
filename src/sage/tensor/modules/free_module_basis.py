@@ -700,7 +700,7 @@ class FreeModuleBasis(Basis_abstract):
             symbol_dual = tuple(symbol_dual)
         if isinstance(latex_symbol_dual, list):
             latex_symbol_dual = tuple(latex_symbol_dual)
-        return super(FreeModuleBasis, cls).__classcall__(cls, fmodule, symbol,
+        return super().__classcall__(cls, fmodule, symbol,
                                            latex_symbol=latex_symbol,
                                            indices=indices,
                                            latex_indices=latex_indices,
@@ -904,7 +904,6 @@ class FreeModuleBasis(Basis_abstract):
             aut.add_comp(basis)[:] = mat
             aut.add_comp(self)[:] = mat
             fmodule.set_change_of_basis(basis, self, aut)
-
 
     def module(self):
         r"""

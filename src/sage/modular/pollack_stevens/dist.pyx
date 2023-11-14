@@ -18,45 +18,29 @@ REFERENCES:
 - [PS2011]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.arith.misc import binomial, bernoulli
-from sage.modules.free_module_element import vector, zero_vector
 from sage.matrix.matrix cimport Matrix
-from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
-from sage.misc.prandom import random
-from sage.structure.element cimport RingElement, Element
+from sage.structure.element cimport Element
 import operator
 from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.padics.padic_capped_absolute_element cimport pAdicCappedAbsoluteElement
-from sage.rings.padics.padic_capped_relative_element cimport pAdicCappedRelativeElement
-from sage.rings.padics.padic_fixed_mod_element cimport pAdicFixedModElement
 from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
-from sage.misc.misc import cputime
 from sage.misc.verbose import verbose
 from sage.rings.infinity import Infinity
-
-from sage.libs.flint.nmod_poly cimport (nmod_poly_init2_preinv,
-                                        nmod_poly_set_coeff_ui,
-                                        nmod_poly_inv_series,
-                                        nmod_poly_mullow,
-                                        nmod_poly_pow_trunc,
-                                        nmod_poly_get_coeff_ui, nmod_poly_t)
 
 #from sage.libs.flint.ulong_extras cimport *
 
@@ -154,7 +138,7 @@ cdef class Dist(ModuleElement):
         """
         return self.parent().prime() ** (self.ordp) * self._moments
 
-    cpdef normalize(self, include_zeroth_moment=True):
+    cpdef normalize(self, include_zeroth_moment=True) noexcept:
         r"""
         Normalize so that the precision of the `i`-th moment is `n-i`,
         where `n` is the number of moments.
@@ -174,13 +158,13 @@ cdef class Dist(ModuleElement):
         """
         raise NotImplementedError
 
-    cdef long _relprec(self):
+    cdef long _relprec(self) noexcept:
         raise NotImplementedError
 
-    cdef _unscaled_moment(self, long i):
+    cdef _unscaled_moment(self, long i) noexcept:
         raise NotImplementedError
 
-    cpdef long _ord_p(self):
+    cpdef long _ord_p(self) noexcept:
         r"""
         Return power of `p` by which the moments are shifted.
 
@@ -293,7 +277,7 @@ cdef class Dist(ModuleElement):
                 use_arg = False
             if not z:
                 return False
-            for a in xrange(1, n):
+            for a in range(1, n):
                 if usearg:
                     try:
                         z = self._unscaled_moment(a).is_zero(M - a)
@@ -351,8 +335,8 @@ cdef class Dist(ModuleElement):
         other_pr = other.precision_relative()
         if n == 0:
             raise ValueError("self is zero")
-        verbose("n = %s" % n, level  = 2)
-        verbose("moment 0", level = 2)
+        verbose("n = %s" % n, level=2)
+        verbose("moment 0", level=2)
         a = self._unscaled_moment(i)
         verbose("a = %s" % a, level = 2)
         padic = isinstance(a.parent(), pAdicGeneric)
@@ -405,7 +389,7 @@ cdef class Dist(ModuleElement):
                 verbose("comparing p moment %s" % i, level = 2)
                 a = self._unscaled_moment(i)
                 if check:
-#                    verbose("self.moment=%s, other.moment=%s" % (a, other._unscaled_moment(i)))
+                    # verbose("self.moment=%s, other.moment=%s" % (a, other._unscaled_moment(i)))
                     if (padic and other._unscaled_moment(i) != alpha * a) or \
                        (not padic and other._unscaled_moment(i) % p ** (n - i) != alpha * a % p ** (n - i)):
                         raise ValueError("not a scalar multiple")
@@ -472,14 +456,12 @@ cdef class Dist(ModuleElement):
         """
         cdef Dist other = _other
         n = self.precision_relative()
-        other_pr = other.precision_relative()
         if n == 0:
             raise ValueError("zeroth moment is zero")
         verbose("n = %s" % n, level = 2)
         a = self.moment(0)
         if a.is_zero():
             raise ValueError("zeroth moment is zero")
-        padic = isinstance(a.parent(), pAdicGeneric)
         alpha = other.moment(0) / a
         if check:
             for i in range(1, n):
@@ -499,7 +481,7 @@ cdef class Dist(ModuleElement):
                 pass
         return alpha
 
-    cpdef _richcmp_(_left, _right, int op):
+    cpdef _richcmp_(_left, _right, int op) noexcept:
         r"""
         Comparison.
 
@@ -527,7 +509,7 @@ cdef class Dist(ModuleElement):
         left.normalize()
         right.normalize()
         cdef long rprec = min(left._relprec(), right._relprec())
-        cdef long i, c
+        cdef long i
         p = left.parent().prime()
         if left.ordp > right.ordp:
             shift = p ** (left.ordp - right.ordp)
@@ -818,7 +800,7 @@ cdef class Dist_vector(Dist):
         """
         return (self.__class__, (self._moments, self.parent(), self.ordp, False))
 
-    cdef Dist_vector _new_c(self):
+    cdef Dist_vector _new_c(self) noexcept:
         r"""
         Creates an empty distribution.
 
@@ -871,7 +853,7 @@ cdef class Dist_vector(Dist):
             sage: QQ(d)
             4/3
 
-        We get a TypeError if there is more than 1 moment::
+        We get a :class:`TypeError` if there is more than 1 moment::
 
             sage: D = Symk(1); d = D([1,2]); d
             (1, 2)
@@ -884,7 +866,7 @@ cdef class Dist_vector(Dist):
             return QQ(self.moment(0))
         raise TypeError("k must be 0")
 
-    cdef long _relprec(self):
+    cdef long _relprec(self) noexcept:
         """
         Return the number of moments.
 
@@ -898,7 +880,7 @@ cdef class Dist_vector(Dist):
         """
         return len(self._moments)
 
-    cdef _unscaled_moment(self, long n):
+    cdef _unscaled_moment(self, long n) noexcept:
         r"""
         Return the `n`-th moment, unscaled by the overall power of `p`
         stored in ``self.ordp``.
@@ -912,7 +894,7 @@ cdef class Dist_vector(Dist):
         """
         return self._moments[n]
 
-    cdef Dist_vector _addsub(self, Dist_vector right, bint negate):
+    cdef Dist_vector _addsub(self, Dist_vector right, bint negate) noexcept:
         r"""
         Common code for the sum and the difference of two distributions
 
@@ -952,7 +934,7 @@ cdef class Dist_vector(Dist):
         ans._moments = smoments + rmoments
         return ans
 
-    cpdef _add_(self, _right):
+    cpdef _add_(self, _right) noexcept:
         r"""
         Sum of two distributions.
 
@@ -965,7 +947,7 @@ cdef class Dist_vector(Dist):
         """
         return self._addsub(<Dist_vector>_right, False)
 
-    cpdef _sub_(self, _right):
+    cpdef _sub_(self, _right) noexcept:
         r"""
         Difference of two distributions.
 
@@ -978,7 +960,7 @@ cdef class Dist_vector(Dist):
         """
         return self._addsub(<Dist_vector>_right, True)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         r"""
         Scalar product of a distribution with a ring element that coerces into the base ring.
 
@@ -1062,7 +1044,7 @@ cdef class Dist_vector(Dist):
         """
         return Integer(len(self._moments) + self.ordp)
 
-    cpdef normalize(self, include_zeroth_moment=True):
+    cpdef normalize(self, include_zeroth_moment=True) noexcept:
         r"""
         Normalize by reducing modulo `Fil^N`, where `N` is the number of moments.
 
@@ -1288,7 +1270,7 @@ cdef class WeightKAction(Action):
         self._actmat = {}
         self._maxprecs = {}
 
-    cpdef acting_matrix(self, g, M):
+    cpdef acting_matrix(self, g, M) noexcept:
         r"""
         The matrix defining the action of ``g`` at precision ``M``.
 
@@ -1346,7 +1328,7 @@ cdef class WeightKAction(Action):
             mats[M] = A
             return A
 
-    cpdef _compute_acting_matrix(self, g, M):
+    cpdef _compute_acting_matrix(self, g, M) noexcept:
         r"""
         Compute the matrix defining the action of ``g`` at precision ``M``.
 
@@ -1375,7 +1357,7 @@ cdef class WeightKAction(Action):
 
 
 cdef class WeightKAction_vector(WeightKAction):
-    cpdef _compute_acting_matrix(self, g, M):
+    cpdef _compute_acting_matrix(self, g, M) noexcept:
         r"""
         Compute the matrix defining the action of ``g`` at precision ``M``.
 
@@ -1437,7 +1419,7 @@ cdef class WeightKAction_vector(WeightKAction):
             B *= (a * d - b * c) ** (self._dettwist)
         return B
 
-    cpdef _act_(self, g, _v):
+    cpdef _act_(self, g, _v) noexcept:
         r"""
         The right action of ``g`` on a distribution.
 
@@ -1473,7 +1455,6 @@ cdef class WeightKAction_vector(WeightKAction):
             g.set_immutable()
         except AttributeError:
             pass
-        coeffmodule = v._moments.parent()
         v_moments = v._moments
         ans._moments = v_moments * self.acting_matrix(g, len(v_moments))
         ans.ordp = v.ordp

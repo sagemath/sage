@@ -4,6 +4,7 @@ Feature for testing the presence of ``pandoc``
 """
 # ****************************************************************************
 #       Copyright (C) 2018 Thierry Monteil <sage!lma.metelu.net>
+#                     2021 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@ from . import Executable
 
 class Pandoc(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``pandoc``
+    A :class:`~sage.features.Feature` describing the presence of :ref:`pandoc <spkg_pandoc>`.
 
     EXAMPLES::
 

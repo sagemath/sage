@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Diagram and Partition Algebras
 
@@ -31,9 +31,10 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.combinat import bell_number, catalan_number
 from sage.structure.global_options import GlobalOptions
-from sage.combinat.combinat_cython import (set_partition_iterator, perfect_matchings_iterator,
+from sage.combinat.combinat_cython import (perfect_matchings_iterator,
                                            set_partition_composition)
 from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
+from sage.combinat.set_partition_iterator import set_partition_iterator
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra_n
 from sage.combinat.permutation import Permutations
 from sage.graphs.graph import Graph
@@ -231,7 +232,7 @@ def planar_partitions_rec(X):
         if len(X) > 1:
             yield ([X[0]], [X[1]])
         return
-    from sage.misc.misc import powerset
+    from sage.combinat.subset import powerset
     from itertools import product
     for S in powerset(range(len(X)-1)):
         if not S:
@@ -2053,9 +2054,9 @@ class DiagramAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: q = var('q')
-            sage: PA = PartitionAlgebra(2, q)
-            sage: PA.order()
+            sage: q = var('q')                                                          # needs sage.symbolic
+            sage: PA = PartitionAlgebra(2, q)                                           # needs sage.symbolic
+            sage: PA.order()                                                            # needs sage.symbolic
             2
         """
         return self._k
@@ -2412,17 +2413,20 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     ::
 
+        sage: # needs sage.symbolic
         sage: q = var('q')
         sage: PA = PartitionAlgebra(2, q); PA
         Partition Algebra of rank 2 with parameter q over Symbolic Ring
         sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])
         True
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]])
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2
+        ....:   == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]]))
         True
 
     The identity element of the partition algebra is the set
     partition `\{\{1,-1\}, \{2,-2\}, \ldots, \{k,-k\}\}`::
 
+        sage: # needs sage.symbolic
         sage: P = PA.basis().list()
         sage: PA.one()
         P{{-2, 2}, {-1, 1}}
@@ -2445,17 +2449,19 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         sage: PA = PartitionAlgebra(2, 5, base_ring=ZZ, prefix='B')
         sage: PA
         Partition Algebra of rank 2 with parameter 5 over Integer Ring
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == 16*PA([[-2, -1], [1, 2]]) + PA([[2, -2], [1, -1]])
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2
+        ....:   == 16*PA([[-2, -1], [1, 2]]) + PA([[2, -2], [1, -1]]))
         True
 
     Symmetric group algebra elements and elements from other subalgebras
     of the partition algebra (e.g., ``BrauerAlgebra`` and
     ``TemperleyLiebAlgebra``) can also be coerced into the partition algebra::
 
+        sage: # needs sage.symbolic
         sage: S = SymmetricGroupAlgebra(SR, 2)
         sage: B = BrauerAlgebra(2, x, SR)
         sage: A = PartitionAlgebra(2, x, SR)
-        sage: S([2,1])*A([[1,-1],[2,-2]])
+        sage: S([2,1]) * A([[1,-1],[2,-2]])
         P{{-2, 1}, {-1, 2}}
         sage: B([[-1,-2],[2,1]]) * A([[1],[-1],[2,-2]])
         P{{-2}, {-1}, {1, 2}}
@@ -2470,7 +2476,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         sage: S = SymmetricGroupAlgebra(ZZ, 2)
         sage: B = BrauerAlgebra(2, q, ZZ[q])
         sage: A = PartitionAlgebra(3, q, R)
-        sage: S([2,1])*A([[1,-1],[2,-3],[3,-2]])
+        sage: S([2,1]) * A([[1,-1],[2,-3],[3,-2]])
         P{{-3, 1}, {-2, 3}, {-1, 2}}
         sage: A(B([[-1,-2],[2,1]]))
         P{{-3, 3}, {-2, -1}, {1, 2}}
@@ -2489,20 +2495,18 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     Shorthands for working with basis elements are as follows::
 
+        sage: # needs sage.symbolic
         sage: S = SymmetricGroupAlgebra(ZZ, 3)
         sage: A = PartitionAlgebra(3, x, SR)
-
-        sage: A([[1,3],[-1],[-3]]) # pair up the omitted nodes as `{-i, i}`, if possible
+        sage: A([[1,3],[-1],[-3]])  # pair up the omitted nodes as `{-i, i}`, if possible
         P{{-3}, {-2, 2}, {-1}, {1, 3}}
         sage: A([[1,3],[-1],[-3]]) == A[[1,3],[-1],[-3]]
         True
-
         sage: A([[1,2]])
         P{{-3, 3}, {-2}, {-1}, {1, 2}}
         sage: A([[1,2]]) == A[[1,2]]
         True
-
-        sage: A([2,3,1]) # permutations in one-line notation are imported as well
+        sage: A([2,3,1])  # permutations in one-line notation are imported as well
         P{{-3, 2}, {-2, 1}, {-1, 3}}
         sage: A([2,3,1]) == A(S([2,3,1]))
         True
@@ -3592,9 +3596,9 @@ class SubPartitionAlgebra(DiagramBasis):
 
         EXAMPLES::
 
-            sage: x = var('x')
-            sage: BA = BrauerAlgebra(2, x)
-            sage: BA.ambient()
+            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: BA = BrauerAlgebra(2, x)                                              # needs sage.symbolic
+            sage: BA.ambient()                                                          # needs sage.symbolic
             Partition Algebra of rank 2 with parameter x over Symbolic Ring
         """
         return self.lift.codomain()
@@ -3833,6 +3837,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: z = var('z')
             sage: B = BrauerAlgebra(3,z)
             sage: B.jucys_murphy(1)

@@ -29,10 +29,10 @@ import os
 import random
 import re
 import shutil
-from subprocess import call, PIPE
+from subprocess import call, run, PIPE
+from tempfile import TemporaryDirectory
 
 from sage.misc.cachefunc import cached_function, cached_method
-from sage.misc.temporary_file import tmp_dir
 from sage.structure.sage_object import SageObject
 
 from sage.misc.lazy_import import lazy_import
@@ -184,7 +184,8 @@ def list_function(x):
         '\\left[1, 2, 3\\right]'
         sage: latex([1,2,3])  # indirect doctest
         \left[1, 2, 3\right]
-        sage: latex([Matrix(ZZ,3,range(9)), Matrix(ZZ,3,range(9))]) # indirect doctest
+        sage: latex([Matrix(ZZ, 3, range(9)),   # indirect doctest                      # needs sage.modules
+        ....:        Matrix(ZZ, 3, range(9))])
         \left[\left(\begin{array}{rrr}
         0 & 1 & 2 \\
         3 & 4 & 5 \\
@@ -366,6 +367,7 @@ def dict_function(x):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.misc.latex import dict_function
         sage: x,y,z = var('x,y,z')
         sage: print(dict_function({x/2: y^2}))
@@ -450,9 +452,9 @@ class LatexExpr(str):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)
+        sage: latex(x^20 + 1)                                                           # needs sage.symbolic
         x^{20} + 1
-        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")
+        sage: LatexExpr(r"\frac{x^2 + 1}{x - 2}")                                       # needs sage.symbolic
         \frac{x^2 + 1}{x - 2}
 
     ``LatexExpr`` simply converts to string without doing anything
@@ -465,15 +467,15 @@ class LatexExpr(str):
 
     The result of :func:`latex` is of type ``LatexExpr``::
 
-        sage: L = latex(x^20 + 1)
-        sage: L
+        sage: L = latex(x^20 + 1)                                                       # needs sage.symbolic
+        sage: L                                                                         # needs sage.symbolic
         x^{20} + 1
-        sage: type(L)
+        sage: type(L)                                                                   # needs sage.symbolic
         <class 'sage.misc.latex.LatexExpr'>
 
     A ``LatexExpr`` can be converted to a plain string::
 
-        sage: str(latex(x^20 + 1))
+        sage: str(latex(x^20 + 1))                                                      # needs sage.symbolic
         'x^{20} + 1'
     """
     def __add__(self, other):
@@ -558,7 +560,7 @@ def has_latex_attr(x) -> bool:
     EXAMPLES::
 
         sage: from sage.misc.latex import has_latex_attr
-        sage: has_latex_attr(identity_matrix(3))
+        sage: has_latex_attr(identity_matrix(3))                                        # needs sage.modules
         True
         sage: has_latex_attr("abc")  # strings have no _latex_ method
         False
@@ -566,6 +568,7 @@ def has_latex_attr(x) -> bool:
     Types inherit the ``_latex_`` method of the class to which they refer,
     but calling it is broken::
 
+        sage: # needs sage.modules
         sage: T = type(identity_matrix(3)); T
         <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         sage: hasattr(T, '_latex_')
@@ -647,6 +650,7 @@ def latex_extra_preamble():
         \newcommand{\RLF}{\Bold{R}}
         \newcommand{\SL}{\mathrm{SL}}
         \newcommand{\PSL}{\mathrm{PSL}}
+        \newcommand{\lcm}{\mathop{\operatorname{lcm}}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
     """
@@ -917,12 +921,12 @@ class LatexCall:
             3
             sage: latex(1==0)
             \mathrm{False}
-            sage: print(latex([x,2]))
+            sage: print(latex([x, 2]))                                                  # needs sage.symbolic
             \left[x, 2\right]
 
         Check that :trac:`11775` is fixed::
 
-            sage: latex((x,2), combine_all=True)
+            sage: latex((x,2), combine_all=True)                                        # needs sage.symbolic
             x 2
         """
         if has_latex_attr(x):
@@ -961,9 +965,9 @@ class Latex(LatexCall):
 
     EXAMPLES::
 
-        sage: latex(x^20 + 1)
+        sage: latex(x^20 + 1)                                                           # needs sage.symbolic
         x^{20} + 1
-        sage: latex(FiniteField(25,'a'))
+        sage: latex(FiniteField(25,'a'))                                                # needs sage.rings.finite_rings
         \Bold{F}_{5^{2}}
         sage: latex("hello")
         \text{\texttt{hello}}
@@ -973,7 +977,7 @@ class Latex(LatexCall):
     LaTeX expressions can be added; note that a space is automatically
     inserted::
 
-        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)
+        sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # needs sage.symbolic
         y \neq x^{20} + 1
     """
     def __init__(self, debug=False, slide=False, density=150, pdflatex=None, engine=None):
@@ -1099,44 +1103,49 @@ class Latex(LatexCall):
             filename = 'sage%s' % random.randint(1, 100)  # to defeat browser caches
         else:
             filename = os.path.splitext(filename)[0]  # get rid of extension
-        base = tmp_dir()
-        orig_base, filename = os.path.split(os.path.abspath(filename))
-        if len(filename.split()) > 1:
-            raise ValueError("filename must contain no spaces")
-        if debug is None:
-            debug = self.__debug
-        x = self._latex_preparse(x, locals)
-        O = open(os.path.join(base, filename + ".tex"), 'w')
-        if self.__slide:
-            O.write(SLIDE_HEADER)
-            O.write(MACROS)
-            O.write('\\begin{document}\n\n')
-        else:
-            O.write(LATEX_HEADER)
-            O.write(MACROS)
-            O.write('\\begin{document}\n')
 
-        O.write(x)
-        if self.__slide:
-            O.write('\n\n\\end{document}')
-        else:
-            O.write('\n\n\\end{document}\n')
-
-        O.close()
-        if engine is None:
-            if self.__engine is None:
-                engine = _Latex_prefs._option["engine"]
+        result = None
+        with TemporaryDirectory() as base:
+            orig_base, filename = os.path.split(os.path.abspath(filename))
+            if len(filename.split()) > 1:
+                raise ValueError("filename must contain no spaces")
+            if debug is None:
+                debug = self.__debug
+            x = self._latex_preparse(x, locals)
+            O = open(os.path.join(base, filename + ".tex"), 'w')
+            if self.__slide:
+                O.write(SLIDE_HEADER)
+                O.write(MACROS)
+                O.write('\\begin{document}\n\n')
             else:
-                engine = self.__engine
-        e = _run_latex_(os.path.join(base, filename + ".tex"), debug=debug,
-                        density=density, engine=engine, png=True)
-        if e.find("Error") == -1:
-            shutil.copy(os.path.join(base, filename + ".png"),
-                        os.path.join(orig_base, filename + ".png"))
-            shutil.rmtree(base)
-            return ''
-        else:
-            return
+                O.write(LATEX_HEADER)
+                O.write(MACROS)
+                O.write('\\begin{document}\n')
+
+            O.write(x)
+            if self.__slide:
+                O.write('\n\n\\end{document}')
+            else:
+                O.write('\n\n\\end{document}\n')
+
+            O.close()
+            if engine is None:
+                if self.__engine is None:
+                    engine = _Latex_prefs._option["engine"]
+                else:
+                    engine = self.__engine
+            e = _run_latex_(os.path.join(base, filename + ".tex"),
+                            debug=debug,
+                            density=density,
+                            engine=engine,
+                            png=True)
+
+            if e.find("Error") == -1:
+                shutil.copy(os.path.join(base, filename + ".png"),
+                            os.path.join(orig_base, filename + ".png"))
+                result = ''
+
+        return result
 
     def blackboard_bold(self, t=None):
         r"""nodetex
@@ -1212,6 +1221,7 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: a = matrix(1, 1, [17])
             sage: latex(a)
             \left(\begin{array}{r}
@@ -1273,6 +1283,7 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: a = vector(QQ, [1,2,3])
             sage: latex(a)
             \left(1,\,2,\,3\right)
@@ -1318,6 +1329,7 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: a = matrix(1, 1, [42])
             sage: latex(a)
             \left(\begin{array}{r}
@@ -1911,8 +1923,14 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     if pdflatex or (viewer == "pdf" and engine == "latex"):
         engine = "pdflatex"
     # command line or notebook with viewer
-    tmp = tmp_dir('sage_viewer')
-    tex_file = os.path.join(tmp, "sage.tex")
+
+    # We can't automatically delete the temporary file in this case
+    # because we need it to live at least long enough for the viewer
+    # to open it. Since we're launching the viewer asynchronously,
+    # that would be tricky.
+    tmp = TemporaryDirectory()
+
+    tex_file = os.path.join(tmp.name, "sage.tex")
     with open(tex_file, 'w') as file:
         file.write(s)
     suffix = _run_latex_(tex_file, debug=debug, engine=engine, png=False)
@@ -1924,14 +1942,29 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         viewer = dvi_viewer()
     else:
         print("Latex error")
+        tmp.cleanup()
         return
-    output_file = os.path.join(tmp, "sage." + suffix)
+    output_file = os.path.join(tmp.name, "sage." + suffix)
     # this should get changed if we switch the stuff in misc.viewer to
     # producing lists
     if debug:
         print('viewer: "{}"'.format(viewer))
-    call('%s %s' % (viewer, output_file), shell=True,
-         stdout=PIPE, stderr=PIPE)
+
+    # Return immediately but only clean up the temporary file after
+    # the viewer has closed. This function is synchronous and waits
+    # for the process to complete...
+    def run_viewer():
+        run([viewer, output_file], capture_output=True)
+        tmp.cleanup()
+
+    # ...but we execute it asynchronously so that view() completes
+    # immediately. The "daemon" flag is important because, without it,
+    # sage won't quit until the viewer does.
+    from threading import Thread
+    t = Thread(target=run_viewer)
+    t.daemon = True
+    t.start()
+
     return
 
 
@@ -1967,7 +2000,7 @@ def png(x, filename, density=150, debug=False,
 
         sage: from sage.misc.latex import png
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random, optional - latex imagemagick
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random   # optional - imagemagick latex, needs sage.plot
         ....:     png(ZZ[x], f.name)
     """
     if not pdflatex:
@@ -1983,20 +2016,21 @@ def png(x, filename, density=150, debug=False,
     # path name for permanent png output
     abs_path_to_png = os.path.abspath(filename)
     # temporary directory to store stuff
-    tmp = tmp_dir('sage_viewer')
-    tex_file = os.path.join(tmp, "sage.tex")
-    png_file = os.path.join(tmp, "sage.png")
-    # write latex string to file
-    with open(tex_file, 'w') as file:
-        file.write(s)
-    # run latex on the file, producing png output to png_file
-    e = _run_latex_(tex_file, density=density, debug=debug,
-                    png=True, engine=engine)
-    if e.find("Error") == -1:
-        # if no errors, copy png_file to the appropriate place
-        shutil.copy(png_file, abs_path_to_png)
-    else:
-        print("Latex error")
+    with TemporaryDirectory() as tmp:
+        tex_file = os.path.join(tmp, "sage.tex")
+        png_file = os.path.join(tmp, "sage.png")
+        # write latex string to file
+        with open(tex_file, 'w') as file:
+            file.write(s)
+        # run latex on the file, producing png output to png_file
+        e = _run_latex_(tex_file, density=density, debug=debug,
+                        png=True, engine=engine)
+        if e.find("Error") == -1:
+            # if no errors, copy png_file to the appropriate place
+            shutil.copy(png_file, abs_path_to_png)
+        else:
+            print("Latex error")
+
     if debug:
         return s
     return
@@ -2019,7 +2053,7 @@ def coeff_repr(c):
         sage: from sage.misc.latex import coeff_repr
         sage: coeff_repr(QQ(1/2))
         '\\frac{1}{2}'
-        sage: coeff_repr(-x^2)
+        sage: coeff_repr(-x^2)                                                          # needs sage.symbolic
         '\\left(-x^{2}\\right)'
     """
     try:
@@ -2067,9 +2101,9 @@ def repr_lincomb(symbols, coeffs):
     Verify that :trac:`17299` (latex representation of modular symbols)
     is fixed::
 
-        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]
+        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]         # needs sage.schemes
         sage: from sage.misc.latex import repr_lincomb
-        sage: latex(x.modular_symbol_rep())
+        sage: latex(x.modular_symbol_rep())                                             # needs sage.schemes
         \left\{\frac{-3}{11}, \frac{-1}{4}\right\} - \left\{\frac{3}{13}, \frac{1}{4}\right\}
 
     Verify that it works when the symbols are numbers::
@@ -2198,8 +2232,8 @@ def latex_varify(a, is_fname=False):
 
     TESTS:
 
-        sage: abc = var('abc')
-        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870
+        sage: abc = var('abc')                                                          # needs sage.symbolic
+        sage: latex((abc/(abc+1)+42)/(abc-1))  # trac #15870                            # needs sage.symbolic
         \frac{\frac{\mathit{abc}}{\mathit{abc} + 1} + 42}{\mathit{abc} - 1}
     """
     if a in common_varnames:
@@ -2270,12 +2304,12 @@ def latex_variable_name(x, is_fname=False):
 
     TESTS::
 
-        sage: latex_variable_name('_C')  # trac #16007
+        sage: latex_variable_name('_C')  # trac #16007                                  # needs sage.symbolic
         'C'
-        sage: latex_variable_name('_K1')
+        sage: latex_variable_name('_K1')                                                # needs sage.symbolic
         'K_{1}'
 
-        sage: latex_variable_name('5')
+        sage: latex_variable_name('5')                                                  # needs sage.symbolic
         '5'
     """
     # if x is an integer (it might be the case for padics), we return x

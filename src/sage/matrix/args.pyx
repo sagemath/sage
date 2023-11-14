@@ -21,6 +21,7 @@ from cysignals.signals cimport sig_check
 MatrixSpace = None
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.integer cimport Integer
 from sage.structure.coerce cimport (coercion_model,
         is_numpy_type, py_scalar_parent)
 from sage.structure.element cimport Element, RingElement, Vector
@@ -38,7 +39,7 @@ except ImportError:
 CommutativeMonoids = monoids.Monoids().Commutative()
 
 
-cdef inline bint element_is_scalar(Element x):
+cdef inline bint element_is_scalar(Element x) noexcept:
     """
     Should this element be considered a scalar (as opposed to a vector)?
     """
@@ -82,7 +83,7 @@ cdef class SparseEntry:
         sage: from sage.matrix.args import SparseEntry
         sage: SparseEntry(123, 456, "abc")
         SparseEntry(123, 456, 'abc')
-        sage: SparseEntry(1/3, 2/3, x)
+        sage: SparseEntry(1/3, 2/3, x)                                                  # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: unable to convert rational 1/3 to an integer
@@ -175,8 +176,10 @@ cdef class MatrixArgs:
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Double Field; typ=SCALAR; entries=3.141592653589793>
         [3.141592653589793               0.0]
         [              0.0 3.141592653589793]
-        sage: ma = MatrixArgs(2, 2, entries=pi); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Symbolic Ring; typ=SCALAR; entries=pi>
+        sage: ma = MatrixArgs(2, 2, entries=pi); ma.finalized()                         # needs sage.symbolic
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+         over Symbolic Ring; typ=SCALAR; entries=pi>
+        sage: ma.matrix()                                                               # needs sage.symbolic
         [pi  0]
         [ 0 pi]
         sage: ma = MatrixArgs(ZZ, 2, 2, entries={(0,0):7}); ma.finalized(); ma.matrix()
@@ -191,18 +194,27 @@ cdef class MatrixArgs:
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=SEQ_FLAT; entries=(1, 2, 3, 4)>
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
+
+        sage: # needs sage.libs.pari
+        sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+         over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
+        sage: ma.matrix()
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
+        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("[1,2,3,4]")); ma.finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+         over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
+        sage: ma.matrix()
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Rational Field; typ=SCALAR; entries=3/5>
+        sage: ma = MatrixArgs(QQ, 2, 2, entries=pari("3/5")); ma.finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+         over Rational Field; typ=SCALAR; entries=3/5>
+        sage: ma.matrix()
         [3/5   0]
         [  0 3/5]
+
         sage: ma = MatrixArgs(entries=matrix(2,2)); ma.finalized(); ma.matrix()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=MATRIX; entries=[0 0]
         [0 0]>
@@ -216,26 +228,37 @@ cdef class MatrixArgs:
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=CALLABLE; entries=<function ...>>
         [1 2]
         [3 4]
+
+        sage: # needs numpy
         sage: from numpy import array
-        sage: ma = MatrixArgs(array([[1,2],[3,4]])); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=SEQ_SEQ; entries=array([[1, 2],
-               [3, 4]])>
+        sage: ma = MatrixArgs(array([[1,2],[3,4]])); ma.finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+         over Integer Ring; typ=SEQ_SEQ; entries=array([[1, 2], [3, 4]])>
+        sage: ma.matrix()
         [1 2]
         [3 4]
-        sage: ma = MatrixArgs(array([[1.,2.],[3.,4.]])); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Double Field; typ=MATRIX; entries=[1.0 2.0]
-        [3.0 4.0]>
+        sage: ma = MatrixArgs(array([[1.,2.],[3.,4.]])); ma.finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+         over Real Double Field; typ=MATRIX; entries=[1.0 2.0]
+                                                     [3.0 4.0]>
+        sage: ma.matrix()
         [1.0 2.0]
         [3.0 4.0]
-        sage: ma = MatrixArgs(RealField(20), array([[1.,2.],[3.,4.]])); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Field with 20 bits of precision; typ=MATRIX; entries=[1.0 2.0]
-        [3.0 4.0]>
+        sage: ma = MatrixArgs(RealField(20), array([[1.,2.],[3.,4.]])); ma.finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Real Field
+         with 20 bits of precision; typ=MATRIX; entries=[1.0 2.0]
+                                                        [3.0 4.0]>
+        sage: ma.matrix()
         [1.0000 2.0000]
         [3.0000 4.0000]
-        sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 3 by 3 dense matrices over Integer Ring; typ=MATRIX; entries=[0 1 1]
-        [1 0 1]
-        [1 1 0]>
+
+        sage: # needs sage.graphs
+        sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized()
+        <MatrixArgs for Full MatrixSpace of 3 by 3 dense matrices
+         over Integer Ring; typ=MATRIX; entries=[0 1 1]
+                                                [1 0 1]
+                                                [1 1 0]>
+        sage: ma.matrix()
         [0 1 1]
         [1 0 1]
         [1 1 0]
@@ -457,8 +480,8 @@ cdef class MatrixArgs:
 
         Sparse examples::
 
-            sage: ma = MatrixArgs(3, 3, pi)
-            sage: list(ma.iter(sparse=True))
+            sage: ma = MatrixArgs(3, 3, pi)                                             # needs sage.symbolic
+            sage: list(ma.iter(sparse=True))                                            # needs sage.symbolic
             [SparseEntry(0, 0, pi), SparseEntry(1, 1, pi), SparseEntry(2, 2, pi)]
             sage: ma = MatrixArgs(2, 3)
             sage: list(ma.iter(sparse=True))
@@ -583,7 +606,7 @@ cdef class MatrixArgs:
         self.finalize()
         return self.nrows * self.ncols
 
-    cpdef Matrix matrix(self, bint convert=True):
+    cpdef Matrix matrix(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a Sage Matrix.
 
@@ -671,7 +694,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_MATRIX
         return M
 
-    cpdef list list(self, bint convert=True):
+    cpdef list list(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a flat list of scalars.
 
@@ -716,7 +739,6 @@ cdef class MatrixArgs:
         """
         self.finalize()
 
-        cdef long i
         cdef list L
         if self.typ == MA_ENTRIES_SEQ_FLAT and not convert:
             # Try to re-use existing list
@@ -739,7 +761,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_SEQ_FLAT
         return L
 
-    cpdef dict dict(self, bint convert=True):
+    cpdef dict dict(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a dict. The keys of this
         dict are the non-zero positions ``(i,j)``. The corresponding
@@ -765,7 +787,6 @@ cdef class MatrixArgs:
         """
         self.finalize()
 
-        R = self.base
         cdef dict D = {}
         for t in self.iter(convert, True):
             se = <SparseEntry>t
@@ -818,11 +839,11 @@ cdef class MatrixArgs:
         EXAMPLES::
 
             sage: from sage.matrix.args import MatrixArgs
-            sage: MatrixArgs(pi).finalized()
+            sage: MatrixArgs(pi).finalized()                                            # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: the dimensions of the matrix must be specified
-            sage: MatrixArgs(RR, pi).finalized()
+            sage: MatrixArgs(RR, pi).finalized()                                        # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: the dimensions of the matrix must be specified
@@ -847,6 +868,25 @@ cdef class MatrixArgs:
             Traceback (most recent call last):
             ...
             ValueError: sequence too short (expected length 6, got 1)
+
+        Check github issue #36065:
+
+            sage: # needs sage.rings.number_field
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
+            ....:     def __bool__(self):
+            ....:         raise ValueError
+            sage: matrix(1, 1, MyAlgebraicNumber(0))
+            [0]
+            sage: matrix(1, 1, MyAlgebraicNumber(3))
+            [3]
+            sage: matrix(1, 2, MyAlgebraicNumber(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: scalar matrix must be square if the value cannot be determined to be zero
+            sage: matrix(1, 2, MyAlgebraicNumber(3))
+            Traceback (most recent call last):
+            ...
+            TypeError: scalar matrix must be square if the value cannot be determined to be zero
         """
         self.finalize()
         return self
@@ -924,11 +964,18 @@ cdef class MatrixArgs:
                 raise AssertionError(f"nrows={self.nrows}  ncols={self.ncols}  base={self.base}  type={self.typ}")
 
         # Non-zero scalar matrices must be square
+        # also ensure type is MA_ENTRIES_ZERO for scalar zero matrices
         if self.typ == MA_ENTRIES_SCALAR:
-            if self.nrows != self.ncols:
-                if self.entries:
-                    raise TypeError("nonzero scalar matrix must be square")
-                self.typ = MA_ENTRIES_ZERO
+            try:
+                if not self.entries:
+                    self.typ = MA_ENTRIES_ZERO
+            except Exception:
+                # "not self.entries" has failed, self.entries cannot be determined to be zero
+                if self.nrows != self.ncols:
+                    raise TypeError("scalar matrix must be square if the value cannot be determined to be zero")
+            if self.typ == MA_ENTRIES_SCALAR and self.nrows != self.ncols:
+                # self.typ is still SCALAR -> "not self.entries" has successfully evaluated, to False
+                raise TypeError("nonzero scalar matrix must be square")
 
         if self.sparse == -1:
             self.sparse = (self.typ & MA_FLAG_SPARSE) != 0
@@ -936,7 +983,7 @@ cdef class MatrixArgs:
         if self.space is None:
             global MatrixSpace
             if MatrixSpace is None:
-                from .matrix_space import MatrixSpace
+                from sage.matrix.matrix_space import MatrixSpace
             self.space = MatrixSpace(self.base, self.nrows, self.ncols,
                     sparse=self.sparse, **self.kwds)
 
@@ -1067,7 +1114,7 @@ cdef class MatrixArgs:
         if not (e.flags.c_contiguous is True or e.flags.f_contiguous is True):
             raise TypeError('numpy matrix must be either c_contiguous or f_contiguous')
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
 
@@ -1196,6 +1243,7 @@ cdef class MatrixArgs:
 
         Check that :trac:`26655` is fixed::
 
+            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(9)
             sage: M = MatrixSpace(F, 2, 2)
             sage: A = M([[1, a], [0, 1]])
@@ -1206,11 +1254,11 @@ cdef class MatrixArgs:
         Constructing a matrix from a PARI ``t_VEC`` or ``t_COL`` with
         ``t_VEC`` or ``t_COL`` elements is currently not supported::
 
-            sage: M(pari([1, a, 0, 1]))
+            sage: M(pari([1, a, 0, 1]))                                                 # needs sage.libs.pari sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
-            sage: M(pari([[1, a], [0, 1]]))
+            sage: M(pari([[1, a], [0, 1]]))                                             # needs sage.libs.pari sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
@@ -1219,12 +1267,14 @@ cdef class MatrixArgs:
         # hurt to do these first.
         if self.entries is None:
             return MA_ENTRIES_ZERO
+        if isinstance(self.entries, (int, float, complex, Integer)):
+            if self.entries:
+                return MA_ENTRIES_SCALAR
+            return MA_ENTRIES_ZERO
         if isinstance(self.entries, (list, tuple)):
             return self.sequence_type()
         if isinstance(self.entries, dict):
             return MA_ENTRIES_MAPPING
-        if isinstance(self.entries, (int, float, complex)):
-            return MA_ENTRIES_SCALAR
 
         # Note: some objects are callable, iterable and act like a
         # scalar, e.g. polynomials. So the order of these checks
@@ -1260,7 +1310,7 @@ cdef class MatrixArgs:
         if isinstance(self.entries, MatrixArgs):
             # Prevent recursion
             return MA_ENTRIES_UNKNOWN
-        if isinstance(self.entries, basestring):
+        if isinstance(self.entries, str):
             # Blacklist strings, we don't want them to be considered a sequence
             return MA_ENTRIES_UNKNOWN
         try:
@@ -1300,7 +1350,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_FLAT
         if isinstance(x, Element) and element_is_scalar(<Element>x):
             return MA_ENTRIES_SEQ_FLAT
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             # Blacklist strings, we don't want them to be considered a sequence
             return MA_ENTRIES_UNKNOWN
         try:
@@ -1311,7 +1361,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_SEQ
 
 
-cpdef MatrixArgs MatrixArgs_init(space, entries):
+cpdef MatrixArgs MatrixArgs_init(space, entries) noexcept:
     """
     Construct a :class:`MatrixArgs` object from a matrix space and
     entries. This is the typical use in a matrix constructor.
@@ -1323,7 +1373,7 @@ cpdef MatrixArgs MatrixArgs_init(space, entries):
 
         sage: from sage.matrix.args import MatrixArgs_init
         sage: S = MatrixSpace(GF(2), 2, 4)
-        sage: ma = MatrixArgs_init(S, {(1,3):7})
+        sage: ma = MatrixArgs_init(S, {(1, 3): 7})
         sage: M = ma.matrix(); M
         [0 0 0 0]
         [0 0 0 1]

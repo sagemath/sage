@@ -22,18 +22,18 @@ from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport *
+from sage.structure.factorization import Factorization
 
-
-cdef inline celement *celement_new(unsigned long n):
+cdef inline celement *celement_new(unsigned long n) noexcept:
     cdef celement *g = <celement *>sig_malloc(sizeof(nmod_poly_t))
     nmod_poly_init(g, n)
     return g
 
-cdef inline int celement_delete(nmod_poly_t e, unsigned long n):
+cdef inline int celement_delete(nmod_poly_t e, unsigned long n) noexcept:
     nmod_poly_clear(e)
     sig_free(e)
 
-cdef inline int celement_construct(nmod_poly_t e, unsigned long n):
+cdef inline int celement_construct(nmod_poly_t e, unsigned long n) noexcept:
     """
     EXAMPLES::
 
@@ -43,7 +43,7 @@ cdef inline int celement_construct(nmod_poly_t e, unsigned long n):
     """
     nmod_poly_init(e, n)
 
-cdef inline int celement_destruct(nmod_poly_t e, unsigned long n):
+cdef inline int celement_destruct(nmod_poly_t e, unsigned long n) noexcept:
     """
     EXAMPLES::
 
@@ -66,7 +66,7 @@ cdef inline int celement_gen(nmod_poly_t e, long i, unsigned long n) except -2:
     nmod_poly_zero(e)
     nmod_poly_set_coeff_ui(e, 1, 1)
 
-cdef object celement_repr(nmod_poly_t e, unsigned long n):
+cdef object celement_repr(nmod_poly_t e, unsigned long n) noexcept:
     raise NotImplementedError
 
 cdef inline int celement_set(nmod_poly_t res, nmod_poly_t a, unsigned long n) except -2:
@@ -617,7 +617,7 @@ cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmo
     nmod_poly_xgcd(res, s, t, a, b)
 
 
-cdef factor_helper(Polynomial_zmod_flint poly, bint squarefree=False):
+cdef factor_helper(Polynomial_zmod_flint poly, bint squarefree=False) noexcept:
     """
     EXAMPLES::
 
@@ -644,10 +644,12 @@ cdef factor_helper(Polynomial_zmod_flint poly, bint squarefree=False):
     cdef nmod_poly_factor_t factors_c
     nmod_poly_factor_init(factors_c)
 
+    sig_on()
     if squarefree:
         nmod_poly_factor_squarefree(factors_c, &poly.x)
     else:
         nmod_poly_factor(factors_c, &poly.x)
+    sig_off()
 
     factor_list = []
     cdef Polynomial_zmod_flint t

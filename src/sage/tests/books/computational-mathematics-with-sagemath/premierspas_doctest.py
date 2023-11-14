@@ -117,7 +117,7 @@ Sage example in ./premierspas.tex, line 1208::
 
 Sage example in ./premierspas.tex, line 1217::
 
-  sage: from sage.all import pi
+  sage: from sage.symbolic.constants import pi
 
 Sage example in ./premierspas.tex, line 1224::
 

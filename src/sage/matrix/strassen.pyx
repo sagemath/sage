@@ -15,7 +15,7 @@ multiplication algorithms.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .matrix_window cimport MatrixWindow
+from sage.matrix.matrix_window cimport MatrixWindow
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -48,8 +48,9 @@ def strassen_window_multiply(C, A,B, cutoff):
     """
     strassen_window_multiply_c(C, A, B, cutoff)
 
+
 cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
-                                MatrixWindow B, Py_ssize_t cutoff):
+                                MatrixWindow B, Py_ssize_t cutoff) noexcept:
     # todo -- I'm not sure how to interpret "cutoff". Should it be...
     # (a) the minimum side length of the matrices (currently implemented below)
     # (b) the maximum side length of the matrices
@@ -97,7 +98,6 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
 
     cdef MatrixWindow S0, S1, S2, S3, T0, T1 ,T2, T3, P0, P1, P2, P3, P4, P5, P6, U0, U1, U2, U3, U4, U5, U6
     cdef MatrixWindow X, Y
-    cdef Py_ssize_t tmp_cols, start_row
     X = A.new_empty_window(A_sub_nrows, max(A_sub_ncols,B_sub_ncols))
     Y = B.new_empty_window(A_sub_ncols, B_sub_ncols)
 
@@ -235,7 +235,7 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
         C_bulk = C.matrix_window(0, 0, A_sub_nrows << 1, B_sub_ncols << 1)
         C_bulk.add_prod(A_last_col, B_last_row)
 
-cdef subtract_strassen_product(MatrixWindow result, MatrixWindow A, MatrixWindow B, Py_ssize_t cutoff):
+cdef subtract_strassen_product(MatrixWindow result, MatrixWindow A, MatrixWindow B, Py_ssize_t cutoff) noexcept:
     cdef MatrixWindow to_sub
     if (cutoff == -1 or result.ncols() <= cutoff or result.nrows() <= cutoff):
         result.subtract_prod(A, B)
@@ -253,12 +253,10 @@ def strassen_echelon(MatrixWindow A, cutoff):
 
     INPUT:
 
-
     -  ``A`` - matrix window
 
     -  ``cutoff`` - size at which algorithm reverts to
        naive Gaussian elimination and multiplication must be at least 1.
-
 
     OUTPUT: The list of pivot columns
 
@@ -312,7 +310,8 @@ def strassen_echelon(MatrixWindow A, cutoff):
     strassen_echelon_c(A, cutoff, A._matrix._strassen_default_cutoff(A._matrix))
     sig_off()
 
-cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff):
+
+cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff) noexcept:
     # The following notation will be used in the comments below, which should be understood to give
     # the general idea of what's going on, as if there were no inconvenient non-pivot columns.
     # The original matrix is given by [ A B ]

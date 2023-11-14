@@ -1,1 +1,1 @@
-python3-traitlets
+python3${PYTHON_MINOR}-traitlets

@@ -30,8 +30,7 @@ Methods
 # ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-from .basis_matroid cimport BasisMatroid
-from sage.arith.all import binomial
+from sage.matroids.basis_matroid cimport BasisMatroid
 
 
 cdef class CutNode:
@@ -88,10 +87,10 @@ cdef class CutNode:
         bitset_free(self._l0)
         bitset_free(self._l1)
 
-    cdef CutNode copy(self):
+    cdef CutNode copy(self) noexcept:
         return CutNode(self._MC, self)
 
-    cdef bint insert_plane(self, long p0):
+    cdef bint insert_plane(self, long p0) noexcept:
         """
         Add a hyperplane to the linear subclass.
         """
@@ -129,7 +128,7 @@ cdef class CutNode:
                         return False
         return True
 
-    cdef bint remove_plane(self, long p0):
+    cdef bint remove_plane(self, long p0) noexcept:
         """
         Remove a hyperplane from the linear subclass.
         """
@@ -154,7 +153,7 @@ cdef class CutNode:
                         return False
         return True
 
-    cdef select_plane(self):
+    cdef select_plane(self) noexcept:
         """
         Choose a hyperplane from the linear subclass.
         """
@@ -170,7 +169,7 @@ cdef class CutNode:
 
         return bitset_first(self._p_free)
 
-    cdef list planes(self):
+    cdef list planes(self) noexcept:
         """
         Return all hyperplanes from the linear subclass.
         """
@@ -341,8 +340,8 @@ cdef class LinearSubclasses:
 
         self._planes_on_line = [[] for l in range(self._hyperlines_count)]
         self._lines_on_plane = [[] for l in range(self._hyperplanes_count)]
-        for l in xrange(self._hyperlines_count):
-            for h in xrange(self._hyperplanes_count):
+        for l in range(self._hyperlines_count):
+            for h in range(self._hyperplanes_count):
                 if self._hyperplanes[h] >= self._hyperlines[l]:
                     self._lines_on_plane[h].append(l)
                     self._planes_on_line[l].append(h)
@@ -354,10 +353,10 @@ cdef class LinearSubclasses:
 
         if line_length is not None:
             self._line_length = line_length
-            self._mandatory_lines = [l for l in xrange(self._hyperlines_count) if len(self._planes_on_line[l]) >= line_length]
+            self._mandatory_lines = [l for l in range(self._hyperlines_count) if len(self._planes_on_line[l]) >= line_length]
 
         if subsets is not None:
-            for p in xrange(self._hyperplanes_count):
+            for p in range(self._hyperplanes_count):
                 H = self._hyperplanes[p]
                 for S in subsets:
                     if frozenset(S).issubset(H):
@@ -371,7 +370,7 @@ cdef class LinearSubclasses:
             if len(E) != len(E2) or len(F) != 1:
                 raise ValueError("LinearSubclasses: the ground set of the splice matroid is not of the form E + e-f")
 
-            for p in xrange(self._hyperplanes_count):
+            for p in range(self._hyperplanes_count):
                 X = self._hyperplanes[p] - F
                 if splice._rank(X) == splice.full_rank() - 1:
                     if splice._rank(X | F2) == splice.full_rank() - 1:
@@ -485,13 +484,13 @@ cdef class MatroidExtensions(LinearSubclasses):
         """
         if M.full_rank() == 0:
             pass
-        if type(M) == BasisMatroid:
+        if isinstance(M, BasisMatroid):
             BM = M
         else:
             BM = BasisMatroid(M)
         LinearSubclasses.__init__(self, BM, line_length=line_length, subsets=subsets, splice=splice)
         self._BX = BM._extension(e, [])
-        self._BH = [BM._extension(e, [self._hyperplanes[i]]) for i in xrange(len(self._hyperplanes))]
+        self._BH = [BM._extension(e, [self._hyperplanes[i]]) for i in range(len(self._hyperplanes))]
         if orderly:
             self._orderly = True
 

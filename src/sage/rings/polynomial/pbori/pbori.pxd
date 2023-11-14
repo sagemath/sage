@@ -1,14 +1,13 @@
 from libcpp.memory cimport unique_ptr, shared_ptr, make_shared
 
-from sage.rings.polynomial.multi_polynomial_ring_base cimport \
-                                                MPolynomialRing_base
+from sage.rings.polynomial.multi_polynomial_ring_base cimport MPolynomialRing_base, BooleanPolynomialRing_base
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
 from sage.structure.element cimport MonoidElement
 
 from sage.libs.polybori.decl cimport *
 
 
-cdef class BooleanPolynomialRing(MPolynomialRing_base):
+cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
     cdef PBRing _pbring
     cdef Py_ssize_t* pbind
     cdef public _monom_monoid
@@ -18,12 +17,12 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
     # it is very important to keep this cached, since otherwise the magma interface will break
     cdef public object __cover_ring
 
-    cdef _convert(self, rhs)
+    cdef _convert(self, rhs) noexcept
 
 cdef class BooleanPolynomial(MPolynomial):
     cdef PBPoly _pbpoly
-    cpdef _add_(self, other)
-    cpdef _mul_(self, other)
+    cpdef _add_(self, other) noexcept
+    cpdef _mul_(self, other) noexcept
 
 cdef class BooleSet:
     cdef BooleanPolynomialRing _ring
@@ -36,14 +35,15 @@ cdef class CCuddNavigator:
 cdef class BooleanMonomial(MonoidElement):
     cdef PBMonom _pbmonom
     cdef BooleanPolynomialRing _ring
-    cpdef _mul_(self, other)
+    cpdef _mul_(self, other) noexcept
 
 cdef class BooleanMonomialVariableIterator:
     cdef object parent
     cdef BooleanPolynomialRing _ring
     cdef BooleanMonomial obj
-    cdef PBMonomVarIter _iter
-    cdef PBMonomVarIter _end
+    cdef PBMonomIter _iter
+    cdef PBMonomIter _end
+    cdef Py_ssize_t* pbind
 
 cdef class BooleanMonomialIterator:
     cdef BooleanMonomial obj
