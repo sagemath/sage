@@ -314,7 +314,7 @@ jobs:
       - name: Prepare coverage results
         if: success() || failure()
         run: |
-          venv/bin/python3 -m coverage combine src/.coverage/
+          venv/bin/python3 -m coverage combine .coverage/
           mkdir -p ${{ github.workspace }}/coverage-report
           venv/bin/python3 -m coverage xml -o ${{ github.workspace }}/coverage-report/coverage.xml
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
