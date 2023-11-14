@@ -446,13 +446,25 @@ If you don't want conda to be used by sage, deactivate conda (for the current sh
   operating system, or its own compilers.
 
 
-Tcl/Tk
-^^^^^^
+Tcl/Tk (and system's Python)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, you need
-to install the Tcl/Tk and its development headers before building Sage.  Sage's
-Python will then automatically recognize your system's install of Tcl/Tk.
+If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, and you
+are going to use your OS's Python3 as Sage's Python, you merely need to install
+its **Tkinter** module.  On Lunix systems, it is usually provided by the
+**python3-tk** or a similarly named (e.g. **python3-tkinter**) package,
+which can be installed using::
 
+    $ sudo apt-get install python3-tk
+
+or similar commands.
+
+Tcl/Tk (and Sage's own Python)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage,
+and you are going to build Sage's Python from source, you need to install
+these, and the corresponding headers.
 On Linux systems, these are usually provided by the **tk** and **tk-dev**
 (or **tk-devel**) packages which can be installed using::
 
@@ -460,6 +472,8 @@ On Linux systems, these are usually provided by the **tk** and **tk-dev**
 
 or similar commands.
 
+
+Sage's Python will then automatically recognize your system's install of Tcl/Tk.
 If you installed Sage first, all is not lost. You just need to rebuild
 Sage's Python and any part of Sage relying on it::
 
