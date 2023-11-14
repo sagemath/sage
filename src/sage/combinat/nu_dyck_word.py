@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 `\nu`-Dyck Words
 
@@ -94,7 +94,7 @@ def replace_dyck_char(x):
     - If ``x`` is a closing character, replace ``x`` with the
       constant ``ndw_close_symbol``.
 
-    - Raise a ``ValueError`` if ``x`` is neither an opening nor a
+    - Raise a :class:`ValueError` if ``x`` is neither an opening nor a
       closing character.
 
     .. SEEALSO:: :func:`replace_dyck_symbol`
@@ -142,7 +142,7 @@ def replace_dyck_symbol(x, open_char='N', close_char='E') -> str:
     - If ``x`` is ``ndw_close_symbol``, replace ``x`` with ``close_char``.
 
     - If ``x`` is neither ``ndw_open_symbol`` nor ``ndw_close_symbol``, a
-      ``ValueError`` is raised.
+      :class:`ValueError` is raised.
 
     .. SEEALSO:: :func:`replace_dyck_char`
 
@@ -873,7 +873,7 @@ class NuDyckWord(CombinatorialElement):
         EXAMPLES::
 
             sage: NDW = NuDyckWord('010','010')
-            sage: NDW.plot()                                                            # optional - sage.plot
+            sage: NDW.plot()                                                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.plot import list_plot

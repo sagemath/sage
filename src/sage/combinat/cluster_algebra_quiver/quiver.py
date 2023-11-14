@@ -2150,18 +2150,17 @@ class ClusterQuiver(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron sage.libs.singular
             sage: Fd = ClusterQuiver([[1,2]]).d_vector_fan(); Fd
             Rational polyhedral fan in 2-d lattice N
             sage: Fd.ngenerating_cones()
             5
-
             sage: Fd = ClusterQuiver([[1,2],[2,3]]).d_vector_fan(); Fd
             Rational polyhedral fan in 3-d lattice N
             sage: Fd.ngenerating_cones()
             14
             sage: Fd.is_smooth()
             True
-
             sage: Fd = ClusterQuiver([[1,2],[2,3],[3,1]]).d_vector_fan(); Fd
             Rational polyhedral fan in 3-d lattice N
             sage: Fd.ngenerating_cones()
@@ -2176,12 +2175,13 @@ class ClusterQuiver(SageObject):
             ...
             ValueError: only makes sense for quivers of finite type
         """
+        if not(self.is_finite()):
+            raise ValueError('only makes sense for quivers of finite type')
+
         from .cluster_seed import ClusterSeed
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
-        if not(self.is_finite()):
-            raise ValueError('only makes sense for quivers of finite type')
         seed = ClusterSeed(self)
         return Fan([Cone(s.d_matrix().columns())
                     for s in seed.mutation_class()])
@@ -2228,7 +2228,7 @@ class ClusterQuiver(SageObject):
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
-        if not(self.is_finite()):
+        if not (self.is_finite()):
             raise ValueError('only supported for quivers of finite type')
         seed = ClusterSeed(self).principal_extension()
         return Fan([Cone(s.g_matrix().columns())

@@ -445,7 +445,7 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: rings += [ZZ[I], ZZ[I, sqrt(2)]]                                          # needs sage.rings.number_field sage.symbolic
         sage: rings += [GF(49, 'a')]                                                    # needs sage.rings.finite_rings
         sage: rings += [MatrixSpace(GF(17), 3)]                                         # needs sage.modules
-        sage: for C in rings:
+        sage: for C in rings:                                                           # needs sage.modules
         ....:     test_karatsuba_multiplication(C, 10, 10)
 
     Zero-tests over ``QQbar`` are currently very slow, so we test only very small examples::

@@ -112,7 +112,7 @@ from sage.rings.number_field.totallyreal_data import tr_data, int_has_small_squa
 from sage.rings.number_field.totallyreal_data cimport tr_data
 
 
-cpdef double odlyzko_bound_totallyreal(int n):
+cpdef double odlyzko_bound_totallyreal(int n) noexcept:
     r"""
     This function returns the unconditional Odlyzko bound for the root
     discriminant of a totally real number field of degree `n`.

@@ -465,7 +465,8 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         TESTS::
 
-            sage: g.subs(fixed=x[0], x_1=N)                                             # needs sage.modules
+            sage: # needs sage.modules
+            sage: g.subs(fixed=x[0], x_1=N)
             Traceback (most recent call last):
             ...
             ValueError: fixed must be a dict
@@ -952,7 +953,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         for i in Lsmall:  # i is a shift of the smaller polynomial
             j += 1
             ExpoSmall = Fsmall[i]
-            while (j < lenBig):
+            while j < lenBig:
                 found = False
                 if Lbig[j] >= i:
                     ExpoBigSave = [e for e in Fbig[Lbig[j]]]

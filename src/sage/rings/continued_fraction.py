@@ -157,7 +157,7 @@ quadratic field::
 
 Nevertheless, the tail is preserved under invertible integer homographies::
 
-    sage: # needs sage.rings.number_field
+    sage: # needs sage.modular sage.rings.number_field
     sage: apply_homography =  lambda m,z: (m[0,0]*z + m[0,1]) / (m[1,0]*z + m[1,1])
     sage: m1 = SL2Z([60,13,83,18])
     sage: m2 = SL2Z([27,80,28,83])
@@ -700,7 +700,7 @@ class ContinuedFraction_base(SageObject):
         q_odd = self.denominator(2 * k + 1)
         m_even = (p_even << N) // q_even      # floor((2^N p_even) / q_even)
         m_odd = (p_odd << N + q_odd - 1) // q_odd  # ceil((2^N p_odd) / q_odd)
-        while (m_odd - m_even) > 1:
+        while m_odd - m_even > 1:
             k += 1
             p_even = self.numerator(2 * k)
             p_odd = self.numerator(2 * k + 1)
@@ -725,7 +725,7 @@ class ContinuedFraction_base(SageObject):
             # in order to find the nearest approximation we possibly need to
             # augment our precision on convergents.
             while True:
-                assert not(p_odd << (N+1) <= (2*m_odd-1) * q_odd) or not(p_even << (N+1) >= (2*m_even+1) * q_even)
+                assert not (p_odd << (N+1) <= (2*m_odd-1) * q_odd) or not (p_even << (N+1) >= (2*m_even+1) * q_even)
                 if p_odd << (N+1) <= (2*m_odd-1) * q_odd:
                     return R(sgn * m_even) >> N
                 if p_even << (N+1) >= (2*m_even+1) * q_even:

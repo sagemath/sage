@@ -56,14 +56,14 @@ from sage.libs.flint.fmpz cimport fmpz_init, fmpz_clear, fmpz_set_mpz, fmpz_one,
 from sage.libs.flint.fmpq cimport fmpq_is_zero, fmpq_set_mpq, fmpq_canonicalise
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
 
-from .args cimport MatrixArgs_init
-from .constructor import matrix
-from .matrix_space import MatrixSpace
-from .matrix cimport Matrix
-from . import matrix_dense
-from .matrix_integer_dense cimport _lift_crt
+from sage.matrix.args cimport MatrixArgs_init
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.matrix cimport Matrix
+from sage.matrix import matrix_dense
+from sage.matrix.matrix_integer_dense cimport _lift_crt
 from sage.structure.element cimport Matrix as baseMatrix
-from .misc_flint import matrix_integer_dense_rational_reconstruction
+from sage.matrix.misc_flint import matrix_integer_dense_rational_reconstruction
 
 from sage.arith.misc import binomial, previous_prime
 from sage.rings.rational_field import QQ
@@ -159,7 +159,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         QQmat = Matrix_rational_dense(QQspace, L, False, False)
         self._matrix = QQmat.transpose()
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
         """
         Set the ij-th entry of self.
 
@@ -286,7 +286,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         mpz_clear(numer)
         mpz_clear(denom)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Get the ij-th of self.
 
@@ -488,7 +488,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
     #   * _dict -- sparse dictionary of underlying elements (need not be a copy)
     ########################################################################
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Return the sum of two dense cyclotomic matrices.
 
@@ -516,7 +516,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         A._matrix = self._matrix + (<Matrix_cyclo_dense>right)._matrix
         return A
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Return the difference of two dense cyclotomic matrices.
 
@@ -543,7 +543,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         A._matrix = self._matrix - (<Matrix_cyclo_dense>right)._matrix
         return A
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         Multiply a dense cyclotomic matrix by a scalar.
 
@@ -584,7 +584,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             A._matrix = T * self._matrix
         return A
 
-    cdef _matrix_times_matrix_(self, baseMatrix right):
+    cdef _matrix_times_matrix_(self, baseMatrix right) noexcept:
         """
         Return the product of two cyclotomic dense matrices.
 
@@ -719,7 +719,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         """
         return hash(self._matrix)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         """
         Implement comparison of two cyclotomic matrices with
         identical parents.
@@ -847,7 +847,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: A.set_mutable()
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.matrix.matrix_cyclo_dense.Matrix_cyclo_dense' object has no attribute 'set_mutable'
+            AttributeError: 'sage.matrix.matrix_cyclo_dense.Matrix_cyclo_dense' object has no attribute 'set_mutable'...
             sage: B = A.__copy__()
             sage: B[0,0] = 20
             sage: B[0,0]
@@ -977,7 +977,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         return ht
 
     cdef _randomize_rational_column_unsafe(Matrix_cyclo_dense self,
-        Py_ssize_t col, mpz_t nump1, mpz_t denp1, distribution=None):
+        Py_ssize_t col, mpz_t nump1, mpz_t denp1, distribution=None) noexcept:
         """
         Randomizes all entries in column ``col``.  This is a helper method
         used in the implementation of dense matrices over cyclotomic fields.
@@ -1535,7 +1535,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         K = self.base_ring()
         phi = K.defining_polynomial()
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         F = GF(p)
         aa = [a for a, _ in phi.change_ring(F).roots()]
         n = K.degree()

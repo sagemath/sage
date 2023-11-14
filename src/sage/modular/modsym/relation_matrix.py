@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Relation matrices for ambient modular symbols spaces
 

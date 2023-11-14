@@ -36,7 +36,7 @@ There is also a mixed version:
 from cpython cimport *
 
 
-cdef int print_order_c(Expression lhs, Expression rhs):
+cdef int print_order_c(Expression lhs, Expression rhs) noexcept:
     """
     Print comparison.
 
@@ -135,7 +135,7 @@ class _print_key():
         return print_order_c(self.ex, other.ex) < 0
 
 
-cpdef print_sorted(expressions):
+cpdef print_sorted(expressions) noexcept:
     """
     Sort a list in print order
 
@@ -219,7 +219,7 @@ class _math_key():
                 raise ValueError('cannot compare {0} and {1}'.format(self.ex, other.ex))
 
 
-cpdef math_sorted(expressions):
+cpdef math_sorted(expressions) noexcept:
     """
     Sort a list of symbolic numbers in the "Mathematics" order
 
@@ -409,7 +409,7 @@ class _mixed_key():
             return num < 0
 
 
-cpdef mixed_sorted(expressions):
+cpdef mixed_sorted(expressions) noexcept:
     """
     Sort a list of symbolic numbers in the "Mixed" order
 

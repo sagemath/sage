@@ -1738,7 +1738,7 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
         return (Nowhere0WordsTwoWeightCodeGraph, q)
 
 
-cdef eigenvalues(int v, int k, int l, int mu):
+cdef eigenvalues(int v, int k, int l, int mu) noexcept:
     r"""
     Return the eigenvalues of a (v,k,l,mu)-strongly regular graph.
 
@@ -1848,7 +1848,7 @@ def eigenmatrix(int v, int k, int l, int mu):
         return Matrix(ZZ, [[1, k, v-k-1], [1, r, -r-1], [1, s, -s-1]])
 
 
-cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
+cpdef latin_squares_graph_parameters(int v, int k, int l,int mu) noexcept:
     r"""
     Check whether (v,k,l,mu)-strongly regular graph has parameters of an `L_g(n)` s.r.g.
 
@@ -1922,8 +1922,8 @@ def SRG_100_44_18_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_100_44_18_20
-        sage: G = SRG_100_44_18_20()                    # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = SRG_100_44_18_20()                    # long time                     # needs sage.groups
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (100, 44, 18, 20)
     """
     L = ['100', '110', '130', '140', '200', '230', '240', '300', '310', '320',
@@ -1944,8 +1944,8 @@ def SRG_100_45_20_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_100_45_20_20
-        sage: G = SRG_100_45_20_20()                    # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = SRG_100_45_20_20()                    # long time                     # needs sage.groups
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (100, 45, 20, 20)
     """
     L = ['120', '140', '200', '210', '201', '401', '411', '321', '002', '012',
@@ -2435,8 +2435,8 @@ def SRG_560_208_72_80():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_560_208_72_80
-        sage: g = SRG_560_208_72_80()                   # not tested (~2s)
-        sage: g.is_strongly_regular(parameters=True)    # not tested (~2s)
+        sage: g = SRG_560_208_72_80()                   # not tested (~2s)              # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)    # not tested (~2s)              # needs sage.libs.gap
         (560, 208, 72, 80)
     """
     from sage.libs.gap.libgap import libgap
@@ -2616,8 +2616,8 @@ def SRG_630_85_20_10():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_630_85_20_10
-        sage: G = SRG_630_85_20_10()                    # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = SRG_630_85_20_10()                    # long time                     # needs sage.groups
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (630, 85, 20, 10)
     """
     from sage.graphs.generators.intersection import IntersectionGraph
@@ -2690,7 +2690,7 @@ def SRG_1288_792_476_504():
     return G
 
 
-cdef bint seems_feasible(int v, int k, int l, int mu):
+cdef bint seems_feasible(int v, int k, int l, int mu) noexcept:
     r"""
     Check if the set of parameters seems feasible.
 
@@ -2812,7 +2812,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     Petersen's graph from its set of parameters::
 
-        sage: graphs.strongly_regular_graph(10,3,0,1,existence=True)
+        sage: graphs.strongly_regular_graph(10,3,0,1,existence=True)                    # needs sage.libs.pari
         True
         sage: graphs.strongly_regular_graph(10,3,0,1)
         complement(Johnson graph with parameters 5,2): Graph on 10 vertices
@@ -3133,15 +3133,15 @@ def _build_small_srg_database():
         complement(two-intersection set in PG(8,2)): Graph on 256 vertices
         sage: graphs.strongly_regular_graph(512, 73, 12, 10)                    # not tested (too long), needs sage.rings.finite_rings
         two-weight code: [219, 9] linear code over GF(2): Graph on 512 vertices
-        sage: graphs.strongly_regular_graph(512, 219, 106, 84)                  # long time
+        sage: graphs.strongly_regular_graph(512, 219, 106, 84)                  # long time, needs sage.combinat
         two-intersection set in PG(9,2): Graph on 512 vertices
         sage: graphs.strongly_regular_graph(512, 315, 202, 180)                 # not tested (too long), needs sage.rings.finite_rings
         two-weight code: [70, 9] linear code over GF(2): Graph on 512 vertices
-        sage: graphs.strongly_regular_graph(625, 364, 213, 210)                 # long time
+        sage: graphs.strongly_regular_graph(625, 364, 213, 210)                 # long time, needs sage.libs.pari
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
-        sage: graphs.strongly_regular_graph(625, 416, 279, 272)                 # long time
+        sage: graphs.strongly_regular_graph(625, 416, 279, 272)                 # long time, needs sage.libs.pari
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
-        sage: graphs.strongly_regular_graph(625, 468, 353, 342)                 # long time
+        sage: graphs.strongly_regular_graph(625, 468, 353, 342)                 # long time, needs sage.libs.pari
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
         sage: graphs.strongly_regular_graph(729, 336, 153,156)                  # not tested (too long)
         two-intersection set in PG(6,3): Graph on 729 vertices
@@ -3258,7 +3258,7 @@ def _build_small_srg_database():
             _small_srg_database[N, K, l, m] = [strongly_regular_from_two_weight_code, code['M']]
 
 
-cdef load_brouwer_database():
+cdef load_brouwer_database() noexcept:
     r"""
     Loads Andries Brouwer's database into _brouwer_database.
     """
@@ -3286,7 +3286,7 @@ def _check_database():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import _check_database
-        sage: _check_database() # long time
+        sage: _check_database()                 # long time                             # needs sage.libs.pari
         Sage cannot build a (512  133  24   38  ) that exists. Comment ...
         ...
         In Andries Brouwer's database:

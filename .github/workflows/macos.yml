@@ -21,16 +21,16 @@ on:
       osversion_xcodeversion_toxenv_tuples:
         description: 'Stringified JSON object'
         default: >-
-          [["latest", "",           "homebrew-macos-usrlocal-minimal"],
-           ["latest", "",           "homebrew-macos-usrlocal-standard"],
-           ["11",     "xcode_11.7", "homebrew-macos-usrlocal-standard"],
-           ["12",     "",           "homebrew-macos-usrlocal-standard"],
-           ["13",     "xcode_15.0", "homebrew-macos-usrlocal-standard"],
-           ["latest", "",           "homebrew-macos-usrlocal-maximal"],
-           ["latest", "",           "homebrew-macos-usrlocal-python3_xcode-standard"],
-           ["latest", "",           "conda-forge-macos-minimal"],
-           ["latest", "",           "conda-forge-macos-standard"],
-           ["latest", "",           "conda-forge-macos-maximal"]]
+          [["latest", "",             "homebrew-macos-usrlocal-minimal"],
+           ["latest", "",             "homebrew-macos-usrlocal-standard"],
+           ["11",     "xcode_13.2.1", "homebrew-macos-usrlocal-standard"],
+           ["12",     "",             "homebrew-macos-usrlocal-standard"],
+           ["13",     "xcode_15.0",   "homebrew-macos-usrlocal-standard"],
+           ["latest", "",             "homebrew-macos-usrlocal-maximal"],
+           ["latest", "",             "homebrew-macos-usrlocal-python3_xcode-standard"],
+           ["latest", "",             "conda-forge-macos-minimal"],
+           ["latest", "",             "conda-forge-macos-standard"],
+           ["latest", "",             "conda-forge-macos-maximal"]]
         type: string
       extra_sage_packages:
         description: 'Extra Sage packages to install as system packages'

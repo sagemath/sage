@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.ntl
 """
 Frobenius endomorphisms on p-adic fields
 """
@@ -85,7 +86,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         self._order = self._degree / domain.absolute_f().gcd(self._power)
         RingHomomorphism.__init__(self, Hom(domain, domain))
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -104,7 +105,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         slots['_order'] = self._order
         return slots
 
-    cdef _update_slots(self, dict slots):
+    cdef _update_slots(self, dict slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -157,7 +158,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             sage: Frob._repr_short()
             'Frob'
         """
-        name = self.domain().variable_name()
         if self._power == 0:
             s = "Identity"
         elif self._power == 1:
@@ -166,7 +166,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             s = "Frob^%s" % self._power
         return s
 
-    cpdef Element _call_ (self, x):
+    cpdef Element _call_ (self, x) noexcept:
         """
         TESTS::
 
@@ -330,7 +330,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         codomain = self.codomain()
         return hash((domain, codomain, ('Frob', self._power)))
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare ``left`` and ``right``
 

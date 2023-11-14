@@ -327,7 +327,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         raise RuntimeError("too much recursion, Graph coloring failed")
 
 
-cpdef first_coloring(G, n=0, hex_colors=False):
+cpdef first_coloring(G, n=0, hex_colors=False) noexcept:
     r"""
     Return the first vertex coloring found.
 
@@ -365,7 +365,7 @@ cpdef first_coloring(G, n=0, hex_colors=False):
             return C
 
 
-cpdef number_of_n_colorings(G, n):
+cpdef number_of_n_colorings(G, n) noexcept:
     r"""
     Compute the number of `n`-colorings of a graph
 
@@ -397,7 +397,7 @@ cpdef number_of_n_colorings(G, n):
     return m
 
 
-cpdef numbers_of_colorings(G):
+cpdef numbers_of_colorings(G) noexcept:
     r"""
     Compute the number of colorings of a graph.
 
@@ -416,7 +416,7 @@ cpdef numbers_of_colorings(G):
     return answer
 
 
-cpdef chromatic_number(G):
+cpdef chromatic_number(G) noexcept:
     r"""
     Return the chromatic number of the graph.
 
@@ -1598,7 +1598,7 @@ def _vizing_edge_coloring(g):
        True
        sage: all(g.has_edge(e) for C in colors for e in C)
        True
-       sage: all(len(Graph(C).matching()) == len(C) for C in colors)
+       sage: all(len(Graph(C).matching()) == len(C) for C in colors)                    # needs networkx
        True
     """
     # This implementation was discussed in github issue #34809
@@ -2237,7 +2237,7 @@ cdef class Test:
         TESTS::
 
             sage: from sage.graphs.graph_coloring import Test
-            sage: Test().random(1)
+            sage: Test().random(1)                                                      # needs sage.libs.flint
         """
         self.random_all_graph_colorings(tests)
 
@@ -2256,7 +2256,7 @@ cdef class Test:
         TESTS::
 
             sage: from sage.graphs.graph_coloring import Test
-            sage: Test().random_all_graph_colorings(1)
+            sage: Test().random_all_graph_colorings(1)                                  # needs sage.libs.flint
         """
         from sage.graphs.generators.random import RandomGNP
         cdef set S

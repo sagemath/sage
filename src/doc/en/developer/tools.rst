@@ -219,6 +219,17 @@ Cython-lint
 `Cython-lint <https://pypi.org/project/cython-lint/>`_ checks Cython source files
 for coding style.
 
+.. _section-tools-ruff:
+
+Ruff
+====
+
+`Ruff <https://pypi.org/project/ruff/>`_ is a powerful and fast linter
+for Python code, written in Rust.
+
+It comes with a large choice of possible checks, and has the capacity
+to fix some of the warnings it emits.
+
 .. _section-tools-relint:
 
 Relint
@@ -316,7 +327,10 @@ Pyright
 
 - Tox: Run ``./sage -tox -e pyright path/to/the/file.py``
 
-- Manual: Run ``pyright path/to/the/file.py``
+- Manual: Run ``pyright path/to/the/file.py``. If you want to check the whole Sage library, you most likely run out of memory with the default settings.
+  You can use the following command to check the whole library::
+
+    NODE_OPTIONS="--max-old-space-size=8192" pyright
 
 - VS Code: Install the `Pylance <https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance>`__ extension.
 

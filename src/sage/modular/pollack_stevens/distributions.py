@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 Spaces of distributions for Pollack-Stevens modular symbols
 
@@ -319,7 +319,7 @@ class OverconvergentDistributions_abstract(Module):
         """
         ordp = kwargs.get('ord',0)
         check = kwargs.get('check',True)
-        normalize= kwargs.get('normalize',True)
+        normalize = kwargs.get('normalize',True)
         return self.Element(val, self, ordp, check, normalize)
 
     def _coerce_map_from_(self, other):

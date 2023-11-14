@@ -587,7 +587,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         P = [ time_search_loop(p) for p in range(tau+1) ]
 
         def compute_estimate(p):
-            iters = 1.* binomial(n, k)/ \
+            iters = 1. * binomial(n, k) / \
                 sum( binomial(n-tau, k-i)*binomial(tau,i) for i in range(p+1) )
             estimate = iters*(T +
                 sum(P[pi] * (q-1)**pi * binomial(k, pi) for pi in range(p+1) ))

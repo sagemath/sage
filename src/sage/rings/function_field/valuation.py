@@ -654,7 +654,7 @@ class ClassicalFunctionFieldValuation_base(DiscreteFunctionFieldValuation_base):
 
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
-            sage: v._test_classical_residue_field()
+            sage: v._test_classical_residue_field()                                     # needs sage.rings.number_field
 
         """
         tester = self._tester(**options)
@@ -774,7 +774,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
-            sage: v.reduce(x)
+            sage: v.reduce(x)                                                           # needs sage.rings.number_field
             u1
 
         """
@@ -805,7 +805,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: K.valuation(x^2 + 1) # indirect doctest
+            sage: K.valuation(x^2 + 1)  # indirect doctest
             (x^2 + 1)-adic valuation
 
         """
@@ -827,6 +827,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
             sage: L.<x> = FunctionField(GaussianIntegers().fraction_field())
@@ -1474,7 +1475,7 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
              [ Valuation at the infinite place, v(y - 1) = 2 ]-adic valuation]
 
         """
-        assert(self.domain().base() is not self.domain())
+        assert (self.domain().base() is not self.domain())
         if repr(self._base_valuation) == repr(self.restriction(self.domain().base())):
             return repr(self._base_valuation)
         return super()._repr_()

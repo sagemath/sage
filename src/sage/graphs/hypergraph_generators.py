@@ -257,7 +257,7 @@ class HypergraphGenerators():
             Traceback (most recent call last):
             ...
             ValueError: the uniformity should be non-negative
-            sage: hypergraphs.UniformRandomUniform(52, I, 17)
+            sage: hypergraphs.UniformRandomUniform(52, I, 17)                           # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the uniformity should be an integer
