@@ -48,7 +48,7 @@ foreach name, pyx : extension_data_cpp
         override_options : ['cython_language=cpp'],
         cpp_args: ['-I', inc_farey],
         include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, flint, gmp],
+        dependencies: [py_dep, cysignals, flint, gmp, gmpxx],
     )
 endforeach
 
