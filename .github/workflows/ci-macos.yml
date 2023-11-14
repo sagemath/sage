@@ -34,35 +34,41 @@ jobs:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "1"
+      max_parallel: 2
 
   stage-2:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2"
+      max_parallel: 1
     needs: [stage-1]
 
   stage-2-optional-0-o:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-0-o"
+      max_parallel: 1
     needs: [stage-2]
 
   stage-2-optional-p-z:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-p-z"
+      max_parallel: 1
     needs: [stage-2-optional-0-o]
 
   stage-2-experimental-0-o:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-0-o"
+      max_parallel: 1
     needs: [stage-2-optional-p-z]
 
   stage-2-experimental-p-z:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-experimental-p-z"
+      max_parallel: 1
     needs: [stage-2-experimental-0-o]
 
   dist:
@@ -101,7 +107,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 4
+      max-parallel: 1
       matrix:
         os: [ macos-11, macos-12 ]
         tox_system_factor: [macos-nobootstrap]
