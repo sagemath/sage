@@ -1373,6 +1373,10 @@ REFERENCES:
              for closed Riemannian manifolds*, Ann. of Math. (2) 45 (1944),
              747–752.
 
+.. [CP2023] \M. Cati and D.V. Pasechnik.
+            *Implementing Hadamard Matrices in SageMath*.
+            Preprint, :arxiv:`2306.16812`, (2023).
+
 .. [CQ2019] \A. Cassella and C. Quadrelli.
             *Right-angled Artin groups and enhanced Koszul properties*.
             Preprint, :arxiv:`1907.03824`, (2019).
