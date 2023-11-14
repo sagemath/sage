@@ -1,3 +1,4 @@
+inc_farey = meson.current_build_dir()
 py.install_sources(
     'all.py',
     'arithgroup_generic.py',
@@ -22,10 +23,20 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/modular/arithgroup',
         install: true,
-        include_directories: [inc_cpython, inc_ext, inc_src, inc_flint, inc_rings],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
         dependencies: [py_dep, cysignals, flint, gmp],
     )
 endforeach
+
+# Manually create header file, which otherwise is not found
+farey_symbol_header = custom_target(
+  'farey_symbol.h',
+  output : 'farey_symbol.h',
+  input : 'farey_symbol.pyx',
+  install: true,
+  install_dir: '.',
+  command : ['cython', '--cplus', '@INPUT@', '-o', '@OUTPUT@'],
+)
 
 extension_data_cpp = {
     'farey_symbol': files('farey_symbol.pyx', 'sl2z.cpp', 'farey.cpp'),
@@ -37,7 +48,8 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/modular/arithgroup',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ext, inc_src, inc_flint, inc_rings],
+        cpp_args: ['-I', inc_farey],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
         dependencies: [py_dep, cysignals, flint, gmp],
     )
 endforeach
