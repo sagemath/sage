@@ -33,8 +33,6 @@ farey_symbol_header = custom_target(
   'farey_symbol.h',
   output : 'farey_symbol.h',
   input : 'farey_symbol.pyx',
-  install: true,
-  install_dir: '.',
   command : [cython.cmd_array(), '--cplus', '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
 )
 
