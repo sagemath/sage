@@ -35,11 +35,11 @@ farey_symbol_header = custom_target(
   input : 'farey_symbol.pyx',
   install: true,
   install_dir: '.',
-  command : [cython.cmd_array(), '--cplus', '@INPUT@', '-o', '@OUTPUT@', '-I', '../../../'],
+  command : [cython.cmd_array(), '--cplus', '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
 )
 
 extension_data_cpp = {
-    'farey_symbol': files('farey_symbol.pyx', 'sl2z.cpp', 'farey.cpp'),
+    'farey_symbol': [files('farey_symbol.pyx', 'sl2z.cpp', 'farey.cpp'), farey_symbol_header[0]],
 }
 
 foreach name, pyx : extension_data_cpp
