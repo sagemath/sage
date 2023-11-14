@@ -62,7 +62,7 @@ available::
         codespell              -- check for misspelled words in source code
         rst                    -- validate Python docstrings markup as reStructuredText
         coverage.py            -- run the Sage doctester with Coverage.py
-                                  (use "sage --tox -e coverage.py-html" to generate HTML report)
+        coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
         pyright                -- run the static typing checker pyright
         pycodestyle            -- check against the Python style conventions of PEP8
         cython-lint            -- check Cython files for code style
