@@ -5,6 +5,9 @@
     "sage.combinat.cluster_algebra_quiver.quiver": {
         "failed": true
     },
+    "sage.geometry.cone": {
+        "failed": true
+    },
     "sage.groups.matrix_gps.finitely_generated_gap": {
         "failed": true
     },
@@ -15,6 +18,9 @@
         "failed": true
     },
     "sage.matrix.matrix2": {
+        "failed": true
+    },
+    "sage.matrix.matrix_integer_sparse": {
         "failed": true
     },
     "sage.misc.lazy_import": {
