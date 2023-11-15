@@ -1587,6 +1587,26 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         span_set = specht_module_spanning_set(D, self)
         return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
 
+    def simple_module_dimension(self, la):
+        r"""
+        Return the dimension of the simple module of ``self`` indexed by the
+        partition ``la``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(5), 6)
+            sage: SGA.simple_module_dimension(Partition([4,1,1]))
+            10
+            sage: SGA.simple_module_dimension(Partition([3,1,1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: [3, 1, 1] is not a partition of 6
+        """
+        if sum(la) != self.n:
+            raise ValueError(f"{la} is not a partition of {self.n}")
+        from sage.combinat.specht_module import simple_module_rank
+        return simple_module_rank(la, self.base_ring())
+
     def jucys_murphy(self, k):
         r"""
         Return the Jucys-Murphy element `J_k` (also known as a
