@@ -14,6 +14,9 @@
     "sage.libs.singular.singular": {
         "failed": true
     },
+    "sage.matrix.matrix2": {
+        "failed": true
+    },
     "sage.misc.lazy_import": {
         "failed": true
     },
