@@ -11,6 +11,9 @@
     "sage.misc.lazy_import": {
         "failed": true
     },
+    "sage.misc.weak_dict": {
+        "failed": true
+    },
     "sage.rings.polynomial.multi_polynomial_ideal": {
         "failed": true
     },
