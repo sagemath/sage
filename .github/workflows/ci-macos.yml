@@ -40,30 +40,35 @@ jobs:
     with:
       stage: "2"
     needs: [stage-1]
+    if: ${{ success() || failure() }}
 
   stage-2-optional-0-o:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-0-o"
     needs: [stage-2]
+    if: ${{ success() || failure() }}
 
   stage-2-optional-p-z:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-p-z"
     needs: [stage-2-optional-0-o]
+    if: ${{ success() || failure() }}
 
   stage-2-experimental-0-o:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-0-o"
     needs: [stage-2-optional-p-z]
+    if: ${{ success() || failure() }}
 
   stage-2-experimental-p-z:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-experimental-p-z"
     needs: [stage-2-experimental-0-o]
+    if: ${{ success() || failure() }}
 
   dist:
 
@@ -85,7 +90,7 @@ jobs:
         run: |
           git config --global user.email "nobody@example.com"
           git config --global user.name "Sage GitHub CI"
-          SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(git describe) || echo "(ignoring error)"
+          SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(git describe --tags) || echo "(ignoring error)"
       - name: make dist
         run: |
           ./configure --enable-download-from-upstream-url && make dist
