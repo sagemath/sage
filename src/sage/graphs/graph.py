@@ -4476,7 +4476,7 @@ class Graph(GenericGraph):
         # The graph is factor critical if all vertices are marked even
         return len(even) == self.order()
 
-    def is_valid_hom(G, H, hom):
+    def is_valid_homomorphism(G, H, hom):
         r"""
         Check if `hom` is a valid homomorphism from `G` to `H`.
 
