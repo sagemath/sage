@@ -597,8 +597,6 @@ class SimplicialSets(Category_singleton):
                     sage: list(d.values())[0].parent()
                     Multivariate Laurent Polynomial Ring in f2, f3 over Integer Ring
                     sage: Y = simplicial_sets.RealProjectiveSpace(2)
-                    sage: Y._canonical_twisting_operator()
-                    {f: F1bar}
                     sage: d2 = Y._canonical_twisting_operator()
                     sage: d2
                     {f: F1bar}
