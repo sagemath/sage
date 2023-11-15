@@ -329,8 +329,9 @@ cdef class TwoSumNode(SumNode):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
-            ....:                       [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0],
-            ....:                        [1, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M2
+            ....:                            [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0],
+            ....:                             [1, 0, 1, 1, 0], [1, 0, 0, 1, 1],
+            ....:                             [1, 1, 0, 0, 1]]); M2
             [1 1 1 1 1]
             [1 1 1 0 0]
             [1 0 1 1 0]
@@ -446,15 +447,15 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
-            ....:                                   [[1, 1, 1, 1, 1, 0], [1, 1, 1, 0,0, 0],
-            ....:                                 [1, 0, 1, 1, 0, 1] ,[1, 0,0, 1, 1, 0], 
-            ....:                                   [1, 1, 0, 0, 1, 0]]); M
+            ....:                           [[1, 1, 1, 1, 1, 0], [1, 1, 1, 0, 0, 0],
+            ....:                            [1, 0, 1, 1, 0, 1] ,[1, 0, 0, 1, 1, 0],
+            ....:                            [1, 1, 0, 0, 1, 0]]); M
             [1 1 1 1 1 0]
             [1 1 1 0 0 0]
             [1 0 1 1 0 1]
             [1 0 0 1 1 0]
             [1 1 0 0 1 0]
-            sage: result, certificate = M.is_totally_unimodular(certificate = True)
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
             sage: result, certificate
             (True, SeriesParallelReductionNode (5×6))
             sage: certificate.core()

@@ -412,8 +412,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def two_sum(first_mat, second_mat, column, row):
         r"""
-        Return the 2-sum matrix constructed from the given matrices ``first_mat`` and ``second_mat``, with column index of the first matrix ``column`` and row index of the second matrix ``row``.
-        Suppose that ``column`` indicates the last column and ``row`` indicates the first row, i.e, the first matrix is `M_1=\begin{bmatrix} A & a\end{bmatrix}` and the second matrix is `M_2=\begin{bmatrix} b^T \\ B\end{bmatrix}`. Then the two sum `M_1 \oplus_2 M_2 =\begin{bmatrix}A & ab^T\\ 0 & B\end{bmatrix}`.
+        Return the 2-sum matrix constructed from the given matrices ``first_mat`` and
+        ``second_mat``, with column index of the first matrix ``column`` and row index
+        of the second matrix ``row``.
+        Suppose that ``column`` indicates the last column and ``row`` indicates the
+        first row, i.e, the first matrix is `M_1=\begin{bmatrix} A & a\end{bmatrix}`
+        and the second matrix is `M_2=\begin{bmatrix} b^T \\ B\end{bmatrix}`. Then
+        the two sum `M_1 \oplus_2 M_2 =\begin{bmatrix}A & ab^T\\ 0 & B\end{bmatrix}`.
 
         INPUT:
 
@@ -465,38 +470,42 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
         r"""
-        Return the 3-sum matrix constructed from the given matrices ``first_mat`` and ``second_mat``, with ``first_col_index1``
-        and ``first_col_index2`` being the indices of the column vectors of the matrix, which are identical except for one row
-        having a 0 in one column and the other a non-zero entry in that row. The method assumes the nonzero entry is one. The same goes
-        are made for ``second_mat``, ``second_col_index1``, and  ``second_col_index2``.
+        Return the 3-sum matrix constructed from the given matrices ``first_mat`` and
+        ``second_mat``, with ``first_col_index1`` and ``first_col_index2`` being the
+        indices of the column vectors of the matrix, which are identical except for
+        one row having a 0 in one column and the other a non-zero entry in that row.
+        The method assumes the nonzero entry is one. The same goes are made for ``second_mat``, ``second_col_index1``, and  ``second_col_index2``.
 
-        The operation performed is effectively as in Schrijver:=
-        [first_submat  first_subcol  first_subcol]  ___|___   [second_submat  second_subcol  second_suncol]
-        [ first_row         0             1      ]     |   3  [ second_row          0              1      ]
-        -----  [         first_submat       first_subcol x second_row]
-        -----  [second_subcol x first_row          second_subcol     ]
+        The operation is defined in [Sch1986]_, Ch. 19.4.:=
+        [first_mat  first_col  first_col]  ___|___   [second_mat  second_col  second_col]
+        [first_row      0          1    ]     |   3  [second_row       0           1    ]
+        -----  [         first_mat       first_col x second_row]
+        -----  [second_col x first_row          second_col     ]
 
         INPUT:
 
-        - ``first_mat`` -- integer matrix having two collumns which are identical in every entry except for one row in 
-        which one is 0 and the other is 1
-        - ``second_mat`` -- integer matrix having two collumns which are identical in every entry except for one row in 
-        which one is 0 and the other is 1
-        - ``first_col_index1`` -- index of a column in ``first_mat`` identical to some other column in every entry except for one row in 
-        which one is 0 and the other is 1
-        - ``first_col_index2`` -- index of the other column which is identical to first_mat[first_col_index1] in every entry except for one 
-        row in which one is 0 and the other is 1
-        - ``second_col_index1`` -- index of a column in ``second_mat`` identical to some other column in every entry except for one row in 
-        which one is 0 and the other is 1
-        - ``first_col_index2`` -- index of the other column which is identical to second_mat[second_col_index1] in every entry except for one 
-        row in which one is 0 and the other is 1
+        - ``first_mat`` -- integer matrix having two collumns which are identical in
+          every entry except for one row in which one is 0 and the other is 1
+        - ``second_mat`` -- integer matrix having two collumns which are identical in
+          every entry except for one row in which one is 0 and the other is 1
+        - ``first_col_index1`` -- index of a column in ``first_mat`` identical to some
+          other column in every entry except for one row in which one is 0 and the other is 1
+        - ``first_col_index2`` -- index of the other column which is identical to
+          first_mat[first_col_index1] in every entry except for one row in which
+          one is 0 and the other is 1
+        - ``second_col_index1`` -- index of a column in ``second_mat`` identical to some
+          other column in every entry except for one row in which one is 0 and the other is 1
+        - ``first_col_index2`` -- index of the other column which is identical to
+          second_mat[second_col_index1] in every entry except for one row in which
+          one is 0 and the other is 1
 
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
-            ....:                      [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0], [1, 0, 1, 1, 0],
-            ....:                       [0, 0, 0, 1, 1], [1, 1, 0, 0, 1]]); M
+            ....:                           [[1, 1, 1, 1, 1], [1, 1, 1, 0, 0],
+            ....:                            [1, 0, 1, 1, 0], [0, 0, 0, 1, 1],
+            ....:                            [1, 1, 0, 0, 1]]); M
             [1 1 1 1 1]
             [1 1 1 0 0]
             [1 0 1 1 0]
@@ -592,7 +601,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             for i in range(len(r)):
                 x.append(r[i])
             row_list.append(x)
-        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
     def delete_columns(self, indices):
         rows = self.rows()
@@ -607,7 +616,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                 if not (k in indices):
                     x.append(r[k])
             row_list.append(x)
-        return Matrix_cmr_chr_sparse._from_data(row_list, immutable = False)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
     def is_unimodular(self):
         r"""
@@ -927,9 +936,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 9, sparse=True), [[1, 0, 0, 0, 1, -1, 1, 0, 0],
-            ....:                                  [0, 1, 0, 0, 0, 1, -1, 1, 0], [0, 0, 1, 0, 0, 0, 1, -1, 1], 
-            ....:                                  [0, 0, 0, 1, 1, 0, 0, 1, -1]]); M
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 9, sparse=True),
+            ....:                           [[1, 0, 0, 0, 1, -1, 1, 0, 0],
+            ....:                            [0, 1, 0, 0, 0, 1, -1, 1, 0],
+            ....:                            [0, 0, 1, 0, 0, 0, 1, -1, 1],
+            ....:                            [0, 0, 0, 1, 1, 0, 0, 1, -1]]); M
             [ 1  0  0  0  1 -1  1  0  0]
             [ 0  1  0  0  0  1 -1  1  0]
             [ 0  0  1  0  0  0  1 -1  1]
@@ -967,7 +978,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
 
         return False, NotImplemented  # submatrix TBD
-
 
     def is_network_matrix(self, *, time_limit=60.0, certificate=False):
         r"""
