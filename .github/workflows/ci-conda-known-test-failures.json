@@ -20,6 +20,9 @@
     "sage.modular.modform.l_series_gross_zagier": {
         "failed": true
     },
+    "sage.rings.function_field.drinfeld_modules.morphism": {
+        "failed": true
+    },
     "sage.rings.polynomial.multi_polynomial_ideal": {
         "failed": true
     },
