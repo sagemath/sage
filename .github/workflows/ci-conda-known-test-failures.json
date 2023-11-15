@@ -5,6 +5,9 @@
     "sage.groups.matrix_gps.finitely_generated_gap": {
         "failed": true
     },
+    "sage.libs.gap.element": {
+        "failed": true
+    },
     "sage.libs.singular.singular": {
         "failed": true
     },
