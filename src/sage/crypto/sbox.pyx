@@ -25,7 +25,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
-cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg):
+cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg) noexcept:
     """
     Return the number of monomials possible up to a given
     degree.
@@ -268,7 +268,7 @@ cdef class SBox(SageObject):
         """
         return not self.__eq__(other)
 
-    cpdef list to_bits(self, x, n=None):
+    cpdef list to_bits(self, x, n=None) noexcept:
         """
         Return bitstring of length ``n`` for integer ``x``. The
         returned bitstring is guaranteed to have length ``n``.
@@ -333,7 +333,7 @@ cdef class SBox(SageObject):
 
         return ZZ(self._rpad(x, n), 2)
 
-    cdef list _rpad(self, list x, Py_ssize_t n=-1):
+    cdef list _rpad(self, list x, Py_ssize_t n=-1) noexcept:
         """
         Right pads ``x`` such that ``len(x) == n``.
 
@@ -1920,7 +1920,7 @@ cdef class SBox(SageObject):
         return self == self.inverse()
 
 
-cdef Py_ssize_t feistel_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes):
+cdef Py_ssize_t feistel_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes) noexcept:
     """
     Compute a Feistel output using the given sboxes.
 
@@ -1947,7 +1947,7 @@ cdef Py_ssize_t feistel_substitute(Py_ssize_t x, Py_ssize_t input_size, list sbo
     return (xl << input_size) | xr
 
 
-cdef Py_ssize_t misty_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes):
+cdef Py_ssize_t misty_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxes) noexcept:
     """
     Compute a Misty output using the given sboxes.
 
@@ -1974,10 +1974,10 @@ cdef Py_ssize_t misty_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxe
     return (xl << input_size) | xr
 
 
-ctypedef Py_ssize_t (*_SBOX_CONSTR) (Py_ssize_t, Py_ssize_t, list)
+ctypedef Py_ssize_t (*_SBOX_CONSTR) (Py_ssize_t, Py_ssize_t, list) noexcept
 
 
-cdef sbox_construction(_SBOX_CONSTR construction, list args):
+cdef sbox_construction(_SBOX_CONSTR construction, list args) noexcept:
     """
     Construct an Sbox from the given input sboxes that has a twice
     as big input size.

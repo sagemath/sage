@@ -69,8 +69,6 @@ jobs:
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build & Test workflow"
           .ci/retrofit-worktree.sh worktree-image /sage
-          # Keep track of changes to built HTML
-          new_version=$(cat src/VERSION.txt); (cd /sage/local/share/doc/sage/html/en && find . -name "*.html" | xargs sed -i '/class="sidebar-brand-text"/s/Sage [0-9a-z.]* /Sage '$new_version' /'; git init && (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; git add -A && git commit --quiet -m "old")
 
       - name: Incremental build
         id: incremental
@@ -97,19 +95,20 @@ jobs:
         id: docbuild
         if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         run: |
-          make doc-clean doc-uninstall; make doc-pdf
+          make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
       - name: Copy docs
+        id: copy
         if: always() && steps.docbuild.outcome == 'success'
         run: |
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           mkdir -p ./docs
-          cp -r -L /sage/local/share/doc/sage/pdf/en/* ./docs
+          cp -r -L /sage/local/share/doc/sage/pdf ./docs
           # Zip everything for increased performance
           zip -r docs-pdf.zip docs
 

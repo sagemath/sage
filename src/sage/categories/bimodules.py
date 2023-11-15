@@ -37,22 +37,24 @@ class Bimodules(CategoryWithParameters):
 
     def __init__(self, left_base, right_base, name=None):
         """
+        The ``name`` parameter is ignored.
+
         EXAMPLES::
 
             sage: C = Bimodules(QQ, ZZ)
             sage: TestSuite(C).run()
         """
-        if not ( left_base in Rings() or
-                 (isinstance(left_base, Category)
-                  and left_base.is_subcategory(Rings())) ):
+        if not (left_base in Rings() or
+                (isinstance(left_base, Category)
+                 and left_base.is_subcategory(Rings()))):
             raise ValueError("the left base must be a ring or a subcategory of Rings()")
-        if not ( right_base in Rings() or
-                 (isinstance(right_base, Category)
-                  and right_base.is_subcategory(Rings())) ):
+        if not (right_base in Rings() or
+                (isinstance(right_base, Category)
+                 and right_base.is_subcategory(Rings()))):
             raise ValueError("the right base must be a ring or a subcategory of Rings()")
         self._left_base_ring = left_base
         self._right_base_ring = right_base
-        Category.__init__(self, name)
+        Category.__init__(self)
 
     def _make_named_class_key(self, name):
         r"""

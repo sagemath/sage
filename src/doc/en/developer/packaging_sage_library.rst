@@ -190,9 +190,6 @@ The technique of using symbolic links pointing into ``SAGE_ROOT/src``
 has allowed the modularization effort to keep the ``SAGE_ROOT/src``
 tree monolithic: Modularization has been happening behind the scenes
 and will not change where Sage developers find the source files.
-When adding a new distribution package that uses a symbolic link pointing into
-``SAGE_ROOT/src``, please update ``search.exclude`` in
-``SAGE_ROOT/.vscode/settings.json``.
 
 Some of these files may actually be generated from source files with suffix ``.m4`` by the
 ``SAGE_ROOT/bootstrap`` script via the ``m4`` macro processor.
@@ -470,6 +467,17 @@ requiring all of Sage to be present.
 *Declaring doctest-only dependencies:* The
 `extras_require <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies>`_
 mechanism mentioned above can also be used for this.
+
+
+Dependencies of the Sage documentation
+--------------------------------------
+
+The documentation will not be modularized.
+
+However, some parts of the Sage reference manual may depend on functionality
+provided by optional packages. These portions of the reference manual
+should be conditionalized using the Sphinx directive ``.. ONLY::``,
+as explained in :ref:`section-documentation-conditional`.
 
 
 Version constraints of dependencies

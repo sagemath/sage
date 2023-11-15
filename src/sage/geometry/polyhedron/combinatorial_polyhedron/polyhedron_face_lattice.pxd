@@ -1,8 +1,8 @@
 cimport cython
-from .list_of_faces             cimport ListOfFaces
-from .face_data_structure       cimport face_t
-from .face_list_data_structure  cimport face_list_t
-from .combinatorial_face        cimport CombinatorialFace
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces             cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure  cimport face_list_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face        cimport CombinatorialFace
 
 @cython.final
 cdef class PolyhedronFaceLattice:
@@ -40,11 +40,11 @@ cdef class PolyhedronFaceLattice:
 
     cdef int _sort(self) except -1
     cdef inline size_t find_face(self, int dimension, face_t face) except -2
-    cpdef CombinatorialFace get_face(self, int dimension, size_t index)
+    cpdef CombinatorialFace get_face(self, int dimension, size_t index) noexcept
     cdef size_t set_coatom_rep(self, int dimension, size_t index) except -1
     cdef size_t set_atom_rep(self, int dimension, size_t index) except -1
-    cdef void incidence_init(self, int dimension_one, int dimension_two)
-    cdef inline bint next_incidence(self, size_t *one, size_t *two)
-    cdef inline bint next_incidence_loop(self, size_t *one, size_t *two)
-    cdef inline bint next_trivial_incidence(self, size_t *one, size_t *two)
-    cdef inline bint next_trivial_incidence2(self, size_t *one, size_t *two)
+    cdef void incidence_init(self, int dimension_one, int dimension_two) noexcept
+    cdef inline bint next_incidence(self, size_t *one, size_t *two) noexcept
+    cdef inline bint next_incidence_loop(self, size_t *one, size_t *two) noexcept
+    cdef inline bint next_trivial_incidence(self, size_t *one, size_t *two) noexcept
+    cdef inline bint next_trivial_incidence2(self, size_t *one, size_t *two) noexcept

@@ -174,7 +174,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
         weight = tuple(Partition(a) for a in weight)
         if shape.size() != sum(a.size() for a in weight):
             raise ValueError("the sizes of shapes and sequence of weights do not match")
-        return super(LittlewoodRichardsonTableaux, cls).__classcall__(cls, shape, weight)
+        return super().__classcall__(cls, shape, weight)
 
     def __init__(self, shape, weight):
         r"""
@@ -193,7 +193,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
         self._shape = shape
         self._weight = weight
         self._heights = [a.length() for a in self._weight]
-        super(LittlewoodRichardsonTableaux, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """

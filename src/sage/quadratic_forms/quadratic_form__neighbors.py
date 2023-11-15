@@ -389,8 +389,7 @@ def orbits_lines_mod_p(self, p):
     # but in gap we act from the right!! --> transpose
     gens = self.automorphism_group().gens()
     gens = [g.matrix().transpose().change_ring(GF(p)) for g in gens]
-    orbs = libgap.function_factory(
-    """function(gens, p)
+    orbs = libgap.function_factory("""function(gens, p)
         local one, G, reps, V, n, orb;
         one:= One(GF(p));
         G:=Group(List(gens, g -> g*one));

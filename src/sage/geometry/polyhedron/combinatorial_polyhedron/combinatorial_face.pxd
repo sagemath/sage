@@ -1,8 +1,8 @@
 cimport cython
 from sage.structure.sage_object cimport SageObject
-from .list_of_faces             cimport ListOfFaces
-from .face_data_structure       cimport face_t
-from .face_iterator             cimport FaceIterator
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces             cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator             cimport FaceIterator
 
 @cython.final
 cdef class CombinatorialFace(SageObject):
@@ -31,7 +31,7 @@ cdef class CombinatorialFace(SageObject):
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
     cdef ListOfFaces atoms, coatoms
 
-    cpdef dimension(self)
+    cpdef dimension(self) noexcept
     cdef size_t n_atom_rep(self) except -1
     cdef size_t set_coatom_rep(self) except -1
     cdef size_t set_atom_rep(self) except -1

@@ -327,7 +327,10 @@ Pyright
 
 - Tox: Run ``./sage -tox -e pyright path/to/the/file.py``
 
-- Manual: Run ``pyright path/to/the/file.py``
+- Manual: Run ``pyright path/to/the/file.py``. If you want to check the whole Sage library, you most likely run out of memory with the default settings.
+  You can use the following command to check the whole library::
+
+    NODE_OPTIONS="--max-old-space-size=8192" pyright
 
 - VS Code: Install the `Pylance <https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance>`__ extension.
 

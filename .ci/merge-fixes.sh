@@ -14,10 +14,10 @@ else
     git tag -f test_base
     git commit -q -m "Uncommitted changes" --no-allow-empty -a
     for a in $PRs; do
+        git fetch --unshallow --all > /dev/null 2>&1 && echo "Unshallowed."
         echo "::group::Merging PR https://github.com/$REPO/pull/$a"
         git tag -f test_head
         $GH pr checkout -b pr-$a $a
-        git fetch --unshallow --all
         git checkout -q test_head
         if git merge --no-edit --squash --allow-unrelated-histories -q pr-$a; then
             echo "::endgroup::"
