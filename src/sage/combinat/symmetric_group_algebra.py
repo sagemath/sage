@@ -739,14 +739,15 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             from sage.combinat.rsk import RSK_inverse
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
             G = self.basis().keys()
-            one = self.base_ring().one()
+            R = self.base_ring()
+            one = R.one()
             # check if the KL polynomials can be computed using ``coxeter3``
             try:
                 from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
             except ImportError:
                 # Falback to using the KL polynomial
                 from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
-                q = PolynomialRing(self.base_ring(), 'q').gen()
+                q = PolynomialRing(QQ, 'q').gen()
                 KLG = SymmetricGroup(self.n)
                 self._cellular_KL = KazhdanLusztigPolynomial(KLG, q)
                 polyfunc = self._cellular_KL.P
@@ -758,7 +759,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             def func(S, T, mult=None):
                 w = KLG.from_reduced_word(RSK_inverse(T, S, output="permutation").reduced_word())
                 bruhat = RecursivelyEnumeratedSet([w], lambda u: u.bruhat_lower_covers(), structure='graded')
-                return self.element_class(self, {G.from_reduced_word(v.reduced_word()): c(q=one)
+                return self.element_class(self, {G.from_reduced_word(v.reduced_word()): R(c(q=one))
                                                  for v in bruhat if (c := polyfunc(v, w))})
 
         else:
