@@ -4477,80 +4477,130 @@ class Graph(GenericGraph):
         return len(even) == self.order()
 
     def is_valid_hom(G, H, hom):
-    r"""
-    Check if `hom` is a valid homomorphism from `G` to `H`.
-
-    INPUT:
-
-    - ``G`` -- a Sage graph
-
-    - ``H`` -- a Sage graph, as target of the homomorphism
-
-    - ``hom`` -- a graph homomorphism
-
-    OUTPUT:
-
-    - `True` if `hom` is a valid homomorphism from `G` to `H`, `False` otherwise
-
-    EXAMPLES::
-
-        sage: Petersen = graphs.PetersenGraph()
-        sage: K3 = graphs.CompleteGraph(3)
-        sage: hom = Petersen.has_homomorphism_to(K3); hom
-        {0: 0, 1: 1, 2: 2, 3: 0, 4: 2, 5: 1, 6: 0, 7: 0, 8: 2, 9: 1}
-        sage: is_valid_hom(P, K3, hom)
-        True
-    """
-    if not isinstance(G, Graph):
-        raise ValueError("the first argument must be a sage Graph")
-    if not isinstance(H, Graph):
-        raise ValueError("the second argument must be a sage Graph")
-
-    G._scream_if_not_simple()
-    H._scream_if_not_simple()
-
-    return all(H.has_edge(hom[u], hom[v]) for (u, v) in G.edges(labels=False))
-
-    def enum_homs(bag, target_graph): # TODO ask better approach or algo
         r"""
-        Enumerate all graph homomorphisms from vertices of `bag` to `target_graph`
+        Check if `hom` is a valid homomorphism from `G` to `H`.
+
+        INPUT:
+
+        - ``G`` -- a Sage graph
+
+        - ``H`` -- a Sage graph, as target of the homomorphism
+
+        - ``hom`` -- a graph homomorphism
+
+        OUTPUT:
+
+        - `True` if `hom` is a valid homomorphism from `G` to `H`, `False` otherwise
+
+        EXAMPLES::
+
+            sage: Petersen = graphs.PetersenGraph()
+            sage: K3 = graphs.CompleteGraph(3)
+            sage: hom = Petersen.has_homomorphism_to(K3); hom
+            {0: 0, 1: 1, 2: 2, 3: 0, 4: 2, 5: 1, 6: 0, 7: 0, 8: 2, 9: 1}
+            sage: is_valid_hom(P, K3, hom)
+            True
         """
-        homs = deque()
+        if not isinstance(G, Graph):
+            raise ValueError("the first argument must be a sage Graph")
+        if not isinstance(H, Graph):
+            raise ValueError("the second argument must be a sage Graph")
 
-        sorted_H = sorted(target_graph)
+        G._scream_if_not_simple()
+        H._scream_if_not_simple()
 
-        for bag_vtx in bag:
-            hom_pairs = []
-            for target_vtx in sorted_H:
-                hom_pairs.append({bag_vtx, target_vtx})
+        return all(H.has_edge(hom[u], hom[v]) for (u, v) in G.edges(labels=False))
 
-            homs.append(hom_pairs)
+    def enumerate_mappings(bag, target_graph):
+        r"""
+        Enumerate all mappings from vertices of `bag` (or elements of
+        thecollection `bag`) to `target_graph`.
 
-        return homs
+        INPUT:
 
-    # def enumerate_functions(vertices, g):
-    #     # Initialize a queue to store partial and complete mappings from 'vertices' to 'g'
-    #     mappings_queue = deque([[]])
+        - ``bag`` -- a bag of a tree decomposition; though any list suffices
 
-    #     # Iterate through each vertex in the input set 'vertices'
-    #     for vertex in vertices:
-    #         for _ in range(len(mappings_queue)):
-    #             current_mapping = mappings_queue.popleft()
+        - ``target_graph`` -- a Sage graph, which the function enumerates into
 
-    #             # For each vertex in 'g', create a new mapping by pairing it with 'vertex'
-    #             for target_vertex in range(g.num_verts()):
-    #                 extended_mapping = current_mapping + [(vertex, target_vertex)]
-    #                 mappings_queue.append(extended_mapping)
+        OUTPUT:
 
-    #     # Convert all the mappings in the queue to a list of mappings (or functions)
-    #     functions = list(mappings_queue)
+        - A list of lists of mappings from the vertices of `bag` to `target_graph`
 
-    #     return functions
+        EXAMPLES::
 
-    # # Example usage
-    # G = graphs.CompleteGraph(3)
-    # vertices = [0, 1, 2]
-    # functions = enumerate_functions(vertices, G)
+            sage: K3 = graphs.CompleteGraph(3)
+            sage: enumerate_mappings([4, 5], K3)
+            [[(4, 0), (5, 0)],
+            [(4, 0), (5, 1)],
+            [(4, 0), (5, 2)],
+            [(4, 1), (5, 0)],
+            [(4, 1), (5, 1)],
+            [(4, 1), (5, 2)],
+            [(4, 2), (5, 0)],
+            [(4, 2), (5, 1)],
+            [(4, 2), (5, 2)]]
+        """
+        if not isinstance(target_graph, Graph):
+            raise ValueError("the second argument must be a sage Graph")
+
+        target_graph._scream_if_not_simple()
+
+        mappings = deque([[]])
+
+        for bag_vertex in bag:
+            for _ in range(len(mappings)):
+                current_mapping = mappings.popleft()
+
+                # For each vertex in `target_graph`, create a new
+                # mapping by pairing/extending it with `bag_vertex`.
+                for target_vertex in target_graph:
+                    extended_mapping = current_mapping + [(bag_vertex, target_vertex)]
+                    mappings.append(extended_mapping)
+
+        return list(mappings)
+
+    def extract_homomorphisms(graph, target_graph, mappings):
+        r"""
+        Extract valid (partial) homomorphisms from `graph` to `target_graph`
+        in `mappings` returned by the function `enumerate_mappings`.
+
+        INPUT:
+
+        - ``bag`` -- a bag of a tree decomposition; though any list suffices
+
+        - ``target_graph`` -- a Sage graph, which the function enumerates into
+
+        OUTPUT:
+
+        - A list of lists of mappings from the vertices of `bag` to `target_graph`
+
+        EXAMPLES::
+
+            sage: K2 = graphs.CompleteGraph(2)
+            sage: K2.relabel({0: 4, 1: 5})
+            sage: K3 = graphs.CompleteGraph(3)
+            sage: enum = enumerate_mappings(K2, K3)
+            sage: extract_homomorphisms(K2, K3, enum)
+            [[(4, 0), (5, 1)],
+            [(4, 0), (5, 2)],
+            [(4, 1), (5, 0)],
+            [(4, 1), (5, 2)],
+            [(4, 2), (5, 0)],
+            [(4, 2), (5, 1)]]
+        """
+        valid_mappings = []
+        
+        for a_map in mappings:
+            edges = [pair[0] for pair in a_map]
+            mapped_edges = [pair[1] for pair in a_map]
+
+            induced_subgraph = graph.subgraph(edges)
+            mapped_induced_subgraph = target_graph.subgraph(mapped_edges)
+                
+            if induced_subgraph.has_homomorphism_to(mapped_induced_subgraph):
+                valid_mappings.append(a_map)
+
+        return valid_mappings
 
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
