@@ -32,11 +32,11 @@ debugger.
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from .data_structures cimport *
-from .automorphism_group_canonical_label cimport (
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+from sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label cimport (
     get_aut_gp_and_can_lab, aut_gp_and_can_lab,
     deallocate_agcl_output)
-from .double_coset cimport double_coset
+from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset
 from sage.rings.integer cimport Integer
 
 
@@ -388,7 +388,7 @@ class PythonObjectWrapper:
         self.rari_fn = rari_fn
         self.cs_fn = cs_fn
 
-cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S):
+cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S) noexcept:
     """
     Python conversion of all_children_are_equivalent function.
     """
@@ -397,7 +397,7 @@ cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S):
     PS_copy_from_to(PS, Py_PS.c_ps)
     return S_obj.acae_fn(Py_PS, S_obj.obj)
 
-cdef int refine_and_return_invariant_python(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_and_return_invariant_python(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     """
     Python conversion of refine_and_return_invariant function.
     """
@@ -408,7 +408,7 @@ cdef int refine_and_return_invariant_python(PartitionStack *PS, void *S, int *ce
     cdef list ctrb_py = [cells_to_refine_by[i] for i from 0 <= i < ctrb_len]
     return S_obj.rari_fn(Py_PS, S_obj.obj, ctrb_py)
 
-cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     """
     Python conversion of compare_structures function.
     """

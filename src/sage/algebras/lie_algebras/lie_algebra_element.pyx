@@ -124,7 +124,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         return codomain.sum(base_map(c) * t._im_gens_(codomain, im_gens, names)
                             for t, c in self._monomial_coefficients.items())
 
-    cpdef lift(self):
+    cpdef lift(self) noexcept:
         """
         Lift ``self`` to the universal enveloping algebra.
 
@@ -275,7 +275,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         """
         return bool(self.value)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add ``self`` and ``rhs``.
 
@@ -288,7 +288,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         """
         return type(self)(self._parent, self.value + right.value)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract ``self`` and ``rhs``.
 
@@ -376,7 +376,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         """
         return self * (~x)
 
-    cpdef _acted_upon_(self, scalar, bint self_on_left):
+    cpdef _acted_upon_(self, scalar, bint self_on_left) noexcept:
         """
         Return the action of a scalar on ``self``.
 
@@ -572,7 +572,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         """
         return self._parent.module()(self.value.to_vector(sparse=sparse))
 
-    cpdef dict monomial_coefficients(self, bint copy=True):
+    cpdef dict monomial_coefficients(self, bint copy=True) noexcept:
         r"""
         Return a dictionary whose keys are indices of basis elements
         in the support of ``self`` and whose values are the
@@ -605,7 +605,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             return dict(self._monomial_coefficients)
         return self._monomial_coefficients
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add ``self`` and ``rhs``.
 
@@ -631,7 +631,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             ret._monomial_coefficients = mc
         return ret
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract ``self`` and ``rhs``.
 
@@ -657,7 +657,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             ret._monomial_coefficients = mc
         return ret
 
-    cpdef _acted_upon_(self, scalar, bint self_on_left):
+    cpdef _acted_upon_(self, scalar, bint self_on_left) noexcept:
         """
         Return the action of a scalar on ``self``.
 
@@ -757,7 +757,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
                                         scalar_mult='·',
                                         strip_one=True))
 
-    cpdef bracket(self, right):
+    cpdef bracket(self, right) noexcept:
         """
         Return the Lie bracket ``[self, right]``.
 
@@ -777,7 +777,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
 
     # We need this method because the LieAlgebra.bracket method (from the
     #   category) calls this, where we are guaranteed to have the same parent.
-    cpdef _bracket_(self, right):
+    cpdef _bracket_(self, right) noexcept:
         """
         Return the Lie bracket ``[self, right]``.
 
@@ -832,7 +832,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             if v != zero:
                 yield (I[i], v)
 
-    cpdef to_vector(self, bint sparse=False):
+    cpdef to_vector(self, bint sparse=False) noexcept:
         """
         Return ``self`` as a vector.
 
@@ -865,7 +865,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
         gens = UEA.gens()
         return UEA.sum(c * gens[i] for i, c in self.value.items())
 
-    cpdef dict monomial_coefficients(self, bint copy=True):
+    cpdef dict monomial_coefficients(self, bint copy=True) noexcept:
         """
         Return the monomial coefficients of ``self`` as a dictionary.
 
@@ -1072,7 +1072,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
                                   lambda t: "t" + unicode_superscript(t),
                                   unicode_art('⋅'), unicode_art('⊗'))
 
-    cpdef dict t_dict(self):
+    cpdef dict t_dict(self) noexcept:
         r"""
         Return the ``dict``, whose keys are powers of `t` and values are
         elements of the classical Lie algebra, of ``self``.
@@ -1088,7 +1088,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         """
         return self._t_dict.copy()
 
-    cpdef c_coefficient(self):
+    cpdef c_coefficient(self) noexcept:
         r"""
         Return the coefficient of `c` of ``self``.
 
@@ -1101,7 +1101,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         """
         return self._c_coeff
 
-    cpdef d_coefficient(self):
+    cpdef d_coefficient(self) noexcept:
         r"""
         Return the coefficient of `d` of ``self``.
 
@@ -1114,7 +1114,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         """
         return self._d_coeff
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Return the rich comparison of ``self`` with ``other``.
 
@@ -1177,7 +1177,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         """
         return bool(self._t_dict) or bool(self._c_coeff) or bool(self._d_coeff)
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         Add ``self`` and ``other``.
 
@@ -1193,7 +1193,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
                           self._c_coeff + rt._c_coeff,
                           self._d_coeff + rt._d_coeff)
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         """
         Subtract ``self`` and ``other``.
 
@@ -1217,7 +1217,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
                           self._c_coeff - rt._c_coeff,
                           self._d_coeff - rt._d_coeff)
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         Negate ``self``.
 
@@ -1232,7 +1232,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         return type(self)(self._parent, negate(self._t_dict),
                           -self._c_coeff, -self._d_coeff)
 
-    cpdef _acted_upon_(self, x, bint self_on_left):
+    cpdef _acted_upon_(self, x, bint self_on_left) noexcept:
         """
         Return ``self`` acted upon by ``x``.
 
@@ -1250,7 +1250,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
                           x * self._c_coeff,
                           x * self._d_coeff)
 
-    cpdef monomial_coefficients(self, bint copy=True):
+    cpdef monomial_coefficients(self, bint copy=True) noexcept:
         """
         Return the monomial coefficients of ``self``.
 
@@ -1280,7 +1280,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             d['d'] = self._d_coeff
         return d
 
-    cpdef bracket(self, right):
+    cpdef bracket(self, right) noexcept:
         """
         Return the Lie bracket ``[self, right]``.
 
@@ -1303,7 +1303,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             self, right = coercion_model.canonical_coercion(self, right)
         return self._bracket_(right)
 
-    cpdef _bracket_(self, y):
+    cpdef _bracket_(self, y) noexcept:
         """
         Return the Lie bracket ``[self, y]``.
 
@@ -1371,7 +1371,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         return type(self)(self._parent, d, c,
                           self._parent.base_ring().zero())
 
-    cpdef canonical_derivation(self):
+    cpdef canonical_derivation(self) noexcept:
         r"""
         Return the canonical derivation `d` applied to ``self``.
 
@@ -1511,7 +1511,7 @@ cdef class LieObject(SageObject):
     """
     Abstract base class for :class:`LieGenerator` and :class:`LieBracket`.
     """
-    cpdef tuple to_word(self):
+    cpdef tuple to_word(self) noexcept:
         """
         Return the word ("flattening") of ``self``.
 
@@ -1645,7 +1645,7 @@ cdef class LieGenerator(LieObject):
         """
         return im_gens[names.index(self._name)]
 
-    cpdef tuple to_word(self):
+    cpdef tuple to_word(self) noexcept:
         """
         Return the word ("flattening") of ``self``.
 
@@ -1831,7 +1831,7 @@ cdef class LieBracket(LieObject):
         return codomain.bracket(self._left._im_gens_(codomain, im_gens, names),
                                 self._right._im_gens_(codomain, im_gens, names))
 
-    cpdef lift(self, dict UEA_gens_dict):
+    cpdef lift(self, dict UEA_gens_dict) noexcept:
         """
         Lift ``self`` to the universal enveloping algebra.
 
@@ -1860,7 +1860,7 @@ cdef class LieBracket(LieObject):
 
         return l*r - r*l
 
-    cpdef tuple to_word(self):
+    cpdef tuple to_word(self) noexcept:
         """
         Return the word ("flattening") of ``self``.
 

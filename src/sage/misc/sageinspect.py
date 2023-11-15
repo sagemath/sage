@@ -1807,14 +1807,17 @@ def formatannotation(annotation, base_module=None):
     return repr(annotation)
 
 
+_formatannotation = formatannotation
+
+
 def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        kwonlyargs=(), kwonlydefaults=None, annotations={},
                        formatarg=str,
-                       formatvarargs=lambda name: '*' + name,
-                       formatvarkw=lambda name: '**' + name,
-                       formatvalue=lambda value: '=' + repr(value),
-                       formatreturns=lambda text: ' -> ' + text,
-                       formatannotation=formatannotation):
+                       formatvarargs=None,
+                       formatvarkw=None,
+                       formatvalue=None,
+                       formatreturns=None,
+                       formatannotation=None):
     """
     Format an argument spec from the values returned by getfullargspec.
 
@@ -1843,6 +1846,17 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         sage: sage_formatargspec(args, defaults=defaults)
         '(a, b, c=3)'
     """
+    if formatvarargs is None:
+        formatvarargs = lambda name: '*' + name
+    if formatvarkw is None:
+        formatvarkw = lambda name: '**' + name
+    if formatvalue is None:
+        formatvalue = lambda value: '=' + repr(value)
+    if formatreturns is None:
+        formatreturns = lambda text: ' -> ' + text
+    if formatannotation is None:
+        formatannotation = _formatannotation
+
     def formatargandannotation(arg):
         result = formatarg(arg)
         if arg in annotations:
@@ -2383,7 +2397,7 @@ def sage_getsourcelines(obj):
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
-         '    cpdef object pyobject(self):\n']
+         '    cpdef object pyobject(self) noexcept:\n']
         sage: lines[-1]    # last line                                                  # needs sage.symbolic
         '        return S\n'
 

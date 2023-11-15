@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.groups sage.rings.number_field
 """
 Galois Groups of Number Fields
 

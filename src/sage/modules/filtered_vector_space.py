@@ -1002,7 +1002,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: v = [(1,0), (0,1)]
             sage: F1 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=QQ)
             sage: F2 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=RDF)
-            sage: F1 + F2
+            sage: F1 + F2                                                               # needs scipy
             RDF^4 >= RDF^2 >= 0
         """
         from sage.structure.element import get_coercion_model
@@ -1067,7 +1067,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: v = [(1,0), (0,1)]
             sage: F1 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=QQ)
             sage: F2 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=RDF)
-            sage: F1 * F2
+            sage: F1 * F2                                                               # needs scipy
             RDF^4 >= RDF^3 >= RDF^1 >= 0
         """
         V = self

@@ -97,7 +97,7 @@ class TernaryQF(SageObject):
         if len(v) != 6:
             # Check we have six coefficients
             raise ValueError("Ternary quadratic form must be given by a list of six coefficients")
-        self._a, self._b, self._c, self._r, self._s, self._t = [ZZ(x) for x in v]
+        self._a, self._b, self._c, self._r, self._s, self._t = (ZZ(x) for x in v)
         self._automorphisms = None
         self._number_of_automorphisms = None
 
@@ -115,6 +115,20 @@ class TernaryQF(SageObject):
             (1, 2, 3, 4, 5, 6)
         """
         return self._a, self._b, self._c, self._r, self._s, self._t
+
+    def __hash__(self):
+        """
+        Returns a hash for self.
+
+        EXAMPLES::
+
+            sage: Q = TernaryQF([1, 2, 3, 4, 5, 6])
+            sage: Q.__hash__()
+            5881802312257552497  # 64-bit
+            1770036893           # 32-bit
+        """
+
+        return hash(self.coefficients())
 
     def coefficient(self, n):
         r"""

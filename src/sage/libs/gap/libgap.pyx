@@ -213,9 +213,9 @@ AUTHORS:
 
 from pathlib import Path
 
-from .gap_includes cimport *
-from .util cimport *
-from .element cimport *
+from sage.libs.gap.gap_includes cimport *
+from sage.libs.gap.util cimport *
+from sage.libs.gap.element cimport *
 
 from sage.cpython.string cimport str_to_bytes
 from sage.structure.parent cimport Parent

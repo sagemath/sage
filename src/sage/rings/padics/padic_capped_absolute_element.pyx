@@ -25,7 +25,7 @@ include "CA_template.pxi"
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
-cdef extern from "sage/rings/padics/transcendantal.c":
+cdef extern from "transcendantal.c":
     cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
@@ -97,13 +97,13 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         """
         return self.lift_c()
 
-    cdef lift_c(self):
+    cdef lift_c(self) noexcept:
         """
         Implementation of lift.
 
         TESTS::
 
-            sage: ZpCA(3,3)(1/4).lift() # indirect doctest
+            sage: ZpCA(3,3)(1/4).lift()  # indirect doctest
             7
         """
         cdef Integer ans = Integer.__new__(Integer)
@@ -117,24 +117,24 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         EXAMPLES::
 
             sage: R = ZpCA(5)
-            sage: pari(R(1777)) #indirect doctest
+            sage: pari(R(1777))  # indirect doctest                                     # needs sage.libs.pari
             2 + 5^2 + 4*5^3 + 2*5^4 + O(5^20)
-            sage: pari(R(0,0))
+            sage: pari(R(0,0))                                                          # needs sage.libs.pari
             O(5^0)
         """
         return self._to_gen()
 
-    cdef pari_gen _to_gen(self):
+    cdef pari_gen _to_gen(self) noexcept:
         """
         Converts this element to an equivalent pari element.
 
         EXAMPLES::
 
-            sage: R = ZpCA(5, 10); a = R(17); pari(a) #indirect doctest
+            sage: R = ZpCA(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^5)
-            sage: pari(R(0,5)).debug()
+            sage: pari(R(0,5)).debug()                                                  # needs sage.libs.pari
             [&=...] PADIC(lg=5):... (precp=0,valp=5):... ... ... ...
                 p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
@@ -477,6 +477,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest

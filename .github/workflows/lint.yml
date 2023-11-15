@@ -33,7 +33,8 @@ jobs:
         python-version: 3.9
 
     - name: Install dependencies
-      run: pip install tox relint
+      id: deps
+      run: pip install tox
 
     # Manually register problem matcher as long as https://github.com/ChartBoost/ruff-action/issues/7 is not implemented
     - name: Register problem matcher
@@ -90,7 +91,9 @@ jobs:
           args: --ignore I001,PLR2004,F401,E741,F821,PLR0912,PLR0913,E402,PLR0915,PLW2901,PLR5501,PLR0911,E731,F405,PLR1714,F403,PLR0402,PLW0603,E713,F841,PLW0602,E714,PLR1711,PLR1701,PLW3301,E721,PLW1510,F811,PLW0120,PLC0414,E743,F541,PLE0101,PLR0124,PLW0127,PLW1508,PLC3002,E742,PLE0302,E701,F402,F823,PLC0208,PLW0129,E902
 
     - name: Code style check with relint
+      if: always() && steps.deps.outcome == 'success'
       run: tox -e relint -- src/sage/
 
     - name: Validate docstring markup as RST
+      if: always() && steps.deps.outcome == 'success'
       run: tox -e rst

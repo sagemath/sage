@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .c_graph cimport CGraph, CGraphBackend
+from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
 from sage.data_structures.binary_matrix cimport binary_matrix_t
 
 cdef class DenseGraph(CGraph):
@@ -21,5 +21,5 @@ cdef int copy_dense_graph(DenseGraph dest, DenseGraph src) except -1
 
 cdef class DenseGraphBackend(CGraphBackend):
     cdef DenseGraph _cg
-    cdef inline CGraph cg(self):
+    cdef inline CGraph cg(self) noexcept:
         return <CGraph> self._cg

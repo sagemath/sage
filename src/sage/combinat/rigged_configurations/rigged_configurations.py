@@ -358,7 +358,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         if not cartan_type.classical().is_simply_laced():
             return RCNonSimplyLaced(cartan_type, B)
 
-        return super(RiggedConfigurations, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, B):
         r"""
@@ -476,7 +476,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         """
         if key == 'element_ascii_art':
             return self.options.element_ascii_art
-        return super(RiggedConfigurations, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def __iter__(self):
         """
@@ -1062,7 +1062,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
             for B in crystals:
                 dims += B.dims
             return RiggedConfigurations(ct, dims)
-        return super(RiggedConfigurations, self).tensor(*crystals, **options)
+        return super().tensor(*crystals, **options)
 
     Element = KRRCSimplyLacedElement
 
@@ -1093,7 +1093,7 @@ class RCNonSimplyLaced(RiggedConfigurations):
 
         # Standardize B input into a tuple of tuples
         B = tuple(map(tuple, B))
-        return super(RCNonSimplyLaced, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, dims):
         """
