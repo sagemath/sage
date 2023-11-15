@@ -36,7 +36,7 @@ cdef class Matrix_cmr_sparse(Matrix_sparse):
 
     EXAMPLES::
 
-        sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+        sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_sparse, Matrix_cmr_chr_sparse
         sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
         ....:                           [[1, 2, 3], [4, 0, 6]])
         sage: isinstance(M, Matrix_cmr_sparse)

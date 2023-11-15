@@ -454,8 +454,8 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
             [1 0 1 1 0 1]
             [1 0 0 1 1 0]
             [1 1 0 0 1 0]
-            sage: result, certificate = M.is_totally_unimodular(certificate = True); result
-            ....: , certificate
+            sage: result, certificate = M.is_totally_unimodular(certificate = True)
+            sage: result, certificate
             (True, SeriesParallelReductionNode (5×6))
             sage: certificate.core()
             [1 1 1 1 1]
