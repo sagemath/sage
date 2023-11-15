@@ -4,7 +4,6 @@ from sage.rings.integer cimport Integer
 from sage.rings.number_field.number_field_element_base cimport NumberFieldElement_base
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.structure.parent cimport Parent
-from sage.structure.parent_base cimport ParentWithBase
 from sage.libs.ntl.types cimport ZZ_c, ZZX_c
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ

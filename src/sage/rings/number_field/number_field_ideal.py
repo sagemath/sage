@@ -273,6 +273,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: K.<I>=QQ[i]
             sage: A = K.ideal([5, 2 + I])
             sage: B = K.ideal([13, 5 + 12*I])
@@ -804,11 +805,11 @@ class NumberFieldIdeal(Ideal_generic):
             sage: R.<x> = QQ['x']
             sage: L.<b> = NumberField(x^10 - 10*x^8 - 20*x^7 + 165*x^6 - 12*x^5 - 760*x^3 + 2220*x^2 + 5280*x + 7744)
             sage: z_x = -96698852571685/2145672615243325696*b^9 + 2472249905907/195061146840302336*b^8 + 916693155514421/2145672615243325696*b^7 + 1348520950997779/2145672615243325696*b^6 - 82344497086595/12191321677518896*b^5 + 2627122040194919/536418153810831424*b^4 - 452199105143745/48765286710075584*b^3 + 4317002771457621/536418153810831424*b^2 + 2050725777454935/67052269226353928*b + 3711967683469209/3047830419379724
-            sage: P = EllipticCurve(L, '57a1').lift_x(z_x) * 3
-            sage: ideal = L.fractional_ideal(P[0], P[1])
-            sage: ideal.is_principal(proof=False)
+            sage: P = EllipticCurve(L, '57a1').lift_x(z_x) * 3                          # needs sage.schemes
+            sage: ideal = L.fractional_ideal(P[0], P[1])                                # needs sage.schemes
+            sage: ideal.is_principal(proof=False)                                       # needs sage.schemes
             True
-            sage: len(ideal.gens_reduced(proof=False))
+            sage: len(ideal.gens_reduced(proof=False))                                  # needs sage.schemes
             1
         """
         if len(self.gens()) <= 1:
