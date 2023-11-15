@@ -13,8 +13,8 @@
 # distutils: extra_link_args = FFLASFFPACK_LIBEXTRA
 # distutils: language = c++ 
 
-from .givaro cimport Modular_double, Modular_float, Dense, Sparse
-from .givaro cimport givvector, Poly1Dom
+from sage.libs.linbox.givaro cimport Modular_double, Modular_float, Dense, Sparse
+from sage.libs.linbox.givaro cimport givvector, Poly1Dom
 from libcpp.vector cimport vector
 from libcpp cimport bool
 ctypedef Poly1Dom[Modular_double, Dense] PolynomialRing_Modular_double

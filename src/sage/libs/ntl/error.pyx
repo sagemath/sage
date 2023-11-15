@@ -28,8 +28,8 @@ AUTHOR:
 #*****************************************************************************
 
 
-from .ntl_tools cimport ErrorMsgCallback
-from ...cpython.string cimport char_to_str
+from sage.libs.ntl.ntl_tools cimport ErrorMsgCallback
+from sage.cpython.string cimport char_to_str
 
 
 class NTLError(RuntimeError):
