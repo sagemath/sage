@@ -2,6 +2,9 @@
     "sage_setup.clean": {
         "failed": true
     },
+    "sage.combinat.cluster_algebra_quiver.quiver": {
+        "failed": true
+    },
     "sage.groups.matrix_gps.finitely_generated_gap": {
         "failed": true
     },
