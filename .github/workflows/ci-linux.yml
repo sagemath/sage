@@ -132,7 +132,7 @@ jobs:
          "opensuse-tumbleweed",
          "debian-bullseye-i386"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      max_parallel: 10
+      max_parallel: 8
 
   minimal-pre:
     if: ${{ success() || failure() }}
@@ -193,7 +193,8 @@ jobs:
       tox_packages_factors: >-
           ["maximal"]
       docker_targets: "with-targets-optional"
-      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-o]))'
+      # [0-9a-o] excludes _, in particular package _develop
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-9a-o]))'
       max_parallel: 10
 
   optional-p-z:
@@ -208,6 +209,7 @@ jobs:
       tox_packages_factors: >-
           ["maximal"]
       docker_targets: "with-targets-optional"
+      # [0-9a-o] excludes _, in particular package _develop
       targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
       max_parallel: 10
 
@@ -223,7 +225,7 @@ jobs:
       tox_packages_factors: >-
           ["maximal"]
       docker_targets: "with-targets-optional"
-      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-o]))'
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-9a-o]))'
       max_parallel: 10
 
   experimental-p-z:
