@@ -105,7 +105,7 @@ class Gamma_class(CongruenceSubgroup):
 
         EXAMPLES::
 
-            sage: Gamma(3) == SymmetricGroup(8)
+            sage: Gamma(3) == SymmetricGroup(8)                                         # needs sage.groups
             False
             sage: Gamma(3) == Gamma1(3)
             False
@@ -113,7 +113,7 @@ class Gamma_class(CongruenceSubgroup):
             True
             sage: Gamma(5) == Gamma(5)
             True
-            sage: Gamma(3) == Gamma(3).as_permutation_group()
+            sage: Gamma(3) == Gamma(3).as_permutation_group()                           # needs sage.groups
             True
         """
         if is_Gamma(other):

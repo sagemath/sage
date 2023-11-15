@@ -289,7 +289,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
             # Check O'Meara's condition (ii) when appropriate
             if norm_list[i + 1] % (4 * norm_list[i]) == 0:
                 if self_hasse_chain_list[i] * hilbert_symbol(norm_list[i] * other_chain_det_list[i], -self_chain_det_list[i], 2) \
-                       != other_hasse_chain_list[i] * hilbert_symbol(norm_list[i], -other_chain_det_list[i], 2):      # Nipp conditions
+                   != other_hasse_chain_list[i] * hilbert_symbol(norm_list[i], -other_chain_det_list[i], 2):      # Nipp conditions
                     return False
 
         # All tests passed for the prime 2.

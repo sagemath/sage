@@ -358,7 +358,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
                 return parent.base()(base(self._backend))
         raise NotImplementedError("cannot cast %s to the base" % self)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         r"""
         Compare this element with ``right`` according to
         the rich comparison operator ``op``.
@@ -386,7 +386,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         """
         return left._backend._richcmp_(backend_element(right), op)
 
-    cpdef _add_(self,other):
+    cpdef _add_(self,other) noexcept:
         r"""
         Return the sum of this element and ``other``.
 
@@ -406,7 +406,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = self._backend + (<RingExtensionElement>other)._backend
         return ans
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         r"""
         Return the opposite of this element.
 
@@ -426,7 +426,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = -self._backend
         return ans
 
-    cpdef _sub_(self,other):
+    cpdef _sub_(self,other) noexcept:
         r"""
         Return the difference of this element and ``other``.
 
@@ -446,7 +446,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = self._backend - (<RingExtensionElement>other)._backend
         return ans
 
-    cpdef _mul_(self,other):
+    cpdef _mul_(self,other) noexcept:
         r"""
         Return the product of this element and ``other``.
 
@@ -466,7 +466,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = self._backend * (<RingExtensionElement>other)._backend
         return ans
 
-    cpdef _div_(self,other):
+    cpdef _div_(self,other) noexcept:
         r"""
         Return the quotient of this element by ``other``,
         considered as an element of the fraction field.
@@ -1033,7 +1033,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         base = (<RingExtension_generic>self._parent)._check_base(base)
         return self._vector(base)
 
-    cdef _vector(self, CommutativeRing base):
+    cdef _vector(self, CommutativeRing base) noexcept:
         r"""
         Return the vector of coordinates of this element over ``base``
         (in the basis output by the method :meth:`basis_over`).
@@ -1198,7 +1198,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             raise ValueError("the extension is not finite free")
         return self._matrix(base)
 
-    cdef _matrix(self, CommutativeRing base):
+    cdef _matrix(self, CommutativeRing base) noexcept:
         r"""
         Return the matrix of the multiplication by this element (in
         the basis output by :meth:`basis_over`).
@@ -1286,7 +1286,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             raise ValueError("the extension is not finite free")
         return self._trace(base)
 
-    cdef _trace(self, CommutativeRing base):
+    cdef _trace(self, CommutativeRing base) noexcept:
         r"""
         Return the trace of this element over ``base``.
 
@@ -1379,7 +1379,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             raise ValueError("the extension is not finite free")
         return self._norm(base)
 
-    cdef _norm(self, CommutativeRing base):
+    cdef _norm(self, CommutativeRing base) noexcept:
         r"""
         Return the norm of this element over ``base``.
 
@@ -1483,7 +1483,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         """
         return self.matrix(base).charpoly(var)
 
-    cpdef minpoly(self, base=None, var='x'):
+    cpdef minpoly(self, base=None, var='x') noexcept:
         r"""
         Return the minimal polynomial of this element over ``base``.
 

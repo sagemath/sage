@@ -75,7 +75,7 @@ already_pickled = { }
 already_unpickled = { }
 
 
-cdef _normalize_filename(s):
+cdef _normalize_filename(s) noexcept:
     """
     Append the .sobj extension to a filename if it doesn't already have it.
     """
@@ -1130,7 +1130,8 @@ def unpickle_all(target, debug=False, run_test_suite=False):
         Successfully unpickled 1 objects.
         Failed to unpickle 0 objects.
     """
-    import os.path, tarfile
+    import os.path
+    import tarfile
 
     ok_count = 0
     fail_count = 0

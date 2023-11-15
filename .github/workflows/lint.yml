@@ -33,13 +33,17 @@ jobs:
         python-version: 3.9
 
     - name: Install dependencies
-      run: pip install tox pycodestyle relint
+      id: deps
+      run: pip install tox
 
     - name: Code style check with pycodestyle
+      if: always() && steps.deps.outcome == 'success'
       run: tox -e pycodestyle-minimal
 
     - name: Code style check with relint
+      if: always() && steps.deps.outcome == 'success'
       run: tox -e relint -- src/sage/
 
     - name: Validate docstring markup as RST
+      if: always() && steps.deps.outcome == 'success'
       run: tox -e rst

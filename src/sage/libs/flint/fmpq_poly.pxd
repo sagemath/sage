@@ -187,5 +187,5 @@ cdef extern from "flint_wrap.h":
     void fmpq_poly_tanh_series(fmpq_poly_t, const fmpq_poly_t, slong)
 
 # since the fmpq_poly header seems to be lacking this inline function
-cdef inline sage_fmpq_poly_max_limbs(const fmpq_poly_t poly):
+cdef inline sage_fmpq_poly_max_limbs(const fmpq_poly_t poly) noexcept:
     return _fmpz_vec_max_limbs(fmpq_poly_numref(poly), fmpq_poly_length(poly))
