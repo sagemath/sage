@@ -7,8 +7,14 @@ on:
       - 'develop'
   push:
     tags:
-      # Create images on pushing a tag
-      - '*'
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
+
   schedule:
     # Recover failed runs each Tuesday and Thursday at one o'clock
     - cron: '0 1 * * 2,4'
