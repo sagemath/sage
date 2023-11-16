@@ -46,7 +46,7 @@ cdef extern from "integer_fake.h":
     bint unlikely(bint c)       # Defined by Cython
 
 
-cdef inline bint is_Integer(x):
+cdef inline bint is_Integer(x) noexcept:
     global Integer
     if unlikely(Integer is NULL):
         import sage.rings.integer

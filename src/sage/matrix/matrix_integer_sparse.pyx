@@ -53,15 +53,15 @@ from sage.libs.gmp.mpz cimport *
 
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
-from .matrix cimport Matrix
+from sage.matrix.matrix cimport Matrix
 
-from .args cimport SparseEntry, MatrixArgs_init
-from .matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_get_mpz
 from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, fmpz_poly_set_coeff_mpz, _fmpz_poly_set_length
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
-from .matrix_modn_sparse cimport Matrix_modn_sparse
+from sage.matrix.matrix_modn_sparse cimport Matrix_modn_sparse
 from sage.structure.element cimport Element
 
 import sage.matrix.matrix_space as matrix_space
@@ -109,10 +109,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             if z:
                 mpz_vector_set_entry(&self._matrix[se.i], se.j, z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
         mpz_vector_set_entry(&self._matrix[i], j, (<Integer> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         cdef Integer x
         x = Integer()
         mpz_vector_get_entry(x.value, &self._matrix[i], j)
@@ -159,7 +159,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
     # def _multiply_classical(left, matrix.Matrix _right):
     # def _list(self):
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -181,7 +181,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             mpz_vector_scalar_multiply(M_row, self_row, _x.value)
         return M
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
@@ -195,7 +195,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         mpz_clear(mul)
         return M
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
@@ -230,7 +230,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         self.cache('dict', d)
         return d
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right) noexcept:
         """
         Return the product of the sparse integer matrices
         ``self`` and ``_right``.
@@ -380,7 +380,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         """
         return self._mod_int_c(modulus)
 
-    cdef _mod_int_c(self, mod_int p):
+    cdef _mod_int_c(self, mod_int p) noexcept:
         cdef Py_ssize_t i, j
         cdef Matrix_modn_sparse res
         cdef mpz_vector* self_row
@@ -421,7 +421,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             ...
             ZeroDivisionError: The modulus cannot be zero
         """
-        from .misc import matrix_integer_sparse_rational_reconstruction
+        from sage.matrix.misc import matrix_integer_sparse_rational_reconstruction
         return matrix_integer_sparse_rational_reconstruction(self, N)
 
     def _right_kernel_matrix(self, **kwds):
@@ -985,7 +985,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         .. NOTE::
 
-           In Sage one can also write ``A \ B`` for
+           DEPRECATED. In Sage one can also write ``A \ B`` for
            ``A.solve_right(B)``, i.e., Sage implements the "the
            MATLAB/Octave backslash operator".
 
@@ -1019,14 +1019,14 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
             sage: A = matrix(ZZ, 3, [1,2,3,-1,2,5,2,3,1], sparse=True)
             sage: b = vector(ZZ, [1,2,3])
-            sage: x = A \ b
+            sage: x = A.solve_right(b)
             sage: x
             (-13/12, 23/12, -7/12)
             sage: A * x
             (1, 2, 3)
 
             sage: u = matrix(ZZ, 3, 2, [0,1,1,1,0,2])
-            sage: x = A \ u
+            sage: x = A.solve_right(u)
             sage: x
             [-7/12  -1/6]
             [ 5/12   5/6]
@@ -1037,7 +1037,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 2]
         """
         if check_rank and self.rank() < self.nrows():
-            from .matrix2 import NotFullRankError
+            from sage.matrix.matrix2 import NotFullRankError
             raise NotFullRankError
 
         if self.base_ring() != B.base_ring():
@@ -1230,7 +1230,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         if self._nrows == 0 or self._ncols == 0:
             raise ValueError("not implemented for nrows=0 or ncols=0")
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
         cdef Matrix_integer_dense B

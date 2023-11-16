@@ -40,7 +40,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from collections import OrderedDict
 from itertools import repeat, chain, product
 
 from sage.misc.cachefunc import cached_method
@@ -633,14 +632,14 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: x = b*a*d*a*c*b
             sage: M._compute_dependence_stack(x)
             ({a, b, c, d},
-             OrderedDict([(a, [False, False, True, True, False]),
-                          (b, [True, False, False, False, True]),
-                          (c, [True, False, False, False]),
-                          (d, [False, False, True, False])]))
+             {a: [False, False, True, True, False],
+              b: [True, False, False, False, True],
+              c: [True, False, False, False],
+              d: [False, False, True, False]})
         """
         independence = self._independence
         generators_set = set(e for e, _ in x)
-        stacks = OrderedDict(sorted((g, []) for g in generators_set))
+        stacks = dict(sorted((g, []) for g in generators_set))
         for generator, times in reversed(list(x)):
             stacks[generator].extend(repeat(True, times))
             for other_gen in generators_set:

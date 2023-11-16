@@ -98,7 +98,8 @@ def build_many(target, args, processes=None):
 
     This is a simplified version of ``multiprocessing.Pool.map`` from the
     Python standard library which avoids a couple of its pitfalls.  In
-    particular, it can abort (with a ``RuntimeError``) without hanging if one of
+    particular, it can abort (with a :class:`RuntimeError`)
+    without hanging if one of
     the worker processes unexpectedly dies.  It also has semantics equivalent
     to ``maxtasksperchild=1``; that is, one process is started per argument.
     As such, this is inefficient for processing large numbers of fast tasks,
@@ -175,8 +176,8 @@ def build_many(target, args, processes=None):
 
     Similarly, if one of the worker processes dies unexpectedly otherwise exits
     non-zero (e.g. killed by a signal) any in-progress tasks will be completed
-    gracefully, but then a ``RuntimeError`` is raised and pending tasks are not
-    started::
+    gracefully, but then a :class:`RuntimeError` is raised and pending tasks
+    are not started::
 
         sage: def target(N):
         ....:     import time, os, signal

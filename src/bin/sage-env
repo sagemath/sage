@@ -121,7 +121,8 @@ if [ "$SAGE_ENV_SOURCED" = "$SAGE_ENV_VERSION" ]; then
     # Already sourced, nothing to do.
     return 0
 fi
-export SAGE_ENV_SOURCED="$SAGE_ENV_VERSION"
+# Set SAGE_ENV_SOURCED to the appropriate value at the end of this file, once
+# $SAGE_LOCAL, $SAGE_VENV, $SAGE_SRC have been set.
 
 # The compilers are set in order of priority by
 # 1) environment variables
@@ -373,7 +374,14 @@ if [ -n "$PYTHONHOME" ]; then
 fi
 
 if [ -n "$SAGE_LOCAL" ]; then
-    LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    # On OS X, test whether "ld-classic" is present in the installed
+    # version of the command-line tools. If so, we add "-ld_classic"
+    # to LD_FLAGS. See #36599.
+    if [ "$UNAME" = "Darwin" ] && [ -x "$(xcode-select -p)/usr/bin/ld-classic" ] ; then
+        LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-ld_classic,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    else
+        LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    fi
     if [ "$UNAME" = "Linux" ]; then
         LDFLAGS="-Wl,-rpath-link,$SAGE_LOCAL/lib $LDFLAGS"
     fi
@@ -643,3 +651,7 @@ fi
 # our doctests predictable (which was the status quo with earlier
 # versions of debugpy).
 export PYDEVD_DISABLE_FILE_VALIDATION=1
+
+# Finally, set SAGE_ENV_SOURCED as evidence that this script has been
+# run successfully.
+export SAGE_ENV_SOURCED="6:$SAGE_LOCAL:$SAGE_VENV:$SAGE_SRC"

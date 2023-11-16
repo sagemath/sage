@@ -1466,8 +1466,8 @@ def OA_17_560():
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.database import OA_17_560
-        sage: OA = OA_17_560()                                                          # needs sage.rings.finite_rings
-        sage: is_orthogonal_array(OA,17,560,2)                                          # needs sage.rings.finite_rings
+        sage: OA = OA_17_560()                                                          # needs sage.rings.finite_rings sage.schemes
+        sage: is_orthogonal_array(OA,17,560,2)                                          # needs sage.rings.finite_rings sage.schemes
         True
 
     The design is available from the general constructor::
@@ -2127,7 +2127,7 @@ def QDM_21_5_1_1_1():
         [0,14,7,0,None]]
 
     for R in zip(*M):
-        a,b,c,d,e = [G(x) if x is not None else None for x in R]
+        a,b,c,d,e = (G(x) if x is not None else None for x in R)
         Mb.append([a,b,c,d,e])
 
         Mb.append([16*c,
@@ -2265,7 +2265,7 @@ def QDM_33_6_1_1_1():
 
     times4 = lambda x : None if x is None else 4*x
     for R in zip(*M):
-        a,b,c,d,e,f = [None if x is None else G(x) for x in R]
+        a,b,c,d,e,f = (None if x is None else G(x) for x in R)
         for i in range(5):
             Mb.append([a,b,c,d,e,f])
             a,b,c,d,e,f = map(times4,[e,a,b,c,d,f])
@@ -2504,7 +2504,6 @@ Vmt_vectors = {
     (3 ,6 ) : ((0,1,3,7),                               _ref_Handbook),
     (3 ,26) : ((0,1,3,8),                               _ref_Handbook),
     (3 ,32) : ((0,1,3,9),                               _ref_Handbook),
-    (3 ,6 ) : ((0,1,3,7),                               _ref_Handbook),
     (3 ,14) : ((0,1,4,13),                              _ref_Handbook),
     (3 ,24) : ((0,1,3,15),                              _ref_Handbook),
     (3 ,34) : ((0,1,3,7),                               _ref_Handbook),
@@ -3468,7 +3467,7 @@ def DM_39_6_1():
         for i in range(3):
             Mb.append([ a, b, c, d, e, f])
             Mb.append([-a,-b,-c,-d,-e,-f])
-            a,b,c,d,e,f = [16*x for x in [c,a,b,f,d,e]]
+            a,b,c,d,e,f = (16*x for x in [c,a,b,f,d,e])
 
     return G,Mb
 
@@ -3846,13 +3845,13 @@ def DM_57_8_1():
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix
         sage: from sage.combinat.designs.database import DM_57_8_1
-        sage: G,M = DM_57_8_1()                                                         # needs sage.rings.finite_rings
-        sage: is_difference_matrix(M,G,8,1)                                             # needs sage.rings.finite_rings
+        sage: G,M = DM_57_8_1()                                                         # needs sage.rings.finite_rings sage.schemes
+        sage: is_difference_matrix(M,G,8,1)                                             # needs sage.rings.finite_rings sage.schemes
         True
 
     Can be obtained from the constructor::
 
-        sage: _ = designs.difference_matrix(57,8)                                       # needs sage.rings.finite_rings
+        sage: _ = designs.difference_matrix(57,8)                                       # needs sage.rings.finite_rings sage.schemes
     """
     M = orthogonal_array(8,8)
     M = [R for R in M if any(x != R[0] for x in R)] # removing the 0..0, 1..1, 7..7 rows.

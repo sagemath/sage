@@ -365,7 +365,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             sage: H.zero().is_zero()
             True
 
-        Previously the above code resulted in a TypeError because the
+        Previously the above code resulted in a :class:`TypeError` because the
         dimensions of the matrix were incorrect.
         """
         from .vector_space_morphism import is_VectorSpaceMorphism, VectorSpaceMorphism

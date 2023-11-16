@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.geometry.polyhedron sage.graphs
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs sage.libs.singular
 r"""
 Toric ideals
 

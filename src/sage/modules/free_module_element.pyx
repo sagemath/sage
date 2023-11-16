@@ -416,8 +416,8 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     Complex numbers can be converted naturally to a sequence of length 2.  And
     then to a vector.  ::
 
-        sage: c = CDF(2 + 3*I)
-        sage: v = vector(c); v
+        sage: c = CDF(2 + 3*I)                                                          # needs sage.rings.complex_double sage.symbolic
+        sage: v = vector(c); v                                                          # needs sage.rings.complex_double sage.symbolic
         (2.0, 3.0)
 
     A generator, or other iterable, may also be supplied as input.  Anything
@@ -457,9 +457,9 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v.is_immutable()
         True
 
-        sage: # needs numpy
+        sage: # needs numpy sage.symbolic
         sage: import numpy as np
-        sage: w = np.array([1, 2, pi], float)                                           # needs sage.symbolic
+        sage: w = np.array([1, 2, pi], float)
         sage: v = vector(w, immutable=True)
         sage: v.is_immutable()
         True
@@ -554,11 +554,11 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         if isinstance(v, ndarray):
             if len(v.shape) != 1:
                 raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
-            from .free_module import VectorSpace
+            from sage.modules.free_module import VectorSpace
             if (R is None or isinstance(R, RealDoubleField)) and v.dtype.kind == 'f':
                 from sage.rings.real_double import RDF
                 V = VectorSpace(RDF, v.shape[0])
-                from .vector_real_double_dense import Vector_real_double_dense
+                from sage.modules.vector_real_double_dense import Vector_real_double_dense
                 v = Vector_real_double_dense(V, v)
                 if immutable:
                     v.set_immutable()
@@ -566,7 +566,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
             if (R is None or isinstance(R, ComplexDoubleField)) and v.dtype.kind == 'c':
                 from sage.rings.complex_double import CDF
                 V = VectorSpace(CDF, v.shape[0])
-                from .vector_complex_double_dense import Vector_complex_double_dense
+                from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
                 v = Vector_complex_double_dense(V, v)
                 if immutable:
                     v.set_immutable()
@@ -1634,7 +1634,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: v = vector([1,2/3,pi])                                                # needs sage.symbolic
             sage: v.items()                                                             # needs sage.symbolic
-            <generator object at ...>
+            <...generator object at ...>
             sage: list(v.items())                                                       # needs sage.symbolic
             [(0, 1), (1, 2/3), (2, pi)]
 
@@ -1762,7 +1762,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         s = sum(a ** p for a in abs_self)
         return s**(__one__/p)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         EXAMPLES::
 
@@ -1831,7 +1831,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             values = []
             for n in range(slicelength):
                 values.append(self.get_unsafe(start + n*step))
-            from .free_module import FreeModule
+            from sage.modules.free_module import FreeModule
             M = FreeModule(self.coordinate_ring(), slicelength, sparse=self.is_sparse())
             return M(values, coerce=False, copy=False)
         else:
@@ -1842,7 +1842,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 raise IndexError("vector index out of range")
             return self.get_unsafe(n)
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         Cython function to get the `i`'th entry of this vector.
 
@@ -2484,7 +2484,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         else:
             return points(v, **kwds)
 
-    cpdef _dot_product_coerce_(left, Vector right):
+    cpdef _dot_product_coerce_(left, Vector right) noexcept:
         """
         Return the dot product of left and right.
 
@@ -3225,6 +3225,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         We test this by building a specialized vector space with a non-standard
         inner product, and constructing a test vector in this space. ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: V = VectorSpace(CDF, 2, inner_product_matrix=[[2,1],[1,5]])
             sage: v = vector(CDF, [2-3*I, 4+5*I])
             sage: w = V(v)
@@ -3435,8 +3436,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: R.<t> = ZZ[]
             sage: v = vector(R, [12, 24*t])
             sage: w = vector(QQ, [1/2, 1/3, 1/4])
-            sage: op = v.outer_product(w)
-            sage: op
+            sage: op = v.outer_product(w); op
             [   6    4    3]
             [12*t  8*t  6*t]
             sage: op.base_ring()
@@ -3451,7 +3451,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: w = vector(GF(5), [1,2])
             sage: v = vector(GF(7), [1,2,3,4])
-            sage: z = w.outer_product(v)                                                # needs sage.rings.finite_rings
+            sage: z = w.outer_product(v)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *:
@@ -3460,8 +3460,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         And some inputs don't make any sense at all. ::
 
-            sage: w=vector(QQ, [5,10])
-            sage: z=w.outer_product(6)
+            sage: w = vector(QQ, [5,10])
+            sage: z = w.outer_product(6)
             Traceback (most recent call last):
             ...
             TypeError: right operand in an outer product must be a vector,
@@ -3531,7 +3531,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         in each argument (with conjugation on the first scalar),
         and anti-commutative. ::
 
-            sage: # needs sage.symbolic
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: alpha = CDF(5.0 + 3.0*I)
             sage: u = vector(CDF, [2+4*I, -3+5*I, 2-7*I])
             sage: v = vector(CDF, [-1+3*I, 5+4*I, 9-2*I])
@@ -3550,6 +3550,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         default for the :meth:`norm` method). The norm squared equals
         the Hermitian inner product of the vector with itself.  ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: v = vector(CDF, [-0.66+0.47*I, -0.60+0.91*I, -0.62-0.87*I, 0.53+0.32*I])
             sage: abs(v.norm()^2 - v.hermitian_inner_product(v)) < 1.0e-10
             True
@@ -3560,6 +3561,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         which allows for a wide variety of inputs.  Any error
         handling happens there. ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: v = vector(CDF, [2+3*I])
             sage: w = vector(CDF, [5+2*I, 3+9*I])
             sage: v.hermitian_inner_product(w)
@@ -3584,7 +3586,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         return self.is_dense_c()
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return self.parent().is_dense()
 
     def is_sparse(self):
@@ -3602,7 +3604,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         return self.is_sparse_c()
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return self.parent().is_sparse()
 
     def is_vector(self):
@@ -3760,7 +3762,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         return self.nonzero_positions()
 
-    cpdef int hamming_weight(self):
+    cpdef int hamming_weight(self) noexcept:
         """
         Return the number of positions ``i`` such that ``self[i] != 0``.
 
@@ -4227,7 +4229,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         sage: isinstance(hash(v), int)
         True
     """
-    cdef _new_c(self, object v):
+    cdef _new_c(self, object v) noexcept:
         """
         Create a new dense free module element with minimal overhead and
         no type checking.
@@ -4245,10 +4247,10 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         x._degree = self._degree
         return x
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
@@ -4371,7 +4373,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _add_(left, right):
+    cpdef _add_(left, right) noexcept:
         """
         Add left and right.
 
@@ -4388,7 +4390,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _sub_(left, right):
+    cpdef _sub_(left, right) noexcept:
         """
         Subtract right from left.
 
@@ -4406,7 +4408,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         v = [(<RingElement> a[i])._sub_(<RingElement> b[i]) for i in range(left._degree)]
         return left._new_c(v)
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         EXAMPLES::
 
@@ -4420,7 +4422,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             v = [left * x for x in self._entries]
         return self._new_c(v)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -4438,7 +4440,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef _pairwise_product_(left, Vector right):
+    cpdef _pairwise_product_(left, Vector right) noexcept:
         """
         EXAMPLES::
 
@@ -4470,7 +4472,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         EXAMPLES::
 
@@ -4678,7 +4680,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         sage: (b-a).dict()
         {2: -1}
     """
-    cdef _new_c(self, object v):
+    cdef _new_c(self, object v) noexcept:
         """
         Create a new sparse free module element with minimal overhead and
         no type checking.
@@ -4696,10 +4698,10 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         x._degree = self._degree
         return x
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 0
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 1
 
     def __copy__(self):
@@ -4829,7 +4831,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 entries_dict = dict(entries_dict)  # make a copy/convert to dict
         self._entries = entries_dict
 
-    cpdef _add_(left, right):
+    cpdef _add_(left, right) noexcept:
         """
         Add left and right.
 
@@ -4851,7 +4853,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 v[i] = a
         return left._new_c(v)
 
-    cpdef _sub_(left, right):
+    cpdef _sub_(left, right) noexcept:
         """
         EXAMPLES::
 
@@ -4871,7 +4873,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 v[i] = -a
         return left._new_c(v)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -4887,7 +4889,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                     v[i] = prod
         return self._new_c(v)
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         EXAMPLES::
 
@@ -4903,7 +4905,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                     v[i] = prod
         return self._new_c(v)
 
-    cpdef _dot_product_coerce_(left, Vector right):
+    cpdef _dot_product_coerce_(left, Vector right) noexcept:
         """
         Return the dot product of left and right.
 
@@ -4955,7 +4957,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 z += a * e[i]
         return z
 
-    cpdef _pairwise_product_(left, Vector right):
+    cpdef _pairwise_product_(left, Vector right) noexcept:
         """
         EXAMPLES::
 
@@ -4973,7 +4975,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                     v[i] = prod
         return left._new_c(v)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare two sparse free module elements.
 
@@ -5093,7 +5095,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
                 if min <= n <= max and n % step == mod:
                     k = (n - start) // step
                     newentries[k] = x
-            from .free_module import FreeModule
+            from sage.modules.free_module import FreeModule
             M = FreeModule(self.coordinate_ring(), slicelength, sparse=True)
             return M(newentries, coerce=False, copy=False)
 
@@ -5104,7 +5106,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             raise IndexError("vector index out of range")
         return self.get_unsafe(n)
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         EXAMPLES::
 
@@ -5269,7 +5271,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         return sorted(self._entries)
 
-    cpdef int hamming_weight(self):
+    cpdef int hamming_weight(self) noexcept:
         """
         Returns the number of positions ``i`` such that ``self[i] != 0``.
 
