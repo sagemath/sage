@@ -22,15 +22,13 @@ all.py -- export of schemes to Sage
 
 from .jacobians.all import *
 
-# Runtime error
-#from .hyperelliptic_curves.all import *
+from .hyperelliptic_curves.all import *
 
 from .curves.all import *
 
 from .plane_conics.all import *
 
-# Runtime error
-#from .elliptic_curves.all import *
+from .elliptic_curves.all import *
 
 from .plane_quartics.all import *
 
@@ -44,7 +42,6 @@ from .projective.all import *
 
 from .product_projective.all import *
 
-# Runtime error
-#from .cyclic_covers.all import *
+from .cyclic_covers.all import *
 
 from .berkovich.all import *
