@@ -669,7 +669,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         A matrix is strongly unimodular if ``self`` and ``self.transpose()`` are both unimodular.
 
-        .. SEEALSO: meth:`is_unimodular`, :meth:`is_strongly_k_modular`
+        .. SEEALSO:: meth:`is_unimodular`, :meth:`is_strongly_k_modular`
 
         EXAMPLES::
 
