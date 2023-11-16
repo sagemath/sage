@@ -1,3 +1,5 @@
+# Cannot be found via pkg-config
+glpk = cc.find_library('glpk')
 py.install_sources(
     'all.py',
     'all__sagemath_polyhedra.py',
@@ -33,7 +35,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/numerical/backends',
         install: true,
         include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
+        dependencies: [py_dep, cysignals, glpk, gmp],
     )
 endforeach
 
