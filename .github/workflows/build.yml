@@ -297,26 +297,11 @@ jobs:
 
       # Testing
 
-      - name: Pytest
-        if: (success() || failure()) && contains(github.ref, 'pytest')
-        run: |
-          ./sage -python -m pip install coverage pytest-xdist
-          ./sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
-        # Increase the length of the lines in the "short summary"
-        shell: sh .ci/docker-exec-script.sh BUILD /sage COLUMNS=120 {0}
-
       - name: Test all files (sage -t --all --long)
         run: |
-          ./sage -python -m pip install coverage
-          ./sage -python -m coverage run src/bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
-
-      - name: Prepare coverage results
-        if: success() || failure()
-        run: |
-          venv/bin/python3 -m coverage combine .coverage/
+          ./sage -tox -e coverage.py-xml -- --all --long -p2 --random-seed=286735480429121101562228604801325644303
           mkdir -p ${{ github.workspace }}/coverage-report
-          venv/bin/python3 -m coverage xml -o ${{ github.workspace }}/coverage-report/coverage.xml
+          cp src/.tox/sagedirect/coverage.xml ${{ github.workspace }}/coverage-report/
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload coverage to codecov
