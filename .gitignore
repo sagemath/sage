@@ -288,3 +288,4 @@ worktree*
 
 # meson build directory
 builddir
+builddir-*
