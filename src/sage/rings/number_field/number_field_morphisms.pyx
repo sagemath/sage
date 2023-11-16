@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Embeddings into ambient fields
 

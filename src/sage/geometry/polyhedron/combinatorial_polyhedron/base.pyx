@@ -98,14 +98,14 @@ from .conversions \
                incidence_matrix_to_bit_rep_of_Vrep, \
                facets_tuple_to_bit_rep_of_facets, \
                facets_tuple_to_bit_rep_of_Vrep
-from .conversions cimport Vrep_list_to_bit_rep
+from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport Vrep_list_to_bit_rep
 from sage.misc.cachefunc            import cached_method
 
 from sage.rings.integer                cimport smallInteger
 from cysignals.signals                 cimport sig_check
 
-from .face_data_structure cimport face_len_atoms, face_init, face_free
-from .face_iterator cimport iter_t, parallel_f_vector
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure cimport face_len_atoms, face_init, face_free
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator cimport iter_t, parallel_f_vector
 
 
 cdef extern from "Python.h":

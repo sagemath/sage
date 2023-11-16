@@ -1,5 +1,5 @@
-from .lzz_p cimport *
-from .ntl_lzz_pContext cimport ntl_zz_pContext_class
+from sage.libs.ntl.lzz_p cimport *
+from sage.libs.ntl.ntl_lzz_pContext cimport ntl_zz_pContext_class
 
 cdef class ntl_zz_p():
     cdef zz_p_c x

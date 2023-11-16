@@ -42,7 +42,7 @@ Let's request the category of some objects::
     sage: G.category()                                                                  # needs sage.groups
     Join of
      Category of finite enumerated permutation groups and
-     Category of finite weyl groups and
+     Category of finite Weyl groups and
      Category of well generated finite irreducible complex reflection groups
 
     sage: P = PerfectMatchings(3)                                                       # needs sage.combinat
@@ -2597,13 +2597,13 @@ def category_sample():
          Category of G-sets for Symmetric group of order 8! as a permutation group,
          Category of Hecke modules over Rational Field,
          Category of Lie algebras over Rational Field,
+         Category of Weyl groups,
          Category of additive magmas, ...,
          Category of fields, ...,
          Category of graded hopf algebras with basis over Rational Field, ...,
          Category of modular abelian varieties over Rational Field, ...,
          Category of simplicial complexes, ...,
-         Category of vector spaces over Rational Field, ...,
-         Category of weyl groups, ...
+         Category of vector spaces over Rational Field, ...
     """
     import sage.categories.all
     abstract_classes_for_categories = [Category]

@@ -29,8 +29,8 @@ from libcpp.vector cimport vector as cppvector
 
 from sage.libs.gmp.mpz cimport mpz_set
 
-from .givaro cimport Modular_uint64, ZRing, Integer
-from .linbox cimport SparseMatrix_Modular_uint64, SparseMatrix_integer, DenseVector_integer
+from sage.libs.linbox.givaro cimport Modular_uint64, ZRing, Integer
+from sage.libs.linbox.linbox cimport SparseMatrix_Modular_uint64, SparseMatrix_integer, DenseVector_integer
 
 from sage.matrix.matrix_modn_sparse cimport Matrix_modn_sparse
 from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse

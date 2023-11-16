@@ -4,8 +4,8 @@ from cysignals.signals cimport sig_on, sig_off
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
 
-from ..eclib cimport svec, mat, smat
-from .mat cimport MatrixFactory
+from sage.libs.eclib cimport svec, mat, smat
+from sage.libs.eclib.mat cimport MatrixFactory
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ

@@ -532,13 +532,13 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
         elif el[0] == 'div_c':
             string += "inv_mc("+el[2]+","+el[1]+",XX[{}], i);".format(i+n)
         elif el[0] == 'log':
-            string += "log_mc("+el[1]+",XX[{}], i);".format(i+n)
+            string += "log_mc(" + el[1] + ",XX[{}], i);".format(i+n)
         elif el[0] == 'exp':
-            string += "exp_mc("+el[1]+",XX[{}], i);".format(i+n)
+            string += "exp_mc(" + el[1] + ",XX[{}], i);".format(i+n)
         elif el[0] == 'sin':
-            string += "sin_mc("+el[1]+",XX[{}], i);".format(i+n+1)
+            string += "sin_mc(" + el[1] + ",XX[{}], i);".format(i+n+1)
         elif el[0] == 'cos':
-            string += "cos_mc("+el[1]+",XX[{}], i);".format(i+n-1)
+            string += "cos_mc(" + el[1] + ",XX[{}], i);".format(i+n-1)
 
         res.append(string)
 
@@ -583,7 +583,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     for(i=0;i<ORDER;i++) {
     """
     outfile.write(auxstring)
-    outfile.writelines(["\t\t"+i+"\n" for i in code])
+    outfile.writelines(["\t\t" + i + "\n" for i in code])
 
     outfile.write('\t}\n')
     outfile.write('\n')
@@ -805,57 +805,55 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     code = []
 
     l0 = lv + l0
-    indices = [l0.index(str(i(*var)))+n for i in f]
+    indices = [l0.index(str(i(*var))) + n for i in f]
     for i in range(1, n):
-        aux = indices[i-1]-n
+        aux = indices[i - 1] - n
         if aux < n:
-            code.append('mpfrts_var_t(itd, var[{}], var[{}], i);'.format(aux, i))
+            code.append(f'mpfrts_var_t(itd, var[{aux}], var[{i}], i);')
         else:
-            code.append('mpfrts_var_t(itd, link[{}], var[{}], i);'.format(aux-n, i))
+            code.append(f'mpfrts_var_t(itd, link[{aux-n}], var[{i}], i);')
 
     for i in range(len(l3)):
         el = l3[i]
         string = "mpfrts_"
         if el[0] == 'add':
-            string += 'add_t(itd, ' + el[1] + ', ' + el[2] + ', link[{}], i);'.format(i)
+            string += 'add_t(itd, ' + el[1] + ', ' + el[2] + f', link[{i}], i);'
         elif el[0] == 'add_c':
-            string += 'add_t_c(itd, "' + el[2] + '", ' + el[1] + ', link[{}], i);'.format(i)
+            string += 'add_t_c(itd, "' + el[2] + '", ' + el[1] + f', link[{i}], i);'
         elif el[0] == 'mul':
-            string += 'mul_t(itd, ' + el[1] + ', ' + el[2] + ', link[{}], i);'.format(i)
+            string += 'mul_t(itd, ' + el[1] + ', ' + el[2] + f', link[{i}], i);'
         elif el[0] == 'mul_c':
-            string += 'mul_t_c(itd, "' + el[2] + '", ' + el[1] + ', link[{}], i);'.format(i)
+            string += 'mul_t_c(itd, "' + el[2] + '", ' + el[1] + f', link[{i}], i);'
         elif el[0] == 'pow_c':
-            string += 'pow_t_c(itd, ' + el[1] + ', "' + el[2] + '", link[{}], i);'.format(i)
+            string += 'pow_t_c(itd, ' + el[1] + ', "' + el[2] + f'", link[{i}], i);'
         elif el[0] == 'div':
-            string += 'div_t(itd, ' + el[2] + ', ' + el[1] + ', link[{}], i);'.format(i)
+            string += 'div_t(itd, ' + el[2] + ', ' + el[1] + f', link[{i}], i);'
         elif el[0] == 'div_c':
-            string += 'div_t_cv(itd, "' + el[2] + '", ' + el[1] + ', link[{}], i);'.format(i)
+            string += 'div_t_cv(itd, "' + el[2] + '", ' + el[1] + f', link[{i}], i);'
         elif el[0] == 'log':
-            string += 'log_t(itd, ' + el[1]  + ', link[{}], i);'.format(i)
+            string += 'log_t(itd, ' + el[1] + f', link[{i}], i);'
         elif el[0] == 'exp':
-            string += 'exp_t(itd, ' + el[1]  + ', link[{}], i);'.format(i)
+            string += 'exp_t(itd, ' + el[1] + f', link[{i}], i);'
         elif el[0] == 'sin':
-            string += 'sin_t(itd, ' + el[1]  + ', link[{}], link[{}], i);'.format(i+1, i)
+            string += 'sin_t(itd, ' + el[1] + f', link[{i+1}], link[{i}], i);'
         elif el[0] == 'cos':
-            string += 'cos_t(itd, ' + el[1]  + ', link[{}], link[{}], i);'.format(i-1, i)
+            string += 'cos_t(itd, ' + el[1] + f', link[{i-1}], link[{i}], i);'
         elif el[0] == 'atan':
             indarg = l0.index(str(1+l2[i][1]**2))-n
-            string += 'atan_t(itd, ' + el[1] + ', link[{}], link[{}], i);'.format(indarg, i)
+            string += 'atan_t(itd, ' + el[1] + f', link[{indarg}], link[{i}], i);'
         elif el[0] == 'asin':
             indarg = l0.index(str(sqrt(1-l2[i][1]**2)))-n
-            string += 'asin_t(itd, ' + el[1] + ', link[{}], link[{}], i);'.format(indarg, i)
+            string += 'asin_t(itd, ' + el[1] + f', link[{indarg}], link[{i}], i);'
         elif el[0] == 'acos':
             indarg = l0.index(str(-sqrt(1-l2[i][1]**2)))-n
-            string += 'acos_t(itd, ' + el[1] + ', link[{}], link[{}], i);'.format(indarg, i)
+            string += 'acos_t(itd, ' + el[1] + f', link[{indarg}], link[{i}], i);'
         code.append(string)
 
-    VAR = n-1
+    VAR = n - 1
     PAR = len(parameters)
-    TT = len(code)+1-VAR
+    TT = len(code) + 1 - VAR
 
-    outfile = open(integrator, 'a')
-
-    auxstring = """
+    auxstring1 = """
     /****************************************************************************
     This file has been created by Sage for its use with TIDES
     *****************************************************************************/
@@ -870,19 +868,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     mpfr_t ct[0];
     """
 
-    outfile.write(auxstring)
-
-    outfile.write("\n\tstatic int VARIABLES = {};\n".format(VAR))
-    outfile.write("\tstatic int PARAMETERS = {};\n".format(PAR))
-    outfile.write("\tstatic int LINKS = {};\n".format(TT))
-    outfile.write('\tstatic int   FUNCTIONS        = 0;\n')
-    outfile.write('\tstatic int   POS_FUNCTIONS[1] = {0};\n')
-    outfile.write('\n\tinitialize_mp_case();\n')
-    outfile.write('\n\tfor(i=0;  i<=ORDER; i++) {\n')
-    for i in code:
-        outfile.write('\t\t'+i+'\n')
-
-    auxstring = """
+    auxstring2 = """
     }
     write_mp_solution();
     clear_vpl();
@@ -890,13 +876,26 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     return NUM_COLUMNS;
 }
     """
-    outfile.write(auxstring)
-    outfile.close()
+
+    with open(integrator, 'a') as outfile:
+        outfile.write(auxstring1)
+
+        outfile.write(f"\n\tstatic int VARIABLES = {VAR};\n")
+        outfile.write(f"\tstatic int PARAMETERS = {PAR};\n")
+        outfile.write(f"\tstatic int LINKS = {TT};\n")
+        outfile.write('\tstatic int   FUNCTIONS        = 0;\n')
+        outfile.write('\tstatic int   POS_FUNCTIONS[1] = {0};\n')
+        outfile.write('\n\tinitialize_mp_case();\n')
+        outfile.write('\n\tfor(i=0;  i<=ORDER; i++) {\n')
+        for i in code:
+            outfile.write('\t\t' + i + '\n')
+
+        outfile.write(auxstring2)
 
     npar = len(parameter_values)
     outfile = open(driver, 'a')
 
-    auxstring = """
+    auxstring3 = """
     /****************************************************************************
     Driver file of the mp_tides program
     This file has been created automatically by Sage
@@ -914,7 +913,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
 
     int nfun = 0;
     """
-    outfile.write(auxstring)
+    outfile.write(auxstring3)
     outfile.write('\tset_precision_digits({});'.format(dig))
     outfile.write('\n\tint npar = {};\n'.format(npar))
     outfile.write('\tmpfr_t p[npar];\n')
