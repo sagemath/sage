@@ -14,7 +14,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/libs/arb',
         install: true,
         include_directories: [inc_arb, inc_cpython, inc_flint, inc_rings],
-        dependencies: [py_dep, flint, gmp, mpfr],
+        dependencies: [py_dep, arb, flint, gmp, mpfr],
     )
 endforeach
 
