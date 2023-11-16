@@ -37,26 +37,26 @@ interpreters = custom_target(
 wrapper_el_header = custom_target(
   'wrapper_el.h',
   output : 'wrapper_el.h',
-  input : 'interpreters/wrapper_el.pyx',
-  command : [cython.cmd_array(), '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
+  input : ['interpreters/wrapper_el.pyx', interpreters],
+  command : [cython.cmd_array(), '@INPUT0@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
 )
 wrapper_cc_header = custom_target(
   'wrapper_cc.h',
   output : 'wrapper_cc.h',
-  input : 'interpreters/wrapper_cc.pyx',
-  command : [cython.cmd_array(), '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
+  input : ['interpreters/wrapper_cc.pyx', interpreters],
+  command : [cython.cmd_array(), '@INPUT0@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
 )
 wrapper_cdf_header = custom_target(
   'wrapper_cdf.h',
   output : 'wrapper_cdf.h',
-  input : 'interpreters/wrapper_cdf.pyx',
-  command : [cython.cmd_array(), '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
+  input : ['interpreters/wrapper_cdf.pyx', interpreters],
+  command : [cython.cmd_array(), '@INPUT0@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
 )
 wrapper_rr_header = custom_target(
   'wrapper_rr.h',
   output : 'wrapper_rr.h',
-  input : 'interpreters/wrapper_rr.pyx',
-  command : [cython.cmd_array(), '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
+  input : ['interpreters/wrapper_rr.pyx', interpreters],
+  command : [cython.cmd_array(), '@INPUT0@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
 )
 
 interpreters_dep = declare_dependency(
