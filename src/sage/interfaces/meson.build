@@ -49,6 +49,7 @@ py.install_sources(
     'read_data.py',
     'rubik.py',
     'sage0.py',
+    'sage-maxima.lisp',
     'scilab.py',
     'singular.py',
     'sympy.py',
