@@ -1080,7 +1080,7 @@ def solve(f, *args, **kwds):
         variables = tuple(x)
 
     for v in variables:
-        if not (isinstance(v, Expression) and v.is_symbol()):
+        if not isinstance(v, Expression):
             raise TypeError("%s is not a valid variable." % repr(v))
 
     try:
