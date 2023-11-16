@@ -15780,13 +15780,10 @@ class GenericGraph(GenericGraph_pyx):
 
         power_of_graph = DiGraph() if self.is_directed() else Graph()
 
-        added_edges = set()
-
         for u in self:
             for v in self.breadth_first_search(u, distance=k):
-                if u != v and (u, v) not in added_edges and (v, u) not in added_edges:
+                if u != v:
                     power_of_graph.add_edge(u, v)
-                    added_edges.add((u, v))
 
         return power_of_graph
 
