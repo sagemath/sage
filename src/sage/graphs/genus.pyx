@@ -143,7 +143,7 @@ cdef class simple_connected_genus_backtracker:
         cdef int *w = <int *> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
         cdef int *s = <int *> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
 
-        cdef int i, j, du, dv, u, v
+        cdef int i, j, dv, u, v
 
         for v in range(self.num_verts):
             if not G.has_vertex(v):
@@ -341,7 +341,6 @@ cdef class simple_connected_genus_backtracker:
         before the flip, the cycle breaks into three.  Otherwise, the number of
         cycles stays the same.
         """
-        cdef int cycles = 0
         cdef int *w = self.vertex_darts[v]
         cdef int *face_map = self.face_map
 
@@ -393,7 +392,7 @@ cdef class simple_connected_genus_backtracker:
         """
         Count all cycles.
         """
-        cdef int i, j, c, m
+        cdef int i
         self.num_cycles = 0
 
         for i in range(self.num_darts):
@@ -447,7 +446,7 @@ cdef class simple_connected_genus_backtracker:
             sage: gb.genus()
             0
         """
-        cdef int g, i
+        cdef int g
 
         # in the original genus implementation, this case resulted in infinite
         # recursion.  oops.  Let's skip that.

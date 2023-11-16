@@ -696,7 +696,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
     cdef int* reachU
     cdef int* pred = <int*> mem.calloc(n, sizeof(int))
     cdef double *farness = <double*> mem.malloc(n * sizeof(double))
-    cdef int d, nd, x, v, w
+    cdef int d, nd, x, v
     cdef long f, gamma
     cdef int* queue = <int*> mem.malloc(n * sizeof(int))
     cdef double tildefL, tildefU

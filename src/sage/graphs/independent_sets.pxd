@@ -10,4 +10,3 @@ cdef class IndependentSets:
     cdef int i
     cdef int count_only
     cdef int maximal
-

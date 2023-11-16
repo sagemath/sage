@@ -612,6 +612,7 @@ def binary_string_from_dig6(s, n):
     m = "".join(l)
     return m[:n*n]
 
+
 # Exhaustive search in graphs
 
 cdef class SubgraphSearch:
@@ -831,16 +832,16 @@ cdef class SubgraphSearch:
         # whether both are of the same type)
         self.directed = G.is_directed()
 
-        cdef int i, j, k
+        cdef int i, j
 
         # A vertex is said to be busy if it is already part of the partial copy
         # of H in G.
-        self.busy       = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.tmp_array  = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.stack      = <int *>  self.mem.allocarray(self.nh, sizeof(int))
-        self.vertices   = <int *>  self.mem.allocarray(self.nh, sizeof(int))
+        self.busy = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.tmp_array = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.stack = <int *> self.mem.allocarray(self.nh, sizeof(int))
+        self.vertices = <int *> self.mem.allocarray(self.nh, sizeof(int))
         self.line_h_out = <int **> self.mem.allocarray(self.nh, sizeof(int *))
-        self.line_h_in  = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
+        self.line_h_in = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
 
         self.line_h_out[0] = <int *> self.mem.allocarray(self.nh*self.nh,
                                                          sizeof(int))
@@ -1029,6 +1030,7 @@ cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
         if a[i] < b[i]:
             return False
     return True
+
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
