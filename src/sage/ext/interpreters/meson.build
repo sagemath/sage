@@ -4,12 +4,12 @@ py.install_sources(
 )
 
 extension_data = {
-    #'wrapper_cc': files('wrapper_cc.pyx'), # compilation error
-    #'wrapper_cdf': files('wrapper_cdf.pyx'), # compilation error
-    #'wrapper_el': files('wrapper_el.pyx'), # compilation error
+    'wrapper_cc': files('wrapper_cc.pyx'),
+    'wrapper_cdf': files('wrapper_cdf.pyx'),
+    'wrapper_el': files('wrapper_el.pyx'),
     'wrapper_py': files('wrapper_py.pyx'),
     'wrapper_rdf': files('wrapper_rdf.pyx'),
-    #'wrapper_rr': files('wrapper_rr.pyx'), # compilation error
+    'wrapper_rr': files('wrapper_rr.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -18,7 +18,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/ext/interpreters',
         install: true,
         include_directories: [inc_cpython, inc_ext, inc_interpreters, inc_rings, inc_src],
-        dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr, pari],
+        dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr, pari, interpreters_dep],
     )
 endforeach
 

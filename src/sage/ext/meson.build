@@ -26,11 +26,41 @@ interpreters = custom_target(
     input: '../../sage_setup/autogen/interpreters/__init__.py',
     command: [py, '-m', 'sage_setup.autogen.interpreters', meson.current_source_dir() / 'interpreters'],
     # This is actually against the Meson philosophy, which does not like in-source builds.
-    # So normally you would do something like the following (left for a follow-up)
+    # So normally you would do something like the following
+    # however, this we currently cannot pass the generated files as sources to install_sources
+    # properly fixing this is left for a follow-up
     # command: [py, '-m', 'sage_setup.autogen.interpreters','@OUTDIR@'],
     env: ['PYTHONPATH=' + meson.current_source_dir() / '..' / '..'],
-    install: true,
-    install_dir: sage_install_dir / 'ext' / 'interpreters'
+)
+
+# Manually create header files, which otherwise is not found
+wrapper_el_header = custom_target(
+  'wrapper_el.h',
+  output : 'wrapper_el.h',
+  input : 'interpreters/wrapper_el.pyx',
+  command : [cython.cmd_array(), '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
+)
+wrapper_cc_header = custom_target(
+  'wrapper_cc.h',
+  output : 'wrapper_cc.h',
+  input : 'interpreters/wrapper_cc.pyx',
+  command : [cython.cmd_array(), '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
+)
+wrapper_cdf_header = custom_target(
+  'wrapper_cdf.h',
+  output : 'wrapper_cdf.h',
+  input : 'interpreters/wrapper_cdf.pyx',
+  command : [cython.cmd_array(), '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
+)
+wrapper_rr_header = custom_target(
+  'wrapper_rr.h',
+  output : 'wrapper_rr.h',
+  input : 'interpreters/wrapper_rr.pyx',
+  command : [cython.cmd_array(), '@INPUT@', '-o', '@OUTPUT@', '-I', join_paths(meson.current_source_dir(), '../../../')],
+)
+
+interpreters_dep = declare_dependency(
+    sources: [interpreters, wrapper_el_header, wrapper_cc_header, wrapper_cdf_header, wrapper_rr_header],
 )
 
 subdir('interpreters')
