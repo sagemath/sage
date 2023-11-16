@@ -1,7 +1,7 @@
 # distutils: libraries = gmp flint ARB_LIBRARY
 # distutils: depends = bernoulli.h
 
-from ..flint.types cimport fmpq_t, ulong
+from sage.libs.flint.types cimport fmpq_t, ulong
 
 # bernoulli.h
 cdef extern from "arb_wrap.h":

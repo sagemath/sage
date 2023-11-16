@@ -12,11 +12,11 @@ of exponents where their coefficients can be non-zero, have a triangular shape.
 The M-triangle class is motivated by the generating series of Möbius numbers
 for graded posets. A typical example is::
 
-    sage: W = SymmetricGroup(4)                                                         # optional - sage.groups
-    sage: posets.NoncrossingPartitions(W).M_triangle()                                  # optional - sage.graphs sage.groups
+    sage: W = SymmetricGroup(4)                                                         # needs sage.groups
+    sage: posets.NoncrossingPartitions(W).M_triangle()                                  # needs sage.graphs sage.groups
     M: x^3*y^3 - 6*x^2*y^3 + 6*x^2*y^2 + 10*x*y^3 - 16*x*y^2
     - 5*y^3 + 6*x*y + 10*y^2 - 6*y + 1
-    sage: unicode_art(_)                                                                # optional - sage.graphs sage.modules sage.groups
+    sage: unicode_art(_)                                                                # needs sage.graphs sage.groups sage.modules
     ⎛ -5  10  -6   1⎞
     ⎜ 10 -16   6   0⎟
     ⎜ -6   6   0   0⎟
@@ -27,11 +27,12 @@ simplicial complexes endowed with a distinguished facet. One can also
 think about complete fans endowed with a distinguished maximal
 cone. A typical example is::
 
+    sage: # needs sage.graphs sage.modules
     sage: C = ClusterComplex(['A',3])
     sage: f = C.greedy_facet()
     sage: C.F_triangle(f)
     F: 5*x^3 + 5*x^2*y + 3*x*y^2 + y^3 + 10*x^2 + 8*x*y + 3*y^2 + 6*x + 3*y + 1
-    sage: unicode_art(_)                                                                # optional - sage.modules
+    sage: unicode_art(_)
     ⎛ 1  0  0  0⎞
     ⎜ 3  3  0  0⎟
     ⎜ 3  8  5  0⎟
@@ -67,7 +68,7 @@ def _matrix_display(self, variables=None):
 
         sage: from sage.combinat.triangles_FHM import _matrix_display
         sage: x, y = PolynomialRing(QQ,['x', 'y']).gens()
-        sage: _matrix_display(x**2+x*y+y**3)                                            # optional - sage.modules
+        sage: _matrix_display(x**2+x*y+y**3)                                            # needs sage.modules
         [1 0 0]
         [0 0 0]
         [0 1 0]
@@ -76,10 +77,10 @@ def _matrix_display(self, variables=None):
     With a specific choice of variables::
 
         sage: x, y, z = PolynomialRing(QQ,['x','y','z']).gens()
-        sage: _matrix_display(x**2+z*x*y+z*y**3+z*x,[y,z])                              # optional - sage.modules
+        sage: _matrix_display(x**2+z*x*y+z*y**3+z*x,[y,z])                              # needs sage.modules
         [  x   x   0   1]
         [x^2   0   0   0]
-        sage: _matrix_display(x**2+z*x*y+z*y**3+z*x,[x,z])                              # optional - sage.modules
+        sage: _matrix_display(x**2+z*x*y+z*y**3+z*x,[x,z])                              # needs sage.modules
         [  y^3 y + 1     0]
         [    0     0     1]
     """
@@ -124,7 +125,7 @@ class Triangle(SageObject):
         sage: from sage.combinat.triangles_FHM import Triangle
         sage: x, y = polygens(ZZ, 'x,y')
         sage: ht = Triangle(1+4*x+2*x*y)
-        sage: unicode_art(ht)                                                           # optional - sage.modules
+        sage: unicode_art(ht)                                                           # needs sage.modules
         ⎛0 2⎞
         ⎝1 4⎠
     """
@@ -136,7 +137,7 @@ class Triangle(SageObject):
             sage: from sage.combinat.triangles_FHM import Triangle
             sage: x, y = polygens(ZZ, 'x,y')
             sage: ht = Triangle(1+2*x*y)
-            sage: unicode_art(ht)                                                       # optional - sage.modules
+            sage: unicode_art(ht)                                                       # needs sage.modules
             ⎛0 2⎞
             ⎝1 0⎠
         """
@@ -156,7 +157,7 @@ class Triangle(SageObject):
             sage: from sage.combinat.triangles_FHM import H_triangle
             sage: x, y = polygens(ZZ, 'x,y')
             sage: ht = H_triangle(1+2*x*y)
-            sage: ascii_art(ht)                                                         # optional - sage.modules
+            sage: ascii_art(ht)                                                         # needs sage.modules
             [0 2]
             [1 0]
         """
@@ -171,7 +172,7 @@ class Triangle(SageObject):
             sage: from sage.combinat.triangles_FHM import H_triangle
             sage: x, y = polygens(ZZ, 'x,y')
             sage: ht = H_triangle(1+2*x*y)
-            sage: unicode_art(ht)                                                       # optional - sage.modules
+            sage: unicode_art(ht)                                                       # needs sage.modules
             ⎛0 2⎞
             ⎝1 0⎠
         """
@@ -200,7 +201,7 @@ class Triangle(SageObject):
             sage: from sage.combinat.triangles_FHM import H_triangle
             sage: x, y = polygens(ZZ, 'x,y')
             sage: ht = H_triangle(1+2*x*y)
-            sage: latex(ht)                                                             # optional - sage.modules
+            sage: latex(ht)                                                             # needs sage.modules
             \left(\begin{array}{rr}
             0 & 2 \\
             1 & 0
@@ -296,7 +297,7 @@ class Triangle(SageObject):
             sage: from sage.combinat.triangles_FHM import H_triangle
             sage: x, y = polygens(ZZ, 'x,y')
             sage: h = H_triangle(1+2*x*y)
-            sage: h.matrix()                                                            # optional - sage.modules
+            sage: h.matrix()                                                            # needs sage.modules
             [0 2]
             [1 0]
         """
@@ -350,8 +351,8 @@ class M_triangle(Triangle):
     EXAMPLES::
 
         sage: x, y = polygens(ZZ, 'x,y')
-        sage: P = Poset({2:[1]})
-        sage: P.M_triangle()
+        sage: P = Poset({2: [1]})                                                       # needs sage.graphs
+        sage: P.M_triangle()                                                            # needs sage.graphs
         M: x*y - y + 1
     """
     _prefix = 'M'
@@ -398,9 +399,9 @@ class M_triangle(Triangle):
             sage: x, y = polygens(ZZ, 'x,y')
             sage: nc3 = x^2*y^2 - 3*x*y^2 + 3*x*y + 2*y^2 - 3*y + 1
             sage: m = M_triangle(nc3)
-            sage: m2 = m.transmute(); m2
+            sage: m2 = m.transmute(); m2                                                # needs sage.libs.flint
             M: 2*x^2*y^2 - 3*x*y^2 + 2*x*y + y^2 - 2*y + 1
-            sage: m2.transmute() == m
+            sage: m2.transmute() == m                                                   # needs sage.libs.flint
             True
         """
         return self.h().transpose().m()
@@ -557,9 +558,9 @@ class H_triangle(Triangle):
             sage: H_triangle(ht).gamma()
             Γ: y^2 + x
 
-            sage: W = SymmetricGroup(5)                                                 # optional - sage.groups
-            sage: P = posets.NoncrossingPartitions(W)                                   # optional - sage.graphs
-            sage: P.M_triangle().h().gamma()                                            # optional - sage.graphs sage.groups
+            sage: W = SymmetricGroup(5)                                                 # needs sage.groups
+            sage: P = posets.NoncrossingPartitions(W)                                   # needs sage.graphs sage.groups
+            sage: P.M_triangle().h().gamma()                                            # needs sage.graphs sage.groups
             Γ: y^4 + 3*x*y^2 + 2*x^2 + 2*x*y + x
         """
         x, y = self._vars

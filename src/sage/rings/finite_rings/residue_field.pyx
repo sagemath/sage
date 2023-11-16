@@ -89,7 +89,7 @@ Verify that :trac:`7475` is fixed::
 
 Reducing a curve modulo a prime::
 
-    sage: # needs sage.rings.number_field
+    sage: # needs sage.rings.number_field sage.schemes
     sage: K.<s> = NumberField(x^2 + 23)
     sage: OK = K.ring_of_integers()
     sage: E = EllipticCurve([0,0,0,K(1),K(5)])
@@ -99,12 +99,12 @@ Reducing a curve modulo a prime::
     Elliptic Curve defined by y^2 = x^3 + x + 5 over
      Residue field of Fractional ideal (13, 1/2*s + 9/2)
 
-    sage: # needs sage.rings.finite_rings
+    sage: # needs sage.libs.pari sage.schemes
     sage: R.<t> = GF(11)[]
     sage: P = R.ideal(t^3 + t + 4)
     sage: ff.<a> = R.residue_field(P)
-    sage: E = EllipticCurve([0,0,0,R(1),R(t)])                                          # needs sage.schemes
-    sage: E.base_extend(ff)                                                             # needs sage.schemes
+    sage: E = EllipticCurve([0,0,0,R(1),R(t)])
+    sage: E.base_extend(ff)
     Elliptic Curve defined by y^2 = x^3 + x + a over
      Residue field in a of Principal ideal (t^3 + t + 4) of
       Univariate Polynomial Ring in t over Finite Field of size 11
@@ -995,7 +995,7 @@ cdef class ReductionMap(Map):
         self._repr_type_str = "Partially defined reduction"
         Map.__init__(self, Hom(K, F, SetsWithPartialMaps()))
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1026,7 +1026,7 @@ cdef class ReductionMap(Map):
         slots['_section'] = self._section
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1056,7 +1056,7 @@ cdef class ReductionMap(Map):
         self._PB = _slots['_PB']
         self._section = _slots['_section']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Apply this reduction map to an element that coerces into the global
         field.
@@ -1293,7 +1293,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
             sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(2)[]; P = R.ideal(t^7 + t^6 + t^5 + t^4 + 1)
             sage: k = P.residue_field(); f = k.coerce_map_from(R)
-            sage: f(t^10)
+            sage: f(t^10)                                                               # needs sage.modules
             tbar^6 + tbar^3 + tbar^2
         """
         self._K = K
@@ -1305,7 +1305,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         self._repr_type_str = "Reduction"
         RingHomomorphism.__init__(self, Hom(K,F))
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1337,7 +1337,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         slots['_section'] = self._section
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1368,7 +1368,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         self._PB = _slots['_PB']
         self._section = _slots['_section']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Applies this morphism to an element.
 
@@ -1482,7 +1482,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
             sage: k.<a> = P.residue_field(); f = k.coerce_map_from(R)
             sage: f.lift(a^2 + 5*a + 1)
             t^2 + 5*t + 1
-            sage: f(f.lift(a^2 + 5*a + 1)) == a^2 + 5*a + 1
+            sage: f(f.lift(a^2 + 5*a + 1)) == a^2 + 5*a + 1                             # needs sage.modules
             True
         """
         if self.domain() is ZZ:
@@ -1572,7 +1572,7 @@ cdef class LiftingMap(Section):
         self._PB = PB
         Section.__init__(self, reduction)
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1598,7 +1598,7 @@ cdef class LiftingMap(Section):
         slots['_PB'] = self._PB
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         Helper for copying and pickling.
 
@@ -1623,7 +1623,7 @@ cdef class LiftingMap(Section):
         self._to_order = _slots['_to_order']
         self._PB = _slots['_PB']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Lift from this residue class field to the number field.
 
@@ -1780,12 +1780,11 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.modules sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^3 - 7)
             sage: P = K.ideal(29).factor()[1][0]
-            sage: k = ResidueField(P)
-            sage: k
+            sage: k = ResidueField(P); k
             Residue field of Fractional ideal (-a^2 - 2*a - 2)
             sage: OK = K.maximal_order()
             sage: c = OK(a)
@@ -1799,7 +1798,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             sage: k(v)  # indirect doctest
             3
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: R.<t> = GF(2)[]; P = R.ideal(t + 1); k.<a> = P.residue_field()
             sage: V = k.vector_space(map=False); v = V([1])
             sage: k(v)

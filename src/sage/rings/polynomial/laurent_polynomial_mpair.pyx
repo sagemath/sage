@@ -251,7 +251,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         from sage.misc.misc_c import prod
         return codomain(p(im_gens) * prod(ig**m[im_gens.index(ig)] for ig in im_gens))
 
-    cdef _normalize(self, i=None):
+    cdef _normalize(self, i=None) noexcept:
         r"""
         Remove the common monomials from ``self._poly`` and store
         them in ``self._mon``.
@@ -302,7 +302,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                 self._poly = <ModuleElement > (self._poly // self._poly._parent.gen(i))
                 self._mon = self._mon.eadd_p(e, i)
 
-    cdef _compute_polydict(self):
+    cdef _compute_polydict(self) noexcept:
         """
         EXAMPLES::
 
@@ -796,7 +796,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             v.sort()
         return tuple(v)
 
-    cpdef dict dict(self):
+    cpdef dict dict(self) noexcept:
         """
         Return ``self`` represented as a ``dict``.
 
@@ -838,7 +838,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                 denom *= var[i] ** (-j)
         return (numer, denom)
 
-    cpdef _add_(self, _right):
+    cpdef _add_(self, _right) noexcept:
         """
         Return the Laurent polynomial ``self + right``.
 
@@ -863,7 +863,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             ans._poly += right._poly
         return ans
 
-    cpdef _sub_(self, _right):
+    cpdef _sub_(self, _right) noexcept:
         """
         Return the Laurent polynomial ``self - right``.
 
@@ -889,7 +889,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             ans._poly -= right._poly
         return ans
 
-    cpdef _div_(self, rhs):
+    cpdef _div_(self, rhs) noexcept:
         """
         Return the division of ``self`` by ``rhs``.
 
@@ -940,7 +940,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         return self._poly.is_monomial()
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         Return ``-self``.
 
@@ -956,7 +956,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         ans._poly = -self._poly
         return ans
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         Return ``self * right`` where ``right`` is in ``self``'s base ring.
 
@@ -972,7 +972,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         ans._poly = self._poly * right
         return ans
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         Return ``left * self`` where ``left`` is in ``self``'s base ring.
 
@@ -988,7 +988,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         ans._poly = left * self._poly
         return ans
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Return ``self * right``.
 
@@ -1005,7 +1005,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         ans._poly = self._poly * ( < LaurentPolynomial_mpair > right)._poly
         return ans
 
-    cpdef _floordiv_(self, right):
+    cpdef _floordiv_(self, right) noexcept:
         """
         Perform division with remainder and return the quotient.
 
@@ -1107,7 +1107,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         rl._normalize()
         return (ql, rl)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         """
         Compare two polynomials in a `LaurentPolynomialRing` based on the term
         order from the parent ring.  If the parent ring does not specify a term
@@ -1674,7 +1674,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             ans._poly = root
             return (True, ans)
 
-    cpdef rescale_vars(self, dict d, h=None, new_ring=None):
+    cpdef rescale_vars(self, dict d, h=None, new_ring=None) noexcept:
         r"""
         Rescale variables in a Laurent polynomial.
 
@@ -1741,7 +1741,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return new_ring(ans)
         return ans
 
-    cpdef toric_coordinate_change(self, M, h=None, new_ring=None):
+    cpdef toric_coordinate_change(self, M, h=None, new_ring=None) noexcept:
         r"""
         Apply a matrix to the exponents in a Laurent polynomial.
 
@@ -1810,7 +1810,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return new_ring(ans)
         return ans
 
-    cpdef toric_substitute(self, v, v1, a, h=None, new_ring=None):
+    cpdef toric_substitute(self, v, v1, a, h=None, new_ring=None) noexcept:
         r"""
         Perform a single-variable substitution up to a toric coordinate change.
 

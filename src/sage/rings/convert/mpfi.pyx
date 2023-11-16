@@ -35,7 +35,7 @@ from ..complex_double cimport ComplexDoubleElement
 from cypari2.gen cimport Gen
 
 
-cdef inline int return_real(mpfi_ptr im):
+cdef inline int return_real(mpfi_ptr im) noexcept:
     """
     Called by ``mpfi_set_sage`` on the imaginary part when converting
     a real number.

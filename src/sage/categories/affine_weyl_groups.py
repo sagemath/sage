@@ -28,16 +28,16 @@ class AffineWeylGroups(Category_singleton):
     EXAMPLES::
 
         sage: C = AffineWeylGroups(); C
-        Category of affine weyl groups
+        Category of affine Weyl groups
         sage: C.super_categories()
-        [Category of infinite weyl groups]
+        [Category of infinite Weyl groups]
 
         sage: C.example()
         NotImplemented
         sage: W = WeylGroup(["A", 4, 1]); W                                             # needs sage.combinat sage.groups
         Weyl Group of type ['A', 4, 1] (as a matrix group acting on the root space)
         sage: W.category()                                                              # needs sage.combinat sage.groups
-        Category of irreducible affine weyl groups
+        Category of irreducible affine Weyl groups
 
     TESTS::
 
@@ -49,7 +49,7 @@ class AffineWeylGroups(Category_singleton):
         EXAMPLES::
 
             sage: AffineWeylGroups().super_categories()
-            [Category of infinite weyl groups]
+            [Category of infinite Weyl groups]
         """
         return [WeylGroups().Infinite()]
 
@@ -70,6 +70,17 @@ class AffineWeylGroups(Category_singleton):
             sage: AffineWeylGroups().additional_structure()
         """
         return None
+
+    def _repr_object_names(self):
+        """
+        Return the name of the objects of this category.
+
+        EXAMPLES::
+
+            sage: AffineWeylGroups()
+            Category of affine Weyl groups
+        """
+        return "affine Weyl groups"
 
     class ParentMethods:
 

@@ -115,13 +115,14 @@ some coordinates changes::
 
 Let us compute the induced metric (or first fundamental form)::
 
-    sage: gamma = N.induced_metric()  # long time
-    sage: gamma.display()  # long time
+    sage: # long time
+    sage: gamma = N.induced_metric()
+    sage: gamma.display()
     gamma = b^2 drh⊗drh + b^2*sinh(rh)^2 dth⊗dth
-    sage: gamma[:]  # long time
+    sage: gamma[:]
     [           b^2              0]
     [             0 b^2*sinh(rh)^2]
-    sage: gamma[1,1]  # long time
+    sage: gamma[1,1]
     b^2
 
 the normal vector::
