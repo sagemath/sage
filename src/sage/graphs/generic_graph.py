@@ -15776,12 +15776,17 @@ class GenericGraph(GenericGraph_pyx):
             [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2), (4, 5)]
 
         """
-        power_of_graph = self.copy()
+        from sage.graphs.graph import DiGraph, Graph
+
+        power_of_graph = DiGraph() if self.is_directed() else Graph()
+
+        added_edges = set()
 
         for u in self:
             for v in self.breadth_first_search(u, distance=k):
-                if u != v:
+                if u != v and (u, v) not in added_edges and (v, u) not in added_edges:
                     power_of_graph.add_edge(u, v)
+                    added_edges.add((u, v))
 
         return power_of_graph
 
