@@ -84,8 +84,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
 
     - ``indices`` -- (default: ``None``) a list or tuple
 
-      If this
-      is ``None``, this is automatically determined.
+      If this is ``None``, this is automatically determined.
 
     - ``name`` -- (default: ``'y'``) a string
 
@@ -101,15 +100,15 @@ def generating_function_of_integral_points(polyhedron, split=False,
     - ``algorithm`` -- (default:``"omega"``) The algorithm which is used
       to compute the multivariate generating function. Options are:
 
-        * "omega" -- Run the algorithm via
-          :func:`MacMahon's Omega operator <sage.rings.polynomial.omega.MacMahonOmega>`.
+      * ``"omega"`` -- Run the algorithm via
+        :func:`MacMahon's Omega operator <sage.rings.polynomial.omega.MacMahonOmega>`.
 
-        * "latte" -- Run the corresponding algorithm of ``LattE``.
-          This algorithm requires LattE (Lattice point Enumeration) Integrale.
-          To install LattE Integrale, type :code:`sage -i latte_int` in the terminal.
+      * ``"latte"`` -- Run the corresponding algorithm of ``LattE``.
+        This algorithm requires LattE (Lattice point Enumeration) Integrale.
+        To install LattE Integrale, type :code:`sage -i latte_int` in the terminal.
 
-        * "naive" -- Only works for bounded polyhedrons. Collect the monomials
-          corresponding to each integral points.
+      * ``"naive"`` -- Only works for bounded polyhedra. Collect the monomials
+        corresponding to each integral point.
 
     - ``Factorization_sort`` (default: ``False``) and
       ``Factorization_simplify`` (default: ``True``) -- booleans
@@ -136,9 +135,10 @@ def generating_function_of_integral_points(polyhedron, split=False,
 
     .. NOTE::
 
-        At the moment, ``"omega"`` option only handles polyhedra with nonnegative coordinates
-        (i.e. a polyhedron in the nonnegative orthant).
-        ``"latte"`` option can handle general polyhedra,
+        At the moment, ``algorithm="omega"`` only handles polyhedra with
+        nonnegative coordinates (i.e., polyhedra in the nonnegative orthant).
+
+        ``algorithm="latte"`` option can handle general polyhedra,
         but has no loggings for the decompositions and
         only supports a tuple output unless the tuple has only one element.
 
@@ -148,9 +148,8 @@ def generating_function_of_integral_points(polyhedron, split=False,
 
     ::
 
-        sage: P2 = (
-        ....:   Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
-        ....:   Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
+        sage: P2 = (Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
+        ....:       Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
         sage: generating_function_of_integral_points(P2[0], sort_factors=True)
         1 * (-y0 + 1)^-1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
         sage: generating_function_of_integral_points(P2[1], sort_factors=True)
@@ -162,14 +161,19 @@ def generating_function_of_integral_points(polyhedron, split=False,
         sage: generating_function_of_integral_points(P2[0] & P2[1], sort_factors=True)
         1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
 
-        sage: generating_function_of_integral_points(P2[0], sort_factors=True, algorithm="latte")
+        sage: # optional - latte_int
+        sage: generating_function_of_integral_points(P2[0], sort_factors=True,
+        ....:                                        algorithm="latte")
         1 * (-y0 + 1)^-1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
-        sage: generating_function_of_integral_points(P2[1], sort_factors=True, algorithm="latte")
+        sage: generating_function_of_integral_points(P2[1], sort_factors=True,
+        ....:                                        algorithm="latte")
         1 * (-y1 + 1)^-1 * (-y2 + 1)^-1 * (-y0*y2 + 1)^-1
-        sage: generating_function_of_integral_points(P2[0] & P2[1], sort_factors=True, algorithm="latte")
+        sage: generating_function_of_integral_points(P2[0] & P2[1], sort_factors=True,
+        ....:                                        algorithm="latte")
         1 * (-y1 + 1)^-1 * (-y0*y2 + 1)^-1
 
-        sage: generating_function_of_integral_points(P2[0], sort_factors=True, algorithm="naive")
+        sage: generating_function_of_integral_points(P2[0], sort_factors=True,
+        ....:                                        algorithm="naive")
         Traceback (most recent call last):
         ...
         ValueError: Polyhedron must be bounded for the naive algorithm
@@ -224,7 +228,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
                  An inequality (0, 0, 1, 0) x + 0 >= 0)
         y0 * (-y0 + 1)^-1 * (-y0*y2 + 1)^-1 * (-y0*y1*y3 + 1)^-1
         [2]: (An inequality (-1, 0, 1, 1) x + 1 >= 0,
-             An inequality (-1, 1, 1, 0) x + 1 >= 0,
+              An inequality (-1, 1, 1, 0) x + 1 >= 0,
               An inequality (0, 0, 0, 1) x + 0 >= 0,
               An inequality (0, 0, 1, 0) x + 0 >= 0,
               An inequality (0, 1, 0, 0) x + 0 >= 0,
@@ -331,12 +335,14 @@ def generating_function_of_integral_points(polyhedron, split=False,
         [0, 1, 2, 3, 4]: (An equation -1 == 0,)
         0
 
+        sage: # optional - latte_int
         sage: for J in subsets(range(len(P3))):
         ....:     if not J:
         ....:         continue
         ....:     P = intersect([P3[j] for j in J])
         ....:     f1 = generating_function_of_integral_points(P, sort_factors=True)
-        ....:     f2 = generating_function_of_integral_points(P, algorithm="latte", result_as_tuple=True)
+        ....:     f2 = generating_function_of_integral_points(P, result_as_tuple=True,
+        ....:                                                 algorithm="latte")
         ....:     print('{}: {}'.format(J, f1.value() == sum(f2)))
         [0]: True
         [1]: True
@@ -375,7 +381,8 @@ def generating_function_of_integral_points(polyhedron, split=False,
         sage: P = Polyhedron(vertices=[[1], [5]])
         sage: P.generating_function_of_integral_points()
         y0^5 + y0^4 + y0^3 + y0^2 + y0
-        sage: P.generating_function_of_integral_points(algorithm="latte", result_as_tuple=True)
+        sage: P.generating_function_of_integral_points(algorithm="latte",    # optional - latte_int
+        ....:                                          result_as_tuple=True)
         (y0 * (-y0 + 1)^-1, y0^5 * (1 - y0^-1)^-1)
         sage: P.generating_function_of_integral_points(algorithm="naive")
         y0^5 + y0^4 + y0^3 + y0^2 + y0
@@ -412,51 +419,54 @@ def generating_function_of_integral_points(polyhedron, split=False,
 
         sage: G = generating_function_of_integral_points(P2[0], sort_factors=True)
         sage: S = generating_function_of_integral_points(P2[0], sort_factors=True,
-        ....:                                       split=True)
+        ....:                                            split=True)
         sage: sum(S) == G.value()
         True
 
         sage: G = generating_function_of_integral_points(P2[1], sort_factors=True)
         sage: S = generating_function_of_integral_points(P2[1], sort_factors=True,
-        ....:                                       split=True)
+        ....:                                            split=True)
         sage: sum(S) == G.value()
         True
 
         sage: G = generating_function_of_integral_points(P3[0], sort_factors=True)
         sage: S = generating_function_of_integral_points(P3[0], sort_factors=True,
-        ....:                                       split=True)
+        ....:                                            split=True)
         sage: sum(S) == G.value()
         True
 
         sage: G = generating_function_of_integral_points(P3[1], sort_factors=True)
         sage: S1 = generating_function_of_integral_points(P3[1], sort_factors=True,
-        ....:                                       split=True)
-        sage: S2 = generating_function_of_integral_points(P3[1], sort_factors=True,
-        ....:                                       algorithm="latte",result_as_tuple=True)
+        ....:                                             split=True)
+        sage: S2 = generating_function_of_integral_points(P3[1],        # optional - latte_int
+        ....:                                             sort_factors=True,
+        ....:                                             algorithm="latte",
+        ....:                                             result_as_tuple=True)
         sage: sum(S1) == G.value()
         True
-        sage: sum(S2) == G.value()
+        sage: sum(S2) == G.value()                                      # optional - latte_int
         True
         sage: S1
         (0,
-        ...
-        0,
-        y0*y3 * (-y0*y3 + 1)^-1 * (-y0*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3^2 + 1)^-1,
-        (-y0^4*y1*y2*y3^2 + y0) * (-y0 + 1)^-1 * (-y0*y3 + 1)^-1 * (-y0*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3^2 + 1)^-1,
-        0,
-        y0^2*y2 * (-y0 + 1)^-1 * (-y0*y2 + 1)^-1 * (-y0*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3 + 1)^-1,
-        0,
-        0,
-        y0^2*y1*y3^2 * (-y0*y3 + 1)^-1 * (-y0*y1*y3 + 1)^-1 * (-y0^2*y1*y2*y3^2 + 1)^-1,
-        (-y0^5*y1^2*y2*y3^3 + y0^2*y1*y3) * (-y0 + 1)^-1 * (-y0*y3 + 1)^-1 * (-y0*y1*y3 + 1)^-1 * (-y0^2*y1*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3^2 + 1)^-1,
-        0,
-        ...
-        0)
-        sage: S2
+         ...
+         0,
+         y0*y3 * (-y0*y3 + 1)^-1 * (-y0*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3^2 + 1)^-1,
+         (-y0^4*y1*y2*y3^2 + y0) * (-y0 + 1)^-1 * (-y0*y3 + 1)^-1 * (-y0*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3^2 + 1)^-1,
+         0,
+         y0^2*y2 * (-y0 + 1)^-1 * (-y0*y2 + 1)^-1 * (-y0*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3 + 1)^-1,
+         0,
+         0,
+         y0^2*y1*y3^2 * (-y0*y3 + 1)^-1 * (-y0*y1*y3 + 1)^-1 * (-y0^2*y1*y2*y3^2 + 1)^-1,
+         (-y0^5*y1^2*y2*y3^3 + y0^2*y1*y3) * (-y0 + 1)^-1 * (-y0*y3 + 1)^-1 * (-y0*y1*y3 + 1)^-1 * (-y0^2*y1*y2*y3 + 1)^-1 * (-y0^2*y1*y2*y3^2 + 1)^-1,
+         0,
+         ...
+         0)
+        sage: S2                                                        # optional - latte_int
         (y0 * (-y0 + 1)^-1 * (-y3 + 1)^-1 * (-y0*y2 + 1)^-1 * (-y0*y1*y3 + 1)^-1,
-        y0*y3 * (1 - y3^-1)^-1 * (-y0*y3 + 1)^-1 * (-y0*y1*y3 + 1)^-1 * (-y0*y2*y3 + 1)^-1)
+         y0*y3 * (1 - y3^-1)^-1 * (-y0*y3 + 1)^-1 * (-y0*y1*y3 + 1)^-1 * (-y0*y2*y3 + 1)^-1)
         sage: G
-        (-y0^2*y2*y3 - y0^2*y3 + y0*y3 + y0) * (-y0 + 1)^-1 * (-y0*y2 + 1)^-1 * (-y0*y3 + 1)^-1 * (-y0*y1*y3 + 1)^-1 * (-y0*y2*y3 + 1)^-1
+        (-y0^2*y2*y3 - y0^2*y3 + y0*y3 + y0) * (-y0 + 1)^-1 * (-y0*y2 + 1)^-1
+        * (-y0*y3 + 1)^-1 * (-y0*y1*y3 + 1)^-1 * (-y0*y2*y3 + 1)^-1
 
     We show the distinct polyhedra that are used when ``split=True`` and the
     resulting polyhedra that are used in the individual computations::
@@ -523,7 +533,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
         ...
         NotImplementedError: cannot compute the generating function of
         polyhedra with negative coordinates
-        sage: generating_function_of_integral_points(
+        sage: generating_function_of_integral_points(                   # optional - latte_int
         ....:     Polyhedron(vertices=[(-2, 0), (5, 0)]),
         ....:     sort_factors=True, algorithm="latte", result_as_tuple=True)
         ((y0^-2) * (-y0 + 1)^-1, y0^5 * (1 - y0^-1)^-1)
@@ -550,32 +560,33 @@ def generating_function_of_integral_points(polyhedron, split=False,
         (-mu0*mu1*mu2 - mu0*mu2 + mu0 + mu2) *
         (-mu0 + 1)^-1 * (-mu2 + 1)^-1 * (-mu0*mu1 + 1)^-1 * (-mu1*mu2 + 1)^-1
 
+        sage: # optional - latte_int
         sage: generating_function_of_integral_points(
         ....:     Polyhedron(ieqs=[(0, 0, 1, 0), (-1, 1, -1, 1),
         ....:                      (0, 0, 0, 1), (0, 1, 0, 0)]),
         ....:     name='z',
         ....:     sort_factors=True, algorithm="latte", result_as_tuple=True)
         (z0 * (-z0 + 1)^-1 * (-z0*z1 + 1)^-1 * (1 - z0^-1*z2)^-1,
-        z2 * (-z2 + 1)^-1 * (-z0*z2^-1 + 1)^-1 * (-z1*z2 + 1)^-1)
+         z2 * (-z2 + 1)^-1 * (-z0*z2^-1 + 1)^-1 * (-z1*z2 + 1)^-1)
         sage: generating_function_of_integral_points(
         ....:     Polyhedron(ieqs=[(0, 0, 1, 0), (-1, 1, -1, 1),
         ....:                      (0, 0, 0, 1), (0, 1, 0, 0)]),
         ....:     name='mu',
         ....:     sort_factors=True, algorithm="latte", result_as_tuple=True)
         (mu0 * (-mu0 + 1)^-1 * (-mu0*mu1 + 1)^-1 * (1 - mu0^-1*mu2)^-1,
-        mu2 * (-mu2 + 1)^-1 * (-mu0*mu2^-1 + 1)^-1 * (-mu1*mu2 + 1)^-1)
+         mu2 * (-mu2 + 1)^-1 * (-mu0*mu2^-1 + 1)^-1 * (-mu1*mu2 + 1)^-1)
 
         sage: f1 = generating_function_of_integral_points(
         ....:     Polyhedron(ieqs=[(0, 0, 1, 0), (-1, 1, -1, 1),
         ....:                      (0, 0, 0, 1), (0, 1, 0, 0)]),
         ....:     name='z',
         ....:     sort_factors=True)
-        sage: f2 = generating_function_of_integral_points(
+        sage: f2 = generating_function_of_integral_points(              # optional - latte_int
         ....:     Polyhedron(ieqs=[(0, 0, 1, 0), (-1, 1, -1, 1),
         ....:                      (0, 0, 0, 1), (0, 1, 0, 0)]),
         ....:     name='z',
         ....:     sort_factors=True, algorithm="latte", result_as_tuple=True)
-        sage: f1.value() == sum(f2)
+        sage: f1.value() == sum(f2)                                     # optional - latte_int
         True
 
     ::
@@ -599,6 +610,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
 
     ::
 
+        sage: # needs sage.symbolic
         sage: P = Polyhedron(rays=[(1, sqrt(2)), (0, 1)])
         Traceback (most recent call last):
         ...
