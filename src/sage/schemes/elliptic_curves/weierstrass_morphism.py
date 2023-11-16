@@ -611,7 +611,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         Q = baseWI.__call__(self, P)
         return self._codomain.base_extend(k).point(Q)
 
-    def __call__(self, P):
+    def _call_(self, P):
         r"""
         Call function for WeierstrassIsomorphism class.
 
@@ -648,6 +648,21 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             432
             sage: E(i(P))._order
             432
+
+        Check that the isomorphism cannot be evaluated on points outside
+        its domain (see :issue:`35799`)::
+
+            sage: # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: f = E.automorphisms()[0]
+            sage: EE = EllipticCurve(GF(101), [5,5])
+            sage: P = EE.lift_x(2)
+            sage: P in f.domain()
+            False
+            sage: f(P)
+            Traceback (most recent call last):
+            ...
+            TypeError: (2 : 15 : 1) fails to convert into the map's domain Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 101, but a `pushforward` method is not properly implemented
         """
         if P[2] == 0:
             return self._codomain(0)
