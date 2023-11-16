@@ -42,6 +42,7 @@ jobs:
       stage: "2"
       max_parallel: 1
     needs: [stage-1]
+    if: ${{ success() || failure() }}
 
   stage-2-optional-0-o:
     uses: ./.github/workflows/macos.yml
@@ -49,6 +50,7 @@ jobs:
       stage: "2-optional-0-o"
       max_parallel: 1
     needs: [stage-2]
+    if: ${{ success() || failure() }}
 
   stage-2-optional-p-z:
     uses: ./.github/workflows/macos.yml
@@ -56,6 +58,7 @@ jobs:
       stage: "2-optional-p-z"
       max_parallel: 1
     needs: [stage-2-optional-0-o]
+    if: ${{ success() || failure() }}
 
   stage-2-experimental-0-o:
     uses: ./.github/workflows/macos.yml
@@ -63,6 +66,7 @@ jobs:
       stage: "2-optional-0-o"
       max_parallel: 1
     needs: [stage-2-optional-p-z]
+    if: ${{ success() || failure() }}
 
   stage-2-experimental-p-z:
     uses: ./.github/workflows/macos.yml
@@ -70,6 +74,7 @@ jobs:
       stage: "2-experimental-p-z"
       max_parallel: 1
     needs: [stage-2-experimental-0-o]
+    if: ${{ success() || failure() }}
 
   dist:
 
