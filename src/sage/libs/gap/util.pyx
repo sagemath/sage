@@ -250,10 +250,7 @@ cdef initialize() noexcept:
 
     # Get the path to the sage.gaprc file and check that it exists
     sage_gaprc = os.path.join(os.path.dirname(__file__), 'sage.gaprc')
-    if not os.path.exists(sage_gaprc):
-        warnings.warn(f"Sage's GAP initialization file {sage_gaprc} is "
-                       "is missing; some functionality may be limited")
-    else:
+    if os.path.exists(sage_gaprc):
         sage_gaprc = str_to_bytes(sage_gaprc, FS_ENCODING, "surrogateescape")
         argv[argc] = sage_gaprc
         argc += 1
