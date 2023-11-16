@@ -747,7 +747,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             except ImportError:
                 # Falback to using the KL polynomial
                 from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
-                q = PolynomialRing(QQ, 'q').gen()
+                from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+                q = PolynomialRing(R, 'q').gen()
                 KLG = SymmetricGroup(self.n)
                 self._cellular_KL = KazhdanLusztigPolynomial(KLG, q)
                 polyfunc = self._cellular_KL.P
