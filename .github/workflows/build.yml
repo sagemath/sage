@@ -289,6 +289,7 @@ jobs:
             TARGETS=ci-build-with-fallback
 
       - name: Start container
+        id: container
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -305,6 +306,7 @@ jobs:
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload coverage to codecov
+        if: (success() || failure()) && steps.container.outcome == 'success'
         uses: codecov/codecov-action@v3
         with:
           directory: ./coverage-report
