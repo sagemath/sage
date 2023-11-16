@@ -292,11 +292,10 @@ ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
-$ADD .gitignore /new
+$ADD .gitignore /new/.gitignore
 $ADD src /new/src
 RUN if command -v git; then                             \
-        rm -f /sage/.git &&                             \
-        cd /new &&                                      \
+        cd /new && rm -rf .git &&                       \
         ./.ci/retrofit-worktree.sh worktree-pre /sage;  \
     else                                                \
         rm -rf /sage/src;                               \
