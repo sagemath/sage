@@ -56,19 +56,20 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
 
     EXAMPLES::
 
-        sage: from sage.interfaces.latte import count    # optional - latte_int
+        sage: from sage.interfaces.latte import count
         sage: P = 2 * polytopes.cube()
 
     Counting integer points from either the H or V representation::
 
-        sage: count(P.cdd_Hrepresentation(), cdd=True)   # optional - latte_int
+        sage: count(P.cdd_Hrepresentation(), cdd=True)      # optional - latte_int
         125
-        sage: count(P.cdd_Vrepresentation(), cdd=True)   # optional - latte_int
+        sage: count(P.cdd_Vrepresentation(), cdd=True)      # optional - latte_int
         125
 
     Ehrhart polynomial::
 
-        sage: count(P.cdd_Hrepresentation(), cdd=True, ehrhart_polynomial=True)  # optional - latte_int
+        sage: count(P.cdd_Hrepresentation(), cdd=True,      # optional - latte_int
+        ....:       ehrhart_polynomial=True)
         64*t^3 + 48*t^2 + 12*t + 1
 
     Returning a string of the multivariate generating function when ``raw_output=True``.
@@ -81,7 +82,7 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         ....:         'multivariate_generating_function': True,
         ....:         'raw_output': True}
         sage: cddin = P.cdd_Hrepresentation()
-        sage: print(count(cddin, **opts))  # optional - latte_int
+        sage: print(count(cddin, **opts))                                       # optional - latte_int
         x[0]^2*x[1]^(-2)*x[2]^(-2)/((1-x[1])*(1-x[2])*(1-x[0]^(-1)))
          + x[0]^(-2)*x[1]^(-2)*x[2]^(-2)/((1-x[1])*(1-x[2])*(1-x[0]))
          + x[0]^2*x[1]^(-2)*x[2]^2/((1-x[1])*(1-x[2]^(-1))*(1-x[0]^(-1)))
@@ -90,7 +91,7 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
          + x[0]^(-2)*x[1]^2*x[2]^(-2)/((1-x[2])*(1-x[0])*(1-x[1]^(-1)))
          + x[0]^2*x[1]^2*x[2]^2/((1-x[2]^(-1))*(1-x[1]^(-1))*(1-x[0]^(-1)))
          + x[0]^(-2)*x[1]^2*x[2]^2/((1-x[0])*(1-x[2]^(-1))*(1-x[1]^(-1)))
-        sage: count(cddin, cdd=True, multivariate_generating_function=True) # optional - latte_int
+        sage: count(cddin, cdd=True, multivariate_generating_function=True)     # optional - latte_int
         ((y0^2*y1^-2*y2^-2) * (-y1 + 1)^-1 * (-y2 + 1)^-1 * (1 - y0^-1)^-1,
          (y0^-2*y1^-2*y2^-2) * (-y1 + 1)^-1 * (-y2 + 1)^-1 * (-y0 + 1)^-1,
          (y0^2*y1^-2*y2^2) * (-y1 + 1)^-1 * (1 - y2^-1)^-1 * (1 - y0^-1)^-1,
@@ -104,22 +105,23 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
 
     Testing raw output::
 
-        sage: from sage.interfaces.latte import count   # optional - latte_int
+        sage: from sage.interfaces.latte import count
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
-        sage: count(cddin, cdd=True, raw_output=True)  # optional - latte_int
+        sage: count(cddin, cdd=True, raw_output=True)                           # optional - latte_int
         '19'
-        sage: count(cddin, cdd=True, raw_output=True, ehrhart_polynomial=True) # optional - latte_int
+        sage: count(cddin, cdd=True, raw_output=True, ehrhart_polynomial=True)  # optional - latte_int
         ' + 1 * t^0 + 10/3 * t^1 + 8 * t^2 + 20/3 * t^3'
-        sage: count(cddin, cdd=True, raw_output=True, multivariate_generating_function=True) # optional - latte_int
+        sage: count(cddin, cdd=True, raw_output=True,                           # optional - latte_int
+        ....:       multivariate_generating_function=True)
         'x[0]^(-1)*x[1]^(-1)/((1-x[0]*x[2])*(1-x[0]^(-1)*x[1])*(1-x[2]^(-1)))\n + x[0]^(-1)*x[1]^(-1)/((1-x[2])*(1-x[0]^(-1)*x[1])*(1-x[0]*x[2]^(-1)))\n + ... + x[0]*x[1]/((1-x[0]^(-1)*x[2])*(1-x[0]*x[1]^(-1))*(1-x[2]^(-1)))\n + x[0]*x[1]/((1-x[2])*(1-x[0]*x[1]^(-1))*(1-x[0]^(-1)*x[2]^(-1)))\n'
 
     Testing multivariate generating function::
 
-        sage: from sage.interfaces.latte import count   # optional - latte_int
+        sage: from sage.interfaces.latte import count                           # optional - latte_int
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
-        sage: count(cddin, cdd=True, multivariate_generating_function=True) # optional - latte_int
+        sage: count(cddin, cdd=True, multivariate_generating_function=True)     # optional - latte_int
         ((y0^-1*y1^-1) * (-y0*y2 + 1)^-1 * (1 - y0^-1*y1)^-1 * (1 - y2^-1)^-1,
          (y0^-1*y1^-1) * (-y2 + 1)^-1 * (1 - y0^-1*y1)^-1 * (-y0*y2^-1 + 1)^-1,
         ...
@@ -128,17 +130,18 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
 
         sage: P = Polyhedron(rays=[[0,1], [1,0]])
         sage: cddin = P.cdd_Hrepresentation()
-        sage: count(cddin, cdd=True, raw_output=True, multivariate_generating_function=True) # optional - latte_int
+        sage: count(cddin, cdd=True, raw_output=True,                           # optional - latte_int
+        ....:       multivariate_generating_function=True)
         '1/((1-x[1])*(1-x[0]))\n'
-        sage: count(cddin, cdd=True, multivariate_generating_function=True) # optional - latte_int
+        sage: count(cddin, cdd=True, multivariate_generating_function=True)     # optional - latte_int
         (1 * (-y1 + 1)^-1 * (-y0 + 1)^-1,)
 
     Testing the ``verbose`` option::
 
-        sage: from sage.interfaces.latte import count   # optional - latte_int
+        sage: from sage.interfaces.latte import count
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
-        sage: n = count(cddin, cdd=True, verbose=True, raw_output=True)  # optional - latte_int
+        sage: n = count(cddin, cdd=True, verbose=True, raw_output=True)         # optional - latte_int
         This is LattE integrale ...
         ...
         Invocation: ...count '--redundancy-check=none' --cdd /dev/stdin
@@ -153,14 +156,14 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
 
         sage: P = Polyhedron(vertices=[[0,0,0]])
         sage: cddin = P.cdd_Hrepresentation()
-        sage: count(cddin, cdd=True, raw_output=False)  # optional - latte_int
+        sage: count(cddin, cdd=True, raw_output=False)                          # optional - latte_int
         1
 
     Testing the runtime error::
 
         sage: P = Polyhedron(rays=[[0,1], [1,0]])
         sage: cddin = P.cdd_Hrepresentation()
-        sage: count(cddin, cdd=True, raw_output=False)  # optional - latte_int
+        sage: count(cddin, cdd=True, raw_output=False)                          # optional - latte_int
         Traceback (most recent call last):
         ...
         RuntimeError: LattE integrale program failed (exit code 1):
@@ -275,11 +278,12 @@ def str_to_multivariate_generating_function(raw_output_str, name=None, **kwds):
 
     TESTS:
 
-        sage: from sage.interfaces.latte import count, str_to_multivariate_generating_function # optional - latte_int
+        sage: from sage.interfaces.latte import count, str_to_multivariate_generating_function
         sage: P = Polyhedron(ieqs=[(0, 1, 0, 0), (0, -1, 1, 0)], eqns=[(0, -1, -1, 2)])
         sage: cddin = P.cdd_Hrepresentation()
-        sage: raw_output_str = count(cddin, cdd=True, raw_output=True, multivariate_generating_function=True) # optional - latte_int
-        sage: str_to_multivariate_generating_function(raw_output_str, name='xi') # optional - latte_int
+        sage: raw_output_str = count(cddin, cdd=True, raw_output=True,
+        ....:                        multivariate_generating_function=True)
+        sage: str_to_multivariate_generating_function(raw_output_str, name='xi')
         (1 * (-xi0*xi1*xi2 + 1)^-1 * (-xi1^2*xi2 + 1)^-1,)
     """
     from sage.rings.integer_ring import ZZ
@@ -312,14 +316,14 @@ def _str_to_multivariate_generating_function(summand, B=None,
 
     TESTS::
 
-        sage: from sage.interfaces.latte import _str_to_multivariate_generating_function # optional - latte_int
+        sage: from sage.interfaces.latte import _str_to_multivariate_generating_function
         sage: B = LaurentPolynomialRing(ZZ, 'y', 3)
-        sage: _str_to_multivariate_generating_function( # optional - latte_int
+        sage: _str_to_multivariate_generating_function(
         ....:     '(-1)*x[0]^(-1)*x[2]/((1-x[0]^(-1)*x[1]^(-1))*(1-x[0]^(-1)*x[2]^(-1))*(1-x[0]))', B)
         (-y0^-1*y2) * (1 - y0^-1*y1^-1)^-1 * (1 - y0^-1*y2^-1)^-1 * (-y0 + 1)^-1
-        sage: _str_to_multivariate_generating_function('(-1)/((1-x[0]*x[1]*x[2])*(1-x[1]^2*x[2]))\n', B) # optional - latte_int
+        sage: _str_to_multivariate_generating_function('(-1)/((1-x[0]*x[1]*x[2])*(1-x[1]^2*x[2]))\n', B)
         (-1) * (-y0*y1*y2 + 1)^-1 * (-y1^2*y2 + 1)^-1
-        sage: _str_to_multivariate_generating_function( # optional - latte_int
+        sage: _str_to_multivariate_generating_function(
         ....:    '((-1)*x[0]*x[2]^2 + x[1]^(-2)*x[2])/((1-x[0]*x[1]*x[2])*(1-x[1]^2*x[2]))', B)
         (-y0*y2^2 + y1^-2*y2) * (-y0*y1*y2 + 1)^-1 * (-y1^2*y2 + 1)^-1
     """
@@ -395,44 +399,45 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     EXAMPLES::
 
-        sage: from sage.interfaces.latte import integrate   # optional - latte_int
+        sage: from sage.interfaces.latte import integrate
         sage: P = 2 * polytopes.cube()
         sage: x, y, z = polygen(QQ, 'x, y, z')
 
     Integrating over a polynomial over a polytope in either the H or V representation::
 
-        sage: integrate(P.cdd_Hrepresentation(), x^2*y^2*z^2, cdd=True)   # optional - latte_int
+        sage: integrate(P.cdd_Hrepresentation(), x^2*y^2*z^2, cdd=True)         # optional - latte_int
         4096/27
-        sage: integrate(P.cdd_Vrepresentation(), x^2*y^2*z^2, cdd=True)   # optional - latte_int
+        sage: integrate(P.cdd_Vrepresentation(), x^2*y^2*z^2, cdd=True)         # optional - latte_int
         4096/27
 
     Computing the volume of a polytope in either the H or V representation::
 
-        sage: integrate(P.cdd_Hrepresentation(), cdd=True)   # optional - latte_int
+        sage: integrate(P.cdd_Hrepresentation(), cdd=True)                      # optional - latte_int
         64
-        sage: integrate(P.cdd_Vrepresentation(), cdd=True)   # optional - latte_int
+        sage: integrate(P.cdd_Vrepresentation(), cdd=True)                      # optional - latte_int
         64
 
     Polynomials given as a string in LattE description are also accepted::
 
-        sage: integrate(P.cdd_Hrepresentation(), '[[1,[2,2,2]]]', cdd=True)   # optional - latte_int
+        sage: integrate(P.cdd_Hrepresentation(), '[[1,[2,2,2]]]', cdd=True)     # optional - latte_int
         4096/27
 
     TESTS:
 
     Testing raw output::
 
-        sage: from sage.interfaces.latte import integrate   # optional - latte_int
+        sage: from sage.interfaces.latte import integrate
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
         sage: x, y, z = polygen(QQ, 'x, y, z')
         sage: f = 3*x^2*y^4*z^6 + 7*y^3*z^5
-        sage: integrate(cddin, f, cdd=True, raw_output=True)  # optional - latte_int
+        sage: integrate(cddin, f, cdd=True, raw_output=True)                    # optional - latte_int
         '629/47775'
 
     Testing the ``verbose`` option to integrate over a polytope::
 
-        sage: ans = integrate(cddin, f, cdd=True, verbose=True, raw_output=True)  # optional - latte_int
+        sage: ans = integrate(cddin, f, cdd=True, verbose=True,                 # optional - latte_int
+        ....:                 raw_output=True)
         This is LattE integrale ...
         ...
         Invocation: ...integrate --valuation=integrate --triangulate --redundancy-check=none --cdd --monomials=... /dev/stdin
@@ -440,41 +445,42 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     Testing triangulate algorithm::
 
-        sage: from sage.interfaces.latte import integrate   # optional - latte_int
+        sage: from sage.interfaces.latte import integrate
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
-        sage: integrate(cddin, algorithm='triangulate', cdd=True)  # optional - latte_int
+        sage: integrate(cddin, algorithm='triangulate', cdd=True)               # optional - latte_int
         20/3
 
     Testing convex decomposition algorithm::
 
-        sage: from sage.interfaces.latte import integrate   # optional - latte_int
+        sage: from sage.interfaces.latte import integrate
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
-        sage: integrate(cddin, algorithm='cone-decompose', cdd=True)  # optional - latte_int
+        sage: integrate(cddin, algorithm='cone-decompose', cdd=True)            # optional - latte_int
         20/3
 
     Testing raw output::
 
-        sage: from sage.interfaces.latte import integrate   # optional - latte_int
+        sage: from sage.interfaces.latte import integrate
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
-        sage: integrate(cddin, cdd=True, raw_output=True)  # optional - latte_int
+        sage: integrate(cddin, cdd=True, raw_output=True)                       # optional - latte_int
         '20/3'
 
     Testing polynomial given as a string in LattE description::
 
-        sage: from sage.interfaces.latte import integrate   # optional - latte_int
+        sage: from sage.interfaces.latte import integrate
         sage: P = polytopes.cuboctahedron()
-        sage: integrate(P.cdd_Hrepresentation(), '[[3,[2,4,6]],[7,[0, 3, 5]]]', cdd=True)   # optional - latte_int
+        sage: integrate(P.cdd_Hrepresentation(),                                # optional - latte_int
+        ....:           '[[3,[2,4,6]],[7,[0, 3, 5]]]', cdd=True)
         629/47775
 
     Testing the ``verbose`` option to compute the volume of a polytope::
 
-        sage: from sage.interfaces.latte import integrate   # optional - latte_int
+        sage: from sage.interfaces.latte import integrate
         sage: P = polytopes.cuboctahedron()
         sage: cddin = P.cdd_Vrepresentation()
-        sage: ans = integrate(cddin, cdd=True, raw_output=True, verbose=True)  # optional - latte_int
+        sage: ans = integrate(cddin, cdd=True, raw_output=True, verbose=True)   # optional - latte_int
         This is LattE integrale ...
         ...
         Invocation: ...integrate --valuation=volume --triangulate --redundancy-check=none --cdd /dev/stdin
@@ -483,7 +489,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     Testing the runtime error::
 
         sage: P = Polyhedron(rays=[[1,0],[0,1]])
-        sage: P._volume_latte()  # optional - latte_int
+        sage: P._volume_latte()                                                 # optional - latte_int
         Traceback (most recent call last):
         ...
         RuntimeError: LattE integrale program failed (exit code -6):
