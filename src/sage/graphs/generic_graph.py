@@ -15757,7 +15757,7 @@ class GenericGraph(GenericGraph_pyx):
         OUTPUT:
         - The kth power graph based on shortest distances between nodes.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Testing on undirected graphs::
 
