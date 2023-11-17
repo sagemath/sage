@@ -1597,6 +1597,10 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: SGA = SymmetricGroupAlgebra(GF(5), 6)
             sage: SGA.simple_module_dimension(Partition([4,1,1]))
             10
+
+        TESTS::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(5), 6)
             sage: SGA.simple_module_dimension(Partition([3,1,1]))
             Traceback (most recent call last):
             ...

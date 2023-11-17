@@ -475,7 +475,7 @@ def polytabloid(T):
 
     OUTPUT:
 
-    A ``dict`` whose keys are taboids represented by tuples of frozensets
+    A ``dict`` whose keys are tabloids represented by tuples of frozensets
     and whose values are the coefficient.
 
     EXAMPLES::
@@ -505,7 +505,7 @@ def tabloid_gram_matrix(la, base_ring):
     pulled back from the tabloid module.
 
     For the module spanned by all tabloids, we define an bilinear form
-    by having the taboids be an orthonormal basis. We then pull this
+    by having the tabloids be an orthonormal basis. We then pull this
     bilinear form back across the natural injection of the Specht module
     into the tabloid module.
 
@@ -541,6 +541,20 @@ def simple_module_rank(la, base_ring):
         sage: from sage.combinat.specht_module import simple_module_rank
         sage: simple_module_rank([3,2,1,1], GF(3))
         13
+
+    TESTS::
+
+        sage: from sage.combinat.specht_module import simple_module_rank
+        sage: simple_module_rank([1,1,1,1], GF(3))
+        Traceback (most recent call last):
+        ...
+        ValueError: the partition [1, 1, 1, 1] is not 3-regular
+
+        sage: from sage.combinat.specht_module import simple_module_rank
+        sage: simple_module_rank([2,1], GF(3)['x'])
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: the base must be a field
     """
     from sage.categories.fields import Fields
     from sage.combinat.partition import Partition

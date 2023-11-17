@@ -5538,8 +5538,8 @@ class Partition(CombinatorialElement):
         r"""
         Return the dimension of the simple module corresponding to ``self``.
 
-        This is equal to the dimension of the Specht module over a field
-        of characteristic `0`.
+        When the base ring is a field of characteristic `0`, this is equal
+        to the dimension of the Specht module.
 
         INPUT:
 
