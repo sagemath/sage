@@ -10,6 +10,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 cd src
-# Needed because of trees.txt directs us to $SAGE_LOCAL/...
+# Needed because we have trees.txt, which directs us to $SAGE_LOCAL/...
 export PIP_FIND_LINKS=$SAGE_VENV/var/lib/sage/wheels
-python3 -m pip install --verbose --no-index --no-build-isolation --config-settings=editable-verbose=true --config-settings=compile-args="-j12" --config-settings=compile-args="--verbose" --editable . || sdh_die "Error installing $PKG_NAME"
+sdh_pip_install --no-build-isolation .
