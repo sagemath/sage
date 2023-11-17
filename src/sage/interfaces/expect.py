@@ -250,13 +250,13 @@ class Expect(Interface):
             env_name = 'SAGE_%s_{}' % self.name().upper()  # same as in __init__
             command = os.getenv(env_name.format('COMMAND'), self.name())
         elif not isinstance(command, str):
-            executable = self.command[0]
+            executable = command[0]
             if server:
                 executable = executable.name
             else:
                 executable = executable.absolute_filename()
             command = ' '.join([shlex.quote(executable)]
-                               + [shlex.quote(arg) for arg in self.__command[1:]])
+                               + [shlex.quote(arg) for arg in command[1:]])
         if server:
             if self.__ulimit:
                 command = f"ulimit {ulimit}; {command}"

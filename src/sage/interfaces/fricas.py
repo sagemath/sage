@@ -267,7 +267,7 @@ class FriCAS(ExtraTabCompletion, Expect):
     """
     def __init__(self, name='fricas', command=None,
                  script_subdirectory=None, logfile=None,
-                 server=None, server_tmpdir=None, options=""):
+                 server=None, server_tmpdir=None):
         """
         Create an instance of the FriCAS interpreter.
 
@@ -290,11 +290,9 @@ class FriCAS(ExtraTabCompletion, Expect):
             sage: fricas(I*x).sage()
             I*x
         """
-        from sage.features.fricas import FriCAS
-        FriCAS().require()
-        options ="-nosman" + options
-        import shlex
-        command = '{} {}'.format(shlex.quote(FriCAS().absolute_filename()), options)
+        if command is None:
+            from sage.features.fricas import FriCAS
+            command = [FriCAS(), "-nosman"]
 
         eval_using_file_cutoff = 4096 - 5  # magic number from Expect._eval_line (there might be a bug)
         assert max(len(c) for c in FRICAS_INIT_CODE) < eval_using_file_cutoff
