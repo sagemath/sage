@@ -84,7 +84,7 @@ Control-C interruption works well with the FriCAS interface. For
 example, try the following sum but with a much bigger range, and hit
 control-C::
 
-    sage:  f = fricas('(x^5 - y^5)^10000')                                      # not tested - fricas
+    sage:  f = fricas('(x^5 - y^5)^10000')                                      # not tested
     Interrupting FriCAS...
     ...
     KeyboardInterrupt: Ctrl-c pressed while running FriCAS
