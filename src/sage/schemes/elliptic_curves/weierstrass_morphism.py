@@ -662,7 +662,10 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: f(P)
             Traceback (most recent call last):
             ...
-            TypeError: (2 : 15 : 1) fails to convert into the map's domain Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 101, but a `pushforward` method is not properly implemented
+            TypeError: (2 : 15 : 1) fails to convert into the map's
+            domain Elliptic Curve defined by y^2 = x^3 + x + 1 over
+            Finite Field of size 101, but a `pushforward` method is
+            not properly implemented
         """
         if P[2] == 0:
             return self._codomain(0)
