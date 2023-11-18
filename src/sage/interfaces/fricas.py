@@ -1608,13 +1608,13 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         Check that :trac:`25602` is fixed::
 
             sage: r = fricas.integrate(72000/(1+x^5), x).sage()
-            sage: n(r.subs(x=5) - r.subs(x=3))              # tol 0.1
-            193.020947266210
+            sage: abs(n(r.subs(x=5) - r.subs(x=3)) - 193.020947266210) <= 0.1
+            True
 
             sage: var("a"); r = fricas.integrate(72000*a^8/(a^5+x^5), x).sage()
             a
-            sage: n(r.subs(a=1, x=5) - r.subs(a=1, x=3))    # tol 0.1
-            193.020947266268 - 8.73114913702011e-11*I
+            sage: abs(n(r.subs(a=1, x=5) - r.subs(a=1, x=3)) - 193.020947266268) <= 0.1
+            True
 
         Check conversions of sums and products::
 
