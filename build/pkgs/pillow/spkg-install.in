@@ -6,6 +6,6 @@ if [ "$CONDA_PREFIX" != "" ]; then
     PILLOW_CONFIG_SETTINGS="$PILLOW_CONFIG_SETTINGS -C platform-guessing=disable"
 fi
 
-PILLOW_CONFIG_SETTINGS="-C debug=true -C jpeg=disable $PILLOW_CONFIG_SETTINGS"
+PILLOW_CONFIG_SETTINGS="-C debug=true $PILLOW_CONFIG_SETTINGS"
 
 eval sdh_pip_install $PILLOW_CONFIG_SETTINGS .
