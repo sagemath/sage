@@ -10,6 +10,17 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 cd src
-# Needed because we have trees.txt, which directs us to $SAGE_LOCAL/...
-export PIP_FIND_LINKS=$SAGE_VENV/var/lib/sage/wheels
-sdh_pip_install --no-build-isolation .
+
+if [ "$SAGE_WHEELS" = yes ]; then
+    # Needed because we have trees.txt, which directs us to $SAGE_LOCAL/...
+    export PIP_FIND_LINKS=$SAGE_VENV/var/lib/sage/wheels
+    # First build the sdist, then build the wheel from the sdist.
+    # https://pypa-build.readthedocs.io/en/latest/#python--m-build
+    # Do not install the wheel.
+    DIST_DIR="$(mktemp -d)"
+    python3 -m build --no-isolation --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
+    wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel --prefix "$SAGE_LOCAL" . >&2 && echo $wheel)
+    ls -l "$wheel"
+else
+    (cd doc && $MAKE doc-html) || sdh_die "Failure building HTML documentation"
+fi
