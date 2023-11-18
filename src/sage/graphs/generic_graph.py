@@ -15745,7 +15745,7 @@ class GenericGraph(GenericGraph_pyx):
                                             algorithm=algorithm,
                                             weight_function=weight_function,
                                             check_weight=check_weight)[0]
-                                
+    
     def power(self, k):
         r"""
         Compute the kth power graph of an unweighted graph based on shortest
