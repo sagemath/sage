@@ -1,5 +1,3 @@
-# Cannot be found via pkg-config
-glpk = cc.find_library('glpk')
 py.install_sources(
     'all.py',
     'all__sagemath_polyhedra.py',

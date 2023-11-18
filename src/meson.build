@@ -138,11 +138,8 @@ ecm = declare_dependency(
     cc.find_library('ecm'),
   ]
 )
-glpk = declare_dependency(
-  dependencies: [
-    cc.find_library('glpk'),
-  ]
-)
+# Cannot be found via pkg-config
+glpk = cc.find_library('glpk')
 ppl = declare_dependency(
   dependencies: [
     cc.find_library('ppl'),
