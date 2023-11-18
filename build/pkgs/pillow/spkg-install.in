@@ -1,8 +1,6 @@
 cd src
 
 if [ "$CONDA_PREFIX" != "" ]; then
-    # Quoted quotes so that whitespace in CONDA_PREFIX works correctly.
-    # Below we run the command line through eval.
     PILLOW_CONFIG_SETTINGS="$PILLOW_CONFIG_SETTINGS -C platform-guessing=disable"
 fi
 
