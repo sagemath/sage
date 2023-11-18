@@ -148,11 +148,14 @@ PYPI_WHEEL_PACKAGES = $(PYPI_NOARCH_WHEEL_PACKAGES) \
 	sagemath_sirocco			\
 	sagemath_meataxe
 
-# sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
+# sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib.
+# This can be changed when we have separate 'dependencies_build' files.
 WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\
 	sage_conf				\
 	sagelib					\
-	sage_docbuild
+	sage_docbuild				\
+	sagemath_doc_html			\
+	sagemath_doc_pdf
 
 # Packages for which build sdists for PyPI
 PYPI_SDIST_PACKAGES = $(WHEEL_PACKAGES)
