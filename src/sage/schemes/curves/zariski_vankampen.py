@@ -634,9 +634,9 @@ def fieldI(field):
         sage: a0 = p.roots(QQbar, multiplicities=False)[0]
         sage: F0.<a> = NumberField(p, embedding=a0)
         sage: fieldI(F0)
-        Number Field in b with defining polynomial
+        Number Field in primitif_element with defining polynomial
         x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10
-        with b = 0.4863890359345430? + 1.000000000000000?*I
+        with primitif_element = 0.4863890359345430? + 1.000000000000000?*I
 
     If ``I`` is already in the field, the result is the field itself::
 
@@ -652,7 +652,7 @@ def fieldI(field):
     if I0 in field:
         return field
     field_a = field[I0]
-    field_b = field_a.absolute_field('b0')
+    field_b = field_a.absolute_field('imaginary_unit')
     b0 = field_b.gen()
     q = b0.minpoly()
     qembd = field_b.embeddings(QQbar)
@@ -660,7 +660,7 @@ def fieldI(field):
         b1 = h1(b0)
         b2 = h1(field_b(field_a.gen(0)))
         b3 = field.gen(0)
-        F1 = NumberField(q, 'b', embedding=b1)
+        F1 = NumberField(q, 'primitif_element', embedding=b1)
         if b3 in F1 and b2.imag() > 0:
             return F1
 
