@@ -93,8 +93,25 @@ ntl_configure()
         echo "Configuring NTL with NATIVE=on (NTL might still disable it)."
         DISABLE_NATIVE="NATIVE=on"
     fi
+    
+    CONFIGURE_PATH="$PATH"
+    
+    # The configure script for ntl uses perl to run most of its build logic,
+    # and by default the first perl on PATH will be a Windows Perl, which causes
+    # the build to fail because any attempts to run commands in a subshell use
+    # command prompt, when they're expecting a POSIX-style shell
+    # This works around that by adding the MSYS perl to PATH
+    if [ -n "$MSYSTEM" ]; then
+        
+        # We only want the MSYS perl added to PATH, not everything else in /usr/bin,
+        # since that includes plenty of other MSYS tools that might accidentally result
+        # in a Cygwin build, not a Windows-native build 
+        mkdir ../commands
+        ln -s /usr/bin/perl ../commands/perl
+        CONFIGURE_PATH="$(realpath ../commands):$PATH"
+    fi
 
-    ./configure DEF_PREFIX="$SAGE_LOCAL" SHARED=on \
+    PATH="$CONFIGURE_PATH" ./configure DEF_PREFIX="$SAGE_LOCAL" SHARED=on \
         CXX="$CXX" CXXFLAGS="$CXXFLAGS $SHAREDFLAGS" \
         LDFLAGS="$LDFLAGS" LIBTOOL_LINK_FLAGS="$LIBTOOL_LINK_FLAGS" \
         NTL_GMP_LIP=on NTL_GF2X_LIB=on \

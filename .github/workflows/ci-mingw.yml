@@ -1,0 +1,70 @@
+name: CI MinGW
+
+on:
+  push:
+    # tags:
+    #   - '*'
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TARGETS_PRE: all-sage-local
+  TARGETS: build doc-html
+  TARGETS_OPTIONAL: ptest
+
+jobs:
+  mingw64:
+    name: MinGW
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        packages_factor: [minimal, standard]
+
+    env:
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-mingw-${{ matrix.packages_factor }}
+
+    defaults:
+      run:
+        # https://github.com/actions/runner-images/blob/main/images/win/Windows2022-Readme.md#msys2
+        shell: "C:\\msys64\\usr\\bin\\bash.exe -e {0}"
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install test prerequisites
+        run: |
+          set -x
+          uname -s
+          eval $(PATH=build/bin:$PATH build/bin/sage-print-system-package-command auto --spkg --yes update)
+          eval $(PATH=build/bin:$PATH build/bin/sage-print-system-package-command auto --spkg --yes install tox)
+        env:
+          PATH: "C:\\msys64\\usr\\bin"
+      - name: Build and test
+        run: |
+          MAKE="make -j12" tox -e local-${{ matrix.packages_factor }} -- SAGE_NUM_THREADS=4 $TARGETS
+        env:
+          PATH: "C:\\msys64\\usr\\bin"
+      - name: Prepare logs artifact
+        run: |
+          mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()
+        env:
+          PATH: "C:\\msys64\\usr\\bin"
+      - uses: actions/upload-artifact@v3
+        with:
+          path: artifacts
+          name: ${{ env.LOGS_ARTIFACT_NAME }}
+        if: always()
+      - name: Print out logs for immediate inspection
+        # and markup the output with GitHub Actions logging commands
+        run: |
+          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
+        env:
+          PATH: "C:\\msys64\\usr\\bin"

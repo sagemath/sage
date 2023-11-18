@@ -1,4 +1,17 @@
 cd src
+
+# Somewhat annoyingly, running `setup.py install` using the configuration we have set up below
+# fails on MSYS due to the combination of:
+# - the (Windows-based) Python version correctly reporting that the OS is Windows
+# - MSYS patching the Windows-based Python to report the default path separator as a forward slash
+#   instead of the standard back slash (see https://github.com/msys2/MINGW-packages/blob/4e32b48a178bd87d0e00ecc5df91fe711505eaec/mingw-w64-python/0031-msys-mingw-prefer-unix-sep-if-MSYSTEM.patch)
+# - setuptools using the presence of a starting backslash to determine if a path is absolute when relevant
+#   absolute path starts with a forward slash due to the MSYS patch (see https://github.com/pypa/setuptools/blob/f747e8bca333a45aaf7fbc58fa1ce12c663bebe3/setuptools/_distutils/util.py#L167)
+
+# The MSYS patch conditions whether the default path separator should be changed based on the presence
+# of the MSYSTEM environment variable, so take advantage of that to make that bug not happen
+unset MSYSTEM
+
 # Use --single-version-externally-managed to prevent setuptools from installing itself with easy_install
 python3 setup.py --no-user-cfg install \
             --single-version-externally-managed --root="$SAGE_DESTDIR" || \

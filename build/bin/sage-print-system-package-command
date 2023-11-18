@@ -123,10 +123,10 @@ case $system:$command in
     gentoo*:install)
         [ -n "$system_packages" ] && print_shell_command "${SUDO}emerge $system_packages"
         ;;
-    arch*:update)
+    @(arch*|msys_x86_64*):update)
         print_shell_command "${SUDO}pacman -Sy"
         ;;
-    arch*:install)
+    @(arch*|msys_x86_64*):install)
         [ "$YES" = yes ] && options="$options --noconfirm"
         [ -n "$system_packages" ] && print_shell_command "${SUDO}pacman -S $options $system_packages"
         ;;

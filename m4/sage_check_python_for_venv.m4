@@ -126,7 +126,7 @@ PyInit_spam(void)
 from distutils.core import setup
 from distutils.extension import Extension
 from sys import exit
-modules = list((Extension("config_check_distutils", list(("conftest.c",))),))
+modules = list((Extension("spam", list(("conftest.c",))),))
 setup(name="config_check_distutils", ext_modules=modules)
 exit(0)
 EOF
@@ -179,7 +179,7 @@ PyInit_spam(void)
 from distutils.core import setup
 from distutils.extension import Extension
 from sys import exit
-modules = list((Extension("config_check_distutils_cxx", list(("conftest.cpp",)),
+modules = list((Extension("spam", list(("conftest.cpp",)),
                           extra_compile_args=list(("-std=c++11",)), language="c++"),))
 setup(name="config_check_distutils_cxx", ext_modules=modules)
 exit(0)
