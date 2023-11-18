@@ -192,6 +192,7 @@ build/bin/sage-build-env-config
 /pkgs/*/MANIFEST
 /pkgs/*/*.egg-info
 /pkgs/*/.tox
+/pkgs/*/.mesonpy-*
 
 /pkgs/sage-conf_pypi/sage_root/config.log
 /pkgs/sage-conf_pypi/sage_root/config.status
