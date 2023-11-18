@@ -258,8 +258,8 @@ class Expect(Interface):
             command = ' '.join([shlex.quote(executable)]
                                + [shlex.quote(arg) for arg in command[1:]])
         if server:
-            if self.__ulimit:
-                command = f"ulimit {ulimit}; {command}"
+            if self.__remote_ulimit:
+                command = f"ulimit {self.__remote_ulimit}; {command}"
             command = f"ssh -t {shlex.quote(server)} {shlex.quote(command)}"
 
         return command
