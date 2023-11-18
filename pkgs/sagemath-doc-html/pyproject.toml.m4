@@ -17,8 +17,17 @@ name = "sagemath-doc-html"
 version = "10.2"
 description = "Sage: Open Source Mathematics Software: Documentation in HTML format"
 dependencies = []
-
-include(`pyproject_toml_metadata.m4')dnl'
+license = {text = "GNU General Public License (GPL) v2 or later; Creative Commons Attribution-ShareAlike 3.0 Unported"}
+authors = [{name = "The Sage Developers", email = "sage-support@googlegroups.com"}]
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+urls = {Homepage = "https://www.sagemath.org"}
 
 [project.readme]
 file = "README.rst"
