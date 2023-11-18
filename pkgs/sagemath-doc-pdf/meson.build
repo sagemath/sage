@@ -7,8 +7,9 @@ docdir = get_option('datadir') / 'share' / 'doc' / 'sage'
 pdf = custom_target('PDF documentation',
   build_by_default: true,
   output: 'doc-pdf',  # phony
-  command: ['env', 'SAGE_DOC=' + meson.current_build_dir(),
-            'make', '-j20', '-C', join_paths(meson.current_source_dir(), 'doc'), '@OUTPUT@'],
+  command: [join_paths(meson.current_source_dir(), 'doc', 'make.sh'),
+            '-C', join_paths(meson.current_source_dir(), 'doc'), '@OUTPUT@'],
+  env: {'SAGE_DOC': meson.current_build_dir()}
 )
 
 install_subdir(meson.current_build_dir() / 'pdf',

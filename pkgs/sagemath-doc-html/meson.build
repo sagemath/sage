@@ -6,8 +6,9 @@ docdir = get_option('datadir') / 'share' / 'doc' / 'sage'
 
 html = custom_target('HTML documentation',
   output: 'index.html',
-  command: ['env', 'SAGE_DOC=' + meson.current_build_dir(),
-            'make', '-j20', '-C', join_paths(meson.current_source_dir(), 'doc'), 'doc-html'],
+  command: [join_paths(meson.current_source_dir(), 'doc', 'make.sh'),
+            '-C', join_paths(meson.current_source_dir(), 'doc'), 'doc-html'],
+  env: {'SAGE_DOC': meson.current_build_dir()},
   install: true,
   install_dir: docdir
 )
