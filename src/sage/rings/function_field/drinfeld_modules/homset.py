@@ -475,9 +475,9 @@ class DrinfeldModuleHomset(Homset):
 
         INPUT:
 
-        - ``degree`` -- the maximum degree of the morphism
+        - ``degree`` -- the maximum degree of the morphisms in the span.
 
-        OUTPUT: a list of univariate ore polynomials with coefficients in `K`
+        OUTPUT: a list of Drinfeld module morphisms.
 
         EXAMPLES::
 
@@ -543,11 +543,7 @@ class DrinfeldModuleHomset(Homset):
         Return a basis for the `\mathbb{F}_q[\tau^n]`-module of morphisms from
         the domain to the codomain.
 
-        INPUT:
-
-        - None
-
-        OUTPUT: a list of univariate ore polynomials with coefficients in `K`
+        OUTPUT: a list of Drinfeld module morphisms.
 
         EXAMPLES::
 
@@ -557,7 +553,8 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
             sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
             sage: H = Hom(phi, psi)
-            sage: H.basis()
+            sage: basis = H.basis()
+            sage: [b.ore_polynomial() for b in basis]
             [(z^2 + 1)*t^2 + t + z + 1, (z^2 + 1)*t^5 + (z + 1)*t^4 + z*t^3 + t^2 + (z^2 + z)*t + z, z^2]
 
             ::
@@ -575,7 +572,7 @@ class DrinfeldModuleHomset(Homset):
 
             We return the basis of the kernel of a matrix derived from the
             constraint that `\iota \phi_T = \psi_T \iota` for any morphism
-            `iota`.
+            `iota`. 
         """
         domain, codomain = self.domain(), self.codomain()
         Fq = domain._Fq
@@ -622,7 +619,7 @@ class DrinfeldModuleHomset(Homset):
             for i in range(n):
                 for j in range(n):
                     basis_poly += basis_vector[n*i + j].subs(tau**n)*K_basis[j]*tau**i
-            basis.append(basis_poly)
+            basis.append(self(basis_poly))
         return basis
 
     def _frobenius_matrix(self, order=1, K_basis=None):
