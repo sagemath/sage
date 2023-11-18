@@ -200,7 +200,7 @@ class Expect(Interface):
             sage: magma.server()
             'remote'
             sage: magma.command()
-            "ssh -t remote 'mymagma'"
+            'ssh -t remote mymagma'
         """
         if self._expect:
             raise RuntimeError("interface has already started")
