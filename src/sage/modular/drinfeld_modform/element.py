@@ -13,8 +13,8 @@ EXAMPLES::
     sage: g1.parent()
     Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
 
-A *graded Drinfeld modular form* is a sum of modular forms having
-potentially different weights::
+A *graded Drinfeld modular form* is a sum of Drinfeld modular forms
+having potentially different weights::
 
     sage: F = g1*g2 + g2
     sage: F.is_drinfeld_modular_form()
@@ -77,7 +77,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def _repr_(self):
         r"""
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         TESTS::
 
@@ -92,7 +92,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def _add_(self, other):
         r"""
-        Return the addition of self with other.
+        Return the addition of ``self`` with ``other``.
 
         TESTS::
 
@@ -105,7 +105,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def _mul_(self, other):
         r"""
-        Return the multiplication of self with other.
+        Return the multiplication of ``self`` with ``other``.
 
         TESTS::
 
@@ -122,7 +122,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def _lmul_(self, c):
         r"""
-        Return the scalar multiplication of self by `c`.
+        Return the scalar multiplication of ``self`` by `c`.
 
         TESTS::
 
@@ -141,7 +141,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def __neg__(self):
         r"""
-        Return the negation of self.
+        Return the negation of ``self``.
 
         TESTS::
 
@@ -154,7 +154,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def __bool__(self):
         r"""
-        Return True whether self is nonzero.
+        Return ``True`` whether ``self`` is nonzero.
 
         TESTS::
 
@@ -167,7 +167,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def _latex_(self):
         r"""
-        Return the latex expression of self.
+        Return the LaTeX expression of ``self``.
 
         TESTS::
 
@@ -186,7 +186,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Return the comparison of self with other.
+        Return the comparison of ``self`` with ``other``.
 
         TESTS::
 
@@ -238,8 +238,8 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def is_zero(self):
         r"""
-        Return ``True`` whether the given graded Drinfeld form is the additive
-        identity.
+        Return ``True`` whether the given graded Drinfeld form is the
+        additive identity.
 
         EXAMPLES::
 
@@ -303,8 +303,8 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def polynomial(self):
         r"""
-        Return self as a multivariate polynomial over the generators of
-        the ring.
+        Return ``self`` as a multivariate polynomial over the generators
+        of the ring.
 
         OUTPUT:
 
@@ -368,7 +368,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def weight(self):
         r"""
-        Return the weight of self.
+        Return the weight of ``self``.
 
         EXAMPLES::
 
