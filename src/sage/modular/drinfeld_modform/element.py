@@ -51,9 +51,15 @@ class DrinfeldModularFormsElement(ModuleElement):
     r"""
     Element class of rings of Drinfeld modular forms.
 
+    This class should not be directly instanciated, instead create an
+    instance of the parent
+    :class:`~drinfeld_modular_forms.ring.DrinfeldModularForms` and
+    access its elements using the relevant methods.
+
     EXAMPLES::
 
-        sage: A = GF(3)['T']; K = Frac(A); T = K.gen()
+        sage: A = GF(3)['T']
+        sage: K.<T> = Frac(A)
         sage: M = DrinfeldModularForms(K, 2)
         sage: M.inject_variables()
         Defining g1, g2
@@ -63,6 +69,17 @@ class DrinfeldModularFormsElement(ModuleElement):
         Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
         sage: g2 in M
         True
+
+    When calling the parent, you can construct an element simply by
+    passing a multivariate polynomial::
+
+        sage: f1, f2 = polygens(K, 2, 'f1, f2')
+        sage: M(f1)
+        g1
+        sage: M(f2)
+        g2
+        sage: M(T*f1 + f2^3 + T^2 + 1)
+        g2^3 + T*g1 + (T^2 + 1)
     """
     def __init__(self, parent, polynomial):
         if not isinstance(polynomial, MPolynomial):
