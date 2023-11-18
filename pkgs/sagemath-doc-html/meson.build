@@ -14,3 +14,5 @@ html = custom_target('HTML documentation',
 
 install_subdir(meson.current_build_dir() / 'html',
                install_dir: docdir)
+
+meson.add_dist_script('meson_dist_script.sh')
