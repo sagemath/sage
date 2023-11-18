@@ -1,1 +1,1 @@
-pandoc ffmpeg imagemagick texlive git
+pandoc ffmpeg imagemagick texlive git libjpeg
