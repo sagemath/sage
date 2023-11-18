@@ -200,6 +200,7 @@ build/pkgs/wheel/version_requirements.txt
 
 # Generated files in the top-level source trees
 /pkgs/*/build
+/pkgs/*/.mesonpy-*
 /pkgs/*/dist
 /pkgs/*/MANIFEST
 /pkgs/*/*.egg-info
