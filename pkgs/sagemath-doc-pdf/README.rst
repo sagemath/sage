@@ -1,5 +1,5 @@
 ======================================================================
- Sage: Open Source Mathematics Software: Documentation in HTML format
+ Sage: Open Source Mathematics Software: Documentation in PDF format
 ======================================================================
 
 About SageMath
@@ -25,5 +25,5 @@ installs the Sage Library (sagelib, implemented in Python and Cython).
 About this pip-installable source distribution
 ----------------------------------------------
 
-When installed from source, the distribution `sagemath-doc-html` uses Sphinx
-to build the SageMath documentation in HTML format.
+When installed from source, the distribution `sagemath-doc-pdf` uses Sphinx
+and PDFLaTeX to build the SageMath documentation in PDF format.
