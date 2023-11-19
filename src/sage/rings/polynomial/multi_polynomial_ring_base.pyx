@@ -1835,14 +1835,16 @@ def unpickle_MPolynomialRing_generic(base_ring, n, names, order):
 class MatrixPolynomialAction(Action):
     def __init__(self, MS, PR):
         """
-        Initialize a MatrixPolynomialAction object.
+        Initialize ``self``.
 
-        Parameters:
-        MS: The matrix space for the action.
-        PR: The polynomial ring where the action takes place.
+        INPUT:
 
-        Examples:
-        sage: G = groups.matrix.Sp(4,GF(2))
+        - ``MS`` -- the matrix space for the action
+        - ``PR`` -- the polynomial ring where the action takes place
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.Sp(4,GF(2))
         sage: R.<w,x,y,z>=GF(2)[]
         sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
         sage: g=G.1
