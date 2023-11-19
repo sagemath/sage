@@ -216,6 +216,11 @@ gap = cc.find_library('gap')
 
 singular = dependency('Singular')
 
+maxima = find_program('maxima', required: true)
+
+# Cannot be found via pkg-config
+ntl = cc.find_library('ntl', required: true)
+
 # It's strange but cython cannot find its own include files
 # so we find them ourselves, and add them to the include path
 inc_cython = run_command(py,

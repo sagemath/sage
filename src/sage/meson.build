@@ -1,5 +1,37 @@
 sage_install_dir = py.get_install_dir() / 'sage'
 
+# Generate the configuration file
+conf_data = configuration_data()
+conf_data.set('PACKAGE_VERSION', '1.2.3')
+conf_data.set('SAGE_ROOT', meson.current_source_dir() / '..' / '..')
+conf_data.set('SAGE_MAXIMA', maxima.full_path())
+# Conda's ecl does not have any problems with Maxima, so nothing needs to be set here:
+conf_data.set('SAGE_MAXIMA_FAS', '')
+# Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.
+conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
+conf_data.set('SAGE_ARB_LIBRARY', 'arb')
+# It can be found, so we don't have to set anything here:
+conf_data.set('NTL_INCDIR', '')
+conf_data.set('NTL_LIBDIR', '')
+ecl_config = find_program('ecl-config', required: true)
+conf_data.set('SAGE_ECL_CONFIG', ecl_config.full_path())
+conf_data.set('SAGE_ARCHFLAGS', 'unset')
+# not needed when using conda, as we then don't build any pc files
+conf_data.set('SAGE_PKG_CONFIG_PATH', '')
+openmp = dependency('openmp', required : false)
+if openmp.found()
+  conf_data.set('OPENMP_CFLAGS', '-fopenmp')
+  conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
+endif
+
+configure_file(
+    input: '../../pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
+    output: 'config.py',
+    install_dir: py.get_install_dir() / 'sage',
+    install: true,
+    configuration: conf_data
+)
+
 # Packages that need no processing and can be installed directly
 no_processing = [
     'databases',
