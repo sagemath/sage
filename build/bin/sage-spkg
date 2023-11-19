@@ -316,6 +316,20 @@ fi
 PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
 PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini" | sed "s/VERSION/$PKG_BASE_VER/"`
 
+# Set the $SAGE_DESTDIR variable to be passed to the spkg-install
+# script (the script itself could set this, but better to standardize
+# this in one place)
+export SAGE_DESTDIR="${SAGE_BUILD_DIR}/${PKG_NAME}/inst"
+
+# The actual prefix where the installation will be staged. This is the
+# directory that you need to work in if you want to change the staged
+# installation tree (before final installation to $SAGE_INST_LOCAL) at the
+# end of spkg-install.
+export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_INST_LOCAL}"
+
+INSTALLED_SCRIPTS="prerm piprm postrm"
+WRAPPED_SCRIPTS="build install check preinst postinst $INSTALLED_SCRIPTS"
+
 
 warning_for_experimental_packages() { ############################
 if [ x`cat "$PKG_SCRIPTS/type"` = x"experimental" ]; then
@@ -543,10 +557,6 @@ __EOF__
     trap - ERR
 }
 
-
-INSTALLED_SCRIPTS="prerm piprm postrm"
-WRAPPED_SCRIPTS="build install check preinst postinst $INSTALLED_SCRIPTS"
-
 # Prepare script for uninstallation of packages that use sdh_pip_install
 # or sdh_store_and_pip_install_wheel.
 echo 'sdh_pip_uninstall -r $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-requirements.txt' > spkg-piprm.in
@@ -603,17 +613,6 @@ if [ "$UNAME" = "CYGWIN" ]; then
     exec 200>"$SAGE_LOCAL/var/lock/rebase.lock"
     sage-flock -s $lock_type 200
 fi
-
-# Set the $SAGE_DESTDIR variable to be passed to the spkg-install
-# script (the script itself could set this, but better to standardize
-# this in one place)
-export SAGE_DESTDIR="${SAGE_BUILD_DIR}/${PKG_NAME}/inst"
-
-# The actual prefix where the installation will be staged. This is the
-# directory that you need to work in if you want to change the staged
-# installation tree (before final installation to $SAGE_INST_LOCAL) at the
-# end of spkg-install.
-export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_INST_LOCAL}"
 
 # First uninstall the previous version of this package, if any
 if [ "$KEEP_EXISTING" != "yes" ]; then
