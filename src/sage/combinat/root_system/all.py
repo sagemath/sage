@@ -121,12 +121,13 @@ install_doc(__package__, __doc__)
 
 from sage.misc.lazy_import import lazy_import
 
-from .cartan_type import CartanType
-from .dynkin_diagram import DynkinDiagram
-from .cartan_matrix import CartanMatrix
-from .coxeter_matrix import CoxeterMatrix
-from .coxeter_type import CoxeterType
-from .root_system import RootSystem, WeylDim
+lazy_import('sage.combinat.root_system.cartan_type', 'CartanType')
+lazy_import('sage.combinat.root_system.dynkin_diagram', 'DynkinDiagram')
+lazy_import('sage.combinat.root_system.cartan_matrix', 'CartanMatrix')
+lazy_import('sage.combinat.root_system.coxeter_matrix', 'CoxeterMatrix')
+lazy_import('sage.combinat.root_system.coxeter_type', 'CoxeterType')
+lazy_import('sage.combinat.root_system.root_system', 'RootSystem')
+lazy_import('sage.combinat.root_system.root_system', 'WeylDim')
 lazy_import('sage.combinat.root_system.weyl_group', ['WeylGroup',
                                                      'WeylGroupElement'])
 lazy_import('sage.combinat.root_system.reflection_group_real',

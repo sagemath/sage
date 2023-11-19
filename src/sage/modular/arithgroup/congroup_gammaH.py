@@ -28,7 +28,6 @@ from sage.modular.cusps import Cusp
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.matrix.constructor import matrix
 from sage.structure.richcmp import richcmp_method, richcmp
 
@@ -1289,6 +1288,7 @@ class GammaH_class(CongruenceSubgroup):
             raise NotImplementedError("matrix groups over ring of integers modulo 1 not implemented")
         gens = [matrix(Zmod(N), 2, 2, [x, 0, 0, Zmod(N).one() / x]) for x in self._generators_for_H()]
         gens += [matrix(Zmod(N), 2, 2, [1, 1, 0, 1])]
+        from sage.groups.matrix_gps.finitely_generated import MatrixGroup
         return MatrixGroup(gens)
 
     def atkin_lehner_matrix(self, Q):

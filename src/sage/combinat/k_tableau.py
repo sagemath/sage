@@ -38,7 +38,6 @@ from sage.structure.list_clone import ClonableList
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.combinat.skew_tableau import SkewTableau, SemistandardSkewTableaux
 from sage.combinat.partition import Partition, Partitions
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.core import Core
 from sage.rings.integer_ring import ZZ
 from sage.functions.generalized import sgn
@@ -1827,6 +1826,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
             ...
             ValueError: inconsistent number of rows: should be 4 but got 5
         """
+        from sage.combinat.root_system.weyl_group import WeylGroup
         W = WeylGroup(['A', k, 1], prefix='s')
         if len(t) > 0:
             if isinstance(t[0], (list, tuple)):
@@ -1865,6 +1865,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
         """
         if isinstance(t, cls):
             return t
+        from sage.combinat.root_system.weyl_group import WeylGroup
         W = WeylGroup(['A', k, 1], prefix='s')
         w = cls.straighten_input(t, k)
         weight = tuple(w[i].length() for i in range(len(w) - 1, -1, -1))

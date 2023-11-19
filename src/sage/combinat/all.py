@@ -95,7 +95,7 @@ from .yang_baxter_graph import YangBaxterGraph
 
 # Permutations
 from .permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
-from .affine_permutation import AffinePermutationGroup
+lazy_import('sage.combinat.affine_permutation', 'AffinePermutationGroup')
 lazy_import('sage.combinat.colored_permutations', ['ColoredPermutations',
                                                    'SignedPermutation',
                                                    'SignedPermutations'])
@@ -203,10 +203,10 @@ lazy_import('sage.combinat.parking_functions',
             ['ParkingFunctions', 'ParkingFunction'])
 
 # Trees and Tamari interval posets
-from .ordered_tree import (OrderedTree, OrderedTrees,
-                          LabelledOrderedTree, LabelledOrderedTrees)
-from .binary_tree import (BinaryTree, BinaryTrees,
-                         LabelledBinaryTree, LabelledBinaryTrees)
+lazy_import('sage.combinat.ordered_tree', ['OrderedTree', 'OrderedTrees',
+                                           'LabelledOrderedTree', 'LabelledOrderedTrees'])
+lazy_import('sage.combinat.binary_tree', ['BinaryTree', 'BinaryTrees',
+                                          'LabelledBinaryTree', 'LabelledBinaryTrees'])
 lazy_import('sage.combinat.interval_posets', ['TamariIntervalPoset', 'TamariIntervalPosets'])
 lazy_import('sage.combinat.rooted_tree', ('RootedTree', 'RootedTrees',
                          'LabelledRootedTree', 'LabelledRootedTrees'))

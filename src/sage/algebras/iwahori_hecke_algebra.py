@@ -36,7 +36,6 @@ from sage.categories.coxeter_groups import CoxeterGroups
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.arith.misc import is_square
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
 
@@ -445,6 +444,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             True
         """
         if W not in CoxeterGroups():
+            from sage.combinat.root_system.coxeter_group import CoxeterGroup
             W = CoxeterGroup(W)
         if base_ring is None:
             base_ring = q1.parent()
@@ -2018,6 +2018,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             if isinstance(IHAlgebra._W, Coxeter3Group):
                 self._W_Coxeter3 = IHAlgebra._W
             else:
+                from sage.combinat.root_system.coxeter_group import CoxeterGroup
                 self._W_Coxeter3 = CoxeterGroup(IHAlgebra._W.coxeter_type(), implementation='coxeter3')
 
         def hash_involution_on_basis(self, w):
@@ -2751,6 +2752,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
             True
         """
         if W not in CoxeterGroups():
+            from sage.combinat.root_system.coxeter_group import CoxeterGroup
             W = CoxeterGroup(W)
         return super().__classcall__(cls, W)
 

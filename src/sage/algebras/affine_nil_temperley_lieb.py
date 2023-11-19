@@ -9,7 +9,6 @@ Affine nilTemperley Lieb Algebra of type A
 # ****************************************************************************
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.rings.ring import Ring
 from sage.rings.integer_ring import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -57,6 +56,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             raise TypeError("argument R must be a ring")
         self._cartan_type = CartanType(['A', n - 1, 1])
         self._n = n
+        from sage.combinat.root_system.weyl_group import WeylGroup
         W = WeylGroup(self._cartan_type)
         self._prefix = prefix
         self._index_set = W.index_set()
