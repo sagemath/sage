@@ -306,11 +306,6 @@ PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
 PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini" | sed "s/VERSION/$PKG_BASE_VER/"`
 
 
-if [ $INFO -ne 0 ]; then
-    exec sage-spkg-info $PKG_BASE
-fi
-
-
 warning_for_experimental_packages() { ############################
 if [ x`cat "$PKG_SCRIPTS/type"` = x"experimental" ]; then
     if [ $YES != 1 ]; then
@@ -342,8 +337,7 @@ EOF
         echo > /dev/tty "OK, installing $PKG_NAME now..."
     fi
 fi
-} ################################################################
-warning_for_experimental_packages
+} ############################## warning_for_experimental_packages
 
 ensure_pkg_src() { ###############################################
 # If we haven't found the package yet, we must download it
@@ -382,16 +376,9 @@ if [ -n "$SAGE_SPKG_COPY_UPSTREAM" ]; then
         exit 1
     fi
 fi
-} ################################################################
-ensure_pkg_src
+} ################################################# ensure_pkg_src
 
-if [ -n "$SAGE_INSTALL_FETCH_ONLY" ]; then
-    exit 0
-fi
-
-##################################################################
-setup_directories() {
-##################################################################
+setup_directories() { ############################################
 
 for dir in "$SAGE_SPKG_INST" "$SAGE_SPKG_SCRIPTS" "$SAGE_BUILD_DIR"; do
     mkdir -p "$dir"
@@ -442,12 +429,9 @@ if [ -e "$PKG_NAME" ]; then
     error_msg "Error (re)moving $PKG_NAME"
     exit 1
 fi
-} ################################################################
-setup_directories
+} ############################################## setup_directories
 
-##################################################################
-extract_the_package() {
-##################################################################
+extract_the_package() { ##########################################
 
 echo "Setting up build directory for $PKG_NAME"
 cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
@@ -482,13 +466,10 @@ case "$PKG_SRC" in
         cd ..
         ;;
 esac
-} ################################################################
-extract_the_package
+} ############################################ extract_the_package
 
-##################################################################
 # The package has been extracted,
-prepare_for_installation() {
-##################################################################
+prepare_for_installation() { #####################################
 
 # Rewrites the given bash pseudo-script with a boilerplate header that includes
 # the shebang line and sourcing sage-env.  Make sure the name of the script is
@@ -575,12 +556,9 @@ for script in $WRAPPED_SCRIPTS; do
             write_script_wrapper "$(pwd)/$script" "$script_dir"
     fi
 done
-} ################################################################
-prepare_for_installation
+} ####################################### prepare_for_installation
 
-##################################################################
-actually_build_and_install() {
-##################################################################
+actually_build_and_install() { ###################################
 
 echo "****************************************************"
 echo "Host system:"
@@ -591,15 +569,12 @@ echo "C compiler version:"
 $CC -v
 echo "****************************************************"
 
-##################################################################
 # Poison the proxy variable to forbid downloads in spkg-install
-##################################################################
 export http_proxy=http://192.0.2.0:5187/
 export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
 export rsync_proxy=$http_proxy
 
-##################################################################
 # We need to run sage-rebase.sh for each package installed, but it
 # can be dangerous to do this while other packages are installing
 # so we need to use a lock to manage when rebase is allowed to
@@ -609,8 +584,6 @@ export rsync_proxy=$http_proxy
 # that.  This also unfortunately slows down parallel builds since
 # all packages will eventually need to wait for this lock, but
 # again there's no simple way around that.
-##################################################################
-
 if [ "$UNAME" = "CYGWIN" ]; then
     # This is a global lock - so we use SAGE_LOCAL, not SAGE_INST_LOCAL.
     if [ ! -d "$SAGE_LOCAL/var/lock" ]; then
@@ -669,11 +642,11 @@ else
         exit 1
     fi
 fi
-} ################################################################
-actually_build_and_install
+} ##################################### actually_build_and_install
 
-unload_destdir() {
-# To work around #26996: Remove the symlink set, or we get "cp: cannot overwrite directory"
+unload_destdir() { ###############################################
+# To work around #26996: Remove the symlink set,
+# or we get "cp: cannot overwrite directory"
 rm -f "$SAGE_DESTDIR_LOCAL/lib64"
 
 # All spkgs should eventually support this, but fall back on old behavior in
@@ -710,8 +683,7 @@ fi
 # should be unset
 unset SAGE_DESTDIR
 unset SAGE_DESTDIR_LOCAL
-} ################################################################
-unload_destdir
+} ################################################# unload_destdir
 
 install_scripts() { ##############################################
 # Some spkg scripts, if they exist, should also be installed to
@@ -741,8 +713,7 @@ for script in $INSTALLED_SCRIPTS; do
         fi
     fi
 done
-} ################################################################
-install_scripts
+} ################################################ install_scripts
 
 post_install() { #################################################
 # Run the post-install script, if any
@@ -767,8 +738,7 @@ if [ "$UNAME" = "CYGWIN" ]; then
     sage-flock -x "$SAGE_LOCAL/var/lock/rebase.lock" \
         sage-rebase.sh "$SAGE_LOCAL" 2>/dev/null
 fi
-} ################################################################
-post_install
+} ################################################### post_install
 
 run_test_suite() { ###############################################
 # Note: spkg-check tests are run after the package has been copied into
@@ -783,7 +753,8 @@ if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
         if [ $? -ne 0 ]; then
             TEST_SUITE_RESULT="failed"
             if [ "$SAGE_CHECK" = "warn" ]; then
-                # The following warning message must be consistent with SAGE_ROOT/build/make/install (see trac:32781)
+                # The following warning message must be consistent
+                # with SAGE_ROOT/build/make/install (see #32781)
                 error_msg "Warning: Failures testing package $PKG_NAME (ignored)" "make check"
             else
                 error_msg "Error testing package $PKG_NAME" "make check"
@@ -798,8 +769,7 @@ if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
         TEST_SUITE_RESULT="not available"
     fi
 fi
-} ################################################################
-run_test_suite
+} ################################################# run_test_suite
 
 write_installation_record() { ####################################
 # For each line in $FILE_LIST, enclose in double quotes:
@@ -828,15 +798,9 @@ cat > "$PKG_NAME_INSTALLED" << __EOF__
     ]
 }
 __EOF__
-} ################################################################
-write_installation_record
+} ###################################### write_installation_record
 
-echo "Successfully installed $PKG_NAME"
-
-
-##################################################################
-delete_the_temporary_build_directory_if_required() {
-##################################################################
+delete_the_temporary_build_directory_if_required() { #############
 if [ ! -e "$SAGE_BUILD_DIR/$PKG_NAME/.keep" ]; then
     echo "Deleting temporary build directory"
     echo "$SAGE_BUILD_DIR/$PKG_NAME"
@@ -848,7 +812,36 @@ else
     echo "You can safely delete the temporary build directory"
     echo "$SAGE_BUILD_DIR/$PKG_NAME"
 fi
-} ################################################################
+} ############### delete_the_temporary_build_directory_if_required
+
+
+##################################################################
+# MAIN
+##################################################################
+
+if [ $INFO -ne 0 ]; then
+    exec sage-spkg-info $PKG_BASE
+fi
+
+warning_for_experimental_packages
+ensure_pkg_src
+
+if [ -n "$SAGE_INSTALL_FETCH_ONLY" ]; then
+    exit 0
+fi
+
+setup_directories
+extract_the_package
+prepare_for_installation
+actually_build_and_install
+unload_destdir
+install_scripts
+post_install
+run_test_suite
+write_installation_record
+
+echo "Successfully installed $PKG_NAME"
+
 delete_the_temporary_build_directory_if_required
 
 echo "Finished installing $PKG_NAME"
