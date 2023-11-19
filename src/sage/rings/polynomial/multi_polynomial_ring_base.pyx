@@ -1860,17 +1860,11 @@ class MatrixPolynomialAction(Action):
 
     def _act_(self, mat, polynomial):
         """
-        Perform the action of a matrix on a polynomial.
+        Return the action of the matrix ``mat`` on ``polynomial``.
 
-        Parameters:
-        mat: The matrix to act on the polynomial.
-        polynomial: The polynomial to be acted upon.
+        EXAMPLES::
 
-        Returns:
-        Polynomial: The result of the action.
-
-        Examples:
-        sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+            sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
         sage: R.<x, y, z> = PolynomialRing(GF(2), 3)
         sage: M = Matrix(GF(2), [[1, 1, 0], [0, 1, 1], [1, 0, 1]])
         sage: p = x*y + y*z + z^2
