@@ -14,7 +14,6 @@ build-backend = 'mesonpy'
 
 [project]
 name = "sagemath-doc-html"
-version = "10.2"
 description = "Sage: Open Source Mathematics Software: Documentation in HTML format"
 dependencies = []
 license = {text = "GNU General Public License (GPL) v2 or later; Creative Commons Attribution-ShareAlike 3.0 Unported"}
@@ -28,6 +27,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 urls = {Homepage = "https://www.sagemath.org"}
+dynamic = ["version"]
 
 [project.readme]
 file = "README.rst"
