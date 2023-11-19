@@ -25,7 +25,7 @@ def run(folder: Path):
         return
     folder_rel_to_src = folder.relative_to('src')
 
-    python_files = sorted(list(folder.glob('*.py')))
+    python_files = sorted(list(folder.glob('*.py')) + list(folder.glob('*.pxd')) + list(folder.glob('*.h')))
     cython_files = sorted(list(folder.glob('*.pyx')))
 
 

@@ -1,6 +1,14 @@
 py.install_sources(
     'all.py',
+    'boost_graph.pxd',
+    'c_graph.pxd',
+    'dense_graph.pxd',
+    'graph_backends.pxd',
     'overview.py',
+    'sparse_graph.pxd',
+    'static_dense_graph.pxd',
+    'static_sparse_backend.pxd',
+    'static_sparse_graph.pxd',
     subdir: 'sage/graphs/base',
 )
 

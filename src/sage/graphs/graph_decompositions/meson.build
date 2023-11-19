@@ -9,7 +9,11 @@ rw = declare_dependency(
 py.install_sources(
     'all.py',
     'all__sagemath_tdlib.py',
+    'fast_digraph.pxd',
     'modular_decomposition.py',
+    'rankwidth.pxd',
+    'tree_decomposition.pxd',
+    'vertex_separation.pxd',
     subdir: 'sage/graphs/graph_decompositions',
 )
 

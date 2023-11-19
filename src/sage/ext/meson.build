@@ -1,5 +1,13 @@
 py.install_sources(
     'all__sagemath_objects.py',
+    'ccobject.h',
+    'cplusplus.pxd',
+    'fast_callable.pxd',
+    'fast_eval.pxd',
+    'memory_allocator.pxd',
+    'mod_int.h',
+    'mod_int.pxd',
+    'stdsage.pxd',
     subdir: 'sage/ext',
 )
 

@@ -1,5 +1,11 @@
 py.install_sources(
     'all.py',
+    'wrapper_cc.pxd',
+    'wrapper_cdf.pxd',
+    'wrapper_el.pxd',
+    'wrapper_py.pxd',
+    'wrapper_rdf.pxd',
+    'wrapper_rr.pxd',
     subdir: 'sage/ext/interpreters',
 )
 

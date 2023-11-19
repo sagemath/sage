@@ -1,6 +1,12 @@
 py.install_sources(
     '__init__.py',
+    'decl.pxd',
+    'function.pxd',
     'function_factory.py',
+    'groebner_strategy.pxd',
+    'polynomial.pxd',
+    'ring.pxd',
+    'singular.pxd',
     'standard_options.py',
     subdir: 'sage/libs/singular',
 )

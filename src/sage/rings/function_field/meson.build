@@ -6,6 +6,7 @@ py.install_sources(
     'derivations_rational.py',
     'differential.py',
     'divisor.py',
+    'element.pxd',
     'extensions.py',
     'function_field.py',
     'function_field_polymod.py',
