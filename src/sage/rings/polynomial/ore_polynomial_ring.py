@@ -264,7 +264,9 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         r"""
         Construct the Ore polynomial ring associated to the given parameters.
 
-        TESTS::
+        TESTS:
+        
+        When there is no twisting morphism a special class is used::
 
             sage: R.<t> = QQ[]
             sage: der = R.derivation()
@@ -272,7 +274,8 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             sage: A
             Ore Polynomial Ring in d over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
             sage: type(A)
-            <class 'sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing_with_category'>
+            <class
+            'sage.rings.polynomial.differential_polynomial_ring.DifferentialPolynomialRing_with_category'>
 
         We check the uniqueness property of parents::
 
@@ -353,7 +356,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         if sparse:
             raise NotImplementedError("sparse Ore polynomial rings are not implemented")
 
-        from sage.rings.polynomial import skew_polynomial_ring
+        from sage.rings.polynomial import skew_polynomial_ring, differential_polynomial_ring
         constructors = []
         if derivation is None:
             if base_ring in _Fields:
@@ -367,6 +370,8 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
                 except (AttributeError, NotImplementedError):
                     pass
             constructors.append(skew_polynomial_ring.SkewPolynomialRing)
+        elif morphism is None:
+            constructors.append(differential_polynomial_ring.DifferentialPolynomialRing)
 
         for constructor in constructors:
             try:
@@ -835,7 +840,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         """
         if n != 0:
             raise IndexError("generator %s not defined" % n)
-        return self.Element(self, [0, 1])
+        return self.element_class(self, [0, 1])
 
     parameter = gen
 
