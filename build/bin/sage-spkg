@@ -460,6 +460,10 @@ echo "Setting up build directory for $PKG_NAME"
 cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
 cd "$PKG_NAME" || exit $?
 
+if [ "$SAGE_KEEP_BUILT_SPKGS" = "yes" ]; then
+    touch .keep
+fi
+
 case "$PKG_SRC" in
     *.whl)
         # (Platform-independent) wheel
@@ -823,7 +827,7 @@ echo "Successfully installed $PKG_NAME"
 ##################################################################
 # Delete the temporary build directory if required
 ##################################################################
-if [ "x$SAGE_KEEP_BUILT_SPKGS" != "xyes" ]; then
+if [ ! -e "$SAGE_BUILD_DIR/$PKG_NAME/.keep" ]; then
     echo "Deleting temporary build directory"
     echo "$SAGE_BUILD_DIR/$PKG_NAME"
     # On Solaris, the current working directory cannot be deleted,
