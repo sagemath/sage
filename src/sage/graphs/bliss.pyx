@@ -581,7 +581,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     if return_graph:
         if directed:
-            from sage.graphs.graph import DiGraph
+            from sage.graphs.digraph import DiGraph
             H = DiGraph(new_edges, loops=G.allows_loops(), multiedges=G.allows_multiple_edges())
         else:
             from sage.graphs.graph import Graph

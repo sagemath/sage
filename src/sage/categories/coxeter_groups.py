@@ -1088,7 +1088,7 @@ class CoxeterGroups(Category_singleton):
                             nextlayer.add(t)
                 curlayer = nextlayer
 
-            from sage.graphs.graph import DiGraph
+            from sage.graphs.digraph import DiGraph
             return Poset(DiGraph(d, format='dict_of_lists',
                                  data_structure='static_sparse'),
                          cover_relations=True,
@@ -1174,7 +1174,7 @@ class CoxeterGroups(Category_singleton):
                             else:
                                 d.append((u, v))
 
-            from sage.graphs.graph import DiGraph
+            from sage.graphs.digraph import DiGraph
             return DiGraph(d)
 
         def canonical_representation(self):
