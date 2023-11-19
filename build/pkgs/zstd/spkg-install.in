@@ -1,0 +1,2 @@
+cd src
+sdh_make -C lib install-shared install-includes PREFIX="${SAGE_LOCAL}"
