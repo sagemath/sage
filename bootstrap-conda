@@ -100,7 +100,8 @@ echo >&2 $0:$LINENO: generate conda environment files
         sed 's/name: sage-build/name: sage/' environment-template.yml
         echo "  - meson"
         echo "  - meson-python"
-        echo "  - pytest" 
+        echo "  - ccache"
+        echo "  - pytest"
         echo "  # Additional packages providing all dependencies for the Sage library"
         for pkg in $SAGELIB_SYSTEM_PACKAGES; do
             echo "  - $pkg"
