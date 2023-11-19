@@ -75,6 +75,16 @@ Usage: sage {-i|-p} <options> <package name>
 Search Sage's list of packages (see 'sage --package list') for a
 matching package, and if a match is found, install it.
 
+Modes of operation:
+   -d: only download the package
+   -b: build and install (stage) only, do not run post-install
+       or check
+   -p: post-install only
+   -x: exclusively run the test suite; this may assume that:
+        * the package has been installed already and/or that
+        * the temporary build directory has not been deleted
+   -e: erase (delete) the temporary build directory only
+
 Options:
    -y: automatically reply "y" for all prompts regarding
        experimental and old-style packages; warning: there
@@ -82,20 +92,14 @@ Options:
        use at your own risk
    -n: automatically reply "n" for all prompts regarding
        experimental and old-style packages
-   -d: only download the package
    -o: allow fetching the package from its upstream URL
        when it is not available from the Sage mirrors (yet)
-   -b: build and stage only, do not install or check
-   -x: exclusively run the test suite; this may assume that:
-        * the package has been installed already and/or that
-        * the temporary build directory has not been deleted
    -c: after installing, run the test suite for the package;
        exit with an error on test suite failures
    -w: after installing, run the test suite for the package;
        print a warning on test suite failures
    -s: save (do not delete) the temporary build directory,
        even when the installation was successful
-   -e: erase (delete) the temporary build directory
 EOF
 }
 
@@ -222,8 +226,9 @@ fi
 INFO=0
 YES=0
 KEEP_EXISTING=0
-BUILD=1
 INSTALL=1
+POST_INSTALL=1
+ERASE_ONLY=0
 while true; do
     case "$1" in
         --info)
@@ -240,10 +245,16 @@ while true; do
             export SAGE_CHECK=yes;;
         -w|--check-warning-only)
             export SAGE_CHECK=warn;;
+        -b|--build-and-stage-only)
+            POST_INSTALL=0; export SAGE_CHECK=no;;
+        -p|--post-install-only)
+            INSTALL=0; export SAGE_CHECK=no;;
         -x|--check-only)
-            INSTALL=0;;
+            INSTALL=0; POST_INSTALL=0; export SAGE_CHECK=yes;;
         -k|--keep-existing)
             KEEP_EXISTING=yes;;
+        -e|--erase-build-directory-only)
+            ERASE_ONLY=1;;
         -o|--allow-upstream)
             SAGE_DOWNLOAD_FILE_OPTIONS+=" --allow-upstream";;
         -*)
@@ -800,14 +811,18 @@ cat > "$PKG_NAME_INSTALLED" << __EOF__
 __EOF__
 } ###################################### write_installation_record
 
-delete_the_temporary_build_directory_if_required() { #############
-if [ ! -e "$SAGE_BUILD_DIR/$PKG_NAME/.keep" ]; then
+delete_the_temporary_build_directory() { #########################
     echo "Deleting temporary build directory"
     echo "$SAGE_BUILD_DIR/$PKG_NAME"
     # On Solaris, the current working directory cannot be deleted,
     # so we "cd" out of $SAGE_BUILD_DIR/$PKG_NAME. See #12637.
     cd "$SAGE_BUILD_DIR"
     rm -rf "$SAGE_BUILD_DIR/$PKG_NAME"
+} ########################### delete_the_temporary_build_directory
+
+delete_the_temporary_build_directory_if_required() { #############
+if [ ! -e "$SAGE_BUILD_DIR/$PKG_NAME/.keep" ]; then
+    delete_the_temporary_build_directory
 else
     echo "You can safely delete the temporary build directory"
     echo "$SAGE_BUILD_DIR/$PKG_NAME"
@@ -823,25 +838,38 @@ if [ $INFO -ne 0 ]; then
     exec sage-spkg-info $PKG_BASE
 fi
 
-warning_for_experimental_packages
-ensure_pkg_src
+if [ $ERASE_ONLY = 1 ]; then
+    delete_the_temporary_build_directory
+    exit 0
+fi
+
+if [ $INSTALL = 1 ]; then
+    warning_for_experimental_packages
+    ensure_pkg_src
+fi
 
 if [ -n "$SAGE_INSTALL_FETCH_ONLY" ]; then
     exit 0
 fi
 
-setup_directories
-extract_the_package
-prepare_for_installation
-actually_build_and_install
-unload_destdir
-install_scripts
-post_install
+if [ $INSTALL = 1 ]; then
+    setup_directories
+    extract_the_package
+    prepare_for_installation
+    actually_build_and_install
+fi
+
+if [ $POST_INSTALL = 1 ]; then
+    unload_destdir
+    install_scripts
+    post_install
+fi
+
 run_test_suite
-write_installation_record
 
-echo "Successfully installed $PKG_NAME"
-
-delete_the_temporary_build_directory_if_required
-
-echo "Finished installing $PKG_NAME"
+if [ $POST_INSTALL = 1 ]; then
+    write_installation_record
+    echo "Successfully installed $PKG_NAME"
+    delete_the_temporary_build_directory_if_required
+    echo "Finished installing $PKG_NAME"
+fi
