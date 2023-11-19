@@ -1920,13 +1920,11 @@ class MatrixPolynomialAction(Action):
         
     def __reduce__(self):
         """
-        Reduce the object for serialization.
+        Return data for creating a pickle of ``self``.
 
-        Returns:
-        tuple: The callable and its arguments to recreate the object.
+        EXAMPLES::
 
-        Examples:
-        sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+            sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
         sage: M = MatrixSpace(GF(2), 2)
         sage: R = PolynomialRing(GF(2), 2, 'x')
         sage: A = MatrixPolynomialAction(M, R)
