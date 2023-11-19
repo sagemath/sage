@@ -19,8 +19,7 @@ export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
 # First build the sdist, then build the wheel from the sdist.
 # https://pypa-build.readthedocs.io/en/latest/#python--m-build
-# (Important because sagemath-objects uses MANIFEST.in for filtering.)
-# Do not install the wheel.
+# This makes sure that the sdist is complete.
 DIST_DIR="$(mktemp -d)"
 python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
 
