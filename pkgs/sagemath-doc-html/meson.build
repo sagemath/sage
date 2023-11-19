@@ -1,5 +1,7 @@
 project('sagemath-doc-html',
-  version: '10.2'
+        version: run_command('cat',
+                             join_paths(meson.current_source_dir(), 'VERSION.txt'),
+                             check: true).stdout().strip()
 )
 
 docdir = get_option('datadir') / 'share' / 'doc' / 'sage'
