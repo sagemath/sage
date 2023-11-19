@@ -80,6 +80,9 @@ SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(grep -v ^= build/pkgs/$pkgname/SPKG.
                     esac
                 fi
     done
+    cat >> m4/sage_spkg_configures.m4 <<EOF
+SAGE_SPKG_COLLECT_INIT([$(echo $(sage-package list))])
+EOF
     for pkgname in $(sage-package list --has-file spkg-configure.m4); do
         echo "m4_sinclude([build/pkgs/$pkgname/spkg-configure.m4])"
         config="SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"

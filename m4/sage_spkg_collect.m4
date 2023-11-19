@@ -167,6 +167,10 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
     dnl Determine package source
     dnl
     m4_case(SPKG_SOURCE,
+      [wheel], [dnl Treat it the same as a normal package
+        m4_define([SPKG_SOURCE], [normal])dnl
+        m4_define([in_sdist], [yes])dnl
+      ],
       [normal], [dnl
         m4_define([in_sdist], [yes])dnl
       ], [dnl pip/script/none (dummy package)
@@ -206,7 +210,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
                 AS_IF([test -r "$f"], [dnl
                     AS_IF([test "$is_installed" = "yes"], [dnl
                         m4_case(SPKG_SOURCE, [normal], [dnl
-                            dnl Only issue the multiple installation record test for normal packages,
+                            dnl Only issue the multiple installation record test for normal/wheel packages,
                             dnl not for script packages.
                             AC_MSG_ERROR(m4_normalize([
                                 multiple installation records for SPKG_NAME:
