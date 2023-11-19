@@ -458,6 +458,7 @@ fi
 
 extract_the_package() { ##########################################
 
+cd "$SAGE_BUILD_DIR" || exit $?
 echo "Setting up build directory for $PKG_NAME"
 cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
 cd "$PKG_NAME" || exit $?
@@ -661,8 +662,8 @@ rm -f "$SAGE_DESTDIR_LOCAL/lib64"
 
 # All spkgs should eventually support this, but fall back on old behavior in
 # case DESTDIR=$SAGE_DESTDIR installation was not used
-echo "Copying package files from temporary location $SAGE_DESTDIR to $SAGE_INST_LOCAL"
 if [ -d "$SAGE_DESTDIR" ]; then
+    echo "Copying package files from temporary location $SAGE_DESTDIR to $SAGE_INST_LOCAL"
     # Some `find` implementations will put superfluous slashes in the
     # output if we give them a directory name with a slash; so make sure
     # any trailing slash is removed; https://github.com/sagemath/sage/issues/26013
@@ -687,6 +688,9 @@ if [ -d "$SAGE_DESTDIR" ]; then
     # Remove the $SAGE_DESTDIR entirely once all files have been moved to their
     # final location.
     rm -rf "$SAGE_DESTDIR"
+else
+    echo "The temporary location $SAGE_DESTDIR does not exist; has the build directory been deleted?"
+    exit 1
 fi
 
 # At this stage the path in $SAGE_DESTDIR no longer exists, so the variable
@@ -856,6 +860,8 @@ if [ $INSTALL = 1 ]; then
     extract_the_package
     prepare_for_installation
     actually_build_and_install
+else
+    cd "$SAGE_BUILD_DIR/$PKG_NAME" || exit $?
 fi
 
 if [ $POST_INSTALL = 1 ]; then
