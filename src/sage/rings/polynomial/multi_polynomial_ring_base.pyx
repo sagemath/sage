@@ -1886,16 +1886,11 @@ class MatrixPolynomialAction(Action):
     
     def __eq__(self, other):
         """
-        Check if another object is equal to this MatrixPolynomialAction.
+        Check if ``self`` equals ``other``.
 
-        Parameters:
-        other: The object to compare with.
+        EXAMPLES::
 
-        Returns:
-        bool: True if equal, False otherwise.
-
-        Examples:
-        sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+            sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
         sage: M = MatrixSpace(GF(2), 2)
         sage: R = PolynomialRing(GF(2), 2, 'x')
         sage: A1 = MatrixPolynomialAction(M, R)
