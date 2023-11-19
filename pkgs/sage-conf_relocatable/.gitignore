@@ -1,0 +1,9 @@
+/bin/sage-env-config
+/_sage_conf/_conf.py
+/_sage_conf/sage_root
+/build
+/dist
+/*.egg-info
+/.tox
+# old location:
+/sage_root

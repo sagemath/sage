@@ -80,6 +80,15 @@ download:
 dist: build/make/Makefile
 	./sage --sdist
 
+# Make wheels for https://github.com/sagemath/sage-wheels
+# We run this with the python3 from 'sage -sh' so that we get the configured python3 and our versions of setuptools/wheel.
+# But we run it outside of 'sage -sh' because we do not want all the environment settings.
+sage-wheels: config.status setuptools wheel pip
+	PYTHON3=$$(./sage -sh -c 'command -v python3') && (cd pkgs/sage-conf_relocatable/ && SETUPTOOLS_USE_DISTUTILS=local $$PYTHON3 -m pip wheel -v -v --wheel-dir=dist --no-index --no-binary :all: --verbose --isolated --no-build-isolation .)
+	@echo "Built wheels are in:"
+	@echo " - pkgs/sage-conf_relocatable/dist/"
+	@echo " - pkgs/sage-conf_relocatable/_sage_conf/sage_root/venv-cp*/var/lib/sage/wheels/"
+
 ###############################################################################
 # Cleaning up
 ###############################################################################
