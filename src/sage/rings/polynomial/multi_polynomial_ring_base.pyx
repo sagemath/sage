@@ -1904,13 +1904,11 @@ class MatrixPolynomialAction(Action):
 
     def __hash__(self):
         """
-        Generate a hash for the MatrixPolynomialAction.
+        Return the hash of ``self``.
 
-        Returns:
-        int: The hash value.
+        EXAMPLES::
 
-        Examples:
-        sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+            sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
         sage: M = MatrixSpace(GF(2), 2)
         sage: R = PolynomialRing(GF(2), 2, 'x')
         sage: A1 = MatrixPolynomialAction(M, R)
