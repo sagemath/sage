@@ -8,6 +8,7 @@ VERSION = "@PACKAGE_VERSION@"
 # to it.
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
+SAGE_SHARE = "@SAGE_SHARE@"
 
 # The path to the standalone maxima executable.
 MAXIMA = "@SAGE_MAXIMA@".replace('${prefix}', SAGE_LOCAL)

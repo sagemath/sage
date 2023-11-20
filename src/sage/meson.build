@@ -1,9 +1,21 @@
+fs = import('fs')
 sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file
 conf_data = configuration_data()
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 conf_data.set('SAGE_ROOT', meson.current_source_dir() / '..' / '..')
+# We use Python's prefix here to make it work with conda
+prefix = py.get_variable('prefix', '')
+conf_data.set('prefix', prefix)
+datadir = fs.expanduser(get_option('datadir'))
+if not fs.is_absolute(datadir)
+  datadir = prefix / datadir
+endif
+conf_data.set('SAGE_SHARE', datadir)
+if not fs.exists(datadir / 'cremona')
+  message('Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify a correct the correct path via the environment variable SAGE_SHARE during runtime.')
+endif
 conf_data.set('SAGE_MAXIMA', maxima.full_path())
 # Conda's ecl does not have any problems with Maxima, so nothing needs to be set here:
 conf_data.set('SAGE_MAXIMA_FAS', '')
