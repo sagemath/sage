@@ -1,5 +1,16 @@
 py.install_sources(
     '__init__.py',
+    'all.pxd',
+    'binop.pxd',
+    'misc.pxd',
+    'mpf.pxd',
+    'mpn.pxd',
+    'mpq.pxd',
+    'mpz.pxd',
+    'pylong.pxd',
+    'random.pxd',
+    'randomize.pxd',
+    'types.pxd',
     subdir: 'sage/libs/gmp',
 )
 

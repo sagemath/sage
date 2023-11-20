@@ -6,6 +6,8 @@ giac = declare_dependency(
 
 py.install_sources(
     '__init__.py',
+    'giac.pxd',
+    'misc.h',
     subdir: 'sage/libs/giac',
 )
 

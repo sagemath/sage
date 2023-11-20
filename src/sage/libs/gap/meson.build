@@ -3,12 +3,15 @@ py.install_sources(
     'all_documented_functions.py',
     'assigned_names.py',
     'context_managers.py',
+    'element.pxd',
     'gap_functions.py',
     'gap_globals.py',
+    'gap_includes.pxd',
     'operations.py',
     'saved_workspace.py',
     'test.py',
     'test_long.py',
+    'util.pxd',
     subdir: 'sage/libs/gap',
 )
 

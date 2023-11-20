@@ -1,6 +1,12 @@
 py.install_sources(
     '__init__.py',
     'all.py',
+    'convert_flint.pxd',
+    'convert_gmp.pxd',
+    'convert_sage.pxd',
+    'convert_sage_complex_double.pxd',
+    'convert_sage_real_double.pxd',
+    'misc.pxd',
     'tests.py',
     subdir: 'sage/libs/pari',
 )
