@@ -161,6 +161,39 @@ class Stream():
         """
         raise NotImplementedError
 
+    def order(self):
+        r"""
+        Return the order of ``self``, which is the minimum index ``n`` such
+        that ``self[n]`` is non-zero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: f.order()
+            1
+
+        TESTS::
+
+            sage: f = Stream_function(lambda n: n*(n+1), False, -1)
+            sage: f.order()
+            1
+            sage: f._true_order
+            True
+
+            sage: f = Stream_function(lambda n: n*(n+1), True, -1)
+            sage: f.order()
+            1
+            sage: f._true_order
+            True
+        """
+        if self._true_order:
+            return self._approximate_order
+        n = self._approximate_order
+        while not self[n]:
+            n += 1
+        return n
+
     def __ne__(self, other):
         """
         Return whether ``self`` and ``other`` are known to be different.
@@ -452,39 +485,6 @@ class Stream_inexact(Stream):
         while True:
             yield self.get_coefficient(n)
             n += 1
-
-    def order(self):
-        r"""
-        Return the order of ``self``, which is the minimum index ``n`` such
-        that ``self[n]`` is non-zero.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_function
-            sage: f = Stream_function(lambda n: n, True, 0)
-            sage: f.order()
-            1
-
-        TESTS::
-
-            sage: f = Stream_function(lambda n: n*(n+1), False, -1)
-            sage: f.order()
-            1
-            sage: f._true_order
-            True
-
-            sage: f = Stream_function(lambda n: n*(n+1), True, -1)
-            sage: f.order()
-            1
-            sage: f._true_order
-            True
-        """
-        if self._true_order:
-            return self._approximate_order
-        n = self._approximate_order
-        while not self[n]:
-            n += 1
-        return n
 
     def __ne__(self, other):
         """
@@ -976,8 +976,6 @@ class Stream_function(Stream_inexact):
     - ``is_sparse`` -- boolean; specifies whether the stream is sparse
     - ``approximate_order`` -- integer; a lower bound for the order
       of the stream
-    - ``input_streams`` -- optional, a list of streams that are
-      involved in the computation of the coefficients of ``self``
 
     .. NOTE::
 
@@ -1003,7 +1001,7 @@ class Stream_function(Stream_inexact):
         4
 
     """
-    def __init__(self, function, is_sparse, approximate_order, true_order=False, input_streams=[]):
+    def __init__(self, function, is_sparse, approximate_order, true_order=False):
         """
         Initialize.
 
@@ -1016,14 +1014,21 @@ class Stream_function(Stream_inexact):
         self.get_coefficient = function
         super().__init__(is_sparse, true_order)
         self._approximate_order = approximate_order
-        self._input_streams = input_streams
 
     def input_streams(self):
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``, as provided.
         """
-        return self._input_streams
+        closure = self.get_coefficient.__closure__
+        if closure is None:
+            return []
+        l = []
+        for cell in closure:
+            content = cell.cell_contents
+            if isinstance(content, Stream):
+                l.append(content)
+        return l
 
     def __hash__(self):
         """
@@ -1230,7 +1235,7 @@ class Stream_taylor(Stream_inexact):
             denom *= n
 
 
-class Stream_uninitialized(Stream_inexact):
+class Stream_uninitialized(Stream):
     r"""
     Coefficient stream for an uninitialized series.
 
@@ -1253,7 +1258,7 @@ class Stream_uninitialized(Stream_inexact):
         sage: one = Stream_exact([1])
         sage: C = Stream_uninitialized(0)
         sage: C._target
-        sage: C._target = one
+        sage: C.define(one)
         sage: C[4]
         0
     """
@@ -1268,11 +1273,203 @@ class Stream_uninitialized(Stream_inexact):
             sage: TestSuite(C).run(skip="_test_pickling")
         """
         self._target = None
+        self._F = None
         if approximate_order is None:
             raise ValueError("the valuation must be specified for undefined series")
-        super().__init__(False, true_order)
+        super().__init__(true_order)
         self._approximate_order = approximate_order
         self._initializing = False
+        self._is_sparse = False
+
+    def input_streams(self):
+        r"""
+        Return the list of streams which are used to compute the
+        coefficients of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_function
+            sage: h = Stream_function(lambda n: n, False, 1)
+            sage: M = Stream_uninitialized(0)
+            sage: M.input_streams()
+            []
+            sage: M._target = h
+            sage: [h[i] for i in range(5)]
+            [0, 1, 2, 3, 4]
+            sage: M.input_streams()
+            [<sage.data_structures.stream.Stream_function object at ...>]
+        """
+        if self._target is not None:
+            return [self._target]
+        if self._F is not None:
+            return [self._F]
+        return []
+
+    def define(self, target):
+        self._target = target
+        self._n = self._approximate_order - 1 # the largest index of a coefficient we know
+        # we only need this if target is not dense
+        self._cache = list()
+        self._iter = self.iterate_coefficients()
+
+    def define_implicitly(self, F, initial_values, R):
+        assert self._target is None
+
+        if initial_values is None:
+            initial_values = []
+
+        for i, val in enumerate(initial_values):
+            if val:
+                self._approximate_order += i
+                self._true_order = True
+                self._cache = initial_values[i:]
+                break
+        else:
+            self._approximate_order += len(initial_values)
+            self._cache = []
+
+        self._F = F
+        self._base = R
+        from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+        self._P = InfinitePolynomialRing(self._base, names=('FESDUMMY',),
+                                         implementation='sparse')
+        self._x = self._P.gen()
+        self._PFF = self._P.fraction_field()
+        self._uncomputed = True
+        self._last_eq_n = self._F._approximate_order - 1 # the index of the last equation we used
+        self._n = self._approximate_order + len(self._cache) - 1 # the index of the last coefficient we know
+
+        self._input_streams = list(self.input_streams_iterator())
+        self._good_cache = [0 for c in self._input_streams] # the number of coefficients that have been substituted already
+
+    def input_streams_iterator(self):
+        known = [self]
+        todo = [self]
+        while todo:
+            x = todo.pop()
+            yield x
+            for y in x.input_streams():
+                if hasattr(y, "_cache") and not any(y is z for z in known):
+                    todo.append(y)
+                    known.append(y)
+
+    def __getitem__(self, n):
+        if n < self._approximate_order:
+            return ZZ.zero()
+
+        # define
+        if self._target is not None:
+            while not self._true_order and n >= self._approximate_order:
+                c = next(self._iter)
+                if c:
+                    self._true_order = True
+                    self._cache.append(c)
+                else:
+                    self._approximate_order += 1
+
+            if self._true_order:
+                # It is important to extend by generator:
+                # self._iter might recurse, and thereby extend the
+                # cache itself, too.
+                i = n - self._approximate_order
+                self._cache.extend(next(self._iter)
+                                   for _ in range(i - len(self._cache) + 1))
+                return self._cache[i]
+
+            return ZZ.zero()
+
+# if target is dense, we do not need to duplicate its cache
+#            for i in range(self._n+1, n):
+#                self._target[i]
+#            self._n = n
+#            return self._target[n]
+
+        # define_implicitly
+        if self._n >= n:
+            return self._cache[n - self._approximate_order]
+
+        if self._uncomputed:
+            self._uncomputed = False
+            while not self._true_order and n >= self._approximate_order:
+                for k in range(self._n+1, n+1):
+                    v, val = self._compute()
+                    if val:
+                        self._true_order = True
+                        self._cache[-1] = val
+                    else:
+                        self._approximate_order += 1
+                        del self._cache[-1]
+                    self._subs_in_caches(v, val)
+                    self._n += 1
+
+            if self._true_order:
+                for k in range(self._n+1, n+1):
+                    v, val = self._compute()
+                    self._cache[-1] = val
+                    self._subs_in_caches(v, val)
+                    self._n += 1
+            self._uncomputed = True
+
+        if len(self._cache) == n - self._approximate_order + 1:
+            if n >= self._approximate_order:
+                return self._cache[n - self._approximate_order]
+            return ZZ.zero()
+
+        self._cache.append(self._x[n])
+        return self._cache[-1]
+
+    def _subs_in_caches(self, var, val):
+
+        def subs(cache, k):
+            c = cache[k]
+            if hasattr(c, "parent"):
+                if c.parent() is self._PFF:
+                    num = c.numerator().subs({var: val})
+                    den = c.denominator().subs({var: val})
+                    cache[k] = self._base(num/den)
+                elif c.parent() is self._P:
+                    cache[k] = self._base(c.subs({var: val}))
+
+        for j, s in enumerate(self._input_streams):
+            m = len(s._cache) - self._good_cache[j]
+            if s._is_sparse:
+                for _, i in zip(range(m), reversed(s._cache)):
+                    subs(s._cache, i)
+            else:
+                for i in range(-m, -1):
+                    subs(s._cache, i)
+            self._good_cache[j] += m
+
+    def _compute(self):
+        while True:
+            self._last_eq_n += 1
+            coeff = self._F[self._last_eq_n]
+            if coeff.parent() is self._PFF:
+                coeff = coeff.numerator()
+            else:
+                coeff = self._P(coeff)
+            V = coeff.variables()
+
+            if len(V) > 1:
+                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}")
+
+            if not V:
+                if coeff:
+                    raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
+                continue
+
+            # single variable to solve for
+            hc = coeff.homogeneous_components()
+            if len(hc) == 1:
+                val = self._base.zero()
+            else:
+                if set(hc) != set([0, 1]):
+                    raise ValueError(f"unable to determine a unique solution in degree {n}")
+#                if str(hc[1].lm()) != str(self._x[m]):
+#                    raise ValueError(f"the solutions to the coefficients must be computed in order")
+                val = self._base(-hc[0].lc() / hc[1].lc())
+
+            return V[0], val
 
     def iterate_coefficients(self):
         """
@@ -1315,203 +1512,19 @@ class Stream_uninitialized(Stream_inexact):
             sage: T._coeff_stream.is_uninitialized()
             True
         """
-        if self._target is None:
+        if self._target is None and self._F is None:
             return True
         if self._initializing:
             return False
         # We implement semaphore-like behavior for coupled (undefined) series
         self._initializing = True
-        result = self._target.is_uninitialized()
+        if self._target is None:
+            result = self._F.is_uninitialized()
+        else:
+            result = self._target.is_uninitialized()
         self._initializing = False
         return result
 
-    def input_streams(self):
-        r"""
-        Return the list of streams which are used to compute the
-        coefficients of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_function
-            sage: h = Stream_function(lambda n: n, False, 1)
-            sage: M = Stream_uninitialized(0)
-            sage: M.input_streams()
-            []
-            sage: M._target = h
-            sage: [h[i] for i in range(5)]
-            [0, 1, 2, 3, 4]
-            sage: M.input_streams()
-            [<sage.data_structures.stream.Stream_function object at ...>]
-        """
-        if self._target is not None:
-            return [self._target]
-        return []
-
-
-class Stream_functional_equation(Stream):
-    r"""
-    Coefficient stream defined by a functional equation `F = 0`.
-
-    INPUT:
-
-    - ``approximate_order`` -- integer; a lower bound for the order
-      of the stream
-    - ``F`` -- the stream for the equation using ``uninitialized``
-    - ``uninitialized`` -- the uninitialized stream
-    - ``initial_values`` -- the initial values
-    - ``R`` -- the base ring
-
-    Instances of this class are always dense.
-
-    EXAMPLES::
-
-        sage: from sage.data_structures.stream import Stream_uninitialized
-        sage: from sage.data_structures.stream import Stream_functional_equation
-        sage: from sage.data_structures.stream import Stream_derivative, Stream_sub
-        sage: C = Stream_uninitialized(0)
-        sage: D = Stream_derivative(C, 1, False)
-        sage: F = Stream_sub(D, C, False)
-        sage: S = Stream_functional_equation(0, F, C, [1], QQ)
-        sage: [S[i] for i in range(10)]
-        [1, 1, 1/2, 1/6, 1/24, 1/120, 1/720, 1/5040, 1/40320, 1/362880]
-    """
-    def __init__(self, approximate_order, F, uninitialized, initial_values, R, true_order=False):
-        """
-        Initialize ``self``.
-
-        TESTS::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized
-            sage: from sage.data_structures.stream import Stream_functional_equation
-            sage: from sage.data_structures.stream import Stream_derivative, Stream_sub
-            sage: C = Stream_uninitialized(0)
-            sage: D = Stream_derivative(C, 1, False)
-            sage: F = Stream_sub(D, C, False)
-            sage: S = Stream_functional_equation(0, F, C, [1], QQ)
-            sage: TestSuite(S).run(skip="_test_pickling")
-        """
-        if approximate_order is None:
-            raise ValueError("the valuation must be specified for undefined series")
-        if initial_values is None:
-            initial_values = []
-
-        for i, val in enumerate(initial_values):
-            if val:
-                approximate_order += i
-                true_order = True
-                initial_values = initial_values[i:]
-                break
-        else:
-            approximate_order += len(initial_values)
-            initial_values = []
-        super().__init__(true_order)
-        self._is_sparse = False
-        self._F = F
-        self._base = R
-        from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
-        self._P = InfinitePolynomialRing(self._base, names=('FESDUMMY',),
-                                         implementation='sparse')
-        self._x = self._P.gen()
-        self._PFF = self._P.fraction_field()
-        for i, v in enumerate(initial_values):
-            if v:
-                self._cache = initial_values[i:]
-                self._true_order = True
-                break
-            approximate_order += 1
-        else:
-            self._cache = []
-        self._approximate_order = approximate_order
-        self._n = approximate_order + len(self._cache) - 1 # the largest index of a coefficient we know
-        self._uncomputed = True
-        self._last_eq_n = self._F._approximate_order - 1
-        uninitialized._target = self
-
-    def __getitem__(self, n):
-        if n < self._approximate_order:
-            return ZZ.zero()
-
-        if self._n >= n:
-            return self._cache[n - self._approximate_order]
-
-        if self._uncomputed:
-            self._uncomputed = False
-            while not self._true_order and n >= self._approximate_order:
-                for k in range(self._n+1, n+1):
-                    v, val = self._compute()
-                    if val:
-                        self._true_order = True
-                        self._cache[-1] = val
-                    else:
-                        self._approximate_order += 1
-                        del self._cache[-1]
-                    self._subs_in_caches(self._F, v, val)
-                    self._n += 1
-
-            if self._true_order:
-                for k in range(self._n+1, n+1):
-                    v, val = self._compute()
-                    self._cache[-1] = val
-                    self._subs_in_caches(self._F, v, val)
-                    self._n += 1
-            self._uncomputed = True
-
-        if len(self._cache) == n - self._approximate_order + 1:
-            if n >= self._approximate_order:
-                return self._cache[n - self._approximate_order]
-            return ZZ.zero()
-
-        self._cache.append(self._x[n])
-        return self._cache[-1]
-
-    def _subs_in_caches(self, s, var, val):
-        if hasattr(s, "_cache"):
-            if s._cache:
-                if s._is_sparse:
-                    i = max(s._cache)
-                else:
-                    i = -1
-                c = s._cache[i]
-                if hasattr(c, "parent"):
-                    if c.parent() is self._PFF:
-                        num = c.numerator().subs({var: val})
-                        den = c.denominator().subs({var: val})
-                        s._cache[i] = self._base(num/den)
-                    elif c.parent() is self._P:
-                        s._cache[i] = self._base(c.subs({var: val}))
-        for t in s.input_streams():
-            self._subs_in_caches(t, var, val)
-
-    def _compute(self):
-        while True:
-            self._last_eq_n += 1
-            coeff = self._F[self._last_eq_n]
-            if coeff.parent() is self._PFF:
-                coeff = coeff.numerator()
-            else:
-                coeff = self._P(coeff)
-            V = coeff.variables()
-
-            if len(V) > 1:
-                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}")
-
-            if not V:
-                if coeff:
-                    raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
-                continue
-
-            # single variable to solve for
-            hc = coeff.homogeneous_components()
-            if len(hc) == 1:
-                val = self._base.zero()
-            else:
-                if set(hc) != set([0, 1]):
-                    raise ValueError(f"unable to determine a unique solution in degree {n}")
-#                if str(hc[1].lm()) != str(self._x[m]):
-#                    raise ValueError(f"the solutions to the coefficients must be computed in order")
-                val = self._base(-hc[0].lc() / hc[1].lc())
-
-            return V[0], val
 
 class Stream_unary(Stream_inexact):
     r"""

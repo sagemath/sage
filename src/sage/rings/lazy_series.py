@@ -253,7 +253,6 @@ from sage.data_structures.stream import (
     Stream_zero,
     Stream_exact,
     Stream_uninitialized,
-    Stream_functional_equation,
     Stream_shift,
     Stream_truncated,
     Stream_function,
@@ -1545,7 +1544,7 @@ class LazyModuleElement(Element):
             self._coeff_stream = coeff_stream
             return
 
-        self._coeff_stream._target = coeff_stream
+        self._coeff_stream.define(coeff_stream)
 
     # an alias for compatibility with padics
     set = define
@@ -1677,7 +1676,7 @@ class LazyModuleElement(Element):
             sage: f = L.undefined(1)
             sage: f.define_implicitly(log(1+f) - ~(1 + f) + 1, [])
             sage: f
-            0
+            O(z^8)
 
             sage: f = L.undefined(0)
             sage: fp = f.derivative()
@@ -1697,17 +1696,14 @@ class LazyModuleElement(Element):
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
             raise ValueError("series already defined")
 
+        P = self.parent()
+        F = P(eqn)._coeff_stream
+        R = P.base_ring()
         if initial_values is None:
             initial_values = []
-
-        P = self.parent()
-        eqn = P(eqn)
-        cs = self._coeff_stream
-        ao = cs._approximate_order
-        R = P.base_ring()
-        initial_values = [R(val) for val in initial_values]
-        ret = Stream_functional_equation(ao, eqn._coeff_stream, cs, initial_values, R)
-        self._coeff_stream = ret
+        else:
+            initial_values = [R(val) for val in initial_values]
+        self._coeff_stream.define_implicitly(F, initial_values, R)
 
     def _repr_(self):
         r"""
@@ -3808,9 +3804,8 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # of the product are of the form sum_{k=1}^n a_k a_{n+1-k}.
         d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
         int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
-                                       False, 0,
-                                       input_streams=[d_self_f])
-        f._coeff_stream._target = int_d_self_f
+                                       False, 0)
+        f._coeff_stream.define(int_d_self_f)
         return f
 
     def log(self):
@@ -3863,8 +3858,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
                                                         coeff_stream_inverse,
                                                         P.is_sparse())
         int_d_self_quo_self = Stream_function(lambda n: d_self_quo_self[n-1] / R(n),
-                                              P.is_sparse(), 1,
-                                              input_streams=[d_self_quo_self])
+                                              P.is_sparse(), 1)
         return P.element_class(P, int_d_self_quo_self)
 
 
