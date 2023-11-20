@@ -158,6 +158,12 @@ class Feature(TrivialUniqueRepresentation):
         self._hidden = False
         self._type = type
 
+        # For multiprocessing of doctests, the data self._num_hidings should be
+        # shared among subprocesses. Thus we use the Value class from the
+        # multiprocessing module (cf. self._seen of class AvailableSoftware)
+        from multiprocessing import Value
+        self._num_hidings = Value('i', 0)
+
         try:
             from sage.misc.package import spkg_type
         except ImportError:  # may have been surgically removed in a downstream distribution
@@ -205,8 +211,6 @@ class Feature(TrivialUniqueRepresentation):
             sage: TestFeature("other").is_present()
             FeatureTestResult('other', True)
         """
-        if self._hidden:
-            return FeatureTestResult(self, False, reason="Feature `{name}` is hidden.".format(name=self.name))
         # We do not use @cached_method here because we wish to use
         # Feature early in the build system of sagelib.
         if self._cache_is_present is None:
@@ -214,6 +218,14 @@ class Feature(TrivialUniqueRepresentation):
             if not isinstance(res, FeatureTestResult):
                 res = FeatureTestResult(self, res)
             self._cache_is_present = res
+
+        if self._hidden:
+            if self._num_hidings.value > 0:
+                self._num_hidings.value += 1
+            elif self._cache_is_present:
+                self._num_hidings.value = 1
+            return FeatureTestResult(self, False, reason="Feature `{name}` is hidden.".format(name=self.name))
+
         return self._cache_is_present
 
     def _is_present(self):
@@ -386,7 +398,8 @@ class Feature(TrivialUniqueRepresentation):
             Feature `benzene` is hidden.
             Use method `unhide` to make it available again.
 
-            sage: Benzene().unhide()
+            sage: Benzene().unhide()            # optional - benzene, needs sage.graphs
+            1
             sage: len(list(graphs.fusenes(2)))  # optional - benzene, needs sage.graphs
             1
         """
@@ -394,29 +407,25 @@ class Feature(TrivialUniqueRepresentation):
 
     def unhide(self):
         r"""
-        Revert what :meth:`hide` does.
+        Revert what :meth:`hide` does. It returns the number of events
+        a present feature has been hidden.
 
         EXAMPLES:
 
-        Polycyclic is a standard GAP package since 4.10 (see :trac:`26856`). The
-        following test just fails if it is hidden. Thus, in the second
-        invocation no optional tag is needed::
-
-            sage: from sage.features.gap import GapPackage
-            sage: Polycyclic = GapPackage("polycyclic", spkg="gap_packages")
-            sage: Polycyclic.hide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap
-            Traceback (most recent call last):
-            ...
-            FeatureNotPresentError: gap_package_polycyclic is not available.
-            Feature `gap_package_polycyclic` is hidden.
-            Use method `unhide` to make it available again.
-
-            sage: Polycyclic.unhide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap
-            Pcp-group with orders [ 0, 3, 4 ]
+            sage: from sage.features.sagemath import sage__plot
+            sage: sage__plot().hide()
+            sage: sage__plot().is_present()
+            FeatureTestResult('sage.plot', False)
+            sage: sage__plot().unhide()                                                 # needs sage.plot
+            1
+            sage: sage__plot().is_present()                                             # needs sage.plot
+            FeatureTestResult('sage.plot', True)
         """
+        num_hidings = self._num_hidings.value
+        self._num_hidings.value = 0
         self._hidden = False
+        return int(num_hidings)
+
 
 class FeatureNotPresentError(RuntimeError):
     r"""
@@ -801,7 +810,7 @@ class StaticFile(FileFeature):
         To install no_such_file...you can try to run...sage -i some_spkg...
         Further installation instructions might be available at http://rand.om.
     """
-    def __init__(self, name, filename, search_path=None, **kwds):
+    def __init__(self, name, filename, search_path=None, type='optional', **kwds):
         r"""
         TESTS::
 
@@ -809,7 +818,7 @@ class StaticFile(FileFeature):
             sage: StaticFile(name="null", filename="null", search_path=("/dev",))
             Feature('null')
         """
-        Feature.__init__(self, name, **kwds)
+        Feature.__init__(self, name, type=type, **kwds)
         self.filename = filename
         if search_path is None:
             self.search_path = [SAGE_SHARE]

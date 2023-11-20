@@ -72,12 +72,12 @@ class DatabaseCremona(StaticFile):
     EXAMPLES::
 
         sage: from sage.features.databases import DatabaseCremona
-        sage: DatabaseCremona('cremona_mini').is_present()
+        sage: DatabaseCremona('cremona_mini', type='sandard').is_present()
         FeatureTestResult('database_cremona_mini_ellcurve', True)
         sage: DatabaseCremona().is_present()                                    # optional - database_cremona_ellcurve
         FeatureTestResult('database_cremona_ellcurve', True)
     """
-    def __init__(self, name="cremona", spkg="database_cremona_ellcurve"):
+    def __init__(self, name="cremona", spkg="database_cremona_ellcurve", type='optional'):
         r"""
         TESTS::
 
@@ -198,7 +198,7 @@ class DatabaseReflexivePolytopes(StaticFile):
 
 def all_features():
     return [DatabaseConwayPolynomials(),
-            DatabaseCremona(), DatabaseCremona('cremona_mini'),
+            DatabaseCremona(), DatabaseCremona('cremona_mini', type='standard'),
             DatabaseJones(),
             DatabaseKnotInfo(),
             DatabaseCubicHecke(),
