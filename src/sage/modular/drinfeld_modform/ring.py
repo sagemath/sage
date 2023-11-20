@@ -74,7 +74,7 @@ as they may have mixed weight components::
     sage: M.inject_variables()
     Defining g1, g2, g3, g4
     sage: F = g1 + g2 + g3 + g4
-    sage: F.is_drinfeld_modular_form()
+    sage: F.is_homogeneous()
     False
 
 This is why we call these elements *graded Drinfeld modular forms*.
@@ -88,9 +88,9 @@ One can also consider the ring Drinfeld modular forms of arbitrary type::
     Defining g1, g2, g3, h4
     sage: h4.weight()
     400
-    sage: h4.type_m()
+    sage: h4.type()
     1
-    sage: (g1*h4^4).type_m()
+    sage: (g1*h4^4).type()
     4
 
 The last generator is known as Gekeler's `h` function.

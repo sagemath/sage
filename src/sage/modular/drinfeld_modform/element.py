@@ -17,12 +17,12 @@ A *graded Drinfeld modular form* is a sum of Drinfeld modular forms
 having potentially different weights::
 
     sage: F = g1*g2 + g2
-    sage: F.is_drinfeld_modular_form()
+    sage: F.is_homogeneous()
     False
     sage: F.homogeneous_components()
     {8: g2, 10: g1*g2}
     sage: H = g1^4*g2^9 + T*g1^8*g2^8 + (T^2 - 1)*g1^28*g2^3
-    sage: H.is_drinfeld_modular_form()
+    sage: H.is_homogeneous()
     True
     sage: H.weight()
     80
@@ -275,12 +275,13 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return not bool(self)
 
-    def is_drinfeld_modular_form(self):
+    def is_homogeneous(self):
         r"""
-        Return whether ``self`` is a Drinfeld modular form.
+        Return whether the graded form is homogeneous in the weight.
 
         We recall that elements of Drinfeld modular forms ring are not
-        necessarily modular forms as they may have mixed weight components.
+        necessarily modular forms as they may have mixed weight
+        components.
 
         EXAMPLES::
 
@@ -289,10 +290,10 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: M.inject_variables()
             Defining g1, g2
             sage: f = g1^5*g2^2  # homogeneous polynomial
-            sage: f.is_drinfeld_modular_form()
+            sage: f.is_homogeneous()
             True
             sage: g = g1 + g2  # mixed weight components
-            sage: g.is_drinfeld_modular_form()
+            sage: g.is_homogeneous()
             False
         """
         return self._polynomial.is_homogeneous()
@@ -350,7 +351,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return self._polynomial
 
-    def type_m(self):  # Find a better name
+    def type(self):
         r"""
         Return the type of the graded Drinfeld form.
 
@@ -369,14 +370,14 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: M.inject_variables()
             Defining g1, h2
             sage: F = g1*h2^9
-            sage: F.type_m()
+            sage: F.type()
             9
-            sage: (h2^11).type_m()
+            sage: (h2^11).type()
             1
-            sage: g1.type_m()
+            sage: g1.type()
             0
         """
-        if not self.is_drinfeld_modular_form():
+        if not self.is_homogeneous():
             raise ValueError("self should be a Drinfeld modular form")
         if not self.parent()._has_type:
             return ZZ(0)
@@ -409,6 +410,6 @@ class DrinfeldModularFormsElement(ModuleElement):
             ...
             ValueError: the given ring element is not a Drinfeld modular form
         """
-        if not self.is_drinfeld_modular_form():
+        if not self.is_homogeneous():
             raise ValueError("the given ring element is not a Drinfeld modular form")
         return self._polynomial.degree()
