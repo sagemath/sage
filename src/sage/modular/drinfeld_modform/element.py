@@ -90,7 +90,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         poly = parent._poly_ring(polynomial)
         self._polynomial = poly
 
-        ModuleElement.__init__(self, parent)
+        super().__init__(parent)
 
     def _repr_(self):
         r"""

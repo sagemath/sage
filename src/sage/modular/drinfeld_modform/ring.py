@@ -246,7 +246,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                                          order=TermOrder('wdeglex', degs))
         self._assign_names(names)
 
-        Parent.__init__(self, base=base_ring, category=GradedAlgebras(base_ring))
+        super().__init__(base=base_ring, category=GradedAlgebras(base_ring))
 
     def _an_element_(self):
         r"""
