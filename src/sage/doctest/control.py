@@ -36,7 +36,6 @@ import os
 import sys
 import time
 import json
-import re
 import shlex
 import types
 import sage.misc.flatten
@@ -65,6 +64,7 @@ try:
     auto_optional_tags.add(arb_tag)
 except ImportError:
     pass
+
 
 class DocTestDefaults(SageObject):
     """
@@ -145,7 +145,7 @@ class DocTestDefaults(SageObject):
         # automatically anyway. However, this default is still used for
         # displaying user-defined optional tags and we don't want to see
         # the auto_optional_tags there.
-        self.optional = set(['sage']) | auto_optional_tags
+        self.optional = {'sage'} | auto_optional_tags
         self.hide = ''
         self.probe = ''
 
@@ -223,6 +223,7 @@ def skipdir(dirname):
     if os.path.exists(os.path.join(dirname, "nodoctest.py")) or os.path.exists(os.path.join(dirname, "nodoctest")):
         return True
     return False
+
 
 def skipfile(filename, tested_optional_tags=False, *,
              if_installed=False, log=None):
@@ -317,8 +318,8 @@ def skipfile(filename, tested_optional_tags=False, *,
             return file_tag_string
 
     elif tested_optional_tags is not True:
-        extra = set(tag for tag in file_optional_tags
-                    if tag not in tested_optional_tags)
+        extra = {tag for tag in file_optional_tags
+                 if tag not in tested_optional_tags}
         if extra:
             file_tag_string = unparse_optional_tags(file_optional_tags, prefix='')
             if log:
@@ -445,7 +446,7 @@ class DocTestController(SageObject):
         options.hidden_features = set()
         if isinstance(options.hide, str):
             if not len(options.hide):
-                options.hide = set([])
+                options.hide = set()
             else:
                 s = options.hide.lower()
                 options.hide = set(s.split(','))
@@ -455,12 +456,16 @@ class DocTestController(SageObject):
             if 'all' in options.hide:
                 options.hide.discard('all')
                 from sage.features.all import all_features
-                feature_names = set([f.name for f in all_features() if not f.is_standard()])
+                feature_names = {f.name for f in all_features() if not f.is_standard()}
+                from sage.doctest.external import external_software
+                feature_names.difference_update(external_software)
                 options.hide = options.hide.union(feature_names)
             if 'optional' in options.hide:
                 options.hide.discard('optional')
                 from sage.features.all import all_features
-                feature_names = set([f.name for f in all_features() if f.is_optional()])
+                feature_names = {f.name for f in all_features() if f.is_optional()}
+                from sage.doctest.external import external_software
+                feature_names.difference_update(external_software)
                 options.hide = options.hide.union(feature_names)
 
         options.disabled_optional = set()
@@ -1085,7 +1090,7 @@ class DocTestController(SageObject):
         """
         if self.options.nthreads > 1 and len(self.sources) > self.options.nthreads:
             self.log("Sorting sources by runtime so that slower doctests are run first....")
-            default = dict(walltime=0)
+            default = {'walltime': 0}
 
             def sort_key(source):
                 basename = source.basename
@@ -1153,7 +1158,7 @@ class DocTestController(SageObject):
                     self.cleanup(False)
         else:
             self.log("No files to doctest")
-            self.reporter = DictAsObject(dict(error_status=0, stats={}))
+            self.reporter = DictAsObject({'error_status': 0, 'stats': {}})
 
     def cleanup(self, final=True):
         """
@@ -1315,9 +1320,9 @@ class DocTestController(SageObject):
                 flags = os.getenv("SAGE_MEMCHECK_FLAGS")
                 if flags is None:
                     flags = "--leak-resolution=high --leak-check=full --num-callers=25 "
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind","pyalloc.supp"))
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind","sage.supp"))
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind","sage-additional.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "pyalloc.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "sage.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "sage-additional.supp"))
             elif opt.massif:
                 toolname = "massif"
                 flags = os.getenv("SAGE_MASSIF_FLAGS", "--depth=6 ")

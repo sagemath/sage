@@ -302,9 +302,9 @@ class CombinatorialMap():
             sage: p = Permutation([1,3,2,4])
             sage: cm = type(p).left_tableau; cm
             Combinatorial map: Robinson-Schensted insertion tableau
-            sage: cm(p)                                                                 # optional - sage.combinat
+            sage: cm(p)                                                                 # needs sage.combinat
             [[1, 2, 4], [3]]
-            sage: cm(Permutation([4,3,2,1]))                                            # optional - sage.combinat
+            sage: cm(Permutation([4,3,2,1]))                                            # needs sage.combinat
             [[1], [2], [3], [4]]
         """
         if self._inst is not None:
