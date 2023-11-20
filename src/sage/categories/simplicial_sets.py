@@ -712,7 +712,7 @@ class SimplicialSets(Category_singleton):
                     if s in twop:
                         return twop[s]
                     if s.dimension() > 1:
-                        return twist(self.face_data()[s][-1])
+                        return twist(self.face(s,s.dimension()))
                     return 1
                 base_ring = cm.common_parent(*twop.values())
 
