@@ -103,8 +103,6 @@ from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.misc.cachefunc import cached_method
-from copy import copy
-
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
@@ -1464,7 +1462,7 @@ class Stream_uninitialized(Stream):
                 val = self._base.zero()
             else:
                 if set(hc) != set([0, 1]):
-                    raise ValueError(f"unable to determine a unique solution in degree {n}")
+                    raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}")
 #                if str(hc[1].lm()) != str(self._x[m]):
 #                    raise ValueError(f"the solutions to the coefficients must be computed in order")
                 val = self._base(-hc[0].lc() / hc[1].lc())
