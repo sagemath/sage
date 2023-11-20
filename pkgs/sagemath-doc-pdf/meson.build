@@ -1,16 +1,16 @@
 project('sagemath-doc-pdf',
-        version: run_command('cat',
-                             join_paths(meson.current_source_dir(), 'VERSION.txt'),
-                             check: true).stdout().strip()
+        version: files('VERSION.txt')
 )
 
+# This is a meson-python project, so this is subject to the wheel mappings
+# defined in https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py
 docdir = get_option('datadir') / 'share' / 'doc' / 'sage'
 
 pdf = custom_target('PDF documentation',
   build_by_default: true,
   output: 'doc-pdf',  # phony
-  command: [join_paths(meson.current_source_dir(), 'doc', 'make.sh'),
-            '-C', join_paths(meson.current_source_dir(), 'doc'), '@OUTPUT@'],
+  command: [meson.current_source_dir() / 'doc' / 'make.sh'),
+            '-C', meson.current_source_dir() / 'doc', '@OUTPUT@'],
   env: {'SAGE_DOC': meson.current_build_dir()}
 )
 
