@@ -104,6 +104,7 @@ from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_it
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.misc.cachefunc import cached_method
 from copy import copy
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
@@ -1276,6 +1277,30 @@ class Stream_uninitialized(Stream):
         self._initializing = False
         self._is_sparse = False
 
+    def input_streams(self):
+        r"""
+        Return the list of streams which are used to compute the
+        coefficients of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_function
+            sage: h = Stream_function(lambda n: n, False, 1)
+            sage: M = Stream_uninitialized(0)
+            sage: M.input_streams()
+            []
+            sage: M._target = h
+            sage: [h[i] for i in range(5)]
+            [0, 1, 2, 3, 4]
+            sage: M.input_streams()
+            [<sage.data_structures.stream.Stream_function object at ...>]
+        """
+        if self._target is not None:
+            return [self._target]
+        if self._F is not None:
+            return [self._F]
+        return []
+
     def define(self, target):
         self._target = target
         self._n = self._approximate_order - 1 # the largest index of a coefficient we know
@@ -1308,7 +1333,13 @@ class Stream_uninitialized(Stream):
         self._PFF = self._P.fraction_field()
         self._uncomputed = True
         self._last_eq_n = self._F._approximate_order - 1 # the index of the last equation we used
-        self._n = self._approximate_order + len(self._cache) - 1 # the largest index of a coefficient we know
+        self._n = self._approximate_order + len(self._cache) - 1 # the index of the last coefficient we know
+
+        def children(c):
+            return [s for s in c.input_streams() if hasattr(s, "_cache")]
+
+        self._input_streams = list(RecursivelyEnumeratedSet([self], children))
+        self._good_cache = [0 for c in self._input_streams] # the number of coefficients that have been substituted already
 
     def __getitem__(self, n):
         if n < self._approximate_order:
@@ -1356,14 +1387,14 @@ class Stream_uninitialized(Stream):
                     else:
                         self._approximate_order += 1
                         del self._cache[-1]
-                    self._subs_in_caches(self._F, v, val)
+                    self._subs_in_caches(v, val)
                     self._n += 1
 
             if self._true_order:
                 for k in range(self._n+1, n+1):
                     v, val = self._compute()
                     self._cache[-1] = val
-                    self._subs_in_caches(self._F, v, val)
+                    self._subs_in_caches(v, val)
                     self._n += 1
             self._uncomputed = True
 
@@ -1375,23 +1406,27 @@ class Stream_uninitialized(Stream):
         self._cache.append(self._x[n])
         return self._cache[-1]
 
-    def _subs_in_caches(self, s, var, val):
-        if hasattr(s, "_cache"):
-            if s._cache:
-                if s._is_sparse:
-                    i = max(s._cache)
-                else:
-                    i = -1
-                c = s._cache[i]
-                if hasattr(c, "parent"):
-                    if c.parent() is self._PFF:
-                        num = c.numerator().subs({var: val})
-                        den = c.denominator().subs({var: val})
-                        s._cache[i] = self._base(num/den)
-                    elif c.parent() is self._P:
-                        s._cache[i] = self._base(c.subs({var: val}))
-        for t in s.input_streams():
-            self._subs_in_caches(t, var, val)
+    def _subs_in_caches(self, var, val):
+
+        def subs(cache, k):
+            c = cache[k]
+            if hasattr(c, "parent"):
+                if c.parent() is self._PFF:
+                    num = c.numerator().subs({var: val})
+                    den = c.denominator().subs({var: val})
+                    cache[k] = self._base(num/den)
+                elif c.parent() is self._P:
+                    cache[k] = self._base(c.subs({var: val}))
+
+        for j, s in enumerate(self._input_streams):
+            m = len(s._cache) - self._good_cache[j]
+            if s._is_sparse:
+                for _, i in zip(range(m), reversed(s._cache)):
+                    subs(s._cache, i)
+            else:
+                for i in range(-m, -1):
+                    subs(s._cache, i)
+            self._good_cache[j] += m
 
     def _compute(self):
         while True:
@@ -1477,28 +1512,6 @@ class Stream_uninitialized(Stream):
             result = self._target.is_uninitialized()
         self._initializing = False
         return result
-
-    def input_streams(self):
-        r"""
-        Return the list of streams which are used to compute the
-        coefficients of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_function
-            sage: h = Stream_function(lambda n: n, False, 1)
-            sage: M = Stream_uninitialized(0)
-            sage: M.input_streams()
-            []
-            sage: M._target = h
-            sage: [h[i] for i in range(5)]
-            [0, 1, 2, 3, 4]
-            sage: M.input_streams()
-            [<sage.data_structures.stream.Stream_function object at ...>]
-        """
-        if self._target is not None:
-            return [self._target]
-        return []
 
 
 class Stream_unary(Stream_inexact):
