@@ -15753,7 +15753,8 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``k`` -- integer; the maximum path length for considering edges in the power graph.
+        - ``k`` -- integer; the maximum path length for considering edges in
+          the power graph.
 
         OUTPUT:
 
@@ -15784,7 +15785,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
             sage: k = -2
             sage: PG = G.power(k)
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: distance must be a non-negative integer, not -2
 
@@ -15809,7 +15810,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
             sage: k = Infinity
             sage: PG = G.power(k)
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: distance must be a non-negative integer, not +Infinity
 
