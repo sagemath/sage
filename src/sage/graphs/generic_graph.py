@@ -15753,8 +15753,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``k`` -- integer; the maximum path length for considering edges in the power
-        graph.
+        - ``k`` -- integer; the maximum path length for considering edges in the power graph.
 
         OUTPUT:
 
