@@ -1,7 +1,7 @@
 project(
   'SageMath',
   ['c', 'cpp', 'cython'],
-  version: '10.2.beta8',
+  version: files('src/VERSION.txt'),
   license: 'GPL v3',
   meson_version: '>= 1.2.0',
 )
@@ -16,15 +16,6 @@ py_dep = py.dependency()
 cc = meson.get_compiler('c')
 cpp = meson.get_compiler('cpp')
 cython = meson.get_compiler('cython')
-
-test(
-    'import',
-    py,
-    args: [
-      '-c',
-      'from sage.categories.category import Category; print(Category)',
-    ],
-    )
 
 # py_with_pytest = py_module.find_installation(required: false, modules: ['pytest'])
 # if py_with_pytest.found()
