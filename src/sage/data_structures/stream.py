@@ -104,7 +104,6 @@ from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_it
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.misc.cachefunc import cached_method
 from copy import copy
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
@@ -977,8 +976,6 @@ class Stream_function(Stream_inexact):
     - ``is_sparse`` -- boolean; specifies whether the stream is sparse
     - ``approximate_order`` -- integer; a lower bound for the order
       of the stream
-    - ``input_streams`` -- optional, a list of streams that are
-      involved in the computation of the coefficients of ``self``
 
     .. NOTE::
 
@@ -1004,7 +1001,7 @@ class Stream_function(Stream_inexact):
         4
 
     """
-    def __init__(self, function, is_sparse, approximate_order, true_order=False, input_streams=[]):
+    def __init__(self, function, is_sparse, approximate_order, true_order=False):
         """
         Initialize.
 
@@ -1017,14 +1014,21 @@ class Stream_function(Stream_inexact):
         self.get_coefficient = function
         super().__init__(is_sparse, true_order)
         self._approximate_order = approximate_order
-        self._input_streams = input_streams
 
     def input_streams(self):
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``, as provided.
         """
-        return self._input_streams
+        closure = self.get_coefficient.__closure__
+        if closure is None:
+            return []
+        l = []
+        for cell in closure:
+            content = cell.cell_contents
+            if isinstance(content, Stream):
+                l.append(content)
+        return l
 
     def __hash__(self):
         """
@@ -1254,7 +1258,7 @@ class Stream_uninitialized(Stream):
         sage: one = Stream_exact([1])
         sage: C = Stream_uninitialized(0)
         sage: C._target
-        sage: C._target = one
+        sage: C.define(one)
         sage: C[4]
         0
     """
@@ -1335,11 +1339,19 @@ class Stream_uninitialized(Stream):
         self._last_eq_n = self._F._approximate_order - 1 # the index of the last equation we used
         self._n = self._approximate_order + len(self._cache) - 1 # the index of the last coefficient we know
 
-        def children(c):
-            return [s for s in c.input_streams() if hasattr(s, "_cache")]
-
-        self._input_streams = list(RecursivelyEnumeratedSet([self], children))
+        self._input_streams = list(self.input_streams_iterator())
         self._good_cache = [0 for c in self._input_streams] # the number of coefficients that have been substituted already
+
+    def input_streams_iterator(self):
+        known = [self]
+        todo = [self]
+        while todo:
+            x = todo.pop()
+            yield x
+            for y in x.input_streams():
+                if hasattr(y, "_cache") and not any(y is z for z in known):
+                    todo.append(y)
+                    known.append(y)
 
     def __getitem__(self, n):
         if n < self._approximate_order:
