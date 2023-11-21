@@ -80,7 +80,7 @@ class FormsRing_abstract(Parent):
         """
 
         # from graded_ring import canonical_parameters
-        # (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
+        # group, base_ring, red_hom, n = canonical_parameters(group, base_ring, red_hom, n)
 
         # if not group.is_arithmetic() and base_ring.characteristic()>0:
         #    raise NotImplementedError
@@ -140,7 +140,7 @@ class FormsRing_abstract(Parent):
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import ModularFormsRing
             sage: MR = ModularFormsRing()
-            sage: (x,y,z,d) = MR.pol_ring().gens()
+            sage: x,y,z,d = MR.pol_ring().gens()
 
             sage: MR(x^3)
             f_rho^3
@@ -494,7 +494,7 @@ class FormsRing_abstract(Parent):
         elif degree is None:
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
         else:
-            (weight, ep) = degree
+            weight, ep = degree
             if self.is_homogeneous() and (weight != self.weight() or ep != self.ep()):
                 analytic_type = self._analytic_type.reduce_to([])
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=weight, ep=ep)
@@ -808,15 +808,14 @@ class FormsRing_abstract(Parent):
             sage: ModularFormsRing(n=infinity)._derivative_op()
             -X*Y*dX + X*Z*dX + 1/2*Y*Z*dY + 1/4*Z^2*dZ - 1/2*X*dY - 1/4*X*dZ
         """
-        (X, Y, Z, dX, dY, dZ) = self.diff_alg().gens()
+        X, Y, Z, dX, dY, dZ = self.diff_alg().gens()
 
         if self.hecke_n() == infinity:
-            return (X*Z-X*Y) * dX\
-                + ZZ(1)/ZZ(2) * (Y*Z-X) * dY\
-                + ZZ(1)/ZZ(4) * (Z**2-X) * dZ
+            return (X*Z-X*Y) * dX + ZZ(1) / 2 * (Y*Z-X) * dY \
+                + ZZ(1) / 4 * (Z**2-X) * dZ
 
-        return 1/self._group.n() * (X*Z-Y) * dX\
-            + ZZ(1)/ZZ(2) * (Y*Z-X**(self._group.n()-1)) * dY\
+        return 1/self._group.n() * (X*Z-Y) * dX \
+            + ZZ(1) / 2 * (Y*Z-X**(self._group.n()-1)) * dY \
             + (self._group.n()-2) / (4*self._group.n()) * (Z**2-X**(self._group.n()-2)) * dZ
 
     @cached_method
@@ -834,15 +833,14 @@ class FormsRing_abstract(Parent):
             sage: ModularFormsRing(n=infinity)._serre_derivative_op()
             -X*Y*dX - 1/4*Z^2*dZ - 1/2*X*dY - 1/4*X*dZ
         """
-        (X, Y, Z, dX, dY, dZ) = self.diff_alg().gens()
+        X, Y, Z, dX, dY, dZ = self.diff_alg().gens()
 
         if self.hecke_n() == infinity:
-            return - X * Y * dX\
-                - ZZ(1)/ZZ(2) * X * dY\
-                - ZZ(1)/ZZ(4) * (Z**2+X) * dZ
+            return - X * Y * dX - ZZ(1) / 2 * X * dY \
+                - ZZ(1) / 4 * (Z**2+X) * dZ
 
-        return - 1/self._group.n() * Y*dX\
-            - ZZ(1)/ZZ(2) * X**(self._group.n()-1) * dY\
+        return - 1/self._group.n() * Y*dX \
+            - ZZ(1) / 2 * X**(self._group.n()-1) * dY \
             - (self._group.n()-2) / (4*self._group.n()) * (Z**2+X**(self._group.n()-2)) * dZ
 
     @cached_method
@@ -1091,7 +1089,7 @@ class FormsRing_abstract(Parent):
             sage: WeakModularForms().J_inv()
             1/1728*q^-1 + 31/72 + 1823/16*q + 335840/27*q^2 + 16005555/32*q^3 + 11716352*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         if self.hecke_n() == infinity:
             return self.extend_type("weak", ring=True)(x/(x-y**2)).reduce()
@@ -1142,7 +1140,7 @@ class FormsRing_abstract(Parent):
             sage: WeakModularForms().j_inv()
             q^-1 + 744 + 196884*q + 21493760*q^2 + 864299970*q^3 + 20245856256*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         if self.hecke_n() == infinity:
             return self.extend_type("weak", ring=True)(1/d*x/(x-y**2)).reduce()
@@ -1217,7 +1215,7 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=4).f_rho()
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         if self.hecke_n() == infinity:
             return self.extend_type("holo", ring=True)(1).reduce()
@@ -1283,7 +1281,7 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=6).f_i()
             1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         return self.extend_type("holo", ring=True)(y).reduce()
 
@@ -1352,7 +1350,7 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(k=12).f_inf()
             q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         if self.hecke_n() == infinity:
             return self.extend_type("holo", ring=True)(d*(x-y**2)).reduce()
@@ -1428,7 +1426,7 @@ class FormsRing_abstract(Parent):
             ...
             ArithmeticError: G_inv doesn't exist for odd n(=9).
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         if self.hecke_n() == infinity:
             raise ArithmeticError("G_inv doesn't exist for n={} (it is not meromorphic at -1).".format(self._group.n()))
@@ -1503,7 +1501,7 @@ class FormsRing_abstract(Parent):
         if self.hecke_n() == infinity:
             raise ArithmeticError("g_inv doesn't exist for n={} (it is not meromorphic at -1).".format(self._group.n()))
         if ZZ(2).divides(self._group.n()):
-            (x, y, z, d) = self._pol_ring.gens()
+            x, y, z, d = self._pol_ring.gens()
             return self.extend_type("weak", ring=True)(1/d*y*x**(self._group.n()/ZZ(2))/(x**self._group.n()-y**2)).reduce()
         else:
             raise ArithmeticError("g_inv doesn't exist for odd n(={}).".format(self._group.n()))
@@ -1575,7 +1573,7 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=4).E4()
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         if self.hecke_n() == infinity:
             return self.extend_type("holo", ring=True)(x).reduce()
@@ -1640,7 +1638,7 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=6).E6()
             1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         if self.hecke_n() == infinity:
             return self.extend_type("holo", ring=True)(x*y).reduce()
@@ -1711,7 +1709,7 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(k=12).Delta()
             q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         if self.hecke_n() == infinity:
             return self.extend_type("cusp", ring=True)(d*x**2*(x-y**2)).reduce()
@@ -1780,7 +1778,7 @@ class FormsRing_abstract(Parent):
             sage: QuasiModularForms(k=2).E2()
             1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 + O(q^5)
         """
-        (x, y, z, d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
         return self.extend_type(["holo", "quasi"], ring=True)(z).reduce()
 
     @cached_method

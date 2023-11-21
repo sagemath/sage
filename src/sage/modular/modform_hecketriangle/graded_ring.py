@@ -56,7 +56,7 @@ def canonical_parameters(group, base_ring, red_hom, n=None):
     return (group, base_ring, red_hom, n)
 
 
-class QuasiMeromorphicModularFormsRing(FormsRing_abstract, Parent, UniqueRepresentation):
+class QuasiMeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation):
     r"""
     Graded ring of (Hecke) quasi meromorphic modular forms
     for the given group and base ring.
