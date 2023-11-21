@@ -1232,7 +1232,6 @@ class Stream_taylor(Stream_inexact):
             n += 1
             denom *= n
 
-
 class Stream_uninitialized(Stream):
     r"""
     Coefficient stream for an uninitialized series.
@@ -1304,13 +1303,34 @@ class Stream_uninitialized(Stream):
         return []
 
     def define(self, target):
+        r"""
+        Define ``self`` via ``self = target``.
+
+        INPUT:
+
+            - ``target`` -- a stream
+
+        EXAMPLES::
+
+        """
         self._target = target
         self._n = self._approximate_order - 1 # the largest index of a coefficient we know
-        # we only need this if target is not dense
+        # we only need this if target does not have a dense cache
         self._cache = list()
         self._iter = self.iterate_coefficients()
 
     def define_implicitly(self, F, initial_values, R):
+        r"""
+        Define ``self`` via ``F == 0``.
+
+        INPUT:
+
+            - ``F`` -- a stream
+            - ``initial_values`` -- a list specifying ``self[0], self[1], ...``
+            - ``R`` -- the coefficient ring
+
+        EXAMPLES::
+        """
         assert self._target is None
 
         if initial_values is None:
@@ -1329,9 +1349,11 @@ class Stream_uninitialized(Stream):
         self._F = F
         self._base = R
         from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
-        self._P = InfinitePolynomialRing(self._base, names=('FESDUMMY',),
-                                         implementation='sparse')
+        # we use a silly variable name, because InfinitePolynomialRing is cached
+        self._P = InfinitePolynomialRing(self._base, names=("FESDUMMY",),
+                                         implementation='dense')
         self._x = self._P.gen()
+        self._variables = set()
         self._PFF = self._P.fraction_field()
         self._uncomputed = True
         self._last_eq_n = self._F._approximate_order - 1 # the index of the last equation we used
@@ -1341,6 +1363,12 @@ class Stream_uninitialized(Stream):
         self._good_cache = [0 for c in self._input_streams] # the number of coefficients that have been substituted already
 
     def input_streams_iterator(self):
+        r"""
+        Return the list of streams which have a cache and ``self``
+        depends on.
+
+        EXAMPLES::
+        """
         known = [self]
         todo = [self]
         while todo:
@@ -1352,6 +1380,17 @@ class Stream_uninitialized(Stream):
                     known.append(y)
 
     def __getitem__(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the index
+
+        EXAMPLES::
+
+            sage:
+        """
         if n < self._approximate_order:
             return ZZ.zero()
 
@@ -1413,11 +1452,24 @@ class Stream_uninitialized(Stream):
                 return self._cache[n - self._approximate_order]
             return ZZ.zero()
 
-        self._cache.append(self._x[n])
-        return self._cache[-1]
+        x = self._x[self._P._max + 1]
+        self._variables.add(x)
+        self._cache.append(x)
+        return x
 
     def _subs_in_caches(self, var, val):
+        r"""
+        Substitute ``val`` for ``var`` in the caches of the input
+        streams.
 
+        INPUT:
+
+            - ``var``, a variable
+            - ``val``, the value that should replace the variable
+
+        EXAMPLES::
+
+        """
         def subs(cache, k):
             c = cache[k]
             if hasattr(c, "parent"):
@@ -1439,6 +1491,9 @@ class Stream_uninitialized(Stream):
             self._good_cache[j] += m
 
     def _compute(self):
+        """
+        Solve the next equations, until the next variable is determined.
+        """
         while True:
             self._last_eq_n += 1
             coeff = self._F[self._last_eq_n]
@@ -1446,10 +1501,10 @@ class Stream_uninitialized(Stream):
                 coeff = coeff.numerator()
             else:
                 coeff = self._P(coeff)
-            V = coeff.variables()
+            V = list(self._variables.intersection([self._P(v) for v in coeff.variables()]))
 
             if len(V) > 1:
-                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}")
+                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the equation is {coeff} == 0")
 
             if not V:
                 if coeff:
@@ -1462,7 +1517,7 @@ class Stream_uninitialized(Stream):
                 val = self._base.zero()
             else:
                 if set(hc) != set([0, 1]):
-                    raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}")
+                    raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the equation is {coeff} == 0")
 #                if str(hc[1].lm()) != str(self._x[m]):
 #                    raise ValueError(f"the solutions to the coefficients must be computed in order")
                 val = self._base(-hc[0].lc() / hc[1].lc())
