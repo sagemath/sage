@@ -593,7 +593,7 @@ class SimplicialSets(Category_singleton):
                     sage: X = simplicial_sets.Torus()
                     sage: d = X._canonical_twisting_operator()
                     sage: d
-                    {(s_0 v_0, sigma_1): f2*f3^-1, (sigma_1, s_0 v_0): f3, (sigma_1, sigma_1): f2}
+                    {(s_0 v_0, sigma_1): f3, (sigma_1, s_0 v_0): f2*f3^-1, (sigma_1, sigma_1): f2}
                     sage: list(d.values())[0].parent()
                     Multivariate Laurent Polynomial Ring in f2, f3 over Integer Ring
                     sage: Y = simplicial_sets.RealProjectiveSpace(2)
@@ -610,7 +610,7 @@ class SimplicialSets(Category_singleton):
                 QRP = R.quotient_ring(I)
                 res = dict()
                 for s, el in d.items():
-                    res[s] = QRP(prod(images[abs(a)-1]**sign(a) for a in phi(el).Tietze()))
+                    res[s] = QRP(prod(images[abs(a)-1]**sign(a) for a in el.Tietze()))
                 return res
 
             def twisted_chain_complex(self, twisting_operator=None, dimensions=None, augmented=False,
@@ -675,10 +675,10 @@ class SimplicialSets(Category_singleton):
                     sage: X = simplicial_sets.Torus()
                     sage: C = X.twisted_chain_complex()
                     sage: C.differential(1)
-                    [f2*f3^-1 - 1       f3 - 1       f2 - 1]
+                    [      f3 - 1 f2*f3^-1 - 1       f2 - 1]
                     sage: C.differential(2)
-                    [       1       f3]
-                    [f2*f3^-1        1]
+                    [       1 f2*f3^-1]
+                    [      f3        1]
                     [      -1       -1]
                     sage: C.differential(3)
                     []
@@ -873,6 +873,21 @@ class SimplicialSets(Category_singleton):
                     [0 0 0 1 0]
                     [0 0 0 0 1]
 
+                TESTS::
+
+                    sage: X = simplicial_sets.PresentationComplex(groups.presentation.FGAbelian((3,2)))
+                    sage: TW2 = X.twisted_homology(2, reduced=True)
+                    sage: M = TW2.relations_matrix()
+                    sage: from sage.libs.singular.function import singular_function
+                    sage: vdim = singular_function("vdim")
+                    sage: vdim(M.T, ring=M.base_ring())
+                    // ** considering the image in Q[...]
+                    // ** _ is no standard basis
+                    5
+                    sage: X.universal_cover().homology(2)
+                    Z^5
+                    sage: from sage.libs.singular.function import singular_function
+
                 """
                 from sage.libs.singular.function import singular_function
                 from sage.libs.singular.option import opt_verb
@@ -948,6 +963,7 @@ class SimplicialSets(Category_singleton):
                     return sres.delete_rows(to_delete)
                     M2 = border_matrix(n+1)
                 if M1.nrows() == 0:
+                    opt_verb.reset_default()
                     return (RP**0).quotient_module([])
                 K = mkernel(M1)
                 DK = mkernel(K)
@@ -963,6 +979,7 @@ class SimplicialSets(Category_singleton):
                 AM = RP ** K.nrows()
                 if resmat.ncols() == 0:
                     SM = AM.submodule([])
+                    opt_verb.reset_default()
                     return AM.quotient_module(SM)
                 for g in (IP+JP).gens():
                     resmat = resmat.stack(g * identity_matrix(resmat.ncols()))
