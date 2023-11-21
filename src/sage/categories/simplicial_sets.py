@@ -796,12 +796,12 @@ class SimplicialSets(Category_singleton):
                                     sign *= -1
 
                             differentials[d] = matrix(base_ring, old_rank,
-                                                      rank, matrix_data)
+                                                      rank, matrix_data, sparse=False)
 
                     else:
                         rank = 0
                         current = []
-                        differentials[d] = matrix(base_ring, old_rank, rank)
+                        differentials[d] = matrix(base_ring, old_rank, rank, sparse=False)
 
                 if cochain:
                     new_diffs = {}
@@ -874,6 +874,13 @@ class SimplicialSets(Category_singleton):
                     [0 0 0 0 1]
 
                 """
+                from sage.libs.singular.function import singular_function
+                from sage.libs.singular.option import opt_verb
+                opt_verb['not_warn_sb'] = True
+                singstd = singular_function("std")
+                singsyz = singular_function("syz")
+                singred = singular_function("reduce")
+                singlift = singular_function("lift")
                 G, d = self._universal_cover_dict()
                 phi = G.abelianization_map()
                 abelG, R, I, images = G.abelianization_to_algebra(ZZ)
@@ -895,7 +902,7 @@ class SimplicialSets(Category_singleton):
                 GBI = RP.ideal(GB)
 
                 def reduce_laurent(a):
-                    return a._singular_().reduce(GBI)._sage_()
+                    return singred(a, GBI, ring=RP)
 
                 def group_to_polynomial(el, RP):
                     res = RP.one()
@@ -915,7 +922,7 @@ class SimplicialSets(Category_singleton):
                     n = res.ncols()
                     for g in (IP+JP).gens():
                         res = res.stack(g*identity_matrix(n))
-                    syz = res.T._singular_().syz()._sage_()
+                    syz = matrix(singsyz(res.T, ring=res.base_ring())).T
                     trimmed = syz.T.submatrix(0, 0, syz.ncols(), M.nrows())
                     trimmed = trimmed.apply_map(reduce_laurent)
                     to_delete = [i for (i, r) in enumerate(trimmed.rows()) if not r]
@@ -927,7 +934,7 @@ class SimplicialSets(Category_singleton):
                     res = M
                     for g in GB:
                         res = res.stack(g*identity_matrix(M.ncols()))
-                    singres = res.T._singular_().lift(S.T._singular_())._sage_()
+                    singres = matrix(singlift(res.T, S.T,ring=res.base_ring()))
                     return singres.submatrix(0, 0, M.nrows(), S.nrows())
 
                 def mgb(M):
@@ -936,7 +943,7 @@ class SimplicialSets(Category_singleton):
                     res = M
                     for g in GB:
                         res = res.stack(g*identity_matrix(M.ncols()))
-                    sres = res.T._singular_().std()._sage_().T
+                    sres = matrix(singstd(res.T, ring=RP))
                     to_delete = [i for i, r in enumerate(sres.apply_map(reduce_laurent)) if not r]
                     return sres.delete_rows(to_delete)
                     M2 = border_matrix(n+1)
@@ -960,8 +967,9 @@ class SimplicialSets(Category_singleton):
                 for g in (IP+JP).gens():
                     resmat = resmat.stack(g * identity_matrix(resmat.ncols()))
                 if reduced:
-                    resmat = resmat.T._singular_().std()._sage_().T
+                    resmat = matrix(singstd(resmat.T, ring=RP))
                 SM = AM.submodule(resmat)
+                opt_verb.reset_default()
                 return AM.quotient_module(SM)
 
             def is_simply_connected(self):
