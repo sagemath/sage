@@ -1,16 +1,11 @@
+# Usage: python -m sage_setup.autogen.interpreters <output_dir>
+
 import argparse
-import os
 
 from . import rebuild
 
 parser = argparse.ArgumentParser()
-parser.add_argument("output_dir")
+parser.add_argument("output_dir", help="Output directory")
 args = parser.parse_args()
 
-output_dir = args.output_dir
-if not output_dir:
-    from sage.env import SAGE_SRC
-    output_dir = os.path.join(SAGE_SRC, "sage", "ext", "interpreters")
-
-
-rebuild(output_dir)
+rebuild(args.output_dir)
