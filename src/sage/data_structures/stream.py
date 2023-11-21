@@ -1359,13 +1359,14 @@ class Stream_uninitialized(Stream):
         self._last_eq_n = self._F._approximate_order - 1 # the index of the last equation we used
         self._n = self._approximate_order + len(self._cache) - 1 # the index of the last coefficient we know
 
-        self._input_streams = list(self.input_streams_iterator())
-        self._good_cache = [0 for c in self._input_streams] # the number of coefficients that have been substituted already
 
-    def input_streams_iterator(self):
+    @lazy_attribute
+    def _input_streams(self):
         r"""
         Return the list of streams which have a cache and ``self``
         depends on.
+
+        All caches must have been created before this is called.
 
         EXAMPLES::
         """
@@ -1373,11 +1374,18 @@ class Stream_uninitialized(Stream):
         todo = [self]
         while todo:
             x = todo.pop()
-            yield x
             for y in x.input_streams():
                 if hasattr(y, "_cache") and not any(y is z for z in known):
                     todo.append(y)
                     known.append(y)
+        return known
+
+    @lazy_attribute
+    def _good_cache(self):
+        r"""
+        The number of coefficients that have been substituted already.
+        """
+        return [0 for c in self._input_streams]
 
     def __getitem__(self, n):
         """
@@ -1476,9 +1484,15 @@ class Stream_uninitialized(Stream):
                 if c.parent() is self._PFF:
                     num = c.numerator().subs({var: val})
                     den = c.denominator().subs({var: val})
-                    cache[k] = self._base(num/den)
+                    new = num/den
                 elif c.parent() is self._P:
-                    cache[k] = self._base(c.subs({var: val}))
+                    new = c.subs({var: val})
+                else:
+                    return
+                if new in self._base:
+                    cache[k] = self._base(new)
+                else:
+                    cache[k] = new
 
         for j, s in enumerate(self._input_streams):
             m = len(s._cache) - self._good_cache[j]
@@ -1486,7 +1500,7 @@ class Stream_uninitialized(Stream):
                 for _, i in zip(range(m), reversed(s._cache)):
                     subs(s._cache, i)
             else:
-                for i in range(-m, -1):
+                for i in range(-m, 0):
                     subs(s._cache, i)
             self._good_cache[j] += m
 
@@ -1511,16 +1525,15 @@ class Stream_uninitialized(Stream):
                     raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
                 continue
 
-            # single variable to solve for
-            hc = coeff.homogeneous_components()
-            if len(hc) == 1:
+            c = coeff.polynomial()
+            v = c.parent()(V[0].polynomial())
+            d = c.degree(v)
+            if d == 1:
+                val = self._PFF(- c.coefficient({v: 0}) / c.coefficient({v: 1}))
+            elif c.is_monomial() and c.coefficient({v: d}) in self._base:
                 val = self._base.zero()
             else:
-                if set(hc) != set([0, 1]):
-                    raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the equation is {coeff} == 0")
-#                if str(hc[1].lm()) != str(self._x[m]):
-#                    raise ValueError(f"the solutions to the coefficients must be computed in order")
-                val = self._base(-hc[0].lc() / hc[1].lc())
+                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the equation is {coeff} == 0")
 
             return V[0], val
 

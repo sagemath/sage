@@ -1532,7 +1532,9 @@ class LazyModuleElement(Element):
             sage: f
             1 + 3*x + 16*x^2 + 87*x^3 + 607*x^4 + 4518*x^5 + 30549*x^6 + O(x^7)
         """
-        if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
+        if (not isinstance(self._coeff_stream, Stream_uninitialized)
+            or self._coeff_stream._target is not None
+            or self._coeff_stream._F is not None):
             raise ValueError("series already defined")
 
         if not isinstance(s, LazyModuleElement):
@@ -1615,9 +1617,9 @@ class LazyModuleElement(Element):
             sage: R[0]
             0
             sage: R[1]
-            q*y/(-q*y + 1)
+            (-q*y)/(q*y - 1)
             sage: R[2]
-            (-q^3*y^2 - q^2*y)/(-q^3*y^2 + q^2*y + q*y - 1)
+            (q^3*y^2 + q^2*y)/(q^3*y^2 - q^2*y - q*y + 1)
             sage: R[3].factor()
             (-1) * y * q^3 * (q*y - 1)^-2 * (q^2*y - 1)^-1 * (q^3*y - 1)^-1
              * (q^4*y^3 + q^3*y^2 + q^2*y^2 - q^2*y - q*y - 1)
@@ -1692,8 +1694,37 @@ class LazyModuleElement(Element):
             0
             sage: f[1]
             0
+
+        Some systems of two coupled functional equations::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: FA = A^2 + B - 2 - z*B
+            sage: FB = B^2 - A
+            sage: A.define_implicitly(FA, [1])
+            sage: B.define_implicitly(FB, [1])
+            sage: A^2 + B - 2 - z*B
+            O(z^7)
+            sage: B^2 - A
+            O(z^7)
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: FA = A^2 + B^2 - 2 - z*B
+            sage: FB = B^3 + 2*A^3 - 3 - z*(A + B)
+            sage: A.define_implicitly(FA, [1])
+            sage: B.define_implicitly(FB, [1])
+            sage: A^2 + B^2 - 2 - z*B
+            O(z^7)
+            sage: B^3 + 2*A^3 - 3 - z*(A + B)
+            O(z^7)
+
         """
-        if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
+        if (not isinstance(self._coeff_stream, Stream_uninitialized)
+            or self._coeff_stream._target is not None
+            or self._coeff_stream._F is not None):
             raise ValueError("series already defined")
 
         P = self.parent()
