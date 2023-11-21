@@ -149,7 +149,7 @@ jobs:
             const diffParagraphs = document.querySelectorAll('p.diff');
             diffParagraphs.forEach(paragraph => {
               const rootURL = window.location.origin;
-              const docAnchor = paragraph.querySelector('a');  # first "a" element
+              const docAnchor = paragraph.querySelector('a');  // first "a" element
               const url = new URL(docAnchor.href);
               const path = url.pathname;
               const anchor = document.createElement('a');
