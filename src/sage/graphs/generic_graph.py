@@ -15748,8 +15748,13 @@ class GenericGraph(GenericGraph_pyx):
 
     def power(self, k):
         r"""
-        Compute the kth power graph of an unweighted graph based on shortest
-        distances between nodes using BFS.
+        Return the `k`-th power graph of ``self``.
+
+        In the `k`-th power graph of a graph `G`, there is an edge between
+        any pair of vertices at distance at most `k` in `G`, where the
+        distance is considered in the unweighted graph. In a directed graph,
+        there is an arc from a vertex `u` to a vertex `v` if there is a path
+        of length at most `k` in `G` from `u` to `v`.
 
         INPUT:
 
@@ -15765,16 +15770,14 @@ class GenericGraph(GenericGraph_pyx):
         Testing on undirected graphs::
 
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
-            sage: k = 2
-            sage: PG = G.power(k)
+            sage: PG = G.power(2)
             sage: PG.edges(sort=True, labels=False)
             [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (2, 5), (3, 4), (4, 5)]
 
         Testing on directed graphs::
 
             sage: G = DiGraph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
-            sage: k = 3
-            sage: PG = G.power(k)
+            sage: PG = G.power(3)
             sage: PG.edges(sort=True, labels=False)
             [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2), (4, 5)]
 
@@ -15783,8 +15786,7 @@ class GenericGraph(GenericGraph_pyx):
         Testing when k < 0::
 
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
-            sage: k = -2
-            sage: PG = G.power(k)
+            sage: PG = G.power(-2)
             Traceback (most recent call last):
             ...
             ValueError: distance must be a non-negative integer, not -2
@@ -15792,24 +15794,21 @@ class GenericGraph(GenericGraph_pyx):
         Testing when k = 0::
 
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
-            sage: k = 0
-            sage: PG = G.power(k)
+            sage: PG = G.power(0)
             sage: PG.edges(sort=True, labels=False)
             []
 
         Testing when k = 1::
 
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
-            sage: k = 1
-            sage: PG = G.power(k)
+            sage: PG = G.power(1)
             sage: PG.edges(sort=True, labels=False)
             [(0, 1), (0, 3), (1, 2), (2, 3), (2, 4), (4, 5)]
 
         Testing when k = Infinity::
 
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
-            sage: k = Infinity
-            sage: PG = G.power(k)
+            sage: PG = G.power(Infinity)
             Traceback (most recent call last):
             ...
             ValueError: distance must be a non-negative integer, not +Infinity
@@ -15817,8 +15816,7 @@ class GenericGraph(GenericGraph_pyx):
         Testing on graph with multiple edges::
 
             sage: G = DiGraph([(0, 1), (0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
-            sage: k = 3
-            sage: PG = G.power(k)
+            sage: PG = G.power(3)
             sage: PG.edges(sort=True, labels=False)
             [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2), (4, 5)]
         """
