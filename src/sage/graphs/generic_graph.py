@@ -15832,6 +15832,9 @@ class GenericGraph(GenericGraph_pyx):
                 if u != v:
                     power_of_graph.add_edge(u, v)
 
+        if self.name():
+            power_of_graph.name("power({})".format(self.name()))
+
         return power_of_graph
 
     def girth(self, certificate=False):
