@@ -1650,12 +1650,12 @@ class LazyModuleElement(Element):
             sage: F = L.undefined()
             sage: F.define_implicitly(F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z))
             sage: F
-            <repr(...) failed: ValueError: unable to determine a unique solution in degree 2, the equation is -FESDUMMY_12 + (-x - y)*FESDUMMY_10 + FESDUMMY_9 + (x + y)*FESDUMMY_8 == 0>
+            <repr(...) failed: ValueError: unable to determine a unique solution in degree 2, the equation is -FESDUMMY_4 + (-x - y)*FESDUMMY_2 + FESDUMMY_1 + (x + y)*FESDUMMY_0 == 0>
 
             sage: F = L.undefined()
             sage: F.define_implicitly(F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z), [0, f1])
             sage: F
-            <repr(...) failed: ValueError: unable to determine a unique solution in degree 3, the equation is FESDUMMY_17 + (-x - y)*FESDUMMY_15 + 5*FESDUMMY_14 + (-x - y)*FESDUMMY_13 + (x*y*f1) == 0>
+            <repr(...) failed: ValueError: unable to determine a unique solution in degree 3, the equation is FESDUMMY_9 + (-x - y)*FESDUMMY_7 + 5*FESDUMMY_6 + (-x - y)*FESDUMMY_5 + (x*y*f1) == 0>
 
         Laurent series examples::
 

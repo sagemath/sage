@@ -1232,6 +1232,21 @@ class Stream_taylor(Stream_inexact):
             n += 1
             denom *= n
 
+from collections import defaultdict            
+STREAM_UNINITIALIZED_VARIABLES = defaultdict(set)
+def get_variable(P):
+    r"""
+    Return the first variable with index not in
+    ``STREAM_UNINITIALIZED_VARIABLES``.
+
+    """
+    vars = STREAM_UNINITIALIZED_VARIABLES[P]
+    for i in range(P._max+2):
+        v = P.gen()[i]
+        if v not in vars:
+            vars.add(v)
+            return v
+
 class Stream_uninitialized(Stream):
     r"""
     Coefficient stream for an uninitialized series.
@@ -1352,9 +1367,9 @@ class Stream_uninitialized(Stream):
         # we use a silly variable name, because InfinitePolynomialRing is cached
         self._P = InfinitePolynomialRing(self._base, names=("FESDUMMY",),
                                          implementation='dense')
-        self._x = self._P.gen()
-        self._variables = set()
         self._PFF = self._P.fraction_field()
+        self._variables = set()  # variables used for this stream
+
         self._uncomputed = True
         self._last_eq_n = self._F._approximate_order - 1 # the index of the last equation we used
         self._n = self._approximate_order + len(self._cache) - 1 # the index of the last coefficient we know
@@ -1460,7 +1475,7 @@ class Stream_uninitialized(Stream):
                 return self._cache[n - self._approximate_order]
             return ZZ.zero()
 
-        x = self._x[self._P._max + 1]
+        x = get_variable(self._P)
         self._variables.add(x)
         self._cache.append(x)
         return x
@@ -1503,6 +1518,7 @@ class Stream_uninitialized(Stream):
                 for i in range(-m, 0):
                     subs(s._cache, i)
             self._good_cache[j] += m
+        STREAM_UNINITIALIZED_VARIABLES[self._P].remove(var)
 
     def _compute(self):
         """
