@@ -99,7 +99,7 @@ jobs:
 
       - name: Build (fallback to non-incremental)
         id: build
-        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+        if: (success() || failure()) && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
           make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
@@ -110,7 +110,7 @@ jobs:
 
       - name: Build docs
         id: docbuild
-        if: always() && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
@@ -127,7 +127,7 @@ jobs:
 
       - name: Copy docs
         id: copy
-        if: always() && steps.docbuild.outcome == 'success'
+        if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
           set -ex
           mkdir -p ./docs
@@ -182,7 +182,6 @@ jobs:
           echo '</body>' >> ./docs/CHANGES.html
           echo '</html>' >>./docs/CHANGES.html
           rm ./docs/diff.txt ./docs/diff.html
-          (cd /sage/local/share/doc/sage/html && git reset --hard HEAD)
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them
@@ -192,7 +191,7 @@ jobs:
           zip -r docs.zip docs
 
       - name: Upload docs
-        if: always() && steps.copy.outcome == 'success'
+        if: (success() || failure()) && steps.copy.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: docs
