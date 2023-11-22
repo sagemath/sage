@@ -2194,18 +2194,19 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C.function(C.pull_from_function_field(f2)) == f2
             True
         """
-        return self._pull_from_function_field(f)
+        return self._map_from_function_field(f)
 
     @lazy_attribute
     def _nonsingular_model(self):
         """
         Return the data of a nonsingular model of the curve.
 
-        The data consists of an abstract function field `M` and a map from the
+        The data consists of an abstract function field `M`, a map from the
         fraction field of the coordinate ring `R` of the ambient space of the
-        curve to the function field. The coordinate ring of the curve is the
-        quotient of `R` by the kernel of the map restricted to `R`.
+        curve to the function field, and the inverse map.
 
+        The coordinate ring of the curve is the quotient of `R` by the kernel
+        of the map restricted to `R`.
 
         TESTS::
 
@@ -2406,7 +2407,7 @@ class IntegralAffineCurve(AffineCurve_field):
         return self._nonsingular_model[1].im_gens()
 
     @lazy_attribute
-    def _pull_from_function_field(self):
+    def _map_from_function_field(self):
         """
         Return the map from the function field of the curve.
 
@@ -2414,7 +2415,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
             sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
-            sage: C._pull_from_function_field
+            sage: C._map_from_function_field
             Ring morphism:
               From: Function field in z defined by z^3 + 10*x
               To:   Fraction Field of Multivariate Polynomial Ring in x, y, z

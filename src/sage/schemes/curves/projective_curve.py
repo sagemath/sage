@@ -2410,7 +2410,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: C.function(C.pull_from_function_field(f2)) == f2
             True
         """
-        return self._pull_from_function_field(f)
+        return self._map_from_function_field(f)
 
     @lazy_attribute
     def _function_field(self):
@@ -2465,7 +2465,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         return tuple(coords)
 
     @lazy_attribute
-    def _pull_from_function_field(self):
+    def _map_from_function_field(self):
         """
         Return the map to the function field of the curve.
 
@@ -2475,7 +2475,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
             sage: F = C.function_field()
             sage: f = F.random_element()
-            sage: C.function(C._pull_from_function_field(f)) == f
+            sage: C.function(C._map_from_function_field(f)) == f
             True
         """
         F = self._function_field
@@ -2483,13 +2483,13 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         phi = self._open_affine._nonsingular_model[2]
         i = self._open_affine_index
 
-        def pull(f):
+        def m(f):
             pf = phi(f)
             num = S(pf.numerator()).homogenize(i)
             den = S(pf.denominator()).homogenize(i)
             return num / den * S.gen(i) ** (den.total_degree() - num.total_degree())
 
-        return pull
+        return m
 
     @lazy_attribute
     def _singularities(self):
