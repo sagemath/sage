@@ -3184,6 +3184,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             10 loops, best of 3: 0.137 s per loop
             sage: %timeit P.normal_form.clear_cache(); P.normal_form("palp_modified")  # not tested
             10 loops, best of 3:  22.2 s per loop
+
+        TESTS::
+
+            sage: d.normal_form("palp_fiction")
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be 'palp', 'palp_native', or 'palp_modified'
         """
         if self.dim() < self.lattice_dim():
             raise ValueError("normal form is not defined for %s" % self)
