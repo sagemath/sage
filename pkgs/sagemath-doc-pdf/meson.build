@@ -9,7 +9,7 @@ docdir = get_option('datadir') / 'share' / 'doc' / 'sage'
 pdf = custom_target('PDF documentation',
   build_by_default: true,
   output: 'doc-pdf',  # phony
-  command: [meson.current_source_dir() / 'doc' / 'make.sh'),
+  command: [meson.current_source_dir() / 'doc' / 'make.sh',
             '-C', meson.current_source_dir() / 'doc', '@OUTPUT@'],
   env: {'SAGE_DOC': meson.current_build_dir()}
 )
