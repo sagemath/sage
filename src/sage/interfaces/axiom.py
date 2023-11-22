@@ -457,7 +457,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
             return out
         # out = out.lstrip()
         i = out.find('\n')
-        out = out[i + 1:]
+        out = out[i+1:]
         outs = out.split("\n")
         i = 0
         for line in outs:
@@ -620,7 +620,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         P = self._check_valid()
         s = P._eval_line(self.name())
         i = s.rfind('Type:')
-        return P(s[i + 5:].strip())
+        return P(s[i+5:].strip())
 
     def __len__(self):
         """
