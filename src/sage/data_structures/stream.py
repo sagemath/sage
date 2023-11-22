@@ -103,6 +103,9 @@ from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.misc.cachefunc import cached_method
+from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_dense
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+from collections import defaultdict
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
@@ -1232,7 +1235,6 @@ class Stream_taylor(Stream_inexact):
             n += 1
             denom *= n
 
-from collections import defaultdict            
 STREAM_UNINITIALIZED_VARIABLES = defaultdict(set)
 def get_variable(P):
     r"""
@@ -1363,7 +1365,6 @@ class Stream_uninitialized(Stream):
 
         self._F = F
         self._base = R
-        from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
         # we use a silly variable name, because InfinitePolynomialRing is cached
         self._P = InfinitePolynomialRing(self._base, names=("FESDUMMY",),
                                          implementation='dense')
@@ -1531,7 +1532,8 @@ class Stream_uninitialized(Stream):
                 coeff = coeff.numerator()
             else:
                 coeff = self._P(coeff)
-            V = list(self._variables.intersection([self._P(v) for v in coeff.variables()]))
+            V = self._variables.intersection(InfinitePolynomial_dense(self._P, v)
+                                             for v in coeff.variables())
 
             if len(V) > 1:
                 raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the equation is {coeff} == 0")
@@ -1541,8 +1543,9 @@ class Stream_uninitialized(Stream):
                     raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
                 continue
 
+            var = V.pop()
             c = coeff.polynomial()
-            v = c.parent()(V[0].polynomial())
+            v = c.parent()(var.polynomial())
             d = c.degree(v)
             if d == 1:
                 val = self._PFF(- c.coefficient({v: 0}) / c.coefficient({v: 1}))
@@ -1551,7 +1554,7 @@ class Stream_uninitialized(Stream):
             else:
                 raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the equation is {coeff} == 0")
 
-            return V[0], val
+            return var, val
 
     def iterate_coefficients(self):
         """
