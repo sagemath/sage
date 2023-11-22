@@ -320,7 +320,7 @@ fi
 
 # Warning for experimental packages
 if [ x`cat "$PKG_SCRIPTS/type"` = x"experimental" -a $INFO = 0 ]; then
-    if [ $YES != 1 ]; then
+    if [ $YES != 1 -a -n "$PKG_NAME_UPSTREAM" ]; then
         # We use /dev/tty here because our output may be redirected
         # to a logfile, or line-buffered.
         write_to_tty <<EOF
