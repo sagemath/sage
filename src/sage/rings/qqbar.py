@@ -3133,7 +3133,7 @@ class AlgebraicGenerator(SageObject):
             return 'Trivial generator'
         else:
             return '%s with %s in %s' % (self._field, self._field.gen(),
-                                        self._root._interval_fast(53))
+                                         self._root._interval_fast(53))
 
     def root_as_algebraic(self):
         r"""
