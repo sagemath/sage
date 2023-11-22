@@ -314,7 +314,7 @@ else
 fi
 PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
 if [ -f "$PKG_SCRIPTS/checksums.ini" ]; then
-    # Normal package
+    # Normal/wheel package
     PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini" | sed "s/VERSION/$PKG_BASE_VER/"`
 fi
 
@@ -355,7 +355,7 @@ if [ $INFO -ne 0 ]; then
 fi
 
 if [ -n "$PKG_NAME_UPSTREAM" ]; then
-    # Normal package
+    # Normal or wheel package
     if ! sage-download-file $SAGE_DOWNLOAD_FILE_OPTIONS "$PKG_NAME_UPSTREAM"; then
         error_msg "Error downloading $PKG_NAME_UPSTREAM"
         exit 1
@@ -377,7 +377,7 @@ cd "$SAGE_ROOT" || exit $?
 
 # If SAGE_SPKG_COPY_UPSTREAM is set, it should be the name of a directory
 # to which all upstream files are copied. This is used in sage-sdist.
-if [ -n "$SAGE_SPKG_COPY_UPSTREAM" ]; then
+if [ -n "$SAGE_SPKG_COPY_UPSTREAM" -a -n "$PKG_NAME_UPSTREAM" ]; then
     mkdir -p "$SAGE_SPKG_COPY_UPSTREAM" && cp -p "$PKG_SRC" "$SAGE_SPKG_COPY_UPSTREAM"
     if [ $? -ne 0 ]; then
         error_msg "Error copying upstream tarball to directory '$SAGE_SPKG_COPY_UPSTREAM'"
@@ -447,13 +447,26 @@ fi
 ##################################################################
 
 echo "Setting up build directory for $PKG_NAME"
-cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
-cd "$PKG_NAME" || exit $?
-
-case "$PKG_SRC" in
-    "")
-        # Not a normal or wheel package
-        ;;
+if [ -z "$PKG_NAME_UPSTREAM" ]; then
+    # Not a normal or wheel package.
+    # Transplant the 'src' symlink, copy scripts.
+    mkdir -p "$PKG_NAME"
+    if [ -d "$PKG_SCRIPTS"/src ]; then
+        ln -s $(cd "$PKG_SCRIPTS"/src && pwd -P) "$PKG_NAME"/src
+    fi
+    for a in build install check preinst postinst; do  # replace by use of $WRAPPED_SCRIPTS later
+        if [ -r "$PKG_SCRIPTS"/spkg-$a.in ]; then
+            cp "$PKG_SCRIPTS"/spkg-$a.in "$PKG_NAME"/
+        elif [ -x "$PKG_SCRIPTS"/spkg-$a ]; then
+            cp "$PKG_SCRIPTS"/spkg-$a "$PKG_NAME"/
+        fi
+    done
+    cd "$PKG_NAME" || exit $?
+else
+    # Normal or wheel package, copy whole directory, resolving symlinks
+    cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
+    cd "$PKG_NAME" || exit $?
+    case "$PKG_SRC" in
     *.whl)
         # (Platform-independent) wheel
         # Do not extract, do not create a src directory,
@@ -477,7 +490,8 @@ case "$PKG_SRC" in
         fi
         cd ..
         ;;
-esac
+    esac
+fi
 
 ##################################################################
 # The package has been extracted, prepare for installation
@@ -583,7 +597,7 @@ echo "****************************************************"
 # for normal packages
 ##################################################################
 if [ -n "$PKG_NAME_UPSTREAM" ]; then
-    # Normal package
+    # Normal/wheel package
     export http_proxy=http://192.0.2.0:5187/
     export https_proxy=$http_proxy
     export ftp_proxy=$http_proxy
