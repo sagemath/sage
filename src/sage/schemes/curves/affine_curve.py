@@ -2143,7 +2143,7 @@ class IntegralAffineCurve(AffineCurve_field):
         if f not in R and f.parent() is self.coordinate_ring():
             f = f.lift()
 
-        phi = self._lift_to_function_field
+        phi = self._map_to_function_field
         num = R(f.numerator())
         den = R(f.denominator())
         return phi(num) / phi(den)
@@ -2373,7 +2373,7 @@ class IntegralAffineCurve(AffineCurve_field):
         return self._nonsingular_model[0]
 
     @lazy_attribute
-    def _lift_to_function_field(self):
+    def _map_to_function_field(self):
         """
         Return the map to the function field of the curve.
 
@@ -2381,7 +2381,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
             sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
-            sage: C._lift_to_function_field
+            sage: C._map_to_function_field
             Ring morphism:
               From: Fraction Field of Multivariate Polynomial Ring in x, y, z
                     over Finite Field of size 11
@@ -2438,7 +2438,7 @@ class IntegralAffineCurve(AffineCurve_field):
             [(Point (x, y),
               [Place (x, 1/x*y^3 + 1/x*y^2 + 1), Place (x, 1/x*y^3 + 1/x*y^2 + 6)])]
         """
-        to_F = self._lift_to_function_field
+        to_F = self._map_to_function_field
         sing = self.singular_subscheme()
 
         funcs = []
@@ -2655,7 +2655,7 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: Cp = Curve(x^3*y + y^3*z + x*z^3)
             sage: C = Cp.affine_patch(0)
         """
-        phi = self._lift_to_function_field
+        phi = self._map_to_function_field
         gs = [phi(g) for g in point.prime_ideal().gens()]
         fs = [g for g in gs if not g.is_zero()]
         f = fs.pop()

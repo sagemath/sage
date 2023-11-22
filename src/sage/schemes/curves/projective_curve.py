@@ -2349,7 +2349,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
              - Place (y, z + 1)
         """
         S = self.ambient_space().coordinate_ring()
-        phi = self._lift_to_function_field
+        phi = self._map_to_function_field
         num = S(f.numerator())
         den = S(f.denominator())
         if num.degree() != den.degree():
@@ -2427,7 +2427,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         return self._open_affine._function_field
 
     @lazy_attribute
-    def _lift_to_function_field(self):
+    def _map_to_function_field(self):
         """
         Return the map to function field of the curve.
 
@@ -2435,7 +2435,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
             sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
-            sage: C._lift_to_function_field
+            sage: C._map_to_function_field
             Ring morphism:
               From: Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
               To:   Function field in z defined by z^8 + 4*y^2*z^7 + 1
@@ -2508,7 +2508,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         """
         S = self.ambient_space().coordinate_ring()
-        to_F = self._lift_to_function_field
+        to_F = self._map_to_function_field
         sing = self.singular_subscheme()  # singular locus
 
         # for each affine patch, places on which the dehomogenized polynomials
@@ -2694,7 +2694,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             if not S.gen(i) in prime:
                 break
 
-        phi = self._lift_to_function_field
+        phi = self._map_to_function_field
         denom = self._coordinate_functions[i]
         gs = [phi(f)/denom**f.degree() for f in prime.gens()]
         fs = [g for g in gs if not g.is_zero()]
