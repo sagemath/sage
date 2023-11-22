@@ -2488,7 +2488,8 @@ def conjugate_shrink(v):
         return v.real()
     return v
 
-def number_field_elements_from_algebraics(numbers, minimal=False, same_field=False, embedded=False, prec=53):
+
+def number_field_elements_from_algebraics(numbers, minimal=False, same_field=False, embedded=False, name='a', prec=53):
     r"""
     Given a sequence of elements of either ``AA`` or ``QQbar``
     (or a mixture), computes a number field containing all of these
@@ -2507,6 +2508,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
 
     - ``embedded`` -- Boolean (default: ``False``). Whether to make the
       NumberField embedded.
+
+    - ``name`` -- string (default: ``a``). Name of the primitive element.
 
     - ``prec`` -- integer (default: ``53``). The number of bit of precision
       to guarantee finding real roots.
@@ -2543,12 +2546,12 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
         sage: x = polygen(QQ)
         sage: p = x^3 + x^2 + x + 17
         sage: rts = p.roots(ring=QQbar, multiplicities=False)
-        sage: splitting = number_field_elements_from_algebraics(rts)[0]; splitting
-        Number Field in a with defining polynomial y^6 - 40*y^4 - 22*y^3 + 873*y^2 + 1386*y + 594
+        sage: splitting = number_field_elements_from_algebraics(rts, name='b')[0]; splitting
+        Number Field in b with defining polynomial y^6 - 40*y^4 - 22*y^3 + 873*y^2 + 1386*y + 594
         sage: p.roots(ring=splitting)
-        [(361/29286*a^5 - 19/3254*a^4 - 14359/29286*a^3 + 401/29286*a^2 + 18183/1627*a + 15930/1627, 1),
-         (49/117144*a^5 - 179/39048*a^4 - 3247/117144*a^3 + 22553/117144*a^2 + 1744/4881*a - 17195/6508, 1),
-         (-1493/117144*a^5 + 407/39048*a^4 + 60683/117144*a^3 - 24157/117144*a^2 - 56293/4881*a - 53033/6508, 1)]
+        [(361/29286*b^5 - 19/3254*b^4 - 14359/29286*b^3 + 401/29286*b^2 + 18183/1627*b + 15930/1627, 1),
+         (49/117144*b^5 - 179/39048*b^4 - 3247/117144*b^3 + 22553/117144*b^2 + 1744/4881*b - 17195/6508, 1),
+         (-1493/117144*b^5 + 407/39048*b^4 + 60683/117144*b^3 - 24157/117144*b^2 - 56293/4881*b - 53033/6508, 1)]
 
         sage: # needs sage.symbolic
         sage: rt2 = AA(sqrt(2)); rt2
@@ -2824,7 +2827,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
             # the number comes from a complex algebraic number field
             embedded_rt = v.interval_fast(RealIntervalField(prec))
             root = ANRoot(v.minpoly(), embedded_rt)
-            real_nf = NumberField(v.minpoly(),'a')
+            real_nf = NumberField(v.minpoly(), 'a')
             new_ef = AlgebraicGenerator(real_nf, root)
             real_numbers += [new_ef.root_as_algebraic()]
         else:
@@ -2835,7 +2838,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
     for v in numbers:
         if minimal:
             v.simplify()
-        gen = gen.union(v._exact_field())
+        gen = gen.union(v._exact_field(), name=name)
 
     fld = gen._field
     nums = [gen(v._exact_value()) for v in numbers]
@@ -2845,7 +2848,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
 
     if fld is not QQ and embedded:
         # creates the embedded field
-        embedded_field = NumberField(fld.defining_polynomial(),fld.variable_name(),embedding=exact_generator)
+        embedded_field = NumberField(fld.defining_polynomial(), fld.variable_name(), embedding=exact_generator)
 
         # embeds the numbers
         inter_hom = fld.hom([embedded_field.gen(0)])
@@ -3129,7 +3132,7 @@ class AlgebraicGenerator(SageObject):
         if self._trivial:
             return 'Trivial generator'
         else:
-            return '%s with a in %s' % (self._field,
+            return '%s with %s in %s' % (self._field, self._field.gen(),
                                         self._root._interval_fast(53))
 
     def root_as_algebraic(self):
@@ -3249,10 +3252,17 @@ class AlgebraicGenerator(SageObject):
         """
         return self._root._interval_fast(prec)
 
-    def union(self, other):
-        r""" Given generators ``alpha`` and ``beta``,
-        ``alpha.union(beta)`` gives a generator for the number field
+    def union(self, other, name='a'):
+        r"""
+        Given generators ``self`` (`\alpha`) and ``other``(`\beta`),
+        ``self.union(other)`` gives a generator for the number field
         `\QQ[\alpha][\beta]`.
+
+        INPUT:
+
+        - ``other`` - an algebraic number.
+
+        - ``name`` - string (default: 'a'). A name for the primitive element.
 
         EXAMPLES::
 
@@ -3273,8 +3283,8 @@ class AlgebraicGenerator(SageObject):
             True
             sage: qq_generator.union(gen3) is gen3
             True
-            sage: gen2.union(gen3)
-            Number Field in a with defining polynomial y^4 - 4*y^2 + 1 with a in -1.931851652578137?
+            sage: gen2.union(gen3, name='b')
+            Number Field in b with defining polynomial y^4 - 4*y^2 + 1 with b in -1.931851652578137?
         """
         if self._trivial:
             return other
@@ -3324,7 +3334,7 @@ class AlgebraicGenerator(SageObject):
 
         red_back_x = QQx(red_back)
 
-        new_nf = NumberField(red_pol, name='a', check=False)
+        new_nf = NumberField(red_pol, name=name, check=False)
 
         self_pol_sage = QQx(self_pol.lift())
 
@@ -8765,7 +8775,7 @@ def _init_qqbar():
     EXAMPLES::
 
         sage: sage.rings.qqbar.QQbar_I_generator # indirect doctest
-        Number Field in I with defining polynomial x^2 + 1 with I = 1*I with a in 1*I
+        Number Field in I with defining polynomial x^2 + 1 with I = 1*I with I in 1*I
     """
     global ZZX_x, AA_0, QQbar_I, AA_hash_offset, QQbar_hash_offset, QQbar_I_generator, QQbar_I_nf
     global QQ_0, QQ_1, QQ_1_2, QQ_1_4, RR_1_10
