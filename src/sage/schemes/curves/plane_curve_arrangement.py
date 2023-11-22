@@ -2,6 +2,7 @@
 r"""
 Affine Plane Curve Arrangements
 
+# Quitar Ordered
 We create an :class:`OrderedAffinePlaneCurveArrangements`
 object following the properties of :class:`HyperplaneArrangements`::
 
@@ -95,6 +96,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
                 raise ValueError("not all elements are curves")
             if not all(h.ambient_space() is self.parent().ambient_space() for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
+        # Añadir más atributos con opciones
         self._braid_monodromy = None
         self._strands = dict()
         self._vertical_braid_monodromy = None
@@ -180,6 +182,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         return self._curves
 
     def _repr_(self):
+        # Añadir espacio ambiente y posiblemente que dé solo los polinomios
         r"""
         String representation for a curve arrangement.
 
@@ -258,7 +261,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         result = P(*curves)
         return result
 
-    add_curve = union
+    add_curves = union
 
     __or__ = union
 
@@ -434,6 +437,7 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
 
             This functionality requires the sirocco package to be installed.
         """
+        # creo que no hace falta comprobar meridianos
         if self._fundamental_group and self._meridians:
             return self._fundamental_group
         K = self.base_ring()
@@ -445,17 +449,19 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         if not vertical and self._braid_monodromy is not None and self._strands:
             d1 = prod(L).degree()
             bd = (self._braid_monodromy, self._strands, dict(), d1)
+        # línea demasiada larga
         elif vertical and self._vertical_braid_monodromy is not None and self._vertical_lines is not None and self._vertical_strands:
             d1 = prod(L).degree(R.gen(1))
             bd = (self._braid_monodromy, self._strands, self._vertical_lines, d1)
         else:
             bd = None
-            G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, vertical=vertical, braid_data=bd)
+        G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, vertical=vertical, braid_data=bd)
         self._fundamental_group = G
         self._meridians = dic
         return G
 
     def meridians(self):
+        # Añadir opciones con los nuevos atributos y si no está que lo calcule
         r"""
         Meridians of each irreducible component if the group has been computed
 
@@ -589,6 +595,8 @@ class OrderedAffinePlaneCurveArrangementsElement(Element):
         return self._vertical_strands
 
     def vertical_lines(self):
+        # Mirar de hacerlo sin calcular la monodromía, solo chequear con vertical
+        # Hacer dos, vertical_lines y asíntotas, o quitarlo
         r"""
         Vertical lines in the arrangement.
 
@@ -778,6 +786,7 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
         if len(kwds) > 0:
             raise ValueError('unknown keyword argument')
         # process positional arguments
+        # cambiar el nombre
         AA = self.ambient_space()
         R = AA.coordinate_ring()
         curves = ()
@@ -798,7 +807,7 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
     def _an_element_(self):
         """
-        Dirty trick to avoid test run failure.
+        Return an element of ``self``.
 
         TESTS::
 
@@ -862,30 +871,3 @@ class OrderedAffinePlaneCurveArrangements(Parent, UniqueRepresentation):
             y
         """
         return self.gens()[i]
-
-    # def _coerce_map_from_(self, P):
-    #     """
-    #     Return whether there is a coercion.
-    #
-    #     TESTS::
-    #
-    #         sage: L.<x, y> = OrderedAffinePlaneCurveArrangements(QQ);  L
-    #         Curve arrangements in Affine Space of dimension 2 over Rational Field
-    #         sage: M.<x, y> = HyperplaneArrangements(RR);  M
-    #         Hyperplane arrangements in 2-dimensional linear space over Real Field with 53 bits of precision with coordinates x, y
-    #
-    #         sage: L.coerce_map_from(ZZ)
-    #         Coercion map:
-    #           From: Integer Ring
-    #           To:   Hyperplane arrangements in 1-dimensional linear space over Rational Field with coordinate x
-    #         sage: M.coerce_map_from(L)
-    #         Coercion map:
-    #           From: Hyperplane arrangements in 1-dimensional linear space over Rational Field with coordinate x
-    #           To:   Hyperplane arrangements in 1-dimensional linear space over Real Field with 53 bits of precision with coordinate y
-    #         sage: L.coerce_map_from(M)
-    #     """
-    #     if self.ambient_space().has_coerce_map_from(P):
-    #         return True
-    #     if isinstance(P, OrderedAffinePlaneCurveArrangements):
-    #         return self.base_ring().has_coerce_map_from(P.base_ring())
-    #     return super()._coerce_map_from_(P)
