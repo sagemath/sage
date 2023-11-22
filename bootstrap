@@ -92,7 +92,7 @@ EOF
         if test -f "$DIR/requirements.txt"; then
             SPKG_SOURCE=pip
         elif test ! -f "$DIR/checksums.ini"; then
-            if test -f "$DIR/spkg-install"; then
+            if test -f "$DIR/spkg-install" -o -f "$DIR/spkg-install.in"; then
                 SPKG_SOURCE=script
             else
                 # a dummy package
