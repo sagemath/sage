@@ -1016,7 +1016,7 @@ Environment variables dealing with specific Sage packages:
 - :envvar:`PARI_CONFIGURE` - use this to pass extra parameters to
   PARI's ``Configure`` script, for example to specify graphics
   support (which is disabled by default). See the file
-  :file:`build/pkgs/pari/spkg-install` for more information.
+  :file:`build/pkgs/pari/spkg-install.in` for more information.
 
 - :envvar:`SAGE_TUNE_PARI` - if yes, enable PARI self-tuning. Note that
   this can be time-consuming. If you set this variable to "yes", you
