@@ -3254,7 +3254,7 @@ class AlgebraicGenerator(SageObject):
 
     def union(self, other, name='a'):
         r"""
-        Given generators ``self`` (`\alpha`) and ``other``(`\beta`),
+        Given generators ``self``, `\alpha`, and ``other``, `\beta`,
         ``self.union(other)`` gives a generator for the number field
         `\QQ[\alpha][\beta]`.
 
