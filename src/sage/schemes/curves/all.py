@@ -24,4 +24,6 @@ from .constructor import Curve
 
 from .projective_curve import Hasse_bounds
 
-from .plane_curve_arrangement import OrderedAffinePlaneCurveArrangements
+from .plane_curve_arrangement import AffinePlaneCurveArrangements
+
+from .plane_curve_arrangement import ProjectivePlaneCurveArrangements

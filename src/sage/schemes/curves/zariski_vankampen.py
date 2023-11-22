@@ -1269,7 +1269,8 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         if d > 1:
             result = [BraidGroup(d).one() for p in transversal]
         else:
-            result = [() for p in transversal]
+            G = FreeGroup(0) / []
+            result = [G.one() for p in transversal]
         p1 = F(0)
         if d > 0:
             roots_base, strands = strand_components(g, arrangement_h, p1)
@@ -1491,8 +1492,7 @@ def relation(x, b):
     return x * b / x
 
 
-def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False,
-                                     vertical=[]):
+def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False, vertical=[]):
     r"""
     Return a presentation of the fundamental group computed from
     a braid monodromy.
@@ -1519,7 +1519,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
       one relation if ``projective`` is set to ``True``.
 
     - ``vertical`` -- list of integers (default: ``[]``); the indices in
-      ``[1..r]`` of the braids that surround a vertical line
+      ``[0 .. r - 1]`` of the braids that surround a vertical line
 
     If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is
     ``True``, a Zariski-VanKampen presentation is returned.
@@ -1543,7 +1543,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         12 (4,)
         sage: B2 = BraidGroup(2)
         sage: bm = [B2(3 * [1])]
-        sage: g = fundamental_group_from_braid_mon(bm, vertical=[1]); g
+        sage: g = fundamental_group_from_braid_mon(bm, vertical=[0]); g
         Finitely presented group < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1,
                                                 x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
         sage: fundamental_group_from_braid_mon([]) is None
@@ -1555,6 +1555,8 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     v = len(vertical0)
     if bm == []:
         d = degree
+    elif bm[0].parent().order() == 1:
+        d = 1
     else:
         d = bm[0].parent().strands()
     if d is None:
@@ -1565,7 +1567,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         return Fv / []
     if d == 1:
         return Fv / [(1, j, -1, -j) for j in range(2, d + v + 1)]
-    bmh = [br for j, br in enumerate(bm) if j + 1 not in vertical0]
+    bmh = [br for j, br in enumerate(bm) if j not in vertical0]
     if not puiseux:
         relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
         rel_h = [r[1] for r in relations_h]
@@ -1581,7 +1583,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     rel_v = []
     for j, k in enumerate(vertical0):
         l1 = d + j + 1
-        br = bm[k - 1]
+        br = bm[k]
         for gen in F.gens():
             j0 = gen.Tietze()[0]
             rl = (l1,) + (gen * br).Tietze() + (-l1, -j0)
@@ -1792,9 +1794,10 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
          {0: [x1], 1: [x3], 2: [x2], 3: [x0],
           4: [x3^-1*x2^-1*x1^-1*x0^-1]})
         sage: fundamental_group_arrangement(L, vertical=True)
-        (Finitely presented group < x0, x1, x2, x3 | x2*x0*x2^-1*x0^-1, x2*x1*x2^-1*x1^-1,
-                                                     x1*x3*x0*x3^-1*x1^-1*x0^-1,
-                                                     x1*x3*x0*x1^-1*x0^-1*x3^-1 >,
+        (Finitely presented group < x0, x1, x2, x3 | x3*x0*x3^-1*x0^-1,
+                                                     x3*x1*x3^-1*x1^-1,
+                                                     x1*x2*x0*x2^-1*x1^-1*x0^-1,
+                                                     x1*x2*x0*x1^-1*x0^-1*x2^-1 >,
          {0: [x2], 1: [x0], 2: [x3], 3: [x1], 4: [x3^-1*x2^-1*x1^-1*x0^-1]})
     """
     if len(flist) > 0:
