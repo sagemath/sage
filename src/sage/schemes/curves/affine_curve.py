@@ -2119,7 +2119,7 @@ class IntegralAffineCurve(AffineCurve_field):
         INPUT:
 
         - ``f`` -- an element of the fraction field of the coordinate ring of
-          the curve or its ambient space.
+          the ambient space or the coordinate ring of the curve
 
         OUTPUT: An element of the function field of this curve.
 
@@ -2173,7 +2173,8 @@ class IntegralAffineCurve(AffineCurve_field):
 
         OUTPUT:
 
-        A fraction of polynomials in the coordinate ring of this curve.
+        A fraction of polynomials in the coordinate ring of the ambient space
+        of the curve.
 
         EXAMPLES::
 

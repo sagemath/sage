@@ -2325,11 +2325,12 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
     def function(self, f):
         """
-        Return the function field element coerced from ``f``.
+        Return the function field element corresponding to ``f``.
 
         INPUT:
 
-        - ``f`` -- an element in the fraction field of the coordinate ring
+        - ``f`` -- a fraction of homogeneous polynomials of the coordinate ring
+          of the ambient space of the curve
 
         OUTPUT: An element of the function field.
 
@@ -2389,7 +2390,8 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         OUTPUT:
 
-        A fraction of homogeneous polynomials in the coordinate ring of this curve.
+        A fraction of homogeneous polynomials in the coordinate ring of the
+        ambient space of the curve.
 
         EXAMPLES::
 
