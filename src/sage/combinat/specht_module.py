@@ -18,15 +18,135 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.combinat.diagram import Diagram
+from sage.combinat.partition import _Partitions
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.sets.family import Family
 from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis
+from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
 from sage.categories.modules_with_basis import ModulesWithBasis
 
 
-class SpechtModule(SubmoduleWithBasis):
+class SymmetricGroupRepresentation():
+    """
+    Mixin class for symmetric group (algebra) representations.
+    """
+    def __init__(self, SGA):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SM = Partition([3,1,1]).specht_module(GF(3))
+            sage: TestSuite(SM).run()
+        """
+        self._SGA = SGA
+
+    def representation_matrix(self, elt):
+        r"""
+        Return the matrix corresponding to the left action of the symmetric
+        group (algebra) element ``elt`` on ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.combinat.symmetric_group_representations.SpechtRepresentation`
+
+        EXAMPLES::
+
+            sage: SM = Partition([3,1,1]).specht_module(QQ)
+            sage: SM.representation_matrix(Permutation([2,1,3,5,4]))
+            [-1  0  0  0  0  0]
+            [ 0  0  0 -1  0  0]
+            [ 1  0  0 -1  1  0]
+            [ 0 -1  0  0  0  0]
+            [ 1 -1  1  0  0  0]
+            [ 0 -1  0  1  0 -1]
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module([(0,0), (0,1), (0,2), (1,0), (2,0)])
+            sage: SM.representation_matrix(Permutation([2,1,3,5,4]))
+            [-1  0  0  1 -1  0]
+            [ 0  0  1  0 -1  1]
+            [ 0  1  0 -1  0  1]
+            [ 0  0  0  0 -1  0]
+            [ 0  0  0 -1  0  0]
+            [ 0  0  0  0  0 -1]
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM.representation_matrix(SGA([3,1,5,2,4]))
+            [ 0 -1  0  1  0 -1]
+            [ 0  0  0  0  0 -1]
+            [ 0  0  0 -1  0  0]
+            [ 0  0 -1  0  1 -1]
+            [ 1  0  0 -1  1  0]
+            [ 0  0  0  0  1  0]
+        """
+        return matrix(self.base_ring(), [(elt * b).to_vector() for b in self.basis()])
+
+    @cached_method
+    def frobenius_image(self):
+        r"""
+        Return the Frobenius image of ``self``.
+
+        The Frobenius map is defined as the map to symmetric functions
+
+        .. MATH::
+
+            F(\chi) = \frac{1}{n!} \sum_{w \in S_n} \chi(w) p_{\rho(w)},
+
+        where `\chi` is the character of the `S_n`-module ``self``,
+        `p_{\lambda}` is the powersum symmetric function basis element
+        indexed by `\lambda`, and `\rho(w)` is partition of the cycle type
+        of `w`. Specifically, this map takes irreducible representations
+        indexed by `\lambda` to the Schur function `s_{\lambda}`.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: SM = Partition([2,2,1]).specht_module(QQ)
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1]
+            sage: SM = Partition([4,1]).specht_module(CyclotomicField(5))
+            sage: s(SM.frobenius_image())
+            s[4, 1]
+
+        We verify the regular representation::
+
+            sage: from sage.combinat.diagram import Diagram
+            sage: D = Diagram([(0,0), (1,1), (2,2), (3,3), (4,4)])
+            sage: F = s(D.specht_module(QQ).frobenius_image()); F
+            s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 5*s[2, 2, 1]
+             + 6*s[3, 1, 1] + 5*s[3, 2] + 4*s[4, 1] + s[5]
+            sage: F == sum(StandardTableaux(la).cardinality() * s[la]
+            ....:          for la in Partitions(5))
+            True
+            sage: all(s[la] == s(la.specht_module(QQ).frobenius_image())
+            ....:     for n in range(1, 5) for la in Partitions(n))
+            True
+
+            sage: D = Diagram([(0,0), (1,1), (1,2), (2,3), (2,4)])
+            sage: SM = D.specht_module(QQ)
+            sage: s(SM.frobenius_image())
+            s[2, 2, 1] + s[3, 1, 1] + 2*s[3, 2] + 2*s[4, 1] + s[5]
+
+        An example using the tabloid module::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module([2, 2, 1])
+            sage: s(TM.frobenius_image())
+            s[2, 2, 1] + s[3, 1, 1] + 2*s[3, 2] + 2*s[4, 1] + s[5]
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        BR = self.base_ring()
+        p = SymmetricFunctions(BR).p()
+        G = self._SGA.group()
+        CCR = [(elt, elt.cycle_type()) for elt in G.conjugacy_classes_representatives()]
+        return p.sum(self.representation_matrix(elt).trace() / la.centralizer_size() * p[la]
+                     for elt, la in CCR)
+
+
+class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation):
     r"""
     A Specht module.
 
@@ -84,13 +204,13 @@ class SpechtModule(SubmoduleWithBasis):
 
         sage: S5 = SGA.group()
         sage: v = SM.an_element(); v
-        2*B[0] + 2*B[1] + 3*B[2]
+        2*S[0] + 2*S[1] + 3*S[2]
         sage: S5([2,1,5,3,4]) * v
-        3*B[0] + 2*B[1] + 2*B[2]
+        3*S[0] + 2*S[1] + 2*S[2]
         sage: x = SGA.an_element(); x
         [1, 2, 3, 4, 5] + 2*[1, 2, 3, 5, 4] + 3*[1, 2, 4, 3, 5] + [5, 1, 2, 3, 4]
         sage: x * v
-        15*B[0] + 14*B[1] + 16*B[2] - 7*B[5] + 2*B[6] + 2*B[7]
+        15*S[0] + 14*S[1] + 16*S[2] - 7*S[5] + 2*S[6] + 2*S[7]
 
     .. SEEALSO::
 
@@ -120,6 +240,9 @@ class SpechtModule(SubmoduleWithBasis):
             ...
             ValueError: the domain size (=3) does not match the number of boxes (=2) of the diagram
         """
+        if D in _Partitions:
+            D = _Partitions(D)
+            return TabloidModule(SGA, D).specht_module()
         D = _to_diagram(D)
         D = Diagram(D)
         n = len(D)
@@ -138,6 +261,7 @@ class SpechtModule(SubmoduleWithBasis):
             sage: SM = SGA.specht_module([(0,0), (1,1), (1,2), (2,1)])
             sage: TestSuite(SM).run()
         """
+        SymmetricGroupRepresentation.__init__(self, SGA)
         self._diagram = D
         Mod = ModulesWithBasis(SGA.category().base_ring())
         span_set = specht_module_spanning_set(D, SGA)
@@ -145,7 +269,8 @@ class SpechtModule(SubmoduleWithBasis):
         basis = SGA.echelon_form(span_set, False, order=support_order)
         basis = Family(basis)
         SubmoduleWithBasis.__init__(self, basis, support_order, ambient=SGA,
-                                    unitriangular=False, category=Mod.Subobjects())
+                                    unitriangular=False, category=Mod.Subobjects(),
+                                    prefix='S')
 
     def _repr_(self):
         r"""
@@ -156,6 +281,9 @@ class SpechtModule(SubmoduleWithBasis):
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: SGA.specht_module([(0,0), (1,1), (1,2), (2,1)])
             Specht module of [(0, 0), (1, 1), (1, 2), (2, 1)] over Rational Field
+
+            sage: SGA.specht_module([3, 1])
+            Specht module of [3, 1] over Rational Field
         """
         return f"Specht module of {self._diagram} over {self.base_ring()}"
 
@@ -168,13 +296,22 @@ class SpechtModule(SubmoduleWithBasis):
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: SM = SGA.specht_module([(0,0), (1,1), (1,2), (2,1)])
             sage: latex(SM)
-                S^{{\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
-                \raisebox{-.6ex}{$\begin{array}[b]{*{3}{p{0.6ex}}}\cline{1-1}
-                \lr{\phantom{x}}&&\\\cline{1-1}\cline{2-2}\cline{3-3}
-                &\lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{2-2}\cline{3-3}\cline{2-2}
-                &\lr{\phantom{x}}&\\\cline{2-2}
-                \end{array}$}
-                }}
+            S^{{\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{3}{p{0.6ex}}}\cline{1-1}
+            \lr{\phantom{x}}&&\\\cline{1-1}\cline{2-2}\cline{3-3}
+            &\lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{2-2}\cline{3-3}\cline{2-2}
+            &\lr{\phantom{x}}&\\\cline{2-2}
+            \end{array}$}
+            }}
+
+            sage: SM = SGA.specht_module([3,1])
+            sage: latex(SM)
+            S^{{\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{3}c}\cline{1-3}
+            \lr{\phantom{x}}&\lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-3}
+            \lr{\phantom{x}}\\\cline{1-1}
+            \end{array}$}
+            }}
         """
         from sage.misc.latex import latex
         return f"S^{{{latex(self._diagram)}}}"
@@ -191,6 +328,12 @@ class SpechtModule(SubmoduleWithBasis):
              O . .
              . O O
              . O .
+            S
+
+            sage: SM = SGA.specht_module([3,1])
+            sage: ascii_art(SM)
+             ***
+             *
             S
         """
         from sage.typeset.ascii_art import ascii_art
@@ -213,95 +356,16 @@ class SpechtModule(SubmoduleWithBasis):
              │ │X│ │
              └─┴─┴─┘
             S
+
+            sage: SM = SGA.specht_module([3,1])
+            sage: unicode_art(SM)
+             ┌┬┬┐
+             ├┼┴┘
+             └┘
+            S
         """
         from sage.typeset.unicode_art import unicode_art
         return unicode_art("S", baseline=0) + unicode_art(self._diagram, baseline=-1)
-
-    def representation_matrix(self, elt):
-        r"""
-        Return the matrix corresponding to the left action of the symmetric
-        group (algebra) element ``elt`` on ``self``.
-
-        .. SEEALSO::
-
-            :class:`~sage.combinat.symmetric_group_representations.SpechtRepresentation`
-
-        EXAMPLES::
-
-            sage: SM = Partition([3,1,1]).specht_module(QQ)
-            sage: SM.representation_matrix(Permutation([2,1,3,5,4]))
-            [-1  0  0  1 -1  0]
-            [ 0  0  1  0 -1  1]
-            [ 0  1  0 -1  0  1]
-            [ 0  0  0  0 -1  0]
-            [ 0  0  0 -1  0  0]
-            [ 0  0  0  0  0 -1]
-            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
-            sage: SM.representation_matrix(SGA([3,1,5,2,4]))
-            [ 0 -1  0  1  0 -1]
-            [ 0  0  0  0  0 -1]
-            [ 0  0  0 -1  0  0]
-            [ 0  0 -1  0  1 -1]
-            [ 1  0  0 -1  1  0]
-            [ 0  0  0  0  1  0]
-        """
-        SGA = self._ambient
-        return matrix(self.base_ring(), [self.retract(SGA(elt) * b.lift()).to_vector()
-                                         for b in self.basis()])
-
-    @cached_method
-    def frobenius_image(self):
-        r"""
-        Return the Frobenius image of ``self``.
-
-        The Frobenius map is defined as the map to symmetric functions
-
-        .. MATH::
-
-            F(\chi) = \frac{1}{n!} \sum_{w \in S_n} \chi(w) p_{\rho(w)},
-
-        where `\chi` is the character of the `S_n`-module ``self``,
-        `p_{\lambda}` is the powersum symmetric function basis element
-        indexed by `\lambda`, and `\rho(w)` is partition of the cycle type
-        of `w`. Specifically, this map takes irreducible representations
-        indexed by `\lambda` to the Schur function `s_{\lambda}`.
-
-        EXAMPLES::
-
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: SM = Partition([2,2,1]).specht_module(QQ)
-            sage: s(SM.frobenius_image())
-            s[2, 2, 1]
-            sage: SM = Partition([4,1]).specht_module(CyclotomicField(5))
-            sage: s(SM.frobenius_image())
-            s[4, 1]
-
-        We verify the regular representation::
-
-            sage: from sage.combinat.diagram import Diagram
-            sage: D = Diagram([(0,0), (1,1), (2,2), (3,3), (4,4)])
-            sage: F = s(D.specht_module(QQ).frobenius_image()); F
-            s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 5*s[2, 2, 1]
-             + 6*s[3, 1, 1] + 5*s[3, 2] + 4*s[4, 1] + s[5]
-            sage: F == sum(StandardTableaux(la).cardinality() * s[la]
-            ....:          for la in Partitions(5))
-            True
-            sage: all(s[la] == s(la.specht_module(QQ).frobenius_image())
-            ....:     for n in range(1, 5) for la in Partitions(n))
-            True
-
-            sage: D = Diagram([(0,0), (1,1), (1,2), (2,3), (2,4)])
-            sage: SM = D.specht_module(QQ)
-            sage: s(SM.frobenius_image())
-            s[2, 2, 1] + s[3, 1, 1] + 2*s[3, 2] + 2*s[4, 1] + s[5]
-        """
-        from sage.combinat.sf.sf import SymmetricFunctions
-        BR = self._ambient.base_ring()
-        p = SymmetricFunctions(BR).p()
-        G = self._ambient.group()
-        CCR = [(elt, elt.cycle_type()) for elt in G.conjugacy_classes_representatives()]
-        return p.sum(self.representation_matrix(elt).trace() / la.centralizer_size() * p[la]
-                     for elt, la in CCR)
 
     class Element(SubmoduleWithBasis.Element):
         def _acted_upon_(self, x, self_on_left=False):
@@ -317,12 +381,19 @@ class SpechtModule(SubmoduleWithBasis):
 
             EXAMPLES::
 
+                sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+                sage: from sage.combinat.diagram import Diagram
+                sage: D = Diagram([(0,0), (1,1), (2,2), (3,3), (4,4)])
+                sage: SM = SGA.specht_module(D)
+                sage: SGA.an_element() * SM.an_element()
+                15*S[0] + 6*S[1] + 9*S[2] + 6*S[3] + 6*S[4] + 2*S[72] + 2*S[96] + 3*S[97]
+
                 sage: SGA = SymmetricGroupAlgebra(QQ, 4)
                 sage: SM = SGA.specht_module([3,1])
                 sage: SGA.an_element() * SM.an_element()
-                14*B[0] + 18*B[1] + 8*B[2]
+                9*S[[1, 2, 3], [4]] + 17*S[[1, 2, 4], [3]] + 14*S[[1, 3, 4], [2]]
                 sage: 4 * SM.an_element()
-                8*B[0] + 8*B[1] + 12*B[2]
+                12*S[[1, 2, 3], [4]] + 8*S[[1, 2, 4], [3]] + 8*S[[1, 3, 4], [2]]
             """
             # Check for a scalar first
             ret = super()._acted_upon_(x, self_on_left)
@@ -330,12 +401,431 @@ class SpechtModule(SubmoduleWithBasis):
                 return ret
             # Check if it is in the symmetric group algebra
             P = self.parent()
-            if x in P._ambient or x in P._ambient.group():
+            if x in P._SGA or x in P._SGA.group():
                 if self_on_left:  # it is only a left module
                     return None
                 else:
-                    return P.retract(P._ambient(x) * self.lift())
+                    return P.retract(P._SGA(x) * self.lift())
             return None
+
+class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
+    r"""
+    The vector space of all tabloids with the natural symmetric group action.
+    """
+    @staticmethod
+    def __classcall_private__(cls, SGA, shape):
+        r"""
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.specht_module import TabloidModule
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM1 = TabloidModule(SGA, [2, 2, 1])
+            sage: TM2 = TabloidModule(SGA, Partition([2, 2, 1]))
+            sage: TM1 is TM2
+            True
+
+            sage: TabloidModule(SGA, [3, 2, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the domain size (=5) does not match the number of boxes (=6) of the diagram
+        """
+        shape = _Partitions(shape)
+        if SGA.group().rank() != sum(shape) - 1:
+            rk = SGA.group().rank() + 1
+            n = sum(shape)
+            raise ValueError(f"the domain size (={rk}) does not match the number of boxes (={n}) of the diagram")
+        return super().__classcall__(cls, SGA, shape)
+
+    def __init__(self, SGA, shape):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module([2,2,1])
+            sage: TestSuite(TM).run()
+        """
+        SymmetricGroupRepresentation.__init__(self, SGA)
+        from sage.combinat.tabloid import Tabloids
+        self._shape = shape
+        cat = ModulesWithBasis(SGA.base_ring()).FiniteDimensional()
+        return CombinatorialFreeModule.__init__(self, SGA.base_ring(), Tabloids(shape),
+                                                category=cat, prefix='T', bracket='')
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SGA.tabloid_module([2,2,1])
+            Tabloid module of [2, 2, 1] over Rational Field
+        """
+        return f"Tabloid module of {self._shape} over {self.base_ring()}"
+
+    def specht_module(self):
+        r"""
+        Return the Specht submodule of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module([2,2,1])
+            sage: TM.specht_module() is SGA.specht_module([2,2,1])
+            True
+        """
+        return SpechtModuleTableauxBasis(self)
+
+    def bilinear_form(self, u, v):
+        r"""
+        Return the natural bilinear form of ``self`` applied to ``u`` and ``v``.
+
+        The natural bilinear form is given by defining the tabloid basis
+        to be orthonormal.
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module([2,2,1])
+            sage: u = TM.an_element(); u
+            2*T[{1, 2}, {3, 4}, {5}] + 2*T[{1, 2}, {3, 5}, {4}] + 3*T[{1, 2}, {4, 5}, {3}]
+            sage: v = sum(TM.basis())
+            sage: TM.bilinear_form(u, v)
+            7
+        """
+        if len(v) < len(u):
+            u, v = v, u
+        R = self.base_ring()
+        return R.sum(c * v[T] for T,c in u)
+
+    class Element(CombinatorialFreeModule.Element):
+        def _acted_upon_(self, x, self_on_left):
+            r"""
+            Return the action of ``x`` on ``self``.
+
+            INPUT:
+
+            - ``x`` -- an element of the base ring or can be converted into
+              the defining symmetric group algebra
+            - ``self_on_left`` -- boolean (default: ``False``); which side
+              ``self`` is on for the action
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+                sage: SM = SGA.tabloid_module([2,2,1])
+                sage: SGA.an_element() * SM.an_element()
+                2*T[{1, 5}, {2, 3}, {4}] + 2*T[{1, 5}, {2, 4}, {3}] + 3*T[{1, 5}, {3, 4}, {2}]
+                 + 12*T[{1, 2}, {3, 4}, {5}] + 15*T[{1, 2}, {3, 5}, {4}] + 15*T[{1, 2}, {4, 5}, {3}]
+                sage: 4 * SM.an_element()
+                8*T[{1, 2}, {3, 4}, {5}] + 8*T[{1, 2}, {3, 5}, {4}] + 12*T[{1, 2}, {4, 5}, {3}]
+            """
+            # first check for the base action
+            ret = super()._acted_upon_(x, self_on_left)
+            if ret is not None:
+                return ret
+
+            if self_on_left:
+                return None
+            P = self.parent()
+            if x in P._SGA:
+                return P.sum(c * (perm * self) for perm, c in x.monomial_coefficients().items())
+            if x in P._SGA.indices():
+                return P.element_class(P, {T.symmetric_group_action(x): c for T, c in self._monomial_coefficients.items()})
+
+
+class SpechtModuleTableauxBasis(SpechtModule):
+    r"""
+    A Specht module of a partition in the classical standard
+    tableau basis.
+
+    This is constructed as a `S_n`-submodule of the :class:`TabloidModule`
+    (also referred to as the standard module).
+    """
+    def __init__(self, ambient):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module([2,2,1])
+            sage: TestSuite(SM).run()
+        """
+        self._diagram = ambient._shape
+        SymmetricGroupRepresentation.__init__(self, ambient._SGA)
+
+        from sage.combinat.symmetric_group_algebra import e
+        ambient_basis = ambient.basis()
+        tabloids = ambient_basis.keys()
+        support_order = list(tabloids)
+
+        G = self._SGA.basis().keys()
+        BR = self._SGA.base_ring()
+
+        def elt(T):
+            tab = tabloids.from_tableau(T)
+            return ambient.sum_of_terms((tab.symmetric_group_action(sigma), sigma.sign())
+                                        for sigma in T.column_stabilizer())
+
+        basis = Family({T: elt(T)
+                        for T in self._diagram.standard_tableaux()})
+        cat = ambient.category().Subobjects()
+        SubmoduleWithBasis.__init__(self, basis, support_order, ambient=ambient,
+                                    unitriangular=False, category=cat,
+                                    prefix='S', bracket='')
+
+    @lazy_attribute
+    def lift(self):
+        r"""
+        The lift (embedding) map from ``self`` to the ambient space.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module([3, 1, 1])
+            sage: SM.lift
+            Generic morphism:
+              From: Specht module of [3, 1, 1] over Rational Field
+              To:   Tabloid module of [3, 1, 1] over Rational Field
+        """
+        return self.module_morphism(self.lift_on_basis, codomain=self.ambient())
+
+    @lazy_attribute
+    def retract(self):
+        r"""
+        The retract map from the ambient space.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: X = SGA.tabloid_module([2,2,1])
+            sage: Y = X.specht_module()
+            sage: Y.retract
+            Generic morphism:
+              From: Tabloid module of [2, 2, 1] over Rational Field
+              To:   Specht module of [2, 2, 1] over Rational Field
+            sage: all(Y.retract(u.lift()) == u for u in Y.basis())
+            True
+
+            sage: Y.retract(X.zero())
+            0
+        """
+        B = self.basis()
+        COB = matrix([b.lift().to_vector() for b in B]).T
+        P, L, U = COB.LU()
+        # Since U is upper triangular, the nonzero entriesm must be in the
+        #   upper square portiion of the matrix
+        n = len(B)
+
+        Uinv = U.matrix_from_rows(range(n)).inverse()
+        # This is a slight abuse as the codomain should be a module with a different
+        #    S_n action, but we only use it internally, so there isn't any problems
+        PLinv = (P*L).inverse()
+
+        def retraction(elt):
+            vec = PLinv * elt.to_vector(order=self._support_order)
+            if not vec:
+                return self.zero()
+            # vec is now in the image of self under U, which is
+            if max(vec.support()) >= n:
+                raise ValueError(f"{elt} is not in the image")
+            return self._from_dict(dict(zip(B.keys(), Uinv * vec[:n])))
+
+        return self._ambient.module_morphism(function=retraction, codomain=self)
+
+    def bilinear_form(self, u, v):
+        r"""
+        Return the natural bilinear form of ``self`` applied to ``u`` and ``v``.
+
+        The natural bilinear form is given by the pullback of the natural
+        bilinear form on the tabloid module (where the tabloid basis is an
+        orthonormal basis).
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module([2,2,1])
+            sage: u = SM.an_element(); u
+            3*S[[1, 2], [3, 5], [4]] + 2*S[[1, 3], [2, 5], [4]] + 2*S[[1, 4], [2, 5], [3]]
+            sage: v = sum(SM.basis())
+            sage: SM.bilinear_form(u, v)
+            140
+        """
+        TM = self._ambient
+        return TM.bilinear_form(u.lift(), v.lift())
+
+    @cached_method
+    def gram_matrix(self):
+        r"""
+        Return the Gram matrix of the natural bilinear form of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module([2,2,1])
+            sage: M = SM.gram_matrix(); M
+            [12  4 -4 -4  4]
+            [ 4 12  4  4  4]
+            [-4  4 12  4  4]
+            [-4  4  4 12  4]
+            [ 4  4  4  4 12]
+            sage: M.det() != 0
+            True
+        """
+        B = self.basis()
+        M = matrix([[self.bilinear_form(b, bp) for bp in B] for b in B])
+        M.set_immutable()
+        return M
+
+    def maximal_submodule(self):
+        """
+        Return the maximal submodule of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: SM = SGA.specht_module([3,2])
+            sage: U = SM.maximal_submodule()
+            sage: U.dimension()
+            4
+        """
+        return MaximalSpechtSubmodule(self)
+
+    def simple_module(self):
+        r"""
+        Return the simple (or irreducible) `S_n`-submodule of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: SM = SGA.specht_module([3,2])
+            sage: L = SM.simple_module()
+            sage: L.dimension()
+            1
+        """
+        return SimpleModule(self)
+
+
+class MaximalSpechtSubmodule(SubmoduleWithBasis, SymmetricGroupRepresentation):
+    r"""
+    The maximal submodule `U^{\lambda}` of the Specht module `S^{\lambda}`.
+
+    ALGORITHM:
+
+    We construct `U^{\lambda}` as the intersection `S \cap S^{\perp}`,
+    where `S^{\perp}` is the orthogonal complement of the Specht module `S`
+    inside of the tabloid module `T` (with respect to the natural
+    bilinear form on `T`).
+
+    EXAMPLES::
+
+        sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+        sage: SM = SGA.specht_module([3,2])
+        sage: U = SM.maximal_submodule()
+        sage: u = U.an_element(); u
+        2*U[0] + 2*U[1]
+        sage: [p * u for p in list(SGA.basis())[:4]]
+        [2*U[0] + 2*U[1], 2*U[2] + 2*U[3], 2*U[0] + 2*U[1], U[0] + 2*U[2]]
+        sage: sum(SGA.basis()) * u
+        0
+    """
+    def __init__(self, specht_module):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: SM = SGA.specht_module([3,2])
+            sage: U = SM.maximal_submodule()
+            sage: TestSuite(U).run()
+        """
+        SymmetricGroupRepresentation.__init__(self, specht_module._SGA)
+
+        if specht_module.base_ring().characteristic() == 0:
+            basis = []
+        else:
+            TM = specht_module._ambient
+            TV = TM._dense_free_module()
+            SV = TV.submodule(specht_module.lift.matrix().columns())
+            basis = (SV & SV.complement()).basis()
+            basis = [specht_module.retract(TM.from_vector(b)) for b in basis]
+            basis = Family(specht_module.echelon_form(basis))
+
+        unitriangular = all(b.leading_support() == 1 for b in basis)
+        support_order = list(specht_module.basis().keys())
+        cat = specht_module.category().Subobjects()
+        SubmoduleWithBasis.__init__(self, basis, support_order, ambient=specht_module,
+                                    unitriangular=unitriangular, category=cat,
+                                    prefix='U')
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: SM = SGA.specht_module([3,2])
+            sage: SM.maximal_submodule()
+            Maximal submodule of Specht module of [3, 2] over Finite Field of size 3
+        """
+        return f"Maximal submodule of {self._ambient}"
+
+    Element = SpechtModule.Element
+
+
+class SimpleModule(QuotientModuleWithBasis, SymmetricGroupRepresentation):
+    r"""
+    The simgle `S_n`-module associated with a partition `\lambda`.
+
+    The simple module `L^{\lambda}` is the quotient of the Specht module
+    `S^{\lambda}` by its :class:`maximal submodule <MaximalSpechtSubmodule>`
+    `U^{\lambda}`.
+
+    EXAMPLES::
+
+        sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+        sage: SM = SGA.specht_module([3,1,1])
+        sage: L = SM.simple_module()
+        sage: v = L.an_element(); v
+        2*L[[[1, 3, 5], [2], [4]]] + 2*L[[[1, 4, 5], [2], [3]]]
+        sage: SGA.an_element() * v
+        2*L[[[1, 2, 4], [3], [5]]] + 2*L[[[1, 3, 5], [2], [4]]]
+    """
+    def __init__(self, specht_module):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: SM = SGA.specht_module([3,1,1])
+            sage: L = SM.simple_module()
+            sage: TestSuite(L).run()
+        """
+        self._diagram = specht_module._diagram
+        SymmetricGroupRepresentation.__init__(self, specht_module._SGA)
+        cat = specht_module.category()
+        QuotientModuleWithBasis.__init__(self, specht_module.maximal_submodule(), cat, prefix='L')
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: SM = SGA.specht_module([3,1,1])
+            sage: SM.simple_module()
+            Simple module of [3, 1, 1] over Finite Field of size 3
+        """
+        return f"Simple module of {self._diagram} over {self.base_ring()}"
+
+    Element = SpechtModule.Element
 
 
 def _to_diagram(D):
@@ -358,7 +848,6 @@ def _to_diagram(D):
     """
     from sage.combinat.integer_vector import IntegerVectors
     from sage.combinat.skew_partition import SkewPartitions
-    from sage.combinat.partition import _Partitions
     if isinstance(D, Diagram):
         return D
     if D in _Partitions:

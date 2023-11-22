@@ -82,7 +82,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
         category = default_category.or_subcategory(category, join=True)
         return super().__classcall__(cls, submodule, category)
 
-    def __init__(self, submodule, category):
+    def __init__(self, submodule, category, *args, **opts):
         r"""
         Initialize this quotient of a module with basis by a submodule.
 
@@ -107,7 +107,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
         indices = embedding.cokernel_basis_indices()
         CombinatorialFreeModule.__init__(self,
                                          submodule.base_ring(), indices,
-                                         category=category)
+                                         category=category, *args, **opts)
 
     def ambient(self):
         r"""

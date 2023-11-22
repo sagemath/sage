@@ -171,6 +171,9 @@ lazy_import('sage.combinat.shifted_primed_tableau', ['ShiftedPrimedTableaux',
 lazy_import('sage.combinat.super_tableau',
             ["StandardSuperTableau", "SemistandardSuperTableau", "StandardSuperTableaux", "SemistandardSuperTableaux"])
 
+# Tabloids
+lazy_import('sage.combinat.tabloid', "Tabloids")
+
 # Words
 from .words.all import *
 

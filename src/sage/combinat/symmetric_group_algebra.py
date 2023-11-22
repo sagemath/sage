@@ -1572,7 +1572,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: SM = SGA.specht_module(Partition([3,1,1]))
             sage: SM
-            Specht module of [(0, 0), (0, 1), (0, 2), (1, 0), (2, 0)] over Rational Field
+            Specht module of [3, 1, 1] over Rational Field
             sage: s = SymmetricFunctions(QQ).s()
             sage: s(SM.frobenius_image())
             s[3, 1, 1]
@@ -1585,6 +1585,23 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         from sage.combinat.specht_module import SpechtModule
         return SpechtModule(self, D)
+
+    def tabloid_module(self, D):
+        """
+        Return the module of tabloids with the natural action of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module(Partition([3,1,1]))
+            sage: TM
+            Tabloid module of [3, 1, 1] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(TM.frobenius_image())
+            s[3, 1, 1] + s[3, 2] + 2*s[4, 1] + s[5]
+        """
+        from sage.combinat.specht_module import TabloidModule
+        return TabloidModule(self, D)
 
     def specht_module_dimension(self, D):
         r"""
@@ -2591,10 +2608,10 @@ def e(tableau, star=0):
         one = QQ.one()
         P = Permutation
 
-        rd = dict((P(h), one) for h in rs)
+        rd = {P(h): one for h in rs}
         sym = QSn._from_dict(rd)
 
-        cd = dict((P(v), v.sign() * one) for v in cs)
+        cd = {P(v): QQ(v.sign()) for v in cs}
         antisym = QSn._from_dict(cd)
 
         res = QSn.right_action_product(antisym, sym)
@@ -2604,7 +2621,7 @@ def e(tableau, star=0):
         # being [1] rather than [] (which seems to have its origins in
         # permutation group code).
         # TODO: Fix this.
-        if len(tableau) == 0:
+        if not tableau:
             res = QSn.one()
 
         e_cache[t] = res
