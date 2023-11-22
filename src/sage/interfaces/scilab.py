@@ -356,7 +356,7 @@ class Scilab(Expect):
 
     def get(self, var):
         """
-        Get the value of the variable var.
+        Get the value of the variable ``var``.
 
         EXAMPLES::
 
@@ -365,9 +365,9 @@ class Scilab(Expect):
             sage: scilab.get('b')                       # optional - scilab
             '\n \n    124.'
         """
-        s = self.eval('%s' % var)
+        s = self.eval(f'{var}')
         i = s.find('=')
-        return s[i + 1:]
+        return s[i+1:]
 
     def console(self):
         """
