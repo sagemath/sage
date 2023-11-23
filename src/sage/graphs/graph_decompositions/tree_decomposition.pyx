@@ -793,7 +793,7 @@ def length_of_tree_decomposition(G, T, check=True):
 
     INPUT:
 
-    - ``G`` -- a sage Graph
+    - ``G`` -- a graph
 
     - ``T`` -- a tree-decomposition for `G`
 
