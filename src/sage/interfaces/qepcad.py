@@ -638,7 +638,9 @@ def _qepcad_atoms(formula):
         sage: _qepcad_atoms('y^5 + 4 y + 8 >= 0 /\\ y <= 0 /\\ [ y = 0 \\/ y^5 + 4 y + 8 = 0 ]')
         {'y <= 0', 'y = 0', 'y^5 + 4 y + 8 = 0', 'y^5 + 4 y + 8 >= 0'}
     """
-    return set(i.strip() for i in flatten([i.split('\\/') for i in formula.replace('[','').replace(']','').split('/\\')]))
+    L = flatten([i.split('\\/') for i in formula.replace('[', '').replace(']', '').split('/\\')])
+    return {i.strip() for i in L}
+
 
 def _qepcad_cmd(memcells=None):
     r"""
@@ -657,10 +659,10 @@ def _qepcad_cmd(memcells=None):
         True
     """
     if memcells is not None:
-        memcells_arg = '+N%s' % memcells
+        memcells_arg = f'+N{memcells}'
     else:
         memcells_arg = ''
-    return "env qe=%s qepcad %s" % (SAGE_LOCAL, memcells_arg)
+    return f"env qe={SAGE_LOCAL} qepcad {memcells_arg}"
 
 
 _command_info_cache = None
@@ -892,7 +894,7 @@ class Qepcad:
             sage: qepcad(x - 1 == 0, interact=True) # optional - qepcad
             QEPCAD object in phase 'Before Normalization'
         """
-        return "QEPCAD object in phase '{}'".format(self.phase())
+        return f"QEPCAD object in phase '{self.phase()}'"
 
     def assume(self, assume):
         r"""
@@ -1036,7 +1038,7 @@ class Qepcad:
             sage: qe.set_truth_value(1, 1) # optional - qepcad
         """
         index_str = _format_cell_index([index])
-        self._eval_line('set-truth-value\n%s\n%s' % (index_str, nv))
+        self._eval_line(f'set-truth-value\n{index_str}\n{nv}')
 
     def phase(self):
         r"""
@@ -1320,7 +1322,7 @@ class Qepcad:
         name = name.replace('_', '-')
         args = [str(_) for _ in args]
         pre_phase = self.phase()
-        result = self._eval_line('%s %s' % (name, ' '.join(args)))
+        result = self._eval_line('{} {}'.format(name, ' '.join(args)))
         post_phase = self.phase()
         if len(result) and post_phase != 'EXITED':
             return AsciiArtString(result)
@@ -1328,6 +1330,7 @@ class Qepcad:
             if post_phase == 'EXITED' and name != 'quit':
                 return self.answer()
             return AsciiArtString("QEPCAD object has moved to phase '%s'" % post_phase)
+
 
 def _format_cell_index(a):
     """
@@ -1673,7 +1676,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
                                      "infinitely many points")
             return [c.sample_point_dict() for c in cells]
         else:
-            raise ValueError("Unknown solution type ({})".format(solution))
+            raise ValueError(f"Unknown solution type ({solution})")
 
 
 def qepcad_console(memcells=None):
@@ -1721,6 +1724,7 @@ def qepcad_banner():
     qex._start()
     banner = bytes_to_str(qex.expect().before)
     return AsciiArtString(banner)
+
 
 def qepcad_version():
     """
@@ -1930,7 +1934,7 @@ class qepcad_formula_factory:
 
         op = self._normalize_op(op)
 
-        formula = ('%r %s %r' % (lhs, op, rhs))
+        formula = (f'{lhs!r} {op} {rhs!r}')
         formula = formula.replace('*', ' ')
         vars = self._varset(lhs) | self._varset(rhs)
 
@@ -2285,7 +2289,7 @@ class qepcad_formula_factory:
         formula = self.formula(formula)
 
         if allow_multi and isinstance(v, (list, tuple)):
-            if len(v) == 0:
+            if not v:
                 return formula
             else:
                 return self.quantifier(kind, v[0],
@@ -2295,10 +2299,10 @@ class qepcad_formula_factory:
         if form_str[-1] != ']':
             form_str = '[' + form_str + ']'
         v = str(v)
-        if not (v in formula.vars):
+        if v not in formula.vars:
             raise ValueError("Attempting to quantify variable which "
                              "does not occur in formula")
-        form_str = "(%s %s)%s" % (kind, v, form_str)
+        form_str = f"({kind} {v}){form_str}"
         return qformula(form_str, formula.vars - frozenset([v]),
                         [v] + formula.qvars)
 
@@ -2348,8 +2352,7 @@ def _eval_qepcad_algebraic(text):
         if intv.lower().exact_rational() == lbound and intv.upper().exact_rational() == ubound:
             return AA.polynomial_root(p, intv)
 
-    raise ValueError("%s or %s not an exact floating-point number" % (lbound,
-                                                                      ubound))
+    raise ValueError(f"{lbound} or {ubound} not an exact floating-point number")
 
 
 class QepcadCell:
@@ -2420,7 +2423,7 @@ class QepcadCell:
             if 'Information about the cell' in line:
                 tail = line.split('(')[1]
                 index = tail.split(')')[0]
-                if index == '':
+                if not index:
                     index = ()
                 else:
                     index = sage_eval(index)
@@ -2438,7 +2441,7 @@ class QepcadCell:
                 else:
                     self._number_of_children = None
             if 'Truth value' in line:
-                pass # might change
+                pass  # might change
             if 'Degrees after substitution' in line:
                 if self._level == max_level or self._level == 0:
                     self._degrees = None
@@ -2452,7 +2455,7 @@ class QepcadCell:
                 (lev, n, colon, signs) = line.split()
                 assert lev == 'Level' and colon == ':'
                 assert int(n) == len(all_signs) + 1
-                signs = signs.replace('+','1').replace('-','-1').replace(')',',)')
+                signs = signs.replace('+', '1').replace('-', '-1').replace(')', ',)')
                 all_signs.append(sage_eval(signs))
             if 'PRIMITIVE' in line:
                 saw_primitive = True
@@ -2751,4 +2754,4 @@ class QepcadCell:
         """
         points = self.sample_point()
         vars = self._parent._varlist
-        return dict([(vars[i], points[i]) for i in range(len(points))])
+        return {vars[i]: points[i] for i in range(len(points))}
