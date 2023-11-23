@@ -78,6 +78,8 @@ class NumberFieldIdeal(Ideal_generic):
         sage: K.ideal(F[0])
         Fractional ideal (2*i + 1)
 
+    TESTS:
+
     Check that ``_pari_prime`` is set when initializing from a PARI
     prime ideal::
 
