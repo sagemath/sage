@@ -10,6 +10,7 @@ Number Fields
    sage/rings/number_field/number_field_base
    sage/rings/number_field/number_field
    sage/rings/number_field/number_field_rel
+   sage/rings/universal_cyclotomic_field
 
    sage/rings/number_field/splitting_field
    sage/rings/number_field/galois_group
@@ -51,12 +52,16 @@ Orders, Ideals and Ideal Classes
    sage/rings/number_field/small_primes_of_degree_one
    sage/rings/number_field/selmer_group
 
-.. SEEALSO::
+Algebraic Numbers
+-----------------
 
-    :mod:`sage.rings.finite_rings.residue_field`
+.. toctree::
+   :maxdepth: 1
 
-Totally Real Fields
--------------------
+   sage/rings/qqbar
+
+Enumeration of Totally Real Fields
+----------------------------------
 
 .. toctree::
    :maxdepth: 1
@@ -65,18 +70,5 @@ Totally Real Fields
    sage/rings/number_field/totallyreal_rel
    sage/rings/number_field/totallyreal_data
    sage/rings/number_field/totallyreal_phc
-
-Algebraic Numbers
------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/rings/qqbar
-   sage/rings/universal_cyclotomic_field
-
-.. SEEALSO::
-
-    :mod:`sage.rings.algebraic_closure_finite_field`
 
 .. include:: ../footer.txt

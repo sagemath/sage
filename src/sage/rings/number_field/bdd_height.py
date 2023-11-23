@@ -2,22 +2,17 @@
 r"""
 Elements of bounded height in number fields
 
-Sage functions to list all elements of a given number field with height less
-than a specified bound.
-
-AUTHORS:
-
-- John Doyle (2013): initial version
-
-- David Krumm (2013): initial version
-
-- TJ Combs (2018): added Doyle-Krumm algorithm - 4
-
-- Raghukul Raman (2018): added Doyle-Krumm algorithm - 4
+This module provides functions to list all elements of a given number field
+with height less than a specified bound.
 
 REFERENCES:
 
-- [DK2013]
+- [DK2013]_
+
+AUTHORS:
+
+- John Doyle, David Krumm (2013): initial version
+- TJ Combs, Raghukul Raman (2018): added Doyle-Krumm algorithm-4
 
 """
 # ****************************************************************************

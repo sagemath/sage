@@ -1,13 +1,11 @@
 # sage.doctest: needs sage.rings.number_field
 """
-Base class for all number fields
+Base class of number fields
 
+AUTHORS:
 
-TESTS::
+- William Stein (2007-09-04): initial version
 
-    sage: x = polygen(ZZ)
-    sage: k = NumberField(x^2 + 1, 'i'); k == loads(dumps(k))
-    True
 """
 
 
@@ -54,6 +52,11 @@ cdef class NumberField(Field):
     Base class for all number fields.
 
     TESTS::
+
+        sage: x = polygen(ZZ)
+        sage: k = NumberField(x^2 + 1, 'i')
+        sage: k == loads(dumps(k))
+        True
 
         sage: z = polygen(QQ)
         sage: K.<theta, beta> = NumberField([z^3 - 3, z^2 + 1])

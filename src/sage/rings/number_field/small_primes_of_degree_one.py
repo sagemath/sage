@@ -4,7 +4,7 @@ Small primes of degree one
 Iterator for finding several primes of absolute degree one of a number field of
 *small* prime norm.
 
-.. ALGORITHM::
+ALGORITHM:
 
 Let `P` denote the product of some set of prime numbers. (In practice, we
 use the product of the first 10000 primes, because Pari computes this many by
@@ -30,9 +30,9 @@ n)` is prime and of degree one.
 
 .. TODO::
 
-There are situations when this will fail.  There are questions of finding
-primes of relative degree one.  There are questions of finding primes of exact
-degree larger than one.  In short, if you can contribute, please do!
+    There are situations when this will fail.  There are questions of finding
+    primes of relative degree one.  There are questions of finding primes of exact
+    degree larger than one.  In short, if you can contribute, please do!
 
 EXAMPLES::
 

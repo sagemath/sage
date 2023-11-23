@@ -59,7 +59,7 @@ AUTHORS:
 - Steven Sivek (2006-05-12): added support for relative extensions
 - William Stein (2007-09-04): major rewrite and documentation
 - Robert Bradshaw (2008-10): specified embeddings into ambient fields
-- Nick Alexander (2009-01): modernize coercion implementation
+- Nick Alexander (2009-01): modernized coercion implementation
 - Robert Harron (2012-08): added is_CM_extension
 - Julian Rüth (2014-04): absolute number fields are unique parents
 

@@ -5,7 +5,7 @@ Galois groups of number fields
 AUTHORS:
 
 - William Stein (2004, 2005): initial version
-- David Loeffler (2009): rewrite to give explicit homomorphism groups
+- David Loeffler (2009): rewrote to give explicit homomorphism groups
 
 """
 

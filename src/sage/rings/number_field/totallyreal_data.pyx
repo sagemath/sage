@@ -1,6 +1,6 @@
 # distutils: libraries = gmp
 """
-Enumeration of totally real fields
+Enumeration of totally real fields: data
 
 AUTHORS:
 

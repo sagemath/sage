@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.linbox
 r"""
-Field of algebraic numbers
+Algebraic numbers
 
 This module implements the algebraic numbers (the complex
 numbers which are the zero of a polynomial in `\ZZ[x]`; in other

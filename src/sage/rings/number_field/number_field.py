@@ -52,18 +52,18 @@ AUTHORS:
 - Steven Sivek (2006-05-12): added support for relative extensions
 - William Stein (2007-09-04): major rewrite and documentation
 - Robert Bradshaw (2008-10): specified embeddings into ambient fields
-- Simon King (2010-05): Improve coercion from GAP
-- Jeroen Demeyer (2010-07, 2011-04): Upgrade PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
+- Simon King (2010-05): improved coercion from GAP
+- Jeroen Demeyer (2010-07, 2011-04): upgraded PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
 - Robert Harron (2012-08): added is_CM(), complex_conjugation(), and
   maximal_totally_real_subfield()
 - Christian Stump (2012-11): added conversion to universal cyclotomic field
 - Julian Rueth (2014-04-03): absolute number fields are unique parents
 - Vincent Delecroix (2015-02): comparisons/floor/ceil using embeddings
 - Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
-- Peter Bruin (2016-06): make number fields fully satisfy unique representation
-- John Jones (2017-07): improve check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
+- Peter Bruin (2016-06): made number fields fully satisfy unique representation
+- John Jones (2017-07): improved check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
 - Anna Haensch (2018-03): added :meth:`quadratic_defect`
-- Michael Daub, Chris Wuthrich (2020-09-01): adding Dirichlet characters for abelian fields
+- Michael Daub, Chris Wuthrich (2020-09-01): added Dirichlet characters for abelian fields
 
 """
 # ****************************************************************************

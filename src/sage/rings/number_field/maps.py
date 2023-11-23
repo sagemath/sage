@@ -1,8 +1,8 @@
 r"""
 Structure maps for number fields
 
-Provides isomorphisms between relative and absolute presentations, to and from
-vector spaces, name changing maps, etc.
+Thid module provides isomorphisms between relative and absolute presentations,
+to and from vector spaces, name changing maps, etc.
 
 EXAMPLES::
 
