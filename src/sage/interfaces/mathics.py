@@ -586,7 +586,7 @@ optional Sage package Mathics installed.
             sage: bool(mathics('u').sage() == 2*x+e) # optional - mathics
             True
         """
-        cmd = '%s=%s;' % (var, value)
+        cmd = f'{var}={value};'
         _ = self.eval(cmd)
 
     def get(self, var):
@@ -610,7 +610,7 @@ optional Sage package Mathics installed.
             sage: mathics._function_call_string('Sin', ['x'], [])
             'Sin[x]'
         """
-        return "%s[%s]" % (function, ",".join(args))
+        return "{}[{}]".format(function, ",".join(args))
 
     def _left_list_delim(self):
         r"""
@@ -894,7 +894,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             x
             0.15
         """
-        return self.parent().new('%s[[%s]]' % (self._name, n))
+        return self.parent().new(f'{self._name}[[{n}]]')
 
     def __getattr__(self, attrname):
         r"""
@@ -928,7 +928,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             True
         """
         P = self.parent()
-        return float(P._eval('N[%s,%s]' % (self.name(), precision)).last_eval.to_mpmath())
+        return float(P._eval(f'N[{self.name()},{precision}]').last_eval.to_mpmath())
 
     def _reduce(self):
         r"""
@@ -1071,9 +1071,9 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         if self is not p and p is not None:
             def conv(i):
                 return self.parent()(i).sage()
-            if type(p) is list:
+            if isinstance(p, list):
                 return [conv(i) for i in p]
-            elif type(p) is tuple:
+            elif isinstance(p, tuple):
                 return tuple([conv(i) for i in p])
             elif type(p) is dict:
                 return {conv(k): conv(v) for k, v in p.items()}
@@ -1130,7 +1130,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         if not self._is_graphics():
             raise ValueError('mathics expression is not graphics')
         filename = os.path.abspath(filename)
-        s = 'Export["%s", %s, ImageSize->%s]' % (filename, self.name(), ImageSize)
+        s = f'Export["{filename}", {self.name()}, ImageSize->{ImageSize}]'
         P.eval(s)
 
     def _rich_repr_(self, display_manager, **kwds):
@@ -1214,11 +1214,11 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             False
         """
         P = self.parent()
-        if str(P("%s < %s" % (self.name(), other.name()))) == P._true_symbol():
+        if str(P(f"{self.name()} < {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, -1)
-        elif str(P("%s > %s" % (self.name(), other.name()))) == P._true_symbol():
+        elif str(P(f"{self.name()} > {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, 1)
-        elif str(P("%s == %s" % (self.name(), other.name()))) == P._true_symbol():
+        elif str(P(f"{self.name()} == {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, 0)
         return NotImplemented
 
@@ -1239,7 +1239,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             True
         """
         P = self._check_valid()
-        cmd = '%s===%s' % (self._name, P._false_symbol())
+        cmd = f'{self._name}==={P._false_symbol()}'
         return not str(P(cmd)) == P._true_symbol()
 
     def n(self, *args, **kwargs):

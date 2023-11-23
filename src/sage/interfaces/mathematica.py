@@ -1191,7 +1191,7 @@ def request_wolfram_alpha(input, verbose=False):
     resp = opener.open(req)
     # the website returns JSON containing the code
     page_data = json.loads(resp.read().decode("utf-8"))
-    if not ("code" in page_data):
+    if "code" not in page_data:
         raise ValueError("Wolfram did not return a code")
     proxy_code = page_data['code']
     if verbose:
