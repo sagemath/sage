@@ -79,7 +79,8 @@ Modes of operation (provide at most one):
    -d, --download-only: only download the package
    -b, --build-and-stage-only: build and install (stage) only,
        do not run post-install or check
-   -p, --post-install-only: post-install only
+   -p, --post-install-only: unload the staged installation
+       directory and run other post-installation steps only
    -x, --check-only: exclusively run the test suite;
        this may assume that:
         * the package has been installed already and/or that
@@ -685,7 +686,7 @@ rm -f "$SAGE_DESTDIR_LOCAL/lib64"
 # All spkgs should eventually support this, but fall back on old behavior in
 # case DESTDIR=$SAGE_DESTDIR installation was not used
 if [ -d "$SAGE_DESTDIR" ]; then
-    echo "Copying package files from temporary location $SAGE_DESTDIR to $SAGE_INST_LOCAL"
+    echo "Moving package files from temporary location $SAGE_DESTDIR to $SAGE_INST_LOCAL"
     # Some `find` implementations will put superfluous slashes in the
     # output if we give them a directory name with a slash; so make sure
     # any trailing slash is removed; https://github.com/sagemath/sage/issues/26013
@@ -703,7 +704,7 @@ if [ -d "$SAGE_DESTDIR" ]; then
     # Copy files into $SAGE_INST_LOCAL
     $SAGE_SUDO cp -Rp "$PREFIX/." "$SAGE_INST_LOCAL"
     if [ $? -ne 0 ]; then
-        error_msg "Error copying files for $PKG_NAME."
+        error_msg "Error moving files for $PKG_NAME."
         exit 1
     fi
 
@@ -711,7 +712,7 @@ if [ -d "$SAGE_DESTDIR" ]; then
     # final location.
     rm -rf "$SAGE_DESTDIR"
 else
-    echo "The temporary location $SAGE_DESTDIR does not exist; has the build directory been deleted?"
+    echo "The temporary location $SAGE_DESTDIR does not exist; has it been unloaded already?"
     exit 1
 fi
 
