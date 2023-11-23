@@ -451,7 +451,7 @@ Tcl/Tk (and system's Python)
 
 If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, and you
 are going to use your OS's Python3 as Sage's Python, you merely need to install
-its **Tkinter** module.  On Lunix systems, it is usually provided by the
+its **Tkinter** module.  On Linux systems, it is usually provided by the
 **python3-tk** or a similarly named (e.g. **python3-tkinter**) package,
 which can be installed using::
 
