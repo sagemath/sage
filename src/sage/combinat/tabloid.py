@@ -25,7 +25,7 @@ class Tabloid(ClonableArray):
     integer partition).
     """
     def __init__(self, parent, tableaux, check=True):
-        """
+        r"""
         Initialize ``self``.
 
         EXAMPLES::
@@ -37,7 +37,7 @@ class Tabloid(ClonableArray):
         super().__init__(parent, map(frozenset, tableaux), check=check)
 
     def check(self):
-        """
+        r"""
         Check that ``self`` is a valid tabloid.
 
         EXAMPLES::
@@ -70,7 +70,7 @@ class Tabloid(ClonableArray):
         assert not X
 
     def _repr_(self):
-        """
+        r"""
         Return a string representation of ``self``.
 
         EXAMPLES::
@@ -84,7 +84,7 @@ class Tabloid(ClonableArray):
         return ret + "]"
 
     def _ascii_art_(self):
-        """
+        r"""
         Return a string representation of ``self``.
 
         EXAMPLES::
@@ -124,7 +124,7 @@ class Tabloid(ClonableArray):
         return ret.replace("|", "")
 
     def symmetric_group_action(self, permutation):
-        """
+        r"""
         Return the left action of ``permutation`` on ``self``.
 
         EXAMPLES::
@@ -151,7 +151,7 @@ class Tabloid(ClonableArray):
         return P.element_class(P, [[permutation(val) for val in row] for row in self])
 
     def _acted_upon_(self, sigma, self_on_left=True):
-        """
+        r"""
         Return the action of ``sigma`` on ``self``.
 
         EXAMPLES::
@@ -179,12 +179,12 @@ class Tabloid(ClonableArray):
 
 
 class Tabloids(UniqueRepresentation, Parent):
-    """
+    r"""
     Tabloids of a fixed shape.
     """
     @staticmethod
     def __classcall_private__(cls, partition):
-        """
+        r"""
         Normalize input to ensure a unique representation.
 
         EXAMPLES::
@@ -199,7 +199,7 @@ class Tabloids(UniqueRepresentation, Parent):
         return super().__classcall__(cls, partition)
 
     def __init__(self, partition):
-        """
+        r"""
         Initialize ``self``.
 
         EXAMPLES::
@@ -223,7 +223,7 @@ class Tabloids(UniqueRepresentation, Parent):
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __iter__(self):
-        """
+        r"""
         Iterate over ``self``.
 
         EXAMPLES::
@@ -290,7 +290,7 @@ class Tabloids(UniqueRepresentation, Parent):
             i += 1
 
     def from_tableau(self, T):
-        """
+        r"""
         Construct a tabloid from the tableau ``T``.
 
         EXAMPLES::
@@ -302,7 +302,7 @@ class Tabloids(UniqueRepresentation, Parent):
         return self.element_class(self, T)
 
     def cardinality(self):
-        """
+        r"""
         Return the cardinality of ``self``.
 
         EXAMPLES::
@@ -314,4 +314,3 @@ class Tabloids(UniqueRepresentation, Parent):
         return ZZ(multinomial(list(self._shape)))
 
     Element = Tabloid
-

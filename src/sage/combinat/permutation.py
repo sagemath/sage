@@ -1263,7 +1263,7 @@ class Permutation(CombinatorialElement):
             sage: p213 * SGA.an_element()
             3*[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + 2*[3, 1, 2]
             sage: p213 * SM.an_element()
-            2*B[0] - 4*B[1]
+            2*S[[1, 2], [3]] - 4*S[[1, 3], [2]]
         """
         if not isinstance(rp, Permutation) and isinstance(rp, Element):
             return get_coercion_model().bin_op(self, rp, operator.mul)

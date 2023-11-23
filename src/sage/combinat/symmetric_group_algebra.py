@@ -1587,8 +1587,12 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         return SpechtModule(self, D)
 
     def tabloid_module(self, D):
-        """
+        r"""
         Return the module of tabloids with the natural action of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.combinat.specht_module.TabloidModule`
 
         EXAMPLES::
 
@@ -1619,6 +1623,29 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         D = _to_diagram(D)
         span_set = specht_module_spanning_set(D, self)
         return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
+
+    def simple_module(self, la):
+        r"""
+        Return the simple module of ``self`` indexed by the partition ``la``.
+
+        Over a field of characteristic `0`, this simply returns the Specht
+        module.
+
+        .. SEEALSO::
+
+            :class:`sage.combinat.specht_module.SimpleModule`
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: D = SGA.simple_module(Partition([3,1,1]))
+            sage: D
+            Simple module of [3, 1, 1] over Finite Field of size 3
+            sage: D.brauer_character()
+            (6, 0, -2, 0, 1)
+        """
+        from sage.combinat.specht_module import SpechtModule
+        return SpechtModule(self, la).simple_module()
 
     def simple_module_dimension(self, la):
         r"""
