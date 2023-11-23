@@ -1105,6 +1105,45 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
     return (resul, vd)
 
 
+def vertical_lines_in_braidmon(flist):
+    r"""
+    Returns the vertical lines in ``flist``, unless
+    one of the other components has a vertical asymptote.
+
+    INPUT:
+
+    - ``flist`` -- a  list of polynomials with two variables whose
+      product equals ``f``
+
+    OUTPUT:
+
+    A list with the indices of the vertical lines in ``flist`` if there is
+    no other componnet with vertical asymptote; otherwise it returns an empty
+    list.
+
+    EXAMPLES::
+        sage: from sage.schemes.curves.zariski_vankampen import vertical_lines_in_braidmon
+        sage: R.<x, y> = QQ[]
+        sage: flist = [x^2 - y^3, x, x + 3 * y - 5, 1 - x]
+        sage: vertical_lines_in_braidmon(flist)
+        [1, 3]
+        sage: flist += [x * y - 1]
+        sage: vertical_lines_in_braidmon(flist)
+        []
+    """
+    if not flist:
+        return []
+    res = []
+    for j, f in enumerate(flist):
+        C = Curve(f)
+        vertical_asymptote = C.has_vertical_asymptote()
+        if vertical_asymptote:
+            return []
+        if C.is_vertical_line():
+            res.append(j)
+    return res
+
+
 def strand_components(f, flist, p1):
     r"""
     Compute only the assignment from strands to elements of ``flist``.
@@ -1226,23 +1265,16 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     else:
         arrangement1 = tuple(_.change_ring(F) for _ in arrangement)
     x, y = f.parent().gens()
-    if not vertical or any([Curve(g).has_vertical_asymptote() for g in arrangement]):
-        dic_vertical = {j: False for j, f0 in enumerate(arrangement1)}
-    elif vertical:
-        dic_vertical = {j: Curve(f0).is_vertical_line() for j, f0 in enumerate(arrangement1)}
-    arrangement_h = ()
-    indices_h = ()
-    arrangement_v = ()
-    for j, f0 in enumerate(arrangement1):
-        if dic_vertical[j]:
-            arrangement_v += (f0, )
-        else:
-            arrangement_h += (f0, )
-            indices_h += (j, )
+    if vertical:
+        indices_v = vertical_lines_in_braidmon(arrangement1)
+    else:
+        indices_v = []
+    arrangement_h = tuple(f0 for j, f0 in enumerate(arrangement1) if j not in indices_v)
+    arrangement_v = tuple(f0 for j, f0 in enumerate(arrangement1) if j in indices_v)
     glist = tuple(_[0] for f0 in arrangement_h for _ in f0.factor())
     g = f.parent()(prod(glist))
     d = g.degree(y)
-    if not arrangement_v:
+    if not arrangement_v:  # change of coordinates only if indices_v is empty
         while not g.coefficient(y**d) in F:
             g = g.subs({x: x + y})
             d = g.degree(y)

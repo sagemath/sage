@@ -1767,7 +1767,9 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         R = A.coordinate_ring()
         x, y = R.gens()
         f = self.defining_polynomial().radical()
-        return f.degree(y) < f.degree() > 1
+        dy = f.degree(y)
+        dxy = f.coefficient({y: dy}).degree()
+        return dxy > 0 and f.degree() > 1
 
     def is_vertical_line(self):
         """
