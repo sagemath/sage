@@ -1934,7 +1934,7 @@ class qepcad_formula_factory:
 
         op = self._normalize_op(op)
 
-        formula = (f'{lhs!r} {op} {rhs!r}')
+        formula = f'{lhs!r} {op} {rhs!r}'
         formula = formula.replace('*', ' ')
         vars = self._varset(lhs) | self._varset(rhs)
 
