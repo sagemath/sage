@@ -78,7 +78,7 @@ Check that :trac:`27646` is fixed::
 
 AUTHORS:
 
-- John Voight (2007-11-03): Initial version.
+- John Voight (2007-11-03): initial version
 """
 
 # ****************************************************************************

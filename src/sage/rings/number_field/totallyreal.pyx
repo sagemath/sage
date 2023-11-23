@@ -66,11 +66,11 @@ See also [Mar1980]_.
 
 AUTHORS:
 
-- John Voight (2007-09-01): initial version; various optimization tweaks.
+- John Voight (2007-09-01): initial version; various optimization tweaks
 - John Voight (2007-10-09): added DSage module; added pari functions to avoid
-  recomputations; separated DSage component.
-- Craig Citro and John Voight (2007-11-04): additional doctests and type checking.
-- Craig Citro and John Voight (2008-02-10): final modifications for submission.
+  recomputations; separated DSage component
+- Craig Citro and John Voight (2007-11-04): additional doctests and type checking
+- Craig Citro and John Voight (2008-02-10): final modifications for submission
 
 """
 

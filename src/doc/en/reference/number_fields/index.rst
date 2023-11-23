@@ -7,10 +7,9 @@ Number Fields
 .. toctree::
    :maxdepth: 1
 
-   sage/rings/number_field/number_field_base
    sage/rings/number_field/number_field
+   sage/rings/number_field/number_field_base
    sage/rings/number_field/number_field_rel
-   sage/rings/universal_cyclotomic_field
 
    sage/rings/number_field/splitting_field
    sage/rings/number_field/galois_group
@@ -59,6 +58,7 @@ Algebraic Numbers
    :maxdepth: 1
 
    sage/rings/qqbar
+   sage/rings/universal_cyclotomic_field
 
 Enumeration of Totally Real Fields
 ----------------------------------
