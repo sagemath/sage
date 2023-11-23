@@ -29,7 +29,7 @@ treewidth of a tree equal to one.
 The *length* of a tree decomposition, as proposed in [DG2006]_, is the maximum
 *diameter* in `G` of its bags, where the diameter of a bag `X_i` is the largest
 distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v \in X_i}
-dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the minimum length
+\dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the minimum length
 among all possible tree decompositions of `G`.
 
 While deciding whether a graph has treelength 1 can be done in linear time
@@ -787,7 +787,7 @@ def length_of_tree_decomposition(G, T, check=True):
     The *length* of a tree decomposition, as proposed in [DG2006]_, is the
     maximum *diameter* in `G` of its bags, where the diameter of a bag `X_i` is
     the largest distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v
-    \in X_i} dist_G(u, v)`). See the documentation of the
+    \in X_i} \dist_G(u, v)`). See the documentation of the
     :mod:`~sage.graphs.graph_decompositions.tree_decomposition` module for more
     details.
 
@@ -1387,7 +1387,7 @@ def treelength(G, k=None, certificate=False):
     The *length* of a tree decomposition, as proposed in [DG2006]_, is the
     maximum *diameter* in `G` of its bags, where the diameter of a bag `X_i` is
     the largest distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v
-    \in X_i} dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the
+    \in X_i} \dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the
     minimum length among all possible tree decompositions of `G`.
     See the documentation of the
     :mod:`~sage.graphs.graph_decompositions.tree_decomposition` module for more
