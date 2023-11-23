@@ -1818,13 +1818,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         (Finitely presented group < x | x^2 >, {0: [x]})
         sage: L = [x, y, x - 1, x -y]
         sage: fundamental_group_arrangement(L)
-        (Finitely presented group < x0, x1, x2, x3 |
-                                    x2*x3^-1*x2^-1*x3,
-                                    x0*x1*x3*x0^-1*x3^-1*x1^-1,
-                                    x3*x0*x1*x3^-1*x1^-1*x0^-1,
-                                    x1*x2*x1^-1*x0*x1*x2^-1*x1^-1*x0^-1 >,
-         {0: [x1], 1: [x3], 2: [x2], 3: [x0],
-          4: [x3^-1*x2^-1*x1^-1*x0^-1]})
+        (Finitely presented group < x0, x1, x2, x3 | x2*x3^-1*x2^-1*x3,
+                                                     x0*x1*x3*x0^-1*x3^-1*x1^-1,
+                                                     x3*x0*x1*x3^-1*x1^-1*x0^-1,
+                                                     x1*x2*x1^-1*x0*x1*x2^-1*x1^-1*x0^-1 >,
+         {0: [x1], 1: [x3], 2: [x2], 3: [x0]})
         sage: fundamental_group_arrangement(L, vertical=True)
         (Finitely presented group < x0, x1, x2, x3 | x3*x0*x3^-1*x0^-1,
                                                      x3*x1*x3^-1*x1^-1,
@@ -1879,8 +1877,8 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     for i in range(len(flist1)):
         L = [j1 for j1 in dic if dic[j1] == i]
         dic1[i] = [hom(g.gen(j)) for j in L]
-    if not projective and infinity:
-        t = prod(hom(x) for x in g.gens()).inverse()
+    if not projective and infinity and d1 == f.degree(y):
+        t = prod(hom(a) for a in g.gens()).inverse()
         dic1[len(flist1)] = [t]
     n = g1.ngens()
     rels = [_.Tietze() for _ in g1.relations()]

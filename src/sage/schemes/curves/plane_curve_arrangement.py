@@ -405,17 +405,22 @@ class AffinePlaneCurveArrangementsElement(Element):
         L = [c.defining_polynomial().radical() for c in self]
         return P(*L)
 
-    def fundamental_group(self, simplified=True, vertical=False):
-        # chequear qué pasa con vertical
+    def fundamental_group(self, simplified=True, vertical=True, projective=False):
         r"""
         The fundamental group of the complement of the union
         of affine plane curves in `\mathbb{C}^2`.
 
         INPUT:
 
-        - ``vertical`` -- boolean (default: False). If it is ``True``, there
+        - ``vertical`` -- boolean (default: False); if it is ``True``, there
           are no vertical asymptotes, and there are vertical lines, then a
           simplified braid braid_monodromy is used.
+
+        - ``simplified`` -- boolean (default: True); if it is ``True``, the
+          group is simplified.
+
+        - ``projective`` -- boolean (default: False); to be used in the
+          method for projective curves.
 
         OUTPUT:
 
@@ -426,7 +431,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: # needs sirocco
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
-            sage: A.fundamental_group()
+            sage: A.fundamental_group(vertical=False)
             Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
                                                     x1*x0*x1^-1*x0^-1,
                                                     (x0*x2)^2*(x0^-1*x2^-1)^2 >
@@ -461,7 +466,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             bd = (self._braid_monodromy_with_vertical, self._strands, self._vertical_lines_in_braid_mon, d1)
         else:
             bd = None
-        G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, vertical=vertical, braid_data=bd)
+        G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, projective=projective, vertical=vertical, braid_data=bd)
         if not vertical and not simplified:
             self._fundamental_group = G
             self._meridians = dic
@@ -476,9 +481,9 @@ class AffinePlaneCurveArrangementsElement(Element):
             self._meridians_vertical_simplified = dic
         return G
 
-    def meridians(self, simplified=True, vertical=False):
+    def meridians(self, simplified=True, vertical=True):
         r"""
-        Meridians of each irreducible component if the group has been computed
+        Meridians of each irreducible component.
 
         OUTPUT:
 
@@ -491,34 +496,44 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
             sage: G = A.fundamental_group(); G
-            Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
+            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
                                                     x1*x0*x1^-1*x0^-1,
-                                                    (x0*x2)^2*(x0^-1*x2^-1)^2 >
+                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
             sage: A.meridians()
-            {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0], 3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]}
+            {0: [x1, x2*x1*x2^-1], 1: [x0], 2: [x2], 3: [x1^-1*x2^-1*x1^-1*x0^-1]}
 
         .. WARNING::
 
             This functionality requires the sirocco package to be installed.
         """
-        if self._meridians and not vertical and not simplified:
+        if not vertical and not simplified:
+            computed = bool(self._meridians)
+        elif not vertical:
+            computed = bool(self._meridians_simplified)
+        elif not simplified:
+            computed = bool(self._meridians_vertical)
+        else:
+            computed = bool(self._meridians_vertical_simplified)
+        if not computed:
+            _ = self._fundamental_group(simplified=simplified, vertical=vertical)
+        if not vertical and not simplified:
             return self._meridians
-        if self._meridians_simplified and simplified and not vertical:
+        if simplified and not vertical:
             return self._meridians_simplified
-        if self._meridians_vertical and not simplified and vertical:
+        if not simplified and vertical:
             return self._meridians_vertical
-        if self._meridians_vertical_simplified and simplified and vertical:
+        if simplified and vertical:
             return self._meridians_vertical_simplified
 
-    def braid_monodromy(self, vertical=False):
+    def braid_monodromy(self, vertical=True):
         r"""
-        It computes the braid monodromy of the complement of the union
+        It computes the braid monodromy of the compleme+nt of the union
         of affine plane curves in `\mathbb{C}^2`. If there are vertical
         asymptotes a change of variable is done.
 
         INPUT:
 
-        - ``vertical`` -- boolean (default: False). If it is ``True``, there
+        - ``vertical`` -- boolean (default: True). If it is ``True``, there
           are no vertical asymptotes, and there are vertical lines, then a
           simplified braid braid_monodromy is computed.
 
@@ -532,7 +547,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: # needs sirocco
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
-            sage: A.braid_monodromy()
+            sage: A.braid_monodromy(vertical=False)
             [s1*s0*(s1*s2*s1)^2*s2*(s1^-1*s2^-1)^2*s1^-1*s0^-1*s1^-1,
              s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
              s1*s0*s1*s2*(s1*s2^-1)^2*s0*s1*s2*s1*s0*s2^-1*s1^-3*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
@@ -563,7 +578,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             self._strands = dic
         return bm
 
-    def strands(self, vertical=False):
+    def strands(self):
         r"""
         Strands for each member of the arrangement.
 
@@ -584,8 +599,8 @@ class AffinePlaneCurveArrangementsElement(Element):
 
             This functionality requires the sirocco package to be installed.
         """
-        if not self._strands or self._braid_monodromy is None:
-            print("Braid monodromy has not been computed")
+        if not self._strands:
+            self._braid_monodromy = self.braid_monodromy(vertical=False)
         return self._strands
 
     def vertical_strands(self):
@@ -610,7 +625,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             This functionality requires the sirocco package to be installed.
         """
         if not self._strands_with_vertical:
-            self._braid_monodromy_with_vertical = self._braid_monodromy_with_vertical
+            self._braid_monodromy_with_vertical = self.braid_monodromy(vertical=True)
         return self._strands_with_vertical
 
     def vertical_lines_in_braid_mon(self):
@@ -635,7 +650,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             This functionality requires the sirocco package to be installed.
         """
         if not self._vertical_lines_in_braid_mon:
-            self._braid_monodromy_with_vertical = self._braid_monodromy_with_vertical
+            self._braid_monodromy_with_vertical = self.braid_monodromy(vertical=True)
         return self._vertical_lines_in_braid_mon
 
 
@@ -887,7 +902,7 @@ class AffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
 
 class ProjectivePlaneCurveArrangementsElement(Element):
-# class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElement):
+    # class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElement):
     """
     An ordered projective plane curve arrangement.
     """
@@ -919,10 +934,6 @@ class ProjectivePlaneCurveArrangementsElement(Element):
             if not all(h.ambient_space() is self.parent().ambient_space() for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
         # Añadir más atributos con opciones
-        self._fundamental_group_vertical_simplified = None
-        self._meridians_vertical_simplified = dict()
-        self._fundamental_group_vertical = None
-        self._meridians_vertical = dict()
         self._fundamental_group_simplified = None
         self._meridians_simplified = dict()
         self._fundamental_group = None
@@ -1223,257 +1234,133 @@ class ProjectivePlaneCurveArrangementsElement(Element):
         L = [c.defining_polynomial().radical() for c in self]
         return P(*L)
 
-    # def fundamental_group(self, simplified=True, vertical=False):
-    #     r"""
-    #     The fundamental group of the complement of the union
-    #     of projective plane curves in `\mathbb{P}^2`.
-    #
-    #     INPUT:
-    #
-    #     - ``vertical`` -- boolean (default: False). If it is ``True``, there
-    #       are no vertical asymptotes, and there are vertical lines, then a
-    #       simplified braid braid_monodromy is used.
-    #
-    #     OUTPUT:
-    #
-    #     A group finitely presented with the assignation of each curve to
-    #     a set of meridians, including the line at infinity.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: # needs sirocco
-    #         sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2 + x, y + x - 1, x)
-    #         sage: A.fundamental_group()
-    #         Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
-    #                                                 x1*x0*x1^-1*x0^-1,
-    #                                                 (x0*x2)^2*(x0^-1*x2^-1)^2 >
-    #         sage: A.fundamental_group(vertical=True)
-    #         Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
-    #                                                 x1*x0*x1^-1*x0^-1,
-    #                                                 (x2*x1)^2*(x2^-1*x1^-1)^2 >
-    #
-    #     .. WARNING::
-    #
-    #         This functionality requires the sirocco package to be installed.
-    #     """
-    #     if self._fundamental_group and not vertical and not simplified:
-    #         return self._fundamental_group
-    #     if self._fundamental_group_simplified and simplified and not vertical:
-    #         return self._fundamental_group_simplified
-    #     if self._fundamental_group_vertical and not simplified and vertical:
-    #         return self._fundamental_group_vertical
-    #     if self._fundamental_group_vertical_simplified and simplified and vertical:
-    #         return self._fundamental_group_vertical_simplified
-    #     H = self.parent()
-    #     K = self.base_ring()
-    #     R = self.coordinate_ring()
-    #     x, y, z = R.gens()
-    #     if not K.is_subring(QQbar):
-    #         raise TypeError('the base field is not in QQbar')
-    #     C = self.reduce()
-    #     infinity = Curve(z)
-    #     if infinity in C:
-    #       j = C.curves().index(infinity)
-    #     for j, c in enumerate(C):
-    #       g = c.defining_polynomial()
-    #       if z.divides(g):
-    #           h = R(g / z)
-    #           break
-    #     C1 = H(C.curves()[:j] + (h, ) + C.curves()[j + 1: ])
-    #     L = C.defining_polynomials()
-    #     if not vertical and self._braid_monodromy is not None:
-    #         d1 = prod(L).degree()
-    #         bd = (self._braid_monodromy, self._strands, dict(), d1)
-    #     # línea demasiada larga
-    #     elif vertical and self._braid_monodromy_with_vertical is not None:
-    #         d1 = prod(L).degree(R.gen(1))
-    #         bd = (self._braid_monodromy_with_vertical, self._strands, self._vertical_lines_in_braid_mon, d1)
-    #     else:
-    #         bd = None
-    #     G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, vertical=vertical, braid_data=bd)
-    #     if not vertical and not simplified:
-    #         self._fundamental_group = G
-    #         self._meridians = dic
-    #     elif not vertical:
-    #         self._fundamental_group_simplified = G
-    #         self._meridians_simplified = dic
-    #     elif not simplified:
-    #         self._fundamental_group_vertical = G
-    #         self._meridians_vertical = dic
-    #     else:
-    #         self._fundamental_group_vertical = G
-    #         self._meridians_vertical_simplified = dic
-    #     return G
-    #
-    # def meridians(self, simplified=True, vertical=False):
-    #     # Añadir opciones con los nuevos atributos y si no está que lo calcule
-    #     r"""
-    #     Meridians of each irreducible component if the group has been computed
-    #
-    #     OUTPUT:
-    #
-    #     A dictionnary which associates the index of each curve with its meridians,
-    #     including the line at infinity if it can be easily computed
-    #
-    #     EXAMPLES::
-    #
-    #         sage: # needs sirocco
-    #         sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2 + x, y + x - 1, x)
-    #         sage: G = A.fundamental_group(); G
-    #         Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
-    #                                                 x1*x0*x1^-1*x0^-1,
-    #                                                 (x0*x2)^2*(x0^-1*x2^-1)^2 >
-    #         sage: A.meridians()
-    #         {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0], 3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]}
-    #
-    #     .. WARNING::
-    #
-    #         This functionality requires the sirocco package to be installed.
-    #     """
-    #     if self._meridians and not vertical and not simplified:
-    #         return self._meridians
-    #     if self._meridians_simplified and simplified and not vertical:
-    #         return self._meridians_simplified
-    #     if self._meridians_vertical and not simplified and vertical:
-    #         return self._meridians_vertical
-    #     if self._meridians_vertical_simplified and simplified and vertical:
-    #         return self._meridians_vertical_simplified
-    #
-    # def braid_monodromy(self, vertical=False):
-    #     r"""
-    #     It computes the braid monodromy of the complement of the union
-    #     of affine plane curves in `\mathbb{C}^2`. If there are vertical
-    #     asymptotes a change of variable is done.
-    #
-    #     INPUT:
-    #
-    #     - ``vertical`` -- boolean (default: False). If it is ``True``, there
-    #       are no vertical asymptotes, and there are vertical lines, then a
-    #       simplified braid braid_monodromy is computed.
-    #
-    #     OUTPUT:
-    #
-    #     A braid monodromy with dictionnaries identifying strans with components
-    #     and braids with vertical lines..
-    #
-    #     EXAMPLES::
-    #
-    #         sage: # needs sirocco
-    #         sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2 + x, y + x - 1, x)
-    #         sage: A.braid_monodromy()
-    #         [s1*s0*(s1*s2*s1)^2*s2*(s1^-1*s2^-1)^2*s1^-1*s0^-1*s1^-1,
-    #          s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-    #          s1*s0*s1*s2*(s1*s2^-1)^2*s0*s1*s2*s1*s0*s2^-1*s1^-3*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-    #          s1*s0*s1*s2*s1*s2^-1*s1^4*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-    #          s1*s0*s1*s2*s1*s2^-1*s1^-1*s2*s0^-1*s1^-1]
-    #         sage: A.braid_monodromy(vertical=True)
-    #         [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
-    #
-    #     .. WARNING::
-    #
-    #         This functionality requires the sirocco package to be installed.
-    #     """
-    #     if not vertical and self._braid_monodromy is not None:
-    #         return self._braid_monodromy
-    #     if vertical and self._braid_monodromy_with_vertical is not None:
-    #         return self._braid_monodromy_with_vertical
-    #     K = self.base_ring()
-    #     if not K.is_subring(QQbar):
-    #         raise TypeError('the base field is not in QQbar')
-    #     L = self.defining_polynomials()
-    #     bm, dic, dv, d1 = braid_monodromy(prod(L), arrangement=L, vertical=vertical)
-    #     if vertical:
-    #         self._braid_monodromy_with_vertical = bm
-    #         self._strands_with_vertical = dic
-    #         self._vertical_lines_in_braid_mon = dv
-    #     else:
-    #         self._braid_monodromy = bm
-    #         self._strands = dic
-    #     return bm
-    #
-    # def strands(self, vertical=False):
-    #     r"""
-    #     Strands for each member of the arrangement.
-    #
-    #     OUTPUT:
-    #
-    #     A dictionnary which associates to the index of each strand its associated component.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: # needs sirocco
-    #         sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2 + x, y + x - 1, x)
-    #         sage: bm = A.braid_monodromy()
-    #         sage: A.strands()
-    #         {0: 2, 1: 1, 2: 0, 3: 0}
-    #
-    #     .. WARNING::
-    #
-    #         This functionality requires the sirocco package to be installed.
-    #     """
-    #     if not self._strands or self._braid_monodromy is None:
-    #         print("Braid monodromy has not been computed")
-    #     return self._strands
-    #
-    # def vertical_strands(self):
-    #     r"""
-    #     Vertical strands for each member of the arrangement.
-    #
-    #     OUTPUT:
-    #
-    #     A dictionnary which associates to the index of each strand its associated component.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: # needs sirocco
-    #         sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2 + x, y + x - 1, x)
-    #         sage: bm = A.braid_monodromy(vertical=True)
-    #         sage: A.vertical_strands()
-    #         {0: 1, 1: 0, 2: 0}
-    #
-    #     .. WARNING::
-    #
-    #         This functionality requires the sirocco package to be installed.
-    #     """
-    #     if not self._strands_with_vertical:
-    #         self._braid_monodromy_with_vertical = self._braid_monodromy_with_vertical
-    #     return self._strands_with_vertical
-    #
-    # def vertical_lines_in_braid_mon(self):
-    #     # Mirar de hacerlo sin calcular la monodromía, solo chequear con vertical
-    #     # Hacer dos, vertical_lines y asíntotas, o quitarlo
-    #     r"""
-    #     Vertical lines in the arrangement.
-    #
-    #     OUTPUT:
-    #
-    #     A dictionnary which associates an index to the index of a vertical lines.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: # needs sirocco
-    #         sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2 + x, y + x - 1, x)
-    #         sage: bm = A.braid_monodromy(vertical=True)
-    #         sage: A.vertical_lines_in_braid_mon()
-    #         {1: 2}
-    #
-    #     .. WARNING::
-    #
-    #         This functionality requires the sirocco package to be installed.
-    #     """
-    #     if not self._vertical_lines_in_braid_mon:
-    #         self._braid_monodromy_with_vertical = self._braid_monodromy_with_vertical
-    #     return self._vertical_lines_in_braid_mon
+    def fundamental_group(self, simplified=True):
+        r"""
+        The fundamental group of the complement of the union
+        of projective plane curves in `\mathbb{P}^2`.
+
+        INPUT:
+
+        - ``simplified`` -- boolean (default: True); set if the group
+          is simplified..
+
+        OUTPUT:
+
+        A finitely presented group.
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: A.fundamental_group()
+            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
+                                                    x1*x0*x1^-1*x0^-1,
+                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
+            sage: A.fundamental_group(vertical=True)
+            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
+                                                    x1*x0*x1^-1*x0^-1,
+                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        if self._fundamental_group and not simplified:
+            return self._fundamental_group
+        if self._fundamental_group_simplified and simplified:
+            return self._fundamental_group_simplified
+        H = self.parent()
+        K = self.base_ring()
+        R = self.coordinate_ring()
+        x, y, z = R.gens()
+        if not K.is_subring(QQbar):
+            raise TypeError('the base field is not in QQbar')
+        C = self.reduce()
+        n = len(C)
+        infinity = Curve(z)
+        infinity_in_C = infinity in C
+        if infinity_in_C:
+            j = C.curves().index(infinity)
+            C = H(C.curves()[:j] + C.curves()[j + 1:])
+        infinity_divides = False
+        for j, c in enumerate(C):
+            g = c.defining_polynomial()
+            infinity_divides = z.divides(g)
+            if infinity_divides:
+                h = R(g / z)
+                C = H(C.curves()[:j] + (h, ) + C.curves()[j + 1:])
+                break
+        affine = AffinePlaneCurveArrangements(K, names=('u', 'v'))
+        u, v = affine.gens()
+        affines = [f.defining_polynomial()(x=u, y=v, z=1) for f in C]
+        changes = any([g.degree(v) < g.degree() > 1 for g in affines])
+        while changes:
+            affines = [f(u=u + v) for f in affines]
+            changes = any([g.degree(v) < g.degree() > 1 for g in affines])
+        C_affine = affine(affines)
+        proj = not (infinity_divides or infinity_in_C)
+        G = C_affine.fundamental_group(simplified=simplified, vertical=True,
+                                       projective=proj)
+        dic = C_affine.meridians(simplified=simplified, vertical=True)
+        if infinity_in_C:
+            dic1 = dict()
+            for k in range(j):
+                dic1[k] = dic[k]
+            dic1[j] = dic[n - 1]
+            for k in range(j + 1, n):
+                dic1[k] = dic[k - 1]
+        elif infinity_divides:
+            dic1 = {k: dic[k] for k in range(n)}
+            dic1[j] += dic[n]
+        else:
+            dic1 = dic
+        if not simplified:
+            self._fundamental_group = G
+            self._meridians = dic1
+        else:
+            self._fundamental_group_simplified = G
+            self._meridians_simplified = dic1
+        return G
+
+    def meridians(self, simplified=True):
+        r"""
+        Meridians of each irreducible component.
+
+        OUTPUT:
+
+        A dictionnary which associates the index of each curve with its meridians,
+        including the line at infinity if it can be easily computed
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: G = A.fundamental_group(); G
+            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
+                                                    x1*x0*x1^-1*x0^-1,
+                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
+            sage: A.meridians()
+            {0: [x1, x2*x1*x2^-1], 1: [x0], 2: [x2], 3: [x1^-1*x2^-1*x1^-1*x0^-1]}
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        if not simplified:
+            computed = bool(self._meridians)
+        else:
+            computed = bool(self._meridians_simplified)
+        if not computed:
+            _ = self._fundamental_group(simplified=simplified)
+        if not simplified:
+            return self._meridians
+        return self._meridians_simplified
 
 
 class ProjectivePlaneCurveArrangements(Parent, UniqueRepresentation):
-# class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
+    # class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
     """
     Curve arrangements.
 
