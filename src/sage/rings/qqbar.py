@@ -2509,7 +2509,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
     - ``embedded`` -- Boolean (default: ``False``). Whether to make the
       NumberField embedded.
 
-    - ``name`` -- string (default: ``a``). Name of the primitive element.
+    - ``name`` -- string (default: ``'a'``); name of the primitive element.
 
     - ``prec`` -- integer (default: ``53``). The number of bit of precision
       to guarantee finding real roots.
@@ -3261,8 +3261,7 @@ class AlgebraicGenerator(SageObject):
         INPUT:
 
         - ``other`` - an algebraic number.
-
-        - ``name`` - string (default: 'a'). A name for the primitive element.
+        - ``name`` - string (default: ``'a'``); a name for the primitive element.
 
         EXAMPLES::
 
