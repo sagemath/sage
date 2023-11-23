@@ -16,7 +16,8 @@ The individual curves will be in  :class:`AffinePlaneCurve` or in :class:`Projec
     <class 'sage.schemes.curves.affine_curve.IntegralAffinePlaneCurve_with_category'>
 
 The default base field is `\mathbb{Q}`, the rational numbers.
-Number fields are also possible (also with fixed embeddings in `\overline{\mathbb{Q}}`)::
+Number fields are also possible (also with fixed embeddings in
+`\overline{\mathbb{Q}}`)::
 
     sage: # needs sage.rings.number_field
     sage: x = polygen(QQ, 'x')
@@ -94,7 +95,8 @@ class AffinePlaneCurveArrangementsElement(Element):
                 raise ValueError("the curves must be given as a tuple")
             if not all(isinstance(h, AffinePlaneCurve) for h in curves):
                 raise ValueError("not all elements are curves")
-            if not all(h.ambient_space() is self.parent().ambient_space() for h in curves):
+            if not all(h.ambient_space() is self.parent().ambient_space()
+                       for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
         # Añadir más atributos con opciones
         self._braid_monodromy = None
@@ -206,9 +208,12 @@ class AffinePlaneCurveArrangementsElement(Element):
         if len(self) == 0:
             return 'Empty curve arrangement in {0}'.format(self.parent().ambient_space())
         elif len(self) < 5:
-            curves = ', '.join(h.defining_polynomial()._repr_() for h in self._curves)
-            return 'Arrangement ({0}) in {1}'.format(curves, self.parent().ambient_space())
-        return 'Arrangement of {0} curves in {1}'.format(len(self), self.parent().ambient_space())
+            curves = ', '.join(h.defining_polynomial()._repr_()
+                               for h in self._curves)
+            return 'Arrangement ({0}) in {1}'.format(curves,
+                                                     self.parent().ambient_space())
+        return 'Arrangement of {0} curves in {1}'.format(len(self),
+                                                         self.parent().ambient_space())
 
     def _richcmp_(self, other, op):
         """
@@ -403,9 +408,14 @@ class AffinePlaneCurveArrangementsElement(Element):
         """
         P = self.parent()
         L = [c.defining_polynomial().radical() for c in self]
+        for f1, f2 in Combinations(L, 2):
+            if f1.gcd(f2) != 1:
+                print("Some curves have common components")
+                return None
         return P(*L)
 
-    def fundamental_group(self, simplified=True, vertical=True, projective=False):
+    def fundamental_group(self, simplified=True, vertical=True,
+                          projective=False):
         r"""
         The fundamental group of the complement of the union
         of affine plane curves in `\mathbb{C}^2`.
@@ -450,7 +460,8 @@ class AffinePlaneCurveArrangementsElement(Element):
             return self._fundamental_group_simplified
         if self._fundamental_group_vertical and not simplified and vertical:
             return self._fundamental_group_vertical
-        if self._fundamental_group_vertical_simplified and simplified and vertical:
+        if self._fundamental_group_vertical_simplified and simplified \
+           and vertical:
             return self._fundamental_group_vertical_simplified
         K = self.base_ring()
         R = self.coordinate_ring()
@@ -463,10 +474,15 @@ class AffinePlaneCurveArrangementsElement(Element):
             bd = (self._braid_monodromy, self._strands, dict(), d1)
         elif vertical and self._braid_monodromy_with_vertical is not None:
             d1 = prod(L).degree(R.gen(1))
-            bd = (self._braid_monodromy_with_vertical, self._strands, self._vertical_lines_in_braid_mon, d1)
+            bd = (self._braid_monodromy_with_vertical, self._strands,
+                  self._vertical_lines_in_braid_mon, d1)
         else:
             bd = None
-        G, dic = fundamental_group_arrangement(L, simplified=simplified, puiseux=True, projective=projective, vertical=vertical, braid_data=bd)
+        G, dic = fundamental_group_arrangement(L, simplified=simplified,
+                                               puiseux=True,
+                                               projective=projective,
+                                               vertical=vertical,
+                                               braid_data=bd)
         if not vertical and not simplified:
             self._fundamental_group = G
             self._meridians = dic
@@ -515,7 +531,8 @@ class AffinePlaneCurveArrangementsElement(Element):
         else:
             computed = bool(self._meridians_vertical_simplified)
         if not computed:
-            _ = self._fundamental_group(simplified=simplified, vertical=vertical)
+            _ = self._fundamental_group(simplified=simplified,
+                                        vertical=vertical)
         if not vertical and not simplified:
             return self._meridians
         if simplified and not vertical:
@@ -568,7 +585,8 @@ class AffinePlaneCurveArrangementsElement(Element):
         if not K.is_subring(QQbar):
             raise TypeError('the base field is not in QQbar')
         L = self.defining_polynomials()
-        bm, dic, dv, d1 = braid_monodromy(prod(L), arrangement=L, vertical=vertical)
+        bm, dic, dv, d1 = braid_monodromy(prod(L), arrangement=L,
+                                          vertical=vertical)
         if vertical:
             self._braid_monodromy_with_vertical = bm
             self._strands_with_vertical = dic
@@ -584,7 +602,8 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A dictionnary which associates to the index of each strand its associated component.
+        A dictionnary which associates to the index of each strand
+        its associated component.
 
         EXAMPLES::
 
@@ -609,7 +628,8 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A dictionnary which associates to the index of each strand its associated component.
+        A dictionnary which associates to the index of each strand
+        its associated component.
 
         EXAMPLES::
 
@@ -625,7 +645,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             This functionality requires the sirocco package to be installed.
         """
         if not self._strands_with_vertical:
-            self._braid_monodromy_with_vertical = self.braid_monodromy(vertical=True)
+            self.braid_monodromy(vertical=True)
         return self._strands_with_vertical
 
     def vertical_lines_in_braid_mon(self):
@@ -650,7 +670,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             This functionality requires the sirocco package to be installed.
         """
         if not self._vertical_lines_in_braid_mon:
-            self._braid_monodromy_with_vertical = self.braid_monodromy(vertical=True)
+            self.braid_monodromy(vertical=True)
         return self._vertical_lines_in_braid_mon
 
 
@@ -902,7 +922,6 @@ class AffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
 
 class ProjectivePlaneCurveArrangementsElement(Element):
-    # class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElement):
     """
     An ordered projective plane curve arrangement.
     """
@@ -931,7 +950,8 @@ class ProjectivePlaneCurveArrangementsElement(Element):
                 raise ValueError("the curves must be given as a tuple")
             if not all(isinstance(h, ProjectivePlaneCurve) for h in curves):
                 raise ValueError("not all elements are curves")
-            if not all(h.ambient_space() is self.parent().ambient_space() for h in curves):
+            if not all(h.ambient_space() is self.parent().ambient_space()
+                       for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
         # Añadir más atributos con opciones
         self._fundamental_group_simplified = None
@@ -1034,9 +1054,12 @@ class ProjectivePlaneCurveArrangementsElement(Element):
         if len(self) == 0:
             return 'Empty curve arrangement in {0}'.format(self.parent().ambient_space())
         elif len(self) < 5:
-            curves = ', '.join(h.defining_polynomial()._repr_() for h in self._curves)
-            return 'Arrangement ({0}) in {1}'.format(curves, self.parent().ambient_space())
-        return 'Arrangement of {0} curves in {1}'.format(len(self), self.parent().ambient_space())
+            curves = ', '.join(h.defining_polynomial()._repr_()
+                               for h in self._curves)
+            return 'Arrangement ({0}) in {1}'.format(curves,
+                                                     self.parent().ambient_space())
+        return 'Arrangement of {0} curves in {1}'.format(len(self),
+                                                         self.parent().ambient_space())
 
     def _richcmp_(self, other, op):
         """
@@ -1232,6 +1255,10 @@ class ProjectivePlaneCurveArrangementsElement(Element):
         """
         P = self.parent()
         L = [c.defining_polynomial().radical() for c in self]
+        for f1, f2 in Combinations(L, 2):
+            if f1.gcd(f2) != 1:
+                print("Some curves have common components")
+                return None
         return P(*L)
 
     def fundamental_group(self, simplified=True):
@@ -1251,16 +1278,18 @@ class ProjectivePlaneCurveArrangementsElement(Element):
         EXAMPLES::
 
             sage: # needs sirocco
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: A = H(y^2 + x, y + x - 1, x)
+            sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x*z, y + x - z, x)
             sage: A.fundamental_group()
-            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
-                                                    x1*x0*x1^-1*x0^-1,
-                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
-            sage: A.fundamental_group(vertical=True)
-            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
-                                                    x1*x0*x1^-1*x0^-1,
-                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
+            Finitely presented group < x0, x1 | x1^-1*x0*x1*x0^-1 >
+            sage: A = H(y^2 + x*z, z, x)
+            sage: A.fundamental_group()
+            Finitely presented group < x0, x1 | (x1*x0)^2*(x1^-1*x0^-1)^2 >
+            sage: A = H(y^2 + x*z, z*x, y)
+            sage: A.fundamental_group()
+            Finitely presented group
+            < x0, x1, x2 | x2*x0*x1*x0^-1*x2^-1*x1^-1,
+                           x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
 
         .. WARNING::
 
@@ -1329,20 +1358,30 @@ class ProjectivePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A dictionnary which associates the index of each curve with its meridians,
-        including the line at infinity if it can be easily computed
+        A dictionnary which associates the index of each curve with
+        its meridians, including the line at infinity if it can be
+        easily computed
 
         EXAMPLES::
 
             sage: # needs sirocco
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: A = H(y^2 + x, y + x - 1, x)
-            sage: G = A.fundamental_group(); G
-            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
-                                                    x1*x0*x1^-1*x0^-1,
-                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
+            sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
+            sage: A = H(y^2 + x*z, y + x - z, x)
+            sage: A.fundamental_group()
+            Finitely presented group < x0, x1 | x1^-1*x0*x1*x0^-1 >
             sage: A.meridians()
-            {0: [x1, x2*x1*x2^-1], 1: [x0], 2: [x2], 3: [x1^-1*x2^-1*x1^-1*x0^-1]}
+            {0: [x1], 1: [x1^-1*x0^-1*x1^-1], 2: [x0]}
+            sage: A = H(y^2 + x*z, z, x)
+            sage: A.fundamental_group()
+            Finitely presented group < x0, x1 | (x1*x0)^2*(x1^-1*x0^-1)^2 >
+            sage: A.meridians()
+            {0: [x0, x1*x0*x1^-1], 1: [x0^-1*x1^-1*x0^-1], 2: [x1]}
+            sage: A = H(y^2 + x*z, z*x, y)
+            sage: A.fundamental_group()
+            Finitely presented group < x0, x1, x2 | x2*x0*x1*x0^-1*x2^-1*x1^-1,
+                                                    x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
+            sage: A.meridians()
+            {0: [x0, x2*x0*x2^-1], 1: [x2, x0^-1*x2^-1*x1^-1*x0^-1], 2: [x1]}
 
         .. WARNING::
 
@@ -1360,7 +1399,6 @@ class ProjectivePlaneCurveArrangementsElement(Element):
 
 
 class ProjectivePlaneCurveArrangements(Parent, UniqueRepresentation):
-    # class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
     """
     Curve arrangements.
 
