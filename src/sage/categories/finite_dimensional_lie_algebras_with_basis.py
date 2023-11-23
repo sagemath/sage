@@ -1197,7 +1197,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: ascii_art(n.chevalley_eilenberg_complex())
                                         [ 0]
                             [0 0]       [-2]
-                 0 <-- C_0 <------ C_1 <---- C_2 <-- 0
+                 0 <-- C_0 <------ C_1 <----- C_2 <-- 0
 
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
                 sage: f = ({x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])})
