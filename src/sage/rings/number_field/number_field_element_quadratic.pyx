@@ -6,9 +6,9 @@
 # distutils: language = c++
 # sage.doctest: needs sage.rings.number_field
 r"""
-Optimized Quadratic Number Field Elements
+Optimized quadratic number field elements
 
-This file defines a Cython class :class:`NumberFieldElement_quadratic` to speed up
+This module defines a Cython class :class:`NumberFieldElement_quadratic` to speed up
 computations in quadratic extensions of `\QQ`.
 
 AUTHORS:

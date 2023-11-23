@@ -1,9 +1,9 @@
 """
-Enumeration of Totally Real Fields: PHC interface
+Enumeration of totally real fields: PHC interface
 
 AUTHORS:
 
-- John Voight (2007-10-10): Zeroth attempt.
+- John Voight (2007-10-10): zeroth attempt.
 """
 
 # ****************************************************************************

@@ -1,51 +1,8 @@
 # sage.doctest: needs sage.libs.linbox
 r"""
-Number Fields
+Number fields
 
-AUTHORS:
-
-- William Stein (2004, 2005): initial version
-
-- Steven Sivek (2006-05-12): added support for relative extensions
-
-- William Stein (2007-09-04): major rewrite and documentation
-
-- Robert Bradshaw (2008-10): specified embeddings into ambient fields
-
-- Simon King (2010-05): Improve coercion from GAP
-
-- Jeroen Demeyer (2010-07, 2011-04): Upgrade PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
-
-- Robert Harron (2012-08): added is_CM(), complex_conjugation(), and
-  maximal_totally_real_subfield()
-
-- Christian Stump (2012-11): added conversion to universal cyclotomic field
-
-- Julian Rueth (2014-04-03): absolute number fields are unique parents
-
-- Vincent Delecroix (2015-02): comparisons/floor/ceil using embeddings
-
-- Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
-
-- Peter Bruin (2016-06): make number fields fully satisfy unique representation
-
-- John Jones (2017-07): improve check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
-
-- Anna Haensch (2018-03): added :meth:`quadratic_defect`
-
-- Michael Daub, Chris Wuthrich (2020-09-01): adding Dirichlet characters for abelian fields
-
-
-.. note::
-
-   Unlike in PARI/GP, class group computations *in Sage* do *not* by default
-   assume the Generalized Riemann Hypothesis. To do class groups computations
-   not provably correctly you must often pass the flag ``proof=False`` to
-   functions or call the function ``proof.number_field(False)``. It can easily
-   take 1000's of times longer to do computations with ``proof=True`` (the
-   default).
-
-This example follows one in the Magma reference manual::
+We define a quartic number field and its quadratic extension::
 
     sage: x = polygen(ZZ, 'x')
     sage: K.<y> = NumberField(x^4 - 420*x^2 + 40000)
@@ -82,19 +39,32 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-TESTS:
-
-Check that :trac:`23459` is fixed::
-
-    sage: QuadraticField(4**1000+1)
-    Number Field ...
-
-.. warning::
+.. WARNING::
 
    Doing arithmetic in towers of relative fields that depends on
    canonical coercions is currently VERY SLOW. It is much better to
    explicitly coerce all elements into a common field, then do
    arithmetic with them there (which is quite fast).
+
+AUTHORS:
+
+- William Stein (2004, 2005): initial version
+- Steven Sivek (2006-05-12): added support for relative extensions
+- William Stein (2007-09-04): major rewrite and documentation
+- Robert Bradshaw (2008-10): specified embeddings into ambient fields
+- Simon King (2010-05): Improve coercion from GAP
+- Jeroen Demeyer (2010-07, 2011-04): Upgrade PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
+- Robert Harron (2012-08): added is_CM(), complex_conjugation(), and
+  maximal_totally_real_subfield()
+- Christian Stump (2012-11): added conversion to universal cyclotomic field
+- Julian Rueth (2014-04-03): absolute number fields are unique parents
+- Vincent Delecroix (2015-02): comparisons/floor/ceil using embeddings
+- Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
+- Peter Bruin (2016-06): make number fields fully satisfy unique representation
+- John Jones (2017-07): improve check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
+- Anna Haensch (2018-03): added :meth:`quadratic_defect`
+- Michael Daub, Chris Wuthrich (2020-09-01): adding Dirichlet characters for abelian fields
+
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2007 William Stein <wstein@gmail.com>
@@ -993,6 +963,11 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
         False
         sage: QuadraticField(-11, 'a') is QuadraticField(-11, 'a', latex_name=None)
         False
+
+    Check that :trac:`23459` is fixed::
+
+        sage: QuadraticField(4**1000+1)
+        Number Field ...
 
     Check quadratic fields without embedding (:trac:`28932`)::
 
@@ -4638,6 +4613,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             (x - 3) * (x^3 + 4*x^2 + 3*x - 1) * (x^4 - 3*x^3 - x^2 + 6*x - 1)
             sage: [NumberField(g,'a').class_group().order() for g,_ in f.factor()]
             [1, 1, 1]
+
+        .. NOTE::
+
+            Unlike in PARI/GP, class group computations *in Sage* do *not* by
+            default assume the Generalized Riemann Hypothesis. To do class
+            groups computations not provably correctly you must often pass the
+            flag ``proof=False`` to functions or call the function
+            ``proof.number_field(False)``. It can easily take 1000's of times
+            longer to do computations with ``proof=True`` (the default).
+
         """
         proof = proof_flag(proof)
         try:

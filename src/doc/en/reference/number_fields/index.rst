@@ -1,20 +1,27 @@
 Algebraic Numbers and Number Fields
 ===================================
 
-Algebraic Number Fields
------------------------
+Number Fields
+-------------
 
 .. toctree::
    :maxdepth: 1
 
-   sage/rings/number_field/number_field
    sage/rings/number_field/number_field_base
+   sage/rings/number_field/number_field
    sage/rings/number_field/number_field_rel
-   sage/rings/number_field/number_field_element
-   sage/rings/number_field/number_field_element_quadratic
 
    sage/rings/number_field/splitting_field
    sage/rings/number_field/galois_group
+
+Elements
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/rings/number_field/number_field_element
+   sage/rings/number_field/number_field_element_quadratic
    sage/rings/number_field/bdd_height
 
 Morphisms
@@ -29,8 +36,8 @@ Morphisms
    sage/rings/number_field/maps
    sage/rings/number_field/structure
 
-Orders, Ideals, Ideal Classes
------------------------------
+Orders, Ideals and Ideal Classes
+--------------------------------
 
 .. toctree::
    :maxdepth: 1

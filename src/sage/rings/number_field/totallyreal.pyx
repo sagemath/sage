@@ -1,5 +1,5 @@
 r"""
-Enumeration of Primitive Totally Real Fields
+Enumeration of primitive totally real fields
 
 This module contains functions for enumerating all primitive
 totally real number fields of given degree and small discriminant.
@@ -9,26 +9,22 @@ subfields except `\QQ`.
 See also :mod:`sage.rings.number_field.totallyreal_rel`, which handles the non-primitive
 case using relative extensions.
 
-Algorithm
----------
+.. ALGORITHM::
 
-We use Hunter's algorithm ([Coh2000]_, Section 9.3) with modifications
-due to Takeuchi [Tak1999]_ and the author [Voi2008]_.
+    We use Hunter's algorithm ([Coh2000]_, Section 9.3) with modifications
+    due to Takeuchi [Tak1999]_ and the author [Voi2008]_.
 
-We enumerate polynomials `f(x) = x^n + a_{n-1} x^{n-1} + \dots + a_0`.
-Hunter's theorem gives bounds on `a_{n-1}` and `a_{n-2}`; then given
-`a_{n-1}` and `a_{n-2}`, one can recursively compute bounds on `a_{n-3},
-\dots, a_0`, using the fact that the polynomial is totally real by
-looking at the zeros of successive derivatives and applying
-Rolle's theorem. See [Tak1999]_ for more details.
+    We enumerate polynomials `f(x) = x^n + a_{n-1} x^{n-1} + \dots + a_0`.
+    Hunter's theorem gives bounds on `a_{n-1}` and `a_{n-2}`; then given
+    `a_{n-1}` and `a_{n-2}`, one can recursively compute bounds on `a_{n-3},
+    \dots, a_0`, using the fact that the polynomial is totally real by
+    looking at the zeros of successive derivatives and applying
+    Rolle's theorem. See [Tak1999]_ for more details.
 
-Examples
---------
+EXAMPLES:
 
 In this first simple example, we compute the totally real quadratic
-fields of discriminant `\le 50`.
-
-::
+fields of discriminant `\le 50`. ::
 
     sage: enumerate_totallyreal_fields_prim(2,50)
     [[5, x^2 - x - 1],
@@ -68,8 +64,7 @@ We see that there are 9 such fields (up to isomorphism!).
 
 See also [Mar1980]_.
 
-Authors
--------
+AUTHORS:
 
 - John Voight (2007-09-01): Initial version.
 - John Voight (2007-09-19): Various optimization tweaks.

@@ -1,28 +1,16 @@
 # sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
-Number Field Ideals
+Ideals of number fields
 
 AUTHORS:
 
-- Steven Sivek (2005-05-16)
-
+- Steven Sivek (2005-05-16): initial version
 - William Stein (2007-09-06): vastly improved the doctesting
-
 - William Stein and John Cremona (2007-01-28): new class
   NumberFieldFractionalIdeal now used for all except the 0 ideal
-
 - Radoslav Kirov and Alyson Deines (2010-06-22):
   prime_to_S_part, is_S_unit, is_S_integral
 
-TESTS:
-
-We test that pickling works::
-
-    sage: x = polygen(ZZ)
-    sage: K.<a> = NumberField(x^2 - 5)
-    sage: I = K.ideal(2/(5+a))
-    sage: I == loads(dumps(I))
-    True
 """
 
 # ****************************************************************************
@@ -99,6 +87,14 @@ class NumberFieldIdeal(Ideal_generic):
             Fractional ideal (2*i + 1)
 
         TESTS:
+
+        We test that pickling works::
+
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^2 - 5)
+            sage: I = K.ideal(2/(5+a))
+            sage: I == loads(dumps(I))
+            True
 
         Check that ``_pari_prime`` is set when initializing from a PARI
         prime ideal::

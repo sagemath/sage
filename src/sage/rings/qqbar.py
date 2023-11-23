@@ -1,13 +1,8 @@
 # sage.doctest: needs sage.libs.linbox
 r"""
-Field of Algebraic Numbers
+Field of algebraic numbers
 
-AUTHOR:
-
-- Carl Witty (2007-01-27): initial version
-- Carl Witty (2007-10-29): massive rewrite to support complex as well as real numbers
-
-This is an implementation of the algebraic numbers (the complex
+This module implements the algebraic numbers (the complex
 numbers which are the zero of a polynomial in `\ZZ[x]`; in other
 words, the algebraic closure of `\QQ`, with an embedding into `\CC`).
 All computations are exact. We also include an implementation of the
@@ -552,6 +547,12 @@ Check that :trac:`28530` is fixed::
      (1.000505492239?, 2),
      (0.999999587? + 0.?e-11*I, 1),
      (0.999999999? + 0.?e-11*I, 1)]
+
+AUTHOR:
+
+- Carl Witty (2007-01-27): initial version
+- Carl Witty (2007-10-29): massive rewrite to support complex as well as real numbers
+
 """
 
 import itertools
