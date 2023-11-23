@@ -1494,14 +1494,19 @@ class Stream_uninitialized(Stream):
         EXAMPLES::
 
         """
+        var_p = var.polynomial()
         def subs(cache, k):
             c = cache[k]
             if hasattr(c, "parent"):
                 if c.parent() is self._PFF:
-                    num = c.numerator().subs({var: val})
-                    den = c.denominator().subs({var: val})
+                    num = c.numerator()
+                    if var_p in num.variables():
+                        num = num.subs({var: val})
+                    den = c.denominator()
+                    if var_p in den.variables():
+                        num = den.subs({var: val})
                     new = num/den
-                elif c.parent() is self._P:
+                elif c.parent() is self._P and var_p in c.variables():
                     new = c.subs({var: val})
                 else:
                     return
@@ -1536,10 +1541,10 @@ class Stream_uninitialized(Stream):
                                              for v in coeff.variables())
 
             if len(V) > 1:
-                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the equation is {coeff} == 0")
+                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the variables are {V}, the equation is {coeff} == 0")
 
             if not V:
-                if coeff:
+                if coeff in self._base and coeff:
                     raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
                 continue
 
@@ -1552,7 +1557,7 @@ class Stream_uninitialized(Stream):
             elif c.is_monomial() and c.coefficient({v: d}) in self._base:
                 val = self._base.zero()
             else:
-                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the equation is {coeff} == 0")
+                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the variable is {var}, the equation is {coeff} == 0")
 
             return var, val
 
