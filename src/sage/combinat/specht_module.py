@@ -586,6 +586,8 @@ class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
         The natural bilinear form is given by defining the tabloid basis
         to be orthonormal.
 
+        EXAMPLES::
+
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: TM = SGA.tabloid_module([2,2,1])
             sage: u = TM.an_element(); u
