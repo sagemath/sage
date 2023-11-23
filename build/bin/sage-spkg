@@ -75,17 +75,21 @@ Usage: sage {-i|-p} <options> <package name>
 Search Sage's list of packages (see 'sage --package list') for a
 matching package, and if a match is found, install it.
 
-Modes of operation:
-   -d: only download the package
-   -b: build and install (stage) only, do not run post-install
-       or check
-   -p: post-install only
-   -x: exclusively run the test suite; this may assume that:
+Modes of operation (provide at most one):
+   -d, --download-only: only download the package
+   -b, --build-and-stage-only: build and install (stage) only,
+       do not run post-install or check
+   -p, --post-install-only: post-install only
+   -x, --check-only: exclusively run the test suite;
+       this may assume that:
         * the package has been installed already and/or that
         * the temporary build directory has not been deleted
-   -e: erase (delete) the temporary build directory only
+   -e, --erase-build-directory-only: erase (delete) the temporary
+       build directory only
+   --info: print information on the package only
+   --help: print this help only
 
-Options:
+Other options:
    -y: automatically reply "y" for all prompts regarding
        experimental and old-style packages; warning: there
        is no guarantee that these packages will build correctly;
@@ -229,15 +233,21 @@ KEEP_EXISTING=0
 INSTALL=1
 POST_INSTALL=1
 ERASE_ONLY=0
+MODE_SWITCHES=
 while true; do
     case "$1" in
         --info)
+            MODE_SWITCHES+=", $1"
             INFO=1;;
+        --help)
+            usage
+            exit 0;;
         -y)
             YES=1;;
         -n)
             YES=-1;;
-        -d)
+        -d|--download-only)
+            MODE_SWITCHES+=", $1"
             SAGE_INSTALL_FETCH_ONLY=1;;
         -s)
             export SAGE_KEEP_BUILT_SPKGS=yes;;
@@ -246,14 +256,18 @@ while true; do
         -w|--check-warning-only)
             export SAGE_CHECK=warn;;
         -b|--build-and-stage-only)
+            MODE_SWITCHES+=", $1"
             POST_INSTALL=0; export SAGE_CHECK=no;;
         -p|--post-install-only)
+            MODE_SWITCHES+=", $1"
             INSTALL=0; export SAGE_CHECK=no;;
         -x|--check-only)
+            MODE_SWITCHES+=", $1"
             INSTALL=0; POST_INSTALL=0; export SAGE_CHECK=yes;;
         -k|--keep-existing)
             KEEP_EXISTING=yes;;
         -e|--erase-build-directory-only)
+            MODE_SWITCHES+=", $1"
             ERASE_ONLY=1;;
         -o|--allow-upstream)
             SAGE_DOWNLOAD_FILE_OPTIONS+=" --allow-upstream";;
@@ -264,7 +278,15 @@ while true; do
     esac
     shift
 done
-
+MODE_SWITCHES=${MODE_SWITCHES#, }
+case "$MODE_SWITCHES" in
+    *,*)
+        echo >&2 "Error: at most one of the mode switches may be given, got $MODE_SWITCHES"
+        echo >&2
+        usage
+        exit 1
+        ;;
+esac
 # One should be able to install a package using
 # sage -i <package-name>
 
