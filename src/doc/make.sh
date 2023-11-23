@@ -9,4 +9,4 @@ case "$MAKEFLAGS" in
         fi
         ;;
 esac
-exec $MAKE $OPTIONS "$@"
+exec ${MAKE:-make} $OPTIONS "$@"
