@@ -56,35 +56,50 @@ ZZ = integer_ring.IntegerRing()
 class NumberFieldIdeal(Ideal_generic):
     """
     An ideal of a number field.
+
+    EXAMPLES::
+
+        sage: x = polygen(ZZ)
+        sage: K.<i> = NumberField(x^2 + 1)
+        sage: K.ideal(7)
+        Fractional ideal (7)
+
+    Initialization from PARI::
+
+        sage: K.ideal(pari(7))
+        Fractional ideal (7)
+        sage: K.ideal(pari(4), pari(4 + 2*i))
+        Fractional ideal (2)
+        sage: K.ideal(pari("i + 2"))
+        Fractional ideal (i + 2)
+        sage: K.ideal(pari("[3,0;0,3]"))
+        Fractional ideal (3)
+        sage: F = pari(K).idealprimedec(5)
+        sage: K.ideal(F[0])
+        Fractional ideal (2*i + 1)
+
+    Check that ``_pari_prime`` is set when initializing from a PARI
+    prime ideal::
+
+        sage: K.ideal(pari(K).idealprimedec(5)[0])._pari_prime
+        [5, [-2, 1]~, 1, 1, [2, -1; 1, 2]]
+
+    Number fields defined by non-monic and non-integral
+    polynomials are supported (:trac:`252`)::
+
+        sage: K.<a> = NumberField(2*x^2 - 1/3)
+        sage: I = K.ideal(a); I
+        Fractional ideal (a)
+        sage: I.norm()
+        1/6
     """
     def __init__(self, field, gens, coerce=True):
         """
         INPUT:
 
-        -  ``field`` -- a number field
+        - ``field`` -- a number field
 
-        -   ``x`` -- a list of :class:`NumberFieldElement` objects belonging to the field
-
-        EXAMPLES::
-
-            sage: x = polygen(ZZ)
-            sage: K.<i> = NumberField(x^2 + 1)
-            sage: K.ideal(7)
-            Fractional ideal (7)
-
-        Initialization from PARI::
-
-            sage: K.ideal(pari(7))
-            Fractional ideal (7)
-            sage: K.ideal(pari(4), pari(4 + 2*i))
-            Fractional ideal (2)
-            sage: K.ideal(pari("i + 2"))
-            Fractional ideal (i + 2)
-            sage: K.ideal(pari("[3,0;0,3]"))
-            Fractional ideal (3)
-            sage: F = pari(K).idealprimedec(5)
-            sage: K.ideal(F[0])
-            Fractional ideal (2*i + 1)
+        - ``gens`` -- a list of :class:`NumberFieldElement` objects belonging to the field
 
         TESTS:
 
@@ -95,21 +110,6 @@ class NumberFieldIdeal(Ideal_generic):
             sage: I = K.ideal(2/(5+a))
             sage: I == loads(dumps(I))
             True
-
-        Check that ``_pari_prime`` is set when initializing from a PARI
-        prime ideal::
-
-            sage: K.ideal(pari(K).idealprimedec(5)[0])._pari_prime
-            [5, [-2, 1]~, 1, 1, [2, -1; 1, 2]]
-
-        Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
-
-            sage: K.<a> = NumberField(2*x^2 - 1/3)
-            sage: I = K.ideal(a); I
-            Fractional ideal (a)
-            sage: I.norm()
-            1/6
         """
         from .number_field import NumberField_generic
         if not isinstance(field, NumberField_generic):
