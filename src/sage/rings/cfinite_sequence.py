@@ -391,7 +391,6 @@ class CFiniteSequence(FieldElement,
             rem = num % den
             if den != 1:
                 self._a = R(num / den).list()
-                self._aa = (rem.valuation() * [0] + R(rem / den).list())[:self._deg]  # needed for _get_item_
             else:
                 self._a = num.list()
             if len(self._a) < alen:
@@ -650,28 +649,24 @@ class CFiniteSequence(FieldElement,
             m = max(key.start, key.stop)
             return [self[ii] for ii in range(*key.indices(m + 1))]
         elif isinstance(key, Integral):
-            from sage.matrix.constructor import Matrix
-            d = self._deg
-            if (self._off <= key and key < self._off + len(self._a)):
-                return self._a[key - self._off]
-            elif d == 0:
-                return 0
-            (quo, rem) = self.numerator().quo_rem(self.denominator())
-            wp = quo[key - self._off]
-            if key < self._off:
-                return wp
-            A = Matrix(QQ, 1, d, self._c)
-            B = Matrix.identity(QQ, d - 1)
-            C = Matrix(QQ, d - 1, 1, 0)
-            if quo == 0:
-                off = self._off
-                V = Matrix(QQ, d, 1, self._a[:d][::-1])
+            den = self.denominator()
+            num = self.numerator()
+            if self._off >= 0:
+                num = num.shift(-self._off)
             else:
-                off = 0
-                V = Matrix(QQ, d, 1, self._aa[:d][::-1])
-            M = Matrix.block([[A], [B, C]], subdivide=False)
-
-            return wp + list(M ** (key - off) * V)[d - 1][0]
+                den = den.shift(self._off)
+            n = key - self._off
+            if n < 0:
+                return 0
+            (quo, num) = num.quo_rem(den)
+            P = self.parent().polynomial_ring()
+            x = self.parent().gen()
+            m = n
+            while m:
+                num = P((num * den(-x)).list()[m % 2::2])
+                den = P((den * den(-x)).list()[::2])
+                m //= 2
+            return quo[n] + num[0] / den[0]
         else:
             raise TypeError("invalid argument type")
 
