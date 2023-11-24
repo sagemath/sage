@@ -237,7 +237,7 @@ def cython(filename, verbose=0, compile_message=False,
         sage: cython('''
         ....: from sage.misc cimport cachefunc
         ....: ''')
-        
+
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
