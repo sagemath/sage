@@ -192,6 +192,12 @@ cdef initialize():
     `GAP Manual <https://www.gap-system.org/Manuals/doc/ref/chap3.html>`_
     Specifically, the value is for `-s` and `-o` options.
 
+    .. NOTE::
+
+        Additional initialization commands (e.g., bug fixes/workarounds 
+        and/or any Sage-specific patches) can be put in 
+        ``sage.gaprc`` (in the same folder as this file here).
+
     TESTS::
 
         sage: libgap(123)   # indirect doctest

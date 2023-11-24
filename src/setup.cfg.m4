@@ -96,9 +96,6 @@ scripts =
 
 [options.package_data]
 
-sage.libs.gap =
-    sage.gaprc
-
 sage.interfaces =
     sage-maxima.lisp
 
