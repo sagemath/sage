@@ -1721,6 +1721,29 @@ class LazyModuleElement(Element):
             sage: B^3 + 2*A^3 - 3 - z*(A + B)
             O(z^7)
 
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: C = L.undefined()
+            sage: FA = (A^2 + B^2)*z^4
+            sage: FB = A*B*z^3
+            sage: FC = (A + B + C)*z^4
+            sage: A.define_implicitly(FA, [0,0,0])
+            sage: B.define_implicitly(FB, [0,0])
+            sage: C.define_implicitly(FC, [0,0])
+            sage: B[2]
+
+            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: C = L.undefined()
+            sage: D = L.undefined()
+            sage: A.define_implicitly(C^2 + D^2, [0,0,0])
+            sage: B.define_implicitly(A + B + C + D, [0,0])
+            sage: C.define_implicitly(A*D, [0,0])
+            sage: D.define_implicitly(A + B + C + D, [0,0])
+            sage: B[2]
+
         """
         if (not isinstance(self._coeff_stream, Stream_uninitialized)
             or self._coeff_stream._target is not None

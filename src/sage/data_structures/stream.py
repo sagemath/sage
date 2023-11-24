@@ -2209,10 +2209,10 @@ class Stream_cauchy_mul(Stream_binary):
             sage: [h.get_coefficient(i) for i in range(10)]
             [0, 0, 1, 6, 20, 50, 105, 196, 336, 540]
         """
-        return sum(l * self._right[n - k]
-                   for k in range(self._left._approximate_order,
-                                  n - self._right._approximate_order + 1)
-                   if (l := self._left[k]))
+        return ZZ.sum(l * self._right[n - k]
+                      for k in range(self._left._approximate_order,
+                                     n - self._right._approximate_order + 1)
+                      if (l := self._left[k]))
 
     def is_nonzero(self):
         r"""
@@ -2313,10 +2313,10 @@ class Stream_dirichlet_convolve(Stream_binary):
             sage: [h[i] for i in range(1, 10)]
             [1, 3, 4, 7, 6, 12, 8, 15, 13]
         """
-        return sum(l * self._right[n//k] for k in divisors(n)
-                   if (k >= self._left._approximate_order
-                       and n // k >= self._right._approximate_order
-                       and (l := self._left[k])))
+        return ZZ.sum(l * self._right[n//k] for k in divisors(n)
+                      if (k >= self._left._approximate_order
+                          and n // k >= self._right._approximate_order
+                          and (l := self._left[k])))
 
 
 class Stream_cauchy_compose(Stream_binary):
@@ -2416,23 +2416,23 @@ class Stream_cauchy_compose(Stream_binary):
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         if n < 0:
-            return sum(l * self._neg_powers[-k][n]
-                       for k in range(fv, n // gv + 1)
-                       if (l := self._left[k]))
+            return ZZ.sum(l * self._neg_powers[-k][n]
+                          for k in range(fv, n // gv + 1)
+                          if (l := self._left[k]))
         # n > 0
         while len(self._pos_powers) <= n // gv:
             # TODO: possibly we always want a dense cache here?
             self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1],
                                                       self._right,
                                                       self._is_sparse))
-        ret = sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
-                  if (l := self._left[k]))
+        ret = ZZ.sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
+                     if (l := self._left[k]))
 
         if not n:
             ret += self._left[0]
 
-        return ret + sum(l * self._pos_powers[k][n] for k in range(1, n // gv + 1)
-                         if (l := self._left[k]))
+        return ret + ZZ.sum(l * self._pos_powers[k][n] for k in range(1, n // gv + 1)
+                            if (l := self._left[k]))
 
 
 class Stream_plethysm(Stream_binary):
@@ -3318,9 +3318,9 @@ class Stream_dirichlet_invert(Stream_unary):
         if n == 1:
             return self._ainv
         # TODO: isn't self[k] * l and l * self[k] the same here?
-        c = sum(self[k] * l for k in divisors(n)
-                if (k < n
-                    and (l := self._series[n // k])))
+        c = ZZ.sum(self[k] * l for k in divisors(n)
+                   if (k < n
+                       and (l := self._series[n // k])))
         return -c * self._ainv
 
 
