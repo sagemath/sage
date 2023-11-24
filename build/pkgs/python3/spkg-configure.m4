@@ -141,6 +141,12 @@ To build Sage with a different system python, use ./configure --with-python=/pat
         [no],  [SAGE_VENV='${SAGE_LOCAL}'],dnl Quoted so that it is resolved at build time by shell/Makefile
         [yes], [SAGE_VENV='${SAGE_LOCAL}'/var/lib/sage/venv-python$PYTHON_VERSION]
     )
+
+    AS_CASE([$SAGE_VENV],
+        [no],  [JUPYTER_VENV='${SAGE_VENV}'],dnl Quoted so that it is resolved at build time by shell/Makefile
+        [yes], [JUPYTER_VENV='${SAGE_LOCAL}'/var/lib/sage/jupyter-venv-python$PYTHON_VERSION]
+    )
+
     dnl These temporary directories are created by the check above
     dnl and need to be cleaned up to prevent the "rm -f conftest*"
     dnl (that a bunch of other checks do) from emitting warnings about
