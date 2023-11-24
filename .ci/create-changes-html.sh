@@ -54,15 +54,16 @@ echo '<body>' >> CHANGES.html
 (cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html) > diff.txt
 /sage/sage -python - << EOF
 import os, re, html
-with open('./docs/diff.txt', 'r') as f:
+with open('diff.txt', 'r') as f:
     diff_text = f.read()
 diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
 out_blocks = []
 for block in diff_blocks:
     match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
     if match:
-        path = 'html/' + match.group(1)
-        file_path = os.path.join('$DOC_REPOSITORY/..', path)
+        doc = match.group(1)
+        path = 'html/' + doc
+        file_path = os.path.join('$DOC_REPOSITORY', doc)
         with open(file_path, 'r') as file:
             content = file.readlines()
         count = 0
@@ -76,12 +77,12 @@ for block in diff_blocks:
                         break
         with open(file_path, 'w') as file:
             file.writelines(content)
-        hunks = '&nbsp;'.join(f'<a href="{path}#hunk{i+1}" class="hunk" target="_blank">#{i+1}</a>' for i in range(count))
-        out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&nbsp;' + hunks + '&emsp;</p>'
+        hunks = '&nbsp;'.join(f'<a href="{path}#hunk{i+1}" class="hunk" target="_blank">#{i + 1}</a>' for i in range(count))
+        out_blocks.append(f'<p class="diff"><a href="{path}">{doc}</a>&nbsp;' + hunks + '&emsp;</p>'
                             + '\n<pre><code class="language-diff">'
                             + html.escape(block).strip() + '</code></pre>')
 output_text = '\n'.join(out_blocks)
-with open('./docs/diff.html', 'w') as f:
+with open('diff.html', 'w') as f:
     f.write(output_text)
 EOF
 cat diff.html >> CHANGES.html
