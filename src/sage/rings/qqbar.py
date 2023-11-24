@@ -2489,7 +2489,9 @@ def conjugate_shrink(v):
     return v
 
 
-def number_field_elements_from_algebraics(numbers, minimal=False, same_field=False, embedded=False, name='a', prec=53):
+def number_field_elements_from_algebraics(numbers, minimal=False,
+                                          same_field=False,
+                                          embedded=False, name='a', prec=53):
     r"""
     Given a sequence of elements of either ``AA`` or ``QQbar``
     (or a mixture), computes a number field containing all of these
@@ -2499,20 +2501,20 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
 
     INPUT:
 
-    - ``numbers`` -- a number or list of numbers.
+    - ``numbers`` -- a number or list of numbers
 
     - ``minimal`` -- Boolean (default: ``False``). Whether to minimize the
-      degree of the extension.
+      degree of the extension
 
-    - ``same_field`` -- Boolean (default: ``False``). See below.
+    - ``same_field`` -- Boolean (default: ``False``). See below
 
     - ``embedded`` -- Boolean (default: ``False``). Whether to make the
-      NumberField embedded.
+      NumberField embedded
 
-    - ``name`` -- string (default: ``'a'``); name of the primitive element.
+    - ``name`` -- string (default: ``'a'``); name of the primitive element
 
     - ``prec`` -- integer (default: ``53``). The number of bit of precision
-      to guarantee finding real roots.
+      to guarantee finding real roots
 
     OUTPUT:
 
@@ -3260,8 +3262,8 @@ class AlgebraicGenerator(SageObject):
 
         INPUT:
 
-        - ``other`` - an algebraic number.
-        - ``name`` - string (default: ``'a'``); a name for the primitive element.
+        - ``other`` - an algebraic number
+        - ``name`` - string (default: ``'a'``); a name for the primitive element
 
         EXAMPLES::
 
