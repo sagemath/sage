@@ -70,7 +70,7 @@ character-by-character::
 
 import os
 import time
-from IPython import get_ipython
+from IPython.core.getipython import get_ipython
 
 from sage.repl.load import load, load_wrap
 import sage.repl.inputhook

@@ -20,7 +20,7 @@ import errno
 import contextlib
 import io
 
-from IPython import get_ipython
+from IPython.core.getipython import get_ipython
 from IPython.terminal.pt_inputhooks import register
 
 import sage.repl.attach
