@@ -132,7 +132,7 @@ jobs:
         run: |
           set -ex
           DOC_DIR=/sage/local/share/doc/sage/html
-          .ci/create-doc-diffs-page.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR
+          .ci/create-changes-html.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
           # We also need to replace the symlinks because netlify is not following them
