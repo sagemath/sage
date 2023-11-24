@@ -661,12 +661,15 @@ class CFiniteSequence(FieldElement,
             (quo, num) = num.quo_rem(den)
             P = self.parent().polynomial_ring()
             x = self.parent().gen()
-            m = n
-            while m:
-                num = P((num * den(-x)).list()[m % 2::2])
+            if quo.degree() < n:
+                wp = 0
+            else:
+                wp = quo[n]
+            while n:
+                num = P((num * den(-x)).list()[n % 2::2])
                 den = P((den * den(-x)).list()[::2])
-                m //= 2
-            return quo[n] + num[0] / den[0]
+                n //= 2
+            return wp + num[0] / den[0]
         else:
             raise TypeError("invalid argument type")
 
