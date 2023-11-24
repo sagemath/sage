@@ -9,7 +9,6 @@ BASE_DOC_COMMIT="$1"
 DOC_REPOSITORY="$2"
 
 mkdir -p ./docs
-(cd $DOC_REPOSITORY && git commit -a -m 'new')
 # Wipe out chronic diffs between old doc and new doc
 (cd $DOC_REPOSITORY && find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
 # Create CHANGES.html
@@ -57,34 +56,34 @@ echo '<body>' >> ./docs/CHANGES.html
 /sage/sage -python - << EOF
 import os, re, html
 with open('./docs/diff.txt', 'r') as f:
-diff_text = f.read()
+    diff_text = f.read()
 diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
 out_blocks = []
 for block in diff_blocks:
-  match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
-  if match:
-    path = 'html/' + match.group(1)
-    file_path = os.path.join('/sage/local/share/doc/sage', path)
-    with open(file_path, 'r') as file:
-      content = file.readlines()
-      count = 0
-      for line in block.splitlines():
-        if line.startswith('@@ -'):
-          line_number = int(re.search(r'@@ -(\d+)', line).group(1))
-          for i in range(line_number, -1, -1):
-            if content[i].startswith('<'):
-              count += 1
-              content[i] = f'<span id="hunk{count}" style="visibility: hidden;"></span>' + content[i]
-              break
-    with open(file_path, 'w') as file:
-      file.writelines(content)
-    hunks = '&nbsp;'.join(f'<a href="{path}#hunk{i+1}" class="hunk" target="_blank">#{i+1}</a>' for i in range(count))
-    out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&nbsp;' + hunks + '&emsp;</p>'
-                      + '\n<pre><code class="language-diff">'
-                      + html.escape(block).strip() + '</code></pre>')
+    match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
+    if match:
+        path = 'html/' + match.group(1)
+        file_path = os.path.join('$DOC_REPOSITORY/..', path)
+        with open(file_path, 'r') as file:
+            content = file.readlines()
+        count = 0
+        for line in block.splitlines():
+            if line.startswith('@@ -'):
+                line_number = int(re.search(r'@@ -(\d+)', line).group(1))
+                for i in range(line_number, -1, -1):
+                    if content[i].startswith('<'):
+                        count += 1
+                        content[i] = f'<span id="hunk{count}" style="visibility: hidden;"></span>' + content[i]
+                        break
+        with open(file_path, 'w') as file:
+            file.writelines(content)
+        hunks = '&nbsp;'.join(f'<a href="{path}#hunk{i+1}" class="hunk" target="_blank">#{i+1}</a>' for i in range(count))
+        out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&nbsp;' + hunks + '&emsp;</p>'
+                            + '\n<pre><code class="language-diff">'
+                            + html.escape(block).strip() + '</code></pre>')
 output_text = '\n'.join(out_blocks)
 with open('./docs/diff.html', 'w') as f:
-f.write(output_text)
+    f.write(output_text)
 EOF
 cat ./docs/diff.html >> ./docs/CHANGES.html
 echo '</body>' >> ./docs/CHANGES.html

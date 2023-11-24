@@ -132,6 +132,7 @@ jobs:
         run: |
           set -ex
           DOC_DIR=/sage/local/share/doc/sage/html
+          (cd $DOC_DIR && git commit -a -m 'new')
           .ci/create-changes-html.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR
           # For some reason the deploy step below cannot find /sage/...
           # So copy everything from there to local folder
