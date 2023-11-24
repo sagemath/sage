@@ -1,5 +1,5 @@
-Python interface to Frank Lübeck's Conway polynomial database
-===================================================================
+conway_polynomials: Python interface to Frank Lübeck's Conway polynomial database
+=================================================================================
 
 Description
 -----------
