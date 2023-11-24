@@ -459,11 +459,15 @@ class DocTestController(SageObject):
                 options.hide.discard('all')
                 from sage.features.all import all_features
                 feature_names = {f.name for f in all_features() if not f.is_standard()}
+                from sage.doctest.external import external_software
+                feature_names.difference_update(external_software)
                 options.hide = options.hide.union(feature_names)
             if 'optional' in options.hide:
                 options.hide.discard('optional')
                 from sage.features.all import all_features
                 feature_names = {f.name for f in all_features() if f.is_optional()}
+                from sage.doctest.external import external_software
+                feature_names.difference_update(external_software)
                 options.hide = options.hide.union(feature_names)
 
         options.disabled_optional = set()

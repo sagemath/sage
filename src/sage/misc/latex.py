@@ -30,7 +30,7 @@ import os
 import random
 import re
 import shutil
-from subprocess import call, PIPE
+from subprocess import call, run, PIPE
 from tempfile import TemporaryDirectory
 
 from sage.misc.cachefunc import cached_function, cached_method
@@ -1924,27 +1924,48 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     if pdflatex or (viewer == "pdf" and engine == "latex"):
         engine = "pdflatex"
     # command line or notebook with viewer
-    with TemporaryDirectory() as tmp:
-        tex_file = os.path.join(tmp, "sage.tex")
-        with open(tex_file, 'w') as file:
-            file.write(s)
-        suffix = _run_latex_(tex_file, debug=debug, engine=engine, png=False)
-        if suffix == "pdf":
-            from sage.misc.viewer import pdf_viewer
-            viewer = pdf_viewer()
-        elif suffix == "dvi":
-            from sage.misc.viewer import dvi_viewer
-            viewer = dvi_viewer()
-        else:
-            print("Latex error")
-            return
-        output_file = os.path.join(tmp, "sage." + suffix)
-        # this should get changed if we switch the stuff in misc.viewer to
-        # producing lists
-        if debug:
-            print('viewer: "{}"'.format(viewer))
-        call('%s %s' % (viewer, output_file), shell=True,
-             stdout=PIPE, stderr=PIPE)
+
+    # We can't automatically delete the temporary file in this case
+    # because we need it to live at least long enough for the viewer
+    # to open it. Since we're launching the viewer asynchronously,
+    # that would be tricky.
+    tmp = TemporaryDirectory()
+
+    tex_file = os.path.join(tmp.name, "sage.tex")
+    with open(tex_file, 'w') as file:
+        file.write(s)
+    suffix = _run_latex_(tex_file, debug=debug, engine=engine, png=False)
+    if suffix == "pdf":
+        from sage.misc.viewer import pdf_viewer
+        viewer = pdf_viewer()
+    elif suffix == "dvi":
+        from sage.misc.viewer import dvi_viewer
+        viewer = dvi_viewer()
+    else:
+        print("Latex error")
+        tmp.cleanup()
+        return
+    output_file = os.path.join(tmp.name, "sage." + suffix)
+    # this should get changed if we switch the stuff in misc.viewer to
+    # producing lists
+    if debug:
+        print('viewer: "{}"'.format(viewer))
+
+    # Return immediately but only clean up the temporary file after
+    # the viewer has closed. This function is synchronous and waits
+    # for the process to complete...
+    def run_viewer():
+        run([viewer, output_file], capture_output=True)
+        tmp.cleanup()
+
+    # ...but we execute it asynchronously so that view() completes
+    # immediately. The "daemon" flag is important because, without it,
+    # sage won't quit until the viewer does.
+    from threading import Thread
+    t = Thread(target=run_viewer)
+    t.daemon = True
+    t.start()
+
     return
 
 

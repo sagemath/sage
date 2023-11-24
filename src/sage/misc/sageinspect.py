@@ -1811,7 +1811,9 @@ def formatannotation(annotation, base_module=None):
         return annotation.__module__ + '.' + annotation.__qualname__
     return repr(annotation)
 
+
 _formatannotation = formatannotation
+
 
 def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        kwonlyargs=(), kwonlydefaults=None, annotations={},
