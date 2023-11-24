@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.rings.number_field sage.rings.padics
 r"""
-Solve for the `S`-unit equation `x + y = 1`
+Solver for the `S`-unit equation `x + y = 1`
 
 Inspired by works of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the
 LLL methods to implement an algorithm that returns all `S`-unit solutions to
