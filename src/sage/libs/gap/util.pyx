@@ -194,9 +194,10 @@ cdef initialize():
 
     .. NOTE::
 
-        Additional initialization commands (e.g., bug fixes/workarounds 
-        and/or any Sage-specific patches) can be put in 
+        Additional initialization commands (e.g., bug fixes/workarounds
+        and/or any Sage-specific patches) can be put in
         ``sage.gaprc`` (in the same folder as this file here).
+        This is similar to `GAP's ini file <https://docs.gap-system.org/doc/ref/chap3_mj.html#X87DF11C885E73583>`_.
 
     TESTS::
 
