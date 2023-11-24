@@ -1,23 +1,22 @@
 #!/bin/sh
 if [ $# != 2 ]; then
     echo >&2 "usage: $0 BASE_DOC_COMMIT DOC_REPOSITORY"
-    echo >&2 "creates CHANGES.html in the docs subdirectory"
+    echo >&2 "creates CHANGES.html in the current directory"
     echo >&2 "for the diffs of DOC_REPOSITORY against BASE_DOC_COMMIT"
     exit 1
 fi
 BASE_DOC_COMMIT="$1"
 DOC_REPOSITORY="$2"
 
-mkdir -p ./docs
 # Wipe out chronic diffs between old doc and new doc
 (cd $DOC_REPOSITORY && find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
 # Create CHANGES.html
-echo '<html>' > ./docs/CHANGES.html
-echo '<head>' >> ./docs/CHANGES.html
-echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/CHANGES.html
-echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/CHANGES.html
-echo '<script>hljs.highlightAll();</script>' >> ./docs/CHANGES.html
-cat >> ./docs/CHANGES.html << EOF
+echo '<html>' > CHANGES.html
+echo '<head>' >> CHANGES.html
+echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> CHANGES.html
+echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> CHANGES.html
+echo '<script>hljs.highlightAll();</script>' >> CHANGES.html
+cat >> CHANGES.html << EOF
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 const diffSite = 'https://pianomister.github.io/diffsite'
@@ -50,9 +49,9 @@ diffParagraphs.forEach(paragraph => {
 });
 </script>
 EOF
-echo '</head>' >> ./docs/CHANGES.html
-echo '<body>' >> ./docs/CHANGES.html
-(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html; rm -rf .git) > ./docs/diff.txt
+echo '</head>' >> CHANGES.html
+echo '<body>' >> CHANGES.html
+(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html) > diff.txt
 /sage/sage -python - << EOF
 import os, re, html
 with open('./docs/diff.txt', 'r') as f:
@@ -85,7 +84,7 @@ output_text = '\n'.join(out_blocks)
 with open('./docs/diff.html', 'w') as f:
     f.write(output_text)
 EOF
-cat ./docs/diff.html >> ./docs/CHANGES.html
-echo '</body>' >> ./docs/CHANGES.html
-echo '</html>' >>./docs/CHANGES.html
-rm ./docs/diff.txt ./docs/diff.html
+cat diff.html >> CHANGES.html
+echo '</body>' >> CHANGES.html
+echo '</html>' >> CHANGES.html
+rm diff.txt diff.html

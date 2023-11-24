@@ -134,9 +134,11 @@ jobs:
           DOC_DIR=/sage/local/share/doc/sage/html
           (cd $DOC_DIR && git commit -a -m 'new')
           .ci/create-changes-html.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR
-          # For some reason the deploy step below cannot find /sage/...
-          # So copy everything from there to local folder
+          (cd $DOC_DIR && rm -rf .git)
+          # We copy everything to a local folder
           # We also need to replace the symlinks because netlify is not following them
+          mkdir -p ./docs
+          mv CHANGES.html ./docs
           cp -r -L $DOC_DIR ./docs
           cp  $DOC_DIR/../index.html ./docs
           # Zip everything for increased performance
