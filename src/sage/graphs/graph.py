@@ -422,7 +422,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
 from sage.graphs.generic_graph import GenericGraph, _weight_if_real, _weight_1
-from sage.graphs.digraph import DiGraph
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
@@ -3514,6 +3513,7 @@ class Graph(GenericGraph):
         if name:
             name = 'An orientation of ' + name
 
+        from sage.graphs.digraph import DiGraph
         if not self.size():
             D = DiGraph(data=[self.vertices(sort=False), []],
                         format='vertices_and_edges',

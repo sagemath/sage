@@ -64,8 +64,6 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
         ...
         ValueError: parameter 'loops' can be set to True only when 'directed' is True
     """
-    from sage.graphs.graph import Graph, DiGraph
-
     if seed is not None:
         set_random_seed(seed)
 
@@ -75,8 +73,10 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
     cdef int pp = int(round(float(p * RAND_MAX_f)))
 
     if directed:
+        from sage.graphs.digraph import DiGraph
         G = DiGraph(loops=loops)
     else:
+        from sage.graphs.graph import Graph
         G = Graph()
         if loops:
             raise ValueError("parameter 'loops' can be set to True only when 'directed' is True")
