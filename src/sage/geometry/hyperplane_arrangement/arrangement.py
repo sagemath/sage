@@ -367,12 +367,17 @@ arrangements.
 
 from sage.combinat.permutation import Permutation
 from sage.geometry.hyperplane_arrangement.hyperplane import AmbientVectorSpace, Hyperplane
+from sage.misc.misc_c import prod
+from sage.groups.free_group import FreeGroup
 from sage.matrix.constructor import matrix, vector
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import VectorSpace
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
+from sage.schemes.curves.plane_curve_arrangement import AffinePlaneCurveArrangements
+from sage.schemes.curves.plane_curve_arrangement import ProjectivePlaneCurveArrangements
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
@@ -3714,8 +3719,10 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         #         raise ValueError("not all elements are hyperplanes")
         #     if not all(h.parent() is self.parent().ambient_space() for h in hyperplanes):
         #         raise ValueError("not all hyperplanes are in the ambient space")
-        self._fundamental_group_ = None
-        self._meridians_ = None
+        self._affine_fundamental_group_ = None
+        self._affine_meridians_ = None
+        self._projective_fundamental_group_ = None
+        self._projective_meridians_ = None
 
     def hyperplane_section(self, proj=True):
         r"""
@@ -3809,186 +3816,238 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         H1 = self.add_hyperplane(h0)
         return H1.restriction(h0)
 
-    def _plane_fundamental_group_(self, proj=False):
+    def affine_fundamental_group(self):
         r"""
         It computes the fundamental group of the complement of an affine
-        hyperplane arrangement in `\mathbb{C}^n`, or a projective hyperplane
-        arrangement in `\mathbb{CP}^n`, `n=1,2`, whose equations have
-        coefficients in a subfield of `\overline{\mathbb{Q}}``
-
-        INPUT:
-
-        - ``proj`` -- (optional, default ``False``). It decides if it computes the
-          fundamental group of the complement in the affine or projective space
+        hyperplane arrangement in `\mathbb{C}^n` whose equations have
+        coefficients in a subfield of `\overline{\mathbb{Q}`
 
         OUTPUT:
 
-        A group finitely presented with the assignation of each hyperplane to
-        a member of a group (meridian).
+        A finitely presented group.
 
         EXAMPLES::
 
+            sage: # needs sirocco
             sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
             sage: L = [y + x, y + x - 1]
             sage: H = A(L)
-            sage: G, dic = H._plane_fundamental_group_(); G                                   # optional - sirocco
+            sage: H.affine_fundamental_group()
             Finitely presented group < x0, x1 |  >
             sage: L = [x, y, x + 1, y + 1, x - y]
-            sage: H = A(L); list(H)
-            [Hyperplane x + 0*y + 0,
-             Hyperplane 0*x + y + 0,
-             Hyperplane x + 0*y + 1,
-             Hyperplane 0*x + y + 1,
-             Hyperplane x - y + 0]
-            sage: G, dic = H._plane_fundamental_group_()                                      # optional - sirocco
-            sage: G.simplified()                                                        # optional - sirocco
-            Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1,
-                                       x2^-1*x0^-1*x2*x4*x0*x4^-1,
-                                       x0*x1*x3*x0^-1*x3^-1*x1^-1,
-                                       x0*x2*x4*x2^-1*x0^-1*x4^-1,
-                                       x0*x1^-1*x0^-1*x3^-1*x1*x3,
-                                       x4^-1*x3^-1*x1*x3*x4*x3^-1*x1^-1*x3 >
-            sage: dic                                                                   # optional - sirocco
-                {0: [x2], 1: [x4], 2: [x1], 3: [x3], 4: [x0], 5: [x4^-1*x3^-1*x2^-1*x1^-1*x0^-1]}
-            sage: H=A(x,y,x+y)
-            sage: H._plane_fundamental_group_()                                               # optional - sirocco
-            (Finitely presented group < x0, x1, x2 | x1*x2*x0*x2^-1*x1^-1*x0^-1, x1*x0^-1*x2^-1*x1^-1*x2*x0 >,
-             {0: [x0], 1: [x2], 2: [x1], 3: [x2^-1*x1^-1*x0^-1]})
-            sage: H._plane_fundamental_group_(proj=True)                                      # optional - sirocco
-            (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
-            sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
-            sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
-            sage: G, dic = H._plane_fundamental_group_(proj=True)                             # optional - sage.graphs, sirocco
-            sage: h = G.simplification_isomorphism()                                    # optional - sage.graphs, sirocco
-            sage: G.simplified()                                                        # optional - sage.graphs, sirocco
-            Finitely presented group < x0, x1, x3, x4, x5 | x0*x3*x0^-1*x3^-1,
-                                                            x1*x4*x1^-1*x4^-1,
-                                                            x1*x5*x1^-1*x0^-1*x5^-1*x0,
-                                                            x5*x3*x4*x3^-1*x5^-1*x4^-1,
-                                                            x5^-1*x1^-1*x0*x1*x5*x0^-1,
-                                                            x4*x5^-1*x4^-1*x3^-1*x5*x3 >
-            sage: {j: h(dic[j][0]) for j in dic.keys()}                                 # optional - sage.graphs, sirocco
-            {0: x5, 1: x0, 2: x1, 3: x3, 4: x4, 5: x0^-1*x5^-1*x4^-1*x1^-1*x3^-1}
+            sage: A(L).affine_fundamental_group()
+            Finitely presented group
+            < x0, x1, x2, x3, x4 | x4*x0*x4^-1*x0^-1,
+                                   x0*x2*x3*x2^-1*x0^-1*x3^-1,
+                                   x1*x2*x4*x2^-1*x1^-1*x4^-1,
+                                   x2*x3*x0*x2^-1*x0^-1*x3^-1,
+                                   x2*x4*x1*x2^-1*x1^-1*x4^-1,
+                                   x4*x1*x4^-1*x3^-1*x2^-1*x1^-1*x2*x3 >
+            sage: H = A(x, y, x + y)
+            sage: H.affine_fundamental_group()
+            Finitely presented group
+            < x0, x1, x2 | x0*x1*x2*x1^-1*x0^-1*x2^-1, x1*x2*x0*x1^-1*x0^-1*x2^-1 >
 
         .. WARNING::
 
             This functionality requires the sirocco package to be installed.
         """
-        from sage.groups.free_group import FreeGroup
-        from sage.rings.qqbar import QQbar
-        from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
-        n = self.dimension()
-        r = len(self)
-        affine = n == 2 and not proj
-        projective = n == 3 and self.is_central() and proj
-        if (n == 1 and not proj) or (n == 2 and proj and self.is_central()):
-            r1 = r - proj
-            G = FreeGroup(r1) / []
-            dic = {j: (j,) for j in range(1, r)}
-            dic[r] = tuple(-j for j in reversed(range(1, r)))
-            return (G, dic)
-        casos = affine or projective
-        if not casos:
-            raise TypeError('The method does not apply')
         K = self.base_ring()
         if not K.is_subring(QQbar):
             raise TypeError('the base field is not in QQbar')
-        S = self.parent().ambient_space().symmetric_space()
-        if projective:
-            S = PolynomialRing(K, S.gens()[:-1])
-        infinity = [0, 0, 0, 1] == self[0].primitive().coefficients()
-        L = []
-        for h in self:
-            coeff = h.coefficients()
-            if projective:
-                coeff = (coeff[3], coeff[1], coeff[2])
-            V = (1,) + S.gens()
-            p = S.sum(V[i]*c for i, c in enumerate(coeff))
-            if p.degree() > 0:
-                L.append(p)
-        G, dic = fundamental_group_arrangement(L, puiseux=True, projective=projective and not infinity, simplified=False)
-        if infinity:
-            p = Permutation([r] + [j for j in range(1, r)])
-            dic = {j: dic[p(j + 1) - 1] for j in range(r)}
-        return (G, dic)
+        if self._affine_fundamental_group_:
+            return self._affine_fundamental_group_
+        n = self.dimension()
+        r = len(self)
+        if n == 0:
+            print("Only empty arrangements for dimension ", n)
+            return None
+        if n == 1:
+            G = FreeGroup(r) / []
+            dic = {j: G.gen(j) for j in range(r)}
+            dic[r] = [prod(G.gens()) ** -1]
+            self._affine_fundamental_group_ = G
+            self._affine_meridians_ = dic
+            return G
+        if n == 2:
+            S = self.parent().ambient_space().symmetric_space()
+            coord = vector((1,) + S.gens())
+            Af = AffinePlaneCurveArrangements(K,
+                                              names=self.parent().variable_names())
+            L = Af([vector(line.coefficients()) * coord for line in self])
+            G = L.fundamental_group()
+            self._affine_fundamental_group_ = G
+            self._affine_meridians_ = L._meridians_vertical_simplified
+            return G
+        H1 = self.hyperplane_section(proj=False)
+        G = H1.affine_fundamental_group()
+        self._affine_fundamental_group_ = G
+        self._affine_meridians_ = H1._affine_meridians_
+        return G
 
-    def fundamental_group(self, projective=False):
+    def affine_meridians(self):
         r"""
-        It computes the fundamental group of the complement of an affine
-        hyperplane arrangement in `\mathbb{C}^n`, or a projective hyperplane
-        arrangement in `\mathbb{CP}^n`, whose equations have
+        It assigns to each hyperplane (including the one at infinity)
+        a meridian in the fundamental group,
+        of the complement, for a hyperplane arrangement in
+        `\mathbb{C}^n` whose equations have
         coefficients in a subfield of `\overline{\mathbb{Q}`
-
-        INPUT:
-
-        - ``projective`` -- (optional, default ``False``). It decides if it computes the
-          fundamental group of the complement in the affine or projective space
 
         OUTPUT:
 
-        A group finitely presented with the assignation of each hyperplane to
-        a member of a group (meridian).
+        A dictionary
 
         EXAMPLES::
 
+            sage: # needs sirocco
             sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
             sage: L = [y + x, y + x - 1]
             sage: H = A(L)
-            sage: G, dic = H.fundamental_group(); G                                     # optional - sirocco
-            Finitely presented group < x0, x1 |  >
+            sage: H.affine_meridians()
+            {0: [x0], 1: [x1], 2: [x1^-1*x0^-1]}
             sage: L = [x, y, x + 1, y + 1, x - y]
-            sage: H = A(L); list(H)
-            [Hyperplane x + 0*y + 0,
-             Hyperplane 0*x + y + 0,
-             Hyperplane x + 0*y + 1,
-             Hyperplane 0*x + y + 1,
-             Hyperplane x - y + 0]
-            sage: G, dic = H.fundamental_group()                                        # optional - sirocco
-            sage: G.simplified()                                                        # optional - sirocco
-            Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1,
-                                                            x2^-1*x0^-1*x2*x4*x0*x4^-1,
-                                                            x0*x1*x3*x0^-1*x3^-1*x1^-1,
-                                                            x0*x2*x4*x2^-1*x0^-1*x4^-1,
-                                                            x0*x1^-1*x0^-1*x3^-1*x1*x3,
-                                                            x4^-1*x3^-1*x1*x3*x4*x3^-1*x1^-1*x3 >
-            sage: dic                                                                   # optional - sirocco
-            {0: [x2], 1: [x4], 2: [x1], 3: [x3], 4: [x0], 5: [x4^-1*x3^-1*x2^-1*x1^-1*x0^-1]}
-            sage: H=A(x,y,x+y)
-            sage: H.fundamental_group()                                                 # optional - sirocco
-            (Finitely presented group < x0, x1, x2 | x1*x2*x0*x2^-1*x1^-1*x0^-1,
-                                                     x1*x0^-1*x2^-1*x1^-1*x2*x0 >,
-             {0: [x0], 1: [x2], 2: [x1], 3: [x2^-1*x1^-1*x0^-1]})
-            sage: H.fundamental_group(projective=True)                                  # optional - sirocco
-            (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
-            sage: A.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
-            sage: H = A(hyperplane_arrangements.braid(4))                                  # optional - sage.groups
-            sage: G, dic = H.fundamental_group(projective=True)                         # optional - sirocco, sage.groups
-            sage: h = G.simplification_isomorphism()                                    # optional - sirocco, sage.groups
-            sage: G.simplified()                                                        # optional - sirocco, sage.groups
-            Finitely presented group < x0, x1, x3, x4, x5 | x0*x3*x0^-1*x3^-1, x1*x4*x1^-1*x4^-1,
-                                                            x1*x5*x1^-1*x0^-1*x5^-1*x0,
-                                                            x5*x3*x4*x3^-1*x5^-1*x4^-1,
-                                                            x5^-1*x1^-1*x0*x1*x5*x0^-1,
-                                                            x4*x5^-1*x4^-1*x3^-1*x5*x3 >
-            sage: {j: h(dic[j][0]) for j in dic.keys()}                                 # optional - sirocco, sage.groups
-            {0: x5, 1: x0, 2: x1, 3: x0^-1*x5^-1*x4^-1*x1^-1*x3^-1, 4: x4, 5: x3}
-            sage: H = hyperplane_arrangements.coordinate(5)
+            sage: H = A(L)
+            sage: H.affine_meridians()
+            {0: [x4], 1: [x1], 2: [x3], 3: [x0], 4: [x2], 5: [x4^-1*x3^-1*x2^-1*x1^-1*x0^-1]}
+            sage: H = A(x, y, x + y)
+            sage: H.affine_meridians()
+            {0: [x2], 1: [x1], 2: [x0], 3: [x2^-1*x1^-1*x0^-1]}
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        if not self._affine_meridians_:
+            self.affine_fundamental_group()
+        return self._affine_meridians_
+
+    def projective_fundamental_group(self):
+        r"""
+        It computes the fundamental group of the complement of a projective
+        hyperplane arrangement in `\mathbb{P}^n` whose equations have
+        coefficients in a subfield of `\overline{\mathbb{Q}`.
+
+        OUTPUT:
+
+        A finitely presented group.
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
+            sage: H = A(x, y, x + y)
+            sage: H.projective_fundamental_group()
+            Finitely presented group < x0, x1 |  >
+            sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
+            sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
+            sage: G3 = H.projective_fundamental_group(); G3                                 # optional - sage.graphs
+            Finitely presented group
+            < x0, x1, x2, x3, x4 | x0*x2*x0^-1*x2^-1, x1*x3*x1^-1*x3^-1,
+                                   x1*x4*x1^-1*x0^-1*x4^-1*x0,
+                                   x4*x2*x3*x2^-1*x4^-1*x3^-1,
+                                   x4^-1*x1^-1*x0*x1*x4*x0^-1,
+                                   x3*x4^-1*x3^-1*x2^-1*x4*x2 >
+            sage: G3.abelian_invariants()                                                    # optional - sage.graphs
+            (0, 0, 0, 0, 0)
+            sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
+            sage: H = A4(hyperplane_arrangements.braid(4))                                   # optional - sage.graphs
+            sage: G4 = H.projective_fundamental_group(); G4                                  # optional - sage.graphs
+            Finitely presented group
+            < x0, x1, x2, x3, x4 | x0*x2*x0^-1*x2^-1, x1*x3*x1^-1*x3^-1,
+                                   x1*x4*x1^-1*x0^-1*x4^-1*x0,
+                                   x4*x2*x3*x2^-1*x4^-1*x3^-1,
+                                   x4^-1*x1^-1*x0*x1*x4*x0^-1,
+                                   x3*x4^-1*x3^-1*x2^-1*x4*x2 >
+            sage: G4.abelian_invariants()                                                    # optional - sage.graphs
+            (0, 0, 0, 0, 0)
             sage: L.<t0, t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
+            sage: H = hyperplane_arrangements.coordinate(5)
             sage: H = L(H)
-            sage: g = H.fundamental_group(projective=True)[0]                           # optional - sirocco
-            sage: g.is_abelian(), g.abelian_invariants()                                # optional - sirocco
+            sage: g = H.projective_fundamental_group()
+            sage: g.is_abelian(), g.abelian_invariants()
             (True, (0, 0, 0, 0))
 
         .. WARNING::
 
             This functionality requires the sirocco package to be installed.
         """
+        K = self.base_ring()
+        if not K.is_subring(QQbar):
+            raise TypeError('the base field is not in QQbar')
+        if not self.is_central():
+            raise TypeError('the arrangement is not projective')
+        if self._projective_fundamental_group_:
+            return self._projective_fundamental_group_
         n = self.dimension()
-        if n <= 2 or (n == 3 and projective):
-            return self._plane_fundamental_group_(proj=projective)
-        H1 = self.hyperplane_section(proj=projective)
-        H2, dic = H1.fundamental_group(projective=projective)
-        return (H2, dic)
+        r = len(self)
+        if n == 1:
+            print("Only empty arrangements for dimension ", n - 1)
+            return None
+        if n == 2:
+            G = FreeGroup(r - 1) / []
+            dic = {j: G.gen(j) for j in range(r - 1)}
+            dic[r - 1] = [prod(G.gens()) ** -1]
+            self._projective_fundamental_group_ = G
+            self._projective_meridians_ = dic
+            return G
+        if n == 3:
+            S = self.parent().ambient_space().symmetric_space()
+            coord = vector(S.gens())
+            Proj = ProjectivePlaneCurveArrangements(K,
+                                                    names=self.parent().variable_names())
+            L = Proj([vector(line.coefficients()[1:]) * coord for line in self])
+            G = L.fundamental_group()
+            self._projective_fundamental_group_ = G
+            self._projective_meridians_ = L._meridians_simplified
+            return G
+        H1 = self.hyperplane_section()
+        G = H1.projective_fundamental_group()
+        self._projective_fundamental_group_ = G
+        self._projective_meridians_ = H1._projective_meridians_
+        return G
+
+    def projective_meridians(self):
+        r"""
+        It assigns to each hyperplane
+        a meridian in the fundamental group,
+        of the complement, for a hyperplane arrangement in
+        `\mathbb{P}^n` whose equations have
+        coefficients in a subfield of `\overline{\mathbb{Q}`
+
+        OUTPUT:
+
+        A dictionary
+
+        EXAMPLES::
+
+            sage: # needs sirocco
+            sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
+            sage: H = A(x, y, x + y)
+            sage: H.projective_meridians()
+            {0: x0, 1: x1, 2: [x1^-1*x0^-1]}
+            sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
+            sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
+            sage: H.projective_meridians()                                                  # optional - sage.graphs
+            {0: [x4], 1: [x0], 2: [x1], 3: [x2], 4: [x3],
+             5: [x0^-1*x4^-1*x3^-1*x1^-1*x2^-1]}
+            sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
+            sage: H = A4(hyperplane_arrangements.braid(4))                                   # optional - sage.graphs
+            sage: H.projective_meridians()                                                   # optional - sage.graphs
+            {0: [x4], 1: [x0], 2: [x1], 3: [x0^-1*x4^-1*x3^-1*x1^-1*x2^-1],
+             4: [x3], 5: [x2]}
+            sage: L.<t0, t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
+            sage: H = hyperplane_arrangements.coordinate(5)
+            sage: H = L(H)
+            sage: H.projective_meridians()
+            {0: [x2], 1: [x3], 2: [x0], 3: [x3^-1*x2^-1*x1^-1*x0^-1], 4: [x1]}
+
+        .. WARNING::
+
+            This functionality requires the sirocco package to be installed.
+        """
+        if not self._projective_meridians_:
+            self.projective_fundamental_group()
+        return self._projective_meridians_
 
 
 class HyperplaneArrangements(Parent, UniqueRepresentation):

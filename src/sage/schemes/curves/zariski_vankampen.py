@@ -1593,14 +1593,16 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         ....:       s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1,
         ....:       (s0*s1)^2]
         sage: g = fundamental_group_from_braid_mon(bm, projective=True); g
-        Finitely presented group < x0, x1 | x1*x0^2*x1, x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
+        Finitely presented group < x0, x1 | x1*x0^2*x1,
+                                            x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
         sage: print (g.order(), g.abelian_invariants())
         12 (4,)
         sage: B2 = BraidGroup(2)
         sage: bm = [B2(3 * [1])]
         sage: g = fundamental_group_from_braid_mon(bm, vertical=[0]); g
-        Finitely presented group < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1,
-                                                x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
+        Finitely presented group
+        < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1,
+                       x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
         sage: fundamental_group_from_braid_mon([]) is None
         True
         sage: fundamental_group_from_braid_mon([], degree=2)
@@ -1708,7 +1710,8 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: R.<x, y> = QQ[]
         sage: f = y^3 + x^3
         sage: fundamental_group(f)
-        Finitely presented group < x0, x1, x2 | x0*x1*x2*x0^-1*x2^-1*x1^-1, x2*x0*x1*x2^-1*x1^-1*x0^-1 >
+        Finitely presented group < x0, x1, x2 | x0*x1*x2*x0^-1*x2^-1*x1^-1,
+                                                x2*x0*x1*x2^-1*x1^-1*x0^-1 >
 
     It is also possible to have coefficients in a number field with a
     fixed embedding in `\overline{\mathbb{Q}}`::
@@ -1736,7 +1739,8 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: g = fundamental_group(f, puiseux=True); g.sorted_presentation()
         Finitely presented group
          < x0, x1, x2, x3 | x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2,
-                            x3^-1*x2^-1*x1*x2, x2^-1*x1^-1*x0^-1*x1*x2*x1, x2^-1*x0 >
+                            x3^-1*x2^-1*x1*x2, x2^-1*x1^-1*x0^-1*x1*x2*x1,
+                            x2^-1*x0 >
         sage: g.simplified().sorted_presentation()
         Finitely presented group < x0, x1 | x1^-2*x0^2, (x1^-1*x0)^3 >
         sage: g = fundamental_group(f, puiseux=True, projective=True)
@@ -1824,18 +1828,21 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         sage: g, dic = fundamental_group_arrangement(flist)
         sage: g.sorted_presentation()
         Finitely presented group
-         < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x2^-1*x0^-1*x2^-1*x0*x2*x0, x1^-1*x0^-1*x1*x0 >
+         < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x2^-1*x0^-1*x2^-1*x0*x2*x0,
+                        x1^-1*x0^-1*x1*x0 >
         sage: dic
         {0: [x0, x2], 1: [x1], 2: [x0^-1*x2^-1*x1^-1*x0^-1]}
         sage: g, dic = fundamental_group_arrangement(flist, simplified=False)
         sage: g.sorted_presentation(), dic
         (Finitely presented group
-         < x0, x1, x2, x3 | 1, 1, 1, 1, 1, 1, 1, x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
+         < x0, x1, x2, x3 | 1, 1, 1, 1, 1, 1, 1,
+                            x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
                             x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x3*x2,
                             x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2,
-                            x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2, x3^-1*x1^-1*x0*x1,
-                            x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0,
-                            x1^-1*x0^-1*x1*x0 >,
+                            x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
+                            x3^-1*x1^-1*x0*x1,
+                            x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0,
+                            x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0 >,
          {0: [x0, x2, x3], 1: [x1], 2: [x3^-1*x2^-1*x1^-1*x0^-1]})
         sage: fundamental_group_arrangement(flist, projective=True)
         (Finitely presented group < x |  >, {0: [x], 1: [x^-3]})
@@ -1848,16 +1855,16 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         (Finitely presented group < x | x^2 >, {0: [x]})
         sage: L = [x, y, x - 1, x -y]
         sage: fundamental_group_arrangement(L)
-        (Finitely presented group < x0, x1, x2, x3 | x2*x3^-1*x2^-1*x3,
-                                                     x0*x1*x3*x0^-1*x3^-1*x1^-1,
-                                                     x3*x0*x1*x3^-1*x1^-1*x0^-1,
-                                                     x1*x2*x1^-1*x0*x1*x2^-1*x1^-1*x0^-1 >,
+        (Finitely presented group
+         < x0, x1, x2, x3 | x2*x3^-1*x2^-1*x3, x0*x1*x3*x0^-1*x3^-1*x1^-1,
+                            x3*x0*x1*x3^-1*x1^-1*x0^-1,
+                            x1*x2*x1^-1*x0*x1*x2^-1*x1^-1*x0^-1 >,
          {0: [x1], 1: [x3], 2: [x2], 3: [x0]})
         sage: fundamental_group_arrangement(L, vertical=True)
-        (Finitely presented group < x0, x1, x2, x3 | x3*x0*x3^-1*x0^-1,
-                                                     x3*x1*x3^-1*x1^-1,
-                                                     x1*x2*x0*x2^-1*x1^-1*x0^-1,
-                                                     x1*x2*x0*x1^-1*x0^-1*x2^-1 >,
+        (Finitely presented group
+         < x0, x1, x2, x3 | x3*x0*x3^-1*x0^-1, x3*x1*x3^-1*x1^-1,
+                            x1*x2*x0*x2^-1*x1^-1*x0^-1,
+                            x1*x2*x0*x1^-1*x0^-1*x2^-1 >,
          {0: [x2], 1: [x0], 2: [x3], 3: [x1], 4: [x3^-1*x2^-1*x1^-1*x0^-1]})
     """
     if len(flist) > 0:

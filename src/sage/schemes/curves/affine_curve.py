@@ -1839,17 +1839,18 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         In the case of number fields, they need to have an embedding
         to the algebraic field::
 
-            sage: # needs sage.rings.number_field
-            sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]
+            sage: # needs sage.rings.number_field, sirocco
+            sage: T.<t> = QQ[]
+            sage: a = (t^2 + 5).roots(QQbar)[0][0]
             sage: F = NumberField(a.minpoly(), 'a', embedding=a)
             sage: F.inject_variables()
             Defining a
             sage: A.<x,y> = AffineSpace(F, 2)
             sage: C = A.curve(y^2 - a*x^3 - x^2)
-            sage: C.fundamental_group()         # optional - sirocco
+            sage: C.fundamental_group()
             Finitely presented group < x0 |  >
             sage: C = A.curve(x * (x - 1))
-            sage: C.fundamental_group()         # optional - sirocco
+            sage: C.fundamental_group()
             Finitely presented group < x0, x1 |  >
 
         .. WARNING::

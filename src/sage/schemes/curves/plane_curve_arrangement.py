@@ -447,7 +447,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A group finitely presented.
+        A finitely presented group.
 
         EXAMPLES::
 
@@ -1088,10 +1088,10 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
                 break
         affine = AffinePlaneCurveArrangements(K, names=('u', 'v'))
         u, v = affine.gens()
-        affines = [f.defining_polynomial()(x=u, y=v, z=1) for f in C]
+        affines = [f.defining_polynomial().subs({x: u, y: v, z: 1}) for f in C]
         changes = any([g.degree(v) < g.degree() > 1 for g in affines])
         while changes:
-            affines = [f(u=u + v) for f in affines]
+            affines = [f.subs({u: u + v}) for f in affines]
             changes = any([g.degree(v) < g.degree() > 1 for g in affines])
         C_affine = affine(affines)
         proj = not (infinity_divides or infinity_in_C)
