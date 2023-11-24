@@ -3669,6 +3669,54 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         always use the parent.
     """
 
+    def __init__(self, parent, hyperplanes, check=True, backend=None):
+        """
+        Construct an ordered hyperplane arrangement.
+
+        INPUT:
+
+        - ``parent`` -- the parent :class:`OrderedHyperplaneArrangements`
+
+        - ``hyperplanes`` -- a tuple of hyperplanes
+
+        - ``check`` -- boolean (optional; default ``True``); whether
+          to check input
+
+        - ``backend`` -- string (optional; default: ``None``); the backend to
+          use for the related polyhedral objects
+
+        EXAMPLES::
+
+            sage: H.<x,y> = OrderedHyperplaneArrangements(QQ)
+            sage: elt = H(x, y); elt
+            Arrangement <x | y>
+            sage: TestSuite(elt).run()
+
+        It is possible to specify a backend for polyhedral computations::
+
+            sage: # needs sage.rings.number_field
+            sage: R.<sqrt5> = QuadraticField(5)
+            sage: H = OrderedHyperplaneArrangements(R, names='xyz')
+            sage: x, y, z = H.gens()
+            sage: A = H(sqrt5*x + 2*y + 3*z, backend='normaliz')
+            sage: A.backend()
+            'normaliz'
+            sage: A.regions()[0].backend()                              # optional - pynormaliz
+            'normaliz'
+        """
+        super().__init__(parent, hyperplanes, check=check, backend=backend)
+        # self._hyperplanes = hyperplanes
+        # self._backend = backend
+        # if check:
+        #     if not isinstance(hyperplanes, tuple):
+        #         raise ValueError("the hyperplanes must be given as a tuple")
+        #     if not all(isinstance(h, Hyperplane) for h in hyperplanes):
+        #         raise ValueError("not all elements are hyperplanes")
+        #     if not all(h.parent() is self.parent().ambient_space() for h in hyperplanes):
+        #         raise ValueError("not all hyperplanes are in the ambient space")
+        self._fundamental_group_ = None
+        self._meridians_ = None
+
     def hyperplane_section(self, proj=True):
         r"""
         It computes a generic hyperplane section of ``self``, an arrangement
@@ -3761,7 +3809,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         H1 = self.add_hyperplane(h0)
         return H1.restriction(h0)
 
-    def _fundamental_group_(self, proj=False):
+    def _plane_fundamental_group_(self, proj=False):
         r"""
         It computes the fundamental group of the complement of an affine
         hyperplane arrangement in `\mathbb{C}^n`, or a projective hyperplane
@@ -3783,7 +3831,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
             sage: L = [y + x, y + x - 1]
             sage: H = A(L)
-            sage: G, dic = H._fundamental_group_(); G                                   # optional - sirocco
+            sage: G, dic = H._plane_fundamental_group_(); G                                   # optional - sirocco
             Finitely presented group < x0, x1 |  >
             sage: L = [x, y, x + 1, y + 1, x - y]
             sage: H = A(L); list(H)
@@ -3792,7 +3840,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
              Hyperplane x + 0*y + 1,
              Hyperplane 0*x + y + 1,
              Hyperplane x - y + 0]
-            sage: G, dic = H._fundamental_group_()                                      # optional - sirocco
+            sage: G, dic = H._plane_fundamental_group_()                                      # optional - sirocco
             sage: G.simplified()                                                        # optional - sirocco
             Finitely presented group < x0, x1, x2, x3, x4 | x3*x2*x3^-1*x2^-1,
                                        x2^-1*x0^-1*x2*x4*x0*x4^-1,
@@ -3803,14 +3851,14 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: dic                                                                   # optional - sirocco
                 {0: [x2], 1: [x4], 2: [x1], 3: [x3], 4: [x0], 5: [x4^-1*x3^-1*x2^-1*x1^-1*x0^-1]}
             sage: H=A(x,y,x+y)
-            sage: H._fundamental_group_()                                               # optional - sirocco
+            sage: H._plane_fundamental_group_()                                               # optional - sirocco
             (Finitely presented group < x0, x1, x2 | x1*x2*x0*x2^-1*x1^-1*x0^-1, x1*x0^-1*x2^-1*x1^-1*x2*x0 >,
              {0: [x0], 1: [x2], 2: [x1], 3: [x2^-1*x1^-1*x0^-1]})
-            sage: H._fundamental_group_(proj=True)                                      # optional - sirocco
+            sage: H._plane_fundamental_group_(proj=True)                                      # optional - sirocco
             (Finitely presented group < x0, x1 |  >, {1: (1,), 2: (2,), 3: (-2, -1)})
             sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
             sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
-            sage: G, dic = H._fundamental_group_(proj=True)                             # optional - sage.graphs, sirocco
+            sage: G, dic = H._plane_fundamental_group_(proj=True)                             # optional - sage.graphs, sirocco
             sage: h = G.simplification_isomorphism()                                    # optional - sage.graphs, sirocco
             sage: G.simplified()                                                        # optional - sage.graphs, sirocco
             Finitely presented group < x0, x1, x3, x4, x5 | x0*x3*x0^-1*x3^-1,
@@ -3937,7 +3985,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         """
         n = self.dimension()
         if n <= 2 or (n == 3 and projective):
-            return self._fundamental_group_(proj=projective)
+            return self._plane_fundamental_group_(proj=projective)
         H1 = self.hyperplane_section(proj=projective)
         H2, dic = H1.fundamental_group(projective=projective)
         return (H2, dic)
