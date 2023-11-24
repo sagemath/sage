@@ -1,8 +1,7 @@
 #!/bin/sh
 if [ $# != 2 ]; then
     echo >&2 "usage: $0 BASE_DOC_COMMIT DOC_REPOSITORY"
-    echo >&2 "Ensures that DOC_REPOSITORY is a git repository,"
-    echo >&2 "then creates CHANGES.html in the docs subdirectory"
+    echo >&2 "creates CHANGES.html in the docs subdirectory"
     echo >&2 "for the diffs of DOC_REPOSITORY against BASE_DOC_COMMIT"
     exit 1
 fi
