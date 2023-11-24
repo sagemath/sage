@@ -19,15 +19,15 @@ Features for testing the presence of various databases
 
 from . import StaticFile, PythonModule
 from sage.env import (
-    CONWAY_POLYNOMIALS_DATA_DIR,
     CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR,
     POLYTOPE_DATA_DIR)
 
 
-class DatabaseConwayPolynomials(StaticFile):
+class DatabaseConwayPolynomials(PythonModule):
     r"""
-    A :class:`~sage.features.Feature` which describes the presence of :ref:`Frank Luebeck's
-    database of Conway polynomials <spkg_conway_polynomials>`.
+    A :class:`~sage.features.Feature` which describes the presence of
+    :ref:`Frank Lübeck's database of Conway polynomials
+    <spkg_conway_polynomials>`.
 
     EXAMPLES::
 
@@ -44,16 +44,13 @@ class DatabaseConwayPolynomials(StaticFile):
             sage: isinstance(DatabaseConwayPolynomials(), DatabaseConwayPolynomials)
             True
         """
-        if CONWAY_POLYNOMIALS_DATA_DIR:
-            search_path = [CONWAY_POLYNOMIALS_DATA_DIR]
-        else:
-            search_path = []
-        StaticFile.__init__(self, "conway_polynomials",
-                            filename='conway_polynomials.p',
-                            search_path=search_path,
-                            spkg='conway_polynomials',
-                            description="Frank Luebeck's database of Conway polynomials",
-                            type='standard')
+        PythonModule.__init__(
+            self,
+            "conway_polynomials",
+            spkg='conway_polynomials',
+            description="Frank Lübeck's database of Conway polynomials",
+            type="standard"
+        )
 
 
 CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
