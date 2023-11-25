@@ -14,6 +14,7 @@ install_requires =
     SPKG_INSTALL_REQUIRES_sage_conf
     SPKG_INSTALL_REQUIRES_six
 dnl From build/pkgs/sagelib/dependencies
+    SPKG_INSTALL_REQUIRES_conway_polynomials
     SPKG_INSTALL_REQUIRES_cypari
     SPKG_INSTALL_REQUIRES_cysignals
     SPKG_INSTALL_REQUIRES_cython
