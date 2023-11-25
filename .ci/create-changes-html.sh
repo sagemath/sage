@@ -52,7 +52,7 @@ EOF
 echo '</head>' >> CHANGES.html
 echo '<body>' >> CHANGES.html
 (cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html) > diff.txt
-/sage/sage -python - << EOF
+python - << EOF
 import os, re, html
 with open('diff.txt', 'r') as f:
     diff_text = f.read()
