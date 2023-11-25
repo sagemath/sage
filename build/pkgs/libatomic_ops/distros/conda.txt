@@ -1,1 +1,1 @@
-libatomic_ops
+libatomic_ops>=7.6.2
