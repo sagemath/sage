@@ -16,8 +16,6 @@ Frank Lübeck's tables of Conway polynomials over finite fields
 # ****************************************************************************
 from collections.abc import Mapping
 
-from sage.features.databases import DatabaseConwayPolynomials
-
 class DictInMapping(Mapping):
     def __init__(self, dict):
         """
