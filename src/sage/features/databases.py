@@ -23,36 +23,6 @@ from sage.env import (
     POLYTOPE_DATA_DIR)
 
 
-class DatabaseConwayPolynomials(PythonModule):
-    r"""
-    A :class:`~sage.features.Feature` which describes the presence of
-    :ref:`Frank Lübeck's database of Conway polynomials
-    <spkg_conway_polynomials>`.
-
-    EXAMPLES::
-
-        sage: from sage.features.databases import DatabaseConwayPolynomials
-        sage: DatabaseConwayPolynomials().is_present()
-        FeatureTestResult('conway_polynomials', True)
-    """
-
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.databases import DatabaseConwayPolynomials
-            sage: isinstance(DatabaseConwayPolynomials(), DatabaseConwayPolynomials)
-            True
-        """
-        PythonModule.__init__(
-            self,
-            "conway_polynomials",
-            spkg='conway_polynomials',
-            description="Frank Lübeck's database of Conway polynomials",
-            type="standard"
-        )
-
-
 CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
 
 
@@ -194,8 +164,7 @@ class DatabaseReflexivePolytopes(StaticFile):
 
 
 def all_features():
-    return [DatabaseConwayPolynomials(),
-            DatabaseCremona(), DatabaseCremona('cremona_mini'),
+    return [DatabaseCremona(), DatabaseCremona('cremona_mini'),
             DatabaseJones(),
             DatabaseKnotInfo(),
             DatabaseCubicHecke(),
