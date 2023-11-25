@@ -1544,8 +1544,10 @@ class Stream_uninitialized(Stream):
                 raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the variables are {V}, the equation is {coeff} == 0")
 
             if not V:
-                if coeff in self._base and coeff:
-                    raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
+                if coeff:
+                    if coeff in self._base:
+                        raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
+                    # should do some substitution coeff = 0, but unclear which variable to extract
                 continue
 
             var = V.pop()

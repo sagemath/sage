@@ -1725,15 +1725,15 @@ class LazyModuleElement(Element):
             sage: A = L.undefined()
             sage: B = L.undefined()
             sage: C = L.undefined()
-            sage: FA = (A^2 + B^2)*z^4
-            sage: FB = A*B*z^3
-            sage: FC = (A + B + C)*z^4
+            sage: FA = (A^2 + B^2)*z^2
+            sage: FB = A*B*z
+            sage: FC = (A + B + C)*z^2
             sage: A.define_implicitly(FA, [0,0,0])
             sage: B.define_implicitly(FB, [0,0])
             sage: C.define_implicitly(FC, [0,0])
             sage: B[2]
 
-            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: A = L.undefined()
             sage: B = L.undefined()
             sage: C = L.undefined()
@@ -1743,6 +1743,15 @@ class LazyModuleElement(Element):
             sage: C.define_implicitly(A*D, [0,0])
             sage: D.define_implicitly(A + B + C + D, [0,0])
             sage: B[2]
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: C = L.undefined()
+            sage: A.define_implicitly(B - C - 1)
+            sage: B.define_implicitly(B*z + 2*C + 1)
+            sage: C.define_implicitly(A + 2*C + 1)
+            sage: A[0]
 
         """
         if (not isinstance(self._coeff_stream, Stream_uninitialized)
