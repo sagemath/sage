@@ -254,7 +254,7 @@ class Feature(TrivialUniqueRepresentation):
 
             sage: from sage.features.databases import DatabaseConwayPolynomials
             sage: DatabaseConwayPolynomials()  # indirect doctest
-            Feature('conway_polynomials': Frank Luebeck's database of Conway polynomials)
+            Feature('conway_polynomials': Frank Lübeck's database of Conway polynomials)
         """
         description = f'{self.name!r}: {self.description}' if self.description else f'{self.name!r}'
         return f'Feature({description})'
