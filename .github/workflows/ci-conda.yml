@@ -21,8 +21,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      fail-fast: ${{ github.event_name == 'pull_request' }}
-      max-parallel: ${{ github.event_name == 'pull_request' && 2 || 6 }}
       matrix:
         os: [ubuntu-latest, macos-latest]
         python: ['3.9', '3.10', '3.11']
