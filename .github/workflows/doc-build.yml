@@ -131,10 +131,9 @@ jobs:
         if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
           set -ex
-          SAGE_ROOT=/sage
           DOC_DIR=/sage/local/share/doc/sage/html
           (cd $DOC_DIR && git commit -a -m 'new')
-          .ci/create-changes-html.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR $SAGE_ROOT
+          PATH=/sage/venv/bin:$PATH .ci/create-changes-html.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR $SAGE_ROOT
           (cd $DOC_DIR && rm -rf .git)
           # We copy everything to a local folder
           # We also need to replace the symlinks because netlify is not following them

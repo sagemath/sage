@@ -1,13 +1,12 @@
 #!/bin/sh
-if [ $# != 3 ]; then
-    echo >&2 "usage: $0 BASE_DOC_COMMIT DOC_REPO SAGE_ROOT"
+if [ $# != 2 ]; then
+    echo >&2 "usage: $0 BASE_DOC_COMMIT DOC_REPO"
     echo >&2 "creates CHANGES.html in the current directory"
     echo >&2 "for the diffs of DOC_REPO against BASE_DOC_COMMIT"
     exit 1
 fi
 BASE_DOC_COMMIT="$1"
 DOC_REPOSITORY="$2"
-SAGE_ROOT="$3"
 
 # Wipe out chronic diffs between old doc and new doc
 (cd $DOC_REPOSITORY && find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
@@ -53,7 +52,7 @@ EOF
 echo '</head>' >> CHANGES.html
 echo '<body>' >> CHANGES.html
 (cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html) > diff.txt
-$SAGE_ROOT/sage -python - << EOF
+python - << EOF
 import os, re, html
 with open('diff.txt', 'r') as f:
     diff_text = f.read()
