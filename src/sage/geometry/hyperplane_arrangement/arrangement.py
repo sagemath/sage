@@ -365,7 +365,6 @@ arrangements.
 # - create ties with the Sage matroid methods
 # - hyperplane arrangements over other fields
 
-from sage.combinat.permutation import Permutation
 from sage.geometry.hyperplane_arrangement.hyperplane import AmbientVectorSpace, Hyperplane
 from sage.misc.misc_c import prod
 from sage.groups.free_group import FreeGroup
@@ -2850,10 +2849,12 @@ class HyperplaneArrangementElement(Element):
         normal = Polyhedron(vertices=[[0]*self.dimension()],
                             lines=[hyperplane.normal() for hyperplane in self],
                             backend=self._backend)
-        if normal.dim() == 0:
-            transverse = lambda poly: poly
-        else:
-            transverse = lambda poly: poly.intersection(normal)
+
+        def transverse(poly):
+            if normal.dim() == 0:
+                return poly
+            return poly.intersection(normal)
+
         return tuple(i for i, region in enumerate(self.regions())
                      if transverse(region).is_compact())
 

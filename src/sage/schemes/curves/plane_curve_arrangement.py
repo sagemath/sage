@@ -49,6 +49,7 @@ AUTHORS:
 
 from sage.categories.sets_cat import Sets
 from sage.combinat.combination import Combinations
+from sage.groups.free_group import FreeGroup
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.rings.qqbar import QQbar
@@ -98,7 +99,6 @@ class AffinePlaneCurveArrangementsElement(Element):
             if not all(h.ambient_space() is self.parent().ambient_space()
                        for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
-        # Añadir más atributos con opciones
         self._braid_monodromy = None
         self._braid_monodromy_with_vertical = None
         self._strands = dict()
@@ -435,7 +435,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         INPUT:
 
-        - ``vertical`` -- boolean (default: False); if it is ``True``, there
+        - ``vertical`` -- boolean (default: True); if it is ``True``, there
           are no vertical asymptotes, and there are vertical lines, then a
           simplified braid braid_monodromy is used.
 
@@ -454,14 +454,40 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: # needs sirocco
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
+            sage: A.fundamental_group()
+            Finitely presented group
+            < x0, x1, x2 | x2*x0*x2^-1*x0^-1, x1*x0*x1^-1*x0^-1, (x2*x1)^2*(x2^-1*x1^-1)^2 >
+            sage: A.meridians()
+            {0: [x1, x2*x1*x2^-1], 1: [x0], 2: [x2],
+             3: [x1^-1*x2^-1*x1^-1*x0^-1]}
+            sage: A.fundamental_group(simplified=False)
+            Finitely presented group
+            < x0, x1, x2, x3 | x1*x0*x1^-1*x0^-1, x2*x0*x2^-1*x0^-1,
+                               x3*x0*x1*x0^-1*x2^-1*x0*x2*x0*x1^-1*x0^-1*x3^-1*x0^-1,
+                               x3*x0*x1*x0^-1*x2^-1*x0^-1*(x2*x0)^2*x1^-1*x0^-1*x3^-1*x1^-1,
+                               x3*x0*x1*x0^-1*x3^-1*x2^-1 >
+            sage: A.meridians(simplified=False)
+            {0: [x1, x2], 1: [x0], 2: [x3], 3: [x3^-1*x2^-1*x1^-1*x0^-1]}
             sage: A.fundamental_group(vertical=False)
-            Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x2*x1,
-                                                    x1*x0*x1^-1*x0^-1,
-                                                    (x0*x2)^2*(x0^-1*x2^-1)^2 >
-            sage: A.fundamental_group(vertical=True)
-            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
-                                                    x1*x0*x1^-1*x0^-1,
-                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
+            Finitely presented group
+            < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x1*x0*x1^-1*x0^-1, (x0*x2)^2*(x0^-1*x2^-1)^2 >
+            sage: A.meridians(vertical=False)
+            {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0]}
+            sage: A.fundamental_group(simplified=False, vertical=False)
+            Finitely presented group
+            < x0, x1, x2, x3 | x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2,
+                              x1*x0*x1^-1*x0^-1,
+                              x3^-1*x2^-1*x0^-1*x2*x3*x2^-1*x0*x2*x3*x2^-1,
+                              x3^-1*(x2^-1*x0*x2*x3)^2*x2^-1*x0^-1*x2*x3^-1*x2^-1*x0^-1*x2,
+                              x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2 >
+            sage: A.meridians(simplified=False, vertical=False)
+            {0: [x2, x3], 1: [x1], 2: [x0]}
+            sage: A = H(x * y^2 + x + y, y + x -1, x, y)
+            sage: A.fundamental_group()
+            Finitely presented group
+            < x0, x1, x2, x3 | x3*x0^-1*x3^-1*x0, x3*x1*x3^-1*x1^-1,
+                               x3*x2*x3^-1*x2^-1, x2*x0*x2^-1*x0^-1,
+                               x1*x0^-1*x1^-1*x0, x1*x2*x1^-1*x2^-1 >
 
         .. WARNING::
 
@@ -487,7 +513,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             bd = (self._braid_monodromy, self._strands, dict(), d1)
         elif vertical and self._braid_monodromy_with_vertical is not None:
             d1 = prod(L).degree(R.gen(1))
-            bd = (self._braid_monodromy_with_vertical, self._strands,
+            bd = (self._braid_monodromy_with_vertical, self._strands_with_vertical,
                   self._vertical_lines_in_braid_mon, d1)
         else:
             bd = None
@@ -506,7 +532,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             self._fundamental_group_vertical = G
             self._meridians_vertical = dic
         else:
-            self._fundamental_group_vertical = G
+            self._fundamental_group_vertical_simplified = G
             self._meridians_vertical_simplified = dic
         return G
 
@@ -523,13 +549,17 @@ class AffinePlaneCurveArrangementsElement(Element):
 
             sage: # needs sirocco
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: A = H(y^2 + x, y + x - 1, x)
-            sage: G = A.fundamental_group(); G
-            Finitely presented group < x0, x1, x2 | x2*x0*x2^-1*x0^-1,
-                                                    x1*x0*x1^-1*x0^-1,
-                                                    (x2*x1)^2*(x2^-1*x1^-1)^2 >
+            sage: A = H(x-1, y, x, y - 1)
+            sage: A.fundamental_group()
+            Finitely presented group
+            < x0, x1, x2, x3 | x2*x0*x2^-1*x0^-1, x2*x1*x2^-1*x1^-1,
+                               x3*x0*x3^-1*x0^-1, x3*x1*x3^-1*x1^-1 >
             sage: A.meridians()
-            {0: [x1, x2*x1*x2^-1], 1: [x0], 2: [x2], 3: [x1^-1*x2^-1*x1^-1*x0^-1]}
+            {0: [x2], 1: [x0], 2: [x3], 3: [x1], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
+
+        This function needs
+        :func:`AffinePlaneCurveArrangements.fundamental_group`
+        where some examples are shown.
 
         .. WARNING::
 
@@ -544,8 +574,7 @@ class AffinePlaneCurveArrangementsElement(Element):
         else:
             computed = bool(self._meridians_vertical_simplified)
         if not computed:
-            _ = self._fundamental_group(simplified=simplified,
-                                        vertical=vertical)
+            self.fundamental_group(simplified=simplified, vertical=vertical)
         if not vertical and not simplified:
             return self._meridians
         if simplified and not vertical:
@@ -719,314 +748,11 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             if not all(h.ambient_space() is self.parent().ambient_space()
                        for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
-        # Añadir más atributos con opciones
         self._fundamental_group_simplified = None
         self._meridians_simplified = dict()
         self._fundamental_group = None
         self._meridians = dict()
 
-    # def __getitem__(self, i):
-    #     """
-    #     Return the `i`-th curve.
-    #
-    #     INPUT:
-    #
-    #     - ``i`` -- integer
-    #
-    #     OUTPUT:
-    #
-    #     The `i`-th curve.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: h = H(y^2 - x * z, y^3 + 2 * x^2 * z, x^4 + y^4 + z^4); h
-    #         Arrangement (y^2 - x*z, y^3 + 2*x^2*z, x^4 + y^4 + z^4)
-    #         in Projective Space of dimension 2 over Rational Field
-    #     """
-    #     return self._curves[i]
-    #
-    # def __hash__(self):
-    #     r"""
-    #     TESTS::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: h = H((x * y, x + y + z))
-    #         sage: len_dict = {h: len(h)}
-    #     """
-    #     return hash(self.curves())
-    #
-    # def n_curves(self):
-    #     r"""
-    #     Return the number of curves in the arrangement.
-    #
-    #     OUTPUT:
-    #
-    #     An integer.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: h = H((x * y, x + y + z))
-    #         sage: h.n_curves()
-    #         2
-    #         sage: len(h)    # equivalent
-    #         2
-    #     """
-    #     return len(self._curves)
-    #
-    # __len__ = n_curves
-    #
-    # def curves(self):
-    #     r"""
-    #     Return the curves in the arrangement as a tuple.
-    #
-    #     OUTPUT:
-    #
-    #     A tuple.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: h = H((x * y, x + y + z))
-    #         sage: h.curves()
-    #         (Projective Conic Curve over Rational Field defined by x*y,
-    #          Projective Plane Curve over Rational Field defined by x + y + z)
-    #
-    #     Note that the hyperplanes can be indexed as if they were a list::
-    #
-    #         sage: h[1]
-    #         Projective Plane Curve over Rational Field defined by x + y + z
-    #     """
-    #     return self._curves
-    #
-    # def _repr_(self):
-    #     r"""
-    #     String representation for a curve arrangement.
-    #
-    #     OUTPUT:
-    #
-    #     A string.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: h = H([x * y, x + y + z, x^3 * z^2 - y^5, x^2 * y^2 * z + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - z^3)^2])
-    #         sage: h
-    #         Arrangement of 5 curves in Projective Space of dimension 2 over Rational Field
-    #         sage: H(())
-    #         Empty curve arrangement in Projective Space of dimension 2 over Rational Field
-    #     """
-    #     if len(self) == 0:
-    #         return 'Empty curve arrangement in {0}'.format(self.parent().ambient_space())
-    #     elif len(self) < 5:
-    #         curves = ', '.join(h.defining_polynomial()._repr_()
-    #                            for h in self._curves)
-    #         return 'Arrangement ({0}) in {1}'.format(curves,
-    #                                                  self.parent().ambient_space())
-    #     return 'Arrangement of {0} curves in {1}'.format(len(self),
-    #                                                      self.parent().ambient_space())
-    #
-    # def _richcmp_(self, other, op):
-    #     """
-    #     Compare two curve arrangements.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: H(x) == H(y)
-    #         False
-    #         sage: H(x) == H(2 * x)
-    #         True
-    #
-    #     TESTS::
-    #
-    #         sage: H(x) == 0
-    #         False
-    #     """
-    #     return richcmp(self._curves, other._curves, op)
-    #
-    # def union(self, other):
-    #     r"""
-    #     The union of ``self`` with ``other``.
-    #
-    #     INPUT:
-    #
-    #     - ``other`` -- a curve arrangement or something that can
-    #       be converted into a curve arrangement
-    #
-    #     OUTPUT:
-    #
-    #     A new curve arrangement.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: h = H([x * y, x + y + z, x^3 * z^2 - y^5, x^2 * y^2 * z + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - z^3)^2])
-    #         sage: C = Curve(x^8 - y^8 -x^4 * y^4)
-    #         sage: h1 = h.union(C); h1
-    #         Arrangement of 6 curves in Projective Space of dimension 2 over Rational Field
-    #         sage: h1 == h1.union(C)
-    #         Repeated curve
-    #         True
-    #     """
-    #     P = self.parent()
-    #     other_h = P(other)
-    #     curves0 = self._curves + other_h._curves
-    #     curves = ()
-    #     for h in curves0:
-    #         if h not in curves:
-    #             curves += (h, )
-    #         else:
-    #             print("Repeated curve")
-    #     result = P(*curves)
-    #     return result
-    #
-    # add_curves = union
-    #
-    # __or__ = union
-    #
-    # def deletion(self, curves):
-    #     r"""
-    #     Return the curve arrangement obtained by removing ``h``.
-    #
-    #     INPUT:
-    #
-    #     - ``h`` -- a curve or curve arrangement
-    #
-    #     OUTPUT:
-    #
-    #     A new curve arrangement with the given curve(s)
-    #     ``h`` removed.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: h = H([x * y, x + y + z, x^3 * z^2 - y^5, x^2 * y^2 * z + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - z^3)^2])
-    #         sage: C = h[-1]
-    #         sage: h.deletion(C)
-    #         Arrangement (x*y, x + y + z, -y^5 + x^3*z^2, x^5 + y^5 + x^2*y^2*z)
-    #         in Projective Space of dimension 2 over Rational Field
-    #         """
-    #     parent = self.parent()
-    #     curves = parent(curves)
-    #     planes = list(self)
-    #     for curve in curves:
-    #         try:
-    #             planes.remove(curve)
-    #         except ValueError:
-    #             raise ValueError('curve is not in the arrangement')
-    #     return parent(planes)
-    #
-    # def change_ring(self, base_ring):
-    #     """
-    #     Return curve arrangement over the new base ring.
-    #
-    #     INPUT:
-    #
-    #     - ``base_ring`` -- the new base ring; must be a field for
-    #       curve arrangements
-    #
-    #     OUTPUT:
-    #
-    #     The curve arrangement obtained by changing the base
-    #     field, as a new curve arrangement.
-    #
-    #     EXAMPLES::
-    #
-    #         SAGE: # needs sage.rings.number_field
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2*z - x^3, x, y, y^2 + x * y + x^2)
-    #         sage: K.<a> = CyclotomicField(3)
-    #         sage: A.change_ring(K)
-    #         Arrangement (-x^3 + y^2*z, x, y, x^2 + x*y + y^2) in Projective Space of
-    #         dimension 2 over Cyclotomic Field of order 3 and degree 2
-    #     """
-    #     parent = self.parent().change_ring(base_ring)
-    #     curves = tuple(c.change_ring(base_ring) for c in self)
-    #     return parent(curves)
-    #
-    # def coordinate_ring(self):
-    #     """
-    #     Return the coordinate ring of ``self``.
-    #
-    #     OUTPUT:
-    #
-    #     The base ring of the curve arrangement.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: C = L(x, y)
-    #         sage: C.coordinate_ring()
-    #         Multivariate Polynomial Ring in x, y, z over Rational Field
-    #     """
-    #     return self.curves()[0].defining_polynomial().parent()
-    #
-    # def defining_polynomials(self):
-    #     r"""
-    #     Return the defining polynomials of the elements of``self``.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2*z - x^3, x, y, y^2 + x * y + x^2)
-    #         sage: A.defining_polynomials()
-    #         (-x^3 + y^2*z, x, y, x^2 + x*y + y^2)
-    #     """
-    #     return tuple(h.defining_polynomial() for h in self)
-    #
-    # def defining_polynomial(self, simplified=True):
-    #     r"""
-    #     Return the defining polynomial of the union of the curves in ``self``.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: A = H(y ** 2 + x ** 2, x, y)
-    #         sage: prod(A.defining_polynomials()) == A.defining_polynomial()
-    #         True
-    #     """
-    #     return prod(self.defining_polynomials())
-    #
-    # def have_common_factors(self):
-    #     r"""
-    #     Check if the curves have common factors.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: A = H(x * y, x^2 * z^2 + x * y^3)
-    #         sage: A.have_common_factors()
-    #         True
-    #     """
-    #     L = [c.defining_polynomial() for c in self]
-    #     C = Combinations(L, 2)
-    #     for f1, f2 in C:
-    #         if f1.gcd(f2).degree() > 0:
-    #             return True
-    #     return False
-    #
-    # def reduce(self):
-    #     r"""
-    #     Replace the curves by their reduction.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: A = H(y^2, (x + y)^3 * (x^2 + x * y + y^2))
-    #         sage: A.reduce()
-    #         Arrangement (y, x^3 + 2*x^2*y + 2*x*y^2 + y^3) in Projective Space
-    #         of dimension 2 over Rational Field
-    #     """
-    #     P = self.parent()
-    #     L = [c.defining_polynomial().radical() for c in self]
-    #     for f1, f2 in Combinations(L, 2):
-    #         if f1.gcd(f2) != 1:
-    #             print("Some curves have common components")
-    #             return None
-    #     return P(*L)
-    #
     def fundamental_group(self, simplified=True):
         r"""
         The fundamental group of the complement of the union
@@ -1048,6 +774,16 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             sage: A = H(y^2 + x*z, y + x - z, x)
             sage: A.fundamental_group()
             Finitely presented group < x0, x1 | x1^-1*x0*x1*x0^-1 >
+            sage: A.meridians()
+            {0: [x1], 1: [x1^-1*x0^-1*x1^-1], 2: [x0]}
+            sage: A.fundamental_group(simplified=False)
+            Finitely presented group
+            < x0, x1, x2, x3 | x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2,
+                                x1*x0*x1^-1*x0^-1,
+                                x3^-1*x2^-1*x0^-1*x2*x3*x2^-1*x0*x2*x3*x2^-1,
+                                x3^-1*(x2^-1*x0*x2*x3)^2*x2^-1*x0^-1*x2*x3^-1*x2^-1*x0^-1*x2, x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2, x0*x1*x2*x3 >
+            sage: A.meridians(simplified=False)
+            {0: [x2, x3], 1: [x1], 2: [x0]}
             sage: A = H(y^2 + x*z, z, x)
             sage: A.fundamental_group()
             Finitely presented group < x0, x1 | (x1*x0)^2*(x1^-1*x0^-1)^2 >
@@ -1075,6 +811,13 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
         n = len(C)
         infinity = Curve(z)
         infinity_in_C = infinity in C
+        if infinity_in_C and n == 1:
+            G = FreeGroup(0) / []
+            self._fundamental_group = G
+            self._meridians = {0: 0}
+            self._fundamental_group_simplified = G
+            self._meridians_simplified = {0: [G.one()]}
+            return G
         if infinity_in_C:
             j = C.curves().index(infinity)
             C = H(C.curves()[:j] + C.curves()[j + 1:])
@@ -1148,6 +891,10 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
                                                     x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
             sage: A.meridians()
             {0: [x0, x2*x0*x2^-1], 1: [x2, x0^-1*x2^-1*x1^-1*x0^-1], 2: [x1]}
+
+        This function needs
+        :func:`ProjectivePlaneCurveArrangements.fundamental_group`
+        where some examples are shown.
 
         .. WARNING::
 
@@ -1466,66 +1213,6 @@ class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
         self._base_ring = base_ring
         self._names = names
 
-    # def base_ring(self):
-    #     """
-    #     Return the base ring.
-    #
-    #     OUTPUT:
-    #
-    #     The base ring of the curve arrangement.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: L.base_ring()
-    #         Rational Field
-    #     """
-    #     return self._base_ring
-
-    # def coordinate_ring(self):
-    #     """
-    #     Return the base ring.
-    #
-    #     OUTPUT:
-    #
-    #     The base ring of the curve arrangement.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: L.base_ring()
-    #         Rational Field
-    #     """
-    #     return self._coordinate_ring
-
-    def change_ring(self, base_ring):
-        """
-        Return curve arrangements over a different base ring.
-
-        INPUT:
-
-        - ``base_ring`` -- a ring; the new base ring.
-
-        OUTPUT:
-
-        A new :class:`ProjectivePlaneCurveArrangements` instance over the new
-        base ring.
-
-        EXAMPLES::
-
-            sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-            sage: L.gen(0)
-            x
-            sage: L.change_ring(RR).base_ring()
-            Real Field with 53 bits of precision
-
-        TESTS::
-
-            sage: L.change_ring(QQ) is L
-            True
-        """
-        return ProjectivePlaneCurveArrangements(base_ring, names=self._names)
-
     @cached_method
     def ambient_space(self):
         """
@@ -1538,133 +1225,3 @@ class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
             Projective Space of dimension 2 over Rational Field
         """
         return ProjectiveSpace(self.base_ring(), 2, self._names)
-
-    # def _repr_(self):
-    #     """
-    #     Return a string representation.
-    #
-    # OUTPUT:
-    #
-    #     A string.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ);  L
-    #         Curve arrangements in Projective Space of dimension 2 over Rational Field
-    #     """
-    #     return 'Curve arrangements in {0}'.format(self.ambient_space())
-    #
-    # def _element_constructor_(self, *args, **kwds):
-    #     """
-    #     Construct an element of ``self``.
-    #
-    #     INPUT:
-    #
-    #     - ``*args`` -- positional arguments, each defining a curve
-    #
-    #     EXAMPLES::
-    #
-    #         sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: A = L._element_constructor_(x, y); A
-    #         Arrangement (x, y) in Projective Space of dimension 2 over Rational Field
-    #         sage: L._element_constructor_([x, y]) == A
-    #         True
-    #         sage: L._element_constructor_(Curve(x), Curve(y)) == A
-    #         True
-    #         sage: L._element_constructor_(y, x) == A
-    #         False
-    #    """
-    #     if len(args) == 1 and not (isinstance(args[0], (tuple, list))):
-    #         arg = (args[0], )
-    #     elif len(args) == 1:
-    #         arg = tuple(args[0])
-    #     else:
-    #         arg = tuple(args)
-    #     # process keyword arguments
-    #     if len(kwds) > 0:
-    #         raise ValueError('unknown keyword argument')
-    #     # process positional arguments
-    #     ambient_space = self.ambient_space()
-    #     R = ambient_space.coordinate_ring()
-    #     curves = ()
-    #     for h in arg:
-    #         try:
-    #             ambient = h.ambient_space()
-    #             if ambient == ambient_space:
-    #                 curves += (h, )
-    #             else:
-    #                 return None
-    #         except AttributeError:
-    #             try:
-    #                 h = R(h)
-    #                 curves += (Curve(h), )
-    #             except TypeError:
-    #                 return None
-    #     return self.element_class(self, curves)
-    #
-    # def _an_element_(self):
-    #     """
-    #     Return an element of ``self``.
-    #
-    #     TESTS::
-    #
-    #         sage: H.<t, s, r> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: H._an_element_()
-    #         Arrangement (t) in Projective Space of dimension 2 over Rational Field
-    #     """
-    #     x = self.gen(0)
-    #     return self(x)
-
-    # @cached_method
-    # def ngens(self):
-    #     """
-    #     Return the number of variables, i.e. 3, kept for completness.
-    #
-    #     OUTPUT:
-    #
-    #     An integer (3).
-    #
-    #     EXAMPLES::
-    #
-    #         sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: L.ngens()
-    #         3
-    #     """
-    #     return len(self._names)
-
-    # @cached_method
-    # def gens(self):
-    #     """
-    #     Return the coordinates.
-    #
-    #     OUTPUT:
-    #
-    #     A tuple of linear expressions, one for each linear variable.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: L = ProjectivePlaneCurveArrangements(QQ, ('x', 'y', 'z'))
-    #         sage: L.gens()
-    #         (x, y, z)
-    #     """
-    #     return self.ambient_space().gens()
-
-    # def gen(self, i):
-    #     """
-    #     Return the `i`-th coordinate.
-    #
-    #     INPUT:
-    #
-    #     - ``i`` -- integer
-    #
-    #     OUTPUT:
-    #
-    #     A variable.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-    #         sage: L.gen(1)
-    #         y
-    #     """
-    #     return self.gens()[i]

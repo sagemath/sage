@@ -849,7 +849,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
 
     Check that :trac:`26503` is fixed::
 
-        sage: # needs sage.rings.real_mpfr sage.symbolic
+        sage: # needs sage.rings.real_mpfr sage.symbolic sirocco
         sage: wp = QQ['t']([1, 1, 1]).roots(QQbar)[0][0]
         sage: Kw.<wp> = NumberField(wp.minpoly(), embedding=wp)
         sage: R.<x, y> = Kw[]
@@ -866,7 +866,7 @@ def braid_in_segment(glist, x0, x1, precision=dict()):
         sage: p2a = CC(p2)
         sage: p2b = QQ(p2a.real()) + I*QQ(p2a.imag())
         sage: glist = tuple([_[0] for _ in g.factor()])
-        sage: B = braid_in_segment(glist, p1b, p2b); B              # optional - sirocco
+        sage: B = braid_in_segment(glist, p1b, p2b); B
         s5*s3^-1
     """
     precision1 = {_: precision[_] for _ in precision.keys()}
@@ -1235,9 +1235,10 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     - A dictionnary: ``i``, index of a strand is sent to the index of
       the corresponding factor in ``arrangement``.
 
-    - Another dictionnary, only relevant if ``vertical`` is ``True``.
-      It attaches the index of a vertical line in ``arrangement``
-      to the index of its corresponding braid.
+    - Another dictionnary ``dv``, only relevant if ``vertical`` is ``True``.
+      If  ``j`` is the index
+      of a braid corresponding to a vertical line with index ``i``
+      in ``arrangement``, then ``dv[j] = i``.
 
     - A non-negative integer: the number of strands of the braids,
       only necessary if the list of braids is empty.
@@ -1317,7 +1318,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
             transversal[f0] = arrangement1.index(f0)
     vl.sort()
     if not disc:
-        vertical_braids = {i + d: transversal[f0]
+        vertical_braids = {i: transversal[f0]
                            for i, f0 in enumerate(transversal)}
         if d > 1:
             result = [BraidGroup(d).one() for p in transversal]
@@ -1892,7 +1893,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     elif len(flist1) == 0:
         bm = []
         dic = dict()
-        dv = {j: j for j, f in flist}
+        dv = {j: j for j, f in flist1}
         d1 = 0
     else:
         bm, dic, dv, d1 = braid_monodromy(f, flist1, vertical=vertical0)
@@ -1900,9 +1901,6 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     vert_lines.sort()
     for i, j in enumerate(vert_lines):
         dic[d1 + i] = dv[j]
-    # if vertical0:
-    #     for j in dv:
-    #         dic[d1 + j] = dv[j]
     g = fundamental_group_from_braid_mon(bm, degree=d1, simplified=False,
                                          projective=projective,
                                          puiseux=puiseux,

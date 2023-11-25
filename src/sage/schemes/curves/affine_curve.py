@@ -1792,7 +1792,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         return f.degree(y) == 0 and f.degree() == 1
 
     @cached_method
-    def fundamental_group(self, simplified=True, puiseux=False):
+    def fundamental_group(self, simplified=True, puiseux=True):
         r"""
         Return a presentation of the fundamental group of the complement
         of ``self``.
@@ -1801,7 +1801,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         - ``simplified`` -- (default: ``True``) boolean to simplify the presentation.
 
-        - ``puiseux`` -- (default: ``False``) boolean to decide if the
+        - ``puiseux`` -- (default: ``True``) boolean to decide if the
           presentation is constructed in the classical way or using Puiseux
           shortcut. If ``True``, ``simplified`` is set to ``False``.
 
@@ -1827,10 +1827,10 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: # optional - sirocco
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve(y^2 - x^3 - x^2)
-            sage: C.fundamental_group()
+            sage: C.fundamental_group(puiseux=False)
             Finitely presented group < x0 |  >
             sage: bm = C.braid_monodromy()
-            sage: g = C.fundamental_group(puiseux=True)
+            sage: g = C.fundamental_group(simplified=False)
             sage: g.sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x1^-1*x0 >
             sage: g.simplified()
@@ -1839,7 +1839,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         In the case of number fields, they need to have an embedding
         to the algebraic field::
 
-            sage: # needs sage.rings.number_field, sirocco
+            sage: # needs sage.rings.number_field sirocco
             sage: T.<t> = QQ[]
             sage: a = (t^2 + 5).roots(QQbar)[0][0]
             sage: F = NumberField(a.minpoly(), 'a', embedding=a)
@@ -1867,7 +1867,13 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             d = d0 + f0.degree(x)
         else:
             d = bm[0].parent().strands()
-        return fundamental_group_from_braid_mon(self.braid_monodromy(), degree=d, simplified=simplified, puiseux=puiseux)
+        G = fundamental_group_from_braid_mon(self.braid_monodromy(),
+                                             degree=d,
+                                             simplified=simplified,
+                                             puiseux=puiseux)
+        if simplified:
+            G = G.simplified()
+        return G
 
     @cached_method
     def braid_monodromy(self):
