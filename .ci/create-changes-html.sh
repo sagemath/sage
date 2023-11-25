@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ $# != 2 ]; then
+if [ $# != 3 ]; then
     echo >&2 "usage: $0 BASE_DOC_COMMIT DOC_REPO SAGE_ROOT"
     echo >&2 "creates CHANGES.html in the current directory"
     echo >&2 "for the diffs of DOC_REPO against BASE_DOC_COMMIT"
