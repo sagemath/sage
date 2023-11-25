@@ -572,19 +572,16 @@ class DrinfeldModuleHomset(Homset):
 
             We return the basis of the kernel of a matrix derived from the
             constraint that `\iota \phi_T = \psi_T \iota` for any morphism
-            `iota`. 
+            `iota: \phi \to \psi`.
         """
-        domain, codomain = self.domain(), self.codomain()
-        Fq = domain._Fq
-        K = domain.base_over_constants_field()
-        q = Fq.cardinality()
-        char = Fq.characteristic()
-        r = domain.rank()
+        Fq = self.domain()._Fq
+        K = self.domain().base_over_constants_field()
+        r = self.domain().rank()
         n = K.degree(Fq)
-        qorder = logb(q, char)
+        qorder = logb(Fq.cardinality(), Fq.characteristic())
         K_basis = [K.gen()**i for i in range(n)]
-        dom_coeffs = domain.coefficients(sparse=False)
-        cod_coeffs = codomain.coefficients(sparse=False)
+        dom_coeffs = self.domain().coefficients(sparse=False)
+        cod_coeffs = self.codomain().coefficients(sparse=False)
         # The commutative polynomial ring in tau^n.
         poly_taun = PolynomialRing(Fq, 'taun')
 
@@ -600,20 +597,19 @@ class DrinfeldModuleHomset(Homset):
                     # relation defining morphisms of Drinfeld modules
                     # These are elements of K, expanded in terms of
                     # K_basis.
-                    c_tik = (dom_coeffs[i].frobenius(qorder*k)*K_basis[j] \
+                    c_tik = (dom_coeffs[i].frobenius(qorder*k)*K_basis[j]
                             - cod_coeffs[i]*K_basis[j].frobenius(qorder*i)) \
                             .polynomial().coefficients(sparse=False)
                     c_tik += [0 for _ in range(n - len(c_tik))]
-                    colpos = k*n + j
                     taudeg = i + k
                     for b in range(n):
-                        sys[(taudeg % n)*n + b, colpos] += c_tik[b] * \
+                        sys[(taudeg % n)*n + b, k*n + j] += c_tik[b] * \
                                 poly_taun.gen()**(taudeg // n)
 
         sol = sys.right_kernel().basis()
         # Reconstruct basis as skew polynomials.
         basis = []
-        tau = domain.ore_polring().gen()
+        tau = self.domain().ore_polring().gen()
         for basis_vector in sol:
             basis_poly = 0
             for i in range(n):
