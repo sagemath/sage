@@ -1130,7 +1130,7 @@ class GraphGenerators():
             sage: list(graphs.nauty_genbg("-c1 2", debug=True))
             ['>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
             sage: list(graphs.nauty_genbg("-c 1 2", debug=True))
-            ['>A ...genbg n=1+2 e=2:2 d=1:1 D=2:1 c\n', Bipartite graph on 3 vertices]
+            ['>A ...genbg n=1+2 e=2:2 d=1:1 D=2:1 c...\n', Bipartite graph on 3 vertices]
 
         We must have n1=1..24, n2=0..32 and n1+n2=1..32 (:trac:`34179`)::
 
