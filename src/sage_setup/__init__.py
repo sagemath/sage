@@ -108,10 +108,10 @@ def sage_setup(distributions, *,
                                       for f in files]})
             python_packages += list(package_data)
 
-        log.debug('python_packages = {0}'.format(sorted(python_packages)))
-        log.debug('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
-        log.debug('cython_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in cython_modules)))
-        log.debug('package_data = {0}'.format(package_data))
+        log.warn('python_packages = {0}'.format(sorted(python_packages)))
+        log.warn('python_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in python_modules)))
+        log.warn('cython_modules = {0}'.format(sorted(m if isinstance(m, str) else m.name for m in cython_modules)))
+        log.warn('package_data = {0}'.format(package_data))
 
         log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
 

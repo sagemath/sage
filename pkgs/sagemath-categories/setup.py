@@ -3,6 +3,5 @@
 from sage_setup import sage_setup
 
 sage_setup(
-    [''],  # for now, we do the filtering using MANIFEST
-    #['sagemath-categories'],
+    ['sagemath-categories'],
     interpreters=['Element', 'Python'])  # RDF uses gsl --> sagemath-modules
