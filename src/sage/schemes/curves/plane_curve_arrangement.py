@@ -52,6 +52,7 @@ from sage.combinat.combination import Combinations
 from sage.groups.free_group import FreeGroup
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
 from sage.rings.ring import _Fields
 from sage.schemes.affine.affine_space import AffineSpace
@@ -716,7 +717,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: # needs sirocco
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
-            sage: bm = A.braid_monodromy(vertical=True)
+            sage: A.braid_monodromy(vertical=True)
             [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
             sage: A.vertical_lines_in_braid_mon()
             {1: 2}
@@ -793,9 +794,9 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             sage: A.fundamental_group(simplified=False)
             Finitely presented group
             < x0, x1, x2, x3 | x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2,
-                                x1*x0*x1^-1*x0^-1,
-                                x3^-1*x2^-1*x0^-1*x2*x3*x2^-1*x0*x2*x3*x2^-1,
-                                x3^-1*(x2^-1*x0*x2*x3)^2*x2^-1*x0^-1*x2*x3^-1*x2^-1*x0^-1*x2, x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2, x0*x1*x2*x3 >
+                               x1*x0*x1^-1*x0^-1, x3^-1*x2^-1*x0^-1*x2*x3*x2^-1*x0*x2*x3*x2^-1,
+                                x3^-1*(x2^-1*x0*x2*x3)^2*x2^-1*x0^-1*x2*x3^-1*x2^-1*x0^-1*x2,
+                                x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2, x0*x1*x2*x3 >
             sage: A.meridians(simplified=False)
             {0: [x2, x3], 1: [x1], 2: [x0]}
             sage: A = H(y^2 + x*z, z, x)
@@ -998,7 +999,7 @@ class AffinePlaneCurveArrangements(Parent, UniqueRepresentation):
             sage: L.coordinate_ring()
             Multivariate Polynomial Ring in x, y over Rational Field
         """
-        return self._coordinate_ring
+        return PolynomialRing(self._base_ring, self._names)
 
     def change_ring(self, base_ring):
         """

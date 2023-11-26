@@ -3821,7 +3821,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         It computes the fundamental group of the complement of an affine
         hyperplane arrangement in `\mathbb{C}^n` whose equations have
-        coefficients in a subfield of `\overline{\mathbb{Q}`
+        coefficients in a subfield of `\overline{\mathbb{Q}}`
 
         OUTPUT:
 
@@ -3892,7 +3892,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         a meridian in the fundamental group,
         of the complement, for a hyperplane arrangement in
         `\mathbb{C}^n` whose equations have
-        coefficients in a subfield of `\overline{\mathbb{Q}`
+        coefficients in a subfield of `\overline{\mathbb{Q}}`
 
         OUTPUT:
 
@@ -3926,7 +3926,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         It computes the fundamental group of the complement of a projective
         hyperplane arrangement in `\mathbb{P}^n` whose equations have
-        coefficients in a subfield of `\overline{\mathbb{Q}`.
+        coefficients in a subfield of `\overline{\mathbb{Q}}`.
 
         OUTPUT:
 
@@ -4013,7 +4013,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         a meridian in the fundamental group,
         of the complement, for a hyperplane arrangement in
         `\mathbb{P}^n` whose equations have
-        coefficients in a subfield of `\overline{\mathbb{Q}`
+        coefficients in a subfield of `\overline{\mathbb{Q}}`
 
         OUTPUT:
 
