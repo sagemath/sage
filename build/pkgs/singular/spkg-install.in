@@ -40,16 +40,9 @@ remove_old_version()
         singular_resources  # 4.x and up
         gfan
     )
-    if [ "$UNAME" = "CYGWIN" ]; then
-        for name in ${libs[*]}; do
-            rm -f "$SAGE_LOCAL"/bin/cyg${name}*.dll
-            rm -f "$SAGE_LOCAL"/lib/lib${name}*.a
-        done
-    else
-        for name in ${libs[*]}; do
-            rm -f "$SAGE_LOCAL"/lib/lib${name}*
-        done
-    fi
+    for name in ${libs[*]}; do
+        rm -f "$SAGE_LOCAL"/lib/lib${name}*
+    done
 
     rm -f "$SAGE_LOCAL"/lib/p_Procs_Field* # 3.x only
     rm -rf "$SAGE_LOCAL/share/singular"
@@ -58,11 +51,6 @@ remove_old_version()
 
 config()
 {
-    if [ "$UNAME" = "CYGWIN" ]; then
-        # from Hans Schoenemann - https://github.com/Singular/Singular/issues/1017
-        SINGULAR_CONFIGURE="$SINGULAR_CONFIGURE --disable-p-procs-dynamic --enable-p-procs-static --with-builtinmodules=gfanlib,gitfan,interval,loctriv,partialgb,syzextra,customstd,cohomo,subsets,freealgebra,systhreads --disable-cf-inline --disable-Order-module --disable-bigintm-module --disable-pyobject-module"
-    fi
-
     # configure notes (dates from Singular 3.x, maybe outdated for 4.x):
     # 1) We really need to add --exec-prefix and --bindir as Singular
     #    uses some weird defaults.
