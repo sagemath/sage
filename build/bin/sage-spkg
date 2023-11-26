@@ -584,26 +584,6 @@ export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
 export rsync_proxy=$http_proxy
 
-##################################################################
-# We need to run sage-rebase.sh for each package installed, but it
-# can be dangerous to do this while other packages are installing
-# so we need to use a lock to manage when rebase is allowed to
-# run.  Because of this, if multiple sage-spkg runs are waiting on
-# the rebase lock, we can end up with multiple consecutive rebase
-# calls that are redundant, but I don't see an obvious way around
-# that.  This also unfortunately slows down parallel builds since
-# all packages will eventually need to wait for this lock, but
-# again there's no simple way around that.
-##################################################################
-
-if [ "$UNAME" = "CYGWIN" ]; then
-    # This is a global lock - so we use SAGE_LOCAL, not SAGE_INST_LOCAL.
-    if [ ! -d "$SAGE_LOCAL/var/lock" ]; then
-        mkdir -p "$SAGE_LOCAL/var/lock"
-    fi
-    exec 200>"$SAGE_LOCAL/var/lock/rebase.lock"
-    sage-flock -s $lock_type 200
-fi
 
 ##################################################################
 # Actually install
@@ -736,19 +716,6 @@ if [ -f spkg-postinst ]; then
         error_msg "Error running the postinst script for $PKG_NAME."
         exit 1
     fi
-fi
-
-if [ "$UNAME" = "CYGWIN" ]; then
-    # Drop our sage-spkg's shared lock, and try to call sage-rebase.sh
-    # under an exclusive lock
-    sage-flock -u 200
-
-    # Rebase after installing each package--in case any packages load this
-    # package at build time we need to ensure during the build that no binaries
-    # have conflicting address spaces
-    echo "Waiting for rebase lock"
-    sage-flock -x "$SAGE_LOCAL/var/lock/rebase.lock" \
-        sage-rebase.sh "$SAGE_LOCAL" 2>/dev/null
 fi
 
 

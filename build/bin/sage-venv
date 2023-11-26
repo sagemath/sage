@@ -37,19 +37,13 @@ options = parser.parse_args()
 if options.upgrade and options.clear:
     raise ValueError('you cannot supply --upgrade and --clear together.')
 
-if sys.platform == 'cygwin':
-    # default for Cygwin; see https://github.com/sagemath/sage/issues/30149
-    use_symlinks = False
-else:
-    # default for posix
-    # On macOS, definitely need symlinks=True (which matches what we test in build/pkgs/spkg-configure.m4)
-    # or it may fail with 'dyld: Library not loaded: @executable_path/../Python3' on macOS.
-    use_symlinks = True
-            
+
+# On macOS, definitely need symlinks=True (which matches what we test in build/pkgs/spkg-configure.m4)
+# or it may fail with 'dyld: Library not loaded: @executable_path/../Python3' on macOS.
 b = venv.EnvBuilder(system_site_packages=options.system_site,
                     clear=options.clear,
                     upgrade=options.upgrade,
-                    symlinks=use_symlinks)
+                    symlinks=True)
 c = b.ensure_directories(options.env_dir)
 b.setup_python(c)
 b.create_configuration(c)
