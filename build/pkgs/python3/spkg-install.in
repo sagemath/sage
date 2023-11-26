@@ -59,8 +59,4 @@ fi
 if [ "$UNAME" = "Darwin" ] && \
     [ `uname -r | cut '-d.' -f1` -gt 9 ]; then
     rm -f "${SAGE_DESTDIR}${PYTHON_CONFIG_DIR}/libpython${PYTHON_LDVERSION}.a"
-elif [ "$UNAME" = "CYGWIN" ]; then
-    # See https://github.com/sagemath/sage/issues/20437
-    ln -sf "${PYTHON_CONFIG_DIR}/libpython${PYTHON_LDVERSION}.dll.a" \
-        "${SAGE_DESTDIR_LOCAL}/lib/libpython${PYTHON_LDVERSION}.dll.a"
 fi

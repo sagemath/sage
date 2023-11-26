@@ -1,4 +1,4 @@
-# Only test iconv on Solaris, HP-UX and Cygwin, as those are the only
+# Only test iconv on Solaris, HP-UX, as those are the only
 # platforms on which the iconv shipped with Sage will be installed. On
 # other platforms Sage uses the system's iconv.
 
@@ -13,7 +13,7 @@ SunOS)
     echo "    http://bugs.opensolaris.org/bugdatabase/view_bug.do?bug_id=6550204"
 esac
 case "$UNAME" in
-CYGWIN|HP-UX|SunOS)
+HP-UX|SunOS)
 
     cd src
 
@@ -26,10 +26,10 @@ CYGWIN|HP-UX|SunOS)
     echo "All the tests for iconv passed."
     exit 0
     ;;
-*) # Not CYGWIN, HP-UX or SunOS (Solaris)
+*) # Not HP-UX or SunOS (Solaris)
     echo "iconv was not to be tested, since Sage will use the system's iconv"
     echo "and not the one shipped with Sage."
-    echo "The iconv supplied by Sage is only used on Cygwin, HP-UX and Solaris."
+    echo "The iconv supplied by Sage is only used on HP-UX and Solaris."
     exit 0
 esac
 
