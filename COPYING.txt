@@ -1229,7 +1229,9 @@ The following software used with SINGULAR have their own copyright: the
 omalloc library, the readline library, the Gnu Multiple Precision
 Library (GMP), NTL: A Library for doing Number Theory (NTL), the Multi
 Protocol library (MP), the Singular-Factory library, the
-Singular-libfac library, surfex, and the XEmacs editor (XEmacs).
+Singular-libfac library, surfex, and, for the Windows distributions the
+Cygwin DLL and the Cygwin tools (Cygwin), and the XEmacs editor
+(XEmacs).
 
 Their copyrights and licenses can be found in the accompanying files
 COPYING which are distributed along with these packages.  (Since
