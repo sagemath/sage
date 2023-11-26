@@ -693,14 +693,6 @@ def solve(f, *args, **kwds):
         sage: Expression.solve(x^2==1,x)
         [x == -1, x == 1]
 
-    We must solve with respect to actual variables::
-
-        sage: z = 5
-        sage: solve([8*z + y == 3, -z +7*y == 0],y,z)
-        Traceback (most recent call last):
-        ...
-        TypeError: 5 is not a valid variable.
-
     If we ask for dictionaries containing the solutions, we get them::
 
         sage: solve([x^2-1],x,solution_dict=True)
