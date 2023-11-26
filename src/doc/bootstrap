@@ -28,7 +28,7 @@ shopt -s extglob
 RECOMMENDED_SPKG_PATTERN="@(_recommended$(for a in $(head -n 1 build/pkgs/_recommended/dependencies); do echo -n "|"$a; done))"
 DEVELOP_SPKG_PATTERN="@(_develop$(for a in $(head -n 1 build/pkgs/_develop/dependencies); do echo -n "|"$a; done))"
 
-for SYSTEM in arch debian fedora cygwin homebrew opensuse; do
+for SYSTEM in arch debian fedora homebrew opensuse; do
     SYSTEM_PACKAGES=
     OPTIONAL_SYSTEM_PACKAGES=
     SAGELIB_SYSTEM_PACKAGES=

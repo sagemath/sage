@@ -191,15 +191,11 @@ class InlineFortran:
         finally:
             os.chdir(old_cwd)
 
-            if sys.platform != 'cygwin':
-                # Do not delete temporary DLLs on Cygwin; this will cause
-                # future forks of this process to fail.  Instead temporary DLLs
-                # will be cleaned up upon process exit
-                try:
-                    shutil.rmtree(mytmpdir)
-                except OSError:
-                    # This can fail for example over NFS
-                    pass
+            try:
+                shutil.rmtree(mytmpdir)
+            except OSError:
+                # This can fail for example over NFS
+                pass
 
         for k, x in mod.__dict__.items():
             if k[0] != '_':

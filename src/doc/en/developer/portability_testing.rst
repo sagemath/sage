@@ -10,7 +10,7 @@ Testing on Multiple Platforms
 
 Sage is intended to build and run on a variety of platforms,
 including all major Linux distributions, as well as MacOS, and
-Windows (with Cygwin and WSL).
+Windows (with WSL).
 
 There is considerable variation among these platforms.
 To ensure that Sage continues to build correctly on users'
@@ -966,11 +966,6 @@ This is defined in the files
 
 - `$SAGE_ROOT/.github/workflows/ci-macos.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_, and
-
-- `$SAGE_ROOT/.github/workflows/ci-cygwin-standard.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-cygwin-standard.yml>`_
-  (which calls `$SAGE_ROOT/.github/workflows/cygwin.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/cygwin.yml>`_).
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
