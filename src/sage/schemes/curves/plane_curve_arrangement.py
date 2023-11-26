@@ -609,7 +609,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A braid monodromy with dictionnaries identifying strans with components
+        A braid monodromy with dictionnaries identifying strands with components
         and braids with vertical lines.
 
         EXAMPLES::
