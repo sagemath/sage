@@ -181,7 +181,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             (Affine Plane Curve over Rational Field defined by x*y,
              Affine Plane Curve over Rational Field defined by x + y + 1)
 
-        Note that the hyperplanes can be indexed as if they were a list::
+        Note that the curves can be indexed as if they were a list::
 
             sage: h[1]
             Affine Plane Curve over Rational Field defined by x + y + 1
@@ -276,11 +276,11 @@ class AffinePlaneCurveArrangementsElement(Element):
 
     def deletion(self, curves):
         r"""
-        Return the curve arrangement obtained by removing ``h``.
+        Return the curve arrangement obtained by removing ``curves``.
 
         INPUT:
 
-        - ``h`` -- a curve or curve arrangement
+        - ``curves`` -- a curve or curve arrangement
 
         OUTPUT:
 
@@ -339,7 +339,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        The base ring of the curve arrangement.
+        The coordinate ring of the curve arrangement.
 
         EXAMPLES::
 
@@ -352,7 +352,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
     def defining_polynomials(self):
         r"""
-        Return the defining polynomials of the elements of``self``.
+        Return the defining polynomials of the elements of ``self``.
 
         EXAMPLES::
 
@@ -412,6 +412,15 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: A.reduce()
             Arrangement (y, x^3 + 2*x^2*y + 2*x*y^2 + y^3) in Affine Space
             of dimension 2 over Rational Field
+            sage: C = H(x*y, x*(y + 1))
+            sage: C.reduce()
+            Some curves have common components
+            sage: C.reduce(clean=True)
+            Arrangement (x*y, y + 1) in Affine Space of dimension 2
+            over Rational Field
+            sage: C = H(x*y, x)
+            sage: C.reduce(clean=True)
+        Arrangement (x*y) in Affine Space of dimension 2 over Rational Field
         """
         P = self.parent()
         R = self.coordinate_ring()
@@ -424,7 +433,8 @@ class AffinePlaneCurveArrangementsElement(Element):
                     print("Some curves have common components")
                     return None
                 g = R(g / d)
-            L.append(g)
+            if g.degree() > 0:
+                L.append(g)
         return P(*L)
 
     def fundamental_group(self, simplified=True, vertical=True,
@@ -472,7 +482,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             Finitely presented group
             < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x1*x0*x1^-1*x0^-1, (x0*x2)^2*(x0^-1*x2^-1)^2 >
             sage: A.meridians(vertical=False)
-            {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0]}
+            {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0], 3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]}
             sage: A.fundamental_group(simplified=False, vertical=False)
             Finitely presented group
             < x0, x1, x2, x3 | x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2,
@@ -481,7 +491,7 @@ class AffinePlaneCurveArrangementsElement(Element):
                               x3^-1*(x2^-1*x0*x2*x3)^2*x2^-1*x0^-1*x2*x3^-1*x2^-1*x0^-1*x2,
                               x3*x2^-1*x1*x2*x3^-1*x2^-1*x1^-1*x2 >
             sage: A.meridians(simplified=False, vertical=False)
-            {0: [x2, x3], 1: [x1], 2: [x0]}
+            {0: [x2, x3], 1: [x1], 2: [x0], 3: [x3^-1*x2^-1*x1^-1*x0^-1]}
             sage: A = H(x * y^2 + x + y, y + x -1, x, y)
             sage: A.fundamental_group()
             Finitely presented group
@@ -542,8 +552,8 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A dictionnary which associates the index of each curve with its meridians,
-        including the line at infinity if it can be easily computed
+        A dictionary which associates the index of each curve with its meridians,
+        including the line at infinity if it can be omputed
 
         EXAMPLES::
 
@@ -558,7 +568,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             {0: [x2], 1: [x0], 2: [x3], 3: [x1], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
 
         This function needs
-        :func:`AffinePlaneCurveArrangements.fundamental_group`
+        :func:`AffinePlaneCurveArrangements.fundamental_group` with the same options,
         where some examples are shown.
 
         .. WARNING::
@@ -594,12 +604,12 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         - ``vertical`` -- boolean (default: True). If it is ``True``, there
           are no vertical asymptotes, and there are vertical lines, then a
-          simplified braid braid_monodromy is computed.
+          simplified braid_monodromy is computed.
 
         OUTPUT:
 
         A braid monodromy with dictionnaries identifying strans with components
-        and braids with vertical lines..
+        and braids with vertical lines.
 
         EXAMPLES::
 
@@ -644,8 +654,9 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A dictionnary which associates to the index of each strand
-        its associated component.
+        A dictionary which associates to the index of each strand
+        its associated component if the braid monodromy has been
+        calculated with ``vertical=False``.
 
         EXAMPLES::
 
@@ -670,8 +681,9 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A dictionnary which associates to the index of each strand
-        its associated component.
+        A dictionary which associates to the index of each strand
+        its associated component if the braid monodromy has been
+        calculated with ``vertical=True``.
 
         EXAMPLES::
 
@@ -696,7 +708,8 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         OUTPUT:
 
-        A dictionnary which associates an index to the index of a vertical lines.
+        A dictionary which associates the index of a braid
+        to the index of the vertical line associated to the braid.
 
         EXAMPLES::
 
@@ -704,6 +717,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
             sage: bm = A.braid_monodromy(vertical=True)
+            [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
             sage: A.vertical_lines_in_braid_mon()
             {1: 2}
 
@@ -867,9 +881,9 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
 
         OUTPUT:
 
-        A dictionnary which associates the index of each curve with
+        A dictionary which associates the index of each curve with
         its meridians, including the line at infinity if it can be
-        easily computed
+        computed
 
         EXAMPLES::
 
@@ -894,7 +908,7 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
 
         This function needs
         :func:`ProjectivePlaneCurveArrangements.fundamental_group`
-        where some examples are shown.
+        with the same options, where some examples are shown.
 
         .. WARNING::
 
@@ -913,7 +927,7 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
 
 class AffinePlaneCurveArrangements(Parent, UniqueRepresentation):
     """
-    Curve arrangements.
+    Affine curve arrangements.
 
     INPUT:
 
@@ -972,17 +986,17 @@ class AffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
     def coordinate_ring(self):
         """
-        Return the base ring.
+        Return the coordinate ring.
 
         OUTPUT:
 
-        The base ring of the curve arrangement.
+        The coordinate ring of the curve arrangement.
 
         EXAMPLES::
 
             sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: L.base_ring()
-            Rational Field
+            sage: L.coordinate_ring()
+            Multivariate Polynomial Ring in x, y over Rational Field
         """
         return self._coordinate_ring
 
@@ -1172,7 +1186,7 @@ class AffinePlaneCurveArrangements(Parent, UniqueRepresentation):
 
 class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
     """
-    Curve arrangements.
+    Projective curve arrangements.
 
     INPUT:
 

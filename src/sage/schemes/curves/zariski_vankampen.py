@@ -393,7 +393,7 @@ def voronoi_cells(V, vertical_lines=[]):
       of ``E``) with identical first and last elements)
     - ``DG`` -- the dual graph of ``V``, where the vertices are labelled
       by the compact regions of ``V`` and the edges by their dual edges.
-    - ``vertical_regions`` -- dictionnary for the regions associated
+    - ``vertical_regions`` -- dictionary for the regions associated
       with vertical lines.
 
     EXAMPLES::
@@ -957,14 +957,14 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
     - ``vertical_regions`` -- dictionary with keys the vertices of
       ``dual_graph`` to fix regions associated with vertical lines
 
-    OUTPUT: A geometric basis and a dictionnary.
+    OUTPUT: A geometric basis and a dictionary.
 
     The geometric basis is formed by a list of sequences of paths. Each path is a
     ist of vertices, that form a closed path in ``G``, based at ``p``, that goes
     to a region, surrounds it, and comes back by the same path it came. The
     concatenation of all these paths is equivalent to ``E``.
 
-    The dictionnary associates to each vertical line the index of the generator
+    The dictionary associates to each vertical line the index of the generator
     of the geometric basis associated to it.
 
     EXAMPLES::
@@ -1138,6 +1138,7 @@ def vertical_lines_in_braidmon(flist):
     list.
 
     EXAMPLES::
+
         sage: from sage.schemes.curves.zariski_vankampen import vertical_lines_in_braidmon
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x, x + 3 * y - 5, 1 - x]
@@ -1220,22 +1221,25 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     - ``arrangement`` -- tuple (default: ``[]``); an optional tuple
       of polynomials whose product equals ``f``.
 
-    - `vertical` .. boolean (default: ``False`). If set to ``True``,
+    - ``vertical`` -- boolean (default: ``False`); if set to ``True``,
       ``arrangements`` contains more than one polynomial, some of them
       are of degree `1` in `x` and degree `0` in `y`, and none of
       the other components have vertical asymptotes, then these
-      components are marked and not used for the computation
-      of the braid monodromy.
+      components are marked as *vertical* and not used for the computation
+      of the braid monodromy. The other ones are marked as *horizontal*. If
+      a vertical component does not pass through a singular points of the
+      projection of the horizontal components a trivial braid is added
+      to the list.
 
     OUTPUT:
 
     - A list of braids, images by the braid monodromy of a geometric
       basis of the complement of the discriminant of `f` in `\mathbb{C}`.
 
-    - A dictionnary: ``i``, index of a strand is sent to the index of
+    - A dictionary: ``i``, index of a strand is sent to the index of
       the corresponding factor in ``arrangement``.
 
-    - Another dictionnary ``dv``, only relevant if ``vertical`` is ``True``.
+    - Another dictionary ``dv``, only relevant if ``vertical`` is ``True``.
       If  ``j`` is the index
       of a braid corresponding to a vertical line with index ``i``
       in ``arrangement``, then ``dv[j] = i``.
@@ -1813,11 +1817,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
       each of this paths is the conjugated of a loop around one of the points
       in the discriminant of the projection of ``f``.
 
-    - A dictionary attaching a tuple ``(i,)`` (generator) to a number ``j``
-      (a polynomial in the list). If ``simplified`` is set to ``True``,
-      a longer key may appear for either the meridian of the line at infinity,
-      if ``projective`` is ``True``, or a simplified generator,
-      if ``projective`` is ``False``
+    - A dictionary attaching to ``j`` a tuple a list of elements
+      of the group  which are meridians of the curve in position ``j``.
+      If ``projective`` is ``False`` and the `y`-degree of the horizontal
+      components coincide with the total degree, another key is added
+      to give a meridian of the line at infinity.
 
     EXAMPLES::
 
@@ -1851,7 +1855,8 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         (Finitely presented group <  |  >, {})
         sage: g, dic = fundamental_group_arrangement([x * y])
         sage: g.sorted_presentation(), dic
-        (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >, {0: [x0, x1]})
+        (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >,
+         {0: [x0, x1], 1: [x1^-1*x0^-1]})
         sage: fundamental_group_arrangement([y + x^2], projective=True)
         (Finitely presented group < x | x^2 >, {0: [x]})
         sage: L = [x, y, x - 1, x -y]
@@ -1860,7 +1865,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
          < x0, x1, x2, x3 | x2*x3^-1*x2^-1*x3, x0*x1*x3*x0^-1*x3^-1*x1^-1,
                             x3*x0*x1*x3^-1*x1^-1*x0^-1,
                             x1*x2*x1^-1*x0*x1*x2^-1*x1^-1*x0^-1 >,
-         {0: [x1], 1: [x3], 2: [x2], 3: [x0]})
+         {0: [x1], 1: [x3], 2: [x2], 3: [x0], 4: [x3^-1*x2^-1*x1^-1*x0^-1]})
         sage: fundamental_group_arrangement(L, vertical=True)
         (Finitely presented group
          < x0, x1, x2, x3 | x3*x0*x3^-1*x0^-1, x3*x1*x3^-1*x1^-1,
@@ -1883,11 +1888,9 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         while f.degree(y) < d:
             flist1 = [g.subs({x: x + y}) for g in flist1]
             f = prod(flist1)
-    if not vertical0:
-        infinity = all([g.degree(y) == g.degree() or
-                        Curve(g).is_vertical_line() for g in flist1])
-    if vertical0:
-        infinity = all([not Curve(g).has_vertical_asymptote() for g in flist1])
+    infinity = not vertical0 or all([Curve(g).is_vertical_line() or
+                                     g.degree(y) == g.degree()
+                                     for g in flist1])
     if braid_data:
         bm, dic, dv, d1 = braid_data
     elif len(flist1) == 0:
@@ -1916,7 +1919,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     for i in range(len(flist1)):
         L = [j1 for j1 in dic if dic[j1] == i]
         dic1[i] = [hom(g.gen(j)) for j in L]
-    if not projective and infinity and d1 == f.degree(y):
+    if not projective and infinity:
         t = prod(hom(a) for a in g.gens()).inverse()
         dic1[len(flist1)] = [t]
     n = g1.ngens()
