@@ -224,6 +224,9 @@ class DrinfeldModularFormsElement(ModuleElement):
         r"""
         Return the rank of the graded Drinfeld form.
 
+        Note that the rank is independent of the chosen form and depends
+        only on the parent.
+
         EXAMPLES::
 
             sage: A = GF(3)['T']; K = Frac(A)
