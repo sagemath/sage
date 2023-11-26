@@ -344,30 +344,6 @@ def cython(filename, verbose=0, compile_message=False,
 
     extra_compile_args = ['-w']  # no warnings
     extra_link_args = []
-    if sys.platform == 'cygwin':
-        # Link using --enable-auto-image-base, reducing the likelihood of the
-        # new DLL colliding with existing DLLs in memory.
-        # Note: Cygwin locates --enable-auto-image-base DLLs in the range
-        # 0x4:00000000 up to 0x6:00000000; this is documented in heap.cc in the
-        # Cygwin sources, while 0x6:00000000 and up is reserved for the Cygwin
-        # heap.
-        # In practice, Sage has enough DLLs that when rebasing everything we
-        # use up through, approximately, 0x4:80000000 though there is nothing
-        # precise here.  When running 'rebase' it just start from 0x2:00000000
-        # (below that is reserved for Cygwin's DLL and some internal
-        # structures).
-        # Therefore, to minimize the likelihood of collision with one of Sage's
-        # standard DLLs, while giving ~2GB (should be more than enough) for
-        # Sage to grow, we base these DLLs from 0x5:8000000, leaving again ~2GB
-        # for temp DLLs which in normal use should be more than enough.
-        # See https://github.com/sagemath/sage/issues/28258
-        # It should be noted, this is not a bulletproof solution; there is
-        # still a potential for DLL overlaps with this.  But this reduces the
-        # probability thereof, especially in normal practice.
-        dll_filename = os.path.splitext(pyxfile)[0] + '.dll'
-        image_base = _compute_dll_image_base(dll_filename)
-        extra_link_args.extend(['-Wl,--disable-auto-image-base',
-                                '-Wl,--image-base=0x{:x}'.format(image_base)])
 
     ext = Extension(name,
                     sources=[pyxfile],

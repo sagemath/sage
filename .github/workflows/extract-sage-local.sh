@@ -33,10 +33,3 @@ fi
 
 # Show how we are doing on free space.
 df -h
-
-# Rebase!
-case "$(uname)" in
-    CYGWIN*)
-        exec src/bin/sage-rebase.sh --all "$SAGE_LOCAL"
-        ;;
-esac

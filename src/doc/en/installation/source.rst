@@ -377,43 +377,6 @@ Use the following instructions to get started.
 
     .. literalinclude:: cygwin-optional.txt
 
-.. NOTE::
-
-   On Cygwin, at any point in time after building/installing software,
-   it may be required to  "rebase" ``dll`` files.
-   Sage provides some scripts, located in :file:`$SAGE_LOCAL/bin`, to do so:
-
-   - ``sage-rebaseall.sh``, a shell script which calls Cygwin's
-     ``rebaseall`` program.  It must be run within a ``dash`` shell
-     from the :envvar:`SAGE_ROOT` directory after all other Cygwin
-     processes have been shut down and needs write-access to the
-     system-wide rebase database located at
-     :file:`/etc/rebase.db.i386`, which usually means administrator
-     privileges.  It updates the system-wide database and adds Sage
-     dlls to it, so that subsequent calls to ``rebaseall`` will take
-     them into account.
-
-   - ``sage-rebase.sh``, a shell script which calls Cygwin's ``rebase`` program
-     together with the ``-O/--oblivious`` option.
-     It must be run within a shell from :envvar:`SAGE_ROOT` directory.
-     Contrary to the ``sage-rebaseall.sh`` script, it neither updates the
-     system-wide database, nor adds Sage dlls to it.
-     Therefore, subsequent calls to ``rebaseall`` will not take them into account.
-
-   - ``sage-rebaseall.bat`` (respectively ``sage-rebase.bat``), an MS-DOS batch
-     file which calls the ``sage-rebaseall.sh`` (respectively ``sage-rebase.sh``)
-     script.
-     It must be run from a Windows command prompt, after adjusting
-     :envvar:`SAGE_ROOT` to the Windows location of Sage's home directory, and, if
-     Cygwin is installed in a non-standard location, adjusting
-     :envvar:`CYGWIN_ROOT` as well.
-
-   Some systems may encounter this problem frequently enough to make building or
-   testing difficult.
-   If executing the above scripts or directly calling ``rebaseall`` does not solve
-   rebasing issues, deleting the system-wide database and then regenerating it
-   from scratch, e.g., by executing ``sage-rebaseall.sh``, might help.
-
 
 Other platforms
 ^^^^^^^^^^^^^^^
