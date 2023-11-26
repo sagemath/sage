@@ -133,6 +133,7 @@ jobs:
           set -ex
           DOC_DIR=/sage/local/share/doc/sage/html
           (cd $DOC_DIR && git commit -a -m 'new')
+          ls -l /sage/venv/bin
           PATH=/sage/venv/bin:$PATH .ci/create-changes-html.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR
           (cd $DOC_DIR && rm -rf .git)
           # We copy everything to a local folder

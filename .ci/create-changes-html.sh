@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 if [ $# != 2 ]; then
     echo >&2 "usage: $0 BASE_DOC_COMMIT DOC_REPO"
     echo >&2 "creates CHANGES.html in the current directory"
@@ -52,7 +52,7 @@ EOF
 echo '</head>' >> CHANGES.html
 echo '<body>' >> CHANGES.html
 (cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html) > diff.txt
-python - << EOF
+python3 - << EOF
 import os, re, html
 with open('diff.txt', 'r') as f:
     diff_text = f.read()
