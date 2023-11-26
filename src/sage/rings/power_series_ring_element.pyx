@@ -1158,7 +1158,7 @@ cdef class PowerSeries(AlgebraElement):
         if parent(r) is self.parent() or QQ.has_coerce_map_from(parent(r)):
             try:
                 right = QQ.coerce(r)
-            except TypeError:              
+            except TypeError:    
                 right = r
                 return (right * self.log()).exp()
         else:
