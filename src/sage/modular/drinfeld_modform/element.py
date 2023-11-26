@@ -238,7 +238,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def is_one(self):
         r"""
-        Return ``True`` whether the given graded Drinfeld form is the
+        Return ``True`` whether this graded Drinfeld form is the
         multiplicative identity.
 
         EXAMPLES::
@@ -255,7 +255,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def is_zero(self):
         r"""
-        Return ``True`` whether the given graded Drinfeld form is the
+        Return ``True`` whether this graded Drinfeld form is the
         additive identity.
 
         EXAMPLES::
@@ -301,7 +301,7 @@ class DrinfeldModularFormsElement(ModuleElement):
     def homogeneous_components(self):
         r"""
         Return the homogeneous components of this graded Drinfeld
-        modular form.
+        form.
 
         EXAMPLES::
 
@@ -321,8 +321,8 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def polynomial(self):
         r"""
-        Return ``self`` as a multivariate polynomial over the generators
-        of the ring.
+        Return this graded Drinfeld modular forms as a multivariate
+        polynomial over the generators of the ring.
 
         OUTPUT:
 
@@ -353,7 +353,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def type(self):
         r"""
-        Return the type of the graded Drinfeld form.
+        Return the type of this graded Drinfeld form.
 
         Recall that the *type* is the integer `m` such that
 
@@ -376,9 +376,24 @@ class DrinfeldModularFormsElement(ModuleElement):
             1
             sage: g1.type()
             0
+
+        The type only makes sense when the form is homogeneous::
+
+            sage: F = g1^4 + h2
+            sage: F.type()
+            Traceback (most recent call last):
+            ...
+            ValueError: the graded form is not homogeneous
+
+        TESTS::
+
+            sage: A = GF(2)['T']; K = Frac(A)
+            sage: M = DrinfeldModularForms(K, 2, has_type=False)
+            sage: (M.1).type()
+            0
         """
         if not self.is_homogeneous():
-            raise ValueError("self should be a Drinfeld modular form")
+            raise ValueError("the graded form is not homogeneous")
         if not self.parent()._has_type:
             return ZZ(0)
         q = self.base_ring().base_ring().cardinality()
@@ -386,7 +401,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def weight(self):
         r"""
-        Return the weight of ``self``.
+        Return the weight of this graded Drinfeld modular form.
 
         EXAMPLES::
 
@@ -408,8 +423,8 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: f.weight()
             Traceback (most recent call last):
             ...
-            ValueError: the given ring element is not a Drinfeld modular form
+            ValueError: the graded form is not homogeneous
         """
         if not self.is_homogeneous():
-            raise ValueError("the given ring element is not a Drinfeld modular form")
+            raise ValueError("the graded form is not homogeneous")
         return self._polynomial.degree()
