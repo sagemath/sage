@@ -20,9 +20,6 @@ sdh_make_install
 case "$UNAME" in
     Darwin)
         DYLIB_NAME=libreadline.dylib;;
-    CYGWIN)
-        # It is of course very lame that readline names the file .dll.a, but that's what it does.
-        DYLIB_NAME=libreadline.dll.a;;
     OpenBSD)
         # Untested. (David Kirkby, 11th November 2010)
         # Extension changed from 6.1 to 6.2; still untested. (October 2011)
