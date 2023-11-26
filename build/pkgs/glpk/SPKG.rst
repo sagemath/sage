@@ -57,9 +57,6 @@ Patches
 
 -  All patches below are currently used by spkg-src
 -  src/01-zlib.patch: don't build the included zlib library.
--  src/02-cygwin_sharedlib.patch: Let a shared library be built on
-   Cygwin by
-   passing the -no-undefined flag to libtool.
 
    The numbering reflect the order in which they have been created from
    glpk pristine's sources

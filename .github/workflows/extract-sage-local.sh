@@ -8,7 +8,6 @@ fi
 # Show all tar files
 ls -l $*
 
-# Cygwin note: We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
 for a in $*; do
     echo Extracting $a
     (cd / && tar xf -) < $a

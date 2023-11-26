@@ -35,8 +35,6 @@ Special Update/Build Instructions
 Patches
 ~~~~~~~
 
--  0001-Trac-15014-Let-gf2x-build-a-shared-library-on-Cygwin.patch: pass
-   -no-undefined flag to libtool.
 -  0002-tr-portability.patch: backport upstream fix for non-portable tr
    use
 -  0003-Improve-detection-of-sse2-support.patch: backport upstream

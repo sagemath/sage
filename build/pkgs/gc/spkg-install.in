@@ -2,11 +2,6 @@ cd src
 
 GC_CONFIGURE="--enable-large-config"
 
-if [ "$UNAME" = "CYGWIN" ]; then
-    # See https://github.com/sagemath/sage/issues/22694
-    GC_CONFIGURE="$GC_CONFIGURE --enable-threads=posix --enable-handle-fork"
-fi
-
 sdh_configure $GC_CONFIGURE
 sdh_make
 sdh_make_install

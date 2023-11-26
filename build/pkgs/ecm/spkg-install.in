@@ -73,12 +73,6 @@ else
     echo "to, or '--with-pic' was given in ECM_CONFIGURE."
 fi
 
-if [ "$UNAME" == "CYGWIN" ]; then
-    # Force shared library build only on Cygwin; it will not build otherwise
-    ECM_CONFIGURE="$ECM_CONFIGURE --enable-shared --disable-static"
-fi
-
-
 if [ "$SAGE_DEBUG" = yes ]; then
     # Add debug symbols and disable optimization:
     echo >&2 "Warning: Setting SAGE_DEBUG=yes completely disables optimization."

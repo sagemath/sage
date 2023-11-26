@@ -1,8 +1,2 @@
 cd src
-
-if [ "$UNAME" = "CYGWIN" ]; then
-    echo "Disable parallel testing on Cygwin"
-    MAKE="$MAKE -j1"
-fi
-
 $MAKE check

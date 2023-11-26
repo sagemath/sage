@@ -31,9 +31,6 @@ ntl_configure()
         echo "Setting SHAREDFLAGS to '-fno-common'"
         SHAREDFLAGS="-fno-common"
         ;;
-      CYGWIN)
-        LIBTOOL_LINK_FLAGS="-no-undefined"
-        ;;
     esac
 
     # If SAGE_FAT_BINARY is enabled we don't want NTL to be built with CPU-
