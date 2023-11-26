@@ -597,7 +597,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
     def braid_monodromy(self, vertical=True):
         r"""
-        It computes the braid monodromy of the compleme+nt of the union
+        It computes the braid monodromy of the complement of the union
         of affine plane curves in `\mathbb{C}^2`. If there are vertical
         asymptotes a change of variable is done.
 
