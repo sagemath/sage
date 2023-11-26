@@ -420,7 +420,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             over Rational Field
             sage: C = H(x*y, x)
             sage: C.reduce(clean=True)
-        Arrangement (x*y) in Affine Space of dimension 2 over Rational Field
+            Arrangement (x*y) in Affine Space of dimension 2 over Rational Field
         """
         P = self.parent()
         R = self.coordinate_ring()
