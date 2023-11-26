@@ -693,6 +693,14 @@ def solve(f, *args, **kwds):
         sage: Expression.solve(x^2==1,x)
         [x == -1, x == 1]
 
+    We may solve for certain non-variables as well::
+
+        sage: u=function('u')(x,y);
+        sage: solve(list((u^2+x*u+y).gradient()),list(u.gradient()))
+        [[diff(u(x, y), x) == -u(x, y)/(x + 2*u(x, y)), diff(u(x, y), y) == -1/(x + 2*u(x, y))]]
+        sage: solve([diff(u^2+x^2,x), diff(u^2+x^2,x,x)],[diff(u,x),diff(u,x,x)])
+        [[diff(u(x, y), x) == -x/u(x, y), diff(u(x, y), x, x) == -(x^2 + u(x, y)^2)/u(x, y)^3]]
+
     If we ask for dictionaries containing the solutions, we get them::
 
         sage: solve([x^2-1],x,solution_dict=True)
