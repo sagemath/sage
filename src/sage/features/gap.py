@@ -57,8 +57,9 @@ class GapPackage(Feature):
         except ImportError:
             return FeatureTestResult(self, False,
                                      reason="sage.libs.gap is not available")
-        command = 'TestPackageAvailability("{package}")'.format(package=self.package)
+        command = 'IsPackageLoaded("{package}")'.format(package=self.package)
         presence = libgap.eval(command)
+
         if presence:
             return FeatureTestResult(self, True,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))

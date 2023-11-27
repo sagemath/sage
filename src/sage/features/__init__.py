@@ -236,7 +236,7 @@ class Feature(TrivialUniqueRepresentation):
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_ve1EeThu is not available.
-            `TestPackageAvailability("ve1EeThu")` evaluated to `fail` in GAP.
+            `IsPackageLoaded("ve1EeThu")` evaluated to `false` in GAP.
         """
         presence = self.is_present()
         if not presence:
@@ -451,7 +451,7 @@ class FeatureNotPresentError(RuntimeError):
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_gapZuHoh8Uu is not available.
-            `TestPackageAvailability("gapZuHoh8Uu")` evaluated to `fail` in GAP.
+            `IsPackageLoaded("gapZuHoh8Uu")` evaluated to `false` in GAP.
         """
         lines = ["{feature} is not available.".format(feature=self.feature.name)]
         if self.reason:
@@ -481,7 +481,7 @@ class FeatureTestResult():
     ``resolution``::
 
         sage: presence.reason                                                           # needs sage.libs.gap
-        '`TestPackageAvailability("NOT_A_PACKAGE")` evaluated to `fail` in GAP.'
+        '`IsPackageLoaded("NOT_A_PACKAGE")` evaluated to `false` in GAP.'
         sage: bool(presence.resolution)
         False
 
