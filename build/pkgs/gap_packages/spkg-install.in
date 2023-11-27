@@ -4,6 +4,9 @@ PKG_DIR="$GAP_ROOT/pkg"
 PKG_SRC_DIR="$(pwd)/src/pkg"
 cd "$PKG_SRC_DIR"
 
+# The 'packagemanager' package expects this https://github.com/gap-packages/PackageManager/issues/105
+mkdir -p "$SAGE_LOCAL/lib/gap/bin"
+
 # directly install pure GAP packages
 #
 #    happrime - no longer distributed, partly merged in Hap,
@@ -12,30 +15,48 @@ cd "$PKG_SRC_DIR"
 
 sdh_install \
     aclib \
+    alnuth \
+    atlasrep \
+    autodoc \
+    autpgrp \
     corelg \
     crime \
+    crisp \
     cryst \
     crystcat \
+    ctbllib \
     design \
+    factint \
+    fga \
     gbnp \
     genss \
     hap \
     hapcryst \
     hecke \
     images \
+    irredsol \
+    laguna \
     liealgdb \
     liepring \
     liering \
     loops \
     mapclass \
+    packagemanager \
+    polenta \
+    polycyclic \
     polymaking \
     qpa \
     quagroup \
+    radiroot \
     repsn \
+    resclasses \
     singular \
+    sophus \
     sla \
     sonata \
+    tomlib \
     toric \
+    utils \
     "$PKG_DIR"
 
 install_compiled_pkg()
