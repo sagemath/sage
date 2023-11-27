@@ -3262,8 +3262,8 @@ class AlgebraicGenerator(SageObject):
 
         INPUT:
 
-        - ``other`` - an algebraic number
-        - ``name`` - string (default: ``'a'``); a name for the primitive element
+        - ``other`` -- an algebraic number
+        - ``name`` -- string (default: ``'a'``); a name for the primitive element
 
         EXAMPLES::
 
