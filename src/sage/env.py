@@ -244,7 +244,8 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 # GAP memory and args
 
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
-_gap_cmd = "gap -r"
+
+_gap_cmd  = "gap"
 if SAGE_GAP_MEMORY is not None:
     _gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', _gap_cmd)
