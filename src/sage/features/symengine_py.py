@@ -23,7 +23,7 @@ class symengine_py(JoinFeature):
 
     EXAMPLES::
 
-        sage: from sage.features.igraph import symengine_py
+        sage: from sage.features.symengine_py import symengine_py
         sage: symengine_py().is_present()                    # optional - symengine_py
         FeatureTestResult('symengine_py', True)
     """
