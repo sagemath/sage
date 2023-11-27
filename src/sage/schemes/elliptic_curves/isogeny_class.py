@@ -1219,9 +1219,9 @@ def isogeny_degrees_cm(E, verbose=False):
     if not E.has_rational_cm():
         n *= 2
     # For discriminants with extra units there's an extra factor in the class number formula:
-    if d==-4:
+    if d == -4:
         n *= 2
-    if d==-3:
+    if d == -3:
         n *= 3
     divs = n.divisors()
 
