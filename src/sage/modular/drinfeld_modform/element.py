@@ -2,31 +2,6 @@ r"""
 This module defines the elements of the class
 :class:`~drinfeld_modular_forms.ring.DrinfeldModularForms`.
 
-EXAMPLES::
-
-    sage: q = 3
-    sage: A = GF(q)['T']
-    sage: K.<T> = Frac(A)
-    sage: M = DrinfeldModularForms(K, 2)  # rank 2
-    sage: M.inject_variables()
-    Defining g1, g2
-    sage: g1.parent()
-    Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
-
-A *graded Drinfeld modular form* is a sum of Drinfeld modular forms
-having potentially different weights::
-
-    sage: F = g1*g2 + g2
-    sage: F.is_homogeneous()
-    False
-    sage: F.homogeneous_components()
-    {8: g2, 10: g1*g2}
-    sage: H = g1^4*g2^9 + T*g1^8*g2^8 + (T^2 - 1)*g1^28*g2^3
-    sage: H.is_homogeneous()
-    True
-    sage: H.weight()
-    80
-
 AUTHORS:
 
 - David Ayotte (2022): initial version
@@ -51,27 +26,51 @@ class DrinfeldModularFormsElement(ModuleElement):
     r"""
     Element class of rings of Drinfeld modular forms.
 
-    This class should not be directly instanciated, instead create an
-    instance of the parent
-    :class:`~drinfeld_modular_forms.ring.DrinfeldModularForms` and
-    access its elements using the relevant methods.
+    Recall that a *graded Drinfeld form* is a sum of Drinfeld modular
+    forms having potentially different weights:
 
-    EXAMPLES::
+    ..MATH::
+
+        F = f_{k_1} + f_{k_2} + \cdots + f_{k_n}
+
+    where `f_{k_i}` is a Drinfeld modular form of weight `k_i`. We also
+    say that `f_{k_i}` is an *homogeneous component of weight `k_i`*. If
+    `n=1`, then we say that `F` is *homogeneous of weight `k_1`*.
+
+    EXAMPLES: use the ``inject_variable`` method to quickly assign
+    variables names to the generators of the ring::
 
         sage: A = GF(3)['T']
         sage: K.<T> = Frac(A)
         sage: M = DrinfeldModularForms(K, 2)
         sage: M.inject_variables()
         Defining g1, g2
-        sage: (T^2 + 1)*(g1 + g1*g2)
-        (T^2 + 1)*g1*g2 + (T^2 + 1)*g1
-        sage: (g1).parent()
-        Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
-        sage: g2 in M
+        sage: g1 in M
         True
+        sage: g2.parent()
+        Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
 
-    When calling the parent, you can construct an element simply by
-    passing a multivariate polynomial::
+    We first create a nonhomogeneous graded form and access its
+    homogeneous components::
+
+        sage: F = g1*g2 + g2
+        sage: F
+        g1*g2 + g2
+        sage: F.is_homogeneous()
+        False
+        sage: F.homogeneous_components()
+        {8: g2, 10: g1*g2}
+
+    If the created form is homogeneous, we can ask for its weight::
+
+        sage: H = g1^4*g2^9 + T*g1^8*g2^8 + (T^2 - 1)*g1^28*g2^3
+        sage: H.is_homogeneous()
+        True
+        sage: H.weight()
+        80
+
+    You can also construct an element simply by passing a multivariate
+    polynomial to the parent::
 
         sage: f1, f2 = polygens(K, 2, 'f1, f2')
         sage: M(f1)
@@ -80,6 +79,13 @@ class DrinfeldModularFormsElement(ModuleElement):
         g2
         sage: M(T*f1 + f2^3 + T^2 + 1)
         g2^3 + T*g1 + (T^2 + 1)
+
+    .. note::
+
+        This class should not be directly instanciated, instead create
+        an instance of the parent
+        :class:`~drinfeld_modular_forms.ring.DrinfeldModularForms` and
+        access its elements using the relevant methods.
     """
     def __init__(self, parent, polynomial):
         if not isinstance(polynomial, MPolynomial):
@@ -222,7 +228,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def rank(self):
         r"""
-        Return the rank of the graded Drinfeld form.
+        Return the rank of this graded Drinfeld form.
 
         Note that the rank is independent of the chosen form and depends
         only on the parent.
@@ -324,8 +330,8 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     def polynomial(self):
         r"""
-        Return this graded Drinfeld modular forms as a multivariate
-        polynomial over the generators of the ring.
+        Return this graded Drinfeld forms as a multivariate polynomial
+        over the generators of the ring.
 
         OUTPUT:
 
@@ -420,7 +426,8 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: f.weight()
             26
 
-        If the form is not modular, then the method returns an error::
+        If the form is not homogeneous, then the method returns an
+        error::
 
             sage: f = g1 + g2
             sage: f.weight()
