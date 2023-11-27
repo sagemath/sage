@@ -790,21 +790,19 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             sage: # needs sirocco
             sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x*z, y + x - z, x)
-            sage: A.fundamental_group()
-            Finitely presented group < x0, x1 | x1^-1*x0*x1*x0^-1 >
+            sage: A.fundamental_group().sorted_presentation()
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
             sage: A.meridians()
-            {0: [x1], 1: [x1^-1*x0^-1*x1^-1], 2: [x0]}
+            {0: [x1], 1: [x0], 2: [x1^-1*x0^-1*x1^-1]}
             sage: G = A.fundamental_group(simplified=False)
             sage: G.sorted_presentation()
             Finitely presented group
-            < x0, x1, x2, x3 | x3^-1*x2^-1*x1^-1*x0^-1,
-                               x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
-                               x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
-                               (x3^-1*x2^-1*x0^-1*x2)^2*(x3*x2^-1*x0*x2)^2,
-                               x3^-1*x2^-1*x0^-1*x2*x3^-1*x2^-1*x0*x2*x3*x2,
-                               x1^-1*x0^-1*x1*x0 >
+            < x0, x1, x2, x3 | x3^-1*x2^-1*x1^-1*x0^-1, x3^-1*x2^-1*x3*x0*x1*x0^-1,
+                               x3^-1*x1^-1*x3*x0*x1*x0^-1*x2^-1*x0^-1*(x2*x0)^2*x1^-1*x0^-1,
+                               x3^-1*x0^-1*x3*x0*x1*x0^-1*x2^-1*x0*x2*x0*x1^-1*x0^-1,
+                               x2^-1*x0^-1*x2*x0, x1^-1*x0^-1*x1*x0 >
             sage: A.meridians(simplified=False)
-            {0: [x2, x3], 1: [x1], 2: [x0]}
+            {0: [x1, x2], 1: [x0], 2: [x3]}
             sage: A = H(y^2 + x*z, z, x)
             sage: A.fundamental_group()
             Finitely presented group < x0, x1 | (x1*x0)^2*(x1^-1*x0^-1)^2 >
@@ -897,10 +895,10 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             sage: # needs sirocco
             sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x*z, y + x - z, x)
-            sage: A.fundamental_group()
-            Finitely presented group < x0, x1 | x1^-1*x0*x1*x0^-1 >
+            sage: A.fundamental_group().sorted_presentation()
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
             sage: A.meridians()
-            {0: [x1], 1: [x1^-1*x0^-1*x1^-1], 2: [x0]}
+            {0: [x1], 1: [x0], 2: [x1^-1*x0^-1*x1^-1]}
             sage: A = H(y^2 + x*z, z, x)
             sage: A.fundamental_group()
             Finitely presented group < x0, x1 | (x1*x0)^2*(x1^-1*x0^-1)^2 >

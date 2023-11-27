@@ -1857,15 +1857,19 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         sage: g.sorted_presentation(), dic
         (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >,
          {0: [x0, x1], 1: [x1^-1*x0^-1]})
-        sage: fundamental_group_arrangement([y + x^2], projective=True)
+        sage: fundamental_group_arrangement([y + x^2])
+        (Finitely presented group < x |  >, {0: [x]})
+        sage: fundamental_group_arrangement([y^2 + x], projective=True)
         (Finitely presented group < x | x^2 >, {0: [x]})
         sage: L = [x, y, x - 1, x -y]
-        sage: fundamental_group_arrangement(L)
-        (Finitely presented group
-         < x0, x1, x2, x3 | x2*x3^-1*x2^-1*x3, x0*x1*x3*x0^-1*x3^-1*x1^-1,
-                            x3*x0*x1*x3^-1*x1^-1*x0^-1,
-                            x1*x2*x1^-1*x0*x1*x2^-1*x1^-1*x0^-1 >,
-         {0: [x1], 1: [x3], 2: [x2], 3: [x0], 4: [x3^-1*x2^-1*x1^-1*x0^-1]})
+        sage: G, dic =fundamental_group_arrangement(L)
+        sage: G.sorted_presentation()
+        Finitely presented group
+        < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x0^-1*x1*x3*x0,
+                           x3^-1*x1^-1*x0^-1*x3*x0*x1,
+                           x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1 >
+        sage: dic
+        {0: [x1], 1: [x3], 2: [x2], 3: [x0], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
         sage: fundamental_group_arrangement(L, vertical=True)
         (Finitely presented group
          < x0, x1, x2, x3 | x3*x0*x3^-1*x0^-1, x3*x1*x3^-1*x1^-1,
@@ -1881,16 +1885,14 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         f = R(1)
     x, y = R.gens()
     flist1 = [_ for _ in flist]
-    d = f.degree()
-    vertical0 = bool(vertical)
-    if projective:
-        vertical0 = False
-        while f.degree(y) < d:
-            flist1 = [g.subs({x: x + y}) for g in flist1]
-            f = prod(flist1)
-    infinity = not vertical0 or all([Curve(g).is_vertical_line() or
-                                     g.degree(y) == g.degree()
-                                     for g in flist1])
+    if vertical and vertical_lines_in_braidmon(flist1):
+        infinity = all([Curve(g).is_vertical_line() or
+                        g.degree(y) == g.degree() for g in flist1])
+    else:
+        infinity = any([Curve(g).has_vertical_asymptote() or
+                        Curve(g).is_vertical_line() for g in flist1])
+        if not infinity:
+            infinity = all([g.degree(y) == g.degree() for g in flist1])
     if braid_data:
         bm, dic, dv, d1 = braid_data
     elif len(flist1) == 0:
@@ -1899,7 +1901,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         dv = {j: j for j, f in flist1}
         d1 = 0
     else:
-        bm, dic, dv, d1 = braid_monodromy(f, flist1, vertical=vertical0)
+        bm, dic, dv, d1 = braid_monodromy(f, flist1, vertical=vertical)
     vert_lines = list(dv)
     vert_lines.sort()
     for i, j in enumerate(vert_lines):

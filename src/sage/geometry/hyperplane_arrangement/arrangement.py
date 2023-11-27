@@ -3941,24 +3941,26 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             Finitely presented group < x0, x1 |  >
             sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
             sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
-            sage: G3 = H.projective_fundamental_group(); G3                                 # optional - sage.graphs
+            sage: G3 = H.projective_fundamental_group(); G3.sorted_presentation()           # optional - sage.graphs
             Finitely presented group
-            < x0, x1, x2, x3, x4 | x0*x2*x0^-1*x2^-1, x1*x3*x1^-1*x3^-1,
-                                   x1*x4*x1^-1*x0^-1*x4^-1*x0,
-                                   x4*x2*x3*x2^-1*x4^-1*x3^-1,
-                                   x4^-1*x1^-1*x0*x1*x4*x0^-1,
-                                   x3*x4^-1*x3^-1*x2^-1*x4*x2 >
+            < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
+                                   x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
+                                   x4^-1*x1^-1*x0^-1*x4*x0*x1,
+                                   x4^-1*x1^-1*x3*x0*x1*x3^-1*x2^-1*x4*x0^-1*x2,
+                                   x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2,
+                                   x3^-1*x1^-1*x3*x1 >
             sage: G3.abelian_invariants()                                                    # optional - sage.graphs
             (0, 0, 0, 0, 0)
             sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = A4(hyperplane_arrangements.braid(4))                                   # optional - sage.graphs
-            sage: G4 = H.projective_fundamental_group(); G4                                  # optional - sage.graphs
+            sage: G4 = H.projective_fundamental_group(); G4.sorted_presentation()            # optional - sage.graphs
             Finitely presented group
-            < x0, x1, x2, x3, x4 | x0*x2*x0^-1*x2^-1, x1*x3*x1^-1*x3^-1,
-                                   x1*x4*x1^-1*x0^-1*x4^-1*x0,
-                                   x4*x2*x3*x2^-1*x4^-1*x3^-1,
-                                   x4^-1*x1^-1*x0*x1*x4*x0^-1,
-                                   x3*x4^-1*x3^-1*x2^-1*x4*x2 >
+            < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
+                                   x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
+                                   x4^-1*x1^-1*x0^-1*x4*x0*x1,
+                                   x4^-1*x1^-1*x3*x0*x1*x3^-1*x2^-1*x4*x0^-1*x2,
+                                   x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2,
+                                   x3^-1*x1^-1*x3*x1 >
             sage: G4.abelian_invariants()                                                    # optional - sage.graphs
             (0, 0, 0, 0, 0)
             sage: L.<t0, t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
@@ -4029,13 +4031,13 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
             sage: H = A3(hyperplane_arrangements.braid(4).essentialization())               # optional - sage.graphs
             sage: H.projective_meridians()                                                  # optional - sage.graphs
-            {0: [x4], 1: [x0], 2: [x1], 3: [x2], 4: [x3],
-             5: [x0^-1*x4^-1*x3^-1*x1^-1*x2^-1]}
+            {0: [x2^-1*x0^-1*x4^-1*x3^-1*x1^-1],
+             1: [x3], 2: [x4], 3: [x1], 4: [x2], 5: [x0]}
             sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = A4(hyperplane_arrangements.braid(4))                                   # optional - sage.graphs
             sage: H.projective_meridians()                                                   # optional - sage.graphs
-            {0: [x4], 1: [x0], 2: [x1], 3: [x0^-1*x4^-1*x3^-1*x1^-1*x2^-1],
-             4: [x3], 5: [x2]}
+            {0: [x2^-1*x0^-1*x4^-1*x3^-1*x1^-1], 1: [x3],
+             2: [x4], 3: [x0], 4: [x2], 5: [x1]}
             sage: L.<t0, t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = hyperplane_arrangements.coordinate(5)
             sage: H = L(H)
