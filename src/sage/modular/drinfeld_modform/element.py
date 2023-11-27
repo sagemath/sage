@@ -29,7 +29,7 @@ class DrinfeldModularFormsElement(ModuleElement):
     Recall that a *graded Drinfeld form* is a sum of Drinfeld modular
     forms having potentially different weights:
 
-    ..MATH::
+    .. MATH::
 
         F = f_{k_1} + f_{k_2} + \cdots + f_{k_n}
 
@@ -37,8 +37,8 @@ class DrinfeldModularFormsElement(ModuleElement):
     say that `f_{k_i}` is an *homogeneous component of weight `k_i`*. If
     `n=1`, then we say that `F` is *homogeneous of weight `k_1`*.
 
-    EXAMPLES: use the ``inject_variable`` method to quickly assign
-    variables names to the generators of the ring::
+    EXAMPLES: use the ``inject_variable`` method of the parent to
+    quickly assign variables names to the generators::
 
         sage: A = GF(3)['T']
         sage: K.<T> = Frac(A)
@@ -50,8 +50,8 @@ class DrinfeldModularFormsElement(ModuleElement):
         sage: g2.parent()
         Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
 
-    We first create a nonhomogeneous graded form and access its
-    homogeneous components::
+    Next, via algebraic combination of the generator, we create a
+    nonhomogeneous element::
 
         sage: F = g1*g2 + g2
         sage: F
@@ -61,7 +61,8 @@ class DrinfeldModularFormsElement(ModuleElement):
         sage: F.homogeneous_components()
         {8: g2, 10: g1*g2}
 
-    If the created form is homogeneous, we can ask for its weight::
+    If the created form is homogeneous, we can ask for its weight in
+    which case it will be a Drinfeld modular form::
 
         sage: H = g1^4*g2^9 + T*g1^8*g2^8 + (T^2 - 1)*g1^28*g2^3
         sage: H.is_homogeneous()
@@ -369,8 +370,6 @@ class DrinfeldModularFormsElement(ModuleElement):
         .. MATH::
 
             f(\gamma(w)) = \mathrm{det}(\gamma)^m j(\gamma, w)^k f(w).
-
-        This method is only implemented when the rank is two.
 
         EXAMPLES::
 
