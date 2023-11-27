@@ -29,5 +29,5 @@ for platform_key, platform_value in platforms.items():
                 if not env_file.exists():
                     continue
 
-                print(f"Updating lock file for {env_file} at {lock_file}")
+                print(f"Updating lock file for {env_file} at {lock_file}", flush=True)
                 subprocess.run(["conda-lock", "--channel", "conda-forge", "--kind", "env", "--platform", platform_key, "--file", str(env_file), "--lockfile", str(lock_file), "--filename-template", str(lock_file)])
