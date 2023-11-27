@@ -74,6 +74,10 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
         sage: v = Q.find_primitive_p_divisible_vector__next(5, v); v
         (1, 0)
         sage: v = Q.find_primitive_p_divisible_vector__next(5, v); v
+        sage: v = Q.find_primitive_p_divisible_vector__next(2) ; v
+        (0, 1)
+        sage: v = Q.find_primitive_p_divisible_vector__next(2, v) ; v
+        (1, 0)
         sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = Q.find_primitive_p_divisible_vector__next(2)
         sage: Q(v)
@@ -83,6 +87,9 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     n = self.dim()
     if v is None:
         w = vector(ZZ, [0] * (n - 1) + [1])
+        a = self(w)
+        if a in ZZ and (a % p == 0):
+            return w
     else:
         w = deepcopy(v)
 
@@ -132,7 +139,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
             return w
 
 
-def find_p_neighbor_from_vec(self, p, y):
+def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
     r"""
     Return the `p`-neighbor of ``self`` defined by ``y``.
 
@@ -147,25 +154,32 @@ def find_p_neighbor_from_vec(self, p, y):
     - ``p`` -- a prime number
     - ``y`` -- a vector with `q(y) \in p \ZZ`
     - ``odd`` -- (default: ``False``) if `p=2`, return also odd neighbors
+    - ``return_matrix`` -- (boolean, default ``False``) return
+      the transformation matrix instead of the quadratic form
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: v = vector([0,2,1,1])
-        sage: X = Q.find_p_neighbor_from_vec(3, v); X                                   # needs sage.libs.pari
+        sage: X = Q.find_p_neighbor_from_vec(3, v); X
         Quadratic form in 4 variables over Integer Ring with coefficients:
         [ 1 0 0 0 ]
         [ * 1 4 4 ]
         [ * * 5 12 ]
         [ * * * 9 ]
+        sage: B = Q.find_p_neighbor_from_vec(3, v, return_matrix=True)
+        sage: Q(B) == X
+        True
 
     Since the base ring and the domain are not yet separate,
     for rational, half integral forms we just pretend
     the base ring is `\ZZ`::
 
+        sage: # needs sage.libs.pari
         sage: Q = QuadraticForm(QQ, matrix.diagonal([1,1,1,1]))
         sage: v = vector([1,1,1,1])
-        sage: Q.find_p_neighbor_from_vec(2, v)                                          # needs sage.libs.pari
+        sage: Q.find_p_neighbor_from_vec(2, v)
         Quadratic form in 4 variables over Rational Field with coefficients:
         [ 1/2 1 1 1 ]
         [ * 1 1 2 ]
@@ -227,9 +241,12 @@ def find_p_neighbor_from_vec(self, p, y):
     # by definition this is the p-neighbor of L at y
     # assert B.det().abs() == 1
 
-    QF = self.parent()
-    Gnew = (B*G*B.T).change_ring(R)
-    return QF(Gnew)
+    if return_matrix:
+        return B.T
+    else:
+        QF = self.parent()
+        Gnew = (B*G*B.T).change_ring(R)
+        return QF(Gnew)
 
 
 def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
