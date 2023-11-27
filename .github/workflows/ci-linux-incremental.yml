@@ -60,8 +60,8 @@ jobs:
       - name: Determine targets to build
         id: build-targets
         run: |
-          echo "uninstall_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))" >> $GITHUB_OUTPUT
-          echo "build_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.pkgs_all_changed_files }}; do echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([-_.a-z0-9]*)/[^ ]* *,\2-ensure,;'; done | sort -u))" >> $GITHUB_OUTPUT
+          echo "uninstall_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))" >> $GITHUB_OUTPUT
+          echo "build_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.pkgs_all_changed_files }}; do SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;'); if [ -f "build/pkgs/$SPKG/checksums.ini" -o -f "build/pkgs/$SPKG/requirements.txt" -o -f "build/pkgs/$SPKG/spkg-install" ]; then echo "$SPKG-ensure"; fi; done | sort -u))" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
 
   test:
