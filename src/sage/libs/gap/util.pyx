@@ -218,7 +218,7 @@ cdef initialize() noexcept:
     cdef char* argv[16]
     argv[0] = "sage"
     argv[1] = "-l"
-    s = str_to_bytes(sage.env.GAP_LIB_DIR + ";" + sage.env.GAP_SHARE_DIR, FS_ENCODING, "surrogateescape")
+    s = str_to_bytes(sage.env.GAP_ROOT_PATHS, FS_ENCODING, "surrogateescape")
     argv[2] = s
 
     argv[3] = "-m"
