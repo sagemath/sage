@@ -10,9 +10,9 @@ subprocess.run([str(root_dir / "bootstrap-conda")])
 
 platforms = {
     "linux-64": "linux",
-    "linux-aarch64": "linux-aarch",
+    "linux-aarch64": "linux-aarch64",
     "osx-64": "macos",
-    "osx-arm64": "macos-arm"
+    "osx-arm64": "macos-arm64"
     #"win-64": "win",
 }
 pythons = ["3.9", "3.10", "3.11"]
