@@ -134,3 +134,7 @@ end;
 #
 # LogTo("/tmp/gapsage.log");
 #
+
+
+# Try to load some heavily-used (but still optional) packages.
+LoadPackage("PolyCyclic");
