@@ -1,3 +1,17 @@
 # This file is run by Sage when initializing libgap via GAP_Initialize, and may
 # contain bug fixes/workarounds and/or any Sage-specific patches necessary for
 # Sage's libgap interface.
+
+# Try to load some heavily-used (but still optional) packages.
+# Temporarily lower the InfoLevel of the InfoWarning class so
+# that,
+#
+#  #I  polycyclic package is not available. Check that the name is correct
+#  #I  and it is present in one of the GAP root directories (see '??RootPaths')
+#
+# is not output to the console.
+#
+_orig_warn_level := InfoLevel(InfoWarning);
+SetInfoLevel(InfoWarning, 0);
+LoadPackage("PolyCyclic");
+SetInfoLevel(InfoWarning, _orig_warn_level);
