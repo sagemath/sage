@@ -544,7 +544,7 @@ AC_ARG_ENABLE([sagelib],
 dnl Handle combinations of --disable-foo flags that may enable us to
 dnl prune even more dependencies.
 AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
-    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
+    for pkg in jupyter_client ipykernel ipython zeromq pyzmq exceptiongroup; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
