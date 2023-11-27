@@ -711,6 +711,52 @@ class LieAlgebras(Category_over_base_ring):
             from sage.algebras.lie_algebras.representation import TrivialRepresentation
             return TrivialRepresentation(self)
 
+        def representation(self, f=None, index_set=None, on_basis=None, **kwargs):
+            """
+            Return a representation of ``self``.
+
+            If no arguments are given, then this returns the trivial
+            representation.
+
+            Currently the only implementated method of constructing a
+            representation is by explicitly specifying the action of
+
+            * the elements of ``self`` by matrices;
+            * the basis elements of ``self`` using a ``dict`` or
+              a :func:`Family`;
+            * a function on basis elements (either passed as ``on_basis``
+              or setting ``on_basis=True``).
+
+            INPUT:
+
+            - ``f`` -- the function that defines the action
+            - ``index_set`` -- the index set of the representation
+            - ``on_basis`` -- (optional) see above
+
+            .. SEEALSO::
+
+                :class:`~sage.algebras.lie_algebras.representation.RepresentationByMorphism`
+
+            EXAMPLES::
+
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
+                sage: f = {x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])}
+                sage: L.representation(f)
+                Representation of Lie algebra on 2 generators (x, y) over Rational Field defined by:
+                       [1 0]
+                x |--> [0 0]
+                       [0 1]
+                y |--> [0 0]
+                sage: L.representation()
+                Trivial representation of Lie algebra on 2 generators (x, y) over Rational Field
+            """
+            if f is None and on_basis is None and index_set is None:
+                return self.trivial_representation(**kwargs)
+            if on_basis is None:
+                on_basis = False
+            from sage.algebras.lie_algebras.representation import RepresentationByMorphism
+            return RepresentationByMorphism(self, f, index_set, on_basis, **kwargs)
+
         def _test_jacobi_identity(self, **options):
             """
             Test that the Jacobi identity is satisfied on (not

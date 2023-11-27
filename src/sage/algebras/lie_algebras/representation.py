@@ -16,7 +16,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.modules import Modules
 from copy import copy
@@ -103,23 +103,75 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
 
     - ``lie_algebra`` -- a Lie algebra
     - ``f`` -- the Lie algebra morphism defining the action of the basis
-      elements of ``lie_algebra`` encoded as a ``dict`` with keys being
-      indices of the basis of ``lie_algebra`` and the values being the
-      corresponding matrix defining the action
+      elements of ``lie_algebra``
+    - ``index_set`` -- (optional) the index set of the module basis
+    - ``on_basis`` -- (default: ``False``) the function ``f`` defines a
+      map from the basis elements or from a generic element of ``lie_algebra``
+
+    If ``f`` is encoded as a ``dict`` or ``Family``, then the keys must
+    be indices of the basis of ``lie_algebra`` and the values being the
+    corresponding matrix defining the action. This sets ``on_basis=True``.
 
     EXAMPLES::
 
         sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
-        sage: f = ({x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])})
+        sage: f = {x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])}
         sage: L.representation(f)
         Representation of Lie algebra on 2 generators (x, y) over Rational Field defined by:
                [1 0]
         x |--> [0 0]
                [0 1]
         y |--> [0 0]
+
+    We construct the direct sum of two copies of the trivial representation
+    for an infinite dimensional Lie algebra::
+
+        sage: L = lie_algebras.Affine(QQ, ['E',6,1])
+        sage: R = L.representation(lambda b: matrix.zero(QQ, 2), index_set=['a','b'])
+        sage: x = L.an_element()
+        sage: v = R.an_element(); v
+        2*R['a'] + 2*R['b']
+        sage: x * v
+        0
+
+    We construct a finite dimensional representation of the affline Lie algebra
+    of type `A_2^{(1)}`::
+
+        sage: L = lie_algebras.Affine(QQ, ['A',2,1]).derived_subalgebra()
+        sage: Phi_plus = list(RootSystem(['A',2]).root_lattice().positive_roots())
+        sage: def aff_action(key):
+        ....:     mat = matrix.zero(QQ, 3)
+        ....:     if key == 'c':  # central element
+        ....:         return mat
+        ....:     b, ell = key
+        ....:     if b in Phi_plus:  # positive root
+        ....:         ind = tuple(sorted(b.to_ambient().support()))
+        ....:         mat[ind] = 1
+        ....:         if ind[0] + 1 != ind[1]:
+        ....:             mat[ind] = -1
+        ....:     elif -b in Phi_plus:  # negative root
+        ....:         ind = tuple(sorted(b.to_ambient().support(), reverse=True))
+        ....:         mat[ind] = 1
+        ....:         if ind[0] - 1 != ind[1]:
+        ....:             mat[ind] = -1
+        ....:     else:  # must be in the Cartan
+        ....:         i = b.leading_support()
+        ....:         mat[i,i] = -1
+        ....:         mat[i-1,i-1] = 1
+        ....:     return mat
+        sage: F = Family(L.basis(), aff_action, name="lifted natural repr")
+        sage: R = L.representation(index_set=range(1,4), on_basis=F)
+        sage: x = L.an_element(); x
+        (E[alpha[2]] + E[alpha[1]] + h1 + h2 + E[-alpha[2]] + E[-alpha[1]])#t^0
+         + (E[-alpha[1] - alpha[2]])#t^1 + (E[alpha[1] + alpha[2]])#t^-1 + c
+        sage: v = R.an_element(); v
+        2*R[1] + 2*R[2] + 3*R[3]
+        sage: x * v
+        R[1] + 5*R[2] - 3*R[3]
+        sage: R._test_representation()  # verify that it is a representation
     """
     @staticmethod
-    def __classcall_private__(cls, lie_algebra, f, **kwargs):
+    def __classcall_private__(cls, lie_algebra, f=None, index_set=None, on_basis=False, **kwargs):
         r"""
         Normalize inpute to ensure a unique representation.
 
@@ -128,24 +180,69 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
             sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
             sage: f1 = {'x': Matrix([[1,0],[0,0]]), 'y': Matrix([[0,1],[0,0]])}
             sage: R1 = L.representation(f1)
-            sage: f2 = Family({x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])})
+            sage: f2 = Family({x: Matrix([[1,0],[0,0]]), y: Matrix(QQ, [[0,1],[0,0]])})
             sage: R2 = L.representation(f2)
             sage: R1 is R2
             True
+
+        TESTS::
+
+            sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
+            sage: f = {'x': Matrix([[1,0]]), 'y': Matrix([[0,1]])}
+            sage: R = L.representation(f)
+            Traceback (most recent call last):
+            ...
+            ValueError: all matrices must be square
+
+            sage: f = {'x': Matrix([[1,0],[0,0]]), 'y': Matrix([[0]])}
+            sage: R = L.representation(f)
+            Traceback (most recent call last):
+            ...
+            ValueError: all matrices must be square of size 2
         """
-        C = Modules(lie_algebra.base_ring()).WithBasis().FiniteDimensional()
+        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+        base = lie_algebra.base_ring()
+        C = Modules(base).WithBasis().FiniteDimensional()
         C = C.or_subcategory(kwargs.pop('category', C))
         B = lie_algebra.basis()
-        data = {}
-        for k, mat in f.items():
-            if k in B:
-                k = k.leading_support()
-            data[k] = copy(mat)
-            data[k].set_immutable()
-        f = Family(data)
-        return super(cls, RepresentationByMorphism).__classcall__(cls, lie_algebra, f, category=C, **kwargs)
+        if not isinstance(on_basis, bool):
+            f = on_basis
+            on_basis = True
+        if isinstance(f, AbstractFamily):
+            if f.cardinality() < float('inf'):
+                f = dict(f)
+            on_basis = True
+        if isinstance(f, dict):
+            data = {}
+            dim = None
+            for k, mat in f.items():
+                if k in B:
+                    k = k.leading_support()
+                if not mat.is_square():
+                    raise ValueError("all matrices must be square")
+                if dim is None:
+                    dim = mat.nrows()
+                elif mat.nrows() != dim or mat.ncols() != dim:
+                    raise ValueError("all matrices must be square of size {}".format(dim))
+                data[k] = mat.change_ring(base)
+                data[k].set_immutable()
 
-    def __init__(self, lie_algebra, f, category, **kwargs):
+            if index_set is None:
+                index_set = FiniteEnumeratedSet(range(dim))
+            f = Family(data)
+            on_basis = True
+
+        if f is None:
+            raise ValueError("either 'f' or 'on_basis' must be specified")
+        if index_set is None:
+            raise ValueError("the index set needs to be specified")
+
+        index_set = FiniteEnumeratedSet(index_set)
+
+        return super(cls, RepresentationByMorphism).__classcall__(cls, lie_algebra,
+             f, index_set, on_basis, category=C, **kwargs)
+
+    def __init__(self, lie_algebra, f, index_set, on_basis, category, **kwargs):
         r"""
         Initialize ``self``.
 
@@ -156,20 +253,17 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
             sage: R = L.representation(f)
             sage: TestSuite(R).run()
         """
-        it = iter(f)
-        mat = next(it)
-        if not mat.is_square():
-            raise ValueError("all matrices must be square")
-        dim = mat.nrows()
-        self._mat_space = mat.parent()
-        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-        if any(mat.nrows() != dim or mat.ncols() != dim for mat in it):
-            raise ValueError("all matrices must be square of size {}".format(dim))
-        self._f = dict(f)
+        if on_basis:
+            self._family = f
+            self._f = f.__getitem__
+        else:
+            self._f = f
+        prefix = kwargs.pop("prefix", 'R')
+        self._on_basis = on_basis
 
-        I = FiniteEnumeratedSet(range(dim))
         Representation_abstract.__init__(self, lie_algebra)
-        CombinatorialFreeModule.__init__(self, lie_algebra.base_ring(), I, prefix='R', category=category)
+        CombinatorialFreeModule.__init__(self, lie_algebra.base_ring(), index_set,
+                                         category=category, prefix=prefix, **kwargs)
 
     def _repr_(self):
         r"""
@@ -185,12 +279,28 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
             x |--> [0 0]
                    [0 1]
             y |--> [0 0]
+
+            sage: L = lie_algebras.Affine(QQ, ['E',6,1])
+            sage: F = Family(L.basis(), lambda b: matrix.zero(QQ, 2), name="zero map")
+            sage: L.representation(F, index_set=['a','b'], on_basis=True)
+            Representation of Affine Kac-Moody algebra of ['E', 6] in the Chevalley basis defined by:
+            Lazy family (zero map(i))_{i in Lazy family...}
+
+            sage: L.representation(lambda b: matrix.zero(QQ, 2), index_set=['a','b'])
+            Representation of Affine Kac-Moody algebra of ['E', 6] in the Chevalley basis defined by:
+            <function <lambda> at 0x...>
         """
         ret = "Representation of {} defined by:".format(self._lie_algebra)
         from sage.typeset.ascii_art import ascii_art
-        B = self._lie_algebra.basis()
-        for k in self._f:
-            ret += '\n' + repr(ascii_art(B[k], self._f[k], sep=" |--> ", sep_baseline=0))
+        if self._on_basis:
+            B = self._lie_algebra.basis()
+            if B.cardinality() < float('inf'):
+                for k in B.keys():
+                    ret += '\n' + repr(ascii_art(B[k], self._f(k), sep=" |--> ", sep_baseline=0))
+            else:
+                ret += '\n' + repr(self._family)
+        else:
+            ret += '\n' + repr(self._f)
         return ret
 
     class Element(CombinatorialFreeModule.Element):
@@ -220,14 +330,28 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
                 4*R[0] + 5*R[1]
                 sage: (1/3*x - 5*y) * v
                 -71/3*R[0]
+
+                sage: L = lie_algebras.Affine(QQ, ['E',6,1])
+                sage: F = Family(L.basis(), lambda b: matrix.zero(QQ, 2), name="zero map")
+                sage: R = L.representation(F, index_set=['a','b'], on_basis=True)
+                sage: R.an_element()
+                2*R['a'] + 2*R['b']
+                sage: L.an_element() * R.an_element()
+                0
             """
             P = self.parent()
             if scalar in P._lie_algebra:
                 if self_on_left:
                     return None
+                if not self:  # we are (already) the zero vector
+                    return self
                 scalar = P._lie_algebra(scalar)
-                f = P._f
-                mat = P._mat_space.sum(scalar[k] * f[k] for k in f if scalar[k])
+                if not scalar:  # we are acting by zero
+                    return P.zero()
+                if P._on_basis:
+                    mat = sum(c * P._f(k) for k, c in scalar.monomial_coefficients(copy=False).items())
+                else:
+                    mat = P._f(scalar)
                 return P.from_vector(mat * self.to_vector())
 
             return super()._acted_upon_(scalar, self_on_left)
@@ -249,7 +373,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
 
     - :wikipedia:`Trivial_representation`
     """
-    def __init__(self, lie_algebra):
+    def __init__(self, lie_algebra, **kwargs):
         r"""
         Initialize ``self``.
 
@@ -262,7 +386,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
         R = lie_algebra.base_ring()
         cat = Modules(R).WithBasis().FiniteDimensional()
         Representation_abstract.__init__(self, lie_algebra)
-        CombinatorialFreeModule.__init__(self, R, ['v'], prefix='T', category=cat)
+        CombinatorialFreeModule.__init__(self, R, ['v'], prefix='T', category=cat, **kwargs)
 
     def _repr_(self):
         r"""
