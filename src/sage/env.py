@@ -265,7 +265,7 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
 
-_gap_cmd  = "gap"
+_gap_cmd  = f'gap -l "{GAP_ROOT_PATHS}"'
 if SAGE_GAP_MEMORY is not None:
     _gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', _gap_cmd)
