@@ -57,6 +57,10 @@ class GapPackage(Feature):
         except ImportError:
             return FeatureTestResult(self, False,
                                      reason="sage.libs.gap is not available")
+
+        # Implied: a package can go from being not present to present
+        # if the user loads it. For this reason we do not cache the
+        # result of this test.
         command = 'IsPackageLoaded("{package}")'.format(package=self.package)
         presence = libgap.eval(command)
 
@@ -66,6 +70,12 @@ class GapPackage(Feature):
         else:
             return FeatureTestResult(self, False,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
+
+
+    # Override the parent class's is_present() method. Package
+    # tests should not be cached; the user can load a package
+    # from within a sage session.
+    is_present = _is_present
 
 
 def all_features():
