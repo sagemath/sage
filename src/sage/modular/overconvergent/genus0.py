@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari sage.rings.padics
 r"""
 Overconvergent `p`-adic modular forms for small primes
 
@@ -387,7 +387,7 @@ class OverconvergentModularFormsSpace(Module):
                 pi = p
                 e = d
             if not e.is_integral():
-                raise ValueError("no element of base ring (=%s) has normalised valuation %s" % (self.base_ring(), radius * 12 /(p-1)))
+                raise ValueError("no element of base ring (=%s) has normalised valuation %s" % (self.base_ring(), radius * 12 / (p-1)))
             self._radius = radius
             self._const = pi ** ZZ(e)
 
@@ -422,9 +422,10 @@ class OverconvergentModularFormsSpace(Module):
 
     def base_extend(self, ring):
         r"""
-        Return the base extension of self to the given base ring. There must be
-        a canonical map to this ring from the current base ring, otherwise a
-        TypeError will be raised.
+        Return the base extension of ``self`` to the given base ring.
+
+        There must be a canonical map to this ring from the current
+        base ring, otherwise a :class:`TypeError` will be raised.
 
         EXAMPLES::
 
@@ -1249,7 +1250,7 @@ class OverconvergentModularFormsSpace(Module):
             xyring = PolynomialRing(self.base_ring(), ["x","y"], 2)
             x,y = xyring.gens()
             cc = self.prime() ** (-12/(self.prime() - 1))
-            bigI = x*SmiH(y*cc)- y*cc*SmiH(x)
+            bigI = x*SmiH(y*cc) - y*cc*SmiH(x)
             smallI = xyring(bigI / (x - cc*y))
             r = matrix(ZZ, self.prime(), self.prime())
             for i in range(self.prime()):
@@ -1656,7 +1657,7 @@ class OverconvergentModularFormElement(ModuleElement):
 
             sage: o = OverconvergentModularForms(3, 0, 1/2)
             sage: f = o.eigenfunctions(4)[1]
-            sage: f.valuation_plot()
+            sage: f.valuation_plot()                                                    # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.plot import plot

@@ -116,30 +116,6 @@ cimport gmpy2
 gmpy2.import_gmpy2()
 
 
-def is_ComplexDoubleField(x):
-    """
-    Return ``True`` if ``x`` is the complex double field.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.ComplexDoubleField` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.complex_double import is_ComplexDoubleField
-        sage: is_ComplexDoubleField(CDF)
-        doctest:warning...
-        DeprecationWarning: is_ComplexDoubleField is deprecated;
-        use isinstance(..., sage.rings.abc.ComplexDoubleField) instead
-        See https://github.com/sagemath/sage/issues/32610 for details.
-        True
-        sage: is_ComplexDoubleField(ComplexField(53))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32610, 'is_ComplexDoubleField is deprecated; use isinstance(..., sage.rings.abc.ComplexDoubleField) instead')
-    return isinstance(x, ComplexDoubleField_class)
-
-
 cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
     """
     An approximation to the field of complex numbers using double
@@ -401,7 +377,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         else:
             return ComplexDoubleElement(x, 0)
 
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         """
         Return the canonical coerce of `x` into the complex double field, if
         it is defined, otherwise raise a ``TypeError``.
@@ -715,7 +691,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         return Factorization([(x - a, 1) for a in roots], unit)
 
 
-cdef ComplexDoubleElement new_ComplexDoubleElement():
+cdef ComplexDoubleElement new_ComplexDoubleElement() noexcept:
     """
     Creates a new (empty) :class:`ComplexDoubleElement`.
     """
@@ -785,7 +761,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return (ComplexDoubleElement,
                 (GSL_REAL(self._complex), GSL_IMAG(self._complex)))
 
-    cdef ComplexDoubleElement _new_c(self, gsl_complex x):
+    cdef ComplexDoubleElement _new_c(self, gsl_complex x) noexcept:
         """
         C-level code for creating a :class:`ComplexDoubleElement` from a
         ``gsl_complex``.
@@ -810,7 +786,7 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         return hash(complex(self))
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         We order the complex numbers in dictionary order by real parts then
         imaginary parts.
@@ -820,11 +796,11 @@ cdef class ComplexDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: CDF(1.2) > CDF(i)
+            sage: CDF(1.2) > CDF(i)                                                     # needs sage.symbolic
             True
             sage: CDF(1) < CDF(2)
             True
-            sage: CDF(1 + i) > CDF(-1 - i)
+            sage: CDF(1 + i) > CDF(-1 - i)                                              # needs sage.symbolic
             True
 
         ::
@@ -1182,7 +1158,7 @@ cdef class ComplexDoubleElement(FieldElement):
     # Arithmetic
     #######################################################################
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add ``self`` and ``right``.
 
@@ -1194,7 +1170,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return self._new_c(gsl_complex_add(self._complex,
                                            (<ComplexDoubleElement>right)._complex))
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract ``self`` and ``right``.
 
@@ -1206,7 +1182,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return self._new_c(gsl_complex_sub(self._complex,
                                 (<ComplexDoubleElement>right)._complex))
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply ``self`` and ``right``.
 
@@ -1218,7 +1194,7 @@ cdef class ComplexDoubleElement(FieldElement):
         return self._new_c(gsl_complex_mul(self._complex,
                        (<ComplexDoubleElement>right)._complex))
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide ``self`` by ``right``.
 
@@ -1252,7 +1228,7 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         return self._new_c(gsl_complex_inverse(self._complex))
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         This function returns the negative of the complex number `z`:
 
@@ -1639,7 +1615,7 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         return self.real().is_NaN() or self.imag().is_NaN()
 
-    cpdef _pow_(self, other):
+    cpdef _pow_(self, other) noexcept:
         r"""
         The complex number ``self`` raised to the power ``other``.
 
@@ -1705,7 +1681,7 @@ cdef class ComplexDoubleElement(FieldElement):
         z = <ComplexDoubleElement>other
         return self._new_c(gsl_complex_pow(self._complex, z._complex))
 
-    cdef _pow_long(self, long other):
+    cdef _pow_long(self, long other) noexcept:
         if other == 1:
             return self
         elif other == 0:
@@ -1721,7 +1697,7 @@ cdef class ComplexDoubleElement(FieldElement):
             res = gsl_complex_pow_real(self._complex, other)
         return self._new_c(res)
 
-    cpdef _pow_int(self, other):
+    cpdef _pow_int(self, other) noexcept:
         if not GSL_IMAG(self._complex):
             # If self is real, the result should be real too
             real = GSL_REAL(self._complex) ** <double>other
@@ -2539,7 +2515,7 @@ cdef class FloatToCDF(Morphism):
             R = Set_PythonType(R)
         Morphism.__init__(self, Hom(R, CDF))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Create an :class:`ComplexDoubleElement`.
 
@@ -2575,11 +2551,12 @@ cdef class ComplexToCDF(Morphism):
 
     EXAMPLES::
 
-        sage: import numpy                                                              # needs numpy
-        sage: f = CDF.coerce_map_from(numpy.complex_)                                   # needs numpy
-        sage: f(numpy.complex_(I))                                                      # needs numpy
+        sage: # needs numpy
+        sage: import numpy
+        sage: f = CDF.coerce_map_from(numpy.complex_)
+        sage: f(numpy.complex_(I))
         1.0*I
-        sage: f(numpy.complex_(I)).parent()                                             # needs numpy
+        sage: f(numpy.complex_(I)).parent()
         Complex Double Field
     """
     def __init__(self, R):
@@ -2589,7 +2566,7 @@ cdef class ComplexToCDF(Morphism):
             R = Set_PythonType(R)
         Morphism.__init__(self, Hom(R, CDF))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Create an :class:`ComplexDoubleElement`.
 
@@ -2643,7 +2620,7 @@ def ComplexDoubleField():
 from sage.misc.parser import Parser
 cdef cdf_parser = Parser(float, float,  {"I" : _CDF.gen(), "i" : _CDF.gen()})
 
-cdef inline double complex extract_double_complex(ComplexDoubleElement x):
+cdef inline double complex extract_double_complex(ComplexDoubleElement x) noexcept:
     """
     Return the value of ``x`` as a c99 complex double.
     """
@@ -2653,7 +2630,7 @@ cdef inline double complex extract_double_complex(ComplexDoubleElement x):
     return z
 
 
-cdef inline ComplexDoubleElement ComplexDoubleElement_from_doubles(double re, double im):
+cdef inline ComplexDoubleElement ComplexDoubleElement_from_doubles(double re, double im) noexcept:
     """
     Create a new :class:`ComplexDoubleElement` with the specified real and
     imaginary parts.

@@ -282,7 +282,7 @@ def numerical_inverse(C):
     with mpall.workprec(prec):
         Cmp = mpall.matrix([mpall.sage_to_mpmath(list(c), prec) for c in C])
         PLU = mpall.lu(Cmp)
-    P, L, U = [R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU]
+    P, L, U = (R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU)
     return U.inverse() * L.inverse() * P
 
 
@@ -712,7 +712,7 @@ class RiemannSurface():
         combined_discriminant = lcm(discriminants)(*self._R.gens())
         self._differentials_branch_locus = []
         for x in combined_discriminant.factor():
-            if not x[0] in existing_factors:
+            if x[0] not in existing_factors:
                 self._differentials_branch_locus += self._CCz(
                     x[0](self._CCz.gen(), 0)
                 ).roots(multiplicities=False)

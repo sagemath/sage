@@ -27,7 +27,12 @@ from sage.manifolds.utilities import (simplify_chain_real,
                                       simplify_chain_real_sympy,
                                       simplify_chain_generic_sympy,)
 from sage.misc.latex import latex
-import sympy
+
+try:
+    import sympy
+    from sympy import latex as sympy_latex
+except ImportError:
+    sympy_latex = None
 
 
 # Conversion functions
@@ -202,7 +207,7 @@ class CalculusMethod(SageObject):
             self._simplify_dict['SR'] = simplify_chain_generic
         # The default simplifying functions are saved:
         self._simplify_dict_default = self._simplify_dict.copy()
-        self._latex_dict = {'sympy': sympy.latex, 'SR': latex}
+        self._latex_dict = {'sympy': sympy_latex, 'SR': latex}
 
     def simplify(self, expression, method=None):
         r"""
@@ -257,7 +262,7 @@ class CalculusMethod(SageObject):
             sage: cm.simplify(f)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.symbolic.expression.Expression' object has no attribute 'combsimp'
+            AttributeError: 'sage.symbolic.expression.Expression' object has no attribute 'combsimp'...
 
         In the present case, one should either transform ``f`` to a SymPy
         object::

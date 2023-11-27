@@ -294,7 +294,7 @@ class Mwrank_class(Expect):
 
         .. NOTE::
 
-           If a RuntimeError exception is raised, then the mwrank
+           If a :class:`RuntimeError` exception is raised, then the mwrank
            interface is restarted and the command is retried once.
 
         EXAMPLES::

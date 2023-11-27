@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Spaces of homomorphisms between modular abelian varieties
 
@@ -16,7 +17,8 @@ nontrivially in J0(37).
     Simple abelian subvariety 37b(1,37) of dimension 1 of J0(37)
     ]
     sage: D[0].intersection(D[1])
-    (Finite subgroup with invariants [2, 2] over QQ of Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
+    (Finite subgroup with invariants [2, 2] over QQ of
+      Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
      Simple abelian subvariety of dimension 0 of J0(37))
 
 As an abstract product, since these newforms are distinct, the
@@ -218,7 +220,8 @@ class Homspace(HomsetWithBase):
         EXAMPLES::
 
             sage: H = Hom(J0(11), J0(22)); H
-            Space of homomorphisms from Abelian variety J0(11) of dimension 1 to Abelian variety J0(22) of dimension 2
+            Space of homomorphisms from Abelian variety J0(11) of dimension 1
+             to Abelian variety J0(22) of dimension 2
             sage: Hom(J0(11), J0(11))
             Endomorphism ring of Abelian variety J0(11) of dimension 1
             sage: type(H)
@@ -397,7 +400,7 @@ class Homspace(HomsetWithBase):
             sage: End(J)._repr_()
             'Endomorphism ring of Abelian variety J0(11) of dimension 1'
         """
-        return "Space of homomorphisms from %s to %s"%\
+        return "Space of homomorphisms from %s to %s" %\
                (self.domain(), self.codomain())
 
     def _get_matrix(self, g):
@@ -501,7 +504,7 @@ class Homspace(HomsetWithBase):
         """
         self.calculate_generators()
         if i > self.ngens():
-            raise ValueError("self only has %s generators"%self.ngens())
+            raise ValueError("self only has %s generators" % self.ngens())
         return self.element_class(self, self._gens[i])
 
     def ngens(self):

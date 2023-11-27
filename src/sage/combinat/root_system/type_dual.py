@@ -209,7 +209,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
         """
         return (attrcall("dual"), (self._type,))
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         EXAMPLES::
 
@@ -229,11 +229,13 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
             }
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         return self._type._latex_dynkin_diagram(label, node, node_dist, dual=True)
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of this Cartan type
 
@@ -261,6 +263,8 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
             O=>=O---O---O=>=O
             0   1   2   3   4
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         res = self._type.ascii_art(label, node)
@@ -657,9 +661,9 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         result = self._type._latex_()
         import re
         if re.match(r".*\^{\(\d\)}$", result):
-            return "%s%s}"%(result[:-1], self.options('dual_latex'))
+            return "%s%s}" % (result[:-1], self.options('dual_latex'))
         else:
-            return "{%s}^%s"%(result, self.options('dual_latex'))
+            return "{%s}^%s" % (result, self.options('dual_latex'))
 
     def _default_folded_cartan_type(self):
         """

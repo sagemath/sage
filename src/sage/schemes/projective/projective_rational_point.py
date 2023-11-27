@@ -45,23 +45,22 @@ AUTHORS:
 - Raghukul Raman <raghukul.raman01@gmail.com> (2018): Added sieve algorithm
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein, David Kohel, John Cremona, Charlie Turner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import product
 
 from sage.arith.misc import gcd, next_prime, previous_prime, crt
 from sage.arith.srange import srange
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.mrange import cartesian_product_iterator
 from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange
 from sage.schemes.generic.scheme import is_Scheme
@@ -140,7 +139,7 @@ def enum_projective_rational_field(X, B):
     n = X.codomain().ambient_space().ngens()
     zero = (0,) * n
     pts = []
-    for c in cartesian_product_iterator([srange(-B,B+1) for _ in range(n)]):
+    for c in product(*[srange(-B, B + 1) for _ in range(n)]):
         if gcd(c) == 1 and c > zero:
             try:
                 pts.append(X(c))
@@ -191,7 +190,7 @@ def enum_projective_number_field(X, **kwds):
         sage: K = NumberField(u^3 - 5, 'v')
         sage: P.<x,y,z> = ProjectiveSpace(K, 2)
         sage: X = P.subscheme([x - y])
-        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)
+        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)          # needs sage.symbolic
         [(0 : 0 : 1), (1 : 1 : 0), (-1 : -1 : 1), (1 : 1 : 1)]
 
     ::
@@ -296,13 +295,13 @@ def enum_projective_finite_field(X):
     elif not is_ProjectiveSpace(X.codomain().ambient_space()):
         raise TypeError("codomain must be projective space over a finite field")
 
-    n = X.codomain().ambient_space().ngens()-1
+    n = X.codomain().ambient_space().ngens() - 1
     F = X.value_ring()
     pts = []
-    for k in range(n+1):
-        for c in cartesian_product_iterator([F for _ in range(k)]):
+    for k in range(n + 1):
+        for c in product(*[F for _ in range(k)]):
             try:
-                pts.append(X(list(c)+[1]+[0]*(n-k)))
+                pts.append(X(list(c) + [1] + [0] * (n - k)))
             except TypeError:
                 pass
     pts.sort()

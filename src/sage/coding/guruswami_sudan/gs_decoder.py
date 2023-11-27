@@ -371,7 +371,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         def get_tau(s,l):
             "Return the decoding radius given this s and l"
-            if s<=0 or l<=0:
+            if s <= 0 or l <= 0:
                 return -1
             return gilt(n - n/2*(s+1)/(l+1) - (k-1)/2*l/s)
         if l is None and s is None:
@@ -482,7 +482,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         atau = n - tau
         smin = tau * w / (atau ** 2 - n * w)
         s = floor(1 + smin)
-        D = (s - smin) * (atau ** 2 - n * w) * s + (w**2) /4
+        D = (s - smin) * (atau ** 2 - n * w) * s + (w**2) / 4
         l = floor(atau / w * s + 0.5 - sqrt(D)/w)
         return (s, l)
 

@@ -29,6 +29,7 @@ AUTHORS:
 import numpy
 import math
 import bisect
+from itertools import product
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -41,7 +42,6 @@ from sage.rings.real_mpfi import RIF
 from sage.rings.real_mpfr import RR
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.mrange import cartesian_product_iterator
 from sage.arith.functions import lcm
 from sage.arith.misc import factorial
 from sage.ext.fast_callable import fast_callable
@@ -685,7 +685,7 @@ def rat_term_CIF(z, try_strict=True):
 
         corner_reals = []
         corner_imags = []
-        for a, b in cartesian_product_iterator([z.real().endpoints(), z.imag().endpoints()]):
+        for a, b in product(z.real().endpoints(), z.imag().endpoints()):
             zz = CDF(a,b)
             u = (two_pi_i_CDF*zz).exp()
             f = u/(1-u)**2
@@ -928,7 +928,7 @@ class EllipticCurveCanonicalHeight:
             0.347263296676126
         """
         from sage.rings.polynomial.polynomial_ring import polygen
-        b2, b4, b6, b8 = [v(b) for b in self.E.b_invariants()]
+        b2, b4, b6, b8 = (v(b) for b in self.E.b_invariants())
         x = polygen(v.codomain())
         f = 4*x**3 + b2*x**2 + 2*b4*x + b6
         g = x**4 - b4*x**2 - 2*b6*x - b8

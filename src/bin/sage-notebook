@@ -29,7 +29,12 @@ class NotebookJupyter():
     def __init__(self, argv):
         self.print_banner()
         try:
-            from notebook.notebookapp import main
+            try:
+                # notebook 6
+                from notebook.notebookapp import main
+            except ImportError:
+                # notebook 7
+                from notebook.app import main
         except ImportError:
             import traceback
             traceback.print_exc()

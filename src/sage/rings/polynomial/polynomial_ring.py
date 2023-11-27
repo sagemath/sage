@@ -388,7 +388,7 @@ class PolynomialRing_general(ring.Algebra):
             sage: S(x)
             x
 
-        Throw a TypeError if any of the coefficients cannot be coerced
+        Throw a :class:`TypeError` if any of the coefficients cannot be coerced
         into the base ring (:trac:`6777`)::
 
             sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # needs sage.rings.real_mpfr
@@ -1057,10 +1057,11 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings sage.rings.real_interval_field
             sage: R.<ZZZ> = RealIntervalField()[]; R
             Univariate Polynomial Ring in ZZZ over
              Real Interval Field with 53 bits of precision
-            sage: R.change_ring(GF(19^2, 'b'))                                          # needs sage.rings.finite_rings
+            sage: R.change_ring(GF(19^2, 'b'))
             Univariate Polynomial Ring in ZZZ over Finite Field in b of size 19^2
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -1160,6 +1161,7 @@ class PolynomialRing_general(ring.Algebra):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_interval_field
             sage: R.<ZZZ> = RealIntervalField()[]; R
             Univariate Polynomial Ring in ZZZ over Real Interval Field with 53 bits of precision
             sage: R.characteristic()
@@ -1797,6 +1799,7 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x> = QQ[]
             sage: S.<y> = R[]
             sage: p = y^3 + (-x^2 - 3)*y^2 + (2*x^3 - x^2 + 3)*y - x^4 + 2*x^2 - 1
@@ -2067,9 +2070,11 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             Sparse Univariate Polynomial Ring in x over Rational Field
             sage: type(R.gen())
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
-            sage: R = PRing(CC, 'x'); R                                                 # needs sage.rings.real_mpfr
+
+            sage: # needs sage.rings.real_mpfr
+            sage: R = PRing(CC, 'x'); R
             Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
-            sage: type(R.gen())                                                         # needs sage.rings.real_mpfr
+            sage: type(R.gen())
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
 
         Demonstrate that :trac:`8762` is fixed::
@@ -2163,6 +2168,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
         Only return the divided-difference coefficients `F_{i,i}`.
         This example is taken from Example 1, page 121 of [BF2005]_::
 
+            sage: # needs sage.rings.real_mpfr
             sage: points = [(1.0, 0.7651977), (1.3, 0.6200860), (1.6, 0.4554022),
             ....:           (1.9, 0.2818186), (2.2, 0.1103623)]
             sage: R = PolynomialRing(RR, "x")
@@ -2175,6 +2181,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 
         Now return the full divided-difference table::
 
+            sage: # needs sage.rings.real_mpfr
             sage: points = [(1.0, 0.7651977), (1.3, 0.6200860), (1.6, 0.4554022),
             ....:           (1.9, 0.2818186), (2.2, 0.1103623)]
             sage: R = PolynomialRing(RR, "x")
@@ -2585,7 +2592,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: f = GF(5^3, 'a')['x'].irreducible_element(2)
             sage: f.degree()
             2

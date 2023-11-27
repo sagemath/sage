@@ -68,30 +68,6 @@ cimport gmpy2
 new_gen_from_real_double_element = None
 
 
-def is_RealDoubleField(x):
-    """
-    Returns ``True`` if ``x`` is the field of real double precision numbers.
-
-    This function is deprecated. Use :func:`isinstance` with
-    :class:`~sage.rings.abc.RealDoubleField` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.real_double import is_RealDoubleField
-        sage: is_RealDoubleField(RDF)
-        doctest:warning...
-        DeprecationWarning: is_RealDoubleField is deprecated;
-        use isinstance(..., sage.rings.abc.RealDoubleField) instead
-        See https://github.com/sagemath/sage/issues/32610 for details.
-        True
-        sage: is_RealDoubleField(RealField(53))                                         # needs sage.rings.real_mpfr
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32610, 'is_RealDoubleField is deprecated; use isinstance(..., sage.rings.abc.RealDoubleField) instead')
-    return isinstance(x, RealDoubleField_class)
-
-
 cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
     """
     An approximation to the field of real numbers using double
@@ -301,7 +277,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         from sage.rings.complex_double import CDF
         return CDF
 
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         """
         Canonical coercion of ``S`` to the real double field.
 
@@ -496,7 +472,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         return Integer(0)
 
-    cdef _new_c(self, double value):
+    cdef _new_c(self, double value) noexcept:
         cdef RealDoubleElement x
         x = PY_NEW(RealDoubleElement)
         x._value = value
@@ -764,7 +740,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return RealDoubleElement, (self._value, )
 
-    cdef _new_c(self, double value):
+    cdef _new_c(self, double value) noexcept:
         cdef RealDoubleElement x
         x = PY_NEW(RealDoubleElement)
         x._value = value
@@ -1333,7 +1309,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = 1.0 / self._value
         return x
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two real numbers with the same parent.
 
@@ -1346,7 +1322,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value + (<RealDoubleElement>right)._value
         return x
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two real numbers with the same parent.
 
@@ -1359,7 +1335,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value - (<RealDoubleElement>right)._value
         return x
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply two real numbers with the same parent.
 
@@ -1372,7 +1348,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value * (<RealDoubleElement>right)._value
         return x
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide ``self`` by ``right``.
 
@@ -1433,7 +1409,7 @@ cdef class RealDoubleElement(FieldElement):
         else:
             return self._new_c(-self._value)
 
-    cpdef RealDoubleElement abs(RealDoubleElement self):
+    cpdef RealDoubleElement abs(RealDoubleElement self) noexcept:
         """
         Returns the absolute value of ``self``.
 
@@ -1764,7 +1740,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return bool(libc.math.isinf(self._value))
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Rich comparison of ``left`` and ``right``.
 
@@ -2022,7 +1998,7 @@ cdef class ToRDF(Morphism):
             R = Set_PythonType(R)
         Morphism.__init__(self, Hom(R, RDF))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Send ``x`` to the image under this map.
 
@@ -2117,7 +2093,7 @@ cdef int total_alloc = 0
 cdef int use_pool = 0
 
 
-cdef PyObject* fast_tp_new(type t, args, kwds):
+cdef PyObject* fast_tp_new(type t, args, kwds) noexcept:
     global element_pool, element_pool_count, total_alloc, use_pool
 
     cdef PyObject* new
@@ -2175,7 +2151,7 @@ cdef PyObject* fast_tp_new(type t, args, kwds):
 
     return new
 
-cdef void fast_tp_dealloc(PyObject* o):
+cdef void fast_tp_dealloc(PyObject* o) noexcept:
 
     # If there is room in the pool for a used integer object,
     # then put it in rather than deallocating it.
@@ -2209,7 +2185,7 @@ else:
     # From here on, calling PY_NEW(RealDoubleElement) actually creates an instance of RealDoubleElement_gsl
 
 
-cdef double_repr(double x):
+cdef double_repr(double x) noexcept:
     """
     Convert a double to a string with maximum precision.
     """

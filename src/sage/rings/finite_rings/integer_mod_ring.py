@@ -19,13 +19,13 @@ the other direction.
     sage: s = GF(7)
     sage: r.has_coerce_map_from(s)
     False
-    sage: s.has_coerce_map_from(r)                                                      # needs sage.rings.finite_rings
+    sage: s.has_coerce_map_from(r)
     True
-    sage: s(1) + r(1)                                                                   # needs sage.rings.finite_rings
+    sage: s(1) + r(1)
     2
-    sage: parent(s(1) + r(1))                                                           # needs sage.rings.finite_rings
+    sage: parent(s(1) + r(1))
     Finite Field of size 7
-    sage: parent(r(1) + s(1))                                                           # needs sage.rings.finite_rings
+    sage: parent(r(1) + s(1))
     Finite Field of size 7
 
 We list the elements of `\ZZ/3\ZZ`::
@@ -244,38 +244,6 @@ class IntegerModFactory(UniqueFactory):
 
 
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
-
-
-def is_IntegerModRing(x):
-    """
-    Return ``True`` if ``x`` is an integer modulo ring.
-
-    This function is deprecated.  Use :func:`isinstance` with
-    :class:`sage.rings.abc.IntegerModRing` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-        sage: R = IntegerModRing(17)
-        sage: is_IntegerModRing(R)
-        doctest:warning...
-        DeprecationWarning: the function is_IntegerModRing is deprecated.
-        Use isinstance(..., sage.rings.abc.IntegerModRing) instead.
-        See https://github.com/sagemath/sage/issues/32606 for details.
-        True
-        sage: is_IntegerModRing(GF(13))
-        True
-        sage: is_IntegerModRing(GF(4, 'a'))                                             # needs sage.rings.finite_rings
-        False
-        sage: is_IntegerModRing(10)
-        False
-        sage: is_IntegerModRing(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32606, "the function is_IntegerModRing is deprecated. "
-                "Use isinstance(..., sage.rings.abc.IntegerModRing) instead.")
-    return isinstance(x, IntegerModRing_generic)
 
 
 from sage.categories.commutative_rings import CommutativeRings

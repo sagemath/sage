@@ -49,6 +49,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
+from itertools import product
 
 from . import constructor
 from . import BSD
@@ -4986,7 +4987,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         if not is_EllipticCurve(other):
             raise ValueError("Second argument is not an Elliptic Curve.")
-        if not other.base_field() is QQ:
+        if other.base_field() is not QQ:
             raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")
 
         if self.is_isomorphic(other):
@@ -6814,7 +6815,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 # denom_maxpa is a list of pairs (d,q) where d runs
                 # through possible denominators, and q=p^a is the
                 # maximum prime power divisor of d:
-                denom_maxpa = [(prod(tmp),max(tmp)) for tmp in cartesian_product_iterator(p_pow_alpha)]
+                denom_maxpa = [(prod(tmp), max(tmp)) for tmp in product(*p_pow_alpha)]
 #               The maximum denominator is this (not used):
 #                denom = [prod([pp[-1] for pp in p_pow_alpha],1)]
                 for de,maxpa in denom_maxpa:
@@ -6840,12 +6841,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 return set(xs)
         # -------------------------------------------------------------------
         # End internal functions ############################################
-        from sage.misc.mrange import cartesian_product_iterator
 
         E = self
         tors_points = E.torsion_points()
 
-        if (r == 0):#only Torsionpoints to consider
+        if (r == 0):  # only Torsionpoints to consider
             int_points = [P for P in tors_points if not P.is_zero()]
             int_points = [P for P in int_points if P[0].is_S_integral(S)]
             if not both_signs:

@@ -443,7 +443,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: P2c = Fan(cones, rays, check=False, normalize=False)
         Traceback (most recent call last):
         ...
-        AttributeError: 'tuple' object has no attribute 'parent'
+        AttributeError: 'tuple' object has no attribute 'parent'...
 
     Yet another way is to use functions :func:`FaceFan` and :func:`NormalFan`
     to construct fans from :class:`lattice polytopes

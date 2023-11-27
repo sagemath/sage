@@ -76,8 +76,9 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 from sage.arith.misc import gcd, binomial
 
@@ -98,7 +99,6 @@ from sage.categories.homset import Hom
 from sage.categories.map import Map
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
-from sage.misc.mrange import cartesian_product_iterator
 from sage.misc.persist import register_unpickle_override
 
 from sage.structure.category_object import normalize_names
@@ -359,8 +359,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def _check_satisfies_equations(self, v):
         """
-        Return True if ``v`` defines a point on the scheme; raise a
-        TypeError otherwise.
+        Return ``True`` if ``v`` defines a point on the scheme; raise a
+        :class:`TypeError` otherwise.
 
         EXAMPLES::
 
@@ -2247,7 +2247,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P3.<x0,x1,x2,x3> = ProjectiveSpace(3, QQ)
             sage: p1 = P3(1, 2, 3, 4)
             sage: p2 = P3(4, 3, 2, 1)
-            sage: P3.line_through(p1, p2)                                               # needs sage.schemes
+            sage: P3.line_through(p1, p2)                                               # needs sage.libs.singular sage.schemes
             Projective Curve over Rational Field defined by
               -5/4*x0 + 5/2*x1 - 5/4*x2,        -5/2*x0 + 15/4*x1 - 5/4*x3,
               -5/4*x0 + 15/4*x2 - 5/2*x3,       -5/4*x1 + 5/2*x2 - 5/4*x3
@@ -2352,7 +2352,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
         C = PHom.codomain()
 
         for k in range(n + 1): # position of last 1 before the 0's
-            for v in cartesian_product_iterator([R for _ in range(n - k)]):
+            for v in product(*[R for _ in range(n - k)]):
                 yield C._point(PHom, v + one + zero * k, check=False)
 
     def rational_points(self, F=None):

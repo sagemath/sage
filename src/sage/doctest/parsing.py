@@ -94,7 +94,7 @@ def RIFtol(*args):
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
 
 special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
-tag_with_explanation_regex = fr'((?:\w|[.])+)\s*(?:\((.*?)\))?'
+tag_with_explanation_regex = r'((?:\w|[.])+)\s*(?:\((.*?)\))?'
 optional_regex = re.compile(fr'(?P<cmd>{special_optional_regex})\s*(?:\((?P<cmd_explanation>.*?)\))?|'
                             fr'[^ a-z]\s*(optional|needs)(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)',
                             re.IGNORECASE)
@@ -204,6 +204,9 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
             return {}
 
     first_line_sans_comments, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
+    if not first_line_sans_comments.endswith("  ") and not first_line_sans_comments.rstrip().endswith("sage:"):
+        # Enforce two spaces before comment
+        first_line_sans_comments = first_line_sans_comments.rstrip() + "  "
 
     if return_string_sans_tags:
         # skip non-tag comments that precede the first tag comment
@@ -230,7 +233,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
 
     if return_string_sans_tags:
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
-        return tags, (first_line + '\n' + rest%literals if rest is not None
+        return tags, (first_line + '\n' + rest % literals if rest is not None
                       else first_line), is_persistent
     else:
         return tags
@@ -467,7 +470,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
         |                                                V       V       V       V       V   V   v           v                   v                                       v
         |    sage: # optional - magma, needs sage.symbolic
     """
-    if not (m := re.match('( *sage: *)(.*)', line)):
+    if not re.match('( *sage: *)(.*)', line):
         raise ValueError(f'line must start with a sage: prompt, got: {line}')
 
     current_tags, line_sans_tags, is_persistent = parse_optional_tags(line.rstrip(), return_string_sans_tags=True)
@@ -1137,8 +1140,8 @@ class SageDocTestParser(doctest.DocTestParser):
 
         def check_and_clear_tag_counts():
             if (num_examples := tag_count_within_block['']) >= 4:
-                if overused_tags := set(tag for tag, count in tag_count_within_block.items()
-                                        if tag and count >= num_examples):
+                if overused_tags := {tag for tag, count in tag_count_within_block.items()
+                                     if tag and count >= num_examples}:
                     overused_tags.update(persistent_optional_tags)
                     overused_tags.difference_update(self.file_optional_tags)
                     suggested = unparse_optional_tags(overused_tags, prefix='sage: # ')
@@ -1207,13 +1210,19 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = set(tag
-                                    for tag in optional_tags
-                                    if (tag not in self.optional_tags
-                                        and tag not in available_software))
+                        extra = {tag
+                                 for tag in optional_tags
+                                 if (tag not in self.optional_tags
+                                     and tag not in available_software)}
                         if extra:
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
+                                continue
+                            if any(tag in ['webbrowser'] for tag in extra):
+                                # never probe
+                                continue
+                            if any(tag in ['got', 'expected', 'nameerror'] for tag in extra):
+                                # never probe special tags added by sage-fixdoctests
                                 continue
                             if all(tag in persistent_optional_tags for tag in extra):
                                 # don't probe if test is only conditional

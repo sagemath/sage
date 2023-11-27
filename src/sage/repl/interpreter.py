@@ -777,14 +777,14 @@ class SageTerminalApp(TerminalIPythonApp):
 
         Test that :trac:`15972` has been fixed::
 
-            sage: from sage.misc.temporary_file import tmp_dir
+            sage: import tempfile
             sage: from sage.repl.interpreter import SageTerminalApp
-            sage: d = tmp_dir()
             sage: from IPython.paths import get_ipython_dir
-            sage: IPYTHONDIR = get_ipython_dir()
-            sage: os.environ['IPYTHONDIR'] = d
-            sage: SageTerminalApp().load_config_file()
-            sage: os.environ['IPYTHONDIR'] = IPYTHONDIR
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     IPYTHONDIR = get_ipython_dir()
+            ....:     os.environ['IPYTHONDIR'] = d
+            ....:     SageTerminalApp().load_config_file()
+            ....:     os.environ['IPYTHONDIR'] = IPYTHONDIR
         """
         super().load_config_file(*args, **kwds)
         newconfig = sage_ipython_config.default()

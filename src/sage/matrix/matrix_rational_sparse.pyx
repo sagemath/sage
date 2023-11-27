@@ -35,8 +35,8 @@ from cpython.sequence cimport *
 
 from sage.rings.rational cimport Rational
 from sage.rings.integer  cimport Integer
-from .matrix cimport Matrix
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix cimport Matrix
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
@@ -51,8 +51,8 @@ cimport sage.structure.element
 
 import sage.matrix.matrix_space
 
-from .matrix_integer_sparse cimport Matrix_integer_sparse
-from .matrix_rational_dense cimport Matrix_rational_dense
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
@@ -93,10 +93,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             if z:
                 mpq_vector_set_entry(&self._matrix[se.i], se.j, z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
         mpq_vector_set_entry(&self._matrix[i], j, (<Rational> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         cdef Rational x
         x = Rational()
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
@@ -168,7 +168,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     #   * _list -- list of underlying elements (need not be a copy)
     #   * x _dict -- sparse dictionary of underlying elements (need not be a copy)
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right) noexcept:
         cdef Matrix_rational_sparse right, ans
         right = _right
 
@@ -583,7 +583,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - height_guess -- integer or None
         - proof -- boolean (default: True)
         """
-        from .misc import matrix_rational_echelon_form_multimodular
+        from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
         E, pivots = matrix_rational_echelon_form_multimodular(self,
                                  height_guess=height_guess, proof=proof)

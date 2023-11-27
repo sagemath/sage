@@ -176,14 +176,13 @@ AUTHOR:
 
 from cython.parallel cimport prange, threadid
 from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_check
 from memory_allocator cimport MemoryAllocator
 
-from cysignals.signals      cimport sig_check
-from .conversions           cimport bit_rep_to_Vrep_list
-from .base                  cimport CombinatorialPolyhedron
-
+from sage.geometry.polyhedron.combinatorial_polyhedron.base cimport CombinatorialPolyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport bit_rep_to_Vrep_list
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 from sage.geometry.polyhedron.face import combinatorial_face_to_polyhedral_face, PolyhedronFace
-from .face_list_data_structure cimport *
 
 
 cdef extern from "Python.h":
@@ -351,7 +350,7 @@ cdef class FaceIterator_base(SageObject):
             sage: FaceIterator_base(2)  # indirect doctest
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'combinatorial_polyhedron'
+            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'combinatorial_polyhedron'...
         """
         cdef int i
         sig_free(self.structure.atom_rep)
@@ -1201,7 +1200,7 @@ cdef class FaceIterator_base(SageObject):
         # for the dimension. By this time the current dimension has changed.
         self.structure.highest_dimension = self.structure.current_dimension - 1
 
-    cdef inline CombinatorialFace next_face(self):
+    cdef inline CombinatorialFace next_face(self) noexcept:
         r"""
         Set attribute ``face`` to the next face and return it as
         :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace`.
@@ -1923,7 +1922,7 @@ cdef class FaceIterator_geom(FaceIterator_base):
 
 # Nogil definitions of crucial functions.
 
-cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0) nogil except -1:
+cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0) except -1 nogil:
     r"""
     See :meth:`FaceIterator.next_dimension`.
 
@@ -1937,7 +1936,7 @@ cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0)
     structure._index += 1
     return structure.current_dimension
 
-cdef inline int next_face_loop(iter_t structure) nogil except -1:
+cdef inline int next_face_loop(iter_t structure) except -1 nogil:
     r"""
     See :meth:`FaceIterator.next_face_loop`.
     """
@@ -1945,7 +1944,8 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
         # The function is not supposed to be called,
         # just prevent it from crashing.
         # Actually raising an error here results in a bad branch prediction.
-        return -1
+        # But return -1 results in a crash with python 3.12
+        raise StopIteration
 
     # Getting ``[faces, n_faces, n_visited_all]`` according to dimension.
     cdef face_list_t* faces = &structure.new_faces[structure.current_dimension]
@@ -2022,7 +2022,7 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
         structure.first_time[structure.current_dimension] = True
         return 0
 
-cdef inline size_t n_atom_rep(iter_t structure) nogil except -1:
+cdef inline size_t n_atom_rep(iter_t structure) except -1 nogil:
     r"""
     See :meth:`FaceIterator.n_atom_rep`.
     """
@@ -2113,7 +2113,7 @@ cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parall
             f_vector[j] += parallel_structs[i].f_vector[j]
 
 cdef int _parallel_f_vector(iter_t structure, size_t parallelization_depth,
-                            parallel_f_t parallel_struct, size_t job_id) nogil except -1:
+                            parallel_f_t parallel_struct, size_t job_id) except -1 nogil:
     """
     Set up a job and then visit all faces.
     """
@@ -2128,7 +2128,7 @@ cdef int _parallel_f_vector(iter_t structure, size_t parallelization_depth,
 
 cdef inline int prepare_face_iterator_for_partial_job(
         iter_t structure, size_t parallelization_depth,
-        parallel_f_t parallel_struct, size_t job_id) nogil except -1:
+        parallel_f_t parallel_struct, size_t job_id) except -1 nogil:
     """
     Set ``structure`` according to ``job_id``.
 
@@ -2257,7 +2257,7 @@ cdef inline int prepare_face_iterator_for_partial_job(
 
     return 1
 
-cdef inline size_t get_digit(size_t job_id, size_t pos, size_t padto, size_t base) nogil:
+cdef inline size_t get_digit(size_t job_id, size_t pos, size_t padto, size_t base) noexcept nogil:
     """
     Get the digit ``pos`` of ``job_id`` with base ``base``
     padding the number of digits to ``pad_to``.

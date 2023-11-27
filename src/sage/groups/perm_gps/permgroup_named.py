@@ -236,13 +236,19 @@ class SymmetricGroup(PermutationGroup_symalt):
         {1, 2, 3, 4}
         sage: G.category()
         Join of Category of finite enumerated permutation groups and
-        Category of finite weyl groups and
+        Category of finite Weyl groups and
         Category of well generated finite irreducible complex reflection groups
 
     TESTS::
 
         sage: groups.permutation.Symmetric(4)
         Symmetric group of order 4! as a permutation group
+        sage: groups.permutation.Symmetric(1).gens()
+        ()
+
+    Check for :issue:`36204`::
+
+        sage: h = SymmetricGroup(1).hom(SymmetricGroup(2))
     """
     def __init__(self, domain=None):
         """
@@ -261,7 +267,8 @@ class SymmetricGroup(PermutationGroup_symalt):
         # Note that we skip the call to the superclass initializer in order to
         # avoid infinite recursion since SymmetricGroup is called by
         # PermutationGroupElement
-        cat = Category.join([FinitePermutationGroups(), FiniteWeylGroups().Irreducible()])
+        cat = Category.join([FinitePermutationGroups(),
+                             FiniteWeylGroups().Irreducible()])
         super(PermutationGroup_generic, self).__init__(category=cat)
 
         self._domain = domain
@@ -270,11 +277,14 @@ class SymmetricGroup(PermutationGroup_symalt):
         self._domain_from_gap = {i+1: key for i, key in enumerate(self._domain)}
 
         # Create the generators for the symmetric group
-        gens = [tuple(self._domain)]
-        if len(self._domain) > 2:
-            gens.append(tuple(self._domain[:2]))
-        self._gens = tuple([self.element_class(g, self, check=False)
-                            for g in gens])
+        if self._deg <= 1:
+            self._gens = ()
+        else:
+            gens = [tuple(self._domain)]
+            if self._deg > 2:
+                gens.append(tuple(self._domain[:2]))
+            self._gens = tuple([self.element_class(g, self, check=False)
+                                for g in gens])
 
     def _gap_init_(self, gap=None):
         """
@@ -630,7 +640,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         We illustrate the choice of the category::
 
             sage: A.category()                                                          # needs sage.combinat
-            Join of Category of coxeter group algebras over Rational Field
+            Join of Category of Coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
                 and Category of finite dimensional cellular algebras with basis
                      over Rational Field
@@ -706,7 +716,7 @@ class AlternatingGroup(PermutationGroup_symalt):
             sage: A = AlternatingGroup([2,3,7]); A
             Alternating group of order 3!/2 as a permutation group
         """
-        return "Alternating group of order %s!/2 as a permutation group"%self.degree()
+        return "Alternating group of order %s!/2 as a permutation group" % self.degree()
 
     def _gap_init_(self, gap=None):
         """
@@ -772,7 +782,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
             sage: CyclicPermutationGroup(8)
             Cyclic group of order 8 as a permutation group
         """
-        return "Cyclic group of order %s as a permutation group"%self.order()
+        return "Cyclic group of order %s as a permutation group" % self.order()
 
     def is_commutative(self):
         """
@@ -965,7 +975,7 @@ class DiCyclicGroup(PermutationGroup_unique):
 
         # Representation of  x
         # Four-cycles that will conjugate the generator  a  properly
-        x = [(i+1, (-i) % halfr + halfr + 1, (fourthr+i) % halfr + 1, (-fourthr-i)%halfr + halfr + 1)
+        x = [(i+1, (-i) % halfr + halfr + 1, (fourthr+i) % halfr + 1, (-fourthr-i) % halfr + halfr + 1)
              for i in range(0, fourthr)]
         # With an odd part, transpositions will conjugate the m-cycle to create inverse
         if m > 1:
@@ -980,7 +990,7 @@ class DiCyclicGroup(PermutationGroup_unique):
             sage: DiCyclicGroup(12)
             Dicyclic group of order 48 as a permutation group
         """
-        return "Dicyclic group of order %s as a permutation group"%self.order()
+        return "Dicyclic group of order %s as a permutation group" % self.order()
 
     def is_commutative(self):
         r"""
@@ -1799,7 +1809,7 @@ class MathieuGroup(PermutationGroup_unique):
             sage: G = MathieuGroup(12); G
             Mathieu group of degree 12 and order 95040 as a permutation group
         """
-        return "Mathieu group of degree %s and order %s as a permutation group"%(self._n, self.order())
+        return "Mathieu group of degree %s and order %s as a permutation group" % (self._n, self.order())
 
 
 class TransitiveGroup(PermutationGroup_unique):
@@ -1909,7 +1919,7 @@ class TransitiveGroup(PermutationGroup_unique):
             sage: G = TransitiveGroup(1,1); G
             Transitive group number 1 of degree 1
         """
-        return "Transitive group number %s of degree %s"%(self._n, self._d)
+        return "Transitive group number %s of degree %s" % (self._n, self._d)
 
 
 def TransitiveGroups(d=None):
@@ -1946,11 +1956,11 @@ def TransitiveGroups(d=None):
     """
     if d is None:
         return TransitiveGroupsAll()
-    else:
-        d = Integer(d)
-        if d < 0:
-            raise ValueError("a transitive group acts on a non negative integer number of positions")
-        return TransitiveGroupsOfDegree(d)
+
+    d = Integer(d)
+    if d < 0:
+        raise ValueError("a transitive group acts on a non negative integer number of positions")
+    return TransitiveGroupsOfDegree(d)
 
 
 class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
@@ -2486,7 +2496,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: PrimitiveGroups(6)
             Primitive Groups of degree 6
         """
-        return "Primitive Groups of degree %s"%(self._degree)
+        return "Primitive Groups of degree %s" % (self._degree)
 
     def __contains__(self, G):
         r"""
@@ -2679,7 +2689,7 @@ class PGL(PermutationGroup_plg):
             sage: print(G)
             The projective general linear group of degree 2 over Finite Field of size 3
         """
-        return "The projective general linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective general linear group of degree %s over %s" % (self._n, self.base_ring())
 
 
 class PSL(PermutationGroup_plg):
@@ -2766,7 +2776,7 @@ class PSL(PermutationGroup_plg):
             sage: print(G)
             The projective special linear group of degree 2 over Finite Field of size 3
         """
-        return "The projective special linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective special linear group of degree %s over %s" % (self._n, self.base_ring())
 
     def ramification_module_decomposition_hurwitz_curve(self):
         r"""
@@ -2925,7 +2935,7 @@ class PSp(PermutationGroup_plg):
             sage: print(G)
             The projective symplectic linear group of degree 4 over Finite Field of size 3
         """
-        return "The projective symplectic linear group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective symplectic linear group of degree %s over %s" % (self._n, self.base_ring())
 
 
 PSP = PSp
@@ -3044,7 +3054,7 @@ class PGU(PermutationGroup_pug):
             The projective general unitary group of degree 2 over Finite Field of size 3
 
         """
-        return "The projective general unitary group of degree %s over %s"%(self._n, self.base_ring())
+        return "The projective general unitary group of degree %s over %s" % (self._n, self.base_ring())
 
 
 class SuzukiGroup(PermutationGroup_unique):
@@ -3449,6 +3459,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         ret.append((self._n-1)*self._m - self._n)
         return tuple(sorted(ret, reverse=True))
 
+
 class SmallPermutationGroup(PermutationGroup_generic):
     r"""
     A GAP SmallGroup, returned as a permutation group.
@@ -3513,7 +3524,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         """
         self._n = order
         self._gap_id = gap_id
-        self._gap_small_group = libgap.SmallGroup(order,gap_id)
+        self._gap_small_group = libgap.SmallGroup(order, gap_id)
         gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
         PermutationGroup_generic.__init__(self, gap_group=gap_permutation_group)
 
@@ -3524,7 +3535,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
             sage: G = SmallPermutationGroup(12,4); G
             Group of order 12 and GAP Id 4 as a permutation group
         """
-        return "Group of order %s and GAP Id %s as a permutation group"%(self._n, self._gap_id)
+        return "Group of order %s and GAP Id %s as a permutation group" % (self._n, self._gap_id)
 
     def order(self):
         """

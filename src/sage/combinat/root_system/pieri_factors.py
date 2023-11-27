@@ -700,7 +700,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         if len(support) < len(red):  # There should be no repetitions
             return False
 
-        if not(self._min_length <= len(support) and
+        if not (self._min_length <= len(support) and
                len(support) <= self._max_length and
                self._min_support.issubset(support) and
                support.issubset(self._max_support)):
@@ -755,7 +755,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             sage: WeylGroup(["A", 3, 1]).pieri_factors().cardinality()
             15
         """
-        if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) -1:
+        if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) - 1:
             return Integer(2**(len(self._extra_support)) - 1)
         else:
             return self.generating_series(weight=ConstantFunction(1))

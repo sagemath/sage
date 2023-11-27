@@ -418,7 +418,7 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
         ideal = self.prime_ideal()
         if i is None:
             for j in range(P.ngens()):
-                if not P.gen(j) in ideal:
+                if P.gen(j) not in ideal:
                     i = j
                     break
         else:

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Symmetric Functions
 
@@ -1439,21 +1440,21 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] < w[-1])
+                    return w[0] < w[-1]
             elif comparison == 0:
                 def check_word(w):
                     if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] == w[-1])
+                    return w[0] == w[-1]
             elif comparison == 1:
                 def check_word(w):
                     if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] > w[-1])
+                    return w[0] > w[-1]
 
             def coeff_of_m_mu_in_result(mu):
                 # Compute the coefficient of the monomial symmetric
@@ -1701,7 +1702,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
                 sage: m.degree_negation(m(e[3]))
                 -m[1, 1, 1]
             """
-            return self.sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+            return self.sum_of_terms([ (lam, (-1)**(sum(lam) % 2) * a)
                                        for lam, a in self(element) ])
 
     class ElementMethods:
@@ -1728,7 +1729,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
                 sage: parent(x) is m
                 True
             """
-            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam) % 2) * a)
                                                 for lam, a in self ])
 
         def degree_zero_coefficient(self):
@@ -2278,9 +2279,9 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             known_cache_part = {}
             f = known_function(pn[i])
             for j in range(len_pn):
-                if lower_triangular and j>i:
+                if lower_triangular and j > i:
                     break
-                if upper_triangular and i>j:
+                if upper_triangular and i > j:
                     continue
                 value = f(pn[j])
                 if value != zero:
@@ -2710,7 +2711,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
                 ext = self([])
             else:
                 ext = 0
-            return ext + self(sum([s([n]) for n in degrees if n!=0]))
+            return ext + self(sum([s([n]) for n in degrees if n != 0]))
 
         #For each k in nu, we compute the inner plethysm of
         #p_k with p_x
@@ -2718,7 +2719,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         #To get the final answer, we compute the inner tensor product
         #of all the symmetric functions in res
-        return self(reduce(lambda x, y: 0 if x==0 else x.itensor(y), res))
+        return self(reduce(lambda x, y: 0 if x == 0 else x.itensor(y), res))
 
     def _dual_basis_default(self):
         """
@@ -4915,8 +4916,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             -q^3 + 2*q^2 - 2*q + 1
             sage: a.scalar_qt(a,5,7) # q=5 and t=7
             490/1539
-            sage: (x,y) = var('x,y')                                                    # optional - sage.symbolic
-            sage: a.scalar_qt(a, q=x, t=y)                                              # optional - sage.symbolic
+            sage: (x,y) = var('x,y')                                                    # needs sage.symbolic
+            sage: a.scalar_qt(a, q=x, t=y)                                              # needs sage.symbolic
             1/3*(x^3 - 1)/(y^3 - 1) + 2/3*(x - 1)^3/(y - 1)^3
             sage: Rn = QQ['q','t','y','z'].fraction_field()
             sage: (q,t,y,z) = Rn.gens()
@@ -6029,7 +6030,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         it is better to obtain an element of the symbolic ring::
 
             sage: h = SymmetricFunctions(QQ).h()
-            sage: (h[3]+h[2]).principal_specialization(q=var("q"))                      # optional - sage.symbolic
+            sage: (h[3]+h[2]).principal_specialization(q=var("q"))                      # needs sage.symbolic
             1/((q^2 - 1)*(q - 1)) - 1/((q^3 - 1)*(q^2 - 1)*(q - 1))
 
         In case ``q`` is in the base ring, it must be passed explicitly::
@@ -6083,7 +6084,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             1
 
         Check that the stable principal specialization at `q = 1`
-        raises a ``ValueError``:
+        raises a :class:`ValueError`:
 
             sage: def test_error(x):
             ....:     message = "the stable principal specialization of %s at q=1 should raise a ValueError"
@@ -6290,11 +6291,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: x = m[3]+m[2,1]+m[1,1,1]
             sage: d = x.homogeneous_degree()
-            sage: var("q t")                                                            # optional - sage.symbolic
+            sage: var("q t")                                                            # needs sage.symbolic
             (q, t)
-            sage: factor((x.principal_specialization()*(1-q)^d*t^d))                    # optional - sage.symbolic
+            sage: factor((x.principal_specialization()*(1-q)^d*t^d))                    # needs sage.symbolic
             t^3/((q^2 + q + 1)*(q + 1))
-            sage: factor(x.exponential_specialization(q=q, t=t))                        # optional - sage.symbolic
+            sage: factor(x.exponential_specialization(q=q, t=t))                        # needs sage.symbolic
             t^3/((q^2 + q + 1)*(q + 1))
 
         TESTS::

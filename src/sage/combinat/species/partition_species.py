@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Partition Species
 """
@@ -141,7 +142,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
             sage: P = species.PartitionSpecies(); P
             Partition species
        """
-        return super(PartitionSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """

@@ -140,7 +140,7 @@ class FormalSum(ModuleElement):
             try:
                 self._data = [(k(t[0]), t[1]) for t in self._data]
             except (IndexError, KeyError) as msg:
-                raise TypeError("%s\nInvalid formal sum"%msg)
+                raise TypeError("%s\nInvalid formal sum" % msg)
 
     def __iter__(self):
         """
@@ -348,7 +348,7 @@ class FormalSums(UniqueRepresentation, Module):
             sage: FormalSums(GF(7))._repr_()
             'Abelian Group of all Formal Finite Sums over Finite Field of size 7'
         """
-        return "Abelian Group of all Formal Finite Sums over %s"%self.base_ring()
+        return "Abelian Group of all Formal Finite Sums over %s" % self.base_ring()
 
     def _element_constructor_(self, x, check=True, reduce=True):
         """
