@@ -3340,13 +3340,13 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: rho.reducible_primes() # CM curves always return [0]
             [0]
             sage: E.reducible_primes()
-            [2, 3, 5]
+            [2, 5]
             sage: E = EllipticCurve_from_j(K(0)) # CM but NOT over K
             sage: rho = E.galois_representation()
             sage: rho.reducible_primes() # long time
             [2, 3]
             sage: E.reducible_primes()
-            [2, 3, 5, 7, 11, 13]
+            [2, 3]
             sage: E = EllipticCurve_from_j(K(2268945/128)).global_minimal_model() # c.f. [Sut2012]
             sage: rho = E.galois_representation()
             sage: rho.isogeny_bound() # ..but there is no 7-isogeny, long time
