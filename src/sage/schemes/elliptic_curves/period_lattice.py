@@ -1427,7 +1427,7 @@ class PeriodLattice_ell(PeriodLattice):
         R = RealField(prec2)
         C = ComplexField(prec2)
         e1,e2,e3 = self._ei
-        a1,a2,a3 = [self.embedding(a) for a in self.E.ainvs()[:3]]
+        a1,a2,a3 = (self.embedding(a) for a in self.E.ainvs()[:3])
 
         wP = 2*yP+a1*xP+a3
 
@@ -1707,7 +1707,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L.elliptic_logarithm(P, prec=1000)
             1.17058357737548897849026170185581196033579563441850967539191867385734983296504066660506637438866628981886518901958717288150400849746892393771983141354014895386251320571643977497740116710952913769943240797618468987304985625823413440999754037939123032233879499904283600304184828809773650066658885672885 - 1.13513899565966043682474529757126359416758251309237866586896869548539516543734207347695898664875799307727928332953834601460994992792519799260968053875387282656993476491590607092182964878750169490985439873220720963653658829712494879003124071110818175013453207439440032582917366703476398880865439217473*I
         """
-        if not P.curve() is self.E:
+        if P.curve() is not self.E:
             raise ValueError("Point is on the wrong curve")
         if prec is None:
             prec = RealField().precision()
@@ -1716,7 +1716,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         # Compute the real or complex coordinates of P:
 
-        xP, yP = [self.embedding(coord) for coord in P.xy()]
+        xP, yP = (self.embedding(coord) for coord in P.xy())
 
         # The real work is done over R or C now:
 
@@ -1915,7 +1915,7 @@ class PeriodLattice_ell(PeriodLattice):
         # the same precision as the input.
 
         x, y = pari(self.basis(prec=prec)).ellwp(z, flag=1)
-        x, y = [C(t) for t in (x, y)]
+        x, y = (C(t) for t in (x, y))
 
         if self.real_flag and z_is_real:
             x = x.real()
@@ -1924,7 +1924,7 @@ class PeriodLattice_ell(PeriodLattice):
         if to_curve:
             K = x.parent()
             v = refine_embedding(self.embedding, Infinity)
-            a1, a2, a3, a4, a6 = [K(v(a)) for a in self.E.ainvs()]
+            a1, a2, a3, a4, a6 = (K(v(a)) for a in self.E.ainvs())
             b2 = K(v(self.E.b2()))
             x = x - b2 / 12
             y = (y - (a1 * x + a3)) / 2

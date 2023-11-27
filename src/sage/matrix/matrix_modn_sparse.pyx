@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Sparse matrices over `\ZZ/n\ZZ` for `n` small
 
@@ -109,6 +108,7 @@ from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix2 import Matrix as Matrix2
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.matrix_sparse cimport Matrix_sparse
 from sage.misc.verbose import verbose, get_verbose
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.modules.vector_integer_sparse cimport *
@@ -173,10 +173,10 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             if z:
                 set_entry(&self.rows[se.i], se.j, z)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
         set_entry(&self.rows[i], j, (<IntegerMod_int> value).ivalue)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         cdef IntegerMod_int n
         n =  IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self._base_ring)
@@ -255,7 +255,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         else:
             raise ValueError("unknown matrix format")
 
-    cdef Matrix _matrix_times_matrix_(self, Matrix _right):
+    cdef Matrix _matrix_times_matrix_(self, Matrix _right) noexcept:
         """
         This code is implicitly called for multiplying self by another
         sparse matrix.
@@ -392,7 +392,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         self.check_bounds_and_mutability(r2,0)
         self.swap_rows_c(r1, r2)
 
-    cdef swap_rows_c(self, Py_ssize_t n1, Py_ssize_t n2):
+    cdef swap_rows_c(self, Py_ssize_t n1, Py_ssize_t n2) noexcept:
         """
         Swap the rows in positions n1 and n2. No bounds checking.
         """
@@ -401,7 +401,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         self.rows[n1] = self.rows[n2]
         self.rows[n2] = tmp
 
-    cpdef _echelon_in_place(self, str algorithm):
+    cpdef _echelon_in_place(self, str algorithm) noexcept:
         """
         Replace self by its reduction to reduced row echelon form.
 
@@ -880,7 +880,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         .. NOTE::
 
-           In Sage one can also write ``A \ B`` for
+           DEPRECATED. In Sage one can also write ``A \ B`` for
            ``A.solve_right(B)``, i.e., Sage implements the "the
            MATLAB/Octave backslash operator".
 
@@ -914,14 +914,14 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
             sage: A = matrix(ZZ, 3, [1,2,3,-1,2,5,2,3,1], sparse=True)
             sage: b = vector(ZZ, [1,2,3])
-            sage: x = A \ b
+            sage: x = A.solve_right(b)
             sage: x
             (-13/12, 23/12, -7/12)
             sage: A * x
             (1, 2, 3)
 
             sage: u = matrix(ZZ, 3, 2, [0,1,1,1,0,2])
-            sage: x = A \ u
+            sage: x = A.solve_right(u)
             sage: x
             [-7/12  -1/6]
             [ 5/12   5/6]
@@ -932,7 +932,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [0 2]
         """
         if check_rank and self.rank() < self.nrows():
-            from .matrix2 import NotFullRankError
+            from sage.matrix.matrix2 import NotFullRankError
             raise NotFullRankError
 
         if self.base_ring() != B.base_ring():
@@ -1111,7 +1111,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         if self._nrows == 0 or self._ncols == 0:
             raise ValueError("not implemented for nrows=0 or ncols=0")
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
         cdef Matrix_integer_dense B

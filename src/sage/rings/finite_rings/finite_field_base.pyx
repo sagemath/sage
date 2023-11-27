@@ -4,6 +4,7 @@ Base class for finite fields
 
 TESTS::
 
+    sage: x = polygen(ZZ)
     sage: K.<a> = NumberField(x^2 + 1)                                                  # needs sage.rings.number_field
     sage: F = K.factor(3)[0][0].residue_field()                                         # needs sage.rings.number_field
     sage: loads(dumps(F)) == F                                                          # needs sage.rings.number_field
@@ -1238,6 +1239,7 @@ cdef class FiniteField(Field):
             (0, 1)
 
             sage: # needs sage.modules
+            sage: x = polygen(ZZ)
             sage: F = GF(9, 't', modulus=x^2 + x - 1)
             sage: E = GF(81)
             sage: h = Hom(F,E).an_element()
@@ -1316,7 +1318,7 @@ cdef class FiniteField(Field):
 
         return V, phi, psi
 
-    cpdef _coerce_map_from_(self, R):
+    cpdef _coerce_map_from_(self, R) noexcept:
         r"""
         Canonical coercion to ``self``.
 
@@ -1387,7 +1389,7 @@ cdef class FiniteField(Field):
                       and hasattr(self, '_prefix') and hasattr(R, '_prefix')):
                     return R.hom((self.gen() ** ((self.order() - 1)//(R.order() - 1)),))
 
-    cpdef _convert_map_from_(self, R):
+    cpdef _convert_map_from_(self, R) noexcept:
         """
         Conversion from p-adic fields.
 

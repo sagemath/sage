@@ -57,7 +57,7 @@ on:
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "opensuse-tumbleweed",
-           "conda-forge",
+           "conda-forge-python3.11",
            "ubuntu-bionic-gcc_8-i386",
            "debian-bullseye-i386",
            ]
@@ -78,6 +78,10 @@ on:
       free_disk_space:
         default: false
         type: boolean
+      timeout:
+        description: 'Elapsed time (seconds) at which to kill the build'
+        default: 20000
+        type: number
       #
       # Publishing to GitHub Packages
       #
@@ -144,24 +148,23 @@ jobs:
       EXTRA_CONFIGURE_ARGS: --enable-fat-binary
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v8
+        with:
+          # need space in /var for Docker images
+          root-reserve-mb:      40000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
+        if: inputs.free_disk_space
       - name: Check out SageMath
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
-      - name: free disk space
-        run: |
-          df -h
-          sudo swapoff -a
-          sudo rm -f /swapfile
-          sudo apt-get clean
-          docker rmi $(docker image ls -aq)
-          echo "Largest packages:"
-          dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 50
-          sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono)') || echo "(error ignored)"
-          df -h
-        if: inputs.free_disk_space
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
         with:
@@ -191,6 +194,9 @@ jobs:
               echo "DOCKER_PUSH_REPOSITORY=$(echo ${{ inputs.docker_push_repository }} | tr "[:upper:]" "[:lower:]")" >> $GITHUB_ENV
               echo "DOCKER_CONFIG_FILE=$HOME/.docker/config.json" >> $GITHUB_ENV
             fi
+
+      - name: Determine Docker tags to use
+        run: |
             # This line needs to be run before the step "Merge CI fixes from sagemath/sage".
             DOCKER_TAG="$(git describe --dirty --always)"
             echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
@@ -216,9 +222,13 @@ jobs:
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
-
+      - name: Show disk space
+        run: |
+          df -h
+        if: inputs.free_disk_space
       - name: Configure and build Sage distribution within a Docker container
         run: |
+          (sleep ${{ inputs.timeout }}; for id in $(docker ps -q); do docker exec $id pkill make; done) &
           set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
       - name: Copy logs from the Docker image or build container
         run: |

@@ -151,7 +151,6 @@ echo >&2 $0:$LINENO: generate conda environment files
                 done
             fi
         done
-    #) 4>> src/environment-dev-template.yml 5>> src/environment-optional-template.yml
     ) 4>> /dev/null 5>> src/environment-optional-template.yml
 
 for f in environment environment-optional src/environment src/environment-optional src/environment-dev; do

@@ -47,7 +47,7 @@ from sage.rings.integer_ring import is_IntegerRing
 
 import sage.modules.free_module
 
-from .matrix_misc import row_iterator
+from sage.matrix.matrix_misc import row_iterator
 
 _Fields = Fields()
 _IntegralDomains = IntegralDomains()
@@ -334,14 +334,14 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         self.clear_cache()
 
-    cdef void clear_cache(self):
+    cdef void clear_cache(self) noexcept:
         """
         Clear the properties cache.
         """
         self._cache = None
         self.hash = -1
 
-    cdef fetch(self, key):
+    cdef fetch(self, key) noexcept:
         """
         Try to get an element from the cache; if there isn't anything
         there, return None.
@@ -353,7 +353,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except KeyError:
             return None
 
-    cdef cache(self, key, x):
+    cdef cache(self, key, x) noexcept:
         """
         Record x in the cache with given key.
         """
@@ -380,7 +380,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Mutability and bounds checking
     ###########################################################
 
-    cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j):
+    cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         This function gets called when you're about to access the i,j entry
         of this matrix. If i, j are out of range, an IndexError is
@@ -389,7 +389,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
             raise IndexError("matrix index out of range")
 
-    cdef check_mutability(self):
+    cdef check_mutability(self) noexcept:
         """
         This function gets called when you're about to change this matrix.
 
@@ -403,7 +403,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         else:
             self._cache = None
 
-    cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j):
+    cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         This function gets called when you're about to set the i,j entry of
         this matrix. If i or j is out of range, an :class:`IndexError`
@@ -516,7 +516,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Entry access
     #    The first two must be overloaded in the derived class
     ###########################################################
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x) noexcept:
         """
         Set entry quickly without doing any bounds checking. Calling this
         with invalid arguments is allowed to produce a segmentation fault.
@@ -526,7 +526,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError("this must be defined in the derived class (type=%s)" % type(self))
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Entry access, but fast since it might be without bounds checking.
 
@@ -543,11 +543,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         TESTS::
 
-            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):            # needs sage.rings.number_fields
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):            # needs sage.rings.number_field
             ....:     def __bool__(self):
             ....:         raise ValueError
-            sage: mat = matrix(1, 1, MyAlgebraicNumber(1))                              # needs sage.rings.number_fields
-            sage: bool(mat)                                                             # needs sage.rings.number_fields
+            sage: mat = matrix(1, 1, MyAlgebraicNumber(1))                              # needs sage.rings.number_field
+            sage: bool(mat)                                                             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError
@@ -1562,7 +1562,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
 
 
-    cdef _coerce_element(self, x):
+    cdef _coerce_element(self, x) noexcept:
         """
         Return coercion of x into the base ring of self.
         """
@@ -1750,7 +1750,7 @@ cdef class Matrix(sage.structure.element.Matrix):
              100 x 100 dense matrix over Integer Ring]
 
         """
-        from .constructor import options
+        from sage.matrix.constructor import options
         if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str()
         if self.is_sparse():
@@ -2051,7 +2051,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         # only use floating point formatting for inexact types that have
         # custom implementation of __format__
-        from .constructor import options
+        from sage.matrix.constructor import options
         prec = options.precision()
         if prec is None or callable(rep_mapping) or not entries \
                 or type(entries[0]).__format__ is Element.__format__ \
@@ -2135,7 +2135,7 @@ cdef class Matrix(sage.structure.element.Matrix):
               -0.35104242112828943    0.5084492941557279]
                -0.9541798283979341   -0.8948790563276592]
         """
-        from .constructor import options
+        from sage.matrix.constructor import options
         if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str(character_art=True)
         else:
@@ -2164,7 +2164,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: unicode_art(A)
             100 x 100 dense matrix over Integer Ring
         """
-        from .constructor import options
+        from sage.matrix.constructor import options
         if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str(unicode=True, character_art=True)
         else:
@@ -2375,7 +2375,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [  5  25]
             [125 625]
         """
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         return matrix(self.nrows(), self.ncols(), [e(*args, **kwargs) for e in self.list()])
 
     ###################################################
@@ -2431,11 +2431,11 @@ cdef class Matrix(sage.structure.element.Matrix):
     # involve multiplication outside base ring, including
     # with_ versions of these methods for this situation
     ###################################################
-    cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2):
+    cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2) noexcept:
         if r1 < 0 or r1 >= self._nrows or r2 < 0 or r2 >= self._nrows:
             raise IndexError("matrix row index out of range")
 
-    cdef check_row_bounds_and_mutability(self, Py_ssize_t r1, Py_ssize_t r2):
+    cdef check_row_bounds_and_mutability(self, Py_ssize_t r1, Py_ssize_t r2) noexcept:
         if self._is_immutable:
             raise ValueError("Matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).")
         else:
@@ -2443,11 +2443,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         if r1 < 0 or r1 >= self._nrows or r2 < 0 or r2 >= self._nrows:
             raise IndexError("matrix row index out of range")
 
-    cdef check_column_bounds(self, Py_ssize_t c1, Py_ssize_t c2):
+    cdef check_column_bounds(self, Py_ssize_t c1, Py_ssize_t c2) noexcept:
         if c1 < 0 or c1 >= self._ncols or c2 < 0 or c2 >= self._ncols:
             raise IndexError("matrix column index out of range")
 
-    cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2):
+    cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2) noexcept:
         if self._is_immutable:
             raise ValueError("Matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).")
         else:
@@ -2633,7 +2633,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     temp.swap_columns_c(cycle[0], elt)
         return temp
 
-    cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2):
+    cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2) noexcept:
         cdef Py_ssize_t r
         for r from 0 <= r < self._nrows:
             a = self.get_unsafe(r, c2)
@@ -2815,7 +2815,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     temp.swap_rows_c(cycle[0], elt)
         return temp
 
-    cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2):
+    cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2) noexcept:
         cdef Py_ssize_t c
         for c from 0 <= c < self._ncols:
             a = self.get_unsafe(r2, c)
@@ -2950,7 +2950,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except TypeError:
             raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring or with_added_multiple_of_row instead.' % (s.parent(), self.base_ring()))
 
-    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j,    s,   Py_ssize_t start_col):
+    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j,    s,   Py_ssize_t start_col) noexcept:
         cdef Py_ssize_t c
         for c from start_col <= c < self._ncols:
             self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
@@ -3035,7 +3035,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except TypeError:
             raise TypeError('Multiplying column by %s element cannot be done over %s, use change_ring or with_added_multiple_of_column instead.' % (s.parent(), self.base_ring()))
 
-    cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row):
+    cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row) noexcept:
         cdef Py_ssize_t r
         for r from start_row <= r < self._nrows:
             self.set_unsafe(r, i, self.get_unsafe(r, i) + s*self.get_unsafe(r, j))
@@ -3150,7 +3150,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except TypeError:
             raise TypeError('Rescaling row by %s element cannot be done over %s, use change_ring or with_rescaled_row instead.' % (s.parent(), self.base_ring()))
 
-    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col):
+    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col) noexcept:
         cdef Py_ssize_t j
         for j from start_col <= j < self._ncols:
             self.set_unsafe(i, j, self.get_unsafe(i, j)*s)
@@ -3265,7 +3265,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except TypeError:
             raise TypeError('Rescaling column by %s element cannot be done over %s, use change_ring or with_rescaled_col instead.' % (s.parent(), self.base_ring()))
 
-    cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row):
+    cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row) noexcept:
         cdef Py_ssize_t j
         for j from start_row <= j < self._nrows:
             self.set_unsafe(j, i, self.get_unsafe(j, i)*s)
@@ -3850,7 +3850,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ValueError("length of v must be at most the number of rows of self")
         if not self._nrows:
             return self.parent().row_space().zero_vector()
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         v = matrix(list(v)+[0]*(self._nrows-len(v)))
         return (v * self)[0]
 
@@ -3927,7 +3927,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ValueError("length of v must be at most the number of columns of self")
         if not self._ncols:
             return self.parent().column_space().zero_vector()
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         v = matrix(self._ncols, 1, list(v)+[0]*(self._ncols-len(v)))
         return (self * v).column(0)
 
@@ -4898,7 +4898,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Over finite fields::
 
             sage: A = matrix(GF(59), 3, [10,56,39,53,56,33,58,24,55])
-            sage: A.multiplicative_order()                                              # needs sage.groups
+            sage: A.multiplicative_order()                                              # needs sage.libs.pari
             580
             sage: (A^580).is_one()
             True
@@ -4918,7 +4918,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Over `\ZZ`::
 
             sage: m = matrix(ZZ, 2, 2, [-1,1,-1,0])
-            sage: m.multiplicative_order()                                              # needs sage.groups
+            sage: m.multiplicative_order()                                              # needs sage.libs.pari
             3
 
             sage: m = posets.ChainPoset(6).coxeter_transformation()                     # needs sage.combinat sage.graphs
@@ -4930,10 +4930,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             10
 
             sage: M = matrix(ZZ, 2, 2, [1, 1, 0, 1])
-            sage: M.multiplicative_order()                                              # needs sage.groups
+            sage: M.multiplicative_order()                                              # needs sage.libs.pari
             +Infinity
 
-            sage: for k in range(600):                                                  # needs sage.groups
+            sage: for k in range(600):                                                  # needs sage.groups sage.modular
             ....:     m = SL2Z.random_element()
             ....:     o = m.multiplicative_order()
             ....:     if o != Infinity and m**o != SL2Z.one():
@@ -4948,7 +4948,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:     else:
             ....:         return ZZ.random_element(-100,100)
             sage: rnd = matrix(ZZ, 8, 8, val)
-            sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()            # needs sage.groups
+            sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()            # needs sage.libs.pari
             24
 
         TESTS::
@@ -5038,7 +5038,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     ###################################################
     # Arithmetic
     ###################################################
-    cdef _vector_times_matrix_(self, Vector v):
+    cdef _vector_times_matrix_(self, Vector v) noexcept:
         r"""
         Return the vector times matrix product.
 
@@ -5095,7 +5095,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         return sum([v[i] * self.row(i, from_list=True)
                     for i in range(self._nrows)], M(0))
 
-    cdef _matrix_times_vector_(self, Vector v):
+    cdef _matrix_times_vector_(self, Vector v) noexcept:
         """
         EXAMPLES::
 
@@ -5206,7 +5206,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             MS = self.matrix_space(n, m)
             return MS(X).transpose()
 
-    cpdef _add_(self, _right):
+    cpdef _add_(self, _right) noexcept:
         """
         Add two matrices with the same parent.
 
@@ -5230,7 +5230,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 A.set_unsafe(i,j,self.get_unsafe(i,j)._add_(right.get_unsafe(i,j)))
         return A
 
-    cpdef _sub_(self, _right):
+    cpdef _sub_(self, _right) noexcept:
         """
         Subtract two matrices with the same parent.
 
@@ -5296,7 +5296,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self.change_ring(self._base_ring.quotient_ring(p))
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         EXAMPLES::
 
@@ -5334,7 +5334,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 ans.set_unsafe(r, c, x * self.get_unsafe(r, c))
         return ans
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES:
 
@@ -5378,7 +5378,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 ans.set_unsafe(r, c, self.get_unsafe(r, c) * x)
         return ans
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right) noexcept:
         r"""
         Return the product of two matrices.
 
@@ -5771,7 +5771,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     raise ZeroDivisionError("input matrix must be nonsingular")
             return A.matrix_from_columns(list(range(self._ncols, 2 * self._ncols)))
 
-    cdef build_inverse_from_augmented_sparse(self, A):
+    cdef build_inverse_from_augmented_sparse(self, A) noexcept:
         # We can directly use the dict entries of A
         cdef Py_ssize_t i, nrows
         cdef dict data = <dict> A._dict()
@@ -5813,10 +5813,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             Traceback (most recent call last):
             ...
             ArithmeticError: self must be a square matrix
+
             sage: matrix(RR, 1, 1, [2]).inverse_of_unit()                               # needs sage.libs.singular
             Traceback (most recent call last):
             ...
-            NotImplementedError: Lifting of multivariate polynomials over non-fields is not implemented.
+            ArithmeticError: non-invertible matrix
 
             sage: R = ZZ.cartesian_product(ZZ)
             sage: m = matrix(R, 2, [R((2,1)), R((1,1)), R((1,1)), R((1,2))])
@@ -5826,9 +5827,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Tests for :trac:`28570`::
 
-            sage: P = posets.TamariLattice(7)                                           # needs sage.combinat sage.graphs
-            sage: M = P._hasse_diagram._leq_matrix                                      # needs sage.combinat sage.graphs
-            sage: M.inverse_of_unit()   # this was very slow, now 1s                    # needs sage.combinat sage.graphs
+            sage: P = posets.TamariLattice(7)                                           # needs sage.graphs
+            sage: M = P._hasse_diagram._leq_matrix                                      # needs sage.graphs
+            sage: M.inverse_of_unit()   # this was very slow, now 1s                    # needs sage.graphs
             429 x 429 sparse matrix over Integer Ring...
 
             sage: m = matrix(Zmod(2**2), 1, 1, [1], sparse=True)
@@ -6037,7 +6038,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             return -2
         return h
 
-    cdef void get_hash_constants(self, long C[5]):
+    cdef void get_hash_constants(self, long C[5]) noexcept:
         """
         Get constants for the hash algorithm.
         """
@@ -6073,7 +6074,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         # C[0] = (1 - m * (m - 1)/2) * C[2] - (m - 1) * C[1]
         C[0] = (1 - mm) * C[2] - (m - 1) * C[1]
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare two matrices.
 
@@ -6177,7 +6178,7 @@ def set_max_rows(n):
     """
     from sage.misc.superseded import deprecation
     deprecation(30552, "'set_max_rows' is replaced by 'matrix.options.max_rows'")
-    from .constructor import options
+    from sage.matrix.constructor import options
     options.max_rows = n-1
 
 def set_max_cols(n):
@@ -6194,5 +6195,5 @@ def set_max_cols(n):
     """
     from sage.misc.superseded import deprecation
     deprecation(30552, "'set_max_cols' is replaced by 'matrix.options.max_cols'")
-    from .constructor import options
+    from sage.matrix.constructor import options
     options.max_cols = n-1

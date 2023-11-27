@@ -343,12 +343,12 @@ doctest::
     sage: sorted([C for C in category_sample()                                          # needs sage.combinat sage.graphs sage.modules sage.rings.number_field
     ....:         if len(C._super_categories_for_classes) != len(C.super_categories())],
     ....:        key=str)
-    [Category of affine weyl groups,
+    [Category of affine Weyl groups,
      Category of fields,
+     Category of finite Weyl groups,
      Category of finite dimensional algebras with basis over Rational Field,
      Category of finite dimensional hopf algebras with basis over Rational Field,
      Category of finite enumerated permutation groups,
-     Category of finite weyl groups,
      Category of number fields]
 
 AUTHOR:
@@ -659,7 +659,7 @@ def C3_merge(list lists):
             raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
 
-cpdef identity(x):
+cpdef identity(x) noexcept:
     r"""
     EXAMPLES::
 
@@ -669,7 +669,7 @@ cpdef identity(x):
     """
     return x
 
-cpdef tuple C3_sorted_merge(list lists, key=identity):
+cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
     r"""
     Return the sorted input lists merged using the ``C3`` algorithm, with a twist.
 

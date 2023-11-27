@@ -125,11 +125,12 @@ Here we assume that you are using a git checkout.
     ``src/environment-optional-3.11-linux.yml``, which will only install standard
     (and optional) packages without any additional developer tools.
 
-    This will use Python 3.11. You can change the Python version by using one 
-    of the other environment files, e.g. ``src/environment-3.10-linux.yml``.
+    A different Python version can be selected by replacing ``3.11`` by ``3.9``
+    or ``3.10`` in these commands.
 
-  - Install the build prerequisites and the Sage library::
+  - Bootstrap the source tree and install the build prerequisites and the Sage library::
 
+      $ ./bootstrap
       $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_conda ./pkgs/sage-setup
       $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
 
@@ -152,7 +153,7 @@ suffices to restart Sage.
 
 After editing any Cython files, rebuild the Sage library using::
 
-  $ pip install --no-build-isolation -v -v --editable src
+  $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable src
 
 In order to update the conda environment later, you can run::
 

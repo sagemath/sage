@@ -1931,7 +1931,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         P = self
         E = P.curve()
 
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("Points must both be on the same curve")
 
         K = E.base_ring()
@@ -2139,7 +2139,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         # check for same curve
         E = P.curve()
         O = E(0)
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("Points must both be on the same curve")
 
         # set q to be the order of the base field
@@ -3035,7 +3035,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         # (with infinite precision) and then trim back to RR or CC.
 
         x = RC(v_inf(self[0]))
-        b2, b4, b6, b8 = [RC(v_inf(b)) for b in E.b_invariants()]
+        b2, b4, b6, b8 = (RC(v_inf(b)) for b in E.b_invariants())
 
         # The following comes from Silverman Theorem 4.2.  Silverman
         # uses decimal precision d, so his term (5/3)d =

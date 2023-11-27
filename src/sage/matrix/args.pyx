@@ -39,7 +39,7 @@ except ImportError:
 CommutativeMonoids = monoids.Monoids().Commutative()
 
 
-cdef inline bint element_is_scalar(Element x):
+cdef inline bint element_is_scalar(Element x) noexcept:
     """
     Should this element be considered a scalar (as opposed to a vector)?
     """
@@ -606,7 +606,7 @@ cdef class MatrixArgs:
         self.finalize()
         return self.nrows * self.ncols
 
-    cpdef Matrix matrix(self, bint convert=True):
+    cpdef Matrix matrix(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a Sage Matrix.
 
@@ -694,7 +694,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_MATRIX
         return M
 
-    cpdef list list(self, bint convert=True):
+    cpdef list list(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a flat list of scalars.
 
@@ -761,7 +761,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_SEQ_FLAT
         return L
 
-    cpdef dict dict(self, bint convert=True):
+    cpdef dict dict(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a dict. The keys of this
         dict are the non-zero positions ``(i,j)``. The corresponding
@@ -871,6 +871,7 @@ cdef class MatrixArgs:
 
         Check github issue #36065:
 
+            sage: # needs sage.rings.number_field
             sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
             ....:     def __bool__(self):
             ....:         raise ValueError
@@ -982,7 +983,7 @@ cdef class MatrixArgs:
         if self.space is None:
             global MatrixSpace
             if MatrixSpace is None:
-                from .matrix_space import MatrixSpace
+                from sage.matrix.matrix_space import MatrixSpace
             self.space = MatrixSpace(self.base, self.nrows, self.ncols,
                     sparse=self.sparse, **self.kwds)
 
@@ -1113,7 +1114,7 @@ cdef class MatrixArgs:
         if not (e.flags.c_contiguous is True or e.flags.f_contiguous is True):
             raise TypeError('numpy matrix must be either c_contiguous or f_contiguous')
 
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
 
@@ -1360,7 +1361,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_SEQ
 
 
-cpdef MatrixArgs MatrixArgs_init(space, entries):
+cpdef MatrixArgs MatrixArgs_init(space, entries) noexcept:
     """
     Construct a :class:`MatrixArgs` object from a matrix space and
     entries. This is the typical use in a matrix constructor.

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Elements of modular forms spaces
 
@@ -3237,7 +3237,7 @@ class GradedModularFormElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Modular Forms space of dimension 1 for Modular Group SL(2,Z) of weight 4 over Rational Field to Rational Field
-            sage: M([E4, x])
+            sage: M([E4, x])                                                            # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Symbolic Ring to Rational Field
@@ -3547,18 +3547,26 @@ class GradedModularFormElement(ModuleElement):
         TESTS::
 
             sage: M = ModularFormsRing(1)
-            sage: f4 = ModularForms(1, 4).0; f6 = ModularForms(1, 6).0;
-            sage: F4 = M(f4); F6 = M(f6);
+            sage: F4 = M.0; F6 = M.1;
             sage: F4*F6 # indirect doctest
             1 - 264*q - 135432*q^2 - 5196576*q^3 - 69341448*q^4 - 515625264*q^5 + O(q^6)
+
+        This shows that the issue at :issue:`35932` is fixed::
+
+            sage: (F4 + M(1))^2
+            4 + 960*q + 66240*q^2 + 1063680*q^3 + 7961280*q^4 + 37560960*q^5 + O(q^6)
         """
+        from collections import defaultdict
+
         GM = self.__class__
         f_self = self._forms_dictionary
         f_other = other._forms_dictionary
-        f_mul = {}
+        f_mul = defaultdict(int)
+
         for k_self in f_self.keys():
             for k_other in f_other.keys():
-                f_mul[k_self + k_other] = f_self[k_self]*f_other[k_other]
+                f_mul[k_self + k_other] += f_self[k_self] * f_other[k_other]
+
         return GM(self.parent(), f_mul)
 
     def _lmul_(self, c):

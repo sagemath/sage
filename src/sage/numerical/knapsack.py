@@ -408,6 +408,7 @@ class Superincreasing(SageObject):
 
         The sequence must contain only integers::
 
+            sage: # needs sage.symbolic
             sage: from sage.numerical.knapsack import Superincreasing
             sage: L = [1.0, 2.1, pi, 21, 69, 189, 376, 919]
             sage: Superincreasing(L).is_superincreasing()
