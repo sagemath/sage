@@ -10,7 +10,8 @@ html = custom_target('HTML documentation',
   output: 'index.html',
   command: [meson.current_source_dir() / 'doc' / 'make.sh',
             '-C', meson.current_source_dir() / 'doc', 'doc-html'],
-  env: {'SAGE_DOC': meson.current_build_dir()},
+  env: {'SAGE_DOC': meson.current_build_dir(),
+        'SAGE_DOC_SRC': meson.current_source_dir() / 'doc'},
   install: true,
   install_dir: docdir
 )
