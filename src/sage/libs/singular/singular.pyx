@@ -1776,7 +1776,6 @@ cdef init_libsingular() noexcept:
     else:
         os.environ["SINGULAR_BIN_DIR"] = dirname(singular_executable)
 
-    import platform
     # reload the current module to force reload of libSingular (see #33446)
     lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
     handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
