@@ -341,6 +341,8 @@ AUTHORS:
 
 - William Stein (2005): first version
 
+- Doug Cutrell (2006-03-01): Instructions for use under Cygwin/Windows.
+
 - Felix Lawrence (2009-08-21): Added support for importing Mathematica lists
   and floats with exponents.
 
