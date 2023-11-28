@@ -393,22 +393,25 @@ class Feature(TrivialUniqueRepresentation):
 
         EXAMPLES:
 
-        Polycyclic is a standard GAP package since 4.10 (see :trac:`26856`). The
-        following test just fails if it is hidden. Thus, in the second
-        invocation no optional tag is needed::
+        PolyCyclic is an optional GAP package. The following test
+        fails if it is hidden, regardless of whether it is installed
+        or not::
 
             sage: from sage.features.gap import GapPackage
             sage: Polycyclic = GapPackage("polycyclic", spkg="gap_packages")
             sage: Polycyclic.hide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap
+            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap  # optional - gap_packages_polycyclic
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_polycyclic is not available.
             Feature `gap_package_polycyclic` is hidden.
             Use method `unhide` to make it available again.
 
+        After unhiding the feature, the test should pass again if PolyCyclic
+        is installed and loaded::
+
             sage: Polycyclic.unhide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap
+            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap  # optional - gap_packages_polycyclic
             Pcp-group with orders [ 0, 3, 4 ]
         """
         self._hidden = False
