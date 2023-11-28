@@ -267,6 +267,9 @@ if [ -n "$SAGE_LOCAL" -a -f "$SAGE_LOCAL"/toolchain/toolchain-env ]; then
   source "$SAGE_LOCAL"/toolchain/toolchain-env
 fi
 
+# setting of the variable UNAME (describing the o.s.)
+export UNAME=`uname`
+
 # Mac OS X-specific setup
 if [ "$UNAME" = "Darwin" ]; then
     export MACOSX_VERSION=`uname -r | awk -F. '{print $1}'`
