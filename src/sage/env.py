@@ -468,10 +468,6 @@ def cython_aliases(required_modules=None,
 
     aliases["ARB_LIBRARY"] = ARB_LIBRARY
 
-    # TODO: Remove Cygwin hack by installing a suitable cblas.pc
-    # if os.path.exists('/usr/lib/libblas.dll.a'):
-    #    aliases["CBLAS_LIBS"] = ['gslcblas']
-
     try:
         aliases["M4RI_CFLAGS"].remove("-pedantic")
     except (ValueError, KeyError):
