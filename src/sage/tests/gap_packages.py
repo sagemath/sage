@@ -10,11 +10,11 @@ TESTS::
       Status   Package   GAP Output
     +--------+---------+------------+
 
-    sage: test_packages(['atlasrep', 'tomlib'])
+    sage: test_packages(['primgrp', 'smallgrp'])
       Status   Package    GAP Output
     +--------+----------+------------+
-               atlasrep   true
-               tomlib     true
+               primgrp    true
+               smallgrp   true
 """
 
 import os
