@@ -649,25 +649,26 @@ class CFiniteSequence(FieldElement,
             m = max(key.start, key.stop)
             return [self[ii] for ii in range(*key.indices(m + 1))]
         elif isinstance(key, Integral):
+            n = key - self._off
+            if n < 0:
+                return 0
             den = self.denominator()
             num = self.numerator()
             if self._off >= 0:
                 num = num.shift(-self._off)
             else:
                 den = den.shift(self._off)
-            n = key - self._off
-            if n < 0:
-                return 0
             (quo, num) = num.quo_rem(den)
-            P = self.parent().polynomial_ring()
-            x = self.parent().gen()
             if quo.degree() < n:
                 wp = 0
             else:
                 wp = quo[n]
+            P = self.parent().polynomial_ring()
+            x = P.gen()
             while n:
-                num = P((num * den(-x)).list()[n % 2::2])
-                den = P((den * den(-x)).list()[::2])
+                nden = den(-x)
+                num = P((num * nden).list()[n % 2::2])
+                den = P((den * nden).list()[::2])
                 n //= 2
             return wp + num[0] / den[0]
         else:
