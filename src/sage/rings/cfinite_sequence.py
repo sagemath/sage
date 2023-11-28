@@ -644,6 +644,14 @@ class CFiniteSequence(FieldElement,
             [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]
             sage: s = C(x^3 * (1 - x)^-2); s[0:10]
             [0, 0, 0, 1, 2, 3, 4, 5, 6, 7]
+            sage: s = C(1/(1-x^1000)); s[10^18]
+            1
+            sage: s = C(1/(1-x^1000)); s[10^20]
+            1
+
+        REFERENCES:
+
+        - [BM2021]_
         """
         if isinstance(key, slice):
             m = max(key.start, key.stop)
