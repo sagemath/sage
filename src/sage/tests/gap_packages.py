@@ -116,6 +116,16 @@ def all_installed_packages(ignore_dot_gap=False, gap=None):
     else:
         paths = [str(p) for p in gap('GAPInfo.RootPaths')]
 
+    # When GAP_ROOT_PATHS in sage-conf is empty (so GAP_ROOT_PATHS in
+    # sage.env ends with a semicolon), the list of "gap" root paths
+    # will contain duplicates but the list for "libgap" will not. I
+    # don't know why this is: when GAP_ROOT_PATHS in sage-conf is
+    # NON-empty, the list for libgap is indeed appended to, so the
+    # issue is not that appending does not work at all. For lack of a
+    # better idea, we can simply remove the duplicates here to avoid
+    # listing the same packages twice for the non-lib "gap" interface.
+    paths = set(paths)
+
     packages = []
     for path in paths:
         if ignore_dot_gap and path.endswith('/.gap/'):
