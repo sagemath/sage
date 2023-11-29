@@ -960,6 +960,13 @@ REFERENCES:
 .. [BL2003] \S. Brlek, A. Ladouceur, A note on differentiable palindromes,
             Theoret. Comput. Sci. 302 (2003) 167--178.
 
+.. [BLL1998] \F. Bergeron, G. Labelle, and P. Leroux.
+             "Combinatorial species and tree-like structures".
+             Encyclopedia of Mathematics and its Applications, vol. 67, Cambridge Univ. Press. 1998.
+
+.. [BLL2008] François Bergeron, Gilbert Labelle, and Pierre Leroux.
+             "Introduction to the Theory of Species of Structures", March 14, 2008.
+
 .. [BraLea2008] \C. Bracken and Gregor Leander: *New families of functions
              with differential uniformity of 4*, Proceedings of the Conference
              BFCA, Copenhagen, 2008.

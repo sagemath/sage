@@ -4,7 +4,7 @@ from sage.misc.lazy_import import lazy_import
 
 # Resolve a circular import so that "import sage.categories.all" can succeed
 # in initializing the category system.
-import sage.structure.category_object    # imports sage.categories.category
+import sage.structure.category_object  # imports sage.categories.category
 
 # Small part of "from sage.categories.basic import *":
 from sage.categories.objects import Objects
