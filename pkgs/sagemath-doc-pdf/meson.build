@@ -6,13 +6,21 @@ project('sagemath-doc-pdf',
 # defined in https://github.com/mesonbuild/meson-python/blob/main/mesonpy/__init__.py
 docdir = get_option('datadir') / 'share' / 'doc' / 'sage'
 
+doc_src = custom_target('Writable documentation source tree',
+  output: 'doc-src',  # phony
+  command: [meson.current_source_dir() / 'doc' / 'copy_doc_src.py'],
+  env: {'SAGE_DOC': meson.current_build_dir(),
+        'SAGE_DOC_SRC': meson.current_source_dir() / 'doc'}
+)
+
 pdf = custom_target('PDF documentation',
   build_by_default: true,
   output: 'doc-pdf',  # phony
+  depends: [doc_src],
   command: [meson.current_source_dir() / 'doc' / 'make.sh',
             '-C', meson.current_source_dir() / 'doc', '@OUTPUT@'],
   env: {'SAGE_DOC': meson.current_build_dir(),
-        'SAGE_DOC_SRC': meson.current_source_dir() / 'doc'}
+        'SAGE_DOC_SRC': meson.current_build_dir() / 'src'}
 )
 
 install_subdir(meson.current_build_dir() / 'pdf',
