@@ -32,10 +32,6 @@ doc-html--%:
 	sage --docbuild --no-pdf-links $(subst -,/,$(subst doc-html--,,$@)) html $(SAGE_DOCBUILD_OPTS)
 
 # reference manual, inventory
-ifndef SAGE_ROOT
-doc-inventory-reference:
-	$(error SAGE_ROOT undefined. This Makefile needs to be invoked by build/make/install)
-else
 doc-inventory-reference: doc-src
 	$(eval DOCS = $(shell sage --docbuild --all-documents reference))
 	@if [ -z "$(DOCS)" ]; then echo "Error: 'sage --docbuild --all-documents' failed"; exit 1; fi
@@ -44,7 +40,6 @@ doc-inventory-reference: doc-src
 	$(MAKE) doc-inventory--$(subst /,-,$(BIBLIO))
 	$(MAKE) $(foreach doc, $(OTHER_DOCS), doc-inventory--$(subst /,-,$(doc)))
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" doc-inventory--reference_top
-endif
 
 # sub docs of reference manual, html
 doc-html-reference-sub: doc-inventory-reference
