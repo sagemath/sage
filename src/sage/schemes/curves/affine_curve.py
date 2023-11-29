@@ -2304,7 +2304,7 @@ class IntegralAffineCurve(AffineCurve_field):
             F = F.extension(f, names[i])
             coords[i] = F.gen()
 
-        proper_extension = F.base_field() is not F  # and n is 1
+        proper_extension = F.base_field() is not F
 
         if proper_extension:
             N, from_N, to_N = F.simple_model()
