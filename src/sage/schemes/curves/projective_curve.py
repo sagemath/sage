@@ -2431,7 +2431,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
     @lazy_attribute
     def _map_to_function_field(self):
         """
-        Return the map to function field of the curve.
+        Return the map to the function field of the curve.
 
         TESTS::
 
@@ -2469,7 +2469,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
     @lazy_attribute
     def _map_from_function_field(self):
         """
-        Return the map to the function field of the curve.
+        Return the map from the function field of the curve.
 
         TESTS::
 
