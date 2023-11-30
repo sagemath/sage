@@ -1,38 +1,28 @@
 # -*- coding: utf-8 -*-
 r"""
-FindStat - the Combinatorial Statistic Finder.
+FindStat - the search engine for combinatorial statistics and maps
 
-The FindStat database can be found at::
+The Sage interface to the FindStat database is::
 
     sage: findstat()
     The Combinatorial Statistic Finder (https://www.findstat.org/)
 
-Fix the following three notions:
+We use the following three notions:
 
 - A *combinatorial collection* is a set `S` with interesting combinatorial properties,
 - a *combinatorial map* is a combinatorially interesting map `f: S \to S'` between combinatorial collections, and
 - a *combinatorial statistic* is a combinatorially interesting map `s: S \to \ZZ`.
 
-You can use the sage interface to FindStat to:
+You can use the Sage interface to:
 
 - identify a combinatorial statistic or map given the values on a few small objects,
 - obtain more terms, formulae, references, etc. for a given statistic or map,
 - edit statistics and maps and submit new statistics.
 
-AUTHORS:
+The main entry points to the database is
 
-- Martin Rubey (2015): initial version.
-- Martin Rubey (2020): rewrite, adapt to new FindStat API
-
-The main entry points
----------------------
-.. csv-table::
-    :class: contentstable
-    :widths: 20, 40
-    :delim: |
-
-    :func:`findstat` | search for matching statistics.
-    :func:`findmap`  | search for matching maps.
+- :func:`findstat` to search for matching statistics,
+- :func:`findmap` to search for matching maps.
 
 A guided tour
 -------------
@@ -195,8 +185,10 @@ replace the value by using :meth:`FindStatFunction.set_description`,
 :meth:`FindStatStatistic.submit` your changes for review by the
 FindStat team.
 
-Classes and methods
--------------------
+AUTHORS:
+
+- Martin Rubey (2015): initial version
+- Martin Rubey (2020): rewrite, adapt to new FindStat API
 
 """
 # ****************************************************************************

@@ -1,12 +1,18 @@
 """
-Tables of zeros of the Riemann-Zeta function
+Database of the zeros of the Riemann zeta function
+
+The main access function to the database of the zeros of the Riemann zeta
+function is :func:`zeta_zeros`. In order to use ``zeta_zeros()``, you need to
+install the optional Odlyzko database package::
+
+    sage -i database_odlyzko_zeta
 
 AUTHORS:
 
 - William Stein: initial version
+- Jeroen Demeyer (2015-01-20): converted ``database_odlyzko_zeta`` to new-style
+  package
 
-- Jeroen Demeyer (2015-01-20): convert ``database_odlyzko_zeta`` to
-  new-style package
 """
 
 #*****************************************************************************
@@ -30,13 +36,7 @@ def zeta_zeros():
     List of the imaginary parts of the first 2,001,052 zeros of the
     Riemann zeta function, accurate to within 4e-9.
 
-    In order to use ``zeta_zeros()``, you will need to
-    install the optional Odlyzko database package::
 
-        sage -i database_odlyzko_zeta
-
-    You can see a list of all available optional packages with
-    ``sage --optional``.
 
     REFERENCES:
 

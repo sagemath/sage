@@ -1,7 +1,7 @@
 """
 Ideals from the Symbolic Data project
 
-This file implements a thin wrapper for the optional symbolic data set
+This module implements a thin wrapper for the optional symbolic dataset
 of ideals as published on http://www.symbolicdata.org . From the
 project website:
 
@@ -32,21 +32,24 @@ project website:
     certified data that could be addressed and extended during further
     development.
 
+In order to use this dataset, you need to install the optional package
+by the Sage command ::
+
+    sage -i database_symbolic_data
+
 EXAMPLES::
 
-    sage: sd = SymbolicData(); sd # optional - database_symbolic_data
+    sage: # optional - database_symbolic_data
+    sage: sd = SymbolicData(); sd
     SymbolicData with 372 ideals
-
-    sage: sd.ZeroDim__example_1 # optional - database_symbolic_data
+    sage: sd.ZeroDim__example_1
     Ideal (x1^2 + x2^2 - 10, x1^2 + x1*x2 + 2*x2^2 - 16) of Multivariate Polynomial Ring in x1, x2 over Rational Field
-
-    sage: sd.Katsura_3 # optional - database_symbolic_data
+    sage: sd.Katsura_3
     Ideal (u0 + 2*u1 + 2*u2 + 2*u3 - 1,
            u1^2 + 2*u0*u2 + 2*u1*u3 - u2,
            2*u0*u1 + 2*u1*u2 + 2*u2*u3 - u1,
            u0^2 + 2*u1^2 + 2*u2^2 + 2*u3^2 - u0) of Multivariate Polynomial Ring in u0, u1, u2, u3 over Rational Field
-
-    sage: sd.get_ideal('Katsura_3',GF(127),'degrevlex') # optional - database_symbolic_data
+    sage: sd.get_ideal('Katsura_3', GF(127), 'degrevlex')
     Ideal (u0 + 2*u1 + 2*u2 + 2*u3 - 1,
            u1^2 + 2*u0*u2 + 2*u1*u3 - u2,
            2*u0*u1 + 2*u1*u2 + 2*u2*u3 - u1,

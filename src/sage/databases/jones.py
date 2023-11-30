@@ -2,8 +2,9 @@ r"""
 John Jones's tables of number fields
 
 In order to use the Jones database, the optional database package
-must be installed using the Sage command !sage -i
-database_jones_numfield
+must be installed using the Sage command ::
+
+    sage -i database_jones_numfield
 
 This is a table of number fields with bounded ramification and
 degree `\leq 6`. You can query the database for all number

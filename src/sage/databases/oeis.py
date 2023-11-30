@@ -8,17 +8,6 @@ order to:
 - identify a sequence from its first terms.
 - obtain more terms, formulae, references, etc. for a given sequence.
 
-AUTHORS:
-
-- Thierry Monteil (2012-02-10 -- 2013-06-21): initial version.
-
-- Vincent Delecroix (2014): modifies continued fractions because of :trac:`14567`
-
-- Moritz Firsching (2016): modifies handling of dead sequence, see :trac:`17330`
-
-- Thierry Monteil (2019): refactorization (unique representation :trac:`28480`,
-  laziness :trac:`28627`)
-
 EXAMPLES::
 
     sage: oeis
@@ -134,13 +123,14 @@ primes ?
     - Some infinite OEIS sequences are implemented in Sage, via the
       :mod:`sloane_functions <sage.combinat.sloane_functions>` module.
 
-.. TODO::
+AUTHORS:
 
-    - in case of flood, suggest the user to install the off-line database instead.
-    - interface with the off-line database (or reimplement it).
+- Thierry Monteil (2012-02-10 -- 2013-06-21): initial version.
+- Vincent Delecroix (2014): modifies continued fractions because of :trac:`14567`
+- Moritz Firsching (2016): modifies handling of dead sequence, see :trac:`17330`
+- Thierry Monteil (2019): refactorization (unique representation :trac:`28480`,
+  laziness :trac:`28627`)
 
-Classes and methods
--------------------
 """
 
 # ****************************************************************************
