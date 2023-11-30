@@ -19,6 +19,7 @@ from sage.combinat.permutation_cython import (left_action_same_n, right_action_s
 from sage.combinat.partition import _Partitions, Partitions_n
 from sage.combinat.tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
 from sage.algebras.group_algebra import GroupAlgebra_class
+from sage.algebras.cellular_basis import CellularBasis
 from sage.categories.weyl_groups import WeylGroups
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
@@ -688,8 +689,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             Finite poset containing 5 elements
         """
         from sage.combinat.posets.posets import Poset
-        from sage.combinat.partition import Partitions
-        return Poset([Partitions(self.n), lambda x, y: y.dominates(x)])
+        return Poset([Partitions_n(self.n), lambda x, y: y.dominates(x)])
 
     def cell_module_indices(self, la):
         r"""
@@ -2083,6 +2083,36 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         else:
             return z.map_support(lambda x: x.inverse())
 
+    def murphy_basis(self):
+        r"""
+        Return the Murphy basis of ``self``.
+        """
+        return MurphyBasis(self)
+
+    def murphy_basis_element(self, S, T):
+        r"""
+        Return the Murphy basis element indexed by ``S`` and ``T``.
+        """
+        la = S.shape()
+        if la != T.shape():
+            raise ValueError("S and T must have the same shape")
+        if sum(la) != self.n:
+            raise ValueError(f"the shape must be a partition of size {self.n}")
+
+        G = self.group()
+        ds = G(list(sum((row for row in S), ())))
+        dt = G(list(sum((row for row in T), ())))
+        return self.monomial(~ds) * self._row_stabilizer(la) * self.monomial(dt)
+
+    @cached_method
+    def _row_stabilizer(self, la):
+        """
+        Return the row stabilizer element of a canonical standard tableau
+        of shape ``la``.
+        """
+        G = self.group()
+        return self.sum_of_monomials(G(list(w.tuple())) for w in la.young_subgroup())
+
 
 epsilon_ik_cache = {}
 
@@ -2633,6 +2663,116 @@ def seminormal_test(n):
                     if e_hat(tab2) * e_hat(tab) != 0:
                         raise ValueError("3.1.20 - %s, %s" % (tab, tab2))
     return True
+
+
+#######################
+
+
+class MurphyBasis(CellularBasis):
+    """
+    The Murphy basis of a symmetric group algebra.
+
+    Let `R` be a commutative ring, and let `A = R[S_n]` denote the group
+    algebra (over `R`) of `S_n`. The *Murphy basis* is the basis of `A`
+    defined as follows. Let `S, T` be standard tableaux of shape `\lambda`.
+    Define `T^{\lambda}` as the standard tableau of shape `\lambda` with
+    the first row filled with `1, \ldots, \lambda_1`, the second row
+    `\lambda_1+1, \ldots, \lambda_1+\lambda_2`, and so on. Let `d(S)` be
+    the unique permutation such that `S = T^{\lambda} d(S)` under the natural
+    action. Then the Murphy basis element indexed by `S` and `T` is
+
+    .. MATH::
+
+        M_{ST} = d(S)^{-1} R_{\lambda} d(T).
+
+    The Murphy basis is a :class:`cellular basis
+    <sage.algebras.cellular_basis.CellularBasis>` of `A`.
+
+    EXAMPLES::
+
+        sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+        sage: M = SGA.murphy_basis()
+        sage: for la in M.simple_module_parameterization():
+        ....:     CM = M.cell_module(la)
+        ....:     print(la, CM.dimension(), CM.simple_module().dimension())
+        [3, 2] 5 4
+        [3, 1, 1] 6 6
+        [2, 2, 1] 5 1
+        [2, 1, 1, 1] 4 4
+        [1, 1, 1, 1, 1] 1 1
+    """
+    def __init__(self, SGA):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
+            sage: M = SGA.murphy_basis()
+            sage: TestSuite(M).run()
+        """
+        self._algebra = SGA
+        I = [(S, T) for la in Partitions_n(SGA.n)
+             for S in la.standard_tableaux() for T in la.standard_tableaux()]
+        CellularBasis.__init__(self, SGA, self._to_sga)
+
+    def _to_sga(self, ind):
+        r"""
+        Return the element in the symmetric group algebra indexed by ``ind``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
+            sage: M = SGA.murphy_basis()
+            sage: for ind in M.basis().keys():
+            ....:     print(ind, M._to_sga(ind))
+            ([3], [[1, 2, 3]], [[1, 2, 3]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
+            ([2, 1], [[1, 3], [2]], [[1, 3], [2]]) [1, 2, 3] + [3, 2, 1]
+            ([2, 1], [[1, 3], [2]], [[1, 2], [3]]) [1, 3, 2] + [2, 3, 1]
+            ([2, 1], [[1, 2], [3]], [[1, 3], [2]]) [1, 3, 2] + [3, 1, 2]
+            ([2, 1], [[1, 2], [3]], [[1, 2], [3]]) [1, 2, 3] + [2, 1, 3]
+            ([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]]) [1, 2, 3]
+        """
+        return self._algebra.murphy_basis_element(ind[1], ind[2])
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+            sage: SGA.murphy_basis()
+            Murphy basis of Symmetric group algebra of order 4 over Finite Field of size 3
+        """
+        return "Murphy basis of {}".format(self._algebra)
+
+    @cached_method
+    def one_basis(self):
+        """
+        Return the index of the basis element for the multiplicative identity.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+            sage: M = SGA.murphy_basis()
+            sage: M.one_basis()
+        """
+        col = _Partitions([1]*self._algebra.n).standard_tableaux()[0]
+        return (col, col)
+
+    @cached_method
+    def one(self):
+        """
+        Return the element `1` in ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+            sage: M = SGA.murphy_basis()
+            sage: M.one()
+        """
+        return self.monomial(self.one_basis())
 
 #######################
 
