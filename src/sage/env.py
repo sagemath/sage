@@ -202,11 +202,11 @@ POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytop
 # When the GAP SPKG is used, the corresponding variable in sage-conf
 # will be empty, so the final result will look like
 #
-#   GAP_ROOT_PATHS="$SAGE_LOCAL/lib/gap;$SAGE_SHARE/gap;"
+#   GAP_ROOT_PATHS="$SAGE_LOCAL/lib/gap;$SAGE_LOCAL/share/gap;"
 #
 # When the system GAP is used, on the other hand, we'll have e.g.
 #
-#   GAP_ROOT_PATHS="$SAGE_LOCAL/lib/gap;$SAGE_SHARE/gap;/usr/lib/gap"
+#   GAP_ROOT_PATHS="$SAGE_LOCAL/lib/gap;$SAGE_LOCAL/share/gap;/usr/lib/gap"
 #
 # And both of these are correct enough. Suffixing the list with a
 # semicolon is allowed and in fact tells GAP to prepend to the list of
@@ -218,7 +218,7 @@ POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytop
 # thing to watch out for here is the possibility of the empty string
 # after calling split(";").
 GAP_ROOT_PATHS = ";".join([join(SAGE_LOCAL, "lib", "gap"),
-                           join(SAGE_SHARE, "gap"),
+                           join(SAGE_LOCAL, "share", "gap"),
                            var("GAP_ROOT_PATHS", "")])
 
 COMBINATORIAL_DESIGN_DATA_DIR = var("COMBINATORIAL_DESIGN_DATA_DIR", join(SAGE_SHARE, "combinatorial_designs"))
