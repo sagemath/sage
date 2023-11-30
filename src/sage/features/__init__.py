@@ -28,6 +28,8 @@ feature::
 Here we test whether the grape GAP package is available::
 
     sage: from sage.features.gap import GapPackage
+    sage: libgap.LoadPackage("Grape")                            # optional - gap_packages
+    true
     sage: GapPackage("grape", spkg="gap_packages").is_present()  # optional - gap_packages
     FeatureTestResult('gap_package_grape', True)
 
