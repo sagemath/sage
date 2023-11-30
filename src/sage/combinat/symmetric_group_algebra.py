@@ -732,40 +732,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: [S._from_cellular_index(i) for i in C.basis().keys()]
             [[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1],
              [1, 2, 3] + [2, 1, 3],
-             [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [3, 1, 2],
-             [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1],
-             [1, 2, 3] + [1, 3, 2],
+             [1, 3, 2] + [3, 1, 2],
+             [1, 3, 2] + [2, 3, 1],
+             [1, 2, 3] + [3, 2, 1],
              [1, 2, 3]]
             sage: TestSuite(C).run()
         """
         if ~factorial(self.n) not in self.base_ring():
-            from sage.combinat.rsk import RSK_inverse
-            from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
-            G = self.basis().keys()
-            R = self.base_ring()
-            one = R.one()
-            # check if the KL polynomials can be computed using ``coxeter3``
-            try:
-                from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
-            except ImportError:
-                # Falback to using the KL polynomial
-                from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
-                from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-                q = PolynomialRing(R, 'q').gen()
-                KLG = SymmetricGroup(self.n)
-                self._cellular_KL = KazhdanLusztigPolynomial(KLG, q)
-                polyfunc = self._cellular_KL.P
-            else:
-                self._cellular_KL = Coxeter3Group(['A', self.n+1])
-                KLG = self._cellular_KL
-                polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
-
-            def func(S, T, mult=None):
-                w = KLG.from_reduced_word(RSK_inverse(T, S, output="permutation").reduced_word())
-                bruhat = RecursivelyEnumeratedSet([w], lambda u: u.bruhat_lower_covers(), structure='graded')
-                return self.element_class(self, {G.from_reduced_word(v.reduced_word()): R(c(q=one))
-                                                 for v in bruhat if (c := polyfunc(v, w))})
-
+            func = self.murphy_basis_element
         else:
             func = self.epsilon_ik
 
@@ -2085,14 +2059,46 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
     def murphy_basis(self):
         r"""
-        Return the Murphy basis of ``self``.
+        Return the :class:`Murphy basis
+        <sage.combinat.symmetric_group_algebra.MurphyBasis>` of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: M = SGA.murphy_basis()
+            sage: M(SGA.an_element())
+            -C([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]])
+             + C([2, 1], [[1, 2], [3]], [[1, 2], [3]])
+             + C([2, 1], [[1, 2], [3]], [[1, 3], [2]])
+             + 2*C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
+             + 4*C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
+             - 3*C([3], [[1, 2, 3]], [[1, 2, 3]])
         """
         return MurphyBasis(self)
 
+    @cached_method
     def murphy_basis_element(self, S, T):
         r"""
         Return the Murphy basis element indexed by ``S`` and ``T``.
+
+        .. SEEALSO::
+
+            :class:`~sage.combinat.symmetric_group_algebra.MurphyBasis`
+
+        EXAMPLES::
+
+            sage: import itertools
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: for S, T in itertools.product(StandardTableaux([2,1]), repeat=2):
+            ....:     print(S, T, SGA.murphy_basis_element(S, T))
+            [[1, 3], [2]] [[1, 3], [2]] [1, 2, 3] + [2, 1, 3]
+            [[1, 3], [2]] [[1, 2], [3]] [1, 3, 2] + [3, 1, 2]
+            [[1, 2], [3]] [[1, 3], [2]] [1, 3, 2] + [2, 3, 1]
+            [[1, 2], [3]] [[1, 2], [3]] [1, 2, 3] + [3, 2, 1]
         """
+        S = S.conjugate()
+        T = T.conjugate()
+
         la = S.shape()
         if la != T.shape():
             raise ValueError("S and T must have the same shape")
@@ -2109,9 +2115,78 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         Return the row stabilizer element of a canonical standard tableau
         of shape ``la``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: for la in Partitions(3):
+            ....:     print(la, SGA._row_stabilizer(la))
+            [3] [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
+            [2, 1] [1, 2, 3] + [2, 1, 3]
+            [1, 1, 1] [1, 2, 3]
         """
         G = self.group()
         return self.sum_of_monomials(G(list(w.tuple())) for w in la.young_subgroup())
+
+    def kazhdan_lusztig_cellular_basis(self):
+        r"""
+        Return the Kazhdan-Lusztig basis (at `q = 1`) of ``self``
+        as a cellular basis.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: KL = SGA.kazhdan_lusztig_cellular_basis()
+            sage: KL(SGA.an_element())
+            C([2, 1], [[1, 2], [3]], [[1, 2], [3]])
+             + C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
+             + 2*C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
+             - 3*C([3], [[1, 2, 3]], [[1, 2, 3]])
+        """
+        return KLCellularBasis(self)
+
+    @cached_method
+    def kazhdan_lusztig_basis_element(self, w):
+        r"""
+        Return the Kazhdan-Lusztig `C'_w` basis element at `q = 1`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: for w in SGA.group():
+            ....:     print(w, SGA.kazhdan_lusztig_basis_element(w))
+            [1, 2, 3] [1, 2, 3]
+            [1, 3, 2] [1, 2, 3] + [1, 3, 2]
+            [2, 1, 3] [1, 2, 3] + [2, 1, 3]
+            [2, 3, 1] [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1]
+            [3, 1, 2] [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [3, 1, 2]
+            [3, 2, 1] [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
+        """
+        from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+        G = self.basis().keys()
+        R = self.base_ring()
+        one = R.one()
+        # check if the KL polynomials can be computed using ``coxeter3``
+        try:
+            from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
+        except ImportError:
+            # Falback to using the KL polynomial
+            from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
+            from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+            q = PolynomialRing(R, 'q').gen()
+            self._KLG = SymmetricGroup(self.n)
+            self._cellular_KL = KazhdanLusztigPolynomial(KLG, q)
+            polyfunc = self._cellular_KL.P
+        else:
+            self._cellular_KL = Coxeter3Group(['A', self.n+1])
+            self._KLG = self._cellular_KL
+            polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
+
+        if w.parent() is not self._KLG:
+            w = self._KLG.from_reduced_word(w.reduced_word())
+        bruhat = RecursivelyEnumeratedSet([w], lambda u: u.bruhat_lower_covers(), structure='graded')
+        return self.element_class(self, {G.from_reduced_word(v.reduced_word()): R(c(q=one))
+                                         for v in bruhat if (c := polyfunc(v, w))})
 
 
 epsilon_ik_cache = {}
@@ -2668,8 +2743,71 @@ def seminormal_test(n):
 #######################
 
 
-class MurphyBasis(CellularBasis):
+class SGACellularBasis(CellularBasis):
+    r"""
+    A cellular basis of the symmetric group algebra.
     """
+    def __init__(self, SGA):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
+            sage: M = SGA.murphy_basis()
+            sage: TestSuite(M).run()
+            sage: KL = SGA.kazhdan_lusztig_cellular_basis()
+            sage: TestSuite(KL).run()
+        """
+        CellularBasis.__init__(self, SGA, self._to_sga)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+            sage: SGA.murphy_basis()
+            Murphy basis of Symmetric group algebra of order 4 over Finite Field of size 3
+            sage: SGA.kazhdan_lusztig_cellular_basis()
+            Kazhdan-Lusztig basis of Symmetric group algebra of order 4 over Finite Field of size 3
+        """
+        return self._name + " basis of {}".format(self._algebra)
+
+    @cached_method
+    def one_basis(self):
+        r"""
+        Return the index of the basis element for the multiplicative identity.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+            sage: M = SGA.murphy_basis()
+            sage: M.one_basis()
+            ([4], [[1, 2, 3, 4]], [[1, 2, 3, 4]])
+        """
+        la = _Partitions([self._algebra.n])
+        col = la.standard_tableaux()[0]
+        return (la, col, col)
+
+    @cached_method
+    def one(self):
+        r"""
+        Return the element `1` in ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+            sage: M = SGA.murphy_basis()
+            sage: M.one()
+            C([4], [[1, 2, 3, 4]], [[1, 2, 3, 4]])
+        """
+        return self.monomial(self.one_basis())
+
+
+class MurphyBasis(SGACellularBasis):
+    r"""
     The Murphy basis of a symmetric group algebra.
 
     Let `R` be a commutative ring, and let `A = R[S_n]` denote the group
@@ -2683,8 +2821,9 @@ class MurphyBasis(CellularBasis):
 
     .. MATH::
 
-        M_{ST} = d(S)^{-1} R_{\lambda} d(T).
+        M_{S'T'} = d(S)^{-1} R_{\lambda} d(T),
 
+    where `S'` denotes the conjugate tableau.
     The Murphy basis is a :class:`cellular basis
     <sage.algebras.cellular_basis.CellularBasis>` of `A`.
 
@@ -2695,26 +2834,18 @@ class MurphyBasis(CellularBasis):
         sage: for la in M.simple_module_parameterization():
         ....:     CM = M.cell_module(la)
         ....:     print(la, CM.dimension(), CM.simple_module().dimension())
-        [3, 2] 5 4
+        [2, 2, 1] 5 4
         [3, 1, 1] 6 6
-        [2, 2, 1] 5 1
-        [2, 1, 1, 1] 4 4
-        [1, 1, 1, 1, 1] 1 1
+        [3, 2] 5 1
+        [4, 1] 4 4
+        [5] 1 1
+
+    REFERENCES:
+
+    - [DJM1998]_
+    - [Mathas2004]_
     """
-    def __init__(self, SGA):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
-            sage: M = SGA.murphy_basis()
-            sage: TestSuite(M).run()
-        """
-        self._algebra = SGA
-        I = [(S, T) for la in Partitions_n(SGA.n)
-             for S in la.standard_tableaux() for T in la.standard_tableaux()]
-        CellularBasis.__init__(self, SGA, self._to_sga)
+    _name = "Murphy"
 
     def _to_sga(self, ind):
         r"""
@@ -2726,53 +2857,59 @@ class MurphyBasis(CellularBasis):
             sage: M = SGA.murphy_basis()
             sage: for ind in M.basis().keys():
             ....:     print(ind, M._to_sga(ind))
-            ([3], [[1, 2, 3]], [[1, 2, 3]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
-            ([2, 1], [[1, 3], [2]], [[1, 3], [2]]) [1, 2, 3] + [3, 2, 1]
-            ([2, 1], [[1, 3], [2]], [[1, 2], [3]]) [1, 3, 2] + [2, 3, 1]
-            ([2, 1], [[1, 2], [3]], [[1, 3], [2]]) [1, 3, 2] + [3, 1, 2]
-            ([2, 1], [[1, 2], [3]], [[1, 2], [3]]) [1, 2, 3] + [2, 1, 3]
-            ([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]]) [1, 2, 3]
+            ([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
+            ([2, 1], [[1, 3], [2]], [[1, 3], [2]]) [1, 2, 3] + [2, 1, 3]
+            ([2, 1], [[1, 3], [2]], [[1, 2], [3]]) [1, 3, 2] + [3, 1, 2]
+            ([2, 1], [[1, 2], [3]], [[1, 3], [2]]) [1, 3, 2] + [2, 3, 1]
+            ([2, 1], [[1, 2], [3]], [[1, 2], [3]]) [1, 2, 3] + [3, 2, 1]
+            ([3], [[1, 2, 3]], [[1, 2, 3]]) [1, 2, 3]
         """
         return self._algebra.murphy_basis_element(ind[1], ind[2])
 
-    def _repr_(self):
+
+class KLCellularBasis(SGACellularBasis):
+    """
+    The Kazhdan-Lusztig `C'` basis (at `q = 1`) of the symmetric group
+    algebra realized as a cellular basis.
+
+    EXAMPLES::
+
+        sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+        sage: KL = SGA.kazhdan_lusztig_cellular_basis()
+        sage: for la in KL.simple_module_parameterization():
+        ....:     CM = KL.cell_module(la)
+        ....:     print(la, CM.dimension(), CM.simple_module().dimension())
+        [2, 2, 1] 5 4
+        [3, 1, 1] 6 6
+        [3, 2] 5 1
+        [4, 1] 4 4
+        [5] 1 1
+    """
+    _name = "Kazhdan-Lusztig"
+
+    def _to_sga(self, ind):
         r"""
-        Return a string representation of ``self``.
+        Return the element in the symmetric group algebra indexed by ``ind``.
 
         EXAMPLES::
 
-            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
-            sage: SGA.murphy_basis()
-            Murphy basis of Symmetric group algebra of order 4 over Finite Field of size 3
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
+            sage: KL = SGA.kazhdan_lusztig_cellular_basis()
+            sage: for ind in KL.basis().keys():
+            ....:     print(ind, KL._to_sga(ind))
+            ([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
+            ([2, 1], [[1, 3], [2]], [[1, 3], [2]]) [1, 2, 3] + [2, 1, 3]
+            ([2, 1], [[1, 3], [2]], [[1, 2], [3]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [3, 1, 2]
+            ([2, 1], [[1, 2], [3]], [[1, 3], [2]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1]
+            ([2, 1], [[1, 2], [3]], [[1, 2], [3]]) [1, 2, 3] + [1, 3, 2]
+            ([3], [[1, 2, 3]], [[1, 2, 3]]) [1, 2, 3]
         """
-        return "Murphy basis of {}".format(self._algebra)
+        from sage.combinat.rsk import RSK_inverse
+        S = ind[1]
+        T = ind[2]
+        w = RSK_inverse(T, S, output="permutation")
+        return self._algebra.kazhdan_lusztig_basis_element(w)
 
-    @cached_method
-    def one_basis(self):
-        """
-        Return the index of the basis element for the multiplicative identity.
-
-        EXAMPLES::
-
-            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
-            sage: M = SGA.murphy_basis()
-            sage: M.one_basis()
-        """
-        col = _Partitions([1]*self._algebra.n).standard_tableaux()[0]
-        return (col, col)
-
-    @cached_method
-    def one(self):
-        """
-        Return the element `1` in ``self``.
-
-        EXAMPLES::
-
-            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
-            sage: M = SGA.murphy_basis()
-            sage: M.one()
-        """
-        return self.monomial(self.one_basis())
 
 #######################
 
