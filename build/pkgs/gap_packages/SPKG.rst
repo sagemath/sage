@@ -13,8 +13,10 @@ package will not be loaded automatically. At the moment, only the
 PolyCyclic package meets that criterion. To load any other GAP
 package, please use (for example)::
 
-  sage: gap.eval('LoadPackage("Grape")')
-  sage: libgap.LoadPackage("Grape")
+  sage: gap.eval('LoadPackage("Grape")')  # optional - gap_packages
+  'true'
+  sage: libgap.LoadPackage("Grape")       # optional - gap_packages
+  true
 
 Those correspond to::
 
