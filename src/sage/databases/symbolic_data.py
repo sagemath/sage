@@ -1,9 +1,8 @@
 """
 Ideals from the Symbolic Data project
 
-This module implements a thin wrapper for the optional symbolic dataset
-of ideals as published on http://www.symbolicdata.org . From the
-project website:
+This module implements a thin wrapper for the optional symbolic dataset of
+ideals as published on http://www.symbolicdata.org. From the project website:
 
     For different purposes algorithms and implementations are tested
     on certified and reliable data. The development of tools and data
@@ -57,8 +56,20 @@ EXAMPLES::
 
 AUTHORS:
 
-- Martin Albrecht <martinralbrecht@googlemail.com>
+- Martin Albrecht (2007-02-19): initial version
+
 """
+
+# ****************************************************************************
+#       Copyright (C) 2007 Martin Albrecht <martinralbrecht@googlemail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 import os
 from xml.dom.minidom import parse
 from sage.rings.rational_field import QQ
