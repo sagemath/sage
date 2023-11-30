@@ -36,21 +36,20 @@ def zeta_zeros():
     List of the imaginary parts of the first 2,001,052 zeros of the
     Riemann zeta function, accurate to within 4e-9.
 
-
-
     REFERENCES:
 
     - http://www.dtc.umn.edu/~odlyzko/zeta_tables/index.html
 
     EXAMPLES:
 
-    The following example prints the imaginary part of the 13th
+    The following example shows the imaginary part of the 13th
     nontrivial zero of the Riemann zeta function::
 
-        sage: zz = zeta_zeros()  # optional - database_odlyzko_zeta
-        sage: zz[12]             # optional - database_odlyzko_zeta
+        sage: # optional - database_odlyzko_zeta
+        sage: zz = zeta_zeros()
+        sage: zz[12]
         59.347044003
-        sage: len(zz)            # optional - database_odlyzko_zeta
+        sage: len(zz)
         2001052
     """
     from sage.misc.verbose import verbose
