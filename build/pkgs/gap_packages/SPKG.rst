@@ -7,6 +7,20 @@ Description
 Several "official" and "undeposited" GAP packages available from
 https://www.gap-system.org/Packages/packages.html
 
+Installing this SPKG makes the corresponding GAP packages available to
+GAP within Sage, but unless Sage itself needs a given package, that
+package will not be loaded automatically. At the moment, only the
+PolyCyclic package meets that criterion. To load any other GAP
+package, please use (for example)::
+
+  sage: gap.eval('LoadPackage("Grape")')
+  sage: libgap.LoadPackage("Grape")
+
+Those correspond to::
+
+  gap> LoadPackage("Grape");
+
+within the GAP interface and libgap, respectively.
 
 Upstream Contact
 ----------------
