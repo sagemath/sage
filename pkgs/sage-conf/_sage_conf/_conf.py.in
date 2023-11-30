@@ -11,8 +11,8 @@ SAGE_ROOT = "@SAGE_ROOT@"
 
 # The semicolon-separated list of GAP root paths. This is the list of
 # locations that are searched for GAP packages. We always prepend
-# SAGE_LOCAL/lib and SAGE_SHARE to this list so it should be empty
-# when the gap SPKG is used.
+# SAGE_LOCAL/lib/gap and SAGE_LOCAL/share/gap to this list so it
+# should be empty when the gap SPKG is used.
 GAP_ROOT_PATHS = "@GAP_ROOT_PATHS@"
 
 # The path to the standalone maxima executable.
