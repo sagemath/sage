@@ -73,7 +73,6 @@ class GapPackage(Feature):
             return FeatureTestResult(self, False,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
 
-
     # Override the parent class's is_present() method. Package
     # tests should not be cached; the user can load a package
     # from within a sage session.
