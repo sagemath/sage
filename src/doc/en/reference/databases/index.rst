@@ -1,7 +1,7 @@
 Databases
 =========
 
-Sage includes mathematical databases as either standard or optional packages,
+Sage includes mathematical databases as standard or optional packages,
 and provides convenient interfaces for easy access to the databases.
 
 Standard databases
@@ -26,15 +26,15 @@ The following databases require you to install optional packages before full acc
 .. toctree::
    :maxdepth: 1
 
+   sage/databases/cunningham_tables
+   sage/databases/knotinfo_db
+   sage/databases/cubic_hecke_db
+   sage/databases/symbolic_data
    sage/databases/cremona
    sage/databases/stein_watkins
    sage/databases/jones
    sage/databases/db_class_polynomials
    sage/databases/db_modular_polynomials
    sage/databases/odlyzko
-   sage/databases/cunningham_tables
-   sage/databases/knotinfo_db
-   sage/databases/cubic_hecke_db
-   sage/databases/symbolic_data
 
 .. include:: ../footer.txt

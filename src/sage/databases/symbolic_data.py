@@ -4,12 +4,12 @@ Ideals from the Symbolic Data project
 This module implements a thin wrapper for the optional symbolic dataset of
 ideals as published on http://www.symbolicdata.org. From the project website:
 
-    For different purposes algorithms and implementations are tested
+    For different purposes, algorithms and implementations are tested
     on certified and reliable data. The development of tools and data
     for such tests is usually 'orthogonal' to the main
     implementation efforts, it requires different skills and
     technologies and is not loved by programmers. On the other hand,
-    in many cases tools and data could easily be reused - with slight
+    in many cases, tools and data could easily be reused - with slight
     modifications - across similar projects. The SymbolicData Project
     is set out to coordinate such efforts within the Computer Algebra
     Community.  Commonly collected certified and reliable data can
@@ -20,11 +20,11 @@ ideals as published on http://www.symbolicdata.org. From the project website:
     there are not yet well agreed aims of such a
     benchmarking. Nevertheless various (often high quality) special
     benchmarks are scattered through the literature.  During the last
-    years efforts toward collection of test data for symbolic
+    years, efforts toward collection of test data for symbolic
     computations were intensified. They focused mainly on the creation
     of general benchmarks for different areas of symbolic computation
     and the collection of such activities on different Web site.  For
-    further qualification of these efforts it would be of great
+    further qualification of these efforts, it would be of great
     benefit to create a commonly available digital archive of these
     special benchmark data scattered through the literature. This
     would provide the community with an electronic repository of
@@ -104,13 +104,11 @@ class SymbolicData:
 
         INPUT:
 
-        - ``name`` - name as on the symbolic data website
-        - ``base_ring`` - base ring for the polynomial ring (default: ``QQ``)
-        - ``term_order`` - term order for the polynomial ring (default: ``degrevlex``)
+        - ``name`` -- name as on the symbolic data website
+        - ``base_ring`` -- base ring for the polynomial ring (default: ``QQ``)
+        - ``term_order`` -- term order for the polynomial ring (default: ``degrevlex``)
 
-        OUTPUT:
-
-            ideal as given by ``name`` in ``PolynomialRing(base_ring,vars,term_order)``
+        OUTPUT: ideal as given by ``name`` in ``PolynomialRing(base_ring,vars,term_order)``
 
         EXAMPLES::
 

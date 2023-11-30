@@ -1,8 +1,8 @@
 """
-Local copy of Sloane On-Line Encyclopedia of Integer Sequences
+Local copy of the On-Line Encyclopedia of Integer Sequences
 
-The SloaneEncyclopedia object provides access to a local copy of the database
-containing only the sequences and their names. To use this you must download
+The `SloaneEncyclopedia` object provides access to a local copy of the database
+containing only the sequences and their names. To use this, you must download
 and install the database using ``SloaneEncyclopedia.install()``, or
 ``SloaneEncyclopedia.install_from_gz()`` if you have already downloaded the
 database manually.
