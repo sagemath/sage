@@ -199,27 +199,11 @@ GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
 ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
 
-# When the GAP SPKG is used, the corresponding variable in sage-conf
-# will be empty, so the final result will look like
-#
-#   GAP_ROOT_PATHS="$SAGE_LOCAL/lib/gap;$SAGE_LOCAL/share/gap;"
-#
-# When the system GAP is used, on the other hand, we'll have e.g.
-#
-#   GAP_ROOT_PATHS="$SAGE_LOCAL/lib/gap;$SAGE_LOCAL/share/gap;/usr/lib/gap"
-#
-# And both of these are correct enough. Suffixing the list with a
-# semicolon is allowed and in fact tells GAP to prepend to the list of
-# root paths rather than replace it. This is quite fine in the SPKG
-# case because we'll wind up with the same list of root paths being
-# included twice. It's also fine for the system GAP because we want
-# sage's GAP packages to take precedence (just like with executables
-# in the usual $PATH) over the system ones. In any case, the only
-# thing to watch out for here is the possibility of the empty string
-# after calling split(";").
-GAP_ROOT_PATHS = ";".join([join(SAGE_LOCAL, "lib", "gap"),
-                           join(SAGE_LOCAL, "share", "gap"),
-                           var("GAP_ROOT_PATHS", "")])
+# The semicolon-separated search path for GAP packages. It is passed
+# directly to GAP via the -l flag.
+GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
+                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
+                               join(SAGE_LOCAL, "share", "gap")]))
 
 COMBINATORIAL_DESIGN_DATA_DIR = var("COMBINATORIAL_DESIGN_DATA_DIR", join(SAGE_SHARE, "combinatorial_designs"))
 CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR", join(SAGE_SHARE, "cremona"))
