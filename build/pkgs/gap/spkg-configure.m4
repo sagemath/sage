@@ -23,7 +23,9 @@ SAGE_SPKG_CONFIGURE([gap], [
         AC_MSG_RESULT([$SYS_GAP_ROOT_PATHS])
         AS_IF([test -n "${SYS_GAP_ROOT_PATHS}"], [
           AC_MSG_CHECKING([for the PrimGrp, SmallGrp, and TransGrp packages])
-          # The crazy thing below is a "quadrigraph" for a square bracket
+          # Check for a very minimal set of packages without which the
+          # sage test suite will fail. The crazy thing below is a
+          # "quadrigraph" for a square bracket.
           _cmd="Display(@<:@"
           _cmd="${_cmd} TestPackageAvailability(\"PrimGrp\"),"
           _cmd="${_cmd} TestPackageAvailability(\"SmallGrp\"),"
