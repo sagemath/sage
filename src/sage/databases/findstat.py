@@ -2,7 +2,7 @@
 r"""
 FindStat - the search engine for combinatorial statistics and maps
 
-The interface to the FindStat database is
+The interface to the FindStat database is ::
 
     sage: findstat()
     The Combinatorial Statistic Finder (https://www.findstat.org/)
