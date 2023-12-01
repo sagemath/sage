@@ -654,11 +654,11 @@ class ReferenceTopBuilder(DocBuilder):
         os.makedirs(d, exist_ok=True)
         return d
 
-    def pdf(self):
+    def html(self):
         """
-        Build top-level document.
+        Build the top-level document.
         """
-        super().pdf()
+        super().html()
 
         # We want to build master index file which lists all of the PDF file.
         # We modify the file index.html from the "reference_top" target, if it
@@ -668,12 +668,8 @@ class ReferenceTopBuilder(DocBuilder):
         reference_dir = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         output_dir = self._output_dir('html')
 
-        # Check if the top reference index.html exists.
-        try:
-            with open(os.path.join(reference_dir, 'index.html')) as f:
-                html = f.read()
-        except FileNotFoundError:
-            return
+        with open(os.path.join(reference_dir, 'index.html')) as f:
+            html = f.read()
 
         # Install in output_dir a symlink to the directory containing static files.
         # Prefer relative path for symlinks.
