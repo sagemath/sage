@@ -15,46 +15,32 @@ mkdir -p "$SAGE_LOCAL/lib/gap/bin"
 
 sdh_install \
     aclib \
-    alnuth \
-    atlasrep \
     autodoc \
-    autpgrp \
     corelg \
     crime \
-    crisp \
     cryst \
     crystcat \
-    ctbllib \
     design \
-    factint \
-    fga \
     gbnp \
     genss \
     hap \
     hapcryst \
     hecke \
     images \
-    irredsol \
-    laguna \
     liealgdb \
     liepring \
     liering \
     loops \
     mapclass \
     packagemanager \
-    polenta \
-    polycyclic \
     polymaking \
     qpa \
     quagroup \
     radiroot \
     repsn \
-    resclasses \
     singular \
-    sophus \
     sla \
     sonata \
-    tomlib \
     toric \
     utils \
     "$PKG_DIR"

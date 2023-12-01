@@ -23,6 +23,27 @@ sdh_make_install
 # Install only the minimal packages GAP needs to run
 sdh_install pkg/gapdoc pkg/primgrp pkg/smallgrp pkg/transgrp "$GAP_ROOT"/pkg
 
+# Install additional packages that are automatically loaded in the
+# default GAP configuration. The list can be found in lib/package.gi
+# as part of the "PackagesToLoad" user preference. Also include
+# atlasrep because it is a dependency of tomlib.
+sdh_install \
+    pkg/alnuth \
+    pkg/atlasrep \
+    pkg/autpgrp \
+    pkg/crisp \
+    pkg/ctbllib \
+    pkg/factint \
+    pkg/fga \
+    pkg/irredsol \
+    pkg/laguna \
+    pkg/polenta \
+    pkg/polycyclic \
+    pkg/resclasses \
+    pkg/sophus \
+    pkg/tomlib \
+    "$GAP_ROOT"/pkg
+
 # TODO: This seems unnecessary--we are already installing all of doc/ to
 # GAP_ROOT, which is necessary for some functionality in GAP to work.  Do
 # we need this?  Maybe doc/gap could just be a symlink to gap/doc??
