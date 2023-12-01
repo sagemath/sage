@@ -8,7 +8,7 @@ docdir = get_option('datadir') / 'share' / 'doc' / 'sage'
 
 doc_src = custom_target('Writable documentation source tree',
   output: 'doc-src',  # phony
-  command: [meson.current_source_dir() / 'doc' / 'copy_doc_src.py'],
+  command: [meson.current_source_dir() / 'copy_doc_src.py'],
   env: {'SAGE_DOC': meson.current_build_dir(),
         'SAGE_DOC_SRC': meson.current_source_dir() / 'doc'}
 )
@@ -17,7 +17,7 @@ pdf = custom_target('PDF documentation',
   build_by_default: true,
   output: 'doc-pdf',  # phony
   depends: [doc_src],
-  command: [meson.current_source_dir() / 'doc' / 'make.sh',
+  command: [meson.current_source_dir() / 'make.sh',
             '-C', meson.current_build_dir() / 'src', '@OUTPUT@'],
   env: {'SAGE_DOC': meson.current_build_dir(),
         'SAGE_DOC_SRC': meson.current_build_dir() / 'src'}
