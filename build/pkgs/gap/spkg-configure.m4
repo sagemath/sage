@@ -2,10 +2,6 @@ SAGE_SPKG_CONFIGURE([gap], [
   # Default to installing the SPKG, if the check is run at all.
   sage_spkg_install_gap=yes
 
-  # Default this to empty because that's what it should be set
-  # to in sage-conf if the SPKG is used.
-  GAP_ROOT_PATHS=""
-
   m4_pushdef([GAP_MINVER],["4.12.2"])
 
   SAGE_SPKG_DEPCHECK([ncurses readline zlib], [
@@ -23,9 +19,9 @@ SAGE_SPKG_CONFIGURE([gap], [
         AC_MSG_RESULT([yes])
         AC_MSG_CHECKING([the gap root paths])
         _cmd='Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));'
-        GAP_ROOT_PATHS=$(${GAPC} "${_cmd}")
-        AC_MSG_RESULT([$GAP_ROOT_PATHS])
-        AS_IF([test -n "${GAP_ROOT_PATHS}"], [
+        SYS_GAP_ROOT_PATHS=$(${GAPC} "${_cmd}")
+        AC_MSG_RESULT([$SYS_GAP_ROOT_PATHS])
+        AS_IF([test -n "${SYS_GAP_ROOT_PATHS}"], [
           AC_MSG_CHECKING([for the PrimGrp, SmallGrp, and TransGrp packages])
           # The crazy thing below is a "quadrigraph" for a square bracket
           _cmd="Display(@<:@"
@@ -55,6 +51,17 @@ SAGE_SPKG_CONFIGURE([gap], [
 
   m4_popdef([GAP_MINVER])
 ],[],[],[
-  # post-check, where we make sage-conf substitutions
+  # This is the post-check phase, where we make sage-conf
+  # substitutions, in this case of GAP_ROOT_PATHS. We begin with the
+  # two root paths used by the sage distribution. The '${prefix}' is
+  # a magic string that sage-conf will replace.
+  GAP_ROOT_PATHS='${prefix}/lib/gap;${prefix}/share/gap';
+
+  AS_IF([test "${sage_spkg_install_gap}" = "no"],[
+    # If we're using the system GAP, append the system root
+    # paths to the existing two sage paths.
+    GAP_ROOT_PATHS="${GAP_ROOT_PATHS};${SYS_GAP_ROOT_PATHS}"
+  ])
+
   AC_SUBST(GAP_ROOT_PATHS, "${GAP_ROOT_PATHS}")
 ])
