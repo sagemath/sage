@@ -4,7 +4,7 @@ sdh_setup_bdist_wheel
 
 # pip can install its own wheel! But first we need to ensure that the pip
 # source directory in on the PYTHONPATH
-export PYTHONPATH="$(pwd)/src"
+echo "export PYTHONPATH=\"$(pwd)/src\"" >> ../spkg-pipinst
 
 # --ignore-installed makes sure that pip does not mistake
 # its own source tree as an existing installation
