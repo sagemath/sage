@@ -12,14 +12,14 @@ SAGE_SPKG_CONFIGURE([gap], [
       # GAP will later add the "user" path to the list of root paths
       # so long as we don't initialize GAP with -r in Sage. But we
       # don't want to include it in the hard-coded list.
-      GAPC="${GAP} -r -q --bare --nointeract -c"
+      GAPRUN="${GAP} -r -q --bare --nointeract -c"
       _cmd='Display(GAPInfo.KernelInfo.KERNEL_VERSION);'
-      GAP_VERSION=$(${GAPC} "${_cmd}")
+      GAP_VERSION=$(${GAPRUN} "${_cmd}")
       AX_COMPARE_VERSION(["${GAP_VERSION}"], [ge], [GAP_MINVER], [
         AC_MSG_RESULT([yes])
         AC_MSG_CHECKING([the gap root paths])
         _cmd='Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));'
-        SYS_GAP_ROOT_PATHS=$(${GAPC} "${_cmd}")
+        SYS_GAP_ROOT_PATHS=$(${GAPRUN} "${_cmd}")
         AC_MSG_RESULT([$SYS_GAP_ROOT_PATHS])
         AS_IF([test -n "${SYS_GAP_ROOT_PATHS}"], [
           AC_MSG_CHECKING([for the PrimGrp, SmallGrp, and TransGrp packages])
@@ -29,7 +29,7 @@ SAGE_SPKG_CONFIGURE([gap], [
           _cmd="${_cmd} TestPackageAvailability(\"SmallGrp\"),"
           _cmd="${_cmd} TestPackageAvailability(\"TransGrp\")"
           _cmd="${_cmd} @:>@);"
-          _output=$( ${GAPC} "${_cmd}" )
+          _output=$( ${GAPRUN} "${_cmd}" )
           AS_IF([test $? -eq 0], [
             AS_CASE([$_output],
               [*fail*],[AC_MSG_RESULT([no (at least one package missing)])],[
