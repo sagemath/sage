@@ -195,7 +195,7 @@ AUTHORS:
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from .gap_workspace import gap_workspace_file, prepare_workspace_dir
 from sage.cpython.string import bytes_to_str
-from sage.env import SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
+from sage.env import SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY, GAP_ROOT_PATHS
 from sage.misc.misc import is_in_string
 from sage.misc.cachefunc import cached_method
 from sage.misc.instancedoc import instancedoc
@@ -217,7 +217,17 @@ WORKSPACE = gap_workspace_file()
 
 first_try = True
 
-gap_cmd = SAGE_GAP_COMMAND
+if SAGE_GAP_COMMAND is None:
+    # Passing -A allows us to use a minimal GAP installation without
+    # producing errors at start-up. The files sage.g and sage.gaprc are
+    # used to load any additional packages that may be available.
+    gap_cmd  = f'gap -A -l "{GAP_ROOT_PATHS}"'
+    if SAGE_GAP_MEMORY is not None:
+        gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
+else:
+    gap_cmd = SAGE_GAP_COMMAND
+
+
 if platform.processor() == 'ia64' and os.path.exists('/usr/bin/prctl'):
     # suppress unaligned access to 0x..., ip=0x... warnings
     gap_cmd = 'prctl --unaligned=silent ' + gap_cmd

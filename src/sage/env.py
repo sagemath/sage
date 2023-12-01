@@ -199,12 +199,6 @@ GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
 ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
 
-# The semicolon-separated search path for GAP packages. It is passed
-# directly to GAP via the -l flag.
-GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
-                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
-                               join(SAGE_LOCAL, "share", "gap")]))
-
 COMBINATORIAL_DESIGN_DATA_DIR = var("COMBINATORIAL_DESIGN_DATA_DIR", join(SAGE_SHARE, "combinatorial_designs"))
 CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR", join(SAGE_SHARE, "cremona"))
 CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR", join(SAGE_SHARE, "cremona"))
@@ -248,15 +242,13 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 # GAP memory and args
 
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
+SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', None)
 
-# Passing -A allows us to use a minimal GAP installation without
-# producing errors at start-up. The files sage.g and sage.gaprc can be
-# used to load any additional packages that may be available.
-_gap_cmd  = f'gap -A -l "{GAP_ROOT_PATHS}"'
-if SAGE_GAP_MEMORY is not None:
-    _gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
-SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', _gap_cmd)
-
+# The semicolon-separated search path for GAP packages. It is passed
+# directly to GAP via the -l flag.
+GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
+                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
+                               join(SAGE_LOCAL, "share", "gap")]))
 
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:
