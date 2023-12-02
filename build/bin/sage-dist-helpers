@@ -234,6 +234,7 @@ sdh_pip_install() {
     echo "Installing $PKG_NAME"
     mkdir -p dist
     rm -f dist/*.whl
+    export PIP_NO_INDEX=1
     install_options=""
     build_options=""
     # pip has --no-build-isolation but no flag that turns the default back on...
@@ -255,13 +256,13 @@ sdh_pip_install() {
                 # Use --no-binary, so that no wheels from caches are used.
                 unset PIP_FIND_LINKS
                 export PIP_NO_BINARY=:all:
-                build_isolation_option="--no-build-isolation"
+                build_isolation_option="--no-isolation"
                 ;;
             --no-deps)
                 install_options="$install_options $1"
                 ;;
             -C|--config-settings)
-                build_options="$build_options $1"
+                build_options="$build_options --config-setting"
                 shift
                 build_options="$build_options $1"
                 ;;
@@ -271,20 +272,20 @@ sdh_pip_install() {
         esac
         shift
     done
-    if python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option $build_options "$@"; then
+    if python3 -m build --wheel --outdir=dist $build_isolation_option $build_options "$@"; then
         : # successful
     else
         case $build_isolation_option in
-            *--no-build-isolation*)
+            *--no-isolation*)
                 sdh_die "Error building a wheel for $PKG_NAME"
                 ;;
             *)
-                echo >&2 "Warning: building with \"python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option\" failed."
+                echo >&2 "Warning: building with \"python3 -m build --wheel --outdir=dist $build_isolation_option $build_options $@\" failed."
                 unset PIP_FIND_LINKS
                 export PIP_NO_BINARY=:all:
-                build_isolation_option="--no-build-isolation"
-                echo >&2 "Retrying with \"python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option\"."
-                if python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option $build_options "$@"; then
+                build_isolation_option="--no-isolation"
+                echo >&2 "Retrying with \"python3 -m build --wheel --outdir=dist $build_isolation_option $build_options $@\"."
+                if python3 -m build --wheel --outdir=dist $build_isolation_option $build_options "$@"; then
                     echo >&2 "Warning: Wheel building needed to use \"$build_isolation_option\" to succeed. This means that a dependencies file in build/pkgs/ needs to be updated. Please report this to sage-devel@googlegroups.com, including the build log of this package."
                 else
                     sdh_die "Error building a wheel for $PKG_NAME"
@@ -294,6 +295,7 @@ sdh_pip_install() {
     fi
     unset PIP_FIND_LINKS
     unset PIP_NO_BINARY
+    unset PIP_NO_INDEX
     sdh_store_and_pip_install_wheel $install_options .
 }
 
