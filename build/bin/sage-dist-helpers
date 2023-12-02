@@ -69,11 +69,6 @@
 #
 #    Runs `pip uninstall` with the given arguments.  If unsuccessful, it displays a warning.
 #
-# - eval sdh_prefix_args PREFIX [...]
-#
-#    Helper function for transforming build options so that they can be passed
-#    through "pip".
-#
 # - sdh_cmake [...]
 #
 #    Runs `cmake` in the current directory with the given arguments, as well as
@@ -218,16 +213,6 @@ sdh_setup_bdist_wheel() {
     python3 setup.py --no-user-cfg \
          bdist_wheel --bdist-dir "$BDIST_DIR" \
          "$@" || sdh_die "Error building a wheel for $PKG_NAME"
-}
-
-sdh_prefix_args () {
-    prefix="$1"
-    shift
-    while [ $# -gt 0 ]; do
-        # Quoted quotes because the result is to be run through eval
-        echo "$prefix" \"$1\"
-        shift
-    done
 }
 
 sdh_pip_install() {
