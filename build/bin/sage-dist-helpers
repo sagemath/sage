@@ -256,7 +256,7 @@ sdh_pip_install() {
                 # Use --no-binary, so that no wheels from caches are used.
                 unset PIP_FIND_LINKS
                 export PIP_NO_BINARY=:all:
-                build_isolation_option="--no-isolation"
+                build_isolation_option="--no-isolation --skip-dependency-check"
                 ;;
             --no-deps)
                 install_options="$install_options $1"
@@ -283,7 +283,7 @@ sdh_pip_install() {
                 echo >&2 "Warning: building with \"python3 -m build --wheel --outdir=dist $build_isolation_option $build_options $@\" failed."
                 unset PIP_FIND_LINKS
                 export PIP_NO_BINARY=:all:
-                build_isolation_option="--no-isolation"
+                build_isolation_option="--no-isolation --skip-dependency-check"
                 echo >&2 "Retrying with \"python3 -m build --wheel --outdir=dist $build_isolation_option $build_options $@\"."
                 if python3 -m build --wheel --outdir=dist $build_isolation_option $build_options "$@"; then
                     echo >&2 "Warning: Wheel building needed to use \"$build_isolation_option\" to succeed. This means that a dependencies file in build/pkgs/ needs to be updated. Please report this to sage-devel@googlegroups.com, including the build log of this package."
