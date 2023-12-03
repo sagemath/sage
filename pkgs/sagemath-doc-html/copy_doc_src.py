@@ -9,4 +9,4 @@ from_path = environ['SAGE_DOC_SRC']
 to_path = Path(environ['SAGE_DOC']) / "src"
 
 print(f"Copying {from_path} to {to_path}")
-copytree(from_path, to_path)
+copytree(from_path, to_path, dirs_exist_ok=True)
