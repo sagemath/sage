@@ -20,7 +20,8 @@ pdf = custom_target('PDF documentation',
   command: [meson.current_source_dir() / 'make.sh',
             '-C', meson.current_build_dir() / 'src', '@OUTPUT@'],
   env: {'SAGE_DOC': meson.current_build_dir(),
-        'SAGE_DOC_SRC': meson.current_build_dir() / 'src'}
+        'SAGE_DOC_SRC': meson.current_build_dir() / 'src'},
+  console: true,
 )
 
 install_subdir(meson.current_build_dir() / 'pdf',
