@@ -732,7 +732,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         except AttributeError:
             pass
 
-    def _field(self, key):
+    def _field(self, key, warn=True):
         r"""
         Return the ``key`` field of the entry of ``self``.
 
@@ -751,7 +751,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             for line in self.raw_entry().splitlines():
                 fields[line[1]].append(line[11:])
             self._fields = fields
-            self.is_dead(warn_only=True)
+            self.is_dead(warn_only=warn)
             return self._fields[key]
 
     def id(self, format='A'):
@@ -995,7 +995,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s.keywords()
             ('nonn', 'hard')
         """
-        return tuple(self._field('K')[0].split(','))
+        return tuple(self._field('K', warn=False)[0].split(','))
 
     def natural_object(self):
         r"""
