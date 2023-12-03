@@ -30,13 +30,6 @@ TESTS::
     sage: s[3]                                                                          # optional - sage.modules
     p[1, 1, 1] + p[2, 1]
 
-REFERENCES:
-
-.. [BLL] \F. Bergeron, G. Labelle, and P. Leroux.
-   "Combinatorial species and tree-like structures".
-   Encyclopedia of Mathematics and its Applications, vol. 67, Cambridge Univ. Press. 1998.
-.. [BLL-Intro] François Bergeron, Gilbert Labelle, and Pierre Leroux.
-   "Introduction to the Theory of Species of Structures", March 14, 2008.
 """
 
 # ****************************************************************************
@@ -217,7 +210,7 @@ class ExponentialGeneratingSeries(LazyPowerSeries):
 
         REFERENCES:
 
-        - Section 2.2 of [BLL]_.
+        - Section 2.2 of [BLL1998]_.
 
         EXAMPLES::
 
@@ -651,7 +644,7 @@ def LogarithmCycleIndexSeries(R=QQ):
     Return the cycle index series of the virtual species `\Omega`, the
     compositional inverse of the species `E^{+}` of nonempty sets.
 
-    The notion of virtual species is treated thoroughly in [BLL]_.
+    The notion of virtual species is treated thoroughly in [BLL1998]_.
     The specific algorithm used here to compute the cycle index of
     `\Omega` is found in [Labelle2008]_.
 

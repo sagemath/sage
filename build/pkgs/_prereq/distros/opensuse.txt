@@ -11,6 +11,7 @@
 binutils
 make
 m4
+gawk
 perl
 python3
 tar
