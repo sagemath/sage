@@ -539,6 +539,47 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         """
         return bool(self[2])
 
+    def has_order(self, n):
+        r"""
+        Test if this point has order exactly `n`.
+
+        INPUT:
+
+        - `n` -- integer, or its :class:`~sage.structure.factorization.Factorization`
+
+        ALGORITHM:
+
+        Compare a cached order if available, otherwise use :func:`sage.groups.generic.has_order`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('26b1')
+            sage: P = E(1, 0)
+            sage: P.has_order(7)
+            True
+            sage: P._order
+            7
+
+        This method can be much faster than computing the order and comparing::
+
+            sage: p = 4 * prod(primes(3,377)) * 587 - 1
+            sage: E = EllipticCurve(GF(p), [1,0])
+            sage: %timeit P = E.random_point(); P.set_order(multiple=p+1)   # not tested
+            72.4 ms ± 773 µs per loop (mean ± std. dev. of 7 runs, 1 loop each)
+            sage: %timeit P = E.random_point(); P.has_order(p+1)            # not tested
+            32.8 ms ± 3.12 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+        """
+        if hasattr(self, '_order'):                 # already known
+            if not isinstance(n, Integer):
+                n = n.value()
+            return self._order == n
+        ret = generic.has_order(self, n, operation='+')
+        if ret and not hasattr(self, '_order'):     # known now; cache
+            if not isinstance(n, Integer):
+                n = n.value()
+            self._order = n
+        return ret
+
     def has_finite_order(self):
         """
         Return ``True`` if this point has finite additive order as an
