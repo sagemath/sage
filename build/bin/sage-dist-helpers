@@ -388,7 +388,7 @@ sdh_store_and_pip_install_wheel() {
             local sudo=""
             local root=""
         fi
-        sdh_actually_pip_install_wheel $distname $root $pip_options -r "$SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-requirements.txt"
+        sdh_actually_pip_install_wheel $distname $root $pip_options "$wheel"
     fi
     echo "sdh_pip_uninstall -r \"\$SAGE_SPKG_SCRIPTS/\$PKG_BASE/spkg-requirements.txt\"" >> "$script_dir"/spkg-piprm
 }
@@ -406,7 +406,7 @@ sdh_actually_pip_install_wheel() {
         echo "(ignoring error)" >&2
     fi
     $sudo sage-pip-install "$@" || \
-        sdh_die "Error installing $@"
+        sdh_die "Error installing $distname"
 }
 
 sdh_pip_uninstall() {
