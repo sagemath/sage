@@ -587,11 +587,18 @@ def symbolic_sum(expression, *args, **kwds):
         sage: sum([[1], [2]], start=[])
         [1, 2]
 
+    Check for :issue:`36804`::
+
+        sage: sum([])
+        0
+        sage: type(sum([]))
+        <class 'sage.rings.integer.Integer'>
     """
     if hasattr(expression, 'sum'):
         return expression.sum(*args, **kwds)
     elif max(len(args),len(kwds)) <= 1:
-        return sum(expression, *args, **kwds)
+        from sage.structure.coerce import py_scalar_to_element
+        return py_scalar_to_element(sum(expression, *args, **kwds))
     else:
         from sage.symbolic.ring import SR
         return SR(expression).sum(*args, **kwds)
