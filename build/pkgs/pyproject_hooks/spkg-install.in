@@ -1,0 +1,7 @@
+cd src
+
+python -m flit_core.wheel || sdh_die "Building 'pyproject_hooks' wheel failed"
+
+sdh_store_wheel .
+
+python -m installer $wheel || sdh_die "Installing 'pyproject_hooks' wheel failed"
