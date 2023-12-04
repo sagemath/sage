@@ -29,7 +29,7 @@ Mathematical Folk Humor." Notices Amer. Math. Soc. 52, 24-34,
 Index of methods
 ----------------
 
-Here are the method of a :func:`PermutationGroup`
+Here are the methods of a :func:`PermutationGroup`
 
 {METHODS_OF_PermutationGroup_generic}
 
