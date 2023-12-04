@@ -19,7 +19,8 @@ class GapPackage(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of a GAP package.
 
-    A GAP package is "present" if it *can be* loaded, not if it *is*.
+    A GAP package is "present" if it *can be* loaded, not if it *has
+    been* loaded.
 
     .. SEEALSO::
 
