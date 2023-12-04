@@ -40,4 +40,6 @@ from .kodaira_symbol import KodairaSymbol
 
 from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
 
+lazy_import('sage.schemes.elliptic_curves.mod_poly', 'classical_modular_polynomial')
+
 from .heegner import heegner_points, heegner_point

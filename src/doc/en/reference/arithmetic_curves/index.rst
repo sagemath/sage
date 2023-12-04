@@ -25,6 +25,7 @@ Maps between them
    sage/schemes/elliptic_curves/hom_scalar
    sage/schemes/elliptic_curves/hom_frobenius
    sage/schemes/elliptic_curves/isogeny_small_degree
+   sage/schemes/elliptic_curves/mod_poly
 
 
 Elliptic curves over number fields
