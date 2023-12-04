@@ -234,6 +234,7 @@ AUTHORS:
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
+from sage.rings.integer cimport Integer
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
 from sage.matrix.constructor import Matrix
 from sage.structure.element import is_Matrix
@@ -895,7 +896,7 @@ cdef class SemidefiniteProgram(SageObject):
             sage: p.add_constraint(sum([]))
 
         """
-        if linear_function is 0:
+        if isinstance(linear_function, (int, Integer)) and not linear_function:
             return
 
         from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint

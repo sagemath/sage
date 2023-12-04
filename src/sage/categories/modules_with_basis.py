@@ -2437,26 +2437,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 base ring of `A` and `B`. Here the codomain is `\ZZ`::
 
                     sage: def f(a, b):
-                    ....:     return sum(a.coefficients(), 0) * sum(b.coefficients(), 0)
+                    ....:     return sum(a.coefficients()) * sum(b.coefficients())
                     sage: f(a, b)                                                       # needs sage.modules
                     -3
                     sage: tensor([a, b]).apply_multilinear_morphism(f)                  # needs sage.modules
                     -3
-
-                Mind the `0` in the sums above; otherwise `f` would
-                not return `0` in `\ZZ`::
-
-                    sage: def f(a,b):
-                    ....:     return sum(a.coefficients()) * sum(b.coefficients())
-                    sage: type(f(A.zero(), B.zero()))                                   # needs sage.modules
-                    <... 'int'>
-
-                Which would be wrong and break this method::
-
-                    sage: tensor([a, b]).apply_multilinear_morphism(f)                  # needs sage.modules
-                    Traceback (most recent call last):
-                    ...
-                    AttributeError: 'int' object has no attribute 'parent'...
 
                 Here we consider an example where the codomain is a
                 module with basis with a different base ring::
