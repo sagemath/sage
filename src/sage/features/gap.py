@@ -19,6 +19,8 @@ class GapPackage(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of a GAP package.
 
+    A GAP package is "present" if it *can be* loaded, not if it *is*.
+
     .. SEEALSO::
 
         :class:`Feature sage.libs.gap <~sage.features.sagemath.sage__libs__gap>`
@@ -42,15 +44,14 @@ class GapPackage(Feature):
 
     def _is_present(self):
         r"""
-        Return whether the package is available in GAP.
+        Return whether or not the GAP package is present.
 
-        This does not check whether this package is functional.
+        If the package is installed but not yet loaded, it is loaded
+        first. This does *not* check that the package is functional.
 
         EXAMPLES::
 
             sage: from sage.features.gap import GapPackage
-            sage: libgap.LoadPackage("Grape")                             # optional - gap_packages
-            true
             sage: GapPackage("grape", spkg="gap_packages")._is_present()  # optional - gap_packages
             FeatureTestResult('gap_package_grape', True)
         """
@@ -60,10 +61,8 @@ class GapPackage(Feature):
             return FeatureTestResult(self, False,
                                      reason="sage.libs.gap is not available")
 
-        # Implied: a package can go from being not present to present
-        # if the user loads it. For this reason we do not cache the
-        # result of this test.
-        command = 'IsPackageLoaded("{package}")'.format(package=self.package)
+        # This returns "true" even if the package is already loaded.
+        command = 'LoadPackage("{package}")'.format(package=self.package)
         presence = libgap.eval(command)
 
         if presence:
@@ -72,11 +71,6 @@ class GapPackage(Feature):
         else:
             return FeatureTestResult(self, False,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
-
-    # Override the parent class's is_present() method. Package
-    # tests should not be cached; the user can load a package
-    # from within a sage session.
-    is_present = _is_present
 
 
 def all_features():
