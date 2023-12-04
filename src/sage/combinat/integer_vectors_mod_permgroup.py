@@ -8,8 +8,7 @@ AUTHORS:
 * Jukka Kohonen (2023) - fast cardinality method, :issue:`36787`
 """
 # ****************************************************************************
-#    Copyright (C) 2010-12 Nicolas Borie <nicolas.borie at math dot u-psud.fr>,
-#                  2023 Jukka Kohonen <jukka.kohonen at aalto.fi>
+#    Copyright (C) 2010-12 Nicolas Borie <nicolas.borie at math dot u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -844,7 +843,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         # possible sums.
         Z = G.cycle_index()
         funcount = sum(
-            series_prod((1 - x**((m+1)*cyclen)) / (1 - x**cyclen)
+            prod((1 - x**((m+1)*cyclen)) / (1 - x**cyclen)
                         for cyclen in cyctype)
             * coeff
             for (cyctype, coeff) in Z)
