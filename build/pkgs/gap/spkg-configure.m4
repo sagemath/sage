@@ -17,7 +17,7 @@ SAGE_SPKG_CONFIGURE([gap], [
       GAP_VERSION=$(${GAPRUN} "${_cmd}")
       AX_COMPARE_VERSION(["${GAP_VERSION}"], [ge], [GAP_MINVER], [
         AC_MSG_RESULT([yes])
-        AC_MSG_CHECKING([the gap root paths])
+        AC_MSG_CHECKING([for gap root paths])
         _cmd='Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));'
         SYS_GAP_ROOT_PATHS=$(${GAPRUN} "${_cmd}")
         AC_MSG_RESULT([$SYS_GAP_ROOT_PATHS])
