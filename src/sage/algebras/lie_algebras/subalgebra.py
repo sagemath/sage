@@ -75,6 +75,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
     Elements of the ambient Lie algebra can be reduced modulo an
     ideal or subalgebra::
 
+        sage: # needs sage.symbolic
         sage: L.<X,Y,Z> = LieAlgebra(SR, {('X','Y'): {'Z': 1}})
         sage: I = L.ideal(Y)
         sage: I.reduce(X + 2*Y + 3*Z)
@@ -87,6 +88,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
     When the base ring is a field, the complementary subspace is spanned by
     those basis elements which are not leading supports of the basis::
 
+        sage: # needs sage.symbolic
         sage: I =  L.ideal(X + Y)
         sage: I.basis()
         Family (X + Y, Z)
@@ -97,10 +99,10 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
     Giving a different ``order`` may change the reduction of elements::
 
-        sage: I =  L.ideal(X + Y, order=lambda s: ['Z','Y','X'].index(s))
-        sage: I.basis()
+        sage: I =  L.ideal(X + Y, order=lambda s: ['Z','Y','X'].index(s))               # needs sage.symbolic
+        sage: I.basis()                                                                 # needs sage.symbolic
         Family (Z, X + Y)
-        sage: I.reduce(el)
+        sage: I.reduce(el)                                                              # needs sage.symbolic
         (-x+y)*Y
 
     A subalgebra of a subalgebra is a subalgebra of the original::

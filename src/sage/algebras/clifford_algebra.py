@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Clifford Algebras
 
@@ -1770,6 +1771,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         Check :trac:`34694`::
 
+            sage: # needs sage.symbolic
             sage: E = ExteriorAlgebra(SR,'e',3)
             sage: E.inject_variables()
             Defining e0, e1, e2
