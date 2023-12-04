@@ -1607,7 +1607,7 @@ def run_doctests(module, options=None):
     if not save_dtmode:
         if options.debug:
             raise ValueError("You should not try to run doctests with a debugger from within Sage: IPython objects to embedded shells")
-        from IPython import get_ipython
+        from IPython.core.getipython import get_ipython
         IP = get_ipython()
         if IP is not None:
             old_color = IP.colors
