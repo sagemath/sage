@@ -3925,7 +3925,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
     there's some unpredictability in the way that GAP chooses a
     representative in ``NormalSubgroups()``, the function that
     underlies our own
-    :meth:`sage.groups.perm_gps.permgroup.PermutationGroup_generic.normal_subgroups`
+    :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.normal_subgroups`
     method::
 
         sage: # needs sage.groups sage.libs.gap sage.rings.finite_rings
