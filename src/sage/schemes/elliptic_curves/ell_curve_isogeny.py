@@ -2879,28 +2879,19 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__init_kernel_polynomial()
         return self.__kernel_polynomial
 
-    def is_separable(self):
+    def inseparable_degree(self):
         r"""
-        Determine whether or not this isogeny is separable.
+        Return the inseparable degree of this isogeny.
 
-        Since :class:`EllipticCurveIsogeny` only implements
-        separable isogenies, this method always returns ``True``.
+        Since this class only implements separable isogenies,
+        this method always returns one.
 
-        EXAMPLES::
+        TESTS::
 
-            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
-            sage: phi = EllipticCurveIsogeny(E,  E((0,0)))
-            sage: phi.is_separable()
-            True
-
-        ::
-
-            sage: E = EllipticCurve('11a1')
-            sage: phi = EllipticCurveIsogeny(E, E.torsion_points())
-            sage: phi.is_separable()
-            True
+            sage: EllipticCurveIsogeny.inseparable_degree(None)
+            1
         """
-        return True
+        return Integer(1)
 
     def _set_pre_isomorphism(self, preWI):
         """
