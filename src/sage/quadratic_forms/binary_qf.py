@@ -179,6 +179,49 @@ class BinaryQF(SageObject):
         """
         return 'Qfb(%s,%s,%s)' % (self._a, self._b, self._c)
 
+    @staticmethod
+    def principal(D):
+        r"""
+        Return the principal binary quadratic form of the given discriminant.
+
+        EXAMPLES::
+
+            sage: BinaryQF.principal(8)
+            x^2 - 2*y^2
+            sage: BinaryQF.principal(5)
+            x^2 + x*y - y^2
+            sage: BinaryQF.principal(4)
+            x^2 - y^2
+            sage: BinaryQF.principal(1)
+            x^2 + x*y
+            sage: BinaryQF.principal(-3)
+            x^2 + x*y + y^2
+            sage: BinaryQF.principal(-4)
+            x^2 + y^2
+            sage: BinaryQF.principal(-7)
+            x^2 + x*y + 2*y^2
+            sage: BinaryQF.principal(-8)
+            x^2 + 2*y^2
+
+        TESTS:
+
+        Some randomized testing::
+
+            sage: D = 1
+            sage: while D.is_square():
+            ....:     D = choice((-4,+4)) * randrange(9999) + randrange(2)
+            sage: Q = BinaryQF.principal(D)
+            sage: Q.discriminant() == D     # correct discriminant
+            True
+            sage: (Q*Q).is_equivalent(Q)    # idempotent (hence identity)
+            True
+        """
+        D = ZZ(D)
+        D4 = D % 4
+        if D4 not in (0,1):
+            raise ValueError('discriminant must be congruent to 0 or 1 modulo 4')
+        return BinaryQF([1, D4, (D4-D)//4])
+
     def __mul__(self, right):
         """
         Gauss composition or right action by a 2x2 integer matrix.
@@ -1720,6 +1763,23 @@ class BinaryQF(SageObject):
         flag = 2  # single solution, possibly imprimitive
         sol = self.__pari__().qfbsolve(n, flag)
         return tuple(map(ZZ, sol)) if sol else None
+
+    def form_class(self):
+        r"""
+        Return the class of this form modulo equivalence.
+
+        EXAMPLES::
+
+            sage: F = BinaryQF([3, -16, 161])
+            sage: cl = F.form_class(); cl
+            Class of 3*x^2 + 2*x*y + 140*y^2
+            sage: cl.parent()
+            Form Class Group of Discriminant -1676
+            sage: cl.parent() is BQFClassGroup(-4*419)
+            True
+        """
+        from sage.quadratic_forms.bqf_class_group import BQFClassGroup
+        return BQFClassGroup(self.discriminant())(self)
 
 
 def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
