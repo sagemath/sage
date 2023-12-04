@@ -32,7 +32,7 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
-from sage.all import prod as series_prod
+from sage.misc.misc_c import prod
 
 
 class IntegerVectorsModPermutationGroup(UniqueRepresentation):
@@ -786,7 +786,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
                 return SF.elements_of_depth_iterator(self._sum)
 
     def cardinality(self):
-        r"""Return the number of integer vectors in the class.
+        r"""Return the number of integer vectors in the set.
 
         The number is computed using the cycle index theorem, which is
         faster than listing the vectors.
@@ -794,7 +794,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         EXAMPLES::
 
             sage: G = PermutationGroup([], domain=[1,2,3])
-            sage: IntegerVectorsModPermutationGroup(G,5).cardinality()
+            sage: IntegerVectorsModPermutationGroup(G, 5).cardinality()
             21
 
             sage: G = PermutationGroup([(1,2)])
@@ -817,9 +817,9 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         m = self._max_part      # Max of one entry, -1 for no limit
         if m == -1:
             m = d               # Any entry cannot exceed total
-        if k==0:
+        if k == 0:
             # Special case: Empty vectors cannot have nonzero sum.
-            if d==0 or d is None:
+            if d == 0 or d is None:
                 return Integer(1)
             else:
                 return Integer(0)
@@ -832,7 +832,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             dmax = d
 
         # Power series with enough precision that x^dmax is valid.
-        R = PowerSeriesRing(QQ, 'x', default_prec = dmax+1)
+        R = PowerSeriesRing(QQ, 'x', default_prec=dmax+1)
         x = R.gen()
 
         # Cardinality is computed using the Cycle Index Theorem.
