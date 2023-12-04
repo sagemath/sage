@@ -41,7 +41,7 @@ Those who are impatient may use the Binder badge
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sagemath/sage-binder-env/master)
 
-for an instant computing environment with Sage. Otherwise read on.
+to build and launch a Sage computing environment with no local installation. Otherwise read on.
 
 The [Sage Installation Guide](https://doc.sagemath.org/html/en/installation/index.html)
 provides a decision tree that guides you to the type of installation
