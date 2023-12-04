@@ -1039,14 +1039,9 @@ written.
     The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
     tab stops at columns 48, 56, 64, ... for these tags.
 
-- **Python3 print:** Python3 syntax for print must be used in Sage
-  code and doctests. If you use an old-style print in doctests, it
-  will raise a SyntaxError::
+- **Python3 print:** In SageMath code and doctests, adhere to Python 3
+  syntax for the print function. Use parentheses as follows:::
 
-      sage: print "not like that"
-      Traceback (most recent call last):
-      ...
-      SyntaxError: ...
       sage: print("but like this")
       but like this
 
