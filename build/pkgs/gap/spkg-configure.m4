@@ -37,7 +37,34 @@ SAGE_SPKG_CONFIGURE([gap], [
               [*fail*],[AC_MSG_RESULT([no (at least one package missing)])],[
                 # default case, i.e. no "fail"
                 AC_MSG_RESULT([yes])
-                sage_spkg_install_gap=no
+
+                AC_MSG_CHECKING([if we can link against libgap])
+                # That was all for the CLI. Now we check for libgap,
+                # too. There's a long list of headers we need in
+                # src/sage/libs/gap/gap_includes.pxd, but libgap-api.h
+                # combined with the version test above should be
+                # sufficient even on systems where the headers are
+                # packaged separately.
+                _old_libs=$LIBS
+                LIBS="${LIBS} -lgap"
+                AC_LANG_PUSH([C])
+                AC_LINK_IFELSE([
+                  AC_LANG_PROGRAM(
+                    [[#include <gap/libgap-api.h>]],
+                    [[
+                      int main(int argc, char** argv) {
+                        GAP_Initialize(0, 0, 0, 0, 0);
+                        return 0;
+                      }
+                    ]])
+                ],[
+                  AC_MSG_RESULT([yes])
+                  sage_spkg_install_gap=no
+                ],[
+                  AC_MSG_RESULT([no])
+                ])
+                AC_LANG_POP
+                LIBS="${_old_libs}"
             ])
           ], [
             # The gap command itself failed
