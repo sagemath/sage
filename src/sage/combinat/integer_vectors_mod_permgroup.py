@@ -1,9 +1,15 @@
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Integer vectors modulo the action of a permutation group
+
+AUTHORS:
+
+* Nicolas Borie (2010-2012) - original module
+* Jukka Kohonen (2023) - fast cardinality method, :issue:`36787`
 """
 # ****************************************************************************
-#    Copyright (C) 2010-12 Nicolas Borie <nicolas.borie at math dot u-psud.fr>
+#    Copyright (C) 2010-12 Nicolas Borie <nicolas.borie at math dot u-psud.fr>,
+#                  2023 Jukka Kohonen <jukka.kohonen at aalto.fi>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -23,6 +29,10 @@ from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
 from sage.combinat.enumeration_mod_permgroup import is_canonical, orbit, canonical_children, canonical_representative_of_orbit_of
 
 from sage.combinat.integer_vector import IntegerVectors
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
+from sage.all import prod as series_prod
 
 
 class IntegerVectorsModPermutationGroup(UniqueRepresentation):
@@ -774,6 +784,79 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
                 return iter(SF)
             else:
                 return SF.elements_of_depth_iterator(self._sum)
+
+    def cardinality(self):
+        r"""Return the number of integer vectors in the class.
+
+        The number is computed using the cycle index theorem, which is
+        faster than listing the vectors.
+
+        EXAMPLES::
+
+            sage: G = PermutationGroup([], domain=[1,2,3])
+            sage: IntegerVectorsModPermutationGroup(G,5).cardinality()
+            21
+
+            sage: G = PermutationGroup([(1,2)])
+            sage: IntegerVectorsModPermutationGroup(G, 1000).cardinality()
+            501
+
+            sage: G = PermutationGroup([(1,2,3)])
+            sage: I = IntegerVectorsModPermutationGroup(G, sum=10, max_part=5)
+            sage: I.cardinality()
+            7
+
+            sage: G = SymmetricGroup(10)
+            sage: I = IntegerVectorsModPermutationGroup(G, max_part=1)
+            sage: I.cardinality()
+            11
+        """
+        G = self._permgroup
+        k = G.degree()          # Vector length
+        d = self._sum           # Required total
+        m = self._max_part      # Max of one entry, -1 for no limit
+        if m == -1:
+            m = d               # Any entry cannot exceed total
+        if k==0:
+            # Special case: Empty vectors cannot have nonzero sum.
+            if d==0 or d is None:
+                return Integer(1)
+            else:
+                return Integer(0)
+
+        if d is None:
+            # No fixed sum, so sum could be anything up to k*m
+            dmax = k*m
+        else:
+            # Fixed sum
+            dmax = d
+
+        # Power series with enough precision that x^dmax is valid.
+        R = PowerSeriesRing(QQ, 'x', default_prec = dmax+1)
+        x = R.gen()
+
+        # Cardinality is computed using the Cycle Index Theorem.
+        # The figure-counting series, for maximum part size m, is
+        # (1-t**(m+1)) / (1-t) = 1+t+...+t**m.
+        # For function-counting series, we substitute x**cyclen for t.
+        #
+        # If there is no fixed sum requirement, we sum over the
+        # possible sums.
+        Z = G.cycle_index()
+        funcount = sum(
+            series_prod((1 - x**((m+1)*cyclen)) / (1 - x**cyclen)
+                        for cyclen in cyctype)
+            * coeff
+            for (cyctype, coeff) in Z)
+
+        if d is None:
+            # No fixed sum, so add up all coeffients to dmax.
+            # Computed as Rational but should have integer value.
+            return Integer(sum(funcount[i] for i in range(dmax+1)))
+        else:
+            # Fixed sum, extract just the d'th coefficient.
+            # Computed as Rational but should have integer value.
+            return Integer(funcount[d])
 
     def is_canonical(self, v, check=True):
         r"""
