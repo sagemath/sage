@@ -2838,11 +2838,18 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi.dual().scaling_factor()
             43
 
+        TESTS:
+
+        Check for :issue:`36638`::
+
+            sage: phi.scaling_factor().parent()  # needs sage.rings.finite_rings
+            Finite Field in z2 of size 257^2
+
         ALGORITHM: The "inner" isogeny is normalized by construction,
         so we only need to account for the scaling factors of a pre-
         and post-isomorphism.
         """
-        sc = Integer(1)
+        sc = self.__base_field.one()
         if self.__pre_isomorphism is not None:
             sc *= self.__pre_isomorphism.scaling_factor()
         if self.__post_isomorphism is not None:
