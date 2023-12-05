@@ -208,3 +208,17 @@ AC_DEFUN([SAGE_SPKG_DEPCHECK], [
         $2
         ])
 ])
+
+
+# SYNOPSIS
+#
+#   SAGE_SPKG_REVDEPCHECK(PACKAGE-REVERSE-DEPENDENCIES)
+#                                 $1
+# DESCRIPTION
+#     *** to be called from SAGE_SPKG_CONFIGURE* ***
+#     check for space-separated list of package reverse dependencies $1 of package SPKG_NAME
+#     If they all come from the system, do not require SPKG_NAME
+#
+AC_DEFUN([SAGE_SPKG_REVDEPCHECK], [
+    SAGE_SPKG_DEPCHECK($1, [[sage_require_]SPKG_NAME=no], [])
+])
