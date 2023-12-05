@@ -185,7 +185,7 @@ AC_DEFUN([SAGE_SPKG_CONFIGURE], [
 
 # SYNOPSIS
 #
-#   SAGE_SPKG_DEPCHECK(PACKAGE-DEPENDENCIES, FURTHER-CHECK, [FAIL= [sage_spkg_install_]SPKG_NAME=yes])
+#   SAGE_SPKG_DEPCHECK(PACKAGE-DEPENDENCIES, FURTHER-CHECK, [DEPS_ARE_INSTALLED= [sage_spkg_install_]SPKG_NAME=yes])
 #                                 $1              $2                $3
 #
 # DESCRIPTION
@@ -193,8 +193,9 @@ AC_DEFUN([SAGE_SPKG_CONFIGURE], [
 #     check for space-separated list of package dependencies $1 of package SPKG_NAME
 #     do $2 if successful
 #
-#     $3 is for off-label use - checking a reverse dependency. Then the default action of
-#     setting sage_spkg_install_SPKG_NAME=yes may be overwritten, typically to [], i.e. nothing.
+#     $3 is for off-label use - checking a reverse dependency, by REVDEPCHECK. Then the default action of
+#     setting sage_spkg_install_SPKG_NAME=yes whenever anything from $1 comes from Sage may be overwritten,
+#     typically to [ ], i.e. a no-op (it can't be [], as m4_default checks non-emptiness)
 #
 AC_DEFUN([SAGE_SPKG_DEPCHECK], [
     m4_foreach_w([DEP], $1, [
@@ -202,7 +203,7 @@ AC_DEFUN([SAGE_SPKG_DEPCHECK], [
     AC_MSG_CHECKING([whether any of $1 is installed as or will be installed as SPKG])
     AS_IF([test x = y m4_foreach_w([DEP], $1, [ -o [x$sage_spkg_install_]DEP = xyes])], [
         AC_MSG_RESULT([yes; install SPKG_NAME as well])
-        m4_default($3, [sage_spkg_install_]SPKG_NAME=yes)
+        m4_default([$3], [sage_spkg_install_]SPKG_NAME=yes)
 	], [
         AC_MSG_RESULT([no])
         $2
@@ -215,10 +216,10 @@ AC_DEFUN([SAGE_SPKG_DEPCHECK], [
 #   SAGE_SPKG_REVDEPCHECK(PACKAGE-REVERSE-DEPENDENCIES)
 #                                 $1
 # DESCRIPTION
-#     *** to be called from SAGE_SPKG_CONFIGURE* ***
+#     *** to be called from REQUIRED-CHECK section of SAGE_SPKG_CONFIGURE* ***
 #     check for space-separated list of package reverse dependencies $1 of package SPKG_NAME
-#     If they all come from the system, do not require SPKG_NAME
+#     If they all come from the system, do not require SPKG_NAME (i.e. it's not needed)
 #
 AC_DEFUN([SAGE_SPKG_REVDEPCHECK], [
-    SAGE_SPKG_DEPCHECK($1, [[sage_require_]SPKG_NAME=no], [])
+    SAGE_SPKG_DEPCHECK($1, [[sage_require_]SPKG_NAME=no], [ ])
 ])
