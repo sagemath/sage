@@ -191,7 +191,7 @@ AC_DEFUN([SAGE_SPKG_CONFIGURE], [
 # DESCRIPTION
 #     *** to be called from SAGE_SPKG_CONFIGURE* ***
 #     check for space-separated list of package dependencies $1 of package SPKG_NAME
-#     do $2 if successful
+#     do $2 if none of $1 is (to be) installed by Sage, normally checks on suitability of the system SPKG_NAME
 #
 #     $3 is for off-label use - checking a reverse dependency, by REVDEPCHECK. Then the default action of
 #     setting sage_spkg_install_SPKG_NAME=yes whenever anything from $1 comes from Sage may be overwritten,
