@@ -1040,8 +1040,7 @@ written.
     tab stops at columns 48, 56, 64, ... for these tags.
 
 - **Python3 print:** In SageMath code and doctests, adhere to Python 3
-  syntax for the print function. Use parentheses as follows:::
-
+  syntax for the print function. Use parentheses as follows::
       sage: print("but like this")
       but like this
 
