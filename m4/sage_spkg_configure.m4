@@ -185,13 +185,16 @@ AC_DEFUN([SAGE_SPKG_CONFIGURE], [
 
 # SYNOPSIS
 #
-#   SAGE_SPKG_DEPCHECK(PACKAGE-DEPENDENCIES, FURTHER-CHECK)
-#                                 $1              $2
+#   SAGE_SPKG_DEPCHECK(PACKAGE-DEPENDENCIES, FURTHER-CHECK, [FAIL= [sage_spkg_install_]SPKG_NAME=yes])
+#                                 $1              $2                $3
 #
 # DESCRIPTION
 #     *** to be called from SAGE_SPKG_CONFIGURE* ***
 #     check for space-separated list of package dependencies $1 of package SPKG_NAME
 #     do $2 if successful
+#
+#     $3 is for off-label use - checking a reverse dependency. Then the default action of
+#     setting sage_spkg_install_SPKG_NAME=yes may be overwritten, typically to [], i.e. nothing.
 #
 AC_DEFUN([SAGE_SPKG_DEPCHECK], [
     m4_foreach_w([DEP], $1, [
@@ -199,7 +202,8 @@ AC_DEFUN([SAGE_SPKG_DEPCHECK], [
     AC_MSG_CHECKING([whether any of $1 is installed as or will be installed as SPKG])
     AS_IF([test x = y m4_foreach_w([DEP], $1, [ -o [x$sage_spkg_install_]DEP = xyes])], [
         AC_MSG_RESULT([yes; install SPKG_NAME as well])
-        [sage_spkg_install_]SPKG_NAME=yes], [
+        m4_default($3, [sage_spkg_install_]SPKG_NAME=yes)
+	], [
         AC_MSG_RESULT([no])
         $2
         ])
