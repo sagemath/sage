@@ -40,30 +40,35 @@ jobs:
     with:
       stage: "2"
     needs: [stage-1]
+    if: ${{ success() || failure() }}
 
   stage-2-optional-0-o:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-0-o"
     needs: [stage-2]
+    if: ${{ success() || failure() }}
 
   stage-2-optional-p-z:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-p-z"
     needs: [stage-2-optional-0-o]
+    if: ${{ success() || failure() }}
 
   stage-2-experimental-0-o:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-optional-0-o"
     needs: [stage-2-optional-p-z]
+    if: ${{ success() || failure() }}
 
   stage-2-experimental-p-z:
     uses: ./.github/workflows/macos.yml
     with:
       stage: "2-experimental-p-z"
     needs: [stage-2-experimental-0-o]
+    if: ${{ success() || failure() }}
 
   dist:
 
