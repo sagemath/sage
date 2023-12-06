@@ -1,4 +1,4 @@
-# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: libraries = gmp flint
 # distutils: depends = arb_fmpz_poly.h
 
 from sage.libs.arb.types cimport *
@@ -22,5 +22,4 @@ cdef extern from "arb_wrap.h":
     unsigned long arb_fmpz_poly_deflation(const fmpz_poly_t poly)
     void arb_fmpz_poly_deflate(fmpz_poly_t res, const fmpz_poly_t poly, unsigned long deflation)
     void arb_fmpz_poly_complex_roots(acb_ptr roots, const fmpz_poly_t poly, int flags, long prec)
-    void arb_fmpz_poly_cos_minpoly(fmpz_poly_t res, unsigned long n)
     void arb_fmpz_poly_gauss_period_minpoly(fmpz_poly_t res, unsigned long q, unsigned long n)

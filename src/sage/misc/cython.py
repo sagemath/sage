@@ -27,7 +27,7 @@ import shutil
 
 from sage.env import (SAGE_LOCAL, cython_aliases,
                       sage_include_directories)
-from .temporary_file import spyx_tmp, tmp_filename
+from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
 from sage.misc.sage_ostools import restore_cwd, redirection
 from sage.cpython.string import str_to_bytes

@@ -406,7 +406,7 @@ compare equal::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import ideal
+from sage.rings import ideal
 import sage.structure.all
 from sage.structure.richcmp cimport (richcmp, rich_to_bool)
 from sage.misc.cachefunc import cached_method
