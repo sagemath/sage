@@ -487,8 +487,8 @@ usage_advanced() {
         echo "                         imports when sage.PAC.KAGE is an implicit namespace"
         echo "                         package"
         echo "  --fixdistributions <files|dirs>"
-        echo "                      -- Check or update 'sage_setup: distribution' directives"
-        echo "                         in source files"
+        echo "                      -- Check or update '# sage_setup: distribution'"
+        echo "                         directives in source files"
     fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"

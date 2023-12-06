@@ -20,10 +20,10 @@ alternatively do:
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
-from .all__sagemath_schemes import *
+from sage.dynamics.all__sagemath_schemes import *
 
 try:
-    from .all__sagemath_symbolics import *
+    from sage.dynamics.all__sagemath_symbolics import *
 except ImportError:
     pass
 
@@ -35,4 +35,7 @@ from sage.dynamics.cellular_automata.all import *
 lazy_import('sage.dynamics.finite_dynamical_system',
             ['DiscreteDynamicalSystem'])
 
-lazy_import('sage.dynamics', 'finite_dynamical_system_catalog', 'finite_dynamical_systems')
+lazy_import('sage.dynamics', 'finite_dynamical_system_catalog',
+            'finite_dynamical_systems')
+del lazy_import
+del install_doc

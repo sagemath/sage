@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-flint
-# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: libraries = gmp flint
 # distutils: depends = bernoulli.h
 
 from sage.libs.flint.types cimport fmpq_t, ulong

@@ -1,2 +1,2 @@
 # sage_setup: distribution = sagemath-polyhedra
-from .toric.all import *
+from sage.schemes.toric.all import *

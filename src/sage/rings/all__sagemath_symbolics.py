@@ -1,2 +1,3 @@
 # sage_setup: distribution = sagemath-symbolics
-from .all__sagemath_modules import *
+
+from sage.rings.all__sagemath_modules import *

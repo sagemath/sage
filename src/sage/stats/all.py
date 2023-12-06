@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-modules
-from .basic_stats import (mean, mode, std, variance, median, moving_average)
-from .hmm import all as hmm
+from sage.stats.basic_stats import (mean, mode, std, variance, median, moving_average)
+from sage.stats.hmm import all as hmm
 
 from sage.misc.lazy_import import lazy_import
 
@@ -11,3 +11,4 @@ lazy_import("sage.stats.r", "ttest")
 
 lazy_import("sage.stats.time_series", ["TimeSeries", "autoregressive_fit"])
 lazy_import("sage.stats.intlist", ["IntList"])
+del lazy_import

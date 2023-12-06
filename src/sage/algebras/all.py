@@ -3,7 +3,7 @@
 Algebras
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,14 +15,13 @@ Algebras
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from sage.misc.lazy_import import lazy_import
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from .all__sagemath_modules import *
-from .all__sagemath_combinat import *
+from sage.algebras.all__sagemath_modules import *
+from sage.algebras.all__sagemath_combinat import *
 
-from .quatalg.all import *
-from .fusion_rings.all import *
-from .lie_algebras.all import *
-from .lie_conformal_algebras.all import *
+from sage.algebras.quatalg.all import *
+from sage.algebras.fusion_rings.all import *
+from sage.algebras.lie_algebras.all import *
+from sage.algebras.lie_conformal_algebras.all import *

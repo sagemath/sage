@@ -71,7 +71,6 @@ from sage.libs.mpc cimport *
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
 from sage.structure.element cimport Element
-from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 
 try:

@@ -1,12 +1,12 @@
 # sage_setup: distribution = sagemath-groups
-from .all__sagemath_modules import *
+from sage.groups.all__sagemath_modules import *
 
 try:
-    from .all__sagemath_pari import *
+    from sage.groups.all__sagemath_pari import *
 except ImportError:
     pass
 
-from .all__sagemath_gap import *
+from sage.groups.all__sagemath_gap import *
 
 from sage.misc.lazy_import import lazy_import
 
@@ -23,8 +23,11 @@ lazy_import('sage.groups.cubic_braid', 'AssionGroupS')
 lazy_import('sage.groups.artin', 'ArtinGroup')
 lazy_import('sage.groups.raag', 'RightAngledArtinGroup')
 
-lazy_import('sage.groups.semimonomial_transformations.semimonomial_transformation_group', 'SemimonomialTransformationGroup')
+lazy_import('sage.groups.semimonomial_transformations.semimonomial_transformation_group',
+            'SemimonomialTransformationGroup')
 
 lazy_import('sage.groups.group_exp', ['GroupExp', 'GroupExp_Class', 'GroupExpElement'])
 
-lazy_import('sage.groups.group_semidirect_product', ['GroupSemidirectProduct', 'GroupSemidirectProductElement'])
+lazy_import('sage.groups.group_semidirect_product', [
+            'GroupSemidirectProduct', 'GroupSemidirectProductElement'])
+del lazy_import

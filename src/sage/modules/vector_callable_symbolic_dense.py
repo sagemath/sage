@@ -50,7 +50,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from . import free_module_element
+from sage.modules import free_module_element
 from sage.symbolic.ring import SR
 
 

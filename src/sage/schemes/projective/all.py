@@ -3,7 +3,7 @@
 all.py -- export of projective schemes to Sage
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -18,7 +18,7 @@ all.py -- export of projective schemes to Sage
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from .projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace

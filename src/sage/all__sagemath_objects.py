@@ -13,7 +13,8 @@ from time import sleep
 
 # This import also sets up the interrupt handler
 from cysignals.signals import (AlarmInterrupt, SignalError,
-        sig_on_reset as sig_on_count)
+                               sig_on_reset as sig_on_count)
+
 from cysignals.alarm import alarm, cancel_alarm
 
 # Full and final

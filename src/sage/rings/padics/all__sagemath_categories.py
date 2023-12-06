@@ -1,2 +1,3 @@
 # sage_setup: distribution = sagemath-categories
-from .padic_generic import local_print_mode
+
+from sage.rings.padics.padic_generic import local_print_mode

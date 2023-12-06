@@ -4,7 +4,7 @@
 # import problems
 try:
     # from maxima_lib import maxima_lib
-    from .maxima import maxima, Maxima
+    from sage.interfaces.maxima import maxima, Maxima
 except ImportError:
     pass
 
@@ -51,3 +51,4 @@ interfaces = ['gap', 'gap3', 'giac', 'gp', 'mathematica', 'gnuplot',
               'kash', 'magma', 'macaulay2', 'maple', 'maxima',
               'mathematica', 'mwrank', 'octave', 'r', 'singular',
               'sage0', 'sage']
+del lazy_import

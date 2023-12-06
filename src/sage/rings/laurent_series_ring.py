@@ -33,20 +33,17 @@ EXAMPLES::
 # ****************************************************************************
 
 
-from sage.categories.rings import Rings
-from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
-from sage.categories.integral_domains import IntegralDomains
-from sage.categories.fields import Fields
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationFields
-
-from .laurent_series_ring_element import LaurentSeries
-from .ring import CommutativeRing
-
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.fields import Fields
+from sage.categories.integral_domains import IntegralDomains
+from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
-
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring_element import LaurentSeries
+from sage.rings.ring import CommutativeRing
+from sage.structure.unique_representation import UniqueRepresentation
 
 try:
     from sage.libs.pari.all import pari_gen
@@ -316,8 +313,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             ...
             ValueError: must be an integral domain
         """
-        from sage.categories.integral_domains import IntegralDomains
         from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
         if self in Fields():
             return self
         elif self in IntegralDomains():
@@ -490,8 +487,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             x^-3
         """
         from sage.rings.fraction_field_element import is_FractionFieldElement
-        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.polynomial.multi_polynomial import MPolynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.structure.element import parent
 
         P = parent(x)
@@ -644,9 +641,11 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
         """
         A = self.base_ring()
+        from sage.rings.polynomial.laurent_polynomial_ring_base import (
+            LaurentPolynomialRing_generic,
+        )
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         from sage.rings.power_series_ring import is_PowerSeriesRing
-        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 
         if ((is_LaurentSeriesRing(P) or
              isinstance(P, LaurentPolynomialRing_generic) or

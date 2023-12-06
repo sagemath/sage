@@ -1,6 +1,8 @@
 # sage_setup: distribution = sagemath-pari
 
-from .special_values import (gamma__exact, zeta__exact, QuadraticBernoulliNumber,
-                             quadratic_L_function__exact, quadratic_L_function__numerical)
+from sage.quadratic_forms.bqf_class_group import BQFClassGroup
 
-from .genera.genus import Genus
+from sage.quadratic_forms.special_values import (gamma__exact, zeta__exact, QuadraticBernoulliNumber,
+                                                 quadratic_L_function__exact, quadratic_L_function__numerical)
+
+from sage.quadratic_forms.genera.genus import Genus

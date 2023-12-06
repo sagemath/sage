@@ -3,7 +3,7 @@
 all.py -- export of abelian groups to Sage
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -18,8 +18,8 @@ all.py -- export of abelian groups to Sage
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from .all__sagemath_modules import *
-from .all__sagemath_gap import *
+from sage.groups.abelian_gps.all__sagemath_modules import *
+from sage.groups.abelian_gps.all__sagemath_gap import *

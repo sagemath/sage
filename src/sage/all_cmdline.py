@@ -23,7 +23,7 @@ except ImportError:
 
 from sage.misc.lazy_import import lazy_import
 
-for pkg in ['axiom', 'fricas', 'gap' , 'gap3', 'giac', 'gp',
+for pkg in ['axiom', 'fricas', 'gap', 'gap3', 'giac', 'gp',
             'gnuplot', 'kash', 'magma', 'macaulay2', 'maple',
             'mathematica', 'mathics', 'matlab',
             'mupad', 'mwrank', 'octave', 'qepcad', 'singular',

@@ -1,7 +1,7 @@
 # sage_setup: distribution = sagemath-polyhedra
-from .all__sagemath_modules import *
+from sage.geometry.all__sagemath_modules import *
 
-from .polyhedron.all import *
+from sage.geometry.polyhedron.all import *
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.geometry.polyhedral_complex', 'PolyhedralComplex')
@@ -15,6 +15,7 @@ lazy_import('sage.geometry.lattice_polytope',
 lazy_import('sage.geometry', 'lattice_polytope')
 lazy_import('sage.geometry', 'toric_plotter')
 lazy_import('sage.geometry.voronoi_diagram', 'VoronoiDiagram')
-lazy_import('sage.geometry.hyperplane_arrangement.arrangement', 'HyperplaneArrangements')
+lazy_import('sage.geometry.hyperplane_arrangement.arrangement',
+            'HyperplaneArrangements')
 lazy_import('sage.geometry.hyperplane_arrangement.library', 'hyperplane_arrangements')
 del lazy_import

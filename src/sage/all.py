@@ -59,8 +59,9 @@ import math
 
 ################ end setup warnings ###############################
 
-from .all__sagemath_repl import *  # includes .all__sagemath_objects, .all__sagemath_environment
-from .all__sagemath_modules import *
+# includes .all__sagemath_objects, .all__sagemath_environment
+from sage.all__sagemath_repl import *
+from sage.all__sagemath_modules import *
 
 ###################################################################
 
@@ -70,7 +71,7 @@ from sage.misc.all       import *         # takes a while
 
 from sage.misc.sh import sh
 
-from sage.libs.all       import *
+from sage.libs.all import *
 from sage.data_structures.all import *
 
 from sage.rings.all      import *
@@ -94,15 +95,15 @@ from sage.combinat.all   import *
 from sage.geometry.all   import *
 from sage.geometry.triangulation.all   import *
 
-from sage.dynamics.all   import *
+from sage.dynamics.all import *
 
-from sage.homology.all   import *
+from sage.homology.all import *
 
 from sage.quadratic_forms.all import *
 
 from sage.logic.all      import *
 
-from sage.numerical.all  import *
+from sage.numerical.all import *
 
 from cysignals.alarm import alarm, cancel_alarm
 
@@ -120,7 +121,7 @@ from sage.combinat.all import Posets  # so that sage.combinat.all.Posets wins ov
 
 
 ###########################################################
-#### WARNING:
+# WARNING:
 # DO *not* import numpy / matplotlib / networkx here!!
 # Each takes a surprisingly long time to initialize,
 # and that initialization should be done more on-the-fly
@@ -134,31 +135,37 @@ from sage.misc.copying import license
 copying = license
 copyright = license
 
+
 def quit_sage(verbose=True):
     """
     Does nothing. Code that needs cleanup should register its own
     handler using the atexit module.
     """
     from sage.misc.superseded import deprecation
-    deprecation(8784, 'quit_sage is deprecated and now does nothing; please simply delete it')
+    deprecation(
+        8784, 'quit_sage is deprecated and now does nothing; please simply delete it')
 
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.categories.category', 'Sets', Sets)
-register_unpickle_override('sage.categories.category_types', 'HeckeModules', HeckeModules)
+register_unpickle_override('sage.categories.category_types',
+                           'HeckeModules', HeckeModules)
 register_unpickle_override('sage.categories.category_types', 'Objects', Objects)
 register_unpickle_override('sage.categories.category_types', 'Rings', Rings)
 register_unpickle_override('sage.categories.category_types', 'Fields', Fields)
-register_unpickle_override('sage.categories.category_types', 'VectorSpaces', VectorSpaces)
-register_unpickle_override('sage.categories.category_types', 'Schemes_over_base', sage.categories.schemes.Schemes_over_base)
-register_unpickle_override('sage.categories.category_types', 'ModularAbelianVarieties', ModularAbelianVarieties)
+register_unpickle_override('sage.categories.category_types',
+                           'VectorSpaces', VectorSpaces)
+register_unpickle_override('sage.categories.category_types',
+                           'Schemes_over_base', sage.categories.schemes.Schemes_over_base)
+register_unpickle_override('sage.categories.category_types',
+                           'ModularAbelianVarieties', ModularAbelianVarieties)
 register_unpickle_override('sage.libs.pari.gen_py', 'pari', pari)
 
 # Cache the contents of star imports.
 sage.misc.lazy_import.save_cache_file()
 
 
-### Debugging for Singular, see trac #10903
+# Debugging for Singular, see trac #10903
 # from sage.libs.singular.ring import poison_currRing
 # sys.settrace(poison_currRing)
 
@@ -185,7 +192,7 @@ del clean_namespace
 sage.misc.lazy_import.finish_startup()
 
 
-### Python broke large ints; see trac #34506
+# Python broke large ints; see trac #34506
 
 if hasattr(sys, "set_int_max_str_digits"):
     sys.set_int_max_str_digits(0)

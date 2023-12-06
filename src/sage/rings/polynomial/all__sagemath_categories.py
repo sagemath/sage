@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-categories
+
 # Quotient of polynomial ring
 from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement

@@ -1,2 +1,2 @@
 # sage_setup: distribution = sagemath-categories
-from .functional import diff, derivative, expand, simplify, taylor
+from sage.calculus.functional import diff, derivative, expand, simplify, taylor

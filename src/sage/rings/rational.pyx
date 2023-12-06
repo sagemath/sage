@@ -68,6 +68,8 @@ import fractions
 
 import sage.rings.rational_field
 
+cimport sage.rings.integer as integer
+
 from sage.arith.long cimport integer_check_long_py
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map

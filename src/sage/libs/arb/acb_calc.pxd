@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-flint
-# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: libraries = gmp flint
 # distutils: depends = acb_calc.h
 
 from sage.libs.arb.types cimport *

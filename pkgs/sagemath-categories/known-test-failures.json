@@ -38,7 +38,7 @@
         "ntests": 28
     },
     "sage.categories.affine_weyl_groups": {
-        "ntests": 14
+        "ntests": 15
     },
     "sage.categories.algebra_functor": {
         "ntests": 7
@@ -139,7 +139,7 @@
     },
     "sage.categories.coxeter_groups": {
         "failed": true,
-        "ntests": 362
+        "ntests": 363
     },
     "sage.categories.crystals": {
         "ntests": 1
@@ -777,7 +777,6 @@
         "ntests": 303
     },
     "sage.doctest.reporting": {
-        "failed": true,
         "ntests": 124
     },
     "sage.doctest.sources": {
@@ -1228,7 +1227,7 @@
     },
     "sage.misc.sageinspect": {
         "failed": true,
-        "ntests": 329
+        "ntests": 332
     },
     "sage.misc.search": {
         "ntests": 4
@@ -1305,6 +1304,7 @@
         "ntests": 128
     },
     "sage.repl.configuration": {
+        "failed": true,
         "ntests": 22
     },
     "sage.repl.display.fancy_repr": {
@@ -1323,6 +1323,7 @@
         "ntests": 7
     },
     "sage.repl.inputhook": {
+        "failed": true,
         "ntests": 7
     },
     "sage.repl.interface_magic": {
@@ -1330,7 +1331,7 @@
     },
     "sage.repl.interpreter": {
         "failed": true,
-        "ntests": 118
+        "ntests": 114
     },
     "sage.repl.ipython_extension": {
         "failed": true,
@@ -1359,7 +1360,7 @@
     },
     "sage.repl.load": {
         "failed": true,
-        "ntests": 42
+        "ntests": 38
     },
     "sage.repl.preparse": {
         "ntests": 349
