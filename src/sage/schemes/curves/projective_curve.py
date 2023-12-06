@@ -1224,8 +1224,8 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         P = [0]*3
         P[i] = 1
         P = PP(P)
-        ll = [0, 1, 2]
-        ll.pop(i)
+        l = [0, 1, 2]
+        l.pop(i)
         # choose points forming a triangle with one vertex at P to map to the coordinate triangle
         good = False
         a = 0
@@ -1233,11 +1233,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             a = a + 1
             # find points to map to (1 : 0 : 0) and (0 : 1 : 0), not on the curve
             Px = [0]*3
-            Px[ll[0]] = a
-            Px[ll[1]] = 1
+            Px[l[0]] = a
+            Px[l[1]] = 1
             Py = [0]*3
-            Py[ll[0]] = -a
-            Py[ll[1]] = 1
+            Py[l[0]] = -a
+            Py[l[1]] = 1
             Py[i] = 1
             try:
                 Px = baseC(Px)
@@ -1778,7 +1778,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         g = self.defining_polynomial()
         ring = self.ambient_space().affine_patch(2).coordinate_ring()
         if g.degree() == 1:
-            return fundamental_group(ring(1))
+            return fundamental_group(ring.one())
         f = ring(self.affine_patch(2).defining_polynomial())
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
