@@ -322,9 +322,8 @@ toolchain-deps:
 all-toolchain: base-toolchain
 	+$(MAKE_REC) toolchain-deps
 
-# All packages needed as a prerequisite to install other Python packages with
-# pip or which are otherwise used by the Python build tools; these should be
-# given as a prerequisite to any pip-installed packages
+# Shorthand for a list of packages sufficient for building and installing
+# typical Python packages from source. Wheel packages only need pip.
 PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel setuptools_wheel
 
 # Trac #32056: Avoid installed setuptools leaking into the build of python3 by uninstalling it.
