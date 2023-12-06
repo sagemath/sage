@@ -56,7 +56,7 @@ class Internet(Feature):
         try:
             urlopen(req, timeout=1, context=default_context())
             return FeatureTestResult(self, True)
-        except urllib.error.URLError:
+        except (urllib.error.URLError, TimeoutError):
             return FeatureTestResult(self, False)
 
 
