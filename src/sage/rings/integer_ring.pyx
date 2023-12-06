@@ -69,7 +69,7 @@ from sage.misc.randstate cimport randstate, current_randstate, SAGE_RAND_MAX
 
 cimport sage.rings.integer as integer
 
-from . import ring
+from sage.rings import ring
 
 arith = None
 cdef void late_import() noexcept:

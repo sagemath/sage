@@ -1282,7 +1282,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         P = self.parent()
         z = self.element()
         o = int(z.additive_order())
-        Auts = set([m % o for m in P._automorphisms()])
+        Auts = {m % o for m in P._automorphisms()}
         v = [P.element_class(P, m * z, check=False) for m in Auts]
         if sort:
             v.sort()

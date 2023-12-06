@@ -263,7 +263,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: F = CombinatorialSpecies()
-            sage: F.cycle_index_series()
+            sage: F.cycle_index_series()                                                # needs sage.modules
             Uninitialized Lazy Series
         """
         if base_ring not in self._cycle_index_series:
@@ -429,17 +429,17 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
         EXAMPLES::
 
-            sage: d = DiGraph(multiedges=True)
+            sage: d = DiGraph(multiedges=True)                                          # needs sage.graphs
             sage: X = species.SingletonSpecies()
             sage: B = species.CombinatorialSpecies()
             sage: B.define(X+B*B)
-            sage: B._add_to_digraph(d); d
+            sage: B._add_to_digraph(d); d                                               # needs sage.graphs
             Multi-digraph on 4 vertices
 
         TESTS::
 
             sage: C = species.CombinatorialSpecies()
-            sage: C._add_to_digraph(d)
+            sage: C._add_to_digraph(d)                                                  # needs sage.graphs
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -461,7 +461,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: C = species.CombinatorialSpecies()
-            sage: C.algebraic_equation_system()
+            sage: C.algebraic_equation_system()                                         # needs sage.graphs
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -469,7 +469,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         ::
 
             sage: B = species.BinaryTreeSpecies()
-            sage: B.algebraic_equation_system()
+            sage: B.algebraic_equation_system()                                         # needs sage.graphs
             [-node3^2 + node1, -node1 + node3 + (-z)]
         """
         try:

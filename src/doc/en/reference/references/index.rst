@@ -1481,6 +1481,11 @@ REFERENCES:
 .. [CFI1992] Cai, JY., Fürer, M. & Immerman, N. Combinatorica (1992) 12: 389.
              :doi:`10.1007/BF01305232`
 
+.. [CFKLMPPS15] Marek Cygan, Fedor V. Fomin, Łukasz Kowalik, Daniel Lokshtanov,
+                Dániel Marx, Marcin Pilipczuk, Michał Pilipczuk, Saket Saurabh.
+                *Parameterized Algorithms*. Springer International Publishing
+                Switzerland 2015
+
 .. [CFKP1997] James W. Cannon, William J. Floyd, Richard Kenyon and Walter R. Parry.
               *Hyperbolic Geometry*. Flavors of Geometry, MSRI Publications,
               Volume 31, 1997.

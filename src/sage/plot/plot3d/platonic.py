@@ -152,6 +152,7 @@ def prep(G, center, size, kwds):
         G = G.translate(center)
     return G
 
+
 @rename_keyword(alpha='opacity')
 def tetrahedron(center=(0, 0, 0), size=1, **kwds):
     """
@@ -255,14 +256,15 @@ def tetrahedron(center=(0, 0, 0), size=1, **kwds):
     one = RR.one()
     sqrt2 = RR(2).sqrt()
     sqrt6 = RR(6).sqrt()
-    point_list = [(0,0,1),
-                  (2*sqrt2/3,        0, -one/3),
-                  ( -sqrt2/3,  sqrt6/3, -one/3),
-                  ( -sqrt2/3, -sqrt6/3, -one/3)]
+    point_list = [(0, 0, 1),
+                  (2*sqrt2/3, 0, -one/3),
+                  (-sqrt2/3, sqrt6/3, -one/3),
+                  (-sqrt2/3, -sqrt6/3, -one/3)]
     face_list = [[0,1,2],[1,3,2],[0,2,3],[0,3,1]]
     if 'aspect_ratio' not in kwds:
         kwds['aspect_ratio'] = [1, 1, 1]
     return index_face_set(face_list, point_list, enclosed=True, center=center, size=size, **kwds)
+
 
 @rename_keyword(alpha='opacity')
 def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
@@ -405,6 +407,7 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
             B += frame3d((-0.5,-0.5,-0.5),(0.5,0.5,0.5), thickness=frame_thickness, color=frame_color)
     return prep(B, center, size, kwds)
 
+
 @rename_keyword(alpha='opacity')
 def octahedron(center=(0, 0, 0), size=1, **kwds):
     r"""
@@ -440,7 +443,8 @@ def octahedron(center=(0, 0, 0), size=1, **kwds):
     kwds['enclosed'] = True
     if 'aspect_ratio' not in kwds:
         kwds['aspect_ratio'] = [1, 1, 1]
-    return prep(Box(1,1,1).dual(**kwds), center, size, kwds)
+    return prep(Box(1, 1, 1).dual(**kwds), center, size, kwds)
+
 
 @rename_keyword(alpha='opacity')
 def dodecahedron(center=(0, 0, 0), size=1, **kwds):
@@ -514,21 +518,21 @@ def dodecahedron(center=(0, 0, 0), size=1, **kwds):
     - Robert Bradshaw, William Stein
     """
     RR = RDF
-    one = RR(1)
+    one = RR.one()
     sqrt3 = RR(3).sqrt()
     sqrt5 = RR(5).sqrt()
     R3 = RR**3
-    rot = matrix(RR, [[  -one/2,-sqrt3/2, 0],
-                      [ sqrt3/2,  -one/2, 0],
-                      [       0,       0, 1]])
-    rot2 = rot*rot
+    rot = matrix(RR, [[-one / 2, -sqrt3 / 2, 0],
+                      [sqrt3 / 2, -one / 2, 0],
+                      [0, 0, 1]])
+    rot2 = rot * rot
 
     # The top
-    Q = R3([0,0,1])
+    Q = R3([0, 0, 1])
     # The first ring
     P1 = R3([2*one/3, 0, sqrt5/3])
     # The second ring
-    R1 = R3([sqrt5/3,  1/sqrt3, one/3])
+    R1 = R3([sqrt5/3, 1/sqrt3, one/3])
     R2 = R3([sqrt5/3, -1/sqrt3, one/3])
 
     top = [Q, P1, rot*P1, rot2*P1, R1, rot*R2, rot*R1, rot2*R2, rot2*R1, R2]
@@ -554,6 +558,7 @@ def dodecahedron(center=(0, 0, 0), size=1, **kwds):
 #        faces = IndexFaceSet([[tuple(vs[i]) for i in f] for f in face_list])
 #        vertex_spheres += [faces.stickers(['red','yellow','blue','purple','black','orange'], .1, .1)] # [faces]
 #        return Graphics3dGroup(vertex_spheres)
+
 
 @rename_keyword(alpha='opacity')
 def icosahedron(center=(0, 0, 0), size=1, **kwds):

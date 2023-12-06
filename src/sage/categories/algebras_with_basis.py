@@ -9,13 +9,13 @@ Algebras With Basis
 #                  https://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.tensor import TensorProductsCategory, tensor
+from sage.categories.unital_algebras import UnitalAlgebras
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
-from sage.categories.tensor import TensorProductsCategory, tensor
-from sage.categories.cartesian_product import CartesianProductsCategory
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from .unital_algebras import UnitalAlgebras
 
 
 class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):

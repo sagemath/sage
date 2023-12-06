@@ -1317,6 +1317,63 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             return ~self
         raise ArithmeticError("element is not a unit")
 
+    def xgcd(self, other):
+        """
+        Extended `gcd` for univariate Laurent polynomial rings over a field.
+
+        EXAMPLES::
+
+            sage: S.<t> = LaurentPolynomialRing(QQ)
+            sage: (t^-2 + 1).xgcd(t^-3 + 1)
+            (1, 1/2*t^2 - 1/2*t^3 - 1/2*t^4, 1/2*t^3 + 1/2*t^4)
+        """
+        R = self.parent()
+        S = R.polynomial_ring()
+        f, df = self.monomial_reduction()
+        g, dg = other.monomial_reduction()
+        h, p, q = f.xgcd(g)
+        return R(h), p / df, q / dg
+
+    def inverse_mod(a, m):
+        """
+        Invert the polynomial ``a`` with respect to ``m``, or raise a :class:`ValueError`
+        if no such inverse exists.
+
+        The parameter ``m`` may be either a single polynomial or an ideal
+        (for consistency with :meth:`inverse_mod` in other rings).
+
+        ALGORITHM: Solve the system `as + mt = 1`, returning `s` as the inverse
+        of `a` mod `m`.
+
+        EXAMPLES::
+
+            sage: S.<t> = LaurentPolynomialRing(QQ)
+            sage: f = inverse_mod(t^-2 + 1, t^-3 + 1); f
+            1/2*t^2 - 1/2*t^3 - 1/2*t^4
+            sage: f * (t^-2 + 1) + (1/2*t^4 + 1/2*t^3) * (t^-3 + 1)
+            1
+        """
+        from sage.rings.ideal import is_Ideal
+        if is_Ideal(m):
+            v = m.gens_reduced()
+            if len(v) > 1:
+                raise NotImplementedError("only inversion modulo principal ideals implemented")
+            m = v[0]
+        if m.degree() == 1 and m[1].is_unit():
+            # a(x) mod (x-r) = a(r)
+            r = -m[0]
+            if not m[1].is_one():
+                r *= m.base_ring()(~m[1])
+            u = a(r)
+            if u.is_unit():
+                return a.parent()(~u)
+        g, s, _ = a.xgcd(m)
+        if g == 1:
+            return s
+        elif g.is_unit():
+            return g.inverse_of_unit() * s
+        raise ValueError("impossible inverse modulo")
+
     def _fraction_pair(self):
         """
         Return one representation of ``self`` as a pair
@@ -1989,3 +2046,38 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             0
         """
         return self.__u[-self.__n]
+
+    @coerce_binop
+    def divides(self, other):
+        r"""
+        Return ``True`` if ``self`` divides ``other``.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentPolynomialRing(ZZ)
+            sage: (2*x**-1 + 1).divides(4*x**-2 - 1)
+            True
+            sage: (2*x + 1).divides(4*x**2 + 1)
+            False
+            sage: (2*x + x**-1).divides(R(0))
+            True
+            sage: R(0).divides(2*x ** -1 + 1)
+            False
+            sage: R(0).divides(R(0))
+            True
+            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
+            sage: p = 4*x + 3*x^-1
+            sage: q = 5*x^2 + x + 2*x^-2
+            sage: p.divides(q)
+            False
+
+            sage: R.<x,y> = GF(2)[]
+            sage: S.<z> = LaurentPolynomialRing(R)
+            sage: p = (x+y+1) * z**-1 + x*y
+            sage: q = (y^2-x^2) * z**-2 + z + x-y
+            sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
+            (False, True)
+        """
+        p = self.polynomial_construction()[0]
+        q = other.polynomial_construction()[0]
+        return p.divides(q)

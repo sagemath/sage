@@ -4,6 +4,7 @@ from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces            
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_t
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator             cimport FaceIterator
 
+
 @cython.final
 cdef class CombinatorialFace(SageObject):
     cdef readonly bint _dual        # if 1, then iterate over dual Polyhedron
