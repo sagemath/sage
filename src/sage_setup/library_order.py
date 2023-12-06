@@ -16,17 +16,12 @@ modules = default_required_modules + default_optional_modules
 
 aliases = cython_aliases(required_modules=(), optional_modules=modules)
 
-if "ARB_LIBRARY" in aliases:
-    arb_dylib_names = [aliases["ARB_LIBRARY"]]
-else:
-    arb_dylib_names = []
-
 library_order_list = aliases.get("SINGULAR_LIBRARIES", []) + [
     "giac", "intl", "curl",
     "ec", "ecm"
 ] + aliases.get("LINBOX_LIBRARIES", []) + aliases.get("FFLASFFPACK_LIBRARIES", []) + aliases.get("GSL_LIBRARIES", []) + [
     "pari", "flint", "ecl", "glpk", "ppl",
-] + arb_dylib_names + [
+] + [
     "mpfi", "mpfr", "mpc", "ntl", "gmp", "gmpxx",
     "brial",
     "brial_groebner",

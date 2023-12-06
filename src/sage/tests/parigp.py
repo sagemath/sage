@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari sage.modules
 r"""
 This file is meant to catch errors in the PARI/GP package which are not
 caught by any other tests.
@@ -39,32 +40,35 @@ Segmentation Fault::
 
 Check that the optional PARI databases work::
 
-    sage: gp.ellinit('"299998a1"')  # optional -- pari_elldata
+    sage: # optional - pari_elldata
+    sage: gp.ellinit('"299998a1"')
     [1, 0, 1, 110, -3660, ...]
-    sage: E = EllipticCurve("1728ba1")
-    sage: gp(E).ellidentify()  # optional -- pari_elldata
+    sage: E = EllipticCurve("1728ba1")                                                  # needs sage.schemes
+    sage: gp(E).ellidentify()                                                           # needs sage.schemes
     [["1728ba1", [0, 0, 0, -6, 6], [[1, 1]]], [1, 0, 0, 0]]
 
-    sage: pari("ellmodulareqn(211)")  # optional -- pari_seadata
-    [x^212 + (-y^7 + 5207*y^6 - 10241606*y^5 + 9430560101*y^4 - 4074860204015*y^3 + 718868274900397*y^2 - 34897101275826114*y + 104096378056356968)*x^211...
+    sage: pari("ellmodulareqn(211)")                            # optional - pari_seadata
+    [x^212 + (-y^7 + 5207*y^6 - 10241606*y^5 + 9430560101*y^4 - 4074860204015*y^3
+      + 718868274900397*y^2 - 34897101275826114*y + 104096378056356968)*x^211...
 
 The following requires the modular polynomials up to degree 223, while
 only those up to degree 199 come standard in Sage::
 
     sage: p = next_prime(2^328)
-    sage: E = EllipticCurve(GF(p), [6,1])
-    sage: E.cardinality()  # long time (108s on sage.math, 2013), optional -- pari_seadata
+    sage: E = EllipticCurve(GF(p), [6,1])                                               # needs sage.schemes
+    sage: E.cardinality()  # long time (108s on sage.math, 2013), optional - pari_seadata, needs sage.schemes
     546812681195752981093125556779405341338292357723293496548601032930284335897180749997402596957976244
 
 Create a number field with Galois group `A4`. Group `A4` corresponds to
 transitive group `(12,3)` in GAP::
 
+    sage: # optional - pari_galpol
     sage: R.<x> = PolynomialRing(ZZ)
-    sage: pol = pari("galoisgetpol(12,3)[1]")  # optional -- pari_galpol
-    sage: K.<a> = NumberField(R(pol))  # optional -- pari_galpol
-    sage: factor(K.discriminant())  # optional -- pari_galpol
+    sage: pol = pari("galoisgetpol(12,3)[1]")
+    sage: K.<a> = NumberField(R(pol))
+    sage: factor(K.discriminant())
     163^8
-    sage: [F.degree() for F,a,b in K.subfields()]  # optional -- pari_galpol
+    sage: [F.degree() for F,a,b in K.subfields()]
     [1, 3, 4, 4, 4, 4, 6, 6, 6, 12]
     sage: sorted([12/H.cardinality() for H in AlternatingGroup(4).subgroups()])
     [1, 3, 4, 4, 4, 4, 6, 6, 6, 12]

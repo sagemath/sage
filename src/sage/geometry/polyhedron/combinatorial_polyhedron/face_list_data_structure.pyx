@@ -9,7 +9,7 @@ Sorting of a list of faces.
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#****************************************************************************
+# ***************************************************************************
 
 cdef void sort_faces_list(face_list_t faces) noexcept:
     r"""

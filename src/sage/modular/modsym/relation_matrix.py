@@ -320,7 +320,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     basis_set = set(A.nonpivots())
     pivots = A.pivots()
 
-    basis_mod2 = set([j for j, c in mod if c != 0])
+    basis_mod2 = {j for j, c in mod if c != 0}
 
     basis_set = basis_set.intersection(basis_mod2)
     basis = sorted(basis_set)
@@ -333,7 +333,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     M = MatrixSpace(field, len(syms), len(basis), sparse=sparse)
 
     B = M(0)
-    cols_index = dict([(basis[i], i) for i in range(len(basis))])
+    cols_index = {basis[i]: i for i in range(len(basis))}
 
     for i in basis_mod2:
         t, l = search(basis, i)
