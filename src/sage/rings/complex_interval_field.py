@@ -36,18 +36,17 @@ heavily modified:
 # ****************************************************************************
 
 
-from sage.structure.parent import Parent
-from .integer_ring import ZZ
-from .rational_field import QQ
-from .ring import Field
-import sage.rings.abc
-from . import integer
-from . import complex_interval
 import weakref
-from .real_mpfi import RealIntervalField, RealIntervalField_class
-from .complex_mpfr import ComplexField
-from sage.misc.cachefunc import cached_method
 
+import sage.rings.abc
+from sage.misc.cachefunc import cached_method
+from sage.rings import complex_interval, integer
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfi import RealIntervalField, RealIntervalField_class
+from sage.rings.ring import Field
+from sage.structure.parent import Parent
 
 cache = {}
 def ComplexIntervalField(prec=53, names=None):

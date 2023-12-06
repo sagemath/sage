@@ -1645,7 +1645,7 @@ class IntegerPowerFunction():
         pi^2
         sage: square(I)                                                                 # needs sage.symbolic
         -1
-        sage: square(RIF(-1, 1)).str(style='brackets')
+        sage: square(RIF(-1, 1)).str(style='brackets')                                  # needs sage.rings.real_interval_field
         '[0.0000000000000000 .. 1.0000000000000000]'
         sage: IntegerPowerFunction(-1)
         (^(-1))
