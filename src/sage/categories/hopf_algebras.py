@@ -8,14 +8,14 @@ Hopf algebras
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from sage.misc.lazy_import import LazyImport
-from .category import Category
-from .category_types import Category_over_base_ring
 from sage.categories.bialgebras import Bialgebras
-from sage.categories.tensor import TensorProductsCategory  # tensor
+from sage.categories.category import Category
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.realizations import RealizationsCategory
 from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.tensor import TensorProductsCategory  # tensor
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
 
 
 class HopfAlgebras(Category_over_base_ring):

@@ -1534,17 +1534,17 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
             sage: f = y / x + x^2 / y + 3 * x^4 * y^-2
             sage: f.monomial_reduction()
-            (3*x^5 + x^3*y + y^3, 1/(x*y^2))
+            (3*x^5 + x^3*y + y^3, x^-1*y^-2)
             sage: f = y * x + x^2 / y + 3 * x^4 * y^-2
             sage: f.monomial_reduction()
-             (3*x^3 + y^3 + x*y, x/y^2)
+             (3*x^3 + y^3 + x*y, x*y^-2)
             sage: x.monomial_reduction()
             (1, x)
             sage: (y^-1).monomial_reduction()
-            (1, 1/y)
+            (1, y^-1)
         """
         self._normalize()
-        ring = self._parent._R
+        ring = self._parent
         g = ring.gens()
         mon = ring.prod(g[i] ** j for i, j in enumerate(self._mon))
         return (self._poly, mon)
@@ -1854,3 +1854,26 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if new_ring is not None:
             return new_ring(ans)
         return ans
+
+    @coerce_binop
+    def divides(self, other):
+        """
+        Check if ``self`` divides ``other``.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = LaurentPolynomialRing(QQ)
+            sage: f1 = x^-2*y^3 - 9 - 1/14*x^-1*y - 1/3*x^-1
+            sage: h = 3*x^-1 - 3*x^-2*y - 1/2*x^-3*y^2 - x^-3*y + x^-3
+            sage: f2 = f1 * h
+            sage: f3 = f2 + x * y
+            sage: f1.divides(f2)
+            True
+            sage: f1.divides(f3)
+            False
+            sage: f1.divides(3)
+            False
+        """
+        p = self.monomial_reduction()[0]
+        q = other.monomial_reduction()[0]
+        return p.divides(q)
