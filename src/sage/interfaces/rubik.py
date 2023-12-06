@@ -137,19 +137,20 @@ class OptimalSolver:
 
         EXAMPLES::
 
-            sage: from sage.interfaces.rubik import *    # optional - rubiks
-            sage: solver = DikSolver()                   # optional - rubiks
-            sage: solver = OptimalSolver()  # optional - rubiks # long time (28s on sage.math, 2012)
+            sage: # optional - rubiks
+            sage: from sage.interfaces.rubik import *
+            sage: solver = DikSolver()
+            sage: solver = OptimalSolver()      # long time (28s on sage.math, 2012)
             Initializing tables...
             Done.
-            sage: C = RubiksCube("R U")                  # optional - rubiks
-            sage: solver.solve(C.facets())               # optional - rubiks
+            sage: C = RubiksCube("R U")
+            sage: solver.solve(C.facets())
             'R  U'
-            sage: C = RubiksCube("R U F L B D")          # optional - rubiks
-            sage: solver.solve(C.facets())               # optional - rubiks
+            sage: C = RubiksCube("R U F L B D")
+            sage: solver.solve(C.facets())
             'R  U  F  L  B  D'
-            sage: C = RubiksCube("R2 D2")                # optional - rubiks
-            sage: solver.solve(C.facets())               # optional - rubiks
+            sage: C = RubiksCube("R2 D2")
+            sage: solver.solve(C.facets())
             'R2 D2'
         """
         self.ready()
@@ -193,21 +194,22 @@ class CubexSolver:
         """
         EXAMPLES::
 
-            sage: from sage.interfaces.rubik import *      # optional - rubiks
-            sage: C = RubiksCube("R U")                    # optional - rubiks
-            sage: CubexSolver().solve(C.facets())          # optional - rubiks
+            sage: # optional - rubiks
+            sage: from sage.interfaces.rubik import *
+            sage: C = RubiksCube("R U")
+            sage: CubexSolver().solve(C.facets())
             'R U'
-            sage: C = RubiksCube("R U F L B D")            # optional - rubiks
-            sage: sol = CubexSolver().solve(C.facets()); sol  # optional - rubiks
+            sage: C = RubiksCube("R U F L B D")
+            sage: sol = CubexSolver().solve(C.facets()); sol
             "U' L' L' U L U' L U D L L D' L' D L' D' L D L' U' L D' L' U L' B' U' L' U B L D L D' U' L' U L B L B' L' U L U' L' F' L' F L' F L F' L' D' L' D D L D' B L B' L B' L B F' L F F B' L F' B D' D' L D B' B' L' D' B U' U' L' B' D' F' F' L D F'"
-            sage: RubiksCube(sol) == C                     # optional - rubiks
+            sage: RubiksCube(sol) == C
             True
-            sage: C = RubiksCube("R2 F'")                  # optional - rubiks
-            sage: CubexSolver().solve(C.facets())          # optional - rubiks
+            sage: C = RubiksCube("R2 F'")
+            sage: CubexSolver().solve(C.facets())
             "R' R' F'"
-            sage: C = RubiksCube().scramble()              # optional - rubiks
-            sage: sol = CubexSolver().solve(C.facets())    # optional - rubiks
-            sage: C == RubiksCube(sol)                     # optional - rubiks
+            sage: C = RubiksCube().scramble()
+            sage: sol = CubexSolver().solve(C.facets())
+            sage: C == RubiksCube(sol)
             True
         """
         s = self.format_cube(facets)
@@ -245,15 +247,16 @@ class DikSolver:
         """
         EXAMPLES::
 
-            sage: from sage.interfaces.rubik import *   # optional - rubiks
-            sage: C = RubiksCube().move("R U")          # optional - rubiks
-            sage: DikSolver().solve(C.facets())         # optional - rubiks
+            sage: # optional - rubiks
+            sage: from sage.interfaces.rubik import *
+            sage: C = RubiksCube().move("R U")
+            sage: DikSolver().solve(C.facets())
             'R U'
-            sage: C = RubiksCube().move("R U F L B D")  # optional - rubiks
-            sage: DikSolver().solve(C.facets())         # optional - rubiks
+            sage: C = RubiksCube().move("R U F L B D")
+            sage: DikSolver().solve(C.facets())
             'R U F L B D'
-            sage: C = RubiksCube().move("R2 F'")        # optional - rubiks
-            sage: DikSolver().solve(C.facets())         # optional - rubiks
+            sage: C = RubiksCube().move("R2 F'")
+            sage: DikSolver().solve(C.facets())
             "R2 F'"
         """
         cube_str = self.format_cube(facets)

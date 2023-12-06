@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Quantum Clifford Algebras
 
