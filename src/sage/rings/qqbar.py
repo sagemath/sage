@@ -557,36 +557,52 @@ Check that :trac:`28530` is fixed::
 import itertools
 import operator
 
-import sage.rings.ring
 import sage.rings.abc
 import sage.rings.number_field.number_field_base
-from sage.misc.fast_methods import Singleton
+import sage.rings.ring
+from sage.arith.misc import factor
+from sage.categories.action import Action
 from sage.misc.cachefunc import cached_method
+from sage.misc.fast_methods import Singleton
 from sage.misc.lazy_string import lazy_string
 from sage.misc.misc import increase_recursion_limit
-from sage.structure.coerce import parent_is_numerical, parent_is_real_numerical
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import (richcmp, richcmp_method,
-                                    rich_to_bool, richcmp_not_equal,
-                                    op_EQ, op_NE, op_GT)
-from sage.rings.real_arb import RealBallField
-from sage.rings.real_mpfr import RR
-from sage.rings.real_mpfi import RealIntervalField, RIF, is_RealIntervalFieldElement, RealIntervalField_class
+from sage.rings import infinity
 from sage.rings.cc import CC
 from sage.rings.cif import CIF
-from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_interval import is_ComplexIntervalFieldElement
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field import (
+    CyclotomicField,
+    GaussianField,
+    NumberField,
+)
+from sage.rings.number_field.number_field_element_quadratic import (
+    NumberFieldElement_gaussian,
+)
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.rings.number_field.number_field import NumberField, GaussianField, CyclotomicField
-from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
-from sage.arith.misc import factor
-from . import infinity
-from sage.categories.action import Action
-
+from sage.rings.real_arb import RealBallField
+from sage.rings.real_mpfi import (
+    RIF,
+    RealIntervalField,
+    RealIntervalField_class,
+    is_RealIntervalFieldElement,
+)
+from sage.rings.real_mpfr import RR
+from sage.structure.coerce import parent_is_numerical, parent_is_real_numerical
 from sage.structure.global_options import GlobalOptions
+from sage.structure.richcmp import (
+    op_EQ,
+    op_GT,
+    op_NE,
+    rich_to_bool,
+    richcmp,
+    richcmp_method,
+    richcmp_not_equal,
+)
+from sage.structure.sage_object import SageObject
 
 
 class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
@@ -888,8 +904,8 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             1
 
         """
-        from sage.structure.factorization import Factorization
         from sage.interfaces.singular import singular
+        from sage.structure.factorization import Factorization
 
         if f.degree() == 0:
             return Factorization([], f.lc())
@@ -1973,8 +1989,8 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             sage: v                                 # random
             (0.4694381338921299?, -0.500000000000000? + 0.866025403784439?*I)
         """
-        from sage.rings.integer_ring import ZZ
         import sage.misc.prandom
+        from sage.rings.integer_ring import ZZ
         try:
             poly_degree = ZZ(poly_degree)
         except TypeError:
@@ -3437,7 +3453,7 @@ class AlgebraicGenerator(SageObject):
             return elt.field_element_value()
         gen = elt.generator()
         sp = gen.super_poly(self)
-        assert (not (sp is None))
+        assert (sp is not None)
         return self._field(elt.field_element_value().polynomial()(sp))
 
 
@@ -5313,7 +5329,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: QQbar(3/5 + 4/5*I).multiplicative_order()
             +Infinity
         """
-        if not (1 in CIF(self).norm()):
+        if 1 not in CIF(self).norm():
             return infinity.infinity
         if self.norm() != 1:
             return infinity.infinity
@@ -5797,7 +5813,7 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: AA(5).sqrt().multiplicative_order()
             +Infinity
         """
-        if not (1 in RIF(self).abs()):
+        if 1 not in RIF(self).abs():
             return infinity.infinity
         if self == 1:
             return 1
@@ -7384,7 +7400,7 @@ class ANRoot(ANDescr):
                 # Give up and fall back on root isolation.
                 return self._complex_isolate_interval(interval, prec)
 
-            if not (zero in slope):
+            if zero not in slope:
                 new_range = center - val / slope
                 interval = interval.intersection(new_range)
 
@@ -8585,7 +8601,6 @@ class ANBinaryExpr(ANDescr):
             1000
             sage: sys.setrecursionlimit(old_recursion_limit)
         """
-        import sys
         with increase_recursion_limit(10):
             left = self._left
             right = self._right
@@ -8814,5 +8829,6 @@ def get_AA_golden_ratio():
 
 # Support Python's numbers abstract base class
 import numbers
+
 numbers.Real.register(AlgebraicReal)
 numbers.Complex.register(AlgebraicNumber)

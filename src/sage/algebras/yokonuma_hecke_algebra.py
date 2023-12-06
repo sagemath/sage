@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Yokonuma-Hecke Algebras
 

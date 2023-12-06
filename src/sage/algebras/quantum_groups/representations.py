@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Quantum Group Representations
 

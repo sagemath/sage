@@ -50,7 +50,7 @@ AUTHOR:
 - Jonathan Kliem (2019-04)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -58,11 +58,10 @@ AUTHOR:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
-from .conversions \
-        import facets_tuple_to_bit_rep_of_facets, \
-               facets_tuple_to_bit_rep_of_Vrep
+from .conversions import (facets_tuple_to_bit_rep_of_facets,
+                          facets_tuple_to_bit_rep_of_Vrep)
 
 from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport bit_rep_to_Vrep_list
 
@@ -166,7 +165,6 @@ cdef class PolyhedronFaceLattice:
             self.atoms = face_iter.atoms
             self.coatoms = face_iter.coatoms
 
-        cdef size_t n_atoms = self.atoms.n_faces()
         self.atom_rep = <size_t *> check_allocarray(self.coatoms.n_atoms(), sizeof(size_t))
         self.coatom_rep = <size_t *> check_allocarray(self.coatoms.n_faces(), sizeof(size_t))
 
@@ -361,7 +359,6 @@ cdef class PolyhedronFaceLattice:
             ....:     face.ambient_V_indices() for face in it)
             True
         """
-        cdef size_t length
         if self.dual:
             # if dual, the Vrepresentation corresponds to the coatom-representation
             dimension = self.dimension - 1 - dimension  # if dual, the dimensions are reversed
@@ -376,9 +373,9 @@ cdef class PolyhedronFaceLattice:
         This is a shortcut of :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace.set_coatom_rep`
         """
         if unlikely(dimension < -1 or dimension > self.dimension):
-            raise ValueError("no face of dimension %s"%dimension)
+            raise ValueError("no face of dimension %s" % dimension)
         if unlikely(index >= self.f_vector[dimension + 1]):
-            raise IndexError("no %s-th face of dimension %s"%(index, dimension))
+            raise IndexError("no %s-th face of dimension %s" % (index, dimension))
         if unlikely(self.coatoms.n_faces() == 0):
             return 0
 
@@ -394,9 +391,9 @@ cdef class PolyhedronFaceLattice:
         This is a shortcut of :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace.set_atom_rep`
         """
         if unlikely(dimension < -1 or dimension > self.dimension):
-            raise ValueError("no face of dimension %s"%dimension)
+            raise ValueError("no face of dimension %s" % dimension)
         if unlikely(index >= self.f_vector[dimension + 1]):
-            raise IndexError("no %s-th face of dimension %s"%(index, dimension))
+            raise IndexError("no %s-th face of dimension %s" % (index, dimension))
 
         cdef face_t face = self.faces[dimension+1].faces[index]
         return bit_rep_to_Vrep_list(face, self.atom_rep)
@@ -412,13 +409,12 @@ cdef class PolyhedronFaceLattice:
         with empty and full polyhedron are implemented, which suffices for the
         face-lattice.
         """
-        cdef size_t i
         if dimension_one == self.dimension:
             # The full polyhedron is incident to every face.
             if dimension_two < -1:
-                raise ValueError("no faces of dimension %s"%dimension_two)
+                raise ValueError("no faces of dimension %s" % dimension_two)
             if dimension_two > self.dimension:
-                raise ValueError("no faces of dimension %s"%dimension_two)
+                raise ValueError("no faces of dimension %s" % dimension_two)
             self.incidence_dim_one = dimension_one
             self.incidence_dim_two = dimension_two
             self.incidence_counter_one = 0
@@ -429,9 +425,9 @@ cdef class PolyhedronFaceLattice:
         if dimension_two == -1:
             # The empty polyhedron is incident to every face.
             if dimension_one < -1:
-                raise ValueError("no faces of dimension %s"%dimension_two)
+                raise ValueError("no faces of dimension %s" % dimension_two)
             if dimension_one > self.dimension:
-                raise ValueError("no faces of dimension %s"%dimension_two)
+                raise ValueError("no faces of dimension %s" % dimension_two)
             self.incidence_dim_one = dimension_one
             self.incidence_dim_two = dimension_two
             self.incidence_counter_one = 0
@@ -444,9 +440,9 @@ cdef class PolyhedronFaceLattice:
             # At the moment, this is not implemented.
 
         if dimension_one > self.dimension:
-            raise ValueError("no faces of dimension %s"%dimension_one)
+            raise ValueError("no faces of dimension %s" % dimension_one)
         if dimension_two < -1:
-            raise ValueError("no faces of dimension %s"%dimension_two)
+            raise ValueError("no faces of dimension %s" % dimension_two)
 
         self.incidence_dim_one = dimension_one
         self.incidence_dim_two = dimension_two

@@ -1,8 +1,14 @@
 cd src
 
+NAUTY_CONFIGURE=""
+
+if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+   NAUTY_CONFIGURE+="--enable-generic --disable-popcnt"
+fi
+
 # Nauty doesn't have an install target; passing a prefix to configure is
 # useless (but harmless)
-sdh_configure CC="$CC -fPIC"
+sdh_configure CC="$CC -fPIC" $NAUTY_CONFIGURE
 sdh_make
 
 # No install target so we resort to manual copy
