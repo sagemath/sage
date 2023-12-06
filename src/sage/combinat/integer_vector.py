@@ -780,7 +780,6 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
                 return False
         return True
 
-
 class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     """
     Class of all integer vectors.
@@ -1164,6 +1163,18 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
 
         return r
 
+    def cardinality(self):
+        """
+            TESTS::
+            sage: IntegerVectors(200,5)
+            70058751            
+        """
+        from sage.arith.misc import binomial
+                
+        n = self.n
+        k = self.k
+        
+        return binomial(n + k - 1, k - 1)
 
 class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
     r"""
