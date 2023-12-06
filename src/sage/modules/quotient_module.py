@@ -19,10 +19,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .free_module import (Module_free_ambient,
-                          FreeModule_ambient,
-                          FreeModule_ambient_field)
-
+from sage.modules.free_module import (
+    FreeModule_ambient,
+    FreeModule_ambient_field,
+    Module_free_ambient,
+)
 
 ###############################################################################
 #

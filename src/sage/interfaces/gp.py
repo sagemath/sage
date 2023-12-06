@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari
 r"""
 Interface to the GP calculator of PARI/GP
 
@@ -792,6 +792,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: pi_def = gp(pi); pi_def
             3.141592653589793238462643383                  # 32-bit
             3.1415926535897932384626433832795028842        # 64-bit
@@ -882,13 +883,14 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
-            sage: gp(SR(I)).sage()
+            sage: gp(SR(I)).sage()                                                      # needs sage.symbolic
             i
-            sage: gp(SR(I)).sage().parent()
+            sage: gp(SR(I)).sage().parent()                                             # needs sage.symbolic
             Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         ::
 
+            sage: # needs sage.modules
             sage: M = Matrix(ZZ,2,2,[1,2,3,4]); M
             [1 2]
             [3 4]
@@ -960,6 +962,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: z = gp(SR(1+15*I)); z
             1 + 15*I
             sage: z._complex_mpfr_field_(CC)
@@ -982,7 +985,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
-            sage: CDF(gp(pi+I*e))
+            sage: CDF(gp(pi+I*e))                                                       # needs sage.symbolic
             3.141592653589793 + 2.718281828459045*I
         """
         # Retrieving values from another computer algebra system is
