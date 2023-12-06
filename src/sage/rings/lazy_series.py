@@ -6219,7 +6219,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         whose labels are the set of all `G`-structures on `A`.
 
         The Frobenius character (or cycle index series) of `F \Box G`
-        can be computed as follows, see section 2.2 of [BLL]_):
+        can be computed as follows, see section 2.2 of [BLL1998]_):
 
         .. MATH::
 

@@ -4,6 +4,7 @@ from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure      
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure  cimport face_list_t
 from sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face        cimport CombinatorialFace
 
+
 @cython.final
 cdef class PolyhedronFaceLattice:
     cdef int dimension              # dimension of Polyhedron

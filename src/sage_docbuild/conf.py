@@ -296,7 +296,7 @@ def set_intersphinx_mappings(app, config):
     intersphinx.normalize_intersphinx_mapping(app, config)
 
 
-# By default document are not master.
+# By default document is master.
 multidocs_is_master = True
 
 # https://sphinx-copybutton.readthedocs.io/en/latest/use.html
