@@ -1,4 +1,4 @@
-# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: libraries = gmp flint
 # distutils: depends = arb_hypgeom.h
 
 from sage.libs.flint.types cimport fmpz_t

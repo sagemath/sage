@@ -67,7 +67,7 @@ from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
 import sage.rings.ring as ring
 import sage.rings.abc
-from . import integer_mod
+from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
 import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring
