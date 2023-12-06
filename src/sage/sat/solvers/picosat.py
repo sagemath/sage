@@ -147,12 +147,13 @@ class PicoSAT(SatSolver):
 
         EXAMPLES::
 
+            sage: # optional - pycosat
             sage: from sage.sat.solvers.picosat import PicoSAT
-            sage: solver = PicoSAT()                       # optional - pycosat
-            sage: solver.add_clause((1,2))                 # optional - pycosat
-            sage: solver.add_clause((-1,2))                # optional - pycosat
-            sage: solver.add_clause((-1,-2))               # optional - pycosat
-            sage: solver()                                 # optional - pycosat
+            sage: solver = PicoSAT()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((-1,-2))
+            sage: solver()
             (None, False, True)
 
             sage: solver.add_clause((1,-2))                # optional - pycosat
@@ -207,13 +208,14 @@ class PicoSAT(SatSolver):
 
         DIMACS format output::
 
+            sage: # optional - pycosat
             sage: from sage.sat.solvers.picosat import PicoSAT
-            sage: solver = PicoSAT()                       # optional - pycosat
-            sage: solver.add_clause((1, 2, 4))             # optional - pycosat
-            sage: solver.add_clause((1, 2, -4))            # optional - pycosat
-            sage: fn = tmp_filename()                      # optional - pycosat
-            sage: solver.clauses(fn)                       # optional - pycosat
-            sage: print(open(fn).read())                   # optional - pycosat
+            sage: solver = PicoSAT()
+            sage: solver.add_clause((1, 2, 4))
+            sage: solver.add_clause((1, 2, -4))
+            sage: fn = tmp_filename()
+            sage: solver.clauses(fn)
+            sage: print(open(fn).read())
             p cnf 4 2
             1 2 4 0
             1 2 -4 0

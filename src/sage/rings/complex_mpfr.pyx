@@ -46,11 +46,11 @@ from sage.misc.sage_eval import sage_eval
 
 import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
-from . import infinity
-from .integer cimport Integer
+from sage.rings import infinity
+from sage.rings.integer cimport Integer
 
-from .complex_double cimport ComplexDoubleElement
-from .real_mpfr cimport RealNumber
+from sage.rings.complex_double cimport ComplexDoubleElement
+from sage.rings.real_mpfr cimport RealNumber
 from sage.libs.gsl.complex cimport *
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval

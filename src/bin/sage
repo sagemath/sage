@@ -453,8 +453,8 @@ usage_advanced() {
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
         echo "  --tox [options] <files|dirs> -- general entry point for testing"
         echo "                                  and linting of the Sage library"
-        echo "     -e <envlist>     -- run specific test environments"
-        echo "                         (default: run all except full pycodestyle)"
+        echo "     -e <envlist>     -- run specific test environments; default:"
+        echo "                         $(echo $(tox -c "$SAGE_SRC" --listenvs 2>/dev/null) | sed 's/ /,/g;')"
         tox -c "$SAGE_SRC" --listenvs-all -v 2>/dev/null | sed -n '/->/s/^/        /;s/(/\
                                   (/;s/->/   --/p;'
         echo "     -p auto          -- run test environments in parallel"
@@ -482,10 +482,13 @@ usage_advanced() {
         echo "  --fixdoctests file.py"
         echo "                      -- Run doctests and replace output of failing doctests"
         echo "                         with actual output."
-        echo "  --fiximports <files|dir>"
+        echo "  --fiximports <files|dirs>"
         echo "                      -- Replace imports from sage.PAC.KAGE.all by specific"
         echo "                         imports when sage.PAC.KAGE is an implicit namespace"
         echo "                         package"
+        echo "  --fixdistributions <files|dirs>"
+        echo "                      -- Check or update '# sage_setup: distribution'"
+        echo "                         directives in source files"
     fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"
@@ -984,6 +987,11 @@ fi
 if [ "$1" = '-fiximports' -o "$1" = '--fiximports' ]; then
     shift
     exec sage-python -m sage.misc.replace_dot_all "$@"
+fi
+
+if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then
+    shift
+    exec sage-python -m sage.misc.package_dir "$@"
 fi
 
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
