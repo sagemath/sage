@@ -1,6 +1,7 @@
 cimport cython
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport face_list_t, face_t
 
+
 @cython.final
 cdef class ListOfFaces:
     # ``data`` points to the raw data.
