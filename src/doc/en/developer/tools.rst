@@ -48,8 +48,8 @@ available::
   ...
   --tox [options] <files|dirs> -- general entry point for testing
                                   and linting of the Sage library
-     -e <envlist>     -- run specific test environments
-                         (default: run all except full pycodestyle)
+     -e <envlist>     -- run specific test environments; default:
+                         doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst
         doctest                -- run the Sage doctester
                                   (same as "sage -t")
         coverage               -- give information about doctest coverage of files
@@ -59,11 +59,13 @@ available::
         pycodestyle-minimal    -- check against Sage's minimal style conventions
         relint                 -- check whether some forbidden patterns appear
                                   (includes all patchbot pattern-exclusion plugins)
-        rst                    -- validate Python docstrings markup as reStructuredText
         codespell              -- check for misspelled words in source code
-        cython-lint            -- Check Cython files for code style
+        rst                    -- validate Python docstrings markup as reStructuredText
+        coverage.py            -- run the Sage doctester with Coverage.py
+        coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
         pyright                -- run the static typing checker pyright
         pycodestyle            -- check against the Python style conventions of PEP8
+        cython-lint            -- check Cython files for code style
      -p auto          -- run test environments in parallel
      --help           -- show tox help
 
@@ -71,22 +73,64 @@ available::
 Doctest
 =======
 
-The command ``./sage -tox -e doctest`` requires that Sage has been
-built already.  ``doctest`` is a special tox environment that runs the
-Sage doctester in the normal Sage environment.  This is equivalent to
-using the command ``./sage -t``; see :ref:`chapter-doctesting`.
+The command ``./sage -tox -e doctest`` runs the Sage doctester. This is
+equivalent to using the command ``./sage -t``; see :ref:`chapter-doctesting`.
 
+.. NOTE::
+
+   ``doctest`` is a special tox environment that requires that Sage has
+   been built already. A virtual environment is created by tox, but
+   Sage is invoked in the normal Sage environment.
+
+
+.. _section-tools-coverage-py:
+
+Doctest with Coverage.py
+========================
+
+The command ``./sage -tox -e coverage.py`` runs the Sage doctester
+(:ref:`chapter-doctesting`) in the normal Sage environment, but
+under the control of
+`Coverage.py <https://coverage.readthedocs.io/en/latest/index.html>`_
+for code coverage analysis.
+
+If invoked as ``./sage -tox -e coverage.py-html``, additionally a
+detailed HTML report is generated.
+
+*Configuration:* ``[coverage:run]`` block in ``SAGE_ROOT/src/tox.ini``
+
+*Documentation:* https://coverage.readthedocs.io
+
+.. NOTE::
+
+   ``coverage.py`` is a special tox environment that requires that Sage has
+   been built already. A virtual environment is created by tox, but the
+   **coverage** package is installed into the normal Sage environment, and
+   Sage is invoked from there.
 
 .. _section-tools-coverage:
 
 Coverage
 ========
 
-The command ``./sage -tox -e coverage`` requires that Sage has been
-built already.  ``coverage`` is a special tox environment that is
-equivalent to using the command ``./sage --coverageall`` (if no
-arguments are provided) or ``./sage --coverage`` (if arguments are
-provided).
+The command ``./sage -tox -e coverage`` checks that each function has
+at least one doctest (typically in an **EXAMPLES** or **TESTS** block,
+see :ref:`section-docstring-function`).
+
+Without additional arguments, this command is equivalent to using the
+command ``./sage --coverageall`` and gives a short report with a one-line
+summary for each module of the Sage library.
+
+If invoked with arguments, for example ``./sage -tox -e coverage
+-- src/sage/geometry src/sage/combinat/tableau.py``, it is equivalent to
+using the command ``./sage --coverage``, which includes details on
+the modules in the given files or directories.
+
+.. NOTE::
+
+   ``coverage`` is a special tox environment that requires that Sage has been
+   built already. A virtual environment is created by tox, but
+   Sage is invoked in the normal Sage environment.
 
 
 .. _section-tools-startuptime:
@@ -94,9 +138,23 @@ provided).
 Startuptime
 ===========
 
-The command ``./sage -tox -e startuptime`` requires that Sage has been
-built already.  ``startuptime`` is a special tox environment that is
+The command ``./sage -tox -e startuptime`` measures the time for loading
+each module that is imported during the start up phase of Sage. It is
 equivalent to using the command ``./sage --startuptime``.
+
+Without additional arguments, the command gives a short report that lists
+the modules with the longest contributions to the overall startup time,
+sorted by time.
+
+If invoked with arguments, for example ``sage -tox -e startuptime -- sage.rings
+src/sage/geometry/polyhedron``, it provides details on the given modules, packages,
+source files, or directories.
+
+.. NOTE::
+
+   ``startuptime`` is a special tox environment that requires that Sage has been
+   built already. A virtual environment is created by tox, but
+   Sage is invoked in the normal Sage environment.
 
 
 .. _section-tools-pycodestyle:

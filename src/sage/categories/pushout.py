@@ -27,9 +27,9 @@ Coercion via construction functors
 
 import operator
 
+from sage.categories.functor import Functor, IdentityFunctor_generic
 from sage.misc.lazy_import import lazy_import
 from sage.structure.coerce_exceptions import CoercionException
-from .functor import Functor, IdentityFunctor_generic
 
 lazy_import('sage.categories.commutative_additive_groups', 'CommutativeAdditiveGroups')
 lazy_import('sage.categories.commutative_rings', 'CommutativeRings')
@@ -902,7 +902,9 @@ class PolynomialFunctor(ConstructionFunctor):
                       From: Integer Ring
                       To:   Finite Field of size 3
         """
-        from sage.rings.polynomial.polynomial_ring_homomorphism import PolynomialRingHomomorphism_from_base
+        from sage.rings.polynomial.polynomial_ring_homomorphism import (
+            PolynomialRingHomomorphism_from_base,
+        )
         R = self._apply_functor(f.domain())
         S = self._apply_functor(f.codomain())
         return PolynomialRingHomomorphism_from_base(R.Hom(S), f)
@@ -1329,7 +1331,9 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
             Infinite polynomial ring in a, b, x over Univariate Polynomial Ring in t over Rational Field
 
         """
-        from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+        from sage.rings.polynomial.infinite_polynomial_ring import (
+            InfinitePolynomialRing,
+        )
         return InfinitePolynomialRing(R, self._gens, order=self._order, implementation=self._imple)
 
     def _repr_(self):
@@ -1795,7 +1799,9 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
 
         """
         from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
+        from sage.rings.polynomial.laurent_polynomial_ring_base import (
+            LaurentPolynomialRing_generic,
+        )
         if self.multi_variate and isinstance(R, LaurentPolynomialRing_generic):
             return LaurentPolynomialRing(R.base_ring(), list(R.variable_names()) + [self.var])
         else:
@@ -2474,8 +2480,8 @@ class FractionField(ConstructionFunctor):
             sage: F(ZZ['t'])
             Fraction Field of Univariate Polynomial Ring in t over Integer Ring
         """
-        from sage.categories.integral_domains import IntegralDomains
         from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
         Functor.__init__(self, IntegralDomains(), Fields())
 
     def _apply_functor(self, R):
@@ -3383,8 +3389,8 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
             3-adic Eisenstein Extension Field in a defined by a^2 - 3
 
         """
-        from sage.rings.rational_field import QQ
         from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
         if self.cyclotomic:
             from sage.rings.number_field.number_field import CyclotomicField
             if R == QQ:

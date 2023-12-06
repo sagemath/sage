@@ -761,7 +761,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         elif (gamma.is_reflection()):
             return self._ep * (t/QQbar(I))**self._weight
         else:
-            L = [v for v in gamma.word_S_T()[0]]
+            L = list(gamma.word_S_T()[0])
             aut_f = ZZ(1)
             while (len(L) > 0):
                 M = L.pop(-1)
@@ -1857,7 +1857,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                 return A
 
             B = A
-            A = A.delete_rows([r for r in range(column_size + (row_size-column_size)//2 - 1, row_size)])
+            A = A.delete_rows(list(range(column_size + (row_size-column_size)//2 - 1, row_size)))
 
         # Next we simply delete row by row. Note that A is still modified here...
         while (B.rank() == column_size):
