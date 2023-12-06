@@ -33,7 +33,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import category
+from sage.categories import category
 
 
 def _Functor_unpickle(Cl, D, domain, codomain):

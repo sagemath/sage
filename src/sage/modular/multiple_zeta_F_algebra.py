@@ -121,7 +121,7 @@ def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
          (3, 11)]
     """
     if n == 0:
-        yield tuple()
+        yield ()
         return
     if n % 2 and n >= start:
         yield (n,)

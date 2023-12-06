@@ -118,7 +118,7 @@ from sage.misc.derivative import multi_derivative
 from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
 from sage.arith.functions import lcm
 
-from . import polynomial_fateman
+from sage.rings.polynomial import polynomial_fateman
 
 from sage.rings.ideal import is_Ideal
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
@@ -182,7 +182,7 @@ cpdef is_Polynomial(f) noexcept:
 
     return isinstance(f, Polynomial)
 
-from .polynomial_compiled cimport CompiledPolynomialFunction
+from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunction
 
 from sage.rings.polynomial.polydict cimport ETuple
 
@@ -11055,10 +11055,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = Zmod(6)[]
             sage: p = 4*x + 3
             sage: q = 5*x**2 + x + 2
+            sage: q.divides(p)
+            False
             sage: p.divides(q)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: divisibility test only implemented for polynomials over an integral domain
+            False
 
         TESTS::
 
@@ -11081,16 +11081,24 @@ cdef class Polynomial(CommutativePolynomial):
             sage: q = (y^2-x^2) * z^2 + z + x-y
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
+            sage: R.<x> = Zmod(6)[]
+            sage: p = 4*x + 3
+            sage: q = 2*x**2 + x + 2
+            sage: p.divides(q)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms
         """
-        if not self.base_ring().is_integral_domain():
-            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain")
-
-        if p.is_zero(): return True          # everything divides 0
-        if self.is_zero(): return False      # 0 only divides 0
+        if p.is_zero():
+            return True          # everything divides 0
+        if self.is_zero():
+            return False      # 0 only divides 0
         try:
-            if self.is_unit(): return True   # units divide everything
+            if self.is_unit():
+                return True   # units divide everything
         except NotImplementedError:
-            if self.is_one(): return True    # if is_unit is not implemented
+            if self.is_one():
+                return True    # if is_unit is not implemented
 
         if self.degree() > p.degree():
             return False
@@ -11098,10 +11106,13 @@ cdef class Polynomial(CommutativePolynomial):
         if not self.leading_coefficient().divides(p.leading_coefficient()):
             return False
 
+        if not self.base_ring().is_integral_domain():
+            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms")
+
         try:
             return (p % self).is_zero()      # if quo_rem is defined
         except ArithmeticError:
-            return False                     # if division is not exact
+            return False
 
     def specialization(self, D=None, phi=None):
         r"""

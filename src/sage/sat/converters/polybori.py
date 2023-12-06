@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.polynomial.pbori
 """
 An ANF to CNF Converter using a Dense/Sparse Strategy
 
