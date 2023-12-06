@@ -290,8 +290,9 @@ class Application(object):
         if pypi:
             if source is None:
                 try:
-                    source = 'wheel'
-                    if not PyPiVersion(package_name, source='wheel').tarball.endswith('-none-any.whl'):
+                    if PyPiVersion(package_name, source='wheel').tarball.endswith('-none-any.whl'):
+                        source = 'wheel'
+                    else:
                         source = 'normal'
                 except PyPiError:
                     source = 'normal'
