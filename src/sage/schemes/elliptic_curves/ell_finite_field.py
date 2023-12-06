@@ -2424,21 +2424,21 @@ def special_supersingular_curve(F, *, endomorphism=False):
 
     Such a curve
 
-    - has coefficients in `\FF_p`;
+    - has coefficients in `\mathbb F_p`;
 
-    - has group structure `E(\FF_p) \cong \ZZ/(p+1)` and
-      `E(\FF_{p^2}) \cong \ZZ/(p+1) \times \ZZ/(p+1)`;
+    - has group structure `E(\mathbb F_p) \cong \ZZ/(p+1)` and
+      `E(\mathbb F_{p^2}) \cong \ZZ/(p+1) \times \ZZ/(p+1)`;
 
     - has an endomorphism `\vartheta` of small degree `q` that
-      anticommutes with the `\FF_p`-Frobenius on `E`.
+      anticommutes with the `\mathbb F_p`-Frobenius on `E`.
 
     (The significance of `\vartheta` is that any such endomorphism,
-    together with the `\FF_p`-Frobenius, generates the endomorphism
-    algebra `\End(E) \otimes \QQ`.)
+    together with the `\mathbb F_p`-Frobenius, generates the endomorphism
+    algebra `\mathrm{End}(E) \otimes \QQ`.)
 
     INPUT:
 
-    - ``F`` -- finite field `\FF_{p^r}`;
+    - ``F`` -- finite field `\mathbb F_{p^r}`;
 
     - ``endomorphism`` -- boolean (optional, default ``False``):
       When set to ``True``, it is required that `2 \mid r`, and
