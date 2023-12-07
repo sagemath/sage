@@ -28,10 +28,6 @@ from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
 from sage.combinat.enumeration_mod_permgroup import is_canonical, orbit, canonical_children, canonical_representative_of_orbit_of
 
 from sage.combinat.integer_vector import IntegerVectors
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.rational_field import QQ
-from sage.rings.integer import Integer
-from sage.misc.misc_c import prod
 
 
 class IntegerVectorsModPermutationGroup(UniqueRepresentation):
@@ -792,27 +788,73 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         EXAMPLES::
 
+        With a trivial group all vectors are canonical.
+
             sage: G = PermutationGroup([], domain=[1,2,3])
             sage: IntegerVectorsModPermutationGroup(G, 5).cardinality()
             21
+            sage: IntegerVectors(5, 3).cardinality()
+            21
+
+        With two symmetric elements that sum to 1000, the second
+        element ranges from 0 to 500.
 
             sage: G = PermutationGroup([(1,2)])
             sage: IntegerVectorsModPermutationGroup(G, 1000).cardinality()
             501
+
+        Both kinds of constraints, sum and maximum part, can be
+        applied at the same time.
 
             sage: G = PermutationGroup([(1,2,3)])
             sage: I = IntegerVectorsModPermutationGroup(G, sum=10, max_part=5)
             sage: I.cardinality()
             7
 
+        With full symmetry, no sum constraint, and maximum part 1,
+        each canonical vector is some ones (0 to ``max_part`` of
+        them), followed by some zeros.
+
             sage: G = SymmetricGroup(10)
             sage: I = IntegerVectorsModPermutationGroup(G, max_part=1)
             sage: I.cardinality()
             11
+
+        TESTS::
+
+        In these tests we always supply the ``sgs`` argument to avoid
+        :issue:`36814` which could otherwise cause the wrong group to
+        be used.
+
+        Check that :issue:`36681` is fixed.
+
+            sage: G = PermutationGroup([], domain=[])
+            sage: sgs = tuple(tuple(t) for t in G.strong_generating_system())
+            sage: V = IntegerVectorsModPermutationGroup(G, sum=1, sgs=sgs)
+            sage: V.cardinality()
+            0
+
+        Check that all permutation groups of degree 4 work with sum 10
+        and/or maximum part 3, by comparing to the explicit listing.
+
+        sage: for G in SymmetricGroup(4).subgroups():
+        ....:     sgs = tuple(tuple(t) for t in G.strong_generating_system())
+        ....:     I1 = IntegerVectorsModPermutationGroup(G, sum=10, sgs=sgs)
+        ....:     assert I1.cardinality() == len(list(I1))
+        ....:     I2 = IntegerVectorsModPermutationGroup(G, max_part=3, sgs=sgs)
+        ....:     assert I2.cardinality() == len(list(I2))
+        ....:     I3 = IntegerVectorsModPermutationGroup(G, sum=10, max_part=3, sgs=sgs)
+        ....:     assert I3.cardinality() == len(list(I3))
+
         """
+        from sage.rings.power_series_ring import PowerSeriesRing
+        from sage.rings.rational_field import QQ
+        from sage.rings.integer import Integer
+        from sage.misc.misc_c import prod
+
         G = self._permgroup
         k = G.degree()          # Vector length
-        d = self._sum           # Required total
+        d = self._sum           # Required sum
         m = self._max_part      # Max of one entry, -1 for no limit
         if m == -1:
             m = d               # Any entry cannot exceed total
@@ -823,39 +865,37 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             else:
                 return Integer(0)
 
-        if d is None:
-            # No fixed sum, so sum could be anything up to k*m
-            dmax = k*m
-        else:
-            # Fixed sum
-            dmax = d
+        # Cardinality is computed using the Cycle Index Theorem.  We
+        # have two cases.  With a fixed sum d we work with power
+        # series and extract the x^d coefficient.  Without a fixed sum
+        # we can do it easier with integer arithmetic.
+        Z = G.cycle_index()
 
-        # Power series with enough precision that x^dmax is valid.
-        R = PowerSeriesRing(QQ, 'x', default_prec=dmax+1)
+        if d is None:
+            # Case 1.  Without a fixed sum, the sum can be up to k*m.
+            result = sum(coeff * (m+1)**len(cycle_type)
+                         for cycle_type, coeff in Z)
+            # Computed as Rational, but should have an integer value
+            # by now.
+            return Integer(result)
+
+        # Case 2.  Fixed sum d.  Work with power series with enough
+        # precision that x^d is valid.
+        R = PowerSeriesRing(QQ, 'x', default_prec=d+1)
         x = R.gen()
 
-        # Cardinality is computed using the Cycle Index Theorem.
-        # The figure-counting series, for maximum part size m, is
-        # (1-t**(m+1)) / (1-t) = 1+t+...+t**m.
-        # For function-counting series, we substitute x**cyclen for t.
+        # The figure-counting series, for max_part==m, is (1-t**(m+1))
+        # / (1-t) = 1+t+...+t**m.  For the function-counting series,
+        # we substitute x**cycle_length for t.
         #
-        # If there is no fixed sum requirement, we sum over the
-        # possible sums.
-        Z = G.cycle_index()
         funcount = sum(
-            prod((1 - x**((m+1)*cyclen)) / (1 - x**cyclen)
-                        for cyclen in cyctype)
-            * coeff
-            for (cyctype, coeff) in Z)
+            coeff * prod((1 - x**((m+1)*cycle_len)) / (1 - x**cycle_len)
+                         for cycle_len in cycle_type)
+            for cycle_type, coeff in Z)
 
-        if d is None:
-            # No fixed sum, so add up all coeffients to dmax.
-            # Computed as Rational but should have integer value.
-            return Integer(sum(funcount[i] for i in range(dmax+1)))
-        else:
-            # Fixed sum, extract just the d'th coefficient.
-            # Computed as Rational but should have integer value.
-            return Integer(funcount[d])
+        # Extract the d'th degree coefficient.  Computed as Rational,
+        # but should have an integer value by now.
+        return Integer(funcount[d])
 
     def is_canonical(self, v, check=True):
         r"""
