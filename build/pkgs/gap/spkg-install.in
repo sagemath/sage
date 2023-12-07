@@ -44,6 +44,15 @@ sdh_install \
     pkg/tomlib \
     "$GAP_ROOT"/pkg
 
+# Finally, install packagemanager for the people who reject both
+# sage's and their system's package managers. We have to create
+# the local bin directory first:
+#
+#   https://github.com/gap-packages/PackageManager/issues/105
+#
+mkdir -p "$SAGE_LOCAL/lib/gap/bin"
+sdh_install pkg/packagemanager "$GAP_ROOT"/pkg
+
 # TODO: This seems unnecessary--we are already installing all of doc/ to
 # GAP_ROOT, which is necessary for some functionality in GAP to work.  Do
 # we need this?  Maybe doc/gap could just be a symlink to gap/doc??

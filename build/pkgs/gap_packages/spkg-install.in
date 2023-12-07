@@ -33,9 +33,6 @@ PKG_DIR="$SAGE_LOCAL/lib/gap/pkg"
 PKG_SRC_DIR="$(pwd)/src/pkg"
 cd "$PKG_SRC_DIR"
 
-# The 'packagemanager' package expects this https://github.com/gap-packages/PackageManager/issues/105
-mkdir -p "$SAGE_LOCAL/lib/gap/bin"
-
 # directly install pure GAP packages
 #
 #    happrime - no longer distributed, partly merged in Hap,
@@ -61,7 +58,6 @@ sdh_install \
     liering \
     loops \
     mapclass \
-    packagemanager \
     polymaking \
     qpa \
     quagroup \
