@@ -72,9 +72,9 @@ from sage.structure.richcmp cimport rich_to_bool_sgn
 import sage.rings.rational_field
 
 cimport sage.rings.integer as integer
-from .integer cimport Integer
+from sage.rings.integer cimport Integer
 
-from .integer_ring import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.structure.coerce cimport is_numpy_type
 

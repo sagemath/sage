@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs sage.groups
 r"""
 This file contains doctests for the Chapter "k-Schur function primer"
 for the book "k-Schur functions and affine Schubert calculus"
@@ -83,16 +84,17 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 398::
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 406::
 
-    sage: w = W.an_element(); w         # long time
+    sage: # long time
+    sage: w = W.an_element(); w
     [ 2  0  0  1 -2]
     [ 2  0  0  0 -1]
     [ 1  1  0  0 -1]
     [ 1  0  1  0 -1]
     [ 1  0  0  1 -1]
-    sage: w.reduced_word()              # long time
+    sage: w.reduced_word()
     [0, 1, 2, 3, 4]
-    sage: w = W.from_reduced_word([2,1,0]) # long time
-    sage: w.is_affine_grassmannian()       # long time
+    sage: w = W.from_reduced_word([2,1,0])
+    sage: w.is_affine_grassmannian()
     True
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 464::
@@ -576,8 +578,8 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 3962::
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 4055::
 
-    sage: t = var('t')
-    sage: for mu in Partitions(5):
+    sage: t = var('t')                                                                  # needs sage.symbolic
+    sage: for mu in Partitions(5):                                                      # needs sage.symbolic
     ....:     print("{} {}".format(mu, sum(t^T.spin() for T in StrongTableaux(3,[4,1,1],mu))))
     [5] 0
     [4, 1] t

@@ -2118,8 +2118,10 @@ class IntegralAffineCurve(AffineCurve_field):
 
         INPUT:
 
-        - ``f`` -- an element of the coordinate ring of either the curve or its
-          ambient space.
+        - ``f`` -- an element of the fraction field of the coordinate ring of
+          the ambient space or the coordinate ring of the curve
+
+        OUTPUT: An element of the function field of this curve.
 
         EXAMPLES::
 
@@ -2141,7 +2143,7 @@ class IntegralAffineCurve(AffineCurve_field):
         if f not in R and f.parent() is self.coordinate_ring():
             f = f.lift()
 
-        phi = self._lift_to_function_field
+        phi = self._map_to_function_field
         num = R(f.numerator())
         den = R(f.denominator())
         return phi(num) / phi(den)
@@ -2161,15 +2163,51 @@ class IntegralAffineCurve(AffineCurve_field):
         """
         return self._coordinate_functions
 
+    def pull_from_function_field(self, f):
+        """
+        Return the fraction corresponding to ``f``.
+
+        INPUT:
+
+        -  ``f`` -- an element of the function field
+
+        OUTPUT:
+
+        A fraction of polynomials in the coordinate ring of the ambient space
+        of the curve.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(8), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: F = C.function_field()
+            sage: C.pull_from_function_field(F.gen())
+            y
+            sage: C.pull_from_function_field(F.one())
+            1
+            sage: C.pull_from_function_field(F.zero())
+            0
+            sage: f1 = F.gen()
+            sage: f2 = F.base_ring().gen()
+            sage: C.function(C.pull_from_function_field(f1)) == f1
+            True
+            sage: C.function(C.pull_from_function_field(f2)) == f2
+            True
+        """
+        return self._map_from_function_field(f)
+
     @lazy_attribute
     def _nonsingular_model(self):
         """
         Return the data of a nonsingular model of the curve.
 
-        The data consists of an abstract function field `M` and a map from the
-        coordinate ring `R` of the ambient space of the curve into the function
-        field. The coordinate ring of the curve is thus the quotient of `R` by
-        the kernel of the map.
+        The data consists of an abstract function field `M`, a map from the
+        fraction field of the coordinate ring `R` of the ambient space of the
+        curve to the function field, and the inverse map.
+
+        The coordinate ring of the curve is the quotient of `R` by the kernel
+        of the map restricted to `R`.
 
         TESTS::
 
@@ -2178,21 +2216,28 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C._nonsingular_model
             (Function field in z defined by z^3 + 10*x,
              Ring morphism:
-               From: Multivariate Polynomial Ring in x, y, z
+               From: Fraction Field of Multivariate Polynomial Ring in x, y, z
                      over Finite Field of size 11
                To:   Function field in z defined by z^3 + 10*x
                Defn: x |--> x
                      y |--> z^2
-                     z |--> z)
+                     z |--> z,
+             Ring morphism:
+               From: Function field in z defined by z^3 + 10*x
+               To:   Fraction Field of Multivariate Polynomial Ring in x, y, z
+                     over Finite Field of size 11)
         """
+        from sage.structure.sequence import Sequence
+        from sage.rings.fraction_field import FractionField
         from sage.rings.function_field.constructor import FunctionField
+        from sage.rings.function_field.maps import FunctionFieldRingMorphism
 
         k = self.base_ring()
-        I0 = self.defining_ideal()
+        I = self.defining_ideal()
 
         # invlex is the lex order with x < y < z for R = k[x,y,z] for instance
-        R = I0.parent().ring().change_ring(order='invlex')
-        I0 = I0.change_ring(R)
+        R = I.parent().ring().change_ring(order='invlex')
+        I0 = I.change_ring(R)
         n = R.ngens()
 
         names = R.variable_names()
@@ -2228,6 +2273,7 @@ class IntegralAffineCurve(AffineCurve_field):
         # syzygy for z. Now x is the generator of a rational function field F0;
         # y is the generator of the extension F1 of F0 by f3; z is the
         # generator of the extension F2 of F1 by f2.
+
         basis = list(gbasis)
         syzygy = {}
         for i in range(n):
@@ -2241,11 +2287,11 @@ class IntegralAffineCurve(AffineCurve_field):
                     basis.append(f)
                     break
 
-        indep = [i for i in range(n) if i not in syzygy]
-        if len(indep) != 1:
+        # sanity check
+        indeps = [i for i in range(n) if i not in syzygy]
+        if len(indeps) != 1:
             raise TypeError("not a curve")
-        else:
-            indep = indep[0]
+        indep = indeps[0]
 
         F = FunctionField(k, names[indep])
         coords = {indep: F.gen()}
@@ -2258,20 +2304,60 @@ class IntegralAffineCurve(AffineCurve_field):
             F = F.extension(f, names[i])
             coords[i] = F.gen()
 
-        if F.base_field() is not F:  # proper extension
+        proper_extension = F.base_field() is not F
+
+        if proper_extension:
             N, from_N, to_N = F.simple_model()
             M, from_M, to_M = N.separable_model()
             coordinate_functions = tuple([to_M(to_N(F(coords[i]))) for i in range(n)])
-        else:  # rational function field
-            M = F
+        else:
+            M = F  # is rational function field
             coordinate_functions = tuple([coords[i] for i in range(n)])
 
-        lift_to_function_field = hom(R, M, coordinate_functions)
+        # map to M
+
+        FR = FractionField(I.ring())
+        map_to_function_field = hom(FR, M, coordinate_functions)
+
+        # map from M
+
+        def convert(f, i):
+            if i == indep:
+                i = i - 1
+            if i < 0:
+                return f._x  # fraction representing rational function field element
+            fx = f._x  # polynomial representing function field element
+            if not fx:
+                fxlist = [fx.base_ring().zero()]
+            else:
+                fxlist = fx.list()
+            coeffs = Sequence(convert(c, i - 1) for c in fxlist)
+            B = coeffs.universe()
+            S = B[names[i]]
+            return S(coeffs)
+
+        z = M.gen()
+
+        if proper_extension:
+            Z = FR(convert(from_N(from_M(z)), n - 1))
+
+            def evaluate(f):
+                coeffs = f._x.list()
+                v = 0
+                while coeffs:
+                    v = v * Z + coeffs.pop()._x
+                return FR(v)
+        else:
+            def evaluate(f):
+                return FR(f._x)
+
+        map_from_function_field = FunctionFieldRingMorphism(Hom(M, FR), evaluate)
 
         # sanity check
-        assert all(lift_to_function_field(f).is_zero() for f in I0.gens())
+        assert all(map_to_function_field(f).is_zero() for f in I.gens())
+        assert map_to_function_field(map_from_function_field(z)) == z
 
-        return M, lift_to_function_field
+        return M, map_to_function_field, map_from_function_field
 
     @lazy_attribute
     def _function_field(self):
@@ -2288,17 +2374,17 @@ class IntegralAffineCurve(AffineCurve_field):
         return self._nonsingular_model[0]
 
     @lazy_attribute
-    def _lift_to_function_field(self):
+    def _map_to_function_field(self):
         """
-        Return the map to function field of the curve.
+        Return the map to the function field of the curve.
 
         TESTS::
 
             sage: A.<x,y,z> = AffineSpace(GF(11), 3)
             sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
-            sage: C._lift_to_function_field
+            sage: C._map_to_function_field
             Ring morphism:
-              From: Multivariate Polynomial Ring in x, y, z
+              From: Fraction Field of Multivariate Polynomial Ring in x, y, z
                     over Finite Field of size 11
               To:   Function field in z defined by z^3 + 10*x
               Defn: x |--> x
@@ -2322,19 +2408,38 @@ class IntegralAffineCurve(AffineCurve_field):
         return self._nonsingular_model[1].im_gens()
 
     @lazy_attribute
-    def _singularities(self):
+    def _map_from_function_field(self):
         """
-        Return a list of the pairs of singular closed points and the places above it.
+        Return the map from the function field of the curve.
 
         TESTS::
 
-            sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # needs sage.rings.finite_rings
-            sage: C = Curve(x^2 - x^4 - y^4)                                            # needs sage.rings.finite_rings
-            sage: C._singularities              # long time                             # needs sage.rings.finite_rings
+            sage: A.<x,y,z> = AffineSpace(GF(11), 3)
+            sage: C = Curve([x*z - y^2, y - z^2, x - y*z], A)
+            sage: C._map_from_function_field
+            Ring morphism:
+              From: Function field in z defined by z^3 + 10*x
+              To:   Fraction Field of Multivariate Polynomial Ring in x, y, z
+                    over Finite Field of size 11
+        """
+        return self._nonsingular_model[2]
+
+    @lazy_attribute
+    def _singularities(self):
+        """
+        Return a list of the pairs of a singular closed point and the places
+        above it.
+
+        TESTS::
+
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(7^2), 2)
+            sage: C = Curve(x^2 - x^4 - y^4)
+            sage: C._singularities              # long time
             [(Point (x, y),
               [Place (x, 1/x*y^3 + 1/x*y^2 + 1), Place (x, 1/x*y^3 + 1/x*y^2 + 6)])]
         """
-        to_F = self._lift_to_function_field
+        to_F = self._map_to_function_field
         sing = self.singular_subscheme()
 
         funcs = []
@@ -2370,9 +2475,10 @@ class IntegralAffineCurve(AffineCurve_field):
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(GF(7^2), 2)                                     # needs sage.rings.finite_rings
-            sage: C = Curve(x^2 - x^4 - y^4)                                            # needs sage.rings.finite_rings
-            sage: C.singular_closed_points()                                            # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(7^2), 2)
+            sage: C = Curve(x^2 - x^4 - y^4)
+            sage: C.singular_closed_points()
             [Point (x, y)]
 
         ::
@@ -2550,7 +2656,7 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: Cp = Curve(x^3*y + y^3*z + x*z^3)
             sage: C = Cp.affine_patch(0)
         """
-        phi = self._lift_to_function_field
+        phi = self._map_to_function_field
         gs = [phi(g) for g in point.prime_ideal().gens()]
         fs = [g for g in gs if not g.is_zero()]
         f = fs.pop()
@@ -2726,11 +2832,12 @@ class IntegralAffinePlaneCurve_finite_field(AffinePlaneCurve_finite_field, Integ
 
     EXAMPLES::
 
-        sage: A.<x,y> = AffineSpace(GF(8), 2)                                           # needs sage.rings.finite_rings
-        sage: C = Curve(x^5 + y^5 + x*y + 1); C                                         # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: A.<x,y> = AffineSpace(GF(8), 2)
+        sage: C = Curve(x^5 + y^5 + x*y + 1); C
         Affine Plane Curve over Finite Field in z3 of size 2^3
          defined by x^5 + y^5 + x*y + 1
-        sage: C.function_field()                                                        # needs sage.rings.finite_rings
+        sage: C.function_field()
         Function field in y defined by y^5 + x*y + x^5 + 1
     """
     _point = IntegralAffinePlaneCurvePoint_finite_field
