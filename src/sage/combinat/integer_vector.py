@@ -908,22 +908,25 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
 
         - ``x`` -- a list with ``sum(x) == n``
 
-        TESTS::
+        EXAMPLE::
 
-            sage: IntegerVectors(k=5).rank([0,0,1,2,2])
-            243
+            sage: IntegerVectors(n=5).rank([5,0])
+            1
+            sage: IntegerVectors(n=5).rank([3,2])
+            3
+            
         """
-        if sum(x)!=self.n:
+        if sum(x) != self.n:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(self.n, None))
             
         n, k, r = self.n, len(x), 0
-        for i in range(k):
-            r += binomial(i+n-1, n)
+
+        r = sum(binomial(n + i - 1, i - 1) for i in range(1, k))
             
         for i in range(k - 1):
             k -= 1
             n -= x[i]
-            r += binomial(k + n - 1, k)
+            r += binomial(k + n - 1, n - 1)
 
         return r
 
@@ -935,23 +938,27 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
 
         - ``x`` -- an integer
 
-        TESTS::
+        EXAMPLE::
 
-            sage: IntegerVectors(n=700).unrank(404654)
-            [603, 52, 28, 17]
+            sage: IntegerVectors(n=5).unrank(2)
+            [4, 1]
+            sage: IntegerVectors(n=10).unrank(10)
+            [1, 9]
+            
+            
         """
         ptr=0
         rtn=[self.n]
-        while self.rank(rtn)<x:
+        while self.rank(rtn) < x:
             rtn.append(0)
         rtn.pop()
             
         while True:
-            if self.rank(rtn)<x:
+            if self.rank(rtn) < x:
                 rtn[ptr+1]=rtn[ptr]
                 rtn[ptr]=0
                 ptr+=1
-            elif self.rank(rtn)>x:
+            elif self.rank(rtn) > x:
                 rtn[ptr]-=1
                 rtn[ptr-1]+=1
             else:
@@ -961,14 +968,14 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
         """
         Return the cardinality of ``self``.
         
-        TESTS::
+        EXAMPLE::
         
             sage: IntegerVectors(n=0).cardinality()
             1
             sage: IntegerVectors(n=10).cardinality()
             +Infinity
         """
-        if self.n==0:
+        if self.n == 0:
             return Integer(1)
         else:
             return PlusInfinity()
@@ -986,7 +993,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             sage: TestSuite(IV).run()
         """
         self.k = k
-        if self.k==0:
+        if self.k == 0:
             IntegerVectors.__init__(self, category=EnumeratedSets())
         else:
             IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
@@ -1051,24 +1058,26 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- a list with ``sum(x) == n`` and ``len(x) == k``
+        - ``x`` -- a list with ``len(x) == k``
 
-        TESTS::
+        EXAMPLES::
 
-            sage: IntegerVectors(k=5).rank([4,5,3,1,1])
-            9322
+            sage: IntegerVectors(k=5).rank([0,0,0,0,0])
+            0
+            sage: IntegerVectors(k=5).rank([1,1,0,0,0])
+            7
         """
-        if len(x)!=self.k:
+        if len(x) != self.k:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(None, self.k))
 
         n, k, r = sum(x), self.k, 0
-        for i in range(n):
-            r += binomial(k+i-1, i)
+        
+        r=sum(binomial(k + i - 1, k - 1) for i in range(n))
             
         for i in range(k - 1):
             k -= 1
             n -= x[i]
-            r += binomial(k + n - 1, k)
+            r += binomial(k + n - 1, n - 1)
 
         return r
     
@@ -1080,26 +1089,28 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
 
         - ``x`` -- an integer such that x < len(self) ``
 
-        TESTS::
+        EXAMPLES::
 
-            sage: IntegerVectors(k=5).unrank(75813)
-            [2, 2, 10, 6, 2]
+            sage: IntegerVectors(k=5).unrank(10)
+            [1, 0, 0, 0, 1]
+            sage: IntegerVectors(k=5).unrank(15)
+            [0, 0, 2, 0, 0]
         """
-        if self.k==0 and x!=0:
+        if self.k == 0 and x != 0:
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
         else:
-            n, ptr=0, 0
+            n, ptr = 0, 0
             rtn=[0]*self.k
-            while self.rank(rtn)<=x:
-                n+=1      
+            while self.rank(rtn) <= x:
+                n += 1      
                 rtn[ptr]=n
             rtn[ptr]-=1
             while True:
-                if self.rank(rtn)<x:
+                if self.rank(rtn) < x:
                     rtn[ptr+1]=rtn[ptr]
                     rtn[ptr]=0
                     ptr+=1
-                elif self.rank(rtn)>x:
+                elif self.rank(rtn) > x:
                     rtn[ptr]-=1
                     rtn[ptr-1]+=1
                 else:
@@ -1109,14 +1120,14 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         """
         Return the cardinality of ``self``.
         
-        TESTS::
+        EXAMPLES::
         
             sage: IntegerVectors(k=0).cardinality()
             1
             sage: IntegerVectors(k=10).cardinality()
             +Infinity
         """
-        if self.k==0:
+        if self.k == 0:
             return Integer(1)
         else:
             return PlusInfinity()            
@@ -1312,7 +1323,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         for i in range(k - 1):
             k -= 1
             n -= x[i]
-            r += binomial(k + n - 1, k)
+            r += binomial(k + n - 1, n - 1)
 
         return r
 
@@ -1324,12 +1335,14 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
 
         - ``x`` -- an integer such that x < len(self) ``
 
-        TESTS::
+        EXAMPLES::
 
-            sage:IntegerVectors(70,5).unrank(30000)
-            [43, 4, 0, 4, 19]
+            sage: IntegerVectors(4,5).unrank(30)
+            [1, 0, 1, 0, 2]
+            sage: IntegerVectors(2,3).unrank(5)
+            [0, 0, 2]
         """
-        if x>=len(self):
+        if x >= len(self):
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
         else:
             ptr=0
@@ -1350,10 +1363,12 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         """
         Return the cardinality of ``self``.
         
-        TESTS::
+        EXAMPLES::
         
-            sage: IntegerVectors(200,5).cardinality()
-            70058751
+            sage: IntegerVectors(2,3).cardinality()
+            6
+            sage: IntegerVectors(3,5).cardinality()
+            35
         """
         n, k = self.n, self.k
         return Integer(binomial(n + k - 1, n))
@@ -1631,7 +1646,8 @@ class IntegerVectorsConstraints(IntegerVectors):
         if self.k is None:
             if self.n is None:
                 return PlusInfinity()
-            elif 'max_length' not in self.constraints and self.constraints.get('min_part', 0) <= 0:
+            elif ('max_length' not in self.constraints
+                    and self.constraints.get('min_part', 0) <= 0):
                 return PlusInfinity()
         elif ('max_part' in self.constraints
                 and self.constraints['max_part'] != PlusInfinity()):
