@@ -838,7 +838,10 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             sage: TestSuite(IV).run()
         """
         self.n = n
-        IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
+        if self.n==0:
+            IntegerVectors.__init__(self, category=EnumeratedSets())
+        else:
+            IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -897,7 +900,22 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             return False
         return sum(x) == self.n
 
-
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+        
+        TESTS::
+        
+            sage: IntegerVectors(n=0).cardinality()
+            1
+            sage: IntegerVectors(n=10).cardinality()
+            +Infinity
+        """
+        if self.n==0:
+            return Integer(1)
+        else:
+            return PlusInfinity()
+        
 class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors of length `k`.
@@ -911,7 +929,10 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             sage: TestSuite(IV).run()
         """
         self.k = k
-        IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
+        if self.k==0:
+            IntegerVectors.__init__(self, category=EnumeratedSets())
+        else:
+            IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -967,6 +988,21 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             return False
         return len(x) == self.k
 
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+        
+        TESTS::
+        
+            sage: IntegerVectors(k=0).cardinality()
+            1
+            sage: IntegerVectors(k=10).cardinality()
+            +Infinity
+        """
+        if self.k==0:
+            return Integer(1)
+        else:
+            return PlusInfinity()
 
 class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     """
@@ -1162,19 +1198,18 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
             r += binomial(k + n - 1, k)
 
         return r
-
+            
     def cardinality(self):
         """
-            TESTS::
-            sage: IntegerVectors(200,5)
-            70058751            
-        """
-        from sage.arith.misc import binomial
-                
-        n = self.n
-        k = self.k
+        Return the cardinality of ``self``.
         
-        return binomial(n + k - 1, k - 1)
+        TESTS::
+        
+            sage: IntegerVectors(200,5).cardinality()
+            70058751
+        """
+        n, k = self.n, self.k
+        return Integer(binomial(n + k - 1, n))
 
 class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
     r"""
@@ -1326,7 +1361,7 @@ class IntegerVectorsConstraints(IntegerVectors):
             del constraints['inner']
         self.constraints = constraints
 
-        if n is not None:
+        if n is not None :
             if k is not None or 'max_length' in constraints:
                 category = FiniteEnumeratedSets()
             else:
@@ -1449,8 +1484,7 @@ class IntegerVectorsConstraints(IntegerVectors):
         if self.k is None:
             if self.n is None:
                 return PlusInfinity()
-            if ('max_length' not in self.constraints
-                    and self.constraints.get('min_part', 0) <= 0):
+            elif 'max_length' not in self.constraints and self.constraints.get('min_part', 0) <= 0:
                 return PlusInfinity()
         elif ('max_part' in self.constraints
                 and self.constraints['max_part'] != PlusInfinity()):
