@@ -223,7 +223,6 @@ FOURTITWO_RAYS = var("FOURTITWO_RAYS")
 FOURTITWO_PPI = var("FOURTITWO_PPI")
 FOURTITWO_CIRCUITS = var("FOURTITWO_CIRCUITS")
 FOURTITWO_GROEBNER = var("FOURTITWO_GROEBNER")
-ARB_LIBRARY = var("ARB_LIBRARY", "arb")
 CBLAS_PC_MODULES = var("CBLAS_PC_MODULES", "cblas:openblas:blas")
 ECL_CONFIG = var("ECL_CONFIG", "ecl-config")
 NTL_INCDIR = var("NTL_INCDIR")
@@ -356,8 +355,7 @@ def cython_aliases(required_modules=None,
         sage: cython_aliases()
         {...}
         sage: sorted(cython_aliases().keys())
-        ['ARB_LIBRARY',
-         'CBLAS_CFLAGS',
+        ['CBLAS_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
         sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
@@ -474,8 +472,6 @@ def cython_aliases(required_modules=None,
     # fflas-ffpack and fflas-ffpack does add such a C++11 flag.
     if "LINBOX_CFLAGS" in aliases:
         aliases["LINBOX_CFLAGS"].append("-std=gnu++11")
-
-    aliases["ARB_LIBRARY"] = ARB_LIBRARY
 
     # TODO: Remove Cygwin hack by installing a suitable cblas.pc
     if os.path.exists('/usr/lib/libblas.dll.a'):

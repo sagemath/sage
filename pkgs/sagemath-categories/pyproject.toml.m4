@@ -10,6 +10,7 @@ requires = [
     SPKG_INSTALL_REQUIRES_cython
     SPKG_INSTALL_REQUIRES_gmpy2
     SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_pkgconfig
 ]
 build-backend = "setuptools.build_meta"
 
