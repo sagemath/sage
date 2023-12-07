@@ -30,13 +30,4 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 Upstream Contact
 ----------------
 
--  Website: http://www.usna.edu/CS/qepcadweb/B/QEPCAD.html
--  Alternative location (sometimes more up-to-date):
-
-   https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html
-
-Special Update/Build Instructions
----------------------------------
-
-One might need to set MAKE to "make -j1" fo this to be built
-successfully.
+  https://github.com/chriswestbrown/qepcad
