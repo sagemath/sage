@@ -6,6 +6,7 @@ from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces            
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure               cimport face_t
 from sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice           cimport PolyhedronFaceLattice
 
+
 @cython.final
 cdef class CombinatorialPolyhedron(SageObject):
     cdef public dict _cached_methods
