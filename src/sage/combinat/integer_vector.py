@@ -900,6 +900,63 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             return False
         return sum(x) == self.n
 
+    def rank(self, x):
+        """
+        Return the rank of a given element.
+
+        INPUT:
+
+        - ``x`` -- a list with ``sum(x) == n``
+
+        TESTS::
+
+            sage: IntegerVectors(k=5).rank([0,0,1,2,2])
+            243
+        """
+        if sum(x)!=self.n:
+            raise ValueError("argument is not a member of IntegerVectors({},{})".format(self.n, None))
+            
+        n, k, r = self.n, len(x), 0
+        for i in range(k):
+            r += binomial(i+n-1, n)
+            
+        for i in range(k - 1):
+            k -= 1
+            n -= x[i]
+            r += binomial(k + n - 1, k)
+
+        return r
+
+    def unrank(self, x):
+        """
+        Return the element at given rank x.
+
+        INPUT:
+
+        - ``x`` -- an integer
+
+        TESTS::
+
+            sage: IntegerVectors(n=700).unrank(404654)
+            [603, 52, 28, 17]
+        """
+        ptr=0
+        rtn=[self.n]
+        while self.rank(rtn)<x:
+            rtn.append(0)
+        rtn.pop()
+            
+        while True:
+            if self.rank(rtn)<x:
+                rtn[ptr+1]=rtn[ptr]
+                rtn[ptr]=0
+                ptr+=1
+            elif self.rank(rtn)>x:
+                rtn[ptr]-=1
+                rtn[ptr-1]+=1
+            else:
+                return self._element_constructor_(rtn)
+
     def cardinality(self):
         """
         Return the cardinality of ``self``.
@@ -915,7 +972,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             return Integer(1)
         else:
             return PlusInfinity()
-        
+
 class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors of length `k`.
@@ -988,6 +1045,66 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             return False
         return len(x) == self.k
 
+    def rank(self, x):
+        """
+        Return the rank of a given element.
+
+        INPUT:
+
+        - ``x`` -- a list with ``sum(x) == n`` and ``len(x) == k``
+
+        TESTS::
+
+            sage: IntegerVectors(k=5).rank([4,5,3,1,1])
+            9322
+        """
+        if len(x)!=self.k:
+            raise ValueError("argument is not a member of IntegerVectors({},{})".format(None, self.k))
+
+        n, k, r = sum(x), self.k, 0
+        for i in range(n):
+            r += binomial(k+i-1, i)
+            
+        for i in range(k - 1):
+            k -= 1
+            n -= x[i]
+            r += binomial(k + n - 1, k)
+
+        return r
+    
+    def unrank(self, x):
+        """
+        Return the element at given rank x.
+
+        INPUT:
+
+        - ``x`` -- an integer such that x < len(self) ``
+
+        TESTS::
+
+            sage: IntegerVectors(k=5).unrank(75813)
+            [2, 2, 10, 6, 2]
+        """
+        if self.k==0 and x!=0:
+            raise IndexError(f"Index {x} is out of range for the IntegerVector.")
+        else:
+            n, ptr=0, 0
+            rtn=[0]*self.k
+            while self.rank(rtn)<=x:
+                n+=1      
+                rtn[ptr]=n
+            rtn[ptr]-=1
+            while True:
+                if self.rank(rtn)<x:
+                    rtn[ptr+1]=rtn[ptr]
+                    rtn[ptr]=0
+                    ptr+=1
+                elif self.rank(rtn)>x:
+                    rtn[ptr]-=1
+                    rtn[ptr-1]+=1
+                else:
+                    return self._element_constructor_(rtn)
+                    
     def cardinality(self):
         """
         Return the cardinality of ``self``.
@@ -1002,8 +1119,8 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         if self.k==0:
             return Integer(1)
         else:
-            return PlusInfinity()
-
+            return PlusInfinity()            
+        
 class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors of length `k` that sum to `n`.
@@ -1198,6 +1315,36 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
             r += binomial(k + n - 1, k)
 
         return r
+
+    def unrank(self, x):
+        """
+        Return the element at given rank x.
+
+        INPUT:
+
+        - ``x`` -- an integer such that x < len(self) ``
+
+        TESTS::
+
+            sage:IntegerVectors(70,5).unrank(30000)
+            [43, 4, 0, 4, 19]
+        """
+        if x>=len(self):
+            raise IndexError(f"Index {x} is out of range for the IntegerVector.")
+        else:
+            ptr=0
+            rtn=[0]*self.k
+            rtn[ptr]=self.n
+            while True:
+                if self.rank(rtn)<x:
+                    rtn[ptr+1]=rtn[ptr]
+                    rtn[ptr]=0
+                    ptr+=1
+                elif self.rank(rtn)>x:
+                    rtn[ptr]-=1
+                    rtn[ptr-1]+=1
+                else:
+                    return self._element_constructor_(rtn)
             
     def cardinality(self):
         """
