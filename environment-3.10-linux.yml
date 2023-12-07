@@ -67,7 +67,7 @@ dependencies:
   - m4=1.4.18=h516909a_1001
   - make=4.3=hd18ef5c_1
   - metis=5.1.0=h59595ed_1007
-  - nauty=2.7.2=h7f98852_0
+  - nauty=2.8.6=hd590300_0
   - ncurses=6.4=h59595ed_2
   - ninja=1.11.1=h924138e_0
   - openssl=3.2.0=hd590300_1
@@ -115,7 +115,7 @@ dependencies:
   - igraph=0.7.1=0
   - krb5=1.21.2=h659d440_0
   - libboost=1.83.0=h6fcfa73_0
-  - libflint=2.9.0=h2f819a4_ntl_100
+  - libflint=3.0.1=h5f2e117_ntl_100
   - libhwloc=2.9.3=default_h554bfaf_1009
   - libopenblas=0.3.25=pthreads_h413a1c8_0
   - libtiff=4.6.0=ha9c0a0a_2
@@ -131,14 +131,14 @@ dependencies:
   - tachyon=0.99b6=0
   - texinfo=7.0=pl5321h0f457ee_0
   - appdirs=1.4.4=pyh9f0ad1d_0
-  - arb=2.23.0=h44d021b_0
+  - arb=2.9.0=0
   - automake=1.16.5=pl5321ha770c72_0
   - c-compiler=1.6.0=hd590300_0
   - cachetools=5.3.2=pyhd8ed1ab_0
   - chardet=5.2.0=py310hff52083_1
   - colorama=0.4.6=pyhd8ed1ab_0
   - distlib=0.3.7=pyhd8ed1ab_0
-  - eclib=20230424=hdef1efb_0
+  - eclib=20230424=h96f522a_1
   - filelock=3.13.1=pyhd8ed1ab_0
   - fontconfig=2.14.2=h14ed4e7_0
   - fplll=5.4.5=h384768b_0
@@ -159,7 +159,7 @@ dependencies:
   - platformdirs=4.1.0=pyhd8ed1ab_0
   - pluggy=1.3.0=pyhd8ed1ab_0
   - rw=0.8=h516909a_1001
-  - singular=4.2.1.p3=h1ea75ed_2
+  - singular=4.3.2.p8=h33f5c3f_0
   - sympow=2.023.6=hc6ab17c_3
   - tbb=2021.10.0=h00ab1b0_2
   - tomli=2.0.1=pyhd8ed1ab_0
@@ -167,7 +167,7 @@ dependencies:
   - zipp=3.17.0=pyhd8ed1ab_0
   - boost-cpp=1.83.0=h44aadfe_0
   - brial=1.2.12=pyh694c41f_1
-  - cmake=3.27.9=hcfe8598_0
+  - cmake=3.28.0=hcfe8598_0
   - curl=8.5.0=hca28451_0
   - cxx-compiler=1.6.0=h00ab1b0_0
   - fortran-compiler=1.6.0=heb67821_0
@@ -187,6 +187,6 @@ dependencies:
   - suitesparse=5.10.1=h9e50725_1
   - blas-devel=3.9.0=20_linux64_openblas
   - giac=1.9.0.21=h673759e_1
-  - linbox=1.6.3=h9d78c56_7
+  - linbox=1.6.3=ha329b40_8
   - tox=4.11.4=pyhd8ed1ab_0
   - blas=2.120=openblas

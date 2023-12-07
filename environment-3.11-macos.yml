@@ -112,7 +112,7 @@ dependencies:
   - libboost-devel=1.83.0=h7728843_0
   - libbrial=1.2.12=h8d08345_1
   - libclang-cpp15=15.0.7=default_h6b1ee41_4
-  - libflint=2.9.0=hfd2f71f_ntl_100
+  - libflint=3.0.1=h5d15de0_ntl_100
   - libopenblas=0.3.25=openmp_hfef2a42_0
   - libwebp=1.3.2=h44782d1_1
   - llvm-tools=15.0.7=hbedff68_4
@@ -125,7 +125,7 @@ dependencies:
   - qd=2.3.22=h2beb688_1004
   - sqlite=3.44.2=h7461747_0
   - appdirs=1.4.4=pyh9f0ad1d_0
-  - arb=2.23.0=h905a977_0
+  - arb=2.9.0=0
   - boost-cpp=1.83.0=h07eb623_0
   - brial=1.2.12=pyh694c41f_1
   - cachetools=5.3.2=pyhd8ed1ab_0
@@ -134,7 +134,7 @@ dependencies:
   - clang-15=15.0.7=default_h6b1ee41_4
   - colorama=0.4.6=pyhd8ed1ab_0
   - distlib=0.3.7=pyhd8ed1ab_0
-  - eclib=20230424=hd00e801_0
+  - eclib=20230424=h563f520_1
   - filelock=3.13.1=pyhd8ed1ab_0
   - fplll=5.4.5=hb7981ad_0
   - gfortran_impl_osx-64=12.3.0=h54fd467_1
@@ -148,7 +148,7 @@ dependencies:
   - packaging=23.2=pyhd8ed1ab_0
   - platformdirs=4.1.0=pyhd8ed1ab_0
   - pluggy=1.3.0=pyhd8ed1ab_0
-  - singular=4.2.1.p3=hac851df_2
+  - singular=4.3.2.p8=h0d51a9f_0
   - sympow=2.023.6=h115ba6a_3
   - tomli=2.0.1=pyhd8ed1ab_0
   - typing_extensions=4.8.0=pyha770c72_0
@@ -173,7 +173,7 @@ dependencies:
   - blas-devel=3.9.0=20_osx64_openblas
   - compiler-rt_osx-64=15.0.7=ha38d28d_2
   - giac=1.9.0.21=h92f3f65_1
-  - linbox=1.6.3=hdde8d14_7
+  - linbox=1.6.3=hfb9b24e_8
   - tox=4.11.4=pyhd8ed1ab_0
   - blas=2.120=openblas
   - compiler-rt=15.0.7=ha38d28d_2

@@ -67,7 +67,7 @@ dependencies:
   - m4=1.4.18=h516909a_1001
   - make=4.3=h309ac5b_1
   - metis=5.1.0=h2f0025b_1007
-  - nauty=2.7.2=hf897c2e_0
+  - nauty=2.8.6=h31becfc_0
   - ncurses=6.4=h0425590_2
   - ninja=1.11.1=hdd96247_0
   - openssl=3.2.0=h31becfc_1

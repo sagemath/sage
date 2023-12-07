@@ -36,7 +36,7 @@ dependencies:
   - make=4.3=he57ea6c_1
   - mathjax=3.2.2=hce30654_0
   - metis=5.1.0=h13dd4ca_1007
-  - nauty=2.7.2=h3422bc3_0
+  - nauty=2.8.6=h93a5062_0
   - palp=2.20=h27ca646_0
   - pari-elldata=0.0.20161017=0
   - pari-galdata=0.0.20180411=0
