@@ -7885,10 +7885,14 @@ class GenericGraph(GenericGraph_pyx):
           argument is set to ``None`` by default, which means that no constraint
           is set upon the first vertex in the path.
 
+          This parameter can only be used when ``algorithm`` is ``"MILP"``.
+
         - ``t`` -- a vertex (default: ``None``); forces the destination of the
           path (the method then returns the longest path ending at ``t``). The
           argument is set to ``None`` by default, which means that no constraint
           is set upon the last vertex in the path.
+
+          This parameter can only be used when ``algorithm`` is ``"MILP"``.
 
         - ``use_edge_labels`` -- boolean (default: ``False``); whether to
           compute a path with maximum weight where the weight of an edge is
@@ -7896,14 +7900,19 @@ class GenericGraph(GenericGraph_pyx):
           considered as a weight of `1`), or to compute a path with the longest
           possible number of edges (i.e., edge weights are set to 1)
 
+          This parameter can only be used when ``algorithm`` is ``"MILP"``.
+
         - ``algorithm`` -- string (default: ``"MILP"``); the algorithm to use
-          among ``"MILP"`` and ``"backtrack"``. Two remarks on this respect:
+          among ``"MILP"``, ``"backtrack"`` and ``"heuristic"``:
 
-          * While the MILP formulation returns an exact answer, the backtrack
-            algorithm is a randomized heuristic.
+          * ``"MILP"`` returns an exact answer.
 
-          * As the backtrack algorithm does not support edge weighting, setting
-            ``use_edge_labels=True`` will force the use of the MILP algorithm.
+          * ``"backtrack"`` is renamed ``"heuristic"`` (:issue:`36574`).
+
+          * ``"heuristic"`` is a randomized heuristic for finding a long path in
+            an unweighted (di)graph. This heuristic does not take into account
+            parameters ``s``, ``t`` and ``use_edge_labels``. An error is raised
+            if these parameters are set.
 
         - ``solver`` -- string (default: ``None``); specify a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -7948,7 +7957,7 @@ class GenericGraph(GenericGraph_pyx):
         The heuristic totally agrees::
 
             sage: g = graphs.PetersenGraph()
-            sage: p = g.longest_path(algorithm="backtrack").edges(sort=True, labels=False)
+            sage: p = g.longest_path(algorithm="heuristic").edges(sort=True, labels=False)
             sage: len(p)
             9
 
@@ -7970,13 +7979,13 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS:
 
-        The argument ``algorithm`` must be either ``'backtrack'`` or
-        ``'MILP'``::
+        The argument ``algorithm`` must be either ``'backtrack'``,
+        ``'heuristic'`` or ``'MILP'``::
 
             sage: graphs.PetersenGraph().longest_path(algorithm="abc")
             Traceback (most recent call last):
             ...
-            ValueError: algorithm must be either 'backtrack' or 'MILP'
+            ValueError: algorithm must be either 'backtrack', 'heuristic' or 'MILP'
 
         Disconnected graphs not weighted::
 
@@ -8049,13 +8058,43 @@ class GenericGraph(GenericGraph_pyx):
             sage: H = {(0, 3), (2, 0), (3, 4)}
             sage: H == {x for x in G.longest_path().edge_iterator(labels=False)}        # needs sage.numerical.mip
             True
+
+        :issue:`36574`::
+
+            sage: G = graphs.PathGraph(3)
+            sage: P = G.longest_path(algorithm='backtrack')
+            doctest:...: DeprecationWarning: algorithm 'backtrack' is deprecated.
+             Use algorithm 'heuristic' instead.
+            See https://github.com/sagemath/sage/issues/36574 for details.
+            sage: G.longest_path(algorithm='heuristic', s=0)
+            Traceback (most recent call last):
+            ...
+            ValueError: parameters s, t, and use_edge_labels can not be used in
+                        combination with algorithm 'heuristic'
+            sage: G.longest_path(algorithm='heuristic', t=2)
+            Traceback (most recent call last):
+            ...
+            ValueError: parameters s, t, and use_edge_labels can not be used in
+                        combination with algorithm 'heuristic'
+            sage: G.longest_path(algorithm='heuristic', use_edge_labels=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: parameters s, t, and use_edge_labels can not be used in
+                        combination with algorithm 'heuristic'
         """
         self._scream_if_not_simple()
 
-        if use_edge_labels:
-            algorithm = "MILP"
-        if algorithm not in ("backtrack", "MILP"):
-            raise ValueError("algorithm must be either 'backtrack' or 'MILP'")
+        if algorithm not in ("backtrack", "heuristic", "MILP"):
+            raise ValueError("algorithm must be either 'backtrack', 'heuristic' or 'MILP'")
+        if algorithm == "backtrack":
+            from sage.misc.superseded import deprecation
+            deprecation(36574, "algorithm 'backtrack' is deprecated. "
+                               "Use algorithm 'heuristic' instead.")
+            algorithm = 'heuristic'
+        if algorithm == 'heuristic':
+            if s is not None or t is not None or use_edge_labels:
+                raise ValueError("parameters s, t, and use_edge_labels can not "
+                                 "be used in combination with algorithm 'heuristic'")
 
         # Quick improvement
         if not self.is_connected():
@@ -8100,8 +8139,8 @@ class GenericGraph(GenericGraph_pyx):
             from sage.graphs.graph import Graph
             return [0, Graph()] if use_edge_labels else Graph()
 
-        # Calling the backtrack heuristic if asked
-        if algorithm == "backtrack":
+        # Calling the heuristic if asked
+        if algorithm == "heuristic":
             from sage.graphs.generic_graph_pyx import find_hamiltonian as fh
             x = fh(self, find_path=True)[1]
             return self.subgraph(vertices=x, edges=list(zip(x[:-1], x[1:])))
@@ -15745,6 +15784,95 @@ class GenericGraph(GenericGraph_pyx):
                                             algorithm=algorithm,
                                             weight_function=weight_function,
                                             check_weight=check_weight)[0]
+
+    def power(self, k):
+        r"""
+        Return the `k`-th power graph of ``self``.
+
+        In the `k`-th power graph of a graph `G`, there is an edge between
+        any pair of vertices at distance at most `k` in `G`, where the
+        distance is considered in the unweighted graph. In a directed graph,
+        there is an arc from a vertex `u` to a vertex `v` if there is a path
+        of length at most `k` in `G` from `u` to `v`.
+
+        INPUT:
+
+        - ``k`` -- integer; the maximum path length for considering edges in
+          the power graph.
+
+        OUTPUT:
+
+        - The kth power graph based on shortest distances between nodes.
+
+        EXAMPLES:
+
+        Testing on undirected graphs::
+
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
+            sage: PG = G.power(2)
+            sage: PG.edges(sort=True, labels=False)
+            [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (2, 5), (3, 4), (4, 5)]
+
+        Testing on directed graphs::
+
+            sage: G = DiGraph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
+            sage: PG = G.power(3)
+            sage: PG.edges(sort=True, labels=False)
+            [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2), (4, 5)]
+
+        TESTS:
+
+        Testing when k < 0::
+
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
+            sage: PG = G.power(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: distance must be a non-negative integer, not -2
+
+        Testing when k = 0::
+
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
+            sage: PG = G.power(0)
+            sage: PG.edges(sort=True, labels=False)
+            []
+
+        Testing when k = 1::
+
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
+            sage: PG = G.power(1)
+            sage: PG.edges(sort=True, labels=False)
+            [(0, 1), (0, 3), (1, 2), (2, 3), (2, 4), (4, 5)]
+
+        Testing when k = Infinity::
+
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)])
+            sage: PG = G.power(Infinity)
+            Traceback (most recent call last):
+            ...
+            ValueError: distance must be a non-negative integer, not +Infinity
+
+        Testing on graph with multiple edges::
+
+            sage: G = DiGraph([(0, 1), (0, 1), (1, 2), (2, 3), (3, 0), (2, 4), (4, 5)], multiedges=True)
+            sage: PG = G.power(3)
+            sage: PG.edges(sort=True, labels=False)
+            [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2), (4, 5)]
+        """
+        from sage.graphs.digraph import DiGraph
+        from sage.graphs.graph import Graph
+
+        power_of_graph = DiGraph() if self.is_directed() else Graph()
+
+        for u in self:
+            for v in self.breadth_first_search(u, distance=k):
+                if u != v:
+                    power_of_graph.add_edge(u, v)
+
+        if self.name():
+            power_of_graph.name("power({})".format(self.name()))
+
+        return power_of_graph
 
     def girth(self, certificate=False):
         """

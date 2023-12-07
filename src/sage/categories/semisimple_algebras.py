@@ -8,12 +8,13 @@ Semisimple Algebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.algebras import Algebras
+from sage.categories.category_types import Category_over_base_ring
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.misc.bindable_class import BoundClass
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from .category_types import Category_over_base_ring
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from .algebras import Algebras
+
 
 class SemisimpleAlgebras(Category_over_base_ring):
     """

@@ -8,5 +8,6 @@ requires = [
     SPKG_INSTALL_REQUIRES_sagemath_environment
     SPKG_INSTALL_REQUIRES_cython
     SPKG_INSTALL_REQUIRES_cysignals
+    SPKG_INSTALL_REQUIRES_pkgconfig
 ]
 build-backend = "setuptools.build_meta"

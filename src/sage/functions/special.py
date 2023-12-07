@@ -511,7 +511,7 @@ class EllipticE(BuiltinFunction):
         Check that :trac:`34085` is fixed::
 
             sage: _ = var("x y")                                                        # needs sage.symbolic
-            sage: fricas(elliptic_e(x, y))                                      # optional - fricas, needs sage.symbolic
+            sage: fricas(elliptic_e(x, y))                                          # optional - fricas, needs sage.symbolic
             ellipticE(sin(x),y)
 
         However, the conversion is only correct in the interval
@@ -525,7 +525,7 @@ class EllipticE(BuiltinFunction):
             sage: f = lambda x, y: elliptic_e(arcsin(x), y).subs(x=x, y=y)
             sage: g = lambda x, y: fricas.ellipticE(x, y).sage()
             sage: d = lambda x, y: f(x, y) - g(x, y)
-            sage: [d(N(-pi/2 + x), y)                           # tol 1e-8      # optional - fricas, needs sage.symbolic
+            sage: [d(N(-pi/2 + x), y)                           # abs tol 1e-8      # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2, 2)]
             [0.000000000000000,
              0.000000000000000,
@@ -877,7 +877,7 @@ class EllipticF(BuiltinFunction):
         Check that :trac:`34186` is fixed::
 
             sage: _ = var("x y")                                                        # needs sage.symbolic
-            sage: fricas(elliptic_f(x, y))                                      # optional - fricas, needs sage.symbolic
+            sage: fricas(elliptic_f(x, y))                                          # optional - fricas, needs sage.symbolic
             ellipticF(sin(x),y)
 
         However, the conversion is only correct in the interval
@@ -891,7 +891,7 @@ class EllipticF(BuiltinFunction):
             sage: f = lambda x, y: elliptic_f(arcsin(x), y).subs(x=x, y=y)
             sage: g = lambda x, y: fricas.ellipticF(x, y).sage()
             sage: d = lambda x, y: f(x, y) - g(x, y)
-            sage: [d(N(-pi/2 + x), y)                          # tol 1e-8       # optional - fricas, needs sage.symbolic
+            sage: [d(N(-pi/2 + x), y)                          # abs tol 1e-8       # optional - fricas, needs sage.symbolic
             ....:  for x in range(1, 3) for y in range(-2,2)]
             [0.000000000000000,
              0.000000000000000,
