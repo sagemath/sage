@@ -1867,8 +1867,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             d = d0 + f0.degree(x)
         else:
             d = bm[0].parent().strands()
-        G = fundamental_group_from_braid_mon(self.braid_monodromy(),
-                                             degree=d,
+        G = fundamental_group_from_braid_mon(bm, degree=d,
                                              simplified=simplified,
                                              puiseux=puiseux)
         if simplified:
