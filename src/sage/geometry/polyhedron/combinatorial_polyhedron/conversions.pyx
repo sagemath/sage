@@ -58,15 +58,15 @@ AUTHOR:
 - Jonathan Kliem (2019-04)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from memory_allocator                 cimport MemoryAllocator
 
@@ -93,6 +93,7 @@ def _Vrep_list_to_bit_rep_wrapper(tup):
     cdef ListOfFaces output = ListOfFaces(1, max(tup) + 1, 1)
     Vrep_list_to_bit_rep(tup, output.data.faces[0])
     return output
+
 
 cdef int Vrep_list_to_bit_rep(tuple Vrep_list, face_t output) except -1:
     r"""
@@ -135,6 +136,7 @@ cdef int Vrep_list_to_bit_rep(tuple Vrep_list, face_t output) except -1:
     for entry in Vrep_list:
         face_add_atom_safe(output, entry)
 
+
 def _incidences_to_bit_rep_wrapper(tup):
     r"""
     A function to allow doctesting of :func:`incidences_to_bit_rep`.
@@ -149,6 +151,7 @@ def _incidences_to_bit_rep_wrapper(tup):
     cdef ListOfFaces output = ListOfFaces(1, len(tup), 1)
     incidences_to_bit_rep(tup, output.data.faces[0])
     return output
+
 
 cdef int incidences_to_bit_rep(tuple incidences, face_t output) except -1:
     r"""
@@ -184,6 +187,7 @@ cdef int incidences_to_bit_rep(tuple incidences, face_t output) except -1:
         if incidences[entry]:
             # Vrep ``entry`` is contained in the face, so set the corresponding bit
             face_add_atom_safe(output, entry)
+
 
 def incidence_matrix_to_bit_rep_of_facets(Matrix_dense matrix):
     r"""
@@ -249,6 +253,7 @@ def incidence_matrix_to_bit_rep_of_facets(Matrix_dense matrix):
                 face_add_atom_safe(output, entry)
     return facets
 
+
 def incidence_matrix_to_bit_rep_of_Vrep(Matrix_dense matrix):
     r"""
     Initialize Vrepresentatives in Bit-representation as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
@@ -307,6 +312,7 @@ def incidence_matrix_to_bit_rep_of_Vrep(Matrix_dense matrix):
     """
     return incidence_matrix_to_bit_rep_of_facets(matrix.transpose())
 
+
 def facets_tuple_to_bit_rep_of_facets(tuple facets_input, size_t n_Vrep):
     r"""
     Initializes facets in Bit-representation as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
@@ -347,6 +353,7 @@ def facets_tuple_to_bit_rep_of_facets(tuple facets_input, size_t n_Vrep):
         Vrep_list_to_bit_rep(facets_input[i], facets.data.faces[i])
         facet_set_coatom(facets.data.faces[i], i)
     return facets
+
 
 def facets_tuple_to_bit_rep_of_Vrep(tuple facets_input, size_t n_Vrep):
     r"""
@@ -408,6 +415,7 @@ def facets_tuple_to_bit_rep_of_Vrep(tuple facets_input, size_t n_Vrep):
             face_add_atom_safe(Vrep_data[input_Vrep], input_facet)
     return Vrep
 
+
 def _bit_rep_to_Vrep_list_wrapper(ListOfFaces faces, index=0):
     r"""
     A function to test :func:`bit_rep_to_Vrep_list`.
@@ -433,9 +441,9 @@ def _bit_rep_to_Vrep_list_wrapper(ListOfFaces faces, index=0):
     output = <size_t *> mem.allocarray(faces.n_atoms(),
                                        sizeof(size_t))
 
-    length = bit_rep_to_Vrep_list(
-            faces.data.faces[index], output)
+    length = bit_rep_to_Vrep_list(faces.data.faces[index], output)
     return tuple(output[i] for i in range(length))
+
 
 cdef inline size_t bit_rep_to_Vrep_list(face_t face, size_t *output) except -1:
     r"""

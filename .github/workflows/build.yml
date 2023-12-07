@@ -96,7 +96,7 @@ jobs:
           SAGE_NUM_THREADS: 2
 
       - name: Build modularized distributions
-        if: always() && steps.worktree.outcome == 'success'
+        if: (success() || failure()) && steps.worktree.outcome == 'success'
         run: make V=0 tox && make SAGE_CHECK=no pypi-wheels
         working-directory: ./worktree-image
         env:
@@ -104,7 +104,7 @@ jobs:
           SAGE_NUM_THREADS: 2
 
       - name: Static code check with pyright
-        if: always() && steps.worktree.outcome == 'success'
+        if: (success() || failure()) && steps.worktree.outcome == 'success'
         uses: jakebailey/pyright-action@v1
         with:
           version: 1.1.332
@@ -116,7 +116,7 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=8192
       
       - name: Static code check with pyright (annotated)
-        if: always() && steps.worktree.outcome == 'success'
+        if: (success() || failure()) && steps.worktree.outcome == 'success'
         uses: jakebailey/pyright-action@v1
         with:
           version: 1.1.332
@@ -130,7 +130,7 @@ jobs:
 
       - name: Clean (fallback to non-incremental)
         id: clean
-        if: always() && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
+        if: (success() || failure()) && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
         run: |
           set -ex
           ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status
@@ -143,7 +143,7 @@ jobs:
         # This step is needed because building the modularized distributions installs some optional packages,
         # so the editable install of sagelib needs to build the corresponding optional extension modules.
         id: build
-        if: always() && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
+        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.clean.outcome == 'success')
         run: |
           make build
         working-directory: ./worktree-image
@@ -154,7 +154,7 @@ jobs:
       # Testing
 
       - name: Test changed files (sage -t --new)
-        if: always() && steps.build.outcome == 'success'
+        if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
           ./sage -t --new -p2
@@ -164,7 +164,7 @@ jobs:
           SAGE_NUM_THREADS: 2
 
       - name: Test modularized distributions
-        if: always() && steps.build.outcome == 'success'
+        if: (success() || failure()) && steps.build.outcome == 'success'
         run: make V=0 tox && make pypi-wheels-check
         working-directory: ./worktree-image
         env:
@@ -182,14 +182,14 @@ jobs:
           COLUMNS: 120
 
       - name: Test all files (sage -t --all --long)
-        if: always() && steps.build.outcome == 'success'
+        if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage
           ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
         working-directory: ./worktree-image/src
 
       - name: Prepare coverage results
-        if: always() && steps.build.outcome == 'success'
+        if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           ./venv/bin/python3 -m coverage combine src/.coverage/
           ./venv/bin/python3 -m coverage xml
@@ -198,7 +198,7 @@ jobs:
         working-directory: ./worktree-image
 
       - name: Upload coverage to codecov
-        if: always() && steps.build.outcome == 'success'
+        if: (success() || failure()) && steps.build.outcome == 'success'
         uses: codecov/codecov-action@v3
         with:
           directory: ./worktree-image/coverage-report
