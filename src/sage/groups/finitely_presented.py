@@ -145,6 +145,7 @@ from sage.rings.rational_field import QQ
 from sage.sets.set import Set
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class GroupMorphismWithGensImages(SetMorphism):
     r"""
     Class used for morphisms from finitely presented groups to
@@ -1702,12 +1703,18 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: g = FreeGroup(1) / []
             sage: g.abelian_alexander_matrix()
             ([], [])
+            sage: g.abelian_alexander_matrix()[0].base_ring()
+            Univariate Laurent Polynomial Ring in f1 over Rational Field
             sage: g = FreeGroup(0) / []
-            sage: g.abelian_alexander_matrix()
-            ([], [])
+            sage: A, ideal = g.abelian_alexander_matrix(); A
+            []
+            sage: A.base_ring()
+            Rational Field
         """
         ab, R, ideal, images = self.abelianization_to_algebra(ring=ring)
         A = self.alexander_matrix(im_gens=images)
+        if A.base_ring() != R:
+            A = A.change_ring(R)
         if simplified:
             n, m = A.dimensions()
             if n == 0 or m == 0:
@@ -1761,66 +1768,111 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         OUTPUT:
 
-        If ``groebner`` is ``False`` a list of ideals defining the characteristic varieties.
-        If it is ``True``, a list of lists for Gröbner bases for each ideal.
+        A dictionary with keys the indices of the varieties. If ``groebner`` is ``False``
+        the values are the ideals defining the characteristic varieties.
+        If it is ``True``, lists for Gröbner bases for the ideal of each irreducible
+        component, stopping when the first time a characteristic variety is empty.
 
         EXAMPLES::
 
             sage: L = [2*(i, j) + 2* (-i, -j) for i, j in ((1, 2), (2, 3), (3, 1))]
             sage: G = FreeGroup(3) / L
             sage: G.characteristic_varieties(groebner=True)
-            [[(f1 - 1, f2 - 1, f3 - 1),
-             (f1 + 1, f2 - 1, f3 - 1),
-             (f1 - 1, f2 - 1, f3 + 1),
-             (f3^2 + 1, f1 - f3, f2 - f3),
-             (f1 - 1, f2 + 1, f3 - 1)],
-             [(f1 - 1, f2 - 1, f3 - 1),
-             (f1*f3 + 1, f2 - 1),
-             (f1*f2 + 1, f3 - 1),
-             (f2*f3 + 1, f1 - 1),
-             (f2*f3 + 1, f1 - f2),
-             (f2*f3 + 1, f1 - f3),
-             (f1*f3 + 1, f2 - f3)]]
+            {0: [(0,)],
+             1: [(f1 - 1, f2 - 1, f3 - 1), (f1*f3 + 1, f2 - 1), (f1*f2 + 1, f3 - 1), (f2*f3 + 1, f1 - 1),
+                 (f2*f3 + 1, f1 - f2), (f2*f3 + 1, f1 - f3), (f1*f3 + 1, f2 - f3)],
+             2: [(f1 - 1, f2 - 1, f3 - 1), (f1 + 1, f2 - 1, f3 - 1), (f1 - 1, f2 - 1, f3 + 1),
+                 (f3^2 + 1, f1 - f3, f2 - f3), (f1 - 1, f2 + 1, f3 - 1)],
+             3: [(f1 - 1, f2 - 1, f3 - 1)],
+             4: []}
             sage: G = FreeGroup(2)/[2*(1,2,-1,-2)]
             sage: G.characteristic_varieties()
-            [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field]
+            {0: Ideal (0) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             1: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             2: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             3: Ideal (1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field}
             sage: G.characteristic_varieties(ring=ZZ)
-            [Ideal (-2*f2 + 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring]
+            {0: Ideal (0) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             1: Ideal (2*f2 - 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             2: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             3: Ideal (1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring}
             sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
             sage: G.characteristic_varieties()
-            [Ideal (1 - f2 + f2^2, -1 + f2 - f2^2) of Univariate Laurent Polynomial Ring in f2 over Rational Field]
+            {0: Ideal (0) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
+             1: Ideal (-1 + 2*f2 - 2*f2^2 + f2^3) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
+             2: Ideal (1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
             sage: G.characteristic_varieties(groebner=True)
-            [[1 - f2 + f2^2]]
+            {0: [0], 1: [-1 + f2, 1 - f2 + f2^2], 2: []}
+            sage: G = FreeGroup(2)/[3 * (1, ), 2 * (2, )]
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [-1 + F1, 1 + F1, 1 - F1 + F1^2, 1 + F1 + F1^2], 1: [1 - F1 + F1^2],  2: []}
+            sage: G = FreeGroup(2)/[2 * (2, )]
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [(f1 + 1,), (f1 - 1,)], 1: [(f1 + 1,), (f1 - 1, f2 - 1)], 2: []}
+            sage: G = (FreeGroup(0) / [])
+            sage: G.characteristic_varieties()
+            {0: Principal ideal (0) of Rational Field,
+             1: Principal ideal (1) of Rational Field}
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [(0,)], 1: [(1,)]}
         """
-        A, ideal = self.abelian_alexander_matrix(ring=ring, simplified=True)
+        if self.ngens() == 0:
+            if groebner:
+                return {j: [(ring(j),)] for j in (0, 1)}
+            return {j: ring.ideal(j) for j in (0, 1)}
+        A, rels = self.abelian_alexander_matrix(ring=ring, simplified=True)
         R = A.base_ring()
-        res = []
+        eval_1 = {x: ring(1) for x in R.gens()}
+        A_scalar = A.apply_map(lambda p: p.subs(eval_1))
+        n = A.ncols()
+        n1 = n - A_scalar.rank()
+        ideal_1 = R.ideal([x - 1 for x in R.gens()])
         S = R.polynomial_ring()
-        ideal = [S(elt) for elt in ideal]
-        for j in range(1, A.ncols()):
-            L = [p.monomial_reduction()[0] for p in A.minors(j)]
-            J = R.ideal(L + ideal)
-            res.append(J)
-        if not groebner or not R.base_ring().is_field():
+        K = R.base_ring()
+        id_rels = R.ideal(rels)
+        res = dict()
+        bound = n + 1
+        for j in range(bound + 1):
+            J = id_rels + A.fitting_ideal(j)
+            # J = R.ideal(id_rels.gens() + A.fitting_ideal(j).gens())
+            if j <= n1:
+                J1 = K.ideal([K(p.subs(eval_1)) for p in J.gens()])
+                if J1:
+                    J *= ideal_1
+            res[j] = R.ideal(J.gens_reduced())
+            if R(1) in res[j].gens():
+                bound = j
+                break
+        if not groebner or not ring.is_field():
             return res
         if R.ngens() == 1:
-            res0 = [gcd(S(p) for p in J.gens()) for J in res]
-            res1 = []
-            for p in res0:
-                if p == 0:
-                    res1.append([R(0)])
+            res = {j: gcd(S(p) for p in res[j].gens()) for j in range(bound + 1)}
+            char_var = dict()
+            strict = True
+            j = 0
+            while strict and j <= bound:
+                if res[j] == 0:
+                    char_var[j] = [R(0)]
                 else:
-                    fct = [q[0] for q in R(p).factor()]
+                    fct = [q[0] for q in R(res[j]).factor()]
                     if fct:
-                        res1.append(fct)
-            return res1
-        res1 = []
-        for J in res:
-            LJ = J.minimal_associated_primes()
+                        char_var[j] = fct
+                    else:
+                        char_var[j] = []
+                        strict = False
+                j += 1
+            return char_var
+        char_var = dict()
+        strict = True
+        j = 0
+        while strict and j <= bound:
+            LJ = res[j].minimal_associated_primes()
             fct = [id.groebner_basis() for id in LJ]
-            if fct != [(S.one(),)]:
-                res1.append(fct)
-        return res1
+            char_var[j] = fct
+            if not fct:
+                strict = False
+            j += 1
+        return char_var
 
     def rewriting_system(self):
         """

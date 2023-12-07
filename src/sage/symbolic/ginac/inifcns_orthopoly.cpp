@@ -20,6 +20,7 @@
 #include "utils.h"
 
 #include "gmp.h"
+#include "flint/fmpz_poly.h"
 #include "flint/fmpq_poly.h"
 #include "flint/fmpq.h"
 
@@ -63,7 +64,7 @@ static ex chebyt_eval(const ex& n_, const ex& x)
         for (int i = 0; i<len; ++i) {
                 mpz_t bigint;
                 mpz_init(bigint);
-                fmpz_poly_get_coeff_mpz(bigint, p, i);
+                fmpz_get_mpz(bigint, fmpz_poly_get_coeff_ptr(p, i));
                 numeric coeff(bigint);
                 if (not coeff.is_zero())
                         vec.emplace_back(currx, coeff);
@@ -122,7 +123,7 @@ static ex chebyu_eval(const ex& n_, const ex& x)
         for (int i = 0; i<len; ++i) {
                 mpz_t bigint;
                 mpz_init(bigint);
-                fmpz_poly_get_coeff_mpz(bigint, p, i);
+                fmpz_get_mpz(bigint, fmpz_poly_get_coeff_ptr(p, i));
                 numeric coeff(bigint);
                 if (not coeff.is_zero())
                         vec.emplace_back(currx, coeff);

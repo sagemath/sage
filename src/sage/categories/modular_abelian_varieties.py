@@ -10,11 +10,12 @@ Modular abelian varieties
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_over_base
-from .category_with_axiom import CategoryWithAxiom
-from .homsets import HomsetsCategory
-from .rings import Rings
-from .sets_cat import Sets
+from sage.categories.category_types import Category_over_base
+from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.homsets import HomsetsCategory
+from sage.categories.rings import Rings
+from sage.categories.sets_cat import Sets
+
 
 class ModularAbelianVarieties(Category_over_base):
     """

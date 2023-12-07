@@ -1055,7 +1055,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         on_basis = self.on_basis()
         assert y in G
 
-        result    = G.zero()
+        result = G.zero()
         remainder = y
 
         while not remainder.is_zero():
@@ -1447,7 +1447,7 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         if codomain is None:
             raise ValueError("The codomain should be specified")
         if not (domain.basis().keys() == codomain.basis().keys() and
-                domain.base_ring()    == codomain.base_ring()):
+                domain.base_ring() == codomain.base_ring()):
             raise ValueError("The domain and codomain should have the same base ring "
                              "and the same basis indexing")
         from collections.abc import Callable
