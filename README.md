@@ -28,8 +28,8 @@ Table of Contents
 
 * [Getting Started](#getting-started)
 * [Supported Platforms](#supported-platforms)
-* [\[Windows\] Preparing the Platform Libraries](#windows-preparing-the-platform)
-* [\[macOS\] Preparing the Platform Libraries](#macos-preparing-the-platform)
+* [\[Windows\] Preparing the Platform](#windows-preparing-the-platform)
+* [\[macOS\] Preparing the Platform](#macos-preparing-the-platform)
 * [Instructions to Build from Source](#instructions-to-build-from-source)
 * [SageMath Docker Images](#sagemath-docker-images)
 * [Troubleshooting](#troubleshooting)
