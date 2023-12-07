@@ -136,7 +136,7 @@ foreach name, pyx : extension_data
 endforeach
 
 extension_data_cpp = {
-    'bernmm': files('bernmm.pyx', 'bernmm/bern_modp.cpp', 'bernmm/bern_modp_util.cpp'),#, 'bernmm/bern_rat.cpp'), - TODO: Compilation error
+    'bernmm': files('bernmm.pyx', 'bernmm/bern_modp.cpp', 'bernmm/bern_modp_util.cpp', 'bernmm/bern_rat.cpp'),
     'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
     'fraction_field_FpT': files('fraction_field_FpT.pyx'),
     'rational': files('rational.pyx'),
@@ -147,6 +147,7 @@ foreach name, pyx : extension_data_cpp
         sources: pyx,
         subdir: 'sage/rings',
         install: true,
+        cpp_args: ['-DUSE_THREADS=1','-DTHREAD_STACK_SIZE=4096'],
         override_options : ['cython_language=cpp'],
         include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
         dependencies: [py_dep, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
