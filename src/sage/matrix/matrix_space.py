@@ -306,6 +306,13 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                         pass
                     else:
                         return matrix_mpolynomial_dense.Matrix_mpolynomial_dense
+                elif isinstance(R, sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_mpair) and R.base_ring() in _Fields:
+                    try:
+                        from . import matrix_laurent_mpolynomial_dense
+                    except ImportError:
+                        pass
+                    else:
+                        return matrix_laurent_mpolynomial_dense.Matrix_laurent_mpolynomial_dense
 
             # The fallback
             from sage.matrix.matrix_generic_dense import Matrix_generic_dense

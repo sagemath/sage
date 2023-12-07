@@ -1232,9 +1232,10 @@ class Factorization(SageObject):
             sage: F(t=0)
             0
 
-            sage: R.<x> = LaurentPolynomialRing(QQ, 1)                                  # needs sage.modules
-            sage: F = ((x+2)/x**3).factor()                                             # needs sage.modules
-            sage: F(x=4)                                                                # needs sage.modules
+            sage: # needs sage.libs.pari sage.modules
+            sage: R.<x> = LaurentPolynomialRing(QQ, 1)
+            sage: F = ((x+2)/x**3).factor()
+            sage: F(x=4)
             1/64 * 6
         """
         unit = self.__unit.subs(*args, **kwds)
