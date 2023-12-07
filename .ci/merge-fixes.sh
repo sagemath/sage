@@ -19,7 +19,7 @@ else
         git tag -f test_head
         $GH pr checkout -b pr-$a $a
         git checkout -q test_head
-        if git merge --no-edit --squash -q pr-$a; then
+        if git merge --no-edit --squash --allow-unrelated-histories -q pr-$a; then
             echo "::endgroup::"
             if git commit -q -m "Merge https://github.com/$REPO/pull/$a" -a --no-allow-empty; then
                 echo "Merged #$a"
