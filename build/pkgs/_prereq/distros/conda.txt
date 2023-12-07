@@ -1,8 +1,7 @@
+compilers
+make
+m4
+perl
 python
-# Not needed on conda
-# compilers
-# make
-# m4
-# perl
-# tar
-# bc
+tar
+bc
