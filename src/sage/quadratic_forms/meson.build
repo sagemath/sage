@@ -1,6 +1,7 @@
 py.install_sources(
     'all.py',
     'binary_qf.py',
+    'bqf_class_group.py',
     'constructions.py',
     'extras.py',
     'qfsolve.py',
