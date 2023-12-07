@@ -914,14 +914,13 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             1
             sage: IntegerVectors(n=5).rank([3,2])
             3
-            
         """
         if sum(x) != self.n:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(self.n, None))
             
-        n, k, r = self.n, len(x), 0
+        n, k = self.n, len(x)
 
-        r = sum(binomial(n + i - 1, i - 1) for i in range(1, k))
+        r = binomial(k+n-1, n+1)
             
         for i in range(k - 1):
             k -= 1
@@ -944,8 +943,6 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             [4, 1]
             sage: IntegerVectors(n=10).unrank(10)
             [1, 9]
-            
-            
         """
         ptr=0
         rtn=[self.n]
@@ -1070,9 +1067,9 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         if len(x) != self.k:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(None, self.k))
 
-        n, k, r = sum(x), self.k, 0
+        n, k = sum(x), self.k
         
-        r=sum(binomial(k + i - 1, k - 1) for i in range(n))
+        r = sum(binomial(k + i - 1, k - 1) for i in range(n))
             
         for i in range(k - 1):
             k -= 1
@@ -1333,7 +1330,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- an integer such that x < len(self) ``
+        - ``x`` -- an integer such that ``x < len(self)``
 
         EXAMPLES::
 
