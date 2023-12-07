@@ -131,7 +131,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/rings',
         install: true,
         include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, arb, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
+        dependencies: [py_dep, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
     )
 endforeach
 
@@ -149,7 +149,7 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, arb, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
+        dependencies: [py_dep, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
     )
 endforeach
 

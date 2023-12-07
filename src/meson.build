@@ -195,12 +195,6 @@ mpc = declare_dependency(
     cc.find_library('mpc'),
   ]
 )
-# Cannot be found via pkg-config
-arb = declare_dependency(
-  dependencies: [
-    cc.find_library('arb'),
-  ]
-)
 mpfi = declare_dependency(
   dependencies: [
     cc.find_library('mpfi'),

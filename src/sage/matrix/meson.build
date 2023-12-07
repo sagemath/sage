@@ -49,6 +49,7 @@ extension_data = {
     'matrix_generic_dense': files('matrix_generic_dense.pyx'),
     'matrix_generic_sparse': files('matrix_generic_sparse.pyx'),
     # 'matrix_gfpn_dense': files('matrix_gfpn_dense.pyx'), # not yet on conda
+    'matrix_laurent_mpolynomial_dense': files('matrix_laurent_mpolynomial_dense.pyx'),
     'matrix_numpy_dense': files('matrix_numpy_dense.pyx'),
     'matrix_numpy_integer_dense': files('matrix_numpy_integer_dense.pyx'),
     'matrix_polynomial_dense': files('matrix_polynomial_dense.pyx'),
@@ -70,7 +71,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/matrix',
         install: true,
         include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, arb, cblas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, zlib],
+        dependencies: [py_dep, cblas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, zlib],
     )
 endforeach
 
@@ -94,7 +95,7 @@ foreach name, pyx : extension_data_cpp
         install: true,
         override_options : ['cython_language=cpp'],
         include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, arb, cblas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, singular, zlib],
+        dependencies: [py_dep, cblas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, singular, zlib],
     )
 endforeach
 

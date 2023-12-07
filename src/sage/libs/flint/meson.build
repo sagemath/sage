@@ -34,6 +34,7 @@ py.install_sources(
 extension_data = {
     'arith': files('arith.pyx'),
     'flint': files('flint.pyx'),
+    'fmpq_poly': files('fmpq_poly.pyx'),
     'fmpz_factor': files('fmpz_factor.pyx'),
     'fmpz_poly': files('fmpz_poly.pyx'),
     'qsieve': files('qsieve.pyx'),
