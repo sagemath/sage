@@ -780,6 +780,20 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
                 return False
         return True
 
+    def unrank(self, x, rtn):
+        ptr = 0
+        while True:
+            current_rank = self.rank(rtn)
+            if current_rank < x:
+                rtn[ptr+1] = rtn[ptr]
+                rtn[ptr] = 0
+                ptr += 1
+            elif current_rank > x:
+                rtn[ptr] -= 1
+                rtn[ptr-1] += 1
+            else:
+                return self._element_constructor_(rtn)
+
 
 class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     """
@@ -945,22 +959,12 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             sage: IntegerVectors(n=10).unrank(10)
             [1, 9]
         """
-        ptr = 0
         rtn = [self.n]
         while self.rank(rtn) < x:
             rtn.append(0)
         rtn.pop()
 
-        while True:
-            if self.rank(rtn) < x:
-                rtn[ptr+1] = rtn[ptr]
-                rtn[ptr] = 0
-                ptr += 1
-            elif self.rank(rtn) > x:
-                rtn[ptr] -= 1
-                rtn[ptr-1] += 1
-            else:
-                return self._element_constructor_(rtn)
+        return IntegerVectors.unrank(self, x, rtn)
 
     def cardinality(self):
         """
@@ -1086,7 +1090,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- an integer such that x < len(self) ``
+        - ``x`` -- an integer such that x < self.cardinality() ``
 
         EXAMPLES::
 
@@ -1098,22 +1102,14 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         if self.k == 0 and x != 0:
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
         else:
-            n, ptr = 0, 0
+            n = 0
             rtn = [0]*self.k
             while self.rank(rtn) <= x:
                 n += 1
-                rtn[ptr] = n
-            rtn[ptr] -= 1
-            while True:
-                if self.rank(rtn) < x:
-                    rtn[ptr+1] = rtn[ptr]
-                    rtn[ptr] = 0
-                    ptr += 1
-                elif self.rank(rtn) > x:
-                    rtn[ptr] -= 1
-                    rtn[ptr-1] += 1
-                else:
-                    return self._element_constructor_(rtn)
+                rtn[0] = n
+            rtn[0] -= 1
+
+            return IntegerVectors.unrank(self, x, rtn)
 
     def cardinality(self):
         """
@@ -1333,7 +1329,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- an integer such that ``x < len(self)``
+        - ``x`` -- an integer such that ``x < self.cardinality()``
 
         EXAMPLES::
 
@@ -1342,22 +1338,12 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
             sage: IntegerVectors(2,3).unrank(5)
             [0, 0, 2]
         """
-        if x >= len(self):
+        if x >= self.cardinality():
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
         else:
-            ptr = 0
             rtn = [0]*self.k
-            rtn[ptr] = self.n
-            while True:
-                if self.rank(rtn) < x:
-                    rtn[ptr+1] = rtn[ptr]
-                    rtn[ptr] = 0
-                    ptr += 1
-                elif self.rank(rtn) > x:
-                    rtn[ptr] -= 1
-                    rtn[ptr-1] += 1
-                else:
-                    return self._element_constructor_(rtn)
+            rtn[0] = self.n
+            return IntegerVectors.unrank(self, x, rtn)
 
     def cardinality(self):
         """
