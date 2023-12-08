@@ -748,7 +748,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
                 if asm.has(symbol):
                     asm.forget()
 
-    def var(self, name, latex_name=None, n=None, domain=None):
+    def var(self, name, latex_name=None, n=None, domain="complex"):
         r"""
         Return a symbolic variable as an element of the symbolic ring.
 
@@ -862,6 +862,16 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             Traceback (most recent call last):
             ...
             ValueError: cannot specify n for multiple symbol names
+        
+        Check that :trac:`36833` is fixed: Variables whose domain is not
+        defined should be considered in complex plane as described in documentation::
+
+            sage: y = SR.var("y"); y
+            y
+            sage: f = y * conjugate(y); f
+            f
+            sage: f.factor()
+            y*conjugate(y)
         """
         if isinstance(name, Expression):
             return name
