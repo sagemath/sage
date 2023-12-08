@@ -1,7 +1,16 @@
 py.install_sources(
     '__init__.py',
     'all.py',
+    'binary_matrix.pxd',
+    'binary_search.pxd',
+    'bitset.pxd',
+    'bitset_base.pxd',
+    'bitset_intrinsics.h',
+    'blas_dict.pxd',
+    'bounded_integer_sequences.pxd',
+    'list_of_pairs.pxd',
     'mutable_poset.py',
+    'sparse_bitset.pxd',
     'stream.py',
     subdir: 'sage/data_structures',
 )
