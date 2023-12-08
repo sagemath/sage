@@ -43,7 +43,7 @@ with one file for each evaluation of the function.
 import inspect
 import os
 
-from . import persist
+from sage.misc import persist
 
 class func_persist:
     r"""

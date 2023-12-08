@@ -71,7 +71,7 @@ import sage.matrix.matrix_space
 import sage.misc.latex as latex
 import sage.rings.ring as ring
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from . import free_module
+from sage.modules import free_module
 
 # #############################################################################
 #
@@ -154,7 +154,7 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
 
     if key in _cache:
         M = _cache[key]()
-        if not (M is None):
+        if M is not None:
             return M
 
     if not base_ring.is_commutative():

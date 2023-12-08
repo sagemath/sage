@@ -814,30 +814,6 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         phis = (phi.dual() for phi in self._phis[::-1])
         return EllipticCurveHom_composite.from_factors(phis)
 
-    def is_separable(self):
-        """
-        Determine whether this composite isogeny is separable.
-
-        A composition of isogenies is separable if and only if
-        all factors are.
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            sage: E = EllipticCurve(GF(7^2), [3,2])
-            sage: P = E.lift_x(1)
-            sage: phi = EllipticCurveHom_composite(E, P); phi
-            Composite morphism of degree 7 = 7:
-              From: Elliptic Curve defined by y^2 = x^3 + 3*x + 2
-                    over Finite Field in z2 of size 7^2
-              To:   Elliptic Curve defined by y^2 = x^3 + 3*x + 2
-                    over Finite Field in z2 of size 7^2
-            sage: phi.is_separable()
-            True
-        """
-        return all(phi.is_separable() for phi in self._phis)
-
     def formal(self, prec=20):
         """
         Return the formal isogeny corresponding to this composite
@@ -899,29 +875,21 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         """
         return prod(phi.scaling_factor() for phi in self._phis)
 
-    def is_injective(self):
-        """
-        Determine whether this composite morphism has trivial kernel.
+    def inseparable_degree(self):
+        r"""
+        Return the inseparable degree of this morphism.
 
-        In other words, return ``True`` if and only if ``self`` is a
-        purely inseparable isogeny.
+        Like the degree, the inseparable degree is multiplicative
+        under composition, so this method returns the product of
+        the inseparable degrees of the factors.
 
         EXAMPLES::
 
-            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            sage: E = EllipticCurve([1,0])
-            sage: phi = EllipticCurveHom_composite(E, E(0,0))
-            sage: phi.is_injective()
-            False
-            sage: E = EllipticCurve_from_j(GF(3).algebraic_closure()(0))
-            sage: nu = EllipticCurveHom_composite.from_factors(E.automorphisms())
-            sage: nu
-            Composite morphism of degree 1 = 1^12:
-              From: Elliptic Curve defined by y^2 = x^3 + x
-                    over Algebraic closure of Finite Field of size 3
-              To:   Elliptic Curve defined by y^2 = x^3 + x
-                    over Algebraic closure of Finite Field of size 3
-            sage: nu.is_injective()
-            True
+            sage: E = EllipticCurve(j=GF(11^5).random_element())
+            sage: phi = E.frobenius_isogeny(2) * E.scalar_multiplication(77)
+            sage: type(phi)
+            <class 'sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite'>
+            sage: phi.inseparable_degree()
+            1331
         """
-        return all(phi.is_injective() for phi in self._phis)
+        return prod(phi.inseparable_degree() for phi in self._phis)
