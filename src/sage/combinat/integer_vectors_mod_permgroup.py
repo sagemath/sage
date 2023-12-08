@@ -789,11 +789,13 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             [3, 0, 2, 2]
             [2, 2, 2, 1]
 
+            Check that :issue:`36681` is fixed::
             sage: I = IntegerVectorsModPermutationGroup(
             ....:     PermutationGroup([], domain=[]), sum=0)
             sage: list(iter(I))     # Single empty vector
             [[]]
 
+            Check that :issue:`36681` is fixed::
             sage: I = IntegerVectorsModPermutationGroup(
             ....:     PermutationGroup([], domain=[]), sum=3)
             sage: list(iter(I))     # No solutions
@@ -834,13 +836,15 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         EXAMPLES::
 
-            sage: # With a trivial group all vectors are canonical.
+            With a trivial group all vectors are canonical::
             sage: G = PermutationGroup([], domain=[1,2,3])
             sage: IntegerVectorsModPermutationGroup(G, 5).cardinality()
             21
             sage: IntegerVectors(5, 3).cardinality()
             21
 
+            With two interchangeable elements, the smaller one
+            ranges from zero to n//2::
             sage: G = PermutationGroup([(1,2)])
             sage: IntegerVectorsModPermutationGroup(G, 1000).cardinality()
             501
@@ -850,6 +854,8 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             sage: I.cardinality()
             7
 
+            Binary vectors up to full symmetry are first some
+            ones and then some zeros::
             sage: G = SymmetricGroup(10)
             sage: I = IntegerVectorsModPermutationGroup(G, max_part=1)
             sage: I.cardinality()
@@ -857,12 +863,14 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         TESTS::
 
+            Check that :issue:`36681` is fixed::
             sage: G = PermutationGroup([], domain=[])
             sage: sgs = tuple(tuple(t) for t in G.strong_generating_system())
             sage: V = IntegerVectorsModPermutationGroup(G, sum=1, sgs=sgs)
             sage: V.cardinality()
             0
 
+            All permutation groups of degree 4::
             sage: for G in SymmetricGroup(4).subgroups():
             ....:     sgs = tuple(tuple(t) for t in G.strong_generating_system())
             ....:     I1 = IntegerVectorsModPermutationGroup(G, sum=10, sgs=sgs)
