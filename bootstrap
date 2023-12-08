@@ -62,7 +62,7 @@ AS_VAR_SET_IF([SAGE_ENABLE_$pkgname], [], [AS_VAR_SET([SAGE_ENABLE_$pkgname], [y
                         _*) ;;
                         *)  spkg_configures="$spkg_configures
 AC_SUBST(SAGE_ENABLE_$pkgname, [if_installed])"
-                            if [ -f build/pkgs/$pkgname/spkg-install -o -f build/pkgs/$pkgname/spkg-install.in ]; then
+                            if [ -f build/pkgs/$pkgname/spkg-install -o -f build/pkgs/$pkgname/spkg-install.in -o -f build/pkgs/$pkgname/distros/conda.txt ]; then
                                 # Issue #31163: Not just an optional dummy package
                                 spkg_configures="$spkg_configures
 SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(grep -v ^= build/pkgs/$pkgname/SPKG.rst | head -n1 2>/dev/null || echo $pkgname)])"
@@ -94,6 +94,8 @@ EOF
         elif test ! -f "$DIR/checksums.ini"; then
             if test -f "$DIR/spkg-install"; then
                 SPKG_SOURCE=script
+            elif test -f "$DIR/distros/conda.txt"; then
+                SPKG_SOURCE=conda
             else
                 # a dummy package
                 SPKG_SOURCE=none

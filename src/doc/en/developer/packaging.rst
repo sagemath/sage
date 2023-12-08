@@ -124,6 +124,22 @@ the following source types:
      ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
      if ``package-version.txt`` changes.
 
+#. A ``conda`` package:
+
+   - is installed via conda-forge into an isolated conda environment, using
+     the information in ``distros/conda.txt``;
+
+   - only installed executable standalone programs are made
+     accessible (by an addition to :envvar:`PATH`) to the runtime environment
+     of Sage;
+
+   - in particular, no Python packages that need to be ``import``-ed by Sage
+     can be installed as a ``conda`` package;
+
+   - by policy, no ``standard`` package is allowed to be a ``conda`` package
+     (because the ``micromamba`` installer is not built from source but
+     downloaded in binary form).
+
 #. A ``dummy`` package:
 
    - is only used for recording the names of equivalent system packages;
@@ -134,8 +150,9 @@ the following source types:
 To summarize: the package source type is determined as follows: if
 there is a file ``requirements.txt``, it is a ``pip`` package. If not,
 then if there is a ``checksums.ini`` file, it is ``normal`` or ``wheel``.
-Otherwise, if it has an ``spkg-install`` script, it is a ``script`` package,
-and if it does not, then it is a ``dummy`` package.
+Otherwise, if it has an ``spkg-install`` script, it is a ``script`` package.
+If it does not, but it has ``distros/conda.txt``, it is a ``conda`` package.
+Otherwise, it is a ``dummy`` package.
 
 
 .. _section-directory-structure:

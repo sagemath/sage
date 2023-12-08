@@ -41,6 +41,12 @@ do
         --yes)
             YES=yes
             ;;
+        --quiet)
+            QUIET=yes
+            ;;
+        --isolated)
+            ISOLATED=yes
+            ;;
         -*)
             echo >&2 "$0: unknown option $1"
             exit 1
@@ -64,7 +70,8 @@ if [ "$system" = auto ]; then
     fi
 fi
 if [ "$SPKG" = "yes" ]; then
-    system_packages=$(echo $(sage-get-system-packages $system $*))
+    base_system=${system%%-*}
+    system_packages=$(echo $(sage-get-system-packages $base_system $*))
 else
     system_packages="$*"
 fi
@@ -139,6 +146,16 @@ case $system:$command in
         ;;
     opensuse*:install)
         [ -n "$system_packages" ] && print_shell_command "${SUDO}zypper install $system_packages"
+        ;;
+    conda-micromamba*:install)
+        [ "$YES" = yes ] && options="$options --yes"
+        [ "$ISOLATED" = yes ] && options="$options --no-rc"
+        [ -n "$system_packages" ] && print_shell_command "micromamba install $options $system_packages"
+        ;;
+    conda-mamba*:install)
+        [ "$YES" = yes ] && options="$options --yes"
+        [ "$QUIET" = yes ] && options="$options --no-banner"
+        [ -n "$system_packages" ] && print_shell_command "mamba install $options $system_packages"
         ;;
     *conda*:install)
         [ "$YES" = yes ] && options="$options --yes"

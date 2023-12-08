@@ -1,9 +1,0 @@
---- a/reid/Makefile	2016-07-04 13:37:19.218923000 +0000
-+++ b/reid/Makefile	2016-07-04 13:46:28.070923000 +0000
-@@ -1,6 +1,5 @@
- all: optimal twist
- 
--CFLAGS=-O2 -g
- 
- clean:
- 	rm -f *.o
