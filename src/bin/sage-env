@@ -252,6 +252,12 @@ if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
     SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET
 fi
 if [ -n "$SAGE_LOCAL" ]; then
+    # https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html
+    SAGE_CONDA_PREFIX="$SAGE_LOCAL/var/lib/sage/conda"
+    if [ -d "$SAGE_CONDA_PREFIX/conda-meta" ]; then
+        # We do not use the activation script; we only want bin in PATH, nothing else.
+        export PATH="$SAGE_CONDA_PREFIX/bin:$PATH"
+    fi
     export PATH="$SAGE_LOCAL/bin:$PATH"
 fi
 if [ -n "$SAGE_VENV" ]; then

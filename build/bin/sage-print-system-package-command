@@ -44,6 +44,9 @@ do
         --quiet)
             QUIET=yes
             ;;
+        --isolated)
+            ISOLATED=yes
+            ;;
         -*)
             echo >&2 "$0: unknown option $1"
             exit 1
@@ -67,12 +70,7 @@ if [ "$system" = auto ]; then
     fi
 fi
 if [ "$SPKG" = "yes" ]; then
-    case $system in
-        mamba)
-            base_system=conda;;
-        *)
-            base_system=$system;;
-    esac
+    base_system=${system%%-*}
     system_packages=$(echo $(sage-get-system-packages $base_system $*))
 else
     system_packages="$*"
@@ -149,14 +147,19 @@ case $system:$command in
     opensuse*:install)
         [ -n "$system_packages" ] && print_shell_command "${SUDO}zypper install $system_packages"
         ;;
-    *conda*:install)
+    conda-micromamba*:install)
         [ "$YES" = yes ] && options="$options --yes"
-        [ -n "$system_packages" ] && print_shell_command "conda install $options $system_packages"
+        [ "$ISOLATED" = yes ] && options="$options --no-rc"
+        [ -n "$system_packages" ] && print_shell_command "micromamba install $options $system_packages"
         ;;
-    mamba*:install)
+    conda-mamba*:install)
         [ "$YES" = yes ] && options="$options --yes"
         [ "$QUIET" = yes ] && options="$options --no-banner"
         [ -n "$system_packages" ] && print_shell_command "mamba install $options $system_packages"
+        ;;
+    *conda*:install)
+        [ "$YES" = yes ] && options="$options --yes"
+        [ -n "$system_packages" ] && print_shell_command "conda install $options $system_packages"
         ;;
     homebrew*:install)
         [ -n "$system_packages" ] && print_shell_command "brew install $system_packages"

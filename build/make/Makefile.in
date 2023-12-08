@@ -725,14 +725,15 @@ $(1)-$(4)-no-deps:
 	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
 	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \
-	elif [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
-	    rm -rf '$$($(4))/var/lib/sage/scripts/$(1)'; \
-	    cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
+	else \
+	  cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
+	  if [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
+	        rm -rf '$$($(4))/var/lib/sage/scripts/$(1)'; \
 		PKG_BASE="$(1)" \
 		PKG_VER="$(2)" \
 		PKG_NAME="$(1)-$(2)" \
@@ -740,10 +741,20 @@ $(1)-$(4)-no-deps:
 		SAGE_SPKG_SCRIPTS=$$($(4))/var/lib/sage/scripts \
 		SAGE_INST_LOCAL=$$($(4)) \
 		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install && if [ $$$$SAGE_CHECK != no -a -x $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check ]; then $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check; fi' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
-	    rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)"-* && \
-	    touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
-	else ( \
+	        sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install && if [ $$$$SAGE_CHECK != no -a -x $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check ]; then $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check; fi' '$$(SAGE_LOGS)/$(1)-$(2).log' || exit 1; \
+	  else \
+	   INSTALL_COMMAND=$$$$(sage-print-system-package-command conda-micromamba --yes --quiet --spkg install $(1)); \
+	   if [ -n "$$$$INSTALL_COMMAND" ]; then \
+	        if [ -d "$$$$SAGE_CONDA_PREFIX" ]; then \
+	                export MAMBA_ROOT_PREFIX="$$$$SAGE_CONDA_PREFIX"; \
+	                export CONDA_PREFIX="$$$$SAGE_CONDA_PREFIX"; \
+	                export CONDARC="$(SAGE_ROOT)/condarc.yml"; \
+	                eval $$$$INSTALL_COMMAND; \
+	        else ( \
+		        echo "Error: $(1) is a conda package, but the environment created by SPKG conda is not present" \
+		   ) | sage-logger -p 'cat; exit 1' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
+		fi; \
+	   else ( \
 	    echo; \
 	    echo "Note: $(1) is a dummy package that the Sage distribution uses"; \
 	    echo "to provide information about equivalent system packages."; \
@@ -756,6 +767,10 @@ $(1)-$(4)-no-deps:
 	    echo; \
 	    echo "Error: $(1) is a dummy package and "; \
 	    echo "cannot be installed using the Sage distribution." ) | sage-logger -p 'cat; exit 1' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
+	   fi; \
+	  fi; \
+	  rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)"-* && \
+	  touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
 	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps
