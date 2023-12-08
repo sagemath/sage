@@ -230,13 +230,22 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
             sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3)]]), 8, max_part=5)
         """
         if sum is None and max_part is None:
-            return IntegerVectorsModPermutationGroup_All(G, sgs=sgs)
+            # No constraints.
+            if G.domain():
+                # Nonempty domain, infinite set.
+                return IntegerVectorsModPermutationGroup_All(G, sgs=sgs)
+            else:
+                # Empty domain, singleton set.
+                return IntegerVectorsModPermutationGroup_with_constraints(
+                    G, 0, max_part=-1, sgs=sgs)
         else:
+            # Some constraints, either sum or max_part or both.
             if sum is not None:
                 assert sum == NN(sum)
             if max_part is not None:
                 assert max_part == NN(max_part)
-            return IntegerVectorsModPermutationGroup_with_constraints(G, sum, max_part, sgs=sgs)
+            return IntegerVectorsModPermutationGroup_with_constraints(
+                G, sum, max_part, sgs=sgs)
 
 
 class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnumeratedSet_forest):
@@ -756,6 +765,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             [2, 0, 2, 0]
             [2, 0, 1, 1]
             [1, 1, 1, 1]
+
             sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), sum=7, max_part=3)
             sage: for i in I: i
             [3, 3, 1, 0]
@@ -768,13 +778,37 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             [3, 1, 1, 2]
             [3, 0, 2, 2]
             [2, 2, 2, 1]
+
+            sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([]), sum=0)
+            sage: list(iter(I))     # Single empty vector
+            [[]]
+
+            sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([]), sum=3)
+            sage: list(iter(I))     # No solutions
+            []
+
+
         """
+        # Special cases when domain is empty.
+        if self.n == 0:
+            if self._sum is not None and self._sum > 0:
+                # No empty vector can have positive sum.
+                return iter(())
+            else:
+                # Sum is allowed to be zero.  It does not matter what
+                # the maxpart is, the empty vector is a solution.
+                return iter([[]])
+            
+        # General case, nonempty domain.
         if self._max_part < 0:
             return self.elements_of_depth_iterator(self._sum)
         else:
-            SF = RecursivelyEnumeratedSet_forest((self([0]*(self.n), check=False),),
-                              lambda x : [self(y, check=False) for y in canonical_children(self._sgs, x, self._max_part)],
-                              algorithm='breadth')
+            SF = RecursivelyEnumeratedSet_forest(
+                (self([0]*(self.n), check=False),),
+                lambda x: [self(y, check=False)
+                           for y in canonical_children(
+                                   self._sgs, x, self._max_part)],
+                algorithm='breadth')
             if self._sum is None:
                 return iter(SF)
             else:
