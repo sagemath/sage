@@ -648,9 +648,9 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 6); S
             Integer vectors of length 4 and of sum 6 enumerated up to the action of Permutation Group with generators [(1,2,3,4)]
             sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), 6, max_part=4); S
-            Vectors of length 4 and of sum 6 whose entries is in {0, ..., 4} enumerated up to the action of Permutation Group with generators [(1,2,3,4)]
+            Vectors of length 4 and of sum 6 whose entries are in {0, ..., 4} enumerated up to the action of Permutation Group with generators [(1,2,3,4)]
             sage: S = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]), max_part=4); S
-            Integer vectors of length 4 whose entries is in {0, ..., 4} enumerated up to the action of Permutation Group with generators [(1,2,3,4)]
+            Integer vectors of length 4 whose entries are in {0, ..., 4} enumerated up to the action of Permutation Group with generators [(1,2,3,4)]
         """
         if self._sum is not None:
             if self._max_part >= 0:
@@ -789,11 +789,13 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             [3, 0, 2, 2]
             [2, 2, 2, 1]
 
-            sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([]), sum=0)
+            sage: I = IntegerVectorsModPermutationGroup(
+            ....:     PermutationGroup([], domain=[]), sum=0)
             sage: list(iter(I))     # Single empty vector
             [[]]
 
-            sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([]), sum=3)
+            sage: I = IntegerVectorsModPermutationGroup(
+            ....:     PermutationGroup([], domain=[]), sum=3)
             sage: list(iter(I))     # No solutions
             []
 
