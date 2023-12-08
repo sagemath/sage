@@ -93,8 +93,27 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2007-2013 Andrey Novoseltsev <novoselt@gmail.com>
-#       Copyright (C) 2007-2013 William Stein <wstein@gmail.com>
+#       Copyright (C) 2007-2017 Andrey Novoseltsev <novoselt@gmail.com>
+#                     2007-2013 William Stein <wstein@gmail.com>
+#                     2009      Mike Hansen
+#                     2009-2020 John H. Palmieri
+#                     2010-2014 Volker Braun
+#                     2012      Samuel Gonshaw
+#                     2013      Jan Keitel
+#                     2014      André Apitzsch
+#                     2014      Wilfried Luebbe
+#                     2015-2022 Frédéric Chapoton
+#                     2015      Ursula Whitcher
+#                     2016      Jori Mäntysalo
+#                     2017      Travis Scrimshaw
+#                     2018      Christian Stump
+#                     2018      Vincent Klein
+#                     2019      Vincent Delecroix
+#                     2019      Jonathan Kliem
+#                     2020      Samuel Lelièvre
+#                     2021-2023 Matthias Koeppe
+#                     2022      David Coudert
+#                     2023      Luze Xu
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2500,16 +2519,16 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0)
             in 2-d lattice M
 
-        But they are in the same `GL(Z^n)` orbit and have the same
+        But they are in the same `GL(\ZZ^n)` orbit and have the same
         normal form::
 
-            sage: d.normal_form()                                                       # needs palp
+            sage: d.normal_form()                                                       # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
             M(-1,  0)
             in 2-d lattice M
-            sage: lattice_polytope.ReflexivePolytope(2,3).normal_form()
+            sage: lattice_polytope.ReflexivePolytope(2,3).normal_form()                 # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -2913,36 +2932,38 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         return len(self.facet_normals()) if self.dim() > 0 else 0
 
     @cached_method
-    def normal_form(self, algorithm="palp", permutation=False):
+    def normal_form(self, algorithm="palp_native", permutation=False):
         r"""
         Return the normal form of vertices of ``self``.
 
         Two full-dimensional lattice polytopes are in the same
-        ``GL(\ZZ)``-orbit if and only if their normal forms are the
+        `GL(\ZZ^n)`-orbit if and only if their normal forms are the
         same. Normal form is not defined and thus cannot be used for polytopes
         whose dimension is smaller than the dimension of the ambient space.
 
         The original algorithm was presented in [KS1998]_ and implemented
         in PALP. A modified version of the PALP algorithm is discussed in
-        [GK2013]_ and available here as "palp_modified".
+        [GK2013]_ and available here as ``"palp_modified"``.
 
         INPUT:
 
-        - ``algorithm`` -- (default: "palp") The algorithm which is used
+        - ``algorithm`` -- (default: ``"palp_native"``) The algorithm which is used
           to compute the normal form. Options are:
 
-          * "palp" -- Run external PALP code, usually the fastest option.
+          * ``"palp"`` -- Run external PALP code, usually the fastest option
+            when it works; but reproducible crashes have been observed in dimension
+            5 and higher.
 
-          * "palp_native" -- The original PALP algorithm implemented
-            in sage. Currently considerably slower than PALP.
+          * ``"palp_native"`` -- The original PALP algorithm implemented
+            in sage. Currently competitive with PALP in many cases.
 
-          * "palp_modified" -- A modified version of the PALP
+          * ``"palp_modified"`` -- A modified version of the PALP
             algorithm which determines the maximal vertex-facet
             pairing matrix first and then computes its
             automorphisms, while the PALP algorithm does both things
             concurrently.
 
-        - ``permutation`` -- (default: ``False``) If ``True`` the permutation
+        - ``permutation`` -- boolean (default: ``False``); if ``True``, the permutation
           applied to vertices to obtain the normal form is returned as well.
           Note that the different algorithms may return different results
           that nevertheless lead to the same normal form.
@@ -2963,7 +2984,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M(-1,  0),
             M( 0, -1)
             in 2-d lattice M
-            sage: d.normal_form()                                                       # needs palp
+            sage: d.normal_form()                                                       # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3013,6 +3034,163 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 0, -1),
             M(-1,  0)
             in 2-d lattice M
+
+        The following examples demonstrate the speed of the available algorithms.
+        In low dimensions, the default algorithm, ``"palp_native"``, is the fastest.
+        As the dimension increases, ``"palp"`` is relatively faster than ``"palp_native"``.
+        ``"palp_native"`` is usually much faster than ``"palp_modified"``.
+        In some cases when the polytope has high symmetry, however, ``"palp_native"`` is slower::
+
+            sage: # not tested
+            sage: o = lattice_polytope.cross_polytope(2)
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp")
+            625 loops, best of 3: 3.07 ms per loop
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native")
+            625 loops, best of 3: 0.445 ms per loop
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
+            625 loops, best of 3: 5.01 ms per loop
+            sage: o = lattice_polytope.cross_polytope(3)
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp")
+            625 loops, best of 3: 3.22 ms per loop
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native")
+            625 loops, best of 3: 2.73 ms per loop
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
+            625 loops, best of 3: 20.7 ms per loop
+            sage: o = lattice_polytope.cross_polytope(4)
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp")
+            625 loops, best of 3: 4.84 ms per loop
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native")
+            625 loops, best of 3: 55.6 ms per loop
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
+            625 loops, best of 3: 129 ms per loop
+            sage: o = lattice_polytope.cross_polytope(5)
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp")
+            10 loops, best of 3: 0.0364 s per loop
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_native")
+            10 loops, best of 3: 1.68 s per loop
+            sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
+            10 loops, best of 3: 0.858 s per loop
+
+        Note that the algorithm ``"palp"`` may crash for higher dimensions because of
+        the overflow errors as mentioned in :issue:`13525#comment:9`.
+        Then use ``"palp_native"`` instead, which is usually faster than ``"palp_modified"``.
+        Below is an example where ``"palp"`` fails and
+        ``"palp_native"`` is much faster than ``"palp_modified"``::
+
+            sage: P = LatticePolytope([[-3, -3, -6, -6, -1], [3, 3, 6, 6, 1], [-3, -3, -6, -6, 1],
+            ....:                      [-3, -3, -3, -6, 0], [-3, -3, -3, 0, 0], [-3, -3, 0, 0, 0],
+            ....:                      [-3, 0, -6, -6, 0], [-3, 0, -3, -6, 0], [-3, 0, -3, 0, 0],
+            ....:                      [-3, 0, 0, 0, -1], [3, 3, 6, 6, -1], [-3, 0, 0, 0, 1],
+            ....:                      [0, -3, -6, -6, 0], [0, -3, -3, -6, 0], [0, -3, -3, 0, 0],
+            ....:                      [0, -3, 0, 0, -1], [3, 3, 3, 6, 0], [0, -3, 0, 0, 1],
+            ....:                      [0, 0, -6, -6, 0], [0, 0, -3, -6, -1], [3, 3, 3, 0, 0],
+            ....:                      [0, 0, -3, -6, 1], [0, 0, -3, 0, -1], [3, 3, 0, 0, 0],
+            ....:                      [0, 0, -3, 0, 1], [0, 0, 3, 0, -1], [3, 0, 6, 6, 0],
+            ....:                      [0, 0, 3, 0, 1], [0, 0, 3, 6, -1], [3, 0, 3, 6, 0],
+            ....:                      [0, 0, 3, 6, 1], [0, 0, 6, 6, 0], [0, 3, 0, 0, -1],
+            ....:                      [3, 0, 3, 0, 0], [0, 3, 0, 0, 1], [0, 3, 3, 0, 0],
+            ....:                      [0, 3, 3, 6, 0], [0, 3, 6, 6, 0], [3, 0,0, 0, -1], [3, 0, 0, 0, 1]])
+            sage: P.normal_form(algorithm="palp")  # not tested
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Error executing ... for a polytope sequence!
+            Output:
+            b'*** stack smashing detected ***: terminated\nAborted\n'
+            sage: P.normal_form(algorithm="palp_native")                                # needs sage.groups
+            M(  6,  0,  0,  0,  0),
+            M( -6,  0,  0,  0,  0),
+            M(  0,  1,  0,  0,  0),
+            M(  0,  0,  3,  0,  0),
+            M(  0,  1,  0,  3,  0),
+            M(  0,  0,  0,  0,  3),
+            M( -6,  1,  6,  3, -6),
+            M( -6,  0,  6,  0, -3),
+            M(-12,  1,  6,  3, -3),
+            M( -6,  1,  0,  3,  0),
+            M( -6,  0,  3,  3,  0),
+            M(  6,  0, -6, -3,  6),
+            M(-12,  1,  6,  3, -6),
+            M(-12,  0,  9,  3, -6),
+            M(  0,  0,  0, -3,  0),
+            M(-12,  1,  6,  6, -6),
+            M(-12,  0,  6,  3, -3),
+            M(  0,  1, -3,  0,  0),
+            M(  0,  0, -3, -3,  3),
+            M(  0,  1,  0,  3, -3),
+            M(  0, -1,  0, -3,  3),
+            M(  0,  0,  3,  3, -3),
+            M(  0, -1,  3,  0,  0),
+            M( 12,  0, -6, -3,  3),
+            M( 12, -1, -6, -6,  6),
+            M(  0,  0,  0,  3,  0),
+            M( 12,  0, -9, -3,  6),
+            M( 12, -1, -6, -3,  6),
+            M( -6,  0,  6,  3, -6),
+            M(  6,  0, -3, -3,  0),
+            M(  6, -1,  0, -3,  0),
+            M(-12,  1,  9,  6, -6),
+            M(  6,  0, -6,  0,  3),
+            M(  6, -1, -6, -3,  6),
+            M(  0,  0,  0,  0, -3),
+            M(  0, -1,  0, -3,  0),
+            M(  0,  0, -3,  0,  0),
+            M(  0, -1,  0,  0,  0),
+            M( 12, -1, -9, -6,  6),
+            M( 12, -1, -6, -3,  3)
+            in 5-d lattice M
+            sage: P.normal_form(algorithm="palp_modified")  # not tested (22s; MemoryError on 32 bit), needs sage.groups
+            M(  6,  0,  0,  0,  0),
+            M( -6,  0,  0,  0,  0),
+            M(  0,  1,  0,  0,  0),
+            M(  0,  0,  3,  0,  0),
+            M(  0,  1,  0,  3,  0),
+            M(  0,  0,  0,  0,  3),
+            M( -6,  1,  6,  3, -6),
+            M( -6,  0,  6,  0, -3),
+            M(-12,  1,  6,  3, -3),
+            M( -6,  1,  0,  3,  0),
+            M( -6,  0,  3,  3,  0),
+            M(  6,  0, -6, -3,  6),
+            M(-12,  1,  6,  3, -6),
+            M(-12,  0,  9,  3, -6),
+            M(  0,  0,  0, -3,  0),
+            M(-12,  1,  6,  6, -6),
+            M(-12,  0,  6,  3, -3),
+            M(  0,  1, -3,  0,  0),
+            M(  0,  0, -3, -3,  3),
+            M(  0,  1,  0,  3, -3),
+            M(  0, -1,  0, -3,  3),
+            M(  0,  0,  3,  3, -3),
+            M(  0, -1,  3,  0,  0),
+            M( 12,  0, -6, -3,  3),
+            M( 12, -1, -6, -6,  6),
+            M(  0,  0,  0,  3,  0),
+            M( 12,  0, -9, -3,  6),
+            M( 12, -1, -6, -3,  6),
+            M( -6,  0,  6,  3, -6),
+            M(  6,  0, -3, -3,  0),
+            M(  6, -1,  0, -3,  0),
+            M(-12,  1,  9,  6, -6),
+            M(  6,  0, -6,  0,  3),
+            M(  6, -1, -6, -3,  6),
+            M(  0,  0,  0,  0, -3),
+            M(  0, -1,  0, -3,  0),
+            M(  0,  0, -3,  0,  0),
+            M(  0, -1,  0,  0,  0),
+            M( 12, -1, -9, -6,  6),
+            M( 12, -1, -6, -3,  3)
+            in 5-d lattice M
+            sage: %timeit P.normal_form.clear_cache(); P.normal_form("palp_native")    # not tested
+            10 loops, best of 3: 0.137 s per loop
+            sage: %timeit P.normal_form.clear_cache(); P.normal_form("palp_modified")  # not tested
+            10 loops, best of 3:  22.2 s per loop
+
+        TESTS::
+
+            sage: d.normal_form("palp_fiction")
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be 'palp', 'palp_native', or 'palp_modified'
         """
         if self.dim() < self.lattice_dim():
             raise ValueError("normal form is not defined for %s" % self)
@@ -3025,8 +3203,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         elif algorithm == "palp_modified":
             result = self._palp_modified_normal_form(permutation=permutation)
         else:
-            raise ValueError('Algorithm must be palp, ' +
-                             'palp_native, or palp_modified.')
+            raise ValueError("algorithm must be 'palp', 'palp_native', or 'palp_modified'")
         if permutation:
             vertices, perm = result
         else:
@@ -3049,7 +3226,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        -   ``permutation`` -- a Boolean, whether to return the permutation of
+        -   ``permutation`` -- boolean (default: ``False``); whether to return the permutation of
             the order of the vertices that was applied to obtain this matrix.
 
         OUTPUT:
@@ -3155,8 +3332,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         INPUT:
 
         - ``check`` -- Boolean (default: ``False``), whether to return
-            the permutations leaving the maximal vertex-facet pairing
-            matrix invariant.
+          the permutations leaving the maximal vertex-facet pairing
+          matrix invariant.
 
         OUTPUT:
 
@@ -3198,206 +3375,21 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             ....:             for j, i in PMs )
             sage: all(results)  # long time
             True
+
+        TESTS:
+
+        Check that a bug introduced in :issue:`35997` is fixed::
+
+            sage: P = LatticePolytope([(-4,-6),(-4,-5),(0,0),(1,0),(5,6)])
+            sage: P._palp_PM_max()
+            [9 5 4 0 0]
+            [6 0 6 5 0]
+            [1 5 0 0 4]
+            [0 6 0 1 6]
+            [0 0 3 5 3]
         """
-        PM = self.vertex_facet_pairing_matrix()
-        n_v = PM.ncols()
-        n_f = PM.nrows()
-        S_v = SymmetricGroup(n_v)
-        S_f = SymmetricGroup(n_f)
-
-        # and find all the ways of making the first row of PM_max
-        def index_of_max(iterable):
-            # returns the index of max of any iterable
-            return max(enumerate(iterable), key=lambda x: x[1])[0]
-
-        n_s = 1
-        permutations = {0: [S_f.one(), S_v.one()]}
-        for j in range(n_v):
-            m = index_of_max(PM[0, i] for i in range(j, n_v))
-            if m > 0:
-                permutations[0][1] = S_v((j + 1, m + j + 1), check=False) * permutations[0][1]
-        first_row = list(PM[0])
-
-        # Arrange other rows one by one and compare with first row
-        for k in range(1, n_f):
-            # Error for k == 1 already!
-            permutations[n_s] = [S_f.one(), S_v.one()]
-            m = index_of_max(PM[k, permutations[n_s][1](j+1) - 1] for j in range(n_v))
-            if m > 0:
-                permutations[n_s][1] = S_v((1, m + 1), check=False) * permutations[n_s][1]
-            d = (PM[k, permutations[n_s][1](1) - 1]
-                - permutations[0][1](first_row)[0])
-            if d < 0:
-                # The largest elt of this row is smaller than largest elt
-                # in 1st row, so nothing to do
-                continue
-            # otherwise:
-            for i in range(1, n_v):
-                m = index_of_max(PM[k, permutations[n_s][1](j+1) - 1] for j in range(i,n_v))
-                if m > 0:
-                    permutations[n_s][1] = S_v((i + 1, m + i + 1), check=False) \
-                                           * permutations[n_s][1]
-                if d == 0:
-                    d = (PM[k, permutations[n_s][1](i+1) - 1]
-                        - permutations[0][1](first_row)[i])
-                    if d < 0:
-                        break
-            if d < 0:
-                # This row is smaller than 1st row, so nothing to do
-                del permutations[n_s]
-                continue
-            permutations[n_s][0] = S_f((1, k + 1), check=False) * permutations[n_s][0]
-            if d == 0:
-                # This row is the same, so we have a symmetry!
-                n_s += 1
-            else:
-                # This row is larger, so it becomes the first row and
-                # the symmetries reset.
-                first_row = list(PM[k])
-                permutations = {0: permutations[n_s]}
-                n_s = 1
-        permutations = {k: permutations[k] for k in permutations if k < n_s}
-
-        b = tuple(PM[permutations[0][0](1) - 1, permutations[0][1](j+1) - 1] for j in range(n_v))
-        # Work out the restrictions the current permutations
-        # place on other permutations as a automorphisms
-        # of the first row
-        # The array is such that:
-        # S = [i, 1, ..., 1 (ith), j, i+1, ..., i+1 (jth), k ... ]
-        # describes the "symmetry blocks"
-        S = list(range(1, n_v + 1))
-        for i in range(1, n_v):
-            if b[i-1] == b[i]:
-                S[i] = S[i-1]
-                S[S[i]-1] += 1
-            else:
-                S[i] = i + 1
-
-        # We determine the other rows of PM_max in turn by use of perms and
-        # aut on previous rows.
-        for l in range(1, n_f - 1):
-            n_s = len(permutations)
-            n_s_bar = n_s
-            cf = 0
-            l_r = [0]*n_v
-            # Search for possible local permutations based off previous
-            # global permutations.
-            for k in range(n_s_bar - 1, -1, -1):
-                # number of local permutations associated with current global
-                n_p = 0
-                ccf = cf
-                permutations_bar = {0: copy(permutations[k])}
-                # We look for the line with the maximal entry in the first
-                # subsymmetry block, i.e. we are allowed to swap elements
-                # between 0 and S(0)
-                for s in range(l, n_f):
-                    for j in range(1, S[0]):
-                        v0 = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
-                        vj = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](j+1) - 1]
-                        if v0 < vj:
-                            permutations_bar[n_p][1] = S_v((1, j + 1), check=False) * permutations_bar[n_p][1]
-                    if ccf == 0:
-                        l_r[0] = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
-                        if s != l:
-                            permutations_bar[n_p][0] = S_f((l + 1, s + 1), check=False) * permutations_bar[n_p][0]
-                        n_p += 1
-                        ccf = 1
-                        permutations_bar[n_p] = copy(permutations[k])
-                    else:
-                        d1 = PM[permutations_bar[n_p][0](s+1) - 1, permutations_bar[n_p][1](1) - 1]
-                        d = d1 - l_r[0]
-                        if d < 0:
-                            # We move to the next line
-                            continue
-                        elif d == 0:
-                            # Maximal values agree, so possible symmetry
-                            if s != l:
-                                permutations_bar[n_p][0] = S_f((l + 1, s + 1), check=False) * permutations_bar[n_p][0]
-                            n_p += 1
-                            permutations_bar[n_p] = copy(permutations[k])
-                        else:
-                            # We found a greater maximal value for first entry.
-                            # It becomes our new reference:
-                            l_r[0] = d1
-                            if s != l:
-                                permutations_bar[n_p][0] = S_f((l + 1, s + 1), check=False) * permutations_bar[n_p][0]
-                            # Forget previous work done
-                            cf = 0
-                            permutations_bar = {0:copy(permutations_bar[n_p])}
-                            n_p = 1
-                            permutations_bar[n_p] = copy(permutations[k])
-                            n_s = k + 1
-                # Check if the permutations found just now work
-                # with other elements
-                for c in range(1, n_v):
-                    h = S[c]
-                    ccf = cf
-                    # Now let us find out where the end of the
-                    # next symmetry block is:
-                    if h < c + 1:
-                        h = S[h - 1]
-                    s = n_p
-                    # Check through this block for each possible permutation
-                    while s > 0:
-                        s -= 1
-                        # Find the largest value in this symmetry block
-                        for j in range(c + 1, h):
-                            vc = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
-                            vj = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(j+1) - 1]
-                            if (vc < vj):
-                                permutations_bar[s][1] = S_v((c + 1, j + 1), check=False) * permutations_bar[s][1]
-                        if ccf == 0:
-                            # Set reference and carry on to next permutation
-                            l_r[c] = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
-                            ccf = 1
-                        else:
-                            d1 = PM[(permutations_bar[s][0])(l+1) - 1, (permutations_bar[s][1])(c+1) - 1]
-                            d = d1 - l_r[c]
-                            if d < 0:
-                                n_p -= 1
-                                if s < n_p:
-                                    permutations_bar[s] = copy(permutations_bar[n_p])
-                            elif d > 0:
-                                # The current case leads to a smaller matrix,
-                                # hence this case becomes our new reference
-                                l_r[c] = d1
-                                cf = 0
-                                n_p = s + 1
-                                n_s = k + 1
-                # Update permutations
-                if (n_s - 1) > k:
-                    permutations[k] = copy(permutations[n_s - 1])
-                n_s -= 1
-                for s in range(n_p):
-                    permutations[n_s] = copy(permutations_bar[s])
-                    n_s += 1
-                cf = n_s
-            permutations = {k: permutations[k] for k in permutations if k < n_s}
-            # If the automorphisms are not already completely restricted,
-            # update them
-            if S != list(range(1, n_v + 1)):
-                # Take the old automorphisms and update by
-                # the restrictions the last worked out
-                # row imposes.
-                c = 0
-                M = tuple(PM[permutations[0][0](l+1) - 1, permutations[0][1](j+1) - 1] for j in range(n_v))
-                while c < n_v:
-                    s = S[c] + 1
-                    S[c] = c + 1
-                    c += 1
-                    while c < (s - 1):
-                        if M[c] == M[c - 1]:
-                            S[c] = S[c - 1]
-                            S[S[c] - 1] += 1
-                        else:
-                            S[c] = c + 1
-                        c += 1
-        # Now we have the perms, we construct PM_max using one of them
-        PM_max = PM.with_permuted_rows_and_columns(*permutations[0])
-        if check:
-            return (PM_max, permutations)
-        else:
-            return PM_max
+        from .palp_normal_form import _palp_PM_max
+        return _palp_PM_max(self.vertex_facet_pairing_matrix(), check)
 
     def npoints(self):
         r"""
@@ -5175,12 +5167,13 @@ def _palp_canonical_order(V, PM_max, permutations):
 
     - ``PM_max`` -- the maximal vertex-facet pairing matrix
 
-    - ``permutation`` -- the permutations of the vertices yielding
+    - ``permutations`` -- the permutations of the vertices yielding
         ``PM_max``.
 
     OUTPUT:
 
-    The PALP normal form as a :class:`point collection <PointCollection>`.
+    The PALP normal form as a :class:`point collection <PointCollection>`
+    and a permutation.
 
     TESTS::
 
@@ -5195,32 +5188,15 @@ def _palp_canonical_order(V, PM_max, permutations):
          M(-1,  0)
          in 2-d lattice M, (1,3,2,4))
     """
-    n_v = PM_max.ncols()
-    S_v = SymmetricGroup(n_v)
-    p_c = S_v.one()
-    M_max = [max(row[j] for row in PM_max.rows()) for j in range(n_v)]
-    S_max = sum(PM_max)
-    for i in range(n_v):
-        k = i
-        for j in range(i + 1, n_v):
-            if M_max[j] < M_max[k] or \
-               (M_max[j] == M_max[k] and S_max[j] < S_max[k]):
-                k = j
-        if not k == i:
-            M_max[i], M_max[k] = M_max[k], M_max[i]
-            S_max[i], S_max[k] = S_max[k], S_max[i]
-            p_c = S_v((1 + i, 1 + k), check=False) * p_c
-    # Create array of possible NFs.
-    permutations = [p_c * l[1] for l in permutations.values()]
+    from .palp_normal_form import _palp_canonical_order
+
     Vmatrix = V.column_matrix()
-    Vs = [(Vmatrix.with_permuted_columns(sig).hermite_form(), sig)
-          for sig in permutations]
-    Vmin = min(Vs, key=lambda x:x[0])
     Vmodule = V.module()
-    vertices = [Vmodule(_) for _ in Vmin[0].columns()]
+    vertices, permutation = _palp_canonical_order(Vmatrix, PM_max, permutations)
+    vertices = [Vmodule(v) for v in vertices]
     for v in vertices:
         v.set_immutable()
-    return (PointCollection(vertices, Vmodule), Vmin[1])
+    return PointCollection(vertices, Vmodule), permutation
 
 
 def _palp_convert_permutation(permutation):
@@ -5237,7 +5213,7 @@ def _palp_convert_permutation(permutation):
 
     OUTPUT:
 
-    A :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermmutationGroupElement>`.
+    A :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermutationGroupElement>`.
 
     EXAMPLES::
 

@@ -558,7 +558,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
             nf = (i < S.ncols() and S[i, i]) or 0  # ?
             good_vects.append((vect * 24 / gcd(nf, 24)).list())
         for v in good_vects:
-            v.append(-sum([r for r in v]))
+            v.append(-sum(list(v)))
         dicts = []
         for v in good_vects:
             dicts.append({})

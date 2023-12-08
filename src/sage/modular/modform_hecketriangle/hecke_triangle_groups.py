@@ -803,7 +803,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             else:
                 K = AlgebraicField()
 
-        L = [emb for emb in F.embeddings(K)]
+        L = list(F.embeddings(K))
 
         # Three possibilities up to numerical artefacts:
         # (1) emb = e, purely imaginary

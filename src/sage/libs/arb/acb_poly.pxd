@@ -1,4 +1,4 @@
-# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: libraries = gmp flint
 # distutils: depends = acb_poly.h
 
 from sage.libs.arb.types cimport *
@@ -79,24 +79,10 @@ cdef extern from "arb_wrap.h":
     void _acb_poly_divrem(acb_ptr Q, acb_ptr R, acb_srcptr A, long lenA, acb_srcptr B, long lenB, long prec)
     bint acb_poly_divrem(acb_poly_t Q, acb_poly_t R, const acb_poly_t A, const acb_poly_t B, long prec)
     void _acb_poly_div_root(acb_ptr Q, acb_t R, acb_srcptr A, long len, const acb_t c, long prec)
-    void _acb_poly_taylor_shift_horner(acb_ptr g, const acb_t c, long n, long prec)
-    void acb_poly_taylor_shift_horner(acb_poly_t g, const acb_poly_t f, const acb_t c, long prec)
-    void _acb_poly_taylor_shift_divconquer(acb_ptr g, const acb_t c, long n, long prec)
-    void acb_poly_taylor_shift_divconquer(acb_poly_t g, const acb_poly_t f, const acb_t c, long prec)
-    void _acb_poly_taylor_shift_convolution(acb_ptr g, const acb_t c, long n, long prec)
-    void acb_poly_taylor_shift_convolution(acb_poly_t g, const acb_poly_t f, const acb_t c, long prec)
     void _acb_poly_taylor_shift(acb_ptr g, const acb_t c, long n, long prec)
     void acb_poly_taylor_shift(acb_poly_t g, const acb_poly_t f, const acb_t c, long prec)
-    void _acb_poly_compose_horner(acb_ptr res, acb_srcptr poly1, long len1, acb_srcptr poly2, long len2, long prec)
-    void acb_poly_compose_horner(acb_poly_t res, const acb_poly_t poly1, const acb_poly_t poly2, long prec)
-    void _acb_poly_compose_divconquer(acb_ptr res, acb_srcptr poly1, long len1, acb_srcptr poly2, long len2, long prec)
-    void acb_poly_compose_divconquer(acb_poly_t res, const acb_poly_t poly1, const acb_poly_t poly2, long prec)
     void _acb_poly_compose(acb_ptr res, acb_srcptr poly1, long len1, acb_srcptr poly2, long len2, long prec)
     void acb_poly_compose(acb_poly_t res, const acb_poly_t poly1, const acb_poly_t poly2, long prec)
-    void _acb_poly_compose_series_horner(acb_ptr res, acb_srcptr poly1, long len1, acb_srcptr poly2, long len2, long n, long prec)
-    void acb_poly_compose_series_horner(acb_poly_t res, const acb_poly_t poly1, const acb_poly_t poly2, long n, long prec)
-    void _acb_poly_compose_series_brent_kung(acb_ptr res, acb_srcptr poly1, long len1, acb_srcptr poly2, long len2, long n, long prec)
-    void acb_poly_compose_series_brent_kung(acb_poly_t res, const acb_poly_t poly1, const acb_poly_t poly2, long n, long prec)
     void _acb_poly_compose_series(acb_ptr res, acb_srcptr poly1, long len1, acb_srcptr poly2, long len2, long n, long prec)
     void acb_poly_compose_series(acb_poly_t res, const acb_poly_t poly1, const acb_poly_t poly2, long n, long prec)
     void _acb_poly_revert_series_lagrange(acb_ptr h, acb_srcptr f, long flen, long n, long prec)
@@ -161,10 +147,6 @@ cdef extern from "arb_wrap.h":
     void acb_poly_exp_series_basecase(acb_poly_t f, const acb_poly_t h, long n, long prec)
     void _acb_poly_exp_series(acb_ptr f, acb_srcptr h, long hlen, long n, long prec)
     void acb_poly_exp_series(acb_poly_t f, const acb_poly_t h, long n, long prec)
-    void _acb_poly_sin_cos_series_basecase(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec, int times_pi)
-    void acb_poly_sin_cos_series_basecase(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec, int times_pi)
-    void _acb_poly_sin_cos_series_tangent(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec, int times_pi)
-    void acb_poly_sin_cos_series_tangent(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec, int times_pi)
     void _acb_poly_sin_cos_series(acb_ptr s, acb_ptr c, acb_srcptr h, long hlen, long n, long prec)
     void acb_poly_sin_cos_series(acb_poly_t s, acb_poly_t c, const acb_poly_t h, long n, long prec)
     void _acb_poly_sin_series(acb_ptr s, acb_srcptr h, long hlen, long n, long prec)
