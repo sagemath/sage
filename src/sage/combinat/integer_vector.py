@@ -1361,11 +1361,13 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         Return the cardinality of ``self``.
         
         EXAMPLES::
-        
-            sage: IntegerVectors(2,3).cardinality()
-            6
+
             sage: IntegerVectors(3,5).cardinality()
             35
+            sage: IntegerVectors(99, 3).cardinality()
+            5050
+            sage: IntegerVectors(10^9 - 1, 3).cardinality()
+            500000000500000000
         """
         n, k = self.n, self.k
         return Integer(binomial(n + k - 1, n))
@@ -1643,7 +1645,7 @@ class IntegerVectorsConstraints(IntegerVectors):
         if self.k is None:
             if self.n is None:
                 return PlusInfinity()
-            elif ('max_length' not in self.constraints
+            if ('max_length' not in self.constraints
                     and self.constraints.get('min_part', 0) <= 0):
                 return PlusInfinity()
         elif ('max_part' in self.constraints
