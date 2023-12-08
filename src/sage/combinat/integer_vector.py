@@ -838,7 +838,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             sage: TestSuite(IV).run()
         """
         self.n = n
-        if self.n==0:
+        if self.n == 0:
             IntegerVectors.__init__(self, category=EnumeratedSets())
         else:
             IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
@@ -908,7 +908,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
 
         - ``x`` -- a list with ``sum(x) == n``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: IntegerVectors(n=5).rank([5,0])
             1
@@ -935,9 +935,9 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- an integer
+        - ``x`` -- an integer.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: IntegerVectors(n=5).unrank(2)
             [4, 1]
@@ -965,7 +965,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
         """
         Return the cardinality of ``self``.
         
-        EXAMPLE::
+        EXAMPLES::
         
             sage: IntegerVectors(n=0).cardinality()
             1
