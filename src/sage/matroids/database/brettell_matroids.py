@@ -21,7 +21,7 @@ Functions
 from sage.matrix.constructor import Matrix
 from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
 from sage.matroids.linear_matroid import TernaryMatroid, QuaternaryMatroid
-from sage.matroids.database.OxleyMatroids import Uniform
+from sage.matroids.database.oxley_matroids import Uniform
 from sage.rings.finite_rings.finite_field_constructor import GF
 
 # 2r elements:

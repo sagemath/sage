@@ -36,7 +36,7 @@ from sage.matrix.constructor import Matrix
 from sage.matroids.constructor import Matroid
 from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
 from sage.matroids.linear_matroid import RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from sage.matroids.database.VariousMatroids import CompleteGraphic
+from sage.matroids.database.various_matroids import CompleteGraphic
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.schemes.projective.projective_space import ProjectiveSpace
