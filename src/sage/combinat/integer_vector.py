@@ -48,7 +48,7 @@ from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
 
 
-def is_gale_ryser(r,s):
+def is_gale_ryser(r, s):
     r"""
     Tests whether the given sequences satisfy the condition
     of the Gale-Ryser theorem.
@@ -314,20 +314,20 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
     """
     from sage.matrix.constructor import matrix
 
-    if not is_gale_ryser(p1,p2):
+    if not is_gale_ryser(p1, p2):
         return False
 
-    if algorithm == "ryser": # ryser's algorithm
+    if algorithm == "ryser":  # ryser's algorithm
         from sage.combinat.permutation import Permutation
 
         # Sorts the sequences if they are not, and remembers the permutation
         # applied
-        tmp = sorted(enumerate(p1), reverse=True, key=lambda x:x[1])
+        tmp = sorted(enumerate(p1), reverse=True, key=lambda x: x[1])
         r = [x[1] for x in tmp]
         r_permutation = [x-1 for x in Permutation([x[0]+1 for x in tmp]).inverse()]
         m = len(r)
 
-        tmp = sorted(enumerate(p2), reverse=True, key=lambda x:x[1])
+        tmp = sorted(enumerate(p2), reverse=True, key=lambda x: x[1])
         s = [x[1] for x in tmp]
         s_permutation = [x-1 for x in Permutation([x[0]+1 for x in tmp]).inverse()]
 
@@ -340,12 +340,12 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
                 k = i + 1
                 while k < m and r[i] == r[k]:
                     k += 1
-                if t >= k - i: # == number rows of the same length
+                if t >= k - i:  # == number rows of the same length
                     for j in range(i, k):
                         r[j] -= 1
                         c[j] = 1
                     t -= k - i
-                else: # Remove the t last rows of that length
+                else:  # Remove the t last rows of that length
                     for j in range(k-t, k):
                         r[j] -= 1
                         c[j] = 1
@@ -366,17 +366,17 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         k1, k2 = len(p1), len(p2)
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
-        for (i,c) in enumerate(p1):
-            p.add_constraint(p.sum([b[i,j] for j in range(k2)]) == c)
-        for (i,c) in enumerate(p2):
-            p.add_constraint(p.sum([b[j,i] for j in range(k1)]) == c)
+        for (i, c) in enumerate(p1):
+            p.add_constraint(p.sum([b[i, j] for j in range(k2)]) == c)
+        for (i, c) in enumerate(p2):
+            p.add_constraint(p.sum([b[j, i] for j in range(k1)]) == c)
         p.set_objective(None)
         p.solve()
         b = p.get_values(b, convert=ZZ, tolerance=integrality_tolerance)
         M = [[0]*k2 for i in range(k1)]
         for i in range(k1):
             for j in range(k2):
-                M[i][j] = b[i,j]
+                M[i][j] = b[i, j]
         return matrix(M)
 
     else:
@@ -780,6 +780,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
                 return False
         return True
 
+
 class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     """
     Class of all integer vectors.
@@ -917,11 +918,11 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
         """
         if sum(x) != self.n:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(self.n, None))
-            
+
         n, k = self.n, len(x)
 
         r = binomial(k+n-1, n+1)
-            
+
         for i in range(k - 1):
             k -= 1
             n -= x[i]
@@ -944,29 +945,29 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             sage: IntegerVectors(n=10).unrank(10)
             [1, 9]
         """
-        ptr=0
-        rtn=[self.n]
+        ptr = 0
+        rtn = [self.n]
         while self.rank(rtn) < x:
             rtn.append(0)
         rtn.pop()
-            
+
         while True:
             if self.rank(rtn) < x:
-                rtn[ptr+1]=rtn[ptr]
-                rtn[ptr]=0
-                ptr+=1
+                rtn[ptr+1] = rtn[ptr]
+                rtn[ptr] = 0
+                ptr += 1
             elif self.rank(rtn) > x:
-                rtn[ptr]-=1
-                rtn[ptr-1]+=1
+                rtn[ptr] -= 1
+                rtn[ptr-1] += 1
             else:
                 return self._element_constructor_(rtn)
 
     def cardinality(self):
         """
         Return the cardinality of ``self``.
-        
+
         EXAMPLES::
-        
+
             sage: IntegerVectors(n=0).cardinality()
             1
             sage: IntegerVectors(n=10).cardinality()
@@ -976,6 +977,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             return Integer(1)
         else:
             return PlusInfinity()
+
 
 class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
     """
@@ -1068,16 +1070,16 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(None, self.k))
 
         n, k = sum(x), self.k
-        
+
         r = sum(binomial(k + i - 1, k - 1) for i in range(n))
-            
+
         for i in range(k - 1):
             k -= 1
             n -= x[i]
             r += binomial(k + n - 1, n - 1)
 
         return r
-    
+
     def unrank(self, x):
         """
         Return the element at given rank x.
@@ -1097,28 +1099,28 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
         else:
             n, ptr = 0, 0
-            rtn=[0]*self.k
+            rtn = [0]*self.k
             while self.rank(rtn) <= x:
-                n += 1      
-                rtn[ptr]=n
-            rtn[ptr]-=1
+                n += 1
+                rtn[ptr] = n
+            rtn[ptr] -= 1
             while True:
                 if self.rank(rtn) < x:
-                    rtn[ptr+1]=rtn[ptr]
-                    rtn[ptr]=0
-                    ptr+=1
+                    rtn[ptr+1] = rtn[ptr]
+                    rtn[ptr] = 0
+                    ptr += 1
                 elif self.rank(rtn) > x:
-                    rtn[ptr]-=1
-                    rtn[ptr-1]+=1
+                    rtn[ptr] -= 1
+                    rtn[ptr-1] += 1
                 else:
                     return self._element_constructor_(rtn)
-                    
+
     def cardinality(self):
         """
         Return the cardinality of ``self``.
-        
+
         EXAMPLES::
-        
+
             sage: IntegerVectors(k=0).cardinality()
             1
             sage: IntegerVectors(k=10).cardinality()
@@ -1127,8 +1129,9 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         if self.k == 0:
             return Integer(1)
         else:
-            return PlusInfinity()            
-        
+            return PlusInfinity()
+
+
 class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors of length `k` that sum to `n`.
@@ -1170,11 +1173,11 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         res = []
 
         if k == 1:
-            return [ (n, ) ]
+            return [(n, )]
 
         for nbar in range(n + 1):
             n_diff = n - nbar
-            for rest in self._list_rec( nbar , k - 1):
+            for rest in self._list_rec(nbar, k - 1):
                 res.append((n_diff,) + rest)
         return res
 
@@ -1342,24 +1345,24 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         if x >= len(self):
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
         else:
-            ptr=0
-            rtn=[0]*self.k
-            rtn[ptr]=self.n
+            ptr = 0
+            rtn = [0]*self.k
+            rtn[ptr] = self.n
             while True:
-                if self.rank(rtn)<x:
-                    rtn[ptr+1]=rtn[ptr]
-                    rtn[ptr]=0
-                    ptr+=1
-                elif self.rank(rtn)>x:
-                    rtn[ptr]-=1
-                    rtn[ptr-1]+=1
+                if self.rank(rtn) < x:
+                    rtn[ptr+1] = rtn[ptr]
+                    rtn[ptr] = 0
+                    ptr += 1
+                elif self.rank(rtn) > x:
+                    rtn[ptr] -= 1
+                    rtn[ptr-1] += 1
                 else:
                     return self._element_constructor_(rtn)
-            
+
     def cardinality(self):
         """
         Return the cardinality of ``self``.
-        
+
         EXAMPLES::
 
             sage: IntegerVectors(3,5).cardinality()
@@ -1371,6 +1374,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         """
         n, k = self.n, self.k
         return Integer(binomial(n + k - 1, n))
+
 
 class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
     r"""
@@ -1522,16 +1526,16 @@ class IntegerVectorsConstraints(IntegerVectors):
             del constraints['inner']
         self.constraints = constraints
 
-        if n is not None :
+        if n is not None:
             if k is not None or 'max_length' in constraints:
                 category = FiniteEnumeratedSets()
             else:
                 category = EnumeratedSets()
-        elif k is not None and 'max_part' in constraints: # n is None
+        elif k is not None and 'max_part' in constraints:  # n is None
             category = FiniteEnumeratedSets()
         else:
             category = EnumeratedSets()
-        IntegerVectors.__init__(self, category=category) # placeholder category
+        IntegerVectors.__init__(self, category=category)  # placeholder category
 
     def _repr_(self):
         """
