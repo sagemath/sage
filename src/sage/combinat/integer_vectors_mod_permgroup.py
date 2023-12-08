@@ -788,32 +788,21 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         EXAMPLES::
 
-        With a trivial group all vectors are canonical.
-
+            sage: # With a trivial group all vectors are canonical.
             sage: G = PermutationGroup([], domain=[1,2,3])
             sage: IntegerVectorsModPermutationGroup(G, 5).cardinality()
             21
             sage: IntegerVectors(5, 3).cardinality()
             21
 
-        With two symmetric elements that sum to 1000, the second
-        element ranges from 0 to 500.
-
             sage: G = PermutationGroup([(1,2)])
             sage: IntegerVectorsModPermutationGroup(G, 1000).cardinality()
             501
-
-        Both kinds of constraints, sum and maximum part, can be
-        applied at the same time.
 
             sage: G = PermutationGroup([(1,2,3)])
             sage: I = IntegerVectorsModPermutationGroup(G, sum=10, max_part=5)
             sage: I.cardinality()
             7
-
-        With full symmetry, no sum constraint, and maximum part 1,
-        each canonical vector is some ones (0 to ``max_part`` of
-        them), followed by some zeros.
 
             sage: G = SymmetricGroup(10)
             sage: I = IntegerVectorsModPermutationGroup(G, max_part=1)
@@ -822,29 +811,20 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         TESTS::
 
-        In these tests we always supply the ``sgs`` argument to avoid
-        :issue:`36814` which could otherwise cause the wrong group to
-        be used.
-
-        Check that :issue:`36681` is fixed.
-
             sage: G = PermutationGroup([], domain=[])
             sage: sgs = tuple(tuple(t) for t in G.strong_generating_system())
             sage: V = IntegerVectorsModPermutationGroup(G, sum=1, sgs=sgs)
             sage: V.cardinality()
             0
 
-        Check that all permutation groups of degree 4 work with sum 10
-        and/or maximum part 3, by comparing to the explicit listing.
-
-        sage: for G in SymmetricGroup(4).subgroups():
-        ....:     sgs = tuple(tuple(t) for t in G.strong_generating_system())
-        ....:     I1 = IntegerVectorsModPermutationGroup(G, sum=10, sgs=sgs)
-        ....:     assert I1.cardinality() == len(list(I1))
-        ....:     I2 = IntegerVectorsModPermutationGroup(G, max_part=3, sgs=sgs)
-        ....:     assert I2.cardinality() == len(list(I2))
-        ....:     I3 = IntegerVectorsModPermutationGroup(G, sum=10, max_part=3, sgs=sgs)
-        ....:     assert I3.cardinality() == len(list(I3))
+            sage: for G in SymmetricGroup(4).subgroups():
+            ....:     sgs = tuple(tuple(t) for t in G.strong_generating_system())
+            ....:     I1 = IntegerVectorsModPermutationGroup(G, sum=10, sgs=sgs)
+            ....:     assert I1.cardinality() == len(list(I1))
+            ....:     I2 = IntegerVectorsModPermutationGroup(G, max_part=3, sgs=sgs)
+            ....:     assert I2.cardinality() == len(list(I2))
+            ....:     I3 = IntegerVectorsModPermutationGroup(G, sum=10, max_part=3, sgs=sgs)
+            ....:     assert I3.cardinality() == len(list(I3))
 
         """
         from sage.rings.power_series_ring import PowerSeriesRing
