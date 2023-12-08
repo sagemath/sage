@@ -654,11 +654,21 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         """
         if self._sum is not None:
             if self._max_part >= 0:
-                return "Vectors of length %s and of sum %s whose entries is in {0, ..., %s} enumerated up to the action of %s" % (self.n, self._sum, self._max_part, self.permutation_group())
+                return ("Vectors of length %s and of sum %s"
+                        " whose entries are in {0, ..., %s}"
+                        " enumerated up to the action of %s"
+                        % (self.n, self._sum, self._max_part,
+                           self.permutation_group()))
             else:
-                return "Integer vectors of length %s and of sum %s enumerated up to the action of %s" % (self.n, self._sum, self.permutation_group())
+                return ("Integer vectors of length %s"
+                        " and of sum %s"
+                        " enumerated up to the action of %s"
+                        % (self.n, self._sum, self.permutation_group()))
         else:
-            return "Integer vectors of length %s whose entries is in {0, ..., %s} enumerated up to the action of %s" % (self.n, self._max_part, self.permutation_group())
+            return ("Integer vectors of length %s"
+                    " whose entries are in {0, ..., %s}"
+                    " enumerated up to the action of %s"
+                    % (self.n, self._max_part, self.permutation_group()))
 
     def roots(self):
         r"""
@@ -798,7 +808,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
                 # Sum is allowed to be zero.  It does not matter what
                 # the maxpart is, the empty vector is a solution.
                 return iter([[]])
-            
+
         # General case, nonempty domain.
         if self._max_part < 0:
             return self.elements_of_depth_iterator(self._sum)
