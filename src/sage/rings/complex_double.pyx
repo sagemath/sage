@@ -81,10 +81,10 @@ cdef extern from "<complex.h>":
 import sage.rings.abc
 cimport sage.rings.ring
 cimport sage.rings.integer
+from sage.rings.ring import Ring
 
 from sage.structure.element cimport Element, FieldElement
 from sage.structure.parent  cimport Parent
-from sage.structure.parent_gens import ParentWithGens
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
@@ -149,7 +149,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             (-1.0, -1.0 + 1.2246...e-16*I, False)
         """
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self, ('I',), normalize=False, category=Fields().Infinite().Metric().Complete())
+        Ring.__init__(self, self, ('I',), normalize=False, category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_()
 
     def __reduce__(self):
