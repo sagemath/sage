@@ -583,9 +583,13 @@ __EOF__
 
 # Prepare script for uninstallation of packages that use sdh_pip_install
 # or sdh_store_and_pip_install_wheel.
-echo 'sdh_pip_uninstall -r $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-requirements.txt' > spkg-piprm.in
+touch spkg-piprm.in
 
-for script in $WRAPPED_SCRIPTS; do
+# Prepare script for deferred installation of packages that use sdh_pip_install
+# or sdh_store_and_pip_install_wheel.
+touch spkg-pipinst.in
+
+for script in $WRAPPED_SCRIPTS pipinst; do  # pipinst can be added to WRAPPED_SCRIPTS later
     # 'Installed' scripts are not run immediately out of the package build
     # directory, and may be run later, so set their root directory to
     # $SAGE_ROOT
@@ -730,10 +734,11 @@ INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
 
 if [ ! -f $INSTALLED_SCRIPTS_DEST/spkg-requirements.txt ]; then
     # No packages to uninstall with pip, so remove the prepared uninstall script
-    rm -f spkg-piprm spkg-piprm.in
+    # and the prepared deferred installation script
+    rm -f spkg-piprm spkg-piprm.in spkg-pipinst spkg-pipinst.in
 fi
 
-for script in $INSTALLED_SCRIPTS; do
+for script in $INSTALLED_SCRIPTS pipinst; do  # pipinst can be added to WRAPPED_SCRIPTS later
     script="spkg-$script"
 
     if [ -f "$script" ]; then
@@ -754,6 +759,15 @@ done
 
 post_install() { #################################################
 # Run the post-install script, if any
+# But first complete the delayed installation of wheels.
+if [ -f spkg-pipinst ]; then
+    echo "Running pip-install script for $PKG_NAME."
+    $SAGE_SUDO ./spkg-pipinst
+    if [ $? -ne 0 ]; then
+        error_msg "Error running the pipinst script for $PKG_NAME."
+        exit 1
+    fi
+fi
 if [ -f spkg-postinst ]; then
     echo "Running post-install script for $PKG_NAME."
     time $SAGE_SUDO ./spkg-postinst
