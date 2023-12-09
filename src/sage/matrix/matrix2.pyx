@@ -18624,6 +18624,7 @@ def _matrix_power_symbolic(A, n):
     from sage.functions.other import binomial
     from sage.symbolic.ring import SR
     from sage.rings.qqbar import QQbar
+    from sage.symbolic.expression import Expression
 
     got_SR = A.base_ring() == SR
 
@@ -18659,11 +18660,11 @@ def _matrix_power_symbolic(A, n):
 
         # Return mk^(n-i) instead of mk**(n-i) if mk=0
         if mk:
-            vk = [(binomial(n, i) * mk**(n-i)).simplify_full()
+            vk = [(binomial(n, i) * mk._pow_(n-i)).simplify_full()
                   for i in range(nk)]
         else:
-            vk = [(binomial(n, i)).simplify_full() * (mk^(n-i))
-                  for i in range(nk)] 
+            vk = [(binomial(n, i).simplify_full() * mk._pow_(n-i))
+                  for i in range(nk)]
 
         # Form block Mk and insert it in M
         Mk = matrix(SR, [[SR.zero()]*i + vk[:nk-i] for i in range(nk)])
