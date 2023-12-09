@@ -12,7 +12,6 @@ To create a custom matroid using a variety of inputs, see the function
 :func:`Matroid() <sage.matroids.constructor.Matroid>`.
 
 - Parametrized matroid constructors (``matroids.<tab>``)
-
     - :func:`matroids.AG <sage.matroids.database.oxley_matroids.AG>`
     - :func:`matroids.CompleteGraphic <sage.matroids.database.various_matroids.CompleteGraphic>`
     - :func:`matroids.FreeSpike <sage.matroids.database.brettell_matroids.FreeSpike>`
@@ -25,14 +24,12 @@ To create a custom matroid using a variety of inputs, see the function
 
 
 - List of collections of matroids (``matroids.<tab>``)
-
     - :func:`matroids.oxley_matroids <sage.matroids.database.oxley_matroids>`
     - :func:`matroids.brettell_matroids <sage.matroids.database.brettell_matroids>`
     - :func:`matroids.various_matroids <sage.matroids.database.various_matroids>`
 
 
 - List of matroids in the catalog (``matroids.catalog.<tab>``)
-
     - :func:`matroids.catalog.U24 <sage.matroids.database.oxley_matroids.U24>`
     - :func:`matroids.catalog.U25 <sage.matroids.database.oxley_matroids.U25>`
     - :func:`matroids.catalog.U35 <sage.matroids.database.oxley_matroids.U35>`
