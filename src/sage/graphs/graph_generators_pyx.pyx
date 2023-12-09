@@ -6,16 +6,16 @@ AUTHORS:
 - David Coudert (2012)
 """
 
-
-################################################################################
+# #############################################################################
 #           Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-################################################################################
+#                         https://www.gnu.org/licenses/
+# #############################################################################
 
 from sage.misc.randstate cimport random
 from sage.misc.randstate import set_random_seed
+
 
 def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
     r"""
