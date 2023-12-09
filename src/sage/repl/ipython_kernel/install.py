@@ -14,12 +14,14 @@ in the Jupyter notebook's kernel drop-down. This is done by
 
 """
 
-import os
 import errno
+import os
 import warnings
 
 from sage.env import (
-    SAGE_DOC, SAGE_VENV, SAGE_EXTCODE,
+    SAGE_DOC,
+    SAGE_EXTCODE,
+    SAGE_VENV,
     SAGE_VERSION,
     THREEJS_DIR,
 )
@@ -257,7 +259,7 @@ class SageKernelSpec():
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: SageKernelSpec.check()  # random
         """
-        from jupyter_client.kernelspec import get_kernel_spec, NoSuchKernel
+        from jupyter_client.kernelspec import NoSuchKernel, get_kernel_spec
         ident = cls.identifier()
         try:
             spec = get_kernel_spec(ident)
