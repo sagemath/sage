@@ -1,4 +1,4 @@
-compilers<=1.6.0 # 1.7 pulls in c-compiler v.16, which is not working on macos
+compilers<=1.6.0 # 1.7 pulls in c-compiler v.16
 make
 m4
 perl
