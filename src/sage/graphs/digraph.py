@@ -444,9 +444,9 @@ class DiGraph(GenericGraph):
     #. An igraph directed Graph (see also
        :meth:`~sage.graphs.generic_graph.GenericGraph.igraph_graph`)::
 
-           sage: import igraph                                  # optional - python_igraph
-           sage: g = igraph.Graph([(0,1),(0,2)], directed=True) # optional - python_igraph
-           sage: DiGraph(g)                                     # optional - python_igraph
+           sage: import igraph                                   # optional - python_igraph
+           sage: g = igraph.Graph([(0,1),(0,2)], directed=True)  # optional - python_igraph
+           sage: DiGraph(g)                                      # optional - python_igraph
            Digraph on 3 vertices
 
        If ``vertex_labels`` is ``True``, the names of the vertices are given by
@@ -462,8 +462,9 @@ class DiGraph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)], directed=True, edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
-           sage: DiGraph(g).edges(sort=True)               # optional - python_igraph
+           sage: g = igraph.Graph([(0, 1), (0, 2)], directed=True,                  # optional - python_igraph
+           ....:                  edge_attrs={'name':['a', 'b'], 'weight':[1, 3]})
+           sage: DiGraph(g).edges(sort=True)                                        # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
 
@@ -621,8 +622,8 @@ class DiGraph(GenericGraph):
 
         Sage DiGraph from igraph undirected graph::
 
-            sage: import igraph           # optional - python_igraph
-            sage: DiGraph(igraph.Graph()) # optional - python_igraph
+            sage: import igraph            # optional - python_igraph
+            sage: DiGraph(igraph.Graph())  # optional - python_igraph
             Traceback (most recent call last):
             ...
             ValueError: a *directed* igraph graph was expected. To build an undirected graph, call the Graph constructor

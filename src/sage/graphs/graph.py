@@ -213,9 +213,9 @@ covered here.
 
 - an igraph Graph::
 
-       sage: import igraph                                # optional - python_igraph
-       sage: g = Graph(igraph.Graph([(1,3),(3,2),(0,2)])) # optional - python_igraph
-       sage: g                                            # optional - python_igraph
+       sage: import igraph                                 # optional - python_igraph
+       sage: g = Graph(igraph.Graph([(1,3),(3,2),(0,2)]))  # optional - python_igraph
+       sage: g                                             # optional - python_igraph
        Graph on 4 vertices
 
 Generators
@@ -820,9 +820,9 @@ class Graph(GenericGraph):
     #. An igraph Graph (see also
        :meth:`~sage.graphs.generic_graph.GenericGraph.igraph_graph`)::
 
-           sage: import igraph                      # optional - python_igraph
-           sage: g = igraph.Graph([(0, 1), (0, 2)]) # optional - python_igraph
-           sage: Graph(g)                           # optional - python_igraph
+           sage: import igraph                       # optional - python_igraph
+           sage: g = igraph.Graph([(0, 1), (0, 2)])  # optional - python_igraph
+           sage: Graph(g)                            # optional - python_igraph
            Graph on 3 vertices
 
        If ``vertex_labels`` is ``True``, the names of the vertices are given by
@@ -838,8 +838,8 @@ class Graph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)], edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
-           sage: Graph(g).edges(sort=True)                                                               # optional - python_igraph
+           sage: g = igraph.Graph([(0,1),(0,2)], edge_attrs={'name':['a','b'], 'weight':[1,3]})  # optional - python_igraph
+           sage: Graph(g).edges(sort=True)                                                       # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
 
@@ -883,7 +883,7 @@ class Graph(GenericGraph):
         ...
         ValueError: Unknown input format 'HeyHeyHey'
 
-        sage: Graph(igraph.Graph(directed=True)) # optional - python_igraph
+        sage: Graph(igraph.Graph(directed=True))  # optional - python_igraph
         Traceback (most recent call last):
         ...
         ValueError: An *undirected* igraph graph was expected. To build an directed graph, call the DiGraph constructor.
@@ -7175,7 +7175,7 @@ class Graph(GenericGraph):
 
         Testing mcqd::
 
-            sage: graphs.PetersenGraph().vertex_cover(algorithm="mcqd", value_only=True) # optional - mcqd
+            sage: graphs.PetersenGraph().vertex_cover(algorithm="mcqd", value_only=True)  # optional - mcqd
             6
 
         Given a wrong algorithm::
