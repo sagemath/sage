@@ -960,7 +960,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             [1, 9]
         """
         rtn = [self.n]
-        while self.rank(rtn) < x:
+        while self.rank(rtn) <= x:
             rtn.append(0)
         rtn.pop()
 
@@ -1075,7 +1075,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
 
         n, k = sum(x), self.k
 
-        r = sum(binomial(k + i - 1, k - 1) for i in range(n))
+        r = binomial(n+k-1, k)
 
         for i in range(k - 1):
             k -= 1
@@ -1090,7 +1090,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- an integer such that x < self.cardinality() ``
+        - ``x`` -- an integer such that x < self.cardinality()``
 
         EXAMPLES::
 
