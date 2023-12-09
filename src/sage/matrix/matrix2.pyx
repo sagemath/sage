@@ -18656,8 +18656,14 @@ def _matrix_power_symbolic(A, n):
         # D^i(f) / i! with f = x^n and D = differentiation wrt x
         if hasattr(mk, 'radical_expression'):
             mk = mk.radical_expression()
-        vk = [(binomial(n, i) * mk**(n-i)).simplify_full()
-              for i in range(nk)]
+
+        # Return mk^(n-i) instead of mk**(n-i) if mk=0
+        if mk:
+            vk = [(binomial(n, i) * mk**(n-i)).simplify_full()
+                  for i in range(nk)]
+        else:
+            vk = [(binomial(n, i)).simplify_full() * (mk^(n-i))
+                  for i in range(nk)] 
 
         # Form block Mk and insert it in M
         Mk = matrix(SR, [[SR.zero()]*i + vk[:nk-i] for i in range(nk)])
