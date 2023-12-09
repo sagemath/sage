@@ -1,7 +1,7 @@
 #
 # SYNOPSIS
 #
-#   SAGE_PYTHON_PACKAGE_CHECK(package)
+#   SAGE_PYTHON_PACKAGE_CHECK(package, [further_checks])
 #
 # DESCRIPTION
 #
@@ -37,6 +37,9 @@
 #   To avoid suggesting these system packages to users who have not
 #   set --enable-system-site-packages, this macro also changes the
 #   default for --with-system-foo from "yes" to "no" in that case.
+#
+#   further_checks is an optional argument: a snippet of Python code to be
+#   called as python3 -c $2; normal exit means OK, error means not OK.
 #
 
 AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
@@ -80,7 +83,15 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
            "import pkg_resources;                                      dnl
             pkg_resources.require('${SAGE_PKG_VERSPEC}'.splitlines())" dnl
 	 2>&AS_MESSAGE_LOG_FD],
-        [AC_MSG_RESULT(yes)],
+        [AC_MSG_RESULT(yes)
+         AS_IF([test x$2 != x],
+           [AC_MSG_CHECKING([whether further conditions are satisfied...])
+            AS_IF(
+              [PYTHONUSERBASE="${PYTHONUSERBASE}" config.venv/bin/python3 -c $2 2>&AS_MESSAGE_LOG_FD],
+              [AC_MSG_RESULT(yes)],
+              [AC_MSG_RESULT(no); sage_spkg_install_$1=yes])
+            ])
+        ],
         [AC_MSG_RESULT(no); sage_spkg_install_$1=yes]
       )
 
