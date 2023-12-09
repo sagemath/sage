@@ -789,7 +789,9 @@ Here are some of the more commonly used variables affecting the build process:
   If this is not set, then determine the number of threads using the value of
   the :envvar:`MAKE` (see above) or :envvar:`MAKEFLAGS` environment variables.
   If none of these specifies a number of jobs,
+
   - ``sage -b`` only uses one thread
+
   - ``sage -t -p 0`` uses a default of the number of CPU cores, with a
     maximum of 8 and a minimum of 2.
 
