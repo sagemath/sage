@@ -852,6 +852,22 @@ def make_nice_tree_decomposition(graph, tree_decomp):
         sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
         sage: make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
         Nice tree decomposition of Tree decomposition: Graph on 15 vertices
+
+    The following two examples are for testing GitHub Issue 36843::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: triangle = graphs.CompleteGraph(3)
+        sage: triangle_TD = triangle.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(triangle, triangle_TD)
+        Nice tree decomposition of Tree decomposition: Graph on 7 vertices
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: graph = graphs.CompleteBipartiteGraph(2, 5)
+        sage: graph_TD = graph.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(graph, graph_TD)
+        Nice tree decomposition of Tree decomposition: Graph on 25 vertices
     """
     if not is_valid_tree_decomposition(graph, tree_decomp):
         raise ValueError("input must be a valid tree decomposition for this graph")
@@ -863,11 +879,19 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     # Step 1: Ensure the tree is directed and has a root
     # Choose a root and orient the edges from root-to-leaves direction
-    leaves = [u for u in tree_decomp if tree_decomp.degree(u) == 1]
-    root = leaves.pop()
+    #
+    # Testing <= 1 for the special case when one bag containing all vertices
+    leaves = [u for u in tree_decomp if tree_decomp.degree(u) <= 1]
+
     from sage.graphs.digraph import DiGraph
-    directed_tree = DiGraph(tree_decomp.breadth_first_search(start=root, edges=True),
-                            format='list_of_edges')
+    if len(leaves) == 1:
+        root = leaves[0]
+        directed_tree = DiGraph(tree_decomp)
+    else:
+        root = leaves.pop()
+
+        directed_tree = DiGraph(tree_decomp.breadth_first_search(start=root, edges=True),
+                                format='list_of_edges')
 
     # Relabel the graph in range (0, |tree_decomp| - 1)
     bags_to_int = directed_tree.relabel(inplace=True, return_map=True)
@@ -904,7 +928,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
             children = directed_tree.neighbors_out(ui)
             children.pop() # one vertex remains a child of ui
 
-            directed_tree.delete_edges((ui, vi) for v in children)
+            directed_tree.delete_edges((ui, vi) for vi in children)
 
             new_nodes = [directed_tree.add_vertex() for _ in range(len(children) - 1)]
 
@@ -1011,7 +1035,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     return nice_tree_decomp
 
-def label_nice_tree_decomposition(nice_TD, root):
+def label_nice_tree_decomposition(nice_TD, root, directed=False):
     r"""
     Return a nice tree decomposition with nodes labelled accordingly.
 
@@ -1020,6 +1044,8 @@ def label_nice_tree_decomposition(nice_TD, root):
     - ``nice_TD`` -- a nice tree decomposition
 
     - ``root`` -- the root of the nice tree decomposition
+
+    - ``directed`` -- boolean (default: ``False``); whether to return the directed graph
 
     OUTPUT:
 
@@ -1035,7 +1061,7 @@ def label_nice_tree_decomposition(nice_TD, root):
         sage: label_TD = label_nice_tree_decomposition(nice_TD, root)
         sage: for node in sorted(label_TD):
         ....:     print(node, label_TD.get_vertex(node))
-        (0, {}) root
+        (0, {}) forget
         (1, {0}) forget
         (2, {0, 1}) intro
         (3, {0}) forget
@@ -1064,9 +1090,7 @@ def label_nice_tree_decomposition(nice_TD, root):
         in_deg = directed_TD.in_degree(node)
         out_deg = directed_TD.out_degree(node)
 
-        if in_deg == 0:
-            directed_TD.set_vertex(node, 'root')
-        elif out_deg == 2:
+        if out_deg == 2:
             directed_TD.set_vertex(node, 'join')
         elif out_deg == 1:
             current_bag = node[1]
@@ -1079,6 +1103,8 @@ def label_nice_tree_decomposition(nice_TD, root):
         else:
             directed_TD.set_vertex(node, 'leaf')
 
+    if directed:
+        return directed_TD
     return Graph(directed_TD, name=nice_TD.name())
 
 
