@@ -168,9 +168,16 @@ To create a custom matroid using a variety of inputs, see the function
 
 # user-accessible:
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.matroids.database.driver_functions', ('BrettellMatroids', 'OxleyMatroids', 'VariousMatroids'))
-lazy_import('sage.matroids.database.oxley_matroids', ('Wheel', 'Whirl', 'Uniform', 'PG', 'AG'))
-lazy_import('sage.matroids.database.brettell_matroids', 'FreeSpike')
-lazy_import('sage.matroids.database.various_matroids', 'CompleteGraphic')
-lazy_import('sage.matroids', 'catalog')
-lazy_import('sage.matroids', 'named_matroids')
+
+lazy_import(
+    "sage.matroids.database.driver_functions",
+    ("BrettellMatroids", "OxleyMatroids", "VariousMatroids"),
+)
+lazy_import(
+    "sage.matroids.database.oxley_matroids",
+    ("Wheel", "Whirl", "Uniform", "PG", "AG")
+)
+lazy_import("sage.matroids.database.brettell_matroids", "FreeSpike")
+lazy_import("sage.matroids.database.various_matroids", "CompleteGraphic")
+lazy_import("sage.matroids", "catalog")
+lazy_import("sage.matroids", "named_matroids")

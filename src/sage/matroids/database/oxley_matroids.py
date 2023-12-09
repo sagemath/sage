@@ -35,7 +35,12 @@ Functions
 from sage.matrix.constructor import Matrix
 from sage.matroids.constructor import Matroid
 from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
-from sage.matroids.linear_matroid import RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from sage.matroids.linear_matroid import (
+    RegularMatroid,
+    BinaryMatroid,
+    TernaryMatroid,
+    QuaternaryMatroid,
+)
 from sage.matroids.database.various_matroids import CompleteGraphic
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -44,21 +49,22 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 
 # The order is the same as in Oxley.
 
+
 def U24():
-    M = Uniform(2,4)
-    M.rename('U(2,4): ' + repr(M))
+    M = Uniform(2, 4)
+    M.rename("U(2, 4): " + repr(M))
     return M
 
 
 def U25():
-    M = Uniform(2,5)
-    M.rename('U(2,5): ' + repr(M))
+    M = Uniform(2, 5)
+    M.rename("U(2, 5): " + repr(M))
     return M
 
 
 def U35():
-    M = Uniform(3,5)
-    M.rename('U(3,5): ' + repr(M))
+    M = Uniform(3, 5)
+    M.rename("U(3, 5): " + repr(M))
     return M
 
 
@@ -69,7 +75,7 @@ def K4():
 
 def Whirl3():
     M = Whirl(3)
-    M.rename('Whirl(3): ' + repr(M))
+    M.rename("Whirl(3): " + repr(M))
     return M
 
 
@@ -94,15 +100,11 @@ def Q6():
         sage: M.nonspanning_circuits() == M.noncospanning_cocircuits()                  # needs sage.rings.finite_rings
         False
     """
-    F = GF(4, 'x')
+    F = GF(4, "x")
     x = F.gens()[0]
-    A = Matrix(F, [
-        [1, 0, 0, 1, 0, 1],
-        [0, 1, 0, 1, 1, x],
-        [0, 0, 1, 0, 1, 1]
-    ])
-    M = QuaternaryMatroid(A, 'abcdef')
-    M.rename('Q6: ' + repr(M))
+    A = Matrix(F, [[1, 0, 0, 1, 0, 1], [0, 1, 0, 1, 1, x], [0, 0, 1, 0, 1, 1]])
+    M = QuaternaryMatroid(A, "abcdef")
+    M.rename("Q6: " + repr(M))
     return M
 
 
@@ -130,19 +132,16 @@ def P6():
         sage: M.is_valid()
         True
     """
-    E = 'abcdef'
-    CC = {
-        2: ['abc'],
-        3: [E]
-    }
+    E = "abcdef"
+    CC = {2: ["abc"], 3: [E]}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('P6: ' + repr(M))
+    M.rename("P6: " + repr(M))
     return M
 
 
 def U36():
-    M = Uniform(3,6)
-    M.rename('U(3,6): ' + repr(M))
+    M = Uniform(3, 6)
+    M.rename("U(3, 6): " + repr(M))
     return M
 
 
@@ -167,13 +166,11 @@ def R6():
         sage: M.is_3connected()                                                         # needs sage.graphs
         False
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 1, 1, 1],
-        [0, 1, 0, 1, 2, 1],
-        [0, 0, 1, 1, 0, 2]
-    ])
-    M = TernaryMatroid(A, 'abcdef')
-    M.rename('R6: ' + repr(M))
+    A = Matrix(
+        GF(3), [[1, 0, 0, 1, 1, 1], [0, 1, 0, 1, 2, 1], [0, 0, 1, 1, 0, 2]]
+    )
+    M = TernaryMatroid(A, "abcdef")
+    M.rename("R6: " + repr(M))
     return M
 
 
@@ -200,19 +197,18 @@ def Fano():
         ....:                  7)]).is_isomorphic(matroids.CompleteGraphic(4))
         True
     """
-    A = Matrix(GF(2), [
-        [1, 0, 0, 0, 1, 1, 1],
-        [0, 1, 0, 1, 0, 1, 1],
-        [0, 0, 1, 1, 1, 0, 1]
-    ])
-    M = BinaryMatroid(A, 'abcdefg')
-    M.rename('Fano: ' + repr(M))
+    A = Matrix(
+        GF(2),
+        [[1, 0, 0, 0, 1, 1, 1], [0, 1, 0, 1, 0, 1, 1], [0, 0, 1, 1, 1, 0, 1]]
+    )
+    M = BinaryMatroid(A, "abcdefg")
+    M.rename("Fano: " + repr(M))
     return M
 
 
 def FanoDual():
     M = Fano().dual()
-    M.rename('FanoDual: ' + repr(M))
+    M.rename("FanoDual: " + repr(M))
     return M
 
 
@@ -238,19 +234,18 @@ def NonFano():
         sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))                  # needs sage.graphs
         False
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 0, 1, 1, 1],
-        [0, 1, 0, 1, 0, 1, 1],
-        [0, 0, 1, 1, 1, 0, 1]
-    ])
-    M = TernaryMatroid(A, 'abcdefg')
-    M.rename('NonFano: ' + repr(M))
+    A = Matrix(
+        GF(3),
+        [[1, 0, 0, 0, 1, 1, 1], [0, 1, 0, 1, 0, 1, 1], [0, 0, 1, 1, 1, 0, 1]]
+    )
+    M = TernaryMatroid(A, "abcdefg")
+    M.rename("NonFano: " + repr(M))
     return M
 
 
 def NonFanoDual():
     M = NonFano().dual()
-    M.rename('NonFanoDual: ' + repr(M))
+    M.rename("NonFanoDual: " + repr(M))
     return M
 
 
@@ -273,13 +268,12 @@ def O7():
         sage: M.tutte_polynomial()
         y^4 + x^3 + x*y^2 + 3*y^3 + 4*x^2 + 5*x*y + 5*y^2 + 4*x + 4*y
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 1, 1, 1, 1],
-        [0, 1, 0, 0, 1, 2, 2],
-        [0, 0, 1, 1, 0, 1, 0]
-    ])
-    M = TernaryMatroid(A, 'abcdefg')
-    M.rename('O7: ' + repr(M))
+    A = Matrix(
+        GF(3),
+        [[1, 0, 0, 1, 1, 1, 1], [0, 1, 0, 0, 1, 2, 2], [0, 0, 1, 1, 0, 1, 0]]
+    )
+    M = TernaryMatroid(A, "abcdefg")
+    M.rename("O7: " + repr(M))
     return M
 
 
@@ -304,19 +298,18 @@ def P7():
         sage: M.is_valid()
         True
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 2, 1, 1, 0],
-        [0, 1, 0, 1, 1, 0, 1],
-        [0, 0, 1, 1, 0, 1, 1]
-    ])
-    M = TernaryMatroid(A, 'abcdefg')
-    M.rename('P7: ' + repr(M))
+    A = Matrix(
+        GF(3),
+        [[1, 0, 0, 2, 1, 1, 0], [0, 1, 0, 1, 1, 0, 1], [0, 0, 1, 1, 0, 1, 1]]
+    )
+    M = TernaryMatroid(A, "abcdefg")
+    M.rename("P7: " + repr(M))
     return M
 
 
 def AG32():
-    M = AG(3,2)
-    M.rename('AG(3, 2): ' + repr(M))
+    M = AG(3, 2)
+    M.rename("AG(3, 2): " + repr(M))
     return M
 
 
@@ -350,14 +343,27 @@ def AG32prime():
         sage: M.is_valid()                      # long time, needs sage.rings.finite_rings
         True
     """
-    E = 'abcdefgh'
+    E = "abcdefgh"
     CC = {
-        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed',
-            'cfgh', 'bcef', 'adgh', 'acdf', 'begh', 'aceg'],
-        4: [E]
+        3: [
+            "abfg",
+            "bcdg",
+            "defg",
+            "cdeh",
+            "aefh",
+            "abch",
+            "abed",
+            "cfgh",
+            "bcef",
+            "adgh",
+            "acdf",
+            "begh",
+            "aceg",
+        ],
+        4: [E],
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('AG(3, 2)\': ' + repr(M))
+    M.rename("AG(3, 2)': " + repr(M))
     return M
 
 
@@ -382,14 +388,17 @@ def R8():
         sage: M.has_minor(matroids.named_matroids.Fano())
         False
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 0, 2, 1, 1, 1],
-        [0, 1, 0, 0, 1, 2, 1, 1],
-        [0, 0, 1, 0, 1, 1, 2, 1],
-        [0, 0, 0, 1, 1, 1, 1, 2]
-    ])
-    M = TernaryMatroid(A, 'abcdefgh')
-    M.rename('R8: ' + repr(M))
+    A = Matrix(
+        GF(3),
+        [
+            [1, 0, 0, 0, 2, 1, 1, 1],
+            [0, 1, 0, 0, 1, 2, 1, 1],
+            [0, 0, 1, 0, 1, 1, 2, 1],
+            [0, 0, 0, 1, 1, 1, 1, 2],
+        ],
+    )
+    M = TernaryMatroid(A, "abcdefgh")
+    M.rename("R8: " + repr(M))
     return M
 
 
@@ -418,17 +427,29 @@ def F8():
         [...True...]
         sage: [N.is_isomorphic(matroids.named_matroids.NonFano()) for N in D]
         [...True...]
-        sage: M.is_valid()                      # long time, needs sage.rings.finite_rings
+        sage: M.is_valid() # long time, needs sage.rings.finite_rings
         True
     """
-    E = 'abcdefgh'
+    E = "abcdefgh"
     CC = {
-        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed',
-            'cfgh', 'bcef', 'adgh', 'acdf', 'aceg'],
-        4: [E]
+        3: [
+            "abfg",
+            "bcdg",
+            "defg",
+            "cdeh",
+            "aefh",
+            "abch",
+            "abed",
+            "cfgh",
+            "bcef",
+            "adgh",
+            "acdf",
+            "aceg",
+        ],
+        4: [E],
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('F8: ' + repr(M))
+    M.rename("F8: " + repr(M))
     return M
 
 
@@ -461,14 +482,25 @@ def Q8():
         sage: M.is_valid() # long time
         True
     """
-    E = 'abcdefgh'
+    E = "abcdefgh"
     CC = {
-        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'abed',
-            'cfgh', 'bcef', 'adgh', 'acdf'],
-        4: [E]
+        3: [
+            "abfg",
+            "bcdg",
+            "defg",
+            "cdeh",
+            "aefh",
+            "abch",
+            "abed",
+            "cfgh",
+            "bcef",
+            "adgh",
+            "acdf",
+        ],
+        4: [E],
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('Q8: ' + repr(M))
+    M.rename("Q8: " + repr(M))
     return M
 
 
@@ -494,13 +526,13 @@ def L8():
         sage: M.is_valid() # long time
         True
     """
-    E = 'abcdefgh'
+    E = "abcdefgh"
     CC = {
-        3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'aceg', 'bdfh'],
+        3: ["abfg", "bcdg", "defg", "cdeh", "aefh", "abch", "aceg", "bdfh"],
         4: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('L8: ' + repr(M))
+    M.rename("L8: " + repr(M))
     return M
 
 
@@ -535,14 +567,17 @@ def S8():
         [...True...]
 
     """
-    A = Matrix(GF(2), [
-        [1, 0, 0, 0, 0, 1, 1, 1],
-        [0, 1, 0, 0, 1, 0, 1, 1],
-        [0, 0, 1, 0, 1, 1, 0, 1],
-        [0, 0, 0, 1, 1, 1, 1, 1]
-    ])
-    M = BinaryMatroid(A, 'abcdefgh')
-    M.rename('S8: ' + repr(M))
+    A = Matrix(
+        GF(2),
+        [
+            [1, 0, 0, 0, 0, 1, 1, 1],
+            [0, 1, 0, 0, 1, 0, 1, 1],
+            [0, 0, 1, 0, 1, 1, 0, 1],
+            [0, 0, 0, 1, 1, 1, 1, 1],
+        ],
+    )
+    M = BinaryMatroid(A, "abcdefgh")
+    M.rename("S8: " + repr(M))
     return M
 
 
@@ -572,13 +607,10 @@ def Vamos():
         sage: M.is_valid() # long time
         True
     """
-    E = 'abcdefgh'
-    CC = {
-        3: ['abcd', 'abef', 'cdef', 'abgh', 'efgh'],
-        4: [E]
-    }
+    E = "abcdefgh"
+    CC = {3: ["abcd", "abef", "cdef", "abgh", "efgh"], 4: [E]}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('Vamos: ' + repr(M))
+    M.rename("Vamos: " + repr(M))
     return M
 
 
@@ -603,14 +635,17 @@ def T8():
         False
 
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 0, 0, 1, 1, 1],
-        [0, 1, 0, 0, 1, 0, 1, 1],
-        [0, 0, 1, 0, 1, 1, 0, 1],
-        [0, 0, 0, 1, 1, 1, 1, 0]
-    ])
-    M = TernaryMatroid(A, 'abcdefgh')
-    M.rename('T8: ' + repr(M))
+    A = Matrix(
+        GF(3),
+        [
+            [1, 0, 0, 0, 0, 1, 1, 1],
+            [0, 1, 0, 0, 1, 0, 1, 1],
+            [0, 0, 1, 0, 1, 1, 0, 1],
+            [0, 0, 0, 1, 1, 1, 1, 0],
+        ],
+    )
+    M = TernaryMatroid(A, "abcdefgh")
+    M.rename("T8: " + repr(M))
     return M
 
 
@@ -636,14 +671,17 @@ def J():
         sage: M.is_valid()
         True
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 0, 0, 1, 1, 1],
-        [0, 1, 0, 0, 1, 1, 0, 0],
-        [0, 0, 1, 0, 1, 0, 1, 0],
-        [0, 0, 0, 1, 1, 0, 0, 1]
-    ])
-    M = TernaryMatroid(A, 'abcdefgh')
-    M.rename('J: ' + repr(M))
+    A = Matrix(
+        GF(3),
+        [
+            [1, 0, 0, 0, 0, 1, 1, 1],
+            [0, 1, 0, 0, 1, 1, 0, 0],
+            [0, 0, 1, 0, 1, 0, 1, 0],
+            [0, 0, 0, 1, 1, 0, 0, 1],
+        ],
+    )
+    M = TernaryMatroid(A, "abcdefgh")
+    M.rename("J: " + repr(M))
     return M
 
 
@@ -670,14 +708,17 @@ def P8():
         2
 
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 0, 2, 1, 1, 0],
-        [0, 1, 0, 0, 1, 1, 0, 1],
-        [0, 0, 1, 0, 1, 0, 1, 1],
-        [0, 0, 0, 1, 0, 1, 1, 2]
-    ])
-    M = TernaryMatroid(A, 'abcdefgh')
-    M.rename('P8: ' + repr(M))
+    A = Matrix(
+        GF(3),
+        [
+            [1, 0, 0, 0, 2, 1, 1, 0],
+            [0, 1, 0, 0, 1, 1, 0, 1],
+            [0, 0, 1, 0, 1, 0, 1, 1],
+            [0, 0, 0, 1, 0, 1, 1, 2],
+        ],
+    )
+    M = TernaryMatroid(A, "abcdefgh")
+    M.rename("P8: " + repr(M))
     return M
 
 
@@ -710,23 +751,27 @@ def P8pp():
         True
 
     """
-    E = 'abcdefgh'
-    CC = {3: ['abfh', 'bceg', 'cdfh', 'adeg', 'acef', 'bdfg', 'acgh', 'bdeh'],
-          4: [E]}
+    E = "abcdefgh"
+    CC = {
+        3: ["abfh", "bceg", "cdfh", "adeg", "acef", "bdfg", "acgh", "bdeh"],
+        4: [E]
+    }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('P8\'\': ' + repr(M))
+    M.rename("P8'': " + repr(M))
     return M
 
 
 def Wheel4():
     M = Wheel(4)
-    M.rename('Wheel(4): ' + repr(M))
+    M.rename("Wheel(4): " + repr(M))
     return M
+
 
 def Whirl4():
     M = Wheel(4)
-    M.rename('Whirl(4): ' + repr(M))
+    M.rename("Whirl(4): " + repr(M))
     return M
+
 
 def K33dual():
     """
@@ -750,27 +795,27 @@ def K33dual():
     """
     from sage.graphs.graph_generators import graphs
 
-    E = 'abcdefghi'
+    E = "abcdefghi"
     G = graphs.CompleteBipartiteGraph(3, 3)
     M = Matroid(groundset=E, graph=G, regular=True)
     M = M.dual()
-    M.rename('M*(K3, 3): ' + repr(M))
+    M.rename("M*(K3, 3): " + repr(M))
     return M
 
 
 def K33():
     from sage.graphs.graph_generators import graphs
 
-    E = 'abcdefghi'
+    E = "abcdefghi"
     G = graphs.CompleteBipartiteGraph(3, 3)
     M = Matroid(groundset=E, graph=G, regular=True)
-    M.rename('M(K3, 3): ' + repr(M))
+    M.rename("M(K3, 3): " + repr(M))
     return M
 
 
 def AG23():
-    M = AG(2,3)
-    M.rename('AG(2, 3): ' + repr(M))
+    M = AG(2, 3)
+    M.rename("AG(2, 3): " + repr(M))
     return M
 
 
@@ -793,14 +838,18 @@ def TernaryDowling3():
         {'a': 2, 'b': 1, 'd': 1}
 
     """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 1, 1, 0, 0, 1, 1],
-        [0, 1, 0, 2, 1, 1, 1, 0, 0],
-        [0, 0, 1, 0, 0, 2, 1, 2, 1]
-    ])
-    M = TernaryMatroid(A, 'abcdefghi')
-    M.rename('Q3(GF(3)x): ' + repr(M))
+    A = Matrix(
+        GF(3),
+        [
+            [1, 0, 0, 1, 1, 0, 0, 1, 1],
+            [0, 1, 0, 2, 1, 1, 1, 0, 0],
+            [0, 0, 1, 0, 0, 2, 1, 2, 1],
+        ],
+    )
+    M = TernaryMatroid(A, "abcdefghi")
+    M.rename("Q3(GF(3)x): " + repr(M))
     return M
+
 
 def Pappus():
     """
@@ -830,13 +879,13 @@ def Pappus():
         sage: M.is_valid() # long time
         True
     """
-    E = 'abcdefghi'
+    E = "abcdefghi"
     CC = {
-        2: ['abc', 'def', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi'],
+        2: ["abc", "def", "ceg", "bfg", "cdh", "afh", "bdi", "aei", "ghi"],
         3: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('Pappus: ' + repr(M))
+    M.rename("Pappus: " + repr(M))
     return M
 
 
@@ -865,13 +914,10 @@ def NonPappus():
         sage: M.is_valid() # long time
         True
     """
-    E = 'abcdefghi'
-    CC = {
-        2: ['abc', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi'],
-        3: [E]
-    }
+    E = "abcdefghi"
+    CC = {2: ["abc", "ceg", "bfg", "cdh", "afh", "bdi", "aei", "ghi"], 3: [E]}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('NonPappus: ' + repr(M))
+    M.rename("NonPappus: " + repr(M))
     return M
 
 
@@ -879,9 +925,10 @@ def K5():
     M = CompleteGraphic(5)
     return M
 
+
 def K5dual():
     M = CompleteGraphic(5).dual()
-    M.rename('M*(K5): ' + repr(M))
+    M.rename("M*(K5): " + repr(M))
     return M
 
 
@@ -915,18 +962,23 @@ def R10():
         sage: matroids.named_matroids.R10().linear_extensions(simple=True)
         []
     """
-    A = Matrix(ZZ, [
-        [1, 0, 0, 0, 0, -1, 1, 0, 0, 1],
-        [0, 1, 0, 0, 0, 1, -1, 1, 0, 0],
-        [0, 0, 1, 0, 0, 0, 1, -1, 1, 0],
-        [0, 0, 0, 1, 0, 0, 0, 1, -1, 1],
-        [0, 0, 0, 0, 1, 1, 0, 0, 1, -1]
-    ])
-    M = RegularMatroid(A, 'abcdefghij')
-    M.rename('R10: ' + repr(M))
+    A = Matrix(
+        ZZ,
+        [
+            [1, 0, 0, 0, 0, -1, 1, 0, 0, 1],
+            [0, 1, 0, 0, 0, 1, -1, 1, 0, 0],
+            [0, 0, 1, 0, 0, 0, 1, -1, 1, 0],
+            [0, 0, 0, 1, 0, 0, 0, 1, -1, 1],
+            [0, 0, 0, 0, 1, 1, 0, 0, 1, -1],
+        ],
+    )
+    M = RegularMatroid(A, "abcdefghij")
+    M.rename("R10: " + repr(M))
     return M
 
+
 # NonDesargues
+
 
 def R12():
     """
@@ -949,16 +1001,19 @@ def R12():
         sage: M.is_valid()
         True
     """
-    A = Matrix(ZZ, [
-        [1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0],
-        [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -1],
-        [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1]
-    ])
-    M = RegularMatroid(A, 'abcdefghijkl')
-    M.rename('R12: ' + repr(M))
+    A = Matrix(
+        ZZ,
+        [
+            [1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+            [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+            [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -1],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1],
+        ],
+    )
+    M = RegularMatroid(A, "abcdefghijkl")
+    M.rename("R12: " + repr(M))
     return M
 
 
@@ -983,22 +1038,25 @@ def T12():
         sage: M.is_valid()
         True
     """
-    A = Matrix(GF(2), [
-        [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-        [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-        [0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-        [0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0],
-        [0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0],
-        [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1]
-    ])
-    M = BinaryMatroid(A, 'abcdefghijkl')
-    M.rename('T12: ' + repr(M))
+    A = Matrix(
+        GF(2),
+        [
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+            [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+            [0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0],
+            [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1],
+        ],
+    )
+    M = BinaryMatroid(A, "abcdefghijkl")
+    M.rename("T12: " + repr(M))
     return M
 
 
 def PG23():
-    M = PG(2,3)
-    M.rename('PG(2, 3): ' + repr(M))
+    M = PG(2, 3)
+    M.rename("PG(2, 3): " + repr(M))
     return M
 
 
@@ -1061,7 +1119,7 @@ def Wheel(n, field=None, ring=None):
         M = RegularMatroid(A)
     else:
         M = Matroid(A)
-    M.rename('Wheel(' + str(n) + '): ' + repr(M))
+    M.rename("Wheel(" + str(n) + "): " + repr(M))
     return M
 
 
@@ -1111,7 +1169,7 @@ def Whirl(n):
         else:
             A[i, 2 * n - 1] = 1
     M = TernaryMatroid(A)
-    M.rename('Whirl(' + str(n) + '): ' + repr(M))
+    M.rename("Whirl(" + str(n) + "): " + repr(M))
     return M
 
 
@@ -1161,7 +1219,7 @@ def Uniform(r, n):
     else:
         CC = {}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename('U(' + str(r) + ', ' + str(n) + '): ' + repr(M))
+    M.rename("U(" + str(r) + ", " + str(n) + "): " + repr(M))
     return M
 
 
@@ -1196,12 +1254,12 @@ def PG(n, q, x=None):
         the Finite Field of size 7
     """
     if x is None:
-        x = 'x'
+        x = "x"
     F = GF(q, x)
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in list(P)]).transpose()
     M = Matroid(A)
-    M.rename('PG(' + str(n) + ', ' + str(q) + '): ' + repr(M))
+    M.rename("PG(" + str(n) + ", " + str(q) + "): " + repr(M))
     return M
 
 
@@ -1240,12 +1298,14 @@ def AG(n, q, x=None):
 
     """
     if x is None:
-        x = 'x'
+        x = "x"
     F = GF(q, x)
     P = ProjectiveSpace(n, F)
-    A = Matrix(F, [list(p) for p in list(P) if not list(p)[0] == 0]).transpose()
+    A = Matrix(
+        F, [list(p) for p in list(P) if not list(p)[0] == 0]
+    ).transpose()
     M = Matroid(A)
-    M.rename('AG(' + str(n) + ', ' + str(q) + '): ' + repr(M))
+    M.rename("AG(" + str(n) + ", " + str(q) + "): " + repr(M))
     return M
 
 
