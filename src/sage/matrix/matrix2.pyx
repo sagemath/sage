@@ -18618,6 +18618,18 @@ def _matrix_power_symbolic(A, n):
          -1/2*I*(a + I*b)^k + 1/2*I*(a - I*b)^k,
          1/2*I*(a + I*b)^k - 1/2*I*(a - I*b)^k,
          1/2*(a + I*b)^k + 1/2*(a - I*b)^k]
+
+    Check if :trac:`36838` is fixed:Checking symbolic power of
+    nilpotent matrix::
+
+        sage: A = matrix([[0,1],[0,0]]); A
+        [0 1]
+        [0 0]
+        sage: n = var('n'); n
+        n
+        sage: An = A^n; An
+        [        0^n 0^(n - 1)*n]
+        [          0         0^n]
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix
