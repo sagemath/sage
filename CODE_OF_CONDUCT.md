@@ -40,3 +40,19 @@ it to https://groups.google.com/g/sage-abuse. The group administrators will
 consider the issue and explore resolutions. It is also possible to move heated
 discussions to https://groups.google.com/g/sage-flame.
 
+
+## Examples of problematic conduct ##
+
+Sometimes even conduct that is intended to be helpful can be offensive to others.
+
+- Do not attempt to manage other developers' time and focus. Always remember
+  that different people contribute to the project with a variety of motivations
+  and constraints. For you, time that you can set aside for Sage development
+  may be very scarce; but for others, for example hobbyists, it might simply not
+  be a relevant constraint. Moreover, keep in mind that in real life, it
+  is supervisors who manage time and assignments of their subordinates.
+
+- Do not dismiss other people's efforts on an aspect of the project because you
+  feel that other aspects are more important or more urgent for the project.
+  Always remember that different people contribute to the project on the basis
+  of a variety of expertise, motivations, and priorities.
