@@ -105,8 +105,8 @@ def late_import():
         import sage.rings.qqbar
         AA = sage.rings.qqbar.AA
         QQbar = sage.rings.qqbar.QQbar
-        from .real_lazy import CLF, RLF
-        from .complex_double import CDF
+        from sage.rings.real_lazy import CLF, RLF
+        from sage.rings.complex_double import CDF
 
 _mpfr_rounding_modes = ['RNDN', 'RNDZ', 'RNDU', 'RNDD']
 
