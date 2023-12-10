@@ -98,6 +98,7 @@ jobs:
           ["standard",
            "minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 8
 
   site:
     needs: [changed_files]
@@ -120,16 +121,10 @@ jobs:
       docker_targets: "with-targets"
       targets: "${{needs.changed_files.outputs.uninstall_targets}} ${{needs.changed_files.outputs.build_targets}} build doc-html ptest"
       # Only test systems with a usable system python (>= 3.9)
+      # with only a small number of test failures as of 10.2.rc0
       tox_system_factors: >-
-        ["ubuntu-jammy",
-         "ubuntu-mantic",
-         "debian-bullseye",
-         "debian-bookworm",
-         "fedora-33",
-         "fedora-38",
-         "gentoo-python3.11",
-         "archlinux",
-         "debian-bullseye-i386"]
+        ["gentoo-python3.11",
+         "archlinux"]
       tox_packages_factors: >-
           ["standard-sitepackages"]
       docker_push_repository: ghcr.io/${{ github.repository }}/

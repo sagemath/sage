@@ -119,6 +119,9 @@ from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _f
 _join_cache = WeakValueDictionary()
 
 
+HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke']
+
+
 class Category(UniqueRepresentation, SageObject):
     r"""
     The base class for modeling mathematical categories, like for example:
@@ -513,14 +516,10 @@ class Category(UniqueRepresentation, SageObject):
             sage: PrincipalIdealDomains()._repr_object_names()
             'principal ideal domains'
         """
-        i = -1
-        s = self._label
-        while i < len(s) - 1:
-            for i in range(len(s)):
-                if s[i].isupper():
-                    s = s[:i] + " " + s[i].lower() + s[i + 1:]
-                    break
-        return s.lstrip()
+        words = "".join(letter if not letter.isupper() else ";" + letter
+                        for letter in self._label).split(";")
+        return " ".join(w if w in HALL_OF_FAME else w.lower()
+                        for w in words).lstrip()
 
     def _short_name(self):
         """
@@ -1235,7 +1234,7 @@ class Category(UniqueRepresentation, SageObject):
              Category of right modules over Rational Field,
              Category of left modules over Rational Field)
             sage: structure(HopfAlgebras(QQ).Graded().WithBasis().Connected())
-            (Category of hopf algebras over Rational Field,
+            (Category of Hopf algebras over Rational Field,
              Category of graded modules over Rational Field)
 
         This method is used in :meth:`is_full_subcategory` for
@@ -2018,7 +2017,7 @@ class Category(UniqueRepresentation, SageObject):
              Category of commutative magmas,
              Category of finite additive groups)
             sage: HopfAlgebras(QQ)._with_axiom_as_tuple('FiniteDimensional')
-            (Category of hopf algebras over Rational Field,
+            (Category of Hopf algebras over Rational Field,
              Category of finite dimensional vector spaces over Rational Field)
         """
         if axiom in self.axioms():
@@ -2595,11 +2594,13 @@ def category_sample():
         [Category of Coxeter groups,
          Category of G-sets for Symmetric group of order 8! as a permutation group,
          Category of Hecke modules over Rational Field,
+         Category of Hopf algebras over Rational Field,
+         Category of Hopf algebras with basis over Rational Field,
          Category of Lie algebras over Rational Field,
          Category of Weyl groups,
          Category of additive magmas, ...,
          Category of fields, ...,
-         Category of graded hopf algebras with basis over Rational Field, ...,
+         Category of graded Hopf algebras with basis over Rational Field, ...,
          Category of modular abelian varieties over Rational Field, ...,
          Category of simplicial complexes, ...,
          Category of vector spaces over Rational Field, ...
