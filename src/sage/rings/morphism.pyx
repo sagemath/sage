@@ -650,7 +650,7 @@ cdef class RingHomomorphism(RingMap):
             True
 
         """
-        from .homset import RingHomset_generic
+        from sage.rings.homset import RingHomset_generic
         if not isinstance(parent, RingHomset_generic):
             raise TypeError("parent must be a ring homset")
         RingMap.__init__(self, parent)
@@ -1038,10 +1038,10 @@ cdef class RingHomomorphism(RingMap):
             sage: f.kernel()                                                            # needs sage.libs.singular
             Ideal (0) of Multivariate Polynomial Ring in t, u over Rational Field
         """
-        from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        from .quotient_ring import is_QuotientRing
-        from .polynomial.multi_polynomial_ring import is_MPolynomialRing
-        from .polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
+        from sage.rings.quotient_ring import is_QuotientRing
+        from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         B = self.codomain()
         graph, from_B, to_A = self._graph_ideal()
         Q = graph.ring()
@@ -1287,8 +1287,8 @@ cdef class RingHomomorphism(RingMap):
             ...
             NotImplementedError: rings are not commutative
         """
-        from .quotient_ring import is_QuotientRing
-        from .ideal import Ideal_generic
+        from sage.rings.quotient_ring import is_QuotientRing
+        from sage.rings.ideal import Ideal_generic
         A = self.domain()
         B = self.codomain()
         if not (A.is_commutative() and B.is_commutative()):
@@ -2882,7 +2882,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
             Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
              over Finite Field of size 5
         """
-        from .ring import CommutativeRing
+        from sage.rings.ring import CommutativeRing
         from sage.categories.homset import Hom
         if not isinstance(domain, CommutativeRing):
             raise TypeError("The base ring must be a commutative ring")
@@ -3135,14 +3135,14 @@ def _tensor_product_ring(B, A):
         ...
         ValueError: term ordering must be global
     """
-    from .finite_rings.finite_field_base import FiniteField
-    from .number_field.number_field_base import NumberField
-    from .polynomial.multi_polynomial_ring import is_MPolynomialRing
-    from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-    from .polynomial.polynomial_ring import is_PolynomialRing
-    from .polynomial.polynomial_ring_constructor import PolynomialRing
-    from .polynomial.term_order import TermOrder
-    from .quotient_ring import is_QuotientRing
+    from sage.rings.finite_rings.finite_field_base import FiniteField
+    from sage.rings.number_field.number_field_base import NumberField
+    from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+    from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
+    from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.polynomial.term_order import TermOrder
+    from sage.rings.quotient_ring import is_QuotientRing
 
     if set(B.variable_names()).isdisjoint(A.variable_names()):
         names = B.variable_names() + A.variable_names()

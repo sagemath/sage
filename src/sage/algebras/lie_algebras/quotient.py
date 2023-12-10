@@ -51,7 +51,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         L: Free Nilpotent Lie algebra on 5 generators (X_1, X_2, X_12, X_112, X_122) over Rational Field
         I: Ideal (X_122)
         sage: E.category()
-        Join of Category of finite dimensional nilpotent lie algebras with basis
+        Join of Category of finite dimensional nilpotent Lie algebras with basis
         over Rational Field and Category of subquotients of sets
         sage: E.basis().list()
         [X_1, X_2, X_12, X_112]

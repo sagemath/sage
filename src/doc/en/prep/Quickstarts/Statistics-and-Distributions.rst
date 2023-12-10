@@ -142,13 +142,14 @@ the examples in ``r.kruskal_test?`` in the notebook.
 
 ::
 
-    sage: x=r([2.9, 3.0, 2.5, 2.6, 3.2])  # normal subjects                       # optional - rpy2
-    sage: y=r([3.8, 2.7, 4.0, 2.4])       # with obstructive airway disease       # optional - rpy2
-    sage: z=r([2.8, 3.4, 3.7, 2.2, 2.0])  # with asbestosis                       # optional - rpy2
-    sage: a = r([x,y,z])                  # make a long R vector of all the data  # optional - rpy2
-    sage: b = r.factor(5*[1]+4*[2]+5*[3]) # create something for R to tell        # optional - rpy2
-    ....:                                 #   which subjects are which
-    sage: a; b                            # show them                             # optional - rpy2
+    sage: # optional - rpy2
+    sage: x = r([2.9, 3.0, 2.5, 2.6, 3.2])      # normal subjects
+    sage: y = r([3.8, 2.7, 4.0, 2.4])           # with obstructive airway disease
+    sage: z = r([2.8, 3.4, 3.7, 2.2, 2.0])      # with asbestosis
+    sage: a = r([x,y,z])                        # make a long R vector of all the data
+    sage: b = r.factor(5*[1] + 4*[2] + 5*[3])   # create something for R to tell
+    ....:                                       #   which subjects are which
+    sage: a; b                                  # show them
      [1] 2.9 3.0 2.5 2.6 3.2 3.8 2.7 4.0 2.4 2.8 3.4 3.7 2.2 2.0
      [1] 1 1 1 1 1 2 2 2 2 3 3 3 3 3
     Levels: 1 2 3
