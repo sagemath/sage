@@ -1229,7 +1229,6 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     n = v
     a = (n-4*mu)//2
     e = 2*k - n + 1 + a
-    t = abs(a//2)
 
     if (e**2 == 1 and
             k == (n-1-a+e)/2 and
@@ -1510,7 +1509,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         sage: graphs.strongly_regular_graph(279, 150, 85, 75).is_strongly_regular(parameters=True)  # optional - gap_package_design internet
         (279, 150, 85, 75)
     """
-    cdef int b, k, s
+    cdef int b, k
     if k0 != 2*mu or not v % 2:
         return
     b = v+1+4*mu
@@ -1570,9 +1569,8 @@ def is_taylor_twograph_srg(int v, int k, int l, int mu):
 
         sage: is_taylor_twograph_srg(730, 369, 168, 205)                                # needs sage.libs.pari
         (<function TaylorTwographSRG at ...>, 9)
-
     """
-    r, s = eigenvalues(v, k, l, mu)
+    r, _ = eigenvalues(v, k, l, mu)
     if r is None:
         return
     p, t = is_prime_power(v-1, get_data=True)
@@ -2391,8 +2389,8 @@ def strongly_regular_from_two_weight_code(L):
     if is_Matrix(L):
         L = LinearCode(L)
     V = [tuple(l) for l in L]
-    w1, w2 = sorted(set(sum(map(bool, x)) for x in V).difference([0]))
-    G = Graph([V, lambda u, v: sum(uu!=vv for uu, vv in zip(u, v)) == w1])
+    w1, _ = sorted(set(sum(map(bool, x)) for x in V).difference([0]))
+    G = Graph([V, lambda u, v: sum(uu != vv for uu, vv in zip(u, v)) == w1])
     G.relabel()
     G.name('two-weight code: '+str(L))
     return G

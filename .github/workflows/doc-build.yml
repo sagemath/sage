@@ -67,6 +67,7 @@ jobs:
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
+          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
       # Building
 
@@ -142,9 +143,9 @@ jobs:
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
-          export SAGE_USE_CDNS=yes
           make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html
+          export SAGE_USE_CDNS=yes
+          ./config.status && make sagemath_doc_html-no-deps
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy docs
@@ -152,62 +153,17 @@ jobs:
         if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
           set -ex
+          # We copy everything to a local folder
           docker cp BUILD:/sage/local/share/doc/sage/html docs
           docker cp BUILD:/sage/local/share/doc/sage/index.html docs
           (cd docs && git commit -a -m 'new')
-          # Wipe out chronic diffs between old doc and new doc
-          (cd docs && \
-           find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
-          # Create CHANGES.html
-          echo '<html>' > ./docs/CHANGES.html
-          echo '<head>' >> ./docs/CHANGES.html
-          echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/CHANGES.html
-          echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/CHANGES.html
-          echo '<script>hljs.highlightAll();</script>' >> ./docs/CHANGES.html
-          cat >> ./docs/CHANGES.html << EOF
-          <script>
-          document.addEventListener('DOMContentLoaded', () => {
-            const diffSite = 'https://pianomister.github.io/diffsite/'
-            const baseDocURL = 'https://sagemath-tobias.netlify.app/'
-            const diffParagraphs = document.querySelectorAll('p.diff');
-            diffParagraphs.forEach(paragraph => {
-              const rootURL = window.location.origin + '/';
-              const docAnchor = paragraph.querySelector('a');
-              const path = docAnchor.textContent; // .href doesn't work
-              const anchor = document.createElement('a');
-              anchor.href = diffSite + '?url1=' + rootURL + path + '&url2=' + baseDocURL + path;
-              anchor.textContent = 'compare with the base';
-              anchor.setAttribute('target', '_blank');
-              paragraph.appendChild(anchor);
-            });
-          });
-          </script>
-          EOF
-          echo '</head>' >> ./docs/CHANGES.html
-          echo '<body>' >> ./docs/CHANGES.html
-          (cd docs && git diff HEAD^ -- *.html; rm -rf .git) > ./docs/diff.txt
-          python3 - << EOF
-          import re, html
-          with open('./docs/diff.txt', 'r') as f:
-              diff_text = f.read()
-              diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
-              out_blocks = []
-              for block in diff_blocks:
-                  match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
-                  if match:
-                      path = 'html/' + match.group(1)
-                      out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&emsp;</p>\n<pre><code class="language-diff">' + html.escape(block).strip() + '</code></pre>')
-              output_text = '\n'.join(out_blocks)
-          with open('./docs/diff.html', 'w') as f:
-              f.write(output_text)
-          EOF
-          cat ./docs/diff.html >> ./docs/CHANGES.html
-          echo '</body>' >> ./docs/CHANGES.html
-          echo '</html>' >>./docs/CHANGES.html
-          rm ./docs/diff.txt ./docs/diff.html
+          .ci/create-changes-html.sh $(cd docs && git rev-parse HEAD^) docs
+          (cd $DOC_DIR && rm -rf .git)
+          mv CHANGES.html docs
           # We also need to replace the symlinks because netlify is not following them
           # CHECK IF STILL NEEDED
-          ##### cp -r -L /sage/local/share/doc/sage/html ./docs
+          #cp -r -L $DOC_DIR ./docs
+          cp  $DOC_DIR/../index.html ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
 

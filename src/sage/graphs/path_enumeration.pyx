@@ -1790,9 +1790,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
         starting_vertices = self
     cdef dict data = {}
     cdef dict vertex_iterators
-    cdef list paths = []
     cdef list path
-    cdef list shortest_path
 
     if report_edges and labels:
         if use_multiedges:

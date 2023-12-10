@@ -28,7 +28,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         sage: CoxeterGroups.Finite()
         Category of finite Coxeter groups
         sage: FiniteCoxeterGroups().super_categories()
-        [Category of finite generalized coxeter groups,
+        [Category of finite generalized Coxeter groups,
          Category of Coxeter groups]
 
         sage: G = CoxeterGroups().Finite().example()
@@ -55,7 +55,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: CoxeterGroups().Finite().super_categories()
-            [Category of finite generalized coxeter groups,
+            [Category of finite generalized Coxeter groups,
              Category of Coxeter groups]
         """
         from sage.categories.complex_reflection_groups import ComplexReflectionGroups

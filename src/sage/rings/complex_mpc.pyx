@@ -69,7 +69,6 @@ from sage.cpython.string cimport str_to_bytes
 from sage.libs.mpfr cimport *
 from sage.libs.mpc cimport *
 from sage.structure.parent cimport Parent
-from sage.structure.parent_gens cimport ParentWithGens
 from sage.structure.element cimport Element
 from sage.categories.map cimport Map
 
@@ -78,10 +77,10 @@ try:
 except ImportError:
     pari_gen = PariError = ()
 
-
 from sage.rings.integer cimport Integer
 from sage.rings.complex_mpfr cimport ComplexNumber
 from sage.rings.complex_mpfr import ComplexField_class
+from sage.rings.ring import Ring
 
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.rings.real_mpfr cimport RealField_class, RealNumber
@@ -324,7 +323,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         self.__real_field = real_mpfr.RealField(prec, rnd=_mpfr_rounding_modes[rnd_re(n)])
         self.__imag_field = real_mpfr.RealField(prec, rnd=_mpfr_rounding_modes[rnd_im(n)])
 
-        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite())
+        Ring.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite())
         self._populate_coercion_lists_(coerce_list=[MPFRtoMPC(self._real_field(), self)])
 
     cdef MPComplexNumber _new(self) noexcept:

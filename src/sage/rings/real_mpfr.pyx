@@ -109,7 +109,7 @@ Make sure we don't have a new field for every new literal::
     True
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2005-2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -117,7 +117,7 @@ Make sure we don't have a new field for every new literal::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import math  # for log
 import operator
@@ -133,6 +133,10 @@ import sage.rings.abc
 import sage.rings.infinity
 import sage.rings.rational_field
 
+from sage.arith.constants cimport M_LN2_LN10
+from sage.arith.long cimport is_small_python_int
+from sage.arith.numerical_approx cimport digits_to_bits
+from sage.categories.map cimport Map
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
@@ -140,7 +144,10 @@ from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.libs.mpfr cimport *
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.misc.superseded import deprecation_cython as deprecation
-
+from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
+from sage.rings.real_double cimport RealDoubleElement
+from sage.rings.ring import Ring
 from sage.structure.element cimport Element
 from sage.structure.element cimport have_same_parent
 from sage.structure.richcmp cimport rich_to_bool_sgn
@@ -148,18 +155,6 @@ cdef bin_op
 from sage.structure.element import bin_op
 
 from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
-
-from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
-
-from sage.categories.map cimport Map
-
-from sage.rings.real_double cimport RealDoubleElement
-
-from sage.structure.parent_gens cimport ParentWithGens
-from sage.arith.numerical_approx cimport digits_to_bits
-from sage.arith.constants cimport M_LN2_LN10
-from sage.arith.long cimport is_small_python_int
 
 try:
     from cypari2 import Gen
@@ -171,11 +166,11 @@ cimport gmpy2
 gmpy2.import_gmpy2()
 
 
-#*****************************************************************************
+# ****************************************************************************
 #
 #       Implementation
 #
-#*****************************************************************************
+# ****************************************************************************
 
 _re_skip_zeroes = re.compile(r'^(.+?)0*$')
 
@@ -358,11 +353,11 @@ def mpfr_get_exp_max_max():
 mpfr_set_exp_min(mpfr_get_emin_min())
 mpfr_set_exp_max(mpfr_get_emax_max())
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #       Real Field
 #
-#*****************************************************************************
+# *****************************************************************************
 # The real field is in Cython, so mpfr elements will have access to
 # their parent via direct C calls, which will be faster.
 
@@ -536,7 +531,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         self.rnd_str = char_to_str(rnd_str + 5)  # Strip "MPFR_"
 
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self, tuple(), False, category=Fields().Infinite().Metric().Complete())
+        Ring.__init__(self, self, tuple(), False, category=Fields().Infinite().Metric().Complete())
 
         # Initialize zero and one
         cdef RealNumber rn
