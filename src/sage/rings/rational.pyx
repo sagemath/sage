@@ -1749,7 +1749,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             return (self > 0)
 
         ## Check that p is prime
-        from .integer_ring import ZZ
+        from sage.rings.integer_ring import ZZ
         p = ZZ(p)
         if check and not p.is_prime():
             raise ValueError('p must be "infinity" or a positive prime number.')
@@ -4094,8 +4094,8 @@ cdef class Z_to_Q(Morphism):
               From: Integer Ring
               To:   Rational Field
         """
-        from . import integer_ring
-        from . import rational_field
+        from sage.rings import integer_ring
+        from sage.rings import rational_field
         import sage.categories.homset
         Morphism.__init__(self, sage.categories.homset.Hom(integer_ring.ZZ, rational_field.QQ))
 
@@ -4215,7 +4215,7 @@ cdef class int_to_Q(Morphism):
               From: Set of Python objects of class 'int'
               To:   Rational Field
         """
-        from . import rational_field
+        from sage.rings import rational_field
         import sage.categories.homset
         from sage.sets.pythonclass import Set_PythonType
         Morphism.__init__(self, sage.categories.homset.Hom(
