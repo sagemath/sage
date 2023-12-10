@@ -810,9 +810,9 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         """
         NAME = 'DifferentialWeylAlgebra'
         module = 'sage.algebras.weyl_algebra'
-        factor_representation = dict(default=False,
-                 description='Controls whether to factor the differentials out or not in the output representations',
-                 checker=lambda x: x in [True, False])
+        factor_representation = {'default': False,
+                 'description': 'Controls whether to factor the differentials out or not in the output representations',
+                 'checker': lambda x: x in [True, False]}
 
     def _element_constructor_(self, x):
         """

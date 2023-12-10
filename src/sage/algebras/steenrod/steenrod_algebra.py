@@ -1320,7 +1320,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         while a and a[-1] == 0:
                             a = a[:-1]
                         right.append(tuple(a))
-                    tens = dict().fromkeys(zip(left, right), 1)
+                    tens = {}.fromkeys(zip(left, right), 1)
                     return self.tensor_square()._from_dict(tens, coerce=True)
                 else:  # p odd
                     from sage.combinat.permutation import Permutation

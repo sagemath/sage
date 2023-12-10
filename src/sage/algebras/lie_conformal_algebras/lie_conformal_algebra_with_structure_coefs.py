@@ -146,7 +146,7 @@ class LieConformalAlgebraWithStructureCoefficients(
         """
         if parity is None:
             parity = (0,)*index_set.cardinality()
-        index_to_parity = {i:p for (i,p) in zip(index_set,parity)}
+        index_to_parity = dict(zip(index_set,parity))
         sc = {}
         #mypair has a pair of generators
         for mypair in s_coeff.keys():
@@ -215,7 +215,7 @@ class LieConformalAlgebraWithStructureCoefficients(
         """
         names, index_set = standardize_names_index_set(names,index_set)
         if central_elements is None:
-            central_elements = tuple()
+            central_elements = ()
 
         if names is not None and names != tuple(index_set):
             names2 = names + tuple(central_elements)
