@@ -817,6 +817,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
     INPUT:
 
     - ``graph`` -- a Sage graph
+
     - ``tree_decomp`` -- a tree decomposition
 
     OUTPUT:
@@ -853,7 +854,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
         sage: make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
         Nice tree decomposition of Tree decomposition: Graph on 15 vertices
 
-    The following two examples are for testing GitHub Issue 36843::
+    Check that :issue:`36843` is fixed::
 
         sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
         sage: triangle = graphs.CompleteGraph(3)
@@ -868,6 +869,30 @@ def make_nice_tree_decomposition(graph, tree_decomp):
         sage: graph_TD = graph.treewidth(certificate=True)
         sage: make_nice_tree_decomposition(graph, graph_TD)
         Nice tree decomposition of Tree decomposition: Graph on 25 vertices
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: empty_graph = graphs.EmptyGraph()
+        sage: tree_decomp = empty_graph.treewidth(certificate=True)
+        sage: len(make_nice_tree_decomposition(empty_graph, tree_decomp))
+        0
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: singleton = graphs.CompleteGraph(1)
+        sage: tree_decomp = singleton.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(singleton, tree_decomp)
+        Nice tree decomposition of Tree decomposition: Graph on 3 vertices
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: an_edge = graphs.CompleteGraph(2)
+        sage: tree_decomp = an_edge.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(an_edge, tree_decomp)
+        Nice tree decomposition of Tree decomposition: Graph on 5 vertices
     """
     if not is_valid_tree_decomposition(graph, tree_decomp):
         raise ValueError("input must be a valid tree decomposition for this graph")
@@ -1035,6 +1060,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     return nice_tree_decomp
 
+
 def label_nice_tree_decomposition(nice_TD, root, directed=False):
     r"""
     Return a nice tree decomposition with nodes labelled accordingly.
@@ -1045,7 +1071,9 @@ def label_nice_tree_decomposition(nice_TD, root, directed=False):
 
     - ``root`` -- the root of the nice tree decomposition
 
-    - ``directed`` -- boolean (default: ``False``); whether to return the directed graph
+    - ``directed`` -- boolean (default: ``False``); whether to return the nice
+      tree decomposition as a directed graph rooted at vertex ``root`` or as an
+      undirected graph
 
     OUTPUT:
 
@@ -1058,7 +1086,9 @@ def label_nice_tree_decomposition(nice_TD, root, directed=False):
         sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
         sage: nice_TD = make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
         sage: root = sorted(nice_TD.vertices())[0]
-        sage: label_TD = label_nice_tree_decomposition(nice_TD, root)
+        sage: label_TD = label_nice_tree_decomposition(nice_TD, root, directed=True)
+        sage: print(label_TD.name())
+        Labelled Nice tree decomposition of Tree decomposition
         sage: for node in sorted(label_TD):
         ....:     print(node, label_TD.get_vertex(node))
         (0, {}) forget
@@ -1081,13 +1111,13 @@ def label_nice_tree_decomposition(nice_TD, root, directed=False):
     from sage.graphs.graph import Graph
 
     directed_TD = DiGraph(nice_TD.breadth_first_search(start=root, edges=True),
-                          format='list_of_edges')
+                          format='list_of_edges',
+                          name='Labelled {}'.format(nice_TD))
 
     # The loop starts from the root node
     # We assume the tree decomposition is valid and nice,
     # hence saving time on checking.
     for node in directed_TD:
-        in_deg = directed_TD.in_degree(node)
         out_deg = directed_TD.out_degree(node)
 
         if out_deg == 2:
