@@ -180,7 +180,7 @@ class QmodnZ(Parent, UniqueRepresentation):
             sage: len(L)
             92
         """
-        return list(set(self(x) for x in QQ.some_elements()))
+        return list({self(x) for x in QQ.some_elements()})
 
     def random_element(self):
         r"""
