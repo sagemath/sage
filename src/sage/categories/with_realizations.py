@@ -271,9 +271,9 @@ def WithRealizations(self):
         sage: Semigroups().WithRealizations()
         Join of Category of semigroups and Category of sets with realizations
         sage: C = GradedHopfAlgebrasWithBasis(QQ).WithRealizations(); C
-        Category of graded hopf algebras with basis over Rational Field with realizations
+        Category of graded Hopf algebras with basis over Rational Field with realizations
         sage: C.super_categories()
-        [Join of Category of hopf algebras over Rational Field
+        [Join of Category of Hopf algebras over Rational Field
              and Category of graded algebras over Rational Field
              and Category of graded coalgebras over Rational Field]
         sage: TestSuite(Semigroups().WithRealizations()).run()
@@ -303,7 +303,7 @@ class WithRealizationsCategory(RegressiveCovariantConstructionCategory):
         EXAMPLES::
 
             sage: C = GradedHopfAlgebrasWithBasis(QQ).WithRealizations(); C #indirect doctest
-            Category of graded hopf algebras with basis over Rational Field with realizations
+            Category of graded Hopf algebras with basis over Rational Field with realizations
         """
         s = repr(self.base_category())
-        return s+" with realizations"
+        return s + " with realizations"

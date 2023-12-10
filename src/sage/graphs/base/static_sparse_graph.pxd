@@ -14,7 +14,7 @@ cdef extern from "stdlib.h":
                   size_t size, int(*compar)(const_void *, const_void *)) nogil
 
 ctypedef struct short_digraph_s:
-    uint32_t *  edges
+    uint32_t * edges
     uint32_t ** neighbors
     PyObject * edge_labels
     int m

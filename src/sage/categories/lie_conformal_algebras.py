@@ -186,12 +186,12 @@ class LieConformalAlgebras(Category_over_base_ring):
             sage: C.super_categories()
             [Category of Lambda bracket algebras over Rational Field]
             sage: C = LieConformalAlgebras(QQ).FinitelyGenerated(); C
-            Category of finitely generated lie conformal algebras over Rational Field
+            Category of finitely generated Lie conformal algebras over Rational Field
             sage: C.super_categories()
             [Category of finitely generated lambda bracket algebras over Rational Field,
              Category of Lie conformal algebras over Rational Field]
             sage: C.all_super_categories()
-            [Category of finitely generated lie conformal algebras over Rational Field,
+            [Category of finitely generated Lie conformal algebras over Rational Field,
              Category of finitely generated lambda bracket algebras over Rational Field,
              Category of Lie conformal algebras over Rational Field,
              Category of Lambda bracket algebras over Rational Field,
