@@ -40,7 +40,7 @@ class GroupAlgebras(AlgebrasCategory):
         sage: C = Groups().Algebras(ZZ); C
         Category of group algebras over Integer Ring
         sage: C.super_categories()
-        [Category of hopf algebras with basis over Integer Ring,
+        [Category of Hopf algebras with basis over Integer Ring,
          Category of monoid algebras over Integer Ring]
 
     We can also construct this category with::
@@ -92,9 +92,9 @@ class GroupAlgebras(AlgebrasCategory):
 
             sage: C = Groups().Algebras(QQ)
             sage: C.extra_super_categories()
-            [Category of hopf algebras over Rational Field]
+            [Category of Hopf algebras over Rational Field]
             sage: sorted(C.super_categories(), key=str)
-            [Category of hopf algebras with basis over Rational Field,
+            [Category of Hopf algebras with basis over Rational Field,
              Category of monoid algebras over Rational Field]
         """
         from sage.categories.hopf_algebras import HopfAlgebras

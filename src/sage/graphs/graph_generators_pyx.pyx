@@ -6,16 +6,16 @@ AUTHORS:
 - David Coudert (2012)
 """
 
-
-################################################################################
+# #############################################################################
 #           Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-################################################################################
+#                         https://www.gnu.org/licenses/
+# #############################################################################
 
 from sage.misc.randstate cimport random
 from sage.misc.randstate import set_random_seed
+
 
 def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
     r"""
@@ -63,8 +63,6 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
         ...
         ValueError: parameter 'loops' can be set to True only when 'directed' is True
     """
-    from sage.graphs.graph import Graph, DiGraph
-
     if seed is not None:
         set_random_seed(seed)
 
@@ -74,8 +72,10 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
     cdef int pp = int(round(float(p * RAND_MAX_f)))
 
     if directed:
+        from sage.graphs.digraph import DiGraph
         G = DiGraph(loops=loops)
     else:
+        from sage.graphs.graph import Graph
         G = Graph()
         if loops:
             raise ValueError("parameter 'loops' can be set to True only when 'directed' is True")
