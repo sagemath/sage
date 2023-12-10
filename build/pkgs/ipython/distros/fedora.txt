@@ -1,1 +1,2 @@
 ipython
+python-ipython-sphinx
