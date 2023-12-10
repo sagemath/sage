@@ -29,7 +29,7 @@ treewidth of a tree equal to one.
 The *length* of a tree decomposition, as proposed in [DG2006]_, is the maximum
 *diameter* in `G` of its bags, where the diameter of a bag `X_i` is the largest
 distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v \in X_i}
-dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the minimum length
+\dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the minimum length
 among all possible tree decompositions of `G`.
 
 While deciding whether a graph has treelength 1 can be done in linear time
@@ -80,6 +80,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
     :meth:`is_valid_tree_decomposition` | Check whether `T` is a valid tree-decomposition for `G`.
     :meth:`reduced_tree_decomposition` | Return a reduced tree-decomposition of `T`.
     :meth:`width_of_tree_decomposition` | Return the width of the tree decomposition `T` of `G`.
+    :meth:`length_of_tree_decomposition` | Return the length of the tree decomposition `T` of `G`.
 
 
 .. TODO:
@@ -1086,6 +1087,116 @@ def label_nice_tree_decomposition(nice_TD, root):
 # Treelength
 #
 
+def length_of_tree_decomposition(G, T, check=True):
+    r"""
+    Return the length of the tree decomposition `T` of `G`.
+
+    The *length* of a tree decomposition, as proposed in [DG2006]_, is the
+    maximum *diameter* in `G` of its bags, where the diameter of a bag `X_i` is
+    the largest distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v
+    \in X_i} \dist_G(u, v)`). See the documentation of the
+    :mod:`~sage.graphs.graph_decompositions.tree_decomposition` module for more
+    details.
+
+    INPUT:
+
+    - ``G`` -- a graph
+
+    - ``T`` -- a tree-decomposition for `G`
+
+    - ``check`` -- boolean (default: ``True``); whether to check that the
+      tree-decomposition `T` is valid for `G`
+
+    EXAMPLES:
+
+    Trees and cliques have treelength 1::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import length_of_tree_decomposition
+        sage: G = graphs.CompleteGraph(5)
+        sage: tl, T = G.treelength(certificate=True)
+        sage: tl
+        1
+        sage: length_of_tree_decomposition(G, T, check=True)
+        1
+        sage: G = graphs.RandomTree(20)
+        sage: tl, T = G.treelength(certificate=True)
+        sage: tl
+        1
+        sage: length_of_tree_decomposition(G, T, check=True)
+        1
+
+    The Petersen graph has treelength 2::
+
+        sage: G = graphs.PetersenGraph()
+        sage: tl, T = G.treelength(certificate=True)
+        sage: tl
+        2
+        sage: length_of_tree_decomposition(G, T)
+        2
+
+    When a tree-decomposition has a single bag containing all vertices of a
+    graph, the length of this tree-decomposition is the diameter of the graph::
+
+        sage: G = graphs.Grid2dGraph(2, 5)
+        sage: G.treelength()
+        2
+        sage: G.diameter()
+        5
+        sage: T = Graph({Set(G): []})
+        sage: length_of_tree_decomposition(G, T)
+        5
+
+    TESTS::
+
+        sage: G = Graph()
+        sage: _, T = G.treelength(certificate=True)
+        sage: length_of_tree_decomposition(G, T, check=True)
+        0
+        sage: length_of_tree_decomposition(Graph(1), T, check=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: the tree-decomposition is not valid for this graph
+    """
+    if check and not is_valid_tree_decomposition(G, T):
+        raise ValueError("the tree-decomposition is not valid for this graph")
+
+    cdef unsigned int n = G.order()
+
+    if n < 2:
+        return 0
+    if any(len(bag) == n for bag in T):
+        return G.diameter()
+
+    cdef unsigned int i, j
+
+    # We map vertices to integers in range 0..n-1
+    cdef list int_to_vertex = list(G)
+    cdef dict vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
+
+    # We compute the distance matrix.
+    cdef unsigned short * c_distances = c_distances_all_pairs(G, vertex_list=int_to_vertex)
+    cdef unsigned short ** distances = <unsigned short **>sig_calloc(n, sizeof(unsigned short *))
+    for i in range(n):
+        distances[i] = c_distances + i * n
+
+    # We now compute the maximum lengths of the bags
+    from itertools import combinations
+    cdef list bag_int
+    cdef unsigned short dij
+    cdef unsigned short length = 0
+    for bag in T:
+        bag_int = [vertex_to_int[u] for u in bag]
+        for i, j in combinations(bag_int, 2):
+            dij = distances[i][j]
+            if dij > length:
+                length = dij
+
+    sig_free(c_distances)
+    sig_free(distances)
+
+    return length
+
+
 def treelength_lowerbound(G):
     r"""
     Return a lower bound on the treelength of `G`.
@@ -1583,7 +1694,7 @@ def treelength(G, k=None, certificate=False):
     The *length* of a tree decomposition, as proposed in [DG2006]_, is the
     maximum *diameter* in `G` of its bags, where the diameter of a bag `X_i` is
     the largest distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v
-    \in X_i} dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the
+    \in X_i} \dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the
     minimum length among all possible tree decompositions of `G`.
     See the documentation of the
     :mod:`~sage.graphs.graph_decompositions.tree_decomposition` module for more
