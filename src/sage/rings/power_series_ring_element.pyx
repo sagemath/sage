@@ -2957,7 +2957,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
 def make_powerseries_poly_v0(parent,  f, prec, is_gen):
     # This is only used to unpickle old pickles. The new pickling
     # works differently!
-    from . import power_series_poly
+    from sage.rings import power_series_poly
     return power_series_poly.PowerSeries_poly(parent, f, prec, 0, is_gen)
 
 

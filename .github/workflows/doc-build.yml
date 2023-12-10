@@ -27,6 +27,7 @@ jobs:
           .ci/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
+          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
       - name: Store CI fixes in upstream artifact
         run: |
           mkdir -p upstream
@@ -68,8 +69,8 @@ jobs:
                                                 -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
                                                 -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create git repo from old doc
-          (cd /sage/local/share/doc/sage/html && \
-           git init && \
+          DOC_DIR=/sage/local/share/doc/sage/html
+          (cd $DOC_DIR && git init && \
            (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
            (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
            git add -A && git commit --quiet -m "old")
@@ -115,10 +116,11 @@ jobs:
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
           set -ex
-          export SAGE_USE_CDNS=yes
-          mv /sage/local/share/doc/sage/html/.git /sage/.git-doc
+          DOC_DIR=/sage/local/share/doc/sage/html
+          mv $DOC_DIR/.git /sage/.git-doc
           make doc-clean doc-uninstall
-          mkdir -p /sage/local/share/doc/sage/html/ && mv /sage/.git-doc /sage/local/share/doc/sage/html/.git
+          mkdir -p $DOC_DIR/ && mv /sage/.git-doc $DOC_DIR/.git
+          export SAGE_USE_CDNS=yes
           ./config.status && make sagemath_doc_html-no-deps
         working-directory: ./worktree-image
         env:
@@ -130,63 +132,17 @@ jobs:
         if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
           set -ex
-          mkdir -p ./docs
-          (cd /sage/local/share/doc/sage/html && git commit -a -m 'new')
-          # Wipe out chronic diffs between old doc and new doc
-          (cd /sage/local/share/doc/sage/html && \
-           find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
-          # Create CHANGES.html
-          echo '<html>' > ./docs/CHANGES.html
-          echo '<head>' >> ./docs/CHANGES.html
-          echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> ./docs/CHANGES.html
-          echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> ./docs/CHANGES.html
-          echo '<script>hljs.highlightAll();</script>' >> ./docs/CHANGES.html
-          cat >> ./docs/CHANGES.html << EOF
-          <script>
-          document.addEventListener('DOMContentLoaded', () => {
-            const diffSite = 'https://pianomister.github.io/diffsite/'
-            const baseDocURL = 'https://sagemath-tobias.netlify.app/'
-            const diffParagraphs = document.querySelectorAll('p.diff');
-            diffParagraphs.forEach(paragraph => {
-              const rootURL = window.location.origin + '/';
-              const docAnchor = paragraph.querySelector('a');
-              const path = docAnchor.textContent; // .href doesn't work
-              const anchor = document.createElement('a');
-              anchor.href = diffSite + '?url1=' + rootURL + path + '&url2=' + baseDocURL + path;
-              anchor.textContent = 'compare with the base';
-              anchor.setAttribute('target', '_blank');
-              paragraph.appendChild(anchor);
-            });
-          });
-          </script>
-          EOF
-          echo '</head>' >> ./docs/CHANGES.html
-          echo '<body>' >> ./docs/CHANGES.html
-          (cd /sage/local/share/doc/sage/html && git diff HEAD^ -- *.html; rm -rf .git) > ./docs/diff.txt
-          /sage/sage -python - << EOF
-          import re, html
-          with open('./docs/diff.txt', 'r') as f:
-              diff_text = f.read()
-              diff_blocks = re.split(r'^(?=diff --git)', diff_text, flags=re.MULTILINE)
-              out_blocks = []
-              for block in diff_blocks:
-                  match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
-                  if match:
-                      path = 'html/' + match.group(1)
-                      out_blocks.append(f'<p class="diff"><a href="{path}">{path}</a>&emsp;</p>\n<pre><code class="language-diff">' + html.escape(block).strip() + '</code></pre>')
-              output_text = '\n'.join(out_blocks)
-          with open('./docs/diff.html', 'w') as f:
-              f.write(output_text)
-          EOF
-          cat ./docs/diff.html >> ./docs/CHANGES.html
-          echo '</body>' >> ./docs/CHANGES.html
-          echo '</html>' >>./docs/CHANGES.html
-          rm ./docs/diff.txt ./docs/diff.html
-          # For some reason the deploy step below cannot find /sage/...
-          # So copy everything from there to local folder
+          DOC_DIR=/sage/local/share/doc/sage/html
+          (cd $DOC_DIR && git commit -a -m 'new')
+          ls -l /sage/venv/bin
+          PATH=/sage/venv/bin:$PATH .ci/create-changes-html.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR
+          (cd $DOC_DIR && rm -rf .git)
+          # We copy everything to a local folder
           # We also need to replace the symlinks because netlify is not following them
-          cp -r -L /sage/local/share/doc/sage/html ./docs
-          cp  /sage/local/share/doc/sage/index.html ./docs
+          mkdir -p ./docs
+          mv CHANGES.html ./docs
+          cp -r -L $DOC_DIR ./docs
+          cp  $DOC_DIR/../index.html ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
 
@@ -202,11 +158,15 @@ jobs:
         if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
         run: |
           set -ex
+          export PATH="build/bin:$PATH"
+          eval $(sage-print-system-package-command auto update)
+          eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive)
           export SAGE_USE_CDNS=yes
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html-no-deps
+          ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -219,6 +179,7 @@ jobs:
           set -ex
           mkdir -p ./livedoc
           cp -r -L /sage/local/share/doc/sage/html ./livedoc
+          cp -r -L /sage/local/share/doc/sage/pdf ./livedoc
           cp  /sage/local/share/doc/sage/index.html ./livedoc
           zip -r livedoc.zip livedoc
 

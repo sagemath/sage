@@ -91,7 +91,7 @@ cdef class Action(Functor):
       :class:`Action` itself, but other classes may use it
     """
     def __init__(self, G, S, is_left=True, op=None):
-        from .groupoid import Groupoid
+        from sage.categories.groupoid import Groupoid
         Functor.__init__(self, Groupoid(G), category(S))
         self.G = G
         self.US = ref(S)

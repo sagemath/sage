@@ -148,10 +148,10 @@ from sage.structure.richcmp cimport richcmp
 
 from sage.misc.fpickle import pickle_function, unpickle_function
 
-from .symbols import symbol_table, register_symbol
+from sage.symbolic.symbols import symbol_table, register_symbol
 
 try:
-    from .expression import (
+    from sage.symbolic.expression import (
         call_registered_function, find_registered_function, register_or_update_function,
         get_sfunction_from_hash, get_sfunction_from_serial as get_sfunction_from_serial
     )
@@ -528,7 +528,7 @@ cdef class Function(SageObject):
         # to a numeric type at the end
         symbolic_input = any(isinstance(arg, Expression) for arg in args)
 
-        from .ring import SR
+        from sage.symbolic.ring import SR
 
         if coerce:
             try:
@@ -606,7 +606,7 @@ cdef class Function(SageObject):
             sage: sin.default_variable()                                                # needs sage.symbolic
             x
         """
-        from .ring import SR
+        from sage.symbolic.ring import SR
         return SR.var('x')
 
     def _is_numerical(self, x):
@@ -1053,7 +1053,7 @@ cdef class BuiltinFunction(Function):
             if (self._preserved_arg
                     and isinstance(args[self._preserved_arg-1], Element)):
                 arg_parent = parent(args[self._preserved_arg-1])
-                from .ring import SR
+                from sage.symbolic.ring import SR
                 if arg_parent is SR:
                     return res
                 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
