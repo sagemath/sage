@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Element class for Pollack-Stevens' modular symbols
 
@@ -361,9 +360,9 @@ class PSModularSymbolElement(ModuleElement):
 
         OUTPUT:
 
-        - a prime or None.  If ``allow_none`` is False then a
-          ``ValueError`` will be raised rather than returning None if no
-          prime can be determined.
+        - a prime or ``None``.  If ``allow_none`` is ``False`` then a
+          :class:`ValueError` will be raised rather than returning ``None``
+          if no prime can be determined.
 
         EXAMPLES::
 
