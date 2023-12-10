@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Frank Luebeck's tables of Conway polynomials over finite fields
 """

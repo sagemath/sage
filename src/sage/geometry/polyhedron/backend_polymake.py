@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-polyhedra
-# -*- coding: utf-8 -*-
 """
 The polymake backend for polyhedral computations
 

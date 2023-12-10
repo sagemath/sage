@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-schemes
-# -*- coding: utf-8 -*-
 r"""
 Element class for Pollack-Stevens' modular symbols
 

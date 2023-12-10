@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-objects
-# -*- coding: utf-8 -*-
 """
 Accurate timing information for Sage commands
 

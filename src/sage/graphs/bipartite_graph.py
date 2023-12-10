@@ -1,6 +1,5 @@
 # sage_setup: distribution = sagemath-graphs
 # autopep8: off
-# -*- coding: utf-8 -*-
 r"""
 Bipartite graphs
 
