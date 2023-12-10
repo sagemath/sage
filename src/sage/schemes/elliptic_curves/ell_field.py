@@ -1964,7 +1964,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         """
 
         from warnings import warn
-        from sage.graphs.graph import DiGraph, Graph
         from sage.matrix.constructor import Matrix
 
         # warn users if things are getting big
@@ -2016,8 +2015,13 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 labels.append(E._equation_string())
 
         A = Matrix([r + [0] * (len(A) - len(r)) for r in A])
-        G = (DiGraph if directed else Graph)(A, format="adjacency_matrix",
-                data_structure="static_sparse")
+        if directed:
+            from sage.graphs.digraph import DiGraph as GraphType
+        else:
+            from sage.graphs.graph import Graph as GraphType
+
+        G = GraphType(A, format="adjacency_matrix",
+                      data_structure="static_sparse")
         # inplace relabelling is necessary for static_sparse graphs
         GL = G.relabel(labels, inplace=False)
         return GL
