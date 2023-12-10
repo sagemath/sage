@@ -8,10 +8,6 @@ unset CFLAGS
 
 EXTRA=""
 
-if [ $UNAME = "CYGWIN" ]; then
-    EXTRA="--disable-static --enable-shared"
-fi
-
 # Building
 sdh_configure $SAGE_CONFIGURE_GMP $SAGE_CONFIGURE_MPFR $EXTRA
 sdh_make

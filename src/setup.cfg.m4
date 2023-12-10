@@ -85,10 +85,6 @@ scripts =
     bin/sage-num-threads.py
     bin/sage-preparse
     bin/sage-python
-    bin/sage-rebase.bat
-    bin/sage-rebase.sh
-    bin/sage-rebaseall.bat
-    bin/sage-rebaseall.sh
     bin/sage-run
     bin/sage-run-cython
     bin/sage-startuptime.py

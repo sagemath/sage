@@ -18,10 +18,3 @@ Upstream Contact
 
 -  http://www.gnu.org/software/libiconv/
 -  Bug reports to bug-gnu-libiconv@gnu.org
-
-Special Update/Build Instructions
----------------------------------
-
--  None, other than anyone updating this package should be familiar with
-   how
-   to write shell scripts.
