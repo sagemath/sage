@@ -29,6 +29,8 @@ lazy_import('sage.schemes.elliptic_curves.jacobian', 'Jacobian')
 lazy_import('sage.schemes.elliptic_curves.ell_rational_field',
             ['cremona_curves', 'cremona_optimal_curves'])
 
+lazy_import('sage.schemes.elliptic_curves.ell_finite_field', 'special_supersingular_curve')
+
 from .cm import ( cm_orders,
                  cm_j_invariants,
                  cm_j_invariants_and_orders,

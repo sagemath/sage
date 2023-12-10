@@ -216,31 +216,6 @@ cdef class Parent(parent.Parent):
         check_old_coerce(self)
         return self._coerce_c_impl(x)
 
-    def _coerce_try(self, x, v):
-        """
-        Given a list v of rings, try to coerce x canonically into each
-        one in turn.  Return the __call__ coercion of the result into
-        self of the first canonical coercion that succeeds.  Raise a
-        :class:`TypeError` if none of them succeed.
-
-        INPUT:
-
-        - x -- Python object
-        - v -- parent object or list (iterator) of parent objects
-        """
-        deprecation(33464, "usage of _coerce_try is deprecated")
-        check_old_coerce(self)
-        if not isinstance(v, list):
-            v = [v]
-
-        for R in v:
-            try:
-                y = R._coerce_(x)
-                return self(y)
-            except (TypeError, AttributeError) as msg:
-                pass
-        raise TypeError("no canonical coercion of element into self")
-
     cdef __has_coerce_map_from_c(self, S) noexcept:
         check_old_coerce(self)
         if self == S:

@@ -556,7 +556,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: TestSuite(SteenrodAlgebra(basis='woody')).run()   # long time
             sage: A3 = SteenrodAlgebra(3)
             sage: A3.category()
-            Category of supercocommutative super hopf algebras
+            Category of supercocommutative super Hopf algebras
              with basis over Finite Field of size 3
             sage: TestSuite(A3).run()  # long time
             sage: TestSuite(SteenrodAlgebra(basis='adem', p=3)).run()
@@ -3842,7 +3842,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
         sage: A.is_division_algebra()
         False
         sage: A.category()
-        Category of supercocommutative super hopf algebras
+        Category of supercocommutative super Hopf algebras
          with basis over Finite Field of size 2
 
     There are methods for constructing elements of the Steenrod
