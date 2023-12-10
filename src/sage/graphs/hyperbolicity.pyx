@@ -641,7 +641,7 @@ cdef tuple hyperbolicity_BCCM(int N,
     cdef int a, b, c, d, h_UB, n_val, n_acc, i, j
     cdef int hplusone
     cdef int condacc
-    cdef int x, y, S1, S2, S3
+    cdef int x, S1, S2, S3
     cdef list certificate = []
     cdef uint32_t nb_p  # The total number of pairs.
     cdef unsigned short *dist_a
@@ -1672,7 +1672,7 @@ def hyperbolicity_distribution(G, algorithm='sampling', sampling_size=10**6):
         return {0: sampling_size if algorithm=='sampling' else binomial(G.num_verts(), 4)}
 
     cdef int N = G.num_verts()
-    cdef int i, j
+    cdef int i
     cdef unsigned short** distances
     cdef unsigned short* _distances_
     cdef dict hdict

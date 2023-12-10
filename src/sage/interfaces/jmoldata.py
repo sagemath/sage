@@ -10,14 +10,14 @@ AUTHORS:
 - Jonathan Gutow (2012-03-21): initial version
 """
 
-#*******************************************************************************
+# ******************************************************************************
 #       Copyright (C) 2012 Jonathan Gutow (gutow@uwosh.edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ******************************************************************************
 
 from sage.structure.sage_object import SageObject
 
@@ -72,12 +72,12 @@ class JmolData(SageObject):
         return java_version_number >= 7
 
     def export_image(self,
-        targetfile,
-        datafile, #name (path) of data file Jmol can read or script file telling it what to read or load
-        datafile_cmd='script', #"script" or "load"
-        image_type='PNG', #PNG, JPG, GIF
-        figsize=5,
-        **kwds):
+                     targetfile,
+                     datafile,  # name (path) of data file Jmol can read or script file telling it what to read or load
+                     datafile_cmd='script',  # "script" or "load"
+                     image_type='PNG',  # PNG, JPG, GIF
+                     figsize=5,
+                     **kwds):
         r"""
         This executes JmolData.jar to make an image file.
 
@@ -134,10 +134,10 @@ class JmolData(SageObject):
 
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
-            sage: D = dodecahedron()
+            sage: D = dodecahedron()                                                    # needs sage.plot
             sage: from tempfile import NamedTemporaryFile
             sage: archive = NamedTemporaryFile(suffix=".zip")
-            sage: D.export_jmol(archive.name)
+            sage: D.export_jmol(archive.name)                                           # needs sage.plot
             sage: archive_native = archive.name
             sage: import sys
             sage: if sys.platform == 'cygwin':
@@ -145,7 +145,7 @@ class JmolData(SageObject):
             ....:     archive_native = cygwin.cygpath(archive_native, 'w')
             sage: script  = f'set defaultdirectory "f{archive_native}"\n'
             sage: script += 'script SCRIPT\n'
-            sage: with NamedTemporaryFile(suffix=".png") as testfile:  # optional -- java
+            sage: with NamedTemporaryFile(suffix=".png") as testfile:   # optional - java, needs sage.plot
             ....:     JData.export_image(targetfile=testfile.name,
             ....:                        datafile=script,
             ....:                        image_type="PNG")
@@ -170,7 +170,7 @@ class JmolData(SageObject):
         launchscript = launchscript + datafile
 
         imagescript = 'write {} {!r}\n'.format(image_type, target_native)
-        size_arg = "%sx%s" % (figsize*100,figsize*100)
+        size_arg = "%sx%s" % (figsize * 100, figsize * 100)
         # Scratch file for Jmol errors
         scratchout = tmp_filename(ext=".txt")
         with open(scratchout, 'w') as jout:
@@ -179,9 +179,9 @@ class JmolData(SageObject):
             env['LC_ALL'] = 'C'
             env['LANG'] = 'C'
             subprocess.call(["java", "-Xmx512m", "-Djava.awt.headless=true",
-                "-jar", jmolpath, "-iox", "-g", size_arg,
-                "-J", launchscript, "-j", imagescript],
-                stdout=jout, stderr=jout, env=env)
+                             "-jar", jmolpath, "-iox", "-g", size_arg,
+                             "-J", launchscript, "-j", imagescript],
+                            stdout=jout, stderr=jout, env=env)
         if not os.path.isfile(targetfile):
             raise RuntimeError(f"Jmol failed to create file {targetfile}: {Path(scratchout).read_text()}")
         os.unlink(scratchout)

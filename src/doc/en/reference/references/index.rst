@@ -1238,6 +1238,9 @@ REFERENCES:
              :doi:`10.1109/SFCS.1989.63516`,
              <http://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf>_
 
+.. [Bro2009] \R. Bröker: *Constructing supersingular elliptic curves*.
+             Journal of Combinatorics and Number Theory 1.3 (2009), pp. 269--273.
+
 .. [Broder2000] Broder, A.Z., Kumar, R., Maghoul, F., Raghavan, P., Rajagopalan,
                 S., Stata, R., Tomkins, A., Wiener, J.L.: Graph structure in
                 the web. Computer Networks 33(1-6), 309–320 (2000)
@@ -1480,6 +1483,11 @@ REFERENCES:
 
 .. [CFI1992] Cai, JY., Fürer, M. & Immerman, N. Combinatorica (1992) 12: 389.
              :doi:`10.1007/BF01305232`
+
+.. [CFKLMPPS15] Marek Cygan, Fedor V. Fomin, Łukasz Kowalik, Daniel Lokshtanov,
+                Dániel Marx, Marcin Pilipczuk, Michał Pilipczuk, Saket Saurabh.
+                *Parameterized Algorithms*. Springer International Publishing
+                Switzerland 2015
 
 .. [CFKP1997] James W. Cannon, William J. Floyd, Richard Kenyon and Walter R. Parry.
               *Hyperbolic Geometry*. Flavors of Geometry, MSRI Publications,

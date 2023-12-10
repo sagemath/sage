@@ -214,10 +214,10 @@ class FSymBases(Category_realization_of_parent):
             sage: bases = FSymBases(FSym)
             sage: bases.super_categories()
             [Category of realizations of Hopf algebra of standard tableaux over the Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring,
-             Category of graded connected hopf algebras with basis over Integer Ring]
+             Category of graded connected Hopf algebras with basis over Integer Ring]
         """
         R = self.base().base_ring()
         return [self.base().Realizations(),

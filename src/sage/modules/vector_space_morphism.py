@@ -329,10 +329,11 @@ TESTS::
 ####################################################################################
 
 
-import sage.modules.matrix_morphism as matrix_morphism
 import sage.modules.free_module_morphism as free_module_morphism
-from . import vector_space_homspace
+import sage.modules.matrix_morphism as matrix_morphism
+from sage.modules import vector_space_homspace
 from sage.structure.element import is_Matrix
+
 
 def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     r"""
@@ -692,12 +693,14 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         ArithmeticError: some image of the function is not in the codomain, because
         element [1, 0] is not in free module
     """
-    from sage.matrix.constructor import matrix
-    from sage.modules.module import is_VectorSpace
-    from sage.modules.free_module import VectorSpace
     from sage.categories.homset import Hom
+    from sage.matrix.constructor import matrix
+    from sage.modules.free_module import VectorSpace
+    from sage.modules.module import is_VectorSpace
     try:
-        from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
+        from sage.modules.vector_callable_symbolic_dense import (
+            Vector_callable_symbolic_dense,
+        )
     except ImportError:
         Vector_callable_symbolic_dense = ()
 

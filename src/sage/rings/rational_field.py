@@ -54,16 +54,17 @@ AUTHORS:
 
 """
 
-from .rational import Rational
-from .integer import Integer
+from sage.rings.integer import Integer
+from sage.rings.rational import Rational
 
 ZZ = None
 
-from sage.structure.parent_gens import ParentWithGens
-from sage.structure.sequence import Sequence
 import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
 from sage.misc.superseded import deprecated_function_alias
+from sage.structure.parent_gens import ParentWithGens
+from sage.structure.sequence import Sequence
+
 
 class RationalField(Singleton, number_field_base.NumberField):
     r"""
@@ -317,6 +318,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             (FractionField, Integer Ring)
         """
         from sage.categories.pushout import FractionField
+
         from . import integer_ring
         return FractionField(), integer_ring.ZZ
 
@@ -446,8 +448,8 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ / ZZ                                                               # needs sage.modules
             Q/Z
         """
-        from sage.rings.ideal import Ideal_generic
         from sage.groups.additive_abelian.qmodnz import QmodnZ
+        from sage.rings.ideal import Ideal_generic
         if I is ZZ:
             return QmodnZ(1)
         elif isinstance(I, Ideal_generic) and I.base_ring() is ZZ:
@@ -834,15 +836,15 @@ class RationalField(Singleton, number_field_base.NumberField):
         - Simon Brandhorst, Juanita Duque, Anna Haensch, Manami Roy, Sandi Rudzinski (10-24-2017)
 
         """
+        from sage.arith.misc import hilbert_symbol, is_prime
+        from sage.matrix.constructor import matrix
+        from sage.modules.free_module import VectorSpace
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
         from sage.rings.padics.factory import Qp
-        from sage.modules.free_module import VectorSpace
-        from sage.matrix.constructor import matrix
         from sage.sets.primes import Primes
-        from sage.arith.misc import hilbert_symbol, is_prime
 
         # input checks
-        if not type(S) is list:
+        if type(S) is not list:
             raise TypeError("first argument must be a list or integer")
         # -1 is used for the infinite place
         infty = -1
@@ -1375,8 +1377,9 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         KSgens, ords = self.selmer_generators(S=S, m=m, proof=proof, orders=True)
         one = self.one()
-        from sage.misc.misc_c import prod
         from itertools import product
+
+        from sage.misc.misc_c import prod
         for ev in product(*[range(o) for o in ords]):
             yield prod((p**e for p,e in zip(KSgens, ev)), one)
 
@@ -1490,8 +1493,8 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ.quadratic_defect(5, 5)
             1
         """
-        from sage.rings.infinity import Infinity
         from sage.arith.misc import legendre_symbol
+        from sage.rings.infinity import Infinity
         if a not in self:
             raise TypeError(str(a) + " must be an element of " + str(self))
         if p.parent() == ZZ.ideal_monoid():
@@ -1596,8 +1599,8 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ._sympy_()                                                          # needs sympy
             Rationals
         """
-        from sympy import Rationals
         from sage.interfaces.sympy import sympy_init
+        from sympy import Rationals
         sympy_init()
         return Rationals
 
