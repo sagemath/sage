@@ -18619,8 +18619,8 @@ def _matrix_power_symbolic(A, n):
         sage: n = var('n'); n
         n
         sage: An = A^n; An
-        [        0^n 0^(n - 1)*n]
-        [          0         0^n]
+        [  kronecker_delta(0, n) n*kronecker_delta(1, n)]
+        [                      0   kronecker_delta(0, n)]
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix
