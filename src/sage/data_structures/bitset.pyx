@@ -31,7 +31,7 @@ linear in ``capacity``.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .bitset_base cimport *
+from sage.data_structures.bitset_base cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 

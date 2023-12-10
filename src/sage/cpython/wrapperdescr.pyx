@@ -30,7 +30,7 @@ Pure Python classes have normal methods, not slot wrappers::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .string import bytes_to_str
+from sage.cpython.string import bytes_to_str
 
 
 def wrapperdescr_call(slotwrapper, self, *args, **kwds):

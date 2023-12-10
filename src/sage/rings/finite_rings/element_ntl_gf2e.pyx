@@ -44,8 +44,8 @@ from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
-from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
-from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+from sage.rings.finite_rings.element_pari_ffelt import FiniteFieldElement_pari_ffelt
+from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 
 from sage.interfaces.abc import GapElement
 

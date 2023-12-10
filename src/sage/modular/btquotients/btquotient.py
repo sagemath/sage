@@ -3710,7 +3710,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                                    'from expected.')
 
         self._nontorsion_generators = nontorsion_generators
-        self._boundary = dict([(vv.rep, vv) for vv in vertex_list])
+        self._boundary = {vv.rep: vv for vv in vertex_list}
         self._edge_list = edge_list
         self._vertex_list = vertex_list
         self._num_edges = num_edges

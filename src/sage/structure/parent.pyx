@@ -2672,7 +2672,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 _register_pair(self, S, "action")  # avoid possible infinite loops
 
                 # detect actions defined by _rmul_, _lmul_, _act_on_, and _acted_upon_ methods
-                from .coerce_actions import detect_element_action
+                from sage.structure.coerce_actions import detect_element_action
                 action = detect_element_action(self, S, self_on_left, self_el, S_el)
                 if action is not None:
                     return action

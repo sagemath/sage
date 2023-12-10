@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
 r"""
 Common Interface Functionality
 
@@ -348,14 +349,14 @@ class Interface(WithEqualityById, ParentWithBase):
         if isinstance(x, bool):
             return self(self._true_symbol() if x else self._false_symbol())
         elif isinstance(x, int):
-            import sage.rings.all
-            return self(sage.rings.all.Integer(x))
+            from sage.rings.integer import Integer
+            return self(Integer(x))
         elif isinstance(x, float):
-            import sage.rings.all
-            return self(sage.rings.all.RDF(x))
+            from sage.rings.real_double import RDF
+            return self(RDF(x))
         elif isinstance(x, complex):
-            import sage.rings.all
-            return self(sage.rings.all.CDF(x))
+            from sage.rings.complex_double import CDF
+            return self(CDF(x))
         if use_special:
             try:
                 return self._coerce_from_special_method(x)
@@ -881,11 +882,12 @@ class InterfaceElement(Element):
         by the doctests because the original identifier was reused. This test makes sure
         that does not happen again::
 
-            sage: a = r("'abc'")                                                  # optional - rpy2
-            sage: b = dumps(a)                                                    # optional - rpy2
-            sage: r.set(a.name(), 0) # make sure that identifier reuse            # optional - rpy2
+            sage: # optional - rpy2
+            sage: a = r("'abc'")
+            sage: b = dumps(a)
+            sage: r.set(a.name(), 0) # make sure that identifier reuse
             ....:                    # does not accidentally lead to success
-            sage: loads(b)                                                        # optional - rpy2
+            sage: loads(b)
             [1] "abc"
 
         """
@@ -1373,8 +1375,8 @@ class InterfaceElement(Element):
             sage: QQ(m)
             1
         """
-        import sage.rings.all
-        return sage.rings.all.Integer(repr(self))
+        from sage.rings.integer import Integer
+        return Integer(repr(self))
 
     def _rational_(self):
         """
@@ -1388,8 +1390,8 @@ class InterfaceElement(Element):
             sage: QQ(m)
             1/2
         """
-        import sage.rings.all
-        return sage.rings.all.Rational(repr(self))
+        from sage.rings.rational import Rational
+        return Rational(repr(self))
 
     def name(self, new_name=None):
         """
@@ -1401,13 +1403,14 @@ class InterfaceElement(Element):
 
         EXAMPLES::
 
-            sage: x = r([1,2,3]); x                                               # optional - rpy2
+            sage: # optional - rpy2
+            sage: x = r([1,2,3]); x
             [1] 1 2 3
-            sage: x.name()                                                        # optional - rpy2
+            sage: x.name()
             'sage...'
-            sage: x = r([1,2,3]).name('x'); x                                     # optional - rpy2
+            sage: x = r([1,2,3]).name('x'); x
             [1] 1 2 3
-            sage: x.name()                                                        # optional - rpy2
+            sage: x.name()
             'x'
 
         ::
