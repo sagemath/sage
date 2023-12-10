@@ -313,6 +313,7 @@ def sage_include_directories(use_sources=False):
 
     return dirs
 
+
 def get_cblas_pc_module_name() -> str:
     """
     Return the name of the BLAS libraries to be used.
@@ -420,7 +421,7 @@ def cython_aliases(required_modules=None,
             aliases["ECL_INCDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-I'), ecl_cflags)))
             aliases["ECL_LIBDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-L'), ecl_libs)))
             aliases["ECL_LIBRARIES"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-l'), ecl_libs)))
-            aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), ecl_libs))
+            aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), ecl_libs))
             continue
         else:
             try:
@@ -439,7 +440,7 @@ def cython_aliases(required_modules=None,
         # include search order matters.
         aliases[var + "INCDIR"] = pc['include_dirs']
         aliases[var + "LIBDIR"] = pc['library_dirs']
-        aliases[var + "LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), libs.split()))
+        aliases[var + "LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), libs.split()))
         aliases[var + "LIBRARIES"] = pc['libraries']
 
     # uname-specific flags
