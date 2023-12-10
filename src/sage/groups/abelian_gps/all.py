@@ -2,7 +2,7 @@
 all.py -- export of abelian groups to Sage
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -17,13 +17,8 @@ all.py -- export of abelian groups to Sage
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-#from dual_abelian_group import DualAbelianGroup
-from .abelian_group import AbelianGroup, word_problem
-from .values import AbelianGroupWithValues
-
-# TODO:
-# Implement group homset, conversion of generator images to morphism
-from .abelian_group_morphism import AbelianGroupMorphism
+from sage.groups.abelian_gps.all__sagemath_modules import *
+from sage.groups.abelian_gps.all__sagemath_gap import *

@@ -1,4 +1,4 @@
-from .all__sagemath_objects import *
+from sage.all__sagemath_objects import *
 
 from sage.categories.all import *
 
