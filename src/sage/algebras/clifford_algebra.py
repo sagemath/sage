@@ -1370,7 +1370,7 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: E.category()
             Category of finite dimensional supercommutative supercocommutative
-             super hopf algebras with basis over Rational Field
+             super Hopf algebras with basis over Rational Field
             sage: TestSuite(E).run()
 
             sage: TestSuite(ExteriorAlgebra(GF(3), ['a', 'b'])).run()

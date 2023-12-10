@@ -1,10 +1,8 @@
-from sage.libs.mpfr.types cimport mpfr_rnd_t, mpfr_t
+from sage.libs.mpfr.types cimport mpfr_rnd_t, mpfr_t, mpfr_prec_t
 
 cimport sage.rings.ring
 cimport sage.rings.abc
 cimport sage.structure.element
-from cypari2.types cimport GEN
-from sage.libs.mpfr.types cimport mpfr_prec_t
 
 cdef class RealNumber(sage.structure.element.RingElement)  # forward decl
 
@@ -26,7 +24,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
     cpdef _mul_(self, other) noexcept
     cpdef _mod_(self, right) noexcept
     cdef _set(self, x, int base) noexcept
-    cdef _set_from_GEN_REAL(self, GEN g) noexcept
     cdef RealNumber abs(RealNumber self) noexcept
 
 cpdef RealField(mpfr_prec_t prec=*, int sci_not=*, rnd=*) noexcept
