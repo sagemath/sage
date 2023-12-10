@@ -145,7 +145,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
         # But then this would impose that, for any constructor, the
         # category of the result does not depend on the order/repetition
         # of the categories of the parents
-        return self.category_from_categories(tuple(set(parent.category() for parent in parents)))
+        return self.category_from_categories(tuple({parent.category() for parent in parents}))
 
     @cached_method
     def category_from_categories(self, categories):
