@@ -243,7 +243,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
 
         sage: L = LieAlgebra(QQ, 3, step=3)
         sage: L.category()
-        Category of finite dimensional stratified lie algebras with basis over Rational Field
+        Category of finite dimensional stratified Lie algebras with basis over Rational Field
         sage: L in LieAlgebras(QQ).Nilpotent()
         True
 

@@ -114,7 +114,6 @@ This base class provides a lot more methods than a general parent::
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
-     '_coerce_try',
      '_default_category',
      '_gens',
      '_ideal_class_',

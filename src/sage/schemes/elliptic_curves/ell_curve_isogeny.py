@@ -2838,11 +2838,18 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi.dual().scaling_factor()
             43
 
+        TESTS:
+
+        Check for :issue:`36638`::
+
+            sage: phi.scaling_factor().parent()  # needs sage.rings.finite_rings
+            Finite Field in z2 of size 257^2
+
         ALGORITHM: The "inner" isogeny is normalized by construction,
         so we only need to account for the scaling factors of a pre-
         and post-isomorphism.
         """
-        sc = Integer(1)
+        sc = self.__base_field.one()
         if self.__pre_isomorphism is not None:
             sc *= self.__pre_isomorphism.scaling_factor()
         if self.__post_isomorphism is not None:
@@ -2879,28 +2886,19 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__init_kernel_polynomial()
         return self.__kernel_polynomial
 
-    def is_separable(self):
+    def inseparable_degree(self):
         r"""
-        Determine whether or not this isogeny is separable.
+        Return the inseparable degree of this isogeny.
 
-        Since :class:`EllipticCurveIsogeny` only implements
-        separable isogenies, this method always returns ``True``.
+        Since this class only implements separable isogenies,
+        this method always returns one.
 
-        EXAMPLES::
+        TESTS::
 
-            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
-            sage: phi = EllipticCurveIsogeny(E,  E((0,0)))
-            sage: phi.is_separable()
-            True
-
-        ::
-
-            sage: E = EllipticCurve('11a1')
-            sage: phi = EllipticCurveIsogeny(E, E.torsion_points())
-            sage: phi.is_separable()
-            True
+            sage: EllipticCurveIsogeny.inseparable_degree(None)
+            1
         """
-        return True
+        return Integer(1)
 
     def _set_pre_isomorphism(self, preWI):
         """

@@ -23,8 +23,3 @@ https://users.aalto.fi/~tjunttil/bliss/index.html
 Bliss used to be maintained by Tommi Junttila and Petteri Kaski up to version 0.73 at
 
 http://www.tcs.tkk.fi/Software/bliss/index.html
-
-Dependencies
-------------
-
-None
