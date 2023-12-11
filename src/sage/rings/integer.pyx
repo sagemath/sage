@@ -3996,7 +3996,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             global n_factor_to_list
             if n_factor_to_list is None:
                 try:
-                    from sage.libs.flint.ulong_extras import n_factor_to_list
+                    from sage.libs.flint.ulong_extras_sage import n_factor_to_list
                 except ImportError:
                     pass
             if n_factor_to_list is not None:
