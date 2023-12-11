@@ -51,7 +51,7 @@ diffParagraphs.forEach(paragraph => {
 EOF
 echo '</head>' >> CHANGES.html
 echo '<body>' >> CHANGES.html
-(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html) > diff.txt
+(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- "*.html") > diff.txt
 python3 - << EOF
 import os, re, html
 with open('diff.txt', 'r') as f:
