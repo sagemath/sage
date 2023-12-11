@@ -198,6 +198,9 @@ release = sage.version.version
 # for a list of supported languages.
 #language = None
 
+# The LaTeX engine to build the docs.
+latex_engine = 'xelatex'
+
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
 #today = ''
