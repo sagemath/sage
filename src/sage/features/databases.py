@@ -18,9 +18,7 @@ Features for testing the presence of various databases
 
 
 from . import StaticFile, PythonModule
-from sage.env import (
-    CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR,
-    POLYTOPE_DATA_DIR)
+from sage.env import CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR
 
 
 CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
@@ -146,21 +144,32 @@ class DatabaseReflexivePolytopes(StaticFile):
     EXAMPLES::
 
         sage: from sage.features.databases import DatabaseReflexivePolytopes
-        sage: bool(DatabaseReflexivePolytopes().is_present())                              # optional - polytopes_db
+        sage: bool(DatabaseReflexivePolytopes().is_present())                   # optional - polytopes_db
         True
-        sage: bool(DatabaseReflexivePolytopes('polytopes_db_4d', 'Hodge4d').is_present())  # optional - polytopes_db_4d
+        sage: bool(DatabaseReflexivePolytopes('polytopes_db_4d').is_present())  # optional - polytopes_db_4d
         True
     """
-    def __init__(self, name='polytopes_db', dirname='Full3D'):
+    def __init__(self, name='polytopes_db'):
         """
         TESTS::
 
             sage: from sage.features.databases import DatabaseReflexivePolytopes
             sage: isinstance(DatabaseReflexivePolytopes(), DatabaseReflexivePolytopes)
             True
+            sage: DatabaseReflexivePolytopes().filename
+            'Full3d'
+            sage: DatabaseReflexivePolytopes('polytopes_db_4d').filename
+            'Hodge4d'
         """
-        StaticFile.__init__(self, name, dirname,
-                            search_path=[POLYTOPE_DATA_DIR])
+        from sage.env import POLYTOPE_DATA_DIR
+
+        dirname = "Full3d"
+        if name == "polytopes_db_4d":
+            dirname = "Hodge4d"
+
+        StaticFile.__init__(self, name,
+                            filename=dirname,
+                            search_path=POLYTOPE_DATA_DIR)
 
 
 def all_features():
@@ -169,4 +178,4 @@ def all_features():
             DatabaseKnotInfo(),
             DatabaseCubicHecke(),
             DatabaseReflexivePolytopes(),
-            DatabaseReflexivePolytopes('polytopes_db_4d', 'Hodge4d')]
+            DatabaseReflexivePolytopes('polytopes_db_4d')]
