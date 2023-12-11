@@ -8,7 +8,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 lazy_import("sage.functions.other", "ceil")
-lazy_import("from sage.rings.number_field.number_field", "QuadraticField")
+lazy_import("sage.rings.number_field.number_field", "QuadraticField")
 
 
 class BSD_data:
