@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void partitions_rademacher_bound(arf_t b, const fmpz_t n, ulong N)
+    void partitions_rademacher_bound(arf_t b, const fmpz_t n, ulong N) noexcept
     # Sets `b` to an upper bound for
     # .. math ::
     # M(n,N) = \frac{44 \pi^2}{225 \sqrt 3} N^{-1/2}
@@ -22,7 +22,7 @@ cdef extern from "flint_wrap.h":
     # Hardy-Ramanujan-Rademacher formula when the series is taken up
     # to the term `t(n,N)` inclusive.
 
-    void partitions_hrr_sum_arb(arb_t x, const fmpz_t n, slong N0, slong N, int use_doubles)
+    void partitions_hrr_sum_arb(arb_t x, const fmpz_t n, slong N0, slong N, int use_doubles) noexcept
     # Evaluates the partial sum `\sum_{k=N_0}^N t(n,k)` of the
     # Hardy-Ramanujan-Rademacher series.
     # If *use_doubles* is nonzero, doubles and the system's standard library math
@@ -34,7 +34,7 @@ cdef extern from "flint_wrap.h":
     # safe. Setting *use_doubles* to zero gives a fully guaranteed
     # bound.
 
-    void partitions_fmpz_fmpz(fmpz_t p, const fmpz_t n, int use_doubles)
+    void partitions_fmpz_fmpz(fmpz_t p, const fmpz_t n, int use_doubles) noexcept
     # Computes the partition function `p(n)` using the Hardy-Ramanujan-Rademacher
     # formula. This function computes a numerical ball containing `p(n)`
     # and verifies that the ball contains a unique integer.
@@ -44,18 +44,18 @@ cdef extern from "flint_wrap.h":
     # See :func:`partitions_hrr_sum_arb` for an explanation of the
     # *use_doubles* option.
 
-    void partitions_fmpz_ui(fmpz_t p, ulong n)
+    void partitions_fmpz_ui(fmpz_t p, ulong n) noexcept
     # Computes the partition function `p(n)` using the Hardy-Ramanujan-Rademacher
     # formula. This function computes a numerical ball containing `p(n)`
     # and verifies that the ball contains a unique integer.
 
-    void partitions_fmpz_ui_using_doubles(fmpz_t p, ulong n)
+    void partitions_fmpz_ui_using_doubles(fmpz_t p, ulong n) noexcept
     # Computes the partition function `p(n)`, enabling the use of doubles
     # internally. This significantly speeds up evaluation for small `n`
     # (e.g. `n < 10^6`), but the error bounds are not certified
     # (see remarks for :func:`partitions_hrr_sum_arb`).
 
-    void partitions_leading_fmpz(arb_t res, const fmpz_t n, slong prec)
+    void partitions_leading_fmpz(arb_t res, const fmpz_t n, slong prec) noexcept
     # Sets *res* to the leading term in the Hardy-Ramanujan series
     # for `p(n)` (without Rademacher's correction of this term, which is
     # vanishingly small when `n` is large), that is,

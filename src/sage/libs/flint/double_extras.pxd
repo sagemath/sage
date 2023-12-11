@@ -12,22 +12,22 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    double d_randtest(flint_rand_t state)
+    double d_randtest(flint_rand_t state) noexcept
     # Returns a random number in the interval `[0.5, 1)`.
 
-    double d_randtest_signed(flint_rand_t state, slong minexp, slong maxexp)
+    double d_randtest_signed(flint_rand_t state, slong minexp, slong maxexp) noexcept
     # Returns a random signed number with exponent between ``minexp`` and
     # ``maxexp`` or zero.
 
-    double d_randtest_special(flint_rand_t state, slong minexp, slong maxexp)
+    double d_randtest_special(flint_rand_t state, slong minexp, slong maxexp) noexcept
     # Returns a random signed number with exponent between ``minexp`` and
     # ``maxexp``, zero, ``D_NAN`` or `\pm`\ ``D_INF``.
 
-    double d_polyval(const double * poly, int len, double x)
+    double d_polyval(const double * poly, int len, double x) noexcept
     # Uses Horner's rule to evaluate the polynomial defined by the given
     # ``len`` coefficients. Requires that ``len`` is nonzero.
 
-    double d_lambertw(double x)
+    double d_lambertw(double x) noexcept
     # Computes the principal branch of the Lambert W function, solving
     # the equation `x = W(x) \exp(W(x))`. If `x < -1/e`, the solution is
     # complex, and NaN is returned.
@@ -42,10 +42,10 @@ cdef extern from "flint_wrap.h":
     # However, accuracy may be worse depending on compiler flags and
     # the accuracy of the system libm functions.
 
-    bint d_is_nan(double x)
+    bint d_is_nan(double x) noexcept
     # Returns a nonzero integral value if ``x`` is ``D_NAN``, and otherwise
     # returns 0.
 
-    double d_log2(double x)
+    double d_log2(double x) noexcept
     # Returns the base 2 logarithm of ``x`` provided ``x`` is positive. If
     # a domain or pole error occurs, the appropriate error value is returned.

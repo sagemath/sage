@@ -12,122 +12,122 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void acb_mat_init(acb_mat_t mat, slong r, slong c)
+    void acb_mat_init(acb_mat_t mat, slong r, slong c) noexcept
     # Initializes the matrix, setting it to the zero matrix with *r* rows
     # and *c* columns.
 
-    void acb_mat_clear(acb_mat_t mat)
+    void acb_mat_clear(acb_mat_t mat) noexcept
     # Clears the matrix, deallocating all entries.
 
-    slong acb_mat_allocated_bytes(const acb_mat_t x)
+    slong acb_mat_allocated_bytes(const acb_mat_t x) noexcept
     # Returns the total number of bytes heap-allocated internally by this object.
     # The count excludes the size of the structure itself. Add
     # ``sizeof(acb_mat_struct)`` to get the size of the object as a whole.
 
-    void acb_mat_window_init(acb_mat_t window, const acb_mat_t mat, slong r1, slong c1, slong r2, slong c2)
+    void acb_mat_window_init(acb_mat_t window, const acb_mat_t mat, slong r1, slong c1, slong r2, slong c2) noexcept
     # Initializes *window* to a window matrix into the submatrix of *mat*
     # starting at the corner at row *r1* and column *c1* (inclusive) and ending
     # at row *r2* and column *c2* (exclusive).
 
-    void acb_mat_window_clear(acb_mat_t window)
+    void acb_mat_window_clear(acb_mat_t window) noexcept
     # Frees the window matrix.
 
-    void acb_mat_set(acb_mat_t dest, const acb_mat_t src)
+    void acb_mat_set(acb_mat_t dest, const acb_mat_t src) noexcept
 
-    void acb_mat_set_fmpz_mat(acb_mat_t dest, const fmpz_mat_t src)
+    void acb_mat_set_fmpz_mat(acb_mat_t dest, const fmpz_mat_t src) noexcept
 
-    void acb_mat_set_round_fmpz_mat(acb_mat_t dest, const fmpz_mat_t src, slong prec)
+    void acb_mat_set_round_fmpz_mat(acb_mat_t dest, const fmpz_mat_t src, slong prec) noexcept
 
-    void acb_mat_set_fmpq_mat(acb_mat_t dest, const fmpq_mat_t src, slong prec)
+    void acb_mat_set_fmpq_mat(acb_mat_t dest, const fmpq_mat_t src, slong prec) noexcept
 
-    void acb_mat_set_arb_mat(acb_mat_t dest, const arb_mat_t src)
+    void acb_mat_set_arb_mat(acb_mat_t dest, const arb_mat_t src) noexcept
 
-    void acb_mat_set_round_arb_mat(acb_mat_t dest, const arb_mat_t src, slong prec)
+    void acb_mat_set_round_arb_mat(acb_mat_t dest, const arb_mat_t src, slong prec) noexcept
     # Sets *dest* to *src*. The operands must have identical dimensions.
 
-    void acb_mat_randtest(acb_mat_t mat, flint_rand_t state, slong prec, slong mag_bits)
+    void acb_mat_randtest(acb_mat_t mat, flint_rand_t state, slong prec, slong mag_bits) noexcept
     # Sets *mat* to a random matrix with up to *prec* bits of precision
     # and with exponents of width up to *mag_bits*.
 
-    void acb_mat_randtest_eig(acb_mat_t mat, flint_rand_t state, acb_srcptr E, slong prec)
+    void acb_mat_randtest_eig(acb_mat_t mat, flint_rand_t state, acb_srcptr E, slong prec) noexcept
     # Sets *mat* to a random matrix with the prescribed eigenvalues
     # supplied as the vector *E*. The output matrix is required to be
     # square. We generate a random unitary matrix via a matrix
     # exponential, and then evaluate an inverse Schur decomposition.
 
-    void acb_mat_printd(const acb_mat_t mat, slong digits)
+    void acb_mat_printd(const acb_mat_t mat, slong digits) noexcept
     # Prints each entry in the matrix with the specified number of decimal digits.
 
-    void acb_mat_fprintd(FILE * file, const acb_mat_t mat, slong digits)
+    void acb_mat_fprintd(FILE * file, const acb_mat_t mat, slong digits) noexcept
     # Prints each entry in the matrix with the specified number of decimal
     # digits to the stream *file*.
 
-    bint acb_mat_equal(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_equal(const acb_mat_t mat1, const acb_mat_t mat2) noexcept
     # Returns whether the matrices have the same dimensions and identical
     # intervals as entries.
 
-    bint acb_mat_overlaps(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_overlaps(const acb_mat_t mat1, const acb_mat_t mat2) noexcept
     # Returns whether the matrices have the same dimensions
     # and each entry in *mat1* overlaps with the corresponding entry in *mat2*.
 
-    bint acb_mat_contains(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_contains(const acb_mat_t mat1, const acb_mat_t mat2) noexcept
 
-    bint acb_mat_contains_fmpz_mat(const acb_mat_t mat1, const fmpz_mat_t mat2)
+    bint acb_mat_contains_fmpz_mat(const acb_mat_t mat1, const fmpz_mat_t mat2) noexcept
 
-    bint acb_mat_contains_fmpq_mat(const acb_mat_t mat1, const fmpq_mat_t mat2)
+    bint acb_mat_contains_fmpq_mat(const acb_mat_t mat1, const fmpq_mat_t mat2) noexcept
     # Returns whether the matrices have the same dimensions and each entry
     # in *mat2* is contained in the corresponding entry in *mat1*.
 
-    bint acb_mat_eq(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_eq(const acb_mat_t mat1, const acb_mat_t mat2) noexcept
     # Returns whether *mat1* and *mat2* certainly represent the same matrix.
 
-    bint acb_mat_ne(const acb_mat_t mat1, const acb_mat_t mat2)
+    bint acb_mat_ne(const acb_mat_t mat1, const acb_mat_t mat2) noexcept
     # Returns whether *mat1* and *mat2* certainly do not represent the same matrix.
 
-    bint acb_mat_is_real(const acb_mat_t mat)
+    bint acb_mat_is_real(const acb_mat_t mat) noexcept
     # Returns whether all entries in *mat* have zero imaginary part.
 
-    bint acb_mat_is_empty(const acb_mat_t mat)
+    bint acb_mat_is_empty(const acb_mat_t mat) noexcept
     # Returns whether the number of rows or the number of columns in *mat* is zero.
 
-    bint acb_mat_is_square(const acb_mat_t mat)
+    bint acb_mat_is_square(const acb_mat_t mat) noexcept
     # Returns whether the number of rows is equal to the number of columns in *mat*.
 
-    bint acb_mat_is_exact(const acb_mat_t mat)
+    bint acb_mat_is_exact(const acb_mat_t mat) noexcept
     # Returns whether all entries in *mat* have zero radius.
 
-    bint acb_mat_is_zero(const acb_mat_t mat)
+    bint acb_mat_is_zero(const acb_mat_t mat) noexcept
     # Returns whether all entries in *mat* are exactly zero.
 
-    bint acb_mat_is_finite(const acb_mat_t mat)
+    bint acb_mat_is_finite(const acb_mat_t mat) noexcept
     # Returns whether all entries in *mat* are finite.
 
-    bint acb_mat_is_triu(const acb_mat_t mat)
+    bint acb_mat_is_triu(const acb_mat_t mat) noexcept
     # Returns whether *mat* is upper triangular; that is, all entries
     # below the main diagonal are exactly zero.
 
-    bint acb_mat_is_tril(const acb_mat_t mat)
+    bint acb_mat_is_tril(const acb_mat_t mat) noexcept
     # Returns whether *mat* is lower triangular; that is, all entries
     # above the main diagonal are exactly zero.
 
-    bint acb_mat_is_diag(const acb_mat_t mat)
+    bint acb_mat_is_diag(const acb_mat_t mat) noexcept
     # Returns whether *mat* is a diagonal matrix; that is, all entries
     # off the main diagonal are exactly zero.
 
-    void acb_mat_zero(acb_mat_t mat)
+    void acb_mat_zero(acb_mat_t mat) noexcept
     # Sets all entries in mat to zero.
 
-    void acb_mat_one(acb_mat_t mat)
+    void acb_mat_one(acb_mat_t mat) noexcept
     # Sets the entries on the main diagonal to ones,
     # and all other entries to zero.
 
-    void acb_mat_ones(acb_mat_t mat)
+    void acb_mat_ones(acb_mat_t mat) noexcept
     # Sets all entries in the matrix to ones.
 
-    void acb_mat_indeterminate(acb_mat_t mat)
+    void acb_mat_indeterminate(acb_mat_t mat) noexcept
     # Sets all entries in the matrix to indeterminate (NaN).
 
-    void acb_mat_dft(acb_mat_t mat, int type, slong prec)
+    void acb_mat_dft(acb_mat_t mat, int type, slong prec) noexcept
     # Sets *mat* to the DFT (discrete Fourier transform) matrix of order *n*
     # where *n* is the smallest dimension of *mat* (if *mat* is not square,
     # the matrix is extended periodically along the larger dimension).
@@ -137,46 +137,46 @@ cdef extern from "flint_wrap.h":
     # The *type* parameter is currently ignored and should be set to 0.
     # In the future, it might be used to select a different convention.
 
-    void acb_mat_transpose(acb_mat_t dest, const acb_mat_t src)
+    void acb_mat_transpose(acb_mat_t dest, const acb_mat_t src) noexcept
     # Sets *dest* to the exact transpose *src*. The operands must have
     # compatible dimensions. Aliasing is allowed.
 
-    void acb_mat_conjugate_transpose(acb_mat_t dest, const acb_mat_t src)
+    void acb_mat_conjugate_transpose(acb_mat_t dest, const acb_mat_t src) noexcept
     # Sets *dest* to the conjugate transpose of *src*. The operands must have
     # compatible dimensions. Aliasing is allowed.
 
-    void acb_mat_conjugate(acb_mat_t dest, const acb_mat_t src)
+    void acb_mat_conjugate(acb_mat_t dest, const acb_mat_t src) noexcept
     # Sets *dest* to the elementwise complex conjugate of *src*.
 
-    void acb_mat_bound_inf_norm(mag_t b, const acb_mat_t A)
+    void acb_mat_bound_inf_norm(mag_t b, const acb_mat_t A) noexcept
     # Sets *b* to an upper bound for the infinity norm (i.e. the largest
     # absolute value row sum) of *A*.
 
-    void acb_mat_frobenius_norm(arb_t res, const acb_mat_t A, slong prec)
+    void acb_mat_frobenius_norm(arb_t res, const acb_mat_t A, slong prec) noexcept
     # Sets *res* to the Frobenius norm (i.e. the square root of the sum
     # of squares of entries) of *A*.
 
-    void acb_mat_bound_frobenius_norm(mag_t res, const acb_mat_t A)
+    void acb_mat_bound_frobenius_norm(mag_t res, const acb_mat_t A) noexcept
     # Sets *res* to an upper bound for the Frobenius norm of *A*.
 
-    void acb_mat_neg(acb_mat_t dest, const acb_mat_t src)
+    void acb_mat_neg(acb_mat_t dest, const acb_mat_t src) noexcept
     # Sets *dest* to the exact negation of *src*. The operands must have
     # the same dimensions.
 
-    void acb_mat_add(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec)
+    void acb_mat_add(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec) noexcept
     # Sets res to the sum of *mat1* and *mat2*. The operands must have the same dimensions.
 
-    void acb_mat_sub(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec)
+    void acb_mat_sub(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec) noexcept
     # Sets *res* to the difference of *mat1* and *mat2*. The operands must have
     # the same dimensions.
 
-    void acb_mat_mul_classical(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec)
+    void acb_mat_mul_classical(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec) noexcept
 
-    void acb_mat_mul_threaded(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec)
+    void acb_mat_mul_threaded(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec) noexcept
 
-    void acb_mat_mul_reorder(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec)
+    void acb_mat_mul_reorder(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec) noexcept
 
-    void acb_mat_mul(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec)
+    void acb_mat_mul(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec) noexcept
     # Sets *res* to the matrix product of *mat1* and *mat2*. The operands must have
     # compatible dimensions for matrix multiplication.
     # The *classical* version performs matrix multiplication in the trivial way.
@@ -186,62 +186,62 @@ cdef extern from "flint_wrap.h":
     # matrix multiplications via :func:`arb_mat_mul`.
     # The default version chooses an algorithm automatically.
 
-    void acb_mat_mul_entrywise(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec)
+    void acb_mat_mul_entrywise(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec) noexcept
     # Sets *res* to the entrywise product of *mat1* and *mat2*.
     # The operands must have the same dimensions.
 
-    void acb_mat_sqr_classical(acb_mat_t res, const acb_mat_t mat, slong prec)
+    void acb_mat_sqr_classical(acb_mat_t res, const acb_mat_t mat, slong prec) noexcept
 
-    void acb_mat_sqr(acb_mat_t res, const acb_mat_t mat, slong prec)
+    void acb_mat_sqr(acb_mat_t res, const acb_mat_t mat, slong prec) noexcept
     # Sets *res* to the matrix square of *mat*. The operands must both be square
     # with the same dimensions.
 
-    void acb_mat_pow_ui(acb_mat_t res, const acb_mat_t mat, ulong exp, slong prec)
+    void acb_mat_pow_ui(acb_mat_t res, const acb_mat_t mat, ulong exp, slong prec) noexcept
     # Sets *res* to *mat* raised to the power *exp*. Requires that *mat*
     # is a square matrix.
 
-    void acb_mat_approx_mul(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec)
+    void acb_mat_approx_mul(acb_mat_t res, const acb_mat_t mat1, const acb_mat_t mat2, slong prec) noexcept
     # Approximate matrix multiplication. The input radii are ignored and
     # the output matrix is set to an approximate floating-point result.
     # For performance reasons, the radii in the output matrix will *not*
     # necessarily be written (zeroed), but will remain zero if they
     # are already zeroed in *res* before calling this function.
 
-    void acb_mat_scalar_mul_2exp_si(acb_mat_t B, const acb_mat_t A, slong c)
+    void acb_mat_scalar_mul_2exp_si(acb_mat_t B, const acb_mat_t A, slong c) noexcept
     # Sets *B* to *A* multiplied by `2^c`.
 
-    void acb_mat_scalar_addmul_si(acb_mat_t B, const acb_mat_t A, slong c, slong prec)
+    void acb_mat_scalar_addmul_si(acb_mat_t B, const acb_mat_t A, slong c, slong prec) noexcept
 
-    void acb_mat_scalar_addmul_fmpz(acb_mat_t B, const acb_mat_t A, const fmpz_t c, slong prec)
+    void acb_mat_scalar_addmul_fmpz(acb_mat_t B, const acb_mat_t A, const fmpz_t c, slong prec) noexcept
 
-    void acb_mat_scalar_addmul_arb(acb_mat_t B, const acb_mat_t A, const arb_t c, slong prec)
+    void acb_mat_scalar_addmul_arb(acb_mat_t B, const acb_mat_t A, const arb_t c, slong prec) noexcept
 
-    void acb_mat_scalar_addmul_acb(acb_mat_t B, const acb_mat_t A, const acb_t c, slong prec)
+    void acb_mat_scalar_addmul_acb(acb_mat_t B, const acb_mat_t A, const acb_t c, slong prec) noexcept
     # Sets *B* to `B + A \times c`.
 
-    void acb_mat_scalar_mul_si(acb_mat_t B, const acb_mat_t A, slong c, slong prec)
+    void acb_mat_scalar_mul_si(acb_mat_t B, const acb_mat_t A, slong c, slong prec) noexcept
 
-    void acb_mat_scalar_mul_fmpz(acb_mat_t B, const acb_mat_t A, const fmpz_t c, slong prec)
+    void acb_mat_scalar_mul_fmpz(acb_mat_t B, const acb_mat_t A, const fmpz_t c, slong prec) noexcept
 
-    void acb_mat_scalar_mul_arb(acb_mat_t B, const acb_mat_t A, const arb_t c, slong prec)
+    void acb_mat_scalar_mul_arb(acb_mat_t B, const acb_mat_t A, const arb_t c, slong prec) noexcept
 
-    void acb_mat_scalar_mul_acb(acb_mat_t B, const acb_mat_t A, const acb_t c, slong prec)
+    void acb_mat_scalar_mul_acb(acb_mat_t B, const acb_mat_t A, const acb_t c, slong prec) noexcept
     # Sets *B* to `A \times c`.
 
-    void acb_mat_scalar_div_si(acb_mat_t B, const acb_mat_t A, slong c, slong prec)
+    void acb_mat_scalar_div_si(acb_mat_t B, const acb_mat_t A, slong c, slong prec) noexcept
 
-    void acb_mat_scalar_div_fmpz(acb_mat_t B, const acb_mat_t A, const fmpz_t c, slong prec)
+    void acb_mat_scalar_div_fmpz(acb_mat_t B, const acb_mat_t A, const fmpz_t c, slong prec) noexcept
 
-    void acb_mat_scalar_div_arb(acb_mat_t B, const acb_mat_t A, const arb_t c, slong prec)
+    void acb_mat_scalar_div_arb(acb_mat_t B, const acb_mat_t A, const arb_t c, slong prec) noexcept
 
-    void acb_mat_scalar_div_acb(acb_mat_t B, const acb_mat_t A, const acb_t c, slong prec)
+    void acb_mat_scalar_div_acb(acb_mat_t B, const acb_mat_t A, const acb_t c, slong prec) noexcept
     # Sets *B* to `A / c`.
 
-    int acb_mat_lu_classical(slong * perm, acb_mat_t LU, const acb_mat_t A, slong prec)
+    int acb_mat_lu_classical(slong * perm, acb_mat_t LU, const acb_mat_t A, slong prec) noexcept
 
-    int acb_mat_lu_recursive(slong * perm, acb_mat_t LU, const acb_mat_t A, slong prec)
+    int acb_mat_lu_recursive(slong * perm, acb_mat_t LU, const acb_mat_t A, slong prec) noexcept
 
-    int acb_mat_lu(slong * perm, acb_mat_t LU, const acb_mat_t A, slong prec)
+    int acb_mat_lu(slong * perm, acb_mat_t LU, const acb_mat_t A, slong prec) noexcept
     # Given an `n \times n` matrix `A`, computes an LU decomposition `PLU = A`
     # using Gaussian elimination with partial pivoting.
     # The input and output matrices can be the same, performing the
@@ -261,17 +261,17 @@ cdef extern from "flint_wrap.h":
     # way to benefit from fast matrix multiplication. The default version
     # chooses an algorithm automatically.
 
-    void acb_mat_solve_tril_classical(acb_mat_t X, const acb_mat_t L, const acb_mat_t B, int unit, slong prec)
+    void acb_mat_solve_tril_classical(acb_mat_t X, const acb_mat_t L, const acb_mat_t B, int unit, slong prec) noexcept
 
-    void acb_mat_solve_tril_recursive(acb_mat_t X, const acb_mat_t L, const acb_mat_t B, int unit, slong prec)
+    void acb_mat_solve_tril_recursive(acb_mat_t X, const acb_mat_t L, const acb_mat_t B, int unit, slong prec) noexcept
 
-    void acb_mat_solve_tril(acb_mat_t X, const acb_mat_t L, const acb_mat_t B, int unit, slong prec)
+    void acb_mat_solve_tril(acb_mat_t X, const acb_mat_t L, const acb_mat_t B, int unit, slong prec) noexcept
 
-    void acb_mat_solve_triu_classical(acb_mat_t X, const acb_mat_t U, const acb_mat_t B, int unit, slong prec)
+    void acb_mat_solve_triu_classical(acb_mat_t X, const acb_mat_t U, const acb_mat_t B, int unit, slong prec) noexcept
 
-    void acb_mat_solve_triu_recursive(acb_mat_t X, const acb_mat_t U, const acb_mat_t B, int unit, slong prec)
+    void acb_mat_solve_triu_recursive(acb_mat_t X, const acb_mat_t U, const acb_mat_t B, int unit, slong prec) noexcept
 
-    void acb_mat_solve_triu(acb_mat_t X, const acb_mat_t U, const acb_mat_t B, int unit, slong prec)
+    void acb_mat_solve_triu(acb_mat_t X, const acb_mat_t U, const acb_mat_t B, int unit, slong prec) noexcept
     # Solves the lower triangular system `LX = B` or the upper triangular system
     # `UX = B`, respectively. If *unit* is set, the main diagonal of *L* or *U*
     # is taken to consist of all ones, and in that case the actual entries on
@@ -281,16 +281,16 @@ cdef extern from "flint_wrap.h":
     # way to benefit from fast matrix multiplication. The default versions
     # choose an algorithm automatically.
 
-    void acb_mat_solve_lu_precomp(acb_mat_t X, const slong * perm, const acb_mat_t LU, const acb_mat_t B, slong prec)
+    void acb_mat_solve_lu_precomp(acb_mat_t X, const slong * perm, const acb_mat_t LU, const acb_mat_t B, slong prec) noexcept
     # Solves `AX = B` given the precomputed nonsingular LU decomposition `A = PLU`.
     # The matrices `X` and `B` are allowed to be aliased with each other,
     # but `X` is not allowed to be aliased with `LU`.
 
-    int acb_mat_solve(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong prec)
+    int acb_mat_solve(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong prec) noexcept
 
-    int acb_mat_solve_lu(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong prec)
+    int acb_mat_solve_lu(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong prec) noexcept
 
-    int acb_mat_solve_precond(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong prec)
+    int acb_mat_solve_precond(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong prec) noexcept
     # Solves `AX = B` where `A` is a nonsingular `n \times n` matrix
     # and `X` and `B` are `n \times m` matrices.
     # If `m > 0` and `A` cannot be inverted numerically (indicating either that
@@ -314,7 +314,7 @@ cdef extern from "flint_wrap.h":
     # For example, the *lu* solver often performs better for ill-conditioned
     # systems where use of very high precision is unavoidable.
 
-    int acb_mat_inv(acb_mat_t X, const acb_mat_t A, slong prec)
+    int acb_mat_inv(acb_mat_t X, const acb_mat_t A, slong prec) noexcept
     # Sets `X = A^{-1}` where `A` is a square matrix, computed by solving
     # the system `AX = I`.
     # If `A` cannot be inverted numerically (indicating either that
@@ -323,11 +323,11 @@ cdef extern from "flint_wrap.h":
     # A nonzero return value guarantees that the matrix is invertible
     # and that the exact inverse is contained in the output.
 
-    void acb_mat_det_lu(acb_t det, const acb_mat_t A, slong prec)
+    void acb_mat_det_lu(acb_t det, const acb_mat_t A, slong prec) noexcept
 
-    void acb_mat_det_precond(acb_t det, const acb_mat_t A, slong prec)
+    void acb_mat_det_precond(acb_t det, const acb_mat_t A, slong prec) noexcept
 
-    void acb_mat_det(acb_t det, const acb_mat_t A, slong prec)
+    void acb_mat_det(acb_t det, const acb_mat_t A, slong prec) noexcept
     # Sets *det* to the determinant of the matrix *A*.
     # The *lu* version uses Gaussian elimination with partial pivoting. If at
     # some point an invertible pivot element cannot be found, the elimination is
@@ -343,17 +343,17 @@ cdef extern from "flint_wrap.h":
     # versions and additionally handles small or triangular matrices
     # by direct formulas.
 
-    void acb_mat_approx_solve_triu(acb_mat_t X, const acb_mat_t U, const acb_mat_t B, int unit, slong prec)
+    void acb_mat_approx_solve_triu(acb_mat_t X, const acb_mat_t U, const acb_mat_t B, int unit, slong prec) noexcept
 
-    void acb_mat_approx_solve_tril(acb_mat_t X, const acb_mat_t L, const acb_mat_t B, int unit, slong prec)
+    void acb_mat_approx_solve_tril(acb_mat_t X, const acb_mat_t L, const acb_mat_t B, int unit, slong prec) noexcept
 
-    int acb_mat_approx_lu(slong * P, acb_mat_t LU, const acb_mat_t A, slong prec)
+    int acb_mat_approx_lu(slong * P, acb_mat_t LU, const acb_mat_t A, slong prec) noexcept
 
-    void acb_mat_approx_solve_lu_precomp(acb_mat_t X, const slong * perm, const acb_mat_t A, const acb_mat_t B, slong prec)
+    void acb_mat_approx_solve_lu_precomp(acb_mat_t X, const slong * perm, const acb_mat_t A, const acb_mat_t B, slong prec) noexcept
 
-    int acb_mat_approx_solve(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong prec)
+    int acb_mat_approx_solve(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong prec) noexcept
 
-    int acb_mat_approx_inv(acb_mat_t X, const acb_mat_t A, slong prec)
+    int acb_mat_approx_inv(acb_mat_t X, const acb_mat_t A, slong prec) noexcept
     # These methods perform approximate solving *without any error control*.
     # The radii in the input matrices are ignored, the computations are done
     # numerically with floating-point arithmetic (using ordinary
@@ -362,26 +362,26 @@ cdef extern from "flint_wrap.h":
     # output matrices are set to the approximate floating-point results with
     # zeroed error bounds.
 
-    void _acb_mat_charpoly(acb_ptr poly, const acb_mat_t mat, slong prec)
+    void _acb_mat_charpoly(acb_ptr poly, const acb_mat_t mat, slong prec) noexcept
 
-    void acb_mat_charpoly(acb_poly_t poly, const acb_mat_t mat, slong prec)
+    void acb_mat_charpoly(acb_poly_t poly, const acb_mat_t mat, slong prec) noexcept
     # Sets *poly* to the characteristic polynomial of *mat* which must be
     # a square matrix. If the matrix has *n* rows, the underscore method
     # requires space for `n + 1` output coefficients.
     # Employs a division-free algorithm using `O(n^4)` operations.
 
-    void _acb_mat_companion(acb_mat_t mat, acb_srcptr poly, slong prec)
+    void _acb_mat_companion(acb_mat_t mat, acb_srcptr poly, slong prec) noexcept
 
-    void acb_mat_companion(acb_mat_t mat, const acb_poly_t poly, slong prec)
+    void acb_mat_companion(acb_mat_t mat, const acb_poly_t poly, slong prec) noexcept
     # Sets the *n* by *n* matrix *mat* to the companion matrix of the polynomial
     # *poly* which must have degree *n*.
     # The underscore method reads `n + 1` input coefficients.
 
-    void acb_mat_exp_taylor_sum(acb_mat_t S, const acb_mat_t A, slong N, slong prec)
+    void acb_mat_exp_taylor_sum(acb_mat_t S, const acb_mat_t A, slong N, slong prec) noexcept
     # Sets *S* to the truncated exponential Taylor series `S = \sum_{k=0}^{N-1} A^k / k!`.
     # See :func:`arb_mat_exp_taylor_sum` for implementation notes.
 
-    void acb_mat_exp(acb_mat_t B, const acb_mat_t A, slong prec)
+    void acb_mat_exp(acb_mat_t B, const acb_mat_t A, slong prec) noexcept
     # Sets *B* to the exponential of the matrix *A*, defined by the Taylor series
     # .. math ::
     # \exp(A) = \sum_{k=0}^{\infty} \frac{A^k}{k!}.
@@ -389,24 +389,24 @@ cdef extern from "flint_wrap.h":
     # to give rapid convergence of the Taylor series.
     # Error bounds are computed as for :func:`arb_mat_exp`.
 
-    void acb_mat_trace(acb_t trace, const acb_mat_t mat, slong prec)
+    void acb_mat_trace(acb_t trace, const acb_mat_t mat, slong prec) noexcept
     # Sets *trace* to the trace of the matrix, i.e. the sum of entries on the
     # main diagonal of *mat*. The matrix is required to be square.
 
-    void _acb_mat_diag_prod(acb_t res, const acb_mat_t mat, slong a, slong b, slong prec)
+    void _acb_mat_diag_prod(acb_t res, const acb_mat_t mat, slong a, slong b, slong prec) noexcept
 
-    void acb_mat_diag_prod(acb_t res, const acb_mat_t mat, slong prec)
+    void acb_mat_diag_prod(acb_t res, const acb_mat_t mat, slong prec) noexcept
     # Sets *res* to the product of the entries on the main diagonal of *mat*.
     # The underscore method computes the product of the entries between
     # index *a* inclusive and *b* exclusive (the indices must be in range).
 
-    void acb_mat_get_mid(acb_mat_t B, const acb_mat_t A)
+    void acb_mat_get_mid(acb_mat_t B, const acb_mat_t A) noexcept
     # Sets the entries of *B* to the exact midpoints of the entries of *A*.
 
-    void acb_mat_add_error_mag(acb_mat_t mat, const mag_t err)
+    void acb_mat_add_error_mag(acb_mat_t mat, const mag_t err) noexcept
     # Adds *err* in-place to the radii of the entries of *mat*.
 
-    int acb_mat_approx_eig_qr(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, const mag_t tol, slong maxiter, slong prec)
+    int acb_mat_approx_eig_qr(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, const mag_t tol, slong maxiter, slong prec) noexcept
     # Computes floating-point approximations of all the *n* eigenvalues
     # (and optionally eigenvectors) of the
     # given *n* by *n* matrix *A*. The approximations of the
@@ -427,7 +427,7 @@ cdef extern from "flint_wrap.h":
     # any statement whatsoever about error bounds.
     # The output may also be accurate even if this function returns zero.
 
-    void acb_mat_eig_global_enclosure(mag_t eps, const acb_mat_t A, acb_srcptr E, const acb_mat_t R, slong prec)
+    void acb_mat_eig_global_enclosure(mag_t eps, const acb_mat_t A, acb_srcptr E, const acb_mat_t R, slong prec) noexcept
     # Given an *n* by *n* matrix *A*, a length-*n* vector *E*
     # containing approximations of the eigenvalues of *A*,
     # and an *n* by *n* matrix *R* containing approximations of
@@ -466,7 +466,7 @@ cdef extern from "flint_wrap.h":
     # No assumptions are made about the structure of *A* or the
     # quality of the given approximations.
 
-    void acb_mat_eig_enclosure_rump(acb_t lmbda, acb_mat_t J, acb_mat_t R, const acb_mat_t A, const acb_t lambda_approx, const acb_mat_t R_approx, slong prec)
+    void acb_mat_eig_enclosure_rump(acb_t lmbda, acb_mat_t J, acb_mat_t R, const acb_mat_t A, const acb_t lambda_approx, const acb_mat_t R_approx, slong prec) noexcept
     # Given an *n* by *n* matrix  *A* and an approximate
     # eigenvalue-eigenvector pair *lambda_approx* and *R_approx* (where
     # *R_approx* is an *n* by 1 matrix), computes an enclosure
@@ -502,11 +502,11 @@ cdef extern from "flint_wrap.h":
     # No assumptions are made about the structure of *A* or the
     # quality of the given approximations.
 
-    int acb_mat_eig_simple_rump(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec)
+    int acb_mat_eig_simple_rump(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec) noexcept
 
-    int acb_mat_eig_simple_vdhoeven_mourrain(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec)
+    int acb_mat_eig_simple_vdhoeven_mourrain(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec) noexcept
 
-    int acb_mat_eig_simple(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec)
+    int acb_mat_eig_simple(acb_ptr E, acb_mat_t L, acb_mat_t R, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec) noexcept
     # Computes all the eigenvalues (and optionally corresponding
     # eigenvectors) of the given *n* by *n* matrix *A*.
     # Attempts to prove that *A* has *n* simple (isolated)
@@ -542,9 +542,9 @@ cdef extern from "flint_wrap.h":
     # :func:`acb_mat_eig_multiple_rump` may be used as a fallback,
     # or :func:`acb_mat_eig_multiple` may be used in the first place.
 
-    int acb_mat_eig_multiple_rump(acb_ptr E, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec)
+    int acb_mat_eig_multiple_rump(acb_ptr E, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec) noexcept
 
-    int acb_mat_eig_multiple(acb_ptr E, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec)
+    int acb_mat_eig_multiple(acb_ptr E, const acb_mat_t A, acb_srcptr E_approx, const acb_mat_t R_approx, slong prec) noexcept
     # Computes all the eigenvalues of the given *n* by *n* matrix *A*.
     # On success, the output vector *E* contains *n* complex intervals,
     # each representing one eigenvalue of *A* with the correct

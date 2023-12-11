@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void acb_dirichlet_roots_init(acb_dirichlet_roots_t roots, ulong n, slong num, slong prec)
+    void acb_dirichlet_roots_init(acb_dirichlet_roots_t roots, ulong n, slong num, slong prec) noexcept
     # Initializes *roots* with precomputed data for fast evaluation of roots of
     # unity `e^{2\pi i k/n}` of a fixed order *n*. The precomputation is
     # optimized for *num* evaluations.
@@ -26,13 +26,13 @@ cdef extern from "flint_wrap.h":
     # large *n* if too much memory would be used. For intermediate *num*,
     # baby-step giant-step tables are computed.
 
-    void acb_dirichlet_roots_clear(acb_dirichlet_roots_t roots)
+    void acb_dirichlet_roots_clear(acb_dirichlet_roots_t roots) noexcept
     # Clears the structure.
 
-    void acb_dirichlet_root(acb_t res, const acb_dirichlet_roots_t roots, ulong k, slong prec)
+    void acb_dirichlet_root(acb_t res, const acb_dirichlet_roots_t roots, ulong k, slong prec) noexcept
     # Computes `e^{2\pi i k/n}`.
 
-    void acb_dirichlet_powsum_term(acb_ptr res, arb_t log_prev, ulong * prev, const acb_t s, ulong k, int integer, int critical_line, slong len, slong prec)
+    void acb_dirichlet_powsum_term(acb_ptr res, arb_t log_prev, ulong * prev, const acb_t s, ulong k, int integer, int critical_line, slong len, slong prec) noexcept
     # Sets *res* to `k^{-(s+x)}` as a power series in *x* truncated to length *len*.
     # The flags *integer* and *critical_line* respectively specify optimizing
     # for *s* being an integer or having real part 1/2.
@@ -43,7 +43,7 @@ cdef extern from "flint_wrap.h":
     # overwritten by *k*, allowing *log_prev* to be recycled for the next
     # term when evaluating a power sum.
 
-    void acb_dirichlet_powsum_sieved(acb_ptr res, const acb_t s, ulong n, slong len, slong prec)
+    void acb_dirichlet_powsum_sieved(acb_ptr res, const acb_t s, ulong n, slong len, slong prec) noexcept
     # Sets *res* to `\sum_{k=1}^n k^{-(s+x)}`
     # as a power series in *x* truncated to length *len*.
     # This function stores a table of powers that have already been calculated,
@@ -55,7 +55,7 @@ cdef extern from "flint_wrap.h":
     # power series multiplications, it is only faster than the naive
     # algorithm when *len* is small.
 
-    void acb_dirichlet_powsum_smooth(acb_ptr res, const acb_t s, ulong n, slong len, slong prec)
+    void acb_dirichlet_powsum_smooth(acb_ptr res, const acb_t s, ulong n, slong len, slong prec) noexcept
     # Sets *res* to `\sum_{k=1}^n k^{-(s+x)}`
     # as a power series in *x* truncated to length *len*.
     # This function performs partial sieving by adding multiples of 5-smooth *k*
@@ -66,75 +66,75 @@ cdef extern from "flint_wrap.h":
     # A slightly bigger gain for larger *n* could be achieved by using more
     # small prime factors, at the expense of space.
 
-    void acb_dirichlet_zeta(acb_t res, const acb_t s, slong prec)
+    void acb_dirichlet_zeta(acb_t res, const acb_t s, slong prec) noexcept
     # Computes `\zeta(s)` using an automatic choice of algorithm.
 
-    void acb_dirichlet_zeta_jet(acb_t res, const acb_t s, int deflate, slong len, slong prec)
+    void acb_dirichlet_zeta_jet(acb_t res, const acb_t s, int deflate, slong len, slong prec) noexcept
     # Computes the first *len* terms of the Taylor series of the Riemann zeta
     # function at *s*. If *deflate* is nonzero, computes the deflated
     # function `\zeta(s) - 1/(s-1)` instead.
 
-    void acb_dirichlet_zeta_bound(mag_t res, const acb_t s)
+    void acb_dirichlet_zeta_bound(mag_t res, const acb_t s) noexcept
     # Computes an upper bound for `|\zeta(s)|` quickly. On the critical strip (and
     # slightly outside of it), formula (43.3) in [Rad1973]_ is used.
     # To the right, evaluating at the real part of *s* gives a trivial bound.
     # To the left, the functional equation is used.
 
-    void acb_dirichlet_zeta_deriv_bound(mag_t der1, mag_t der2, const acb_t s)
+    void acb_dirichlet_zeta_deriv_bound(mag_t der1, mag_t der2, const acb_t s) noexcept
     # Sets *der1* to a bound for `|\zeta'(s)|` and *der2* to a bound for
     # `|\zeta''(s)|`. These bounds are mainly intended for use in the critical
     # strip and will not be tight.
 
-    void acb_dirichlet_eta(acb_t res, const acb_t s, slong prec)
+    void acb_dirichlet_eta(acb_t res, const acb_t s, slong prec) noexcept
     # Sets *res* to the Dirichlet eta function
     # `\eta(s) = \sum_{k=1}^{\infty} (-1)^{k+1} / k^s = (1-2^{1-s}) \zeta(s)`,
     # also known as the alternating zeta function.
     # Note that the alternating character `\{1,-1\}` is not itself
     # a Dirichlet character.
 
-    void acb_dirichlet_xi(acb_t res, const acb_t s, slong prec)
+    void acb_dirichlet_xi(acb_t res, const acb_t s, slong prec) noexcept
     # Sets *res* to the Riemann xi function
     # `\xi(s) = \frac{1}{2} s (s-1) \pi^{-s/2} \Gamma(\frac{1}{2} s) \zeta(s)`.
     # The functional equation for xi is `\xi(1-s) = \xi(s)`.
 
-    void acb_dirichlet_zeta_rs_f_coeffs(acb_ptr f, const arb_t p, slong n, slong prec)
+    void acb_dirichlet_zeta_rs_f_coeffs(acb_ptr f, const arb_t p, slong n, slong prec) noexcept
     # Computes the coefficients `F^{(j)}(p)` for `0 \le j < n`.
     # Uses power series division. This method breaks down when `p = \pm 1/2`
     # (which is not problem if *s* is an exact floating-point number).
 
-    void acb_dirichlet_zeta_rs_d_coeffs(arb_ptr d, const arb_t sigma, slong k, slong prec)
+    void acb_dirichlet_zeta_rs_d_coeffs(arb_ptr d, const arb_t sigma, slong k, slong prec) noexcept
     # Computes the coefficients `d_j^{(k)}` for `0 \le j \le \lfloor 3k/2 \rfloor + 1`.
     # On input, the array *d* must contain the coefficients for `d_j^{(k-1)}`
     # unless `k = 0`, and these coefficients will be updated in-place.
 
-    void acb_dirichlet_zeta_rs_bound(mag_t err, const acb_t s, slong K)
+    void acb_dirichlet_zeta_rs_bound(mag_t err, const acb_t s, slong K) noexcept
     # Bounds the error term `RS_K` following Theorem 4.2 in Arias de Reyna.
 
-    void acb_dirichlet_zeta_rs_r(acb_t res, const acb_t s, slong K, slong prec)
+    void acb_dirichlet_zeta_rs_r(acb_t res, const acb_t s, slong K, slong prec) noexcept
     # Computes `\mathcal{R}(s)` in the upper half plane. Uses precisely *K*
     # asymptotic terms in the RS formula if this input parameter is positive;
     # otherwise chooses the number of terms automatically based on *s* and the
     # precision.
 
-    void acb_dirichlet_zeta_rs(acb_t res, const acb_t s, slong K, slong prec)
+    void acb_dirichlet_zeta_rs(acb_t res, const acb_t s, slong K, slong prec) noexcept
     # Computes `\zeta(s)` using the Riemann-Siegel formula. Uses precisely
     # *K* asymptotic terms in the RS formula if this input parameter is positive;
     # otherwise chooses the number of terms automatically based on *s* and the
     # precision.
 
-    void acb_dirichlet_zeta_jet_rs(acb_ptr res, const acb_t s, slong len, slong prec)
+    void acb_dirichlet_zeta_jet_rs(acb_ptr res, const acb_t s, slong len, slong prec) noexcept
     # Computes the first *len* terms of the Taylor series of the Riemann zeta
     # function at *s* using the Riemann Siegel formula. This function currently
     # only supports *len* = 1 or *len* = 2. A finite difference is used
     # to compute the first derivative.
 
-    void acb_dirichlet_hurwitz(acb_t res, const acb_t s, const acb_t a, slong prec)
+    void acb_dirichlet_hurwitz(acb_t res, const acb_t s, const acb_t a, slong prec) noexcept
     # Computes the Hurwitz zeta function `\zeta(s, a)`.
     # This function automatically delegates to the code for the Riemann zeta function
     # when `a = 1`. Some other special cases may also be handled by direct
     # formulas. In general, Euler-Maclaurin summation is used.
 
-    void acb_dirichlet_hurwitz_precomp_init(acb_dirichlet_hurwitz_precomp_t pre, const acb_t s, int deflate, slong A, slong K, slong N, slong prec)
+    void acb_dirichlet_hurwitz_precomp_init(acb_dirichlet_hurwitz_precomp_t pre, const acb_t s, int deflate, slong A, slong K, slong N, slong prec) noexcept
     # Precomputes a grid of Taylor polynomials for fast evaluation of
     # `\zeta(s,a)` on `a \in (0,1]` with fixed *s*.
     # *A* is the initial shift to apply to *a*, *K* is the number of Taylor terms,
@@ -153,15 +153,15 @@ cdef extern from "flint_wrap.h":
     # If *deflate* is set, the deflated Hurwitz zeta function is used,
     # removing the pole at `s = 1`.
 
-    void acb_dirichlet_hurwitz_precomp_init_num(acb_dirichlet_hurwitz_precomp_t pre, const acb_t s, int deflate, double num_eval, slong prec)
+    void acb_dirichlet_hurwitz_precomp_init_num(acb_dirichlet_hurwitz_precomp_t pre, const acb_t s, int deflate, double num_eval, slong prec) noexcept
     # Initializes *pre*, choosing the parameters *A*, *K*, and *N*
     # automatically to minimize the cost of *num_eval* evaluations of the
     # Hurwitz zeta function at argument *s* to precision *prec*.
 
-    void acb_dirichlet_hurwitz_precomp_clear(acb_dirichlet_hurwitz_precomp_t pre)
+    void acb_dirichlet_hurwitz_precomp_clear(acb_dirichlet_hurwitz_precomp_t pre) noexcept
     # Clears the precomputed data.
 
-    void acb_dirichlet_hurwitz_precomp_choose_param(ulong * A, ulong * K, ulong * N, const acb_t s, double num_eval, slong prec)
+    void acb_dirichlet_hurwitz_precomp_choose_param(ulong * A, ulong * K, ulong * N, const acb_t s, double num_eval, slong prec) noexcept
     # Chooses precomputation parameters *A*, *K* and *N* to minimize
     # the cost of *num_eval* evaluations of the Hurwitz zeta function
     # at argument *s* to precision *prec*.
@@ -169,18 +169,18 @@ cdef extern from "flint_wrap.h":
     # scratch would be better than performing a precomputation, *A*, *K* and *N*
     # are all set to 0.
 
-    void acb_dirichlet_hurwitz_precomp_bound(mag_t res, const acb_t s, slong A, slong K, slong N)
+    void acb_dirichlet_hurwitz_precomp_bound(mag_t res, const acb_t s, slong A, slong K, slong N) noexcept
     # Computes an upper bound for the truncation error (not accounting for
     # roundoff error) when evaluating `\zeta(s,a)` with precomputation parameters
     # *A*, *K*, *N*, assuming that `0 < a \le 1`.
     # For details, see :ref:`algorithms_hurwitz`.
 
-    void acb_dirichlet_hurwitz_precomp_eval(acb_t res, const acb_dirichlet_hurwitz_precomp_t pre, ulong p, ulong q, slong prec)
+    void acb_dirichlet_hurwitz_precomp_eval(acb_t res, const acb_dirichlet_hurwitz_precomp_t pre, ulong p, ulong q, slong prec) noexcept
     # Evaluates `\zeta(s,p/q)` using precomputed data, assuming that `0 < p/q \le 1`.
 
-    void acb_dirichlet_lerch_phi_integral(acb_t res, const acb_t z, const acb_t s, const acb_t a, slong prec)
-    void acb_dirichlet_lerch_phi_direct(acb_t res, const acb_t z, const acb_t s, const acb_t a, slong prec)
-    void acb_dirichlet_lerch_phi(acb_t res, const acb_t z, const acb_t s, const acb_t a, slong prec)
+    void acb_dirichlet_lerch_phi_integral(acb_t res, const acb_t z, const acb_t s, const acb_t a, slong prec) noexcept
+    void acb_dirichlet_lerch_phi_direct(acb_t res, const acb_t z, const acb_t s, const acb_t a, slong prec) noexcept
+    void acb_dirichlet_lerch_phi(acb_t res, const acb_t z, const acb_t s, const acb_t a, slong prec) noexcept
     # Computes the Lerch transcendent
     # .. math ::
     # \Phi(z,s,a) = \sum_{k=0}^{\infty} \frac{z^k}{(k+a)^s}
@@ -195,7 +195,7 @@ cdef extern from "flint_wrap.h":
     # checks for some special cases where the function can be expressed
     # in terms of simpler functions (Hurwitz zeta, polylogarithms).
 
-    void acb_dirichlet_stieltjes(acb_t res, const fmpz_t n, const acb_t a, slong prec)
+    void acb_dirichlet_stieltjes(acb_t res, const fmpz_t n, const acb_t a, slong prec) noexcept
     # Given a nonnegative integer *n*, sets *res* to the generalized Stieltjes constant
     # `\gamma_n(a)` which is the coefficient in the Laurent series of the
     # Hurwitz zeta function at the pole
@@ -213,42 +213,42 @@ cdef extern from "flint_wrap.h":
     # expansion once at `s = 1` than to call this function repeatedly,
     # unless *n* is extremely large (at least several hundred).
 
-    void acb_dirichlet_chi(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, ulong n, slong prec)
+    void acb_dirichlet_chi(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, ulong n, slong prec) noexcept
     # Sets *res* to `\chi(n)`, the value of the Dirichlet character *chi*
     # at the integer *n*.
 
-    void acb_dirichlet_chi_vec(acb_ptr v, const dirichlet_group_t G, const dirichlet_char_t chi, slong nv, slong prec)
+    void acb_dirichlet_chi_vec(acb_ptr v, const dirichlet_group_t G, const dirichlet_char_t chi, slong nv, slong prec) noexcept
     # Compute the *nv* first Dirichlet values.
 
-    void acb_dirichlet_pairing(acb_t res, const dirichlet_group_t G, ulong m, ulong n, slong prec)
+    void acb_dirichlet_pairing(acb_t res, const dirichlet_group_t G, ulong m, ulong n, slong prec) noexcept
 
-    void acb_dirichlet_pairing_char(acb_t res, const dirichlet_group_t G, const dirichlet_char_t a, const dirichlet_char_t b, slong prec)
+    void acb_dirichlet_pairing_char(acb_t res, const dirichlet_group_t G, const dirichlet_char_t a, const dirichlet_char_t b, slong prec) noexcept
     # Sets *res* to the value of the Dirichlet pairing `\chi(m,n)` at numbers `m` and `n`.
     # The second form takes two characters as input.
 
-    void acb_dirichlet_gauss_sum_naive(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_gauss_sum_naive(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
 
-    void acb_dirichlet_gauss_sum_factor(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_gauss_sum_factor(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
 
-    void acb_dirichlet_gauss_sum_order2(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_gauss_sum_order2(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
 
-    void acb_dirichlet_gauss_sum_theta(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_gauss_sum_theta(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
 
-    void acb_dirichlet_gauss_sum(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_gauss_sum(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
 
-    void acb_dirichlet_jacobi_sum_naive(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi1, const dirichlet_char_t chi2, slong prec)
+    void acb_dirichlet_jacobi_sum_naive(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi1, const dirichlet_char_t chi2, slong prec) noexcept
 
-    void acb_dirichlet_jacobi_sum_factor(acb_t res,  const dirichlet_group_t G, const dirichlet_char_t chi1, const dirichlet_char_t chi2, slong prec)
+    void acb_dirichlet_jacobi_sum_factor(acb_t res,  const dirichlet_group_t G, const dirichlet_char_t chi1, const dirichlet_char_t chi2, slong prec) noexcept
 
-    void acb_dirichlet_jacobi_sum_gauss(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi1, const dirichlet_char_t chi2, slong prec)
+    void acb_dirichlet_jacobi_sum_gauss(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi1, const dirichlet_char_t chi2, slong prec) noexcept
 
-    void acb_dirichlet_jacobi_sum(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi1,  const dirichlet_char_t chi2, slong prec)
+    void acb_dirichlet_jacobi_sum(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi1,  const dirichlet_char_t chi2, slong prec) noexcept
 
-    void acb_dirichlet_jacobi_sum_ui(acb_t res, const dirichlet_group_t G, ulong a, ulong b, slong prec)
+    void acb_dirichlet_jacobi_sum_ui(acb_t res, const dirichlet_group_t G, ulong a, ulong b, slong prec) noexcept
 
-    void acb_dirichlet_chi_theta_arb(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, const arb_t t, slong prec)
+    void acb_dirichlet_chi_theta_arb(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, const arb_t t, slong prec) noexcept
 
-    void acb_dirichlet_ui_theta_arb(acb_t res, const dirichlet_group_t G, ulong a, const arb_t t, slong prec)
+    void acb_dirichlet_ui_theta_arb(acb_t res, const dirichlet_group_t G, ulong a, const arb_t t, slong prec) noexcept
     # Compute the theta series `\Theta_q(a,t)` for real argument `t>0`.
     # Beware that if `t<1` the functional equation
     # .. math::
@@ -263,21 +263,21 @@ cdef extern from "flint_wrap.h":
     # .. math::
     # \Theta_q(a,t) = \sum_{n\geq 0} \chi_q(a, n) x(t)^{n^2}.
 
-    ulong acb_dirichlet_theta_length(ulong q, const arb_t t, slong prec)
+    ulong acb_dirichlet_theta_length(ulong q, const arb_t t, slong prec) noexcept
 
-    void acb_dirichlet_qseries_arb_powers_naive(acb_t res, const arb_t x, int p, const ulong * a, const acb_dirichlet_roots_t z, slong len, slong prec)
+    void acb_dirichlet_qseries_arb_powers_naive(acb_t res, const arb_t x, int p, const ulong * a, const acb_dirichlet_roots_t z, slong len, slong prec) noexcept
 
-    void acb_dirichlet_qseries_arb_powers_smallorder(acb_t res, const arb_t x, int p, const ulong * a, const acb_dirichlet_roots_t z, slong len, slong prec)
+    void acb_dirichlet_qseries_arb_powers_smallorder(acb_t res, const arb_t x, int p, const ulong * a, const acb_dirichlet_roots_t z, slong len, slong prec) noexcept
 
-    void acb_dirichlet_dft_conrey(acb_ptr w, acb_srcptr v, const dirichlet_group_t G, slong prec)
+    void acb_dirichlet_dft_conrey(acb_ptr w, acb_srcptr v, const dirichlet_group_t G, slong prec) noexcept
 
-    void acb_dirichlet_dft(acb_ptr w, acb_srcptr v, const dirichlet_group_t G, slong prec)
+    void acb_dirichlet_dft(acb_ptr w, acb_srcptr v, const dirichlet_group_t G, slong prec) noexcept
 
-    void acb_dirichlet_root_number_theta(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_root_number_theta(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
 
-    void acb_dirichlet_root_number(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_root_number(acb_t res, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
 
-    void acb_dirichlet_l_hurwitz(acb_t res, const acb_t s, const acb_dirichlet_hurwitz_precomp_t precomp, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_l_hurwitz(acb_t res, const acb_t s, const acb_dirichlet_hurwitz_precomp_t precomp, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
     # Computes `L(s,\chi)` using decomposition in terms of the Hurwitz zeta function
     # .. math::
     # L(s,\chi) = q^{-s}\sum_{k=1}^q \chi(k) \,\zeta\!\left(s,\frac kq\right).
@@ -287,9 +287,9 @@ cdef extern from "flint_wrap.h":
     # directly. If a pre-initialized *precomp* object is provided, this will be
     # used instead to evaluate the Hurwitz zeta function.
 
-    void acb_dirichlet_l_euler_product(acb_t res, const acb_t s, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_l_euler_product(acb_t res, const acb_t s, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
 
-    void _acb_dirichlet_euler_product_real_ui(arb_t res, ulong s, const signed char * chi, int mod, int reciprocal, slong prec)
+    void _acb_dirichlet_euler_product_real_ui(arb_t res, ulong s, const signed char * chi, int mod, int reciprocal, slong prec) noexcept
     # Computes `L(s,\chi)` directly using the Euler product. This is
     # efficient if *s* has large positive real part. As implemented, this
     # function only gives a finite result if `\operatorname{re}(s) \ge 2`.
@@ -307,16 +307,16 @@ cdef extern from "flint_wrap.h":
     # values at 0, 1, ..., *mod* - 1. If *reciprocal* is set, it computes
     # `1 / L(s,\chi)` (this is faster if the reciprocal can be used directly).
 
-    void acb_dirichlet_l(acb_t res, const acb_t s, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_l(acb_t res, const acb_t s, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
     # Computes `L(s,\chi)` using a default choice of algorithm.
 
-    void acb_dirichlet_l_fmpq(acb_t res, const fmpq_t s, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
-    void acb_dirichlet_l_fmpq_afe(acb_t res, const fmpq_t s, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_l_fmpq(acb_t res, const fmpq_t s, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
+    void acb_dirichlet_l_fmpq_afe(acb_t res, const fmpq_t s, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
     # Computes `L(s,\chi)` where *s* is a rational number.
     # The *afe* version uses the approximate functional equation;
     # the default version chooses an algorithm automatically.
 
-    void acb_dirichlet_l_vec_hurwitz(acb_ptr res, const acb_t s, const acb_dirichlet_hurwitz_precomp_t precomp, const dirichlet_group_t G, slong prec)
+    void acb_dirichlet_l_vec_hurwitz(acb_ptr res, const acb_t s, const acb_dirichlet_hurwitz_precomp_t precomp, const dirichlet_group_t G, slong prec) noexcept
     # Compute all values `L(s,\chi)` for `\chi` mod `q`, using the
     # Hurwitz zeta function and a discrete Fourier transform.
     # The output *res* is assumed to have length *G->phi_q* and values
@@ -326,7 +326,7 @@ cdef extern from "flint_wrap.h":
     # directly. If a pre-initialized *precomp* object is provided, this will be
     # used instead to evaluate the Hurwitz zeta function.
 
-    void acb_dirichlet_l_jet(acb_ptr res, const acb_t s, const dirichlet_group_t G, const dirichlet_char_t chi, int deflate, slong len, slong prec)
+    void acb_dirichlet_l_jet(acb_ptr res, const acb_t s, const dirichlet_group_t G, const dirichlet_char_t chi, int deflate, slong len, slong prec) noexcept
     # Computes the Taylor expansion of `L(s,\chi)` to length *len*,
     # i.e. `L(s), L'(s), \ldots, L^{(len-1)}(s) / (len-1)!`.
     # If *deflate* is set, computes the expansion of
@@ -338,13 +338,13 @@ cdef extern from "flint_wrap.h":
     # gives the regular part of the Laurent expansion.
     # When *chi* is non-principal, *deflate* has no effect.
 
-    void _acb_dirichlet_l_series(acb_ptr res, acb_srcptr s, slong slen, const dirichlet_group_t G, const dirichlet_char_t chi, int deflate, slong len, slong prec)
+    void _acb_dirichlet_l_series(acb_ptr res, acb_srcptr s, slong slen, const dirichlet_group_t G, const dirichlet_char_t chi, int deflate, slong len, slong prec) noexcept
 
-    void acb_dirichlet_l_series(acb_poly_t res, const acb_poly_t s, const dirichlet_group_t G, const dirichlet_char_t chi, int deflate, slong len, slong prec)
+    void acb_dirichlet_l_series(acb_poly_t res, const acb_poly_t s, const dirichlet_group_t G, const dirichlet_char_t chi, int deflate, slong len, slong prec) noexcept
     # Sets *res* to the power series `L(s,\chi)` where *s* is a given power series, truncating the result to length *len*.
     # See :func:`acb_dirichlet_l_jet` for the meaning of the *deflate* flag.
 
-    void acb_dirichlet_hardy_theta(acb_ptr res, const acb_t t, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec)
+    void acb_dirichlet_hardy_theta(acb_ptr res, const acb_t t, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec) noexcept
     # Computes the phase function used to construct the Z-function.
     # We have
     # .. math ::
@@ -354,28 +354,28 @@ cdef extern from "flint_wrap.h":
     # is the root number as computed by :func:`acb_dirichlet_root_number`.
     # The first *len* terms in the Taylor expansion are written to the output.
 
-    void acb_dirichlet_hardy_z(acb_ptr res, const acb_t t, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec)
+    void acb_dirichlet_hardy_z(acb_ptr res, const acb_t t, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec) noexcept
     # Computes the Hardy Z-function, also known as the Riemann-Siegel Z-function
     # `Z(t) = e^{i \theta(t)} L(1/2+it)`, which is real-valued for real *t*.
     # The first *len* terms in the Taylor expansion are written to the output.
 
-    void _acb_dirichlet_hardy_theta_series(acb_ptr res, acb_srcptr t, slong tlen, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec)
+    void _acb_dirichlet_hardy_theta_series(acb_ptr res, acb_srcptr t, slong tlen, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec) noexcept
 
-    void acb_dirichlet_hardy_theta_series(acb_poly_t res, const acb_poly_t t, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec)
+    void acb_dirichlet_hardy_theta_series(acb_poly_t res, const acb_poly_t t, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec) noexcept
     # Sets *res* to the power series `\theta(t)` where *t* is a given power series, truncating the result to length *len*.
 
-    void _acb_dirichlet_hardy_z_series(acb_ptr res, acb_srcptr t, slong tlen, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec)
+    void _acb_dirichlet_hardy_z_series(acb_ptr res, acb_srcptr t, slong tlen, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec) noexcept
 
-    void acb_dirichlet_hardy_z_series(acb_poly_t res, const acb_poly_t t, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec)
+    void acb_dirichlet_hardy_z_series(acb_poly_t res, const acb_poly_t t, const dirichlet_group_t G, const dirichlet_char_t chi, slong len, slong prec) noexcept
     # Sets *res* to the power series `Z(t)` where *t* is a given power series, truncating the result to length *len*.
 
-    void acb_dirichlet_gram_point(arb_t res, const fmpz_t n, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec)
+    void acb_dirichlet_gram_point(arb_t res, const fmpz_t n, const dirichlet_group_t G, const dirichlet_char_t chi, slong prec) noexcept
     # Sets *res* to the *n*-th Gram point `g_n`, defined as the unique solution
     # in `[7, \infty)` of `\theta(g_n) = \pi n`. Currently only the Gram points
     # corresponding to the Riemann zeta function are supported and *G* and *chi*
     # must both be set to *NULL*. Requires `n \ge -1`.
 
-    ulong acb_dirichlet_turing_method_bound(const fmpz_t p)
+    ulong acb_dirichlet_turing_method_bound(const fmpz_t p) noexcept
     # Computes an upper bound *B* for the minimum number of consecutive good
     # Gram blocks sufficient to count nontrivial zeros of the Riemann zeta
     # function using Turing's method [Tur1953]_ as updated by [Leh1970]_,
@@ -385,56 +385,56 @@ cdef extern from "flint_wrap.h":
     # If at least *B* consecutive Gram blocks with union `[g_n, g_p)`
     # satisfy Rosser's rule, then `N(g_n) \le n + 1` and `N(g_p) \ge p + 1`.
 
-    int _acb_dirichlet_definite_hardy_z(arb_t res, const arf_t t, slong * pprec)
+    int _acb_dirichlet_definite_hardy_z(arb_t res, const arf_t t, slong * pprec) noexcept
     # Sets *res* to the Hardy Z-function `Z(t)`.
     # The initial precision (* *pprec*) is increased as necessary
     # to determine the sign of `Z(t)`. The sign is returned.
 
-    void _acb_dirichlet_isolate_gram_hardy_z_zero(arf_t a, arf_t b, const fmpz_t n)
+    void _acb_dirichlet_isolate_gram_hardy_z_zero(arf_t a, arf_t b, const fmpz_t n) noexcept
     # Uses Gram's law to compute an interval `(a, b)` that
     # contains the *n*-th zero of the Hardy Z-function and no other zero.
     # Requires `1 \le n \le 126`.
 
-    void _acb_dirichlet_isolate_rosser_hardy_z_zero(arf_t a, arf_t b, const fmpz_t n)
+    void _acb_dirichlet_isolate_rosser_hardy_z_zero(arf_t a, arf_t b, const fmpz_t n) noexcept
     # Uses Rosser's rule to compute an interval `(a, b)` that
     # contains the *n*-th zero of the Hardy Z-function and no other zero.
     # Requires `1 \le n \le 13999526`.
 
-    void _acb_dirichlet_isolate_turing_hardy_z_zero(arf_t a, arf_t b, const fmpz_t n)
+    void _acb_dirichlet_isolate_turing_hardy_z_zero(arf_t a, arf_t b, const fmpz_t n) noexcept
     # Computes an interval `(a, b)` that contains the *n*-th zero of the
     # Hardy Z-function and no other zero, following Turing's method.
     # Requires `n \ge 2`.
 
-    void acb_dirichlet_isolate_hardy_z_zero(arf_t a, arf_t b, const fmpz_t n)
+    void acb_dirichlet_isolate_hardy_z_zero(arf_t a, arf_t b, const fmpz_t n) noexcept
     # Computes an interval `(a, b)` that contains the *n*-th zero of the
     # Hardy Z-function and contains no other zero, using the most appropriate
     # underscore version of this function. Requires `n \ge 1`.
 
-    void _acb_dirichlet_refine_hardy_z_zero(arb_t res, const arf_t a, const arf_t b, slong prec)
+    void _acb_dirichlet_refine_hardy_z_zero(arb_t res, const arf_t a, const arf_t b, slong prec) noexcept
     # Sets *res* to the unique zero of the Hardy Z-function in the
     # interval `(a, b)`.
 
-    void acb_dirichlet_hardy_z_zero(arb_t res, const fmpz_t n, slong prec)
+    void acb_dirichlet_hardy_z_zero(arb_t res, const fmpz_t n, slong prec) noexcept
     # Sets *res* to the *n*-th zero of the Hardy Z-function, requiring `n \ge 1`.
 
-    void acb_dirichlet_hardy_z_zeros(arb_ptr res, const fmpz_t n, slong len, slong prec)
+    void acb_dirichlet_hardy_z_zeros(arb_ptr res, const fmpz_t n, slong len, slong prec) noexcept
     # Sets the entries of *res* to *len* consecutive zeros of the
     # Hardy Z-function, beginning with the *n*-th zero. Requires positive *n*.
 
-    void acb_dirichlet_zeta_zero(acb_t res, const fmpz_t n, slong prec)
+    void acb_dirichlet_zeta_zero(acb_t res, const fmpz_t n, slong prec) noexcept
     # Sets *res* to the *n*-th nontrivial zero of `\zeta(s)`, requiring `n \ge 1`.
 
-    void acb_dirichlet_zeta_zeros(acb_ptr res, const fmpz_t n, slong len, slong prec)
+    void acb_dirichlet_zeta_zeros(acb_ptr res, const fmpz_t n, slong len, slong prec) noexcept
     # Sets the entries of *res* to *len* consecutive nontrivial zeros of `\zeta(s)`
     # beginning with the *n*-th zero. Requires positive *n*.
 
-    void _acb_dirichlet_exact_zeta_nzeros(fmpz_t res, const arf_t t)
+    void _acb_dirichlet_exact_zeta_nzeros(fmpz_t res, const arf_t t) noexcept
 
-    void acb_dirichlet_zeta_nzeros(arb_t res, const arb_t t, slong prec)
+    void acb_dirichlet_zeta_nzeros(arb_t res, const arb_t t, slong prec) noexcept
     # Compute the number of zeros (counted according to their multiplicities)
     # of `\zeta(s)` in the region `0 < \operatorname{Im}(s) \le t`.
 
-    void acb_dirichlet_backlund_s(arb_t res, const arb_t t, slong prec)
+    void acb_dirichlet_backlund_s(arb_t res, const arb_t t, slong prec) noexcept
     # Compute `S(t) = \frac{1}{\pi}\operatorname{arg}\zeta(\frac{1}{2} + it)`
     # where the argument is defined by continuous variation of `s` in `\zeta(s)`
     # starting at `s = 2`, then vertically to `s = 2 + it`, then horizontally
@@ -445,20 +445,20 @@ cdef extern from "flint_wrap.h":
     # :func:`acb_dirichlet_zeta_nzeros` and `\theta(t)` is
     # :func:`acb_dirichlet_hardy_theta`.
 
-    void acb_dirichlet_backlund_s_bound(mag_t res, const arb_t t)
+    void acb_dirichlet_backlund_s_bound(mag_t res, const arb_t t) noexcept
     # Compute an upper bound for `|S(t)|` quickly. Theorem 1
     # and the bounds in (1.2) in [Tru2014]_ are used.
 
-    void acb_dirichlet_zeta_nzeros_gram(fmpz_t res, const fmpz_t n)
+    void acb_dirichlet_zeta_nzeros_gram(fmpz_t res, const fmpz_t n) noexcept
     # Compute `N(g_n)`. That is, compute the number of zeros (counted according
     # to their multiplicities) of `\zeta(s)` in the region
     # `0 < \operatorname{Im}(s) \le g_n` where `g_n` is the *n*-th Gram point.
     # Requires `n \ge -1`.
 
-    slong acb_dirichlet_backlund_s_gram(const fmpz_t n)
+    slong acb_dirichlet_backlund_s_gram(const fmpz_t n) noexcept
     # Compute `S(g_n)` where `g_n` is the *n*-th Gram point. Requires `n \ge -1`.
 
-    void acb_dirichlet_platt_scaled_lambda(arb_t res, const arb_t t, slong prec)
+    void acb_dirichlet_platt_scaled_lambda(arb_t res, const arb_t t, slong prec) noexcept
     # Compute `\Lambda(t) e^{\pi t/4}` where
     # .. math ::
     # \Lambda(t) = \pi^{-\frac{it}{2}}
@@ -469,11 +469,11 @@ cdef extern from "flint_wrap.h":
     # real-valued by the functional equation, and the exponential factor is
     # designed to counteract the decay of the gamma factor as `t` increases.
 
-    void acb_dirichlet_platt_scaled_lambda_vec(arb_ptr res, const fmpz_t T, slong A, slong B, slong prec)
+    void acb_dirichlet_platt_scaled_lambda_vec(arb_ptr res, const fmpz_t T, slong A, slong B, slong prec) noexcept
 
-    void acb_dirichlet_platt_multieval(arb_ptr res, const fmpz_t T, slong A, slong B, const arb_t h, const fmpz_t J, slong K, slong sigma, slong prec)
+    void acb_dirichlet_platt_multieval(arb_ptr res, const fmpz_t T, slong A, slong B, const arb_t h, const fmpz_t J, slong K, slong sigma, slong prec) noexcept
 
-    void acb_dirichlet_platt_multieval_threaded(arb_ptr res, const fmpz_t T, slong A, slong B, const arb_t h, const fmpz_t J, slong K, slong sigma, slong prec)
+    void acb_dirichlet_platt_multieval_threaded(arb_ptr res, const fmpz_t T, slong A, slong B, const arb_t h, const fmpz_t J, slong K, slong sigma, slong prec) noexcept
     # Compute :func:`acb_dirichlet_platt_scaled_lambda` at `N=AB` points on a
     # grid, following the notation of [Pla2017]_. The first point on the grid
     # is `T - B/2` and the distance between grid points is `1/A`. The product
@@ -485,7 +485,7 @@ cdef extern from "flint_wrap.h":
     # *flint_get_num_threads()*, while the default multieval version chooses
     # whether to use multithreading automatically.
 
-    void acb_dirichlet_platt_ws_interpolation(arb_t res, arf_t deriv, const arb_t t0, arb_srcptr p, const fmpz_t T, slong A, slong B, slong Ns_max, const arb_t H, slong sigma, slong prec)
+    void acb_dirichlet_platt_ws_interpolation(arb_t res, arf_t deriv, const arb_t t0, arb_srcptr p, const fmpz_t T, slong A, slong B, slong Ns_max, const arb_t H, slong sigma, slong prec) noexcept
     # Compute :func:`acb_dirichlet_platt_scaled_lambda` at *t0* by
     # Gaussian-windowed Whittaker-Shannon interpolation of points evaluated by
     # :func:`acb_dirichlet_platt_scaled_lambda_vec`. The derivative is
@@ -496,11 +496,11 @@ cdef extern from "flint_wrap.h":
     # interpolation. *sigma* is an odd positive integer tuning parameter
     # `\sigma \in 2\mathbb{Z}_{>0}+1` used in computing error bounds.
 
-    slong _acb_dirichlet_platt_local_hardy_z_zeros(arb_ptr res, const fmpz_t n, slong len, const fmpz_t T, slong A, slong B, const arb_t h, const fmpz_t J, slong K, slong sigma_grid, slong Ns_max, const arb_t H, slong sigma_interp, slong prec)
+    slong _acb_dirichlet_platt_local_hardy_z_zeros(arb_ptr res, const fmpz_t n, slong len, const fmpz_t T, slong A, slong B, const arb_t h, const fmpz_t J, slong K, slong sigma_grid, slong Ns_max, const arb_t H, slong sigma_interp, slong prec) noexcept
 
-    slong acb_dirichlet_platt_local_hardy_z_zeros(arb_ptr res, const fmpz_t n, slong len, slong prec)
+    slong acb_dirichlet_platt_local_hardy_z_zeros(arb_ptr res, const fmpz_t n, slong len, slong prec) noexcept
 
-    slong acb_dirichlet_platt_hardy_z_zeros(arb_ptr res, const fmpz_t n, slong len, slong prec)
+    slong acb_dirichlet_platt_hardy_z_zeros(arb_ptr res, const fmpz_t n, slong len, slong prec) noexcept
     # Sets at most the first *len* entries of *res* to consecutive
     # zeros of the Hardy Z-function starting with the *n*-th zero.
     # The number of obtained consecutive zeros is returned. The first two
@@ -513,7 +513,7 @@ cdef extern from "flint_wrap.h":
     # variants currently expect `10^4 \leq n \leq 10^{23}`. The user has the
     # option of multi-threading through *flint_set_num_threads(numthreads)*.
 
-    slong acb_dirichlet_platt_zeta_zeros(acb_ptr res, const fmpz_t n, slong len, slong prec)
+    slong acb_dirichlet_platt_zeta_zeros(acb_ptr res, const fmpz_t n, slong len, slong prec) noexcept
     # Sets at most the first *len* entries of *res* to consecutive
     # zeros of the Riemann zeta function starting with the *n*-th zero.
     # The number of obtained consecutive zeros is returned. It currently

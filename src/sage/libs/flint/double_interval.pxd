@@ -12,55 +12,55 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    di_t di_interval(double a, double b)
+    di_t di_interval(double a, double b) noexcept
     # Returns the interval `[a, b]`. We require that the endpoints
     # are ordered and not NaN.
 
-    di_t arb_get_di(const arb_t x)
+    di_t arb_get_di(const arb_t x) noexcept
     # Returns the ball *x* converted to a double-precision interval.
 
-    void arb_set_di(arb_t res, di_t x, slong prec)
+    void arb_set_di(arb_t res, di_t x, slong prec) noexcept
     # Sets the ball *res* to the double-precision interval *x*,
     # rounded to *prec* bits.
 
-    void di_print(di_t x)
+    void di_print(di_t x) noexcept
     # Prints *x* to standard output. This simply prints decimal
     # representations of the floating-point endpoints; the
     # decimals are not guaranteed to be rounded outward.
 
-    double d_randtest2(flint_rand_t state)
+    double d_randtest2(flint_rand_t state) noexcept
     # Returns a random non-NaN ``double`` with any exponent.
     # The value can be infinite or subnormal.
 
-    di_t di_randtest(flint_rand_t state)
+    di_t di_randtest(flint_rand_t state) noexcept
     # Returns an interval with random endpoints.
 
-    di_t di_neg(di_t x)
+    di_t di_neg(di_t x) noexcept
     # Returns the exact negation of *x*.
 
-    di_t di_fast_add(di_t x, di_t y)
-    di_t di_fast_sub(di_t x, di_t y)
-    di_t di_fast_mul(di_t x, di_t y)
-    di_t di_fast_div(di_t x, di_t y)
+    di_t di_fast_add(di_t x, di_t y) noexcept
+    di_t di_fast_sub(di_t x, di_t y) noexcept
+    di_t di_fast_mul(di_t x, di_t y) noexcept
+    di_t di_fast_div(di_t x, di_t y) noexcept
     # Returns the sum, difference, product or quotient of *x* and *y*.
     # Division by zero is currently defined to return `[-\infty, +\infty]`.
 
-    di_t di_fast_sqr(di_t x)
+    di_t di_fast_sqr(di_t x) noexcept
     # Returns the square of *x*. The output is clamped to
     # be nonnegative.
 
-    di_t di_fast_add_d(di_t x, double y)
-    di_t di_fast_sub_d(di_t x, double y)
-    di_t di_fast_mul_d(di_t x, double y)
-    di_t di_fast_div_d(di_t x, double y)
+    di_t di_fast_add_d(di_t x, double y) noexcept
+    di_t di_fast_sub_d(di_t x, double y) noexcept
+    di_t di_fast_mul_d(di_t x, double y) noexcept
+    di_t di_fast_div_d(di_t x, double y) noexcept
     # Arithmetic with an exact ``double`` operand.
 
-    di_t di_fast_log_nonnegative(di_t x)
+    di_t di_fast_log_nonnegative(di_t x) noexcept
     # Returns an enclosure of `\log(x)`. The lower endpoint of *x*
     # is rounded up to 0 if it is negative.
 
-    di_t di_fast_mid(di_t x)
+    di_t di_fast_mid(di_t x) noexcept
     # Returns an enclosure of the midpoint of *x*.
 
-    double di_fast_ubound_radius(di_t x)
+    double di_fast_ubound_radius(di_t x) noexcept
     # Returns an upper bound for the radius of *x*.

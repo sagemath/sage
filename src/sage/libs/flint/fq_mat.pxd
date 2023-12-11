@@ -12,117 +12,117 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fq_mat_init(fq_mat_t mat, slong rows, slong cols, const fq_ctx_t ctx)
+    void fq_mat_init(fq_mat_t mat, slong rows, slong cols, const fq_ctx_t ctx) noexcept
     # Initialises ``mat`` to a ``rows``-by-``cols`` matrix with
     # coefficients in `\mathbf{F}_{q}` given by ``ctx``. All elements
     # are set to zero.
 
-    void fq_mat_init_set(fq_mat_t mat, const fq_mat_t src, const fq_ctx_t ctx)
+    void fq_mat_init_set(fq_mat_t mat, const fq_mat_t src, const fq_ctx_t ctx) noexcept
     # Initialises ``mat`` and sets its dimensions and elements to
     # those of ``src``.
 
-    void fq_mat_clear(fq_mat_t mat, const fq_ctx_t ctx)
+    void fq_mat_clear(fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Clears the matrix and releases any memory it used. The matrix
     # cannot be used again until it is initialised. This function must be
     # called exactly once when finished using an ``fq_mat_t`` object.
 
-    void fq_mat_set(fq_mat_t mat, const fq_mat_t src, const fq_ctx_t ctx)
+    void fq_mat_set(fq_mat_t mat, const fq_mat_t src, const fq_ctx_t ctx) noexcept
     # Sets ``mat`` to a copy of ``src``. It is assumed
     # that ``mat`` and ``src`` have identical dimensions.
 
-    fq_struct * fq_mat_entry(const fq_mat_t mat, slong i, slong j)
+    fq_struct * fq_mat_entry(const fq_mat_t mat, slong i, slong j) noexcept
     # Directly accesses the entry in ``mat`` in row `i` and column `j`,
     # indexed from zero. No bounds checking is performed.
 
-    void fq_mat_entry_set(fq_mat_t mat, slong i, slong j, const fq_t x, const fq_ctx_t ctx)
+    void fq_mat_entry_set(fq_mat_t mat, slong i, slong j, const fq_t x, const fq_ctx_t ctx) noexcept
     # Sets the entry in ``mat`` in row `i` and column `j` to ``x``.
 
-    slong fq_mat_nrows(const fq_mat_t mat, const fq_ctx_t ctx)
+    slong fq_mat_nrows(const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Returns the number of rows in ``mat``.
 
-    slong fq_mat_ncols(const fq_mat_t mat, const fq_ctx_t ctx)
+    slong fq_mat_ncols(const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Returns the number of columns in ``mat``.
 
-    void fq_mat_swap(fq_mat_t mat1, fq_mat_t mat2, const fq_ctx_t ctx)
+    void fq_mat_swap(fq_mat_t mat1, fq_mat_t mat2, const fq_ctx_t ctx) noexcept
     # Swaps two matrices. The dimensions of ``mat1`` and ``mat2``
     # are allowed to be different.
 
-    void fq_mat_swap_entrywise(fq_mat_t mat1, fq_mat_t mat2, const fq_ctx_t ctx)
+    void fq_mat_swap_entrywise(fq_mat_t mat1, fq_mat_t mat2, const fq_ctx_t ctx) noexcept
     # Swaps two matrices by swapping the individual entries rather than swapping
     # the contents of the structs.
 
-    void fq_mat_zero(fq_mat_t mat, const fq_ctx_t ctx)
+    void fq_mat_zero(fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Sets all entries of ``mat`` to 0.
 
-    void fq_mat_one(fq_mat_t mat, const fq_ctx_t ctx)
+    void fq_mat_one(fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Sets all the diagonal entries of ``mat`` to 1 and all other entries to 0.
 
-    void fq_mat_swap_rows(fq_mat_t mat, slong * perm, slong r, slong s, const fq_ctx_t ctx)
+    void fq_mat_swap_rows(fq_mat_t mat, slong * perm, slong r, slong s, const fq_ctx_t ctx) noexcept
     # Swaps rows ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    void fq_mat_swap_cols(fq_mat_t mat, slong * perm, slong r, slong s, const fq_ctx_t ctx)
+    void fq_mat_swap_cols(fq_mat_t mat, slong * perm, slong r, slong s, const fq_ctx_t ctx) noexcept
     # Swaps columns ``r`` and ``s`` of ``mat``.  If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
 
-    void fq_mat_invert_rows(fq_mat_t mat, slong * perm, const fq_ctx_t ctx)
+    void fq_mat_invert_rows(fq_mat_t mat, slong * perm, const fq_ctx_t ctx) noexcept
     # Swaps rows ``i`` and ``r - i`` of ``mat`` for ``0 <= i < r/2``, where
     # ``r`` is the number of rows of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the rows will also be applied to ``perm``.
 
-    void fq_mat_invert_cols(fq_mat_t mat, slong * perm, const fq_ctx_t ctx)
+    void fq_mat_invert_cols(fq_mat_t mat, slong * perm, const fq_ctx_t ctx) noexcept
     # Swaps columns ``i`` and ``c - i`` of ``mat`` for ``0 <= i < c/2``, where
     # ``c`` is the number of columns of ``mat``. If ``perm`` is non-``NULL``, the
     # permutation of the columns will also be applied to ``perm``.
 
-    void fq_mat_set_nmod_mat(fq_mat_t mat1, const nmod_mat_t mat2, const fq_ctx_t ctx)
+    void fq_mat_set_nmod_mat(fq_mat_t mat1, const nmod_mat_t mat2, const fq_ctx_t ctx) noexcept
     # Sets the matrix ``mat1`` to the matrix ``mat2``.
 
-    void fq_mat_set_fmpz_mod_mat(fq_mat_t mat1, const fmpz_mod_mat_t mat2, const fq_ctx_t ctx)
+    void fq_mat_set_fmpz_mod_mat(fq_mat_t mat1, const fmpz_mod_mat_t mat2, const fq_ctx_t ctx) noexcept
     # Sets the matrix ``mat1`` to the matrix ``mat2``.
 
-    void fq_mat_concat_vertical(fq_mat_t res, const fq_mat_t mat1, const fq_mat_t mat2, const fq_ctx_t ctx)
+    void fq_mat_concat_vertical(fq_mat_t res, const fq_mat_t mat1, const fq_mat_t mat2, const fq_ctx_t ctx) noexcept
     # Sets ``res`` to vertical concatenation of (``mat1``, ``mat2``) in that order. Matrix dimensions : ``mat1`` : `m \times n`, ``mat2`` : `k \times n`, ``res`` : `(m + k) \times n`.
 
-    void fq_mat_concat_horizontal(fq_mat_t res, const fq_mat_t mat1, const fq_mat_t mat2, const fq_ctx_t ctx)
+    void fq_mat_concat_horizontal(fq_mat_t res, const fq_mat_t mat1, const fq_mat_t mat2, const fq_ctx_t ctx) noexcept
     # Sets ``res`` to horizontal concatenation of (``mat1``, ``mat2``) in that order. Matrix dimensions : ``mat1`` : `m \times n`, ``mat2`` : `m \times k`, ``res``  : `m \times (n + k)`.
 
-    int fq_mat_print_pretty(const fq_mat_t mat, const fq_ctx_t ctx)
+    int fq_mat_print_pretty(const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Pretty-prints ``mat`` to ``stdout``. A header is printed
     # followed by the rows enclosed in brackets.
 
-    int fq_mat_fprint_pretty(FILE * file, const fq_mat_t mat, const fq_ctx_t ctx)
+    int fq_mat_fprint_pretty(FILE * file, const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Pretty-prints ``mat`` to ``file``. A header is printed
     # followed by the rows enclosed in brackets.
     # In case of success, returns a positive value.  In case of failure,
     # returns a non-positive value.
 
-    int fq_mat_print(const fq_mat_t mat, const fq_ctx_t ctx)
+    int fq_mat_print(const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Prints ``mat`` to ``stdout``. A header is printed followed
     # by the rows enclosed in brackets.
 
-    int fq_mat_fprint(FILE * file, const fq_mat_t mat, const fq_ctx_t ctx)
+    int fq_mat_fprint(FILE * file, const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Prints ``mat`` to ``file``. A header is printed followed by
     # the rows enclosed in brackets.
     # In case of success, returns a positive value.  In case of failure,
     # returns a non-positive value.
 
-    void fq_mat_window_init(fq_mat_t window, const fq_mat_t mat, slong r1, slong c1, slong r2, slong c2, const fq_ctx_t ctx)
+    void fq_mat_window_init(fq_mat_t window, const fq_mat_t mat, slong r1, slong c1, slong r2, slong c2, const fq_ctx_t ctx) noexcept
     # Initializes the matrix ``window`` to be an ``r2 - r1`` by
     # ``c2 - c1`` submatrix of ``mat`` whose ``(0,0)`` entry
     # is the ``(r1, c1)`` entry of ``mat``.  The memory for the
     # elements of ``window`` is shared with ``mat``.
 
-    void fq_mat_window_clear(fq_mat_t window, const fq_ctx_t ctx)
+    void fq_mat_window_clear(fq_mat_t window, const fq_ctx_t ctx) noexcept
     # Clears the matrix ``window`` and releases any memory that it
     # uses.  Note that the memory to the underlying matrix that
     # ``window`` points to is not freed.
 
-    void fq_mat_randtest(fq_mat_t mat, flint_rand_t state, const fq_ctx_t ctx)
+    void fq_mat_randtest(fq_mat_t mat, flint_rand_t state, const fq_ctx_t ctx) noexcept
     # Sets the elements of ``mat`` to random elements of
     # `\mathbf{F}_{q}`, given by ``ctx``.
 
-    int fq_mat_randpermdiag(fq_mat_t mat, flint_rand_t state, fq_struct * diag, slong n, const fq_ctx_t ctx)
+    int fq_mat_randpermdiag(fq_mat_t mat, flint_rand_t state, fq_struct * diag, slong n, const fq_ctx_t ctx) noexcept
     # Sets ``mat`` to a random permutation of the diagonal matrix
     # with `n` leading entries given by the vector ``diag``. It is
     # assumed that the main diagonal of ``mat`` has room for at
@@ -130,7 +130,7 @@ cdef extern from "flint_wrap.h":
     # Returns `0` or `1`, depending on whether the permutation is even
     # or odd respectively.
 
-    void fq_mat_randrank(fq_mat_t mat, flint_rand_t state, slong rank, const fq_ctx_t ctx)
+    void fq_mat_randrank(fq_mat_t mat, flint_rand_t state, slong rank, const fq_ctx_t ctx) noexcept
     # Sets ``mat`` to a random sparse matrix with the given rank,
     # having exactly as many non-zero elements as the rank, with the
     # non-zero elements being uniformly random elements of
@@ -138,92 +138,92 @@ cdef extern from "flint_wrap.h":
     # The matrix can be transformed into a dense matrix with unchanged
     # rank by subsequently calling :func:`fq_mat_randops`.
 
-    void fq_mat_randops(fq_mat_t mat, slong count, flint_rand_t state, const fq_ctx_t ctx)
+    void fq_mat_randops(fq_mat_t mat, slong count, flint_rand_t state, const fq_ctx_t ctx) noexcept
     # Randomises ``mat`` by performing elementary row or column
     # operations. More precisely, at most ``count`` random additions
     # or subtractions of distinct rows and columns will be performed.
     # This leaves the rank (and for square matrices, determinant)
     # unchanged.
 
-    void fq_mat_randtril(fq_mat_t mat, flint_rand_t state, int unit, const fq_ctx_t ctx)
+    void fq_mat_randtril(fq_mat_t mat, flint_rand_t state, int unit, const fq_ctx_t ctx) noexcept
     # Sets ``mat`` to a random lower triangular matrix. If
     # ``unit`` is 1, it will have ones on the main diagonal,
     # otherwise it will have random nonzero entries on the main
     # diagonal.
 
-    void fq_mat_randtriu(fq_mat_t mat, flint_rand_t state, int unit, const fq_ctx_t ctx)
+    void fq_mat_randtriu(fq_mat_t mat, flint_rand_t state, int unit, const fq_ctx_t ctx) noexcept
     # Sets ``mat`` to a random upper triangular matrix. If
     # ``unit`` is 1, it will have ones on the main diagonal,
     # otherwise it will have random nonzero entries on the main
     # diagonal.
 
-    bint fq_mat_equal(const fq_mat_t mat1, const fq_mat_t mat2, const fq_ctx_t ctx)
+    bint fq_mat_equal(const fq_mat_t mat1, const fq_mat_t mat2, const fq_ctx_t ctx) noexcept
     # Returns nonzero if mat1 and mat2 have the same dimensions and elements,
     # and zero otherwise.
 
-    bint fq_mat_is_zero(const fq_mat_t mat, const fq_ctx_t ctx)
+    bint fq_mat_is_zero(const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Returns a non-zero value if all entries of ``mat`` are zero, and
     # otherwise returns zero.
 
-    bint fq_mat_is_one(const fq_mat_t mat, const fq_ctx_t ctx)
+    bint fq_mat_is_one(const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Returns a non-zero value if all entries ``mat`` are zero except the
     # diagonal entries which must be one, otherwise returns zero..
 
-    bint fq_mat_is_empty(const fq_mat_t mat, const fq_ctx_t ctx)
+    bint fq_mat_is_empty(const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Returns a non-zero value if the number of rows or the number of
     # columns in ``mat`` is zero, and otherwise returns zero.
 
-    bint fq_mat_is_square(const fq_mat_t mat, const fq_ctx_t ctx)
+    bint fq_mat_is_square(const fq_mat_t mat, const fq_ctx_t ctx) noexcept
     # Returns a non-zero value if the number of rows is equal to the
     # number of columns in ``mat``, and otherwise returns zero.
 
-    void fq_mat_add(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    void fq_mat_add(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Computes `C = A + B`. Dimensions must be identical.
 
-    void fq_mat_sub(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    void fq_mat_sub(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Computes `C = A - B`. Dimensions must be identical.
 
-    void fq_mat_neg(fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    void fq_mat_neg(fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Sets `B = -A`. Dimensions must be identical.
 
-    void fq_mat_mul(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    void fq_mat_mul(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Sets `C = AB`. Dimensions must be compatible for matrix
     # multiplication.  Aliasing is allowed. This function automatically chooses
     # between classical and KS multiplication.
 
-    void fq_mat_mul_classical(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    void fq_mat_mul_classical(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Sets `C = AB`. Dimensions must be compatible for matrix multiplication.
     # `C` is not allowed to be aliased with `A` or `B`. Uses classical
     # matrix multiplication.
 
-    void fq_mat_mul_KS(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    void fq_mat_mul_KS(fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Sets `C = AB`. Dimensions must be compatible for matrix
     # multiplication.  `C` is not allowed to be aliased with `A` or
     # `B`. Uses Kronecker substitution to perform the multiplication
     # over the integers.
 
-    void fq_mat_submul(fq_mat_t D, const fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    void fq_mat_submul(fq_mat_t D, const fq_mat_t C, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Sets `D = C + AB`. `C` and `D` may be aliased with each other but
     # not with `A` or `B`.
 
-    void fq_mat_mul_vec(fq_struct * c, const fq_mat_t A, const fq_struct * b, slong blen, const fq_ctx_t ctx)
-    void fq_mat_mul_vec_ptr(fq_struct * const * c, const fq_mat_t A, const fq_struct * const * b, slong blen, const fq_ctx_t ctx)
+    void fq_mat_mul_vec(fq_struct * c, const fq_mat_t A, const fq_struct * b, slong blen, const fq_ctx_t ctx) noexcept
+    void fq_mat_mul_vec_ptr(fq_struct * const * c, const fq_mat_t A, const fq_struct * const * b, slong blen, const fq_ctx_t ctx) noexcept
     # Compute a matrix-vector product of ``A`` and ``(b, blen)`` and store the result in ``c``.
     # The vector ``(b, blen)`` is either truncated or zero-extended to the number of columns of ``A``.
     # The number entries written to ``c`` is always equal to the number of rows of ``A``.
 
-    void fq_mat_vec_mul(fq_struct * c, const fq_struct * a, slong alen, const fq_mat_t B, const fq_ctx_t ctx)
-    void fq_mat_vec_mul_ptr(fq_struct * const * c, const fq_struct * const * a, slong alen, const fq_mat_t B, const fq_ctx_t ctx)
+    void fq_mat_vec_mul(fq_struct * c, const fq_struct * a, slong alen, const fq_mat_t B, const fq_ctx_t ctx) noexcept
+    void fq_mat_vec_mul_ptr(fq_struct * const * c, const fq_struct * const * a, slong alen, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Compute a vector-matrix product of ``(a, alen)`` and ``B`` and and store the result in ``c``.
     # The vector ``(a, alen)`` is either truncated or zero-extended to the number of rows of ``B``.
     # The number entries written to ``c`` is always equal to the number of columns of ``B``.
 
-    int fq_mat_inv(fq_mat_t B, fq_mat_t A, const fq_ctx_t ctx)
+    int fq_mat_inv(fq_mat_t B, fq_mat_t A, const fq_ctx_t ctx) noexcept
     # Sets `B = A^{-1}` and returns `1` if `A` is invertible. If `A` is singular,
     # returns `0` and sets the elements of `B` to undefined values.
     # `A` and `B` must be square matrices with the same dimensions.
 
-    slong fq_mat_lu(slong * P, fq_mat_t A, int rank_check, const fq_ctx_t ctx)
+    slong fq_mat_lu(slong * P, fq_mat_t A, int rank_check, const fq_ctx_t ctx) noexcept
     # Computes a generalised LU decomposition `LU = PA` of a given
     # matrix `A`, returning the rank of `A`.
     # If `A` is a nonsingular square matrix, it will be overwritten with
@@ -240,26 +240,26 @@ cdef extern from "flint_wrap.h":
     # if `A` is detected to be rank-deficient.
     # This function calls ``fq_mat_lu_recursive``.
 
-    slong fq_mat_lu_classical(slong * P, fq_mat_t A, int rank_check, const fq_ctx_t ctx)
+    slong fq_mat_lu_classical(slong * P, fq_mat_t A, int rank_check, const fq_ctx_t ctx) noexcept
     # Computes a generalised LU decomposition `LU = PA` of a given
     # matrix `A`, returning the rank of `A`. The behavior of this
     # function is identical to that of ``fq_mat_lu``. Uses Gaussian
     # elimination.
 
-    slong fq_mat_lu_recursive(slong * P, fq_mat_t A, int rank_check, const fq_ctx_t ctx)
+    slong fq_mat_lu_recursive(slong * P, fq_mat_t A, int rank_check, const fq_ctx_t ctx) noexcept
     # Computes a generalised LU decomposition `LU = PA` of a given
     # matrix `A`, returning the rank of `A`. The behavior of this
     # function is identical to that of ``fq_mat_lu``. Uses recursive
     # block decomposition, switching to classical Gaussian elimination
     # for sufficiently small blocks.
 
-    slong fq_mat_rref(fq_mat_t A, const fq_ctx_t ctx)
+    slong fq_mat_rref(fq_mat_t A, const fq_ctx_t ctx) noexcept
     # Puts `A` in reduced row echelon form and returns the rank of `A`.
     # The rref is computed by first obtaining an unreduced row echelon
     # form via LU decomposition and then solving an additional
     # triangular system.
 
-    slong fq_mat_reduce_row(fq_mat_t A, slong * P, slong * L, slong n, const fq_ctx_t ctx)
+    slong fq_mat_reduce_row(fq_mat_t A, slong * P, slong * L, slong n, const fq_ctx_t ctx) noexcept
     # Reduce row n of the matrix `A`, assuming the prior rows are in Gauss
     # form. However those rows may not be in order. The entry `i` of the array
     # `P` is the row of `A` which has a pivot in the `i`-th column. If no such
@@ -272,7 +272,7 @@ cdef extern from "flint_wrap.h":
     # `L` can all be set to the number of columns of `A`. We require the entries
     # of `L` to be monotonic increasing.
 
-    void fq_mat_solve_tril(fq_mat_t X, const fq_mat_t L, const fq_mat_t B, int unit, const fq_ctx_t ctx)
+    void fq_mat_solve_tril(fq_mat_t X, const fq_mat_t L, const fq_mat_t B, int unit, const fq_ctx_t ctx) noexcept
     # Sets `X = L^{-1} B` where `L` is a full rank lower triangular
     # square matrix. If ``unit`` = 1, `L` is assumed to have ones on
     # its main diagonal, and the main diagonal will not be read.  `X`
@@ -280,14 +280,14 @@ cdef extern from "flint_wrap.h":
     # is allowed. Automatically chooses between the classical and
     # recursive algorithms.
 
-    void fq_mat_solve_tril_classical(fq_mat_t X, const fq_mat_t L, const fq_mat_t B, int unit, const fq_ctx_t ctx)
+    void fq_mat_solve_tril_classical(fq_mat_t X, const fq_mat_t L, const fq_mat_t B, int unit, const fq_ctx_t ctx) noexcept
     # Sets `X = L^{-1} B` where `L` is a full rank lower triangular
     # square matrix. If ``unit`` = 1, `L` is assumed to have ones on
     # its main diagonal, and the main diagonal will not be read.  `X`
     # and `B` are allowed to be the same matrix, but no other aliasing
     # is allowed. Uses forward substitution.
 
-    void fq_mat_solve_tril_recursive(fq_mat_t X, const fq_mat_t L, const fq_mat_t B, int unit, const fq_ctx_t ctx)
+    void fq_mat_solve_tril_recursive(fq_mat_t X, const fq_mat_t L, const fq_mat_t B, int unit, const fq_ctx_t ctx) noexcept
     # Sets `X = L^{-1} B` where `L` is a full rank lower triangular
     # square matrix. If ``unit`` = 1, `L` is assumed to have ones on
     # its main diagonal, and the main diagonal will not be read.  `X`
@@ -301,7 +301,7 @@ cdef extern from "flint_wrap.h":
     # to reduce the problem to matrix multiplication and triangular
     # solving of smaller systems.
 
-    void fq_mat_solve_triu(fq_mat_t X, const fq_mat_t U, const fq_mat_t B, int unit, const fq_ctx_t ctx)
+    void fq_mat_solve_triu(fq_mat_t X, const fq_mat_t U, const fq_mat_t B, int unit, const fq_ctx_t ctx) noexcept
     # Sets `X = U^{-1} B` where `U` is a full rank upper triangular
     # square matrix. If ``unit`` = 1, `U` is assumed to have ones on
     # its main diagonal, and the main diagonal will not be read.  `X`
@@ -309,14 +309,14 @@ cdef extern from "flint_wrap.h":
     # is allowed. Automatically chooses between the classical and
     # recursive algorithms.
 
-    void fq_mat_solve_triu_classical(fq_mat_t X, const fq_mat_t U, const fq_mat_t B, int unit, const fq_ctx_t ctx)
+    void fq_mat_solve_triu_classical(fq_mat_t X, const fq_mat_t U, const fq_mat_t B, int unit, const fq_ctx_t ctx) noexcept
     # Sets `X = U^{-1} B` where `U` is a full rank upper triangular
     # square matrix. If ``unit`` = 1, `U` is assumed to have ones on
     # its main diagonal, and the main diagonal will not be read.  `X`
     # and `B` are allowed to be the same matrix, but no other aliasing
     # is allowed. Uses forward substitution.
 
-    void fq_mat_solve_triu_recursive(fq_mat_t X, const fq_mat_t U, const fq_mat_t B, int unit, const fq_ctx_t ctx)
+    void fq_mat_solve_triu_recursive(fq_mat_t X, const fq_mat_t U, const fq_mat_t B, int unit, const fq_ctx_t ctx) noexcept
     # Sets `X = U^{-1} B` where `U` is a full rank upper triangular
     # square matrix. If ``unit`` = 1, `U` is assumed to have ones on
     # its main diagonal, and the main diagonal will not be read.  `X`
@@ -330,20 +330,20 @@ cdef extern from "flint_wrap.h":
     # to reduce the problem to matrix multiplication and triangular
     # solving of smaller systems.
 
-    int fq_mat_solve(fq_mat_t X, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    int fq_mat_solve(fq_mat_t X, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Solves the matrix-matrix equation `AX = B`.
     # Returns `1` if `A` has full rank; otherwise returns `0` and sets the
     # elements of `X` to undefined values.
     # The matrix `A` must be square.
 
-    int fq_mat_can_solve(fq_mat_t X, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx)
+    int fq_mat_can_solve(fq_mat_t X, const fq_mat_t A, const fq_mat_t B, const fq_ctx_t ctx) noexcept
     # Solves the matrix-matrix equation `AX = B` over `Fq`.
     # Returns `1` if a solution exists; otherwise returns `0` and sets the
     # elements of `X` to zero. If more than one solution exists, one of the
     # valid solutions is given.
     # There are no restrictions on the shape of `A` and it may be singular.
 
-    void fq_mat_similarity(fq_mat_t M, slong r, fq_t d, const fq_ctx_t ctx)
+    void fq_mat_similarity(fq_mat_t M, slong r, fq_t d, const fq_ctx_t ctx) noexcept
     # Applies a similarity transform to the `n\times n` matrix `M` in-place.
     # If `P` is the `n\times n` identity matrix the zero entries of whose row
     # `r` (`0`-indexed) have been replaced by `d`, this transform is equivalent
@@ -353,14 +353,14 @@ cdef extern from "flint_wrap.h":
     # The value `d` is required to be reduced modulo the modulus of the entries
     # in the matrix.
 
-    void fq_mat_charpoly_danilevsky(fq_poly_t p, const fq_mat_t M, const fq_ctx_t ctx)
+    void fq_mat_charpoly_danilevsky(fq_poly_t p, const fq_mat_t M, const fq_ctx_t ctx) noexcept
     # Compute the characteristic polynomial `p` of the matrix `M`. The matrix
     # is assumed to be square.
 
-    void fq_mat_charpoly(fq_poly_t p, const fq_mat_t M, const fq_ctx_t ctx)
+    void fq_mat_charpoly(fq_poly_t p, const fq_mat_t M, const fq_ctx_t ctx) noexcept
     # Compute the characteristic polynomial `p` of the matrix `M`. The matrix
     # is required to be square, otherwise an exception is raised.
 
-    void fq_mat_minpoly(fq_poly_t p, const fq_mat_t M, const fq_ctx_t ctx)
+    void fq_mat_minpoly(fq_poly_t p, const fq_mat_t M, const fq_ctx_t ctx) noexcept
     # Compute the minimal polynomial `p` of the matrix `M`. The matrix
     # is required to be square, otherwise an exception is raised.

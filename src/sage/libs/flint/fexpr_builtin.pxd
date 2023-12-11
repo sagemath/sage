@@ -12,14 +12,14 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    slong fexpr_builtin_lookup(const char * s)
+    slong fexpr_builtin_lookup(const char * s) noexcept
     # Returns the internal index used to encode the builtin symbol
     # with name *s* in expressions. If *s* is not the name of a builtin
     # symbol, returns -1.
 
-    const char * fexpr_builtin_name(slong n)
+    const char * fexpr_builtin_name(slong n) noexcept
     # Returns a read-only pointer for a string giving the name of the
     # builtin symbol with index *n*.
 
-    slong fexpr_builtin_length()
+    slong fexpr_builtin_length() noexcept
     # Returns the number of builtin symbols.

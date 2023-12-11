@@ -12,7 +12,7 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fq_embed_gens(fq_t gen_sub, fq_t gen_sup, fmpz_mod_poly_t minpoly, const fq_ctx_t sub_ctx, const fq_ctx_t sup_ctx)
+    void fq_embed_gens(fq_t gen_sub, fq_t gen_sup, fmpz_mod_poly_t minpoly, const fq_ctx_t sub_ctx, const fq_ctx_t sup_ctx) noexcept
     # Given two contexts ``sub_ctx`` and ``sup_ctx``, such that
     # ``degree(sub_ctx)`` divides ``degree(sup_ctx)``, compute:
     # * an element ``gen_sub`` in ``sub_ctx`` such that
@@ -24,7 +24,7 @@ cdef extern from "flint_wrap.h":
     # These data uniquely define an embedding of ``sub_ctx`` into
     # ``sup_ctx``.
 
-    void _fq_embed_gens_naive(fq_t gen_sub, fq_t gen_sup, fmpz_mod_poly_t minpoly, const fq_ctx_t sub_ctx, const fq_ctx_t sup_ctx)
+    void _fq_embed_gens_naive(fq_t gen_sub, fq_t gen_sup, fmpz_mod_poly_t minpoly, const fq_ctx_t sub_ctx, const fq_ctx_t sup_ctx) noexcept
     # Given two contexts ``sub_ctx`` and ``sup_ctx``, such that
     # ``degree(sub_ctx)`` divides ``degree(sup_ctx)``, compute an
     # embedding of ``sub_ctx`` into ``sup_ctx`` defined as follows:
@@ -34,7 +34,7 @@ cdef extern from "flint_wrap.h":
     # * ``gen_sup`` is a root of ``minpoly`` inside the field
     # defined by ``sup_ctx``.
 
-    void fq_embed_matrices(fmpz_mod_mat_t embed, fmpz_mod_mat_t project, const fq_t gen_sub, const fq_ctx_t sub_ctx, const fq_t gen_sup, const fq_ctx_t sup_ctx, const fmpz_mod_poly_t gen_minpoly)
+    void fq_embed_matrices(fmpz_mod_mat_t embed, fmpz_mod_mat_t project, const fq_t gen_sub, const fq_ctx_t sub_ctx, const fq_t gen_sup, const fq_ctx_t sup_ctx, const fmpz_mod_poly_t gen_minpoly) noexcept
     # Given:
     # * two contexts ``sub_ctx`` and ``sup_ctx``, of
     # respective degrees `m` and `n`, such that `m` divides `n`;
@@ -49,7 +49,7 @@ cdef extern from "flint_wrap.h":
     # ``project`` `\times` ``embed`` is the `m\times m` identity
     # matrix.
 
-    void fq_embed_trace_matrix(fmpz_mod_mat_t res, const fmpz_mod_mat_t basis, const fq_ctx_t sub_ctx, const fq_ctx_t sup_ctx)
+    void fq_embed_trace_matrix(fmpz_mod_mat_t res, const fmpz_mod_mat_t basis, const fq_ctx_t sub_ctx, const fq_ctx_t sup_ctx) noexcept
     # Given:
     # * two contexts ``sub_ctx`` and ``sup_ctx``, of degrees
     # `m` and `n`, such that `m` divides `n`;
@@ -65,33 +65,33 @@ cdef extern from "flint_wrap.h":
     # `m=n`, ``basis`` represents a Frobenius, and the result is its
     # inverse matrix.
 
-    void fq_embed_composition_matrix(fmpz_mod_mat_t matrix, const fq_t gen, const fq_ctx_t ctx)
+    void fq_embed_composition_matrix(fmpz_mod_mat_t matrix, const fq_t gen, const fq_ctx_t ctx) noexcept
     # Compute the *composition matrix* of ``gen``.
     # For an element `a\in\mathbf{F}_{p^n}`, its composition matrix is the
     # matrix whose columns are `a^0, a^1, \ldots, a^{n-1}`.
 
-    void fq_embed_composition_matrix_sub(fmpz_mod_mat_t matrix, const fq_t gen, const fq_ctx_t ctx, slong trunc)
+    void fq_embed_composition_matrix_sub(fmpz_mod_mat_t matrix, const fq_t gen, const fq_ctx_t ctx, slong trunc) noexcept
     # Compute the *composition matrix* of ``gen``, truncated to
     # ``trunc`` columns.
 
-    void fq_embed_mul_matrix(fmpz_mod_mat_t matrix, const fq_t gen, const fq_ctx_t ctx)
+    void fq_embed_mul_matrix(fmpz_mod_mat_t matrix, const fq_t gen, const fq_ctx_t ctx) noexcept
     # Compute the *multiplication matrix* of ``gen``.
     # For an element `a` in `\mathbf{F}_{p^n}=\mathbf{F}_p[x]`, its
     # multiplication matrix is the matrix whose columns are `a, ax,
     # \dots, ax^{n-1}`.
 
-    void fq_embed_mono_to_dual_matrix(fmpz_mod_mat_t res, const fq_ctx_t ctx)
+    void fq_embed_mono_to_dual_matrix(fmpz_mod_mat_t res, const fq_ctx_t ctx) noexcept
     # Compute the change of basis matrix from the monomial basis of
     # ``ctx`` to its dual basis.
 
-    void fq_embed_dual_to_mono_matrix(fmpz_mod_mat_t res, const fq_ctx_t ctx)
+    void fq_embed_dual_to_mono_matrix(fmpz_mod_mat_t res, const fq_ctx_t ctx) noexcept
     # Compute the change of basis matrix from the dual basis of
     # ``ctx`` to its monomial basis.
 
-    void fq_modulus_pow_series_inv(fmpz_mod_poly_t res, const fq_ctx_t ctx, slong trunc)
+    void fq_modulus_pow_series_inv(fmpz_mod_poly_t res, const fq_ctx_t ctx, slong trunc) noexcept
     # Compute the power series inverse of the reverse of the modulus of
     # ``ctx`` up to `O(x^\texttt{trunc})`.
 
-    void fq_modulus_derivative_inv(fq_t m_prime, fq_t m_prime_inv, const fq_ctx_t ctx)
+    void fq_modulus_derivative_inv(fq_t m_prime, fq_t m_prime_inv, const fq_ctx_t ctx) noexcept
     # Compute the derivative ``m_prime`` of the modulus of ``ctx``
     # as an element of ``ctx``, and its inverse ``m_prime_inv``.

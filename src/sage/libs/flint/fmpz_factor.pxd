@@ -12,25 +12,25 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void fmpz_factor_init(fmpz_factor_t factor)
+    void fmpz_factor_init(fmpz_factor_t factor) noexcept
     # Initialises an ``fmpz_factor_t`` structure.
 
-    void fmpz_factor_clear(fmpz_factor_t factor)
+    void fmpz_factor_clear(fmpz_factor_t factor) noexcept
     # Clears an ``fmpz_factor_t`` structure.
 
-    void _fmpz_factor_append_ui(fmpz_factor_t factor, mp_limb_t p, ulong exp)
+    void _fmpz_factor_append_ui(fmpz_factor_t factor, mp_limb_t p, ulong exp) noexcept
     # Append a factor `p` to the given exponent to the
     # ``fmpz_factor_t`` structure ``factor``.
 
-    void _fmpz_factor_append(fmpz_factor_t factor, const fmpz_t p, ulong exp)
+    void _fmpz_factor_append(fmpz_factor_t factor, const fmpz_t p, ulong exp) noexcept
     # Append a factor `p` to the given exponent to the
     # ``fmpz_factor_t`` structure ``factor``.
 
-    void fmpz_factor(fmpz_factor_t factor, const fmpz_t n)
+    void fmpz_factor(fmpz_factor_t factor, const fmpz_t n) noexcept
     # Factors `n` into prime numbers. If `n` is zero or negative, the
     # sign field of the ``factor`` object will be set accordingly.
 
-    int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n, slong bits, int proved)
+    int fmpz_factor_smooth(fmpz_factor_t factor, const fmpz_t n, slong bits, int proved) noexcept
     # Factors `n` into prime numbers up to approximately the given number of
     # bits and possibly one additional cofactor, which may or may not be prime.
     # If the number is definitely factored fully, the return value is `1`,
@@ -58,10 +58,10 @@ cdef extern from "flint_wrap.h":
     # ``n_factor`` internally if `n` or the remainder after trial division
     # is smaller than one word, guaranteeing a complete factorisation.
 
-    void fmpz_factor_si(fmpz_factor_t factor, slong n)
+    void fmpz_factor_si(fmpz_factor_t factor, slong n) noexcept
     # Like ``fmpz_factor``, but takes a machine integer `n` as input.
 
-    int fmpz_factor_trial_range(fmpz_factor_t factor, const fmpz_t n, ulong start, ulong num_primes)
+    int fmpz_factor_trial_range(fmpz_factor_t factor, const fmpz_t n, ulong start, ulong num_primes) noexcept
     # Factors `n` into prime factors using trial division. If `n` is
     # zero or negative, the sign field of the ``factor`` object will be
     # set accordingly.
@@ -70,7 +70,7 @@ cdef extern from "flint_wrap.h":
     # The function returns 1 if `n` is completely factored, otherwise it returns
     # `0`.
 
-    int fmpz_factor_trial(fmpz_factor_t factor, const fmpz_t n, slong num_primes)
+    int fmpz_factor_trial(fmpz_factor_t factor, const fmpz_t n, slong num_primes) noexcept
     # Factors `n` into prime factors using trial division. If `n` is
     # zero or negative, the sign field of the ``factor`` object will be
     # set accordingly.
@@ -82,20 +82,20 @@ cdef extern from "flint_wrap.h":
     # The final entry in the factor struct is set to the cofactor after removing
     # prime factors, if this is not `1`.
 
-    void fmpz_factor_refine(fmpz_factor_t res, const fmpz_factor_t f)
+    void fmpz_factor_refine(fmpz_factor_t res, const fmpz_factor_t f) noexcept
     # Attempts to improve a partial factorization of an integer by "refining"
     # the factorization ``f`` to a more complete factorization ``res``
     # whose bases are pairwise relatively prime.
     # This function does not require its input to be in canonical form,
     # nor does it guarantee that the resulting factorization will be canonical.
 
-    void fmpz_factor_expand_iterative(fmpz_t n, const fmpz_factor_t factor)
+    void fmpz_factor_expand_iterative(fmpz_t n, const fmpz_factor_t factor) noexcept
     # Evaluates an integer in factored form back to an ``fmpz_t``.
     # This currently exponentiates the bases separately and multiplies
     # them together one by one, although much more efficient algorithms
     # exist.
 
-    int fmpz_factor_pp1(fmpz_t factor, const fmpz_t n, ulong B1, ulong B2_sqrt, ulong c)
+    int fmpz_factor_pp1(fmpz_t factor, const fmpz_t n, ulong B1, ulong B2_sqrt, ulong c) noexcept
     # Use Williams' `p + 1` method to factor `n`, using a prime bound in
     # stage 1 of ``B1`` and a prime limit in stage 2 of at least the square
     # of ``B2_sqrt``. If a factor is found, the function returns `1` and
@@ -108,7 +108,7 @@ cdef extern from "flint_wrap.h":
     # smooth for any prime factors `p` of `n` then the function will
     # not ever succeed).
 
-    int fmpz_factor_pollard_brent_single(fmpz_t p_factor, fmpz_t n_in, fmpz_t yi, fmpz_t ai, mp_limb_t max_iters)
+    int fmpz_factor_pollard_brent_single(fmpz_t p_factor, fmpz_t n_in, fmpz_t yi, fmpz_t ai, mp_limb_t max_iters) noexcept
     # Pollard Rho algorithm for integer factorization. Assumes that the `n` is
     # not prime. ``factor`` is set as the factor if found. Takes as input the initial
     # value `y`, to start polynomial evaluation, and `a`, the constant of the polynomial
@@ -119,7 +119,7 @@ cdef extern from "flint_wrap.h":
     # If the algorithm fails to find a non trivial factor in one call, it tries again
     # (this time with a different set of random values).
 
-    int fmpz_factor_pollard_brent(fmpz_t factor, flint_rand_t state, fmpz_t n, mp_limb_t max_tries, mp_limb_t max_iters)
+    int fmpz_factor_pollard_brent(fmpz_t factor, flint_rand_t state, fmpz_t n, mp_limb_t max_tries, mp_limb_t max_iters) noexcept
     # Pollard Rho algorithm for integer factorization. Assumes that the `n` is
     # not prime. ``factor`` is set as the factor if found. It is not assured that the
     # factor found will be prime. Does not compute the complete factorization,
@@ -133,26 +133,26 @@ cdef extern from "flint_wrap.h":
     # suggested by Richard Brent. It can be found in the paper available at
     # https://maths-people.anu.edu.au/~brent/pd/rpb051i.pdf
 
-    void fmpz_factor_ecm_init(ecm_t ecm_inf, mp_limb_t sz)
+    void fmpz_factor_ecm_init(ecm_t ecm_inf, mp_limb_t sz) noexcept
     # Initializes the ``ecm_t`` struct. This is needed in some functions
     # and carries data between subsequent calls.
 
-    void fmpz_factor_ecm_clear(ecm_t ecm_inf)
+    void fmpz_factor_ecm_clear(ecm_t ecm_inf) noexcept
     # Clears the ``ecm_t`` struct.
 
-    void fmpz_factor_ecm_addmod(mp_ptr a, mp_ptr b, mp_ptr c, mp_ptr n, mp_limb_t n_size)
+    void fmpz_factor_ecm_addmod(mp_ptr a, mp_ptr b, mp_ptr c, mp_ptr n, mp_limb_t n_size) noexcept
     # Sets `a` to `(b + c)` ``%`` `n`. This is not a normal add mod function,
     # it assumes `n` is normalized (highest bit set) and `b` and `c` are reduced
     # modulo `n`.
     # Used for arithmetic operations in ``fmpz_factor_ecm``.
 
-    void fmpz_factor_ecm_submod(mp_ptr x, mp_ptr a, mp_ptr b, mp_ptr n, mp_limb_t n_size)
+    void fmpz_factor_ecm_submod(mp_ptr x, mp_ptr a, mp_ptr b, mp_ptr n, mp_limb_t n_size) noexcept
     # Sets `x` to `(a - b)` ``%`` `n`. This is not a normal subtract mod
     # function, it assumes `n` is normalized (highest bit set)
     # and `b` and `c` are reduced modulo `n`.
     # Used for arithmetic operations in ``fmpz_factor_ecm``.
 
-    void fmpz_factor_ecm_double(mp_ptr x, mp_ptr z, mp_ptr x0, mp_ptr z0, mp_ptr n, ecm_t ecm_inf)
+    void fmpz_factor_ecm_double(mp_ptr x, mp_ptr z, mp_ptr x0, mp_ptr z0, mp_ptr n, ecm_t ecm_inf) noexcept
     # Sets the point `(x : z)` to two times `(x_0 : z_0)` modulo `n` according
     # to the formula
     # .. math ::
@@ -163,7 +163,7 @@ cdef extern from "flint_wrap.h":
     # structure. This group doubling is valid only for points expressed in
     # Montgomery projective coordinates.
 
-    void fmpz_factor_ecm_add(mp_ptr x, mp_ptr z, mp_ptr x1, mp_ptr z1, mp_ptr x2, mp_ptr z2, mp_ptr x0, mp_ptr z0, mp_ptr n, ecm_t ecm_inf)
+    void fmpz_factor_ecm_add(mp_ptr x, mp_ptr z, mp_ptr x1, mp_ptr z1, mp_ptr x2, mp_ptr z2, mp_ptr x0, mp_ptr z0, mp_ptr n, ecm_t ecm_inf) noexcept
     # Sets the point `(x : z)` to the sum of `(x_1 : z_1)` and `(x_2 : z_2)`
     # modulo `n`, given the difference `(x_0 : z_0)` according to the formula
     # .. math ::
@@ -172,14 +172,14 @@ cdef extern from "flint_wrap.h":
     # structure. This group addition is valid only for points expressed in
     # Montgomery projective coordinates.
 
-    void fmpz_factor_ecm_mul_montgomery_ladder(mp_ptr x, mp_ptr z, mp_ptr x0, mp_ptr z0, mp_limb_t k, mp_ptr n, ecm_t ecm_inf)
+    void fmpz_factor_ecm_mul_montgomery_ladder(mp_ptr x, mp_ptr z, mp_ptr x0, mp_ptr z0, mp_limb_t k, mp_ptr n, ecm_t ecm_inf) noexcept
     # Montgomery ladder algorithm for scalar multiplication of elliptic points.
     # Sets the point `(x : z)` to `k(x_0 : z_0)` modulo `n`.
     # ``ecm_inf`` is used just to use temporary ``mp_ptr``'s in the
     # structure. Valid only for points expressed in Montgomery projective
     # coordinates.
 
-    int fmpz_factor_ecm_select_curve(mp_ptr f, mp_ptr sigma, mp_ptr n, ecm_t ecm_inf)
+    int fmpz_factor_ecm_select_curve(mp_ptr f, mp_ptr sigma, mp_ptr n, ecm_t ecm_inf) noexcept
     # Selects a random elliptic curve given a random integer ``sigma``,
     # according to Suyama's parameterization. If the factor is found while
     # selecting the curve, the number of limbs required to store the factor
@@ -192,7 +192,7 @@ cdef extern from "flint_wrap.h":
     # The curve selected is of Montgomery form, the points selected satisfy the
     # curve and are projective coordinates.
 
-    int fmpz_factor_ecm_stage_I(mp_ptr f, const mp_limb_t *prime_array, mp_limb_t num, mp_limb_t B1, mp_ptr n, ecm_t ecm_inf)
+    int fmpz_factor_ecm_stage_I(mp_ptr f, const mp_limb_t *prime_array, mp_limb_t num, mp_limb_t B1, mp_ptr n, ecm_t ecm_inf) noexcept
     # Stage I implementation of the ECM algorithm.
     # ``f`` is set as the factor if found. ``num`` is number of prime numbers
     # `\le` the bound ``B1``. ``prime_array`` is an array of first ``B1``
@@ -200,7 +200,7 @@ cdef extern from "flint_wrap.h":
     # If the factor is found, number of words required to store the factor is
     # returned, otherwise `0`.
 
-    int fmpz_factor_ecm_stage_II(mp_ptr f, mp_limb_t B1, mp_limb_t B2, mp_limb_t P, mp_ptr n, ecm_t ecm_inf)
+    int fmpz_factor_ecm_stage_II(mp_ptr f, mp_limb_t B1, mp_limb_t B2, mp_limb_t P, mp_ptr n, ecm_t ecm_inf) noexcept
     # Stage II implementation of the ECM algorithm.
     # ``f`` is set as the factor if found. ``B1``, ``B2`` are the two
     # bounds. ``P`` is the primorial (approximately equal to `\sqrt{B2}`).
@@ -208,7 +208,7 @@ cdef extern from "flint_wrap.h":
     # If the factor is found, number of words required to store the factor is
     # returned, otherwise `0`.
 
-    int fmpz_factor_ecm(fmpz_t f, mp_limb_t curves, mp_limb_t B1, mp_limb_t B2, flint_rand_t state, const fmpz_t n_in)
+    int fmpz_factor_ecm(fmpz_t f, mp_limb_t curves, mp_limb_t B1, mp_limb_t B2, flint_rand_t state, const fmpz_t n_in) noexcept
     # Outer wrapper function for the ECM algorithm. In case ``f`` can fit
     # in a single unsigned word, a call to ``n_factor_ecm`` is made.
     # The function calls stage I and II, and

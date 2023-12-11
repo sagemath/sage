@@ -12,11 +12,11 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void hypgeom_init(hypgeom_t hyp)
+    void hypgeom_init(hypgeom_t hyp) noexcept
 
-    void hypgeom_clear(hypgeom_t hyp)
+    void hypgeom_clear(hypgeom_t hyp) noexcept
 
-    slong hypgeom_estimate_terms(const mag_t z, int r, slong d)
+    slong hypgeom_estimate_terms(const mag_t z, int r, slong d) noexcept
     # Computes an approximation of the largest `n` such
     # that `|z|^n/(n!)^r = 2^{-d}`, giving a first-order estimate of the
     # number of terms needed to approximate the sum of a hypergeometric
@@ -31,7 +31,7 @@ cdef extern from "flint_wrap.h":
     # The function aborts if the computed value of `n` is greater
     # than or equal to LONG_MAX / 2.
 
-    slong hypgeom_bound(mag_t error, int r, slong C, slong D, slong K, const mag_t TK, const mag_t z, slong prec)
+    slong hypgeom_bound(mag_t error, int r, slong C, slong D, slong K, const mag_t TK, const mag_t z, slong prec) noexcept
     # Computes a truncation parameter sufficient to achieve *prec* bits
     # of absolute accuracy, according to the strategy described above.
     # The input consists of `r`, `C`, `D`, `K`, precomputed bound for `T(K)`,
@@ -45,15 +45,15 @@ cdef extern from "flint_wrap.h":
     # The output variable *error* is set to the value of `\varepsilon`,
     # and `n` is returned.
 
-    void hypgeom_precompute(hypgeom_t hyp)
+    void hypgeom_precompute(hypgeom_t hyp) noexcept
     # Precomputes the bounds data `C`, `D`, `K` and an upper bound for `T(K)`.
 
-    void arb_hypgeom_sum(arb_t P, arb_t Q, const hypgeom_t hyp, slong n, slong prec)
+    void arb_hypgeom_sum(arb_t P, arb_t Q, const hypgeom_t hyp, slong n, slong prec) noexcept
     # Computes `P, Q` such that `P / Q = \sum_{k=0}^{n-1} T(k)` where `T(k)`
     # is defined by *hyp*,
     # using binary splitting and a working precision of *prec* bits.
 
-    void arb_hypgeom_infsum(arb_t P, arb_t Q, hypgeom_t hyp, slong tol, slong prec)
+    void arb_hypgeom_infsum(arb_t P, arb_t Q, hypgeom_t hyp, slong tol, slong prec) noexcept
     # Computes `P, Q` such that `P / Q = \sum_{k=0}^{\infty} T(k)` where `T(k)`
     # is defined by *hyp*, using binary splitting and
     # working precision of *prec* bits.

@@ -12,10 +12,10 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void nf_init(nf_t nf, const fmpq_poly_t pol)
+    void nf_init(nf_t nf, const fmpq_poly_t pol) noexcept
     # Perform basic initialisation of a number field (for element arithmetic)
     # given a defining polynomial over `\mathbb{Q}`.
 
-    void nf_clear(nf_t nf)
+    void nf_clear(nf_t nf) noexcept
     # Release resources used by a number field object. The object will need
     # initialisation again before it can be used.

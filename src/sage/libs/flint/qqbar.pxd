@@ -12,79 +12,79 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void qqbar_init(qqbar_t res)
+    void qqbar_init(qqbar_t res) noexcept
     # Initializes the variable *res* for use, and sets its value to zero.
 
-    void qqbar_clear(qqbar_t res)
+    void qqbar_clear(qqbar_t res) noexcept
     # Clears the variable *res*, freeing or recycling its allocated memory.
 
-    qqbar_ptr _qqbar_vec_init(slong len)
+    qqbar_ptr _qqbar_vec_init(slong len) noexcept
     # Returns a pointer to an array of *len* initialized *qqbar_struct*:s.
 
-    void _qqbar_vec_clear(qqbar_ptr vec, slong len)
+    void _qqbar_vec_clear(qqbar_ptr vec, slong len) noexcept
     # Clears all *len* entries in the vector *vec* and frees the
     # vector itself.
 
-    void qqbar_swap(qqbar_t x, qqbar_t y)
+    void qqbar_swap(qqbar_t x, qqbar_t y) noexcept
     # Swaps the values of *x* and *y* efficiently.
 
-    void qqbar_set(qqbar_t res, const qqbar_t x)
-    void qqbar_set_si(qqbar_t res, slong x)
-    void qqbar_set_ui(qqbar_t res, ulong x)
-    void qqbar_set_fmpz(qqbar_t res, const fmpz_t x)
-    void qqbar_set_fmpq(qqbar_t res, const fmpq_t x)
+    void qqbar_set(qqbar_t res, const qqbar_t x) noexcept
+    void qqbar_set_si(qqbar_t res, slong x) noexcept
+    void qqbar_set_ui(qqbar_t res, ulong x) noexcept
+    void qqbar_set_fmpz(qqbar_t res, const fmpz_t x) noexcept
+    void qqbar_set_fmpq(qqbar_t res, const fmpq_t x) noexcept
     # Sets *res* to the value *x*.
 
-    void qqbar_set_re_im(qqbar_t res, const qqbar_t x, const qqbar_t y)
+    void qqbar_set_re_im(qqbar_t res, const qqbar_t x, const qqbar_t y) noexcept
     # Sets *res* to the value `x + yi`.
 
-    int qqbar_set_d(qqbar_t res, double x)
-    int qqbar_set_re_im_d(qqbar_t res, double x, double y)
+    int qqbar_set_d(qqbar_t res, double x) noexcept
+    int qqbar_set_re_im_d(qqbar_t res, double x, double y) noexcept
     # Sets *res* to the value *x* or `x + yi` respectively. These functions
     # performs error handling: if *x* and *y* are finite, the conversion succeeds
     # and the return flag is 1. If *x* or *y* is non-finite (infinity or NaN),
     # the conversion fails and the return flag is 0.
 
-    slong qqbar_degree(const qqbar_t x)
+    slong qqbar_degree(const qqbar_t x) noexcept
     # Returns the degree of *x*, i.e. the degree of the minimal polynomial.
 
-    bint qqbar_is_rational(const qqbar_t x)
+    bint qqbar_is_rational(const qqbar_t x) noexcept
     # Returns whether *x* is a rational number.
 
-    bint qqbar_is_integer(const qqbar_t x)
+    bint qqbar_is_integer(const qqbar_t x) noexcept
     # Returns whether *x* is an integer (an element of `\mathbb{Z}`).
 
-    bint qqbar_is_algebraic_integer(const qqbar_t x)
+    bint qqbar_is_algebraic_integer(const qqbar_t x) noexcept
     # Returns whether *x* is an algebraic integer, i.e. whether its minimal
     # polynomial has leading coefficient 1.
 
-    bint qqbar_is_zero(const qqbar_t x)
-    bint qqbar_is_one(const qqbar_t x)
-    bint qqbar_is_neg_one(const qqbar_t x)
+    bint qqbar_is_zero(const qqbar_t x) noexcept
+    bint qqbar_is_one(const qqbar_t x) noexcept
+    bint qqbar_is_neg_one(const qqbar_t x) noexcept
     # Returns whether *x* is the number `0`, `1`, `-1`.
 
-    bint qqbar_is_i(const qqbar_t x)
-    bint qqbar_is_neg_i(const qqbar_t x)
+    bint qqbar_is_i(const qqbar_t x) noexcept
+    bint qqbar_is_neg_i(const qqbar_t x) noexcept
     # Returns whether *x* is the imaginary unit `i` (respectively `-i`).
 
-    bint qqbar_is_real(const qqbar_t x)
+    bint qqbar_is_real(const qqbar_t x) noexcept
     # Returns whether *x* is a real number.
 
-    void qqbar_height(fmpz_t res, const qqbar_t x)
+    void qqbar_height(fmpz_t res, const qqbar_t x) noexcept
     # Sets *res* to the height of *x* (the largest absolute value of the
     # coefficients of the minimal polynomial of *x*).
 
-    slong qqbar_height_bits(const qqbar_t x)
+    slong qqbar_height_bits(const qqbar_t x) noexcept
     # Returns the height of *x* (the largest absolute value of the
     # coefficients of the minimal polynomial of *x*) measured in bits.
 
-    int qqbar_within_limits(const qqbar_t x, slong deg_limit, slong bits_limit)
+    int qqbar_within_limits(const qqbar_t x, slong deg_limit, slong bits_limit) noexcept
     # Checks if *x* has degree bounded by *deg_limit* and height
     # bounded by *bits_limit* bits, returning 0 (false) or 1 (true).
     # If *deg_limit* is set to 0, the degree check is skipped,
     # and similarly for *bits_limit*.
 
-    int qqbar_binop_within_limits(const qqbar_t x, const qqbar_t y, slong deg_limit, slong bits_limit)
+    int qqbar_binop_within_limits(const qqbar_t x, const qqbar_t y, slong deg_limit, slong bits_limit) noexcept
     # Checks if `x + y`, `x - y`, `x \cdot y` and `x / y` certainly have
     # degree bounded by *deg_limit* (by multiplying the degrees for *x* and *y*
     # to obtain a trivial bound). For *bits_limits*, the sum of the bit heights
@@ -92,78 +92,78 @@ cdef extern from "flint_wrap.h":
     # If *deg_limit* is set to 0, the degree check is skipped,
     # and similarly for *bits_limit*.
 
-    void _qqbar_get_fmpq(fmpz_t num, fmpz_t den, const qqbar_t x)
+    void _qqbar_get_fmpq(fmpz_t num, fmpz_t den, const qqbar_t x) noexcept
     # Sets *num* and *den* to the numerator and denominator of *x*.
     # Aborts if *x* is not a rational number.
 
-    void qqbar_get_fmpq(fmpq_t res, const qqbar_t x)
+    void qqbar_get_fmpq(fmpq_t res, const qqbar_t x) noexcept
     # Sets *res* to *x*. Aborts if *x* is not a rational number.
 
-    void qqbar_get_fmpz(fmpz_t res, const qqbar_t x)
+    void qqbar_get_fmpz(fmpz_t res, const qqbar_t x) noexcept
     # Sets *res* to *x*. Aborts if *x* is not an integer.
 
-    void qqbar_zero(qqbar_t res)
+    void qqbar_zero(qqbar_t res) noexcept
     # Sets *res* to the number 0.
 
-    void qqbar_one(qqbar_t res)
+    void qqbar_one(qqbar_t res) noexcept
     # Sets *res* to the number 1.
 
-    void qqbar_i(qqbar_t res)
+    void qqbar_i(qqbar_t res) noexcept
     # Sets *res* to the imaginary unit `i`.
 
-    void qqbar_phi(qqbar_t res)
+    void qqbar_phi(qqbar_t res) noexcept
     # Sets *res* to the golden ratio `\varphi = \tfrac{1}{2}(\sqrt{5} + 1)`.
 
-    void qqbar_print(const qqbar_t x)
+    void qqbar_print(const qqbar_t x) noexcept
     # Prints *res* to standard output. The output shows the degree
     # and the list of coefficients
     # of the minimal polynomial followed by a decimal representation of
     # the enclosing interval. This function is mainly intended for debugging.
 
-    void qqbar_printn(const qqbar_t x, slong n)
+    void qqbar_printn(const qqbar_t x, slong n) noexcept
     # Prints *res* to standard output. The output shows a decimal
     # approximation to *n* digits.
 
-    void qqbar_printnd(const qqbar_t x, slong n)
+    void qqbar_printnd(const qqbar_t x, slong n) noexcept
     # Prints *res* to standard output. The output shows a decimal
     # approximation to *n* digits, followed by the degree of the number.
 
-    void qqbar_randtest(qqbar_t res, flint_rand_t state, slong deg, slong bits)
+    void qqbar_randtest(qqbar_t res, flint_rand_t state, slong deg, slong bits) noexcept
     # Sets *res* to a random algebraic number with degree up to *deg* and
     # with height (measured in bits) up to *bits*.
 
-    void qqbar_randtest_real(qqbar_t res, flint_rand_t state, slong deg, slong bits)
+    void qqbar_randtest_real(qqbar_t res, flint_rand_t state, slong deg, slong bits) noexcept
     # Sets *res* to a random real algebraic number with degree up to *deg* and
     # with height (measured in bits) up to *bits*.
 
-    void qqbar_randtest_nonreal(qqbar_t res, flint_rand_t state, slong deg, slong bits)
+    void qqbar_randtest_nonreal(qqbar_t res, flint_rand_t state, slong deg, slong bits) noexcept
     # Sets *res* to a random nonreal algebraic number with degree up to *deg* and
     # with height (measured in bits) up to *bits*. Since all algebraic numbers
     # of degree 1 are real, *deg* must be at least 2.
 
-    bint qqbar_equal(const qqbar_t x, const qqbar_t y)
+    bint qqbar_equal(const qqbar_t x, const qqbar_t y) noexcept
     # Returns whether *x* and *y* are equal.
 
-    bint qqbar_equal_fmpq_poly_val(const qqbar_t x, const fmpq_poly_t f, const qqbar_t y)
+    bint qqbar_equal_fmpq_poly_val(const qqbar_t x, const fmpq_poly_t f, const qqbar_t y) noexcept
     # Returns whether *x* is equal to `f(y)`. This function is more efficient
     # than evaluating `f(y)` and comparing the results.
 
-    int qqbar_cmp_re(const qqbar_t x, const qqbar_t y)
+    int qqbar_cmp_re(const qqbar_t x, const qqbar_t y) noexcept
     # Compares the real parts of *x* and *y*, returning -1, 0 or +1.
 
-    int qqbar_cmp_im(const qqbar_t x, const qqbar_t y)
+    int qqbar_cmp_im(const qqbar_t x, const qqbar_t y) noexcept
     # Compares the imaginary parts of *x* and *y*, returning -1, 0 or +1.
 
-    int qqbar_cmpabs_re(const qqbar_t x, const qqbar_t y)
+    int qqbar_cmpabs_re(const qqbar_t x, const qqbar_t y) noexcept
     # Compares the absolute values of the real parts of *x* and *y*, returning -1, 0 or +1.
 
-    int qqbar_cmpabs_im(const qqbar_t x, const qqbar_t y)
+    int qqbar_cmpabs_im(const qqbar_t x, const qqbar_t y) noexcept
     # Compares the absolute values of the imaginary parts of *x* and *y*, returning -1, 0 or +1.
 
-    int qqbar_cmpabs(const qqbar_t x, const qqbar_t y)
+    int qqbar_cmpabs(const qqbar_t x, const qqbar_t y) noexcept
     # Compares the absolute values of *x* and *y*, returning -1, 0 or +1.
 
-    int qqbar_cmp_root_order(const qqbar_t x, const qqbar_t y)
+    int qqbar_cmp_root_order(const qqbar_t x, const qqbar_t y) noexcept
     # Compares *x* and *y* using an arbitrary but convenient ordering
     # defined on the complex numbers. This is useful for sorting the
     # roots of a polynomial in a canonical order.
@@ -174,7 +174,7 @@ cdef extern from "flint_wrap.h":
     # order of the sign. This implies that complex conjugate roots
     # are adjacent, with the root in the upper half plane first.
 
-    ulong qqbar_hash(const qqbar_t x)
+    ulong qqbar_hash(const qqbar_t x) noexcept
     # Returns a hash of *x*. As currently implemented, this function
     # only hashes the minimal polynomial of *x*. The user should
     # mix in some bits based on the numerical value if it is critical
@@ -185,181 +185,181 @@ cdef extern from "flint_wrap.h":
     # important that all bits in the output are random,
     # the user should apply an integer hash function to the output.
 
-    void qqbar_conj(qqbar_t res, const qqbar_t x)
+    void qqbar_conj(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the complex conjugate of *x*.
 
-    void qqbar_re(qqbar_t res, const qqbar_t x)
+    void qqbar_re(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the real part of *x*.
 
-    void qqbar_im(qqbar_t res, const qqbar_t x)
+    void qqbar_im(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the imaginary part of *x*.
 
-    void qqbar_re_im(qqbar_t res1, qqbar_t res2, const qqbar_t x)
+    void qqbar_re_im(qqbar_t res1, qqbar_t res2, const qqbar_t x) noexcept
     # Sets *res1* to the real part of *x* and *res2* to the imaginary part of *x*.
 
-    void qqbar_abs(qqbar_t res, const qqbar_t x)
+    void qqbar_abs(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the absolute value of *x*:
 
-    void qqbar_abs2(qqbar_t res, const qqbar_t x)
+    void qqbar_abs2(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the square of the absolute value of *x*.
 
-    void qqbar_sgn(qqbar_t res, const qqbar_t x)
+    void qqbar_sgn(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the complex sign of *x*, defined as 0 if *x* is zero
     # and as `x / |x|` otherwise.
 
-    int qqbar_sgn_re(const qqbar_t x)
+    int qqbar_sgn_re(const qqbar_t x) noexcept
     # Returns the sign of the real part of *x* (-1, 0 or +1).
 
-    int qqbar_sgn_im(const qqbar_t x)
+    int qqbar_sgn_im(const qqbar_t x) noexcept
     # Returns the sign of the imaginary part of *x* (-1, 0 or +1).
 
-    int qqbar_csgn(const qqbar_t x)
+    int qqbar_csgn(const qqbar_t x) noexcept
     # Returns the extension of the real sign function taking the
     # value 1 for *x* strictly in the right half plane, -1 for *x* strictly
     # in the left half plane, and the sign of the imaginary part when *x* is on
     # the imaginary axis. Equivalently, `\operatorname{csgn}(x) = x / \sqrt{x^2}`
     # except that the value is 0 when *x* is zero.
 
-    void qqbar_floor(fmpz_t res, const qqbar_t x)
+    void qqbar_floor(fmpz_t res, const qqbar_t x) noexcept
     # Sets *res* to the floor function of *x*. If *x* is not real, the
     # value is defined as the floor function of the real part of *x*.
 
-    void qqbar_ceil(fmpz_t res, const qqbar_t x)
+    void qqbar_ceil(fmpz_t res, const qqbar_t x) noexcept
     # Sets *res* to the ceiling function of *x*. If *x* is not real, the
     # value is defined as the ceiling function of the real part of *x*.
 
-    void qqbar_neg(qqbar_t res, const qqbar_t x)
+    void qqbar_neg(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the negation of *x*.
 
-    void qqbar_add(qqbar_t res, const qqbar_t x, const qqbar_t y)
-    void qqbar_add_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t y)
-    void qqbar_add_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t y)
-    void qqbar_add_ui(qqbar_t res, const qqbar_t x, ulong y)
-    void qqbar_add_si(qqbar_t res, const qqbar_t x, slong y)
+    void qqbar_add(qqbar_t res, const qqbar_t x, const qqbar_t y) noexcept
+    void qqbar_add_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t y) noexcept
+    void qqbar_add_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t y) noexcept
+    void qqbar_add_ui(qqbar_t res, const qqbar_t x, ulong y) noexcept
+    void qqbar_add_si(qqbar_t res, const qqbar_t x, slong y) noexcept
     # Sets *res* to the sum of *x* and *y*.
 
-    void qqbar_sub(qqbar_t res, const qqbar_t x, const qqbar_t y)
-    void qqbar_sub_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t y)
-    void qqbar_sub_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t y)
-    void qqbar_sub_ui(qqbar_t res, const qqbar_t x, ulong y)
-    void qqbar_sub_si(qqbar_t res, const qqbar_t x, slong y)
-    void qqbar_fmpq_sub(qqbar_t res, const fmpq_t x, const qqbar_t y)
-    void qqbar_fmpz_sub(qqbar_t res, const fmpz_t x, const qqbar_t y)
-    void qqbar_ui_sub(qqbar_t res, ulong x, const qqbar_t y)
-    void qqbar_si_sub(qqbar_t res, slong x, const qqbar_t y)
+    void qqbar_sub(qqbar_t res, const qqbar_t x, const qqbar_t y) noexcept
+    void qqbar_sub_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t y) noexcept
+    void qqbar_sub_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t y) noexcept
+    void qqbar_sub_ui(qqbar_t res, const qqbar_t x, ulong y) noexcept
+    void qqbar_sub_si(qqbar_t res, const qqbar_t x, slong y) noexcept
+    void qqbar_fmpq_sub(qqbar_t res, const fmpq_t x, const qqbar_t y) noexcept
+    void qqbar_fmpz_sub(qqbar_t res, const fmpz_t x, const qqbar_t y) noexcept
+    void qqbar_ui_sub(qqbar_t res, ulong x, const qqbar_t y) noexcept
+    void qqbar_si_sub(qqbar_t res, slong x, const qqbar_t y) noexcept
     # Sets *res* to the difference of *x* and *y*.
 
-    void qqbar_mul(qqbar_t res, const qqbar_t x, const qqbar_t y)
-    void qqbar_mul_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t y)
-    void qqbar_mul_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t y)
-    void qqbar_mul_ui(qqbar_t res, const qqbar_t x, ulong y)
-    void qqbar_mul_si(qqbar_t res, const qqbar_t x, slong y)
+    void qqbar_mul(qqbar_t res, const qqbar_t x, const qqbar_t y) noexcept
+    void qqbar_mul_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t y) noexcept
+    void qqbar_mul_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t y) noexcept
+    void qqbar_mul_ui(qqbar_t res, const qqbar_t x, ulong y) noexcept
+    void qqbar_mul_si(qqbar_t res, const qqbar_t x, slong y) noexcept
     # Sets *res* to the product of *x* and *y*.
 
-    void qqbar_mul_2exp_si(qqbar_t res, const qqbar_t x, slong e)
+    void qqbar_mul_2exp_si(qqbar_t res, const qqbar_t x, slong e) noexcept
     # Sets *res* to *x* multiplied by `2^e`.
 
-    void qqbar_sqr(qqbar_t res, const qqbar_t x)
+    void qqbar_sqr(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the square of *x*.
 
-    void qqbar_inv(qqbar_t res, const qqbar_t x)
+    void qqbar_inv(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the multiplicative inverse of *y*.
     # Division by zero calls *flint_abort*.
 
-    void qqbar_div(qqbar_t res, const qqbar_t x, const qqbar_t y)
-    void qqbar_div_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t y)
-    void qqbar_div_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t y)
-    void qqbar_div_ui(qqbar_t res, const qqbar_t x, ulong y)
-    void qqbar_div_si(qqbar_t res, const qqbar_t x, slong y)
-    void qqbar_fmpq_div(qqbar_t res, const fmpq_t x, const qqbar_t y)
-    void qqbar_fmpz_div(qqbar_t res, const fmpz_t x, const qqbar_t y)
-    void qqbar_ui_div(qqbar_t res, ulong x, const qqbar_t y)
-    void qqbar_si_div(qqbar_t res, slong x, const qqbar_t y)
+    void qqbar_div(qqbar_t res, const qqbar_t x, const qqbar_t y) noexcept
+    void qqbar_div_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t y) noexcept
+    void qqbar_div_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t y) noexcept
+    void qqbar_div_ui(qqbar_t res, const qqbar_t x, ulong y) noexcept
+    void qqbar_div_si(qqbar_t res, const qqbar_t x, slong y) noexcept
+    void qqbar_fmpq_div(qqbar_t res, const fmpq_t x, const qqbar_t y) noexcept
+    void qqbar_fmpz_div(qqbar_t res, const fmpz_t x, const qqbar_t y) noexcept
+    void qqbar_ui_div(qqbar_t res, ulong x, const qqbar_t y) noexcept
+    void qqbar_si_div(qqbar_t res, slong x, const qqbar_t y) noexcept
     # Sets *res* to the quotient of *x* and *y*.
     # Division by zero calls *flint_abort*.
 
-    void qqbar_scalar_op(qqbar_t res, const qqbar_t x, const fmpz_t a, const fmpz_t b, const fmpz_t c)
+    void qqbar_scalar_op(qqbar_t res, const qqbar_t x, const fmpz_t a, const fmpz_t b, const fmpz_t c) noexcept
     # Sets *res* to the rational affine transformation `(ax+b)/c`, performed as
     # a single operation. There are no restrictions on *a*, *b* and *c*
     # except that *c* must be nonzero. Division by zero calls *flint_abort*.
 
-    void qqbar_sqrt(qqbar_t res, const qqbar_t x)
-    void qqbar_sqrt_ui(qqbar_t res, ulong x)
+    void qqbar_sqrt(qqbar_t res, const qqbar_t x) noexcept
+    void qqbar_sqrt_ui(qqbar_t res, ulong x) noexcept
     # Sets *res* to the principal square root of *x*.
 
-    void qqbar_rsqrt(qqbar_t res, const qqbar_t x)
+    void qqbar_rsqrt(qqbar_t res, const qqbar_t x) noexcept
     # Sets *res* to the reciprocal of the principal square root of *x*.
     # Division by zero calls *flint_abort*.
 
-    void qqbar_pow_ui(qqbar_t res, const qqbar_t x, ulong n)
-    void qqbar_pow_si(qqbar_t res, const qqbar_t x, slong n)
-    void qqbar_pow_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t n)
-    void qqbar_pow_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t n)
+    void qqbar_pow_ui(qqbar_t res, const qqbar_t x, ulong n) noexcept
+    void qqbar_pow_si(qqbar_t res, const qqbar_t x, slong n) noexcept
+    void qqbar_pow_fmpz(qqbar_t res, const qqbar_t x, const fmpz_t n) noexcept
+    void qqbar_pow_fmpq(qqbar_t res, const qqbar_t x, const fmpq_t n) noexcept
     # Sets *res* to *x* raised to the *n*-th power.
     # Raising zero to a negative power aborts.
 
-    void qqbar_root_ui(qqbar_t res, const qqbar_t x, ulong n)
-    void qqbar_fmpq_root_ui(qqbar_t res, const fmpq_t x, ulong n)
+    void qqbar_root_ui(qqbar_t res, const qqbar_t x, ulong n) noexcept
+    void qqbar_fmpq_root_ui(qqbar_t res, const fmpq_t x, ulong n) noexcept
     # Sets *res* to the principal *n*-th root of *x*. The order *n*
     # must be positive.
 
-    void qqbar_fmpq_pow_si_ui(qqbar_t res, const fmpq_t x, slong m, ulong n)
+    void qqbar_fmpq_pow_si_ui(qqbar_t res, const fmpq_t x, slong m, ulong n) noexcept
     # Sets *res* to the principal branch of `x^{m/n}`. The order *n*
     # must be positive. Division by zero calls *flint_abort*.
 
-    int qqbar_pow(qqbar_t res, const qqbar_t x, const qqbar_t y)
+    int qqbar_pow(qqbar_t res, const qqbar_t x, const qqbar_t y) noexcept
     # General exponentiation: if `x^y` is an algebraic number, sets *res*
     # to this value and returns 1. If `x^y` is transcendental or
     # undefined, returns 0. Note that this function returns 0 instead of
     # aborting on division zero.
 
-    void qqbar_get_acb(acb_t res, const qqbar_t x, slong prec)
+    void qqbar_get_acb(acb_t res, const qqbar_t x, slong prec) noexcept
     # Sets *res* to an enclosure of *x* rounded to *prec* bits.
 
-    void qqbar_get_arb(arb_t res, const qqbar_t x, slong prec)
+    void qqbar_get_arb(arb_t res, const qqbar_t x, slong prec) noexcept
     # Sets *res* to an enclosure of *x* rounded to *prec* bits, assuming that
     # *x* is a real number. If *x* is not real, *res* is set to
     # `[\operatorname{NaN} \pm \infty]`.
 
-    void qqbar_get_arb_re(arb_t res, const qqbar_t x, slong prec)
+    void qqbar_get_arb_re(arb_t res, const qqbar_t x, slong prec) noexcept
     # Sets *res* to an enclosure of the real part of *x* rounded to *prec* bits.
 
-    void qqbar_get_arb_im(arb_t res, const qqbar_t x, slong prec)
+    void qqbar_get_arb_im(arb_t res, const qqbar_t x, slong prec) noexcept
     # Sets *res* to an enclosure of the imaginary part of *x* rounded to *prec* bits.
 
-    void qqbar_cache_enclosure(qqbar_t res, slong prec)
+    void qqbar_cache_enclosure(qqbar_t res, slong prec) noexcept
     # Polishes the internal enclosure of *res* to at least *prec* bits
     # of precision in-place. Normally, *qqbar* operations that need
     # high-precision enclosures compute them on the fly without caching the results;
     # if *res* will be used as an invariant operand for many operations,
     # calling this function as a precomputation step can improve performance.
 
-    void qqbar_denominator(fmpz_t res, const qqbar_t y)
+    void qqbar_denominator(fmpz_t res, const qqbar_t y) noexcept
     # Sets *res* to the denominator of *y*, i.e. the leading coefficient
     # of the minimal polynomial of *y*.
 
-    void qqbar_numerator(qqbar_t res, const qqbar_t y)
+    void qqbar_numerator(qqbar_t res, const qqbar_t y) noexcept
     # Sets *res* to the numerator of *y*, i.e. *y* multiplied by
     # its denominator.
 
-    void qqbar_conjugates(qqbar_ptr res, const qqbar_t x)
+    void qqbar_conjugates(qqbar_ptr res, const qqbar_t x) noexcept
     # Sets the entries of the vector *res* to the *d* algebraic conjugates of
     # *x*, including *x* itself, where *d* is the degree of *x*. The output
     # is sorted in a canonical order (as defined by :func:`qqbar_cmp_root_order`).
 
-    void _qqbar_evaluate_fmpq_poly(qqbar_t res, const fmpz * poly, const fmpz_t den, slong len, const qqbar_t x)
-    void qqbar_evaluate_fmpq_poly(qqbar_t res, const fmpq_poly_t poly, const qqbar_t x)
-    void _qqbar_evaluate_fmpz_poly(qqbar_t res, const fmpz * poly, slong len, const qqbar_t x)
-    void qqbar_evaluate_fmpz_poly(qqbar_t res, const fmpz_poly_t poly, const qqbar_t x)
+    void _qqbar_evaluate_fmpq_poly(qqbar_t res, const fmpz * poly, const fmpz_t den, slong len, const qqbar_t x) noexcept
+    void qqbar_evaluate_fmpq_poly(qqbar_t res, const fmpq_poly_t poly, const qqbar_t x) noexcept
+    void _qqbar_evaluate_fmpz_poly(qqbar_t res, const fmpz * poly, slong len, const qqbar_t x) noexcept
+    void qqbar_evaluate_fmpz_poly(qqbar_t res, const fmpz_poly_t poly, const qqbar_t x) noexcept
     # Sets *res* to the value of the given polynomial *poly* evaluated at
     # the algebraic number *x*. These methods detect simple special cases and
     # automatically reduce *poly* if its degree is greater or equal
     # to that of the minimal polynomial of *x*. In the generic case, evaluation
     # is done by computing minimal polynomials of representation matrices.
 
-    int qqbar_evaluate_fmpz_mpoly_iter(qqbar_t res, const fmpz_mpoly_t poly, qqbar_srcptr x, slong deg_limit, slong bits_limit, const fmpz_mpoly_ctx_t ctx)
-    int qqbar_evaluate_fmpz_mpoly_horner(qqbar_t res, const fmpz_mpoly_t poly, qqbar_srcptr x, slong deg_limit, slong bits_limit, const fmpz_mpoly_ctx_t ctx)
-    int qqbar_evaluate_fmpz_mpoly(qqbar_t res, const fmpz_mpoly_t poly, qqbar_srcptr x, slong deg_limit, slong bits_limit, const fmpz_mpoly_ctx_t ctx)
+    int qqbar_evaluate_fmpz_mpoly_iter(qqbar_t res, const fmpz_mpoly_t poly, qqbar_srcptr x, slong deg_limit, slong bits_limit, const fmpz_mpoly_ctx_t ctx) noexcept
+    int qqbar_evaluate_fmpz_mpoly_horner(qqbar_t res, const fmpz_mpoly_t poly, qqbar_srcptr x, slong deg_limit, slong bits_limit, const fmpz_mpoly_ctx_t ctx) noexcept
+    int qqbar_evaluate_fmpz_mpoly(qqbar_t res, const fmpz_mpoly_t poly, qqbar_srcptr x, slong deg_limit, slong bits_limit, const fmpz_mpoly_ctx_t ctx) noexcept
     # Sets *res* to the value of *poly* evaluated at the algebraic numbers
     # given in the vector *x*. The number of variables is defined by
     # the context object *ctx*.
@@ -373,8 +373,8 @@ cdef extern from "flint_wrap.h":
     # implementation of the Horner scheme. The default algorithm currently
     # uses the Horner scheme.
 
-    void qqbar_roots_fmpz_poly(qqbar_ptr res, const fmpz_poly_t poly, int flags)
-    void qqbar_roots_fmpq_poly(qqbar_ptr res, const fmpq_poly_t poly, int flags)
+    void qqbar_roots_fmpz_poly(qqbar_ptr res, const fmpz_poly_t poly, int flags) noexcept
+    void qqbar_roots_fmpq_poly(qqbar_ptr res, const fmpq_poly_t poly, int flags) noexcept
     # Sets the entries of the vector *res* to the *d* roots of the polynomial
     # *poly*. Roots with multiplicity appear with repetition in the
     # output array. By default, the roots will be sorted in a
@@ -388,80 +388,80 @@ cdef extern from "flint_wrap.h":
     # to be sorted (except for repeated roots being listed
     # consecutively).
 
-    void qqbar_eigenvalues_fmpz_mat(qqbar_ptr res, const fmpz_mat_t mat, int flags)
-    void qqbar_eigenvalues_fmpq_mat(qqbar_ptr res, const fmpq_mat_t mat, int flags)
+    void qqbar_eigenvalues_fmpz_mat(qqbar_ptr res, const fmpz_mat_t mat, int flags) noexcept
+    void qqbar_eigenvalues_fmpq_mat(qqbar_ptr res, const fmpq_mat_t mat, int flags) noexcept
     # Sets the entries of the vector *res* to the eigenvalues of the
     # square matrix *mat*. These functions compute the characteristic polynomial
     # of *mat* and then call :func:`qqbar_roots_fmpz_poly` with the same
     # flags.
 
-    void qqbar_root_of_unity(qqbar_t res, slong p, ulong q)
+    void qqbar_root_of_unity(qqbar_t res, slong p, ulong q) noexcept
     # Sets *res* to the root of unity `e^{2 \pi i p / q}`.
 
-    bint qqbar_is_root_of_unity(slong * p, ulong * q, const qqbar_t x)
+    bint qqbar_is_root_of_unity(slong * p, ulong * q, const qqbar_t x) noexcept
     # If *x* is not a root of unity, returns 0.
     # If *x* is a root of unity, returns 1.
     # If *p* and *q* are not *NULL* and *x* is a root of unity,
     # this also sets *p* and *q* to the minimal integers with `0 \le p < q`
     # such that `x = e^{2 \pi i p / q}`.
 
-    void qqbar_exp_pi_i(qqbar_t res, slong p, ulong q)
+    void qqbar_exp_pi_i(qqbar_t res, slong p, ulong q) noexcept
     # Sets *res* to the root of unity `e^{\pi i p / q}`.
 
-    void qqbar_cos_pi(qqbar_t res, slong p, ulong q)
-    void qqbar_sin_pi(qqbar_t res, slong p, ulong q)
-    int qqbar_tan_pi(qqbar_t res, slong p, ulong q)
-    int qqbar_cot_pi(qqbar_t res, slong p, ulong q)
-    int qqbar_sec_pi(qqbar_t res, slong p, ulong q)
-    int qqbar_csc_pi(qqbar_t res, slong p, ulong q)
+    void qqbar_cos_pi(qqbar_t res, slong p, ulong q) noexcept
+    void qqbar_sin_pi(qqbar_t res, slong p, ulong q) noexcept
+    int qqbar_tan_pi(qqbar_t res, slong p, ulong q) noexcept
+    int qqbar_cot_pi(qqbar_t res, slong p, ulong q) noexcept
+    int qqbar_sec_pi(qqbar_t res, slong p, ulong q) noexcept
+    int qqbar_csc_pi(qqbar_t res, slong p, ulong q) noexcept
     # Sets *res* to the trigonometric function `\cos(\pi x)`,
     # `\sin(\pi x)`, etc., with `x = \tfrac{p}{q}`.
     # The functions tan, cot, sec and csc return the flag 1 if the value exists,
     # and return 0 if the evaluation point is a pole of the function.
 
-    int qqbar_log_pi_i(slong * p, ulong * q, const qqbar_t x)
+    int qqbar_log_pi_i(slong * p, ulong * q, const qqbar_t x) noexcept
     # If `y = \operatorname{log}(x) / (\pi i)` is algebraic, and hence
     # necessarily rational, sets `y = p / q` to the reduced such
     # fraction with `-1 < y \le 1` and returns 1.
     # If *y* is not algebraic, returns 0.
 
-    int qqbar_atan_pi(slong * p, ulong * q, const qqbar_t x)
+    int qqbar_atan_pi(slong * p, ulong * q, const qqbar_t x) noexcept
     # If `y = \operatorname{atan}(x) / \pi` is algebraic, and hence
     # necessarily rational, sets `y = p / q` to the reduced such
     # fraction with `|y| < \tfrac{1}{2}` and returns 1.
     # If *y* is not algebraic, returns 0.
 
-    int qqbar_asin_pi(slong * p, ulong * q, const qqbar_t x)
+    int qqbar_asin_pi(slong * p, ulong * q, const qqbar_t x) noexcept
     # If `y = \operatorname{asin}(x) / \pi` is algebraic, and hence
     # necessarily rational, sets `y = p / q` to the reduced such
     # fraction with `|y| \le \tfrac{1}{2}` and returns 1.
     # If *y* is not algebraic, returns 0.
 
-    int qqbar_acos_pi(slong * p, ulong * q, const qqbar_t x)
+    int qqbar_acos_pi(slong * p, ulong * q, const qqbar_t x) noexcept
     # If `y = \operatorname{acos}(x) / \pi` is algebraic, and hence
     # necessarily rational, sets `y = p / q` to the reduced such
     # fraction with `0 \le y \le 1` and returns 1.
     # If *y* is not algebraic, returns 0.
 
-    int qqbar_acot_pi(slong * p, ulong * q, const qqbar_t x)
+    int qqbar_acot_pi(slong * p, ulong * q, const qqbar_t x) noexcept
     # If `y = \operatorname{acot}(x) / \pi` is algebraic, and hence
     # necessarily rational, sets `y = p / q` to the reduced such
     # fraction with `-\tfrac{1}{2} < y \le \tfrac{1}{2}` and returns 1.
     # If *y* is not algebraic, returns 0.
 
-    int qqbar_asec_pi(slong * p, ulong * q, const qqbar_t x)
+    int qqbar_asec_pi(slong * p, ulong * q, const qqbar_t x) noexcept
     # If `y = \operatorname{asec}(x) / \pi` is algebraic, and hence
     # necessarily rational, sets `y = p / q` to the reduced such
     # fraction with `0 \le y \le 1` and returns 1.
     # If *y* is not algebraic, returns 0.
 
-    int qqbar_acsc_pi(slong * p, ulong * q, const qqbar_t x)
+    int qqbar_acsc_pi(slong * p, ulong * q, const qqbar_t x) noexcept
     # If `y = \operatorname{acsc}(x) / \pi` is algebraic, and hence
     # necessarily rational, sets `y = p / q` to the reduced such
     # fraction with `-\tfrac{1}{2} \le y \le \tfrac{1}{2}` and returns 1.
     # If *y* is not algebraic, returns 0.
 
-    int qqbar_guess(qqbar_t res, const acb_t z, slong max_deg, slong max_bits, int flags, slong prec)
+    int qqbar_guess(qqbar_t res, const acb_t z, slong max_deg, slong max_bits, int flags, slong prec) noexcept
     # Attempts to find an algebraic number *res* of degree at most *max_deg* and
     # height at most *max_bits* bits matching the numerical enclosure *z*.
     # The return flag indicates success.
@@ -478,7 +478,7 @@ cdef extern from "flint_wrap.h":
     # repeatedly with successively larger parameters when the size of the
     # intended solution is unknown or may be much smaller than a worst-case bound.
 
-    int qqbar_express_in_field(fmpq_poly_t res, const qqbar_t alpha, const qqbar_t x, slong max_bits, int flags, slong prec)
+    int qqbar_express_in_field(fmpq_poly_t res, const qqbar_t alpha, const qqbar_t x, slong max_bits, int flags, slong prec) noexcept
     # Attempts to express *x* in the number field generated by *alpha*, returning
     # success (0 or 1). On success, *res* is set to a polynomial *f* of degree
     # less than the degree of *alpha* and with height (counting both the numerator
@@ -500,7 +500,7 @@ cdef extern from "flint_wrap.h":
     # repeatedly with successively larger parameters when the size of the
     # intended solution is unknown or may be much smaller than a worst-case bound.
 
-    void qqbar_get_quadratic(fmpz_t a, fmpz_t b, fmpz_t c, fmpz_t q, const qqbar_t x, int factoring)
+    void qqbar_get_quadratic(fmpz_t a, fmpz_t b, fmpz_t c, fmpz_t q, const qqbar_t x, int factoring) noexcept
     # Assuming that *x* has degree 1 or 2, computes integers *a*, *b*, *c*
     # and *q* such that
     # .. math ::
@@ -530,7 +530,7 @@ cdef extern from "flint_wrap.h":
     # (up to some trial division limit determined internally by Flint),
     # but large factors are only found heuristically.
 
-    int qqbar_set_fexpr(qqbar_t res, const fexpr_t expr)
+    int qqbar_set_fexpr(qqbar_t res, const fexpr_t expr) noexcept
     # Sets *res* to the algebraic number represented by the symbolic
     # expression *expr*, returning 1 on success and 0 on failure.
     # This function performs a "static" evaluation using *qqbar* arithmetic,
@@ -560,7 +560,7 @@ cdef extern from "flint_wrap.h":
     # * ``1 / Infinity``            (only numbers are handled)
     # * ``Sum(n, For(n, 1, 10))``   (only static evaluation is performed)
 
-    void qqbar_get_fexpr_repr(fexpr_t res, const qqbar_t x)
+    void qqbar_get_fexpr_repr(fexpr_t res, const qqbar_t x) noexcept
     # Sets *res* to a symbolic expression reflecting the exact internal
     # representation of *x*. The output will have the form
     # ``AlgebraicNumberSerialized(List(coeffs), enclosure)``.
@@ -569,7 +569,7 @@ cdef extern from "flint_wrap.h":
     # serializing algebraic numbers as it requires minimal computation,
     # but it has the disadvantage of not being human-readable.
 
-    void qqbar_get_fexpr_root_nearest(fexpr_t res, const qqbar_t x)
+    void qqbar_get_fexpr_root_nearest(fexpr_t res, const qqbar_t x) noexcept
     # Sets *res* to a symbolic expression unambiguously describing *x*
     # in the form ``PolynomialRootNearest(List(coeffs), point)``
     # where *point* is an approximation of *x* guaranteed to be closer
@@ -578,7 +578,7 @@ cdef extern from "flint_wrap.h":
     # :func:`qqbar_set_fexpr`. This is a useful format for human-readable
     # presentation, but serialization and deserialization can be expensive.
 
-    void qqbar_get_fexpr_root_indexed(fexpr_t res, const qqbar_t x)
+    void qqbar_get_fexpr_root_indexed(fexpr_t res, const qqbar_t x) noexcept
     # Sets *res* to a symbolic expression unambiguously describing *x*
     # in the form ``PolynomialRootIndexed(List(coeffs), index)``
     # where *index* is the index of *x* among its conjugate roots
@@ -588,7 +588,7 @@ cdef extern from "flint_wrap.h":
     # presentation when the numerical value is important, but serialization
     # and deserialization can be expensive.
 
-    int qqbar_get_fexpr_formula(fexpr_t res, const qqbar_t x, ulong flags)
+    int qqbar_get_fexpr_formula(fexpr_t res, const qqbar_t x, ulong flags) noexcept
     # Attempts to express the algebraic number *x* as a closed-form expression
     # using arithmetic operations, radicals, and possibly exponentials
     # or trigonometric functions, but without using ``PolynomialRootNearest``
@@ -638,18 +638,18 @@ cdef extern from "flint_wrap.h":
     # for nonreal numbers. The other flags (not fully implemented) can be
     # used to force exponential form, trigonometric form, or radical form.
 
-    void qqbar_fmpz_poly_composed_op(fmpz_poly_t res, const fmpz_poly_t A, const fmpz_poly_t B, int op)
+    void qqbar_fmpz_poly_composed_op(fmpz_poly_t res, const fmpz_poly_t A, const fmpz_poly_t B, int op) noexcept
     # Given nonconstant polynomials *A* and *B*, sets *res* to a polynomial
     # whose roots are `a+b`, `a-b`, `ab` or `a/b` for all roots *a* of *A*
     # and all roots *b* of *B*. The parameter *op* selects the arithmetic
     # operation: 0 for addition, 1 for subtraction, 2 for multiplication
     # and 3 for division. If *op* is 3, *B* must not have zero as a root.
 
-    void qqbar_binary_op(qqbar_t res, const qqbar_t x, const qqbar_t y, int op)
+    void qqbar_binary_op(qqbar_t res, const qqbar_t x, const qqbar_t y, int op) noexcept
     # Performs a binary operation using a generic algorithm. This does not
     # check for special cases.
 
-    int _qqbar_validate_uniqueness(acb_t res, const fmpz_poly_t poly, const acb_t z, slong max_prec)
+    int _qqbar_validate_uniqueness(acb_t res, const fmpz_poly_t poly, const acb_t z, slong max_prec) noexcept
     # Given *z* known to be an enclosure of at least one root of *poly*,
     # certifies that the enclosure contains a unique root, and in that
     # case sets *res* to a new (possibly improved) enclosure for the same
@@ -663,7 +663,7 @@ cdef extern from "flint_wrap.h":
     # existence; when existence has not been ensured a priori,
     # :func:`_qqbar_validate_existence_uniqueness` should be used instead.
 
-    int _qqbar_validate_existence_uniqueness(acb_t res, const fmpz_poly_t poly, const acb_t z, slong max_prec)
+    int _qqbar_validate_existence_uniqueness(acb_t res, const fmpz_poly_t poly, const acb_t z, slong max_prec) noexcept
     # Given any complex interval *z*, certifies that the enclosure contains a
     # unique root of *poly*, and in that case sets *res* to a new (possibly
     # improved) enclosure for the same root, returning 1. Returns 0 if
@@ -672,8 +672,8 @@ cdef extern from "flint_wrap.h":
     # interval Newton method. The working precision is determined from the
     # accuracy of *z*, but limited by *max_prec* bits.
 
-    void _qqbar_enclosure_raw(acb_t res, const fmpz_poly_t poly, const acb_t z, slong prec)
-    void qqbar_enclosure_raw(acb_t res, const qqbar_t x, slong prec)
+    void _qqbar_enclosure_raw(acb_t res, const fmpz_poly_t poly, const acb_t z, slong prec) noexcept
+    void qqbar_enclosure_raw(acb_t res, const qqbar_t x, slong prec) noexcept
     # Sets *res* to an enclosure of *x* accurate to about *prec* bits
     # (the actual accuracy can be slightly lower, or higher).
     # This function uses repeated interval Newton steps to polish the initial
@@ -683,7 +683,7 @@ cdef extern from "flint_wrap.h":
     # If the initial enclosure is accurate enough, *res* is set to this value
     # without rounding and without further computation.
 
-    int _qqbar_acb_lindep(fmpz * rel, acb_srcptr vec, slong len, int check, slong prec)
+    int _qqbar_acb_lindep(fmpz * rel, acb_srcptr vec, slong len, int check, slong prec) noexcept
     # Attempts to find an integer vector *rel* giving a linear relation between
     # the elements of the real or complex vector *vec*, using the LLL algorithm.
     # The working precision is set to the minimum of *prec* and the relative

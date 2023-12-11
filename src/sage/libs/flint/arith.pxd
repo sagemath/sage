@@ -12,19 +12,19 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void arith_primorial(fmpz_t res, slong n)
+    void arith_primorial(fmpz_t res, slong n) noexcept
     # Sets ``res`` to ``n`` primorial or `n \#`, the product of all prime
     # numbers less than or equal to `n`.
 
-    void _arith_harmonic_number(fmpz_t num, fmpz_t den, slong n)
-    void arith_harmonic_number(fmpq_t x, slong n)
+    void _arith_harmonic_number(fmpz_t num, fmpz_t den, slong n) noexcept
+    void arith_harmonic_number(fmpq_t x, slong n) noexcept
     # These are aliases for the functions in the fmpq module.
 
-    void arith_stirling_number_1u(fmpz_t s, ulong n, ulong k)
+    void arith_stirling_number_1u(fmpz_t s, ulong n, ulong k) noexcept
 
-    void arith_stirling_number_1(fmpz_t s, ulong n, ulong k)
+    void arith_stirling_number_1(fmpz_t s, ulong n, ulong k) noexcept
 
-    void arith_stirling_number_2(fmpz_t s, ulong n, ulong k)
+    void arith_stirling_number_2(fmpz_t s, ulong n, ulong k) noexcept
     # Sets `s` to `S(n,k)` where `S(n,k)` denotes an unsigned Stirling
     # number of the first kind `|S_1(n, k)|`, a signed Stirling number
     # of the first kind `S_1(n, k)`, or a Stirling number of the second
@@ -41,21 +41,21 @@ cdef extern from "flint_wrap.h":
     # numbers efficiently. To compute a range of numbers, the vector or
     # matrix versions should generally be used.
 
-    void arith_stirling_number_1u_vec(fmpz * row, ulong n, slong klen)
+    void arith_stirling_number_1u_vec(fmpz * row, ulong n, slong klen) noexcept
 
-    void arith_stirling_number_1_vec(fmpz * row, ulong n, slong klen)
+    void arith_stirling_number_1_vec(fmpz * row, ulong n, slong klen) noexcept
 
-    void arith_stirling_number_2_vec(fmpz * row, ulong n, slong klen)
+    void arith_stirling_number_2_vec(fmpz * row, ulong n, slong klen) noexcept
     # Computes the row of Stirling numbers
     # ``S(n,0), S(n,1), S(n,2), ..., S(n,klen-1)``.
     # To compute a full row, this function can be called with
     # ``klen = n+1``. It is assumed that ``klen`` is at most `n + 1`.
 
-    void arith_stirling_number_1u_vec_next(fmpz * row, const fmpz * prev, slong n, slong klen)
+    void arith_stirling_number_1u_vec_next(fmpz * row, const fmpz * prev, slong n, slong klen) noexcept
 
-    void arith_stirling_number_1_vec_next(fmpz * row, const fmpz * prev, slong n, slong klen)
+    void arith_stirling_number_1_vec_next(fmpz * row, const fmpz * prev, slong n, slong klen) noexcept
 
-    void arith_stirling_number_2_vec_next(fmpz * row, const fmpz * prev, slong n, slong klen)
+    void arith_stirling_number_2_vec_next(fmpz * row, const fmpz * prev, slong n, slong klen) noexcept
     # Given the vector ``prev`` containing a row of Stirling numbers
     # ``S(n-1,0), S(n-1,1), S(n-1,2), ..., S(n-1,klen-1)``, computes
     # and stores in the row argument
@@ -67,11 +67,11 @@ cdef extern from "flint_wrap.h":
     # The ``row`` and ``prev`` arguments are permitted to be the
     # same, meaning that the row will be updated in-place.
 
-    void arith_stirling_matrix_1u(fmpz_mat_t mat)
+    void arith_stirling_matrix_1u(fmpz_mat_t mat) noexcept
 
-    void arith_stirling_matrix_1(fmpz_mat_t mat)
+    void arith_stirling_matrix_1(fmpz_mat_t mat) noexcept
 
-    void arith_stirling_matrix_2(fmpz_mat_t mat)
+    void arith_stirling_matrix_2(fmpz_mat_t mat) noexcept
     # For an arbitrary `m`-by-`n` matrix, writes the truncation of the
     # infinite Stirling number matrix::
     # row 0   : S(0,0)
@@ -83,9 +83,9 @@ cdef extern from "flint_wrap.h":
     # For any `n`, the `S_1` and `S_2` matrices thus obtained are
     # inverses of each other.
 
-    void arith_bell_number(fmpz_t b, ulong n)
-    void arith_bell_number_dobinski(fmpz_t res, ulong n)
-    void arith_bell_number_multi_mod(fmpz_t res, ulong n)
+    void arith_bell_number(fmpz_t b, ulong n) noexcept
+    void arith_bell_number_dobinski(fmpz_t res, ulong n) noexcept
+    void arith_bell_number_multi_mod(fmpz_t res, ulong n) noexcept
     # Sets `b` to the Bell number `B_n`, defined as the
     # number of partitions of a set with `n` members. Equivalently,
     # `B_n = \sum_{k=0}^n S_2(n,k)` where `S_2(n,k)` denotes a Stirling number
@@ -104,9 +104,9 @@ cdef extern from "flint_wrap.h":
     # A bound for the number of needed primes is computed using
     # ``arith_bell_number_size``.
 
-    void arith_bell_number_vec(fmpz * b, slong n)
-    void arith_bell_number_vec_recursive(fmpz * b, slong n)
-    void arith_bell_number_vec_multi_mod(fmpz * b, slong n)
+    void arith_bell_number_vec(fmpz * b, slong n) noexcept
+    void arith_bell_number_vec_recursive(fmpz * b, slong n) noexcept
+    void arith_bell_number_vec_multi_mod(fmpz * b, slong n) noexcept
     # Sets `b` to the vector of Bell numbers `B_0, B_1, \ldots, B_{n-1}`
     # inclusive. The ``recursive`` version uses the `O(n^3 \log n)`
     # triangular recurrence, while the ``multi_mod`` version implements
@@ -114,7 +114,7 @@ cdef extern from "flint_wrap.h":
     # running in time `O(n^2 \log^{O(1)} n)`. The default version
     # chooses an algorithm automatically.
 
-    mp_limb_t arith_bell_number_nmod(ulong n, nmod_t mod)
+    mp_limb_t arith_bell_number_nmod(ulong n, nmod_t mod) noexcept
     # Computes the Bell number `B_n` modulo an integer given by ``mod``.
     # After handling special cases, we use the formula
     # .. math ::
@@ -128,10 +128,10 @@ cdef extern from "flint_wrap.h":
     # calling ``arith_bell_number_nmod_vec`` and reading the last
     # coefficient.
 
-    void arith_bell_number_nmod_vec(mp_ptr b, slong n, nmod_t mod)
-    void arith_bell_number_nmod_vec_recursive(mp_ptr b, slong n, nmod_t mod)
-    void arith_bell_number_nmod_vec_ogf(mp_ptr b, slong n, nmod_t mod)
-    int arith_bell_number_nmod_vec_series(mp_ptr b, slong n, nmod_t mod)
+    void arith_bell_number_nmod_vec(mp_ptr b, slong n, nmod_t mod) noexcept
+    void arith_bell_number_nmod_vec_recursive(mp_ptr b, slong n, nmod_t mod) noexcept
+    void arith_bell_number_nmod_vec_ogf(mp_ptr b, slong n, nmod_t mod) noexcept
+    int arith_bell_number_nmod_vec_series(mp_ptr b, slong n, nmod_t mod) noexcept
     # Sets `b` to the vector of Bell numbers `B_0, B_1, \ldots, B_{n-1}`
     # inclusive modulo an integer given by ``mod``.
     # The *recursive* version uses the `O(n^2)` triangular recurrence.
@@ -146,36 +146,36 @@ cdef extern from "flint_wrap.h":
     # The default version of this function selects an algorithm
     # automatically.
 
-    double arith_bell_number_size(ulong n)
+    double arith_bell_number_size(ulong n) noexcept
     # Returns `b` such that `B_n < 2^{\lfloor b \rfloor}`. A previous
     # version of this function used the inequality
     # `B_n < \left(\frac{0.792n}{\log(n+1)}\right)^n` which is given
     # in [BerTas2010]_; we now use a slightly better bound
     # based on an asymptotic expansion.
 
-    void _arith_bernoulli_number(fmpz_t num, fmpz_t den, ulong n)
+    void _arith_bernoulli_number(fmpz_t num, fmpz_t den, ulong n) noexcept
     # Sets ``(num, den)`` to the reduced numerator and denominator
     # of the `n`-th Bernoulli number.
 
-    void arith_bernoulli_number(fmpq_t x, ulong n)
+    void arith_bernoulli_number(fmpq_t x, ulong n) noexcept
     # Sets ``x`` to the `n`-th Bernoulli number. This function is
     # equivalent to ``_arith_bernoulli_number`` apart from the output
     # being a single ``fmpq_t`` variable.
 
-    void _arith_bernoulli_number_vec(fmpz * num, fmpz * den, slong n)
+    void _arith_bernoulli_number_vec(fmpz * num, fmpz * den, slong n) noexcept
     # Sets the elements of ``num`` and ``den`` to the reduced
     # numerators and denominators of the Bernoulli numbers
     # `B_0, B_1, B_2, \ldots, B_{n-1}` inclusive. This function automatically
     # chooses between the ``recursive``, ``zeta`` and ``multi_mod``
     # algorithms according to the size of `n`.
 
-    void arith_bernoulli_number_vec(fmpq * x, slong n)
+    void arith_bernoulli_number_vec(fmpq * x, slong n) noexcept
     # Sets the ``x`` to the vector of Bernoulli numbers
     # `B_0, B_1, B_2, \ldots, B_{n-1}` inclusive. This function is
     # equivalent to ``_arith_bernoulli_number_vec`` apart
     # from the output being a single ``fmpq`` vector.
 
-    void arith_bernoulli_number_denom(fmpz_t den, ulong n)
+    void arith_bernoulli_number_denom(fmpz_t den, ulong n) noexcept
     # Sets ``den`` to the reduced denominator of the `n`-th
     # Bernoulli number `B_n`. For even `n`, the denominator is computed
     # as the product of all primes `p` for which `p - 1` divides `n`;
@@ -184,20 +184,20 @@ cdef extern from "flint_wrap.h":
     # `B_n = 0`). The initial sequence of values smaller than `2^{32}` are
     # looked up directly from a table.
 
-    double arith_bernoulli_number_size(ulong n)
+    double arith_bernoulli_number_size(ulong n) noexcept
     # Returns `b` such that `|B_n| < 2^{\lfloor b \rfloor}`, using the inequality
     # `|B_n| < \frac{4 n!}{(2\pi)^n}` and `n! \le (n+1)^{n+1} e^{-n}`.
     # No special treatment is given to odd `n`. Accuracy is not guaranteed
     # if `n > 10^{14}`.
 
-    void arith_bernoulli_polynomial(fmpq_poly_t poly, ulong n)
+    void arith_bernoulli_polynomial(fmpq_poly_t poly, ulong n) noexcept
     # Sets ``poly`` to the Bernoulli polynomial of degree `n`,
     # `B_n(x) = \sum_{k=0}^n \binom{n}{k} B_k x^{n-k}` where `B_k`
     # is a Bernoulli number. This function basically calls
     # ``arith_bernoulli_number_vec`` and then rescales the coefficients
     # efficiently.
 
-    void _arith_bernoulli_number_vec_recursive(fmpz * num, fmpz * den, slong n)
+    void _arith_bernoulli_number_vec_recursive(fmpz * num, fmpz * den, slong n) noexcept
     # Sets the elements of ``num`` and ``den`` to the reduced
     # numerators and denominators of `B_0, B_1, B_2, \ldots, B_{n-1}`
     # inclusive.
@@ -211,7 +211,7 @@ cdef extern from "flint_wrap.h":
     # as the primorial of `n + 1`.
     # %[1] https://en.wikipedia.org/w/index.php?title=Bernoulli_number&oldid=405938876
 
-    void _arith_bernoulli_number_vec_multi_mod(fmpz * num, fmpz * den, slong n)
+    void _arith_bernoulli_number_vec_multi_mod(fmpz * num, fmpz * den, slong n) noexcept
     # Sets the elements of ``num`` and ``den`` to the reduced
     # numerators and denominators of `B_0, B_1, B_2, \ldots, B_{n-1}`
     # inclusive. Uses the generating function
@@ -225,10 +225,10 @@ cdef extern from "flint_wrap.h":
     # half of the time compared to the usual generating function `x/(e^x-1)`
     # since the odd terms vanish.
 
-    void arith_euler_number(fmpz_t res, ulong n)
+    void arith_euler_number(fmpz_t res, ulong n) noexcept
     # Sets ``res`` to the Euler number `E_n`.
 
-    void arith_euler_number_vec(fmpz * res, slong n)
+    void arith_euler_number_vec(fmpz * res, slong n) noexcept
     # Computes the Euler numbers `E_0, E_1, \dotsc, E_{n-1}` for `n \geq 0`
     # and stores the result in ``res``, which must be an initialised
     # ``fmpz`` vector of sufficient size.
@@ -238,13 +238,13 @@ cdef extern from "flint_wrap.h":
     # ``arith_euler_number_size``, and the final integer values are recovered
     # using balanced CRT reconstruction.
 
-    double arith_euler_number_size(ulong n)
+    double arith_euler_number_size(ulong n) noexcept
     # Returns `b` such that `|E_n| < 2^{\lfloor b \rfloor}`, using the inequality
     # ``|E_n| < \frac{2^{n+2} n!}{\pi^{n+1}}`` and `n! \le (n+1)^{n+1} e^{-n}`.
     # No special treatment is given to odd `n`.
     # Accuracy is not guaranteed if `n > 10^{14}`.
 
-    void arith_euler_polynomial(fmpq_poly_t poly, ulong n)
+    void arith_euler_polynomial(fmpq_poly_t poly, ulong n) noexcept
     # Sets ``poly`` to the Euler polynomial `E_n(x)`. Uses the formula
     # .. math ::
     # E_n(x) = \frac{2}{n+1}\left(B_{n+1}(x) -
@@ -252,16 +252,16 @@ cdef extern from "flint_wrap.h":
     # with the Bernoulli polynomial `B_{n+1}(x)` evaluated once
     # using ``bernoulli_polynomial`` and then rescaled.
 
-    void arith_euler_phi(fmpz_t res, const fmpz_t n)
-    int arith_moebius_mu(const fmpz_t n)
-    void arith_divisor_sigma(fmpz_t res, ulong k, const fmpz_t n)
+    void arith_euler_phi(fmpz_t res, const fmpz_t n) noexcept
+    int arith_moebius_mu(const fmpz_t n) noexcept
+    void arith_divisor_sigma(fmpz_t res, ulong k, const fmpz_t n) noexcept
     # These are aliases for the functions in the fmpz module.
 
-    void arith_divisors(fmpz_poly_t res, const fmpz_t n)
+    void arith_divisors(fmpz_poly_t res, const fmpz_t n) noexcept
     # Set the coefficients of the polynomial ``res`` to the divisors of `n`,
     # including `1` and `n` itself, in ascending order.
 
-    void arith_ramanujan_tau(fmpz_t res, const fmpz_t n)
+    void arith_ramanujan_tau(fmpz_t res, const fmpz_t n) noexcept
     # Sets ``res`` to the Ramanujan tau function `\tau(n)` which is the
     # coefficient of `q^n` in the series expansion of
     # `f(q) = q  \prod_{k \geq 1} \bigl(1 - q^k\bigr)^{24}`.
@@ -276,7 +276,7 @@ cdef extern from "flint_wrap.h":
     # could be accomplished using a lookup table or by calling
     # ``arith_ramanujan_tau_series()`` directly.
 
-    void arith_ramanujan_tau_series(fmpz_poly_t res, slong n)
+    void arith_ramanujan_tau_series(fmpz_poly_t res, slong n) noexcept
     # Sets ``res`` to the polynomial with coefficients
     # `\tau(0),\tau(1), \dotsc, \tau(n-1)`, giving the initial `n` terms
     # in the series expansion of
@@ -287,7 +287,7 @@ cdef extern from "flint_wrap.h":
     # which is evaluated using three squarings. The first squaring is done
     # directly since the polynomial is very sparse at this point.
 
-    void arith_landau_function_vec(fmpz * res, slong len)
+    void arith_landau_function_vec(fmpz * res, slong len) noexcept
     # Computes the first ``len`` values of Landau's function `g(n)`
     # starting with `g(0)`. Landau's function gives the largest order
     # of an element of the symmetric group `S_n`.
@@ -295,23 +295,23 @@ cdef extern from "flint_wrap.h":
     # [DelegliseNicolasZimmermann2009]_. The running time is
     # `O(n^{3/2} / \sqrt{\log n})`.
 
-    void arith_dedekind_sum_naive(fmpq_t s, const fmpz_t h, const fmpz_t k)
-    double arith_dedekind_sum_coprime_d(double h, double k)
-    void arith_dedekind_sum_coprime_large(fmpq_t s, const fmpz_t h, const fmpz_t k)
-    void arith_dedekind_sum_coprime(fmpq_t s, const fmpz_t h, const fmpz_t k)
-    void arith_dedekind_sum(fmpq_t s, const fmpz_t h, const fmpz_t k)
+    void arith_dedekind_sum_naive(fmpq_t s, const fmpz_t h, const fmpz_t k) noexcept
+    double arith_dedekind_sum_coprime_d(double h, double k) noexcept
+    void arith_dedekind_sum_coprime_large(fmpq_t s, const fmpz_t h, const fmpz_t k) noexcept
+    void arith_dedekind_sum_coprime(fmpq_t s, const fmpz_t h, const fmpz_t k) noexcept
+    void arith_dedekind_sum(fmpq_t s, const fmpz_t h, const fmpz_t k) noexcept
     # These are aliases for the functions in the fmpq module.
 
-    void arith_number_of_partitions_vec(fmpz * res, slong len)
+    void arith_number_of_partitions_vec(fmpz * res, slong len) noexcept
     # Computes first ``len`` values of the partition function `p(n)`
     # starting with `p(0)`. Uses inversion of Euler's pentagonal series.
 
-    void arith_number_of_partitions_nmod_vec(mp_ptr res, slong len, nmod_t mod)
+    void arith_number_of_partitions_nmod_vec(mp_ptr res, slong len, nmod_t mod) noexcept
     # Computes first ``len`` values of the partition function `p(n)`
     # starting with `p(0)`, modulo the modulus defined by ``mod``.
     # Uses inversion of Euler's pentagonal series.
 
-    void arith_hrr_expsum_factored(trig_prod_t prod, mp_limb_t k, mp_limb_t n)
+    void arith_hrr_expsum_factored(trig_prod_t prod, mp_limb_t k, mp_limb_t n) noexcept
     # Symbolically evaluates the exponential sum
     # .. math ::
     # A_k(n) = \sum_{h=0}^{k-1}
@@ -328,7 +328,7 @@ cdef extern from "flint_wrap.h":
     # If `n` is larger, it can be pre-reduced modulo `k`, since `A_k(n)`
     # only depends on the value of `n \bmod k`.
 
-    void arith_number_of_partitions_mpfr(mpfr_t x, ulong n)
+    void arith_number_of_partitions_mpfr(mpfr_t x, ulong n) noexcept
     # Sets the pre-initialised MPFR variable `x` to the exact value of `p(n)`.
     # The value is computed using the Hardy-Ramanujan-Rademacher formula.
     # The precision of `x` will be changed to allow `p(n)` to be represented
@@ -375,13 +375,13 @@ cdef extern from "flint_wrap.h":
     # which gets added to the main sum periodically, in order to avoid
     # costly updates of the full-precision result when `n` is large.
 
-    void arith_number_of_partitions(fmpz_t x, ulong n)
+    void arith_number_of_partitions(fmpz_t x, ulong n) noexcept
     # Sets `x` to `p(n)`, the number of ways that `n` can be written
     # as a sum of positive integers without regard to order.
     # This function uses a lookup table for `n < 128` (where `p(n) < 2^{32}`),
     # and otherwise calls ``arith_number_of_partitions_mpfr``.
 
-    void arith_sum_of_squares(fmpz_t r, ulong k, const fmpz_t n)
+    void arith_sum_of_squares(fmpz_t r, ulong k, const fmpz_t n) noexcept
     # Sets `r` to the number of ways `r_k(n)` in which `n` can be represented
     # as a sum of `k` squares.
     # If `k = 2` or `k = 4`, we write `r_k(n)` as a divisor sum.
@@ -389,7 +389,7 @@ cdef extern from "flint_wrap.h":
     # expansion up to `O(x^{n+1})` and read off the last coefficient.
     # This is generally optimal.
 
-    void arith_sum_of_squares_vec(fmpz * r, ulong k, slong n)
+    void arith_sum_of_squares_vec(fmpz * r, ulong k, slong n) noexcept
     # For `i = 0, 1, \ldots, n-1`, sets `r_i` to the number of
     # representations of `i` a sum of `k` squares, `r_k(i)`.
     # This effectively computes the `q`-expansion of `\vartheta_3(q)`

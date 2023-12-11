@@ -182,9 +182,9 @@ cdef inline sage_fmpq_poly_max_limbs(const fmpq_poly_t poly) noexcept:
     return _fmpz_vec_max_limbs(fmpq_poly_numref(poly), fmpq_poly_length(poly))
 
 # functions removed from flint but still needed in sage
-cdef void fmpq_poly_scalar_mul_mpz(fmpq_poly_t, const fmpq_poly_t, const mpz_t)
-cdef void fmpq_poly_scalar_mul_mpq(fmpq_poly_t, const fmpq_poly_t, const mpq_t)
-cdef void fmpq_poly_set_coeff_mpq(fmpq_poly_t, slong, const mpq_t)
-cdef void fmpq_poly_get_coeff_mpq(mpq_t, const fmpq_poly_t, slong)
-cdef void fmpq_poly_set_mpz(fmpq_poly_t, const mpz_t)
-cdef void fmpq_poly_set_mpq(fmpq_poly_t, const mpq_t)
+cdef void fmpq_poly_scalar_mul_mpz(fmpq_poly_t, const fmpq_poly_t, const mpz_t) noexcept
+cdef void fmpq_poly_scalar_mul_mpq(fmpq_poly_t, const fmpq_poly_t, const mpq_t) noexcept
+cdef void fmpq_poly_set_coeff_mpq(fmpq_poly_t, slong, const mpq_t) noexcept
+cdef void fmpq_poly_get_coeff_mpq(mpq_t, const fmpq_poly_t, slong) noexcept
+cdef void fmpq_poly_set_mpz(fmpq_poly_t, const mpz_t) noexcept
+cdef void fmpq_poly_set_mpq(fmpq_poly_t, const mpq_t) noexcept

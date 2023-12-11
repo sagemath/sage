@@ -12,8 +12,8 @@ from sage.libs.flint.types cimport *
 
 cdef extern from "flint_wrap.h":
 
-    void timeit_start(timeit_t t)
-    void timeit_stop(timeit_t t)
+    void timeit_start(timeit_t t) noexcept
+    void timeit_stop(timeit_t t) noexcept
     # Gives wall and user time - useful for parallel programming.
     # Example usage::
     # timeit_t t0;
@@ -23,11 +23,11 @@ cdef extern from "flint_wrap.h":
     # timeit_stop(t0);
     # flint_printf("cpu = %wd ms  wall = %wd ms\n", t0->cpu, t0->wall);
 
-    void start_clock(int n)
+    void start_clock(int n) noexcept
 
-    void stop_clock(int n)
+    void stop_clock(int n) noexcept
 
-    double get_clock(int n)
+    double get_clock(int n) noexcept
     # Gives time based on cycle counter.
     # First one must ensure the processor speed in cycles per second
     # is set correctly in ``profiler.h``, in the macro definition
@@ -44,7 +44,7 @@ cdef extern from "flint_wrap.h":
     # clocks can be changed by altering ``FLINT_NUM_CLOCKS``. One can also
     # initialise an individual clock with ``init_clock(n)``.
 
-    void prof_repeat(double *min, double *max, profile_target_t target, void *arg)
+    void prof_repeat(double *min, double *max, profile_target_t target, void *arg) noexcept
     # Allows one to automatically time a given function. Here is a sample usage:
     # Suppose one has a function one wishes to profile::
     # void myfunc(ulong a, ulong b);
@@ -79,7 +79,7 @@ cdef extern from "flint_wrap.h":
     # adjusting ``DURATION_THRESHOLD`` and one may set a target duration
     # in microseconds by adjusting ``DURATION_TARGET`` in ``profiler.h``.
 
-    void get_memory_usage(meminfo_t meminfo)
+    void get_memory_usage(meminfo_t meminfo) noexcept
     # Obtains information about the memory usage of the current process.
     # The meminfo object contains the slots ``size`` (virtual memory size),
     # ``peak`` (peak virtual memory size), ``rss`` (resident set size),

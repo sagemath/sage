@@ -461,38 +461,38 @@ cdef class Fmpz_poly(SageObject):
 # Functions removed from flint but still needed in Sage. Code adapted from
 # earlier versions of flint.
 
-cdef void fmpz_poly_scalar_mul_mpz(fmpz_poly_t rop, const fmpz_poly_t op, const mpz_t c):
+cdef void fmpz_poly_scalar_mul_mpz(fmpz_poly_t rop, const fmpz_poly_t op, const mpz_t c) noexcept:
     cdef fmpz_t f
     fmpz_init_set_readonly(f, c)
     fmpz_poly_scalar_mul_fmpz(rop, op, f)
     fmpz_clear_readonly(f)
 
-cdef void fmpz_poly_scalar_divexact_mpz(fmpz_poly_t rop, const fmpz_poly_t op, const mpz_t c):
+cdef void fmpz_poly_scalar_divexact_mpz(fmpz_poly_t rop, const fmpz_poly_t op, const mpz_t c) noexcept:
     cdef fmpz_t f
     fmpz_init_set_readonly(f, c)
     fmpz_poly_scalar_divexact_fmpz(rop, op, f)
     fmpz_clear_readonly(f)
 
-cdef void fmpz_poly_scalar_fdiv_mpz(fmpz_poly_t rop, const fmpz_poly_t op, const mpz_t c):
+cdef void fmpz_poly_scalar_fdiv_mpz(fmpz_poly_t rop, const fmpz_poly_t op, const mpz_t c) noexcept:
     cdef fmpz_t f
     fmpz_init_set_readonly(f, c)
     fmpz_poly_scalar_fdiv_fmpz(rop, op, f)
     fmpz_clear_readonly(f)
 
-cdef void fmpz_poly_set_coeff_mpz(fmpz_poly_t poly, slong n, const mpz_t x):
+cdef void fmpz_poly_set_coeff_mpz(fmpz_poly_t poly, slong n, const mpz_t x) noexcept:
     cdef fmpz_t t
     fmpz_init_set_readonly(t, x)
     fmpz_poly_set_coeff_fmpz(poly, n, t)
     fmpz_clear_readonly(t)
 
-cdef void fmpz_poly_get_coeff_mpz(mpz_t x, const fmpz_poly_t poly, slong n):
+cdef void fmpz_poly_get_coeff_mpz(mpz_t x, const fmpz_poly_t poly, slong n) noexcept:
     cdef fmpz_t t
     fmpz_init(t)
     fmpz_poly_get_coeff_fmpz(t, poly, n)
     fmpz_get_mpz(x, t)
     fmpz_clear(t)
 
-cdef void fmpz_poly_set_mpz(fmpz_poly_t poly, const mpz_t x):
+cdef void fmpz_poly_set_mpz(fmpz_poly_t poly, const mpz_t x) noexcept:
     fmpz_poly_fit_length(poly, 1)
     fmpz_set_mpz(poly.coeffs, x)
     _fmpz_poly_set_length(poly, 1)
