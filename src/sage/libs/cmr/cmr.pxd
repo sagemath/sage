@@ -4,6 +4,8 @@
 
 # (progn (replace-regexp "/[*]\\(.\\|\n\\)*?[*]/" "" nil (point) (point-max)) (replace-regexp "[;{}]" ""  nil (point) (point-max)) (replace-regexp "CMR_EXPORT *" ""  nil (point) (point-max)) (replace-regexp "bool" "bint" nil (point) (point-max)))
 
+from libc.stdint cimport uint32_t, int64_t
+
 cdef extern from "stdbool.h":
 
     ctypedef int bool
@@ -46,6 +48,21 @@ cdef extern from "cmr/matrix.h":
     CMR_ERROR CMRsubmatCreate1x1(CMR* cmr, size_t row, size_t column, CMR_SUBMAT** psubmatrix)
     CMR_ERROR CMRsubmatFree(CMR* cmr, CMR_SUBMAT** psubmatrix)
 
+    ctypedef struct CMR_INTMAT:
+        size_t numRows
+        size_t numColumns
+        size_t numNonzeros
+        size_t* rowSlice
+        size_t* entryColumns
+        int* entryValues
+
+    CMR_ERROR CMRintmatCreate(CMR* cmr, CMR_INTMAT** presult, int numRows, int numColumns, int numNonzeros)
+    CMR_ERROR CMRintmatSortNonzeros(CMR* cmr, CMR_INTMAT* matrix)
+    # CMR_ERROR CMRintmatPrintDense(CMR* cmr, CMR_INTMAT* matrix, FILE* stream, char zeroChar, bint header)
+    CMR_ERROR CMRintmatFindEntry(CMR_INTMAT* matrix, size_t row, size_t column, size_t* pentry)
+    CMR_ERROR CMRintmatZoomSubmat(CMR* cmr, CMR_INTMAT* matrix, CMR_SUBMAT* submatrix, CMR_INTMAT** presult)
+    CMR_ERROR CMRintmatFree(CMR* cmr, CMR_INTMAT** pmatrix)
+
     ctypedef struct CMR_CHRMAT:
         size_t numRows
         size_t numColumns
@@ -61,12 +78,8 @@ cdef extern from "cmr/matrix.h":
     CMR_ERROR CMRchrmatZoomSubmat(CMR* cmr, CMR_CHRMAT* matrix, CMR_SUBMAT* submatrix, CMR_CHRMAT** presult)
     CMR_ERROR CMRchrmatFree(CMR* cmr, CMR_CHRMAT** pmatrix)
 
-cdef extern from "cmr/k_modular.h":
-
-    CMR_ERROR CMRtestUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, int* pisUnimodular)
-    CMR_ERROR CMRtestStrongUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisStronglyUnimodular)
-    CMR_ERROR CMRtestKmodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisKmodular, size_t* pk)
-    CMR_ERROR CMRtestStrongKmodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisStronglyKmodular, size_t* pk)
+    CMR_ERROR CMRchrmatToInt(CMR* cmr, CMR_CHRMAT* matrix, CMR_INTMAT** presult)
+    CMR_ERROR CMRintmatToChr(CMR* cmr, CMR_INTMAT* matrix, CMR_CHRMAT** presult)
 
 cdef extern from "cmr/camion.h":
 
@@ -362,7 +375,14 @@ cdef extern from "cmr/regular.h":
 
 cdef extern from "cmr/tu.h":
 
+    const int CMR_TU_ALGORITHM_DECOMPOSITION
+    const int CMR_TU_ALGORITHM_SUBMATRIX
+    const int CMR_TU_ALGORITHM_PARTITION
+
+    ctypedef int CMR_TU_ALGORITHM
+
     ctypedef struct CMR_TU_PARAMETERS:
+        CMR_TU_ALGORITHM algorithm
         CMR_REGULAR_PARAMETERS regular
 
     CMR_ERROR CMRparamsTotalUnimodularityInit(CMR_TU_PARAMETERS* params)
@@ -378,6 +398,39 @@ cdef extern from "cmr/tu.h":
     CMR_ERROR CMRtestTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMETERS* params, CMR_TU_STATISTICS* stats, double timeLimit)
 
 
+cdef extern from "cmr/equimodular.h":
+
+    ctypedef struct CMR_EQUIMODULAR_PARAMETERS:
+        CMR_TU_PARAMETERS tu
+
+    CMR_ERROR CMRparamsEquimodularityInit(CMR_EQUIMODULAR_PARAMETERS* params)
+
+    ctypedef struct CMR_EQUIMODULAR_STATISTICS:
+        uint32_t totalCount
+        double totalTime
+        double linalgTime
+        CMR_TU_STATISTICS tu
+
+    CMR_ERROR CMRstatsEquimodularityInit(CMR_EQUIMODULAR_STATISTICS* stats)
+
+    CMR_ERROR CMRtestEquimodularity(CMR* cmr, CMR_INTMAT* matrix,
+                                    bool* pisEquimodular, int64_t *pgcdDet,
+                                    CMR_EQUIMODULAR_PARAMETERS* params, CMR_EQUIMODULAR_STATISTICS* stats,
+                                    double timeLimit)
+    CMR_ERROR CMRtestStrongEquimodularity(CMR* cmr, CMR_INTMAT* matrix,
+                                          bool* pisStronglyEquimodular, int64_t *pgcdDet,
+                                          CMR_EQUIMODULAR_PARAMETERS* params, CMR_EQUIMODULAR_STATISTICS* stats,
+                                          double timeLimit)
+    CMR_ERROR CMRtestUnimodularity(CMR* cmr, CMR_INTMAT* matrix,
+                                   bool* pisUnimodular,
+                                   CMR_EQUIMODULAR_PARAMETERS* params, CMR_EQUIMODULAR_STATISTICS* stats,
+                                   double timeLimit)
+    CMR_ERROR CMRtestStrongUnimodularity(CMR* cmr, CMR_INTMAT* matrix,
+                                         bool* pisStronglyUnimodular,
+                                         CMR_EQUIMODULAR_PARAMETERS* params, CMR_EQUIMODULAR_STATISTICS* stats,
+                                         double timeLimit)
+
+
 cdef extern from "cmr/ctu.h":
 
     ctypedef struct CMR_CTU_STATISTICS:
@@ -388,7 +441,7 @@ cdef extern from "cmr/ctu.h":
     CMR_ERROR CMRstatsComplementTotalUnimodularityInit(CMR_CTU_STATISTICS* stats)
     # CMR_ERROR CMRstatsComplementTotalUnimodularityPrint(FILE* stream, CMR_CTU_STATISTICS* stats, const char* prefix)
     CMR_ERROR CMRcomplementRowColumn(CMR* cmr, CMR_CHRMAT* matrix, size_t complementRow, size_t complementColumn, CMR_CHRMAT** presult)
-    CMR_ERROR CMRtestComplementTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisComplementTotallyUnimodular, size_t* pcomplementRow, size_t* pcomplementColumn, CMR_CTU_STATISTICS* stats)
+    CMR_ERROR CMRtestComplementTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisComplementTotallyUnimodular, size_t* pcomplementRow, size_t* pcomplementColumn, CMR_CTU_STATISTICS* stats, double timeLimit)
 
 
 # Our global CMR environment

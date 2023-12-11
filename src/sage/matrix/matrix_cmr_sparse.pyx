@@ -618,7 +618,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             row_list.append(x)
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
-    def is_unimodular(self):
+    def is_unimodular(self, time_limit=60.0):
         r"""
         Return whether ``self`` is a unimodular matrix.
 
@@ -653,17 +653,20 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_unimodular()
             False
         """
+        cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
 
         sig_on()
         try:
-            CMR_CALL(CMRtestUnimodularity(cmr, self._mat, &result))
+            CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
+            CMR_CALL(CMRtestUnimodularity(cmr, int_mat, &result, NULL, NULL, time_limit))
         finally:
+            CMRintmatFree(cmr, &int_mat)
             sig_off()
 
         return <bint> result
 
-    def is_strongly_unimodular(self):
+    def is_strongly_unimodular(self, time_limit=60.0):
         r"""
         Return whether ``self`` is a strongly unimodular matrix.
 
@@ -690,17 +693,20 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_strongly_unimodular()
             True
         """
+        cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
 
         sig_on()
         try:
-            CMR_CALL(CMRtestStrongUnimodularity(cmr, self._mat, &result))
+            CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
+            CMR_CALL(CMRtestStrongUnimodularity(cmr, int_mat, &result, NULL, NULL, time_limit))
         finally:
+            CMRintmatFree(cmr, &int_mat)
             sig_off()
 
         return <bint> result
 
-    def modulus(self):
+    def modulus(self, time_limit=60.0):
         r"""
         Return the integer `k` such that ``self`` is `k`-modular.
 
@@ -733,13 +739,16 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [0 1 3]
             sage: M.modulus()
         """
+        cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
-        cdef size_t k
+        cdef int64_t k
 
         sig_on()
         try:
-            CMR_CALL(CMRtestKmodularity(cmr, self._mat, &result, &k))
+            CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
+            CMR_CALL(CMRtestEquimodularity(cmr, int_mat, &result, &k, NULL, NULL, time_limit))
         finally:
+            CMRintmatFree(cmr, &int_mat)
             sig_off()
 
         if result:
@@ -747,7 +756,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         else:
             return None
 
-    def strong_modulus(self):
+    def strong_modulus(self, time_limit=60.0):
         r"""
         Return the integer `k` such that ``self`` is strongly `k`-modular.
 
@@ -780,13 +789,16 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.strong_modulus()
             1
         """
+        cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
-        cdef size_t k
+        cdef int64_t k
 
         sig_on()
         try:
-            CMR_CALL(CMRtestStrongKmodularity(cmr, self._mat, &result, &k))
+            CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
+            CMR_CALL(CMRtestStrongEquimodularity(cmr, int_mat, &result, &k, NULL, NULL, time_limit))
         finally:
+            CMRintmatFree(cmr, &int_mat)
             sig_off()
 
         if result:
@@ -794,7 +806,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         else:
             return None
 
-    def is_k_modular(self, k):
+    def is_k_modular(self, k, time_limit=60.0):
         r"""
         Return whether ``self`` is `k`-modular.
 
@@ -833,13 +845,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_k_modular(1)
             False
         """
-        result = self.modulus()
+        result = self.modulus(time_limit=time_limit)
         if not result:
             return False
         else:
             return result == k
 
-    def is_strongly_k_modular(self, k):
+    def is_strongly_k_modular(self, k, time_limit=60.0):
         r"""
         Return whether ``self`` is strongly `k`-modular.
 
@@ -864,7 +876,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_strongly_k_modular(1)
             True
         """
-        result = self.strong_modulus()
+        result = self.strong_modulus(time_limit=time_limit)
         if not result:
             return False
         else:
