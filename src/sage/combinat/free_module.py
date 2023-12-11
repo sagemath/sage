@@ -777,20 +777,6 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                                lambda x: self.sum_of_terms((G(g), K(c))
                                                            for c, g in x))
 
-    def _an_element_impl(self):  # TODO: REMOVE?
-        """
-        Return an element of ``self``, namely the zero element.
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-            sage: F._an_element_impl()
-            0
-            sage: _.parent() is F
-            True
-        """
-        return self.element_class(self, {})
-
     def _first_ngens(self, n):
         """
         Used by the preparser for ``F.<x> = ...``.

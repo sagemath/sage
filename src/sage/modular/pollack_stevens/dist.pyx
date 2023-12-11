@@ -44,7 +44,7 @@ from sage.rings.infinity import Infinity
 
 #from sage.libs.flint.ulong_extras cimport *
 
-from .sigma0 import Sigma0
+from sage.modular.pollack_stevens.sigma0 import Sigma0
 
 cdef long overflow = 1 << (4 * sizeof(long) - 1)
 cdef long underflow = -overflow

@@ -13,23 +13,25 @@ packages.
 
 TESTS::
 
-    sage: mupad.package('"MuPAD-Combinat"')                        # optional - mupad
-    sage: combinat = mupad.combinat                                # optional - mupad
-    sage: examples = mupad.examples                                # optional - mupad
-    sage: S = examples.SymmetricFunctions()                        # optional - mupad
-    sage: S.s[2,1]^2                                               # optional - mupad
+    sage: # optional - mupad
+    sage: mupad.package('"MuPAD-Combinat"')
+    sage: combinat = mupad.combinat
+    sage: examples = mupad.examples
+    sage: S = examples.SymmetricFunctions()
+    sage: S.s[2,1]^2
     s[3, 3] + s[4, 2] + s[2, 2, 1, 1] + s[2, 2, 2] + 2 s[3, 2, 1] + s[4, 1, 1] +
     s[3, 1, 1, 1]
-    sage: S.omega( S.s[3] )                                        # optional - mupad
+    sage: S.omega( S.s[3] )
     s[1, 1, 1]
-    sage: s = S.s                                                  # optional - mupad
-    sage: p = S.p                                                  # optional - mupad
-    sage: s(s[2,1] + p[2,1])                                       # optional - mupad
+    sage: s = S.s
+    sage: p = S.p
+    sage: s(s[2,1] + p[2,1])
     s[2, 1] + s[3] - s[1, 1, 1]
-    sage: s(_)                                                     # optional - mupad
+    sage: s(_)
     s[2, 1] + s[3] - s[1, 1, 1]
 
-    sage: combinat.tableaux.list(3)                                # optional - mupad # note: the order of the result seems to depend on the version of MuPAD / MuPAD-Combinat
+    sage: # optional - mupad
+    sage: combinat.tableaux.list(3)
                 --                                      +---+ --
                 |                                       | 3 |  |
                 |                 +---+      +---+      +---+  |
@@ -37,8 +39,8 @@ TESTS::
                 |  +---+---+---+  +---+---+  +---+---+  +---+  |
                 |  | 1 | 2 | 3 |, | 1 | 2 |, | 1 | 3 |, | 1 |  |
                 -- +---+---+---+  +---+---+  +---+---+  +---+ --
-    sage: three = mupad(3)                                        # optional - mupad
-    sage: three.combinat.tableaux.list()                          # optional - mupad
+    sage: three = mupad(3)
+    sage: three.combinat.tableaux.list()
                 --                                      +---+ --
                 |                                       | 3 |  |
                 |                 +---+      +---+      +---+  |
@@ -46,12 +48,12 @@ TESTS::
                 |  +---+---+---+  +---+---+  +---+---+  +---+  |
                 |  | 1 | 2 | 3 |, | 1 | 2 |, | 1 | 3 |, | 1 |  |
                 -- +---+---+---+  +---+---+  +---+---+  +---+ --
-    sage: t = _[1]                                                # optional - mupad
-    sage: t                                                       # optional - mupad
+    sage: t = _[1]
+    sage: t
                                  +---+---+---+
                                  | 1 | 2 | 3 |
                                  +---+---+---+
-    sage: combinat.tableaux.conjugate(t)                          # optional - mupad
+    sage: combinat.tableaux.conjugate(t)
                                      +---+
                                      | 3 |
                                      +---+
@@ -60,21 +62,22 @@ TESTS::
                                      | 1 |
                                      +---+
 
-    sage: combinat.ribbonsTableaux.list([2,2],[1,1],2)           # optional - mupad
+    sage: # optional - mupad
+    sage: combinat.ribbonsTableaux.list([2,2],[1,1],2)
                            -- +---+---+  +---+---+ --
                            |  |   | 2 |  |     2 |  |
                            |  +   +   +, +---+---+  |
                            |  | 1 |   |  | 1     |  |
                            -- +---+---+  +---+---+ --
-    sage: combinat.tableaux.kAtom([2,1],3)                      # optional - mupad
+    sage: combinat.tableaux.kAtom([2,1],3)
                                   -- +---+     --
                                   |  | 2 |      |
                                   |  +---+---+  |
                                   |  | 1 | 1 |  |
                                   -- +---+---+ --
-    sage: M = S.Macdonald()                                    # optional - mupad
-    sage: a = M.P[1]^2                                         # optional - mupad
-    sage: mupad.mapcoeffs(a, 'normal')                         # optional - mupad
+    sage: M = S.Macdonald()
+    sage: a = M.P[1]^2
+    sage: mupad.mapcoeffs(a, 'normal')
                                  q - t + q t - 1
                           P[2] + --------------- P[1, 1]
                                      q t - 1
@@ -491,13 +494,14 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
         """
         EXAMPLES::
 
-            sage: mupad.package('"MuPAD-Combinat"')  # optional - mupad-Combinat
-            sage: combinat = mupad.combinat          # optional - mupad-Combinat
-            sage: three = mupad(3)                   # optional - mupad-Combinat
-            sage: type(three.combinat)               # optional - mupad-Combinat
+            sage: # optional - mupad
+            sage: mupad.package('"MuPAD-Combinat"')
+            sage: combinat = mupad.combinat
+            sage: three = mupad(3)
+            sage: type(three.combinat)
             <class 'sage.interfaces.mupad.MupadFunctionElement'>
-            sage: tableaux = three.combinat.tableaux # optional - mupad-Combinat
-            sage: type(tableaux)                     # optional - mupad-Combinat
+            sage: tableaux = three.combinat.tableaux
+            sage: type(tableaux)
             <class 'sage.interfaces.mupad.MupadFunctionElement'>
         """
         P = self._obj.parent()
@@ -528,13 +532,14 @@ class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
         """
         EXAMPLES::
 
-            sage: mupad.package('"MuPAD-Combinat"') # optional - mupad-Combinat
-            sage: combinat = mupad.combinat         # optional - mupad-Combinat
-            sage: examples = mupad.examples         # optional - mupad-Combinat
-            sage: S = examples.SymmetricFunctions() # optional - mupad-Combinat
-            sage: type(S.omega)                     # optional - mupad-Combinat
+            sage: # optional - mupad
+            sage: mupad.package('"MuPAD-Combinat"')
+            sage: combinat = mupad.combinat
+            sage: examples = mupad.examples
+            sage: S = examples.SymmetricFunctions()
+            sage: type(S.omega)
             <class 'sage.interfaces.mupad.MupadFunctionElement'>
-            sage: S.omega(S.s[3])                   # optional - mupad-Combinat
+            sage: S.omega(S.s[3])
             s[1, 1, 1]
         """
         P = self._obj.parent()
@@ -551,11 +556,12 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         """
         EXAMPLES::
 
-            sage: mupad.package('"MuPAD-Combinat"') # optional - mupad-Combinat
-            sage: S = mupad.examples.SymmetricFunctions() # optional - mupad-Combinat
-            sage: type(S)                           # optional - mupad-Combinat
+            sage: # optional - mupad
+            sage: mupad.package('"MuPAD-Combinat"')
+            sage: S = mupad.examples.SymmetricFunctions()
+            sage: type(S)
             <class 'sage.interfaces.mupad.MupadElement'>
-            sage: S.s                               # optional - mupad-Combinat
+            sage: S.s
             (examples::SymmetricFunctions(Dom::ExpressionField()))::s
 
             sage: x = mupad('x')                    # optional - mupad-Combinat

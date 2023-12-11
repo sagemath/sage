@@ -93,6 +93,29 @@ from sage.rings.monomials import monomials
 from sage.libs.pari.all import pari
 
 
+def quadratic_order_class_number(disc):
+    r"""
+    Return the class number of the quadratic order of given discriminant.
+
+    EXAMPLES::
+
+        sage: from sage.rings.number_field.order import quadratic_order_class_number
+        sage: quadratic_order_class_number(-419)
+        9
+        sage: quadratic_order_class_number(60)
+        2
+
+    ALGORITHM: Either :pari:`qfbclassno` or :pari:`quadclassunit`,
+    depending on the size of the discriminant.
+    """
+    # cutoffs from PARI documentation
+    if disc < -10**25 or disc > 10**10:
+        h = pari.quadclassunit(disc)[0]
+    else:
+        h = pari.qfbclassno(disc)
+    return ZZ(h)
+
+
 class OrderFactory(UniqueFactory):
     r"""
     Abstract base class for factories creating orders, such as
@@ -1097,7 +1120,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             K = self.number_field()
             if K.degree() != 2:
                 raise NotImplementedError("computation of class numbers of non-maximal orders not in quadratic fields is not implemented")
-            return ZZ(pari.qfbclassno(self.discriminant()))
+            return quadratic_order_class_number(self.discriminant())
         return self.number_field().class_number(proof=proof)
 
     def class_group(self, proof=None, names='c'):

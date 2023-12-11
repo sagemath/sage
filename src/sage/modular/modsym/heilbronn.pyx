@@ -34,11 +34,11 @@ cdef extern from "<math.h>":
     float roundf(float x)
 
 cimport sage.modular.modsym.p1list as p1list
-from . import p1list
+from sage.modular.modsym import p1list
 cdef p1list.export export
 export = p1list.export()
 
-from .apply cimport Apply
+from sage.modular.modsym.apply cimport Apply
 cdef Apply PolyApply= Apply()
 
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
