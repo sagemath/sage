@@ -11,10 +11,10 @@ TESTS::
     +--------+---------+------------+
 
     sage: test_packages(['atlasrep', 'tomlib'])
-      Status   Package    GAP Output
-    +--------+----------+------------+
-               atlasrep   true
-               tomlib     true
+        Status   Package    GAP Output
+      ├────────┼──────────┼────────────┤
+                 atlasrep   true
+                 tomlib     true
 """
 
 import os
@@ -43,9 +43,9 @@ def test_packages(packages, only_failures=False):
 
         sage: from sage.tests.gap_packages import all_installed_packages, test_packages
         sage: test_packages(['GAPDoc'])
-          Status   Package   GAP Output
-        +--------+---------+------------+
-                   GAPDoc    true
+            Status   Package   GAP Output
+          ├────────┼─────────┼────────────┤
+                     GAPDoc    true
 
     All packages, including user-installed ones::
 
