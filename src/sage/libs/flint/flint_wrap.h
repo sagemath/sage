@@ -31,6 +31,10 @@
 #define slong mp_limb_signed_t
 #endif
 
+/* NOTE: calcium.h must be imported before gr.h as otherwise truth_t gets redefined
+   See https://github.com/flintlib/flint/issues/1653 */
+#include <flint/calcium.h>
+
 #include <flint/fmpz_poly_mat.h>
 #include <flint/fmpq_mpoly.h>
 #include <flint/nmod_poly_mat.h>
