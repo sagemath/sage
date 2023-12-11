@@ -81,10 +81,10 @@ cdef extern from "<complex.h>":
 import sage.rings.abc
 cimport sage.rings.ring
 cimport sage.rings.integer
+from sage.rings.ring import Ring
 
 from sage.structure.element cimport Element, FieldElement
 from sage.structure.parent  cimport Parent
-from sage.structure.parent_gens import ParentWithGens
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
@@ -149,7 +149,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             (-1.0, -1.0 + 1.2246...e-16*I, False)
         """
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self, ('I',), normalize=False, category=Fields().Infinite().Metric().Complete())
+        Ring.__init__(self, self, ('I',), normalize=False, category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_()
 
     def __reduce__(self):
@@ -213,7 +213,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             sage: CDF.characteristic()
             0
         """
-        from .integer import Integer
+        from sage.rings.integer import Integer
         return Integer(0)
 
     def random_element(self, double xmin=-1, double xmax=1, double ymin=-1, double ymax=1):
@@ -351,7 +351,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             sage: CDF((1,2)) # indirect doctest
             1.0 + 2.0*I
         """
-        from . import complex_mpfr
+        from sage.rings import complex_mpfr
         if isinstance(x, ComplexDoubleElement):
             return x
         elif isinstance(x, tuple):
@@ -417,10 +417,10 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         """
         if S is int or S is float:
             return FloatToCDF(S)
-        from .rational_field import QQ
-        from .real_lazy import RLF
-        from .real_mpfr import RR
-        from .cc import CC
+        from sage.rings.rational_field import QQ
+        from sage.rings.real_lazy import RLF
+        from sage.rings.real_mpfr import RR
+        from sage.rings.cc import CC
 
         if S is ZZ or S is QQ or S is RDF or S is RLF:
             return FloatToCDF(S)
@@ -502,7 +502,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         if prec == 53:
             return self
         else:
-            from .complex_mpfr import ComplexField
+            from sage.rings.complex_mpfr import ComplexField
             return ComplexField(prec)
 
 
@@ -621,7 +621,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             ...
             ValueError: n must be a positive integer
         """
-        from .integer import Integer
+        from sage.rings.integer import Integer
         try:
             n = Integer(n)
         except TypeError:
@@ -968,7 +968,7 @@ cdef class ComplexDoubleElement(FieldElement):
             True
         """
         # Sending to another computer algebra system is slow anyway, right?
-        from .complex_mpfr import ComplexField
+        from sage.rings.complex_mpfr import ComplexField
         return ComplexField()(self)._interface_init_(I)
 
     def _mathematica_init_(self):
@@ -980,7 +980,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: mathematica(CDF(1e-25, 1e25))  # optional - mathematica
             1.*^-25 + 1.*^25*I
         """
-        from .complex_mpfr import ComplexField
+        from sage.rings.complex_mpfr import ComplexField
         return ComplexField()(self)._mathematica_init_()
 
     def _maxima_init_(self, I=None):
@@ -995,7 +995,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: CDF(.5 + I)._maxima_init_()                                           # needs sage.symbolic
             '0.50000000000000000 + 1.0000000000000000*%i'
         """
-        from .complex_mpfr import ComplexField
+        from sage.rings.complex_mpfr import ComplexField
         return ComplexField()(self)._maxima_init_(I)
 
     def _sympy_(self):
@@ -1097,7 +1097,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: format(CDF(0, 0), '+#.4')
             '+0.000'
         """
-        from .complex_mpfr import _format_complex_number
+        from sage.rings.complex_mpfr import _format_complex_number
         return _format_complex_number(GSL_REAL(self._complex),
                                                      GSL_IMAG(self._complex),
                                                      format_spec)
@@ -2382,12 +2382,12 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         if not GSL_IMAG(self._complex):
             if GSL_REAL(self._complex) == 0:
-                from .infinity import unsigned_infinity
+                from sage.rings.infinity import unsigned_infinity
                 return unsigned_infinity
             try:
-                from .integer import Integer
+                from sage.rings.integer import Integer
                 if Integer(GSL_REAL(self._complex)) < 0:
-                    from .cc import CC
+                    from sage.rings.cc import CC
                     return CC(self).gamma()
             except TypeError:
                 pass
@@ -2429,7 +2429,7 @@ cdef class ComplexDoubleElement(FieldElement):
             Infinity
         """
         if GSL_REAL(self._complex) == 1 and GSL_IMAG(self._complex) == 0:
-            from .infinity import unsigned_infinity
+            from sage.rings.infinity import unsigned_infinity
             return unsigned_infinity
 
         global complex_double_element_zeta
