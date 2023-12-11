@@ -128,6 +128,31 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if immutable:
             self.set_immutable()
 
+    def matrix_from_rows_and_columns(self, rows, columns):
+        if not isinstance(rows, (list, tuple)):
+            rows = list(rows)
+
+        if not isinstance(columns, (list, tuple)):
+            columns = list(columns)
+
+        if cmr == NULL:
+            CMRcreateEnvironment(&cmr)
+
+        cdef CMR_SUBMAT *submatrix = NULL
+        cdef CMR_CHRMAT *cmr_submatrix = NULL
+
+        CMR_CALL(CMRsubmatCreate(cmr, len(rows), len(columns), &submatrix))
+
+        for i in range(submatrix.numRows):
+            submatrix.rows[i] = rows[i]
+
+        for j in range(submatrix.numColumns):
+            submatrix.columns[j] = columns[j]
+
+        CMR_CALL(CMRchrmatZoomSubmat(cmr, self._mat, submatrix, &cmr_submatrix))
+
+        return Matrix_cmr_chr_sparse._from_cmr(cmr_submatrix)
+
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef size_t index
         CMR_CALL(CMRchrmatFindEntry(self._mat, i, j, &index))
