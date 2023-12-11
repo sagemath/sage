@@ -1278,6 +1278,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               construct_transposes=construct_transposes,
                               construct_graphs=construct_graphs)
 
+        params.algorithm = CMR_TU_ALGORITHM_DECOMPOSITION
         _set_cmr_regular_parameters(&params.regular, kwds)
         sig_on()
         try:
