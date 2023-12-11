@@ -605,7 +605,7 @@ class _Latex_prefs_object(SageObject):
         self._option["matrix_column_alignment"] = matrix_column_alignment
         self._option["macros"] = ""
         self._option["preamble"] = ""
-        self._option["engine"] = "pdflatex"
+        self._option["engine"] = "xelatex"
         self._option["engine_name"] = "LaTeX"
 
 
