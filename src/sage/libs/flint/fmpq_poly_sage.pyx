@@ -4,6 +4,7 @@
 from sage.libs.gmp.mpq cimport *
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpq cimport *
+from sage.libs.flint.fmpq_poly cimport *
 
 
 cdef void fmpq_poly_scalar_mul_mpz(fmpq_poly_t rop, const fmpq_poly_t op, const mpz_t c) noexcept:
