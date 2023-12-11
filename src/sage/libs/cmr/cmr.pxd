@@ -71,7 +71,7 @@ cdef extern from "cmr/k_modular.h":
 cdef extern from "cmr/camion.h":
 
     ctypedef struct CMR_CAMION_STATISTICS:
-        size_t totalCount
+        uint32_t totalCount
         double totalTime
 
     CMR_ERROR CMRstatsCamionInit(CMR_CAMION_STATISTICS* stats)
@@ -190,13 +190,13 @@ cdef extern from "cmr/graph.h":
 cdef extern from "cmr/graphic.h":
 
     ctypedef struct CMR_GRAPHIC_STATISTICS:
-        size_t totalCount
+        uint32_t totalCount
         double totalTime
-        size_t checkCount
+        uint32_t checkCount
         double checkTime
-        size_t applyCount
+        uint32_t applyCount
         double applyTime
-        size_t transposeCount
+        uint32_t transposeCount
         double transposeTime
 
     CMR_ERROR CMRstatsGraphicInit(CMR_GRAPHIC_STATISTICS* stats)
@@ -209,13 +209,13 @@ cdef extern from "cmr/graphic.h":
 cdef extern from "cmr/series_parallel.h":
 
     ctypedef struct CMR_SP_STATISTICS:
-        size_t totalCount
+        uint32_t totalCount
         double totalTime
-        size_t reduceCount
+        uint32_t reduceCount
         double reduceTime
-        size_t wheelCount
+        uint32_t wheelCount
         double wheelTime
-        size_t nonbinaryCount
+        uint32_t nonbinaryCount
         double nonbinaryTime
 
     CMR_ERROR CMRstatsSeriesParallelInit(CMR_SP_STATISTICS* stats)
@@ -243,7 +243,7 @@ cdef extern from "cmr/series_parallel.h":
 cdef extern from "cmr/network.h":
 
     ctypedef struct CMR_NETWORK_STATISTICS:
-        size_t totalCount
+        uint32_t totalCount
         double totalTime
         CMR_CAMION_STATISTICS camion
         CMR_GRAPHIC_STATISTICS graphic
@@ -342,18 +342,18 @@ cdef extern from "cmr/regular.h":
     CMR_ERROR CMRparamsRegularInit(CMR_REGULAR_PARAMETERS* params)
 
     ctypedef struct CMR_REGULAR_STATISTICS:
-        size_t totalCount
+        uint32_t totalCount
         double totalTime
         CMR_SP_STATISTICS seriesParallel
         CMR_GRAPHIC_STATISTICS graphic
         CMR_NETWORK_STATISTICS network
-        size_t sequenceExtensionCount
+        uint32_t sequenceExtensionCount
         double sequenceExtensionTime
-        size_t sequenceGraphicCount
+        uint32_t sequenceGraphicCount
         double sequenceGraphicTime
-        size_t enumerationCount
+        uint32_t enumerationCount
         double enumerationTime
-        size_t enumerationCandidatesCount
+        uint32_t enumerationCandidatesCount
 
     CMR_ERROR CMRstatsRegularInit(CMR_REGULAR_STATISTICS* stats)
     # CMR_ERROR CMRstatsRegularPrint(FILE* stream, CMR_REGULAR_STATISTICS* stats, const char* prefix)
@@ -368,7 +368,7 @@ cdef extern from "cmr/tu.h":
     CMR_ERROR CMRparamsTotalUnimodularityInit(CMR_TU_PARAMETERS* params)
 
     ctypedef struct CMR_TU_STATISTICS:
-        size_t totalCount
+        uint32_t totalCount
         double totalTime
         CMR_CAMION_STATISTICS camion
         CMR_REGULAR_STATISTICS regular
@@ -381,7 +381,7 @@ cdef extern from "cmr/tu.h":
 cdef extern from "cmr/ctu.h":
 
     ctypedef struct CMR_CTU_STATISTICS:
-        size_t totalCount
+        uint32_t totalCount
         double totalTime
         CMR_TU_STATISTICS tu
 
