@@ -1125,7 +1125,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RS = R.root_lattice()
                 sage: P = RS.nonnesting_partition_lattice(); P
                 Finite lattice containing 20 elements
-                sage: P.coxeter_transformation()**7 == 1                                # needs sage.graphs sage.libs.flint
+                sage: P.coxeter_transformation()**7 == 1                                # needs sage.libs.flint
                 True
 
             REFERENCES:

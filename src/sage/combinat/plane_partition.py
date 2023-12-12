@@ -1548,7 +1548,7 @@ class PlanePartitions_box(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([4,3,2])
-            sage: TestSuite(PP).run()                                       # long time, needs sage.modules
+            sage: TestSuite(PP).run()           # long time                             # needs sage.modules
         """
         super().__init__(box_size, category=FiniteEnumeratedSets())
 

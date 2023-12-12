@@ -429,7 +429,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap sage.graphs
+            sage: # needs sage.graphs sage.libs.gap
             sage: Qvee = RootSystem(['C',2]).coroot_lattice()
             sage: Qvee.from_vector(vector([1,2])).max_quantum_element()
             [2, 1, 2, 1]
