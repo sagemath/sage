@@ -153,7 +153,6 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.power_series_pari import PowerSeries_pari
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Expression, parent
 from sage.structure.nonexact import Nonexact
