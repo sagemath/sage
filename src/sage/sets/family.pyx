@@ -540,48 +540,10 @@ cdef class AbstractFamily(Parent):
 
 
 
-cdef class FiniteFamily(AbstractFamily):
+cdef class FiniteFamily_base(AbstractFamily):
     r"""
-    A :class:`FiniteFamily` is an associative container which models a finite
-    family `(f_i)_{i \in I}`. Its elements `f_i` are therefore its
-    values. Instances should be created via the :func:`Family` factory. See its
-    documentation for examples and tests.
-
-    EXAMPLES:
-
-    We define the family `(f_i)_{i \in \{3,4,7\}}` with `f_3=a`,
-    `f_4=b`, and `f_7=d`::
-
-        sage: from sage.sets.family import FiniteFamily
-        sage: f = FiniteFamily({3: 'a', 4: 'b', 7: 'd'})
-
-    Individual elements are accessible as in a usual dictionary::
-
-        sage: f[7]
-        'd'
-
-    And the other usual dictionary operations are also available::
-
-        sage: len(f)
-        3
-        sage: f.keys()
-        [3, 4, 7]
-
-    However f behaves as a container for the `f_i`'s::
-
-        sage: list(f)
-        ['a', 'b', 'd']
-        sage: [ x for x in f ]
-        ['a', 'b', 'd']
-
-    The order of the elements can be specified using the ``keys`` optional argument::
-
-        sage: f = FiniteFamily({"a": "aa", "b": "bb", "c" : "cc" }, keys = ["c", "a", "b"])
-        sage: list(f)
-        ['cc', 'aa', 'bb']
-
+    Cython base class for :class:`FiniteFamily`.
     """
-
     def __init__(self, dictionary, keys=None):
         """
         TESTS::
@@ -717,8 +679,8 @@ cdef class FiniteFamily(AbstractFamily):
             False
         """
         return (isinstance(other, self.__class__) and
-                self._keys == (<FiniteFamily> other)._keys and
-                self._dictionary == (<FiniteFamily> other)._dictionary)
+                self._keys == (<FiniteFamily_base> other)._keys and
+                self._dictionary == (<FiniteFamily_base> other)._dictionary)
 
     def _repr_(self):
         """
@@ -833,6 +795,49 @@ cdef class FiniteFamily(AbstractFamily):
         """
         self.__init__(state['dictionary'], keys=state.get("keys"))
 
+
+class FiniteFamily(FiniteFamily_base):
+    r"""
+    A :class:`FiniteFamily` is an associative container which models a finite
+    family `(f_i)_{i \in I}`. Its elements `f_i` are therefore its
+    values. Instances should be created via the :func:`Family` factory. See its
+    documentation for examples and tests.
+
+    EXAMPLES:
+
+    We define the family `(f_i)_{i \in \{3,4,7\}}` with `f_3=a`,
+    `f_4=b`, and `f_7=d`::
+
+        sage: from sage.sets.family import FiniteFamily
+        sage: f = FiniteFamily({3: 'a', 4: 'b', 7: 'd'})
+
+    Individual elements are accessible as in a usual dictionary::
+
+        sage: f[7]
+        'd'
+
+    And the other usual dictionary operations are also available::
+
+        sage: len(f)
+        3
+        sage: f.keys()
+        [3, 4, 7]
+
+    However f behaves as a container for the `f_i`'s::
+
+        sage: list(f)
+        ['a', 'b', 'd']
+        sage: [ x for x in f ]
+        ['a', 'b', 'd']
+
+    The order of the elements can be specified using the ``keys`` optional argument::
+
+        sage: f = FiniteFamily({"a": "aa", "b": "bb", "c" : "cc" }, keys = ["c", "a", "b"])
+        sage: list(f)
+        ['cc', 'aa', 'bb']
+
+    """
+    pass
 
 class FiniteFamilyWithHiddenKeys(FiniteFamily):
     r"""

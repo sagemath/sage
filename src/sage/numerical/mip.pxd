@@ -3,7 +3,7 @@ cdef extern from *:
     cdef int REAL = -1
     cdef int INTEGER = 0
 
-from sage.sets.family cimport FiniteFamily
+from sage.sets.family cimport FiniteFamily_base
 from sage.structure.sage_object cimport SageObject
 from sage.numerical.backends.generic_backend cimport GenericBackend
 
@@ -29,7 +29,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
     cpdef sum(self, L) noexcept
 
 
-cdef class MIPVariable(FiniteFamily):
+cdef class MIPVariable(FiniteFamily_base):
     cdef MixedIntegerLinearProgram _p
     cdef int _vtype
     cdef str _name
