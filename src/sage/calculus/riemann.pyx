@@ -938,7 +938,7 @@ cdef class Riemann_Map:
             sage: z3(t) = 2+exp(-I*t); z3p(t) = -I*exp(-I*t)
             sage: m = Riemann_Map([z1,z2,z3], [z1p,z2p,z3p], 0,             # long time
             ....:                 ncorners=4)
-            sage: p = m.plot_spiderweb(withcolor=True, plot_points=500,     # long time, needs sage.plot
+            sage: p = m.plot_spiderweb(withcolor=True, plot_points=500,         # long time, needs sage.plot
             ....:                      thickness=2.0, min_mag=0.1)
         """
         from sage.plot.complex_plot import ComplexPlot
@@ -1042,7 +1042,7 @@ cdef class Riemann_Map:
 
         High resolution plot::
 
-            sage: m.plot_colored(plot_points=1000)  # long time (29s on sage.math, 2012)            # needs sage.plot
+            sage: m.plot_colored(plot_points=1000)      # long time (29s on sage.math, 2012), needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         To generate the unit circle map, it's helpful to see what the
