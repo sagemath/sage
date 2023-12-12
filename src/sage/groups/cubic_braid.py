@@ -445,9 +445,9 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
             sage: BuMa, BuMaAd, H = ele.burau_matrix(reduced='unitary'); BuMa
             [       0 zeta12^3]
             [zeta12^3        0]
-            sage: BuMa * H * BuMaAd == H                                                # needs sage.rings.number_field
+            sage: BuMa * H * BuMaAd == H
             True
-            sage: BuMa.base_ring()                                                      # needs sage.rings.number_field
+            sage: BuMa.base_ring()
             Cyclotomic Field of order 12 and degree 4
             sage: BuMa, BuMaAd, H = ele.burau_matrix(domain=QQ[I, sqrt(3)],             # needs sage.symbolic
             ....:                                    reduced='unitary'); BuMa

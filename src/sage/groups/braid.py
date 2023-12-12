@@ -1109,20 +1109,20 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: # needs sage.symbolic
             sage: B = BraidGroup(2)
             sage: b = B([-1, -1, -1])
-            sage: b.jones_polynomial(skein_normalization=True)                          # needs sage.symbolic
+            sage: b.jones_polynomial(skein_normalization=True)
             -A^-16 + A^-12 + A^-4
-            sage: b.jones_polynomial()                                                  # needs sage.symbolic
+            sage: b.jones_polynomial()
             1/t + 1/t^3 - 1/t^4
             sage: B = BraidGroup(3)
             sage: b = B([-1, -2, -1, -2])
-            sage: b.jones_polynomial(skein_normalization=True)                          # needs sage.symbolic
+            sage: b.jones_polynomial(skein_normalization=True)
             -A^-16 + A^-12 + A^-4
             sage: R.<x> = LaurentPolynomialRing(GF(2))
-            sage: b.jones_polynomial(skein_normalization=True, variab=x)                # needs sage.symbolic
+            sage: b.jones_polynomial(skein_normalization=True, variab=x)
             x^-16 + x^-12 + x^-4
             sage: B = BraidGroup(3)
             sage: b = B([1, 2, 1, 2])
-            sage: b.jones_polynomial(skein_normalization=True)                          # needs sage.symbolic
+            sage: b.jones_polynomial(skein_normalization=True)
             A^4 + A^12 - A^16
 
         K11n42 (the mirror of the "Kinoshita-Terasaka" knot) and K11n34 (the
