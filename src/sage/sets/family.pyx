@@ -31,7 +31,7 @@ Check :trac:`12482` (shall be run in a fresh session)::
 #                     2017      Erik M. Bray
 #                     2018      Frédéric Chapoton
 #                     2019      Markus Wageringel
-#                     2022      Matthias Koeppe
+#                     2022-2023 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -834,7 +834,6 @@ cdef class FiniteFamily(AbstractFamily):
         self.__init__(state['dictionary'], keys=state.get("keys"))
 
 
-
 class FiniteFamilyWithHiddenKeys(FiniteFamily):
     r"""
     A close variant of :class:`FiniteFamily` where the family contains some
@@ -876,7 +875,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             KeyError
         """
         try:
-            return super().__getitem__(i)
+            return FiniteFamily.__getitem__(self, i)
         except KeyError:
             try:
                 return self.hidden_dictionary[i]
@@ -930,7 +929,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             6
         """
         hidden_function = d['hidden_function']
-        if isinstance(hidden_function, str):
+        if isinstance(hidden_function, (str, bytes)):
             # Let's assume that hidden_function is an unpickled function.
             from sage.misc.fpickle import unpickle_function
             hidden_function = unpickle_function(hidden_function)
