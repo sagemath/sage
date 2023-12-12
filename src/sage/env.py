@@ -195,7 +195,6 @@ SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
 # installation directories for various packages
-CONWAY_POLYNOMIALS_DATA_DIR = var("CONWAY_POLYNOMIALS_DATA_DIR", join(SAGE_SHARE, "conway_polynomials"))
 GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
 ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
