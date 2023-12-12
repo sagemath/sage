@@ -377,7 +377,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: # needs cvxopt
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
             sage: p = get_solver(solver="CVXOPT")
             sage: p.solver_parameter("show_progress")
