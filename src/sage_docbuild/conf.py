@@ -506,8 +506,8 @@ latex_elements['preamble'] = r"""
 \usepackage{mathrsfs}
 \usepackage{iftex}
 
-% Only declare unicode characters when compiling with pdftex; E.g. japanese
-% tutorial does not use pdftex
+% Only declare Unicode characters when compiling with pdftex; for example,
+% Japanese tutorial does not use pdftex.
 \ifPDFTeX
     \DeclareUnicodeCharacter{01CE}{\capitalcaron a}
     \DeclareUnicodeCharacter{0428}{cyrillic Sha}
