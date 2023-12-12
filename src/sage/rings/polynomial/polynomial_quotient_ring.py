@@ -83,7 +83,6 @@ class PolynomialQuotientRingFactory(UniqueFactory):
     We create the quotient ring `\ZZ[x]/(x^3+7)`, and
     demonstrate many basic functions with it::
 
-        sage:
         sage: Z = IntegerRing()
         sage: R = PolynomialRing(Z, 'x'); x = R.gen()
         sage: S = R.quotient(x^3 + 7, 'a'); a = S.gen()
@@ -134,7 +133,6 @@ class PolynomialQuotientRingFactory(UniqueFactory):
     Next we create a number field, but viewed as a quotient of a
     polynomial ring over `\QQ`::
 
-        sage:
         sage: R = PolynomialRing(RationalField(), 'x'); x = R.gen()
         sage: S = R.quotient(x^3 + 2*x - 5, 'a'); S
         Univariate Quotient Polynomial Ring in a over Rational Field
@@ -665,7 +663,6 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage:
             sage: P.<x> = QQ[]
             sage: Q = P.quotient(x^2 + 2)
             sage: Q.lift(Q.0^3)
@@ -684,7 +681,6 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage:
             sage: Rx.<x> = PolynomialRing(QQ)
             sage: Ry.<y> = PolynomialRing(QQ)
             sage: Rx == Ry
@@ -710,7 +706,6 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage:
             sage: Rx.<x> = PolynomialRing(QQ)
             sage: Ry.<y> = PolynomialRing(QQ)
             sage: Rx != Ry
@@ -733,7 +728,6 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage:
             sage: Rx.<x> = PolynomialRing(QQ)
             sage: Ry.<y> = PolynomialRing(QQ)
             sage: hash(Rx) == hash(Ry)
@@ -1002,7 +996,6 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage:
             sage: R.<x> = PolynomialRing(QQ)
             sage: S = R.quotient(x^3 + x^2 + x + 1)
             sage: S.discriminant()
@@ -1050,7 +1043,6 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage:
             sage: R.<z> = PolynomialRing(ZZ)
             sage: S = R.quo(z^2 - 2)
             sage: S.is_field()
@@ -2281,7 +2273,6 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
 
         EXAMPLES::
 
-            sage:
             sage: R.<x> = ZZ[]
             sage: S.<x> = ZZ[]
             sage: f = S.quo(x).coerce_map_from(R.quo(x^2))
@@ -2301,7 +2292,6 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
     """
     EXAMPLES::
 
-        sage:
         sage: R.<x> = PolynomialRing(ZZ)
         sage: S.<xbar> = R.quotient(x^2 + 1)
         sage: S
@@ -2329,7 +2319,6 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
 
         Check that :trac:`29017` is fixed::
 
-            sage:
             sage: R.<x> = ZZ[]
             sage: Q = R.quo(x - 1)
             sage: H = R.Hom(Q)

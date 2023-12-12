@@ -130,7 +130,6 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage:
             sage: from sage.symbolic.expression_conversions import SympyConverter
             sage: s = SympyConverter()
             sage: s.symbol(x)
@@ -145,7 +144,6 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage:
             sage: import operator
             sage: from sage.symbolic.expression_conversions import SympyConverter
             sage: s = SympyConverter()
