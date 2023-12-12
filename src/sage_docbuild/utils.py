@@ -107,10 +107,7 @@ def build_many(target, args, processes=None):
     also require significant cleanup.
 
     It also avoids starting new processes from a pthread, which results in at
-    least two known issues:
-
-    * On versions of Cygwin prior to 3.0.0 there were bugs in mmap handling
-      on threads (see :trac:`27214#comment:25`).
+    least one known issue:
 
     * When PARI is built with multi-threading support, forking a Sage
       process from a thread leaves the main Pari interface instance broken
@@ -136,8 +133,7 @@ def build_many(target, args, processes=None):
         Processed task ...
         Processed task ...
 
-    Unlike the first version of ``build_many`` which was only intended to get
-    around the Cygwin bug, this version can also return a result, and thus can
+    This version can also return a result, and thus can
     be used as a replacement for ``multiprocessing.Pool.map`` (i.e. it still
     blocks until the result is ready)::
 

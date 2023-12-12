@@ -511,7 +511,6 @@ containing files with names like ::
 
     arch.txt
     conda.txt
-    cygwin.txt
     debian.txt
     homebrew.txt
     ...
@@ -1213,7 +1212,7 @@ must meet the following requirements:
   them <http://www.gnu.org/licenses/license-list.html>`_.
 
 - **Build Support**. The code must build on all the fully supported
-  platforms (Linux, macOS, Cygwin); see :ref:`chapter-portability_testing`.
+  platforms (Linux, macOS); see :ref:`chapter-portability_testing`.
   It must be installed either from source as a normal package,
   or as a Python (platform-independent) wheel package, see
   :ref:`section-package-source-types`.
