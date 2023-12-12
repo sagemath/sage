@@ -443,12 +443,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: e * 2 == 0
             True
         """
-        cdef IntegerMod_int a
-
         if left:
             return self.__copy__()
-        else:
-            return self._new_c()
+        return self._new_c()
 
     cpdef _neg_(self) noexcept:
         """
