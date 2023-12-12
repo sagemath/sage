@@ -334,27 +334,27 @@ automatically translated into the previous ones::
     sage: # needs sage.graphs
     sage: CartanType(["A", 9, 2])
     ['B', 5, 1]^*
-    sage: CartanType(["A", 9, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["A", 9, 2]).dynkin_diagram()
         O 0
         |
         |
     O---O---O---O=<=O
     1   2   3   4   5
     B5~*
-    sage: CartanType(["A", 10, 2]).dynkin_diagram()                                     # needs sage.graphs
+    sage: CartanType(["A", 10, 2]).dynkin_diagram()
     O=<=O---O---O---O=<=O
     0   1   2   3   4   5
     BC5~
-    sage: CartanType(["D", 5, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["D", 5, 2]).dynkin_diagram()
     O=<=O---O---O=>=O
     0   1   2   3   4
     C4~*
-    sage: CartanType(["D", 4, 3]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["D", 4, 3]).dynkin_diagram()
       3
     O=>=O---O
     2   1   0
     G2~* relabelled by {0: 0, 1: 2, 2: 1}
-    sage: CartanType(["E", 6, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["E", 6, 2]).dynkin_diagram()
     O---O---O=<=O---O
     0   1   2   3   4
     F4~*
@@ -365,27 +365,27 @@ Additionally one can set the notation option to use Kac's notation::
     sage: CartanType.options['notation'] = 'Kac'
     sage: CartanType(["A", 9, 2])
     ['A', 9, 2]
-    sage: CartanType(["A", 9, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["A", 9, 2]).dynkin_diagram()
         O 0
         |
         |
     O---O---O---O=<=O
     1   2   3   4   5
     A9^2
-    sage: CartanType(["A", 10, 2]).dynkin_diagram()                                     # needs sage.graphs
+    sage: CartanType(["A", 10, 2]).dynkin_diagram()
     O=<=O---O---O---O=<=O
     0   1   2   3   4   5
     A10^2
-    sage: CartanType(["D", 5, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["D", 5, 2]).dynkin_diagram()
     O=<=O---O---O=>=O
     0   1   2   3   4
     D5^2
-    sage: CartanType(["D", 4, 3]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["D", 4, 3]).dynkin_diagram()
       3
     O=>=O---O
     2   1   0
     D4^3
-    sage: CartanType(["E", 6, 2]).dynkin_diagram()                                      # needs sage.graphs
+    sage: CartanType(["E", 6, 2]).dynkin_diagram()
     O---O---O=<=O---O
     0   1   2   3   4
     E6^2

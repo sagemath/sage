@@ -704,7 +704,7 @@ class Algebras(AlgebrasCategory):
                 sage: # needs sage.graphs
                 sage: T[0](KL0.one())
                 q1*B[(0, 0)]
-                sage: T[1](KL0.one())                                                   # needs sage.graphs
+                sage: T[1](KL0.one())
                 q1*B[(0, 0)]
                 sage: Y = T.Y()
                 sage: alphacheck = Y.keys().simple_roots()
@@ -742,11 +742,11 @@ class Algebras(AlgebrasCategory):
                 sage: T0 = T.Tw(0)
                 sage: T0(KL0.monomial(omega[1]))
                 q*u*B[-Lambda[1]] + ((u^2-1)/u)*B[Lambda[1]]
-                sage: T0(KL0.monomial(2*omega[1]))                                      # needs sage.graphs
+                sage: T0(KL0.monomial(2*omega[1]))
                 ((q*u^2-q)/u)*B[0] + q^2*u*B[-2*Lambda[1]] + ((u^2-1)/u)*B[2*Lambda[1]]
                 sage: T0(KL0.monomial(-omega[1]))
                 1/(q*u)*B[Lambda[1]]
-                sage: T0(KL0.monomial(-2*omega[1]))                                     # needs sage.graphs
+                sage: T0(KL0.monomial(-2*omega[1]))
                 ((-u^2+1)/(q*u))*B[0] + 1/(q^2*u)*B[2*Lambda[1]]
 
             """

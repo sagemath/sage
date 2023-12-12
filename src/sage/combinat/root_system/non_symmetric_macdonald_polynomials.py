@@ -408,8 +408,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: import sage.combinat.sf.ns_macdonald as NS
         sage: p = NS.E([1,0,0]); p
         x0
-        sage: pp = KL0.from_polynomial(p)                                               # needs sage.combinat sage.groups
-        sage: E.eigenvalues(KL0.from_polynomial(p))                                     # needs sage.combinat sage.groups
+        sage: pp = KL0.from_polynomial(p)
+        sage: E.eigenvalues(KL0.from_polynomial(p))
         [t, (-1)/(-q*t^2), t]
 
         sage: def eig(l): return E.eigenvalues(KL0.from_polynomial(NS.E(l)))
@@ -441,11 +441,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         1
         sage: NS.E([0,0])                                                               # needs sage.groups
         1
-        sage: EE([1,0])                                                                 # needs sage.combinat
+        sage: EE([1,0])
         x0
         sage: NS.E([1,0])                                                               # needs sage.groups
         x0
-        sage: EE([0,1])                                                                 # needs sage.combinat
+        sage: EE([0,1])
         (t - 1)/(q*t - 1)*x0 + x1
         sage: NS.E([0,1])                                                               # needs sage.groups
         (t - 1)/(q*t - 1)*x0 + x1
@@ -1619,12 +1619,12 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             ....:                                            for i in x.reduced_word())
             sage: K = QQ['q1,q2']
             sage: q1, q2 = K.gens()
-            sage: KW = W.algebra(K)                                                     # needs sage.libs.gap
-            sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)                # needs sage.libs.gap
-            sage: E = T.Y_eigenvectors()                                                # needs sage.libs.gap
-            sage: w = W.an_element(); w                                                 # needs sage.libs.gap
+            sage: KW = W.algebra(K)
+            sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)
+            sage: E = T.Y_eigenvectors()
+            sage: w = W.an_element(); w
             123
-            sage: E.twist(w,1)                                                          # needs sage.libs.gap
+            sage: E.twist(w,1)
             1231
         """
         return mu.simple_reflection(i)

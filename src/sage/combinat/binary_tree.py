@@ -4262,7 +4262,7 @@ class BinaryTrees_size(BinaryTrees):
 
         EXAMPLES::
 
-            sage: BinaryTrees(5).random_element() # random                              # needs sage.combinat
+            sage: BinaryTrees(5).random_element()  # random                             # needs sage.combinat
             [., [., [., [., [., .]]]]]
             sage: BinaryTrees(0).random_element()                                       # needs sage.combinat
             .

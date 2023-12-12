@@ -1699,24 +1699,24 @@ class DyckWord(CombinatorialElement):
 
             sage: # needs sage.graphs
             sage: dw = DyckWord([1,0])
-            sage: dw.to_binary_tree()                                                   # needs sage.graphs
+            sage: dw.to_binary_tree()
             [., .]
             sage: dw = DyckWord([])
-            sage: dw.to_binary_tree()                                                   # needs sage.graphs
+            sage: dw.to_binary_tree()
             .
             sage: dw = DyckWord([1,0,1,1,0,0])
-            sage: dw.to_binary_tree()                                                   # needs sage.graphs
+            sage: dw.to_binary_tree()
             [., [[., .], .]]
-            sage: dw.to_binary_tree("L1R0")                                             # needs sage.graphs
+            sage: dw.to_binary_tree("L1R0")
             [[., .], [., .]]
             sage: dw = DyckWord([1,0,1,1,0,0,1,1,1,0,1,0,0,0])
-            sage: dw.to_binary_tree() == dw.to_binary_tree("1R0L").left_right_symmetry()            # needs sage.graphs
+            sage: dw.to_binary_tree() == dw.to_binary_tree("1R0L").left_right_symmetry()
             True
-            sage: dw.to_binary_tree() == dw.to_binary_tree("L1R0").left_border_symmetry()           # needs sage.graphs
+            sage: dw.to_binary_tree() == dw.to_binary_tree("L1R0").left_border_symmetry()
             False
-            sage: dw.to_binary_tree("1R0L") == dw.to_binary_tree("L1R0").left_border_symmetry()     # needs sage.graphs
+            sage: dw.to_binary_tree("1R0L") == dw.to_binary_tree("L1R0").left_border_symmetry()
             True
-            sage: dw.to_binary_tree("R1L0") == dw.to_binary_tree("L1R0").left_right_symmetry()      # needs sage.graphs
+            sage: dw.to_binary_tree("R1L0") == dw.to_binary_tree("L1R0").left_right_symmetry()
             True
             sage: dw.to_binary_tree("R10L")
             Traceback (most recent call last):
@@ -1793,22 +1793,22 @@ class DyckWord(CombinatorialElement):
 
             sage: # needs sage.graphs
             sage: dw = DyckWord([1, 1, 0, 1, 0, 0, 1, 0])
-            sage: ip = dw.tamari_interval(DyckWord([1, 1, 1, 0, 0, 1, 0, 0])); ip       # needs sage.graphs
+            sage: ip = dw.tamari_interval(DyckWord([1, 1, 1, 0, 0, 1, 0, 0])); ip
             The Tamari interval of size 4 induced by relations [(2, 4), (3, 4), (3, 1), (2, 1)]
-            sage: ip.lower_dyck_word()                                                  # needs sage.graphs
+            sage: ip.lower_dyck_word()
             [1, 1, 0, 1, 0, 0, 1, 0]
-            sage: ip.upper_dyck_word()                                                  # needs sage.graphs
+            sage: ip.upper_dyck_word()
             [1, 1, 1, 0, 0, 1, 0, 0]
-            sage: ip.interval_cardinality()                                             # needs sage.graphs
+            sage: ip.interval_cardinality()
             4
-            sage: ip.number_of_tamari_inversions()                                      # needs sage.graphs
+            sage: ip.number_of_tamari_inversions()
             2
-            sage: list(ip.dyck_words())                                                 # needs sage.graphs
+            sage: list(ip.dyck_words())
             [[1, 1, 1, 0, 0, 1, 0, 0],
              [1, 1, 1, 0, 0, 0, 1, 0],
              [1, 1, 0, 1, 0, 1, 0, 0],
              [1, 1, 0, 1, 0, 0, 1, 0]]
-            sage: dw.tamari_interval(DyckWord([1,1,0,0,1,1,0,0]))                       # needs sage.graphs
+            sage: dw.tamari_interval(DyckWord([1,1,0,0,1,1,0,0]))
             Traceback (most recent call last):
             ...
             ValueError: the two Dyck words are not comparable on the Tamari lattice
@@ -2490,16 +2490,16 @@ class DyckWord_complete(DyckWord):
 
             sage: # needs sage.graphs
             sage: D = DyckWord([1,1,0,0])
-            sage: D.to_ordered_tree()                                                   # needs sage.graphs
+            sage: D.to_ordered_tree()
             [[[]]]
             sage: D = DyckWord([1,0,1,0])
-            sage: D.to_ordered_tree()                                                   # needs sage.graphs
+            sage: D.to_ordered_tree()
             [[], []]
             sage: D = DyckWord([1, 0, 1, 1, 0, 0])
-            sage: D.to_ordered_tree()                                                   # needs sage.graphs
+            sage: D.to_ordered_tree()
             [[], [[]]]
             sage: D = DyckWord([1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0])
-            sage: D.to_ordered_tree()                                                   # needs sage.graphs
+            sage: D.to_ordered_tree()
             [[], [[], []], [[], [[]]]]
 
         TESTS::

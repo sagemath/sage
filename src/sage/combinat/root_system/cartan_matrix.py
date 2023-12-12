@@ -453,7 +453,7 @@ class CartanMatrix(Base, CartanType_abstract,
         EXAMPLES::
 
             sage: C = CartanMatrix(['A',3])                                             # needs sage.graphs
-            sage: C.reflection_group()                                                  # needs sage.libs.gap sage.graphs
+            sage: C.reflection_group()                                                  # needs sage.graphs sage.libs.gap
             Weyl Group of type ['A', 3] (as a matrix group acting on the root space)
         """
         RS = self.root_space()
@@ -675,17 +675,17 @@ class CartanMatrix(Base, CartanType_abstract,
 
             sage: # needs sage.graphs
             sage: ct = CartanType(['C',3])
-            sage: M = CartanMatrix(ct); M                                               # needs sage.graphs
+            sage: M = CartanMatrix(ct); M
             [ 2 -1  0]
             [-1  2 -2]
             [ 0 -1  2]
-            sage: M.dual()                                                              # needs sage.graphs
+            sage: M.dual()
             [ 2 -1  0]
             [-1  2 -1]
             [ 0 -2  2]
-            sage: M.dual() == CartanMatrix(ct.dual())                                   # needs sage.graphs
+            sage: M.dual() == CartanMatrix(ct.dual())
             True
-            sage: M.dual().cartan_type() == ct.dual()                                   # needs sage.graphs
+            sage: M.dual().cartan_type() == ct.dual()
             True
 
         An example with arbitrary Cartan matrices::
@@ -945,13 +945,13 @@ class CartanMatrix(Base, CartanType_abstract,
             [-1  1  3]
             [ 2  3  1]
             sage: ct = CartanType([['A',2,2], ['B',3]])
-            sage: ct.coxeter_matrix()                                                   # needs sage.graphs
+            sage: ct.coxeter_matrix()
             [ 1 -1  2  2  2]
             [-1  1  2  2  2]
             [ 2  2  1  3  2]
             [ 2  2  3  1  4]
             [ 2  2  2  4  1]
-            sage: ct.cartan_matrix().coxeter_matrix() == ct.coxeter_matrix()            # needs sage.graphs
+            sage: ct.cartan_matrix().coxeter_matrix() == ct.coxeter_matrix()
             True
         """
         scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
@@ -980,12 +980,12 @@ class CartanMatrix(Base, CartanType_abstract,
             sage: cm = CartanMatrix([[2,-5,0],[-2,2,-1],[0,-1,2]])
             sage: G = cm.coxeter_diagram(); G
             Graph on 3 vertices
-            sage: G.edges(sort=True)                                                    # needs sage.graphs
+            sage: G.edges(sort=True)
             [(0, 1, +Infinity), (1, 2, 3)]
             sage: ct = CartanType([['A',2,2], ['B',3]])
-            sage: ct.coxeter_diagram()                                                  # needs sage.graphs
+            sage: ct.coxeter_diagram()
             Graph on 5 vertices
-            sage: ct.cartan_matrix().coxeter_diagram() == ct.coxeter_diagram()          # needs sage.graphs
+            sage: ct.cartan_matrix().coxeter_diagram() == ct.coxeter_diagram()
             True
         """
         return self.coxeter_matrix().coxeter_graph()

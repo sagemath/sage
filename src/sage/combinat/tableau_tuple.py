@@ -4329,7 +4329,7 @@ class StandardTableauTuples_all(StandardTableauTuples, DisjointUnionEnumeratedSe
 
             sage: # needs sage.libs.flint
             sage: stt = StandardTableauTuples()
-            sage: stt[0:8]                                                              # needs sage.libs.flint
+            sage: stt[0:8]
             [(),
              ([[1]]),
              ([], []),
@@ -4338,11 +4338,11 @@ class StandardTableauTuples_all(StandardTableauTuples, DisjointUnionEnumeratedSe
              ([[1]], []),
              ([], [[1]]),
              ([], [], [])]
-            sage: stt[5]                                                                # needs sage.libs.flint
+            sage: stt[5]
             ([[1]], [])
-            sage: stt[50]                                                               # needs sage.libs.flint
+            sage: stt[50]
             ([], [[1, 3], [2]])
-            sage: stt[47].parent() is stt                                               # needs sage.libs.flint
+            sage: stt[47].parent() is stt
             True
         """
         from sage.combinat.partition_tuple import PartitionTuples

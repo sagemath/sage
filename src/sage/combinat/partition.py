@@ -5554,9 +5554,9 @@ class Partition(CombinatorialElement):
 
             sage: Partition([2,2,1]).simple_module_dimension()
             5
-            sage: Partition([2,2,1]).specht_module_dimension(GF(3))                     # optional - sage.rings.finite_rings
+            sage: Partition([2,2,1]).specht_module_dimension(GF(3))                     # needs sage.rings.finite_rings
             5
-            sage: Partition([2,2,1]).simple_module_dimension(GF(3))                     # optional - sage.rings.finite_rings
+            sage: Partition([2,2,1]).simple_module_dimension(GF(3))                     # needs sage.rings.finite_rings
             4
 
             sage: for la in Partitions(6, regular=3):
@@ -6666,7 +6666,7 @@ class Partitions_n(Partitions):
             42
             sage: Partitions(40).cardinality()
             37338
-            sage: Partitions(100).cardinality()                                         # needs sage.libs.flint
+            sage: Partitions(100).cardinality()
             190569292
 
         ::
@@ -6741,9 +6741,9 @@ class Partitions_n(Partitions):
 
         EXAMPLES::
 
-            sage: Partitions(5).random_element() # random                               # needs sage.libs.flint
+            sage: Partitions(5).random_element()  # random                              # needs sage.libs.flint
             [2, 1, 1, 1]
-            sage: Partitions(5).random_element(measure='Plancherel') # random           # needs sage.libs.flint
+            sage: Partitions(5).random_element(measure='Plancherel')  # random          # needs sage.libs.flint
             [2, 1, 1, 1]
         """
         if measure == 'uniform':
@@ -6761,7 +6761,7 @@ class Partitions_n(Partitions):
 
             sage: Partitions(5).random_element_uniform()  # random                      # needs sage.libs.flint
             [2, 1, 1, 1]
-            sage: Partitions(20).random_element_uniform() # random                      # needs sage.libs.flint
+            sage: Partitions(20).random_element_uniform()  # random                     # needs sage.libs.flint
             [9, 3, 3, 2, 2, 1]
 
         TESTS::
