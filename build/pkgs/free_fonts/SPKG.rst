@@ -1,4 +1,4 @@
-free fonts: a free family of scalable outline fonts
+free_fonts: a free family of scalable outline fonts
 ===================================================
 
 Description
