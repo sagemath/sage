@@ -1799,7 +1799,7 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: G.show(scale='semilogy', base=(3,2)) # base ignored for x-axis        # needs sage.symbolic
+            sage: G.show(scale='semilogy', base=(3,2))  # base ignored for x-axis       # needs sage.symbolic
 
         The scale can be also given as a 2-tuple or a 3-tuple.::
 

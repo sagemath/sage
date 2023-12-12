@@ -175,11 +175,11 @@ def rotate_arbitrary(v, double theta):
 
         sage: rotate_arbitrary((1,2,3), -1).det()
         1.0000000000000002
-        sage: rotate_arbitrary((1,1,1), 2*pi/3) * vector(RDF, (1,2,3))  # rel tol 2e-15     # needs sage.symbolic
+        sage: rotate_arbitrary((1,1,1), 2*pi/3) * vector(RDF, (1,2,3))  # rel tol 2e-15             # needs sage.symbolic
         (1.9999999999999996, 2.9999999999999996, 0.9999999999999999)
         sage: rotate_arbitrary((1,2,3), 5) * vector(RDF, (1,2,3))  # rel tol 2e-15
         (1.0000000000000002, 2.0, 3.000000000000001)
-        sage: rotate_arbitrary((1,1,1), pi/7)^7  # rel tol 2e-15                            # needs sage.symbolic
+        sage: rotate_arbitrary((1,1,1), pi/7)^7  # rel tol 2e-15                        # needs sage.symbolic
         [-0.33333333333333337   0.6666666666666671   0.6666666666666665]
         [  0.6666666666666665 -0.33333333333333337   0.6666666666666671]
         [  0.6666666666666671   0.6666666666666667 -0.33333333333333326]
@@ -195,7 +195,7 @@ def rotate_arbitrary(v, double theta):
 
         Setup some variables::
 
-            sage: vx,vy,vz,theta = var('x y z theta')                                       # needs sage.symbolic
+            sage: vx,vy,vz,theta = var('x y z theta')                                   # needs sage.symbolic
 
         Symbolic rotation matrices about X and Y axis::
 
@@ -206,32 +206,32 @@ def rotate_arbitrary(v, double theta):
         way to tell Maxima that `x^2+y^2+z^2=1` which would make for
         a much cleaner calculation::
 
-            sage: vy = sqrt(1-vx^2-vz^2)                                                    # needs sage.symbolic
+            sage: vy = sqrt(1-vx^2-vz^2)                                                # needs sage.symbolic
 
         Now we rotate about the `x`-axis so `v` is in the `xy`-plane::
 
-            sage: t = arctan(vy/vz)+pi/2                                                    # needs sage.symbolic
-            sage: m = rotX(t)                                                               # needs sage.symbolic
-            sage: new_y = vy*cos(t) - vz*sin(t)                                             # needs sage.symbolic
+            sage: t = arctan(vy/vz)+pi/2                                                # needs sage.symbolic
+            sage: m = rotX(t)                                                           # needs sage.symbolic
+            sage: new_y = vy*cos(t) - vz*sin(t)                                         # needs sage.symbolic
 
         And rotate about the `z` axis so `v` lies on the `x` axis::
 
-            sage: s = arctan(vx/new_y) + pi/2                                               # needs sage.symbolic
-            sage: m = rotZ(s) * m                                                           # needs sage.symbolic
+            sage: s = arctan(vx/new_y) + pi/2                                           # needs sage.symbolic
+            sage: m = rotZ(s) * m                                                       # needs sage.symbolic
 
         Rotating about `v` in our old system is the same as rotating
         about the `x`-axis in the new::
 
-            sage: m = rotX(theta) * m                                                       # needs sage.symbolic
+            sage: m = rotX(theta) * m                                                   # needs sage.symbolic
 
         Do some simplifying here to avoid blow-up::
 
-            sage: m = m.simplify_rational()                                                 # needs sage.symbolic
+            sage: m = m.simplify_rational()                                             # needs sage.symbolic
 
         Now go back to the original coordinate system::
 
-            sage: m = rotZ(-s) * m                                                          # needs sage.symbolic
-            sage: m = rotX(-t) * m                                                          # needs sage.symbolic
+            sage: m = rotZ(-s) * m                                                      # needs sage.symbolic
+            sage: m = rotX(-t) * m                                                      # needs sage.symbolic
 
         And simplify every single entry (which is more effective that simplify
         the whole matrix like above)::
