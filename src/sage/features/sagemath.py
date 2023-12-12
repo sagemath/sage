@@ -345,7 +345,7 @@ class sage__libs__braiding(PythonModule):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__libs__braiding
-        sage: sage__libs__braiding().is_present()                                            # needs sage.libs.braiding
+        sage: sage__libs__braiding().is_present()                                       # needs sage.libs.braiding
         FeatureTestResult('sage.libs.braiding', True)
     """
 
@@ -583,7 +583,7 @@ class sage__libs__homfly(JoinFeature):
     TESTS::
 
         sage: from sage.features.sagemath import sage__libs__homfly
-        sage: sage__libs__homfly().is_present()                                           # needs sage.libs.homfly
+        sage: sage__libs__homfly().is_present()                                         # needs sage.libs.homfly
         FeatureTestResult('sage.libs.homfly', True)
     """
     def __init__(self):
