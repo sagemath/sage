@@ -6,7 +6,7 @@ TESTS:
 
 Loading, saving, ... works::
 
-    sage: # needs sage.libs
+    sage: # needs sage.libs.gap
     sage: G = GL(2,5); G
     General Linear Group of degree 2 over Finite Field of size 5
     sage: TestSuite(G).run()
