@@ -21,8 +21,8 @@ Table of Contents
 
 * [Getting Started](#getting-started)
 * [Supported Platforms](#supported-platforms)
-* [\[Windows\] Preparing the Platform Libraries](#windows-preparing-the-platform)
-* [\[macOS\] Preparing the Platform Libraries](#macos-preparing-the-platform)
+* [\[Windows\] Preparing the Platform](#windows-preparing-the-platform)
+* [\[macOS\] Preparing the Platform](#macos-preparing-the-platform)
 * [Instructions to Build from Source](#instructions-to-build-from-source)
 * [SageMath Docker Images](#sagemath-docker-images)
 * [Troubleshooting](#troubleshooting)
@@ -91,25 +91,12 @@ below](#sagemath-docker-images)) or other virtualization solutions.
 [macOS] Preparing the Platform
 ------------------------------
 
-If your Mac uses the Apple Silicon (M1, M2, arm64) architecture:
-
-- If you set up your Mac by transferring files from an older Mac, make sure
+- If your Mac uses the Apple Silicon (M1, M2, M3; arm64) architecture and
+  you set up your Mac by transferring files from an older Mac, make sure
   that the directory ``/usr/local`` does not contain an old copy of Homebrew
   (or other software) for the x86_64 architecture that you may have copied
   over.  Note that Homebrew for the M1 is installed in ``/opt/homebrew``, not
   ``/usr/local``.
-
-- If you wish to use conda, please see the [section on
-  conda](https://doc.sagemath.org/html/en/installation/conda.html) in the Sage
-  Installation Manual for guidance.
-
-- Otherwise, using Homebrew ("the missing package manager for macOS") from
-  https://brew.sh/ required because it provides a version of ``gfortran`` with
-  necessary changes for this platform that are not in a released upstream
-  version of GCC. (The ``gfortran`` package that comes with the Sage
-  distribution is not suitable for the M1/M2.)
-
-If your Mac uses the Intel (x86_64) architecture:
 
 - If you wish to use conda, please see the [section on
   conda](https://doc.sagemath.org/html/en/installation/conda.html) in the Sage
