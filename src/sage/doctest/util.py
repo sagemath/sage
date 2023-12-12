@@ -147,9 +147,9 @@ class Timer:
 
             sage: from sage.doctest.util import Timer
             sage: Timer().start().annotate(EllipticCurve)                               # needs sage.schemes
-            sage: EllipticCurve.cputime # random                                        # needs sage.schemes
+            sage: EllipticCurve.cputime  # random                                       # needs sage.schemes
             2.817255
-            sage: EllipticCurve.walltime # random                                       # needs sage.schemes
+            sage: EllipticCurve.walltime  # random                                      # needs sage.schemes
             1332649288.410404
         """
         object.cputime = self.cputime
