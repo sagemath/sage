@@ -7731,7 +7731,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^3 - 1
             sage: f.roots()
             [(1, 1)]
-            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc     # needs sage.rings.real_mpfr
+            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc   # needs sage.rings.real_mpfr
             [(1.00000000000000, 1),
              (-0.500000000000000 - 0.86602540378443...*I, 1),
              (-0.500000000000000 + 0.86602540378443...*I, 1)]

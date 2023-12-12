@@ -1482,7 +1482,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             ...
             NotImplementedError: is_norm is not implemented unconditionally
              for norms from non-Galois number fields
-            sage: 7.is_norm(K, proof=False)                                             # needs sage.rings.number_field
+            sage: 7.is_norm(K, proof=False)
             False
 
         AUTHORS:

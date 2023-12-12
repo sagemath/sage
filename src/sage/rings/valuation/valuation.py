@@ -481,7 +481,7 @@ class DiscreteValuation(DiscretePseudoValuation):
              [ Gauss valuation induced by (x + 1)-adic valuation, v(y) = 7/2 ],
              [ Gauss valuation induced by (x + 1)-adic valuation, v(y^13 + y^12 + y^10 + y^7 + y^6 + y^3 + 1) = 1 ]]
             sage: v0 = valuations.FunctionFieldValuation(K, GaussValuation(K._ring, valuations.TrivialValuation(k)).augmentation(x^3+x^2+1,1))
-            sage: v0.mac_lane_approximants(F, assume_squarefree=True)  # assumes squarefree for speed                   # needs sage.rings.function_field
+            sage: v0.mac_lane_approximants(F, assume_squarefree=True)  # assumes squarefree for speed
             [[ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y + x^3 + x^2 + x) = 2, v(y^2 + (x^6 + x^4 + 1)*y + x^14 + x^10 + x^9 + x^8 + x^5 + x^4 + x^3 + x^2 + x) = 5 ],
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^2 + (x^2 + x)*y + 1) = 1 ],
              [ Gauss valuation induced by (x^3 + x^2 + 1)-adic valuation, v(y^3 + (x + 1)*y^2 + (x + 1)*y + x^2 + x + 1) = 1 ],

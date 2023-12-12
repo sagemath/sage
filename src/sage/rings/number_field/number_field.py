@@ -1333,7 +1333,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     This example was suggested on sage-nt; see :trac:`18942`::
 
         sage: G = DirichletGroup(80)                                                    # needs sage.modular
-        sage: for chi in G:             # long time                                     # needs sage.modular
+        sage: for chi in G:                     # long time                             # needs sage.modular
         ....:     D = ModularSymbols(chi, 2, -1).cuspidal_subspace().new_subspace().decomposition()
         ....:     for f in D:
         ....:         elt = f.q_eigenform(10, 'alpha')[3]
