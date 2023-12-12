@@ -780,7 +780,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
                 return False
         return True
 
-    def unrank(self, x, rtn):
+    def _unrank_helper(self, x, rtn):
         ptr = 0
         while True:
             current_rank = self.rank(rtn)
@@ -855,8 +855,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
         self.n = n
         if self.n == 0:
             IntegerVectors.__init__(self, category=EnumeratedSets())
-        else:
-            IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
+        IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -964,7 +963,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             rtn.append(0)
         rtn.pop()
 
-        return IntegerVectors.unrank(self, x, rtn)
+        return IntegerVectors._unrank_helper(self, x, rtn)
 
     def cardinality(self):
         """
@@ -979,8 +978,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
         """
         if self.n == 0:
             return Integer(1)
-        else:
-            return PlusInfinity()
+        return PlusInfinity()
 
 
 class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
@@ -998,8 +996,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         self.k = k
         if self.k == 0:
             IntegerVectors.__init__(self, category=EnumeratedSets())
-        else:
-            IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
+        IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -1101,15 +1098,14 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         """
         if self.k == 0 and x != 0:
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
-        else:
-            n = 0
-            rtn = [0]*self.k
-            while self.rank(rtn) <= x:
-                n += 1
-                rtn[0] = n
-            rtn[0] -= 1
+        n = 0
+        rtn = [0]*self.k
+        while self.rank(rtn) <= x:
+            n += 1
+            rtn[0] = n
+        rtn[0] -= 1
 
-            return IntegerVectors.unrank(self, x, rtn)
+        return IntegerVectors._unrank_helper(self, x, rtn)
 
     def cardinality(self):
         """
@@ -1124,8 +1120,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         """
         if self.k == 0:
             return Integer(1)
-        else:
-            return PlusInfinity()
+        return PlusInfinity()
 
 
 class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
@@ -1340,10 +1335,9 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         """
         if x >= self.cardinality():
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
-        else:
-            rtn = [0]*self.k
-            rtn[0] = self.n
-            return IntegerVectors.unrank(self, x, rtn)
+        rtn = [0]*self.k
+        rtn[0] = self.n
+        return IntegerVectors._unrank_helper(self, x, rtn)
 
     def cardinality(self):
         """
