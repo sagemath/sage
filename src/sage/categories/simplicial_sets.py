@@ -9,21 +9,20 @@ Simplicial Sets
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.functions.generalized import sign
-from sage.matrix.special import identity_matrix
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.sets_cat import Sets
 from sage.categories.homsets import HomsetsCategory
-from sage.matrix.constructor import matrix
+from sage.categories.sets_cat import Sets
+from sage.functions.generalized import sign
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
 lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.matrix.special', 'identity_matrix')
 
 
 class SimplicialSets(Category_singleton):
