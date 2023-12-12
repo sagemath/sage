@@ -363,7 +363,7 @@ class Gap(Parent):
         We gracefully handle the case that the conversion fails (:trac:`18039`)::
 
             sage: F.<a> = GF(9, modulus="first_lexicographic")                          # needs sage.rings.finite_rings
-            sage: libgap(Matrix(F, [[a]]))
+            sage: libgap(Matrix(F, [[a]]))                                              # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             NotImplementedError: conversion of (Givaro) finite field element to GAP

@@ -160,8 +160,9 @@ def QuaternionMatrixGroupGF3():
     elements commonly called `I` and `J`, while `K`
     is the product of `I` and `J`. ::
 
-        sage: # needs sage.libs.gap
         sage: from sage.groups.matrix_gps.finitely_generated import QuaternionMatrixGroupGF3
+
+        sage: # needs sage.libs.gap
         sage: Q = QuaternionMatrixGroupGF3()
         sage: Q.order()
         8
@@ -177,7 +178,7 @@ def QuaternionMatrixGroupGF3():
 
     TESTS::
 
-        sage: groups.matrix.QuaternionGF3()                                             # needs sage.modules
+        sage: groups.matrix.QuaternionGF3()
         Matrix group over Finite Field of size 3 with 2 generators (
         [1 1]  [2 1]
         [1 2], [1 1]
