@@ -855,7 +855,8 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
         self.n = n
         if self.n == 0:
             IntegerVectors.__init__(self, category=EnumeratedSets())
-        IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
+        else:
+            IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -996,7 +997,8 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         self.k = k
         if self.k == 0:
             IntegerVectors.__init__(self, category=EnumeratedSets())
-        IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
+        else:
+            IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
