@@ -5,4 +5,3 @@ from .types cimport *
 
 cdef extern from "flint_wrap.h":
     long MAG_BITS
-
