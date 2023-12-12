@@ -149,7 +149,6 @@ cdef extern from "flint_wrap.h":
     ctypedef const acb_struct * acb_srcptr
 
 
-
     # flint/acb_mat.h
     ctypedef struct acb_mat_struct:
         pass
@@ -243,6 +242,16 @@ cdef extern from "flint_wrap.h":
         pass
     ctypedef acb_dirichlet_platt_ws_precomp_struct acb_dirichlet_platt_ws_precomp_t[1]
 
+
+    # flint/acb_theta.h
+    cdef struct acb_theta_eld_struct:
+        pass
+    ctypedef acb_theta_eld_struct acb_theta_eld_t[1]
+
+    ctypedef void (*acb_theta_naive_worker_t)(acb_ptr, acb_srcptr, acb_srcptr, const slong *,
+        slong, const acb_t, const slong *, slong, slong, slong, slong)
+    ctypedef int (*acb_theta_ql_worker_t)(acb_ptr, acb_srcptr, acb_srcptr,
+        arb_srcptr, arb_srcptr, const acb_mat_t, slong, slong)
 
     # flint/d_mat.h
     ctypedef struct d_mat_struct:
@@ -953,6 +962,26 @@ cdef extern from "flint_wrap.h":
         lnf_elem_t lelem
         qnf_elem_t qelem
     ctypedef nf_elem_struct nf_elem_t[1]
+
+
+    # flint/machine_vectors.h
+    ctypedef struct vec1n:
+        pass
+    ctypedef struct vec2n:
+        pass
+    ctypedef struct vec4n:
+        pass
+    ctypedef struct vec8n:
+        pass
+
+    ctypedef struct vec1d:
+        pass
+    ctypedef struct vec2d:
+        pass
+    ctypedef struct vec4d:
+        pass
+    ctypedef struct vec8d:
+        pass
 
 
     # flint/calcium.h
