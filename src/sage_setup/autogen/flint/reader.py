@@ -252,6 +252,3 @@ def extract_functions(filename):
     e = Extractor(filename)
     e.run()
     return e.content
-
-
-

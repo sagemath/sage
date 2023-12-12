@@ -11,7 +11,8 @@ Write flint header files.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import os, shutil
+import os
+import shutil
 from .env import AUTOGEN_DIR, FLINT_DOC_DIR, FLINT_INCLUDE_DIR
 from .reader import extract_functions
 
