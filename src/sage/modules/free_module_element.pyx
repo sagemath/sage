@@ -2333,7 +2333,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Three-dimensional examples::
 
             sage: v = vector(RDF, (1,2,1))
-            sage: plot(v) # defaults to an arrow plot                                   # needs sage.plot
+            sage: plot(v)  # defaults to an arrow plot                                  # needs sage.plot
             Graphics3d Object
 
         ::
@@ -2349,7 +2349,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         ::
 
-            sage: plot(v, plot_type='step') # calls v.plot_step()                       # needs sage.plot
+            sage: plot(v, plot_type='step')  # calls v.plot_step()                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
@@ -2378,7 +2378,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         TESTS::
 
             sage: u = vector([1,1]); v = vector([2,2,2]); z=(3,3,3)
-            sage: plot(u) #test when start=None                                         # needs sage.plot
+            sage: plot(u)  #test when start=None                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::

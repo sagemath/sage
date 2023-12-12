@@ -507,7 +507,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
             sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat
             sage: a = 2 + QS3([2,1,3])                                                  # needs sage.combinat
-            sage: latex(a) #indirect doctest                                            # needs sage.combinat
+            sage: latex(a)  #indirect doctest                                           # needs sage.combinat
             2 [1, 2, 3] + [2, 1, 3]
 
        ::
@@ -686,7 +686,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         ::
 
             sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
-            sage: -s([2,1]) # indirect doctest                                          # needs sage.combinat
+            sage: -s([2,1])  # indirect doctest                                         # needs sage.combinat
             -s[2, 1]
         """
         return type(self)(self._parent, negate(self._monomial_coefficients))
@@ -703,7 +703,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         ::
 
             sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
-            sage: s([2,1]) - s([5,4]) # indirect doctest                                # needs sage.combinat
+            sage: s([2,1]) - s([5,4])  # indirect doctest                               # needs sage.combinat
             s[2, 1] - s[5, 4]
         """
         return type(self)(self._parent,
