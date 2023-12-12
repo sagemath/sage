@@ -1591,13 +1591,13 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         EXAMPLES::
 
             sage: latex.engine()
-            'pdflatex'
+            'xelatex'
             sage: latex.engine("latex")
             sage: latex.engine()
             'latex'
-            sage: latex.engine("xelatex")
+            sage: latex.engine("pdflatex")
             sage: latex.engine()
-            'xelatex'
+            'pdflatex'
         """
         if e is None:
             return _Latex_prefs._option["engine"]

@@ -199,6 +199,7 @@ release = sage.version.version
 #language = None
 
 # The LaTeX engine to build the docs.
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-latex_engine
 latex_engine = 'xelatex'
 
 # There are two options for replacing |today|: either, you set today to some
