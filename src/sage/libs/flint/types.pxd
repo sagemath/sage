@@ -1,4 +1,4 @@
-# distutils: depends = flint/fmpz_poly_mat.h flint/fmpq_mpoly.h flint/nmod_poly_mat.h flint/perm.h flint/nmod_vec.h flint/fmpzi.h flint/mpoly.h flint/mpfr_mat.h flint/nmod_poly.h flint/long_extras.h flint/partitions.h flint/fq_nmod_poly_factor.h flint/mpf_mat.h flint/fmpz_poly_q.h flint/ca_vec.h flint/double_extras.h flint/fq_nmod_mpoly_factor.h flint/fmpz_mpoly.h flint/fmpq_vec.h flint/fq_poly.h flint/fq_nmod_mat.h flint/calcium.h flint/fmpz_vec.h flint/fexpr_builtin.h flint/ca_poly.h flint/fq_embed.h flint/nmod_poly_factor.h flint/fmpz_extras.h flint/acb_mat.h flint/gr_generic.h flint/gr_poly.h flint/fq_zech_poly_factor.h flint/fmpz_mpoly_q.h flint/nmod.h flint/ca_mat.h flint/fq_zech_vec.h flint/arb.h flint/nf_elem.h flint/fmpz_poly.h flint/fq_nmod_embed.h flint/arb_poly.h flint/fmpq.h flint/fmpq_mpoly_factor.h flint/acb_calc.h flint/fq_vec.h flint/padic_mat.h flint/fmpz.h flint/fmpz_mat.h flint/fmpz_mod_mat.h flint/fq_zech.h flint/double_interval.h flint/fq_default_mat.h flint/fmpz_mod_mpoly.h flint/qsieve.h flint/qfb.h flint/thread_pool.h flint/fmpz_mod_mpoly_factor.h flint/acb_modular.h flint/fq_nmod_poly.h flint/profiler.h flint/acb_hypgeom.h flint/d_mat.h flint/fq_zech_poly.h flint/fmpz_mod.h flint/qqbar.h flint/hypgeom.h flint/acb_elliptic.h flint/acb_dft.h flint/d_vec.h flint/ulong_extras.h flint/dlog.h flint/bool_mat.h flint/fmpq_poly.h flint/fexpr.h flint/mag.h flint/fmpz_mpoly_factor.h flint/mpfr_vec.h flint/ca_ext.h flint/gr.h flint/acb_poly.h flint/fft.h flint/padic.h flint/dirichlet.h flint/fmpz_mod_poly_factor.h flint/fq_default.h flint/fq.h flint/gr_vec.h flint/fq_nmod.h flint/fq_zech_embed.h flint/nmod_mpoly_factor.h flint/flint.h flint/fmpz_factor.h flint/qadic.h flint/nf.h flint/gr_mpoly.h flint/arb_fpwrap.h flint/fq_default_poly.h flint/aprcl.h flint/acf.h flint/gr_special.h flint/arf.h flint/fq_zech_mat.h flint/gr_mat.h flint/arb_fmpz_poly.h flint/fq_nmod_vec.h flint/fmpz_mod_poly.h flint/bernoulli.h flint/fq_default_poly_factor.h flint/arb_mat.h flint/arb_hypgeom.h flint/fq_poly_factor.h flint/nmod_mpoly.h flint/acb.h flint/fmpz_lll.h flint/fmpz_poly_factor.h flint/ca_field.h flint/acb_dirichlet.h flint/arith.h flint/fmpz_mod_vec.h flint/fmpq_mat.h flint/fq_mat.h flint/mpn_extras.h flint/mpf_vec.h flint/ca.h flint/padic_poly.h flint/nmod_mat.h flint/fq_nmod_mpoly.h flint/arb_calc.h flint/nmod_types.h
+# distutils: depends = flint/acb.h flint/acb_calc.h flint/acb_dft.h flint/acb_dirichlet.h flint/acb_elliptic.h flint/acb_hypgeom.h flint/acb_mat.h flint/acb_modular.h flint/acb_poly.h flint/acf.h flint/aprcl.h flint/arb.h flint/arb_calc.h flint/arb_fmpz_poly.h flint/arb_fpwrap.h flint/arb_hypgeom.h flint/arb_mat.h flint/arb_poly.h flint/arf.h flint/arith.h flint/bernoulli.h flint/bool_mat.h flint/ca.h flint/ca_ext.h flint/ca_field.h flint/ca_mat.h flint/ca_poly.h flint/ca_vec.h flint/calcium.h flint/d_mat.h flint/d_vec.h flint/dirichlet.h flint/dlog.h flint/double_extras.h flint/double_interval.h flint/fexpr.h flint/fexpr_builtin.h flint/fft.h flint/flint.h flint/fmpq.h flint/fmpq_mat.h flint/fmpq_mpoly.h flint/fmpq_mpoly_factor.h flint/fmpq_poly.h flint/fmpq_vec.h flint/fmpz.h flint/fmpz_extras.h flint/fmpz_factor.h flint/fmpz_lll.h flint/fmpz_mat.h flint/fmpz_mod.h flint/fmpz_mod_mat.h flint/fmpz_mod_mpoly.h flint/fmpz_mod_mpoly_factor.h flint/fmpz_mod_poly.h flint/fmpz_mod_poly_factor.h flint/fmpz_mod_vec.h flint/fmpz_mpoly.h flint/fmpz_mpoly_factor.h flint/fmpz_mpoly_q.h flint/fmpz_poly.h flint/fmpz_poly_factor.h flint/fmpz_poly_mat.h flint/fmpz_poly_q.h flint/fmpz_vec.h flint/fmpzi.h flint/fq.h flint/fq_default.h flint/fq_default_mat.h flint/fq_default_poly.h flint/fq_default_poly_factor.h flint/fq_embed.h flint/fq_mat.h flint/fq_nmod.h flint/fq_nmod_embed.h flint/fq_nmod_mat.h flint/fq_nmod_mpoly.h flint/fq_nmod_mpoly_factor.h flint/fq_nmod_poly.h flint/fq_nmod_poly_factor.h flint/fq_nmod_vec.h flint/fq_poly.h flint/fq_poly_factor.h flint/fq_vec.h flint/fq_zech.h flint/fq_zech_embed.h flint/fq_zech_mat.h flint/fq_zech_poly.h flint/fq_zech_poly_factor.h flint/fq_zech_vec.h flint/gr.h flint/gr_generic.h flint/gr_mat.h flint/gr_mpoly.h flint/gr_poly.h flint/gr_special.h flint/gr_vec.h flint/hypgeom.h flint/long_extras.h flint/mag.h flint/mpf_mat.h flint/mpf_vec.h flint/mpfr_mat.h flint/mpfr_vec.h flint/mpn_extras.h flint/mpoly.h flint/nf.h flint/nf_elem.h flint/nmod.h flint/nmod_mat.h flint/nmod_mpoly.h flint/nmod_mpoly_factor.h flint/nmod_poly.h flint/nmod_poly_factor.h flint/nmod_poly_mat.h flint/nmod_types.h flint/nmod_vec.h flint/padic.h flint/padic_mat.h flint/padic_poly.h flint/partitions.h flint/perm.h flint/profiler.h flint/qadic.h flint/qfb.h flint/qqbar.h flint/qsieve.h flint/thread_pool.h flint/ulong_extras.h
 
 """
 Declarations for FLINT types
@@ -27,7 +27,6 @@ cdef extern from "flint_wrap.h":
     ctypedef slong fmpz
     ctypedef fmpz fmpz_t[1]
 
-    bint COEFF_IS_MPZ(fmpz)
     mpz_ptr COEFF_TO_PTR(fmpz)
 
     ctypedef struct fmpz_preinvn_struct:
@@ -149,7 +148,6 @@ cdef extern from "flint_wrap.h":
     ctypedef const acb_struct * acb_srcptr
 
 
-
     # flint/acb_mat.h
     ctypedef struct acb_mat_struct:
         pass
@@ -243,6 +241,16 @@ cdef extern from "flint_wrap.h":
         pass
     ctypedef acb_dirichlet_platt_ws_precomp_struct acb_dirichlet_platt_ws_precomp_t[1]
 
+
+    # flint/acb_theta.h
+    cdef struct acb_theta_eld_struct:
+        pass
+    ctypedef acb_theta_eld_struct acb_theta_eld_t[1]
+
+    ctypedef void (*acb_theta_naive_worker_t)(acb_ptr, acb_srcptr, acb_srcptr, const slong *,
+        slong, const acb_t, const slong *, slong, slong, slong, slong)
+    ctypedef int (*acb_theta_ql_worker_t)(acb_ptr, acb_srcptr, acb_srcptr,
+        arb_srcptr, arb_srcptr, const acb_mat_t, slong, slong)
 
     # flint/d_mat.h
     ctypedef struct d_mat_struct:
@@ -921,6 +929,18 @@ cdef extern from "flint_wrap.h":
     ctypedef fmpq_mpoly_univar_struct fmpq_mpoly_univar_t[1]
 
 
+    # flint/fft_small.h
+    ctypedef struct mpn_ctx_struct:
+        pass
+    ctypedef mpn_ctx_struct mpn_ctx_t[1]
+
+    ctypedef struct mul_precomp_struct:
+        pass
+
+    ctypedef struct nmod_poly_divrem_precomp_struct:
+        pass
+
+
     # flint/nf.h
     ctypedef struct nf_struct:
         pass
@@ -941,6 +961,26 @@ cdef extern from "flint_wrap.h":
         lnf_elem_t lelem
         qnf_elem_t qelem
     ctypedef nf_elem_struct nf_elem_t[1]
+
+
+    # flint/machine_vectors.h
+    ctypedef struct vec1n:
+        pass
+    ctypedef struct vec2n:
+        pass
+    ctypedef struct vec4n:
+        pass
+    ctypedef struct vec8n:
+        pass
+
+    ctypedef struct vec1d:
+        pass
+    ctypedef struct vec2d:
+        pass
+    ctypedef struct vec4d:
+        pass
+    ctypedef struct vec8d:
+        pass
 
 
     # flint/calcium.h
@@ -1706,7 +1746,7 @@ cdef extern from "flint_wrap.h":
     ctypedef void ((*gr_method_init_clear_op)(gr_ptr, gr_ctx_ptr))
     ctypedef void ((*gr_method_swap_op)(gr_ptr, gr_ptr, gr_ctx_ptr))
     ctypedef int ((*gr_method_ctx)(gr_ctx_ptr))
-    # NOTE: we removed an extra paranthesis so that Cython is less confused
+    # NOTE: we removed an extra parenthesis so that Cython is less confused
     # see https://github.com/cython/cython/issues/5779
     ctypedef truth_t (*gr_method_ctx_predicate)(gr_ctx_ptr)
     ctypedef int ((*gr_method_ctx_set_si)(gr_ctx_ptr, slong))
@@ -1767,7 +1807,7 @@ cdef extern from "flint_wrap.h":
     ctypedef int ((*gr_method_quaternary_binary_op)(gr_ptr, gr_ptr, gr_ptr, gr_ptr, gr_srcptr, gr_srcptr, gr_ctx_ptr))
     ctypedef int ((*gr_method_quaternary_ternary_op)(gr_ptr, gr_ptr, gr_ptr, gr_ptr, gr_srcptr, gr_srcptr, gr_srcptr, gr_ctx_ptr))
     ctypedef int ((*gr_method_si_si_quaternary_op)(gr_ptr, slong, slong, gr_srcptr, gr_srcptr, gr_ctx_ptr))
-    # NOTE: we removed an extra paranthesis so that Cython is less confused
+    # NOTE: we removed an extra parenthesis so that Cython is less confused
     # see https://github.com/cython/cython/issues/5779
     ctypedef truth_t (*gr_method_unary_predicate)(gr_srcptr, gr_ctx_ptr)
     ctypedef truth_t (*gr_method_binary_predicate)(gr_srcptr, gr_srcptr, gr_ctx_ptr)
@@ -1786,7 +1826,7 @@ cdef extern from "flint_wrap.h":
     ctypedef int ((*gr_method_vec_scalar_op_ui)(gr_ptr, gr_srcptr, slong, ulong, gr_ctx_ptr))
     ctypedef int ((*gr_method_vec_scalar_op_fmpz)(gr_ptr, gr_srcptr, slong, const fmpz_t, gr_ctx_ptr))
     ctypedef int ((*gr_method_vec_scalar_op_fmpq)(gr_ptr, gr_srcptr, slong, const fmpq_t, gr_ctx_ptr))
-    # NOTE: we removed an extra paranthesis so that Cython is less confused
+    # NOTE: we removed an extra parenthesis so that Cython is less confused
     # see https://github.com/cython/cython/issues/5779
     ctypedef truth_t (*gr_method_vec_predicate)(gr_srcptr, slong, gr_ctx_ptr)
     ctypedef truth_t (*gr_method_vec_vec_predicate)(gr_srcptr, gr_srcptr, slong, gr_ctx_ptr)

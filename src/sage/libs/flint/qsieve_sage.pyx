@@ -8,7 +8,7 @@ from cysignals.signals cimport sig_on, sig_off
 from .types cimport fmpz_t, fmpz_factor_t
 from .fmpz cimport fmpz_init, fmpz_set_mpz
 from .fmpz_factor cimport fmpz_factor_init, fmpz_factor_clear
-from .fmpz_factor_extra cimport fmpz_factor_to_pairlist
+from .fmpz_factor_sage cimport fmpz_factor_to_pairlist
 from .qsieve cimport qsieve_factor
 from sage.rings.integer cimport Integer
 
