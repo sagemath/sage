@@ -899,7 +899,7 @@ cdef class Expression:
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
             sage: etb = ExpressionTreeBuilder(vars=(x,))                                # needs sage.symbolic
-            sage: v = etb(3); v # indirect doctest                                      # needs sage.symbolic
+            sage: v = etb(3); v  # indirect doctest                                     # needs sage.symbolic
             3
             sage: v._get_etb() is etb                                                   # needs sage.symbolic
             True
