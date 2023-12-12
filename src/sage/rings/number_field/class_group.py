@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Class Groups of Number Fields
+Class groups of number fields
 
 An element of a class group is stored as a pair consisting of both an explicit
 ideal in that ideal class, and a list of exponents giving that ideal class in
