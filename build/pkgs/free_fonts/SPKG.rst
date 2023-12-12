@@ -15,7 +15,7 @@ associate system package lists with it.
 License
 -------
 
-GNU General Public License
+GNU General Public License GPLv3+
 
 Upstream Contact
 ----------------
