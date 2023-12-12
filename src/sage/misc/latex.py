@@ -500,7 +500,7 @@ class _Latex_prefs_object(SageObject):
         self._option["matrix_column_alignment"] = matrix_column_alignment
         self._option["macros"] = ""
         self._option["preamble"] = ""
-        self._option["engine"] = "xelatex"
+        self._option["engine"] = "xelatex"  # lualatex is an alternative
         self._option["engine_name"] = "LaTeX"
 
 
@@ -559,11 +559,11 @@ def latex_extra_preamble():
 def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_in_background=False):
     """
     This runs LaTeX on the TeX file "filename.tex".  It produces files
-    "filename.dvi" (or "filename.pdf"` if engine is either ``pdflatex``
-    or ``xelatex``) and if ``png`` is ``True``, "filename.png".  If ``png``
-    is ``True`` and dvipng cannot convert the dvi file to png (because of
-    postscript specials or other issues), then dvips is called, and the
-    PS file is converted to a png file.
+    "filename.dvi" (or "filename.pdf"` if engine is either ``pdflatex``,
+    ``xelatex``, or ``lualatex``) and if ``png`` is ``True``, "filename.png".
+    If ``png`` is ``True`` and dvipng cannot convert the dvi file to png
+    (because of postscript specials or other issues), then dvips is called, and
+    the PS file is converted to a png file.
 
     INPUT:
 
@@ -585,23 +585,22 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
 
     OUTPUT:
 
-    A string which could be a string starting with 'Error' (if
-    there was a problem), or it could be 'pdf' or 'dvi'.  If
-    engine is latex or ``None``, then a dvi file is created, but if there
-    appear to be problems with it (because of PS special commands, for
-    example), then a pdf file is created instead.  The function
-    returns 'dvi' or 'pdf' to indicate which type of file is created.
-    (Detecting problems requires that dvipng be installed; if it is
-    not, then the dvi file is not checked for problems and 'dvi' is
-    returned.)  If engine is pdflatex or xelatex and there are no errors, then
-    'pdf' is returned.
+    A string which could be a string starting with 'Error' (if there was a
+    problem), or it could be 'pdf' or 'dvi'.  If engine is latex or ``None``,
+    then a dvi file is created, but if there appear to be problems with it
+    (because of PS special commands, for example), then a pdf file is created
+    instead.  The function returns 'dvi' or 'pdf' to indicate which type of
+    file is created.  (Detecting problems requires that dvipng be installed; if
+    it is not, then the dvi file is not checked for problems and 'dvi' is
+    returned.)  If engine is pdflatex, xelatex or lualatex and there are no
+    errors, then 'pdf' is returned.
 
     .. WARNING::
 
        If ``png`` is ``True``, then when using latex (the default), you
        must have 'dvipng' (or 'dvips' and 'convert') installed on your
        operating system, or this command will not work.  When using
-       pdflatex or xelatex, you must have 'convert' installed.
+       pdflatex, xelatex or lualatex, you must have 'convert' installed.
 
     EXAMPLES::
 
@@ -635,6 +634,12 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
         command = "xelatex"
         suffix = "pdf"
         return_suffix = "pdf"
+    elif engine == "lualatex":
+        from sage.features.latex import lualatex
+        lualatex().require()
+        command = "lualatex"
+        suffix = "pdf"
+        return_suffix = "pdf"
     else:
         raise ValueError("Unsupported LaTeX engine.")
 
@@ -653,10 +658,8 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
             print("Go to http://sourceforge.net/projects/dvipng/ and")
             print("http://www.imagemagick.org to download these programs.")
             return "Error"
-    # if png output + pdflatex, check to see if convert is installed.
-        elif engine == "pdflatex":
-            ImageMagick().require()
-        elif engine == "xelatex":
+    # if png output + [pdf|xe|lua]latex, check to see if convert is installed.
+        elif engine in ["pdflatex", "xelatex", "lualatex"]:
             ImageMagick().require()
     # check_validity: check to see if the dvi file is okay by trying
     # to convert to a png file.  if this fails, return_suffix will be
@@ -709,7 +712,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     def subpcall(x):
         return not call(x, stdout=redirect,
                         stderr=redirect, cwd=base)
-    if engine == "pdflatex" or engine == "xelatex":
+    if engine in ['pdflatex', 'xelatex', 'lualatex']:
         if debug:
             print(lt)
             if png:
@@ -750,9 +753,9 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
                         e = subpcall(dvips) and subpcall(ps2pdf)
                         if not e:  # error running dvips and/or ps2pdf
                             pdflt = lt[:]
-                            pdflt[1] = 'pdflatex'
+                            pdflt[1] = 'xelatex'
                             if debug:
-                                print("error running dvips and ps2pdf; trying pdflatex instead...")
+                                print("error running dvips and ps2pdf; trying xelatex instead...")
                                 print(pdflt)
                             e = subpcall(pdflt)
             else:  # do not have dvipng, so must have convert.  run latex, dvips, convert.
@@ -876,7 +879,7 @@ class Latex(LatexCall):
         sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # needs sage.symbolic
         y \neq x^{20} + 1
     """
-    def __init__(self, debug=False, slide=False, density=150, pdflatex=None, engine=None):
+    def __init__(self, debug=False, slide=False, density=150, engine=None):
         """
         Initialize the latex builder.
 
@@ -888,7 +891,6 @@ class Latex(LatexCall):
         """
         self.__debug = debug
         self.__slide = slide
-        self.__pdflatex = pdflatex
         self.__engine = engine
         self.__density = density
 
@@ -941,7 +943,7 @@ class Latex(LatexCall):
             s = s[:i] + k + t[j + 1:]
 
     def eval(self, x, globals, strip=False, filename=None, debug=None,
-             density=None, pdflatex=None, engine=None, locals={}):
+             density=None, engine=None, locals={}):
         r"""
         Compile the formatted tex given by ``x`` as a png and writes the
         output file to the directory given by ``filename``.
@@ -961,21 +963,18 @@ class Latex(LatexCall):
 
         -  ``density`` -- how big output image is.
 
-        -  ``pdflatex`` -- whether to use pdflatex. This is deprecated. Use
-           ``engine`` option instead.
-
-        -  ``engine`` -- latex engine to use. Currently latex, pdflatex, and
-           xelatex are supported.
+        -  ``engine`` -- latex engine to use. Currently latex, pdflatex, xelatex and
+           lualatex are supported.
 
         -  ``locals`` - extra local variables used when
            evaluating Sage code in ``x``.
 
         .. WARNING::
 
-           When using latex (the default), you must have 'dvipng' (or
-           'dvips' and 'convert') installed on your operating system,
-           or this command will not work.  When using pdflatex or xelatex, you
-           must have 'convert' installed.
+           When using latex (the default), you must have 'dvipng' (or 'dvips'
+           and 'convert') installed on your operating system, or this command
+           will not work.  When using pdflatex, xelatex or lualatex, you must
+           have 'convert' installed.
 
         OUTPUT:
 
@@ -1471,7 +1470,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
 
         INPUT:
 
-        - ``e`` -- 'latex', 'pdflatex', 'xelatex' or ``None``
+        - ``e`` -- 'latex', 'pdflatex', 'xelatex', 'lualatex' or ``None``
 
         If  ``e`` is ``None``, return the current engine.
 
@@ -1506,8 +1505,11 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         elif e == "xelatex":
             _Latex_prefs._option["engine"] = e
             _Latex_prefs._option["engine_name"] = "XeLaTeX"
+        elif e == "lualatex":
+            _Latex_prefs._option["engine"] = e
+            _Latex_prefs._option["engine_name"] = "LuaLaTeX"
         else:
-            raise ValueError("%s is not a supported LaTeX engine. Use latex, pdflatex, or xelatex" % e)
+            raise ValueError("%s is not a supported LaTeX engine. Use latex, pdflatex, xelatex, or lualatex" % e)
 
 # Note: latex used to be a separate function, which by default was
 # only loaded in command-line mode: in the old notebook,
@@ -1652,7 +1654,7 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
 
 def view(objects, title='Sage', debug=False, sep='', tiny=False,
-        pdflatex=None, engine=None, viewer=None, tightpage=True, margin=None,
+        engine=None, viewer=None, tightpage=True, margin=None,
         mode='inline', combine_all=False, **kwds):
     r"""nodetex
     Compute a latex representation of each object in objects, compile,
@@ -1674,9 +1676,6 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
     -  ``tiny`` -- bool (default: ``False``): use tiny font.
 
-    -  ``pdflatex`` -- bool (default: ``False``): use pdflatex. This is
-       deprecated. Use ``'engine'`` option instead.
-
     -  ``engine`` -- string or ``None`` (default: ``None``). Can take the
        following values:
 
@@ -1686,6 +1685,8 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
        - ``'pdflatex'`` -- compilation does tex -> pdf
 
        - ``'xelatex'`` -- compilation does tex -> pdf
+
+       - ``'lualatex'`` -- compilation does tex -> pdf
 
        - ``'latex'`` -- compilation first tries tex -> dvi -> png and if an
          error occurs then tries dvi -> ps -> pdf. This is slower than
@@ -1724,20 +1725,17 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     adds a horizontal line between objects, and ``sep='\\newpage'``
     inserts a page break between objects.
 
-    If ``pdflatex`` is ``True``, then the latex engine is set to
-    pdflatex.
-
-    If the ``engine`` is either ``pdflatex`` or ``xelatex``,  it produces
-    a pdf file. Otherwise, it produces a dvi file, and if the program dvipng is
-    installed, it checks the dvi file by trying to convert it to a png
-    file.  If this conversion fails, the dvi file probably contains
-    some postscript special commands or it has other issues which
-    might make displaying it a problem; in this case, the file is
-    converted to a pdf file, which is then displayed.
+    If the ``engine`` is either ``pdflatex``, ``xelatex``, or ``lualatex``,  it
+    produces a pdf file. Otherwise, it produces a dvi file, and if the program
+    dvipng is installed, it checks the dvi file by trying to convert it to a
+    png file.  If this conversion fails, the dvi file probably contains some
+    postscript special commands or it has other issues which might make
+    displaying it a problem; in this case, the file is converted to a pdf file,
+    which is then displayed.
 
     Setting ``viewer`` to ``'pdf'`` forces the use of a separate
     viewer, even in notebook mode. This also sets the latex engine to be
-    ``pdflatex`` if the current engine is latex.
+    ``xelatex`` if the current engine is latex.
 
     Setting the option ``tightpage`` to ``True`` (this is the default setting)
     tells LaTeX to use  the package 'preview' with the 'tightpage' option.
@@ -1816,8 +1814,8 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     s = _latex_file_(objects, title=title, sep=sep, tiny=tiny, debug=debug, **latex_options)
     if engine is None:
         engine = _Latex_prefs._option["engine"]
-    if pdflatex or (viewer == "pdf" and engine == "latex"):
-        engine = "pdflatex"
+    if viewer == "pdf" and engine == "latex":
+        engine = "xelatex"
     # command line or notebook with viewer
 
     # We can't automatically delete the temporary file in this case
@@ -1865,32 +1863,28 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
 
 def png(x, filename, density=150, debug=False,
-        do_in_background=False, tiny=False, pdflatex=True, engine='pdflatex'):
+        do_in_background=False, tiny=False, engine='xelatex'):
     """
     Create a png image representation of ``x`` and save to the given
     filename.
 
     INPUT:
 
-    -  ``x`` -- object to be displayed
+    - ``x`` -- object to be displayed
 
-    -  ``filename`` -- file in which to save the image
+    - ``filename`` -- file in which to save the image
 
-    -  ``density`` -- integer (default: 150)
+    - ``density`` -- integer (default: 150)
 
-    -  ``debug`` -- bool (default: ``False``): print verbose
-       output
+    - ``debug`` -- bool (default: ``False``): print verbose output
 
-    -  ``do_in_background`` -- bool (default: ``False``): Unused,
-       kept for backwards compatibility
+    - ``do_in_background`` -- bool (default: ``False``): Unused, kept for
+      backwards compatibility
 
-    -  ``tiny`` -- bool (default: ``False``): use 'tiny' font
+    - ``tiny`` -- bool (default: ``False``): use 'tiny' font
 
-    -  ``pdflatex`` -- bool (default: ``True``): use pdflatex. This option is
-       deprecated. Use ``engine`` option instead. See below.
-
-    -  ``engine`` -- (default: ``'pdflatex'``) ``'latex'``, ``'pdflatex'``,
-       or ``'xelatex'``
+    - ``engine`` -- (default: ``'xelatex'``) ``'latex'``, ``'pdflatex'``,
+      ``'xelatex'``  or ``'lualatex'``
 
     EXAMPLES::
 
@@ -1899,8 +1893,6 @@ def png(x, filename, density=150, debug=False,
         sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random   # optional - imagemagick latex, needs sage.plot
         ....:     png(ZZ[x], f.name)
     """
-    if not pdflatex:
-        engine = "latex"
     import sage.plot.all
     if sage.plot.graphics.is_Graphics(x):
         x.save(filename)
@@ -2362,7 +2354,7 @@ To use, first try calling 'view' on this object -- it will not work. Now,
 make sure that you have the most recent version of the TeX package
 pstricks installed.  Run 'latex.add_to_preamble("\\usepackage{pstricks}")'
 and try viewing it again. Call 'view' with the option `engine='latex'`
--- the default behavior is to use pdflatex, which does not work with
+-- the default behavior is to use xelatex, which does not work with
 pstricks.  From the command line, this should pop open a nice window
 with a picture of forces acting on a mass on a pendulum."""
 
