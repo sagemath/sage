@@ -115,7 +115,7 @@ def GL(n, R, var='a'):
 
     Here is the Cayley graph of (relatively small) finite General Linear Group::
 
-        sage: # needs sage.libs.gap sage.graphs
+        sage: # needs sage.graphs sage.libs.gap
         sage: g = GL(2,3)
         sage: d = g.cayley_graph(); d
         Digraph on 48 vertices
