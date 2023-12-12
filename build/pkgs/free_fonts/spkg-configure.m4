@@ -1,0 +1,1 @@
+sage_spkg_install_free_fonts=yes
