@@ -1399,7 +1399,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         not even need to check if it is complete::
 
             sage: fan = toric_varieties.P1xP1().fan()                                   # needs palp
-            sage: fan.cone_lattice() # indirect doctest                                 # needs palp
+            sage: fan.cone_lattice()  # indirect doctest                                # needs palp
             Finite lattice containing 10 elements with distinguished linear extension
 
         These 10 elements are: 1 origin, 4 rays, 4 generating cones, 1 fan.

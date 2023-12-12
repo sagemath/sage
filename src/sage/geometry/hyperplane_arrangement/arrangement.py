@@ -1109,7 +1109,7 @@ class HyperplaneArrangementElement(Element):
             sage: W = CoxeterGroup(['F',4], implementation="permutation")
             sage: A = HyperplaneArrangements(QQ, tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])
-            sage: H.primitive_eulerian_polynomial()  # long time                        # needs sage.graphs
+            sage: H.primitive_eulerian_polynomial()     # long time                     # needs sage.graphs
             z^4 + 116*z^3 + 220*z^2 + 48*z
 
         We verify Proposition 2.5 in [BHS2023]_ on the braid arrangement
