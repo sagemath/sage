@@ -57,7 +57,7 @@ only those up to degree 199 come standard in Sage::
 
     sage: p = next_prime(2^328)
     sage: E = EllipticCurve(GF(p), [6,1])                                               # needs sage.schemes
-    sage: E.cardinality()  # long time (108s on sage.math, 2013), optional - pari_seadata, needs sage.schemes
+    sage: E.cardinality()                       # long time (108s on sage.math, 2013), optional - pari_seadata, needs sage.schemes
     546812681195752981093125556779405341338292357723293496548601032930284335897180749997402596957976244
 
 Create a number field with Galois group `A4`. Group `A4` corresponds to
