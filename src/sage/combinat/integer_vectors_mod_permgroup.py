@@ -828,8 +828,14 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             else:
                 return SF.elements_of_depth_iterator(self._sum)
 
+    def has_trivial_group(self):
+        """Check if the associated permutation group is trivial."""
+        g = self.permutation_group().gens()
+        return len(g) == 0 or (len(g) == 1 and tuple(g[0]) == ())
+
     def cardinality(self):
-        r"""Return the number of integer vectors in the set.
+        r"""
+        Return the number of integer vectors in the set.
 
         The number is computed using the cycle index theorem, which is
         faster than listing the vectors.
@@ -880,11 +886,26 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             ....:     I3 = IntegerVectorsModPermutationGroup(G, sum=10, max_part=3, sgs=sgs)
             ....:     assert I3.cardinality() == len(list(I3))
 
+            Symmetric group with sums 0 and 1:
+            sage: S10 = SymmetricGroup(10)
+            sage: IntegerVectorsModPermutationGroup(S10, 0).cardinality()
+            1
+            sage: IntegerVectorsModPermutationGroup(S10, 1).cardinality()
+            1
+
+            Trivial group with sums 1 and 100:
+            sage: T10 = PermutationGroup([], domain=range(1, 11))
+            sage: IntegerVectorsModPermutationGroup(T10, 1).cardinality()
+            10
+            sage: IntegerVectorsModPermutationGroup(T10, 100).cardinality()
+            4263421511271
+
         """
         from sage.rings.power_series_ring import PowerSeriesRing
         from sage.rings.rational_field import QQ
         from sage.rings.integer import Integer
         from sage.misc.misc_c import prod
+        from sage.arith.misc import binomial
 
         G = self._permgroup
         k = G.degree()          # Vector length
@@ -892,17 +913,34 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         m = self._max_part      # Max of one entry, -1 for no limit
         if m == -1:
             m = d               # Any entry cannot exceed total
+
+        # Some easy special cases.
         if k == 0:
-            # Special case: Empty vectors cannot have nonzero sum.
+            # Empty vectors.  There is only one, and it has zero sum.
+            # Here _max_part does not matter because any _max_part
+            # condition is vacuously true (with no parts).
             if d == 0 or d is None:
                 return Integer(1)
             else:
                 return Integer(0)
+        if d == 0 or m == 0:
+            # All-zero vectors.  There is only one of them.
+            return Integer(1)
+        if d == 1:
+            # Vectors with one 1 and all other elements zero.
+            # The 1 can be placed in any orbit, and by symmetry
+            # it will be on the first element of the orbit.
+            return Integer(len(G.orbits()))
+        if d is not None and self.has_trivial_group() and m >= d:
+            # Simple calculation with stars and bars.
+            return Integer(binomial(d + k - 1, k - 1))
 
+        # General case.
+        #
         # Cardinality is computed using the Cycle Index Theorem.  We
         # have two cases.  With a fixed sum d we work with power
         # series and extract the x^d coefficient.  Without a fixed sum
-        # we can do it easier with integer arithmetic.
+        # we can do with integer arithmetic.
         Z = G.cycle_index()
 
         if d is None:
