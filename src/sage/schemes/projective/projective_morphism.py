@@ -929,9 +929,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(3*x^2 + 1)                                        # needs sage.rings.number_field
-            sage: P.<z,w> = ProjectiveSpace(K, 1)                                       # needs sage.rings.number_field
-            sage: f = DynamicalSystem_projective([a*(z^2 + w^2), z*w])                  # needs sage.rings.number_field
+            sage: K.<a> = NumberField(3*x^2 + 1)
+            sage: P.<z,w> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([a*(z^2 + w^2), z*w])
             sage: f.normalize_coordinates(); f
             Dynamical System of Projective Space of dimension 1 over
             Number Field in a with defining polynomial 3*x^2 + 1

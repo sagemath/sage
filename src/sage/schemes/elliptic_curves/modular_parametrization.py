@@ -218,9 +218,9 @@ class ModularParameterization:
             sage: tau = (sqrt(7)*I - 17)/74
             sage: z = phi.map_to_complex_numbers(tau); z
             0.929592715285395 - 1.22569469099340*I
-            sage: E.elliptic_exponential(z)                                             # needs sage.symbolic
+            sage: E.elliptic_exponential(z)
             (...e-16 - ...e-16*I : ...e-16 + ...e-16*I : 1.00000000000000)
-            sage: phi(tau)                                                              # needs sage.symbolic
+            sage: phi(tau)
             (...e-16 - ...e-16*I : ...e-16 + ...e-16*I : 1.00000000000000)
         """
         if prec is None:

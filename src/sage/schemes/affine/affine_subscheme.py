@@ -99,15 +99,15 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
             sage: # needs sage.libs.singular
             sage: A.<x,y> = AffineSpace(2, QQ)
-            sage: A.subscheme([]).dimension()                                           # needs sage.libs.singular
+            sage: A.subscheme([]).dimension()
             2
-            sage: A.subscheme([x]).dimension()                                          # needs sage.libs.singular
+            sage: A.subscheme([x]).dimension()
             1
-            sage: A.subscheme([x^5]).dimension()                                        # needs sage.libs.singular
+            sage: A.subscheme([x^5]).dimension()
             1
-            sage: A.subscheme([x^2 + y^2 - 1]).dimension()                              # needs sage.libs.singular
+            sage: A.subscheme([x^2 + y^2 - 1]).dimension()
             1
-            sage: A.subscheme([x*(x-1), y*(y-1)]).dimension()                           # needs sage.libs.singular
+            sage: A.subscheme([x*(x-1), y*(y-1)]).dimension()
             0
 
         Something less obvious::
