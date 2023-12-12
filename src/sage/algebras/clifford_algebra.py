@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Clifford Algebras
 
@@ -1369,7 +1370,7 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: E.category()
             Category of finite dimensional supercommutative supercocommutative
-             super hopf algebras with basis over Rational Field
+             super Hopf algebras with basis over Rational Field
             sage: TestSuite(E).run()
 
             sage: TestSuite(ExteriorAlgebra(GF(3), ['a', 'b'])).run()
@@ -1770,6 +1771,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         Check :trac:`34694`::
 
+            sage: # needs sage.symbolic
             sage: E = ExteriorAlgebra(SR,'e',3)
             sage: E.inject_variables()
             Defining e0, e1, e2

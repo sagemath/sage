@@ -445,7 +445,7 @@ class AnalyticType(FiniteLatticePoset):
                                  linear_extension=True, facade=False)
 
         L = self._base_poset.order_ideals_lattice()
-        H = L._hasse_diagram.relabel({i: x for i, x in enumerate(L._elements)},
+        H = L._hasse_diagram.relabel(dict(enumerate(L._elements)),
                                      inplace=False)
         FiniteLatticePoset.__init__(self, hasse_diagram=H,
                                     elements=L._elements, category=L.category(),
@@ -485,7 +485,7 @@ class AnalyticType(FiniteLatticePoset):
             True
         """
         if len(args) > 1:
-            return super().__call__([arg for arg in args], **kwargs)
+            return super().__call__(list(args), **kwargs)
         else:
             return super().__call__(*args, **kwargs)
 

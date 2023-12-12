@@ -78,7 +78,7 @@ Sage knows moreover that `M` is a Lie algebra::
 
     sage: M.category()
     Join of
-     Category of lie algebras with basis over Rational Field and
+     Category of Lie algebras with basis over Rational Field and
      Category of modules with basis over
       Multivariate Polynomial Ring in x, y, z over Rational Field
 

@@ -15,11 +15,11 @@ Clean the Install Dir
 #*****************************************************************************
 
 
-import os
 import importlib.util
+import os
 
 from sage.misc.package_dir import SourceDistributionFilter
-from sage_setup.find import installed_files_by_module, get_extensions
+from sage_setup.find import get_extensions, installed_files_by_module
 
 
 def _remove(file_set, module_base, to_remove):
