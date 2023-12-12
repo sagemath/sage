@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Isogenies
 
@@ -1953,7 +1952,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         """
         a1, a2, a3, a4, _ = self._domain.a_invariants()
 
-        self.__kernel_mod_sign = dict()
+        self.__kernel_mod_sign = {}
         v = w = 0
 
         for Q in self.__kernel_list:

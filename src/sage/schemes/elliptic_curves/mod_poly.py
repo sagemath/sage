@@ -22,7 +22,7 @@ from sage.databases.db_modular_polynomials import ClassicalModularPolynomialData
 _db = ClassicalModularPolynomialDatabase()
 
 _cache_bound = 100
-_cache = dict()
+_cache = {}
 
 
 def classical_modular_polynomial(l, j=None):
