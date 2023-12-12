@@ -140,7 +140,7 @@ class GlobalCputime:
         sage: t = cputime(subprocesses=True)
         sage: P = PolynomialRing(QQ,7,'x')
         sage: I = sage.rings.ideal.Katsura(P)                                           # needs sage.libs.singular
-        sage: gb = I.groebner_basis() # calls Singular                                  # needs sage.libs.singular
+        sage: gb = I.groebner_basis()  # calls Singular                                 # needs sage.libs.singular
         sage: cputime(subprocesses=True) - t    # output random
         0.462987
 
@@ -186,7 +186,7 @@ class GlobalCputime:
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
             sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
-            sage: gb = I.groebner_basis() # calls Singular                              # needs sage.libs.singular
+            sage: gb = I.groebner_basis()  # calls Singular                             # needs sage.libs.singular
             sage: cputime(subprocesses=True) + t # output random
             2.798708
         """
@@ -202,7 +202,7 @@ class GlobalCputime:
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
             sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
-            sage: gb = I.groebner_basis() # calls Singular                              # needs sage.libs.singular
+            sage: gb = I.groebner_basis()  # calls Singular                             # needs sage.libs.singular
             sage: cputime(subprocesses=True) - t # output random
             0.462987
         """

@@ -572,7 +572,7 @@ class table(SageObject):
             sage: from sage.misc.table import table
             sage: a = [[r'$\sin(x)$', '$x$', 'text'],                                   # needs sage.modules
             ....:      [1, 34342, 3], [identity_matrix(2), 5, 6]]
-            sage: latex(table(a)) # indirect doctest                                    # needs sage.modules
+            sage: latex(table(a))  # indirect doctest                                   # needs sage.modules
             \begin{tabular}{lll}
             $\sin(x)$ & $x$ & text \\
             $1$ & $34342$ & $3$ \\
