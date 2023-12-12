@@ -14,5 +14,12 @@ in `sage/libs/flint/`. To make the autogeneration
 4. Set the environment variable `FLINT_GIT_DIR`
 
 5. Run the `run.py` script, eg `python autogen.py`
+   (that automatically write down the headers in the sage source tree `SAGE_SRC/sage/libs/flint`)
 
-6. Copy all the files generated in `pxd_headers` inside the sage source tree (ie `SAGE_SRC/sage/libs/flint`)
+
+Additional notes
+----------------
+
+- macros in flint documentation are not converted into cython declarations (because they lack
+  a signature). The cython signature of flint macros must be manually written down in the
+  files contained `SAGE_SRC/sage/src/sage_setup/autogen/flint/macros`
