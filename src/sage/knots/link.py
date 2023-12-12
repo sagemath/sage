@@ -2674,7 +2674,7 @@ class Link(SageObject):
             sage: L = Link([[[1,-2,-3,-8,-12,13,-14,15,-7,-1,2,-4,10,11,-13,12,
             ....:             -11,-16,4,3,-5,6,-9,7,-15,14,16,-10,8,9,-6,5]],
             ....:           [-1,-1,1,1,1,1,-1,1,1,-1,1,-1,-1,-1,-1,-1]])
-            sage: L.jones_polynomial()  # long time                                     # needs sage.symbolic
+            sage: L.jones_polynomial()          # long time                             # needs sage.symbolic
             1
 
         Two unlinked unknots::
@@ -4127,7 +4127,7 @@ class Link(SageObject):
             sage: k11mr.get_knotinfo(unique=False)    # optional - database_knotinfo
             [(<KnotInfo.K11n_82: '11n_82'>, '?')]
 
-            sage: # needs sage.groups, optional - database_knotinfo
+            sage: # optional - database_knotinfo, needs sage.groups
             sage: t = (1, -2, 1, 1, -2, 1, -2, -2)
             sage: l8 = Link(BraidGroup(3)(t))
             sage: l8.get_knotinfo()
@@ -4140,7 +4140,7 @@ class Link(SageObject):
             [(<KnotInfo.L8a19_0_0: 'L8a19{0,0}'>, None),
              (<KnotInfo.L8a19_1_1: 'L8a19{1,1}'>, None)]
 
-            sage: # needs sage.groups, optional - database_knotinfo
+            sage: # optional - database_knotinfo, needs sage.groups
             sage: t = (2, -3, -3, -2, 3, 3, -2, 3, 1, -2, -2, 1)
             sage: l12 = Link(BraidGroup(5)(t))
             sage: l12.get_knotinfo()
