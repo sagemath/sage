@@ -496,6 +496,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         first = Matrix_cmr_chr_sparse._from_data(first_mat, immutable=False)
         second = Matrix_cmr_chr_sparse._from_data(second_mat, immutable=False)
 
+        if nonzero_block not in ["top_right", "bottom_left"]:
+            raise ValueError("Unknown two sum mode", nonzero_block)
+
         if nonzero_block == "top_right":
             column = first_index
             row = second_index
