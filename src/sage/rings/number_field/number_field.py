@@ -371,18 +371,20 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
     One can embed into any other field::
 
-        sage: K.<a> = NumberField(x^3-2, embedding=CC.gen()-0.6)
+        sage: K.<a> = NumberField(x^3 - 2, embedding=CC.gen() - 0.6)
         sage: CC(a)
         -0.629960524947436 + 1.09112363597172*I
-        sage: L = Qp(5)                                                                 # needs sage.rings.padics
+
+        sage: # needs sage.rings.padics
+        sage: L = Qp(5)
         sage: f = polygen(L)^3 - 2
-        sage: K.<a> = NumberField(x^3-2, embedding=f.roots()[0][0])
+        sage: K.<a> = NumberField(x^3 - 2, embedding=f.roots()[0][0])
         sage: a + L(1)
         4 + 2*5^2 + 2*5^3 + 3*5^4 + 5^5 + 4*5^6 + 2*5^8 + 3*5^9 + 4*5^12
          + 4*5^14 + 4*5^15 + 3*5^16 + 5^17 + 5^18 + 2*5^19 + O(5^20)
-        sage: L.<b> = NumberField(x^6-x^2+1/10, embedding=1)
-        sage: K.<a> = NumberField(x^3-x+1/10, embedding=b^2)
-        sage: a+b
+        sage: L.<b> = NumberField(x^6 - x^2 + 1/10, embedding=1)
+        sage: K.<a> = NumberField(x^3 - x + 1/10, embedding=b^2)
+        sage: a + b
         b^2 + b
         sage: CC(a) == CC(b)^2
         True
@@ -409,7 +411,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
     Note that the codomain of the embedding must be ``QQbar`` or ``AA`` for this to work
     (see :trac:`20184`)::
 
-        sage: N.<g> = NumberField(x^3 + 2,embedding=1)
+        sage: N.<g> = NumberField(x^3 + 2, embedding=1)
         sage: 1 < g
         False
         sage: g > 1
@@ -493,7 +495,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
     The following has been fixed in :trac:`8800`::
 
         sage: P.<x> = QQ[]
-        sage: K.<a> = NumberField(x^3 - 5,embedding=0)
+        sage: K.<a> = NumberField(x^3 - 5, embedding=0)
         sage: L.<b> = K.extension(x^2 + a)
         sage: F, R = L.construction()
         sage: F(R) == L    # indirect doctest
@@ -1561,7 +1563,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ::
 
             sage: P.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3-5,embedding=0)
+            sage: K.<a> = NumberField(x^3-5, embedding=0)
             sage: L.<b> = K.extension(x^2+a)
             sage: a*b
             a*b
@@ -8224,7 +8226,7 @@ class NumberField_absolute(NumberField_generic):
         The following was fixed in :trac:`8800`::
 
             sage: P.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3 - 5,embedding=0)
+            sage: K.<a> = NumberField(x^3 - 5, embedding=0)
             sage: L.<b> = K.extension(x^2 + a)
             sage: F,R = L.construction()
             sage: F(R) == L   #indirect doctest
