@@ -22,10 +22,16 @@ Check :trac:`12482` (shall be run in a fresh session)::
     Category of finite enumerated sets
 """
 
-# ****************************************************************************
-#       Copyright (C) 2008 Nicolas Thiery <nthiery at users.sf.net>,
-#                          Mike Hansen <mhansen@gmail.com>,
-#                          Florent Hivert <Florent.Hivert@univ-rouen.fr>
+# *****************************************************************************
+#       Copyright (C) 2008-2017 Nicolas Thiery <nthiery at users.sf.net>
+#                     2008-2009 Mike Hansen <mhansen@gmail.com>
+#                     2008-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
+#                     2013-2021 Travis Scrimshaw
+#                     2014      Nathann Cohen
+#                     2017      Erik M. Bray
+#                     2018      Frédéric Chapoton
+#                     2019      Markus Wageringel
+#                     2022      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
