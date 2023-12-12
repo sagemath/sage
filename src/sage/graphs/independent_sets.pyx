@@ -223,7 +223,6 @@ cdef class IndependentSets:
         bitset_init(tmp, self.n)
 
         cdef uint64_t count = 0
-        cdef list ans
         cdef int j
 
         try:
