@@ -3237,7 +3237,7 @@ class MIPSolverException(RuntimeError):
     pass
 
 
-cdef class MIPVariable(FiniteFamily_base):
+cdef class MIPVariable(FiniteFamily):
     r"""
     ``MIPVariable`` is a variable used by the class
     ``MixedIntegerLinearProgram``.
