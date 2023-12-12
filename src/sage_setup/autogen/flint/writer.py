@@ -90,6 +90,7 @@ def write_flint_cython_headers(output_dir, documentation=False):
         header_list.append(extra_header)
 
     header_list.sort()
+    pxd_list.sort()
 
     with open(os.path.join(AUTOGEN_DIR, 'templates', 'flint_wrap.h.template')) as f:
         text = f.read()
