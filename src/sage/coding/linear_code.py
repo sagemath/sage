@@ -656,7 +656,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.binomial_moment(2)                                                  # needs sage.libs.gap
             0
-            sage: C.binomial_moment(4)    # long time                                   # needs sage.libs.gap
+            sage: C.binomial_moment(4)          # long time                             # needs sage.libs.gap
             35
 
         .. warning::
@@ -2009,7 +2009,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 3)
-            sage: C.zeta_polynomial()                                           # needs sage.libs.gap
+            sage: C.zeta_polynomial()                                                   # needs sage.libs.gap
             2/5*T^2 + 2/5*T + 1/5
 
             sage: C = codes.databases.best_linear_code_in_guava(6, 3, GF(2))    # optional - gap_package_guava
@@ -2019,14 +2019,14 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             2/5*T^2 + 2/5*T + 1/5
 
             sage: C = codes.HammingCode(GF(2), 4)
-            sage: C.zeta_polynomial()                                           # needs sage.libs.gap
+            sage: C.zeta_polynomial()                                                   # needs sage.libs.gap
             16/429*T^6 + 16/143*T^5 + 80/429*T^4 + 32/143*T^3 + 30/143*T^2 + 2/13*T + 1/13
 
             sage: F.<z> = GF(4,"z")
             sage: MS = MatrixSpace(F, 3, 6)
             sage: G = MS([[1,0,0,1,z,z],[0,1,0,z,1,z],[0,0,1,z,z,1]])
             sage: C = LinearCode(G)  # the "hexacode"
-            sage: C.zeta_polynomial()                                           # needs sage.libs.gap
+            sage: C.zeta_polynomial()                                                   # needs sage.libs.gap
             1
 
         REFERENCES:
@@ -2077,7 +2077,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 3)
-            sage: C.zeta_function()                                             # needs sage.libs.gap
+            sage: C.zeta_function()                                                     # needs sage.libs.gap
             (1/5*T^2 + 1/5*T + 1/10)/(T^2 - 3/2*T + 1/2)
         """
         P = self.zeta_polynomial()
