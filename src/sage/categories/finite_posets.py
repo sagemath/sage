@@ -1281,7 +1281,7 @@ class FinitePosets(CategoryWithAxiom):
                 True
                 sage: test_rectangle_periodicity(2, 2, 2)                               # needs sage.modules
                 False
-                sage: test_rectangle_periodicity(2, 3, 5)  # long time                  # needs sage.modules
+                sage: test_rectangle_periodicity(2, 3, 5)       # long time             # needs sage.modules
                 True
 
             While computations with the birational free labelling quickly
