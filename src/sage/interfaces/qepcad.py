@@ -1092,7 +1092,7 @@ class Qepcad:
             sage: ans
             'x^2 - 2 > 0'
             sage: stats
-            '-----------------------------------------------------------------------------\r\n0 Garbage collections, 0 Cells and 0 Arrays reclaimed, in 0 milliseconds.\r\n492514 Cells in AVAIL, 500000 Cells in SPACE.\r\n\r\nSystem time: 16 milliseconds.\r\nSystem time after the initialization: 4 milliseconds.\r\n-----------------------------------------------------------------------------\r\n'
+            '-----------------------------------------------------------------------------\r\n0 Garbage collections, 0 Cells and 0 Arrays reclaimed, in 0 ...
         """
         if self.phase() != 'EXITED':
             raise ValueError("QEPCAD is not finished yet")
