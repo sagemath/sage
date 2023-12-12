@@ -38,14 +38,23 @@ def write_flint_cython_headers(output_dir, documentation=False):
 
         # try to match header
         header = prefix + '.h'
+        if prefix == 'flint':
+            header = header + '.in'
         absolute_header = os.path.join(FLINT_INCLUDE_DIR, header)
+
         if not os.path.isfile(absolute_header):
             print('Warning: skipping {} because no associated .h found'.format(filename))
             continue
-        if prefix == "machine_vectors" or prefix == "fft_small":
-            print('Warning: skipping fft_small.h and machine_vectors.h because depend on special CPU instructions')
+
+        # TODO: below are some exceptions for which we do not create .pxd file
+        if prefix == 'machine_vectors' or prefix == 'fft_small':
+            print('Warning: ignoring machine_vectors and fft_small because architecture dependent')
             continue
-        header_list.append(header)
+        if prefix == 'acb_theta':
+            print('Warning: ignoring acb_theta because not in stable release')
+            continue
+
+        header_list.append(prefix + '.h')
         pxd_list.append(prefix + '.pxd')
 
         output = open(os.path.join(output_dir, prefix + '.pxd'), 'w')
