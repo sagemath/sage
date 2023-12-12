@@ -1,27 +1,20 @@
+<div>
 <a href="https://sagemath.org">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="src/doc/common/static/logo_sagemath_white.svg">
     <img src="src/doc/common/static/logo_sagemath_black.svg" height="60" align="left">
   </picture>
 </a>
+   <em>"Creating a Viable Open Source Alternative to
+   Magma, Maple, Mathematica, and MATLAB"</em>
+</div>
 
-# Sage: Open Source Mathematical Software
+#
 
->   "Creating a Viable Open Source Alternative to
->   Magma, Maple, Mathematica, and MATLAB"
-
->   Copyright (C) 2005-2023 The Sage Development Team
-
-https://www.sagemath.org
-
-[Sage Documentation](https://doc.sagemath.org/html/en/index.html)
-
-The Sage Library is free software released under the
-GNU General Public Licence GPLv2+, and included packages
-have [compatible software licenses](./COPYING.txt).
-[Over 800 people](https://www.sagemath.org/development-map.html)
-have contributed code to Sage. In many cases, documentation
-for modules and functions list the authors.
+Sage is open source mathematical software released under the GNU General Public
+Licence GPLv2+, and includes packages that have [compatible software licenses](./COPYING.txt).
+[People all around the globe](https://www.sagemath.org/development-map.html) have contributed to the
+development of Sage. [Full documentation](https://doc.sagemath.org/html/en/index.html) is available online.
 
 Table of Contents
 -----------------
@@ -43,6 +36,14 @@ Table of Contents
 
 Getting Started
 ---------------
+
+Those who are impatient may use prebuilt Sage available online from any of
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sagemath/sage-binder-env/master
+) &nbsp; [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/sagemath/sage/tree/master
+) &nbsp; [![Open in GitHub Codespaces](https://img.shields.io/badge/Open_in_GitHub_Codespaces-black?logo=github)](https://codespaces.new/sagemath/sage/tree/master)
+
+without local installation. Otherwise read on.
 
 The [Sage Installation Guide](https://doc.sagemath.org/html/en/installation/index.html)
 provides a decision tree that guides you to the type of installation
@@ -81,7 +82,7 @@ The preferred way to run Sage on Windows is using the [Windows Subsystem for
 Linux](https://docs.microsoft.com/en-us/windows/wsl/faq), a.k.a. WSL, which allows
 you to install a standard Linux distribution such as Ubuntu within
 your Windows. Make sure you allocate WSL sufficient RAM; 5GB is known to work, while
-2GB might be not enough for building Sage from source. 
+2GB might be not enough for building Sage from source.
 Then all instructions for installation in Linux apply.
 
 As an alternative, you can also run Linux on Windows using Docker ([see
@@ -428,7 +429,7 @@ in the Installation Guide.
     or JupyterLab installation, as described in [section
     "Launching SageMath"](https://doc.sagemath.org/html/en/installation/launching.html)
     in the installation manual.
-    
+
 Alternative Installation using PyPI
 ---------------
 
@@ -436,10 +437,10 @@ For installation of `sage` in python using `pip` you need to install `sagemath-s
 
             $ python3 -m pip install sage_conf
             $ ls $(sage-config SAGE_SPKG_WHEELS)
-            $ python3 -m pip install $(sage-config SAGE_SPKG_WHEELS)/*.whl 
+            $ python3 -m pip install $(sage-config SAGE_SPKG_WHEELS)/*.whl
             $ python3 -m pip install sagemath-standard
 
-You need to install `sage_conf`, a wheelhouse of various python packages. You can list the wheels using `ls $(sage-config SAGE_SPKG_WHEELS)`. After manual installation of these wheels, you can install the sage library, `sagemath-standard`. 
+You need to install `sage_conf`, a wheelhouse of various python packages. You can list the wheels using `ls $(sage-config SAGE_SPKG_WHEELS)`. After manual installation of these wheels, you can install the sage library, `sagemath-standard`.
 
 **NOTE:** You can find `sage` and `sagemath` pip packages but with these packages, you will encounter `ModuleNotFoundError`.
 
@@ -647,3 +648,11 @@ Sources are in unmodified (as far as possible) tarballs in the
 information, patches, and build scripts are in the accompanying
 `build/pkgs/<packagename>` directory. This directory is
 part of the Sage git repository.
+
+<p align="center">
+   Copyright (C) 2005-2023 The Sage Development Team
+</p>
+<p align="center">
+   https://www.sagemath.org
+</p>
+
