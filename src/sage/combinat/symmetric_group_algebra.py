@@ -2175,7 +2175,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
             q = PolynomialRing(R, 'q').gen()
             self._KLG = SymmetricGroup(self.n)
-            self._cellular_KL = KazhdanLusztigPolynomial(KLG, q)
+            self._cellular_KL = KazhdanLusztigPolynomial(self._KLG, q)
             polyfunc = self._cellular_KL.P
         else:
             self._cellular_KL = Coxeter3Group(['A', self.n+1])
@@ -2870,7 +2870,8 @@ class MurphyBasis(SGACellularBasis):
 class KLCellularBasis(SGACellularBasis):
     """
     The Kazhdan-Lusztig `C'` basis (at `q = 1`) of the symmetric group
-    algebra realized as a cellular basis.
+    algebra realized as a :class:`cellular basis
+    <sage.algebras.cellular_basis.CellularBasis>`
 
     EXAMPLES::
 
