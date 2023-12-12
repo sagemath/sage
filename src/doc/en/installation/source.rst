@@ -782,14 +782,21 @@ Here are some of the more commonly used variables affecting the build process:
       Some users on single-core macOS machines have reported problems when
       building Sage with ``MAKE='make -jNUM'`` with ``NUM`` greater than one.
 
-- :envvar:`SAGE_NUM_THREADS` - if set to a number, then when building the
-  documentation, parallel doctesting, or running ``sage -b``, use this many
-  threads.
+- :envvar:`SAGE_NUM_THREADS` - if set to a number, then when rebuilding with
+  ``sage -b`` or parallel doctesting with ``sage -t -p 0``, use at most this
+  many threads.
+
   If this is not set, then determine the number of threads using the value of
   the :envvar:`MAKE` (see above) or :envvar:`MAKEFLAGS` environment variables.
-  If none of these specifies a number of jobs, use one thread (except for
-  parallel testing: there we use a default of the number of CPU cores, with a
-  maximum of 8 and a minimum of 2).
+  If none of these specifies a number of jobs,
+
+  - ``sage -b`` only uses one thread
+
+  - ``sage -t -p 0`` uses a default of the number of CPU cores, with a
+    maximum of 8 and a minimum of 2.
+
+  When ``sage -t -p`` runs under the control of the GNU ``make``
+  jobserver, then Sage will request as most this number of job slots.
 
 - :envvar:`V` - if set to ``0``, silence the build.  Instead of
   showing a detailed compilation log, only one line of output is shown
