@@ -1118,8 +1118,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         EXAMPLES:
 
-        A warn_only test is triggered as soon as some information on the
-        sequence is queried::
+        A warning is triggered if any field of a dead sequence is accessed,
+        unless :meth:`is_dead` is called before::
 
             sage: s = oeis(17)
             sage: s                                 # optional -- internet
