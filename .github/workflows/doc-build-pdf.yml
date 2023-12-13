@@ -55,8 +55,9 @@ jobs:
       - name: Update system packages
         run: |
           export PATH="build/bin:$PATH"
+          # Install free fonts and xindy along with texlive to build pdf docs by xelatex
           eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
+          eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip xindy)
           eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive free_fonts)
 
       - name: Add prebuilt tree as a worktree
