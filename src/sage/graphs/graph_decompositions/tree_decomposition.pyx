@@ -1090,7 +1090,7 @@ def label_nice_tree_decomposition(nice_TD, root, directed=False):
         sage: label_TD = label_nice_tree_decomposition(nice_TD, root, directed=True)
         sage: label_TD.name()
         'Labelled Nice tree decomposition of Tree decomposition'
-        sage: for node in sorted(label_TD):
+        sage: for node in sorted(label_TD):  # random
         ....:     print(node, label_TD.get_vertex(node))
         (0, {}) forget
         (1, {0}) forget
