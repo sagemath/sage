@@ -18598,8 +18598,9 @@ def _matrix_power_symbolic(A, n):
 
         sage: A = matrix(ZZ, [[1,-1], [-1,1]])
         sage: A^(2*n+1)                                                                 # needs sage.symbolic
-        [ 1/2*2^(2*n + 1) -1/2*2^(2*n + 1)]
-        [-1/2*2^(2*n + 1)  1/2*2^(2*n + 1)]
+        [ 1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1) -1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)]
+        [-1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)  1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)]
+
 
     Check if :trac:`23215` is fixed::
 
