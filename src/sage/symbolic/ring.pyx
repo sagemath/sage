@@ -748,7 +748,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
                 if asm.has(symbol):
                     asm.forget()
 
-    def var(self, name, latex_name=None, n=None, domain="complex"):
+    def var(self, name, latex_name=None, n=None, domain=None):
         r"""
         Return a symbolic variable as an element of the symbolic ring.
 
