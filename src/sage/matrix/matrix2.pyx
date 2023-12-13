@@ -216,10 +216,10 @@ cdef class Matrix(Matrix1):
         from sage.matrix.constructor import matrix
         if self.is_sparse():
             return matrix({ij: self[ij].subs(*args, **kwds) for ij in self.nonzero_positions()},
-                    nrows=self._nrows, ncols=self._ncols, sparse=True)
+                          nrows=self._nrows, ncols=self._ncols, sparse=True)
         else:
             return matrix([a.subs(*args, **kwds) for a in self.list()],
-                        nrows=self._nrows, ncols=self._ncols, sparse=False)
+                          nrows=self._nrows, ncols=self._ncols, sparse=False)
 
     def solve_left(self, B, check=True):
         """
