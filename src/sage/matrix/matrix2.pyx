@@ -216,10 +216,10 @@ cdef class Matrix(Matrix1):
         from sage.matrix.constructor import matrix
         if self.is_sparse():
             return matrix({ij: self[ij].subs(*args, **kwds) for ij in self.nonzero_positions()},
-                    nrows=self._nrows, ncols=self._ncols, sparse=True)
+                          nrows=self._nrows, ncols=self._ncols, sparse=True)
         else:
             return matrix([a.subs(*args, **kwds) for a in self.list()],
-                        nrows=self._nrows, ncols=self._ncols, sparse=False)
+                          nrows=self._nrows, ncols=self._ncols, sparse=False)
 
     def solve_left(self, B, check=True):
         """
@@ -903,8 +903,8 @@ cdef class Matrix(Matrix1):
             # Elements of SR "remember" whether or not they are exact.
             # If every element in the system is exact, we can probably
             # still check the solution over the inexact ring SR.
-            check = (check and all( e.is_exact()
-                                    for e in self.list() + B.list() ))
+            check = (check and all(e.is_exact()
+                                   for e in self.list() + B.list()))
         else:
             check = (check and K.is_exact())
 
@@ -988,7 +988,7 @@ cdef class Matrix(Matrix1):
             raise NotFullRankError
         D = self.augment(B)
         D.echelonize()
-        return D.matrix_from_columns(range(self.ncols(),D.ncols()))
+        return D.matrix_from_columns(range(self.ncols(), D.ncols()))
 
     def pivot_rows(self):
         """
@@ -1069,7 +1069,7 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: a = matrix(QQ, 2,2, [1,2,3,2]); a
+            sage: a = matrix(QQ, 2, 2, [1,2,3,2]); a
             [1 2]
             [3 2]
             sage: a.prod_of_row_sums([0,1])
@@ -1088,8 +1088,6 @@ cdef class Matrix(Matrix1):
         for row from 0 <= row < self._nrows:
             tmp = []
             for c in cols:
-#               if c<0 or c >= self._ncols:
-#                   raise IndexError("matrix column index out of range")
                 tmp.append(self.get_unsafe(row, c))
             pr = pr * sum(tmp)
         return pr
