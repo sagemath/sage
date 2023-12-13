@@ -2,7 +2,7 @@ r"""
 John Jones's tables of number fields
 
 In order to use the Jones database, the optional :ref:`database_jones_numfield
-<database_jones_numfield>` package must be installed using the Sage command ::
+<spkg_database_jones_numfield>` package must be installed using the Sage command ::
 
     sage -i database_jones_numfield
 

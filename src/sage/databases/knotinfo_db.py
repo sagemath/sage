@@ -8,7 +8,7 @@ at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
 `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
 
 To use the database, you need to install the optional :ref:`database_knotinfo
-<database_knotinfo>` package by the Sage command ::
+<spkg_database_knotinfo>` package by the Sage command ::
 
     sage -i database_knotinfo
 

@@ -3,7 +3,7 @@ Database of Hilbert polynomials
 
 This module gives access to the database of Hilbert class polynomials. To use
 the database, you need to install the optional :ref:`database_kohel
-<database_kohel>` package by the Sage command ::
+<spkg_database_kohel>` package by the Sage command ::
 
     sage -i database_kohel
 

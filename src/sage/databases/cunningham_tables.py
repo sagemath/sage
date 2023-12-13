@@ -5,7 +5,7 @@ This module provides :func:`cunningham_prime_factors`, which lists the prime
 numbers occurring in the factorization of numbers of type `b^n+1` or `b^n-1`
 with `b \in \{2,3,5,6,7,10,11,12\}`. For an introduction to Cunningham prime
 factors, see :wikipedia:`Cunningham_Project`. The data becomes available if you
-install the optional :ref:`cunningham_tables <cunningham_tables>` package by
+install the optional :ref:`cunningham_tables <spkg_cunningham_tables>` package by
 the command ::
 
     sage -i cunningham_tables

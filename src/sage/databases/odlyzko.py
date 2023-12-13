@@ -3,7 +3,7 @@ Database of the zeros of the Riemann zeta function
 
 The main access function to the database of the zeros of the Riemann zeta
 function is :func:`zeta_zeros`. In order to use ``zeta_zeros()``, you need to
-install the optional :ref:`database_odlyzko_zeta <database_odlyzko_zeta>`
+install the optional :ref:`database_odlyzko_zeta <spkg_database_odlyzko_zeta>`
 package::
 
     sage -i database_odlyzko_zeta

@@ -32,7 +32,7 @@ ideals as published on http://www.symbolicdata.org. From the project website:
     development.
 
 In order to use this dataset, you need to install the optional
-:ref:`database_symbolic_data <database_symbolic_data>` package by the Sage
+:ref:`database_symbolic_data <spkg_database_symbolic_data>` package by the Sage
 command ::
 
     sage -i database_symbolic_data
