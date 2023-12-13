@@ -16192,6 +16192,7 @@ cdef class Matrix(Matrix1):
                             U.set_unsafe(l, c, (-f) * Ukc + e * Ulc)
                 if i != k:
                     A.swap_rows_c(i, k)
+
                     if transformation:
                         U.swap_rows_c(i, k)
                 pivot_cols.append(j)
@@ -16371,10 +16372,10 @@ cdef class Matrix(Matrix1):
         # data type checks on R
         if not R.is_integral_domain():
             raise TypeError("Generic echelon form only defined over "
-                "integral domains")
+                            "integral domains")
         if not R.is_exact():
             raise NotImplementedError("Echelon form over generic non-exact "
-                "rings not implemented at present")
+                                      "rings not implemented at present")
 
         left_mat, a = _generic_clear_column(self)
         assert left_mat * self == a
@@ -16393,14 +16394,13 @@ cdef class Matrix(Matrix1):
             a = left_mat * self
             pivs = [x+1 for x in pivs]
 
-
         try:
             for i in range(1, len(pivs)):
                 y = a[i][pivs[i]]
                 I = ideal_or_fractional(R, y)
                 s = a[0][pivs[i]]
                 t = I.small_residue(s)
-                v = R( (s-t) / y)
+                v = R((s-t) / y)
 
                 left_mat.add_multiple_of_row(0, i, -v)
                 a.add_multiple_of_row(0, i, -v)
@@ -18230,7 +18230,7 @@ def _generic_clear_column(m):
         k = 0
         while a[k, 0] == 0:
             k += 1
-            if k == a.nrows(): # first column is zero
+            if k == a.nrows():  # first column is zero
                 return left_mat, a
         # k is now first row such that a[k, 0] is nonzero
         left_mat[0, 0] = 0
@@ -18250,7 +18250,7 @@ def _generic_clear_column(m):
     # [e,f]
     # is invertible over R
 
-    I = ideal_or_fractional(R, a[0, 0]) # need to make sure we change this when a[0,0] changes
+    I = ideal_or_fractional(R, a[0, 0])  # need to make sure we change this when a[0,0] changes
     for k in range(1, a.nrows()):
         if a[k, 0] not in I:
             try:
@@ -18268,7 +18268,7 @@ def _generic_clear_column(m):
             # a_{0,0}.
 
             c = R(a[0, 0] / B).inverse_mod(ideal_or_fractional(R, a[k, 0] / B))
-            d = R( (c*a[0, 0] - B)/(a[k, 0]) )
+            d = R((c*a[0, 0] - B)/(a[k, 0]))
 
             # sanity check
             if c*a[0, 0] - d*a[k, 0] != B:
@@ -18276,10 +18276,10 @@ def _generic_clear_column(m):
 
             # now we find e,f such that e*d + c*f = 1 in the same way
             if c != 0:
-                e = d.inverse_mod( ideal_or_fractional(R, c) )
+                e = d.inverse_mod(ideal_or_fractional(R, c))
                 f = R((1 - d*e)/c)
             else:
-                e = R(-a[k, 0]/B) # here d is a unit and this is just 1/d
+                e = R(-a[k, 0]/B)  # here d is a unit and this is just 1/d
                 f = R(1)
 
             if e*d + c*f != 1:
@@ -18299,13 +18299,14 @@ def _generic_clear_column(m):
 
     # now everything in column 0 is divisible by the pivot
     for i in range(1, a.nrows()):
-        s = R( a[i, 0]/a[0, 0])
-        a.add_multiple_of_row(i, 0, -s )
+        s = R(a[i, 0]/a[0, 0])
+        a.add_multiple_of_row(i, 0, -s)
         left_mat.add_multiple_of_row(i, 0, -s)
     if left_mat * m != a:
         raise ArithmeticError
 
     return left_mat, a
+
 
 def _smith_onestep(m):
     r"""
@@ -18365,6 +18366,7 @@ def _smith_onestep(m):
 
     return left_mat, a, right_mat
 
+
 def decomp_seq(v):
     """
     This function is used internally be the decomposition matrix
@@ -18383,6 +18385,7 @@ def decomp_seq(v):
     """
     list.sort(v, key=lambda x: x[0].dimension())
     return Sequence(v, universe=tuple, check=False, cr=True)
+
 
 def _choose(Py_ssize_t n, Py_ssize_t t):
     """
@@ -18434,7 +18437,6 @@ def _choose(Py_ssize_t n, Py_ssize_t t):
             else:
                 break
 
-
         if j >= t:     # T5 stop?
             break
 
@@ -18442,6 +18444,7 @@ def _choose(Py_ssize_t n, Py_ssize_t t):
         j = j-1
 
     return x
+
 
 def _binomial(Py_ssize_t n, Py_ssize_t k):
     """
@@ -18502,6 +18505,7 @@ def _jordan_form_vector_in_difference(V, W):
         if v not in W_space:
             return v
     return None
+
 
 def _matrix_power_symbolic(A, n):
     r"""
@@ -18658,6 +18662,7 @@ def _matrix_power_symbolic(A, n):
 
     return P * M * Pinv
 
+
 class NotFullRankError(ValueError):
     """
     An error that indicates that a matrix is not of full rank.
@@ -18683,7 +18688,7 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
     to return zero/one so that ``1`` can be used to indicate that
     a python exception occurred.
     """
-    cdef Py_ssize_t i, j # dumy loop indices
+    cdef Py_ssize_t i, j  # dumy loop indices
     cdef Py_ssize_t n = A._nrows
     pivot = A.get_unsafe(k, k)
 
@@ -18694,8 +18699,8 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
         for j in range(i+1):
             A.set_unsafe(k+1+i,
                          k+1+j,
-                         ( A.get_unsafe(k+1+i, k+1+j) -
-                           A.get_unsafe(k+1+i, k)*A.get_unsafe(k, k+1+j)/pivot ))
+                         (A.get_unsafe(k+1+i, k+1+j) -
+                          A.get_unsafe(k+1+i, k)*A.get_unsafe(k, k+1+j)/pivot))
             A.set_unsafe(k+1+j,
                          k+1+i,
                          A.get_unsafe(k+1+i, k+1+j).conjugate())
