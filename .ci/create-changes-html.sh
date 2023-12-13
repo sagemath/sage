@@ -69,12 +69,14 @@ for block in diff_blocks:
         count = 0
         for line in block.splitlines():
             if line.startswith('@@ -'):
-                line_number = int(re.search(r'@@ -(\d+)', line).group(1))
-                for i in range(line_number, -1, -1):
-                    if content[i].startswith('<'):
-                        count += 1
-                        content[i] = f'<span id="hunk{count}" style="visibility: hidden;"></span>' + content[i]
-                        break
+                search_result = re.search(r'@@ -(\d+),(\d+) \+(\d+),(\d+)', line)
+                if search_result:
+                    line_number = int(search_result.group(3))
+                    for i in range(line_number - 1, -1, -1):
+                        if content[i].startswith('<'):
+                            count += 1
+                            content[i] = f'<span id="hunk{count}" style="visibility: hidden;"></span>' + content[i]
+                            break
         with open(file_path, 'w') as file:
             file.writelines(content)
         hunks = '&nbsp;'.join(f'<a href="{path}#hunk{i+1}" class="hunk" target="_blank">#{i + 1}</a>' for i in range(count))
