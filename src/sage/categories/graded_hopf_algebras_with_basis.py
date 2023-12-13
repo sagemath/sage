@@ -22,9 +22,9 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
     EXAMPLES::
 
         sage: C = GradedHopfAlgebrasWithBasis(ZZ); C
-        Category of graded hopf algebras with basis over Integer Ring
+        Category of graded Hopf algebras with basis over Integer Ring
         sage: C.super_categories()
-        [Category of filtered hopf algebras with basis over Integer Ring,
+        [Category of filtered Hopf algebras with basis over Integer Ring,
          Category of graded algebras with basis over Integer Ring,
          Category of graded coalgebras with basis over Integer Ring]
 
@@ -64,7 +64,7 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
             EXAMPLES::
 
                 sage: GradedHopfAlgebrasWithBasis(QQ).WithRealizations().super_categories()
-                [Join of Category of hopf algebras over Rational Field
+                [Join of Category of Hopf algebras over Rational Field
                  and Category of graded algebras over Rational Field
                  and Category of graded coalgebras over Rational Field]
 

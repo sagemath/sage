@@ -10,3 +10,22 @@ requires = [
     SPKG_INSTALL_REQUIRES_pkgconfig
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sagemath-tdlib"
+description = "Sage: Open Source Mathematics Software: Tree decompositions with tdlib"
+dependencies = [
+    SPKG_INSTALL_REQUIRES_cysignals
+]
+dynamic = ["version"]
+include(`pyproject_toml_metadata.m4')dnl'
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
