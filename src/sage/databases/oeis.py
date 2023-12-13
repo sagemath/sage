@@ -969,7 +969,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         return self._field('A')[0]
 
-    def keywords(self):
+    def keywords(self, warn=True):
         r"""
         Return the keywords associated to the sequence ``self``.
 
@@ -995,7 +995,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s.keywords()
             ('nonn', 'hard')
         """
-        return tuple(self._field('K', warn=False)[0].split(','))
+        return tuple(self._field('K', warn=warn)[0].split(','))
 
     def natural_object(self):
         r"""
@@ -1148,7 +1148,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             True
         """
         if warn_only:
-            if 'dead' in self.keywords():
+            if 'dead' in self.keywords(warn=False):
                 from warnings import warn
                 warn('This sequence is dead: "{}: {}"'.format(self.id(), self.name()), RuntimeWarning)
         else:
@@ -2019,7 +2019,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             RuntimeWarning: This sequence is dead: ...
             True
         """
-        if self.is_dead():
+        if self.is_dead(warn_only=True):
             return True
         filt = self.programs(language='sage')
         if filt:
