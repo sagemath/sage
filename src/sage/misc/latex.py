@@ -500,8 +500,8 @@ class _Latex_prefs_object(SageObject):
         self._option["matrix_column_alignment"] = matrix_column_alignment
         self._option["macros"] = ""
         self._option["preamble"] = ""
-        self._option["engine"] = "xelatex"  # lualatex is an alternative
-        self._option["engine_name"] = "LaTeX"
+        self._option["engine"] = "xelatex"  # or lualatex
+        self._option["engine_name"] = "XeLaTeX"
 
 
 _Latex_prefs = _Latex_prefs_object()
@@ -559,25 +559,25 @@ def latex_extra_preamble():
 def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_in_background=False):
     """
     This runs LaTeX on the TeX file "filename.tex".  It produces files
-    "filename.dvi" (or "filename.pdf"` if engine is either ``pdflatex``,
-    ``xelatex``, or ``lualatex``) and if ``png`` is ``True``, "filename.png".
+    ``filename.dvi`` (or ``filename.pdf``` if engine is either ``'pdflatex'``,
+    ``'xelatex'``, or ``'lualatex'``) and if ``png`` is ``True``, ``filename.png``.
     If ``png`` is ``True`` and dvipng cannot convert the dvi file to png
     (because of postscript specials or other issues), then dvips is called, and
     the PS file is converted to a png file.
 
     INPUT:
 
-    -  ``filename`` -- string: file to process, including full path
+    -  ``filename`` -- string; file to process, including full path
 
-    -  ``debug`` -- bool (optional, default ``False``): whether to print
+    -  ``debug`` -- bool (optional, default ``False``); whether to print
        verbose debugging output
 
-    -  ``density`` -- integer (optional, default 150): how big output
+    -  ``density`` -- integer (optional, default 150); how big output
        image is.
 
     -  ``engine`` -- string: latex engine to use.
 
-    -  ``png`` -- bool (optional, default ``False``): whether to produce a
+    -  ``png`` -- bool (optional, default ``False``); whether to produce a
        png file.
 
     -  ``do_in_background`` -- bool (optional, default ``False``).  Unused,
@@ -585,22 +585,22 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
 
     OUTPUT:
 
-    A string which could be a string starting with 'Error' (if there was a
-    problem), or it could be 'pdf' or 'dvi'.  If engine is latex or ``None``,
+    A string which could be a string starting with ``'Error'`` (if there was a
+    problem), or it could be ``'pdf'`` or ``'dvi'``.  If engine is latex or ``None``,
     then a dvi file is created, but if there appear to be problems with it
     (because of PS special commands, for example), then a pdf file is created
-    instead.  The function returns 'dvi' or 'pdf' to indicate which type of
+    instead.  The function returns ``'dvi'`` or ``'pdf'`` to indicate which type of
     file is created.  (Detecting problems requires that dvipng be installed; if
-    it is not, then the dvi file is not checked for problems and 'dvi' is
-    returned.)  If engine is pdflatex, xelatex or lualatex and there are no
-    errors, then 'pdf' is returned.
+    it is not, then the dvi file is not checked for problems and ``'dvi'`` is
+    returned.)  If ``engine`` is ``'pdflatex'``, ``'xelatex'`` or
+    ``'lualatex'`` and there are no errors, then ``'pdf'`` is returned.
 
     .. WARNING::
 
        If ``png`` is ``True``, then when using latex (the default), you
-       must have 'dvipng' (or 'dvips' and 'convert') installed on your
+       must have ``dvipng`` (or ``dvips`` and ``convert``) installed on your
        operating system, or this command will not work.  When using
-       pdflatex, xelatex or lualatex, you must have 'convert' installed.
+       ``pdflatex``, ``xelatex`` or ``lualatex``, you must have ``convert`` installed.
 
     EXAMPLES::
 
@@ -963,7 +963,7 @@ class Latex(LatexCall):
 
         -  ``density`` -- how big output image is.
 
-        -  ``engine`` -- latex engine to use. Currently latex, pdflatex, xelatex and
+        -  ``engine`` -- latex engine to use. Currently ``'latex'``, ``'pdflatex'``, ``'xelatex'`` and
            lualatex are supported.
 
         -  ``locals`` - extra local variables used when
@@ -971,10 +971,10 @@ class Latex(LatexCall):
 
         .. WARNING::
 
-           When using latex (the default), you must have 'dvipng' (or 'dvips'
-           and 'convert') installed on your operating system, or this command
-           will not work.  When using pdflatex, xelatex or lualatex, you must
-           have 'convert' installed.
+           When using ``latex`` (the default), you must have ``dvipng`` (or ``dvips``
+           and ``convert``) installed on your operating system, or this command
+           will not work.  When using ``pdflatex``, ``xelatex`` or ``lualatex``, you must
+           have ``convert`` installed.
 
         OUTPUT:
 
@@ -1470,7 +1470,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
 
         INPUT:
 
-        - ``e`` -- 'latex', 'pdflatex', 'xelatex', 'lualatex' or ``None``
+        - ``e`` -- ``'latex'``, ``'pdflatex'``, ``'xelatex'``, ``'lualatex'`` or ``None``
 
         If  ``e`` is ``None``, return the current engine.
 
@@ -1537,22 +1537,22 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
     INPUT:
 
-    -  ``objects`` -- list (or object)
+    - ``objects`` -- list (or object)
 
-    -  ``title`` -- string (default: 'Sage'): title for the document
+    - ``title`` -- string (default: 'Sage'); title for the document
 
-    -  ``math_left`` -- string (default: '\\['), left delimiter for math mode
+    - ``math_left`` -- string (default: '\\['), left delimiter for math mode
 
-    -  ``math_right`` -- string (default: '\\]'), right delimiter for math mode
+    - ``math_right`` -- string (default: '\\]'), right delimiter for math mode
 
-    -  ``debug`` -- bool (default: False): print verbose output
+    - ``debug`` -- bool (default: False); print verbose output
 
-    -  ``sep`` -- string (default: ''): separator between math objects
+    - ``sep`` -- string (default: ``''``); separator between math objects
 
-    -  ``tiny`` -- bool (default: False): use 'tiny' font.
+    - ``tiny`` -- bool (default: False); use 'tiny' font.
 
-    -  ``extra_preamble`` -- string (default: ''): extra LaTeX commands,
-       inserted before "\\begin{document}"
+    - ``extra_preamble`` -- string (default: ``''``); extra LaTeX commands,
+       inserted before ``"\\begin{document}"``
 
     This creates a string intended to be a LaTeX file containing the
     LaTeX representations of objects. It contains the following:
@@ -1571,7 +1571,7 @@ def _latex_file_(objects, title='SAGE', debug=False,
     Then if ``objects`` contains more than one element, for each
     remaining element:
 
-    - the string ``sep``: you can use this, for example, to add
+    - the string ``sep``; you can use this, for example, to add
       vertical space between objects with ``sep='\\vspace{15mm}'``,
       or to add a horizontal line between objects with
       ``sep='\\hrule'``, or to insert a page break between objects
@@ -1579,7 +1579,7 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
     - the LaTeX representation of the element
 
-    The string ends with '\\end{document}'.
+    The string ends with ``'\\end{document}'``.
 
     EXAMPLES::
 
@@ -1665,16 +1665,16 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
     -  ``objects`` -- list (or object)
 
-    -  ``title`` -- string (default: ``'Sage'``): title for the
+    -  ``title`` -- string (default: ``'Sage'``); title for the
        document
 
-    -  ``debug`` -- bool (default: ``False``): print verbose
+    -  ``debug`` -- bool (default: ``False``); print verbose
        output
 
-    -  ``sep`` -- string (default: ''): separator between
+    -  ``sep`` -- string (default: ''); separator between
        math objects
 
-    -  ``tiny`` -- bool (default: ``False``): use tiny font.
+    -  ``tiny`` -- bool (default: ``False``); use tiny font.
 
     -  ``engine`` -- string or ``None`` (default: ``None``). Can take the
        following values:
@@ -1682,21 +1682,21 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
        - ``None`` -- the value defined in the LaTeX global preferences
          ``latex.engine()`` is used.
 
-       - ``'pdflatex'`` -- compilation does tex -> pdf
+       - ``'pdflatex'`` -- compilation does ``tex`` -> ``pdf``
 
-       - ``'xelatex'`` -- compilation does tex -> pdf
+       - ``'xelatex'`` -- compilation does ``tex`` -> ``pdf``
 
-       - ``'lualatex'`` -- compilation does tex -> pdf
+       - ``'lualatex'`` -- compilation does ``tex`` -> ``pdf``
 
-       - ``'latex'`` -- compilation first tries tex -> dvi -> png and if an
-         error occurs then tries dvi -> ps -> pdf. This is slower than
+       - ``'latex'`` -- compilation first tries ``tex`` -> ``dvi`` -> ``png`` and if an
+         error occurs then tries ``dvi`` -> ``ps`` -> ``pdf``. This is slower than
          ``'pdflatex'`` and known to be broken when overfull hbox are detected.
 
-    -  ``viewer`` -- string or ``None`` (default: ``None``): specify a viewer
+    -  ``viewer`` -- string or ``None`` (default: ``None``); specify a viewer
        to use; currently the only options are ``None`` and ``'pdf'``.
 
-    -  ``tightpage`` -- bool (default: ``True``): use the LaTeX package
-       'preview' with the 'tightpage' option.
+    -  ``tightpage`` -- bool (default: ``True``); use the LaTeX package
+       ``preview`` with the 'tightpage' option.
 
     -  ``margin`` -- float or ``None`` (default: ``None``): adds a margin
        of ``margin`` mm; has no affect if the option ``tightpage`` is
@@ -1725,7 +1725,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     adds a horizontal line between objects, and ``sep='\\newpage'``
     inserts a page break between objects.
 
-    If the ``engine`` is either ``pdflatex``, ``xelatex``, or ``lualatex``,  it
+    If the ``engine`` is either ``'pdflatex'``, ``'xelatex'``, or ``'lualatex'``,  it
     produces a pdf file. Otherwise, it produces a dvi file, and if the program
     dvipng is installed, it checks the dvi file by trying to convert it to a
     png file.  If this conversion fails, the dvi file probably contains some
@@ -1963,9 +1963,9 @@ def repr_lincomb(symbols, coeffs):
 
     INPUT:
 
-    -  ``symbols`` -- list of symbols
+    - ``symbols`` -- list of symbols
 
-    -  ``coeffs`` -- list of coefficients of the symbols
+    - ``coeffs`` -- list of coefficients of the symbols
 
     OUTPUT:
 
@@ -2147,7 +2147,7 @@ def latex_variable_name(x, is_fname=False):
     2. If the variable name is suffixed by a number, we put the number
        in the subscript.
 
-    3. If the variable name contains an '_' we start the subscript at
+    3. If the variable name contains an ``'_'`` we start the subscript at
        the underscore. Note that #3 trumps rule #2.
 
     4. If a component of the variable is a Greek letter, escape it
