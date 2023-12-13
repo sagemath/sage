@@ -1,4 +1,6 @@
 /_sage_conf/_conf.py
+/setup.cfg
+/pyproject.toml
 /build
 /dist
 /*.egg-info
