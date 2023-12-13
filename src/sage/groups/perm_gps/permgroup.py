@@ -1371,7 +1371,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         A permutation group is trivial, if it consists only of the
         identity element, that is, if it has no generators or only
-        the trivial generator.
+        trivial generators.
 
         EXAMPLES::
 
@@ -1387,9 +1387,16 @@ class PermutationGroup_generic(FiniteGroup):
             sage: DihedralGroup(1).is_trivial()
             False
 
+        TESTS::
+
+            sage: G = PermutationGroup([[], []], canonicalize=False)
+            sage: G.ngens()
+            2
+            sage: G.is_trivial()
+            True
         """
-        return not self._gens or (len(self._gens) == 1 and self._gens[0].is_one())
-    
+        return all(g.is_one() for g in self._gens)
+
     @cached_method
     def one(self):
         """
