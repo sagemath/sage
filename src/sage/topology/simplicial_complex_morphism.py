@@ -245,7 +245,9 @@ class SimplicialComplexMorphism(Morphism):
             sage: g(Simplex([0,1]), orientation=True)                                   # needs sage.modules
             ((0, 1), -1)
 
-        TESTS::
+        TESTS:
+
+        Test that the problem in :issue:`36849` has been fixed::
 
             sage: S = SimplicialComplex([[1,2]],is_mutable=False).barycentric_subdivision()
             sage: T = SimplicialComplex([[1,2],[2,3],[1,3]],is_mutable=False).barycentric_subdivision()
