@@ -1370,7 +1370,8 @@ class PermutationGroup_generic(FiniteGroup):
         Return ``True`` if this group is the trivial group.
 
         A permutation group is trivial, if it consists only of the
-        identity element, that is, if it has no generators.
+        identity element, that is, if it has no generators or only
+        the trivial generator.
 
         EXAMPLES::
 
@@ -1385,6 +1386,7 @@ class PermutationGroup_generic(FiniteGroup):
             False
             sage: DihedralGroup(1).is_trivial()
             False
+
         """
         return not self._gens or (len(self._gens) == 1 and self._gens[0].is_one())
     
