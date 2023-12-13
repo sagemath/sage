@@ -8835,8 +8835,8 @@ cdef class Matrix(Matrix1):
         # else:
         #    output = self.matrix_space(self._nrows, right._ncols, sparse = False).zero_matrix().__copy__()
 
-        self_window   = self.matrix_window()
-        right_window  = right.matrix_window()
+        self_window = self.matrix_window()
+        right_window = right.matrix_window()
         output_window = output.matrix_window()
 
         from sage.matrix import strassen
@@ -15037,7 +15037,7 @@ cdef class Matrix(Matrix1):
         result = self._is_positive_definite_or_semidefinite(False)
         if certificate:
             from sage.misc.superseded import deprecation
-            msg  = "the 'certificate' argument is deprecated; if you "
+            msg = "the 'certificate' argument is deprecated; if you "
             msg += "need the corresponding factorization, you can "
             msg += "simply compute it yourself (the results are cached)"
             deprecation(31619, msg)
@@ -16405,7 +16405,7 @@ cdef class Matrix(Matrix1):
                 left_mat.add_multiple_of_row(0, i, -v)
                 a.add_multiple_of_row(0, i, -v)
                 assert left_mat * self == a
-        except AttributeError: # on I.small_residue
+        except AttributeError:  # on I.small_residue
             pass
 
         return left_mat, a, pivs
@@ -16512,7 +16512,7 @@ cdef class Matrix(Matrix1):
         cdef list corners = []  # zero or one in corner of off-diagonal blocks
         if basis:
             from sage.matrix.constructor import identity_matrix
-            U = identity_matrix(R, n) # transformation matrix
+            U = identity_matrix(R, n)  # transformation matrix
         # parity switch, True iff working on transpose
         # if False, mimic row operations only on U
         # if True,  mimic column operations only on U
@@ -18172,7 +18172,7 @@ def _smith_diag(d, transformation=True):
                     raise ArithmeticError
                 t = t[0]
                 # find lambda, mu such that lambda*d[i,i] + mu*d[j,j] = t
-                lamb = R(dp[i, i]/t).inverse_mod( ideal_or_fractional(R, dp[j, j]/t))
+                lamb = R(dp[i, i]/t).inverse_mod(ideal_or_fractional(R, dp[j, j]/t))
                 mu = R((t - lamb*dp[i, i]) / dp[j, j])
 
                 newlmat = dp.new_matrix(dp.nrows(), dp.nrows(), 1)
@@ -18191,6 +18191,7 @@ def _smith_diag(d, transformation=True):
                     right = right*newrmat
                 dp = newlmat*dp*newrmat
     return dp, left, right
+
 
 def _generic_clear_column(m):
     r"""
