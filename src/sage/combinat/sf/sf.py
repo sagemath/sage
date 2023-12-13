@@ -73,7 +73,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     Sage knows certain categorical information about this algebra::
 
         sage: Sym.category()
-        Join of Category of hopf algebras over Rational Field
+        Join of Category of Hopf algebras over Rational Field
             and Category of unique factorization domains
             and Category of graded algebras over Rational Field
             and Category of commutative algebras over Rational Field
@@ -165,7 +165,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         [Category of graded bases of Symmetric Functions over Rational Field,
          Category of filtered bases of Symmetric Functions over Rational Field,
          Category of bases of Symmetric Functions over Rational Field,
-         Category of graded hopf algebras with basis over Rational Field,
+         Category of graded Hopf algebras with basis over Rational Field,
          ...]
 
     To start with, ``p`` is a graded algebra, the grading being induced

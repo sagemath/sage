@@ -21,7 +21,7 @@ cdef extern from "Python.h":
 cdef extern from "sage/cpython/debugimpl.c":
     void _type_debug(PyTypeObject*)
 
-from .getattr cimport AttributeErrorMessage
+from sage.cpython.getattr cimport AttributeErrorMessage
 
 
 # Determine subtype_traverse, subtype_clear, subtype_dealloc functions
