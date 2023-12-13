@@ -15,7 +15,4 @@ License
 Upstream Contact
 ----------------
 
-   https://github.com/sebasguts/PyNormaliz
-
-Special Update/Build Instructions
----------------------------------
+https://github.com/Normaliz/PyNormaliz
