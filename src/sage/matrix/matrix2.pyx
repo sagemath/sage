@@ -8883,8 +8883,8 @@ cdef class Matrix(Matrix1):
         verbose('done with strassen', tm)
 
     cpdef matrix_window(self, Py_ssize_t row=0, Py_ssize_t col=0,
-                      Py_ssize_t nrows=-1, Py_ssize_t ncols=-1,
-                      bint check=1) noexcept:
+                        Py_ssize_t nrows=-1, Py_ssize_t ncols=-1,
+                        bint check=1) noexcept:
         """
         Return the requested matrix window.
 
@@ -9190,7 +9190,7 @@ cdef class Matrix(Matrix1):
         if x >= self._subdivisions[0][i+1]-self._subdivisions[0][i] or \
            y >= self._subdivisions[1][j+1]-self._subdivisions[1][j]:
             raise IndexError("Submatrix %s,%s has no entry %s,%s"%(i, j, x, y))
-        return self[self._subdivisions[0][i] + x , self._subdivisions[1][j] + y]
+        return self[self._subdivisions[0][i] + x, self._subdivisions[1][j] + y]
 
     def _subdivide_on_augment(self, left, right):
         r"""
@@ -9500,8 +9500,7 @@ cdef class Matrix(Matrix1):
             if density >= 1:
                 for i from 0 <= i < self._nrows:
                     for j from 0 <= j < self._ncols:
-                        self.set_unsafe(i, j, R._random_nonzero_element(*args,
-                            **kwds))
+                        self.set_unsafe(i, j, R._random_nonzero_element(*args, **kwds))
             else:
                 num = int(self._nrows * self._ncols * density)
                 for i from 0 <= i < num:
@@ -9541,7 +9540,7 @@ cdef class Matrix(Matrix1):
         """
         return self.is_scalar(self.base_ring().one())
 
-    def is_scalar(self, a = None):
+    def is_scalar(self, a=None):
         """
         Return True if this matrix is a scalar matrix.
 
@@ -9729,7 +9728,7 @@ cdef class Matrix(Matrix1):
             P = self.transpose() * self                # Orthogonal
         return P.is_scalar(1)
 
-    def is_bistochastic(self, normalized = True):
+    def is_bistochastic(self, normalized=True):
         r"""
         Returns ``True`` if this matrix is bistochastic.
 
@@ -9771,11 +9770,11 @@ cdef class Matrix(Matrix1):
         col_sums = [sum(c) for c in self.columns()]
 
         return self.is_square() and\
-                col_sums[0] == row_sums[0] and\
-                row_sums == col_sums and\
-                row_sums == len(row_sums) * [col_sums[0]] and\
-                ((not normalized) or col_sums[0] == self.base_ring()(1)) and\
-                all(entry >= 0 for row in self for entry in row)
+               col_sums[0] == row_sums[0] and\
+               row_sums == col_sums and\
+               row_sums == len(row_sums) * [col_sums[0]] and\
+               ((not normalized) or col_sums[0] == self.base_ring()(1)) and\
+               all(entry >= 0 for row in self for entry in row)
 
     def is_normal(self):
         r"""
@@ -10035,7 +10034,7 @@ cdef class Matrix(Matrix1):
                 for _x in range(bi):
                     for _y in range(bi):
                         if not self.get_unsafe(<Py_ssize_t>(x*b + _x), <Py_ssize_t>(y*b + _y)).is_zero():
-                            v -= 1 #increase darkness
+                            v -= 1  # increase darkness
                 v = <Py_ssize_t>(v * fct + 0.5)
                 pixel[y, x] = (v, v, v)
         return img
@@ -10300,7 +10299,7 @@ cdef class Matrix(Matrix1):
             This is all left to the method `adjugate`.
 
         """
-        n  = self._ncols
+        n = self._ncols
 
         if self._nrows != n:
             raise ValueError("self must be a square matrix")
@@ -10585,7 +10584,7 @@ cdef class Matrix(Matrix1):
                     raise TypeError('QR decomposition unable to compute square roots in %s' % F)
         # complete to full orthonormal basis, or reduce to truncated R
         if full:
-            Qt = matrix(Q) # as rows here
+            Qt = matrix(Q)  # as rows here
             if Qt.nrows() == 0:
                 Qt = zero_matrix(F, 0, m)
             orthogonal = Qt.right_kernel().basis_matrix().transpose()
@@ -10734,7 +10733,7 @@ cdef class Matrix(Matrix1):
         zero = F(0)
         Bstar = []
         R = zero_matrix(F, n)
-        nnz = 0 # number non-zero rows in R, or number of nonzero vectors in Bstar
+        nnz = 0  # number non-zero rows in R, or number of nonzero vectors in Bstar
         for i in range(n):
             ortho = B[i]
             for j in range(nnz):
@@ -12643,7 +12642,7 @@ cdef class Matrix(Matrix1):
         R = self.base_ring()
         if not is_Vector(v):
             raise TypeError('first input should be a vector, not {0}'.format(v))
-        if not (var is None  or isinstance(var, str)):
+        if not (var is None or isinstance(var, str)):
             generator = False
             try:
                 generator = var.is_gen()
@@ -12693,7 +12692,6 @@ cdef class Matrix(Matrix1):
             return poly, subspace
         else:
             return subspace
-
 
     def cholesky(self):
         r"""
@@ -12962,7 +12960,7 @@ cdef class Matrix(Matrix1):
             True
 
         """
-        cdef Matrix C # output matrix
+        cdef Matrix C  # output matrix
         C = self.fetch('cholesky')
         if C is not None:
             return C
@@ -13024,7 +13022,7 @@ cdef class Matrix(Matrix1):
             from sage.rings.qqbar import AA
             try:
                 C = L.change_ring(AA)
-            except ValueError: # cannot coerce...
+            except ValueError:  # cannot coerce...
                 C = L.change_ring(F_ac)
         else:
             C = L.__copy__()
@@ -13032,7 +13030,7 @@ cdef class Matrix(Matrix1):
         # Overwrite the (strict) upper-triangular part of "C", since a
         # priori it contains junk after _block_ldlt().
         zero = C.base_ring().zero()
-        cdef Py_ssize_t i, j # loop indices
+        cdef Py_ssize_t i, j  # loop indices
         for i in range(n):
             C.rescale_col_c(i, splits[i], 0)
             for j in range(i+1, n):
@@ -13164,7 +13162,6 @@ cdef class Matrix(Matrix1):
 
         # Take A = PLDL^{*}P^{T} and simply invert.
         return P*L_inv.conjugate_transpose()*D.inverse()*L_inv*P.transpose()
-
 
     def LU(self, pivot=None, format='plu'):
         r"""
@@ -14116,8 +14113,8 @@ cdef class Matrix(Matrix1):
         if result is not None:
             return result
 
-        cdef Py_ssize_t i, j, k # loop indices
-        cdef Py_ssize_t r       # another row/column index
+        cdef Py_ssize_t i, j, k  # loop indices
+        cdef Py_ssize_t r        # another row/column index
 
         # We need to construct 1x1 and 2x2 matrices to stick in d.
         from sage.matrix.constructor import matrix
@@ -14140,7 +14137,7 @@ cdef class Matrix(Matrix1):
         # at the end of the function, not as its columns are computed.
         ring = self.base_ring().fraction_field()
 
-        cdef Matrix A # A copy of the input matrix
+        cdef Matrix A  # A copy of the input matrix
         if self.base_ring() == ring:
             A = self.__copy__()
         else:
@@ -14202,7 +14199,7 @@ cdef class Matrix(Matrix1):
                 # meaningless. The corresponding entry of "L" will be
                 # fixed later (since it's an on-diagonal element, it gets
                 # set to one eventually).
-                d.append( one_by_one_space(A_kk) )
+                d.append(one_by_one_space(A_kk))
                 k += 1
                 continue
 
@@ -14212,7 +14209,7 @@ cdef class Matrix(Matrix1):
                     # It's a back door that lets us escape with only the standard non-block
                     # non-pivoting LDL^T factorization. This allows us to implement e.g.
                     # indefinite_factorization() in terms of this method.
-                    d.append( one_by_one_space(A_kk) )
+                    d.append(one_by_one_space(A_kk))
                     _block_ldlt_pivot1x1(A, k)
                     k += 1
                     continue
@@ -14249,7 +14246,7 @@ cdef class Matrix(Matrix1):
                 # the 1x1 pivot "a" in the top-left position. The entry "a"
                 # will be adjusted to "1" later on to ensure that "L" is
                 # (block) unit-lower-triangular.
-                d.append( one_by_one_space(A_kk) )
+                d.append(one_by_one_space(A_kk))
                 k += 1
                 continue
 
@@ -14261,7 +14258,7 @@ cdef class Matrix(Matrix1):
                 # otherwise. We are performing a 1x1 pivot, but the
                 # rows/columns are already where we want them, so nothing
                 # needs to be permuted.
-                d.append( one_by_one_space(A_kk) )
+                d.append(one_by_one_space(A_kk))
                 _block_ldlt_pivot1x1(A, k)
                 k += 1
                 continue
@@ -14283,7 +14280,7 @@ cdef class Matrix(Matrix1):
 
             if A_kk.abs()*omega_r >= alpha*(omega_1**2):
                 # Step (2) in Higham or Step (4) in B&K.
-                d.append( one_by_one_space(A_kk) )
+                d.append(one_by_one_space(A_kk))
                 _block_ldlt_pivot1x1(A, k)
                 k += 1
                 continue
@@ -14293,7 +14290,7 @@ cdef class Matrix(Matrix1):
                 # This is Step (3) in Higham or Step (5) in B&K. Still
                 # a 1x1 pivot, but this time we need to swap
                 # rows/columns k and r.
-                d.append( one_by_one_space(A_rr) )
+                d.append(one_by_one_space(A_rr))
                 A.swap_columns_c(k, r)
                 A.swap_rows_c(k, r)
                 p_k = p[k]
@@ -14351,7 +14348,6 @@ cdef class Matrix(Matrix1):
                     # Store the new (k and (k+1)st) columns of "L" within
                     # the lower-left-hand corner of "A".
                     A.set_unsafe(k+i+2, k+j, CE_inverse[i, j])
-
 
             k += 2
 
@@ -14665,9 +14661,9 @@ cdef class Matrix(Matrix1):
             True
 
         """
-        cdef Py_ssize_t n    # size of the matrices
-        cdef Py_ssize_t i, j # loop indices
-        cdef Matrix P, L, D    # output matrices
+        cdef Py_ssize_t n     # size of the matrices
+        cdef Py_ssize_t i, j  # loop indices
+        cdef Matrix P, L, D   # output matrices
 
         p, L, d = self._block_ldlt(classical)
         MS = L.matrix_space()
@@ -14688,7 +14684,6 @@ cdef class Matrix(Matrix1):
                 L.set_unsafe(i, j, zero)
 
         return (P, L, D)
-
 
     cdef bint _is_positive_definite_or_semidefinite(self, bint semi) except -1:
         """
@@ -14712,13 +14707,13 @@ cdef class Matrix(Matrix1):
             # field of order 5^2, which might otherwise look positive-
             # definite.
             raise ValueError("Could not see {} as a subring of the "
-                    "real or complex numbers".format(R))
+                             "real or complex numbers".format(R))
 
         if not self.is_hermitian():
             return False
 
         if self._nrows == 0:
-            return True # vacuously
+            return True  # vacuously
 
         cdef list d
         _, _, d = self._block_ldlt(False)
@@ -14732,7 +14727,6 @@ cdef class Matrix(Matrix1):
             op = operator.ge
 
         return all(d_i.nrows() == 1 and op(d_i[0, 0], 0) for d_i in d)
-
 
     def is_positive_semidefinite(self):
         r"""
@@ -15056,7 +15050,6 @@ cdef class Matrix(Matrix1):
             return (result, L, d)
         else:
             return result
-
 
     def principal_square_root(self, check_positivity=True):
         r"""
@@ -16101,8 +16094,6 @@ cdef class Matrix(Matrix1):
                 pass
         return R.ideal(self.minors(rank_minors))
 
-
-
     def _hermite_form_euclidean(self, transformation=False, normalization=None):
         """
         Transform the matrix in place to hermite normal form and optionally
@@ -16173,18 +16164,18 @@ cdef class Matrix(Matrix1):
         pivot_cols = []
         while j < n:
             k = i
-            while k < m and A.get_unsafe(k, j).is_zero(): # first nonzero entry
+            while k < m and A.get_unsafe(k, j).is_zero():  # first nonzero entry
                 k += 1
             if k < m:
                 l = k + 1
                 while l < m:
-                    while l < m and A.get_unsafe(l, j).is_zero(): # nonzero entry below
+                    while l < m and A.get_unsafe(l, j).is_zero():  # nonzero entry below
                         l += 1
                     if l >= m: break
 
                     a = A.get_unsafe(k, j)
                     b = A.get_unsafe(l, j)
-                    d, p, q = a.xgcd(b) # p * a + q * b = d = gcd(a,b)
+                    d, p, q = a.xgcd(b)     # p * a + q * b = d = gcd(a,b)
                     e = a // d
                     f = b // d
 
@@ -16373,7 +16364,7 @@ cdef class Matrix(Matrix1):
                 return self.new_matrix(self.nrows(), self.nrows(), 1), self, []
             else:
                 return self.new_matrix(self.nrows(), self.nrows(), 1), self, [
-                    self.nonzero_positions_in_row(0)[0] ]
+                    self.nonzero_positions_in_row(0)[0]]
 
         R = self.base_ring()
 
