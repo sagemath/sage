@@ -1365,6 +1365,29 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return len(self.gens())
 
+    def is_trivial(self):
+        r"""
+        Return ``True`` if this group is the trivial group.
+
+        A permutation group is trivial, if it consists only of the
+        identity element, that is, if it has no generators.
+
+        EXAMPLES::
+
+            sage: G = PermutationGroup([], domain=["a", "b", "c"])
+            sage: G.is_trivial()
+            True
+            sage: SymmetricGroup(0).is_trivial()
+            True
+            sage: SymmetricGroup(1).is_trivial()
+            True
+            sage: SymmetricGroup(2).is_trivial()
+            False
+            sage: DihedralGroup(1).is_trivial()
+            False
+        """
+        return not self._gens or (len(self._gens) == 1 and self._gens[0].is_one())
+    
     @cached_method
     def one(self):
         """
