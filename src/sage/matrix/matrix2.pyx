@@ -8639,14 +8639,14 @@ cdef class Matrix(Matrix1):
                 # Sort each row with respect to S for the first matrix in X = MS
                 X = copy(MS)
                 SM = [sorted([(S[j], X[0][k][j]) for j in range(ncols)], reverse=True)
-                                for k in range(l, nrows)]
+                               for k in range(l, nrows)]
                 SM = [[k[1] for k in s] for s in SM]
 
                 # and pick the maximal row
                 b = max(SM)
                 # Find all rows equal to the maximal (potential new cases)
                 m = [[j for j in range(nrows - l) if SM[j] == b]]
-                w = 0 # keeps track of how many entries we have removed from MS
+                w = 0  # keeps track of how many entries we have removed from MS
                 # Let us find the maximal row in each of the entries in X = MS
                 for i in range(1, len(X)):
                     SN = [sorted([(S[j], X[i][k][j]) for j in range(ncols)], reverse=True)
@@ -8830,15 +8830,14 @@ cdef class Matrix(Matrix1):
         output = self.new_matrix(self._nrows, right._ncols)
         # The following used to be a little faster, but meanwhile
         # the previous line is faster.
-        #if self.is_sparse():
+        # if self.is_sparse():
         #    output = self.matrix_space(self._nrows, right._ncols, sparse = True)(0)
-        #else:
+        # else:
         #    output = self.matrix_space(self._nrows, right._ncols, sparse = False).zero_matrix().__copy__()
 
         self_window   = self.matrix_window()
         right_window  = right.matrix_window()
         output_window = output.matrix_window()
-
 
         from sage.matrix import strassen
         strassen.strassen_window_multiply(output_window, self_window, right_window, cutoff)
