@@ -1,4 +1,4 @@
-$(MP_LIBRARY) flint e_antic libnauty
+$(MP_LIBRARY) flint libnauty
 
 ----------
 All lines of this file are ignored except the first.
