@@ -152,7 +152,7 @@ def spkg_type(name):
         return None
     try:
         f = open(os.path.join(SAGE_PKGS, name, "type"))
-    except IOError:
+    except OSError:
         # Probably an empty directory => ignore
         return None
 
