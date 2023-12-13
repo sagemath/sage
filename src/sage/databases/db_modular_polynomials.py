@@ -2,7 +2,8 @@
 Database of modular polynomials
 
 This module gives access to the database of modular polynomials. To use the
-database, you need to install the optional package by the Sage command ::
+database, you need to install the optional :ref:`database_kohel
+<database_kohel>` package by the Sage command ::
 
     sage -i database_kohel
 

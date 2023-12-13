@@ -7,8 +7,8 @@ for it, which serves as an interface to the lists of named knots and links provi
 at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
 `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
 
-To use the database, you need to install the optional package by the Sage
-command ::
+To use the database, you need to install the optional :ref:`database_knotinfo
+<database_knotinfo>` package by the Sage command ::
 
     sage -i database_knotinfo
 

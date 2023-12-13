@@ -31,7 +31,8 @@ The enum :class:`MarkovTraceModuleBasis` serves as basis for the submodule
 of linear forms on the cubic Hecke algebra on at most four strands
 satisfying the Markov trace condition for its cubic Hecke subalgebras.
 
-To use the database, you need to install the optional package by the Sage
+To use the database, you need to install the optional
+:ref:`database_cubic_hecke <spkg_database_cubic_hecke>` package by the Sage
 command ::
 
     sage -i database_cubic_hecke
