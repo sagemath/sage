@@ -658,7 +658,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
             print("Go to http://sourceforge.net/projects/dvipng/ and")
             print("http://www.imagemagick.org to download these programs.")
             return "Error"
-    # if png output + [pdf|xe|lua]latex, check to see if convert is installed.
+        # if png output + [pdf|xe|lua]latex, check to see if convert is installed.
         elif engine in ["pdflatex", "xelatex", "lualatex"]:
             ImageMagick().require()
     # check_validity: check to see if the dvi file is okay by trying
@@ -753,7 +753,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
                         e = subpcall(dvips) and subpcall(ps2pdf)
                         if not e:  # error running dvips and/or ps2pdf
                             pdflt = lt[:]
-                            pdflt[1] = 'xelatex'
+                            pdflt[1] = 'xelatex'  # or lualatex
                             if debug:
                                 print("error running dvips and ps2pdf; trying xelatex instead...")
                                 print(pdflt)
@@ -1815,7 +1815,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     if engine is None:
         engine = _Latex_prefs._option["engine"]
     if viewer == "pdf" and engine == "latex":
-        engine = "xelatex"
+        engine = "xelatex"  # or lualatex
     # command line or notebook with viewer
 
     # We can't automatically delete the temporary file in this case
