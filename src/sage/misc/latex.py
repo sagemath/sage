@@ -102,7 +102,7 @@ def tuple_function(x, combine_all=False):
 
     - ``x`` -- a tuple
 
-    - ``combine_all`` -- boolean (Default: ``False``) If ``combine_all`` is
+    - ``combine_all`` -- boolean (default: ``False``) If ``combine_all`` is
       ``True``, then it does not return a tuple and instead returns a string
       with all the elements separated by a single space. It does not collapse
       tuples which are inside tuples.
@@ -210,11 +210,9 @@ def str_function(x):
 
     INPUT:
 
-    - ``x`` -- a string.
+    - ``x`` -- a string
 
-    OUTPUT:
-
-    A string
+    OUTPUT: A string
 
     EXAMPLES::
 
@@ -331,10 +329,10 @@ class LatexExpr(str):
     Normally, objects of this class are created by a :func:`latex` call. It is
     also possible to generate :class:`LatexExpr` directly from a string, which
     must contain valid LaTeX code for typesetting in math mode (without dollar
-    signs). In the Sage notebook, use
-    :func:`~sage.repl.rich_output.pretty_print.pretty_print` or the "Typeset"
-    checkbox to actually see the typeset LaTeX code; alternatively, from
-    either the command-line or the notebook, use the :func:`view` function.
+    signs). In the Jupyter notebook, use
+    :func:`~sage.repl.rich_output.pretty_print.pretty_print` to actually see
+    the typeset LaTeX code; alternatively, from either the command-line or the
+    notebook, use the :func:`view` function.
 
     INPUT:
 
@@ -958,8 +956,7 @@ class Latex(LatexCall):
 
         - ``filename`` -- output filename
 
-        - ``debug`` -- whether to print verbose debugging
-           output
+        - ``debug`` -- whether to print verbose debugging output
 
         - ``density`` -- how big output image is
 
@@ -1044,7 +1041,7 @@ class Latex(LatexCall):
     def blackboard_bold(self, t=None):
         r"""nodetex
         Controls whether Sage uses blackboard bold or ordinary bold
-        face for typesetting ZZ, RR, etc.
+        face for typesetting ``ZZ``, ``RR``, etc.
 
         INPUT:
 
@@ -1121,12 +1118,12 @@ class Latex(LatexCall):
             \left(\begin{array}{r}
             17
             \end{array}\right)
-            sage: latex.matrix_delimiters("[", "]")
+            sage: latex.matrix_delimiters('[', ']')
             sage: latex(a)
             \left[\begin{array}{r}
             17
             \end{array}\right]
-            sage: latex.matrix_delimiters(left="\\{")
+            sage: latex.matrix_delimiters(left='\\{')
             sage: latex(a)
             \left\{\begin{array}{r}
             17
@@ -1136,7 +1133,7 @@ class Latex(LatexCall):
 
         Restore defaults::
 
-            sage: latex.matrix_delimiters("(", ")")
+            sage: latex.matrix_delimiters('(', ')')
         """
         if left is None and right is None:
             return _Latex_prefs._option['matrix_delimiters']
@@ -1181,10 +1178,10 @@ class Latex(LatexCall):
             sage: a = vector(QQ, [1,2,3])
             sage: latex(a)
             \left(1,\,2,\,3\right)
-            sage: latex.vector_delimiters("[", "]")
+            sage: latex.vector_delimiters('[', ']')
             sage: latex(a)
             \left[1,\,2,\,3\right]
-            sage: latex.vector_delimiters(right="\\}")
+            sage: latex.vector_delimiters(right='\\}')
             sage: latex(a)
             \left[1,\,2,\,3\right\}
             sage: latex.vector_delimiters()
@@ -1192,7 +1189,7 @@ class Latex(LatexCall):
 
         Restore defaults::
 
-            sage: latex.vector_delimiters("(", ")")
+            sage: latex.vector_delimiters('(', ')')
         """
         if left is None and right is None:
             return _Latex_prefs._option['vector_delimiters']
@@ -1280,7 +1277,7 @@ class Latex(LatexCall):
 
         - ``file_name`` -- a string
 
-        - ``more_info`` -- a string (default: "")
+        - ``more_info`` -- a string (default: ``""``)
 
         Emit a warning if the local LaTeX installation does not
         include ``file_name``. The string ``more_info`` is appended
@@ -1393,7 +1390,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
     def add_to_preamble(self, s):
         r"""nodetex
         Append to the string ``s`` of extra LaTeX macros, for use with
-        %latex.
+        ``%latex``.
 
         EXAMPLES::
 
@@ -1416,7 +1413,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
             sage: latex.extra_preamble()
             '\\DeclareMathOperator{\\Ext}{Ext}\\usepackage{xypic}'
 
-        Now one can put various xypic diagrams into a %latex cell, such as
+        Now one can put various xypic diagrams into a ``%latex`` cell, such as
 
         ::
 
@@ -1662,49 +1659,49 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
     INPUT:
 
-    -  ``objects`` -- list (or object)
+    - ``objects`` -- list (or object)
 
-    -  ``title`` -- string (default: ``'Sage'``); title for the
+    - ``title`` -- string (default: ``'Sage'``); title for the
        document
 
-    -  ``debug`` -- bool (default: ``False``); print verbose
+    - ``debug`` -- bool (default: ``False``); print verbose
        output
 
-    -  ``sep`` -- string (default: ``''``); separator between
+    - ``sep`` -- string (default: ``''``); separator between
        math objects
 
-    -  ``tiny`` -- bool (default: ``False``); use tiny font.
+    - ``tiny`` -- bool (default: ``False``); use tiny font.
 
-    -  ``engine`` -- string or ``None`` (default: ``None``). Can take the
+    - ``engine`` -- string or ``None`` (default: ``None``); can take the
        following values:
 
-       - ``None`` -- the value defined in the LaTeX global preferences
-         ``latex.engine()`` is used.
+      - ``None`` -- the value defined in the LaTeX global preferences
+        ``latex.engine()`` is used.
 
-       - ``'pdflatex'`` -- compilation does ``tex`` -> ``pdf``
+      - ``'pdflatex'`` -- compilation does ``tex`` -> ``pdf``
 
-       - ``'xelatex'`` -- compilation does ``tex`` -> ``pdf``
+      - ``'xelatex'`` -- compilation does ``tex`` -> ``pdf``
 
-       - ``'lualatex'`` -- compilation does ``tex`` -> ``pdf``
+      - ``'lualatex'`` -- compilation does ``tex`` -> ``pdf``
 
-       - ``'latex'`` -- compilation first tries ``tex`` -> ``dvi`` -> ``png`` and if an
-         error occurs then tries ``dvi`` -> ``ps`` -> ``pdf``. This is slower than
-         ``'pdflatex'`` and known to be broken when overfull hbox are detected.
+      - ``'latex'`` -- compilation first tries ``tex`` -> ``dvi`` -> ``png`` and if an
+        error occurs then tries ``dvi`` -> ``ps`` -> ``pdf``. This is slower than
+        ``'pdflatex'`` and known to be broken when overfull hbox are detected.
 
-    -  ``viewer`` -- string or ``None`` (default: ``None``); specify a viewer
+    - ``viewer`` -- string or ``None`` (default: ``None``); specify a viewer
        to use; currently the only options are ``None`` and ``'pdf'``.
 
-    -  ``tightpage`` -- bool (default: ``True``); use the LaTeX package
+    - ``tightpage`` -- bool (default: ``True``); use the LaTeX package
        ``preview`` with the 'tightpage' option.
 
-    -  ``margin`` -- float or ``None`` (default: ``None``): adds a margin
+    - ``margin`` -- float or ``None`` (default: ``None``); adds a margin
        of ``margin`` mm; has no affect if the option ``tightpage`` is
        ``False``.
 
-    - ``mode`` -- string (default: ``'inline'``): ``'display'`` for
+    - ``mode`` -- string (default: ``'inline'``); ``'display'`` for
       displaymath or ``'inline'`` for inline math
 
-    - ``combine_all`` -- bool (default: ``False``): If ``combine_all`` is
+    - ``combine_all`` -- bool (default: ``False``); if ``combine_all`` is
       ``True`` and the input is a tuple, then it does not return a tuple and
       instead returns a string with all the elements separated by a single
       space.
@@ -1880,7 +1877,7 @@ def png(x, filename, density=150, debug=False,
     - ``do_in_background`` -- bool (default: ``False``); Unused, kept for
       backwards compatibility
 
-    - ``tiny`` -- bool (default: ``False``); use 'tiny' font
+    - ``tiny`` -- bool (default: ``False``); use "tiny" font
 
     - ``engine`` -- (default: ``'xelatex'``) ``'latex'``, ``'pdflatex'``,
       ``'xelatex'``  or ``'lualatex'``
@@ -1966,9 +1963,7 @@ def repr_lincomb(symbols, coeffs):
 
     - ``coeffs`` -- list of coefficients of the symbols
 
-    OUTPUT:
-
-    A string
+    OUTPUT: A string
 
     EXAMPLES::
 
@@ -2099,9 +2094,7 @@ def latex_varify(a, is_fname=False):
 
     - ``a`` -- string
 
-    OUTPUT:
-
-    A string
+    OUTPUT: A string
 
     EXAMPLES::
 
