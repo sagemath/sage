@@ -82,7 +82,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
         sage: from sage.categories.complex_reflection_or_generalized_coxeter_groups import ComplexReflectionOrGeneralizedCoxeterGroups
         sage: C = ComplexReflectionOrGeneralizedCoxeterGroups(); C
-        Category of complex reflection or generalized coxeter groups
+        Category of complex reflection or generalized Coxeter groups
         sage: C.super_categories()
         [Category of finitely generated enumerated groups]
 
@@ -108,7 +108,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             sage: from sage.categories.complex_reflection_groups import ComplexReflectionGroups
             sage: ComplexReflectionGroups().super_categories()
-            [Category of complex reflection or generalized coxeter groups]
+            [Category of complex reflection or generalized Coxeter groups]
         """
         return [Groups().FinitelyGenerated()]
 
@@ -117,7 +117,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             r"""
             Return the full subcategory of irreducible objects of ``self``.
 
-            A complex reflection group, or generalized coxeter group
+            A complex reflection group, or generalized Coxeter group
             is *reducible* if its simple reflections can be split in
             two sets `X` and `Y` such that the elements of `X` commute
             with that of `Y`. In particular, the group is then direct

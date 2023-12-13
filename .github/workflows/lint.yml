@@ -26,6 +26,7 @@ jobs:
         .ci/merge-fixes.sh
       env:
         GH_TOKEN: ${{ github.token }}
+        SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -37,13 +38,13 @@ jobs:
       run: pip install tox
 
     - name: Code style check with pycodestyle
-      if: always() && steps.deps.outcome == 'success'
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e pycodestyle-minimal
 
     - name: Code style check with relint
-      if: always() && steps.deps.outcome == 'success'
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e relint -- src/sage/
 
     - name: Validate docstring markup as RST
-      if: always() && steps.deps.outcome == 'success'
+      if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e rst
