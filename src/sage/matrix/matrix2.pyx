@@ -1835,7 +1835,7 @@ cdef class Matrix(Matrix1):
         cdef int mn = min(m, n)
         cdef Matrix B
         zero = self.base_ring().zero()
-        one  = self.base_ring().one()
+        one = self.base_ring().one()
 
         if algorithm is None:
             algorithm = "ButeraPernici"
@@ -2795,7 +2795,7 @@ cdef class Matrix(Matrix1):
         else:
             from sage.matrix.matrix_space import MatrixSpace
             M = MatrixSpace(R, self._nrows,
-                       self._ncols, sparse=sparse)
+                            self._ncols, sparse=sparse)
         image = M(values)
         if self._subdivisions is not None:
             image.subdivide(*self.subdivisions())
@@ -2906,7 +2906,7 @@ cdef class Matrix(Matrix1):
             # At least check that the minimal polynomial kills the matrix
             tester.assertTrue(self.minpoly().subs(x=self).is_zero())
 
-    def charpoly(self, var = 'x', algorithm = None):
+    def charpoly(self, var='x', algorithm=None):
         r"""
         Returns the characteristic polynomial of self, as a polynomial over
         the base ring.
@@ -3101,7 +3101,7 @@ cdef class Matrix(Matrix1):
         self.cache('charpoly', f)
         return f
 
-    def _charpoly_df(self, var = 'x'):
+    def _charpoly_df(self, var='x'):
         r"""
         Computes the characteristic polynomial of ``self`` without divisions.
 
@@ -3189,10 +3189,10 @@ cdef class Matrix(Matrix1):
 
         # Extract parameters
         #
-        cdef Matrix M  = <Matrix> self
-        n  = M._ncols
-        R  = M._base_ring
-        S  = PolynomialRing(R, var)
+        cdef Matrix M = <Matrix> self
+        n = M._ncols
+        R = M._base_ring
+        S = PolynomialRing(R, var)
 
         # Corner cases
         # N.B.  We already tested for M to be square, hence we do not need to
@@ -3490,7 +3490,7 @@ cdef class Matrix(Matrix1):
         else:
             H = self.__copy__()
             H.hessenbergize()
-        #end if
+        # end if
         self.cache('hessenberg_form', H)
         return H
 
@@ -3930,7 +3930,7 @@ cdef class Matrix(Matrix1):
         cdef Py_ssize_t i, nrows = self._nrows
         for i in range(self._ncols):
             if i >= nrows or d[i, i] == 0:
-                basis.append( v.column(i) )
+                basis.append(v.column(i))
         verbose("done computing right kernel matrix over a domain for %sx%s matrix"
                 % (self.nrows(), self.ncols()), level=1, t=tm)
         return 'computed-smith-form', self.new_matrix(nrows=len(basis), ncols=self._ncols, entries=basis)
@@ -4526,7 +4526,7 @@ cdef class Matrix(Matrix1):
         if algorithm is None:
             algorithm = 'default'
         elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq']:
-            raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm )
+            raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
         elif algorithm == 'padic' and not (is_IntegerRing(R) or is_RationalField(R)):
             raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
         elif algorithm == 'flint' and not (is_IntegerRing(R) or is_RationalField(R)):
@@ -4543,7 +4543,7 @@ cdef class Matrix(Matrix1):
         if basis is None:
             basis = 'default'
         elif basis not in ['default', 'computed', 'echelon', 'pivot', 'LLL']:
-            raise ValueError("matrix kernel basis format '%s' not recognized" % basis )
+            raise ValueError("matrix kernel basis format '%s' not recognized" % basis)
         elif basis == 'pivot' and R not in _Fields:
             raise ValueError('pivot basis only available over a field, not over %s' % R)
         elif basis == 'LLL' and not is_IntegerRing(R):
@@ -5548,11 +5548,11 @@ cdef class Matrix(Matrix1):
                False) ]
         """
         if algorithm == 'kernel' or self.base_ring() not in _Fields:
-            return self._decomposition_using_kernels(is_diagonalizable = is_diagonalizable, dual=dual)
+            return self._decomposition_using_kernels(is_diagonalizable=is_diagonalizable, dual=dual)
         elif algorithm == 'spin':
-            X = self._decomposition_spin_generic(is_diagonalizable = is_diagonalizable)
+            X = self._decomposition_spin_generic(is_diagonalizable=is_diagonalizable)
             if dual:
-                Y = self.transpose()._decomposition_spin_generic(is_diagonalizable = is_diagonalizable)
+                Y = self.transpose()._decomposition_spin_generic(is_diagonalizable=is_diagonalizable)
                 return X, Y
             return X
         else:
@@ -5592,7 +5592,7 @@ cdef class Matrix(Matrix1):
         v = V.random_element()
         num_iterates = max([0] + [f.degree() - g.degree() for g, _ in F if g.degree() > 1]) + 1
 
-        S = [ ]
+        S = []
 
         F.sort()
         for i in range(len(F)):
@@ -5651,8 +5651,8 @@ cdef class Matrix(Matrix1):
                     if tries > 1000*m:  # avoid an insanely long infinite loop
                         raise RuntimeError("likely bug in decomposition")
                 # end if
-            #end while
-        #end for
+            # end while
+        # end for
         return E
 
     def _decomposition_using_kernels(self, is_diagonalizable=False, dual=False):
@@ -5699,7 +5699,7 @@ cdef class Matrix(Matrix1):
             return E, Edual
         return E
 
-    def decomposition_of_subspace(self, M, check_restrict = True, **kwds):
+    def decomposition_of_subspace(self, M, check_restrict=True, **kwds):
         """
         Suppose the right action of self on M leaves M invariant. Return
         the decomposition of M as a list of pairs (W, is_irred) where
@@ -5783,7 +5783,7 @@ cdef class Matrix(Matrix1):
         time = verbose(t=0)
 
         # 1. Restrict
-        B = self.restrict(M, check = check_restrict)
+        B = self.restrict(M, check=check_restrict)
         time0 = verbose("decompose restriction -- ", time)
 
         # 2. Decompose restriction
@@ -5862,8 +5862,6 @@ cdef class Matrix(Matrix1):
         """
         if not isinstance(V, sage.modules.free_module.FreeModule_generic):
             raise TypeError("V must be a free module")
-        #if V.base_ring() != self.base_ring():
-        #     raise ValueError("matrix and module must have the same base ring, but matrix is over %s and module is over %s"%(self.base_ring(), V.base_ring()))
         if V.degree() != self.nrows():
             raise IndexError("degree of V (=%s) must equal number of rows of self (=%s)" % (V.degree(), self.nrows()))
         if V.rank() == 0 or V.degree() == 0:
@@ -6463,7 +6461,7 @@ cdef class Matrix(Matrix1):
 
         G = self.fcp()   # factored characteristic polynomial
         V = []
-        i = -1 # variable name index, increments for each eigenvalue
+        i = -1  # variable name index, increments for each eigenvalue
         for h, e in G:
             i = i + 1
             if h.degree() == 1:
@@ -6955,7 +6953,7 @@ cdef class Matrix(Matrix1):
 
         from sage.categories.homset import hom
         eigenspaces = self.eigenspaces_left(format='galois', algebraic_multiplicity=True)
-        evec_list=[]
+        evec_list = []
         n = self._nrows
         evec_eval_list = []
         F = self.base_ring().fraction_field()
@@ -6977,7 +6975,7 @@ cdef class Matrix(Matrix1):
                         m = hom(eigval.parent(), e.parent(), e)
                         space = (e.parent())**n
                         evec_list = [(space)([m(i) for i in v]) for v in eigbasis]
-                        evec_eval_list.append( (e, evec_list, eigmult))
+                        evec_eval_list.append((e, evec_list, eigmult))
 
         return evec_eval_list
 
@@ -7440,7 +7438,7 @@ cdef class Matrix(Matrix1):
 
         """
         D, P = self.transpose().eigenmatrix_left(None if other is None
-                                                else other.transpose())
+                                                 else other.transpose())
         return D, P.transpose()
 
     right_eigenmatrix = eigenmatrix_right
@@ -7964,7 +7962,7 @@ cdef class Matrix(Matrix1):
         if algorithm == 'default':
             v = E.echelonize(cutoff=cutoff, **kwds)
         else:
-            v = E.echelonize(algorithm = algorithm, cutoff=cutoff, **kwds)
+            v = E.echelonize(algorithm=algorithm, cutoff=cutoff, **kwds)
         E.set_immutable()  # so we can cache the echelon form.
         self.cache('echelon_form', E)
         if v is not None:
@@ -8177,7 +8175,7 @@ cdef class Matrix(Matrix1):
                             if abs_val > max_abs_val:
                                 max_abs_val = abs_val
                                 best_r = r
-                else: # algorithm == 'scaled_partial_pivoting_valuation':
+                else:  # algorithm == 'scaled_partial_pivoting_valuation':
                     for r in range(start_row, nr):
                         if scale_factors[r] is not None:
                             abs_val = scale_factors[r] - A.get_unsafe(r, c).valuation()
@@ -8522,7 +8520,7 @@ cdef class Matrix(Matrix1):
                 permutations.append(
                     (PermutationGroupElement([p(1 + i) for i in range(nrows)]),
                      PermutationGroupElement([p(1 + nrows + i) - nrows for i in range(ncols)])
-                    ))
+                     ))
         return permutations
 
     def permutation_normal_form(self, check=False):
