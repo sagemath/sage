@@ -9,7 +9,7 @@ install the database (a 2.6GB package) with the command ::
     sage -i database_stein_watkins
 
 You can also automatically download a small version, which takes much less
-time, via the optional :ref:`database_stein_watkins <spkg_database_stein_watkins_mini>`
+time, via the optional :ref:`database_stein_watkins_mini <spkg_database_stein_watkins_mini>`
 package using the command ::
 
     sage -i database_stein_watkins_mini
