@@ -950,31 +950,30 @@ class Latex(LatexCall):
 
         INPUT:
 
-        -  ``globals`` -- a globals dictionary
+        - ``globals`` -- a globals dictionary
 
-        -  ``x`` -- string to evaluate.
+        - ``x`` -- string to evaluate
 
-        -  ``strip`` -- ignored
+        - ``strip`` -- ignored
 
-        -  ``filename`` -- output filename
+        - ``filename`` -- output filename
 
-        -  ``debug`` -- whether to print verbose debugging
+        - ``debug`` -- whether to print verbose debugging
            output
 
-        -  ``density`` -- how big output image is.
+        - ``density`` -- how big output image is
 
-        -  ``engine`` -- latex engine to use. Currently ``'latex'``, ``'pdflatex'``, ``'xelatex'`` and
-           lualatex are supported.
+        - ``engine`` -- latex engine to use. Currently ``'latex'``,
+          ``'pdflatex'``, ``'xelatex'`` and ``'lualatex'`` are supported
 
-        -  ``locals`` - extra local variables used when
-           evaluating Sage code in ``x``.
+        - ``locals`` - extra local variables used when evaluating Sage code in ``x``
 
         .. WARNING::
 
-           When using ``latex`` (the default), you must have ``dvipng`` (or ``dvips``
-           and ``convert``) installed on your operating system, or this command
-           will not work.  When using ``pdflatex``, ``xelatex`` or ``lualatex``, you must
-           have ``convert`` installed.
+            When using ``latex`` (the default), you must have ``dvipng`` (or
+            ``dvips`` and ``convert``) installed on your operating system, or
+            this command will not work.  When using ``pdflatex``, ``xelatex``
+            or ``lualatex``, you must have ``convert`` installed.
 
         OUTPUT:
 
@@ -1101,18 +1100,18 @@ class Latex(LatexCall):
         Good choices for ``left`` and ``right`` are any delimiters which
         LaTeX understands and knows how to resize; some examples are:
 
-        - parentheses: '(', ')'
-        - brackets: '[', ']'
-        - braces: '\\{', '\\}'
-        - vertical lines: '|'
-        - angle brackets: '\\langle', '\\rangle'
+        - parentheses: ``'('``, ``')'``
+        - brackets: ``'['``, ``']'``
+        - braces: ``'\\{'``, ``'\\}'``
+        - vertical lines: ``'|'``
+        - angle brackets: ``'\\langle'``, ``'\\rangle'``
 
         .. NOTE::
 
-           Putting aside aesthetics, you may combine these in any way
-           imaginable; for example, you could set ``left`` to be a
-           right-hand bracket ']' and ``right`` to be a right-hand
-           brace '\\}', and it will be typeset correctly.
+            Putting aside aesthetics, you may combine these in any way
+            imaginable; for example, you could set ``left`` to be a right-hand
+            bracket ``']'`` and ``right`` to be a right-hand brace ``'\\}'``,
+            and it will be typeset correctly.
 
         EXAMPLES::
 
@@ -1163,18 +1162,18 @@ class Latex(LatexCall):
         Good choices for ``left`` and ``right`` are any delimiters which
         LaTeX understands and knows how to resize; some examples are:
 
-        - parentheses: '(', ')'
-        - brackets: '[', ']'
-        - braces: '\\{', '\\}'
-        - vertical lines: '|'
-        - angle brackets: '\\langle', '\\rangle'
+        - parentheses: ``'('``, ``')'``
+        - brackets: ``'['``, ``']'``
+        - braces: ``'\\{'``, ``'\\}'``
+        - vertical lines: ``'|'``
+        - angle brackets: ``'\\langle'``, ``'\\rangle'``
 
         .. NOTE::
 
-           Putting aside aesthetics, you may combine these in any way
-           imaginable; for example, you could set ``left`` to be a
-           right-hand bracket ']' and ``right`` to be a right-hand
-           brace '\\}', and it will be typeset correctly.
+            Putting aside aesthetics, you may combine these in any way
+            imaginable; for example, you could set ``left`` to be a right-hand
+            bracket ``']'`` and ``right`` to be a right-hand brace ``'\\}'``, and it
+            will be typeset correctly.
 
         EXAMPLES::
 
@@ -1311,7 +1310,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
 
     def extra_macros(self, macros=None):
         r"""nodetex
-        String containing extra LaTeX macros to use with %latex and %html.
+        String containing extra LaTeX macros to use with ``%latex`` and ``%html``.
 
         INPUT:
 
@@ -1671,7 +1670,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     -  ``debug`` -- bool (default: ``False``); print verbose
        output
 
-    -  ``sep`` -- string (default: ''); separator between
+    -  ``sep`` -- string (default: ``''``); separator between
        math objects
 
     -  ``tiny`` -- bool (default: ``False``); use tiny font.
@@ -1876,12 +1875,12 @@ def png(x, filename, density=150, debug=False,
 
     - ``density`` -- integer (default: 150)
 
-    - ``debug`` -- bool (default: ``False``): print verbose output
+    - ``debug`` -- bool (default: ``False``); print verbose output
 
-    - ``do_in_background`` -- bool (default: ``False``): Unused, kept for
+    - ``do_in_background`` -- bool (default: ``False``); Unused, kept for
       backwards compatibility
 
-    - ``tiny`` -- bool (default: ``False``): use 'tiny' font
+    - ``tiny`` -- bool (default: ``False``); use 'tiny' font
 
     - ``engine`` -- (default: ``'xelatex'``) ``'latex'``, ``'pdflatex'``,
       ``'xelatex'``  or ``'lualatex'``
