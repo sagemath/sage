@@ -129,11 +129,51 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             self.set_immutable()
 
     def matrix_from_rows_and_columns(self, rows, columns):
+        """
+        Return the matrix constructed from ``self`` from the given rows and
+        columns.
+
+        OUTPUT: A :class:`Matrix_cmr_chr_sparse`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = MatrixSpace(Integers(8),3,3)
+            sage: A = Matrix_cmr_chr_sparse(M, range(9)); A
+            [0 1 2]
+            [3 4 5]
+            [6 7 0]
+            sage: A.matrix_from_rows_and_columns([1], [0,2])
+            [3 5]
+            sage: A.matrix_from_rows_and_columns([1,2], [1,2])
+            [4 5]
+            [7 0]
+
+        Note that row and column indices can be reordered::
+
+            sage: A.matrix_from_rows_and_columns([2,1], [2,1])
+            [0 7]
+            [5 4]
+
+        But the column indices can not be repeated::
+
+            sage: A.matrix_from_rows_and_columns([1,1,1],[2,0])
+            [5 3]
+            [5 3]
+            [5 3]
+            sage: A.matrix_from_rows_and_columns([1,1,1],[2,0,0])
+            Traceback (most recent call last):
+            ...
+            ValueError: The column indices can not be repeated
+        """
         if not isinstance(rows, (list, tuple)):
             rows = list(rows)
 
         if not isinstance(columns, (list, tuple)):
             columns = list(columns)
+
+        if len(list(set(columns))) != len(columns):
+            raise ValueError("The column indices can not be repeated")
 
         if cmr == NULL:
             CMRcreateEnvironment(&cmr)
@@ -150,6 +190,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             submatrix.columns[j] = columns[j]
 
         CMR_CALL(CMRchrmatZoomSubmat(cmr, self._mat, submatrix, &cmr_submatrix))
+
+        CMR_CALL(CMRsubmatFree(cmr, &submatrix))
 
         return Matrix_cmr_chr_sparse._from_cmr(cmr_submatrix)
 
@@ -451,8 +493,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``second_mat`` -- the second integer matrix
         - ``first_index`` -- the column/row index of the first integer matrix
         - ``second_index`` -- the row/column index of the second integer matrix
-        - ``nonzero_block`` -- ``"top_right"`` (default) or ``"bottom_left"``.
-          The indicator the type of the 2-sum where the all zero block locates.
+        - ``nonzero_block`` -- either ``"top_right"`` (default) or ``"bottom_left"``;
+          whether the nonzero block in the 2-sum matrix locates in the top right or bottom left.
           If ``nonzero_block="top_right"``,
           ``first_index`` is the column index of the first integer matrix,
           ``second_index`` is the row index of the second integer matrix.
@@ -475,7 +517,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             ....:                            [[7, 8, 9], [-1, -2, -3]]); M2
             [ 7  8  9]
             [-1 -2 -3]
-            sage: Matrix_cmr_chr_sparse.two_sum(M1,M2,2,0)
+            sage: Matrix_cmr_chr_sparse.two_sum(M1, M2, 2, 0)
             [ 1  2|21 24 27]
             [ 4  5|42 48 54]
             [-----+--------]
@@ -486,6 +528,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [-------+-----------]
             [  0   0|  7   8   9]
             sage: M1.two_sum(M2, 1, 1, nonzero_block="bottom_right")
+            Traceback (most recent call last):
+            ...
+            ValueError: ('Unknown two sum mode', 'bottom_right')
+            sage: M1.two_sum(M2, 1, 1, nonzero_block="bottom_left")
             [  1   2   3|  0   0]
             [-----------+-------]
             [ 32  40  48|  7   9]
