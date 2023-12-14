@@ -6,6 +6,7 @@ py.install_sources(
     'convert_sage.pxd',
     'convert_sage_complex_double.pxd',
     'convert_sage_real_double.pxd',
+    'convert_sage_real_mpfr.pxd',
     'misc.pxd',
     'tests.py',
     subdir: 'sage/libs/pari',
@@ -16,7 +17,9 @@ extension_data = {
     'convert_gmp': files('convert_gmp.pyx'),
     'convert_sage': files('convert_sage.pyx'),
     'convert_sage_complex_double': files('convert_sage_complex_double.pyx'),
+    'convert_sage_matrix': files('convert_sage_matrix.pyx'),
     'convert_sage_real_double': files('convert_sage_real_double.pyx'),
+    'convert_sage_real_mpfr': files('convert_sage_real_mpfr.pyx'),
     'misc': files('misc.pyx'),
 }
 
