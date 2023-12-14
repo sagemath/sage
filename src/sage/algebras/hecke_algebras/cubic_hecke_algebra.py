@@ -2405,7 +2405,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             result = result_ele.to_vector()
 
         elif abs(k) == 1:
-            result_ele = self._tietze_to_finite_sub_basis_monomial(tuple([k]))
+            result_ele = self._tietze_to_finite_sub_basis_monomial((k,))
             result = result_ele.to_vector()
 
         else:
@@ -2874,7 +2874,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             True
         """
         braid_group = self.braid_group()
-        reverse_gens = [g for g in braid_group.gens()]
+        reverse_gens = list(braid_group.gens())
         reverse_gens.reverse()
         brgrp_garside_involution = braid_group.hom(reverse_gens, check=False)
         return self._extend_braid_automorphism(element, brgrp_garside_involution)
@@ -3446,7 +3446,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         GER = self.extension_ring(generic=True)
         generic_result = [GER(s) for s in gap3_result]
         if generic:
-            return [s for s in generic_result]
+            return list(generic_result)
         else:
             ER = self.extension_ring()
             return [ER(s) for s in generic_result]

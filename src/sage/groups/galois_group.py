@@ -470,7 +470,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
             sage: G._domain_to_gap[5]                                                   # needs sage.rings.number_field
             5
         """
-        return dict((key, i+1) for i, key in enumerate(self._domain))
+        return {key: i+1 for i, key in enumerate(self._domain)}
 
     @lazy_attribute
     def _domain_from_gap(self):
@@ -485,7 +485,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
             sage: G._domain_from_gap[20]                                                # needs sage.rings.number_field
             20
         """
-        return dict((i+1, key) for i, key in enumerate(self._domain))
+        return {i+1: key for i, key in enumerate(self._domain)}
 
     def ngens(self):
         r"""

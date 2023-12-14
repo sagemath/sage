@@ -10,9 +10,6 @@ echo "would interfere with new builds..."
 rm -f "$SAGE_LOCAL"/lib/lib{curvesntl,g0nntl,jcntl,rankntl,mwrank}.*
 # Delete autotools libraries:
 rm -f "$SAGE_LOCAL"/lib/lib{e,j}c.*
-if [ "$UNAME" = "CYGWIN" ]; then
-    rm -f "$SAGE_LOCAL"/lib/cyg{e,j}c-*.dll
-fi
 echo "Deleting old include directory..."
 rm -rf "$SAGE_LOCAL"/include/eclib/
 

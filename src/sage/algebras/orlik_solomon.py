@@ -126,7 +126,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         self._sorting = {x:i for i,x in enumerate(ordering)}
 
         # set up the dictionary of broken circuits
-        self._broken_circuits = dict()
+        self._broken_circuits = {}
         for c in self._M.circuits():
             L = sorted(c, key=lambda x: self._sorting[x])
             self._broken_circuits[frozenset(L[1:])] = L[0]
