@@ -818,22 +818,23 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return <bint> result
 
-    def modulus(self, time_limit=60.0):
+    def equimodulus(self, time_limit=60.0):
         r"""
-        Return the integer `k` such that ``self`` is `k`-modular.
+        Return the integer `k` such that ``self`` is
+        equimodular with determinant gcd `k`.
 
-        A matrix `M` of rank `r` is `k`-modular if the following two conditions
-        are satisfied:
-        - for some column basis `B` of `M`, the greatest common divisor of the
-          determinants of all `r`-by-`r` submatrices of `B` is `k`;
+        A matrix `M` of rank `r` is equimodular with determinant gcd `k`
+        if the following two conditions are satisfied:
+        - for some column basis `B` of `M`, the greatest common divisor of
+          the determinants of all `r`-by-`r` submatrices of `B` is `k`;
         - the matrix `X` such that `M=BX` is totally unimodular.
 
         OUTPUT:
 
-        - ``k``: ``self`` is  `k`-modular
-        - ``None``: ``self`` is not `k`-modular for any `k`
+        - ``k``: ``self`` is equimodular with determinant gcd `k`
+        - ``None``: ``self`` is not equimodular for any `k`
 
-        .. SEEALSO:: :meth:`is_k_modular`, :meth:`strong_modulus`
+        .. SEEALSO:: :meth:`is_k_equimodular`, :meth:`strong_equimodulus`
 
         EXAMPLES::
 
@@ -843,17 +844,17 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [1 0 1]
             [0 1 1]
             [1 2 3]
-            sage: M.modulus()
+            sage: M.equimodulus()
             1
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
             ....:                           [[1, 1, 1], [0, 1, 3]]); M
             [1 1 1]
             [0 1 3]
-            sage: M.modulus()
+            sage: M.equimodulus()
         """
         cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
-        cdef int64_t k
+        cdef int64_t k = 0
 
         sig_on()
         try:
@@ -864,14 +865,20 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sig_off()
 
         if result:
-            return Integer(k)
+            return k
         else:
             return None
 
-    def strong_modulus(self, time_limit=60.0):
+    def strong_equimodulus(self, time_limit=60.0):
         r"""
-        Return the integer `k` such that ``self`` is strongly `k`-modular.
+        Return the integer `k` such that ``self`` is
+        strongly equimodular with determinant gcd `k`.
 
+        Return whether ``self`` is strongly `k`-equimodular.
+
+        A matrix is strongly equimodular if ``self`` and ``self.transpose()``
+        are both equimodular, which implies that they are equimodular for
+        the same determinant gcd `k`.
         A matrix `M` of rank-`r` is `k`-modular if the following two conditions
         are satisfied:
         - for some column basis `B` of `M`, the greatest common divisor of the
@@ -880,10 +887,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         OUTPUT:
 
-        - ``k``: ``self`` is  `k`-modular
-        - ``None``: ``self`` is not `k`-modular for any `k`
+        - ``k``: ``self`` is  `k`-equimodular
+        - ``None``: ``self`` is not `k`-equimodular for any `k`
 
-        .. SEEALSO:: :meth:`is_strongly_k_modular`, :meth:`modulus`
+        .. SEEALSO:: :meth:`is_strongly_k_equimodular`, :meth:`equimodulus`
 
         EXAMPLES::
 
@@ -893,17 +900,17 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [1 0 1]
             [0 1 1]
             [1 2 3]
-            sage: M.strong_modulus()
+            sage: M.strong_equimodulus()
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
             ....:                           [[1, 0, 0], [0, 1, 0]]); M
             [1 0 0]
             [0 1 0]
-            sage: M.strong_modulus()
+            sage: M.strong_equimodulus()
             1
         """
         cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
-        cdef int64_t k
+        cdef int64_t k = 0
 
         sig_on()
         try:
@@ -914,29 +921,30 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sig_off()
 
         if result:
-            return Integer(k)
+            return k
         else:
             return None
 
-    def is_k_modular(self, k, time_limit=60.0):
+    def is_k_equimodular(self, k, time_limit=60.0):
         r"""
-        Return whether ``self`` is `k`-modular.
+        Return whether ``self`` is equimodular with determinant gcd `k`.
 
-        A matrix `M` of rank-`r` is `k`-modular if the following two conditions
-        are satisfied:
-        - for some column basis `B` of `M`, the greatest common divisor of the
-          determinants of all `r`-by-`r` submatrices of `B` is `k`;
+        A matrix `M` of rank-`r` is `k`-equimodular if the following two
+        conditions are satisfied:
+        - for some column basis `B` of `M`, the greatest common divisor of
+          the determinants of all `r`-by-`r` submatrices of `B` is `k`;
         - the matrix `X` such that `M=BX` is totally unimodular.
 
-        If the matrix has full row rank, it is `k`-modular if every full rank minor
-        of the matrix has determinant `0,\pm k`.
+        If the matrix has full row rank, it is `k`-equimodular if
+        every full rank minor of the matrix has determinant `0,\pm k`.
 
         .. NOTE::
 
             In parts of the literature, a matrix with the above properties
             is called *strictly* `k`-modular.
 
-        .. SEEALSO:: :meth:`is_unimodular`, :meth:`is_strongly_k_modular`, :meth:`_modulus`
+        .. SEEALSO:: :meth:`is_unimodular`, :meth:`is_strongly_k_equimodular`,
+                     :meth:`equimodulus`
 
         EXAMPLES::
 
@@ -946,30 +954,40 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [1 0 1]
             [0 1 1]
             [1 2 3]
-            sage: M.is_k_modular(1)
+            sage: M.is_k_equimodular(1)
             True
-            sage: M.is_k_modular(2)
+            sage: M.is_k_equimodular(2)
             False
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
             ....:                           [[1, 1, 1], [0, 1, 3]]); M
             [1 1 1]
             [0 1 3]
-            sage: M.is_k_modular(1)
+            sage: M.is_k_equimodular(1)
             False
         """
-        result = self.modulus(time_limit=time_limit)
-        if not result:
-            return False
-        else:
-            return result == k
+        cdef CMR_INTMAT *int_mat = NULL
+        cdef bool result
+        cdef int64_t gcd_det = k
 
-    def is_strongly_k_modular(self, k, time_limit=60.0):
+        sig_on()
+        try:
+            CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
+            CMR_CALL(CMRtestEquimodularity(cmr, int_mat, &result, &gcd_det, NULL, NULL, time_limit))
+        finally:
+            CMRintmatFree(cmr, &int_mat)
+            sig_off()
+
+        return True if result else False
+
+    def is_strongly_k_equimodular(self, k, time_limit=60.0):
         r"""
-        Return whether ``self`` is strongly `k`-modular.
+        Return whether ``self`` is strongly `k`-equimodular.
 
-        A matrix is strongly `k`-modular if ``self`` and ``self.transpose()`` are both `k`-modular.
+        A matrix is strongly `k`-equimodular if ``self`` and ``self.transpose()``
+        are both `k`-equimodular.
 
-        .. SEEALSO:: :meth:`is_k_modular`, :meth:`is_strongly_unimodular`, :meth:`strong_modulus`
+        .. SEEALSO:: :meth:`is_k_equimodular`, :meth:`is_strongly_unimodular`,
+                     :meth:`strong_equimodulus`
 
         EXAMPLES::
 
@@ -979,20 +997,28 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [1 0 1]
             [0 1 1]
             [1 2 3]
-            sage: M.is_strongly_k_modular(1)
+            sage: M.is_strongly_k_equimodular(1)
             False
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
             ....:                           [[1, 0, 0], [0, 1, 0]]); M
             [1 0 0]
             [0 1 0]
-            sage: M.is_strongly_k_modular(1)
+            sage: M.is_strongly_k_equimodular(1)
             True
         """
-        result = self.strong_modulus(time_limit=time_limit)
-        if not result:
-            return False
-        else:
-            return result == k
+        cdef CMR_INTMAT *int_mat = NULL
+        cdef bool result
+        cdef int64_t gcd_det = k
+
+        sig_on()
+        try:
+            CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
+            CMR_CALL(CMRtestStrongEquimodularity(cmr, int_mat, &result, &gcd_det, NULL, NULL, time_limit))
+        finally:
+            CMRintmatFree(cmr, &int_mat)
+            sig_off()
+
+        return True if result else False
 
     def is_graphic(self, *, time_limit=60.0, certificate=False):
         r"""
