@@ -1,4 +1,3 @@
-# distutils: libraries = CYGWIN_SQLITE3_LIBS
 """
 Miscellaneous operating system functions
 """

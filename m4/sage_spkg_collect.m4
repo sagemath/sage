@@ -38,18 +38,15 @@
 #        of which is the names of the dependencies of <packagename> as read
 #        from the build/<packagename>/dependencies file.
 #
-#      - SAGE_NORMAL_PACKAGES - lists the names of packages that are installed
-#        by the "normal" method (using the sage-spkg program to download and
-#        extract the source tarball, and run the relevant scripts from
-#        build/<packagename>/spkg-*.
+#      - SAGE_NORMAL_PACKAGES - lists the names of packages that are of source type
+#        "normal" or "wheel".
 #
-#      - SAGE_PIP_PACKAGES - lists the names of packages with the "pip" type
+#      - SAGE_PIP_PACKAGES - lists the names of packages with the "pip" source type,
 #        which are installed by directly invoking the pip command.
 #
 #      - SAGE_SCRIPT_PACKAGES - lists the names of packages with the "script"
-#        type which are installed by running a custom script, which may
-#        download additional source files.
-#
+#        source type, which are installed by running a custom script, which may
+#        download additional source files, and the "dummy" source type.
 
 dnl ==========================================================================
 dnl define PKG_CHECK_VAR for old pkg-config < 0.28; see Trac #29001

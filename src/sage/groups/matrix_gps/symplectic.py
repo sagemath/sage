@@ -155,11 +155,11 @@ def Sp(n, R, var='a', invariant_form=None):
 
         name = 'Symplectic Group of degree {0} over {1} with respect to alternating bilinear form\n{2}'.format(
                                                 degree, ring, invariant_form)
-        ltx  = r'\text{{Sp}}_{{{0}}}({1})\text{{ with respect to alternating bilinear form}}{2}'.format(
+        ltx = r'\text{{Sp}}_{{{0}}}({1})\text{{ with respect to alternating bilinear form}}{2}'.format(
                                     degree, latex(ring), latex(invariant_form))
     else:
         name = 'Symplectic Group of degree {0} over {1}'.format(degree, ring)
-        ltx  = r'\text{{Sp}}_{{{0}}}({1})'.format(degree, latex(ring))
+        ltx = r'\text{{Sp}}_{{{0}}}({1})'.format(degree, latex(ring))
 
     try:
         from .symplectic_gap import SymplecticMatrixGroup_gap

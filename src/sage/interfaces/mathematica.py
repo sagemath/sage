@@ -591,25 +591,6 @@ remote connection to a server running Mathematica -- for hints, type
         that's the only ways at present).
 """
 
-#          The following only works with Sage for Cygwin.
-
-#          Create a file named "math", which you place in the Sage root
-#          directory.  The file contained a single line, which was the
-#          path to the mathematica math.exe file.  In my case, this might be:
-
-#          C:/Program Files/Wolfram Research/Mathematica/4.0/math.exe
-
-#          The key points are
-#          1) there is a file named "math.exe", and it will generally be
-#             located in a place analogous to the above (depending on where
-#             Mathematica has been installed).  This file is used only for
-#             launching the kernel with a text-based interface.
-#          2) a cygwin batch file must be created which executes this file,
-#             which means using forward slashes rather than back slashes,
-#             and probably surrounding everything in quotes
-#          3) this cygwin batch file must be on the path for Sage (placing
-#             it in <SAGE_LOCAL>/bin/ is an easy way to ensure this).
-
     def eval(self, code, strip=True, **kwds):
         s = Expect.eval(self, code, **kwds)
         if strip:
@@ -1199,7 +1180,7 @@ def request_wolfram_alpha(input, verbose=False):
     resp = opener.open(req)
     # the website returns JSON containing the code
     page_data = json.loads(resp.read().decode("utf-8"))
-    if not ("code" in page_data):
+    if "code" not in page_data:
         raise ValueError("Wolfram did not return a code")
     proxy_code = page_data['code']
     if verbose:
