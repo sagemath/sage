@@ -498,8 +498,8 @@ class _Latex_prefs_object(SageObject):
         self._option["matrix_column_alignment"] = matrix_column_alignment
         self._option["macros"] = ""
         self._option["preamble"] = ""
-        self._option["engine"] = "xelatex"  # or lualatex
-        self._option["engine_name"] = "XeLaTeX"
+        self._option["engine"] = "lualatex"
+        self._option["engine_name"] = "LuaLaTeX"
 
 
 _Latex_prefs = _Latex_prefs_object()
@@ -751,9 +751,9 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
                         e = subpcall(dvips) and subpcall(ps2pdf)
                         if not e:  # error running dvips and/or ps2pdf
                             pdflt = lt[:]
-                            pdflt[1] = 'xelatex'  # or lualatex
+                            pdflt[1] = 'lualatex'
                             if debug:
-                                print("error running dvips and ps2pdf; trying xelatex instead...")
+                                print("error running dvips and ps2pdf; trying lualatex instead...")
                                 print(pdflt)
                             e = subpcall(pdflt)
             else:  # do not have dvipng, so must have convert.  run latex, dvips, convert.
@@ -1481,7 +1481,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         EXAMPLES::
 
             sage: latex.engine()
-            'xelatex'
+            'lualatex'
             sage: latex.engine("latex")
             sage: latex.engine()
             'latex'
@@ -1721,8 +1721,8 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     adds a horizontal line between objects, and ``sep='\\newpage'``
     inserts a page break between objects.
 
-    If the ``engine`` is either ``'pdflatex'``, ``'xelatex'``, or ``'lualatex'``,  it
-    produces a pdf file. Otherwise, it produces a dvi file, and if the program
+    If the ``engine`` is either ``'pdflatex'``, ``'xelatex'``, or ``'lualatex'``,
+    it produces a pdf file. Otherwise, it produces a dvi file, and if the program
     dvipng is installed, it checks the dvi file by trying to convert it to a
     png file.  If this conversion fails, the dvi file probably contains some
     postscript special commands or it has other issues which might make
@@ -1731,7 +1731,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
     Setting ``viewer`` to ``'pdf'`` forces the use of a separate
     viewer, even in notebook mode. This also sets the latex engine to be
-    ``xelatex`` if the current engine is latex.
+    ``lualatex`` if the current engine is latex.
 
     Setting the option ``tightpage`` to ``True`` (this is the default setting)
     tells LaTeX to use  the package 'preview' with the 'tightpage' option.
@@ -1811,7 +1811,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     if engine is None:
         engine = _Latex_prefs._option["engine"]
     if viewer == "pdf" and engine == "latex":
-        engine = "xelatex"  # or lualatex
+        engine = "lualatex"
     # command line or notebook with viewer
 
     # We can't automatically delete the temporary file in this case
@@ -1859,7 +1859,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
 
 def png(x, filename, density=150, debug=False,
-        do_in_background=False, tiny=False, engine='xelatex'):
+        do_in_background=False, tiny=False, engine='lualatex'):
     """
     Create a png image representation of ``x`` and save to the given
     filename.
@@ -1877,9 +1877,9 @@ def png(x, filename, density=150, debug=False,
     - ``do_in_background`` -- bool (default: ``False``); Unused, kept for
       backwards compatibility
 
-    - ``tiny`` -- bool (default: ``False``); use "tiny" font
+    - ``tiny`` -- bool (default: ``False``); use tiny font
 
-    - ``engine`` -- (default: ``'xelatex'``) ``'latex'``, ``'pdflatex'``,
+    - ``engine`` -- (default: ``'lualatex'``) ``'latex'``, ``'pdflatex'``,
       ``'xelatex'``  or ``'lualatex'``
 
     EXAMPLES::
@@ -2346,7 +2346,7 @@ To use, first try calling 'view' on this object -- it will not work. Now,
 make sure that you have the most recent version of the TeX package
 pstricks installed.  Run 'latex.add_to_preamble("\\usepackage{pstricks}")'
 and try viewing it again. Call 'view' with the option `engine='latex'`
--- the default behavior is to use xelatex, which does not work with
+-- the default behavior is to use lualatex, which does not work with
 pstricks.  From the command line, this should pop open a nice window
 with a picture of forces acting on a mass on a pendulum."""
 
