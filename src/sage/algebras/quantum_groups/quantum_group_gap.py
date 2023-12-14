@@ -2025,7 +2025,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
         """
         B = list(self.basis())
         d = {self.highest_weight_vector(): self._gen}
-        todo = set([self.highest_weight_vector()])
+        todo = {self.highest_weight_vector()}
         I = self._cartan_type.index_set()
         while todo:
             x = todo.pop()

@@ -1699,7 +1699,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
         .. NOTE::
 
             This test will cause an infinite recursion with
-            ``self._element_constructor()`` if the ``__contains__``
+            ``self._element_constructor_()`` if the ``__contains__``
             method in ``OrderedMultisetPartitionsIntoSets_X`` is removed.
 
         TESTS::
