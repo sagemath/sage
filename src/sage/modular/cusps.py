@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The set `\mathbb{P}^1(\QQ)` of cusps
 

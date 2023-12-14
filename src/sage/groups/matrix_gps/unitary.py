@@ -131,11 +131,11 @@ def _UG(n, R, special, var='a', invariant_form=None):
 
         name = '{0} Unitary Group of degree {1} over {2} {3}\n{4}'.format(prefix,
                                  degree, ring, inserted_text, invariant_form)
-        ltx  = r'\text{{{0}U}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(latex_prefix,
+        ltx = r'\text{{{0}U}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(latex_prefix,
                      degree, latex(ring), inserted_text, latex(invariant_form))
     else:
         name = '{0} Unitary Group of degree {1} over {2}'.format(prefix, degree, ring)
-        ltx  = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
+        ltx = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
 
     if isinstance(ring, FiniteField):
         try:

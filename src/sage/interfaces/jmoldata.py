@@ -71,6 +71,47 @@ class JmolData(SageObject):
         java_version_number = int(re.sub(r'.*version "(0\.|1\.)?(\d*)[\s\S]*', r'\2', version, flags=re.S))
         return java_version_number >= 7
 
+    def jmolpath(self):
+        """
+        Return the path to the jar file.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.jmoldata import JmolData
+            sage: JData = JmolData()
+            sage: JData.jmolpath()
+            '.../JmolData.jar'
+
+        """
+        jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
+
+        if sys.platform == 'cygwin':
+            import cygwin
+            jmolpath = cygwin.cygpath(jmolpath, 'w')
+
+        return jmolpath
+
+    def is_jmol_available(self):
+        """
+        Returns True if jmol is available and False if not.
+
+        EXAMPLES:
+
+        Check that it returns a boolean::
+
+            sage: from sage.interfaces.jmoldata import JmolData
+            sage: JData = JmolData()
+            sage: type(JData.is_jmol_available())
+            <... 'bool'>
+        """
+        if not os.path.isfile(self.jmolpath()):
+            return False
+
+        if not self.is_jvm_available():
+            return False
+
+        return True
+
     def export_image(self,
                      targetfile,
                      datafile,  # name (path) of data file Jmol can read or script file telling it what to read or load
@@ -154,12 +195,11 @@ class JmolData(SageObject):
             sage: archive.close()
         """
         # Set up paths, file names and scripts
-        jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
+        jmolpath = self.jmolpath()
         target_native = targetfile
 
         if sys.platform == 'cygwin':
             import cygwin
-            jmolpath = cygwin.cygpath(jmolpath, 'w')
             target_native = cygwin.cygpath(target_native, 'w')
             if datafile_cmd != 'script':
                 datafile = cygwin.cygpath(datafile, 'w')
