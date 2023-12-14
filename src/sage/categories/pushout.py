@@ -1441,7 +1441,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
             # The variable names of the MultiPolynomialFunctor
             # that can be interpreted as variables in self
 
-            RemainingVars = [x for x in othervars]
+            RemainingVars = list(othervars)
             IsOverlap = False
             BadOverlap = False
             for x in othervars:
@@ -2164,7 +2164,7 @@ class VectorFunctor(ConstructionFunctor):
         else:
             n = self.n
 
-        name_mapping = dict()
+        name_mapping = {}
         for base_ring, name in self.name_mapping.items():
             try:
                 other_name = other.name_mapping[base_ring]
@@ -2174,7 +2174,7 @@ class VectorFunctor(ConstructionFunctor):
                 if name == other_name:
                     name_mapping[base_ring] = name
 
-        latex_name_mapping = dict()
+        latex_name_mapping = {}
         for base_ring, latex_name in self.latex_name_mapping.items():
             try:
                 other_latex_name = other.latex_name_mapping[base_ring]

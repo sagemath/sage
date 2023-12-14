@@ -556,7 +556,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: TestSuite(SteenrodAlgebra(basis='woody')).run()   # long time
             sage: A3 = SteenrodAlgebra(3)
             sage: A3.category()
-            Category of supercocommutative super hopf algebras
+            Category of supercocommutative super Hopf algebras
              with basis over Finite Field of size 3
             sage: TestSuite(A3).run()  # long time
             sage: TestSuite(SteenrodAlgebra(basis='adem', p=3)).run()
@@ -1306,7 +1306,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             if basis == 'milnor':
                 if not self._generic:
                     left = coprod_list(t)
-                    right = [[x-y for (x,y) in zip(t, m)] for m in left]
+                    right = [[x - y for x, y in zip(t, m)] for m in left]
                     old = list(left)
                     left = []
                     # trim trailing zeros:
@@ -1320,14 +1320,14 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         while a and a[-1] == 0:
                             a = a[:-1]
                         right.append(tuple(a))
-                    tens = dict().fromkeys(zip(left, right), 1)
+                    tens = dict.fromkeys(zip(left, right), 1)
                     return self.tensor_square()._from_dict(tens, coerce=True)
                 else:  # p odd
                     from sage.combinat.permutation import Permutation
                     from .steenrod_algebra_misc import convert_perm
                     from sage.sets.set import Set
                     left_p = coprod_list(t[1])
-                    right_p = [[x-y for (x,y) in zip(t[1], m)] for m in left_p]
+                    right_p = [[x - y for x, y in zip(t[1], m)] for m in left_p]
                     old = list(left_p)
                     left_p = []
                     # trim trailing zeros:
@@ -3842,7 +3842,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
         sage: A.is_division_algebra()
         False
         sage: A.category()
-        Category of supercocommutative super hopf algebras
+        Category of supercocommutative super Hopf algebras
          with basis over Finite Field of size 2
 
     There are methods for constructing elements of the Steenrod

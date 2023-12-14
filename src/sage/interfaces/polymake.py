@@ -28,18 +28,11 @@ polymake has been described in [GJ1997]_, [GJ2006]_, [JMP2009]_, [GJRW2010]_,
 import os
 import re
 
-from .expect import Expect
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement)
 from sage.misc.verbose import get_verbose
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.structure.richcmp import rich_to_bool
-
-import pexpect
-from random import randrange
-
-from time import sleep
-import warnings
 
 _name_pattern = re.compile('SAGE[0-9]+')
 
@@ -139,7 +132,6 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             sage: from sage.interfaces.polymake import PolymakeAbstract
             sage: PolymakeAbstract()
             Polymake
-
         """
         Interface.__init__(self, "polymake")
         self._seed = seed
@@ -167,7 +159,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             True
 
         """
-        return reduce_load_Polymake, tuple([])
+        return reduce_load_Polymake, ()
 
     def _object_class(self):
         """
@@ -281,7 +273,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             # Convert dictionaries to hashes.
             # This is an adaptation of the list/tuple code from Interface._coerce_impl
             A = []
-            z = dict()
+            z = {}
             cls = self._object_class()
 
             def convert(y):
@@ -1985,7 +1977,7 @@ class PolymakeJuPyMake(PolymakeAbstract):
             sage: print(polymake.eval('$tmp="abc";\nprint $tmp;'))  # optional - jupymake
             abc
 
-        When requesting help, polymake sometimes expect the user to choose
+        When requesting help, polymake sometimes expects the user to choose
         from a list. In that situation, we abort with a warning, and show
         the list from which the user can choose; we could demonstrate this using
         the :meth:`~sage.interfaces.polymake.PolymakeAbstract.help` method,

@@ -132,12 +132,12 @@ AUTHORS:
 from sage.structure.factory import UniqueFactory
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.monoids.monoid import Monoid_class
-from sage.rings.ring import CommutativeAlgebra
+from sage.categories.algebras import Algebras
+from sage.structure.parent import Parent
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.misc.misc_c import prod
 
-from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.pushout import pushout
 
 from sage.structure.category_object import normalize_names
@@ -481,7 +481,6 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
             False
             sage: U.has_coerce_map_from(T) # indirect doctest
             False
-
         """
         base = self._base
         if base.has_coerce_map_from(R):
@@ -686,7 +685,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
 # Tate algebras
 ###############
 
-class TateAlgebra_generic(CommutativeAlgebra):
+class TateAlgebra_generic(Parent):
     def __init__(self, field, prec, log_radii, names, order, integral=False):
         """
         Initialize the Tate algebra
@@ -708,7 +707,7 @@ class TateAlgebra_generic(CommutativeAlgebra):
         self._cap = prec
         self._log_radii = ETuple(log_radii)  # TODO: allow log_radii in QQ
         self._names = names
-        self._latex_names = [ latex_variable_name(var) for var in names ]
+        self._latex_names = [latex_variable_name(var) for var in names]
         uniformizer = field.change(print_mode='terse', show_prec=False).uniformizer()
         self._uniformizer_repr = uniformizer._repr_()
         self._uniformizer_latex = uniformizer._latex_()
@@ -719,17 +718,19 @@ class TateAlgebra_generic(CommutativeAlgebra):
             base = field.integer_ring()
         else:
             base = field
-        CommutativeAlgebra.__init__(self, base, names, category=CommutativeAlgebras(base))
+        Parent.__init__(self, base=base, names=names,
+                        category=Algebras(base).Commutative())
         self._polynomial_ring = _multi_variate(field, names, order=order)
-        one = field(1)
+        one = field.one()
         self._parent_terms = TateTermMonoid(self)
         self._oneterm = self._parent_terms(one, ETuple([0]*self._ngens))
         if integral:
             # This needs to be update if log_radii are allowed to be non-integral
-            self._gens = [ self((one << log_radii[i]) * self._polynomial_ring.gen(i)) for i in range(self._ngens) ]
+            self._gens = [self.element_class(self, (one << log_radii[i]) * self._polynomial_ring.gen(i)) for i in range(self._ngens)]
             self._integer_ring = self
         else:
-            self._gens = [ self(g) for g in self._polynomial_ring.gens() ]
+            self._gens = [self.element_class(self, g)
+                          for g in self._polynomial_ring.gens()]
             self._integer_ring = TateAlgebra_generic(field, prec, log_radii, names, order, integral=True)
             self._integer_ring._rational_ring = self._rational_ring = self
 
@@ -1265,14 +1266,13 @@ class TateAlgebra_generic(CommutativeAlgebra):
             sage: B.<x,y> = TateAlgebra(R, log_radii=[-1,-2])
             sage: B.random_element(integral=True)  # random
             (...1111111.001)*x*y + (...111000101.1)*x + (...11010111.01)*y^2 + ...0010011011*y + ...0010100011000
-
         """
         if integral or self._integral:
             polring = self._polynomial_ring.change_ring(self._field.integer_ring())
             gens = self._integer_ring._gens
         else:
             polring = self._polynomial_ring
-            gens = [ self.element_class(self, g) for g in self._integer_ring._gens ]
+            gens = [self.element_class(self, g) for g in self._integer_ring._gens]
         return self.element_class(self, polring.random_element(degree, terms)(*gens), prec)
 
     def is_integral_domain(self, proof=True):

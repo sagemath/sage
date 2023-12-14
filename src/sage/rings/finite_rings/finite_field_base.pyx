@@ -1045,7 +1045,7 @@ cdef class FiniteField(Field):
             pass
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from .finite_field_constructor import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         R = PolynomialRing(GF(self.characteristic()), 'x')
         self._modulus = R((-1,1))  # Polynomial x - 1
         return self._modulus
@@ -1288,7 +1288,7 @@ cdef class FiniteField(Field):
             inclusion_map = self.coerce_map_from(base)
 
         from sage.matrix.constructor import matrix
-        from .maps_finite_field import (
+        from sage.rings.finite_rings.maps_finite_field import (
             MorphismVectorSpaceToFiniteField, MorphismFiniteFieldToVectorSpace)
 
         E = self
@@ -1379,7 +1379,7 @@ cdef class FiniteField(Field):
         if isinstance(R, FiniteField):
             if R is self:
                 return True
-            from .residue_field import ResidueField_generic
+            from sage.rings.finite_rings.residue_field import ResidueField_generic
             if isinstance(R, ResidueField_generic):
                 return False
             if R.characteristic() == self.characteristic():
@@ -1543,7 +1543,7 @@ cdef class FiniteField(Field):
             sage: L(u).minpoly() == u.minpoly()
             True
         """
-        from .finite_field_constructor import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
         if name is None and names is not None:
@@ -1719,7 +1719,7 @@ cdef class FiniteField(Field):
             sage: GF(3^8, 'a').subfield(4)
             Finite Field in a4 of size 3^4
         """
-        from .finite_field_constructor import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         p = self.characteristic()
         n = self.degree()
         if not n % degree == 0:
@@ -1926,7 +1926,7 @@ cdef class FiniteField(Field):
             sage: GF(next_prime(2^16, 2), 'a').is_conway()
             False
         """
-        from .conway_polynomials import conway_polynomial, exists_conway_polynomial
+        from sage.rings.finite_rings.conway_polynomials import conway_polynomial, exists_conway_polynomial
         p = self.characteristic()
         n = self.degree()
         return (exists_conway_polynomial(p, n)

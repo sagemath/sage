@@ -620,7 +620,7 @@ class FormsSpace_abstract(FormsRing_abstract):
     def homogeneous_part(self, k, ep):
         r"""
         Since ``self`` already is a homogeneous component return ``self``
-        unless the degree differs in which case a ``ValueError`` is raised.
+        unless the degree differs in which case a :class:`ValueError` is raised.
 
         EXAMPLES::
 
