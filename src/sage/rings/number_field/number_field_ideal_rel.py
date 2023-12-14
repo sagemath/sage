@@ -1,14 +1,6 @@
 # sage_setup: distribution = sagemath-flint
 r"""
-Relative Number Field Ideals
-
-AUTHORS:
-
-- Steven Sivek (2005-05-16)
-
-- William Stein (2007-09-06)
-
-- Nick Alexander (2009-01)
+Ideals of relative number fields
 
 EXAMPLES::
 
@@ -23,6 +15,13 @@ EXAMPLES::
     Fractional ideal ((1/2*b + 2)*a - 1/2*b + 2)
     sage: K.fractional_ideal(G).absolute_norm().factor()
     7^2
+
+AUTHORS:
+
+- Steven Sivek (2005-05-16)
+- William Stein (2007-09-06)
+- Nick Alexander (2009-01)
+
 """
 
 #*****************************************************************************

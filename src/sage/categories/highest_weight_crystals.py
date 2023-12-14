@@ -343,7 +343,7 @@ class HighestWeightCrystals(Category_singleton):
                     deg += 1
                     yield len(next)
                     todo = next
-                    next = set([])
+                    next = set()
                     while todo:
                         x = todo.pop()
                         for i in I:

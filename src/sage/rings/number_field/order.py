@@ -1,11 +1,7 @@
 # sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.libs.linbox
 """
-Orders in Number Fields
-
-AUTHORS:
-
-- William Stein and Robert Bradshaw (2007-09): initial version
+Orders in number fields
 
 EXAMPLES:
 
@@ -39,6 +35,10 @@ We compute a suborder, which has index a power of 17 in the maximal order::
     23453165165327788911665591944416226304630809183732482257
     sage: factor(m)
     17^45
+
+AUTHORS:
+
+- William Stein and Robert Bradshaw (2007-09): initial version
 
 """
 # ****************************************************************************

@@ -1816,7 +1816,7 @@ class FGP_Module_class(Module):
             sage: list(V/W)
             [(0), (1)]
         """
-        return [e for e in self]
+        return list(self)
 
     def __iter__(self):
         """

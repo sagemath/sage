@@ -80,7 +80,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
 
     We can create Coxeter groups from Coxeter matrices::
 
-        sage: # needs sage.libs.gap
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: W = CoxeterGroup([[1, 6, 3], [6, 1, 10], [3, 10, 1]]); W
         Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
         [ 1  6  3]
@@ -151,7 +151,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
     graphs, we can input a Coxeter graph. Following the standard convention,
     edges with no label (i.e. labelled by ``None``) are treated as 3::
 
-        sage: # needs sage.libs.gap
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: G = Graph([(0,3,None), (1,3,15), (2,3,7), (0,1,3)])
         sage: W = CoxeterGroup(G); W
         Coxeter group over Universal Cyclotomic Field with Coxeter matrix:
@@ -166,7 +166,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
     Because there currently is no class for `\ZZ \cup \{ \infty \}`, labels
     of `\infty` are given by `-1` in the Coxeter matrix::
 
-        sage: # needs sage.libs.gap
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: G = Graph([(0,1,None), (1,2,4), (0,2,oo)])
         sage: W = CoxeterGroup(G)
         sage: W.coxeter_matrix()

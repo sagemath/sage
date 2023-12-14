@@ -153,7 +153,6 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
     if n < 0 or n >= v.degree:
         raise IndexError("index (=%s) must be between 0 and %s" % (n, v.degree-1))
     cdef Py_ssize_t i, m, ins
-    cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
     cdef int_fast64_t *e
 
@@ -175,7 +174,7 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
             e = v.entries
             pos = v.positions
             allocate_c_vector_modint(v, v.num_nonzero - 1)
-            for i from 0 <= i < m:
+            for i in range(m):
                 v.entries[i] = e[i]
                 v.positions[i] = pos[i]
             for i from m < i < v.num_nonzero:
@@ -199,7 +198,7 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
         e = v.entries
         pos = v.positions
         allocate_c_vector_modint(v, v.num_nonzero)
-        for i from 0 <= i < ins:
+        for i in range(ins):
             v.entries[i] = e[i]
             v.positions[i] = pos[i]
         v.entries[ins] = x

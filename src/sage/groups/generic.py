@@ -489,7 +489,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         raise ValueError("no solution in bsgs()")
 
     m = ran.isqrt() + 1  # we need sqrt(ran) rounded up
-    table = dict()       # will hold pairs (a^(lb+i),lb+i) for i in range(m)
+    table = {}       # will hold pairs (a^(lb+i),lb+i) for i in range(m)
 
     d = c
     for i0 in xsrange(m):
@@ -1044,7 +1044,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     width = Integer(ub - lb)
     N = width.isqrt() + 1
 
-    M = dict()
+    M = {}
     for s in range(10):  # to avoid infinite loops
         # random walk function setup
         k = 0
@@ -1063,7 +1063,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
             c += r
         if mut:
             H.set_immutable()
-        mem = set([H])
+        mem = {H}
         # second random walk
         H = a
         d = 0

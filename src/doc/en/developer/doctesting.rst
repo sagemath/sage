@@ -512,7 +512,10 @@ doctests.  This determines the number of threads by reading the
 environment variable :envvar:`MAKE`: if it is set to ``make -j12``, then
 use 12 threads.  If :envvar:`MAKE` is not set, then by default it uses
 the number of CPU cores (as determined by the Python function
-``multiprocessing.cpu_count()``) with a minimum of 2 and a maximum of 8.
+:func:`multiprocessing.cpu_count`) with a minimum of 2 and a maximum of 8.
+(When this runs under the control of the `GNU make jobserver
+<https://www.gnu.org/software/make/manual/make.html#Parallel>`_, then Sage
+will request as most this number of job slots.)
 
 In any case, this will test the Sage library with multiple threads::
 

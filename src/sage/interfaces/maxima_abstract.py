@@ -918,9 +918,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
            variables will have these initial conditions automatically
            imposed.
         """
-        if not (ics is None):
+        if ics is not None:
             d = len(ics)
-            for i in range(0,d-1):
+            for i in range(d - 1):
                 ic = 'atvalue(diff(%s(%s), %s, %s), %s = %s, %s)' % (
                     vars[1], vars[0], vars[0], i, vars[0], ics[0], ics[1+i])
                 self.eval(ic)

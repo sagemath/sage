@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-groups
 """
 Braid groups
 
@@ -2067,7 +2066,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: br.is_conjugated(b)
             False
         """
-        t = [i for i in self.Tietze()]
+        t = list(self.Tietze())
         t.reverse()
         return self.parent()(tuple(t))
 
@@ -2841,7 +2840,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             # quantum trace operator on two fold tensor space
             E = mu.parent().one()
             mu2 = E.tensor_product(mu)
-            return tuple([[R, RI], mu2])
+            return ([R, RI], mu2)
 
         from sage.matrix.matrix_space import MatrixSpace
         Ed = MatrixSpace(BR, d, d, sparse=sparse).one()

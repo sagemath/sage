@@ -134,8 +134,8 @@ class AbelianGroupMorphism(Morphism):
             sage: libgap(phi)
             [ f1, f2 ] -> [ f1*f4, f2 ]
         """
-        G  = libgap(self.domain())
-        H  = libgap(self.codomain())
+        G = libgap(self.domain())
+        H = libgap(self.codomain())
         in_G = [libgap(g) for g in self.domaingens]
         in_H = [libgap(h) for h in self.codomaingens]
         return G.GroupHomomorphismByImages(H, in_G, in_H)

@@ -345,7 +345,7 @@ class sage__libs__braiding(PythonModule):
     EXAMPLES::
 
         sage: from sage.features.sagemath import sage__libs__braiding
-        sage: sage__libs__braiding().is_present()                                       # needs sage.libs.braiding
+        sage: sage__libs__braiding().is_present()                                            # needs sage.libs.braiding
         FeatureTestResult('sage.libs.braiding', True)
     """
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 The set `\mathbb{P}^1(\QQ)` of cusps
 

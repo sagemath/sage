@@ -110,10 +110,6 @@ script-files = [
     # Uncategorized scripts in alphabetical order
     "bin/sage-grep",
     "bin/sage-grepdoc",
-    "bin/sage-rebase.bat",
-    "bin/sage-rebase.sh",
-    "bin/sage-rebaseall.bat",
-    "bin/sage-rebaseall.sh",
     "bin/sage-update-version",
 ]
 include-package-data = false

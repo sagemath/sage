@@ -1,5 +1,5 @@
 r"""
-Frank Luebeck's tables of Conway polynomials over finite fields
+Frank Lübeck's tables of Conway polynomials over finite fields
 """
 # ****************************************************************************
 #
@@ -14,12 +14,6 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from collections.abc import Mapping
-import pickle
-
-from sage.features.databases import DatabaseConwayPolynomials
-
-_conwaydict = None
-
 
 class DictInMapping(Mapping):
     def __init__(self, dict):
@@ -94,14 +88,10 @@ class ConwayPolynomials(Mapping):
 
             sage: c = ConwayPolynomials()
             sage: c
-            Frank Luebeck's database of Conway polynomials
+            Frank Lübeck's database of Conway polynomials
         """
-        global _conwaydict
-        if _conwaydict is None:
-            _CONWAYDATA = DatabaseConwayPolynomials().absolute_filename()
-            with open(_CONWAYDATA, 'rb') as f:
-                _conwaydict = pickle.load(f)
-        self._store = _conwaydict
+        import conway_polynomials
+        self._store = conway_polynomials.database()
 
     def __repr__(self):
         """
@@ -111,9 +101,9 @@ class ConwayPolynomials(Mapping):
 
             sage: c = ConwayPolynomials()
             sage: c.__repr__()
-            "Frank Luebeck's database of Conway polynomials"
+            "Frank Lübeck's database of Conway polynomials"
         """
-        return "Frank Luebeck's database of Conway polynomials"
+        return "Frank Lübeck's database of Conway polynomials"
 
     def __getitem__(self, key):
         """
@@ -151,7 +141,7 @@ class ConwayPolynomials(Mapping):
 
             sage: c = ConwayPolynomials()
             sage: len(c)
-            35352
+            35357
         """
         try:
             return self._len
