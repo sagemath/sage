@@ -350,9 +350,9 @@ def delsarte_bound_constant_weight_code(n, d, w, return_data=False, solver="PPL"
         bd = p.solve()
     except MIPSolverException as exc:
         print(f"Solver exception: {exc}")
-        return A, p, False if return_data else False
+        return (A, p, False) if return_data else False
 
-    return A, p, bd if return_data else int(bd)
+    return (A, p, bd) if return_data else int(bd)
 
 
 def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isinteger=False):
@@ -433,9 +433,9 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
         bd = p.solve()
     except MIPSolverException as exc:
         print(f"Solver exception: {exc}")
-        return A, p, False if return_data else False
+        return (A, p, False) if return_data else False
 
-    return A, p, bd if return_data else bd
+    return (A, p, bd) if return_data else bd
 
 
 def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_data=False, solver="PPL", isinteger=False):
@@ -541,7 +541,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
             bd = p.solve()
         except MIPSolverException as exc:
             print("Solver exception:", exc)
-            return A, p, False if return_data else False
+            return (A, p, False) if return_data else False
     # rounding the bound down to the nearest power of q_base, for q=q_base^m
     # bd_r = roundres(log(bd, base=q_base))
         m = -1
@@ -550,7 +550,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
         if q_base**(m+1) == bd:
             m += 1
 
-    return A, p, m if return_data else m
+    return (A, p, m) if return_data else m
 
 
 def _delsarte_Q_LP_building(q, d, solver, isinteger):
@@ -690,6 +690,6 @@ def delsarte_bound_Q_matrix(q, d, return_data=False, solver="PPL", isinteger=Fal
         bd = p.solve()
     except MIPSolverException as exc:
         print(f"Solver exception: {exc}")
-        return A, p, False if return_data else False
+        return (A, p, False) if return_data else False
 
-    return A, p, bd if return_data else bd
+    return (A, p, bd) if return_data else bd
