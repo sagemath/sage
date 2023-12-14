@@ -1011,7 +1011,7 @@ class CubeGroup(PermutationGroup_generic):
         P.axes(show=False)
         if title:
             t1 = text('Up, Front, and Right faces. '   , (-0.2, -2.5))
-            t2  = text('      sagemath.org', (0.8, -3.1),rgbcolor=lgrey)
+            t2 = text('      sagemath.org', (0.8, -3.1),rgbcolor=lgrey)
             t3 = text("     ", (3.5, 0), rgbcolor=white)
             P = P + t1 + t2 + t3
             P.axes(show=False)

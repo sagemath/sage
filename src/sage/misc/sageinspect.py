@@ -178,8 +178,6 @@ def loadable_module_extension():
     r"""
     Return the filename extension of loadable modules, including the dot.
 
-    It is '.dll' on cygwin, '.so' otherwise.
-
     This function is deprecated.
 
     EXAMPLES::
