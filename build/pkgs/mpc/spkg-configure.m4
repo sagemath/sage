@@ -8,7 +8,8 @@ SAGE_SPKG_CONFIGURE([mpc], [
 #endif
         ]])], [
             AC_MSG_RESULT([yes])
-	    AC_SEARCH_LIBS([mpc_cmp_abs], [mpc], [], [sage_spkg_install_mpc=yes])
+            dnl mpc_sum was added in MPC 1.2.0 according to https://www.multiprecision.org/mpc/olds.html
+            AC_SEARCH_LIBS([mpc_sum], [mpc], [], [sage_spkg_install_mpc=yes])
         ], [
             AC_MSG_RESULT([no])
             sage_spkg_install_mpc=yes
