@@ -563,7 +563,7 @@ def VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_mat
         (0, 0, 1)
         ]
 
-    The base must be a field or a ``TypeError`` is raised.
+    The base must be a field or a :class:`TypeError` is raised.
 
     ::
 
@@ -1720,8 +1720,8 @@ class Module_free_ambient(Module):
             Echelon basis matrix:
             [3 3 0]
 
-        We try to create a submodule that isn't really a submodule,
-        which results in an ``ArithmeticError`` exception::
+        We try to create a submodule that is not really a submodule,
+        which results in an :class:`ArithmeticError` exception::
 
             sage: W.submodule([B[0] - B[1]])
             Traceback (most recent call last):
@@ -2722,7 +2722,7 @@ class FreeModule_generic(Module_free_ambient):
 
             \\sum c_i B_i = v.
 
-        If `v` is not in self, raise an ``ArithmeticError`` exception.
+        If `v` is not in self, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 
@@ -4637,7 +4637,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             [3 3 0]
 
         The basis vectors must be linearly independent or a
-        ``ValueError`` exception is raised::
+        :class:`ValueError` exception is raised::
 
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
@@ -4696,7 +4696,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             [1 1 0]
 
         With ``check=True`` (the default) the mistake is correctly
-        detected and reported with an ``ArithmeticError`` exception::
+        detected and reported with an :class:`ArithmeticError` exception::
 
             sage: W.subspace([[1,1,0]], check=True)
             Traceback (most recent call last):
@@ -5799,7 +5799,7 @@ class FreeModule_ambient(FreeModule_generic):
 
             \\sum c_i B_i = v.
 
-        If `v` is not in self, raise an ``ArithmeticError`` exception.
+        If `v` is not in self, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 
@@ -6150,7 +6150,7 @@ class FreeModule_ambient_domain(FreeModule_generic_domain, FreeModule_ambient):
 
             \\sum c_i B_i = v.
 
-        If `v` is not in self, raise an ``ArithmeticError`` exception.
+        If `v` is not in self, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 
@@ -7001,7 +7001,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
             \sum c_i B_i = v.
 
-        If `v` is not in self, raise an ``ArithmeticError`` exception.
+        If `v` is not in self, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 
@@ -7441,7 +7441,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
             \\sum c_i B_i = v.
 
-        If `v` is not in self, raise an ``ArithmeticError`` exception.
+        If `v` is not in self, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 
@@ -7498,7 +7498,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
             \\sum c_i B_i = v.
 
-        If `v` is not in self, raise an ``ArithmeticError`` exception.
+        If `v` is not in self, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 
@@ -7652,7 +7652,7 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
 
             \\sum c_i B_i = v.
 
-        If `v` is not in self, raise an ``ArithmeticError`` exception.
+        If `v` is not in self, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 
@@ -8054,7 +8054,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
 
             \\sum c_i B_i = v.
 
-        If `v` is not in ``self``, raise an ``ArithmeticError`` exception.
+        If `v` is not in ``self``, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 
@@ -8117,7 +8117,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
 
             \\sum c_i B_i = v.
 
-        If `v` is not in ``self``, raise an ``ArithmeticError`` exception.
+        If `v` is not in ``self``, raise an :class:`ArithmeticError` exception.
 
         EXAMPLES::
 

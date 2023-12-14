@@ -8105,6 +8105,7 @@ cdef class Polynomial(CommutativePolynomial):
             ....:     f2 = x2^3 - fld_out(2)
             ....:     for algo in (None, 'pari', 'numpy'):
             ....:         rts = f.roots(ring=fld_out, multiplicities=False)
+            ....:         rts = sorted(rts, key=lambda x: x.imag())
             ....:         if fld_in == fld_out and algo is None:
             ....:             print("{} {}".format(fld_in, rts))
             ....:         for rt in rts:
@@ -8113,9 +8114,9 @@ cdef class Polynomial(CommutativePolynomial):
             Real Field with 53 bits of precision [1.25992104989487]
             Real Double Field [1.25992104989...]
             Real Field with 100 bits of precision [1.2599210498948731647672106073]
-            Complex Field with 53 bits of precision [1.25992104989487, -0.62996052494743... - 1.09112363597172*I, -0.62996052494743... + 1.09112363597172*I]
-            Complex Double Field [1.25992104989..., -0.629960524947... - 1.0911236359717...*I, -0.629960524947... + 1.0911236359717...*I]
-            Complex Field with 100 bits of precision [1.2599210498948731647672106073, -0.62996052494743658238360530364 - 1.0911236359717214035600726142*I, -0.62996052494743658238360530364 + 1.0911236359717214035600726142*I]
+            Complex Field with 53 bits of precision [-0.62996052494743... - 1.09112363597172*I, 1.25992104989487, -0.62996052494743... + 1.09112363597172*I]
+            Complex Double Field [-0.629960524947... - 1.0911236359717...*I, 1.25992104989487..., -0.629960524947... + 1.0911236359717...*I]
+            Complex Field with 100 bits of precision [-0.62996052494743658238360530364 - 1.0911236359717214035600726142*I, 1.2599210498948731647672106073, -0.62996052494743658238360530364 + 1.0911236359717214035600726142*I]
 
         Note that we can find the roots of a polynomial with algebraic
         coefficients::

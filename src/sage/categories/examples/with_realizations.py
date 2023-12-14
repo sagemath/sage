@@ -269,7 +269,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             [{1, 2, 3}, {2, 3}, {1, 2}, {2}]
         """
         S = self.base_set()
-        return list(S.difference(s) for s in Subsets(S.difference(set)))
+        return [S.difference(s) for s in Subsets(S.difference(set))]
 
     def _repr_(self):
         r"""

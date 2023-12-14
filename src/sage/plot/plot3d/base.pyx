@@ -278,7 +278,7 @@ cdef class Graphics3d(SageObject):
         T.export_jmol(scene_zip, **opts)
         from sage.interfaces.jmoldata import JmolData
         jdata = JmolData()
-        if not jdata.is_jvm_available():
+        if not jdata.is_jmol_available():
             # We can only use JMol to generate preview if a jvm is installed
             from sage.repl.rich_output.output_graphics import OutputImagePng
             tachyon = self._rich_repr_tachyon(OutputImagePng, **opts)

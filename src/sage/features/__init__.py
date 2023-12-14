@@ -264,9 +264,6 @@ class Feature(TrivialUniqueRepresentation):
             sage: GapPackage("grape")  # indirect doctest
             Feature('gap_package_grape')
 
-            sage: from sage.features.databases import DatabaseConwayPolynomials
-            sage: DatabaseConwayPolynomials()  # indirect doctest
-            Feature('conway_polynomials': Frank Luebeck's database of Conway polynomials)
         """
         description = f'{self.name!r}: {self.description}' if self.description else f'{self.name!r}'
         return f'Feature({description})'
@@ -354,11 +351,10 @@ class Feature(TrivialUniqueRepresentation):
 
         EXAMPLES::
 
-            sage: from sage.features.databases import DatabaseCremona, DatabaseConwayPolynomials
+            sage: from sage.features.databases import DatabaseCremona
             sage: DatabaseCremona().is_standard()
             False
-            sage: DatabaseConwayPolynomials().is_standard()
-            True
+
         """
         if self.name.startswith('sage.'):
             return True
@@ -370,11 +366,10 @@ class Feature(TrivialUniqueRepresentation):
 
         EXAMPLES::
 
-            sage: from sage.features.databases import DatabaseCremona, DatabaseConwayPolynomials
+            sage: from sage.features.databases import DatabaseCremona
             sage: DatabaseCremona().is_optional()
             True
-            sage: DatabaseConwayPolynomials().is_optional()
-            False
+
         """
         return self._spkg_type() == 'optional'
 
