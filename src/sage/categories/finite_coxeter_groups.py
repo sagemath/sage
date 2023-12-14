@@ -596,7 +596,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             covers = []
 
             bottom_elt = frozenset((s, 0) for s in S)
-            new = set([bottom_elt])
+            new = {bottom_elt}
             while new:
                 new_element = new.pop()
                 elements.add(new_element)
@@ -809,7 +809,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             I = self.index_set()
             data = {}
-            next_level = set((g, ()) for g in self)
+            next_level = {(g, ()) for g in self}
             while next_level:
                 cur = next_level
                 next_level = set()
@@ -988,7 +988,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 raise NotImplementedError("this has only been implemented in finite type A so far")
             d = []
             for i in range(2, len(w)):
-                v = [j for j in w]
+                v = list(w)
                 if w[i-2] == w[i]:
                     if w[i] == w[i-1] - 1:
                         v[i-2] = w[i-1]

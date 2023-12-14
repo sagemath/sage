@@ -145,17 +145,17 @@ class LieConformalAlgebraWithStructureCoefficients(
             Finite family {('L', 'L'): ((0, ((('L', 1), 1),)),               (1, ((('L', 0), 2),)),               (3, ((('C', 0), 1/2),)))}
         """
         if parity is None:
-            parity = (0,)*index_set.cardinality()
-        index_to_parity = {i:p for (i,p) in zip(index_set,parity)}
+            parity = (0,) * index_set.cardinality()
+        index_to_parity = dict(zip(index_set, parity))
         sc = {}
-        #mypair has a pair of generators
+        # mypair has a pair of generators
         for mypair in s_coeff.keys():
-            #e.g.  v = { 0: { (L,2):3, (G,3):1}, 1:{(L,1),2} }
+            # e.g.  v = { 0: { (L,2):3, (G,3):1}, 1:{(L,1),2} }
             v = s_coeff[mypair]
             key = tuple(mypair)
             vals = {}
-            for l in v.keys():
-                lth_product = {k:y for k,y in v[l].items() if y}
+            for l in v:
+                lth_product = {k: y for k, y in v[l].items() if y}
                 if lth_product:
                     vals[l] = lth_product
 
@@ -175,7 +175,7 @@ class LieConformalAlgebraWithStructureCoefficients(
                 parsgn = -1
             else:
                 parsgn = 1
-            maxpole = max(v.keys())
+            maxpole = max(v)
             vals = {}
             for k in range(maxpole+1):
                 kth_product = {}
@@ -215,7 +215,7 @@ class LieConformalAlgebraWithStructureCoefficients(
         """
         names, index_set = standardize_names_index_set(names,index_set)
         if central_elements is None:
-            central_elements = tuple()
+            central_elements = ()
 
         if names is not None and names != tuple(index_set):
             names2 = names + tuple(central_elements)
