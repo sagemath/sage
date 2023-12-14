@@ -191,7 +191,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         CMR_CALL(CMRchrmatZoomSubmat(cmr, self._mat, submatrix, &cmr_submatrix))
 
-        CMR_CALL(CMRsubmatFree(cmr, &submatrix))
+        CMRsubmatFree(cmr, &submatrix)
 
         return Matrix_cmr_chr_sparse._from_cmr(cmr_submatrix)
 
