@@ -18601,7 +18601,6 @@ def _matrix_power_symbolic(A, n):
         [ 1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1) -1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)]
         [-1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)  1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)]
 
-
     Check if :trac:`23215` is fixed::
 
         sage: a, b, k = var('a, b, k')                                                  # needs sage.symbolic
@@ -18619,7 +18618,7 @@ def _matrix_power_symbolic(A, n):
         [0 0]
         sage: n = var('n'); n
         n
-        sage: An = A^n; An
+        sage: B = A^n; B
         [  kronecker_delta(0, n) n*kronecker_delta(1, n)]
         [                      0   kronecker_delta(0, n)]
     """
@@ -18662,7 +18661,10 @@ def _matrix_power_symbolic(A, n):
         if hasattr(mk, 'radical_expression'):
             mk = mk.radical_expression()
 
-        # Return mk^(n-i) instead of mk**(n-i) if mk=0
+
+        # When the variable "mk" is equal to zero, it is advisable to employ the Kronecker delta function 
+        # instead of utilizing the numerical value zero. This choice is made to encompass scenarios where 
+        # the power of zero is also equal to zero.
         if mk:
             vk = [(binomial(n, i) * mk._pow_(n-i)).simplify_full()
                   for i in range(nk)]
