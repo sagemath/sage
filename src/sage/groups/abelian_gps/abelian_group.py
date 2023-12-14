@@ -1387,11 +1387,11 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         sylow_types = defaultdict(list)
         for p, e in primary_factors:
             sylow_types[p].append(e)
-        subgroups_orders_kwds = dict()
+        subgroups_orders_kwds = {}
 
         if order is None:
             for p, p_exps in sylow_types.items():
-                subgroups_orders_kwds[p] = dict(max_sum=sum(p_exps))
+                subgroups_orders_kwds[p] = {'max_sum': sum(p_exps)}
         else:
             order = Integer(order)
             if order < 1:
@@ -1403,7 +1403,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             for p in (set(sylow_types) - set(order_exps)):
                 del sylow_types[p]
             for p in sylow_types:
-                subgroups_orders_kwds[p] = dict(n=order_exps[p])
+                subgroups_orders_kwds[p] = {'n': order_exps[p]}
 
         result = Integer(1)
         for p, p_exps in sylow_types.items():

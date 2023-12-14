@@ -1,5 +1,5 @@
 r"""
-Unit and S-unit groups of Number Fields
+Units and `S`-unit groups of number fields
 
 EXAMPLES::
 

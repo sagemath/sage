@@ -984,9 +984,6 @@ cdef class GabowEdgeConnectivity:
             sage: GabowEdgeConnectivity(D).edge_connectivity()
             4
         """
-        # Target x and source y of joining edge e_id
-        cdef int x = self.my_to[e_id]
-        cdef int y = self.my_from[e_id]
         # Previous state (tree Ti or unused) of an edge
         cdef int previous_state = self.FIRSTEDGE
 

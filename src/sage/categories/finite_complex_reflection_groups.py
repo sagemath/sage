@@ -575,9 +575,9 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             """
             I = self.index_set()
             data = {}
-            next_reprs = {(): [g for g in self]}
+            next_reprs = {(): list(self)}
             next_cosets = {(): [frozenset([g]) for g in next_reprs[()]]}
-            next_level = set((i, ()) for i in range(len(next_cosets[()])))
+            next_level = {(i, ()) for i in range(len(next_cosets[()]))}
             while next_level:
                 cur = next_level
                 cosets = next_cosets
@@ -966,7 +966,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 else:
                     L = [(pi, pi.reflection_length()) for pi in L]
                 rels = []
-                ref_lens = {pi: l for (pi, l) in L}
+                ref_lens = dict(L)
                 for (pi, l) in L:
                     for t in R:
                         tau = pi * t
@@ -1215,7 +1215,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     for g in self:
                         if any(g in C for C in cosets[Ip]):
                             continue
-                        H = set([g])
+                        H = {g}
                         to_test = [(g, j) for j in Ip]
                         while to_test:
                             h, j = to_test.pop()

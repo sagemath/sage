@@ -195,7 +195,6 @@ SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
 # installation directories for various packages
-CONWAY_POLYNOMIALS_DATA_DIR = var("CONWAY_POLYNOMIALS_DATA_DIR", join(SAGE_SHARE, "conway_polynomials"))
 GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
 ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
@@ -223,7 +222,6 @@ FOURTITWO_RAYS = var("FOURTITWO_RAYS")
 FOURTITWO_PPI = var("FOURTITWO_PPI")
 FOURTITWO_CIRCUITS = var("FOURTITWO_CIRCUITS")
 FOURTITWO_GROEBNER = var("FOURTITWO_GROEBNER")
-ARB_LIBRARY = var("ARB_LIBRARY", "arb")
 CBLAS_PC_MODULES = var("CBLAS_PC_MODULES", "cblas:openblas:blas")
 ECL_CONFIG = var("ECL_CONFIG", "ecl-config")
 NTL_INCDIR = var("NTL_INCDIR")
@@ -253,19 +251,12 @@ SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', _gap_cmd)
 
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:
-    if UNAME[:6] == 'CYGWIN':
-        # on windows/cygwin it is typical for the home directory
-        # to have a space in it.  Fortunately, users also have
-        # write privileges to c:\cygwin\home, so we just put
-        # .sage there.
-        DOT_SAGE = var("DOT_SAGE", "/home/.sage", force=True)
-    else:
-        print("Your home directory has a space in it.  This")
-        print("will probably break some functionality of Sage.  E.g.,")
-        print("the GAP interface will not work. A workaround")
-        print("is to set the environment variable HOME to a")
-        print("directory with no spaces that you have write")
-        print("permissions to before you start sage.")
+    print("Your home directory has a space in it.  This")
+    print("will probably break some functionality of Sage.  E.g.,")
+    print("the GAP interface will not work. A workaround")
+    print("is to set the environment variable HOME to a")
+    print("directory with no spaces that you have write")
+    print("permissions to before you start sage.")
 
 
 def sage_include_directories(use_sources=False):
@@ -356,8 +347,7 @@ def cython_aliases(required_modules=None,
         sage: cython_aliases()
         {...}
         sage: sorted(cython_aliases().keys())
-        ['ARB_LIBRARY',
-         'CBLAS_CFLAGS',
+        ['CBLAS_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
         sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
@@ -461,8 +451,6 @@ def cython_aliases(required_modules=None,
 
     aliases["LINUX_NOEXECSTACK"] = uname_specific("Linux", ["-Wl,-z,noexecstack"],
                                                   [])
-    aliases["CYGWIN_SQLITE3_LIBS"] = uname_specific("CYGWIN", ["sqlite3"],
-                                                    [])
 
     # LinBox needs special care because it actually requires C++11 with
     # GNU extensions: -std=c++11 does not work, you need -std=gnu++11
@@ -474,12 +462,6 @@ def cython_aliases(required_modules=None,
     # fflas-ffpack and fflas-ffpack does add such a C++11 flag.
     if "LINBOX_CFLAGS" in aliases:
         aliases["LINBOX_CFLAGS"].append("-std=gnu++11")
-
-    aliases["ARB_LIBRARY"] = ARB_LIBRARY
-
-    # TODO: Remove Cygwin hack by installing a suitable cblas.pc
-    if os.path.exists('/usr/lib/libblas.dll.a'):
-        aliases["CBLAS_LIBS"] = ['gslcblas']
 
     try:
         aliases["M4RI_CFLAGS"].remove("-pedantic")
