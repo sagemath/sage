@@ -277,6 +277,18 @@ def SL(n, R, var='a'):
         sage: S = SL(2,FqTN)
         sage: S.is_finite()
         True
+
+        Check if is_finite() function is giving correct answer for the special linear group which is not finite::
+
+        sage: SL(2, QQ).is_finite()
+        False
+
+        Check if the cardinality or order of infinite special linear group is +Infinity or not::
+
+        sage: SL(2, QQ).cardinality()
+        +Infinity
+        sage: SL(2, QQ).order()
+        +Infinity
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
     try:
