@@ -664,7 +664,7 @@ class Link(SageObject):
             sage: A.braid()
             s0*s1*s2*s3
 
-        Check that ??? is solved::
+        Check that `PR 36884 <https://github.com/sagemath/sage/pull/36884>`__ is solved::
 
             sage: L = Link([[1, 7, 2, 6], [3, 1, 4, 8], [5, 5, 6, 4], [7, 3, 8, 2]])
             sage: L.braid()
@@ -704,10 +704,10 @@ class Link(SageObject):
         # look for possible Vogel moves, perform them and call recursively to the modified link
         def idx(cross, edge):
             r"""
-            Return the index of an edge in a crossing taking loops into acount.
+            Return the index of an edge in a crossing taking loops into account.
             A loop appears as an edge which occurs twice in the crossing.
-            In all cases the second occurence is the correct one needed in
-            the Vogel algorithm.
+            In all cases the second occurrence is the correct one needed in
+            the Vogel algorithm (see `PR 36884 <https://github.com/sagemath/sage/pull/36884>`__).
             """
             i = cross.index(edge)
             if cross.count(edge) > 1:
