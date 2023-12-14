@@ -85,10 +85,6 @@ class JmolData(SageObject):
         """
         jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
 
-        if sys.platform == 'cygwin':
-            import cygwin
-            jmolpath = cygwin.cygpath(jmolpath, 'w')
-
         return jmolpath
 
     def is_jmol_available(self):
