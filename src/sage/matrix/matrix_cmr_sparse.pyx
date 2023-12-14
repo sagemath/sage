@@ -181,17 +181,18 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef CMR_SUBMAT *submatrix = NULL
         cdef CMR_CHRMAT *cmr_submatrix = NULL
 
-        CMR_CALL(CMRsubmatCreate(cmr, len(rows), len(columns), &submatrix))
+        try:
+            CMR_CALL(CMRsubmatCreate(cmr, len(rows), len(columns), &submatrix))
 
-        for i in range(submatrix.numRows):
-            submatrix.rows[i] = rows[i]
+            for i in range(submatrix.numRows):
+                submatrix.rows[i] = rows[i]
 
-        for j in range(submatrix.numColumns):
-            submatrix.columns[j] = columns[j]
+            for j in range(submatrix.numColumns):
+                submatrix.columns[j] = columns[j]
 
-        CMR_CALL(CMRchrmatZoomSubmat(cmr, self._mat, submatrix, &cmr_submatrix))
-
-        CMRsubmatFree(cmr, &submatrix)
+            CMR_CALL(CMRchrmatZoomSubmat(cmr, self._mat, submatrix, &cmr_submatrix))
+        finally:
+            CMR_CALL(CMRsubmatFree(cmr, &submatrix))
 
         return Matrix_cmr_chr_sparse._from_cmr(cmr_submatrix)
 
@@ -222,7 +223,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     def __dealloc__(self):
         if self._root is None or self._root is self:
             # We own it, so we have to free it.
-            CMRchrmatFree(cmr, &self._mat)
+            CMR_CALL(CMRchrmatFree(cmr, &self._mat))
 
     def _test_change_ring(self, **options):
         return
@@ -773,7 +774,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
             CMR_CALL(CMRtestUnimodularity(cmr, int_mat, &result, NULL, NULL, time_limit))
         finally:
-            CMRintmatFree(cmr, &int_mat)
+            CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
 
         return <bint> result
@@ -813,7 +814,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
             CMR_CALL(CMRtestStrongUnimodularity(cmr, int_mat, &result, NULL, NULL, time_limit))
         finally:
-            CMRintmatFree(cmr, &int_mat)
+            CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
 
         return <bint> result
@@ -861,7 +862,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
             CMR_CALL(CMRtestEquimodularity(cmr, int_mat, &result, &k, NULL, NULL, time_limit))
         finally:
-            CMRintmatFree(cmr, &int_mat)
+            CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
 
         if result:
@@ -917,7 +918,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
             CMR_CALL(CMRtestStrongEquimodularity(cmr, int_mat, &result, &k, NULL, NULL, time_limit))
         finally:
-            CMRintmatFree(cmr, &int_mat)
+            CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
 
         if result:
@@ -974,7 +975,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
             CMR_CALL(CMRtestEquimodularity(cmr, int_mat, &result, &gcd_det, NULL, NULL, time_limit))
         finally:
-            CMRintmatFree(cmr, &int_mat)
+            CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
 
         return True if result else False
@@ -1015,7 +1016,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
             CMR_CALL(CMRtestStrongEquimodularity(cmr, int_mat, &result, &gcd_det, NULL, NULL, time_limit))
         finally:
-            CMRintmatFree(cmr, &int_mat)
+            CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
 
         return True if result else False
