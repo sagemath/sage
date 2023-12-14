@@ -48,10 +48,6 @@ mpfr_configure()
     # currently causes problems on a few systems:
     SAGE_CONF_OPTS="--disable-thread-safe"
 
-    if [ "$UNAME" = CYGWIN ]; then
-        SAGE_CONF_OPTS="$SAGE_CONF_OPTS --disable-static --enable-shared"
-    fi
-
     ###########################################################################
     # Pre-configure MPFR with CC and CFLAGS unset:
     ###########################################################################

@@ -580,8 +580,8 @@ class FMatrix(SageObject):
         """
         i = 0
         if output:
-            idx_map = dict()
-            ret = dict()
+            idx_map = {}
+            ret = {}
         id_anyon = self._FR.one()
         for (a, b, c, d) in product(self._FR.basis(), repeat=4):
             if a == id_anyon or b == id_anyon or c == id_anyon:
@@ -1053,7 +1053,7 @@ class FMatrix(SageObject):
             self._fvars, self._non_cyc_roots, self._coerce_map_from_cyc_field, self._qqbar_embedding = pickle.load(f)
         # Update state attributes
         self._chkpt_status = 7
-        self._solved = list(True for v in self._fvars)
+        self._solved = [True for v in self._fvars]
         self._field = self._qqbar_embedding.domain()
 
     def get_fr_str(self):
@@ -1675,9 +1675,9 @@ class FMatrix(SageObject):
         for eq in eqns:
             # Eqns could be a list of poly objects or poly tuples stored in internal repn
             if isinstance(eq, tuple):
-                s = [v for v in variables(eq)]
+                s = list(variables(eq))
             else:
-                s = [v for v in eq.variables()]
+                s = list(eq.variables())
             for x in s:
                 for y in s:
                     if y != x:
@@ -1765,8 +1765,8 @@ class FMatrix(SageObject):
         """
         if eqns is None:
             eqns = self.ideal_basis
-        small_comps = list()
-        temp_eqns = list()
+        small_comps = []
+        temp_eqns = []
         for comp, comp_eqns in self._partition_eqns(eqns=eqns, verbose=verbose).items():
             # Check if component is too large to process
             if len(comp) > largest_comp:
@@ -1924,8 +1924,8 @@ class FMatrix(SageObject):
 
         F = self._field
         R = F['x']
-        numeric_fvars = dict()
-        non_cyclotomic_roots = list()
+        numeric_fvars = {}
+        non_cyclotomic_roots = []
         must_change_base_field = False
         phi = F.hom([F.gen()], F)
         for comp, part in eqns_partition.items():
@@ -2270,7 +2270,7 @@ class FMatrix(SageObject):
             {fx3}
         """
         special_values = {known: self._fvars[self._var_to_sextuple[known]] for known in self._solved if known}
-        self.ideal_basis = set(eq.subs(special_values) for eq in self.ideal_basis)
+        self.ideal_basis = {eq.subs(special_values) for eq in self.ideal_basis}
         self.ideal_basis.discard(0)
 
     def find_cyclotomic_solution(self, equations=None, algorithm="", verbose=True, output=False):
