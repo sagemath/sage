@@ -256,6 +256,27 @@ def SL(n, R, var='a'):
 
         sage: groups.matrix.SL(2, 3)
         Special Linear Group of degree 2 over Finite Field of size 3
+
+        Check if :trac:`36876` is fixed: The cardinality or order of a special linear group with degree=1 over any field is 1::
+
+        sage: SL(1, QQ).cardinality()
+        1
+        sage: SL(1, RR).cardinality()
+        1
+        sage: SL(1, QQ).order()
+        1
+        sage: SL(1, CC).order()
+        1
+
+        Check if :trac:`35490` is fixed: The special linear group with degree=1 is finite::
+
+        sage: q = 7
+        sage: FqT.<T> = GF(q)[]
+        sage: N = T^2+1
+        sage: FqTN = QuotientRing(FqT, N*FqT)
+        sage: S = SL(2,FqTN)
+        sage: S.is_finite()
+        True
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
     try:

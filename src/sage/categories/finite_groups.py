@@ -101,12 +101,19 @@ class FiniteGroups(CategoryWithAxiom):
                 sage: G.cardinality()
                 384
             """
+
+            # Check whether the object has _deg attribute or not 
+            # Note for developers - It will have _deg attribute if it is derived from  MatrixGroup_generic class
+            # And if it has _deg attribute then return the value of that attribute
+            if hasattr(self, '_deg'):
+                return self._deg
+
+            # If object does not have _deg attribute then try to find its order with the help of order function.
             try:
                 o = self.order
+                return o()
             except AttributeError:
                 return self._cardinality_from_iterator()
-            else:
-                return o()
 
         def some_elements(self):
             """
