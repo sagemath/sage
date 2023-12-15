@@ -1622,8 +1622,8 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(1, 2, 'a'), (2, 3, 'b')])
             sage: E = list(G.edge_iterator())
-            sage: H = G.igraph_graph(edge_attrs={'label': [e[2] for e in E]}) # optional - python_igraph
-            sage: H.es['label']                                               # optional - python_igraph
+            sage: H = G.igraph_graph(edge_attrs={'label': [e[2] for e in E]})  # optional - python_igraph
+            sage: H.es['label']                                                # optional - python_igraph
             ['a', 'b']
 
 
@@ -1632,84 +1632,86 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(1, 2, {'weight': 1}), (2, 3, {'weight': 2})])
             sage: E = list(G.edge_iterator())
-            sage: H = G.igraph_graph(edge_attrs={'weight': [e[2]['weight'] for e in E]}) # optional - python_igraph
-            sage: H.is_weighted()                                                        # optional - python_igraph
+            sage: H = G.igraph_graph(edge_attrs={'weight': [e[2]['weight'] for e in E]})  # optional - python_igraph
+            sage: H.is_weighted()                                                         # optional - python_igraph
             True
-            sage: H.es['weight']                                                         # optional - python_igraph
+            sage: H.es['weight']                                                          # optional - python_igraph
             [1, 2]
 
         Adding vertex attributes::
 
             sage: G = graphs.GridGraph([2, 2])
-            sage: H = G.igraph_graph(vertex_attrs={'name': G.vertices(sort=True)}) # optional - python_igraph
-            sage: H.vs()['name']                                          # optional - python_igraph
+            sage: H = G.igraph_graph(vertex_attrs={'name': G.vertices(sort=True)})  # optional - python_igraph
+            sage: H.vs()['name']                                                    # optional - python_igraph
             [(0, 0), (0, 1), (1, 0), (1, 1)]
 
         Providing a mapping from vertices to consecutive integers::
 
             sage: G = graphs.GridGraph([2, 2])
             sage: V = list(G)
-            sage: H = G.igraph_graph(vertex_list=V, vertex_attrs={'name': V}) # optional - python_igraph
-            sage: H.vs()['name'] == V                                         # optional - python_igraph
+            sage: H = G.igraph_graph(vertex_list=V, vertex_attrs={'name': V})  # optional - python_igraph
+            sage: H.vs()['name'] == V                                          # optional - python_igraph
             True
 
         Sometimes, Sage integer/floats are not compatible with igraph::
 
             sage: G = Graph([(0, 1, 2)])
             sage: E = list(G.edge_iterator())
-            sage: H = G.igraph_graph(edge_attrs={'capacity': [e[2] for e in E]}) # optional - python_igraph
-            sage: H.maxflow_value(0, 1, 'capacity')                              # optional - python_igraph
+            sage: H = G.igraph_graph(edge_attrs={'capacity': [e[2] for e in E]})  # optional - python_igraph
+            sage: H.maxflow_value(0, 1, 'capacity')                               # optional - python_igraph
             1.0
-            sage: H = G.igraph_graph(edge_attrs={'capacity': [float(e[2]) for e in E]}) # optional - python_igraph
-            sage: H.maxflow_value(0, 1, 'capacity')                                     # optional - python_igraph
+            sage: H = G.igraph_graph(edge_attrs={'capacity': [float(e[2]) for e in E]})  # optional - python_igraph
+            sage: H.maxflow_value(0, 1, 'capacity')                                      # optional - python_igraph
             2.0
 
         TESTS:
 
         Converting a DiGraph back and forth::
 
+            sage: # optional - python_igraph
             sage: G = DiGraph([('a', 'b', {'w': 1}), ('b', 'c', {'w': 2})])
             sage: vertex_attrs = {'name': G.vertices(sort=False)}
             sage: E = list(G.edge_iterator())
             sage: edge_attrs = {'w': [e[2]['w'] for e in E]}
-            sage: H = DiGraph(G.igraph_graph(vertex_attrs=vertex_attrs, edge_attrs=edge_attrs)) # optional - python_igraph
-            sage: G == H                                                                        # optional - python_igraph
+            sage: H = DiGraph(G.igraph_graph(vertex_attrs=vertex_attrs, edge_attrs=edge_attrs))
+            sage: G == H
             True
-            sage: G.edges(sort=True) == H.edges(sort=True)                                      # optional - python_igraph
+            sage: G.edges(sort=True) == H.edges(sort=True)
             True
-            sage: H = DiGraph(G.igraph_graph(edge_attrs=edge_attrs))                            # optional - python_igraph
-            sage: G == H                                                                        # optional - python_igraph
+            sage: H = DiGraph(G.igraph_graph(edge_attrs=edge_attrs))
+            sage: G == H
             False
 
         When checking for equality, edge labels are not taken into account::
 
-            sage: H = DiGraph(G.igraph_graph(vertex_attrs=vertex_attrs)) # optional - python_igraph
-            sage: G == H                                                 # optional - python_igraph
+            sage: H = DiGraph(G.igraph_graph(vertex_attrs=vertex_attrs))  # optional - python_igraph
+            sage: G == H                                                  # optional - python_igraph
             True
-            sage: G.edges(sort=True) == H.edges(sort=True)               # optional - python_igraph
+            sage: G.edges(sort=True) == H.edges(sort=True)                # optional - python_igraph
             False
 
         Converting a Graph back and forth::
 
+            sage: # optional - python_igraph
             sage: G = Graph([('a', 'b', {'w': 1}), ('b', 'c', {'w': 2})])
             sage: vertex_attrs = {'name': G.vertices(sort=False)}
             sage: E = list(G.edge_iterator())
             sage: edge_attrs = {'w': [e[2]['w'] for e in E]}
-            sage: H = Graph(G.igraph_graph(vertex_attrs=vertex_attrs, edge_attrs=edge_attrs)) # optional - python_igraph
-            sage: G == H                                                                      # optional - python_igraph
+            sage: H = Graph(G.igraph_graph(vertex_attrs=vertex_attrs, edge_attrs=edge_attrs))
+            sage: G == H
             True
-            sage: G.edges(sort=True) == H.edges(sort=True)                                    # optional - python_igraph
+            sage: G.edges(sort=True) == H.edges(sort=True)
             True
-            sage: H = Graph(G.igraph_graph(edge_attrs=edge_attrs))                            # optional - python_igraph
-            sage: G == H                                                                      # optional - python_igraph
+            sage: H = Graph(G.igraph_graph(edge_attrs=edge_attrs))
+            sage: G == H
             False
 
         When checking for equality, edge labels are not taken into account::
 
-            sage: H = Graph(G.igraph_graph(vertex_attrs=vertex_attrs)) # optional - python_igraph
-            sage: G == H                                               # optional - python_igraph
+            sage: H = Graph(G.igraph_graph(vertex_attrs=vertex_attrs))  # optional - python_igraph
+            sage: G == H                                                # optional - python_igraph
             True
-            sage: G.edges(sort=True) == H.edges(sort=True)             # optional - python_igraph
+            sage: G.edges(sort=True) == H.edges(sort=True)              # optional - python_igraph
             False
 
         Check input parameter ``vertex_list``::
@@ -7331,7 +7333,7 @@ class GenericGraph(GenericGraph_pyx):
            ....:    g.set_edge_label(u,v,round(random(),5))
            sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="LP")   # needs sage.numerical.mip
            True
-           sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="igraph") # optional - python_igraph
+           sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="igraph")  # optional - python_igraph
            True
 
         Rounded return value when using the LP method::
@@ -9583,8 +9585,8 @@ class GenericGraph(GenericGraph_pyx):
            sage: flow_lp = g.flow(0, 1, algorithm="LP")                                 # needs sage.numerical.mip
            sage: abs(flow_ff - flow_lp) < 0.01                                          # needs sage.numerical.mip
            True
-           sage: flow_igraph = g.flow(0, 1, algorithm="igraph") # optional python_igraph
-           sage: abs(flow_ff - flow_igraph) < 0.00001           # optional python_igraph
+           sage: flow_igraph = g.flow(0, 1, algorithm="igraph")  # optional - python_igraph
+           sage: abs(flow_ff - flow_igraph) < 0.00001            # optional - python_igraph
            True
         """
         self._scream_if_not_simple(allow_loops=True)
@@ -23268,7 +23270,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.automorphism_group(edge_labels=True)                                # needs sage.groups
             Permutation Group with generators [(1,4)(2,3)]
 
-            sage: G.automorphism_group(edge_labels=True, algorithm="bliss") # optional - bliss
+            sage: G.automorphism_group(edge_labels=True, algorithm="bliss")  # optional - bliss
             Permutation Group with generators [(1,4)(2,3)]
 
             sage: G.automorphism_group(edge_labels=True, algorithm="sage")              # needs sage.groups

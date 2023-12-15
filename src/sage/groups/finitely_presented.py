@@ -263,7 +263,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             (Finitely presented group < a, b, c | a*b*c*a^-1*c^-1*b^-1, a*b*c*b^-1*a^-1*c^-1 >,
              ((1, 2, 3),))
         """
-        return (self.parent(), tuple([self.Tietze()]))
+        return (self.parent(), (self.Tietze(),))
 
     def _repr_(self):
         """
@@ -1830,7 +1830,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         S = R.polynomial_ring()
         K = R.base_ring()
         id_rels = R.ideal(rels)
-        res = dict()
+        res = {}
         bound = n + 1
         for j in range(bound + 1):
             J = id_rels + A.fitting_ideal(j)
@@ -1847,7 +1847,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             return res
         if R.ngens() == 1:
             res = {j: gcd(S(p) for p in res[j].gens()) for j in range(bound + 1)}
-            char_var = dict()
+            char_var = {}
             strict = True
             j = 0
             while strict and j <= bound:
@@ -1862,7 +1862,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                         strict = False
                 j += 1
             return char_var
-        char_var = dict()
+        char_var = {}
         strict = True
         j = 0
         while strict and j <= bound:
