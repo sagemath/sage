@@ -542,3 +542,34 @@ class MatrixGroup_generic(MatrixGroup_base):
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
         return rich_to_bool(op, 0)
+
+    def is_trivial(self):
+        r"""
+        Return ``True`` if this group is the trivial group.
+
+        A group is trivial, if it consists only of the identity
+        element, that is, if all its generators are the identity.
+
+        EXAMPLES::
+
+            sage: MatrixGroup([identity_matrix(3)]).is_trivial()
+            True
+            sage: SL(2, ZZ).is_trivial()
+            False
+            sage: CoxeterGroup(['B',3], implementation="matrix").is_trivial()
+            False
+
+        TESTS::
+
+            sage: CoxeterGroup(['A',0], implementation="matrix").is_trivial()
+            True
+            sage: MatrixGroup([matrix(SR, [[1,x], [0,1]])]).is_trivial()
+            False
+            sage: G = MatrixGroup([identity_matrix(3), identity_matrix(3)])
+            sage: G.ngens()
+            2
+            sage: G.is_trivial()
+            True
+
+        """
+        return all(g.is_one() for g in self.gens())

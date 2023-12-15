@@ -186,6 +186,39 @@ cdef class Group(Parent):
         """
         return self.order() != infinity
 
+    def is_trivial(self):
+        r"""
+        Return ``True`` if this group is the trivial group.
+
+        A group is trivial, if it consists only of the identity
+        element.
+
+        .. WARNING::
+
+            It is in principle undecidable whether a group is
+            trivial, for example, if the group is given by a finite
+            presentation.  Thus, this method may not terminate.
+
+        EXAMPLES::
+
+            sage: groups.presentation.Cyclic(1).is_trivial()
+            True
+
+            sage: G.<a,b> = FreeGroup('a, b')
+            sage: H = G / (a^2, b^3, a*b*~a*~b)
+            sage: H.is_trivial()
+            False
+
+        A non-trivial presentation of the trivial group::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: J = F / ((~a)*b*a*(~b)^2, (~b)*a*b*(~a)^2)
+            sage: J.is_trivial()
+            True
+        """
+        return self.order() == 1
+
+
     def is_multiplicative(self):
         r"""
         Returns True if the group operation is given by \* (rather than
