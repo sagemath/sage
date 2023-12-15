@@ -641,7 +641,7 @@ class Link(SageObject):
             sage: L.braid()
             (s0*s1^-1)^2*s1^-1
 
-        using `remove_loops=True`::
+        using ``remove_loops=True``::
 
             sage: L = Link([[2, 7, 1, 1], [7, 3, 9, 2], [4, 11, 3, 9], [11, 5, 5, 4]])
             sage: L.braid()
