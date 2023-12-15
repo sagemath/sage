@@ -1,20 +1,16 @@
-setuptools: Build system for Python packages
-============================================
+setuptools: Easily download, build, install, upgrade, and uninstall Python packages
+===================================================================================
 
 Description
 -----------
 
-setuptools is the classical build system for Python packages,
-a collection of enhancements to the Python distutils.
+Easily download, build, install, upgrade, and uninstall Python packages
 
 License
 -------
 
-MIT License
-
 Upstream Contact
 ----------------
 
-http://pypi.python.org/pypi/setuptools/
+https://pypi.org/project/setuptools/
 
-https://github.com/pypa/setuptools
