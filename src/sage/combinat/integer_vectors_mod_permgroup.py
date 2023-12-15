@@ -936,9 +936,8 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             # The 1 can be placed in any orbit, and by symmetry
             # it will be on the first element of the orbit.
             return Integer(len(G.orbits()))
-        if d is not None and m >= d and all(g.is_one() for g in G.gens()):
-            # Trivial group (should use G.is_trivial() as soon as
-            # available).  Simple calculation with stars and bars.
+        if d is not None and m >= d and G.is_trivial():
+            # Simple calculation with stars and bars.
             return Integer(binomial(d + k - 1, k - 1))
 
         # General case.
