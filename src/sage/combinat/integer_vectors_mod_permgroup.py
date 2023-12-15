@@ -29,6 +29,12 @@ from sage.combinat.enumeration_mod_permgroup import is_canonical, orbit, canonic
 
 from sage.combinat.integer_vector import IntegerVectors
 
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
+from sage.misc.misc_c import prod
+from sage.arith.misc import binomial
+
 
 class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     r"""
@@ -789,18 +795,19 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             [3, 0, 2, 2]
             [2, 2, 2, 1]
 
-            Check that :issue:`36681` is fixed::
-            sage: I = IntegerVectorsModPermutationGroup(
-            ....:     PermutationGroup([], domain=[]), sum=0)
-            sage: list(iter(I))     # Single empty vector
+        Check that :issue:`36681` is fixed::
+
+            sage: G = PermutationGroup([], domain=[])
+            sage: I = IntegerVectorsModPermutationGroup(G, sum=0)
+            sage: list(iter(I))
             [[]]
 
-            Check that :issue:`36681` is fixed::
-            sage: I = IntegerVectorsModPermutationGroup(
-            ....:     PermutationGroup([], domain=[]), sum=3)
-            sage: list(iter(I))     # No solutions
-            []
+        Check that :issue:`36681` is fixed::
 
+            sage: G = PermutationGroup([], domain=[])
+            sage: I = IntegerVectorsModPermutationGroup(G, sum=3)
+            sage: list(iter(I))
+            []
 
         """
         # Special cases when domain is empty.
@@ -811,7 +818,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             else:
                 # Sum is allowed to be zero.  It does not matter what
                 # the maxpart is, the empty vector is a solution.
-                return iter([[]])
+                return iter([self([])])
 
         # General case, nonempty domain.
         if self._max_part < 0:
@@ -835,17 +842,19 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         The number is computed using the cycle index theorem, which is
         faster than listing the vectors.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            With a trivial group all vectors are canonical::
+        With a trivial group all vectors are canonical::
+
             sage: G = PermutationGroup([], domain=[1,2,3])
             sage: IntegerVectorsModPermutationGroup(G, 5).cardinality()
             21
             sage: IntegerVectors(5, 3).cardinality()
             21
 
-            With two interchangeable elements, the smaller one
-            ranges from zero to n//2::
+        With two interchangeable elements, the smaller one
+        ranges from zero to n//2::
+
             sage: G = PermutationGroup([(1,2)])
             sage: IntegerVectorsModPermutationGroup(G, 1000).cardinality()
             501
@@ -855,15 +864,17 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             sage: I.cardinality()
             7
 
-            Binary vectors up to full symmetry are first some ones and
-            then some zeros::
+        Binary vectors up to full symmetry are first some ones and
+        then some zeros::
+
             sage: G = SymmetricGroup(10)
             sage: I = IntegerVectorsModPermutationGroup(G, max_part=1)
             sage: I.cardinality()
             11
 
-            Binary vectors of constant weight, up to PGL(2,17), which
-            is 3-transitive, but not 4-transitive::
+        Binary vectors of constant weight, up to PGL(2,17), which
+        is 3-transitive, but not 4-transitive::
+
             sage: G=PGL(2,17)
             sage: I = IntegerVectorsModPermutationGroup(G, sum=3, max_part=1)
             sage: I.cardinality()
@@ -872,16 +883,18 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             sage: I.cardinality()
             3
 
-        TESTS::
+        TESTS:
 
-            Check that :issue:`36681` is fixed::
+        Check that :issue:`36681` is fixed::
+
             sage: G = PermutationGroup([], domain=[])
             sage: sgs = tuple(tuple(t) for t in G.strong_generating_system())
             sage: V = IntegerVectorsModPermutationGroup(G, sum=1, sgs=sgs)
             sage: V.cardinality()
             0
 
-            All permutation groups of degree 4::
+        All permutation groups of degree 4::
+
             sage: for G in SymmetricGroup(4).subgroups():
             ....:     sgs = tuple(tuple(t) for t in G.strong_generating_system())
             ....:     I1 = IntegerVectorsModPermutationGroup(G, sum=10, sgs=sgs)
@@ -891,14 +904,16 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             ....:     I3 = IntegerVectorsModPermutationGroup(G, sum=10, max_part=3, sgs=sgs)
             ....:     assert I3.cardinality() == len(list(I3))
 
-            Symmetric group with sums 0 and 1:
+        Symmetric group with sums 0 and 1::
+
             sage: S10 = SymmetricGroup(10)
             sage: IntegerVectorsModPermutationGroup(S10, 0).cardinality()
             1
             sage: IntegerVectorsModPermutationGroup(S10, 1).cardinality()
             1
 
-            Trivial group with sums 1 and 100:
+        Trivial group with sums 1 and 100::
+
             sage: T10 = PermutationGroup([], domain=range(1, 11))
             sage: IntegerVectorsModPermutationGroup(T10, 1).cardinality()
             10
@@ -906,12 +921,6 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             4263421511271
 
         """
-        from sage.rings.power_series_ring import PowerSeriesRing
-        from sage.rings.rational_field import QQ
-        from sage.rings.integer import Integer
-        from sage.misc.misc_c import prod
-        from sage.arith.misc import binomial
-
         G = self._permgroup
         k = G.degree()          # Vector length
         d = self._sum           # Required sum
