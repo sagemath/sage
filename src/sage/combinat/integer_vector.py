@@ -956,15 +956,11 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
         if sum(x) != self.n:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(self.n, None))
 
-        n, k = self.n, len(x)
-
-        r = binomial(k+n-1, n+1)
-
+        n, k, s = self.n, len(x), 0
+        r = binomial(k + n - 1, n + 1)
         for i in range(k - 1):
-            k -= 1
-            n -= x[i]
-            r += binomial(k + n - 1, n - 1)
-
+            s += x[k - 1 - i]
+            r += binomial(s + i, i + 1)
         return r
 
     def unrank(self, x):
@@ -1095,15 +1091,11 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         if len(x) != self.k:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(None, self.k))
 
-        n, k = sum(x), self.k
-
-        r = binomial(n+k-1, k)
-
+        n, k, s = sum(x), self.k, 0
+        r = binomial(n + k - 1, k)
         for i in range(k - 1):
-            k -= 1
-            n -= x[i]
-            r += binomial(k + n - 1, n - 1)
-
+            s += x[k - 1 - i]
+            r += binomial(s + i, i + 1)
         return r
 
     def unrank(self, x):
@@ -1335,15 +1327,10 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         if x not in self:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(self.n, self.k))
 
-        n = self.n
-        k = self.k
-
-        r = 0
+        k, s, r = self.k, 0, 0
         for i in range(k - 1):
-            k -= 1
-            n -= x[i]
-            r += binomial(k + n - 1, n - 1)
-
+            s += x[k - 1 - i]
+            r += binomial(s + i, i + 1)
         return r
 
     def unrank(self, x):
