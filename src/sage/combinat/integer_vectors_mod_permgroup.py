@@ -839,9 +839,6 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         r"""
         Return the number of integer vectors in the set.
 
-        The number is computed using the cycle index theorem, which is
-        faster than listing the vectors.
-
         EXAMPLES:
 
         With a trivial group all vectors are canonical::
@@ -853,7 +850,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             21
 
         With two interchangeable elements, the smaller one
-        ranges from zero to n//2::
+        ranges from zero to `sum//2`::
 
             sage: G = PermutationGroup([(1,2)])
             sage: IntegerVectorsModPermutationGroup(G, 1000).cardinality()
