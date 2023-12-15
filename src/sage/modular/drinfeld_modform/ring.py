@@ -168,12 +168,12 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     EXAMPLES::
 
-        sage: q = 2
+        sage: q = 3
         sage: A = GF(q)['T']
         sage: K.<T> = Frac(A)
         sage: M = DrinfeldModularForms(K, 3)
         sage: M
-        Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2 (using GF2X)
+        Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
 
     Use the :meth:`gens` method to obtain the generators of the ring::
 
@@ -196,8 +196,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     weight, use the methode :meth:`basis_of_weight`::
 
         sage: M = DrinfeldModularForms(K, 2)
-        sage: M.basis_of_weight(q^4 - 1)
-        [g2^5, g1^3*g2^4, g1^6*g2^3, g1^9*g2^2, g1^12*g2, g1^15]
+        sage: M.basis_of_weight(q^3 - 1)
+        [g1*g2^3, g1^5*g2^2, g1^9*g2, g1^13]
 
     In order to compute the coefficient forms, use the methods
     :meth:`coefficient_form` and :meth:`coefficient_forms`::
@@ -212,12 +212,12 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         sage: M.coefficient_forms(T)
         [g1, g2, g3]
         sage: M.coefficient_forms(T^2)
-        [(T^2 + T)*g1,
-         g1^3 + (T^4 + T)*g2,
-         g1^4*g2 + g1*g2^2 + (T^8 + T)*g3,
-         g1^8*g3 + g1*g3^2 + g2^5,
-         g2^8*g3 + g2*g3^4,
-         g3^9]
+        [(T^3 + T)*g1,
+         g1^4 + (T^9 + T)*g2,
+         g1^9*g2 + g1*g2^3 + (T^27 + T)*g3,
+         g1^27*g3 + g1*g3^3 + g2^10,
+         g2^27*g3 + g2*g3^9,
+         g3^28]
 
     TESTS::
 

@@ -20,6 +20,7 @@ AUTHORS:
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 
 class DrinfeldModularFormsElement(ModuleElement):
