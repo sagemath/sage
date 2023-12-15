@@ -258,7 +258,7 @@ class GhLabelSynchronizer:
         self._bot_login = read_login([errtxt, outtxt], ['account', 'as'])
         if not self._bot_login:
             self._bot_login = default_bot
-            info('Bot is unknown')
+            warning('Bot is unknown')
             return self._bot_login
         if self._bot_login.endswith('[bot]'):
             self._bot_login = self._bot_login.split('[bot]')[0]
