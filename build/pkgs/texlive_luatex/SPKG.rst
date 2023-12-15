@@ -1,4 +1,4 @@
-texlive-luatex: LuaTeX packages
+texlive_luatex: LuaTeX packages
 ===============================
 
 Description
