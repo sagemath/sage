@@ -127,7 +127,30 @@ from .element import DrinfeldModularFormsElement
 
 class DrinfeldModularForms(Parent, UniqueRepresentation):
     r"""
-    Base class for the graded Drinfeld modular forms ring.
+    Base class for the graded ring of Drinfeld modular forms.
+
+    If `K = \mathrm{Frac}(A)` where `A = \mathbb{F}_q[T]`, then the
+    ring of Drinfeld modular forms over `K` of rank `r` and type zero
+    for `\mathrm{GL}_r(A)` is
+
+    .. MATH::
+
+        M^{r, 0}(\mathrm{GL}_r(A)) = K[g_1, \ldots, g_{r-1}, g_{r}].
+
+    where `g_i` the `i`-th coefficient form of weight `q^{i} - 1` at
+    `T`.
+
+    Similarly, the ring of Drinfeld modular forms over `K` of rank `r`
+    and arbitrary type is
+
+    .. MATH::
+
+        M^{r}(\mathrm{GL}_r(A)) = K[g_1, \ldots, g_{r-1}, h_{r}].
+
+    where `h_r` is a form of weight `(q^r - 1)/(q - 1)` and type `1`.
+
+    We will see the elements of this ring as formal objects given by
+    algebraic combination of the generator of the ring.
 
     INPUT:
 
@@ -137,11 +160,64 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     - ``group`` (NoneType) -- the group of self. The current
       implementation only supports the full group
       `\mathrm{GL}_r(A)`.
-    - ``has_type`` (bool, default: ``False``) -- if set to True, returns
-      the graded ring of arbitrary type.
+    - ``has_type`` (bool, default: ``False``) -- if set to ``True``,
+      returns the graded ring of arbitrary type.
     - ``names`` (string, default: ``'g'``) -- a single character or a
       comma seperated string of character representing the names of the
       generators.
+
+    EXAMPLES::
+
+        sage: q = 2
+        sage: A = GF(q)['T']
+        sage: K.<T> = Frac(A)
+        sage: M = DrinfeldModularForms(K, 3)
+        sage: M
+        Ring of Drinfeld modular forms of rank 3 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 2 (using GF2X)
+
+    Use the :meth:`gens` method to obtain the generators of the ring::
+
+        sage: M.gens()
+        [g1, g2, g3]
+        sage: M.inject_variables()
+        Defining g1, g2, g3
+
+    Set the keyword parameter `has_type` to `True` in order to create
+    the ring of Drinfeld modular forms of arbitrary type::
+
+        sage: M = DrinfeldModularForms(K, 4, has_type=True)
+        sage: M.gens()
+        [g1, g2, g3, h4]
+        sage: h4 = M.3
+        sage: h4.type()
+        1
+
+    To obtain a generating set of the subspace of forms of a fixed
+    weight, use the methode :meth:`basis_of_weight`::
+
+        sage: M = DrinfeldModularForms(K, 2)
+        sage: M.basis_of_weight(q^4 - 1)
+        [g2^5, g1^3*g2^4, g1^6*g2^3, g1^9*g2^2, g1^12*g2, g1^15]
+
+    In order to compute the coefficient forms, use the methods
+    :meth:`coefficient_form` and :meth:`coefficient_forms`::
+
+        sage: M = DrinfeldModularForms(K, 3)
+        sage: M.coefficient_form(1)
+        g1
+        sage: M.coefficient_form(2)
+        g2
+        sage: M.coefficient_form(3)
+        g3
+        sage: M.coefficient_forms(T)
+        [g1, g2, g3]
+        sage: M.coefficient_forms(T^2)
+        [(T^2 + T)*g1,
+         g1^3 + (T^4 + T)*g2,
+         g1^4*g2 + g1*g2^2 + (T^8 + T)*g3,
+         g1^8*g3 + g1*g3^2 + g2^5,
+         g2^8*g3 + g2*g3^4,
+         g3^9]
 
     TESTS::
 
