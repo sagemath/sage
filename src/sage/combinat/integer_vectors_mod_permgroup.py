@@ -5,7 +5,7 @@ Integer vectors modulo the action of a permutation group
 AUTHORS:
 
 * Nicolas Borie (2010-2012) - original module
-* Jukka Kohonen (2023) - fast cardinality method, :issue:`36787`
+* Jukka Kohonen (2023) - fast cardinality method, :issue:`36787`, :issue:`36681`
 """
 # ****************************************************************************
 #    Copyright (C) 2010-12 Nicolas Borie <nicolas.borie at math dot u-psud.fr>
