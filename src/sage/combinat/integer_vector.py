@@ -781,6 +781,23 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
         return True
 
     def _unrank_helper(self, x, rtn):
+        """
+        return an element at rank ``x``.
+
+        EXAMPLES::
+
+        sage: i=IntegerVectors(k=5)
+        sage: i._unrank_helper(10, [2,0,0,0,0])
+        [1, 0, 0, 0, 1]
+
+        sage: i=IntegerVectors(n=7)
+        sage: i._unrank_helper(100, [7,0,0,0])
+        [2, 0, 0, 5]
+
+        sage: i=IntegerVectors(n=12, k=7)
+        sage: i._unrank_helper(1000, [12,0,0,0,0,0,0])
+        [5, 3, 1, 1, 1, 1, 0]
+        """
         ptr = 0
         while True:
             current_rank = self.rank(rtn)
@@ -1097,14 +1114,17 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             [1, 0, 0, 0, 1]
             sage: IntegerVectors(k=5).unrank(15)
             [0, 0, 2, 0, 0]
+            sage: IntegerVectors(k=0).unrank(0)
+            []
         """
         if self.k == 0 and x != 0:
             raise IndexError(f"Index {x} is out of range for the IntegerVector.")
-        n = 0
         rtn = [0]*self.k
+        if self.k == 0 and x == 0:
+            return rtn
+
         while self.rank(rtn) <= x:
-            n += 1
-            rtn[0] = n
+            rtn[0] += 1
         rtn[0] -= 1
 
         return IntegerVectors._unrank_helper(self, x, rtn)
