@@ -828,11 +828,6 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             else:
                 return SF.elements_of_depth_iterator(self._sum)
 
-    def has_trivial_group(self):
-        """Check if the associated permutation group is trivial."""
-        g = self.permutation_group().gens()
-        return len(g) == 0 or (len(g) == 1 and tuple(g[0]) == ())
-
     def cardinality(self):
         r"""
         Return the number of integer vectors in the set.
@@ -860,12 +855,22 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             sage: I.cardinality()
             7
 
-            Binary vectors up to full symmetry are first some
-            ones and then some zeros::
+            Binary vectors up to full symmetry are first some ones and
+            then some zeros::
             sage: G = SymmetricGroup(10)
             sage: I = IntegerVectorsModPermutationGroup(G, max_part=1)
             sage: I.cardinality()
             11
+
+            Binary vectors of constant weight, up to PGL(2,17), which
+            is 3-transitive, but not 4-transitive::
+            sage: G=PGL(2,17)
+            sage: I = IntegerVectorsModPermutationGroup(G, sum=3, max_part=1)
+            sage: I.cardinality()
+            1
+            sage: I = IntegerVectorsModPermutationGroup(G, sum=4, max_part=1)
+            sage: I.cardinality()
+            3
 
         TESTS::
 
@@ -931,8 +936,9 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             # The 1 can be placed in any orbit, and by symmetry
             # it will be on the first element of the orbit.
             return Integer(len(G.orbits()))
-        if d is not None and self.has_trivial_group() and m >= d:
-            # Simple calculation with stars and bars.
+        if d is not None and m >= d and all(g.is_one() for g in G.gens()):
+            # Trivial group (should use G.is_trivial() as soon as
+            # available).  Simple calculation with stars and bars.
             return Integer(binomial(d + k - 1, k - 1))
 
         # General case.
