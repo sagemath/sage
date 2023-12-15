@@ -24,7 +24,7 @@ cdef class SubstitutionMap(SageObject):
 
     cdef GExMap _gmapobj
 
-    cpdef Expression apply_to(self, Expression expr, unsigned options):
+    cpdef Expression apply_to(self, Expression expr, unsigned options) noexcept:
         """
         Apply the substitution to a symbolic expression
 
@@ -51,7 +51,7 @@ cdef class SubstitutionMap(SageObject):
         return 'SubsMap'  # GEx_to_str(&x._gobj)
 
 
-cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
+cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap) noexcept:
     """
     Wrap a Pynac object into a Python object
 
@@ -75,7 +75,7 @@ cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
     return result
 
 
-cpdef SubstitutionMap make_map(subs_dict):
+cpdef SubstitutionMap make_map(subs_dict) noexcept:
     """
     Construct a new substitution map
 

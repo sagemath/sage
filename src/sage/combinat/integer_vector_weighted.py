@@ -101,7 +101,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
         if n is None:
             return WeightedIntegerVectors_all(weight)
 
-        return super(WeightedIntegerVectors, cls).__classcall__(cls, n, weight)
+        return super().__classcall__(cls, n, weight)
 
     def __init__(self, n, weight):
         """

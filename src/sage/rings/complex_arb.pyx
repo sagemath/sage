@@ -197,7 +197,7 @@ from sage.rings.integer_ring import ZZ
 
 cdef void ComplexIntervalFieldElement_to_acb(
     acb_t target,
-    ComplexIntervalFieldElement source):
+    ComplexIntervalFieldElement source) noexcept:
     """
     Convert a :class:`ComplexIntervalFieldElement` to an ``acb``.
 
@@ -250,7 +250,7 @@ cdef class IntegrationContext:
     cdef object exn_tb
 
 cdef int acb_calc_func_callback(acb_ptr out, const acb_t inp, void * param,
-        long order, long prec):
+        long order, long prec) noexcept:
     r"""
     Callback used for numerical integration
 
@@ -1254,16 +1254,16 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         return res
 
-cdef inline bint _do_sig(long prec):
+cdef inline bint _do_sig(long prec) noexcept:
     """
     Whether signal handlers should be installed for calls to arb.
     """
     return (prec > 1000)
 
-cdef inline long prec(ComplexBall ball):
+cdef inline long prec(ComplexBall ball) noexcept:
     return ball._parent._prec
 
-cdef bint arb_contained_unit_interval(arb_t b):
+cdef bint arb_contained_unit_interval(arb_t b) noexcept:
     r"""
     Test if a real ball is contained in [-1,1]. Useful for dealing with branch
     cuts of inverse trigonometric functions.
@@ -1281,7 +1281,7 @@ cdef bint arb_contained_unit_interval(arb_t b):
     finally:
         arb_clear(u)
 
-cdef bint arb_gt_neg_one(arb_t b):
+cdef bint arb_gt_neg_one(arb_t b) noexcept:
     r"""
     Test if a real ball is contained in [-1,∞). Useful for dealing with branch
     cuts.
@@ -1293,7 +1293,7 @@ cdef bint arb_gt_neg_one(arb_t b):
     arb_clear(neg_one)
     return res
 
-cdef inline real_ball_field(ComplexBall ball):
+cdef inline real_ball_field(ComplexBall ball) noexcept:
     return ball._parent._base
 
 cdef class ComplexBall(RingElement):
@@ -1360,12 +1360,13 @@ cdef class ComplexBall(RingElement):
             sage: CBF100(-3r)
             -3.000000000000000000000000000000
 
-            sage: ComplexBall(CBF100, 10^100)
-            1.000000000000000000000000000000e+100
             sage: ComplexBall(CBF100, CIF(1, 2))
             1.000000000000000000000000000000 + 2.000000000000000000000000000000*I
             sage: ComplexBall(CBF100, RBF(1/3), RBF(1))
             [0.3333333333333333 +/- ...e-17] + 1.000000000000000000000000000000*I
+            sage: ComplexBall(CBF100, 10^100)
+            [1.000000000000000000000000000000e+100 +/- ...]
+
             sage: NF.<a> = QuadraticField(-1, embedding=CC(0, -1))
             sage: CBF(a)
             -1.000000000000000*I
@@ -1545,7 +1546,7 @@ cdef class ComplexBall(RingElement):
 
     # Conversions
 
-    cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent):
+    cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent) noexcept:
         """
         Return :class:`ComplexIntervalFieldElement` of the same value.
 
@@ -1804,7 +1805,7 @@ cdef class ComplexBall(RingElement):
 
     # Real and imaginary part, midpoint, radius
 
-    cpdef RealBall real(self):
+    cpdef RealBall real(self) noexcept:
         """
         Return the real part of this ball.
 
@@ -1825,7 +1826,7 @@ cdef class ComplexBall(RingElement):
         arb_set(r.value, acb_realref(self.value))
         return r
 
-    cpdef RealBall imag(self):
+    cpdef RealBall imag(self) noexcept:
         """
         Return the imaginary part of this ball.
 
@@ -2330,7 +2331,7 @@ cdef class ComplexBall(RingElement):
         """
         return acb_is_real(self.value)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare ``left`` and ``right``.
 
@@ -2617,7 +2618,7 @@ cdef class ComplexBall(RingElement):
         acb_conj(res.value, self.value)
         return res
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         Return the sum of two balls, rounded to the ambient field's precision.
 
@@ -2635,7 +2636,7 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         """
         Return the difference of two balls, rounded to the ambient field's
         precision.
@@ -2676,7 +2677,7 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         """
         Return the product of two balls, rounded to the ambient field's
         precision.
@@ -2776,7 +2777,7 @@ cdef class ComplexBall(RingElement):
             raise TypeError("unsupported operand type(s) for >>: '{}' and '{}'"
                             .format(type(val).__name__, type(shift).__name__))
 
-    cpdef _div_(self, other):
+    cpdef _div_(self, other) noexcept:
         """
         Return the quotient of two balls, rounded to the ambient field's
         precision.
@@ -2843,7 +2844,7 @@ cdef class ComplexBall(RingElement):
         else:
             return sage.structure.element.bin_op(base, expo, operator.pow)
 
-    cpdef pow(self, expo, analytic=False):
+    cpdef pow(self, expo, analytic=False) noexcept:
         r"""
         Raise this ball to the power of ``expo``.
 
@@ -3009,7 +3010,7 @@ cdef class ComplexBall(RingElement):
             sage: CBF(1).rising_factorial(2**64)
             [+/- ...e+347382171326740403407]
             sage: ComplexBallField(128)(1).rising_factorial(2**64)
-            [2.343691126796861348e+347382171305201285713 +/- ...e+347382171305201285694]
+            [2.34369112679686134...e+347382171305201285713 +/- ...]
             sage: CBF(1/2).rising_factorial(CBF(2,3)) # abs tol 1e-15
             [-0.123060451458124 +/- 3.06e-16] + [0.0406412631676552 +/- 7.57e-17]*I
 
@@ -4014,7 +4015,7 @@ cdef class ComplexBall(RingElement):
              [2.2882956833435e+50 +/- ...e+36],
              [1.2807602335816e+51 +/- ...e+37])
             sage: ai, aip, bi, bip = CBF(1,2).airy()
-            sage: (ai * bip - bi * aip) * CBF(pi)
+            sage: (ai * bip - bi * aip) * CBF(pi)                                       # needs sage.symbolic
             [1.0000000000000 +/- ...e-15] + [+/- ...e-16]*I
 
         """

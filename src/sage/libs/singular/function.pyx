@@ -339,7 +339,7 @@ cdef class Resolution:
             self._resolution.references -= 1
 
 
-cdef leftv* new_leftv(void *data, res_type):
+cdef leftv* new_leftv(void *data, res_type) noexcept:
     """
     INPUT:
 
@@ -353,7 +353,7 @@ cdef leftv* new_leftv(void *data, res_type):
     res.rtyp = res_type
     return res
 
-cdef free_leftv(leftv *args, ring *r = NULL):
+cdef free_leftv(leftv *args, ring *r = NULL) noexcept:
     """
     Kills this ``leftv`` and all ``leftv``s in the tail.
 
@@ -393,7 +393,7 @@ def is_sage_wrapper_for_singular_ring(ring):
         return True
     return False
 
-cdef new_sage_polynomial(ring,  poly *p):
+cdef new_sage_polynomial(ring,  poly *p) noexcept:
     if isinstance(ring, MPolynomialRing_libsingular):
         return new_MP(ring, p)
     else:
@@ -456,7 +456,7 @@ cdef ring* access_singular_ring(r) except <ring*> -1:
         return (<NCPolynomialRing_plural> r )._ring
     raise ValueError("not a singular polynomial ring wrapper")
 
-cdef poly* copy_sage_polynomial_into_singular_poly(p):
+cdef poly* copy_sage_polynomial_into_singular_poly(p) noexcept:
     return p_Copy(access_singular_poly(p), access_singular_ring(p.parent()))
 
 
@@ -653,7 +653,7 @@ cdef class Converter(SageObject):
         res.next = NULL
         return res
 
-    cdef leftv *_append_leftv(self, leftv *v):
+    cdef leftv *_append_leftv(self, leftv *v) noexcept:
         """
         Append a new Singular element to the list.
         """
@@ -667,7 +667,7 @@ cdef class Converter(SageObject):
             self.args = v
         return v
 
-    cdef leftv *_append(self, void* data, int res_type):
+    cdef leftv *_append(self, void* data, int res_type) noexcept:
         """
         Create a new ``leftv`` and append it to the list.
 
@@ -678,7 +678,7 @@ cdef class Converter(SageObject):
         """
         return self._append_leftv( new_leftv(data, res_type) )
 
-    cdef to_sage_matrix(self, matrix* mat):
+    cdef to_sage_matrix(self, matrix* mat) noexcept:
         """
         Convert singular matrix to matrix over the polynomial ring.
         """
@@ -693,7 +693,7 @@ cdef class Converter(SageObject):
                 result[i,j] = p
         return result
 
-    cdef to_sage_vector_destructive(self, poly *p, free_module = None):
+    cdef to_sage_vector_destructive(self, poly *p, free_module = None) noexcept:
         cdef int rank
         if free_module:
             rank = free_module.rank()
@@ -733,7 +733,7 @@ cdef class Converter(SageObject):
             result.append(new_sage_polynomial(self._sage_ring, first))
         return free_module(result)
 
-    cdef object to_sage_module_element_sequence_destructive( self, ideal *i):
+    cdef object to_sage_module_element_sequence_destructive( self, ideal *i) noexcept:
         """
         Convert a SINGULAR module to a Sage Sequence (the format Sage
         stores a Groebner basis in).
@@ -756,7 +756,7 @@ cdef class Converter(SageObject):
 
         return Sequence(l, check=False, immutable=True)
 
-    cdef to_sage_integer_matrix(self, intvec* mat):
+    cdef to_sage_integer_matrix(self, intvec* mat) noexcept:
         """
         Convert Singular matrix to matrix over the polynomial ring.
         """
@@ -908,7 +908,7 @@ cdef class Converter(SageObject):
         b = str_to_bytes(n)
         return self._append(omStrDup(b), STRING_CMD)
 
-    cdef to_python(self, leftv* to_convert):
+    cdef to_python(self, leftv* to_convert) noexcept:
         """
         Convert the ``leftv`` to a Python object.
 
@@ -994,13 +994,13 @@ cdef class BaseCallHandler:
     A call handler is an abstraction which hides the details of the
     implementation differences between kernel and library functions.
     """
-    cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL):
+    cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL) noexcept:
         """
         Actual function call.
         """
         return NULL
 
-    cdef bint free_res(self):
+    cdef bint free_res(self) noexcept:
         """
         Do we need to free the result object.
         """
@@ -1029,7 +1029,7 @@ cdef class LibraryCallHandler(BaseCallHandler):
         """
         super().__init__()
 
-    cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL):
+    cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL) noexcept:
         if _ring != currRing: rChangeCurrRing(_ring)
         cdef bint error = iiMake_proc(self.proc_idhdl, NULL, argument_list.args)
         cdef leftv * res
@@ -1041,7 +1041,7 @@ cdef class LibraryCallHandler(BaseCallHandler):
             return res
         raise RuntimeError("Error raised calling singular function")
 
-    cdef bint free_res(self):
+    cdef bint free_res(self) noexcept:
         """
         We do not need to free the result object for library
         functions.
@@ -1073,7 +1073,7 @@ cdef class KernelCallHandler(BaseCallHandler):
         self.cmd_n = cmd_n
         self.arity = arity
 
-    cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL):
+    cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL) noexcept:
         cdef leftv * res
         res = <leftv*> omAllocBin(sleftv_bin)
         res.Init()
@@ -1129,7 +1129,7 @@ cdef class KernelCallHandler(BaseCallHandler):
                 .format(number_of_arguments, self.arity))
         return NULL
 
-    cdef bint free_res(self):
+    cdef bint free_res(self) noexcept:
         """
         We need to free the result object for kernel functions.
         """
@@ -1168,13 +1168,13 @@ cdef class SingularFunction(SageObject):
                 currRingHdl.data.uring = <ring *>omAlloc0Bin(sip_sring_bin)
             currRingHdl.data.uring.ref += 1
 
-    cdef BaseCallHandler get_call_handler(self):
+    cdef BaseCallHandler get_call_handler(self) noexcept:
         """
         Return a call handler which does the actual work.
         """
         raise NotImplementedError
 
-    cdef bint function_exists(self):
+    cdef bint function_exists(self) noexcept:
         """
         Return ``True`` if the function exists in this interface.
         """
@@ -1358,7 +1358,7 @@ The Singular documentation for '%s' is given below.
         else:
             return prefix + "\n::\n\n"+"    Singular documentation not found"
 
-    cdef common_ring(self, tuple args, ring=None):
+    cdef common_ring(self, tuple args, ring=None) noexcept:
         """
         Return the common ring for the argument list ``args``.
 
@@ -1442,7 +1442,7 @@ The Singular documentation for '%s' is given below.
         return richcmp(lx._name, rx._name, op)
 
 
-cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None):
+cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None) noexcept:
     global currRingHdl
     global errorreported
     global currentVoice
@@ -1530,7 +1530,7 @@ cdef class SingularLibraryFunction(SingularFunction):
         super().__init__(name)
         self.call_handler = self.get_call_handler()
 
-    cdef BaseCallHandler get_call_handler(self):
+    cdef BaseCallHandler get_call_handler(self) noexcept:
         cdef idhdl* singular_idhdl = ggetid(str_to_bytes(self._name))
         if singular_idhdl==NULL:
             raise NameError("Singular library function {!r} is not defined".format(self._name))
@@ -1541,7 +1541,7 @@ cdef class SingularLibraryFunction(SingularFunction):
         res.proc_idhdl = singular_idhdl
         return res
 
-    cdef bint function_exists(self):
+    cdef bint function_exists(self) noexcept:
         cdef idhdl* singular_idhdl = ggetid(str_to_bytes(self._name))
         return singular_idhdl!=NULL
 
@@ -1577,7 +1577,7 @@ cdef class SingularKernelFunction(SingularFunction):
         super().__init__(name)
         self.call_handler = self.get_call_handler()
 
-    cdef BaseCallHandler get_call_handler(self):
+    cdef BaseCallHandler get_call_handler(self) noexcept:
         cdef int cmd_n = 0
         arity = IsCmd(str_to_bytes(self._name), cmd_n) # call by reverence for CMD_n
         if not cmd_n:
@@ -1585,7 +1585,7 @@ cdef class SingularKernelFunction(SingularFunction):
 
         return KernelCallHandler(cmd_n, arity)
 
-    cdef bint function_exists(self):
+    cdef bint function_exists(self) noexcept:
         cdef int cmd_n = -1
         arity = IsCmd(str_to_bytes(self._name), cmd_n) # call by reverence for CMD_n
         return cmd_n != -1
@@ -1842,7 +1842,7 @@ def list_of_functions(packages=False):
         h = IDNEXT(h)
     return l
 
-cdef inline RingWrap new_RingWrap(ring* r):
+cdef inline RingWrap new_RingWrap(ring* r) noexcept:
     cdef RingWrap ring_wrap_result = RingWrap.__new__(RingWrap)
     ring_wrap_result._ring = r
     ring_wrap_result._ring.ref += 1

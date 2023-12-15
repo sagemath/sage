@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Sparse action of Hecke operators
 """

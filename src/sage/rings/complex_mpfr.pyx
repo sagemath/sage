@@ -40,17 +40,17 @@ from sage.structure.element cimport RingElement, Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.structure.parent import Parent
-from sage.structure.parent_gens import ParentWithGens
+from sage.rings.ring import Ring
 
 from sage.misc.sage_eval import sage_eval
 
 import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
-from . import infinity
-from .integer cimport Integer
+from sage.rings import infinity
+from sage.rings.integer cimport Integer
 
-from .complex_double cimport ComplexDoubleElement
-from .real_mpfr cimport RealNumber
+from sage.rings.complex_double cimport ComplexDoubleElement
+from sage.rings.real_mpfr cimport RealNumber
 from sage.libs.gsl.complex cimport *
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
@@ -59,7 +59,12 @@ from sage.rings.integer_ring import ZZ
 cimport gmpy2
 gmpy2.import_gmpy2()
 
-# Some objects that are note imported at startup in order to break
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
+
+# Some objects that are not imported at startup in order to break
 # circular imports
 NumberFieldElement_quadratic = None
 AlgebraicNumber_base = None
@@ -97,8 +102,8 @@ def late_import():
         QQbar = sage.rings.qqbar.QQbar
         import sage.symbolic.ring
         SR = sage.symbolic.ring.SR
-        from .real_lazy import CLF, RLF
-        from .complex_double import CDF
+        from sage.rings.real_lazy import CLF, RLF
+        from sage.rings.complex_double import CDF
 
 cdef object numpy_complex_interface = {'typestr': '=c16'}
 cdef object numpy_object_interface = {'typestr': '|O'}
@@ -277,7 +282,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         """
         self._prec = int(prec)
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite().Metric().Complete())
+        Ring.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_(coerce_list=[RRtoCC(self._real_field(), self)],
                 convert_method_name='_complex_mpfr_')
 
@@ -367,7 +372,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         try:
             return self.__real_field
         except AttributeError:
-            from .real_mpfr import RealField
+            from sage.rings.real_mpfr import RealField
             self.__real_field = RealField(self._prec)
             return self.__real_field
 
@@ -867,7 +872,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         True
     """
 
-    cdef ComplexNumber _new(self):
+    cdef ComplexNumber _new(self) noexcept:
         """
         Quickly creates a new initialized complex number with the same
         parent as ``self``.
@@ -929,7 +934,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             if isinstance(real, ComplexNumber):
                 real, imag = (<ComplexNumber>real).real(), (<ComplexNumber>real).imag()
-            elif isinstance(real, sage.libs.pari.all.pari_gen):
+            elif isinstance(real, pari_gen):
                 real, imag = real.real(), real.imag()
             elif isinstance(real, (list, tuple)):
                 re, imag = real
@@ -1460,7 +1465,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         import sympy
         return self.real()._sympy_() + self.imag()._sympy_() * sympy.I
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add ``self`` to ``right``.
 
@@ -1475,7 +1480,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_add(x.__im, self.__im, (<ComplexNumber>right).__im, rnd)
         return x
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract ``right`` from ``self``.
 
@@ -1490,7 +1495,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_sub(x.__im, self.__im, (<ComplexNumber>right).__im, rnd)
         return x
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply ``self`` by ``right``.
 
@@ -1559,7 +1564,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         return self.norm_c()
 
-    cdef RealNumber norm_c(ComplexNumber self):
+    cdef RealNumber norm_c(ComplexNumber self) noexcept:
         cdef RealNumber x
         x = RealNumber(self._parent._real_field(), None)
 
@@ -1576,7 +1581,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(t1)
         return x
 
-    cdef RealNumber abs_c(ComplexNumber self):
+    cdef RealNumber abs_c(ComplexNumber self) noexcept:
         cdef RealNumber x
         x = RealNumber(self._parent._real_field(), None)
 
@@ -1594,7 +1599,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(t1)
         return x
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide ``self`` by ``right``.
 
@@ -1951,7 +1956,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         return complex(mpfr_get_d(self.__re, rnd),
                        mpfr_get_d(self.__im, rnd))
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare ``left`` and ``right``.
 
@@ -2926,7 +2931,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         if base is None:
             return ComplexNumber(self._parent, rho.log(), theta)
         else:
-            from .real_mpfr import RealField
+            from sage.rings.real_mpfr import RealField
             return ComplexNumber(self._parent, rho.log()/RealNumber(RealField(self.prec()),base).log(), theta/RealNumber(RealField(self.prec()),base).log())
 
     def additive_order(self):
@@ -3340,7 +3345,7 @@ cdef class RRtoCC(Map):
         self._zero = ComplexNumber(CC, 0)
         self._repr_type_str = "Natural"
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         A helper for pickling and copying.
 
@@ -3366,7 +3371,7 @@ cdef class RRtoCC(Map):
         slots['_zero'] = self._zero
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         A helper for unpickling and copying.
 
@@ -3385,7 +3390,7 @@ cdef class RRtoCC(Map):
         Map._update_slots(self, _slots)
         self._zero = _slots['_zero']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         EXAMPLES::
 
@@ -3399,13 +3404,13 @@ cdef class RRtoCC(Map):
         mpfr_set_ui(z.__im, 0, rnd)
         return z
 
-cdef inline mp_exp_t min_exp_t(mp_exp_t a, mp_exp_t b):
+cdef inline mp_exp_t min_exp_t(mp_exp_t a, mp_exp_t b) noexcept:
     return a if a < b else b
 
-cdef inline mp_exp_t max_exp_t(mp_exp_t a, mp_exp_t b):
+cdef inline mp_exp_t max_exp_t(mp_exp_t a, mp_exp_t b) noexcept:
     return a if a > b else b
 
-cdef inline mp_exp_t max_exp(ComplexNumber z):
+cdef inline mp_exp_t max_exp(ComplexNumber z) noexcept:
     """
     Quickly return the maximum exponent of the real and complex parts of z,
     which is useful for estimating its magnitude.
@@ -3416,7 +3421,7 @@ cdef inline mp_exp_t max_exp(ComplexNumber z):
         return mpfr_get_exp(z.__im)
     return max_exp_t(mpfr_get_exp(z.__re), mpfr_get_exp(z.__im))
 
-cpdef int cmp_abs(ComplexNumber a, ComplexNumber b):
+cpdef int cmp_abs(ComplexNumber a, ComplexNumber b) noexcept:
     """
     Return `-1`, `0`, or `1` according to whether `|a|` is less than, equal to, or
     greater than `|b|`.

@@ -455,7 +455,7 @@ class RecognizableSeries(ModuleElement):
             sage: S.mu[0] is M0, S.mu[1] is M1, S.left is L, S.right is R
             (True, True, True, True)
         """
-        super(RecognizableSeries, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         from copy import copy
         from sage.matrix.constructor import Matrix
@@ -1660,7 +1660,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
             sage: Rec1 is Rec2 is Rec3
             True
         """
-        return super(RecognizableSeriesSpace, cls).__classcall__(
+        return super().__classcall__(
             cls, *cls.__normalize__(*args, **kwds))
 
     @classmethod
@@ -1782,7 +1782,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         """
         self._indices_ = indices
         self._minimize_results_ = minimize_results
-        super(RecognizableSeriesSpace, self).__init__(
+        super().__init__(
             category=category, base=coefficient_ring)
 
     def __reduce__(self):

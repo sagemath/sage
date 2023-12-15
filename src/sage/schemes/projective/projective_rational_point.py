@@ -190,7 +190,7 @@ def enum_projective_number_field(X, **kwds):
         sage: K = NumberField(u^3 - 5, 'v')
         sage: P.<x,y,z> = ProjectiveSpace(K, 2)
         sage: X = P.subscheme([x - y])
-        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)
+        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)          # needs sage.symbolic
         [(0 : 0 : 1), (1 : 1 : 0), (-1 : -1 : 1), (1 : 1 : 1)]
 
     ::

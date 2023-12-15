@@ -200,7 +200,7 @@ fa = sage.rings.fast_arith.arith_llong()
 cdef llong llgcd(llong a, llong b) except -1:
     return fa.gcd_longlong(a,b)
 
-cdef llong llinvmod(llong a, llong m):
+cdef llong llinvmod(llong a, llong m) noexcept:
     return fa.inverse_mod_longlong(a, m)
 
 DEF TWOPI = 6.28318530717958647
@@ -602,7 +602,7 @@ cdef class _CuspsForModularSymbolNumerical:
         # from sage.modular.cusps import Cusp
         # Cusp.__init__(self, a,m)
 
-    cdef public int is_unitary(self):
+    cdef public int is_unitary(self) noexcept:
         r"""
         Return whether the cusp is unitary,
         i.e. whether there exists an Atkin-
@@ -1437,7 +1437,7 @@ cdef class ModularSymbolNumerical:
 
     # the version using double is 70-80 times faster it seems.
     cdef complex _integration_to_tau_double(self, complex tau,
-                                            int number_of_terms):
+                                            int number_of_terms) noexcept:
         r"""
         Given a point `\tau` in the upper half plane
         this returns a complex number that is a close
@@ -2014,7 +2014,7 @@ cdef class ModularSymbolNumerical:
                                      Integer epsQ, Integer epsQQ,
                                     llong* wQ, llong* wQQ,
                                     int T, int prec, double eps,
-                                    int use_partials=2):
+                                    int use_partials=2) noexcept:
         r"""
         This is just a helper function for _from_r_to_rr_approx. In case
         the integral is evaluated directly this function is called.

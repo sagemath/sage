@@ -10,7 +10,7 @@
 
 from sage.structure.sage_object cimport SageObject
 
-cpdef check_default_category(default_category, category)
+cpdef check_default_category(default_category, category) noexcept
 
 cdef class CategoryObject(SageObject):
     cdef public dict _cached_methods
@@ -21,7 +21,7 @@ cdef class CategoryObject(SageObject):
     cdef object __weakref__
     cdef long _hash_value
 
-    cdef getattr_from_category(self, name)
+    cdef getattr_from_category(self, name) noexcept
 
-cpdef normalize_names(Py_ssize_t ngens, names)
+cpdef normalize_names(Py_ssize_t ngens, names) noexcept
 cpdef bint certify_names(names) except -1

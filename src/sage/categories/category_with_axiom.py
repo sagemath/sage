@@ -269,7 +269,7 @@ from the name of the category with axiom (see
 covers the following examples::
 
     sage: FiniteCoxeterGroups()
-    Category of finite coxeter groups
+    Category of finite Coxeter groups
     sage: FiniteCoxeterGroups() is CoxeterGroups().Finite()
     True
     sage: FiniteCoxeterGroups._base_category_class_and_axiom_origin

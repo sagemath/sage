@@ -988,13 +988,13 @@ class KnotInfoBase(Enum):
 
         h = self.homfly_polynomial()
         v, z = h.parent().gens()
-        hm  = h.subs(v=~v, z=-z)
+        hm = h.subs(v=~v, z=-z)
         if h != hm:
             return False
 
         k = self.kauffman_polynomial()
         a, z = k.parent().gens()
-        km  = k.subs(a=~a)
+        km = k.subs(a=~a)
         if k != km:
             return False
 
@@ -2067,7 +2067,7 @@ class KnotInfoBase(Enum):
         # on such series
         if self.is_knot():
             return True
-        S  = self.series(oriented=True)
+        S = self.series(oriented=True)
         hp = self.homfly_polynomial()
         Sl = S.list(homfly=hp)
         if len(Sl) == 1:
@@ -2343,10 +2343,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             sage: L6a = KnotInfoSeries(6, False, True); L6a
             Series of links L6a
         """
-        self._crossing_number   = crossing_number
-        self._is_knot           = is_knot
-        self._is_alternating    = is_alternating
-        self._name_unoriented   = name_unoriented
+        self._crossing_number = crossing_number
+        self._is_knot = is_knot
+        self._is_alternating = is_alternating
+        self._name_unoriented = name_unoriented
 
     @cached_method
     def list(self, oriented=False, comp=None, det=None, homfly=None):
@@ -2405,10 +2405,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return [L for L in l if L.num_components() == comp]
 
         # default case
-        is_knot  = self._is_knot
+        is_knot = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   = self._is_alternating
-        n_unori  = self._name_unoriented
+        is_alt = self._is_alternating
+        n_unori = self._name_unoriented
 
         res = []
         curr_n_unori = None
@@ -2425,10 +2425,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             else:
                 this_n_unori = K.name_unoriented()
                 if n_unori:
-                    if this_n_unori  != n_unori:
+                    if this_n_unori != n_unori:
                         continue
                     res.append(K)
-                elif this_n_unori  != curr_n_unori:
+                elif this_n_unori != curr_n_unori:
                     if curr_n_unori:
                         res.append(KnotInfoSeries(cross_nr, is_knot, is_alt, curr_n_unori))
                     curr_n_unori = this_n_unori
@@ -2576,10 +2576,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             sage: KnotInfoSeries(6, True, True)._name()
             'K6'
         """
-        is_knot  = self._is_knot
+        is_knot = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   = self._is_alternating
-        n_unori  = self._name_unoriented
+        is_alt = self._is_alternating
+        n_unori = self._name_unoriented
 
         alt = 'a'
         if not is_alt:

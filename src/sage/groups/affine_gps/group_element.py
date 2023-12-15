@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Elements of Affine Groups
 

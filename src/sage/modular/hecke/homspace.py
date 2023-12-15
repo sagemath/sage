@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Hom spaces between Hecke modules
 """
@@ -181,6 +182,7 @@ class HeckeModuleHomspace(HomsetWithBase):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: M = ModularSymbols(Gamma0(2), weight=12, sign=1)
             sage: S = M.cuspidal_subspace()
             sage: S.Hom(S).an_element()

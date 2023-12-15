@@ -22,7 +22,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
 
 
-cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
+cpdef Matrix_integer_dense moebius_matrix_fast(list positions) noexcept:
     """
     Compute the Möbius matrix of a poset by a specific triangular inversion.
 
@@ -61,7 +61,7 @@ cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
     for i in range(n):
         pos_lens[i] = len(positions[i])
         pos_array[i] = <int*> sig_malloc(pos_lens[i]*sizeof(int))
-        for jind,j in enumerate(positions[i]):
+        for jind, j in enumerate(positions[i]):
             pos_array[i][jind] = j
 
     for i in range(n - 1, -1, -1):
@@ -81,7 +81,7 @@ cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
     return A
 
 
-cpdef Matrix_integer_dense coxeter_matrix_fast(list positions):
+cpdef Matrix_integer_dense coxeter_matrix_fast(list positions) noexcept:
     """
     Compute the Coxeter matrix of a poset by a specific algorithm.
 
@@ -120,7 +120,7 @@ cpdef Matrix_integer_dense coxeter_matrix_fast(list positions):
     for i in range(n):
         pos_lens[i] = len(positions[i])
         pos_array[i] = <int*> sig_malloc(pos_lens[i]*sizeof(int))
-        for jind,j in enumerate(positions[i]):
+        for jind, j in enumerate(positions[i]):
             pos_array[i][jind] = j
 
     for i in range(n - 1, -1, -1):

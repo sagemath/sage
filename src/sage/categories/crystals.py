@@ -2082,7 +2082,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
         elif isinstance(on_gens, collections.abc.Sequence):
             if len(self._gens) != len(on_gens):
                 raise ValueError("invalid generator images")
-            d = {x: y for x, y in zip(self._gens, on_gens)}
+            d = dict(zip(self._gens, on_gens))
             f = lambda x: d[x]
         else:
             f = on_gens
@@ -2239,7 +2239,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
             return self._path_mg_cache[x]
 
         mg = set(self._path_mg_cache.keys())
-        visited = set([None, x])
+        visited = {None, x}
         index_set = self._cartan_type.index_set()
         todo = [x]
         ef = [[]]

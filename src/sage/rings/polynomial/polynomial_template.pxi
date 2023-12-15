@@ -29,7 +29,7 @@ from sage.interfaces.singular import singular as singular_default
 def make_element(parent, args):
     return parent(*args)
 
-cdef inline Polynomial_template element_shift(self, int n):
+cdef inline Polynomial_template element_shift(self, int n) noexcept:
      if not isinstance(self, Polynomial_template):
          if n > 0:
              error_msg = "Cannot shift %s << %n."%(self, n)
@@ -189,7 +189,7 @@ cdef class Polynomial_template(Polynomial):
         """
         return make_element, ((<Polynomial_template>self)._parent, (self.list(), False, self.is_gen()))
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         """
         EXAMPLES::
 
@@ -224,7 +224,7 @@ cdef class Polynomial_template(Polynomial):
         """
         celement_destruct(&self.x, (<Polynomial_template>self)._cparent)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -242,7 +242,7 @@ cdef class Polynomial_template(Polynomial):
         #assert(r._parent(pari(self) + pari(right)) == r)
         return r
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -276,7 +276,7 @@ cdef class Polynomial_template(Polynomial):
         #assert(r._parent(-pari(self)) == r)
         return r
 
-    cpdef _lmul_(self, Element left):
+    cpdef _lmul_(self, Element left) noexcept:
         """
         EXAMPLES::
 
@@ -322,7 +322,7 @@ cdef class Polynomial_template(Polynomial):
         celement_mul_scalar(&r.x, &(<Polynomial_template>self).x, left, (<Polynomial_template>self)._cparent)
         return r
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -409,7 +409,7 @@ cdef class Polynomial_template(Polynomial):
         #assert(t._parent(tp) == t)
         return r,s,t
 
-    cpdef _floordiv_(self, right):
+    cpdef _floordiv_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -444,7 +444,7 @@ cdef class Polynomial_template(Polynomial):
         celement_floordiv(&r.x, &(<Polynomial_template>self).x, &(<Polynomial_template>right).x, (<Polynomial_template>self)._cparent)
         return r
 
-    cpdef _mod_(self, other):
+    cpdef _mod_(self, other) noexcept:
         """
         EXAMPLES::
 
@@ -513,7 +513,7 @@ cdef class Polynomial_template(Polynomial):
         """
         return not celement_is_zero(&self.x, (<Polynomial_template>self)._cparent)
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         EXAMPLES::
 
@@ -731,7 +731,7 @@ cdef class Polynomial_template(Polynomial):
         """
         return Integer(celement_len(&self.x, (<Polynomial_template>self)._cparent)-1)
 
-    cpdef Polynomial truncate(self, long n):
+    cpdef Polynomial truncate(self, long n) noexcept:
         r"""
         Returns this polynomial mod `x^n`.
 

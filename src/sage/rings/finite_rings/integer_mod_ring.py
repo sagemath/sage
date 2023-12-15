@@ -19,13 +19,13 @@ the other direction.
     sage: s = GF(7)
     sage: r.has_coerce_map_from(s)
     False
-    sage: s.has_coerce_map_from(r)                                                      # needs sage.rings.finite_rings
+    sage: s.has_coerce_map_from(r)
     True
-    sage: s(1) + r(1)                                                                   # needs sage.rings.finite_rings
+    sage: s(1) + r(1)
     2
-    sage: parent(s(1) + r(1))                                                           # needs sage.rings.finite_rings
+    sage: parent(s(1) + r(1))
     Finite Field of size 7
-    sage: parent(r(1) + s(1))                                                           # needs sage.rings.finite_rings
+    sage: parent(r(1) + s(1))
     Finite Field of size 7
 
 We list the elements of `\ZZ/3\ZZ`::
@@ -67,7 +67,7 @@ from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
 import sage.rings.ring as ring
 import sage.rings.abc
-from . import integer_mod
+from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
 import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring

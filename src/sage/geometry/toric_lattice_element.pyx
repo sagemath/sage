@@ -223,7 +223,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         """
         return Vector_integer_dense.__hash__(self)
 
-    cpdef _act_on_(self, other, bint self_on_left):
+    cpdef _act_on_(self, other, bint self_on_left) noexcept:
         """
         Act on ``other``.
 
@@ -298,7 +298,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     # We need to override this function to prohibit default behaviour.
     # It seems to be called when right is in the same lattice as self, which
     # is wrong from our point of view.
-    cpdef _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right) noexcept:
         """
         Raise a ``TypeError`` exception.
 

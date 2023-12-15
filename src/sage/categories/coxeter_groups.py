@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Coxeter Groups
 """
@@ -41,9 +40,9 @@ class CoxeterGroups(Category_singleton):
     EXAMPLES::
 
         sage: C = CoxeterGroups(); C
-        Category of coxeter groups
+        Category of Coxeter groups
         sage: C.super_categories()
-        [Category of generalized coxeter groups]
+        [Category of generalized Coxeter groups]
 
         sage: W = C.example(); W
         The symmetric group on {0, ..., 3}
@@ -105,7 +104,7 @@ class CoxeterGroups(Category_singleton):
         EXAMPLES::
 
             sage: CoxeterGroups().super_categories()
-            [Category of generalized coxeter groups]
+            [Category of generalized Coxeter groups]
         """
         return [GeneralizedCoxeterGroups()]
 
@@ -633,8 +632,8 @@ class CoxeterGroups(Category_singleton):
             if not self.is_irreducible() or not self.is_well_generated():
                 raise ValueError("this method is available for irreducible, well-generated complex reflection groups")
             from sage.combinat.permutation import Permutations
-            return set(self.from_reduced_word(w)
-                       for w in Permutations(self.index_set()))
+            return {self.from_reduced_word(w)
+                    for w in Permutations(self.index_set())}
 
         def grassmannian_elements(self, side="right"):
             """
@@ -1061,7 +1060,7 @@ class CoxeterGroups(Category_singleton):
                 return Poset([[x], []])
             if not x.bruhat_le(y):
                 return Poset()
-            curlayer = set([y])
+            curlayer = {y}
             d = {}
             while curlayer:
                 nextlayer = set()
@@ -1077,7 +1076,7 @@ class CoxeterGroups(Category_singleton):
                             nextlayer.add(t)
                 curlayer = nextlayer
 
-            from sage.graphs.graph import DiGraph
+            from sage.graphs.digraph import DiGraph
             return Poset(DiGraph(d, format='dict_of_lists',
                                  data_structure='static_sparse'),
                          cover_relations=True,
@@ -1163,7 +1162,7 @@ class CoxeterGroups(Category_singleton):
                             else:
                                 d.append((u, v))
 
-            from sage.graphs.graph import DiGraph
+            from sage.graphs.digraph import DiGraph
             return DiGraph(d)
 
         def canonical_representation(self):
@@ -1263,8 +1262,8 @@ class CoxeterGroups(Category_singleton):
                         tester.assertEqual(opi[i](w), w.apply_simple_projection(i, side=side, length_increasing=False))
                         tester.assertTrue(pi[i](w).has_descent(i, side=side))
                         tester.assertFalse(opi[i](w).has_descent(i, side=side))
-                        tester.assertEqual(set([pi[i](w), opi[i](w)]),
-                                           set([w, w.apply_simple_reflection(i, side=side)]))
+                        tester.assertEqual({pi[i](w), opi[i](w)},
+                                           {w, w.apply_simple_reflection(i, side=side)})
 
         def _test_has_descent(self, **options):
             """
