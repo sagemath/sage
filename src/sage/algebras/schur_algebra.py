@@ -343,7 +343,7 @@ class SchurAlgebra(CombinatorialFreeModule):
         # Find s in I(n,r) such that (p,s) ~ (i,j) and (s,q) ~ (k,l)
         for e in e_pq:
             Z_ijklpq = self.base_ring().zero()
-            for s in Permutations([xx for xx in j]):
+            for s in Permutations(list(j)):
                 if (schur_representative_from_index(e[0], s) == e_ij
                         and schur_representative_from_index(s, e[1]) == e_kl):
                     Z_ijklpq += self.base_ring().one()

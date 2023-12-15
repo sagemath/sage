@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Poor Man's map
 """

@@ -1044,6 +1044,11 @@ REFERENCES:
             *Guide to using plantri*, version 5.0, 2016.
             http://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt
 
+.. [BM2021] Alin Bostan and Ryuhei Mori,
+            *A simple and fast algorithm for computing the N-th term of a linearly recurrent sequence*,
+            Proceedings of Symposium on Simplicity in Algorithms (SOSA), pp. 118--132, 2021.
+            :doi:`10.1137/1.9781611976496.14`
+
 .. [BMBFLR2008] A. Blondin-Massé, S. Brlek, A. Frosini, S. Labbé,
                 S. Rinaldi, *Reconstructing words from a fixed
                 palindromic length sequence*, Proc. TCS 2008, 5th IFIP
