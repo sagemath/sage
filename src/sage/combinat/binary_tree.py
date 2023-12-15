@@ -748,7 +748,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t1.graph(with_leaves=False).edges(sort=True)
             [(0, 1, None), (0, 2, None), (2, 3, None), (2, 4, None)]
         """
-        from sage.graphs.graph import DiGraph
+        from sage.graphs.digraph import DiGraph
 
         if with_leaves:   # We want leaves and nodes.
 

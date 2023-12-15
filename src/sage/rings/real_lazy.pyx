@@ -49,9 +49,13 @@ from sage.rings.integer import Integer
 
 cdef QQ, RR, CC, RealField, ComplexField
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR, RealField
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.cc import CC
+
+try:
+    from sage.rings.real_mpfr import RR, RealField
+    from sage.rings.complex_mpfr import ComplexField
+    from sage.rings.cc import CC
+except ImportError:
+    pass
 
 cdef _QQx = None
 
@@ -814,7 +818,6 @@ cdef class LazyFieldElement(FieldElement):
         try:
             return self.eval(complex)
         except Exception:
-            from .complex_mpfr import ComplexField
             return complex(self.eval(ComplexField(53)))
 
     cpdef eval(self, R) noexcept:

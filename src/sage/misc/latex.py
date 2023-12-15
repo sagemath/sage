@@ -651,6 +651,7 @@ def latex_extra_preamble():
         \newcommand{\SL}{\mathrm{SL}}
         \newcommand{\PSL}{\mathrm{PSL}}
         \newcommand{\lcm}{\mathop{\operatorname{lcm}}}
+        \newcommand{\dist}{\mathrm{dist}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
     """
