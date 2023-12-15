@@ -17,7 +17,7 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.FreeSpike <sage.matroids.database.brettell_matroids.FreeSpike>`
     - :func:`matroids.CompleteGraphic <sage.matroids.database.various_matroids.CompleteGraphic>`
     - :func:`matroids.PG <sage.matroids.database.oxley_matroids.PG>`
-    - :func:`matroids.TippedFreeSpike <sage.matroids.database.brettell_matroids.TippedFreeSpike>`
+    - :func:`matroids.Spike <sage.matroids.database.oxley_matroids.Spike>`
     - :func:`matroids.Uniform <sage.matroids.database.oxley_matroids.Uniform>`
     - :func:`matroids.Wheel <sage.matroids.database.oxley_matroids.Wheel>`
     - :func:`matroids.Whirl <sage.matroids.database.oxley_matroids.Whirl>`
@@ -72,8 +72,7 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.catalog.T12 <sage.matroids.database.oxley_matroids.T12>`
     - :func:`matroids.catalog.PG23 <sage.matroids.database.oxley_matroids.PG23>`
 
-    - :func:`matroids.catalog.relaxedNonFano <sage.matroids.database.brettell_matroids.relaxedNonFano>`
-    - :func:`matroids.catalog.tippedFree3spike <sage.matroids.database.brettell_matroids.tippedFree3spike>`
+    - :func:`matroids.catalog.RelaxedNonFano <sage.matroids.database.brettell_matroids.RelaxedNonFano>`
     - :func:`matroids.catalog.AG23minusDY <sage.matroids.database.brettell_matroids.AG23minusDY>`
     - :func:`matroids.catalog.TQ8 <sage.matroids.database.brettell_matroids.TQ8>`
     - :func:`matroids.catalog.P8p <sage.matroids.database.brettell_matroids.P8p>`
@@ -129,7 +128,7 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.catalog.FK12 <sage.matroids.database.brettell_matroids.FK12>`
     - :func:`matroids.catalog.KB12 <sage.matroids.database.brettell_matroids.KB12>`
     - :func:`matroids.catalog.AF12 <sage.matroids.database.brettell_matroids.AF12>`
-    - :func:`matroids.catalog.nestOfTwistedCubes <sage.matroids.database.brettell_matroids.nestOfTwistedCubes>`
+    - :func:`matroids.catalog.NestOfTwistedCubes <sage.matroids.database.brettell_matroids.NestOfTwistedCubes>`
     - :func:`matroids.catalog.XY13 <sage.matroids.database.brettell_matroids.XY13>`
     - :func:`matroids.catalog.N3 <sage.matroids.database.brettell_matroids.N3>`
     - :func:`matroids.catalog.N3pp <sage.matroids.database.brettell_matroids.N3pp>`

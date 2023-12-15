@@ -1,14 +1,9 @@
 r"""
 Documentation for the matroids in the catalog
 
-This module contains implementations for many of the functions accessible
-through :mod:`matroids. <sage.matroids.matroids_catalog>` and
-:mod:`matroids.named_matroids. <sage.matroids.matroids_catalog>`
-(type those lines in Sage and hit ``tab`` for a list).
-
-The docstrings include educational information about each named matroid with
-the hopes that this class can be used as a reference. However, for a more
-comprehensive list of properties we refer to the appendix of [Oxl2011]_.
+This module contains implementations of Brettell's interesting matroids,
+accessible through :mod:`matroids.catalog. <sage.matroids.catalog>` (type
+and hit ``tab`` for a list).
 
 AUTHORS:
 
@@ -18,6 +13,7 @@ AUTHORS:
 
 Functions
 =========
+
 """
 from sage.matrix.constructor import Matrix
 from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
@@ -25,87 +21,45 @@ from sage.matroids.linear_matroid import TernaryMatroid, QuaternaryMatroid
 from sage.matroids.database.oxley_matroids import Uniform
 from sage.rings.finite_rings.finite_field_constructor import GF
 
-# 2r elements:
-
-
-def FreeSpike(r):
-    """
-    Tipless rank-r free spike.
-    When r=3, is isomorphic to U_{3,6};
-    when r=4, is the unique tightening of the Vamos matroid.
-
-    EXAMPLES::
-        sage: M = matroids.FreeSpike(3)
-        sage: M.is_isomorphic(matroids.Uniform(3,6))
-        True
-        sage: M = matroids.FreeSpike(8)
-        sage: M.is_3connected()
-        True
-    """
-    if r == 3:
-        return Uniform(3, 6)
-    elif r < 3:
-        raise AttributeError("Tipless free spike must have rank at least 3.")
-
-    E = range(1, 2 * r + 1)
-    circs = [
-        [2 * i + 1, 2 * i + 2, 2 * j + 1, 2 * j + 2]
-        for i in range(r)
-        for j in range(i + 1, r)
-    ]
-    CC = {3: circs, r: [E]}
-    spike = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    spike.rename("(Tipless) rank-" + str(r) + " free spike: " + repr(spike))
-    return spike
-
-
-def TippedFreeSpike(r):
-    """
-    Tipped rank-r free spike.
-    """
-    if r == 3:
-        return TippedFree3spike()
-    elif r < 3:
-        raise AttributeError("Tipped free spike must have rank at least 3.")
-
-    E = range(2 * r + 1)
-    tris = [[0, 2 * i + 1, 2 * i + 2] for i in range(r)]
-    planes = [
-        [2 * i + 1, 2 * i + 2, 2 * j + 1, 2 * j + 2]
-        for i in range(r)
-        for j in range(i + 1, r)
-    ]
-    CC = {2: tris, 3: planes, r: [E]}
-    spike = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    spike.rename("Tipped rank-" + str(r) + " free spike: " + repr(spike))
-    return spike
-
 
 # 7 elements:
 
 
 def RelaxedNonFano():
     """
-    An excluded minor for 2-regular matroids.
-    UPF is K_2.
+    Return the relaxed NonFano matroid
+
+    An excluded minor for `2`-regular matroids. UPF is `K_2`.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.RelaxedNonFano()
+        sage: M.is_valid()
+        True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
     A = Matrix(gf4, [[1, 1, 0, 1], [1, 0, 1, 1], [0, 1, w, 1]])
-    relaxedNonFano = QuaternaryMatroid(reduced_matrix=A)
-    relaxedNonFano.rename("F7=: " + repr(relaxedNonFano))
-    return relaxedNonFano
+    RelaxedNonFano = QuaternaryMatroid(reduced_matrix=A)
+    RelaxedNonFano.rename("F7=: " + repr(RelaxedNonFano))
+    return RelaxedNonFano
 
 
 def TippedFree3spike():
     """
-    Unique 3-connected extension of U_{3,6}.
-    Stabilizer for K_2.
+    Return the tipped free `3`-spike
+
+    Unique 3-connected extension of
+    :func:`U36 <sage.matroids.database.oxley_matroids.U36>`. Stabilizer for
+    `K_2`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.TippedFree3spike()
         sage: M.has_minor(matroids.Uniform(3,6))
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -121,9 +75,19 @@ def TippedFree3spike():
 
 
 def AG23minusDY():
-    """
-    The matroid obtained from a AG(2,3)\\e by a single delta-Y exchange
-    on a triangle. An excluded minor for near-regular matroids. UPF is S.
+    r"""
+    Return the matroid `AG23minusDY`
+
+    The matroid obtained from a `AG(2, 3)\setminus e` by a single `\delta-Y`
+    exchange on a triangle. An excluded minor for near-regular matroids. UPF
+    is `S`.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.AG23minusDY()
+        sage: M.is_valid()
+        True
+
     """
     A = Matrix(GF(3), [[1, 1, 1, 1], [1, 0, 1, 2], [2, 0, 1, 2], [2, 1, 1, 0]])
     dy = TernaryMatroid(reduced_matrix=A)
@@ -133,13 +97,17 @@ def AG23minusDY():
 
 def TQ8():
     """
-    An excluded minor for 2-regular matroids.
-    UPF is K_2. Self-dual.
+    Return the matroid `TQ8`
+
+    An excluded minor for `2`-regular matroids.
+    UPF is `K_2`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.TQ8()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -155,13 +123,18 @@ def TQ8():
 
 def P8p():
     """
-    P8-: obtained by relaxing one of the disjoint circuit-hyperplanes of P8.
-    An excluded minor for 2-regular matroids. UPF is K_2. Self-dual.
+    Return the matroid `P8^-`
+
+    `P8^-` is obtained by relaxing one of the disjoint circuit-hyperplanes of
+    :func:`P8 <sage.matroids.database.oxley_matroids.P8>`. An excluded minor
+    for `2`-regular matroids. UPF is `K_2`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.P8p()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -177,14 +150,18 @@ def P8p():
 
 def KP8():
     """
-    An excluded minor for K_2-representable matroids.
-    UPF is G. Self-dual. Uniquely GF(5)-representable.
-    (An excluded minor for H_2-representable matroids.)
+    Return the matroid `KP8`
+
+    An excluded minor for `K_2`-representable matroids.
+    UPF is `G`. Self-dual. Uniquely `GF(5)`-representable.
+    (An excluded minor for `H_2`-representable matroids.)
 
     EXAMPLES::
+
         sage: M = matroids.catalog.KP8()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -200,14 +177,18 @@ def KP8():
 
 def Sp8():
     """
-    An excluded minor for G- and K_2-representable matroids.
-    UPF is U_1^(2). Self-dual.
-    (An excluded minor for H_2- and GF(5)-representable matroids.)
+    Return the matroid `Sp8`
+
+    An excluded minor for `G`- and `K_2`-representable matroids.
+    UPF is `U_1^{(2)}`. Self-dual.
+    (An excluded minor for `H_2`- and `GF(5)`-representable matroids.)
 
     EXAMPLES::
+
         sage: M = matroids.catalog.Sp8()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -223,14 +204,18 @@ def Sp8():
 
 def Sp8pp():
     """
-    An excluded minor for G- and K_2-representable matroids.
-    UPF is (GF(2)(a,b),<a,b,a+1,b+1,ab+a+b>). Self-dual.
-    (An excluded minor for H_2- and GF(5)-representable matroids.)
+    Return the matroid `Sp8=`
+
+    An excluded minor for `G`- and `K_2`-representable matroids.
+    UPF is `(GF(2)(a,b),<a,b,a+1,b+1,ab+a+b>)`. Self-dual.
+    (An excluded minor for `H_2`- and `GF(5)`-representable matroids.)
 
     EXAMPLES::
+
         sage: M = matroids.catalog.Sp8pp()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -244,14 +229,18 @@ def Sp8pp():
 
 def LP8():
     """
-    An excluded minor for G- and K_2-representable matroids.
-    Self-dual. UPF is W.
-    (Also an excluded minor for H_2- and GF(5)-representable matroids.)
+    Return the matroid `LP8`
+
+    An excluded minor for `G`- and `K_2`-representable matroids.
+    Self-dual. UPF is `W`.
+    (Also an excluded minor for `H_2`- and `GF(5)`-representable matroids.)
 
     EXAMPLES::
+
         sage: M = matroids.catalog.LP8()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -266,16 +255,19 @@ def LP8():
 
 
 def WQ8():
-    """
-    An excluded minor for G-, K_2-, H_4-, and GF(5)-representable matroids.
-    Self-dual.
-    UPF is (Z[zeta,a],<zeta,a-zeta>) where zeta is solution to x^2-x+1 = 0
-    and a is an indeterminate.
+    r"""
+    Return the matroid `WQ8`
+
+    An excluded minor for `G`, `K_2`, `H_4`, and `GF(5)`-representable
+    matroids. Self-dual. UPF is `(Z[\zeta,a], <\zeta,a-\zeta>)` where `\zeta`
+    is solution to `x^2-x+1 = 0` and `a` is an indeterminate.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.WQ8()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -294,12 +286,14 @@ def WQ8():
 
 def BB9():
     """
-    An excluded minor for K_2-representable matroids, and a restriction of the
-    Betsy Ross matroid.
-    The UPF is G. Uniquely GF(5)-representable.
-    (An excluded minor for H_2-representable matroids.)
+    Return the matroid `BB9`
+
+    An excluded minor for `K_2`-representable matroids, and a restriction of
+    the Betsy Ross matroid. The UPF is `G`. Uniquely `GF(5)`-representable.
+    (An excluded minor for `H_2`-representable matroids.)
 
     EXAMPLES::
+
         sage: BB = matroids.catalog.BB9()
         sage: BR = matroids.catalog.BetsyRoss()
         sage: for M in BB.extensions(): # long time
@@ -308,6 +302,7 @@ def BB9():
         ....:             print(True)
         True
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -325,12 +320,16 @@ def BB9():
 
 def TQ9():
     """
-    An excluded minor for K_2-representable matroids, and
-    a single-element extension of TQ8.
-    The UPF is G. Uniquely GF(5)-representable.
-    (An excluded minor for H_2-representable matroids.)
+    Return the matroid `TQ9`
+
+    An excluded minor for `K_2`-representable matroids, and
+    a single-element extension of
+    :func:`TQ8 <sage.matroids.database.brettell_matroids.TQ8>`.
+    The UPF is `G`. Uniquely `GF(5)`-representable.
+    (An excluded minor for `H_2`-representable matroids.)
 
     EXAMPLES::
+
         sage: TQ8 = matroids.catalog.TQ8()
         sage: TQ9 = matroids.catalog.TQ9()
         sage: for M in TQ8.extensions():
@@ -338,6 +337,7 @@ def TQ9():
         ....:         print(True)
         ....:         break
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -356,12 +356,16 @@ def TQ9():
 
 def TQ9p():
     """
-    An excluded minor for G- and K_2-representable matroids, and
-    a single-element extension of TQ8.
-    UPF is U_1^(2).
-    (An excluded minor for H_2- and GF(5)-representable matroids.)
+    Return the matroid `TQ9^-`
+
+    An excluded minor for `G`- and `K_2`-representable matroids, and
+    a single-element extension of
+    :func:`TQ8 <sage.matroids.database.brettell_matroids.TQ8>`. UPF is
+    `U_1^{(2)}`. (An excluded minor for `H_2`- and
+    `GF(5)`-representable matroids.)
 
     EXAMPLES::
+
         sage: TQ8 = matroids.catalog.TQ8()
         sage: TQ9p = matroids.catalog.TQ9p()
         sage: for M in TQ8.extensions():
@@ -369,6 +373,7 @@ def TQ9p():
         ....:         print(True)
         ....:         break
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -389,9 +394,19 @@ def TQ9p():
 
 
 def M8591():
-    """
-    An excluded minor for K_2-representable matroids.
-    A Y-delta exchange on the unique triad gives A_9. The UPF is P_4.
+    r"""
+    Return the matroid `M8591`
+
+    An excluded minor for `K_2`-representable matroids.
+    A `Y-\delta` exchange on the unique triad gives
+    :func:`A9 <sage.matroids.database.brettell_matroids.A9>`. The UPF is `P_4`.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.M8591()
+        sage: M.is_valid()
+        True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -408,13 +423,16 @@ def M8591():
 
 def PP9():
     """
-    An excluded minor for K_2-representable matroids.
-    A single-element extension of P8-.
-    The UPF is P_4. Has a P8- minor (delete z).
-    Uniquely GF(5)-representable.
-    (An excluded minor for H_2-representable matroids.)
+    Return the matroid `PP9`
+
+    An excluded minor for `K_2`-representable matroids. A single-element
+    extension of `P8^-`. The UPF is `P_4`. Has a
+    :func:`P8p <sage.matroids.database.brettell_matroids.P8p>`-minor (delete
+    `z`). Uniquely `GF(5)`-representable. (An excluded minor for
+    `H_2`-representable matroids.)
 
     EXAMPLES::
+
         sage: P8p = matroids.catalog.P8p()
         sage: PP9 = matroids.catalog.PP9()
         sage: for M in P8p.extensions():
@@ -425,6 +443,7 @@ def PP9():
         sage: M = PP9.delete('z')
         sage: M.is_isomorphic(P8p)
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -443,12 +462,22 @@ def PP9():
 
 
 def BB9gDY():
-    """
-    An excluded minor for K_2-representable matroids. The UPF is G.
-    In a DY*-equivalence class of 4 matroids, one of which can be obtained
-    from BB9 by a segment-cosegment exchange on {a,d,i,j}.
-    Uniquely GF(5)-representable.
-    (An excluded minor for H_2-representable matroids.)
+    r"""
+    Return the matroid `BB9gDY`
+
+    An excluded minor for `K_2`-representable matroids. The UPF is `G`. In a
+    `DY^*`-equivalence class of 4 matroids, one of which can be obtained from
+    :func:`BB9 <sage.matroids.database.brettell_matroids.BB9>` by a
+    segment-cosegment exchange on `\{a,d,i,j\}`. Uniquely
+    `GF(5)`-representable. (An excluded minor for `H_2`-representable
+    matroids.)
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.BB9gDY()
+        sage: M.is_valid()
+        True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -472,9 +501,18 @@ def BB9gDY():
 
 def A9():
     """
-    An excluded minor for K_2-representable matroids.
-    The UPF is P_4. Uniquely GF(5)-representable.
-    (An excluded minor for H_2-representable matroids.)
+    Return the matroid `A9`
+
+    An excluded minor for `K_2`-representable matroids.
+    The UPF is `P_4`. Uniquely `GF(5)`-representable.
+    (An excluded minor for `H_2`-representable matroids.)
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.A9()
+        sage: M.is_valid()
+        True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -492,9 +530,18 @@ def A9():
 
 def FN9():
     """
-    An excluded minor for G- and K_2-representable matroids.
-    In a DY*-equivalence class of 10 matroids. UPF is U_1^(2).
-    (An excluded minor for H_2- and GF(5)-representable matroids.)
+    Return the matroid `FN9`
+
+    An excluded minor for `G`- and `K_2`-representable matroids.
+    In a `DY^*`-equivalence class of `10` matroids. UPF is `U_1^{(2)}`.
+    (An excluded minor for `H_2`- and `GF(5)`-representable matroids.)
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.FN9()
+        sage: M.is_valid()
+        True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -516,9 +563,18 @@ def FN9():
 
 def FX9():
     """
-    An excluded minor for G- and K_2-representable matroids.
-    UPF is (Q(a,b), <-1,a,b,a-1,b-1,a-b,a+b,a+b-2,a+b-2ab>).
-    (An excluded minor for H_2- and GF(5)-representable matroids.)
+    Return the matroid `FX9`
+
+    An excluded minor for `G`- and `K_2`-representable matroids.
+    UPF is `(Q(a,b), <-1,a,b,a-1,b-1,a-b,a+b,a+b-2,a+b-2ab>)`.
+    (An excluded minor for `H_2`- and `GF(5)`-representable matroids.)
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.FX9()
+        sage: M.is_valid()
+        True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -538,16 +594,21 @@ def FX9():
 
 def KR9():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids.)
-    In a DY-equivalence class of 4 matroids. Has a KP8-minor (delete 8).
-    UPF is GF(4).
+    Return the matroid `KR9`
+
+    An excluded minor for `G`-representable matroids (and
+    `GF(5)`-representable matroids.) In a `DY`-equivalence class of `4`
+    matroids. Has a
+    :func:`KP8 <sage.matroids.database.brettell_matroids.KP8>`-minor (delete
+    `8`). UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: KR9 = matroids.catalog.KR9()
         sage: KP8 = matroids.catalog.KP8()
         sage: KP8.is_isomorphic(KR9.delete(8))
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -569,11 +630,17 @@ def KR9():
 
 def KQ9():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids.)
-    Has a TQ8-minor (delete 6) and a KP8-minor (delete 8). UPF is GF(4).
+    Return the matroid `KQ9`
+
+    An excluded minor for `G`-representable matroids (and
+    `GF(5)`-representable matroids.) Has a
+    :func:`TQ8 <sage.matroids.database.brettell_matroids.TQ8>`-minor`
+    (delete `6`) and a
+    :func:`KP8 <sage.matroids.database.brettell_matroids.KP8>`-minor
+    (delete `8`). UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: KQ9 = matroids.catalog.KQ9()
         sage: TQ8 = matroids.catalog.TQ8()
         sage: TQ8.is_isomorphic(KQ9.delete(6))
@@ -581,6 +648,7 @@ def KQ9():
         sage: KP8 = matroids.catalog.KP8()
         sage: KP8.is_isomorphic(KQ9.delete(8))
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -605,16 +673,20 @@ def KQ9():
 
 def UG10():
     """
-    An excluded minor for K_2- and P_4-representable matroids. Self-dual.
-    An excluded minor for H_3- and H_2-representable matroids.
-    Uniquely GF(5)-representable.
-    Although not P_4-representable, it is O-representable,
+    Return the matroid `UG10`
+
+    An excluded minor for `K_2`- and `P_4`-representable matroids. Self-dual.
+    An excluded minor for `H_3`- and `H_2`-representable matroids.
+    Uniquely `GF(5)`-representable.
+    Although not `P_4`-representable, it is `O`-representable,
     and hence is representable over all fields of size at least four.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UG10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -635,13 +707,17 @@ def UG10():
 
 def FF10():
     """
-    An excluded minor for K_2-representable matroids.
-    UPF is P_4. Self-dual.
+    Return the matroid `FF10`
+
+    An excluded minor for `K_2`-representable matroids.
+    UPF is `P_4`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FF10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -664,13 +740,17 @@ def FF10():
 
 def GP10():
     """
-    An excluded minor for K_2-representable matroids.
-    UPF is G. Self-dual.
+    Return the matroid `GP10`
+
+    An excluded minor for `K_2`-representable matroids.
+    UPF is `G`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.GP10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -691,14 +771,18 @@ def GP10():
 
 def FZ10():
     """
-    An excluded minor for K_2- and G-representable matroids
-    (and H2- and GF(5)-representable matroids).
-    UPF is W. Not self-dual.
+    Return the matroid `FZ10`
+
+    An excluded minor for `K_2`- and `G`-representable matroids
+    (and `H_2`- and `GF(5)`-representable matroids).
+    UPF is `W`. Not self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FZ10()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -719,14 +803,18 @@ def FZ10():
 
 def UQ10():
     """
-    An excluded minor for K_2- and G-representable matroids
-    (and H2- and GF(5)-representable matroids).
-    Self-dual. UPF is (Q(a,b), <-1,a,b,a-1,b-1,a-b,a+b,a+1,ab+b-1,ab-b+1>)
+    Return the matroid `UQ10`
+
+    An excluded minor for `K_2`- and `G`-representable matroids
+    (and `H_2`- and `GF(5)`-representable matroids).
+    Self-dual. UPF is `(Q(a,b), <-1,a,b,a-1,b-1,a-b,a+b,a+1,ab+b-1,ab-b+1>)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UQ10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -747,14 +835,18 @@ def UQ10():
 
 def FP10():
     """
-    An excluded minor for K_2- and G-representable matroids
-    (and H2- and GF(5)-representable matroids).
-    UPF is U_1^(2). Self-dual.
+    Return the matroid `FP10`
+
+    An excluded minor for `K_2`- and `G`-representable matroids
+    (and `H_2`- and `GF(5)`-representable matroids).
+    UPF is `U_1^{(2)}`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FP10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -775,16 +867,21 @@ def FP10():
 
 def TQ10():
     """
-    An excluded minor for K_2-representable matroids. UPF is G. Self-dual.
-    Has TQ8 as a minor (delete 'd' and contract 'c').
+    Return the matroid `TQ10`
+
+    An excluded minor for `K_2`-representable matroids. UPF is `G`. Self-dual.
+    Has :func:`TQ8 <sage.matroids.database.brettell_matroids.TQ8>` as a minor
+    (delete 'd' and contract 'c').
 
     EXAMPLES::
+
         sage: M = matroids.catalog.TQ10()
         sage: M.is_isomorphic(M.dual())
         True
         sage: N = M.delete('d').contract('c')
         sage: N.is_isomorphic(matroids.catalog.TQ8())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -807,12 +904,17 @@ def TQ10():
 
 def FY10():
     """
-    An excluded minor for P_4-representable matroids. UPF is G. Not self-dual.
+    Return the matroid `FY10`
+
+    An excluded minor for `P_4`-representable matroids. UPF is `G`. Not
+    self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FY10()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -833,11 +935,17 @@ def FY10():
 
 def PP10():
     """
-    An excluded minor for P_4-representable matroids. UPF is U_1^(2).
-    Has a TQ8-minor (e.g. delete 'a' and contract 'e')
-    and a PP9 (and hence P8p) minor (contract 'x')
+    Return the matroid `PP10`
+
+    An excluded minor for `P_4`-representable matroids. UPF is `U_1^{(2)}`.
+    Has a :func:`TQ8 <sage.matroids.database.brettell_matroids.TQ8>`-minor
+    (e.g. delete 'a' and contract 'e') and a
+    :func:`PP9 <sage.matroids.database.brettell_matroids.PP9>` (and hence
+    :func:`P8p <sage.matroids.database.brettell_matroids.P8p>`) minor
+    (contract 'x').
 
     EXAMPLES::
+
         sage: PP10 = matroids.catalog.PP10()
         sage: M = PP10.delete('a').contract('e')
         sage: M.is_isomorphic(matroids.catalog.TQ8())
@@ -845,6 +953,7 @@ def PP10():
         sage: M = PP10.contract('x')
         sage: M.is_isomorphic(matroids.catalog.PP9())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -868,12 +977,16 @@ def PP10():
 
 def FU10():
     """
-    An excluded minor for P_4-representable matroids. UPF is G. Self-dual.
+    Return the matroid `FU10`
+
+    An excluded minor for `P_4`-representable matroids. UPF is `G`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FU10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -894,14 +1007,19 @@ def FU10():
 
 def D10():
     """
-    An excluded minor for P_4-representable matroids.
-    UPF is G. Has a TQ8-minor.
-    In a DY*-equivalence class of 13 matroids.
+    Return the matroid `D10`
+
+    An excluded minor for `P_4`-representable matroids.
+    UPF is `G`. Has a
+    :func:`TQ8 <sage.matroids.database.brettell_matroids.TQ8>`-minor.
+    In a `DY^*`-equivalence class of `13` matroids.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.D10()
         sage: M.has_minor(matroids.catalog.TQ8())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -921,14 +1039,18 @@ def D10():
 
 def UK10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Not self-dual. UPF is GF(4).
+    Return the matroid `UK10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Not self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UK10()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -949,14 +1071,18 @@ def UK10():
 
 def PK10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Not self-dual. UPF is GF(4).
+    Return the matroid `PK10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Not self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.PK10()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -977,14 +1103,18 @@ def PK10():
 
 def GK10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Not self-dual. UPF is GF(4).
+    Return the matroid `GK10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Not self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.GK10()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1005,14 +1135,18 @@ def GK10():
 
 def FT10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Self-dual. UPF is GF(4).
+    Return the matroid `FT10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FT10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1033,14 +1167,18 @@ def FT10():
 
 def TK10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Self-dual. UPF is GF(4).
+    Return the matroid `TK10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.TK10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1061,14 +1199,18 @@ def TK10():
 
 def KT10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Self-dual. UPF is GF(4).
+    Return the matroid `KT10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.KT10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1089,14 +1231,18 @@ def KT10():
 
 def TU10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Self-dual. UPF is GF(4).
+    Return the matroid `TU10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.TU10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1117,14 +1263,18 @@ def TU10():
 
 def UT10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Self-dual. UPF is I.
+    Return the matroid `UT10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Self-dual. UPF is `I`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UT10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1145,14 +1295,18 @@ def UT10():
 
 def FK10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Self-dual. UPF is GF(4).
+    Return the matroid `FK10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FK10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1173,14 +1327,18 @@ def FK10():
 
 def KF10():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Self-dual. UPF is GF(4).
+    Return the matroid `KF10`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.KF10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1204,15 +1362,20 @@ def KF10():
 
 def FA11():
     """
-    An excluded minor for P_4-representable matroids.
-    UPF is PT. In a DY*-equivalence class of 6 matroids.
-    Has a FF10-minor (delete 10).
+    Return the matroid `FA11`
+
+    An excluded minor for `P_4`-representable matroids. UPF is `PT`. In a
+    `DY^*`-equivalence class of `6` matroids. Has an
+    :func:`FF10 <sage.matroids.database.brettell_matroids.FF10>`-minor (delete
+    `10`).
 
     EXAMPLES::
+
         sage: FA11 = matroids.catalog.FA11()
         sage: FF10 = matroids.catalog.FF10()
         sage: FF10.is_isomorphic(FA11.delete(10))
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1238,13 +1401,17 @@ def FA11():
 
 def FR12():
     """
-    An excluded minor for K_2-representable matroids.
-    UPF is P_4. Self-dual.
+    Return the matroid `FR12`
+
+    An excluded minor for `K_2`-representable matroids.
+    UPF is `P_4`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FR12()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1266,13 +1433,17 @@ def FR12():
 
 def GP12():
     """
-    An excluded minor for K_2-representable matroids.
-    UPF is G. Not self-dual.
+    Return the matroid `GP12`
+
+    An excluded minor for `K_2`-representable matroids.
+    UPF is `G`. Not self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.GP12()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1294,11 +1465,16 @@ def GP12():
 
 def FQ12():
     """
-    An excluded minor for P_4-representable matroids.
-    UPF is PT. Has a PP9-minor (contract 4 and 7, delete 6)
-    and FF10-minor (contract 'c' and delete 'd').
+    Return the matroid `FQ12`
+
+    An excluded minor for `P_4`-representable matroids. UPF is `PT`. Has` a
+    :func:`PP9 <sage.matroids.database.brettell_matroids.PP9>`-minor (contract
+    `4` and `7`, delete `6`) and
+    :func:`FF10 <sage.matroids.database.brettell_matroids.FF10>`-minor
+    (contract 'c' and delete 'd').
 
     EXAMPLES::
+
         sage: FQ12 = matroids.catalog.FQ12()
         sage: PP9 = matroids.catalog.PP9()
         sage: PP9.is_isomorphic(FQ12.contract([4,7]).delete(6))
@@ -1306,6 +1482,7 @@ def FQ12():
         sage: FF10 = matroids.catalog.FF10()
         sage: FF10.is_isomorphic(FQ12.contract('c').delete('d'))
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1329,17 +1506,22 @@ def FQ12():
 
 def FF12():
     """
-    An excluded minor for P_4-representable matroids.
-    Self-dual. UPF is (Q(a,b),<-1,a,b,a-2,a-1,a+1,b-1,ab-a+b,ab-a-b,ab-a-2b>)
-    Has a FF10-minor (contract 'c' and delete 'd').
+    Return the matroid `FF12`
+
+    An excluded minor for `P_4`-representable matroids. Self-dual. UPF is
+    `(Q(a,b),<-1,a,b,a-2,a-1,a+1,b-1,ab-a+b,ab-a-b,ab-a-2b>)`. Has an
+    :func:`FF10 <sage.matroids.database.brettell_matroids.FF10>`-minor
+    (contract 'c' and delete 'd').
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FF12()
         sage: M.is_isomorphic(M.dual())
         True
         sage: FF10 = matroids.catalog.FF10()
         sage: FF10.is_isomorphic(M.contract('c').delete('d'))
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1363,14 +1545,18 @@ def FF12():
 
 def FZ12():
     """
-    An excluded minor for K_2- and G-representable matroids
-    (and H2- and GF(5)-representable matroids).
-    UPF is W. Not self-dual.
+    Return the matroid `FZ12`
+
+    An excluded minor for `K_2`- and `G`-representable matroids
+    (and `H_2`- and `GF(5)`-representable matroids).
+    UPF is `W`. Not self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FZ12()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1392,14 +1578,18 @@ def FZ12():
 
 def UQ12():
     """
-    An excluded minor for K_2- and G-representable matroids
-    (and H2- and GF(5)-representable matroids).
-    UPF is P_pappus. Self-dual.
+    Return the matroid `UQ12`
+
+    An excluded minor for `K_2` and `G`-representable matroids
+    (and `H2` and `GF(5)`-representable matroids).
+    UPF is `P_{pappus}`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UQ12()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1421,14 +1611,18 @@ def UQ12():
 
 def FP12():
     """
-    An excluded minor for K_2- and G-representable matroids
-    (and H2- and GF(5)-representable matroids).
-    UPF is W. Self-dual.
+    Return the matroid `FP12`
+
+    An excluded minor for `K_2`- and `G`-representable matroids
+    (and `H_2`- and `GF(5)`-representable matroids).
+    UPF is `W`. Self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FP12()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1450,11 +1644,14 @@ def FP12():
 
 def FS12():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Rank 5. UPF is GF(4).
+    Return the matroid `FS12`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Rank `5`. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FS12()
         sage: M.rank()
         5
@@ -1478,14 +1675,18 @@ def FS12():
 
 def UK12():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
+    Return the matroid `UK12`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
     Self-dual. UPF is I.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UK12()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1507,14 +1708,18 @@ def UK12():
 
 def UA12():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Not self-dual. UPF is GF(4).
+    Return the matroid `UA12`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Not self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UA12()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1536,14 +1741,18 @@ def UA12():
 
 def AK12():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    Not self-dual. UPF is GF(4).
+    Return the matroid `AK12`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids).
+    Not self-dual. UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.AK12()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1565,14 +1774,18 @@ def AK12():
 
 def FK12():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids). Self-dual.
-    UPF is GF(4).
+    Return the matroid `FK12`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids). Self-dual.
+    UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UT10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1594,14 +1807,18 @@ def FK12():
 
 def KB12():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids). Self-dual.
-    UPF is GF(4).
+    Return the matroid `KB12`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids). Self-dual.
+    UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UT10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1623,14 +1840,18 @@ def KB12():
 
 def AF12():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids). Self-dual.
-    UPF is GF(4).
+    Return the matroid `AF12`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids). Self-dual.
+    UPF is `GF(4)`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UT10()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1656,9 +1877,18 @@ def complement(groundset, subset):
 
 
 def NestOfTwistedCubes():
-    """
-    A matroid with no U(2,4)-detachable pairs
-    (only {ei,fi} pairs are detachable).
+    r"""
+    Return the NestOfTwistedCubes matroid
+
+    A matroid with no `U(2,4)`-detachable pairs (only `\{e_i,f_i\}` pairs are
+    detachable).
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.NestOfTwistedCubes()
+        sage: M.is_valid() # long time
+        True
+
     """
     gs = ["e1", "e2", "e3", "e4", "e5", "e6",
           "f1", "f2", "f3", "f4", "f5", "f6"]
@@ -1710,9 +1940,17 @@ def NestOfTwistedCubes():
 
 def XY13():
     """
-    An excluded minor for G-representable matroids
-    (and GF(5)-representable matroids).
-    UPF is GF(4)
+    Return the matroid `XY13`
+
+    An excluded minor for `G`-representable matroids
+    (and `GF(5)`-representable matroids). UPF is `GF(4)`.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.XY13()
+        sage: M.is_3connected()
+        True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1737,10 +1975,13 @@ def XY13():
 
 def N3():
     """
-    An excluded minor for dyadic matroids (and GF(5)-representable matroids).
-    UPF is GF(3). 4- (but not 5-) connected. Self-dual.
+    Return the matroid `N3`
+
+    An excluded minor for dyadic matroids (and `GF(5)`-representable matroids).
+    UPF is `GF(3)`. `4`- (but not `5`-) connected. Self-dual.
 
     EXAMPLES::
+
         sage: N3 = matroids.catalog.N3()
         sage: N3.is_isomorphic(N3.dual())
         True
@@ -1748,6 +1989,7 @@ def N3():
         True
         sage: N3.is_kconnected(5)
         False
+
     """
     A = Matrix(
         GF(3),
@@ -1768,15 +2010,20 @@ def N3():
 
 def N3pp():
     """
-    An excluded minor for K_2-representable matroids. Self-dual.
-    Obtained by relaxing the two complementary circuit-hyperplanes of N4.
-    Not P_4-representable, but O-representable, and hence representable over
-    all fields of size at least four.
+    Return the matroid `N3pp`
+
+    An excluded minor for `K_2`-representable matroids. Self-dual.
+    Obtained by relaxing the two complementary circuit-hyperplanes of
+    :func:`N4 <sage.matroids.database.brettell_matroids.N4>`. Not
+    `P_4`-representable, but `O`-representable, and hence representable
+    over all fields of size at least four.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.N3pp()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1799,14 +2046,18 @@ def N3pp():
 
 def UP14():
     """
-    An excluded minor for K_2-representable matroids.
+    Return the matroid `UP14`
+
+    An excluded minor for `K_2`-representable matroids.
     Has disjoint circuit-hyperplanes.
-    UPF is W. Not self-dual.
+    UPF is `W`. Not self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.UP14()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1829,14 +2080,18 @@ def UP14():
 
 def VP14():
     """
-    An excluded minor for K_2-representable matroids.
+    Return the matroid `VP14`
+
+    An excluded minor for `K_2`-representable matroids.
     Has disjoint circuit-hyperplanes.
-    UPF is W. Not self-dual.
+    UPF is `W`. Not self-dual.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.VP14()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1859,13 +2114,17 @@ def VP14():
 
 def FV14():
     """
-    An excluded minor for P_4-representable matroids.
-    Not self-dual. UPF is PT.
+    Return the matroid `FV14`
+
+    An excluded minor for `P_4`-representable matroids.
+    Not self-dual. UPF is `PT`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FV14()
         sage: M.is_isomorphic(M.dual())
         False
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1888,13 +2147,17 @@ def FV14():
 
 def OW14():
     """
-    An excluded minor for P_4-representable matroids.
-    Self-dual. UPF is Orthrus.
+    Return the matroid `OW14`
+
+    An excluded minor for `P_4`-representable matroids.
+    Self-dual. UPF is `Orthrus`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.OW14()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1917,13 +2180,17 @@ def OW14():
 
 def FM14():
     """
-    An excluded minor for P_4-representable matroids.
-    Self-dual. UPF is PT.
+    Return the matroid `FM14`
+
+    An excluded minor for `P_4`-representable matroids.
+    Self-dual. UPF is `PT`.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FM14()
         sage: M.is_isomorphic(M.dual())
         True
+
     """
 
     gf4 = GF(4, "w")
@@ -1950,13 +2217,18 @@ def FM14():
 
 def FA15():
     """
-    An excluded minor for O-representable matroids. UPF is PT.
-    In a DY*-equivalence class of 6 matroids. Has an SQ14-minor.
+    Return the matroid `FA15`
+
+    An excluded minor for `O`-representable matroids. UPF is `PT`.
+    In a `DY^*`-equivalence class of `6` matroids. Has an
+    :func:`SQ14 <sage.matroids.database.brettell_matroids.N3pp>`-minor.
 
     EXAMPLES::
+
         sage: M = matroids.catalog.FA15()
         sage: M.has_minor(matroids.catalog.N3pp())
         True
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1982,10 +2254,13 @@ def FA15():
 
 def N4():
     """
-    An excluded minor for dyadic matroids (and GF(5)-representable matroids).
-    UPF is GF(3). 4- (but not 5-) connected. Self-dual.
+    Return the matroid `N4`
+
+    An excluded minor for dyadic matroids (and `GF(5)`-representable matroids).
+    UPF is `GF(3)`. `4`- (but not `5`-) connected. Self-dual.
 
     EXAMPLES::
+
         sage: N4 = matroids.catalog.N4()
         sage: N4.is_isomorphic(N4.dual())
         True
@@ -1993,6 +2268,7 @@ def N4():
         True
         sage: N4.is_kconnected(5)
         False
+
     """
     A = Matrix(
         GF(3),
@@ -2010,3 +2286,62 @@ def N4():
     n4 = TernaryMatroid(reduced_matrix=A)
     n4.rename("N4: " + repr(n4))
     return n4
+
+
+# 2r elements:
+
+
+def FreeSpike(r, t=True):
+    r"""
+    Return the rank-`r` free spike
+
+    For the tipless free spike (`t` = ``False``), when `r = 3`, it is
+    isomorphic to :func:`U36 <sage.matroids.database.oxley_matroids.U36>`;
+    when `r = 4`, it is the unique tightening of the
+    :func:`Vamos matroid <sage.matroids.database.oxley_matroids.Vamos>`.
+
+    EXAMPLES::
+
+        sage: M = matroids.FreeSpike(3, False)
+        sage: M.is_isomorphic(matroids.Uniform(3, 6))
+        True
+        sage: M = matroids.FreeSpike(8)
+        sage: M.is_3connected()
+        True
+
+    """
+    if t:  # tipped free spike
+        if r == 3:
+            return TippedFree3spike()
+        elif r < 3:
+            raise ValueError("Tipped free spike must have rank at least 3.")
+
+        E = range(2 * r + 1)
+        tris = [[0, 2 * i + 1, 2 * i + 2] for i in range(r)]
+        planes = [
+            [2 * i + 1, 2 * i + 2, 2 * j + 1, 2 * j + 2]
+            for i in range(r)
+            for j in range(i + 1, r)
+        ]
+        CC = {2: tris, 3: planes, r: [E]}
+        spike = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
+        spike.rename("Tipped rank-" + str(r) + " free spike: " + repr(spike))
+        return spike
+    else:  # tipless free spike
+        if r == 3:
+            return Uniform(3, 6)
+        elif r < 3:
+            raise ValueError("Tipless free spike must have rank at least 3.")
+
+        E = range(1, 2 * r + 1)
+        circs = [
+            [2 * i + 1, 2 * i + 2, 2 * j + 1, 2 * j + 2]
+            for i in range(r)
+            for j in range(i + 1, r)
+        ]
+        CC = {3: circs, r: [E]}
+        spike = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
+        spike.rename(
+            "(Tipless) rank-" + str(r) + " free spike: " + repr(spike)
+        )
+        return spike

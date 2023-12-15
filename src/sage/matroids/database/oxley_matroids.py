@@ -1,10 +1,9 @@
 r"""
 Documentation for the matroids in the catalog
 
-This module contains implementations for many of the functions accessible
-through :mod:`matroids. <sage.matroids.matroids_catalog>` and
-:mod:`matroids.named_matroids. <sage.matroids.matroids_catalog>`
-(type those lines in Sage and hit ``tab`` for a list).
+This module contains implementations of Oxley's interesting matroids,
+accessible through :mod:`matroids.catalog. <sage.matroids.catalog>` (type
+those lines in Sage and hit ``tab`` for a list).
 
 The docstrings include educational information about each named matroid with
 the hopes that this class can be used as a reference. However, for a more
@@ -17,7 +16,7 @@ comprehensive list of properties we refer to the appendix of [Oxl2011]_.
 AUTHORS:
 
 - Michael Welsh, Stefan van Zwam (2013-04-01): initial version
-- Giorgos Mousa, Andreas Triantafyllos (2023-12-08): reorganization
+- Giorgos Mousa, Andreas Triantafyllos (2023-12-08): more matroids
 
 Functions
 =========
@@ -50,8 +49,43 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 # The order is the same as in Oxley.
 
 
-def U24():
-    M = Uniform(2, 4)
+def U24(groundset="abcd"):
+    r"""
+    The uniform matroid of rank `2` on `4` elements
+
+    The `4`-point line; isomorphic to `\mathcal{W}^2` , the rank-`2` whirl.
+    The unique excluded minor for the class of binary matroids.
+
+    See [Oxl2011]_, p. 639.
+
+    EXAMPLES::
+
+        sage: M = matroids.Uniform(2, 4)
+        sage: N = matroids.catalog.U24(range(4))
+        sage: M.is_isomorphic(N)
+        True
+        sage: W2 = matroids.Whirl(2)
+        sage: W2.is_isomorphic(N)
+        True
+        sage: N.is_3connected()
+        True
+
+    TESTS::
+
+        sage: M = matroids.catalog.U24(range(4))
+        sage: sorted(M.groundset())
+        [0, 1, 2, 3]
+        sage: M.is_isomorphic(matroids.catalog.U24())
+        True
+
+    """
+    if len(groundset) != 4:
+        raise ValueError(
+            "The groundset should be of size 4 (%s given)" % len(groundset)
+        )
+
+    E = "abcd"
+    M = Uniform(2, 4).relabel(dict(zip(E, groundset)))
     M.rename("U(2, 4): " + repr(M))
     return M
 
@@ -131,6 +165,7 @@ def P6():
         False
         sage: M.is_valid()
         True
+
     """
     E = "abcdef"
     CC = {2: ["abc"], 3: [E]}
@@ -243,8 +278,35 @@ def NonFano():
     return M
 
 
-def NonFanoDual():
-    M = NonFano().dual()
+def NonFanoDual(groundset="abcdefg"):
+    r"""
+    Return the dual of the non-Fano matroid
+
+    `(F_7^-)^*` is a 7-element matroid of rank-3. Every single-element
+    contraction of `(F_7^-)^*` is isomorphic to `M(K_4)` or `\mathcal{W}^3`.
+
+    See [Oxl2011]_, p. 643-4.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.NonFanoDual()
+        sage: sorted(M.groundset())
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+
+    TESTS::
+
+        sage: M = matroids.catalog.NonFanoDual(range(7))
+        sage: sorted(M.groundset())
+        [0, 1, 2, 3, 4, 5, 6]
+
+    """
+    if len(groundset) != 7:
+        raise ValueError(
+            "The groundset should be of size 7 (%s given)" % len(groundset)
+        )
+
+    E = "abcdefg"
+    M = NonFano().dual().relabel(dict(zip(E, groundset)))
     M.rename("NonFanoDual: " + repr(M))
     return M
 
@@ -307,8 +369,28 @@ def P7():
     return M
 
 
-def AG32():
-    M = AG(3, 2)
+def AG32(groundset="abcdefgh"):
+    """
+    Return the matroid AG32
+
+    The binary affine cube. Isomorphic to the unique tipless binary 4-spike.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.AG32()
+        sage: M.is_valid()
+        True
+        sage: M.is_isomorphic(matroids.Z(4, False))
+        True
+
+    """
+    if len(groundset) != 8:
+        raise ValueError(
+            "The groundset should be of size 8 (%s given)" % len(groundset)
+        )
+
+    E = "abcdefgh"
+    M = AG(3, 2).relabel(dict(zip(E, groundset)))
     M.rename("AG(3, 2): " + repr(M))
     return M
 
@@ -342,6 +424,7 @@ def AG32prime():
          {'d', 'e', 'f', 'g'}]
         sage: M.is_valid()                      # long time, needs sage.rings.finite_rings
         True
+
     """
     E = "abcdefgh"
     CC = {
@@ -429,6 +512,7 @@ def F8():
         [...True...]
         sage: M.is_valid() # long time, needs sage.rings.finite_rings
         True
+
     """
     E = "abcdefgh"
     CC = {
@@ -481,6 +565,7 @@ def Q8():
          {'e', 'g', 'h'}]
         sage: M.is_valid() # long time
         True
+
     """
     E = "abcdefgh"
     CC = {
@@ -525,6 +610,7 @@ def L8():
         True
         sage: M.is_valid() # long time
         True
+
     """
     E = "abcdefgh"
     CC = {
@@ -606,6 +692,7 @@ def Vamos():
         False
         sage: M.is_valid() # long time
         True
+
     """
     E = "abcdefgh"
     CC = {3: ["abcd", "abef", "cdef", "abgh", "efgh"], 4: [E]}
@@ -670,6 +757,7 @@ def J():
         False
         sage: M.is_valid()
         True
+
     """
     A = Matrix(
         GF(3),
@@ -761,14 +849,58 @@ def P8pp():
     return M
 
 
-def Wheel4():
-    M = Wheel(4)
+def Wheel4(groundset="abcdefgh"):
+    """
+    Return the rank-4 wheel
+
+    Self-dual but not identically self-dual.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.Wheel4()
+        sage: M.is_valid()
+        True
+        sage: M.equals(M.dual())
+        False
+        sage: M.is_isomorphic(M.dual())
+        True
+
+    """
+    if len(groundset) != 8:
+        raise ValueError(
+            "The groundset should be of size 8 (%s given)" % len(groundset)
+        )
+
+    E = "abcdefgh"
+    M = Wheel(4).relabel(dict(zip(E, groundset)))
     M.rename("Wheel(4): " + repr(M))
     return M
 
 
-def Whirl4():
-    M = Wheel(4)
+def Whirl4(groundset="abcdefgh"):
+    """
+    Return the rank-4 whirl
+
+    Self-dual but not identically self-dual.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.Whirl4()
+        sage: M.is_valid()
+        True
+        sage: M.equals(M.dual())
+        False
+        sage: M.is_isomorphic(M.dual())
+        True
+
+    """
+    if len(groundset) != 8:
+        raise ValueError(
+            "The groundset should be of size 8 (%s given)" % len(groundset)
+        )
+
+    E = "abcdefgh"
+    M = Wheel(4).relabel(dict(zip(E, groundset)))
     M.rename("Whirl(4): " + repr(M))
     return M
 
@@ -781,7 +913,7 @@ def K33dual():
     The matroid `M*(K_{3, 3})` is a 9-element matroid of rank-4.
     It is an excluded minor for the class of graphic matroids.
     It is the graft matroid of the 4-wheel with every vertex except the hub
-    being coloured. See [Oxl2011]_, p. 652.
+    being coloured. See [Oxl2011]_, p. 652-3.
 
     EXAMPLES::
 
@@ -792,6 +924,7 @@ def K33dual():
         False
         sage: M.is_valid()                      # long time, needs sage.graphs
         True
+
     """
     from sage.graphs.graph_generators import graphs
 
@@ -803,7 +936,26 @@ def K33dual():
     return M
 
 
-def K33():
+def K33(groundset="abcdefghi"):
+    r"""
+    Return the graphic matroid `M(K_{3,3})`
+
+    `M(K_{3,3})` is an excluded minor for the class of cographic matroids.
+
+    See [Oxl2011]_, p. 652-3.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.K33()
+        sage: M.is_valid()
+        True
+
+    """
+    if len(groundset) != 9:
+        raise ValueError(
+            "The groundset should be of size 9 (%s given)" % len(groundset)
+        )
+
     from sage.graphs.graph_generators import graphs
 
     E = "abcdefghi"
@@ -813,8 +965,28 @@ def K33():
     return M
 
 
-def AG23():
-    M = AG(2, 3)
+def AG23(groundset="abcdefghi"):
+    """
+    Return the matroid AG23
+
+    The ternary affine plane.
+
+    See [Oxl2011]_, p. 653.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.AG23()
+        sage: M.is_valid()
+        True
+
+    """
+    if len(groundset) != 9:
+        raise ValueError(
+            "The groundset should be of size 9 (%s given)" % len(groundset)
+        )
+
+    E = "abcdefgh"
+    M = AG(2, 3).relabel(dict(zip(E, groundset)))
     M.rename("AG(2, 3): " + repr(M))
     return M
 
@@ -878,6 +1050,7 @@ def Pappus():
         True
         sage: M.is_valid() # long time
         True
+
     """
     E = "abcdefghi"
     CC = {
@@ -913,6 +1086,7 @@ def NonPappus():
         False
         sage: M.is_valid() # long time
         True
+
     """
     E = "abcdefghi"
     CC = {2: ["abc", "ceg", "bfg", "cdh", "afh", "bdi", "aei", "ghi"], 3: [E]}
@@ -921,13 +1095,53 @@ def NonPappus():
     return M
 
 
-def K5():
-    M = CompleteGraphic(5)
+def K5(groundset="abcdefghij"):
+    """
+    Return the graphic matroid `M(K_5)`
+
+    `M(K_5)` is an excluded minor for the class of cographic matroids.
+
+    See [Oxl2011]_, p. 656.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.K5()
+        sage: M.is_valid()
+        True
+
+    """
+    if len(groundset) != 10:
+        raise ValueError(
+            "The groundset should be of size 10 (%s given)" % len(groundset)
+        )
+
+    E = "abcdefghij"
+    M = CompleteGraphic(5).relabel(dict(zip(E, groundset)))
     return M
 
 
-def K5dual():
-    M = CompleteGraphic(5).dual()
+def K5dual(groundset="abcdefghij"):
+    """
+    Return the matroid `M^*(K_5)`
+
+    `M^*(K_5)` is an excluded minor for the class of graphic matroids.
+
+    See [Oxl2011]_, p. 656.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.K5dual()
+        sage: M.is_3connected()
+        True
+
+    """
+    if len(groundset) != 10:
+        raise ValueError(
+            "The groundset should be of size 10 (%s given)" % len(groundset)
+        )
+
+    E = "abcdefghij"
+    M = CompleteGraphic(5).relabel(dict(zip(E, groundset))).dual()
     M.rename("M*(K5): " + repr(M))
     return M
 
@@ -961,6 +1175,7 @@ def R10():
 
         sage: matroids.named_matroids.R10().linear_extensions(simple=True)
         []
+
     """
     A = Matrix(
         ZZ,
@@ -998,8 +1213,9 @@ def R12():
         False
         sage: M.is_isomorphic(M.dual())                                                 # needs sage.graphs
         True
-        sage: M.is_valid()
+        sage: M.is_valid() # long time
         True
+
     """
     A = Matrix(
         ZZ,
@@ -1037,6 +1253,7 @@ def T12():
         T12: Binary matroid of rank 6 on 12 elements, type (2, None)
         sage: M.is_valid()
         True
+
     """
     A = Matrix(
         GF(2),
@@ -1054,8 +1271,29 @@ def T12():
     return M
 
 
-def PG23():
-    M = PG(2, 3)
+def PG23(groundset=range(12)):
+    """
+    Return the matroid `PG23`
+
+    The second smallest projective plane. Not graphic, not cographic, not
+    regular, not near-regular.
+
+    See [Oxl2011]_, p. 659.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.PG23()
+        sage: M.is_3connected()
+        True
+
+    """
+    if len(groundset) != 12:
+        raise ValueError(
+            "The groundset should be of size 12 (%s given)" % len(groundset)
+        )
+
+    E = range(12)
+    M = PG(2, 3).relabel(dict(zip(E, groundset)))
     M.rename("PG(2, 3): " + repr(M))
     return M
 
@@ -1310,3 +1548,124 @@ def AG(n, q, x=None):
 
 
 # Z_r, r-spike, Q_r(A), Theta_n, Psi_r
+
+
+def Z(r, t=True):
+    r"""
+    Defined for all `r \ge 3`; `Z_3\\e \cong M(K4)`, for all `e`;
+    `Z_3 \cong F_7`; `Z_4 \\t \cong AG(3, 2)`; `Z_4\\e \cong S_8`,
+    for all `e \neq t`.
+
+    For more information, see p. 661-2 of [Oxl2011]_.
+
+    INPUT:
+
+    - ``r`` -- an integer (`r \ge 3`); the rank of the spike
+    - ``t`` -- a Boolean (default: ``True``); whether the spike is tipped
+
+    OUTPUT:
+
+    a matroid; the unique rank-`r` binary spike (tipped or tipless)
+
+    EXAMPLES::
+
+        sage: Z3 = matroids.Z(3)
+        sage: sorted(Z3.groundset())
+        [0, 1, 2, 3, 4, 5, 6]
+        sage: K4 = matroids.catalog.K4()
+        sage: Z3.delete(0).is_isomorphic(K4)
+        True
+        sage: F7 = matroids.catalog.Fano()
+        sage: Z3.is_isomorphic(F7)
+        True
+        sage: Z4 = matroids.Z(4)
+        sage: S8 = matroids.catalog.S8()
+        sage: Z4.delete(3).is_isomorphic(S8)
+        True
+        sage: for r in range(3, 10): # long time
+        ....:     Z = matroids.Z(r, False)
+        ....:     Z.is_isomorphic(Z.dual())
+        True
+        ...
+
+    """
+    from sage.matrix.special import identity_matrix, ones_matrix
+    Id = Matrix(GF(2), identity_matrix(r))
+    J = Matrix(GF(2), ones_matrix(r))
+    tip = Matrix(GF(2), ones_matrix(r, 1))
+    A = Id.augment(J-Id).augment(tip)
+
+    M = Matroid(A)
+    if t:
+        M.rename("Z_" + str(r) + ": " + repr(M))
+    else:
+        M = M.delete(2*r)
+        M.rename("Z_" + str(r) + "\\t: " + repr(M))
+    return M
+
+
+def Spike(r, t=True, C3=[]):
+    r"""
+    Return the rank-r spike
+
+    Defined for all `r \ge 3`; a rank-r spike with tip `t` and legs `L_1,
+    L_2, \ldots, L_r`. Deleting `t` gives a tipless rank-`r` spike.
+
+    The groundset is `E = \{t, x_1, x_2, \ldots, x_r, y_1, y_2, \ldots,
+    y_r\}` with `r(E) = r`. The set `L_i = {t, x_i , y_i}` is a circuit for
+    all `i`. For `1 \le k \le r-1`, the union of any `k` of `{L_i}_i` has
+    rank `k+1`.
+
+    Each of `F_7`, `F_7^-`, and `P_7`, is a 3-spike.
+
+    Deleting any element gives a self-dual matroid. The tipless free spike is
+    identically self-dual. For `r \ge 4`, deleting the tip and contracting
+    any other element gives an `(r-1)`-spike.
+
+    For more information, see p. 662 of [Oxl2011]_.
+
+    INPUT:
+
+    - ``r`` -- an integer (`r \ge 3`); the rank of the spike
+    - ``t`` -- a boolean (default: ``True``); whether the spike is tipped
+
+    OUTPUT:
+
+    a matroid; the rank-`r` spike (tipped or tipless)
+
+    """
+    E = ["t"]
+    X, Y = [], []
+    for i in range(1, r + 1):
+        X.append(str(i) + "x")
+        Y.append(str(i) + "y")
+    E += X
+    E += Y
+
+    for S in C3:
+        for xy in S:
+            if xy not in list(set(X).union(set(Y))):
+                raise ValueError(
+                    "The sets in C3 must contain elements x_i and y_i only"
+                )
+        for T in C3:
+            if S != T and len(set(S).intersection(set(T))) > r - 2:
+                raise ValueError(
+                    "Every pair of sets in C3 must not have more than r - 2 "
+                    + "common elements"
+                )
+
+    circuits = [E]+C3
+    for i in range(1, len(X)+1):
+        circuits += [["t", str(i)+"x", str(i)+"y"]]
+        for j in range(i+1, len(Y)+1):
+            circuits += [[str(i)+"x", str(i)+"y", str(j)+"x", str(j)+"y"]]
+
+    M = Matroid(groundset=E, circuits=circuits)
+    if not t:
+        M = M.delete("t")
+    assert M.is_valid()
+    return M
+
+
+# Q_r(A), Theta_n, Psi_r

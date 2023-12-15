@@ -1,14 +1,10 @@
 r"""
 Documentation for the matroids in the catalog
 
-This module contains implementations for many of the functions accessible
-through :mod:`matroids. <sage.matroids.matroids_catalog>` and
-:mod:`matroids.named_matroids. <sage.matroids.matroids_catalog>`
-(type those lines in Sage and hit ``tab`` for a list).
+This module contains implementations for the matroids accessible through
+:mod:`matroids.catalog <sage.matroids.catalog>` (type this in Sage and hit
+``tab`` for a list).
 
-The docstrings include educational information about each named matroid with
-the hopes that this class can be used as a reference. However, for a more
-comprehensive list of properties we refer to the appendix of [Oxl2011]_.
 """
 from sage.matroids.database.oxley_matroids import (
     U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,

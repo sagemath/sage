@@ -21,13 +21,18 @@ Functions
 
 def OxleyMatroids():
     """
-    Return an iterator of (nonparameterized) matroids as listed in the
-    Appendix ``Some Interesting Matroids`` in [Oxl2011]_.
+    Return a list of (nonparameterized) matroids
+
+    As listed in
+    :mod:`matroids.database.oxley_matroids <sage.matroids.database.oxley_matroids>`,
+    following the Appendix ``Some Interesting Matroids`` in [Oxl2011]_ (p.
+    639-64).
 
     EXAMPLES::
 
         sage: for M in matroids.OxleyMatroids(): # long time
         ....:     assert M.is_valid()
+
     """
     all = []
     from sage.matroids.database.oxley_matroids import (
@@ -66,12 +71,16 @@ def OxleyMatroids():
 
 def BrettellMatroids():
     """
-    Return an iterator of interesting matroids as listed in [].
+    Return a list of interesting matroids
 
-        EXAMPLES::
+    As listed in
+    :mod:`matroids.database.brettell_matroids <sage.matroids.database.brettell_matroids>`.
 
-            sage: for M in matroids.OxleyMatroids(): # long time
-            ....:     assert M.is_valid()
+    EXAMPLES::
+
+        sage: for M in matroids.BrettellMatroids(): # long time
+        ....:     assert M.is_valid()
+
     """
     all = []
     from sage.matroids.database.brettell_matroids import (
@@ -115,12 +124,16 @@ def BrettellMatroids():
 
 def VariousMatroids():
     """
-    Return an iterator of various other named matroids.
+    Return a list of various other named matroids
+
+    As listed in
+    :mod:`matroids.database.various_matroids <sage.matroids.database.various_matroids>`.
 
     EXAMPLES::
 
         sage: for M in matroids.VariousMatroids(): # long time
         ....:     assert M.is_valid()
+
     """
     all = []
     from sage.matroids.database.various_matroids import (

@@ -1,10 +1,9 @@
 r"""
 Documentation for the matroids in the catalog
 
-This module contains implementations for many of the functions accessible
-through :mod:`matroids. <sage.matroids.matroids_catalog>` and
-:mod:`matroids.named_matroids. <sage.matroids.matroids_catalog>`
-(type those lines in Sage and hit ``tab`` for a list).
+This module contains implementations of various interesting matroids,
+accessible through :mod:`matroids.catalog. <sage.matroids.catalog>` (type
+those lines in Sage and hit ``tab`` for a list).
 
 The docstrings include educational information about each named matroid with
 the hopes that this class can be used as a reference. However, for a more
@@ -70,6 +69,7 @@ def NonVamos():
         True
         sage: M.is_valid() # long time
         True
+
     """
     E = "abcdefgh"
     CC = {3: ["abcd", "abef", "cdef", "abgh", "cdgh", "efgh"], 4: [E]}
@@ -93,6 +93,7 @@ def NotP8():
         False
         sage: M.is_valid()
         True
+
     """
     A = Matrix(
         GF(3),
@@ -144,6 +145,7 @@ def P9():
         P9: Binary matroid of rank 4 on 9 elements, type (1, 1)
         sage: M.is_valid()
         True
+
     """
     A = Matrix(
         GF(2),
@@ -230,6 +232,7 @@ def Block_9_4():
         sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())                 # needs sage.graphs
         sage: BD.is_t_design(return_parameters=True)                                    # needs sage.graphs
         (True, (2, 9, 4, 3))
+
     """
     E = "abcdefghi"
     CC = {
@@ -313,6 +316,7 @@ def Block_10_5():
         sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())                 # needs sage.graphs
         sage: BD.is_t_design(return_parameters=True)                                    # needs sage.graphs
         (True, (3, 10, 5, 3))
+
     """
     E = "abcdefghij"
     CC = {
@@ -356,6 +360,7 @@ def Q10():
         sage: S = matroids.named_matroids.Q10().linear_extensions(simple=True)          # needs sage.rings.finite_rings
         sage: [M for M in S if not M.has_line_minor(5)]         # long time, needs sage.rings.finite_rings
         []
+
     """
     F = GF(4, "x")
     x = F.gens()[0]
@@ -390,6 +395,7 @@ def BetsyRoss():
         10
         sage: M.is_valid() # long time
         True
+
     """
     E = "abcdefghijk"
     CC = {
@@ -448,6 +454,7 @@ def ExtendedTernaryGolayCode():
         True
         sage: M.is_valid()
         True
+
     """
     A = Matrix(
         GF(3),
@@ -551,6 +558,7 @@ def ExtendedBinaryGolayCode():
         True
         sage: M.is_valid()
         True
+
     """
     A = Matrix(
         GF(2),
@@ -603,6 +611,7 @@ def CompleteGraphic(n):
         {0, 1, 2, 4, 5, 7}
         sage: M.is_valid()
         True
+
     """
     from sage.graphs.graph_generators import graphs
 
