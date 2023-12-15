@@ -42,7 +42,7 @@ import bz2
 comp = zlib
 comp_other = bz2
 
-from .sage_unittest import TestSuite
+from sage.misc.sage_unittest import TestSuite
 
 
 # We define two global dictionaries `already_pickled` and
@@ -1041,8 +1041,6 @@ def picklejar(obj, dir=None):
         ....:     uid = -1
         sage: if uid == 0:
         ....:     print("OK (cannot test this as root)")
-        ....: elif sys.platform == 'cygwin':
-        ....:     print("OK (cannot test this on Cygwin)")
         ....: else:
         ....:     try:
         ....:         sage.misc.persist.picklejar(1, dir + '/noaccess')
@@ -1237,7 +1235,7 @@ def db(name):
 
     The database directory is ``$HOME/.sage/db``.
     """
-    from .misc import SAGE_DB
+    from sage.misc.misc import SAGE_DB
     return load('%s/%s'%(SAGE_DB,name))
 
 
@@ -1250,5 +1248,5 @@ def db_save(x, name=None):
     try:
         x.db(name)
     except AttributeError:
-        from .misc import SAGE_DB
+        from sage.misc.misc import SAGE_DB
         save(x, '%s/%s'%(SAGE_DB,name))

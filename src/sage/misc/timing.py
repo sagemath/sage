@@ -32,8 +32,7 @@ def cputime(t=0, subprocesses=False):
     ``cputime()`` implementation into account.
 
     The measurement for the main Sage process is done via a call to
-    :func:`resource.getrusage()`, so it avoids the wraparound problems in
-    :func:`time.clock()` on Cygwin.
+    :func:`resource.getrusage()`.
 
     INPUT:
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Manin relations for overconvergent modular symbols
 

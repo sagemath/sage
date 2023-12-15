@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Morphisms of modules with a basis
 
@@ -666,9 +665,9 @@ class TriangularModuleMorphism(ModuleMorphism):
             [True, True, True]
         """
         if key is not None:
-            self._key_kwds = dict(key=key)
+            self._key_kwds = {"key": key}
         else:
-            self._key_kwds = dict()
+            self._key_kwds = {}
 
         if triangular == "upper":
             self._dominant_item = attrcall("leading_item", **self._key_kwds)
@@ -817,9 +816,9 @@ class TriangularModuleMorphism(ModuleMorphism):
         """
         Return the section (partial inverse) of ``self``.
 
-        Return a partial triangular morphism which is a section of
-        ``self``. The section morphism raise a ``ValueError`` if asked to
-        apply on an element which is not in the image of ``self``.
+        This returns a partial triangular morphism which is a section of
+        ``self``. The section morphism raises a :class:`ValueError` if
+        asked to apply on an element which is not in the image of ``self``.
 
         EXAMPLES::
 
