@@ -782,12 +782,13 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     def _unrank_helper(self, x, rtn):
         """
+        Return the element at rank ``x`` by iterating through all integer vectors beginning with ``rtn``.
+
         INPUT:
 
         - ``x`` - a nonnegative integer
         - ``rtn`` - a list of nonnegative integers
 
-        Return the element at rank ``x`` by iterating through all integer vectors beginning with ``rtn``.
 
         EXAMPLES::
 
