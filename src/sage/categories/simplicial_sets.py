@@ -379,7 +379,7 @@ class SimplicialSets(Category_singleton):
                 rels = []
 
                 for f in self.n_cells(2):
-                    z = dict()
+                    z = {}
                     for i, sigma in enumerate(self.faces(f)):
                         if sigma in spanning_tree:
                             z[i] = FG.one()
@@ -472,7 +472,7 @@ class SimplicialSets(Category_singleton):
                 """
                 from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
                 from sage.topology.simplicial_set_morphism import SimplicialSetMorphism
-                char = {a: b for (a, b) in character.items()}
+                char = dict(character.items())
                 G = list(char.values())[0].parent()
                 if not G.is_finite():
                     raise NotImplementedError("can only compute universal covers of spaces with finite fundamental group")
@@ -608,7 +608,7 @@ class SimplicialSets(Category_singleton):
                 phi = G.abelianization_map()
                 abelG, R, I, images = G.abelianization_to_algebra(ZZ)
                 QRP = R.quotient_ring(I)
-                res = dict()
+                res = {}
                 for s, el in d.items():
                     res[s] = QRP(prod(images[abs(a)-1]**sign(a) for a in el.Tietze()))
                 return res

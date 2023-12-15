@@ -1,17 +1,7 @@
 r"""
-Relative Number Fields
+Relative number fields
 
-AUTHORS:
-
-- William Stein (2004, 2005): initial version
-- Steven Sivek (2006-05-12): added support for relative extensions
-- William Stein (2007-09-04): major rewrite and documentation
-- Robert Bradshaw (2008-10): specified embeddings into ambient fields
-- Nick Alexander (2009-01): modernize coercion implementation
-- Robert Harron (2012-08): added is_CM_extension
-- Julian Rüth (2014-04): absolute number fields are unique parents
-
-This example follows one in the Magma reference manual::
+This example constructs a quadratic extension of a quartic number field::
 
     sage: x = polygen(ZZ, 'x')
     sage: K.<y> = NumberField(x^4 - 420*x^2 + 40000)
@@ -48,10 +38,12 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-WARNING: Doing arithmetic in towers of relative fields that depends on
-canonical coercions is currently VERY SLOW.  It is much better to
-explicitly coerce all elements into a common field, then do arithmetic
-with them there (which is quite fast).
+.. WARNING:
+
+    Doing arithmetic in towers of relative fields that depends on canonical
+    coercions is currently VERY SLOW.  It is much better to explicitly coerce
+    all elements into a common field, then do arithmetic with them there (which
+    is quite fast).
 
 TESTS::
 
@@ -60,6 +52,17 @@ TESTS::
     27*beta0
     sage: beta^10
     27*beta0
+
+AUTHORS:
+
+- William Stein (2004, 2005): initial version
+- Steven Sivek (2006-05-12): added support for relative extensions
+- William Stein (2007-09-04): major rewrite and documentation
+- Robert Bradshaw (2008-10): specified embeddings into ambient fields
+- Nick Alexander (2009-01): modernized coercion implementation
+- Robert Harron (2012-08): added is_CM_extension
+- Julian Rüth (2014-04): absolute number fields are unique parents
+
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2009 William Stein <wstein@gmail.com>

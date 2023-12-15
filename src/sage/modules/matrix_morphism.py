@@ -321,7 +321,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         r"""
         Return the inverse of this matrix morphism, if the inverse exists.
 
-        Raises a ``ZeroDivisionError`` if the inverse does not exist.
+        This raises a :class:`ZeroDivisionError` if the inverse does not exist.
 
         EXAMPLES:
 

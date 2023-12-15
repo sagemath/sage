@@ -253,14 +253,14 @@ def SL(n, R, var='a'):
     except AttributeError:
         cat = Groups()
     name = 'Special Linear Group of degree {0} over {1}'.format(degree, ring)
-    ltx  = 'SL({0}, {1})'.format(degree, latex(ring))
+    ltx = 'SL({0}, {1})'.format(degree, latex(ring))
     try:
         from .linear_gap import LinearMatrixGroup_gap
     except ImportError:
         pass
     else:
         try:
-            cmd  = 'SL({0}, {1})'.format(degree, ring._gap_init_())
+            cmd = 'SL({0}, {1})'.format(degree, ring._gap_init_())
             return LinearMatrixGroup_gap(degree, ring, True, name, ltx, cmd,
                                          category=cat)
         except ValueError:
