@@ -782,21 +782,26 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     def _unrank_helper(self, x, rtn):
         """
-        return an element at rank ``x``.
+        INPUT:
+
+        - ``x`` - a nonnegative integer
+        - ``rtn`` - a list of nonnegative integers
+
+        Return the element at rank ``x`` by iterating through all integer vectors beginning with ``rtn``.
 
         EXAMPLES::
 
-        sage: i=IntegerVectors(k=5)
-        sage: i._unrank_helper(10, [2,0,0,0,0])
-        [1, 0, 0, 0, 1]
+            sage: IV = IntegerVectors(k=5)
+            sage: IV._unrank_helper(10, [2,0,0,0,0])
+            [1, 0, 0, 0, 1]
 
-        sage: i=IntegerVectors(n=7)
-        sage: i._unrank_helper(100, [7,0,0,0])
-        [2, 0, 0, 5]
+            sage: IV = IntegerVectors(n=7)
+            sage: IV._unrank_helper(100, [7,0,0,0])
+            [2, 0, 0, 5]
 
-        sage: i=IntegerVectors(n=12, k=7)
-        sage: i._unrank_helper(1000, [12,0,0,0,0,0,0])
-        [5, 3, 1, 1, 1, 1, 0]
+            sage: IV = IntegerVectors(n=12, k=7)
+            sage: IV._unrank_helper(1000, [12,0,0,0,0,0,0])
+            [5, 3, 1, 1, 1, 1, 0]
         """
         ptr = 0
         while True:
