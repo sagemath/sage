@@ -6,23 +6,24 @@
 # distutils: language = c++
 # sage.doctest: needs sage.rings.number_field
 r"""
-Optimized Quadratic Number Field Elements
+Elements optimized for quadratic number fields
 
-This file defines a Cython class :class:`NumberFieldElement_quadratic` to speed up
+This module defines a Cython class :class:`NumberFieldElement_quadratic` to speed up
 computations in quadratic extensions of `\QQ`.
-
-AUTHORS:
-
-- Robert Bradshaw (2007-09): Initial version
-- David Harvey (2007-10): fix up a few bugs, polish around the edges
-- David Loeffler (2009-05): add more documentation and tests
-- Vincent Delecroix (2012-07): comparisons for quadratic number fields
-  (:trac:`13213`), abs, floor and ceil functions (:trac:`13256`)
 
 .. TODO::
 
     The ``_new()`` method should be overridden in this class to copy the ``D``
-    and ``standard_embedding`` attributes
+    and ``standard_embedding`` attributes.
+
+AUTHORS:
+
+- Robert Bradshaw (2007-09): initial version
+- David Harvey (2007-10): fixed up a few bugs, polish around the edges
+- David Loeffler (2009-05): added more documentation and tests
+- Vincent Delecroix (2012-07): added comparisons for quadratic number fields
+  (:trac:`13213`), abs, floor and ceil functions (:trac:`13256`)
+
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>

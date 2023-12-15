@@ -187,7 +187,7 @@ class FusionDouble(CombinatorialFreeModule):
         self._fusion_labels = None
         self._field = None
         cat = AlgebrasWithBasis(ZZ)
-        CombinatorialFreeModule.__init__(self, ZZ, [k for k in self._names],
+        CombinatorialFreeModule.__init__(self, ZZ, list(self._names),
                                          prefix=prefix, bracket=False, category=cat)
 
     def _repr_(self):
@@ -433,7 +433,7 @@ class FusionDouble(CombinatorialFreeModule):
         G = self._G
         I = G.conjugacy_class(i.g())
         J = G.conjugacy_class(j.g())
-        IJ = set(I_elem * J_elem for I_elem in I for J_elem in J)
+        IJ = {I_elem * J_elem for I_elem in I for J_elem in J}
         if k.g() not in IJ:
             return ZZ.zero()
 

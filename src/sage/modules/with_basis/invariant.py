@@ -799,7 +799,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: type(T)
             <class 'sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule_with_category'>
 
-        Check the ``ValueError``::
+        Check the :class:`ValueError`::
 
             sage: from sage.groups.class_function import ClassFunction_libgap
             sage: chi = ClassFunction_libgap(G, chi)
