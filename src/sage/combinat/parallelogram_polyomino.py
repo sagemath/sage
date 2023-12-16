@@ -3958,7 +3958,7 @@ class ParallelogramPolyomino(ClonableList,
             ...
             \end{tikzpicture}
         """
-        latex.add_package_to_preamble_if_available(str("tikz"))
+        latex.add_package_to_preamble_if_available("tikz")
         tikz_options = self.get_tikz_options()
         res = "\n\\begin{tikzpicture}[scale=%s]" % (tikz_options['scale'])
         res += self.to_tikz()
