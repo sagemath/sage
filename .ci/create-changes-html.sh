@@ -62,7 +62,6 @@ for block in diff_blocks:
     match = re.search(r'^diff --git a/(.*) b/\1', block, flags=re.MULTILINE)
     if match:
         doc = match.group(1)
-        path = 'html/' + doc
         file_path = os.path.join('$DOC_REPOSITORY', doc)
         try:
             with open(file_path, 'r') as file:
@@ -83,6 +82,7 @@ for block in diff_blocks:
         if content:
             with open(file_path, 'w') as file:
                 file.writelines(content)
+        path = 'html/' + doc
         hunks = '&nbsp;'.join(f'<a href="{path}#hunk{i+1}" class="hunk" target="_blank">#{i + 1}</a>' for i in range(count))
         out_blocks.append(f'<p class="diff"><a href="{path}">{doc}</a>&nbsp;' + hunks + '&emsp;</p>'
                             + '\n<pre><code class="language-diff">'
