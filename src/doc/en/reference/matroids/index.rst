@@ -17,7 +17,10 @@ Built-in families and individual matroids
    :maxdepth: 1
 
    sage/matroids/matroids_catalog
-   sage/matroids/catalog
+   sage/matroids/database/oxley_matroids
+   sage/matroids/database/brettell_matroids
+   sage/matroids/database/various_matroids
+   sage/matroids/database/driver_functions
 
 Concrete implementations
 ------------------------

@@ -1,19 +1,11 @@
 r"""
-Documentation for the matroids in the catalog
+A collection of various matroids
 
 This module contains implementations of various interesting matroids,
 accessible through :mod:`matroids.catalog. <sage.matroids.catalog>` (type
 those lines in Sage and hit ``tab`` for a list).
 
-The docstrings include educational information about each named matroid with
-the hopes that this class can be used as a reference. However, for a more
-comprehensive list of properties we refer to the appendix of [Oxl2011]_.
-
 .. TODO::
-
-    Add optional argument ``groundset`` to each method so users can customize
-    the groundset of the matroid. We probably want some means of relabeling to
-    accomplish that.
 
     Add option to specify the field for represented matroids.
 
@@ -24,6 +16,7 @@ AUTHORS:
 
 Functions
 =========
+
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz >
@@ -57,7 +50,7 @@ def NonVamos():
     EXAMPLES::
 
         sage: from sage.matroids.advanced import setprint
-        sage: M = matroids.named_matroids.NonVamos(); M
+        sage: M = matroids.catalog.NonVamos(); M
         NonVamos: Matroid of rank 4 on 8 elements with circuit-closures
         {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'}, {'a', 'b', 'g', 'h'},
              {'c', 'd', 'e', 'f'}, {'c', 'd', 'g', 'h'}, {'e', 'f', 'g', 'h'}},
@@ -71,10 +64,13 @@ def NonVamos():
         True
 
     """
-    E = "abcdefgh"
-    CC = {3: ["abcd", "abef", "cdef", "abgh", "cdgh", "efgh"], 4: [E]}
+    E = 'abcdefgh'
+    CC = {
+        3: ['abcd', 'abef', 'cdef', 'abgh', 'cdgh', 'efgh'],
+        4: [E]
+    }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("NonVamos: " + repr(M))
+    M.rename('NonVamos: ' + repr(M))
     return M
 
 
@@ -87,25 +83,22 @@ def NotP8():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.P8()
-        sage: N = matroids.named_matroids.NotP8()
+        sage: M = matroids.catalog.P8()
+        sage: N = matroids.catalog.NotP8()
         sage: M.is_isomorphic(N)
         False
         sage: M.is_valid()
         True
 
     """
-    A = Matrix(
-        GF(3),
-        [
-            [1, 0, 0, 0, 0, 1, 1, -1],
-            [0, 1, 0, 0, 1, 0, 1, 1],
-            [0, 0, 1, 0, 1, 1, 0, 1],
-            [0, 0, 0, 1, -1, 1, 1, 1],
-        ],
-    )
+    A = Matrix(GF(3), [
+        [1, 0, 0, 0, 0, 1, 1, -1],
+        [0, 1, 0, 0, 1, 0, 1, 1],
+        [0, 0, 1, 0, 1, 1, 0, 1],
+        [0, 0, 0, 1, -1, 1, 1, 1]
+    ])
     M = TernaryMatroid(A, "abcdefgh")
-    M.rename("NotP8: " + repr(M))
+    M.rename('NotP8: ' + repr(M))
     return M
 
 
@@ -119,15 +112,16 @@ def AG23minus():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.AG23minus()
+        sage: M = matroids.catalog.AG23minus()
         sage: M.is_valid()
         True
 
     """
-    E = "abcdefgh"
-    CC = {2: ["abc", "ceh", "fgh", "adf", "aeg", "cdg", "bdh", "bef"], 3: [E]}
+    E = 'abcdefgh'
+    CC = {2: ['abc', 'ceh', 'fgh', 'adf', 'aeg', 'cdg', 'bdh', 'bef'],
+          3: [E]}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("AG23minus: " + repr(M))
+    M.rename('AG23minus: ' + repr(M))
     return M
 
 
@@ -140,24 +134,21 @@ def P9():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.P9()
+        sage: M = matroids.catalog.P9()
         sage: M
         P9: Binary matroid of rank 4 on 9 elements, type (1, 1)
         sage: M.is_valid()
         True
 
     """
-    A = Matrix(
-        GF(2),
-        [
-            [1, 0, 0, 0, 1, 0, 0, 1, 1],
-            [0, 1, 0, 0, 1, 1, 0, 0, 1],
-            [0, 0, 1, 0, 0, 1, 1, 0, 1],
-            [0, 0, 0, 1, 0, 0, 1, 1, 0],
-        ],
-    )
+    A = Matrix(GF(2), [
+        [1, 0, 0, 0, 1, 0, 0, 1, 1],
+        [0, 1, 0, 0, 1, 1, 0, 0, 1],
+        [0, 0, 1, 0, 0, 1, 1, 0, 1],
+        [0, 0, 0, 1, 0, 0, 1, 1, 0]
+    ])
     M = BinaryMatroid(A, "abcdefghi")
-    M.rename("P9: " + repr(M))
+    M.rename('P9: ' + repr(M))
     return M
 
 
@@ -166,27 +157,23 @@ def R9A():
     Return the matroid `R_9^A`.
 
     The matroid `R_9^A` is not representable over any field, yet none of the
-    cross-ratios in its Tuttegroup equal 1. It is one of the 4 matroids on at
-    most 9 elements with this property, the others being `{R_9^A}^*`, `R_9^B`
-    and `{R_9^B}^*`.
+    cross-ratios in its Tuttegroup equal `1`. It is one of the `4` matroids on
+    at most `9` elements with this property, the others being `{R_9^A}^*`,
+    `R_9^B` and `{R_9^B}^*`.
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.R9A()
+        sage: M = matroids.catalog.R9A()
         sage: M.is_valid() # long time
         True
 
     """
-    E = "abcdefghi"
-    CC = {
-        3: [
-            "abde", "bcdf", "aceg", "abch", "aefh", "adgh", "acdi",
-            "abfi", "defi", "begi", "bdhi", "cehi", "fghi",
-        ],
-        4: [E],
-    }
+    E = 'abcdefghi'
+    CC = {3: ['abde', 'bcdf', 'aceg', 'abch', 'aefh', 'adgh', 'acdi', 'abfi',
+              'defi', 'begi', 'bdhi', 'cehi', 'fghi'],
+          4: [E]}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("R9A: " + repr(M))
+    M.rename('R9A: ' + repr(M))
     return M
 
 
@@ -201,21 +188,17 @@ def R9B():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.R9B()
+        sage: M = matroids.catalog.R9B()
         sage: M.is_valid() # long time
         True
 
     """
-    E = "abcdefghi"
-    CC = {
-        3: [
-            "abde", "bcdf", "aceg", "abch", "befh", "cdgh", "bcei",
-            "adfi", "abgi", "degi", "bdhi", "aehi", "fghi",
-        ],
-        4: [E],
-    }
+    E = 'abcdefghi'
+    CC = {3: ['abde', 'bcdf', 'aceg', 'abch', 'befh', 'cdgh', 'bcei', 'adfi',
+              'abgi', 'degi', 'bdhi', 'aehi', 'fghi'],
+          4: [E]}
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("R9B: " + repr(M))
+    M.rename('R9B: ' + repr(M))
     return M
 
 
@@ -226,7 +209,7 @@ def Block_9_4():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Block_9_4()
+        sage: M = matroids.catalog.Block_9_4()
         sage: M.is_valid() # long time
         True
         sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())                 # needs sage.graphs
@@ -234,17 +217,15 @@ def Block_9_4():
         (True, (2, 9, 4, 3))
 
     """
-    E = "abcdefghi"
+    E = 'abcdefghi'
     CC = {
-        3: [
-            "abcd", "acef", "bdef", "cdeg", "abfg", "adeh",
-            "bcfh", "acgh", "begh", "dfgh", "abei", "cdfi",
-            "bcgi", "adgi", "efgi", "bdhi", "cehi", "afhi",
-        ],
-        4: [E],
+        3: ['abcd', 'acef', 'bdef', 'cdeg', 'abfg', 'adeh', 'bcfh', 'acgh',
+            'begh', 'dfgh', 'abei', 'cdfi', 'bcgi', 'adgi', 'efgi', 'bdhi',
+            'cehi', 'afhi'],
+        4: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("Block(9, 4): " + repr(M))
+    M.rename('Block(9, 4): ' + repr(M))
     return M
 
 
@@ -257,19 +238,19 @@ def TicTacToe():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.TicTacToe()
+        sage: M = matroids.catalog.TicTacToe()
         sage: M.is_valid() # long time
         True
 
     """
-    E = "abcdefghi"
+    E = 'abcdefghi'
     CC = {
-        4: ["abcdg", "adefg", "abceh", "abcfi",
-            "cdefi", "adghi", "beghi", "cfghi"],
-        5: [E],
+        4: ['abcdg', 'adefg', 'abceh', 'abcfi', 'cdefi', 'adghi',
+            'beghi', 'cfghi'],
+        5: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("TicTacToe: " + repr(M))
+    M.rename('TicTacToe: ' + repr(M))
     return M
 
 
@@ -281,25 +262,22 @@ def N1():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.N1()
+        sage: M = matroids.catalog.N1()
         sage: M.is_field_isomorphic(M.dual())
         True
         sage: M.is_valid()
         True
 
     """
-    A = Matrix(
-        GF(3),
-        [
-            [1, 0, 0, 0, 0, 2, 0, 0, 1, 1],
-            [0, 1, 0, 0, 0, 1, 2, 0, 0, 1],
-            [0, 0, 1, 0, 0, 0, 1, 2, 0, 1],
-            [0, 0, 0, 1, 0, 0, 0, 1, 2, 2],
-            [0, 0, 0, 0, 1, 1, 1, 1, 2, 0],
-        ],
-    )
-    M = TernaryMatroid(A, "abcdefghij")
-    M.rename("N1: " + repr(M))
+    A = Matrix(GF(3), [
+        [1, 0, 0, 0, 0, 2, 0, 0, 1, 1],
+        [0, 1, 0, 0, 0, 1, 2, 0, 0, 1],
+        [0, 0, 1, 0, 0, 0, 1, 2, 0, 1],
+        [0, 0, 0, 1, 0, 0, 0, 1, 2, 2],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 0]
+    ])
+    M = TernaryMatroid(A, 'abcdefghij')
+    M.rename('N1: ' + repr(M))
     return M
 
 
@@ -310,7 +288,7 @@ def Block_10_5():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Block_10_5()
+        sage: M = matroids.catalog.Block_10_5()
         sage: M.is_valid() # long time
         True
         sage: BD = BlockDesign(M.groundset(), M.nonspanning_circuits())                 # needs sage.graphs
@@ -318,20 +296,18 @@ def Block_10_5():
         (True, (3, 10, 5, 3))
 
     """
-    E = "abcdefghij"
+    E = 'abcdefghij'
     CC = {
-        4: [
-            "abcde", "acdfg", "bdefg", "bcdfh", "abefh", "abcgh", "adegh",
-            "cefgh", "bcefi", "adefi", "bcdgi", "acegi", "abfgi", "abdhi",
-            "cdehi", "acfhi", "beghi", "dfghi", "abdfj", "acefj", "abegj",
-            "cdegj", "bcfgj", "acdhj", "bcehj", "defhj", "bdghj", "afghj",
-            "abcij", "bdeij", "cdfij", "adgij", "efgij", "aehij", "bfhij",
-            "cghij",
-        ],
-        5: [E],
+        4: ['abcde', 'acdfg', 'bdefg', 'bcdfh', 'abefh', 'abcgh', 'adegh',
+            'cefgh', 'bcefi', 'adefi', 'bcdgi', 'acegi', 'abfgi', 'abdhi',
+            'cdehi', 'acfhi', 'beghi', 'dfghi', 'abdfj', 'acefj', 'abegj',
+            'cdegj', 'bcfgj', 'acdhj', 'bcehj', 'defhj', 'bdghj', 'afghj',
+            'abcij', 'bdeij', 'cdfij', 'adgij', 'efgij', 'aehij', 'bfhij',
+            'cghij'],
+        5: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("Block(10, 5): " + repr(M))
+    M.rename('Block(10, 5): ' + repr(M))
     return M
 
 
@@ -345,7 +321,7 @@ def Q10():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Q10()                                         # needs sage.rings.finite_rings
+        sage: M = matroids.catalog.Q10()                                         # needs sage.rings.finite_rings
         sage: M.is_isomorphic(M.dual())                                                 # needs sage.rings.finite_rings
         True
         sage: M.is_valid()                                                              # needs sage.rings.finite_rings
@@ -357,25 +333,22 @@ def Q10():
     are quaternary are `U_{2, 5}, U_{3, 5}, F_7, F_7^*`. As it happens, it
     suffices to check for `U_{2, 5}`:
 
-        sage: S = matroids.named_matroids.Q10().linear_extensions(simple=True)          # needs sage.rings.finite_rings
+        sage: S = matroids.catalog.Q10().linear_extensions(simple=True)          # needs sage.rings.finite_rings
         sage: [M for M in S if not M.has_line_minor(5)]         # long time, needs sage.rings.finite_rings
         []
 
     """
-    F = GF(4, "x")
+    F = GF(4, 'x')
     x = F.gens()[0]
-    A = Matrix(
-        F,
-        [
-            [1, 0, 0, 0, 0, 1, x, 0, 0, x + 1],
-            [0, 1, 0, 0, 0, x + 1, 1, x, 0, 0],
-            [0, 0, 1, 0, 0, 0, x + 1, 1, x, 0],
-            [0, 0, 0, 1, 0, 0, 0, x + 1, 1, x],
-            [0, 0, 0, 0, 1, x, 0, 0, x + 1, 1],
-        ],
-    )
+    A = Matrix(F, [
+        [1, 0, 0, 0, 0, 1, x, 0, 0, x + 1],
+        [0, 1, 0, 0, 0, x + 1, 1, x, 0, 0],
+        [0, 0, 1, 0, 0, 0, x + 1, 1, x, 0],
+        [0, 0, 0, 1, 0, 0, 0, x + 1, 1, x],
+        [0, 0, 0, 0, 1, x, 0, 0, x + 1, 1]
+    ])
     M = QuaternaryMatroid(A, "abcdefghij")
-    M.rename("Q10: " + repr(M))
+    M.rename('Q10: ' + repr(M))
     return M
 
 
@@ -390,21 +363,21 @@ def BetsyRoss():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.BetsyRoss()
+        sage: M = matroids.catalog.BetsyRoss()
         sage: len(M.circuit_closures()[2])
         10
         sage: M.is_valid() # long time
         True
 
     """
-    E = "abcdefghijk"
+    E = 'abcdefghijk'
     CC = {
-        2: ["acfg", "bdgh", "cehi", "befj", "adij",
-            "dfk", "egk", "ahk", "bik", "cjk"],
-        3: [E],
+        2: ['acfg', 'bdgh', 'cehi', 'befj', 'adij', 'dfk',
+            'egk', 'ahk', 'bik', 'cjk'],
+        3: [E]
     }
     M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-    M.rename("BetsyRoss: " + repr(M))
+    M.rename('BetsyRoss: ' + repr(M))
     return M
 
 
@@ -416,26 +389,23 @@ def N2():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.N2()
+        sage: M = matroids.catalog.N2()
         sage: M.is_field_isomorphic(M.dual())
         True
         sage: M.is_valid()
         True
 
     """
-    A = Matrix(
-        GF(3),
-        [
-            [1, 0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 1],
-            [0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 0, 1],
-            [0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 1],
-            [0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0],
-            [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1],
-            [0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 0, 1],
-        ],
-    )
+    A = Matrix(GF(3), [
+        [1, 0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 1],
+        [0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 0, 1],
+        [0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 1],
+        [0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 1, 0],
+        [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1],
+        [0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 0, 1]
+    ])
     M = TernaryMatroid(A, "abcdefghijkl")
-    M.rename("N2: " + repr(M))
+    M.rename('N2: ' + repr(M))
     return M
 
 
@@ -448,7 +418,7 @@ def ExtendedTernaryGolayCode():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.ExtendedTernaryGolayCode()
+        sage: M = matroids.catalog.ExtendedTernaryGolayCode()
         sage: C = LinearCode(M.representation())
         sage: C.is_permutation_equivalent(codes.GolayCode(GF(3)))       # long time, needs sage.rings.finite_rings
         True
@@ -456,19 +426,16 @@ def ExtendedTernaryGolayCode():
         True
 
     """
-    A = Matrix(
-        GF(3),
-        [
-            [1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 0],
-            [0, 1, 0, 0, 0, 0, 1, 1, 2, 1, 0, 2],
-            [0, 0, 1, 0, 0, 0, 1, 2, 1, 0, 1, 2],
-            [0, 0, 0, 1, 0, 0, 1, 2, 0, 1, 2, 1],
-            [0, 0, 0, 0, 1, 0, 1, 0, 2, 2, 1, 1],
-            [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1],
-        ],
-    )
+    A = Matrix(GF(3), [
+        [1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 0],
+        [0, 1, 0, 0, 0, 0, 1, 1, 2, 1, 0, 2],
+        [0, 0, 1, 0, 0, 0, 1, 2, 1, 0, 1, 2],
+        [0, 0, 0, 1, 0, 0, 1, 2, 0, 1, 2, 1],
+        [0, 0, 0, 0, 1, 0, 1, 0, 2, 2, 1, 1],
+        [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1]
+    ])
     M = TernaryMatroid(A, "abcdefghijkl")
-    M.rename("Extended Ternary Golay Code: " + repr(M))
+    M.rename('Extended Ternary Golay Code: ' + repr(M))
     return M
 
 
@@ -483,28 +450,25 @@ def D16():  # A.K.A. the Carolyn Chun Matroid
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.D16()
+        sage: M = matroids.catalog.D16()
         sage: M
         D16: Binary matroid of rank 8 on 16 elements, type (0, 0)
         sage: M.is_valid()
         True
 
     """
-    A = Matrix(
-        GF(2),
-        [
-            [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0],
-            [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1],
-            [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
-            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1],
-            [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0],
-        ],
-    )
+    A = Matrix(GF(2), [
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0],
+        [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1],
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0]
+    ])
     M = BinaryMatroid(A, "abcdefghijklmnop")
-    M.rename("D16: " + repr(M))
+    M.rename('D16: ' + repr(M))
     return M
 
 
@@ -517,28 +481,25 @@ def Terrahawk():  # A.K.A. the Dillon Mayhew Matroid
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Terrahawk()
+        sage: M = matroids.catalog.Terrahawk()
         sage: M
         Terrahawk: Binary matroid of rank 8 on 16 elements, type (0, 4)
         sage: M.is_valid()
         True
 
     """
-    A = Matrix(
-        GF(2),
-        [
-            [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0],
-        ],
-    )
+    A = Matrix(GF(2), [
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0]
+    ])
     M = BinaryMatroid(A, "abcdefghijklmnop")
-    M.rename("Terrahawk: " + repr(M))
+    M.rename('Terrahawk: ' + repr(M))
     return M
 
 
@@ -552,7 +513,7 @@ def ExtendedBinaryGolayCode():
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.ExtendedBinaryGolayCode()
+        sage: M = matroids.catalog.ExtendedBinaryGolayCode()
         sage: C = LinearCode(M.representation())
         sage: C.is_permutation_equivalent(codes.GolayCode(GF(2)))       # long time, needs sage.rings.finite_rings
         True
@@ -560,25 +521,22 @@ def ExtendedBinaryGolayCode():
         True
 
     """
-    A = Matrix(
-        GF(2),
-        [
-            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0],
-            [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1],
-            [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0],
-            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0],
-            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        ],
-    )
+    A = Matrix(GF(2), [
+        [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0],
+        [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0],
+        [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0],
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ])
     M = BinaryMatroid(A, "abcdefghijklmnopqrstuvwx")
-    M.rename("Extended Binary Golay Code: " + repr(M))
+    M.rename('Extended Binary Golay Code: ' + repr(M))
     return M
 
 

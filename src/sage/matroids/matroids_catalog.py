@@ -21,13 +21,12 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.Uniform <sage.matroids.database.oxley_matroids.Uniform>`
     - :func:`matroids.Wheel <sage.matroids.database.oxley_matroids.Wheel>`
     - :func:`matroids.Whirl <sage.matroids.database.oxley_matroids.Whirl>`
-
+    - :func:`matroids.Z <sage.matroids.database.oxley_matroids.Z>`
 
 - List of collections of matroids (``matroids.<tab>``)
     - :func:`matroids.oxley_matroids <sage.matroids.database.oxley_matroids>`
     - :func:`matroids.brettell_matroids <sage.matroids.database.brettell_matroids>`
     - :func:`matroids.various_matroids <sage.matroids.database.various_matroids>`
-
 
 - List of matroids in the catalog (``matroids.catalog.<tab>``)
     - :func:`matroids.catalog.U24 <sage.matroids.database.oxley_matroids.U24>`
@@ -71,7 +70,6 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.catalog.R12 <sage.matroids.database.oxley_matroids.R12>`
     - :func:`matroids.catalog.T12 <sage.matroids.database.oxley_matroids.T12>`
     - :func:`matroids.catalog.PG23 <sage.matroids.database.oxley_matroids.PG23>`
-
     - :func:`matroids.catalog.RelaxedNonFano <sage.matroids.database.brettell_matroids.RelaxedNonFano>`
     - :func:`matroids.catalog.AG23minusDY <sage.matroids.database.brettell_matroids.AG23minusDY>`
     - :func:`matroids.catalog.TQ8 <sage.matroids.database.brettell_matroids.TQ8>`
@@ -139,7 +137,6 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.catalog.FM14 <sage.matroids.database.brettell_matroids.FM14>`
     - :func:`matroids.catalog.FA15 <sage.matroids.database.brettell_matroids.FA15>`
     - :func:`matroids.catalog.N4 <sage.matroids.database.brettell_matroids.N4>`
-
     - :func:`matroids.catalog.NonVamos <sage.matroids.database.various_matroids.NonVamos>`
     - :func:`matroids.catalog.TicTacToe <sage.matroids.database.various_matroids.TicTacToe>`
     - :func:`matroids.catalog.Q10 <sage.matroids.database.various_matroids.Q10>`
@@ -157,6 +154,7 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.catalog.R9A <sage.matroids.database.various_matroids.R9A>`
     - :func:`matroids.catalog.R9B <sage.matroids.database.various_matroids.R9B>`
     - :func:`matroids.catalog.P9 <sage.matroids.database.various_matroids.P9>`
+
 """
 
 # Do not add code to this file, only imports.
@@ -171,7 +169,7 @@ lazy_import(
 )
 lazy_import(
     "sage.matroids.database.oxley_matroids",
-    ("Wheel", "Whirl", "Uniform", "PG", "AG")
+    ("Wheel", "Whirl", "Uniform", "PG", "AG", "Spike", "Z")
 )
 lazy_import("sage.matroids.database.brettell_matroids", "FreeSpike")
 lazy_import("sage.matroids.database.various_matroids", "CompleteGraphic")

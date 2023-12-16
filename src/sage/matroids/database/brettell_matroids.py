@@ -1,5 +1,5 @@
 r"""
-Documentation for the matroids in the catalog
+Collection of Brettell's matroids
 
 This module contains implementations of Brettell's interesting matroids,
 accessible through :mod:`matroids.catalog. <sage.matroids.catalog>` (type
@@ -7,9 +7,21 @@ and hit ``tab`` for a list).
 
 AUTHORS:
 
-- Nick Brettell (2023-02-25, date of associated publication): initial version
-                (retrieved online on 2023-12-06)
-- Giorgos Mousa (2023-12-08): import to SageMath and add examples
+- Nick Brettell (2023-02-25): initial version
+- Giorgos Mousa (2023-12-08): import to sage and add examples
+
+REFERENCES:
+
+For more information, see `Nick Brettell's research page
+<https://homepages.ecs.vuw.ac.nz/~bretteni/research.html>`_,
+or one of the following references:
+
+- [Bre2023]_ \N. Brettell, *The excluded minors for GF (5)-representable
+  matroids on ten elements*, arXiv preprint :arxiv:`2307.14614` (2023).
+
+- [BP2023]_ \N. Brettell and R. Pendavingh, *Computing excluded minors for
+  classes of matroids representable over partial fields*, arXiv preprint
+  :arxiv:`2302.13175` (2023).
 
 Functions
 =========
@@ -76,11 +88,10 @@ def TippedFree3spike():
 
 def AG23minusDY():
     r"""
-    Return the matroid `AG23minusDY`
+    Return the matroid obtained from a `AG(2, 3)\setminus e` by a single
+    `\delta-Y` exchange on a triangle
 
-    The matroid obtained from a `AG(2, 3)\setminus e` by a single `\delta-Y`
-    exchange on a triangle. An excluded minor for near-regular matroids. UPF
-    is `S`.
+    An excluded minor for near-regular matroids. UPF is `S`.
 
     EXAMPLES::
 
@@ -1655,6 +1666,7 @@ def FS12():
         sage: M = matroids.catalog.FS12()
         sage: M.rank()
         5
+
     """
     gf4 = GF(4, "w")
     w = gf4("w")
@@ -1886,7 +1898,7 @@ def NestOfTwistedCubes():
     EXAMPLES::
 
         sage: M = matroids.catalog.NestOfTwistedCubes()
-        sage: M.is_valid() # long time
+        sage: M.is_3connected()
         True
 
     """
@@ -2192,7 +2204,6 @@ def FM14():
         True
 
     """
-
     gf4 = GF(4, "w")
     w = gf4("w")
     A = Matrix(

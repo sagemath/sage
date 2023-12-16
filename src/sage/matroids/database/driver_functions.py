@@ -1,13 +1,17 @@
 r"""
+Functions that access the collections of matroids
+
 This module contains driver functions to easily access the collections of
-matroids in the database. These functions can be viewed by typing ``matroids.``
-and hitting the ``tab`` button.
+matroids in the database. Each of these functions returns a complete list
+of matroids from the corresponding collection. These functions can be viewed
+by typing ``matroids.`` and hitting the ``tab`` button.
 
 AUTHORS:
 - Giorgos Mousa (2023-12-08): initial version
 
 Functions
 =========
+
 """
 # **********************************************************************
 #       Copyright (C) 2023 Giorgos Mousa <gmousa@proton.me>
@@ -30,11 +34,11 @@ def OxleyMatroids():
 
     EXAMPLES::
 
-        sage: for M in matroids.OxleyMatroids(): # long time
-        ....:     assert M.is_valid()
+        sage: len(matroids.OxleyMatroids())
+        41
 
     """
-    all = []
+    Matroids = []
     from sage.matroids.database.oxley_matroids import (
         U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,
         Fano, FanoDual, NonFano, NonFanoDual, O7, P7,
@@ -44,7 +48,7 @@ def OxleyMatroids():
         K5, K5dual, R10,  # NonDesargues,
         R12,  # S_5_6_12,
         T12,
-        PG23,
+        PG23
     )
 
     lst = {
@@ -56,7 +60,7 @@ def OxleyMatroids():
             AG32, AG32prime,
             R8, F8, Q8, L8, S8,
             Vamos, T8, J, P8, P8pp,
-            Wheel4, Whirl4,
+            Wheel4, Whirl4
         ],
         9: [K33dual, K33, AG23, TernaryDowling3, Pappus, NonPappus],
         10: [K5, K5dual, R10],
@@ -65,8 +69,8 @@ def OxleyMatroids():
     }
     for i in lst:
         for M in lst[i]:
-            all.append(M())
-    return iter(all)
+            Matroids.append(M())
+    return Matroids
 
 
 def BrettellMatroids():
@@ -78,11 +82,11 @@ def BrettellMatroids():
 
     EXAMPLES::
 
-        sage: for M in matroids.BrettellMatroids(): # long time
-        ....:     assert M.is_valid()
+        sage: len(matroids.BrettellMatroids())
+        68
 
     """
-    all = []
+    Matroids = []
     from sage.matroids.database.brettell_matroids import (
         RelaxedNonFano, TippedFree3spike,
         AG23minusDY, TQ8, P8p, KP8, Sp8, Sp8pp, LP8, WQ8,
@@ -95,7 +99,7 @@ def BrettellMatroids():
         XY13,
         N3, N3pp, UP14, VP14, FV14, OW14, FM14,
         FA15,
-        N4,
+        N4
     )
 
     lst = {
@@ -118,8 +122,8 @@ def BrettellMatroids():
     }
     for i in lst:
         for M in lst[i]:
-            all.append(M())
-    return iter(all)
+            Matroids.append(M())
+    return Matroids
 
 
 def VariousMatroids():
@@ -131,11 +135,11 @@ def VariousMatroids():
 
     EXAMPLES::
 
-        sage: for M in matroids.VariousMatroids(): # long time
-        ....:     assert M.is_valid()
+        sage: len(matroids.VariousMatroids())
+        17
 
     """
-    all = []
+    Matroids = []
     from sage.matroids.database.various_matroids import (
         NonVamos, NotP8, AG23minus,
         P9, R9A, R9B, Block_9_4, TicTacToe,
@@ -143,7 +147,7 @@ def VariousMatroids():
         BetsyRoss,
         N2, ExtendedTernaryGolayCode,
         D16, Terrahawk,
-        ExtendedBinaryGolayCode,
+        ExtendedBinaryGolayCode
     )
 
     lst = {
@@ -157,5 +161,5 @@ def VariousMatroids():
     }
     for i in lst:
         for M in lst[i]:
-            all.append(M())
-    return iter(all)
+            Matroids.append(M())
+    return Matroids
