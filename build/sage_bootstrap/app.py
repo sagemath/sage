@@ -77,7 +77,7 @@ class Application(object):
         for pkg_name in pc.names:
             print(pkg_name)
 
-    def properties(self, *package_classes, props=['version', 'type']):
+    def properties(self, *package_classes, props=['path', 'version', 'type', 'source', 'trees']):
         """
         Show the properties of given packages
 
