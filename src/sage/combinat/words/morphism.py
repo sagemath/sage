@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Word morphisms/substitutions
 
@@ -150,7 +149,7 @@ def get_cycles(f, domain):
     return cycles
 
 
-class PeriodicPointIterator():
+class PeriodicPointIterator:
     r"""
     (Lazy) constructor of the periodic points of a word morphism.
 

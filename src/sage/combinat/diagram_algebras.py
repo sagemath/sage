@@ -2158,7 +2158,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
             return self.support()
 
 
-class UnitDiagramMixin():
+class UnitDiagramMixin:
     """
     Mixin class for diagram algebras that have the unit indexed by
     the :func:`identity_set_partition`.
@@ -4610,7 +4610,7 @@ def is_planar(sp):
                         if row is ap:
                             sr = set(rng)
                         else:
-                            sr = set((-1*x for x in rng))
+                            sr = set(-1*x for x in rng)
 
                         sj = set(to_consider[j])
                         intersection = sr.intersection(sj)
@@ -4776,7 +4776,7 @@ def to_set_partition(l, k=None):
         if l == []:
             return []
         else:
-            k = max( (max( map(abs, x) ) for x in l) )
+            k = max( max( map(abs, x) ) for x in l )
 
     to_be_added = set( list(range(1, ceil(k+1))) + [-1*x for x in range(1, ceil(k+1))] )
 
