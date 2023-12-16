@@ -839,6 +839,9 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         r"""
         Return the number of integer vectors in the set.
 
+        The algorithm utilises :wikipedia:`Cycle Index Theorem <Cycle_index>`, allowing
+        for a faster than a plain enumeration computation.
+        
         EXAMPLES:
 
         With a trivial group all vectors are canonical::
