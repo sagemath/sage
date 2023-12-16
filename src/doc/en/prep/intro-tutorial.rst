@@ -14,9 +14,9 @@ by NSF DUE 0817071).  It is licensed under the Creative Commons
 Attribution\-ShareAlike 3.0 license (`CC BY\-SA
 <http://creativecommons.org/licenses/by-sa/3.0/>`_).
 
-If you are unsure how to log on to a Sage server, start using a local 
-installation, or to create a new worksheet, you might find the 
-:doc:`prelude on logging in <Logging-On>` helpful.
+If you are unsure how to log on to a Sage server, start using a local
+installation, or to create a new worksheet, you might find the
+:doc:`prelude on logging in <logging-on>` helpful.
 
 Otherwise, you can continue with this tutorial, which has the
 following sections:
