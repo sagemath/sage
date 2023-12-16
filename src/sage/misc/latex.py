@@ -35,8 +35,6 @@ from tempfile import TemporaryDirectory
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.structure.sage_object import SageObject
 
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.misc.html', ('MathJax', 'MathJaxExpr'), deprecation=31536)
 
 COMMON_HEADER = r'''\usepackage{amsmath}
 \usepackage{amssymb}
@@ -476,6 +474,30 @@ def has_latex_attr(x) -> bool:
     return hasattr(x, '_latex_') and not isinstance(x, type)
 
 
+@cached_function
+def default_engine():
+    """
+    Return the default latex engine and the official name of the engine.
+
+    This is determined by availability of the popular engines on the user's
+    system. It is assumed that at least latex is available.
+
+    EXAMPLES::
+
+        sage: from sage.misc.latex import default_engine
+        sage: default_engine()  # random
+        ('lualatex', 'LuaLaTeX')
+    """
+    from sage.features.latex import pdflatex, xelatex, lualatex
+    if lualatex().is_present():
+        return 'lualatex', 'LuaLaTeX'
+    if xelatex().is_present():
+        return 'xelatex', 'XeLaTeX'
+    if pdflatex().is_present():
+        return 'pdflatex', 'pdfLaTeX'
+    return 'latex', 'LaTeX'
+
+
 class _Latex_prefs_object(SageObject):
     """
     An object that holds LaTeX global preferences.
@@ -498,8 +520,8 @@ class _Latex_prefs_object(SageObject):
         self._option["matrix_column_alignment"] = matrix_column_alignment
         self._option["macros"] = ""
         self._option["preamble"] = ""
-        self._option["engine"] = "lualatex"
-        self._option["engine_name"] = "LuaLaTeX"
+        self._option["engine"] = default_engine()[0]
+        self._option["engine_name"] = default_engine()[1]
 
 
 _Latex_prefs = _Latex_prefs_object()
