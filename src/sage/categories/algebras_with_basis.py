@@ -370,7 +370,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 TODO: optimize this implementation!
                 """
-                return tensor( (module.monomial(x1)*module.monomial(x2) for (module, x1, x2) in zip(self._sets, t1, t2)) ) #.
+                return tensor( module.monomial(x1)*module.monomial(x2) for (module, x1, x2) in zip(self._sets, t1, t2) ) #.
 
         class ElementMethods:
             """
