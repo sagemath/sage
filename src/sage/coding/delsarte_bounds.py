@@ -217,7 +217,8 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger, solver, maxc=0):
     for i in range(1, d):
         p.add_constraint(A[i] == 0)
     for j in range(1, n + 1):
-        rhs = sum([krawtchouk(n, q, j, r, check=False)*A[r] for r in range(n+1)])
+        rhs = sum([krawtchouk(n, q, j, r, check=False) * A[r]
+                   for r in range(n + 1)])
         p.add_constraint(0 <= rhs)
         if j >= d_star:
             p.add_constraint(0 <= rhs)
@@ -281,12 +282,14 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
         return mu_i*eberlein(n, w, i, k)/v_i
 
     for k in range(1, w+1):
-        p.add_constraint(sum([A[2*i]*_q(k, i) for i in range(d//2, w+1)]), min=-1)
+        p.add_constraint(sum([A[2*i]*_q(k, i) for i in range(d//2, w+1)]),
+                         min=-1)
 
     return A, p
 
 
-def delsarte_bound_constant_weight_code(n, d, w, return_data=False, solver="PPL", isinteger=False):
+def delsarte_bound_constant_weight_code(n, d, w, return_data=False,
+                                        solver="PPL", isinteger=False):
     r"""
     Find the Delsarte bound on a constant weight code.
 
@@ -335,10 +338,12 @@ def delsarte_bound_constant_weight_code(n, d, w, return_data=False, solver="PPL"
     from sage.numerical.mip import MIPSolverException
 
     if d < 4:
-        raise ValueError("Violated constraint d>=4 for Binary Constant Weight Codes")
+        raise ValueError("Violated constraint d>=4 for "
+                         "Binary Constant Weight Codes")
 
     if d >= 2*w or 2*w > n:
-        raise ValueError("Violated constraint d<2w<=n for Binary Constant Weight Codes")
+        raise ValueError("Violated constraint d<2w<=n for "
+                         "Binary Constant Weight Codes")
 
     # minimum distance is even => if there is an odd lower bound on d we can
     # increase it by 1
@@ -355,12 +360,13 @@ def delsarte_bound_constant_weight_code(n, d, w, return_data=False, solver="PPL"
     return (A, p, bd) if return_data else int(bd)
 
 
-def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isinteger=False):
+def delsarte_bound_hamming_space(n, d, q, return_data=False,
+                                 solver="PPL", isinteger=False):
     r"""
     Find the Delsarte bound on codes in ``H_q^n`` of minimal distance ``d``
 
-    Find the Delsarte bound [De1973]_ on the size of codes in the Hamming space ``H_q^n``
-    of minimal distance ``d``.
+    Find the Delsarte bound [De1973]_ on the size of codes in
+    the Hamming space ``H_q^n`` of minimal distance ``d``.
 
     INPUT:
 
@@ -438,14 +444,16 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False, solver="PPL", isint
     return (A, p, bd) if return_data else bd
 
 
-def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_data=False, solver="PPL", isinteger=False):
+def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_data=False,
+                                          solver="PPL", isinteger=False):
     r"""
-    Find a modified Delsarte bound on additive codes in Hamming space `H_q^n` of minimal distance `d`
+    Find a modified Delsarte bound on additive codes in Hamming space `H_q^n` of minimal distance `d`.
 
-    Find the Delsarte LP bound on ``F_{q_base}``-dimension of additive codes in
-    Hamming space `H_q^n` of minimal distance ``d`` with minimal distance of the dual
-    code at least ``d_star``.  If ``q_base`` is set to
-    non-zero, then  ``q`` is a power of ``q_base``, and the code is, formally, linear over
+    Find the Delsarte LP bound on ``F_{q_base}``-dimension of additive
+    codes in Hamming space `H_q^n` of minimal distance ``d`` with
+    minimal distance of the dual code at least ``d_star``.  If
+    ``q_base`` is set to non-zero, then ``q`` is a power of
+    ``q_base``, and the code is, formally, linear over
     ``F_{q_base}``. Otherwise it is assumed that ``q_base==q``.
 
     INPUT:
@@ -462,17 +470,19 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
     - ``q_base`` -- if ``0``, the code is assumed to be linear. Otherwise,
       ``q=q_base^m`` and the code is linear over ``F_{q_base}``.
 
-    - ``return_data`` -- if ``True``, return a triple ``(W,LP,bound)``, where ``W`` is
-      a weights vector,  and ``LP`` the Delsarte bound LP; both of them are Sage LP
-      data.  ``W`` need not be a weight distribution of a code, or,
-      if ``isinteger==False``, even have integer entries.
+    - ``return_data`` -- if ``True``, return a triple ``(W,LP,bound)``,
+      where ``W`` is a weights vector, and ``LP`` the Delsarte bound
+      LP; both of them are Sage LP data.  ``W`` need not be a weight
+      distribution of a code, or, if ``isinteger==False``, even have
+      integer entries.
 
-    - ``solver`` -- the LP/ILP solver to be used. Defaults to ``'PPL'``. It is arbitrary
-      precision, thus there will be no rounding errors. With other solvers
-      (see :class:`MixedIntegerLinearProgram` for the list), you are on your own!
+    - ``solver`` -- the LP/ILP solver to be used. Defaults to ``'PPL'``. It is
+      arbitrary precision, thus there will be no rounding errors. With
+      other solvers (see :class:`MixedIntegerLinearProgram` for the
+      list), you are on your own!
 
-    - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP), rather
-      that an LP solver. Can be very slow if set to ``True``.
+    - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP),
+      rather that an LP solver. Can be very slow if set to ``True``.
 
     EXAMPLES:
 
@@ -532,11 +542,13 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
     m = kk*n  # this is to emulate repeat/until block
     bd = q**n+1
 
-    while q_base**m < bd:  # need to solve the LP repeatedly, as this is a new constraint!
+    while q_base**m < bd:
+        # need to solve the LP repeatedly, as this is a new constraint!
         # we might become infeasible. More precisely, after rounding down
         # to the closest value of q_base^m, the LP, with the constraint that
         # the objective function is at most q_base^m,
-        A, p = _delsarte_LP_building(n, d, d_star, q, isinteger, solver, q_base**m)
+        A, p = _delsarte_LP_building(n, d, d_star, q, isinteger,
+                                     solver, q_base**m)
         try:
             bd = p.solve()
         except MIPSolverException as exc:
@@ -626,7 +638,8 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
     return A, p
 
 
-def delsarte_bound_Q_matrix(q, d, return_data=False, solver="PPL", isinteger=False):
+def delsarte_bound_Q_matrix(q, d, return_data=False,
+                            solver="PPL", isinteger=False):
     r"""
     Delsarte bound on a code with Q matrix ``q`` and lower bound on min. dist. ``d``.
 
@@ -683,7 +696,8 @@ def delsarte_bound_Q_matrix(q, d, return_data=False, solver="PPL", isinteger=Fal
     from sage.structure.element import is_Matrix
 
     if not is_Matrix(q):
-        raise ValueError("Input to delsarte_bound_Q_matrix should be a sage Matrix()")
+        raise ValueError("Input to delsarte_bound_Q_matrix "
+                         "should be a sage Matrix()")
 
     A, p = _delsarte_Q_LP_building(q, d, solver, isinteger)
     try:
