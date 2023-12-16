@@ -3237,7 +3237,7 @@ class MIPSolverException(RuntimeError):
     pass
 
 
-cdef class MIPVariable(SageObject):
+cdef class MIPVariable(FiniteFamily):
     r"""
     ``MIPVariable`` is a variable used by the class
     ``MixedIntegerLinearProgram``.
@@ -3286,17 +3286,16 @@ cdef class MIPVariable(SageObject):
             MIPVariable with 0 real components, >= 0
 
         """
-        self._dict = {}
+        super().__init__({})
         self._p = mip
         self._vtype = vtype
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
         self._name = name
-        self._dynamic_indices = True
         if indices is not None:
             for i in indices:
                 self[i]                   # creates component
-            self._dynamic_indices = False
+        self._keys = indices
 
     def __copy__(self):
         r"""
@@ -3398,9 +3397,9 @@ cdef class MIPVariable(SageObject):
 
         """
         cdef int j
-        if i in self._dict:
-            return self._dict[i]
-        if not self._dynamic_indices:
+        if i in self._dictionary:
+            return self._dictionary[i]
+        if self._keys is not None:
             raise IndexError("{} does not index a component of {}".format(i, self))
         zero = self._p._backend.zero()
         name = self._name + "[" + str(i) + "]" if self._name else None
@@ -3415,7 +3414,7 @@ cdef class MIPVariable(SageObject):
             name=name)
         v = self._p.linear_functions_parent()({j : 1})
         self._p._variables[v] = j
-        self._dict[i] = v
+        self._dictionary[i] = v
         return v
 
     def copy_for_mip(self, mip):
@@ -3461,8 +3460,8 @@ cdef class MIPVariable(SageObject):
         """
         cdef MIPVariable cp = type(self)(mip, self._vtype, self._name,
                                          self._lower_bound, self._upper_bound)
-        cp._dict = copy(self._dict)
-        cp._dynamic_indices = self._dynamic_indices
+        cp._dictionary = copy(self._dictionary)
+        cp._keys = self._keys
         return cp
 
     def set_min(self, min):
@@ -3501,7 +3500,7 @@ cdef class MIPVariable(SageObject):
 
         """
         self._lower_bound = min
-        for v in self._dict.values():
+        for v in self._dictionary.values():
             self._p.set_min(v,min)
 
     def set_max(self, max):
@@ -3537,7 +3536,7 @@ cdef class MIPVariable(SageObject):
             True
         """
         self._upper_bound = max
-        for v in self._dict.values():
+        for v in self._dictionary.values():
             self._p.set_max(v,max)
 
     def _repr_(self):
@@ -3570,9 +3569,9 @@ cdef class MIPVariable(SageObject):
         """
         s = 'MIPVariable{0} with {1} {2} component{3}'.format(
             " " + self._name if self._name else "",
-            len(self._dict),
+            len(self._dictionary),
             {0:"binary", -1:"real", 1:"integer"}[self._vtype],
-            "s" if len(self._dict) != 1 else "")
+            "s" if len(self._dictionary) != 1 else "")
         if (self._vtype != 0) and (self._lower_bound is not None):
             s += ', >= {0}'.format(self._lower_bound)
         if (self._vtype != 0) and (self._upper_bound is not None):
@@ -3591,11 +3590,11 @@ cdef class MIPVariable(SageObject):
             sage: sorted(v.keys())
             [0, 1]
         """
-        return self._dict.keys()
+        return self._dictionary.keys()
 
     def items(self):
         r"""
-        Return the pairs (keys,value) contained in the dictionary.
+        Return the pairs (keys, value) contained in the dictionary.
 
         EXAMPLES::
 
@@ -3605,7 +3604,7 @@ cdef class MIPVariable(SageObject):
             sage: sorted(v.items())
             [(0, x_0), (1, x_1)]
         """
-        return self._dict.items()
+        return self._dictionary.items()
 
     def values(self):
         r"""
@@ -3619,7 +3618,7 @@ cdef class MIPVariable(SageObject):
             sage: sorted(v.values(), key=str)
             [x_0, x_1]
         """
-        return self._dict.values()
+        return self._dictionary.values()
 
     def mip(self):
         r"""

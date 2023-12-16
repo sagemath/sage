@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 1-skeletons of Platonic solids
 

@@ -5,10 +5,10 @@ TESTS:
 
 Loading, saving, ... works::
 
+    sage: # needs sage.libs.gap
     sage: G = GL(2,5); G
     General Linear Group of degree 2 over Finite Field of size 5
     sage: TestSuite(G).run()
-
     sage: g = G.1; g
     [4 1]
     [4 0]
@@ -159,7 +159,7 @@ class MatrixGroup_base(Group):
         EXAMPLES::
 
             sage: G = SU(4, GF(5))                                                      # needs sage.rings.finite_rings
-            sage: G.as_matrix_group()                                                   # needs sage.rings.finite_rings
+            sage: G.as_matrix_group()                                                   # needs sage.libs.gap sage.rings.finite_rings
             Matrix group over Finite Field in a of size 5^2 with 2 generators (
             [      a       0       0       0]  [      1       0 4*a + 3       0]
             [      0 2*a + 3       0       0]  [      1       0       0       0]
@@ -167,7 +167,8 @@ class MatrixGroup_base(Group):
             [      0       0       0     3*a], [      0 3*a + 1       0       0]
             )
 
-            sage: G = GO(3,GF(5))
+            sage: # needs sage.libs.gap
+            sage: G = GO(3, GF(5))
             sage: G.as_matrix_group()
             Matrix group over Finite Field of size 5 with 2 generators (
             [2 0 0]  [0 1 0]
@@ -316,8 +317,8 @@ class MatrixGroup_base(Group):
 
         EXAMPLES::
 
-            sage: SO3 = groups.matrix.SO(3, QQ)                                         # needs sage.groups sage.modules
-            sage: SO3._repr_option('element_ascii_art')                                 # needs sage.groups sage.modules
+            sage: SO3 = groups.matrix.SO(3, QQ)
+            sage: SO3._repr_option('element_ascii_art')
             True
         """
         if key == 'element_ascii_art':
@@ -479,6 +480,7 @@ class MatrixGroup_generic(MatrixGroup_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: G = GL(2,3)
             sage: H = MatrixGroup(G.gens())
             sage: H == G
@@ -486,6 +488,7 @@ class MatrixGroup_generic(MatrixGroup_base):
             sage: G == H
             True
 
+            sage: # needs sage.libs.gap
             sage: MS = MatrixSpace(QQ, 2, 2)
             sage: G = MatrixGroup([MS(1), MS([1,2,3,4])])
             sage: G == G
@@ -542,3 +545,34 @@ class MatrixGroup_generic(MatrixGroup_base):
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
         return rich_to_bool(op, 0)
+
+    def is_trivial(self):
+        r"""
+        Return ``True`` if this group is the trivial group.
+
+        A group is trivial, if it consists only of the identity
+        element, that is, if all its generators are the identity.
+
+        EXAMPLES::
+
+            sage: MatrixGroup([identity_matrix(3)]).is_trivial()
+            True
+            sage: SL(2, ZZ).is_trivial()
+            False
+            sage: CoxeterGroup(['B',3], implementation="matrix").is_trivial()
+            False
+
+        TESTS::
+
+            sage: CoxeterGroup(['A',0], implementation="matrix").is_trivial()
+            True
+            sage: MatrixGroup([matrix(SR, [[1,x], [0,1]])]).is_trivial()
+            False
+            sage: G = MatrixGroup([identity_matrix(3), identity_matrix(3)])
+            sage: G.ngens()
+            2
+            sage: G.is_trivial()
+            True
+
+        """
+        return all(g.is_one() for g in self.gens())
