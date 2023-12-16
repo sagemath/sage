@@ -77,6 +77,27 @@ class Application(object):
         for pkg_name in pc.names:
             print(pkg_name)
 
+    def properties(self, *package_classes, props=['version', 'type']):
+        """
+        Show the properties of given packages
+
+        $ sage --package properties maxima
+        version_maxima='5.46.0'
+        type_maxima='standard'
+        """
+        log.debug('Looking up properties')
+        pc = PackageClass(*package_classes)
+        for package_name in pc.names:
+            package = Package(package_name)
+            for p in props:
+                value = getattr(package, p)
+                if value is None:
+                    if p == 'version':
+                        value = 'none'
+                    else:
+                        value = ''
+                print("{0}_{1}='{2}'".format(p, package_name, value))
+
     def name(self, tarball_filename):
         """
         Find the package name given a tarball filename
