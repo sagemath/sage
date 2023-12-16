@@ -19,8 +19,3 @@ Upstream Contact
 ----------------
 
 https://www.luatex.org/
-
-Dependencies
-------------
-
-texlive

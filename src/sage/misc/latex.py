@@ -557,10 +557,10 @@ def latex_extra_preamble():
 def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_in_background=False):
     """
     This runs LaTeX on the TeX file "filename.tex".  It produces files
-    ``filename.dvi`` (or ``filename.pdf``` if engine is either ``'pdflatex'``,
+    ``filename.dvi`` (or ``filename.pdf``` if ``engine`` is either ``'pdflatex'``,
     ``'xelatex'``, or ``'lualatex'``) and if ``png`` is ``True``, ``filename.png``.
-    If ``png`` is ``True`` and dvipng cannot convert the dvi file to png
-    (because of postscript specials or other issues), then dvips is called, and
+    If ``png`` is ``True`` and ``dvipng`` cannot convert the dvi file to png
+    (because of postscript specials or other issues), then ``dvips`` is called, and
     the PS file is converted to a png file.
 
     INPUT:
@@ -584,14 +584,15 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     OUTPUT:
 
     A string which could be a string starting with ``'Error'`` (if there was a
-    problem), or it could be ``'pdf'`` or ``'dvi'``.  If engine is latex or ``None``,
-    then a dvi file is created, but if there appear to be problems with it
-    (because of PS special commands, for example), then a pdf file is created
-    instead.  The function returns ``'dvi'`` or ``'pdf'`` to indicate which type of
-    file is created.  (Detecting problems requires that dvipng be installed; if
-    it is not, then the dvi file is not checked for problems and ``'dvi'`` is
-    returned.)  If ``engine`` is ``'pdflatex'``, ``'xelatex'`` or
-    ``'lualatex'`` and there are no errors, then ``'pdf'`` is returned.
+    problem), or it could be ``'pdf'`` or ``'dvi'``.  If ``engine`` is
+    ``'latex'`` or ``None``, then a dvi file is created, but if there appear to
+    be problems with it (because of PS special commands, for example), then a
+    pdf file is created instead.  The function returns ``'dvi'`` or ``'pdf'``
+    to indicate which type of file is created.  (Detecting problems requires
+    that ``dvipng`` be installed; if it is not, then the dvi file is not checked
+    for problems and ``'dvi'`` is returned.)  If ``engine`` is ``'pdflatex'``,
+    ``'xelatex'`` or ``'lualatex'`` and there are no errors, then ``'pdf'`` is
+    returned.
 
     .. WARNING::
 
@@ -751,9 +752,9 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
                         e = subpcall(dvips) and subpcall(ps2pdf)
                         if not e:  # error running dvips and/or ps2pdf
                             pdflt = lt[:]
-                            pdflt[1] = 'lualatex'
+                            pdflt[1] = 'pdflatex'
                             if debug:
-                                print("error running dvips and ps2pdf; trying lualatex instead...")
+                                print("error running dvips and ps2pdf; trying pdflatex instead...")
                                 print(pdflt)
                             e = subpcall(pdflt)
             else:  # do not have dvipng, so must have convert.  run latex, dvips, convert.
@@ -967,10 +968,10 @@ class Latex(LatexCall):
 
         .. WARNING::
 
-            When using ``latex`` (the default), you must have ``dvipng`` (or
+            When using ``'latex'`` (the default), you must have ``dvipng`` (or
             ``dvips`` and ``convert``) installed on your operating system, or
-            this command will not work.  When using ``pdflatex``, ``xelatex``
-            or ``lualatex``, you must have ``convert`` installed.
+            this command will not work.  When using ``'pdflatex'``, ``'xelatex'``
+            or ``'lualatex'``, you must have ``convert`` installed.
 
         OUTPUT:
 
@@ -1686,7 +1687,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
       - ``'latex'`` -- compilation first tries ``tex`` -> ``dvi`` -> ``png`` and if an
         error occurs then tries ``dvi`` -> ``ps`` -> ``pdf``. This is slower than
-        ``'pdflatex'`` and known to be broken when overfull hbox are detected.
+        ``'pdflatex'`` and known to be broken when overfull hboxes are detected.
 
     - ``viewer`` -- string or ``None`` (default: ``None``); specify a viewer
        to use; currently the only options are ``None`` and ``'pdf'``.
@@ -1723,7 +1724,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
     If the ``engine`` is either ``'pdflatex'``, ``'xelatex'``, or ``'lualatex'``,
     it produces a pdf file. Otherwise, it produces a dvi file, and if the program
-    dvipng is installed, it checks the dvi file by trying to convert it to a
+    ``dvipng`` is installed, it checks the dvi file by trying to convert it to a
     png file.  If this conversion fails, the dvi file probably contains some
     postscript special commands or it has other issues which might make
     displaying it a problem; in this case, the file is converted to a pdf file,
@@ -1731,7 +1732,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
     Setting ``viewer`` to ``'pdf'`` forces the use of a separate
     viewer, even in notebook mode. This also sets the latex engine to be
-    ``lualatex`` if the current engine is latex.
+    ``pdflatex`` if the current engine is ``latex``.
 
     Setting the option ``tightpage`` to ``True`` (this is the default setting)
     tells LaTeX to use  the package 'preview' with the 'tightpage' option.
@@ -1811,7 +1812,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     if engine is None:
         engine = _Latex_prefs._option["engine"]
     if viewer == "pdf" and engine == "latex":
-        engine = "lualatex"
+        engine = "pdflatex"
     # command line or notebook with viewer
 
     # We can't automatically delete the temporary file in this case
