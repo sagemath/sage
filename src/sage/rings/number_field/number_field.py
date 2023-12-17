@@ -3391,23 +3391,23 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<t> = NumberField(x^3 + x^2 - 36*x - 4)
             sage: K.conductor()
             109
-            sage: K.dirichlet_group()
+            sage: K.dirichlet_group()  # optional - gap_package_polycyclic
             [Dirichlet character modulo 109 of conductor 1 mapping 6 |--> 1,
              Dirichlet character modulo 109 of conductor 109 mapping 6 |--> zeta3,
              Dirichlet character modulo 109 of conductor 109 mapping 6 |--> -zeta3 - 1]
 
             sage: K = CyclotomicField(44)
             sage: L = K.subfields(5)[0][0]
-            sage: X = L.dirichlet_group()
-            sage: X
+            sage: X = L.dirichlet_group()  # optional - gap_package_polycyclic
+            sage: X  # optional - gap_package_polycyclic
             [Dirichlet character modulo 11 of conductor 1 mapping 2 |--> 1,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^2,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^3,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> -zeta5^3 - zeta5^2 - zeta5 - 1]
-            sage: X[4]^2
+            sage: X[4]^2  # optional - gap_package_polycyclic
             Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^3
-            sage: X[4]^2 in X
+            sage: X[4]^2 in X  # optional - gap_package_polycyclic
             True
         """
         # todo : turn this into an abelian group rather than a list.
@@ -12711,12 +12711,12 @@ def _splitting_classes_gens_(K, m, d):
         sage: L = K.subfields(20)[0][0]
         sage: L.conductor()
         101
-        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap  # optional - gap_package_polycyclic
         [95]
 
         sage: K = CyclotomicField(44)
         sage: L = K.subfields(4)[0][0]
-        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap  # optional - gap_package_polycyclic
         [37]
 
         sage: K = CyclotomicField(44)
@@ -12728,7 +12728,7 @@ def _splitting_classes_gens_(K, m, d):
          with zeta44_0 = 3.837971894457990?
         sage: L.conductor()
         11
-        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap  # optional - gap_package_polycyclic
         [10]
 
     """
