@@ -102,7 +102,7 @@ class FiniteGroups(CategoryWithAxiom):
                 384
             """
 
-            # Check whether the object has _deg attribute or not 
+            # Check whether the object has _deg attribute or not
             # Note for developers - It will have _deg attribute if it is derived from  MatrixGroup_generic class
             # And if it has _deg attribute then return the value of that attribute
             if hasattr(self, '_deg'):
