@@ -28,20 +28,20 @@ from cpython.object cimport Py_EQ, Py_NE
 
 #it would be preferrable to let bint_symbolp wrap an efficient macro
 #but the macro provided in object.h doesn't seem to work
-cdef bint bint_symbolp(cl_object obj):
+cdef bint bint_symbolp(cl_object obj) noexcept:
     return not(cl_symbolp(obj) == ECL_NIL)
 
 #these type predicates are only provided in "cl_*" form, so we wrap them
 #with the proper type cast.
 
-cdef bint bint_numberp(cl_object obj):
+cdef bint bint_numberp(cl_object obj) noexcept:
     return not(cl_numberp(obj) == ECL_NIL)
-cdef bint bint_integerp(cl_object obj):
+cdef bint bint_integerp(cl_object obj) noexcept:
     return not(cl_integerp(obj) == ECL_NIL)
-cdef bint bint_rationalp(cl_object obj):
+cdef bint bint_rationalp(cl_object obj) noexcept:
     return not(cl_rationalp(obj) == ECL_NIL)
 
-cdef bint bint_base_string_p(cl_object obj):
+cdef bint bint_base_string_p(cl_object obj) noexcept:
     return not(si_base_string_p(obj) == ECL_NIL)
 
 cdef extern from "eclsig.h":
@@ -60,7 +60,7 @@ cdef extern from "eclsig.h":
     cl_object safe_cl_eval(cl_object *error, cl_object form)
 
 
-cdef cl_object string_to_object(char * s):
+cdef cl_object string_to_object(char * s) noexcept:
     return ecl_read_from_cstring(s)
 
 # We need to keep a list of objects bound to python, to protect them from being
@@ -77,7 +77,7 @@ cdef cl_object string_to_object(char * s):
 # chained in a "free list" for quick allocation (and if the free list is empty
 # upon allocating a node, the array needs to be extended)
 
-cdef cl_object insert_node_after(cl_object node,cl_object value):
+cdef cl_object insert_node_after(cl_object node,cl_object value) noexcept:
     cdef cl_object next,newnode
 
     next=cl_cadr(node)
@@ -87,7 +87,7 @@ cdef cl_object insert_node_after(cl_object node,cl_object value):
         cl_rplacd(cl_cdr(next),newnode)
     return newnode
 
-cdef void remove_node(cl_object node):
+cdef void remove_node(cl_object node) noexcept:
     cdef cl_object next, prev
     next=cl_cadr(node)
     prev=cl_cddr(node)
@@ -284,7 +284,7 @@ def init_ecl():
 
     ecl_has_booted = 1
 
-cdef ecl_string_to_python(cl_object s):
+cdef ecl_string_to_python(cl_object s) noexcept:
     if bint_base_string_p(s):
         return char_to_str(ecl_base_string_pointer_safe(s))
     else:
@@ -484,7 +484,7 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
         raise TypeError("Unimplemented type for python_to_ecl")
 
 
-cdef ecl_to_python(cl_object o):
+cdef ecl_to_python(cl_object o) noexcept:
     cdef cl_object s
     cdef Integer N
     # conversions from an ecl object to a python object.
@@ -663,7 +663,7 @@ cdef class EclObject:
     cdef cl_object obj   #the wrapped object
     cdef cl_object node  #linked list pointer: car(node) == obj
 
-    cdef void set_obj(EclObject self, cl_object o):
+    cdef void set_obj(EclObject self, cl_object o) noexcept:
         if self.node:
             remove_node(self.node)
             self.node=NULL
@@ -1341,13 +1341,13 @@ cdef class EclListIterator:
         return r
 
 #input: a cl-object. Output: EclObject wrapping that.
-cdef EclObject ecl_wrap(cl_object o):
+cdef EclObject ecl_wrap(cl_object o) noexcept:
     cdef EclObject obj = EclObject.__new__(EclObject)
     obj.set_obj(o)
     return obj
 
 #convenience routine to more easily evaluate strings
-cpdef EclObject ecl_eval(str s):
+cpdef EclObject ecl_eval(str s) noexcept:
     r"""
     Read and evaluate string in Lisp and return the result
 

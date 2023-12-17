@@ -108,7 +108,7 @@ class LieAlgebras(Category_over_base_ring):
                 sage: LieAlgebras(QQ).Nilpotent()
                 Category of nilpotent Lie algebras over Rational Field
                 sage: LieAlgebras(QQ).WithBasis().Nilpotent()
-                Category of nilpotent lie algebras with basis over Rational Field
+                Category of nilpotent Lie algebras with basis over Rational Field
             """
             return self._with_axiom("Nilpotent")
 

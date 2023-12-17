@@ -236,7 +236,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         {1, 2, 3, 4}
         sage: G.category()
         Join of Category of finite enumerated permutation groups and
-        Category of finite weyl groups and
+        Category of finite Weyl groups and
         Category of well generated finite irreducible complex reflection groups
 
     TESTS::
@@ -640,7 +640,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         We illustrate the choice of the category::
 
             sage: A.category()                                                          # needs sage.combinat
-            Join of Category of coxeter group algebras over Rational Field
+            Join of Category of Coxeter group algebras over Rational Field
                 and Category of finite group algebras over Rational Field
                 and Category of finite dimensional cellular algebras with basis
                      over Rational Field
@@ -1390,14 +1390,14 @@ class GeneralDihedralGroup(PermutationGroup_generic):
             # abelian group
             for i in range(1, (a//2)+1):
                 if i != a-i:
-                    genx.append(tuple((jumppoint+i, jumppoint+a-i)))
+                    genx.append((jumppoint+i, jumppoint+a-i))
             jumppoint = jumppoint + a
         # If all of the direct factors are C2, then the action turning
         # each element into its inverse is trivial, and the
         # semi-direct product becomes a direct product, so we simply
         # tack on another disjoint transposition
         if all(x == 2 for x in simplified):
-            genx.append(tuple((jumppoint, jumppoint+1)))
+            genx.append((jumppoint, jumppoint+1))
         gens.append(genx)
         PermutationGroup_generic.__init__(self, gens=gens)
 
@@ -1492,7 +1492,7 @@ class DihedralGroup(PermutationGroup_unique):
             gens = ((1, 2), (3, 4))
         else:
             gen1 = tuple((i, n - i + 1) for i in range(1, n // 2 + 1))
-            gens = tuple([tuple(gen0), gen1])
+            gens = (tuple(gen0), gen1)
 
         PermutationGroup_generic.__init__(self, gens)
 

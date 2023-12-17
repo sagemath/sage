@@ -1,6 +1,6 @@
 .. _sec-GNU-Linux:
 
-Linux package managers
+Linux Package Managers
 ======================
 
 SageMath is available from various distributions and can be installed

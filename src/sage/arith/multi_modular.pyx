@@ -101,7 +101,7 @@ cdef class MultiModularBasis_base():
         mpz_init(self.product)
         mpz_init(self.half_product)
 
-    cdef _realloc_to_new_count(self, new_count):
+    cdef _realloc_to_new_count(self, new_count) noexcept:
         self.moduli = <mod_int*>check_reallocarray(self.moduli, new_count, sizeof(mod_int))
         self.partial_products = <mpz_t*>check_reallocarray(self.partial_products, new_count, sizeof(mpz_t))
         self.C = <mod_int*>check_reallocarray(self.C, new_count, sizeof(mod_int))
@@ -445,7 +445,7 @@ cdef class MultiModularBasis_base():
         """
         self._extend_moduli_to_count(self.n + count)
 
-    cdef void _refresh_products(self, int start):
+    cdef void _refresh_products(self, int start) noexcept:
         r"""
         Compute and store `\prod_j=1^{i-1} m_j` for i > start.
         """
@@ -460,7 +460,7 @@ cdef class MultiModularBasis_base():
         mpz_clear(z)
         self._refresh_prod()
 
-    cdef void _refresh_prod(self):
+    cdef void _refresh_prod(self) noexcept:
         # record the product and half product for balancing the lifts.
         mpz_set(self.product, self.partial_products[self.n-1])
         mpz_fdiv_q_ui(self.half_product, self.product, 2)
@@ -492,7 +492,7 @@ cdef class MultiModularBasis_base():
 
         return count
 
-    cdef mod_int last_prime(self):
+    cdef mod_int last_prime(self) noexcept:
         return self.moduli[self.n-1]
 
     cdef int mpz_reduce_tail(self, mpz_t z, mod_int* b, int offset, int len) except -1:

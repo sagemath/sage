@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Base class for modular abelian varieties
 
@@ -317,7 +317,7 @@ class ModularAbelianVariety_abstract(Parent):
 
             sage: A = J0(37); A
             Abelian variety J0(37) of dimension 2
-            sage: A.base_extend(QQbar)
+            sage: A.base_extend(QQbar)                                                  # needs sage.rings.number_field
             Abelian variety J0(37) over Algebraic Field of dimension 2
             sage: A.base_extend(GF(7))
             Abelian variety J0(37) over Finite Field of size 7 of dimension 2
@@ -2060,8 +2060,8 @@ class ModularAbelianVariety_abstract(Parent):
             if none_if_not_known:
                 return None
             level = LCM([f.level() for f in self.newform_decomposition('a')])
-            groups = sorted(set([f.group() for f in
-                                 self.newform_decomposition('a')]))
+            groups = sorted({f.group() for f in
+                                 self.newform_decomposition('a')})
             if len(groups) == 1:
                 groups = groups[0]
             self.__newform_level = level, groups
@@ -3870,7 +3870,7 @@ class ModularAbelianVariety_abstract(Parent):
         if not isinstance(other, ModularAbelianVariety_abstract):
             raise TypeError("other must be an abelian variety")
         D = self.decomposition()
-        C = set([A.newform_label() for A in other.decomposition()])
+        C = {A.newform_label() for A in other.decomposition()}
         Z = []
         for X in D:
             lbl = X.newform_label()
@@ -4899,7 +4899,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
                 else:
                     raise NotImplementedError("Atkin-Lehner at p must act as a scalar")
         else:
-            mul_primes = sorted(set([p] + [q for q in prime_range(2, 2 * self.dimension() + 2)]))
+            mul_primes = sorted(set([p] + list(prime_range(2, 2 * self.dimension() + 2))))
         div = Integer(div)
         mul = Integer(mul)
         mul_primes = tuple(mul_primes)

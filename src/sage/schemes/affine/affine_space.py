@@ -11,7 +11,6 @@ Affine `n` space over a ring
 # ****************************************************************************
 from itertools import product
 
-from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -23,7 +22,6 @@ from sage.categories.map import Map
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.misc.latex import latex
-from sage.matrix.constructor import matrix
 from sage.structure.category_object import normalize_names
 from sage.schemes.generic.scheme import AffineScheme
 from sage.schemes.generic.ambient_space import AmbientSpace
@@ -938,9 +936,13 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         if self.dimension_relative() != 1:
             raise TypeError("affine space must be of dimension 1")
         n = ZZ(n)
-        if (n < 0):
+        if n < 0:
             raise ValueError("first parameter 'n' must be a non-negative integer")
+
         from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
+        from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
+        from sage.matrix.constructor import matrix
+
         if kind == 'first':
             if monic and self.base().characteristic() != 2:
                 f = DynamicalSystem_affine([chebyshev_T(n, self.gen(0))], domain=self)
@@ -1149,7 +1151,7 @@ class AffineSpace_field(AffineSpace_generic):
         EXAMPLES::
 
             sage: A.<x,y,z> = AffineSpace(QQ, 3)
-            sage: A.curve([y - x^4, z - y^5])                                           # needs sage.libs.pari
+            sage: A.curve([y - x^4, z - y^5])                                           # needs sage.schemes
             Affine Curve over Rational Field defined by -x^4 + y, -y^5 + z
         """
         from sage.schemes.curves.constructor import Curve

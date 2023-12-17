@@ -13,7 +13,7 @@ Standard C helper code for Cython modules
 from cpython.object cimport Py_TYPE, PyTypeObject, PyObject
 
 
-cdef inline PY_NEW(type t):
+cdef inline PY_NEW(type t) noexcept:
     """
     Return ``t.__new__(t)``.  This works even for types like
     :class:`Integer` where we change ``tp_new`` at runtime (Cython
@@ -22,7 +22,7 @@ cdef inline PY_NEW(type t):
     return (<PyTypeObject*>t).tp_new(t, <PyObject*>NULL, <PyObject*>NULL)
 
 
-cdef inline void PY_SET_TP_NEW(type dst, type src):
+cdef inline void PY_SET_TP_NEW(type dst, type src) noexcept:
     """
     Manually set ``dst.__new__`` to ``src.__new__``.  This is used to
     speed up Cython's boilerplate object construction code by skipping
@@ -31,7 +31,7 @@ cdef inline void PY_SET_TP_NEW(type dst, type src):
     (<PyTypeObject*>dst).tp_new = (<PyTypeObject*>src).tp_new
 
 
-cdef inline bint HAS_DICTIONARY(obj):
+cdef inline bint HAS_DICTIONARY(obj) noexcept:
     """
     Test whether the given object has a Python dictionary.
     """

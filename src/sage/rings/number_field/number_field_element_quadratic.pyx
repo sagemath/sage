@@ -4,24 +4,26 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
+# sage.doctest: needs sage.rings.number_field
 r"""
-Optimized Quadratic Number Field Elements
+Elements optimized for quadratic number fields
 
-This file defines a Cython class :class:`NumberFieldElement_quadratic` to speed up
+This module defines a Cython class :class:`NumberFieldElement_quadratic` to speed up
 computations in quadratic extensions of `\QQ`.
-
-AUTHORS:
-
-- Robert Bradshaw (2007-09): Initial version
-- David Harvey (2007-10): fix up a few bugs, polish around the edges
-- David Loeffler (2009-05): add more documentation and tests
-- Vincent Delecroix (2012-07): comparisons for quadratic number fields
-  (:trac:`13213`), abs, floor and ceil functions (:trac:`13256`)
 
 .. TODO::
 
     The ``_new()`` method should be overridden in this class to copy the ``D``
-    and ``standard_embedding`` attributes
+    and ``standard_embedding`` attributes.
+
+AUTHORS:
+
+- Robert Bradshaw (2007-09): initial version
+- David Harvey (2007-10): fixed up a few bugs, polish around the edges
+- David Loeffler (2009-05): added more documentation and tests
+- Vincent Delecroix (2012-07): added comparisons for quadratic number fields
+  (:trac:`13213`), abs, floor and ceil functions (:trac:`13256`)
+
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -225,7 +227,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         # __cmp__, sign, real, imag, floor, ceil, ...
         self.standard_embedding = parent._standard_embedding
 
-    cdef _new(self):
+    cdef _new(self) noexcept:
         """
         Quickly creates a new initialized NumberFieldElement_quadratic with the
         same parent as self.
@@ -243,7 +245,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         x.D = self.D
         return x
 
-    cdef number_field(self):
+    cdef number_field(self) noexcept:
         r"""
         Return the number field to which this element belongs. Since this is a
         Cython cdef method, it is not directly accessible by the user, but the
@@ -350,7 +352,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             mpz_set(denom.value, self.denom)
             return "new QuadraticExtension({}, {}, {})".format(a/denom, b/denom, self.D)
 
-    cpdef _copy_for_parent(self, Parent parent):
+    cpdef _copy_for_parent(self, Parent parent) noexcept:
         r"""
         Return a copy of ``self`` with the parent replaced by ``parent``.
 
@@ -519,7 +521,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         - Craig Citro (reworked for quadratic elements)
         """
         if check:
-            from .number_field import NumberField_cyclotomic
+            from sage.rings.number_field.number_field import NumberField_cyclotomic
             if not isinstance(self.number_field(), NumberField_cyclotomic) \
                    or not isinstance(new_parent, NumberField_cyclotomic):
                 raise TypeError("The field and the new parent field must both be cyclotomic fields.")
@@ -786,7 +788,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         fmpz_clear(tmpz)
         return 0
 
-    cdef void arb_set_imag(self, arb_t x, long prec):
+    cdef void arb_set_imag(self, arb_t x, long prec) noexcept:
         "Set x to the imaginary part of this element"
         cdef fmpz_t tmpz
         cdef arb_t rootD
@@ -892,7 +894,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         self.arb_set_imag(acb_imagref(res.value), R._prec)
         return res
 
-    cpdef tuple parts(self):
+    cpdef tuple parts(self) noexcept:
         r"""
         Return a pair of rationals `a` and `b` such that ``self`` `=
         a+b\sqrt{D}`.
@@ -1038,7 +1040,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             return test
         return -test
 
-    cpdef _richcmp_(left, _right, int op):
+    cpdef _richcmp_(left, _right, int op) noexcept:
         r"""
         Rich comparison of elements.
 
@@ -1295,7 +1297,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 # Arithmetic
 #########################################################
 
-    cdef void _reduce_c_(self):
+    cdef void _reduce_c_(self) noexcept:
         r"""
         Reduces into canonical form.
 
@@ -1318,7 +1320,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         mpz_clear(gcd)
 
 
-    cpdef _add_(self, other_m):
+    cpdef _add_(self, other_m) noexcept:
         """
         EXAMPLES::
 
@@ -1376,7 +1378,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         return res
 
 
-    cpdef _sub_(self, other_m):
+    cpdef _sub_(self, other_m) noexcept:
         """
         EXAMPLES::
 
@@ -1444,7 +1446,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         mpz_set(res.denom, self.denom)
         return res
 
-    cpdef _mul_(self, other_m):
+    cpdef _mul_(self, other_m) noexcept:
         """
         EXAMPLES::
 
@@ -1512,7 +1514,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         res._reduce_c_()
         return res
 
-    cpdef _rmul_(self, Element _c):
+    cpdef _rmul_(self, Element _c) noexcept:
         """
         EXAMPLES::
 
@@ -1529,7 +1531,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         res._reduce_c_()
         return res
 
-    cpdef _lmul_(self, Element _c):
+    cpdef _lmul_(self, Element _c) noexcept:
         """
         EXAMPLES::
 
@@ -1613,7 +1615,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         res._reduce_c_()
         return res
 
-    cpdef NumberFieldElement galois_conjugate(self):
+    cpdef NumberFieldElement galois_conjugate(self) noexcept:
         """
         Return the image of this element under action of the nontrivial
         element of the Galois group of this field.
@@ -1734,7 +1736,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             mpq_canonicalize(res.value)
             return res
 
-    cpdef bint is_one(self):
+    cpdef bint is_one(self) noexcept:
         r"""
         Check whether this number field element is `1`.
 
@@ -1758,7 +1760,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
                 mpz_cmp_ui(self.b, 0) == 0 and
                 mpz_cmp_ui(self.denom, 1) == 0)
 
-    cpdef bint is_rational(self):
+    cpdef bint is_rational(self) noexcept:
         r"""
         Check whether this number field element is a rational number.
 
@@ -1917,10 +1919,10 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         else:
             # avoid circular import
             if self._parent._embedding is None:
-                from .number_field import NumberField
+                from sage.rings.number_field.number_field import NumberField
                 K = NumberField(QQ['x'].gen()**2 - negD, 'sqrt%s' % negD)
             else:
-                from .number_field import QuadraticField
+                from sage.rings.number_field.number_field import QuadraticField
                 K = QuadraticField(negD, 'sqrt%s' % negD)
             q = (<NumberFieldElement_quadratic> K._zero_element)._new()
             mpz_set(q.denom, self.denom)
@@ -1931,7 +1933,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
                 mpz_neg(q.b, self.b)
             return q
 
-    cpdef list _coefficients(self):
+    cpdef list _coefficients(self) noexcept:
         """
         EXAMPLES::
 
@@ -2417,7 +2419,7 @@ cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
         mpz_set(denom.value, self.denom)
         return denom
 
-    cpdef list _coefficients(self):
+    cpdef list _coefficients(self) noexcept:
         """
         EXAMPLES::
 
@@ -2557,7 +2559,7 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic_sqrt):
                 return qqbar.AlgebraicReal(coeffs[0])
         raise ValueError(f"unable to convert {self!r} to an element of {parent!r}")
 
-    cpdef real_part(self):
+    cpdef real_part(self) noexcept:
         r"""
         Real part.
 
@@ -2579,7 +2581,7 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic_sqrt):
 
     real = real_part
 
-    cpdef imag_part(self):
+    cpdef imag_part(self) noexcept:
         r"""
         Imaginary part.
 
@@ -2744,14 +2746,14 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         else:
             return self.charpoly()
 
-    cdef number_field(self):
+    cdef number_field(self) noexcept:
         # So few functions actually use self.number_field() for quadratic elements, so
         # it is better *not* to return a cached value (since the call to _parent.number_field())
         # is expensive.
         return self._parent.number_field()
 
     # We must override these since the basering is now ZZ not QQ.
-    cpdef _rmul_(self, Element _c):
+    cpdef _rmul_(self, Element _c) noexcept:
         """
         EXAMPLES::
 
@@ -2771,7 +2773,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         res._reduce_c_()
         return res
 
-    cpdef _lmul_(self, Element _c):
+    cpdef _lmul_(self, Element _c) noexcept:
         """
         EXAMPLES::
 
@@ -2840,7 +2842,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         R = self.parent()
         return R(_inverse_mod_generic(self, I))
 
-    cpdef list _coefficients(self):
+    cpdef list _coefficients(self) noexcept:
         """
         EXAMPLES::
 
@@ -2945,7 +2947,7 @@ cdef class Z_to_quadratic_field_element(Morphism):
         import sage.categories.homset
         Morphism.__init__(self, sage.categories.homset.Hom(ZZ, K))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         r"""
         Evaluate at an integer ``x``.
 
@@ -3047,7 +3049,7 @@ cdef class Q_to_quadratic_field_element(Morphism):
         import sage.categories.homset
         Morphism.__init__(self, sage.categories.homset.Hom(QQ, K))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         r"""
         Evaluate at a rational ``x``.
 
@@ -3099,7 +3101,7 @@ cdef class Q_to_quadratic_field_element(Morphism):
 #####################################################################
 ## Helper function
 
-cpdef bint is_sqrt_disc(Rational ad, Rational bd):
+cpdef bint is_sqrt_disc(Rational ad, Rational bd) noexcept:
     r"""
     Return ``True`` if the pair ``(ad, bd)`` is `\sqrt{D}`.
 

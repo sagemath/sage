@@ -282,7 +282,7 @@ class PBWData(): # UniqueRepresentation?
 # enhanced_braid_chain is an ugly data structure.
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig_datum):
+cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig_datum) noexcept:
     """
     Return the Lusztig datum obtained by applying tropical Plücker
     relations along ``enhanced_braid_chain`` starting with
@@ -330,7 +330,7 @@ cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig
 # The tropical Plücker relations
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum):
+cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum) noexcept:
     r"""
     Apply the tropical Plücker relation of type ``a`` to ``lusztig_datum``.
 
@@ -403,7 +403,7 @@ cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum):
 # TODO: Move to PBW_data?
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
+cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type) noexcept:
     r"""
     Return a list of tuples that records the data of the long words in
     ``braid_move_chain`` plus the data of the intervals where the braid moves

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 R-trivial semigroups
 """
@@ -13,7 +12,8 @@ R-trivial semigroups
 #*****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from .semigroups import Semigroups
+from sage.categories.semigroups import Semigroups
+
 
 class RTrivialSemigroups(CategoryWithAxiom):
     def extra_super_categories(self):

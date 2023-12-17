@@ -58,7 +58,7 @@ from sage.structure.element import coerce_binop
 
 from sage.misc.cachefunc import cached_method
 
-cdef inline bint _do_sig(fmpq_poly_t op):
+cdef inline bint _do_sig(fmpq_poly_t op) noexcept:
     """
     Return 1 when signal handling should be carried out for an operation
     on this polynomial and 0 otherwise.
@@ -108,7 +108,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     # Allocation & initialisation                                             #
     ###########################################################################
 
-    cdef Polynomial_rational_flint _new(self):
+    cdef Polynomial_rational_flint _new(self) noexcept:
         """
         Quickly creates a new polynomial object in this class.
 
@@ -129,7 +129,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         res._is_gen = 0
         return res
 
-    cpdef Polynomial _new_constant_poly(self, x, Parent P):
+    cpdef Polynomial _new_constant_poly(self, x, Parent P) noexcept:
         r"""
         Quickly creates a new constant polynomial with value x in parent P
 
@@ -222,7 +222,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         cdef unsigned long n
         cdef Rational c
         cdef list L1
-        cdef mpq_t * L2
+        cdef fmpq_t q
 
         Polynomial.__init__(self, parent, is_gen=is_gen)
 
@@ -253,14 +253,11 @@ cdef class Polynomial_rational_flint(Polynomial):
             L1 = [e if isinstance(e, Rational) else Rational(e) for e in x]
             n  = <unsigned long> len(x)
             sig_on()
-            L2 = <mpq_t *> check_allocarray(n, sizeof(mpq_t))
+            fmpq_poly_fit_length(self._poly, n)
             for deg from 0 <= deg < n:
-                mpq_init(L2[deg])
-                mpq_set(L2[deg], (<Rational> L1[deg]).value)
-            fmpq_poly_set_array_mpq(self._poly, L2, n)
-            for deg from 0 <= deg < n:
-                mpq_clear(L2[deg])
-            sig_free(L2)
+                fmpq_init_set_readonly(q, (<Rational> L1[deg]).value)
+                fmpq_poly_set_coeff_fmpq(self._poly, deg, q)
+                fmpq_clear_readonly(q)
             sig_off()
 
 #           deg = 0
@@ -344,13 +341,13 @@ cdef class Polynomial_rational_flint(Polynomial):
 
             sage: P.<x> = PolynomialRing(QQ)
             sage: f = 3*x^2 + 2*x + 5
-            sage: singular(f)
+            sage: singular(f)                                                           # needs sage.libs.singular
             3*x^2+2*x+5
         """
         self._parent._singular_(singular).set_ring()  # Expensive!
         return singular(self._singular_init_())
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         """
         Return a list with the coefficients of ``self``.
 
@@ -394,7 +391,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         """
         return smallInteger(fmpq_poly_degree(self._poly))
 
-    cdef get_unsafe(self, Py_ssize_t n):
+    cdef get_unsafe(self, Py_ssize_t n) noexcept:
         """
         Return the `n`-th coefficient of ``self``.
 
@@ -416,7 +413,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         fmpq_poly_get_coeff_mpq(z.value, self._poly, n)
         return z
 
-    cpdef _unsafe_mutate(self, unsigned long n, value):
+    cpdef _unsafe_mutate(self, unsigned long n, value) noexcept:
         """
         Sets the `n`-th coefficient of ``self`` to value.
 
@@ -435,6 +432,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         utmost care.
         """
         cdef bint do_sig = _do_sig(self._poly)
+        cdef fmpz_t tmpfz
 
         if isinstance(value, int):
             if do_sig: sig_str("FLINT exception")
@@ -442,7 +440,9 @@ cdef class Polynomial_rational_flint(Polynomial):
             if do_sig: sig_off()
         elif isinstance(value, Integer):
             if do_sig: sig_str("FLINT exception")
-            fmpq_poly_set_coeff_mpz(self._poly, n, (<Integer> value).value)
+            fmpz_init_set_readonly(tmpfz, (<Integer> value).value)
+            fmpq_poly_set_coeff_fmpz(self._poly, n, tmpfz)
+            fmpz_clear_readonly(tmpfz)
             if do_sig: sig_off()
         elif isinstance(value, Rational):
             if do_sig: sig_str("FLINT exception")
@@ -486,13 +486,13 @@ cdef class Polynomial_rational_flint(Polynomial):
             True
             sage: (t/3)(RealBallField(100)(1))
             [0.33333333333333333333333333333...]
-            sage: (t/3)(ComplexBallField(10)(1+i))
+            sage: (t/3)(ComplexBallField(10)(1+i))                                      # needs sage.symbolic
             [0.33...] + [0.33...]*I
         """
         cdef Polynomial_rational_flint f
         cdef Rational r
         cdef fmpz_t tmpfz
-        cdef fmpq_t tmpfq
+        cdef fmpq_t tmpfq, tmpfq1
         cdef RealBall arb_a, arb_z
         cdef ComplexBall acb_a, acb_z
 
@@ -508,13 +508,23 @@ cdef class Polynomial_rational_flint(Polynomial):
             elif isinstance(a, Rational):
                 r = Rational.__new__(Rational)
                 sig_str("FLINT exception")
-                fmpq_poly_evaluate_mpq(r.value, self._poly, (<Rational> a).value)
+                fmpq_init_set_readonly(tmpfq, (<Rational> a).value)
+                fmpq_init(tmpfq1)
+                fmpq_poly_evaluate_fmpq(tmpfq1, self._poly, tmpfq)
+                fmpq_get_mpq(r.value, tmpfq1)
+                fmpq_clear(tmpfq1)
+                fmpq_clear_readonly(tmpfq)
                 sig_off()
                 return r
             elif isinstance(a, Integer):
                 r = Rational.__new__(Rational)
                 sig_str("FLINT exception")
-                fmpq_poly_evaluate_mpz(r.value, self._poly, (<Integer> a).value)
+                fmpz_init_set_readonly(tmpfz, (<Integer> a).value)
+                fmpq_init(tmpfq)
+                fmpq_poly_evaluate_fmpz(tmpfq, self._poly, tmpfz)
+                fmpq_get_mpq(r.value, tmpfq)
+                fmpq_clear(tmpfq)
+                fmpz_clear_readonly(tmpfz)
                 sig_off()
                 return r
             elif isinstance(a, int):
@@ -550,7 +560,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         return Polynomial.__call__(self, *x, **kwds)
 
-    cpdef Polynomial truncate(self, long n):
+    cpdef Polynomial truncate(self, long n) noexcept:
         """
         Return self truncated modulo `t^n`.
 
@@ -837,7 +847,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     # Arithmetic                                                              #
     ###########################################################################
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Return the sum of two rational polynomials.
 
@@ -865,7 +875,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         if do_sig: sig_off()
         return res
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Return the difference of two rational polynomials.
 
@@ -893,7 +903,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         if do_sig: sig_off()
         return res
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         Return the difference of two rational polynomials.
 
@@ -1047,7 +1057,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         sig_off()
         return d, s, t
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Return the product of ``self`` and ``right``.
 
@@ -1076,7 +1086,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         if do_sig: sig_off()
         return res
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
         r"""
         Truncated multiplication.
 
@@ -1113,7 +1123,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         if do_sig: sig_off()
         return res
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         r"""
         Return ``left * self``, where ``left`` is a rational number.
 
@@ -1133,7 +1143,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         if do_sig: sig_off()
         return res
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         r"""
         Return ``self * right``, where ``right`` is a rational number.
 
@@ -1321,6 +1331,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         """
         cdef Polynomial_rational_flint res
         cdef bint do_sig
+        cdef fmpq_t tmpfq
 
         if right == 0:
             raise ZeroDivisionError("division by zero polynomial")
@@ -1331,8 +1342,9 @@ cdef class Polynomial_rational_flint(Polynomial):
                 do_sig = _do_sig(self._poly)
 
                 if do_sig: sig_str("FLINT exception")
-                fmpq_poly_scalar_div_mpq(res._poly, self._poly,
-                                                  (<Rational> QQ(right)).value)
+                fmpq_init_set_readonly(tmpfq, (<Rational> QQ(right)).value)
+                fmpq_poly_scalar_div_fmpq(res._poly, self._poly, tmpfq)
+                fmpq_clear_readonly(tmpfq)
                 if do_sig: sig_off()
                 return res
 
@@ -1345,7 +1357,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         sig_off()
         return res
 
-    cpdef Polynomial inverse_series_trunc(self, long prec):
+    cpdef Polynomial inverse_series_trunc(self, long prec) noexcept:
         r"""
         Return a polynomial approximation of precision ``prec`` of the inverse
         series of this polynomial.
@@ -1393,7 +1405,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         sig_off()
         return res
 
-    cpdef _mod_(self, right):
+    cpdef _mod_(self, right) noexcept:
         """
         Return the remainder of ``self`` and ``right`` obtain by Euclidean division.
 
@@ -2097,6 +2109,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(); G
@@ -2113,6 +2126,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         ::
 
+            sage: # needs sage.libs.pari
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(pari_group=True); G
             PARI group [24, -1, 5, "S4"] of degree 4
@@ -2126,10 +2140,12 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         ::
 
+            sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: f.galois_group(algorithm='kash')   # optional - kash
             Transitive group number 5 of degree 4
 
+            sage: # needs sage.libs.gap
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: f.galois_group(algorithm='gap')
             Transitive group number 5 of degree 4
@@ -2139,6 +2155,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f = x^12 - 2*x^8 - x^7 + 2*x^6 + 4*x^4 - 2*x^3 - x^2 - x + 1
             sage: f.galois_group(algorithm='gap')
             Transitive group number 183 of degree 12
+
             sage: f.galois_group(algorithm='magma')  # optional - magma
             Transitive group number 5 of degree 4
 
@@ -2157,7 +2174,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         are supported (see :trac:`20631`)::
 
             sage: R.<zeta> = QQ[]
-            sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)
+            sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)                     # needs sage.libs.pari
             PARI group [2, -1, 1, "S2"] of degree 2
         """
         from sage.groups.pari_group import PariGroup
@@ -2287,6 +2304,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padic
             sage: R.<x> = QQ[]
             sage: f = x^3 - 2
             sage: f.factor_padic(2)
@@ -2307,6 +2325,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         the same as first coercing to `\QQ_p` and then factoring
         (see also :trac:`15422`)::
 
+            sage: # needs sage.rings.padic
             sage: f = x^2 - 3^6
             sage: f.factor_padic(3, 5)
             ((1 + O(3^5))*x + 3^3 + O(3^5)) * ((1 + O(3^5))*x + 2*3^3 + 2*3^4 + O(3^5))
@@ -2318,13 +2337,15 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         A more difficult example::
 
+            sage: R.<x> = QQ[]
             sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
-            sage: f.factor_padic(5, 10)
+            sage: f.factor_padic(5, 10)                                                 # needs sage.rings.padic
             (4*5^4 + O(5^14)) * ((1 + O(5^9))*x + 5^-1 + O(5^9))^2
             * ((1 + O(5^10))*x + 5 + O(5^10))^2
 
         Try some bogus inputs::
 
+            sage: # needs sage.rings.padic
             sage: f.factor_padic(3, -1)
             Traceback (most recent call last):
             ...
@@ -2469,7 +2490,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             -31
             sage: d.parent() is QQ
             True
-            sage: EllipticCurve([1, 1]).discriminant() / 16
+            sage: EllipticCurve([1, 1]).discriminant() / 16                             # needs sage.schemes
             -31
 
         ::

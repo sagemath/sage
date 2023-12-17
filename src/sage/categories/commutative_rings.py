@@ -354,7 +354,7 @@ class CommutativeRings(CategoryWithAxiom):
                 if cosets is None:
                     rest = set(self)
                 else:
-                    rest = set(self(x) for x in cosets)
+                    rest = {self(x) for x in cosets}
 
                 orbits = []
                 while rest:

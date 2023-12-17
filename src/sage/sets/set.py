@@ -813,7 +813,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             raise NotImplementedError(
                 "this method is only implemented for finite sets")
         from sage.combinat.posets.lattices import FiniteLatticePoset
-        from sage.graphs.graph import DiGraph
+        from sage.graphs.digraph import DiGraph
         from sage.rings.integer import Integer
         n = self.cardinality()
         # list, contains at position 0 <= i < 2^n
@@ -1467,10 +1467,8 @@ class Set_object_union(Set_object_binary):
             sage: [x for x in Set(GF(3)).union(Set(GF(2)))]
             [0, 1, 2, 0, 1]
         """
-        for x in self._X:
-            yield x
-        for y in self._Y:
-            yield y
+        yield from self._X
+        yield from self._Y
 
     def __contains__(self, x):
         """

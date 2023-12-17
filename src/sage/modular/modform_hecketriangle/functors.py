@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Functor construction for all spaces
 

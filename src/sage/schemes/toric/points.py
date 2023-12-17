@@ -1007,7 +1007,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
             sage: X.<u,v,w> = ToricVariety(fan, base_ring=GF(7))
             sage: Y = X.subscheme(u^3 + v^3 + w^3 + u*v*w)
             sage: point_set = Y.point_set()
-            sage: list(point_set)
+            sage: list(point_set)                                                       # needs fpylll
             [[0 : 1 : 3],
              [1 : 0 : 3],
              [1 : 3 : 0],
@@ -1015,8 +1015,8 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
              [1 : 1 : 4],
              [1 : 3 : 2],
              [1 : 3 : 5]]
-            sage: ffe = point_set._enumerator()
-            sage: ffe.cardinality()
+            sage: ffe = point_set._enumerator()                                         # needs fpylll
+            sage: ffe.cardinality()                                                     # needs fpylll
             7
         """
         n = 0

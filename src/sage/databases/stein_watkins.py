@@ -158,8 +158,7 @@ class SteinWatkinsIsogenyClass:
 
     def __iter__(self):
         try:
-            for E in self.curves:
-                yield E
+            yield from self.curves
         except AttributeError:
             return
 

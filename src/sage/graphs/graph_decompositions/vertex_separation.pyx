@@ -332,7 +332,6 @@ def lower_bound(G):
         raise ValueError("the (di)graph can have at most 31 vertices")
 
     cdef FastDigraph FD = FastDigraph(G)
-    cdef int * g = FD.graph
     cdef unsigned int n = <unsigned int>FD.n
 
     # minimums[i] is means to store the value of c'_{i+1}
@@ -1011,7 +1010,7 @@ def vertex_separation_exp(G, verbose=False):
 # Actual algorithm, breadth-first search and updates of the costs of the sets #
 ###############################################################################
 
-cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int cost):
+cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int cost) noexcept:
     """
     Check whether an ordering with the given cost exists, and updates data in
     the neighborhoods array at the same time. See the module's documentation.
@@ -1053,7 +1052,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int c
     return neighborhoods[current]
 
 
-cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost):
+cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost) noexcept:
     """
     Return the ordering once we are sure it exists
     """
@@ -1083,14 +1082,14 @@ cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost):
 
 # Min/Max functions
 
-cdef inline int minimum(int a, int b):
+cdef inline int minimum(int a, int b) noexcept:
     if a < b:
         return a
     else:
         return b
 
 
-cdef inline int maximum(int a, int b):
+cdef inline int maximum(int a, int b) noexcept:
     if a > b:
         return a
     else:
@@ -1742,7 +1741,7 @@ def vertex_separation_BAB(G,
     return (width if width < upper_bound else -1), order
 
 
-cdef inline _my_invert_positions(int *prefix, int *positions, int pos_a, int pos_b):
+cdef inline _my_invert_positions(int *prefix, int *positions, int pos_a, int pos_b) noexcept:
     """
     Permute vertices at positions ``pos_a`` and ``pos_b`` in array ``prefix``,
     and record the new positions in array ``positions``.
@@ -1767,7 +1766,7 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
                                  set prefix_storage,
                                  int max_prefix_length,
                                  int max_prefix_number,
-                                 bint verbose):
+                                 bint verbose) noexcept:
     r"""
     Branch and Bound algorithm for the process number and the vertex separation.
 

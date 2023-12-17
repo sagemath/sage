@@ -115,7 +115,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         gens = [W.simple_reflection(j) for j in W._index_set]
         return _gap_factorization(self, gens)
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def reduced_word_in_reflections(self):
         r"""
         Return a word in the reflections to obtain ``self``.
@@ -180,7 +180,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         """
         return ZZ(len(self.reduced_word()))
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def to_matrix(self, on_space="primal"):
         r"""
         Return ``self`` as a matrix acting on the underlying vector
@@ -347,7 +347,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         mat.set_immutable()
         return mat
 
-    cpdef action(self, vec, on_space="primal"):
+    cpdef action(self, vec, on_space="primal") noexcept:
         r"""
         Return the image of ``vec`` under the action of ``self``.
 
@@ -372,7 +372,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         mat = self.matrix(on_space=on_space)
         return vec * mat
 
-    cpdef _act_on_(self, vec, bint self_on_left):
+    cpdef _act_on_(self, vec, bint self_on_left) noexcept:
         r"""
         Defines the action of ``self`` as a linear transformation
         on the vector space, in the basis given by the simple
@@ -396,7 +396,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             return (~self).action(vec)
         return self.action(vec)
 
-    cpdef action_on_root_indices(self, i):
+    cpdef action_on_root_indices(self, i) noexcept:
         """
         Return the right action on the set of roots.
 
@@ -481,7 +481,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         W = self._parent
         return PermutationGroupElement(self, W)
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def fix_space(self):
         r"""
         Return the fix space of ``self``.
@@ -531,7 +531,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         I = identity_matrix(QQ, self._parent.rank())
         return (self.to_matrix() - I).right_kernel()
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def reflection_eigenvalues(self, is_class_representative=False):
         r"""
         Return the reflection eigenvalues of ``self``.
@@ -578,7 +578,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         """
         return self._parent.reflection_eigenvalues(self, is_class_representative=is_class_representative)
 
-    #@cached_in_parent_method
+    # @cached_in_parent_method
     def galois_conjugates(self):
         r"""
         Return all Galois conjugates of ``self``.
@@ -683,8 +683,8 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         """
         rk = self._parent.rank()
         M = self.to_matrix().list()
-        m = lcm([x.conductor() if hasattr(x,"conductor") else 1 for x in M])
-        cdef list M_gals = [x.galois_conjugates(m) if hasattr(x,"galois_conjugates") else [x] for x in M]
+        m = lcm([x.conductor() if hasattr(x, "conductor") else 1 for x in M])
+        cdef list M_gals = [x.galois_conjugates(m) if hasattr(x, "galois_conjugates") else [x] for x in M]
         cdef list conjugates = []
         cdef int i
         for i in range(len(M_gals[0])):
@@ -763,7 +763,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         """
         return ZZ(len(self._reduced_word))
 
-    cpdef bint has_left_descent(self, i):
+    cpdef bint has_left_descent(self, i) noexcept:
         r"""
         Return whether ``i`` is a left descent of ``self``.
 
@@ -784,7 +784,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         # we also check == because 0-based indexing
         return self.perm[W._index_set_inverse[i]] >= W.number_of_reflections()
 
-    cpdef bint has_descent(self, i, side="left", positive=False):
+    cpdef bint has_descent(self, i, side="left", positive=False) noexcept:
         r"""
         Return whether ``i`` is a descent (or ascent) of ``self``.
 
@@ -808,10 +808,10 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
             False
         """
         if not isinstance(positive, bool):
-            raise TypeError("%s is not a boolean"%(bool))
+            raise TypeError("%s is not a boolean" % (bool))
 
         if i not in self._parent.index_set():
-            raise ValueError("the given index %s is not in the index set"%i)
+            raise ValueError("the given index %s is not in the index set" % i)
 
         negative = not positive
 
@@ -957,7 +957,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
     matrix = to_matrix
 
-    cpdef action(self, vec, side="right", on_space="primal"):
+    cpdef action(self, vec, side="right", on_space="primal") noexcept:
         r"""
         Return the image of ``vec`` under the action of ``self``.
 
@@ -1020,7 +1020,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         else:
             raise ValueError('on_space must be "primal" or "dual"')
 
-    cpdef _act_on_(self, vec, bint self_on_left):
+    cpdef _act_on_(self, vec, bint self_on_left) noexcept:
         r"""
         Give the action of ``self`` as a linear transformation on
         the vector space, in the basis given by the simple roots.
@@ -1049,11 +1049,10 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
             (1, 1) -> (0, -1)
         """
         if self_on_left:
-            return self.action(vec,side="left")
-        else:
-            return self.action(vec,side="right")
+            return self.action(vec, side="left")
+        return self.action(vec, side="right")
 
-    cpdef action_on_root_indices(self, i, side="right"):
+    cpdef action_on_root_indices(self, i, side="right") noexcept:
         """
         Return the action on the set of roots.
 
@@ -1177,10 +1176,11 @@ def _gap_factorization(w, gens):
     """
     from sage.interfaces.gap3 import gap3
 
-    gap3.execute('W := GroupWithGenerators(%s)'%str(gens))
+    gap3.execute('W := GroupWithGenerators(%s)' % str(gens))
     gap3.execute(_gap_factorization_code)
-    fac = gap3('MinimalWord(W,%s)'%str(w)).sage()
+    fac = gap3('MinimalWord(W,%s)' % str(w)).sage()
     return [i-1 for i in fac]
+
 
 _gap_factorization_code = r"""
 # MinimalWord(G,w)
@@ -1232,6 +1232,7 @@ MinimalWord:=function(G,w)
   od;
 end;"""
 
+
 def _gap_return(S, coerce_obj='self'):
     r"""
     Return the string ``S`` after a few modifications are done.
@@ -1245,6 +1246,6 @@ def _gap_return(S, coerce_obj='self'):
         sage: _gap_return("[ (), (1,4)(2,3)(5,6), (1,6,2)(3,5,4) ]")    # optional - gap3
         "[self('()',check=False),self('(1,4)(2,3)(5,6)',check=False),self('(1,6,2)(3,5,4)',check=False)]"
     """
-    S = S.replace(' ','').replace('\n','')
-    S = S.replace(',(','\',check=False),%s(\'('%coerce_obj).replace('[','[%s(\''%coerce_obj).replace(']','\',check=False)]')
+    S = S.replace(' ', '').replace('\n', '')
+    S = S.replace(',(', '\',check=False),%s(\'(' % coerce_obj).replace('[', '[%s(\'' % coerce_obj).replace(']', '\',check=False)]')
     return S

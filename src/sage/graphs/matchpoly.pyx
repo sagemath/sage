@@ -348,7 +348,7 @@ def complete_poly(n):
     return b
 
 
-cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol):
+cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol) noexcept:
     """
     Add matching polynomial to pol via recursion.
 
@@ -389,7 +389,7 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
     cdef int edge1 = edges1[nedges]
     cdef int edge2 = edges2[nedges]
     cdef int new_nedges = 0
-    cdef int i, new_edge1, new_edge2
+    cdef int i
 
     # The new edges are all the edges that are not incident with (edge1, edge2)
 

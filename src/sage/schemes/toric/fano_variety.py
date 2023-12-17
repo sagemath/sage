@@ -1518,7 +1518,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
              covered by 8 affine patches defined by:
               a2*z0^2*z1 + a5*z0*z1*z3 + a1*z1*z3^2 + a3*z0^2*z4 + a4*z0*z3*z4 + a0*z3^2*z4,
               b1*z1*z2^2 + b2*z2^2*z4 + b5*z1*z2*z5 + b4*z2*z4*z5 + b3*z1*z5^2 + b0*z4*z5^2
-            sage: CI.cohomology_class()
+            sage: CI.cohomology_class()                                                 # needs sage.libs.singular
             [2*z3*z4 + 4*z3*z5 + 2*z4*z5]
         """
         X = self.ambient_space()
