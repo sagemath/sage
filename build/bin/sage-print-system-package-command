@@ -79,7 +79,12 @@ function print_shell_command()
         echo ".. CODE-BLOCK:: bash"
         echo
     fi
-    echo "${PROMPT}$1"
+    echo -n "${PROMPT}"
+    for a in "$@"; do
+        # shell-quote arguments if necessary
+        printf "%q " $a
+    done
+    echo
     if [ -n "$OUTPUT_RST" ]; then
         echo
     fi
@@ -109,70 +114,70 @@ case $system:$command in
     # Verbs handled above are our own inventions. Verbs handled below are apt-get verbs.
     #
     @(debian*|ubuntu*):update)
-        print_shell_command "${SUDO}apt-get $command $system_packages"
+        print_shell_command ${SUDO}apt-get $command $system_packages
         ;;
     @(debian*|ubuntu*):*)
         [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
         [ "$YES" = yes ] && options="$options --yes" env="DEBIAN_FRONTEND=noninteractive "
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}${env}apt-get $command $options $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
         ;;
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}yum install $options $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}yum install $options $system_packages
         ;;
     gentoo*:install)
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}emerge $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}emerge $system_packages
         ;;
     arch*:update)
         print_shell_command "${SUDO}pacman -Sy"
         ;;
     arch*:install)
         [ "$YES" = yes ] && options="$options --noconfirm"
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}pacman -S $options $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}pacman -S $options $system_packages
         ;;
     void*:update)
         print_shell_command "${SUDO}xbps-install -Su"
         ;;
     void*:install)
         [ "$YES" = yes ] && options="$options --yes"
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}xbps-install $options $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}xbps-install $options $system_packages
         ;;
     opensuse*:install)
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}zypper install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}zypper install $system_packages
         ;;
     *conda*:install)
         [ "$YES" = yes ] && options="$options --yes"
-        [ -n "$system_packages" ] && print_shell_command "conda install $options $system_packages"
+        [ -n "$system_packages" ] && print_shell_command conda install $options $system_packages
         ;;
     homebrew*:install)
-        [ -n "$system_packages" ] && print_shell_command "brew install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command brew install $system_packages
         ;;
     slackware*:install)
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}slackpkg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}slackpkg install $system_packages
         ;;
     cygwin*:update)
         print_comment "first install apt-cyg from https://github.com/transcode-open/apt-cyg"
         ;;
     cygwin*:install)
-        [ -n "$system_packages" ] && print_shell_command "apt-cyg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command apt-cyg install $system_packages
         ;;
     freebsd*:install)
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}pkg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}pkg install $system_packages
         ;;
     nix*:install)
-        [ -n "$system_packages" ] && print_shell_command "nix-env --install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command nix-env --install $system_packages
         ;;
     alpine:update)
         print_shell_command "apk update"
         ;;
     alpine:install)
-        [ -n "$system_packages" ] && print_shell_command "apk add $system_packages"
+        [ -n "$system_packages" ] && print_shell_command apk add $system_packages
         ;;
     pip:install)
-        [ -n "$system_packages" ] && print_shell_command "sage -pip install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command sage -pip install $system_packages
         ;;
     cpan:install)
-        [ -n "$system_packages" ] && print_shell_command "cpan -i $system_packages"
+        [ -n "$system_packages" ] && print_shell_command cpan -i $system_packages
         ;;
     repology:install)
         if [ -n "$system_packages" ]; then
