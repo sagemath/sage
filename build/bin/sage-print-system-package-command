@@ -162,6 +162,12 @@ case $system:$command in
     nix*:install)
         [ -n "$system_packages" ] && print_shell_command "nix-env --install $system_packages"
         ;;
+    alpine:update)
+        print_shell_command "apk update"
+        ;;
+    alpine:install)
+        [ -n "$system_packages" ] && print_shell_command "apk add $system_packages"
+        ;;
     pip:install)
         [ -n "$system_packages" ] && print_shell_command "sage -pip install $system_packages"
         ;;

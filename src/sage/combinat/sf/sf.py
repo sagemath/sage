@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Symmetric functions, with their multiple realizations
 """
@@ -72,7 +73,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     Sage knows certain categorical information about this algebra::
 
         sage: Sym.category()
-        Join of Category of hopf algebras over Rational Field
+        Join of Category of Hopf algebras over Rational Field
             and Category of unique factorization domains
             and Category of graded algebras over Rational Field
             and Category of commutative algebras over Rational Field
@@ -164,7 +165,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         [Category of graded bases of Symmetric Functions over Rational Field,
          Category of filtered bases of Symmetric Functions over Rational Field,
          Category of bases of Symmetric Functions over Rational Field,
-         Category of graded hopf algebras with basis over Rational Field,
+         Category of graded Hopf algebras with basis over Rational Field,
          ...]
 
     To start with, ``p`` is a graded algebra, the grading being induced
@@ -865,8 +866,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         """
         # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
-        self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
+        assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
+        self._base = R  # Won't be needed when CategoryObject won't override anymore base_ring
         cat = GradedHopfAlgebras(R).Commutative().Cocommutative()
         if R in PrincipalIdealDomains():
             cat &= UniqueFactorizationDomains()

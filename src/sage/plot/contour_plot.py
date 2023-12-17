@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Contour plots
 """
@@ -890,7 +891,7 @@ def contour_plot(f, xrange, yrange, **options):
     F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                        options['plot_points'])
     h = F[0]
-    xrange, yrange = [r[:2] for r in ranges]
+    xrange, yrange = (r[:2] for r in ranges)
 
     xy_data_array = [[h(x, y) for x in xsrange(*ranges[0],
                                                include_endpoint=True)]
@@ -999,7 +1000,7 @@ def contour_plot(f, xrange, yrange, **options):
                 F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                                    options['plot_points'])
                 h = F[0]
-                xrange, yrange = [r[:2] for r in ranges]
+                xrange, yrange = (r[:2] for r in ranges)
 
                 # ...and a function whose values are shifted towards
                 # z0 by "tol".
@@ -1393,8 +1394,7 @@ def implicit_plot(f, xrange, yrange, **options):
 @options(plot_points=100, incol='blue', outcol=None, bordercol=None,
          borderstyle=None, borderwidth=None, frame=False, axes=True,
          legend_label=None, aspect_ratio=1, alpha=1)
-def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
-                borderstyle, borderwidth, alpha, **options):
+def region_plot(f, xrange, yrange, **options):
     r"""
     ``region_plot`` takes a boolean function of two variables, `f(x, y)`
     and plots the region where f is True over the specified
@@ -1658,6 +1658,14 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     from warnings import warn
     import numpy
 
+    plot_points = options['plot_points']
+    incol = options.pop('incol')
+    outcol = options.pop('outcol')
+    bordercol = options.pop('bordercol')
+    borderstyle = options.pop('borderstyle')
+    borderwidth = options.pop('borderwidth')
+    alpha = options.pop('alpha')
+
     if not isinstance(f, (list, tuple)):
         f = [f]
 
@@ -1676,13 +1684,13 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     if neqs and not bordercol:
         bordercol = incol
     if not f:
-        return implicit_plot(feqs[0], xrange, yrange, plot_points=plot_points,
-                             fill=False, linewidth=borderwidth,
-                             linestyle=borderstyle, color=bordercol, **options)
+        return implicit_plot(feqs[0], xrange, yrange, fill=False,
+                             linewidth=borderwidth, linestyle=borderstyle,
+                             color=bordercol, **options)
     f_all, ranges = setup_for_eval_on_grid(feqs + f,
                                            [xrange, yrange],
                                            plot_points)
-    xrange, yrange = [r[:2] for r in ranges]
+    xrange, yrange = (r[:2] for r in ranges)
 
     xy_data_arrays = numpy.asarray([[[func(x, y)
                                       for x in xsrange(*ranges[0],

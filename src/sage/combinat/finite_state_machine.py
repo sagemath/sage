@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Finite state machines, automata, transducers
 
@@ -384,6 +384,7 @@ which gives additionally the state in which we arrived.
 
 We can also let an automaton act on a :doc:`word <words/words>`::
 
+    sage: # needs sage.combinat
     sage: W = Words([-1, 0, 1]); W
     Finite and infinite words over {-1, 0, 1}
     sage: w = W([1, 0, 1, 0, -1]); w
@@ -944,13 +945,12 @@ from sage.misc.cachefunc import cached_function
 from sage.misc.latex import latex
 from sage.misc.verbose import verbose
 from sage.misc.sageinspect import sage_getargspec
-from sage.rings.qqbar import QQbar
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
 
 
-def full_group_by(l, key=lambda x: x):
+def full_group_by(l, key=None):
     """
     Group iterable ``l`` by values of ``key``.
 
@@ -984,13 +984,14 @@ def full_group_by(l, key=lambda x: x):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.combinat.finite_state_machine import full_group_by
-        sage: t = [2/x, 1/x, 2/x]                                               # optional - sage.symbolic
-        sage: r = full_group_by([0, 1, 2], key=lambda i: t[i])                  # optional - sage.symbolic
-        sage: sorted(r, key=lambda p: p[1])                                     # optional - sage.symbolic
+        sage: t = [2/x, 1/x, 2/x]
+        sage: r = full_group_by([0, 1, 2], key=lambda i: t[i])
+        sage: sorted(r, key=lambda p: p[1])
         [(2/x, [0, 2]), (1/x, [1])]
         sage: from itertools import groupby
-        sage: for k, elements in groupby(sorted([0, 1, 2],                      # optional - sage.symbolic
+        sage: for k, elements in groupby(sorted([0, 1, 2],
         ....:                            key=lambda i:t[i]),
         ....:                            key=lambda i:t[i]):
         ....:     print("{} {}".format(k, list(elements)))
@@ -1004,6 +1005,8 @@ def full_group_by(l, key=lambda x: x):
     Here, the result ``r`` has been sorted in order to guarantee a
     consistent order for the doctest suite.
     """
+    if key is None:
+        key = lambda x: x
     elements = defaultdict(list)
     original_keys = {}
     for item in l:
@@ -1564,7 +1567,7 @@ class FSMState(SageObject):
             sage: A.is_final
             False
         """
-        return (self.final_word_out is not None)
+        return self.final_word_out is not None
 
     @is_final.setter
     def is_final(self, is_final):
@@ -1836,7 +1839,7 @@ class FSMState(SageObject):
             sage: T1.transitions
             Traceback (most recent call last):
             ...
-            AttributeError: 'FSMState' object has no attribute 'transitions'
+            AttributeError: 'FSMState' object has no attribute 'transitions'...
             sage: A1 = loads(dumps(A))
             sage: all(A.state(j) == A1.state(j) for j in [0, 1])
             True
@@ -3674,6 +3677,7 @@ class FiniteStateMachine(SageObject):
 
         We can also let them act on :doc:`words <words/words>`::
 
+            sage: # needs sage.combinat
             sage: W = Words([0, 1]); W
             Finite and infinite words over {0, 1}
             sage: binary_inverter(W([0, 1, 1, 0, 1, 1]))
@@ -3681,6 +3685,7 @@ class FiniteStateMachine(SageObject):
 
         Infinite words work as well::
 
+            sage: # needs sage.combinat
             sage: words.FibonacciWord()
             word: 0100101001001010010100100101001001010010...
             sage: binary_inverter(words.FibonacciWord())
@@ -3857,11 +3862,11 @@ class FiniteStateMachine(SageObject):
             sage: from itertools import islice
             sage: inverter = Transducer({'A': [('A', 0, 1), ('A', 1, 0)]},
             ....:     initial_states=['A'], final_states=['A'])
-            sage: inverter(words.FibonacciWord())
+            sage: inverter(words.FibonacciWord())                                       # needs sage.combinat
             word: 1011010110110101101011011010110110101101...
-            sage: inverter(words.FibonacciWord(), automatic_output_type=True)
+            sage: inverter(words.FibonacciWord(), automatic_output_type=True)           # needs sage.combinat
             word: 1011010110110101101011011010110110101101...
-            sage: tuple(islice(inverter(words.FibonacciWord(),
+            sage: tuple(islice(inverter(words.FibonacciWord(),                          # needs sage.combinat
             ....:                       automatic_output_type=False), 10r))
             (1, 0, 1, 1, 0, 1, 0, 1, 1, 0)
             sage: type(inverter((1, 0, 1, 1, 0, 1, 0, 1, 1, 0),
@@ -4121,17 +4126,18 @@ class FiniteStateMachine(SageObject):
         If the probabilities are variables in the symbolic ring,
         :func:`~sage.symbolic.assumptions.assume` will do the trick::
 
-            sage: var('p q')                                                                # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: var('p q')
             (p, q)
-            sage: F = Transducer([(0, 0, p, 1), (0, 0, q, 0)],                              # optional - sage.symbolic
+            sage: F = Transducer([(0, 0, p, 1), (0, 0, q, 0)],
             ....:                on_duplicate_transition=duplicate_transition_add_input)
-            sage: assume(p + q == 1)                                                        # optional - sage.symbolic
-            sage: (p + q - 1).is_zero()                                                     # optional - sage.symbolic
+            sage: assume(p + q == 1)
+            sage: (p + q - 1).is_zero()
             True
-            sage: F.is_Markov_chain()                                                       # optional - sage.symbolic
+            sage: F.is_Markov_chain()
             True
-            sage: forget()                                                                  # optional - sage.symbolic
-            sage: del(p, q)                                                                 # optional - sage.symbolic
+            sage: forget()
+            sage: del(p, q)
 
         If the probabilities are variables in some polynomial ring,
         the parameter ``is_zero`` can be used::
@@ -4144,7 +4150,7 @@ class FiniteStateMachine(SageObject):
             sage: F.state(0).initial_probability = p + q
             sage: F.is_Markov_chain()
             False
-            sage: F.is_Markov_chain(is_zero_polynomial)
+            sage: F.is_Markov_chain(is_zero_polynomial)                                 # needs sage.libs.singular
             True
         """
         def default_is_zero(expression):
@@ -4325,9 +4331,9 @@ class FiniteStateMachine(SageObject):
         #.  In the example above, ``'a'`` and ``'alpha'`` should perhaps
             be symbols::
 
-                sage: var('a alpha a_1')                                            # optional - sage.symbolic
+                sage: var('a alpha a_1')                                                # needs sage.symbolic
                 (a, alpha, a_1)
-                sage: print(T.default_format_transition_label([a, alpha, a_1]))     # optional - sage.symbolic
+                sage: print(T.default_format_transition_label([a, alpha, a_1]))         # needs sage.symbolic
                 a \alpha a_{1}
 
         #.  Example of an empty word::
@@ -5038,7 +5044,7 @@ class FiniteStateMachine(SageObject):
             ....:                         3:{'a':(0, 1), 2:(1, 1)},
             ....:                         4:{4:(1, 1), 3:(0, 1)}},
             ....:                        initial_states=[0])
-            sage: B._matrix_()                                          # optional - sage.symbolic
+            sage: B._matrix_()                                                          # needs sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5080,7 +5086,7 @@ class FiniteStateMachine(SageObject):
             ....:                         3:{'a':(0, 1), 2:(1, 1)},
             ....:                         4:{4:(1, 1), 3:(0, 1)}},
             ....:                        initial_states=[0])
-            sage: B.adjacency_matrix()                                  # optional - sage.symbolic
+            sage: B.adjacency_matrix()                                                  # needs sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5089,7 +5095,7 @@ class FiniteStateMachine(SageObject):
 
         This is equivalent to::
 
-            sage: matrix(B)                                             # optional - sage.symbolic
+            sage: matrix(B)                                                             # needs sage.symbolic
             [1 1 0 0 0]
             [0 0 1 1 0]
             [x 0 0 0 1]
@@ -5104,9 +5110,9 @@ class FiniteStateMachine(SageObject):
             [1 0 0 0 1]
             [0 1 1 0 0]
             [0 0 0 1 1]
-            sage: var('t')                                              # optional - sage.symbolic
+            sage: var('t')                                                              # needs sage.symbolic
             t
-            sage: B.adjacency_matrix(1, entry=(lambda transition:       # optional - sage.symbolic
+            sage: B.adjacency_matrix(1, entry=(lambda transition:                       # needs sage.symbolic
             ....:     exp(I*transition.word_out[0]*t)))
             [      0       1       0       0       0]
             [      0       0       0       1       0]
@@ -5119,7 +5125,7 @@ class FiniteStateMachine(SageObject):
             ....:                (2, 1, 0)],
             ....:               initial_states=[0],
             ....:               final_states=[0])
-            sage: a.adjacency_matrix()                                  # optional - sage.symbolic
+            sage: a.adjacency_matrix()                                                  # needs sage.symbolic
             [0 1 0]
             [0 0 1]
             [1 1 0]
@@ -5407,8 +5413,7 @@ class FiniteStateMachine(SageObject):
             [('1', '2'), ('2', '2')]
         """
         for state in self.iter_states():
-            for t in state.transitions:
-                yield t
+            yield from state.transitions
 
     def initial_states(self):
         """
@@ -5755,7 +5760,7 @@ class FiniteStateMachine(SageObject):
                 state.transitions,
                 key=lambda t: t.word_in)
 
-            for key, transition_class in transition_classes_by_word_in:
+            for _, transition_class in transition_classes_by_word_in:
                 if len(transition_class) > 1:
                     return False
         return True
@@ -6249,6 +6254,8 @@ class FiniteStateMachine(SageObject):
 
             sage: inverter = Transducer({'A': [('A', 0, 1), ('A', 1, 0)]},
             ....:     initial_states=['A'], final_states=['A'])
+
+            sage: # needs sage.combinat
             sage: words.FibonacciWord()
             word: 0100101001001010010100100101001001010010...
             sage: it = inverter.iter_process(
@@ -6258,19 +6265,20 @@ class FiniteStateMachine(SageObject):
 
         This can also be done by::
 
-            sage: inverter.iter_process(words.FibonacciWord(),
+            sage: inverter.iter_process(words.FibonacciWord(),                          # needs sage.combinat
             ....:                       iterator_type='simple',
             ....:                       automatic_output_type=True)
             word: 1011010110110101101011011010110110101101...
 
         or even simpler by::
 
-            sage: inverter(words.FibonacciWord())
+            sage: inverter(words.FibonacciWord())                                       # needs sage.combinat
             word: 1011010110110101101011011010110110101101...
 
         To see what is going on, we use :meth:`iter_process` without
         arguments::
 
+            sage: # needs sage.combinat
             sage: from itertools import islice
             sage: it = inverter.iter_process(words.FibonacciWord())
             sage: for current in islice(it, 4r):
@@ -6399,9 +6407,9 @@ class FiniteStateMachine(SageObject):
 
             sage: inverter = Transducer({'A': [('A', 0, 1), ('A', 1, 0)]},
             ....:     initial_states=['A'], final_states=['A'])
-            sage: it = inverter.iter_process(words.FibonacciWord()[:10])
-            sage: it_simple = inverter._iter_process_simple_(it)
-            sage: list(it_simple)
+            sage: it = inverter.iter_process(words.FibonacciWord()[:10])                # needs sage.combinat
+            sage: it_simple = inverter._iter_process_simple_(it)                        # needs sage.combinat
+            sage: list(it_simple)                                                       # needs sage.combinat
             [1, 0, 1, 1, 0, 1, 0, 1, 1, 0]
 
         .. SEEALSO::
@@ -6447,14 +6455,14 @@ class FiniteStateMachine(SageObject):
                                    "'simple' iterator cannot be used "
                                    "here." %
                                    (len(current),))
-            pos, states = next(iter(current.items()))
+            _, states = next(iter(current.items()))
             if len(states) > 1:
                 raise RuntimeError("Process has branched "
                                    "(visiting %s states in branch). The "
                                    "'simple' iterator cannot be used "
                                    "here." %
                                    (len(states),))
-            state, branch = next(iter(states.items()))
+            _, branch = next(iter(states.items()))
             if len(branch.outputs) > 1:
                 raise RuntimeError("Process has branched. "
                                    "(%s different outputs in branch). The "
@@ -6462,8 +6470,7 @@ class FiniteStateMachine(SageObject):
                                    "here." %
                                    (len(branch.outputs),))
 
-            for o in branch.outputs[0]:
-                yield o
+            yield from branch.outputs[0]
             branch.outputs[0] = []
             # Reset output so that in the next round
             # (of "for current in iterator") only new
@@ -8217,7 +8224,7 @@ class FiniteStateMachine(SageObject):
         for state_result in result.iter_states():
             state = state_result.label()[0]
             if state.is_final:
-                accept, state_to, output = self.process(
+                accept, _, output = self.process(
                     state.final_word_out,
                     initial_state=self.state(state_result.label()[1]))
                 if not accept:
@@ -9615,7 +9622,7 @@ class FiniteStateMachine(SageObject):
             return final_word_out
 
         for state in self.iter_states():
-            assert(not in_progress)
+            assert not in_progress
             # trailing_letters is an infinite iterator additionally
             # marking positions
             trailing_letters = itertools.cycle(enumerate(letters))
@@ -9708,7 +9715,7 @@ class FiniteStateMachine(SageObject):
 
         TESTS::
 
-            sage: FiniteStateMachine([('A', 'A', 0)]).plot()                            # optional - sage.plot
+            sage: FiniteStateMachine([('A', 'A', 0)]).plot()                            # needs sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         return self.graph(edge_labels='words_in_out').plot()
@@ -9793,9 +9800,9 @@ class FiniteStateMachine(SageObject):
             ....:                    (0, 1, -1), (1, 0, 0)],
             ....:                   initial_states=[0],
             ....:                   final_states=[0, 1])
-            sage: N = NAFpm.number_of_words(); N                            # optional - sage.symbolic
+            sage: N = NAFpm.number_of_words(); N                                        # needs sage.symbolic
             4/3*2^n - 1/3*(-1)^n
-            sage: all(len(list(NAFpm.language(s)))                          # optional - sage.symbolic
+            sage: all(len(list(NAFpm.language(s)))                                      # needs sage.symbolic
             ....:     - len(list(NAFpm.language(s-1))) == N.subs(n=s)
             ....:     for s in srange(1, 6))
             True
@@ -9807,10 +9814,10 @@ class FiniteStateMachine(SageObject):
             sage: NAFp = Automaton([(0, 0, 0), (0, 1, 1),  (1, 0, 0)],
             ....:                 initial_states=[0],
             ....:                 final_states=[0, 1])
-            sage: N = NAFp.number_of_words(); N                             # optional - sage.symbolic
+            sage: N = NAFp.number_of_words(); N                                         # needs sage.rings.number_field sage.symbolic
             1.170820393249937?*1.618033988749895?^n
             - 0.1708203932499369?*(-0.618033988749895?)^n
-            sage: all(len(list(NAFp.language(s)))                           # optional - sage.symbolic
+            sage: all(len(list(NAFp.language(s)))                                       # needs sage.rings.number_field sage.symbolic
             ....:     - len(list(NAFp.language(s-1))) == N.subs(n=s)
             ....:     for s in srange(1, 6))
             True
@@ -9820,14 +9827,15 @@ class FiniteStateMachine(SageObject):
         polynomial and then construct a number field generated by its
         roots. ::
 
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: M = NAFp.adjacency_matrix(entry=lambda t: 1)
-            sage: M.characteristic_polynomial()                             # optional - sage.symbolic
+            sage: M.characteristic_polynomial()
             x^2 - x - 1
-            sage: R.<phi> = NumberField(x^2-x-1, embedding=1.6)             # optional - sage.symbolic
-            sage: N = NAFp.number_of_words(base_ring=R); N                  # optional - sage.symbolic
+            sage: R.<phi> = NumberField(x^2 - x - 1, embedding=1.6)
+            sage: N = NAFp.number_of_words(base_ring=R); N
             1/2*(1/2*sqrt(5) + 1/2)^n*(3*sqrt(1/5) + 1)
             - 1/2*(-1/2*sqrt(5) + 1/2)^n*(3*sqrt(1/5) - 1)
-            sage: all(len(list(NAFp.language(s)))                           # optional - sage.symbolic
+            sage: all(len(list(NAFp.language(s)))
             ....:     - len(list(NAFp.language(s-1))) == N.subs(n=s)
             ....:     for s in srange(1, 6))
             True
@@ -9835,11 +9843,12 @@ class FiniteStateMachine(SageObject):
         In this special case, we might also use the constant
         :class:`golden_ratio <sage.symbolic.constants.GoldenRatio>`::
 
-            sage: R.<phi> = NumberField(x^2-x-1, embedding=golden_ratio)    # optional - sage.symbolic
-            sage: N = NAFp.number_of_words(base_ring=R); N                  # optional - sage.symbolic
+            sage: # needs sage.rings.number_field sage.symbolic
+            sage: R.<phi> = NumberField(x^2-x-1, embedding=golden_ratio)
+            sage: N = NAFp.number_of_words(base_ring=R); N
             1/5*(3*golden_ratio + 1)*golden_ratio^n
             - 1/5*(3*golden_ratio - 4)*(-golden_ratio + 1)^n
-            sage: all(len(list(NAFp.language(s)))                           # optional - sage.symbolic
+            sage: all(len(list(NAFp.language(s)))
             ....:     - len(list(NAFp.language(s-1))) == N.subs(n=s)
             ....:     for s in srange(1, 6))
             True
@@ -9857,9 +9866,9 @@ class FiniteStateMachine(SageObject):
             [4 1 0]
             [0 4 1]
             [0 0 4]
-            sage: N = J3.number_of_words(); N                               # optional - sage.symbolic
+            sage: N = J3.number_of_words(); N                                           # needs sage.symbolic
             1/2*4^(n - 2)*(n - 1)*n + 4^(n - 1)*n + 4^n
-            sage: all(len(list(J3.language(s)))                             # optional - sage.symbolic
+            sage: all(len(list(J3.language(s)))                                         # needs sage.symbolic
             ....:     - len(list(J3.language(s-1))) == N.subs(n=s)
             ....:     for s in range(1, 6))
             True
@@ -9869,14 +9878,14 @@ class FiniteStateMachine(SageObject):
             sage: A = Automaton([(j, j+1, 0) for j in range(3)],
             ....:               initial_states=[0],
             ....:               final_states=list(range(3)))
-            sage: A.number_of_words()                                       # optional - sage.symbolic
+            sage: A.number_of_words()                                                   # needs sage.symbolic
             1/2*0^(n - 2)*(n - 1)*n + 0^(n - 1)*n + 0^n
 
         TESTS::
 
             sage: A = Automaton([(0, 0, 0), (0, 1, 0)],
             ....:               initial_states=[0])
-            sage: A.number_of_words()                                       # optional - sage.symbolic
+            sage: A.number_of_words()                                                   # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: Finite State Machine must be deterministic.
@@ -9885,7 +9894,7 @@ class FiniteStateMachine(SageObject):
         from sage.arith.misc import binomial
         from sage.symbolic.ring import SR
         if base_ring is None:
-            base_ring = QQbar
+            from sage.rings.qqbar import QQbar as base_ring
         if variable is None:
             variable = SR.symbol('n')
 
@@ -9967,12 +9976,14 @@ class FiniteStateMachine(SageObject):
                 ....:                final_states=[0])
                 sage: T([0, 1, 1])
                 [0, -1, -1]
-                sage: moments = T.asymptotic_moments()                          # optional - sage.symbolic
-                sage: moments['expectation']                                    # optional - sage.symbolic
+
+                sage: # needs sage.symbolic
+                sage: moments = T.asymptotic_moments()
+                sage: moments['expectation']
                 -1/2*n + Order(1)
-                sage: moments['variance']                                       # optional - sage.symbolic
+                sage: moments['variance']
                 1/4*n + Order(1)
-                sage: moments['covariance']                                     # optional - sage.symbolic
+                sage: moments['covariance']
                 -1/4*n + Order(1)
 
         #.  For the case of the Hamming weight of the non-adjacent-form
@@ -10035,12 +10046,13 @@ class FiniteStateMachine(SageObject):
 
             Now, we actually compute the asymptotic moments::
 
-                sage: moments = NAFweight.asymptotic_moments()                  # optional - sage.symbolic
-                sage: moments['expectation']                                    # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: moments = NAFweight.asymptotic_moments()
+                sage: moments['expectation']
                 1/3*n + Order(1)
-                sage: moments['variance']                                       # optional - sage.symbolic
+                sage: moments['variance']
                 2/27*n + Order(1)
-                sage: moments['covariance']                                     # optional - sage.symbolic
+                sage: moments['covariance']
                 Order(1)
 
         #.  This is Example 3.16 in [HKW2015]_, where a transducer with
@@ -10051,17 +10063,18 @@ class FiniteStateMachine(SageObject):
 
             ::
 
-                sage: var('a_1, a_2, a_3, a_4')                                 # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: var('a_1, a_2, a_3, a_4')
                 (a_1, a_2, a_3, a_4)
-                sage: T = Transducer([[0, 0, 0, a_1], [0, 1, 1, a_3],           # optional - sage.symbolic
+                sage: T = Transducer([[0, 0, 0, a_1], [0, 1, 1, a_3],
                 ....:                 [1, 0, 0, a_4], [1, 1, 1, a_2]],
                 ....:                initial_states=[0], final_states=[0, 1])
-                sage: moments = T.asymptotic_moments()                          # optional - sage.symbolic
+                sage: moments = T.asymptotic_moments()
                 verbose 0 (...) Non-integer output weights lead to
                 significant performance degradation.
-                sage: moments['expectation']                                    # optional - sage.symbolic
+                sage: moments['expectation']
                 1/4*(a_1 + a_2 + a_3 + a_4)*n + Order(1)
-                sage: moments['covariance']                                     # optional - sage.symbolic
+                sage: moments['covariance']
                 -1/4*(a_1 - a_2)*n + Order(1)
 
             Therefore, the asymptotic covariance vanishes if and only if
@@ -10073,12 +10086,13 @@ class FiniteStateMachine(SageObject):
             :ref:`example on Gray code
             <finite_state_machine_gray_code_example>`)::
 
-                sage: moments = transducers.GrayCode().asymptotic_moments()     # optional - sage.symbolic
-                sage: moments['expectation']                                    # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: moments = transducers.GrayCode().asymptotic_moments()
+                sage: moments['expectation']
                 1/2*n + Order(1)
-                sage: moments['variance']                                       # optional - sage.symbolic
+                sage: moments['variance']
                 1/4*n + Order(1)
-                sage: moments['covariance']                                     # optional - sage.symbolic
+                sage: moments['covariance']
                 Order(1)
 
         #.  This is the first part of Example 4.4 in [HKW2015]_,
@@ -10094,12 +10108,14 @@ class FiniteStateMachine(SageObject):
                  Transition from () to (1,): 1|0,
                  Transition from (1,) to (): 0|1,
                  Transition from (1,) to (1,): 1|0]
-                sage: moments = block10.asymptotic_moments()                    # optional - sage.symbolic
-                sage: moments['expectation']                                    # optional - sage.symbolic
+
+                sage: # needs sage.symbolic
+                sage: moments = block10.asymptotic_moments()
+                sage: moments['expectation']
                 1/4*n + Order(1)
-                sage: moments['variance']                                       # optional - sage.symbolic
+                sage: moments['variance']
                 1/16*n + Order(1)
-                sage: moments['covariance']                                     # optional - sage.symbolic
+                sage: moments['covariance']
                 Order(1)
 
         #.  This is the second part of Example 4.4 in [HKW2015]_,
@@ -10115,16 +10131,18 @@ class FiniteStateMachine(SageObject):
                  Transition from () to (1,): 1|0,
                  Transition from (1,) to (): 0|0,
                  Transition from (1,) to (1,): 1|1]
-                sage: var('N')                                                  # optional - sage.symbolic
+
+                sage: # needs sage.symbolic
+                sage: var('N')
                 N
-                sage: moments = block11.asymptotic_moments(N)                   # optional - sage.symbolic
-                sage: moments['expectation']                                    # optional - sage.symbolic
+                sage: moments = block11.asymptotic_moments(N)
+                sage: moments['expectation']
                 1/4*N + Order(1)
-                sage: moments['variance']                                       # optional - sage.symbolic
+                sage: moments['variance']
                 5/16*N + Order(1)
-                sage: correlation = (moments['covariance'].coefficient(N) /     # optional - sage.symbolic
+                sage: correlation = (moments['covariance'].coefficient(N) /
                 ....:                (1/2 * sqrt(moments['variance'].coefficient(N))))
-                sage: correlation                                               # optional - sage.symbolic
+                sage: correlation
                 2/5*sqrt(5)
 
         #.  This is Example 4.5 in [HKW2015]_, counting the number of
@@ -10145,12 +10163,14 @@ class FiniteStateMachine(SageObject):
                  Transition from 1 to 0: 1|0,
                  Transition from 2 to 2: 0|0,
                  Transition from 2 to 0: 1|1]
-                sage: moments = T.asymptotic_moments()                          # optional - sage.symbolic
-                sage: moments['expectation']                                    # optional - sage.symbolic
+
+                sage: # needs sage.symbolic
+                sage: moments = T.asymptotic_moments()
+                sage: moments['expectation']
                 Order(1)
-                sage: moments['variance']                                       # optional - sage.symbolic
+                sage: moments['variance']
                 Order(1)
-                sage: moments['covariance']                                     # optional - sage.symbolic
+                sage: moments['covariance']
                 Order(1)
 
         #.  The finite state machine must have a unique final component::
@@ -10223,28 +10243,30 @@ class FiniteStateMachine(SageObject):
 
         #.  Non-integer input or output labels lead to a warning::
 
+                sage: # needs sage.symbolic
                 sage: T = Transducer([[0, 0, 0, 0], [0, 0, 1, -1/2]],
                 ....:                initial_states=[0], final_states=[0])
-                sage: moments = T.asymptotic_moments()                          # optional - sage.symbolic
+                sage: moments = T.asymptotic_moments()
                 verbose 0 (...) Non-integer output weights lead to
                 significant performance degradation.
-                sage: moments['expectation']                                    # optional - sage.symbolic
+                sage: moments['expectation']
                 -1/4*n + Order(1)
-                sage: moments['variance']                                       # optional - sage.symbolic
+                sage: moments['variance']
                 1/16*n + Order(1)
-                sage: moments['covariance']                                     # optional - sage.symbolic
+                sage: moments['covariance']
                 -1/8*n + Order(1)
 
             This warning can be silenced by :func:`~sage.misc.verbose.set_verbose`::
 
+                sage: # needs sage.symbolic
                 sage: from sage.misc.verbose import set_verbose
                 sage: set_verbose(-1, "finite_state_machine.py")
-                sage: moments = T.asymptotic_moments()                          # optional - sage.symbolic
-                sage: moments['expectation']                                    # optional - sage.symbolic
+                sage: moments = T.asymptotic_moments()
+                sage: moments['expectation']
                 -1/4*n + Order(1)
-                sage: moments['variance']                                       # optional - sage.symbolic
+                sage: moments['variance']
                 1/16*n + Order(1)
-                sage: moments['covariance']                                     # optional - sage.symbolic
+                sage: moments['covariance']
                 -1/8*n + Order(1)
                 sage: set_verbose(0, "finite_state_machine.py")
 
@@ -10259,7 +10281,7 @@ class FiniteStateMachine(SageObject):
                 ....:                initial_states=[s], final_states=[s])
                 sage: T([0, 0])
                 [2, 1, 2, 1, 2]
-                sage: T.asymptotic_moments()['expectation']                     # optional - sage.symbolic
+                sage: T.asymptotic_moments()['expectation']                             # needs sage.symbolic
                 3*n + Order(1)
 
             The same test for non-integer output::
@@ -10268,7 +10290,7 @@ class FiniteStateMachine(SageObject):
                 sage: s = FSMState(0, word_out=2/3)
                 sage: T = Transducer([(s, s, 0, 1/2)],
                 ....:                initial_states=[s], final_states=[s])
-                sage: T.asymptotic_moments()['expectation']                     # optional - sage.symbolic
+                sage: T.asymptotic_moments()['expectation']                             # needs sage.symbolic
                 verbose 0 (...) Non-integer output weights lead to
                 significant performance degradation.
                 7/6*n + Order(1)
@@ -10437,11 +10459,11 @@ class FiniteStateMachine(SageObject):
             and the variance are `\sum_{k\ge 1} k2^{-k}=2` and
             `\sum_{k\ge 1} (k-2)^2 2^{-k}=2`::
 
-                sage: var('k')                                                          # optional - sage.symbolic
+                sage: var('k')                                                          # needs sage.symbolic
                 k
-                sage: sum(k * 2^(-k), k, 1, infinity)                                   # optional - sage.symbolic
+                sage: sum(k * 2^(-k), k, 1, infinity)                                   # needs sage.symbolic
                 2
-                sage: sum((k-2)^2 * 2^(-k), k, 1, infinity)                             # optional - sage.symbolic
+                sage: sum((k-2)^2 * 2^(-k), k, 1, infinity)                             # needs sage.symbolic
                 2
 
             We now compute the same expectation and variance by using a
@@ -10521,6 +10543,7 @@ class FiniteStateMachine(SageObject):
 
             ::
 
+                sage: # needs sage.libs.singular
                 sage: def test(h, r):
                 ....:     R = PolynomialRing(
                 ....:             QQ,
@@ -10575,6 +10598,7 @@ class FiniteStateMachine(SageObject):
             The expectation of `B_j` is given in [FHP2015]_, Theorem 2.
             Here, we verify this result by using transducers::
 
+                sage: # needs sage.libs.singular
                 sage: def test(h, r, j):
                 ....:     R = PolynomialRing(
                 ....:             QQ,
@@ -11810,7 +11834,7 @@ class Automaton(FiniteStateMachine):
         if kwargs['always_include_output']:
             return super()._process_convert_output_(
                 output_data, **kwargs)
-        accept_input, current_state, output = output_data
+        accept_input, current_state, _ = output_data
         if kwargs['full_output']:
             return (accept_input, current_state)
         else:
@@ -11846,13 +11870,13 @@ class Automaton(FiniteStateMachine):
             sage: NAF = Automaton([(0, 0, 0), (0, 1, 1), (0, 1, -1),
             ....:                  (1, 0, 0)], initial_states=[0],
             ....:                 final_states=[0, 1])
-            sage: P_NAF = NAF.shannon_parry_markov_chain()                              # optional - sage.symbolic
-            sage: P_NAF.transitions()                                                   # optional - sage.symbolic
+            sage: P_NAF = NAF.shannon_parry_markov_chain()                              # needs sage.symbolic
+            sage: P_NAF.transitions()                                                   # needs sage.symbolic
             [Transition from 0 to 0: 1/2|0,
              Transition from 0 to 1: 1/4|1,
              Transition from 0 to 1: 1/4|-1,
              Transition from 1 to 0: 1|0]
-            sage: for s in P_NAF.iter_states():                                         # optional - sage.symbolic
+            sage: for s in P_NAF.iter_states():                                         # needs sage.symbolic
             ....:     print(s.color)
             3/4
             3/2
@@ -11860,7 +11884,7 @@ class Automaton(FiniteStateMachine):
         The stationary distribution is also computed and saved as the
         initial probabilities of the returned Markov chain::
 
-            sage: for s in P_NAF.states():                                              # optional - sage.symbolic
+            sage: for s in P_NAF.states():                                              # needs sage.symbolic
             ....:     print("{} {}".format(s, s.initial_probability))
             0 2/3
             1 1/3
@@ -12775,6 +12799,7 @@ class Transducer(FiniteStateMachine):
 
         This can also be used with words as input::
 
+            sage: # needs sage.combinat
             sage: W = Words([0, 1]); W
             Finite and infinite words over {0, 1}
             sage: w = W([0, 1, 0, 0, 1, 1]); w
@@ -12785,7 +12810,7 @@ class Transducer(FiniteStateMachine):
         In this case it is automatically determined that the output is
         a word. The call above is equivalent to::
 
-            sage: binary_inverter.process(w,
+            sage: binary_inverter.process(w,                                            # needs sage.combinat
             ....:                         full_output=False,
             ....:                         list_of_outputs=False,
             ....:                         automatic_output_type=True)
@@ -13770,8 +13795,8 @@ class _FSMTapeCacheDetectAll_(_FSMTapeCache_):
             next(it_word)
 
         # check letters not already cached
-        for letter_in_word in it_word:
-            successful, letter_on_track = self.read(track_number)
+        for _ in it_word:
+            successful, _ = self.read(track_number)
             if not successful:
                 return False
         return True

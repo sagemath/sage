@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 Piecewise functions
 
@@ -71,11 +71,12 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.symbolic.function import BuiltinFunction
-from sage.sets.real_set import RealSet
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import minus_infinity, infinity
+from sage.sets.real_set import RealSet
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.symbolic.ring', 'SR')
 
 
 class PiecewiseFunction(BuiltinFunction):
@@ -472,8 +473,7 @@ class PiecewiseFunction(BuiltinFunction):
                 support is {0}, function is sin(x)
                 support is (0, 2), function is cos(x)
             """
-            for pair in parameters:
-                yield pair
+            yield from parameters
 
         def __call__(self, parameters, variable, value=None, **kwds):
             """
@@ -718,7 +718,7 @@ class PiecewiseFunction(BuiltinFunction):
                 except ValueError:
                     ex2 = 0
                 ex = ex1 + ex2
-                if i>0 and funcs[-1] == ex:
+                if i > 0 and funcs[-1] == ex:
                     # extend the previous domain
                     rs += domain[-1]
                     domain[-1] = rs
@@ -756,17 +756,22 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f2(x) = 3 - x
                 sage: f = piecewise([[(-2, 0), f1], [(0, 3), f2]])
                 sage: f.integral()
-                piecewise(x|-->2*x + 4 on (-2, 0), x|-->-1/2*x^2 + 3*x + 4 on (0, 3); x)
+                piecewise(x|-->2*x + 4 on (-2, 0),
+                          x|-->-1/2*x^2 + 3*x + 4 on (0, 3); x)
 
                 sage: f1(y) = -1
                 sage: f2(y) = y + 3
                 sage: f3(y) = -y - 1
                 sage: f4(y) = y^2 - 1
                 sage: f5(y) = 3
-                sage: f = piecewise([[[-4,-3],f1],[(-3,-2),f2],[[-2,0],f3],[(0,2),f4],[[2,3],f5]])
-                sage: F = f.integral(y)
-                sage: F
-                piecewise(y|-->-y - 4 on [-4, -3], y|-->1/2*y^2 + 3*y + 7/2 on (-3, -2), y|-->-1/2*y^2 - y - 1/2 on [-2, 0], y|-->1/3*y^3 - y - 1/2 on (0, 2), y|-->3*y - 35/6 on [2, 3]; y)
+                sage: f = piecewise([[[-4,-3],f1], [(-3,-2),f2], [[-2,0],f3],
+                ....:                [(0,2),f4], [[2,3],f5]])
+                sage: F = f.integral(y); F
+                piecewise(y|-->-y - 4 on [-4, -3],
+                          y|-->1/2*y^2 + 3*y + 7/2 on (-3, -2),
+                          y|-->-1/2*y^2 - y - 1/2 on [-2, 0],
+                          y|-->1/3*y^3 - y - 1/2 on (0, 2),
+                          y|-->3*y - 35/6 on [2, 3]; y)
 
             Ensure results are consistent with FTC::
 
@@ -792,7 +797,9 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f3(y) = 3
                 sage: f = piecewise([[(-infinity, -3), f1], [(-3, 0), f2], [(0, infinity), f3]])
                 sage: f.integral()
-                piecewise(y|-->1/3*y^3 + 3*y^2 + 9*y + 9 on (-oo, -3), y|-->1/2*y^2 + 3*y + 9/2 on (-3, 0), y|-->3*y + 9/2 on (0, +oo); y)
+                piecewise(y|-->1/3*y^3 + 3*y^2 + 9*y + 9 on (-oo, -3),
+                          y|-->1/2*y^2 + 3*y + 9/2 on (-3, 0),
+                          y|-->3*y + 9/2 on (0, +oo); y)
 
             ::
 
@@ -919,7 +926,7 @@ class PiecewiseFunction(BuiltinFunction):
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    for root in maxima.allroots(SR(f).diff(x)==0):
+                    for root in maxima.allroots(SR(f).diff(x) == 0):
                         root = float(root.rhs())
                         if a < root < b:
                             crit_pts.append(root)
@@ -934,33 +941,51 @@ class PiecewiseFunction(BuiltinFunction):
             EXAMPLES::
 
                 sage: x = PolynomialRing(QQ,'x').gen()
-                sage: f = piecewise([[[0,1],1]])  ## example 0
+                sage: f = piecewise([[[0,1],1]])                        ## example 0
                 sage: g = f.convolution(f); g
                 piecewise(x|-->x on (0, 1], x|-->-x + 2 on (1, 2]; x)
                 sage: h = f.convolution(g); h
-                piecewise(x|-->1/2*x^2 on (0, 1], x|-->-x^2 + 3*x - 3/2 on (1, 2], x|-->1/2*x^2 - 3*x + 9/2 on (2, 3]; x)
-                sage: f = piecewise([[(0,1),1],[(1,2),2],[(2,3),1]])  ## example 1
+                piecewise(x|-->1/2*x^2 on (0, 1],
+                          x|-->-x^2 + 3*x - 3/2 on (1, 2],
+                          x|-->1/2*x^2 - 3*x + 9/2 on (2, 3]; x)
+                sage: f = piecewise([[(0,1),1], [(1,2),2], [(2,3),1]])  ## example 1
                 sage: g = f.convolution(f)
                 sage: h = f.convolution(g); h
-                piecewise(x|-->1/2*x^2 on (0, 1], x|-->2*x^2 - 3*x + 3/2 on (1, 3], x|-->-2*x^2 + 21*x - 69/2 on (3, 4], x|-->-5*x^2 + 45*x - 165/2 on (4, 5], x|-->-2*x^2 + 15*x - 15/2 on (5, 6], x|-->2*x^2 - 33*x + 273/2 on (6, 8], x|-->1/2*x^2 - 9*x + 81/2 on (8, 9]; x)
-                sage: f = piecewise([[(-1,1),1]])                             ## example 2
+                piecewise(x|-->1/2*x^2 on (0, 1],
+                          x|-->2*x^2 - 3*x + 3/2 on (1, 3],
+                          x|-->-2*x^2 + 21*x - 69/2 on (3, 4],
+                          x|-->-5*x^2 + 45*x - 165/2 on (4, 5],
+                          x|-->-2*x^2 + 15*x - 15/2 on (5, 6],
+                          x|-->2*x^2 - 33*x + 273/2 on (6, 8],
+                          x|-->1/2*x^2 - 9*x + 81/2 on (8, 9]; x)
+                sage: f = piecewise([[(-1,1),1]])                       ## example 2
                 sage: g = piecewise([[(0,3),x]])
                 sage: f.convolution(g)
-                piecewise(x|-->1/2*x^2 + x + 1/2 on (-1, 1], x|-->2*x on (1, 2], x|-->-1/2*x^2 + x + 4 on (2, 4]; x)
-                sage: g = piecewise([[(0,3),1],[(3,4),2]])
+                piecewise(x|-->1/2*x^2 + x + 1/2 on (-1, 1],
+                          x|-->2*x on (1, 2],
+                          x|-->-1/2*x^2 + x + 4 on (2, 4]; x)
+                sage: g = piecewise([[(0,3),1], [(3,4),2]])
                 sage: f.convolution(g)
-                piecewise(x|-->x + 1 on (-1, 1], x|-->2 on (1, 2], x|-->x on (2, 3], x|-->-x + 6 on (3, 4], x|-->-2*x + 10 on (4, 5]; x)
+                piecewise(x|-->x + 1 on (-1, 1],
+                          x|-->2 on (1, 2],
+                          x|-->x on (2, 3],
+                          x|-->-x + 6 on (3, 4],
+                          x|-->-2*x + 10 on (4, 5]; x)
 
             Check that the bugs raised in :trac:`12123` are fixed::
 
                 sage: f = piecewise([[(-2, 2), 2]])
                 sage: g = piecewise([[(0, 2), 3/4]])
                 sage: f.convolution(g)
-                piecewise(x|-->3/2*x + 3 on (-2, 0], x|-->3 on (0, 2], x|-->-3/2*x + 6 on (2, 4]; x)
+                piecewise(x|-->3/2*x + 3 on (-2, 0],
+                          x|-->3 on (0, 2],
+                          x|-->-3/2*x + 6 on (2, 4]; x)
                 sage: f = piecewise([[(-1, 1), 1]])
                 sage: g = piecewise([[(0, 1), x], [(1, 2), -x + 2]])
                 sage: f.convolution(g)
-                piecewise(x|-->1/2*x^2 + x + 1/2 on (-1, 0], x|-->-1/2*x^2 + x + 1/2 on (0, 2], x|-->1/2*x^2 - 3*x + 9/2 on (2, 3]; x)
+                piecewise(x|-->1/2*x^2 + x + 1/2 on (-1, 0],
+                          x|-->-1/2*x^2 + x + 1/2 on (0, 2],
+                          x|-->1/2*x^2 - 3*x + 9/2 on (2, 3]; x)
             """
             from sage.symbolic.integration.integral import definite_integral
             f = self
@@ -969,7 +994,7 @@ class PiecewiseFunction(BuiltinFunction):
                 raise ValueError('one of the piecewise functions is nowhere defined')
             fd, f0 = parameters[0]
             gd, g0 = next(other.items())
-            if len(f)==1 and len(g)==1:
+            if len(f) == 1 and len(g) == 1:
                 f = f.unextend_zero()
                 g = g.unextend_zero()
                 a1 = fd[0].lower()
@@ -984,19 +1009,19 @@ class PiecewiseFunction(BuiltinFunction):
                         fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs({tt:variable})
                         fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs({tt:variable})
                         fg4 = definite_integral(i1*i2, uu, a1, a2).subs({tt:variable})
-                if a1-b1<a2-b2:
-                    if a2+b1!=a1+b2:
+                if a1-b1 < a2-b2:
+                    if a2+b1 != a1+b2:
                         h = piecewise([[(a1+b1,a1+b2),fg1],[(a1+b2,a2+b1),fg2],[(a2+b1,a2+b2),fg3]])
                     else:
                         h = piecewise([[(a1+b1,a1+b2),fg1],[(a1+b2,a2+b2),fg3]])
                 else:
-                    if a1+b2!=a2+b1:
+                    if a1+b2 != a2+b1:
                         h = piecewise([[(a1+b1,a2+b1),fg1],[(a2+b1,a1+b2),fg4],[(a1+b2,a2+b2),fg3]])
                     else:
                         h = piecewise([[(a1+b1,a2+b1),fg1],[(a2+b1,a2+b2),fg3]])
                 return (piecewise([[(minus_infinity,infinity),0]]).piecewise_add(h)).unextend_zero()
 
-            if len(f)>1 or len(g)>1:
+            if len(f) > 1 or len(g) > 1:
                 z = piecewise([[(0,0),0]])
                 for fpiece in f.pieces():
                     for gpiece in g.pieces():
@@ -1014,11 +1039,14 @@ class PiecewiseFunction(BuiltinFunction):
 
                 sage: f = piecewise([[[0,1], x^2], [RealSet.open_closed(1,2), 5-x^2]])
                 sage: f.trapezoid(2)
-                piecewise(x|-->1/2*x on (0, 1/2), x|-->3/2*x - 1/2 on (1/2, 1), x|-->7/2*x - 5/2 on (1, 3/2), x|-->-7/2*x + 8 on (3/2, 2); x)
-                sage: f = piecewise([[[-1,1], 1-x^2]])
+                piecewise(x|-->1/2*x on (0, 1/2),
+                          x|-->3/2*x - 1/2 on (1/2, 1),
+                          x|-->7/2*x - 5/2 on (1, 3/2),
+                          x|-->-7/2*x + 8 on (3/2, 2); x)
+                sage: f = piecewise([[[-1,1], 1 - x^2]])
                 sage: f.trapezoid(4).integral(definite=True)
                 5/4
-                sage: f = piecewise([[[-1,1], 1/2+x-x^3]]) ## example 3
+                sage: f = piecewise([[[-1,1], 1/2 + x - x^3]])          ## example 3
                 sage: f.trapezoid(6).integral(definite=True)
                 1
 
@@ -1031,7 +1059,10 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f2 = 5-y^2
                 sage: f = piecewise([[[0,1],f1], [RealSet.open_closed(1,2),f2]])
                 sage: f.trapezoid(2)
-                piecewise(y|-->1/2*y on (0, 1/2), y|-->3/2*y - 1/2 on (1/2, 1), y|-->7/2*y - 5/2 on (1, 3/2), y|-->-7/2*y + 8 on (3/2, 2); y)
+                piecewise(y|-->1/2*y on (0, 1/2),
+                          y|-->3/2*y - 1/2 on (1/2, 1),
+                          y|-->7/2*y - 5/2 on (1, 3/2),
+                          y|-->-7/2*y + 8 on (3/2, 2); y)
             """
             def func(x0, x1):
                 f0, f1 = self(x0), self(x1)
@@ -1066,7 +1097,7 @@ class PiecewiseFunction(BuiltinFunction):
             EXAMPLES::
 
                 sage: x, s, w = var('x, s, w')
-                sage: f = piecewise([[(0,1),1],[[1,2], 1-x]])
+                sage: f = piecewise([[(0,1),1], [[1,2], 1 - x]])
                 sage: f.laplace(x, s)
                 -e^(-s)/s + (s + 1)*e^(-2*s)/s^2 + 1/s - e^(-s)/s^2
                 sage: f.laplace(x, w)
@@ -1075,7 +1106,7 @@ class PiecewiseFunction(BuiltinFunction):
             ::
 
                 sage: y, t = var('y, t')
-                sage: f = piecewise([[[1,2], 1-y]])
+                sage: f = piecewise([[[1,2], 1 - y]])
                 sage: f.laplace(y, t)
                 (t + 1)*e^(-2*t)/t^2 - e^(-t)/t^2
 
@@ -1085,7 +1116,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: t = var('t')
                 sage: f1(t) = -t
                 sage: f2(t) = 2
-                sage: f = piecewise([[[0,1],f1],[(1,infinity),f2]])
+                sage: f = piecewise([[[0,1],f1], [(1,infinity),f2]])
                 sage: f.laplace(t,s)
                 (s + 1)*e^(-s)/s^2 + 2*e^(-s)/s - 1/s^2
             """
@@ -1094,14 +1125,14 @@ class PiecewiseFunction(BuiltinFunction):
 
             x = SR.var(x)
             s = SR.var(s)
-            assume(s>0)
+            assume(s > 0)
             result = 0
             for domain, f in parameters:
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
                     result += (SR(f)*exp(-s*x)).integral(x,a,b)
-            forget(s>0)
+            forget(s > 0)
             return result
 
         def fourier_series_cosine_coefficient(self, parameters,
@@ -1151,8 +1182,8 @@ class PiecewiseFunction(BuiltinFunction):
             more than one period, the half-period must be passed as the
             second argument; for instance::
 
-                sage: f2 = piecewise([((0,1), x), ((1,2), 2-x),
-                ....:                 ((2,3), x-2), ((3,4), 2-(x-2))])
+                sage: f2 = piecewise([((0,1), x), ((1,2), 2 - x),
+                ....:                 ((2,3), x - 2), ((3,4), 2 - (x-2))])
                 sage: bool(f2.restriction((0,2)) == f)  # f2 extends f on (0,4)
                 True
                 sage: f2.fourier_series_cosine_coefficient(3, 1)  # half-period = 1
@@ -1160,7 +1191,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             The default half-period is 2 and one has::
 
-                sage: f2.fourier_series_cosine_coefficient(3)  # half-period = 2
+                sage: f2.fourier_series_cosine_coefficient(3)     # half-period = 2
                 0
 
             The Fourier coefficient `-4/(9\pi^2)` obtained above is actually
@@ -1382,15 +1413,15 @@ class PiecewiseFunction(BuiltinFunction):
             EXAMPLES::
 
                 sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
-                sage: f = ex._sympy_(); f
+                sage: f = ex._sympy_(); f                                               # needs sympy
                 Piecewise((pi, (x > 0) & (x < 1)), (x, (x >= 1) & (x <= 2)))
-                sage: f.diff()
+                sage: f.diff()                                                          # needs sympy
                 Piecewise((0, (x > 0) & (x < 1)), (1, (x >= 1) & (x <= 2)))
 
                 sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
-                sage: g = ex._sympy_(); g
+                sage: g = ex._sympy_(); g                                               # needs sympy
                 Piecewise((1/x, (x > -100) & (x < -2)), (cos(x), x > 1))
-                sage: g.diff()
+                sage: g.diff()                                                          # needs sympy
                 Piecewise((-1/x**2, (x > -100) & (x < -2)), (-sin(x), x > 1))
             """
             from sympy import Piecewise as pw
@@ -1408,22 +1439,22 @@ class PiecewiseFunction(BuiltinFunction):
             EXAMPLES::
 
                 sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
-                sage: f = ex._giac_(); f
+                sage: f = ex._giac_(); f                                                # needs sage.libs.giac
                 piecewise(((sageVARx>0) and (1>sageVARx)),pi,((sageVARx>=1) and (2>=sageVARx)),sageVARx)
-                sage: f.diff(x)
+                sage: f.diff(x)                                                         # needs sage.libs.giac
                 piecewise(((sageVARx>0) and (1>sageVARx)),0,((sageVARx>=1) and (2>=sageVARx)),1)
 
-                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
-                sage: g = ex._giac_(); g
+                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])           # needs sage.libs.giac
+                sage: g = ex._giac_(); g                                                # needs sage.libs.giac
                 piecewise(((sageVARx>-100) and ((-2)>sageVARx)),1/sageVARx,sageVARx>1,cos(sageVARx))
-                sage: g.diff(x)
+                sage: g.diff(x)                                                         # needs sage.libs.giac
                 piecewise(((sageVARx>-100) and ((-2)>sageVARx)),-1/sageVARx^2,sageVARx>1,-sin(sageVARx))
 
             TESTS::
 
-                sage: f = piecewise([([0,1],x),((1,2),3*x)])
-                sage: a = libgiac(f) # random because verbose
-                sage: a
+                sage: f = piecewise([([0,1], x), ((1,2), 3*x)])
+                sage: a = libgiac(f)  # random because verbose                          # needs sage.libs.giac
+                sage: a                                                                 # needs sage.libs.giac
                 piecewise(((sageVARx>=0) and (1>=sageVARx)),sageVARx,((sageVARx>1) and (2>sageVARx)),sageVARx*3)
             """
             from sage.misc.flatten import flatten

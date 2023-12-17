@@ -1,4 +1,4 @@
-$(PYTHON) setuptools_scm | $(PYTHON_TOOLCHAIN) hatchling hatch_vcs
+ setuptools_scm | $(PYTHON_TOOLCHAIN) hatchling hatch_vcs $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

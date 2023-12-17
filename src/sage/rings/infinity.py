@@ -203,8 +203,8 @@ testing whether something is infinity), so make sure it is satisfied::
 
 We check that :trac:`17990` is fixed::
 
-    sage: m = Matrix([Infinity])                                                        # optional - sage.modules
-    sage: m.rows()                                                                      # optional - sage.modules
+    sage: m = Matrix([Infinity])                                                        # needs sage.modules
+    sage: m.rows()                                                                      # needs sage.modules
     [(+Infinity)]
 """
 #*****************************************************************************
@@ -290,7 +290,7 @@ class AnInfinity():
         """
         TESTS::
 
-            sage: maxima(-oo)                                                           # optional - sage.symbolic
+            sage: maxima(-oo)                                                           # needs sage.symbolic
             minf
             sage: [x._maxima_init_() for x in [unsigned_infinity, oo, -oo]]
             ['inf', 'inf', 'minf']
@@ -306,7 +306,7 @@ class AnInfinity():
 
             sage: fricas(-oo)           # optional - fricas
             - infinity
-            sage: [x._fricas_init_() for x in [unsigned_infinity, oo, -oo]]   # optional - fricas
+            sage: [x._fricas_init_() for x in [unsigned_infinity, oo, -oo]]
             ['%infinity', '%plusInfinity', '%minusInfinity']
             sage: [fricas(x) for x in [unsigned_infinity, oo, -oo]]   # optional - fricas
             [infinity,  + infinity, - infinity]
@@ -324,9 +324,9 @@ class AnInfinity():
 
         EXAMPLES::
 
-            sage: pari(-oo)                                                             # optional - sage.libs.pari
+            sage: pari(-oo)                                                             # needs sage.libs.pari
             -oo
-            sage: pari(oo)                                                              # optional - sage.libs.pari
+            sage: pari(oo)                                                              # needs sage.libs.pari
             +oo
         """
         from sage.libs.pari.all import pari
@@ -379,7 +379,7 @@ class AnInfinity():
             Traceback (most recent call last):
             ...
             SignError: cannot add unsigned infinities
-            sage: unsigned_infinity + oo*i
+            sage: unsigned_infinity + oo*i                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
             SignError: cannot add unsigned infinities
@@ -416,7 +416,7 @@ class AnInfinity():
             Traceback (most recent call last):
             ...
             SignError: cannot subtract unsigned infinities
-            sage: unsigned_infinity - oo*i
+            sage: unsigned_infinity - oo*i                                              # needs sage.symbolic
             Traceback (most recent call last):
             ...
             SignError: cannot subtract unsigned infinities
@@ -472,7 +472,7 @@ class AnInfinity():
             Traceback (most recent call last):
             ...
             ValueError: unsigned oo times smaller number not defined
-            sage: SR(infinity) / unsigned_infinity                                      # optional - sage.symbolic
+            sage: SR(infinity) / unsigned_infinity                                      # needs sage.symbolic
             Traceback (most recent call last):
             ...
             RuntimeError: indeterminate expression: 0 * infinity encountered.
@@ -490,7 +490,7 @@ class AnInfinity():
             +infinity
             sage: float(infinity) # random
             +infinity
-            sage: CDF(infinity)
+            sage: CDF(infinity)                                                         # needs sage.rings.complex_double
             +infinity
             sage: infinity.__float__() # random
             +infinity
@@ -499,7 +499,7 @@ class AnInfinity():
             -infinity
             sage: float(-infinity) # random
             -inf
-            sage: CDF(-infinity)
+            sage: CDF(-infinity)                                                        # needs sage.rings.complex_double
             -infinity
             sage: (-infinity).__float__() # random
             -inf
@@ -568,8 +568,8 @@ class UnsignedInfinityRing_class(Singleton, Ring):
 
         Sage can understand SymPy's complex infinity (:trac:`17493`)::
 
-            sage: import sympy                                                          # optional - sympy
-            sage: SR(sympy.zoo)                                                         # optional - sympy
+            sage: import sympy                                                          # needs sympy
+            sage: SR(sympy.zoo)                                                         # needs sympy
             Infinity
 
         Some equality checks::
@@ -676,7 +676,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
 
             sage: UnsignedInfinityRing(2) # indirect doctest
             A number less than infinity
-            sage: UnsignedInfinityRing(I)                                               # optional - sage.rings.number_field
+            sage: UnsignedInfinityRing(I)                                               # needs sage.rings.number_field
             A number less than infinity
             sage: UnsignedInfinityRing(unsigned_infinity)
             Infinity
@@ -684,31 +684,31 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             Infinity
             sage: UnsignedInfinityRing(-oo)
             Infinity
-            sage: K.<a> = QuadraticField(3)                                             # optional - sage.rings.number_field
-            sage: UnsignedInfinityRing(a)                                               # optional - sage.rings.number_field
+            sage: K.<a> = QuadraticField(3)                                             # needs sage.rings.number_field
+            sage: UnsignedInfinityRing(a)                                               # needs sage.rings.number_field
             A number less than infinity
-            sage: UnsignedInfinityRing(a - 2)                                           # optional - sage.rings.number_field
+            sage: UnsignedInfinityRing(a - 2)                                           # needs sage.rings.number_field
             A number less than infinity
             sage: UnsignedInfinityRing(RDF(oo)), UnsignedInfinityRing(RDF(-oo))
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(RR(oo)), UnsignedInfinityRing(RR(-oo))
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(CDF(oo)), UnsignedInfinityRing(CDF(-oo))
+            sage: UnsignedInfinityRing(CDF(oo)), UnsignedInfinityRing(CDF(-oo))         # needs sage.rings.complex_double
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(CC(oo)), UnsignedInfinityRing(CC(-oo))
+            sage: UnsignedInfinityRing(CC(oo)), UnsignedInfinityRing(CC(-oo))           # needs sage.rings.real_mpfr
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(RIF(oo)), UnsignedInfinityRing(RIF(-oo))
+            sage: UnsignedInfinityRing(RIF(oo)), UnsignedInfinityRing(RIF(-oo))         # needs sage.rings.real_interval_field
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(float('+inf')), UnsignedInfinityRing(float('-inf'))
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(SR(oo)), UnsignedInfinityRing(SR(-oo))           # optional - sage.symbolic
+            sage: UnsignedInfinityRing(SR(oo)), UnsignedInfinityRing(SR(-oo))           # needs sage.symbolic
             (Infinity, Infinity)
 
         The following rings have a ``is_infinity`` method::
 
             sage: RR(oo).is_infinity()
             True
-            sage: SR(oo).is_infinity()                                                  # optional - sage.symbolic
+            sage: SR(oo).is_infinity()                                                  # needs sage.symbolic
             True
         """
         # Lazy elements can wrap infinity or not, unwrap first
@@ -746,16 +746,17 @@ class UnsignedInfinityRing_class(Singleton, Ring):
 
             sage: UnsignedInfinityRing.has_coerce_map_from(int) # indirect doctest
             True
-            sage: UnsignedInfinityRing.has_coerce_map_from(CC)
+            sage: UnsignedInfinityRing.has_coerce_map_from(CC)                          # needs sage.rings.real_mpfr
             True
-            sage: UnsignedInfinityRing.has_coerce_map_from(QuadraticField(-163, 'a'))   # optional - sage.rings.number_field
+            sage: UnsignedInfinityRing.has_coerce_map_from(QuadraticField(-163, 'a'))   # needs sage.rings.number_field
             True
-            sage: UnsignedInfinityRing.has_coerce_map_from(QQ^3)                        # optional - sage.modules
+            sage: UnsignedInfinityRing.has_coerce_map_from(QQ^3)                        # needs sage.modules
             False
-            sage: UnsignedInfinityRing.has_coerce_map_from(SymmetricGroup(13))          # optional - sage.groups
+            sage: UnsignedInfinityRing.has_coerce_map_from(SymmetricGroup(13))          # needs sage.groups
             False
         """
         return isinstance(R, Ring) or R in (int, float, complex)
+
 
 UnsignedInfinityRing = UnsignedInfinityRing_class()
 
@@ -942,12 +943,13 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # optional - sympy
-            sage: SR(unsigned_infinity)._sympy_()                                       # optional - sympy
+            sage: # needs sympy
+            sage: import sympy
+            sage: SR(unsigned_infinity)._sympy_()
             zoo
-            sage: gamma(-3)._sympy_() is sympy.factorial(-2)                            # optional - sympy
+            sage: gamma(-3)._sympy_() is sympy.factorial(-2)
             True
-            sage: gamma(-3) is sympy.factorial(-2)._sage_()                             # optional - sympy
+            sage: gamma(-3) is sympy.factorial(-2)._sage_()
             True
         """
         import sympy
@@ -966,10 +968,12 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
             return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 
+
 unsigned_infinity = UnsignedInfinityRing.gen(0)
 less_than_infinity = UnsignedInfinityRing.less_than_infinity()
 
-def is_Infinite(x):
+
+def is_Infinite(x) -> bool:
     """
     This is a type check for infinity elements.
 
@@ -1082,7 +1086,7 @@ class InfinityRing_class(Singleton, Ring):
         """
         return [self.gen(0), self.gen(1)]
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         The Infinity Ring is not zero
 
@@ -1093,7 +1097,7 @@ class InfinityRing_class(Singleton, Ring):
         """
         return False
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         The Infinity Ring is commutative
 
@@ -1130,20 +1134,20 @@ class InfinityRing_class(Singleton, Ring):
             sage: [InfinityRing(a) for a in [-2..2]]
             [A negative finite number, A negative finite number, Zero,
              A positive finite number, A positive finite number]
-            sage: K.<a> = QuadraticField(3)                                             # optional - sage.rings.number_field
-            sage: InfinityRing(a)                                                       # optional - sage.rings.number_field
+            sage: K.<a> = QuadraticField(3)                                             # needs sage.rings.number_field
+            sage: InfinityRing(a)                                                       # needs sage.rings.number_field
             A positive finite number
-            sage: InfinityRing(a - 2)                                                   # optional - sage.rings.number_field
+            sage: InfinityRing(a - 2)                                                   # needs sage.rings.number_field
             A negative finite number
             sage: InfinityRing(RDF(oo)), InfinityRing(RDF(-oo))
             (+Infinity, -Infinity)
             sage: InfinityRing(RR(oo)), InfinityRing(RR(-oo))
             (+Infinity, -Infinity)
-            sage: InfinityRing(RIF(oo)), InfinityRing(RIF(-oo))
+            sage: InfinityRing(RIF(oo)), InfinityRing(RIF(-oo))                         # needs sage.rings.real_interval_field
             (+Infinity, -Infinity)
             sage: InfinityRing(float('+inf')), InfinityRing(float('-inf'))
             (+Infinity, -Infinity)
-            sage: InfinityRing(SR(oo)), InfinityRing(SR(-oo))                           # optional - sage.symbolic
+            sage: InfinityRing(SR(oo)), InfinityRing(SR(-oo))                           # needs sage.symbolic
             (+Infinity, -Infinity)
 
         The following rings have ``is_positive_infinity`` /
@@ -1151,22 +1155,22 @@ class InfinityRing_class(Singleton, Ring):
 
             sage: RR(oo).is_positive_infinity(), RR(-oo).is_negative_infinity()
             (True, True)
-            sage: SR(oo).is_positive_infinity(), SR(-oo).is_negative_infinity()         # optional - sage.symbolic
+            sage: SR(oo).is_positive_infinity(), SR(-oo).is_negative_infinity()         # needs sage.symbolic
             (True, True)
 
         Complex infinity raises an exception. This is fine (there is
         no coercion, so there is no promise of functoriality)::
 
-            sage: i_infinity = CC(0, oo)
-            sage: InfinityRing(CC(oo)), InfinityRing(CC(-oo))
+            sage: i_infinity = CC(0, oo)                                                # needs sage.rings.real_mpfr
+            sage: InfinityRing(CC(oo)), InfinityRing(CC(-oo))                           # needs sage.rings.real_mpfr
             (+Infinity, -Infinity)
-            sage: InfinityRing(i_infinity)
+            sage: InfinityRing(i_infinity)                                              # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             ValueError: infinite but not with +/- phase
-            sage: InfinityRing(CDF(oo)), InfinityRing(CDF(-oo))
+            sage: InfinityRing(CDF(oo)), InfinityRing(CDF(-oo))                         # needs sage.rings.complex_double
             (+Infinity, -Infinity)
-            sage: InfinityRing(CDF(i_infinity))
+            sage: InfinityRing(CDF(i_infinity))                                         # needs sage.rings.complex_double sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             ValueError: infinite but not with +/- phase
@@ -1227,18 +1231,18 @@ class InfinityRing_class(Singleton, Ring):
 
             sage: InfinityRing.has_coerce_map_from(int) # indirect doctest
             True
-            sage: InfinityRing.has_coerce_map_from(AA)                                  # optional - sage.rings.number_field
+            sage: InfinityRing.has_coerce_map_from(AA)                                  # needs sage.rings.number_field
             True
             sage: InfinityRing.has_coerce_map_from(RDF)
             True
-            sage: InfinityRing.has_coerce_map_from(RIF)
+            sage: InfinityRing.has_coerce_map_from(RIF)                                 # needs sage.rings.real_interval_field
             True
 
         As explained above, comparison works by coercing to the
         infinity ring::
 
             sage: cm = get_coercion_model()
-            sage: cm.explain(AA(3), oo, operator.lt)                                    # optional - sage.rings.number_field
+            sage: cm.explain(AA(3), oo, operator.lt)                                    # needs sage.rings.number_field
             Coercion on left operand via
                 Coercion map:
                   From: Algebraic Real Field
@@ -1251,9 +1255,9 @@ class InfinityRing_class(Singleton, Ring):
         symbolic comparisons with infinities all happen in the
         symbolic ring::
 
-            sage: SR.has_coerce_map_from(InfinityRing)                                  # optional - sage.symbolic
+            sage: SR.has_coerce_map_from(InfinityRing)                                  # needs sage.symbolic
             True
-            sage: InfinityRing.has_coerce_map_from(SR)                                  # optional - sage.symbolic
+            sage: InfinityRing.has_coerce_map_from(SR)                                  # needs sage.symbolic
             False
 
         Complex numbers do not coerce into the infinity ring (what
@@ -1261,11 +1265,11 @@ class InfinityRing_class(Singleton, Ring):
         be compared, so we do not have to enforce consistency when
         comparing with infinity either::
 
-            sage: InfinityRing.has_coerce_map_from(CDF)
+            sage: InfinityRing.has_coerce_map_from(CDF)                                 # needs sage.rings.complex_double
             False
-            sage: InfinityRing.has_coerce_map_from(CC)
+            sage: InfinityRing.has_coerce_map_from(CC)                                  # needs sage.rings.real_mpfr
             False
-            sage: CC(0, oo) < CC(1)   # does not coerce to infinity ring
+            sage: CC(0, oo) < CC(1)   # does not coerce to infinity ring                # needs sage.rings.real_mpfr
             True
         """
         from sage.structure.coerce import parent_is_real_numerical
@@ -1279,7 +1283,7 @@ class InfinityRing_class(Singleton, Ring):
         r"""
         EXAMPLES::
 
-            sage: QQbar(-2*i)*infinity                                                  # optional - sage.rings.number_field sage.symbolic
+            sage: QQbar(-2*i)*infinity                                                  # needs sage.rings.number_field sage.symbolic
             (-I)*Infinity
         """
         from sage.symbolic.ring import SR
@@ -1480,9 +1484,9 @@ class FiniteNumber(RingElement):
 
         TESTS::
 
-            sage: a = InfinityRing(pi); a                                               # optional - sage.symbolic
+            sage: a = InfinityRing(pi); a                                               # needs sage.symbolic
             A positive finite number
-            sage: a._latex_()                                                           # optional - sage.symbolic
+            sage: a._latex_()                                                           # needs sage.symbolic
             'A positive finite number'
             sage: [latex(InfinityRing(a)) for a in [-2..2]]
             [A negative finite number, A negative finite number, Zero, A positive finite number, A positive finite number]
@@ -1623,12 +1627,13 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # optional - sympy
-            sage: bool(-oo == -sympy.oo)                                                # optional - sympy
+            sage: # needs sympy
+            sage: import sympy
+            sage: bool(-oo == -sympy.oo)
             True
-            sage: bool(SR(-oo) == -sympy.oo)                                            # optional - sympy
+            sage: bool(SR(-oo) == -sympy.oo)
             True
-            sage: bool((-oo)._sympy_() == -sympy.oo)                                    # optional - sympy
+            sage: bool((-oo)._sympy_() == -sympy.oo)
             True
 
         """
@@ -1641,9 +1646,9 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: gap(-Infinity)                                                        # optional - sage.libs.gap
+            sage: gap(-Infinity)                                                        # needs sage.libs.gap
             -infinity
-            sage: libgap(-Infinity)                                                     # optional - sage.libs.gap
+            sage: libgap(-Infinity)                                                     # needs sage.libs.gap
             -infinity
         """
         return '-infinity'
@@ -1724,10 +1729,10 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # optional - sympy
-            sage: bool(oo == sympy.oo) # indirect doctest                               # optional - sympy
+            sage: import sympy                                                          # needs sympy
+            sage: bool(oo == sympy.oo)  # indirect doctest                              # needs sympy
             True
-            sage: bool(SR(oo) == sympy.oo)                                              # optional - sage.symbolic sympy
+            sage: bool(SR(oo) == sympy.oo)                                              # needs sympy sage.symbolic
             True
         """
         import sympy
@@ -1739,12 +1744,13 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: gap(+Infinity)                                                        # optional - sage.libs.gap
+            sage: gap(+Infinity)                                                        # needs sage.libs.gap
             infinity
-            sage: libgap(+Infinity)                                                     # optional - sage.libs.gap
+            sage: libgap(+Infinity)                                                     # needs sage.libs.gap
             infinity
         """
         return 'infinity'
+
 
 InfinityRing = InfinityRing_class()
 infinity = InfinityRing.gen(0)
@@ -1769,30 +1775,29 @@ def test_comparison(ring):
     EXAMPLES::
 
         sage: from sage.rings.infinity import test_comparison
-        sage: rings = [ZZ, QQ, RR, RealField(200), RDF, RLF, RIF]
+        sage: rings = [ZZ, QQ, RDF]
+        sage: rings += [RR, RealField(200)]                                             # needs sage.rings.real_mpfr
+        sage: rings += [RLF, RIF]                                                       # needs sage.rings.real_interval_field
         sage: for R in rings:
         ....:     print('testing {}'.format(R))
         ....:     test_comparison(R)
         testing Integer Ring
         testing Rational Field
-        testing Real Field with 53 bits of precision
-        testing Real Field with 200 bits of precision
-        testing Real Double Field
-        testing Real Lazy Field
-        testing Real Interval Field with 53 bits of precision
-        sage: test_comparison(AA)                                                       # optional - sage.rings.number_field
+        testing Real Double Field...
+        sage: test_comparison(AA)                                                       # needs sage.rings.number_field
 
     Comparison with number fields does not work::
 
-        sage: K.<sqrt3> = NumberField(x^2 - 3)                                          # optional - sage.rings.number_field
-        sage: (-oo < 1 + sqrt3) and (1 + sqrt3 < oo)     # known bug                    # optional - sage.rings.number_field
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<sqrt3> = NumberField(x^2 - 3)                                          # needs sage.rings.number_field
+        sage: (-oo < 1 + sqrt3) and (1 + sqrt3 < oo)    # known bug                     # needs sage.rings.number_field
         False
 
     The symbolic ring handles its own infinities, but answers
     ``False`` (meaning: cannot decide) already for some very
     elementary comparisons::
 
-        sage: test_comparison(SR)      # known bug                                      # optional - sage.symbolic
+        sage: test_comparison(SR)               # known bug                             # needs sage.symbolic
         Traceback (most recent call last):
         ...
         AssertionError: testing -1000.0 in Symbolic Ring: id = ...
@@ -1850,18 +1855,21 @@ def test_signed_infinity(pos_inf):
     EXAMPLES::
 
         sage: from sage.rings.infinity import test_signed_infinity
-        sage: for pos_inf in [oo, float('+inf'), RLF(oo), RIF(oo), SR(oo)]:
-        ....:     test_signed_infinity(pos_inf)
+        sage: test_signed_infinity(oo)
+        sage: test_signed_infinity(float('+inf'))
+        sage: test_signed_infinity(RLF(oo))                                             # needs sage.rings.real_interval_field
+        sage: test_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
+        sage: test_signed_infinity(SR(oo))                                              # needs sage.symbolic
     """
     msg = 'testing {} ({})'.format(pos_inf, type(pos_inf))
     assert InfinityRing(pos_inf) is infinity, msg
     assert InfinityRing(-pos_inf) is minus_infinity, msg
     assert infinity == pos_inf, msg
-    assert not(infinity > pos_inf), msg
-    assert not(infinity < pos_inf), msg
+    assert not (infinity > pos_inf), msg
+    assert not (infinity < pos_inf), msg
     assert minus_infinity == -pos_inf, msg
-    assert not(minus_infinity > -pos_inf), msg
-    assert not(minus_infinity < -pos_inf), msg
+    assert not (minus_infinity > -pos_inf), msg
+    assert not (minus_infinity < -pos_inf), msg
     assert pos_inf > -pos_inf, msg
     assert infinity > -pos_inf, msg
     assert pos_inf > minus_infinity, msg

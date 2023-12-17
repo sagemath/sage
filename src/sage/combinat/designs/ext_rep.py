@@ -565,6 +565,7 @@ def open_extrep_url(url):
     else:
         return f.read()
 
+
 pattern_integer = re.compile(r'\d+$')
 pattern_decimal = re.compile(r'-?\d+\.\d+$')
 pattern_rational = re.compile(r'-?\d+/\d+$')

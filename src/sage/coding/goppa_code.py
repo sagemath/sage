@@ -436,4 +436,5 @@ class GoppaCodeEncoder(Encoder):
         aux = codes.from_parity_check_matrix(pmat)
         return aux.generator_matrix()
 
+
 GoppaCode._registered_encoders["GoppaEncoder"] = GoppaCodeEncoder

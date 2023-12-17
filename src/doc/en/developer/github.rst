@@ -73,6 +73,18 @@ and check::
 
 which will show the default repo along with its readme, which is quite long.
 
+``gh`` extensions
+-----------------
+
+``gh`` is extendable; e.g.  a useful extension to ``gh`` allows testing of
+Sage's GitHub Actions locally, using Docker. It is called ``act`` and can be
+installed by running::
+
+    [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
+
+Append ``--force`` flag to the command above to force an upgrade of the extension.
+More details on configuring and using ``gh act`` are in :ref:`chapter-portability_testing`.
+
 
 Linking Git to your GitHub account
 ==================================

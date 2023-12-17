@@ -70,7 +70,7 @@ TESTS::
     sage: SteenrodFPModule(ZZ, [0])
     Traceback (most recent call last):
     ...
-    AttributeError: 'sage.rings.integer_ring.IntegerRing_class' object has no attribute 'free_graded_module'
+    AttributeError: 'sage.rings.integer_ring.IntegerRing_class' object has no attribute 'free_graded_module'...
 
 AUTHORS:
 

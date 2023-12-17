@@ -140,7 +140,7 @@ def make_labelled_rooted_tree(atoms, cliques):
     return to_tree(0, len(cliques))
 
 
-cdef inline bint is_clique(short_digraph sd, vector[int] Hx):
+cdef inline bint is_clique(short_digraph sd, vector[int] Hx) noexcept:
     """
     Check if the subgraph sd[Hx] is a clique.
 
@@ -423,7 +423,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     if not G.is_connected():
         from sage.graphs.graph import Graph
 
-        for cc in G.connected_components():
+        for cc in G.connected_components(sort=False):
             g = Graph([cc, G.edge_boundary(cc, cc, False, False)],
                       format='vertices_and_edges',
                       loops=True, multiedges=True)

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.modules
 r"""
 Examples of graded connected Hopf algebras with basis
 """
@@ -161,5 +161,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             ((i-j, j), binomial(i, j))
             for j in range(i+1)
         )
+
 
 Example = GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator

@@ -86,7 +86,7 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
         sage: coeffs
         (0, 1, -1, 0)
         sage: R.<x> = QQ[]
-        sage: R(coeffs).discriminant()
+        sage: R(coeffs).discriminant()                                                  # needs sage.libs.pari
         1
 
     The two non-equivalent cubics `x^3` and `x^2*z` with discriminant 0 can't

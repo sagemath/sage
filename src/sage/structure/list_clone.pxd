@@ -19,46 +19,46 @@ cdef class ClonableElement(Element):
     cdef long int  _hash
 
     cpdef bint _require_mutable(self) except -2
-    cpdef bint is_mutable(self)
-    cpdef bint is_immutable(self)
-    cpdef set_immutable(self)
+    cpdef bint is_mutable(self) noexcept
+    cpdef bint is_immutable(self) noexcept
+    cpdef set_immutable(self) noexcept
 
-    cpdef _set_mutable(self)
+    cpdef _set_mutable(self) noexcept
 
-    cpdef ClonableElement clone(self, bint check=?)
+    cpdef ClonableElement clone(self, bint check=?) noexcept
 
 cdef class ClonableArray(ClonableElement):
     cdef list _list
 
-    cpdef list _get_list(self)
-    cpdef _set_list(self, list lst)
-    cpdef ClonableArray __copy__(self)
-    cpdef check(self)
-    cpdef object _getitem(self, int key)
-    cpdef _setitem(self, int key, value)
+    cpdef list _get_list(self) noexcept
+    cpdef _set_list(self, list lst) noexcept
+    cpdef ClonableArray __copy__(self) noexcept
+    cpdef check(self) noexcept
+    cpdef object _getitem(self, int key) noexcept
+    cpdef _setitem(self, int key, value) noexcept
     cpdef int index(self, key, start=*, stop=*) except -1
     cpdef int count(self, key) except -1
     cpdef long int _hash_(self) except? -1
 
 cdef class ClonableList(ClonableArray):
-    cpdef append(self, el)
-    cpdef extend(self, it)
-    cpdef insert(self, int index, el)
-    cpdef pop(self, int index=*)
-    cpdef remove(self, el)
+    cpdef append(self, el) noexcept
+    cpdef extend(self, it) noexcept
+    cpdef insert(self, int index, el) noexcept
+    cpdef pop(self, int index=*) noexcept
+    cpdef remove(self, el) noexcept
 
 cdef class NormalizedClonableList(ClonableList):
-    cpdef normalize(self)
+    cpdef normalize(self) noexcept
 
 cdef class ClonableIntArray(ClonableElement):
     cdef int _len
     cdef int* _list
 
-    cpdef _alloc_(self, int size)
-    cpdef ClonableIntArray __copy__(self)
-    cpdef check(self)
-    cpdef object _getitem(self, int key)
-    cpdef _setitem(self, int item, value)
+    cpdef _alloc_(self, int size) noexcept
+    cpdef ClonableIntArray __copy__(self) noexcept
+    cpdef check(self) noexcept
+    cpdef object _getitem(self, int key) noexcept
+    cpdef _setitem(self, int item, value) noexcept
     cpdef int index(self, int item) except -1
     cpdef long int _hash_(self) except? -1
-    cpdef list list(self)
+    cpdef list list(self) noexcept

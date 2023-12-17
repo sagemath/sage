@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari sage.modules
 r"""
 Splitting Algebras
 
@@ -332,10 +332,10 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             try:
                 cf0_inv = ~(cf[0])
                 cf0_inv = self(cf0_inv)
-                verbose("invertible coefficient: %s found" %(cf0_inv))
+                verbose("invertible coefficient: %s found" % (cf0_inv))
                 break
             except NotImplementedError:
-                verbose("constant coefficient: %s not invertibe" %(cf0))
+                verbose("constant coefficient: %s not invertibe" % (cf0))
 
         # ------------------------------------------------------------------
         # assuming that cf splits into linear factors over self
@@ -355,7 +355,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
                 root_inv = (-1 )**(deg_cf) * cf0_inv * root_inv
                 self._invertible_elements.update({root:root_inv})
                 verbose("adding inverse %s of root %s" % (root_inv, root))
-            invert_items = [(k,v) for k, v in self._invertible_elements.items()]
+            invert_items = list(self._invertible_elements.items())
             for k, v in invert_items:
                 self._invertible_elements.update({v: k})
         return

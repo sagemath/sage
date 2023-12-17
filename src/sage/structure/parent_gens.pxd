@@ -12,7 +12,7 @@ Parent objects with generators
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .parent_base cimport ParentWithBase
+from sage.structure.parent_base cimport ParentWithBase
 
 
 cdef class ParentWithGens(ParentWithBase):

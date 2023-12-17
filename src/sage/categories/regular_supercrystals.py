@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.graphs
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Supercrystals
 """

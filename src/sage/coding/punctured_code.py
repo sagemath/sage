@@ -709,6 +709,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         elif "error-erasure" in D.decoder_type() and number_erasures is None:
             raise ValueError("You must provide the number of erasures")
 
+
 ####################### registration ###############################
 
 PuncturedCode._registered_encoders["PuncturedMatrix"] = PuncturedCodePuncturedMatrixEncoder

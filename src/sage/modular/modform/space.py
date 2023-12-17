@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Generic spaces of modular forms
 
@@ -138,9 +139,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         global WARN
         if WARN:
             print("Modular forms -- under development -- do not trust yet.")
-            WARN=False
+            WARN = False
         if not arithgroup.is_CongruenceSubgroup(group):
-            raise TypeError("group (=%s) must be a congruence subgroup"%group)
+            raise TypeError("group (=%s) must be a congruence subgroup" % group)
         weight = Integer(weight)
         if not ((character is None) or isinstance(character, dirichlet.DirichletCharacter)):
             raise TypeError("character must be a Dirichlet character")
@@ -405,7 +406,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         else:
             prec = Integer(prec)
         if prec < 0:
-            raise ValueError("prec (=%s) must be at least 0"%prec)
+            raise ValueError("prec (=%s) must be at least 0" % prec)
         return prec
 
     @cached_method
@@ -732,6 +733,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], QQ)._compute_q_expansion_basis(5)
             Traceback (most recent call last):
             ...
@@ -1422,7 +1424,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         try:
             return self.basis()[int(n)]
         except IndexError:
-            raise ValueError("Generator %s not defined"%n)
+            raise ValueError("Generator %s not defined" % n)
 
     def gens(self):
         """
@@ -1551,7 +1553,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         else:
             assert S.dimension() == self.dimension()
             self.__is_cuspidal = True
-        S.__is_eisenstein = (S.dimension()==0)
+        S.__is_eisenstein = (S.dimension() == 0)
         S.__is_cuspidal = True
         return S
 
@@ -1617,10 +1619,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
          EXAMPLES::
 
-             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.new_submodule()
-             Traceback (most recent call last):
-             ...
-             NotImplementedError: computation of new submodule not yet implemented
+            sage: # needs sage.rings.number_field
+            sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.new_submodule()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computation of new submodule not yet implemented
          """
         raise NotImplementedError("computation of new submodule not yet implemented")
 
@@ -1630,6 +1633,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.new_subspace()
             Traceback (most recent call last):
             ...
@@ -1647,6 +1651,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.eisenstein_series()
             Traceback (most recent call last):
             ...
@@ -1737,7 +1742,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         else:
             assert E.dimension() == self.dimension()
             self.__is_eisenstein = True
-        E.__is_cuspidal = (E.dimension()==0)
+        E.__is_cuspidal = (E.dimension() == 0)
         E.__is_eisenstein = True
         return E
 
@@ -1833,6 +1838,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.modular_symbols()
             Traceback (most recent call last):
             ...
@@ -1903,7 +1909,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             else:
                 B = V.span(w)
         if is_PowerSeries(f) and f.prec() < n:
-            raise ValueError("you need at least %s terms of precision"%n)
+            raise ValueError("you need at least %s terms of precision" % n)
         x = V(f.padded_list(n))
         return B.coordinates(x)
 

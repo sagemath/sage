@@ -72,7 +72,7 @@ def rank_from_list(l):
         sage: r('c')
         2
 
-    For non elements a ``ValueError`` is raised, as with the usual
+    For non elements a :class:`ValueError` is raised, as with the usual
     ``index`` method of lists::
 
         sage: r('blah')
@@ -207,7 +207,7 @@ def unrank(L, i):
 
     Enumerated sets::
 
-        sage: unrank(GF(7), 2)                                                          # optional - sage.rings.finite_rings
+        sage: unrank(GF(7), 2)
         2
         sage: unrank(IntegerModRing(29), 10)
         10

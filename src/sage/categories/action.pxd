@@ -1,17 +1,17 @@
 from sage.structure.element cimport Element
-from .morphism cimport Morphism
-from .map cimport Map
-from .functor cimport Functor
+from sage.categories.morphism cimport Morphism
+from sage.categories.map cimport Map
+from sage.categories.functor cimport Functor
 
 cdef class Action(Functor):
     cdef readonly G
     cdef readonly op
     cdef readonly bint _is_left
     cdef US
-    cdef underlying_set(self)
+    cdef underlying_set(self) noexcept
 
-    cdef _act_convert(self, g, x)
-    cpdef _act_(self, g, x)
+    cdef _act_convert(self, g, x) noexcept
+    cpdef _act_(self, g, x) noexcept
 
 
 cdef class InverseAction(Action):

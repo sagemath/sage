@@ -202,12 +202,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra, basis_for_quaternion_lattice
-from sage.algebras.quatalg.quaternion_algebra_cython import rational_matrix_from_rational_quaternions
 from sage.arith.misc import gcd, factor, prime_divisors, kronecker, next_prime
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.modular.dirichlet import TrivialCharacter
@@ -222,6 +221,9 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.ring import CommutativeRing
 from sage.structure.richcmp import richcmp, richcmp_method
+
+lazy_import('sage.algebras.quatalg.quaternion_algebra', ['QuaternionAlgebra', 'basis_for_quaternion_lattice'])
+lazy_import('sage.algebras.quatalg.quaternion_algebra_cython', 'rational_matrix_from_rational_quaternions')
 
 
 cache = {}

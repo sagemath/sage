@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Module of supersingular points
 
@@ -68,8 +69,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import kronecker, next_prime
-from sage.libs.pari.all import pari
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
 from sage.modular.arithgroup.all import Gamma0
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -77,6 +78,8 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.richcmp import richcmp_method, richcmp
+
+lazy_import('sage.libs.pari.all', 'pari')
 
 
 ZZy = PolynomialRing(ZZ, 'y')

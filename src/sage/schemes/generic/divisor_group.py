@@ -209,10 +209,10 @@ class DivisorGroup_generic(FormalSums):
 
         EXAMPLES::
 
-            sage: A.<x, y> = AffineSpace(2, CC)
-            sage: C = Curve(y^2 - x^9 - x)
+            sage: A.<x, y> = AffineSpace(2, CC)                                         # needs sage.rings.real_mpfr
+            sage: C = Curve(y^2 - x^9 - x)                                              # needs sage.rings.real_mpfr sage.schemes
             sage: from sage.schemes.generic.divisor_group import DivisorGroup
-            sage: DivisorGroup(C).an_element()    # indirect test
+            sage: DivisorGroup(C).an_element()    # indirect test                       # needs sage.rings.real_mpfr sage.schemes
             0
         """
         return self._scheme.divisor([], base_ring=self.base_ring(), check=False, reduce=False)
@@ -224,14 +224,14 @@ class DivisorGroup_generic(FormalSums):
             sage: from sage.schemes.generic.divisor_group import DivisorGroup
             sage: DivisorGroup(Spec(ZZ), ZZ).base_extend(QQ)
             Group of QQ-Divisors on Spectrum of Integer Ring
-            sage: DivisorGroup(Spec(ZZ), ZZ).base_extend(GF(7))                         # optional - sage.rings.finite_rings
+            sage: DivisorGroup(Spec(ZZ), ZZ).base_extend(GF(7))
             Group of (Finite Field of size 7)-Divisors on Spectrum of Integer Ring
 
         Divisor groups are unique::
 
-            sage: A.<x, y> = AffineSpace(2, CC)
-            sage: C = Curve(y^2 - x^9 - x)
-            sage: DivisorGroup(C, ZZ).base_extend(QQ) is DivisorGroup(C, QQ)
+            sage: A.<x, y> = AffineSpace(2, CC)                                         # needs sage.rings.real_mpfr
+            sage: C = Curve(y^2 - x^9 - x)                                              # needs sage.rings.real_mpfr sage.schemes
+            sage: DivisorGroup(C, ZZ).base_extend(QQ) is DivisorGroup(C, QQ)            # needs sage.rings.real_mpfr sage.schemes
             True
         """
         if self.base_ring().has_coerce_map_from(R):
@@ -251,15 +251,16 @@ class DivisorGroup_curve(DivisorGroup_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr sage.schemes
             sage: A.<x, y> = AffineSpace(2, CC)
             sage: C = Curve(y^2 - x^9 - x)
-            sage: DivZZ=C.divisor_group(ZZ)
-            sage: DivQQ=C.divisor_group(QQ)
-            sage: DivQQ( DivQQ.an_element() )   # indirect test
+            sage: DivZZ = C.divisor_group(ZZ)
+            sage: DivQQ = C.divisor_group(QQ)
+            sage: DivQQ(DivQQ.an_element())   # indirect test
             0
-            sage: DivZZ( DivZZ.an_element() )   # indirect test
+            sage: DivZZ(DivZZ.an_element())   # indirect test
             0
-            sage: DivQQ( DivZZ.an_element() )   # indirect test
+            sage: DivQQ(DivZZ.an_element())   # indirect test
             0
         """
         if isinstance(x, Divisor_curve):

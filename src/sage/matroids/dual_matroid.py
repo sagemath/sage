@@ -519,9 +519,7 @@ class DualMatroid(Matroid):
 
         """
         N = DualMatroid(self._matroid)
-        if getattr(self, '__custom_name') is not None:
-            # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo={}):
@@ -543,10 +541,7 @@ class DualMatroid(Matroid):
         """
         from copy import deepcopy
         N = DualMatroid(deepcopy(self._matroid, memo))
-        if getattr(self, '__custom_name') is not None:
-            # because of name wrangling, this is not caught by the
-            # default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -575,6 +570,6 @@ class DualMatroid(Matroid):
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}'
         """
         import sage.matroids.unpickling
-        data = (self._matroid, getattr(self, '__custom_name'))
+        data = (self._matroid, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_dual_matroid, (version, data)

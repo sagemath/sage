@@ -315,6 +315,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     Computation of a maximum stable set in Petersen's graph::
 
+         sage: # needs sage.graphs
          sage: g = graphs.PetersenGraph()
          sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
          sage: b = p.new_variable(binary=True)
@@ -659,13 +660,15 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='ppl')
             sage: p.base_ring()
             Rational Field
-            sage: from sage.rings.qqbar import AA                                      # optional - sage.rings.number_field
-            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP', base_ring=AA)  # optional - sage.rings.number_field
-            sage: p.base_ring()                                                        # optional - sage.rings.number_field
+            sage: from sage.rings.qqbar import AA                                       # needs sage.rings.number_field
+            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP', base_ring=AA)   # needs sage.rings.number_field
+            sage: p.base_ring()                                                         # needs sage.rings.number_field
             Algebraic Real Field
-            sage: d = polytopes.dodecahedron()                                         # optional - sage.rings.number_field
-            sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())               # optional - sage.rings.number_field
-            sage: p.base_ring()                                                        # optional - sage.rings.number_field
+
+            sage: # needs sage.groups sage.rings.number_field
+            sage: d = polytopes.dodecahedron()
+            sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())
+            sage: p.base_ring()
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
         """
         return self._backend.base_ring()
@@ -869,7 +872,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return tuple(self.new_variable() for i in range(n))
 
-    cpdef int number_of_constraints(self):
+    cpdef int number_of_constraints(self) noexcept:
         r"""
         Return the number of constraints assigned so far.
 
@@ -883,7 +886,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.nrows()
 
-    cpdef int number_of_variables(self):
+    cpdef int number_of_variables(self) noexcept:
         r"""
         Returns the number of variables used so far.
 
@@ -993,11 +996,11 @@ cdef class MixedIntegerLinearProgram(SageObject):
         cdef str s
         cdef GenericBackend b = self._backend
 
-        result = list()
+        result = []
 
         # If indices is None, we actually want to return all constraints
         if indices is None:
-            indices = list(xrange(b.nrows()))
+            indices = list(range(b.nrows()))
 
         # Only one constraint
         if isinstance(indices, (int, Integer)):
@@ -2629,6 +2632,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
          Computation of a maximum stable set in Petersen's graph::
 
+            sage: # needs sage.graphs
             sage: g = graphs.PetersenGraph()
             sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
             sage: b = p.new_variable(nonnegative=True)
@@ -2823,14 +2827,15 @@ cdef class MixedIntegerLinearProgram(SageObject):
         are not recorded, and we can disable this feature providing an empty
         filename. This is currently working with CPLEX and Gurobi::
 
-            sage: p = MixedIntegerLinearProgram(solver="CPLEX")   # optional - CPLEX
-            sage: p.solver_parameter("logfile")                   # optional - CPLEX
+            sage: # optional - cplex
+            sage: p = MixedIntegerLinearProgram(solver="CPLEX")
+            sage: p.solver_parameter("logfile")
             ''
-            sage: p.solver_parameter("logfile", "/dev/null")      # optional - CPLEX
-            sage: p.solver_parameter("logfile")                   # optional - CPLEX
+            sage: p.solver_parameter("logfile", "/dev/null")
+            sage: p.solver_parameter("logfile")
             '/dev/null'
-            sage: p.solver_parameter("logfile", '')               # optional - CPLEX
-            sage: p.solver_parameter("logfile")                   # optional - CPLEX
+            sage: p.solver_parameter("logfile", '')
+            sage: p.solver_parameter("logfile")
             ''
 
         Solver-specific parameters:
@@ -2878,7 +2883,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L):
+    cpdef sum(self, L) noexcept:
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements
@@ -2983,6 +2988,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
             sage: p.solver_parameter("mip_gap_tolerance",100)
@@ -3017,6 +3023,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
             sage: p.solver_parameter("mip_gap_tolerance",100)
@@ -3035,7 +3042,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         Just make sure that the variable *has* been defined, and is not just
         undefined::
 
-            sage: p.get_relative_objective_gap() > 1
+            sage: p.get_relative_objective_gap() > 1                                    # needs sage.graphs
             True
         """
         return self._backend.get_relative_objective_gap()
@@ -3658,7 +3665,7 @@ cdef class MIPVariable(SageObject):
                 return NotImplemented
             return (<MIPVariable> right)._matrix_lmul_impl(left)
 
-    cdef _matrix_rmul_impl(self, m):
+    cdef _matrix_rmul_impl(self, m) noexcept:
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -3672,7 +3679,7 @@ cdef class MIPVariable(SageObject):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m):
+    cdef _matrix_lmul_impl(self, m) noexcept:
         """
         Implement the action of a matrix multiplying from the left.
         """

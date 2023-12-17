@@ -47,17 +47,17 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
-        sage: m = Q.mass__by_Siegel_densities(); m                                  # optional - sage.symbolic
+        sage: m = Q.mass__by_Siegel_densities(); m                                      # needs sage.symbolic
         1/384
-        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                             # optional - sage.symbolic
+        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                                 # needs sage.symbolic
         0
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: m = Q.mass__by_Siegel_densities(); m                                  # optional - sage.symbolic
+        sage: m = Q.mass__by_Siegel_densities(); m                                      # needs sage.symbolic
         1/48
-        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                             # optional - sage.symbolic
+        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                                 # needs sage.symbolic
         0
     """
     from sage.symbolic.constants import pi
@@ -181,7 +181,7 @@ def Watson_mass_at_2(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.Watson_mass_at_2()  # WARNING:  WE NEED TO CHECK THIS CAREFULLY!    # optional - sage.symbolic
+        sage: Q.Watson_mass_at_2()  # WARNING:  WE NEED TO CHECK THIS CAREFULLY!        # needs sage.symbolic
         384
     """
     from sage.functions.all import sgn

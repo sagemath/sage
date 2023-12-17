@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Analytic types of modular forms
 
@@ -325,9 +326,9 @@ class AnalyticType(FiniteLatticePoset):
     EXAMPLES::
 
         sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
-        sage: x,y,z,d = var("x,y,z,d")
-        sage: el = QuasiModularForms(n=3, k=6, ep=-1)(y-z^3)
-        sage: el.analytic_type()
+        sage: x,y,z,d = var("x,y,z,d")                                                  # needs sage.symbolic
+        sage: el = QuasiModularForms(n=3, k=6, ep=-1)(y-z^3)                            # needs sage.symbolic
+        sage: el.analytic_type()                                                        # needs sage.symbolic
         quasi modular
 
     Similarly the type of the ring element ``el2 = E4/Delta - E6/Delta`` is
@@ -335,9 +336,9 @@ class AnalyticType(FiniteLatticePoset):
     a function which is holomorphic at infinity::
 
         sage: from sage.modular.modform_hecketriangle.graded_ring import WeakModularFormsRing
-        sage: x,y,z,d = var("x,y,z,d")
-        sage: el2 = WeakModularFormsRing(n=3)(x/(x^3-y^2)-y/(x^3-y^2))
-        sage: el2.analytic_type()
+        sage: x,y,z,d = var("x,y,z,d")                                                  # needs sage.symbolic
+        sage: el2 = WeakModularFormsRing(n=3)(x/(x^3-y^2)-y/(x^3-y^2))                  # needs sage.symbolic
+        sage: el2.analytic_type()                                                       # needs sage.symbolic
         weakly holomorphic modular
     """
 
@@ -444,7 +445,7 @@ class AnalyticType(FiniteLatticePoset):
                                  linear_extension=True, facade=False)
 
         L = self._base_poset.order_ideals_lattice()
-        H = L._hasse_diagram.relabel({i: x for i, x in enumerate(L._elements)},
+        H = L._hasse_diagram.relabel(dict(enumerate(L._elements)),
                                      inplace=False)
         FiniteLatticePoset.__init__(self, hasse_diagram=H,
                                     elements=L._elements, category=L.category(),
@@ -484,7 +485,7 @@ class AnalyticType(FiniteLatticePoset):
             True
         """
         if len(args) > 1:
-            return super().__call__([arg for arg in args], **kwargs)
+            return super().__call__(list(args), **kwargs)
         else:
             return super().__call__(*args, **kwargs)
 

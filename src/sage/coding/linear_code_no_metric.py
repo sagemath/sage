@@ -1004,8 +1004,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.is_self_orthogonal()
             False
-            sage: C = codes.QuasiQuadraticResidueCode(11)  # optional - gap_packages (Guava package)
-            sage: C.is_self_orthogonal()                   # optional - gap_packages (Guava package)
+            sage: C = codes.QuasiQuadraticResidueCode(11)  # optional - gap_package_guava
+            sage: C.is_self_orthogonal()                   # optional - gap_package_guava
             True
         """
         return self.is_subcode(self.dual_code())

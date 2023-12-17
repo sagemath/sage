@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs          (because all doctests use SimplicialComplex)
+# sage.doctest: needs sage.graphs          (because all doctests use SimplicialComplex)
 r"""
 Homspaces between chain complexes
 

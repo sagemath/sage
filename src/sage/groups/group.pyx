@@ -35,9 +35,9 @@ def is_Group(x):
 
     EXAMPLES::
 
-        sage: F.<a,b> = FreeGroup()
+        sage: F.<a,b> = FreeGroup()                                                     # needs sage.combinat
         sage: from sage.groups.group import is_Group
-        sage: is_Group(F)
+        sage: is_Group(F)                                                               # needs sage.combinat
         True
         sage: is_Group("a string")
         False
@@ -87,7 +87,7 @@ cdef class Group(Parent):
             sage: G = Group(category=Groups()) # todo: do the same test with some subcategory of Groups when there will exist one
             sage: G.category()
             Category of groups
-            sage: G = Group(category = CommutativeAdditiveGroups())
+            sage: G = Group(category=CommutativeAdditiveGroups())
             Traceback (most recent call last):
             ...
             ValueError: (Category of commutative additive groups,) is not a subcategory of Category of groups
@@ -96,6 +96,7 @@ cdef class Group(Parent):
 
         Check for :trac:`8119`::
 
+            sage: # needs sage.groups
             sage: G = SymmetricGroup(2)
             sage: h = hash(G)
             sage: G.rename('S2')
@@ -139,7 +140,7 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()                                             # optional - sage.rings.finite_rings
+            sage: SL(2, 7).is_commutative()                                             # needs sage.modules sage.rings.finite_rings
             False
         """
         return self.is_abelian()
@@ -161,8 +162,8 @@ cdef class Group(Parent):
 
         TESTS::
 
-            sage: H = SL(2, QQ)
-            sage: H.order()
+            sage: H = SL(2, QQ)                                                         # needs sage.modules
+            sage: H.order()                                                             # needs sage.modules
             +Infinity
         """
         try:
@@ -211,8 +212,8 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup([2,3,4,5])                                           # optional - sage.groups
-            sage: G.an_element()                                                        # optional - sage.groups
+            sage: G = AbelianGroup([2,3,4,5])                                           # needs sage.groups
+            sage: G.an_element()                                                        # needs sage.groups
             f0*f1*f2*f3
         """
         return self.prod(self.gens())

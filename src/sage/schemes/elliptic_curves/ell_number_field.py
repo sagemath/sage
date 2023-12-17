@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 r"""
 Elliptic curves over number fields
 
@@ -2256,7 +2256,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         If the upper and lower bounds given by Simon two-descent are
         the same, then the rank has been uniquely identified and we
-        return this. Otherwise, we raise a ValueError with an error
+        return this. Otherwise, we raise a :class:`ValueError` with an error
         message specifying the upper and lower bounds.
 
         .. NOTE::
@@ -2510,7 +2510,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             ValueError: invalid embedding specified: should have domain ...
         """
         try:
-            if not embedding.domain() is self.base_field():
+            if embedding.domain() is not self.base_field():
                 raise ValueError("invalid embedding specified: should have domain {}".format(self.base_field()))
             if not isinstance(embedding.codomain(), sage.rings.abc.RealField):
                 raise ValueError("invalid embedding specified: should be real")

@@ -1,1 +1,1 @@
-sphinxcontrib_serializinghtml >=1.1.4
+sphinxcontrib_serializinghtml >=1.1.5

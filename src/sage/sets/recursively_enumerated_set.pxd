@@ -16,15 +16,15 @@ cdef class RecursivelyEnumeratedSet_generic(sage.structure.parent.Parent):
     cdef readonly _max_depth
     cdef readonly _graded_component
 
-    cpdef seeds(self)
-    cpdef graded_component(self, depth)
+    cpdef seeds(self) noexcept
+    cpdef graded_component(self, depth) noexcept
 
 cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
-    cdef set _get_next_graded_component(self, set A, set B)
+    cdef set _get_next_graded_component(self, set A, set B) noexcept
 
-    cpdef graded_component(self, depth)
+    cpdef graded_component(self, depth) noexcept
 
 cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
-    cdef set _get_next_graded_component(self, set B)
+    cdef set _get_next_graded_component(self, set B) noexcept
 
-    cpdef graded_component(self, depth)
+    cpdef graded_component(self, depth) noexcept

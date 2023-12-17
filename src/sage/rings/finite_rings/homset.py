@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
 Homset for finite fields
 
@@ -152,9 +153,9 @@ class FiniteFieldHomset(RingHomset_generic):
         D = self.domain()
         C = self.codomain()
         if C == D:
-            return "Automorphism group of %s"%D
+            return "Automorphism group of %s" % D
         else:
-            return "Set of field embeddings from %s to %s"%(D, C)
+            return "Set of field embeddings from %s to %s" % (D, C)
 
     def is_aut(self):
         """

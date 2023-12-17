@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat sage.graphs
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Finite posets
 
@@ -183,7 +183,7 @@ class FinitePosets(CategoryWithAxiom):
 
             .. SEEALSO:: :meth:`FiniteLatticePosets.ParentMethods.is_lattice_morphism`
             """
-            image = set(f(x) for x in self)
+            image = {f(x) for x in self}
             if len(image) != self.cardinality():
                 # Not injective
                 return False
@@ -191,7 +191,7 @@ class FinitePosets(CategoryWithAxiom):
                 # Not surjective
                 return False
             for x in self:
-                if set(f(y) for y in self.upper_covers(x)) != set(codomain.upper_covers(f(x))):
+                if {f(y) for y in self.upper_covers(x)} != set(codomain.upper_covers(f(x))):
                     return False
             return True
 
@@ -1439,10 +1439,10 @@ class FinitePosets(CategoryWithAxiom):
 
             """
             from sage.plot.plot import graphics_array
-            plot_of_orb_plots=[]
+            plot_of_orb_plots = []
             max_orbit_size = 0
             for orb in self.rowmotion_orbits():
-                orb_plots=[]
+                orb_plots = []
                 if len(orb) > max_orbit_size:
                     max_orbit_size = len(orb)
                 for oi in orb:
@@ -1525,10 +1525,10 @@ class FinitePosets(CategoryWithAxiom):
 
             """
             from sage.plot.plot import graphics_array
-            plot_of_orb_plots=[]
+            plot_of_orb_plots = []
             max_orbit_size = 0
             for orb in self.toggling_orbits(vs):
-                orb_plots=[]
+                orb_plots = []
                 if len(orb) > max_orbit_size:
                     max_orbit_size = len(orb)
                 for oi in orb:
