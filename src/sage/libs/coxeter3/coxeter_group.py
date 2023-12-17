@@ -3,12 +3,12 @@
 """
 Coxeter Groups implemented with Coxeter3
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009-2013 Mike Hansen <mhansen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.libs.coxeter3.coxeter import get_CoxGroup, CoxGroupElement
 from sage.misc.cachefunc import cached_method
@@ -31,10 +31,10 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: from sage.libs.coxeter3.coxeter_group import CoxeterGroup # optional - coxeter3
-            sage: CoxeterGroup(['B',2])                                     # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter_group import CoxeterGroup       # optional - coxeter3
+            sage: CoxeterGroup(['B',2])                                           # optional - coxeter3
             Coxeter group of type ['B', 2] implemented by Coxeter3
-            sage: CoxeterGroup(CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1})) # optional - coxeter3
+            sage: CoxeterGroup(CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1}))  # optional - coxeter3
             Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1} implemented by Coxeter3
 
         """
@@ -46,15 +46,15 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: from sage.libs.coxeter3.coxeter_group import CoxeterGroup  # optional - coxeter3
-            sage: CoxeterGroup(['A',2])                                     # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter_group import CoxeterGroup       # optional - coxeter3
+            sage: CoxeterGroup(['A',2])                                           # optional - coxeter3
             Coxeter group of type ['A', 2] implemented by Coxeter3
 
         As degrees and codegrees are not implemented, they are skipped in the
         testsuite::
 
             sage: to_skip = ['_test_degrees', '_test_codegrees']
-            sage: TestSuite(CoxeterGroup(['A',2])).run(skip=to_skip)                    # optional - coxeter3
+            sage: TestSuite(CoxeterGroup(['A',2])).run(skip=to_skip)              # optional - coxeter3
         """
         category = CoxeterGroups()
         if cartan_type.is_finite():
@@ -277,8 +277,8 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3') # optional - coxeter3
-            sage: W.m(1, 1)                                             # optional - coxeter3
+            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')  # optional - coxeter3
+            sage: W.m(1, 1)                                              # optional - coxeter3
             doctest:warning...:
             DeprecationWarning: the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.
             See https://github.com/sagemath/sage/issues/30237 for details.
@@ -667,7 +667,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 sage: w.action(v)
                 -alpha[1] + alpha[2] + alpha[3]
             """
-            #TODO: Find a better way to do this
+            # TODO: Find a better way to do this
             W = self.parent().root_system().root_space().weyl_group()
             w = W.from_reduced_word(list(self))
             return w.action(v)
@@ -705,7 +705,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             n = W.rank()
 
             if Q.ngens() != n:
-                raise ValueError("the number of generators for the polynomial ring must be the same as the rank of the root system")
+                raise ValueError("the number of generators for the polynomial "
+                                 "ring must be the same as the rank of the "
+                                 "root system")
 
             basis_elements = [alpha[i] for i in W.index_set()]
             basis_to_order = {s: i for i, s in enumerate(W.index_set())}
@@ -716,7 +718,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 exponents = poly.exponents()
 
                 for exponent in exponents:
-                    #Construct something in the root lattice from the exponent vector
+                    # Construct something in the root lattice from the exponent vector
                     exponent = sum(e*b for e, b in zip(exponent, basis_elements))
                     exponent = self.action(exponent)
 
