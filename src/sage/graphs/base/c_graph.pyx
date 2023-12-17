@@ -624,8 +624,8 @@ cdef class CGraph:
 
         OUTPUT:
 
-        - Raise a ``NotImplementedError``. This method is not implemented in
-          this base class. A child class should provide a suitable
+        - Raise a :class:`NotImplementedError`. This method is not implemented
+          in this base class. A child class should provide a suitable
           implementation.
 
         .. SEEALSO::
@@ -1267,7 +1267,7 @@ cdef class CGraph:
 
         OUTPUT:
 
-        - Raise ``NotImplementedError``. This method is not implemented at
+        - Raise :class:`NotImplementedError`. This method is not implemented at
           the :class:`CGraph` level. A child class should provide a suitable
           implementation.
 

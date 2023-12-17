@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Various families of graphs
 
@@ -594,7 +593,7 @@ def BarbellGraph(n1, n2):
 
     OUTPUT:
 
-    A barbell graph of order ``2*n1 + n2``. A ``ValueError`` is
+    A barbell graph of order ``2*n1 + n2``. A :class:`ValueError` is
     returned if ``n1 < 2`` or ``n2 < 0``.
 
     PLOTTING:
@@ -929,7 +928,7 @@ def BubbleSortGraph(n):
     OUTPUT:
 
     The bubble sort graph `B(n)` on `n` symbols. If `n < 1`, a
-    ``ValueError`` is returned.
+    :class:`ValueError` is returned.
 
     EXAMPLES::
 
@@ -2714,7 +2713,7 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
     G = SquaredSkewHadamardMatrixGraph(n).complement()
     G.add_vertex((4 * n - 1)**2)
     G.seidel_switching(list(range((4 * n - 1) * (2 * n - 1))))
-    G.name("switch skewhad^2+*_" + str((n)))
+    G.name("switch skewhad^2+*_" + str(n))
     return G
 
 
