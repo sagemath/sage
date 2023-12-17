@@ -79,13 +79,15 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
 
     OUTPUT:
 
-    - If ``sum`` and ``max_part`` are None, it returns the infinite enumerated
-      set of all integer vectors (list of integers) maximal in their orbit for
-      the lexicographic order.
+    - If ``sum`` and ``max_part`` are None, it returns the infinite
+      enumerated set of all integer vectors (lists of integers) maximal
+      in their orbit for the lexicographic order.  Exceptionally, if
+      the domain of ``G`` is empty, the result is a finite enumerated
+      set that contains one element, namely the empty vector.
 
-    - If ``sum`` is an integer, it returns a finite enumerated set containing
-      all integer vectors maximal in their orbit for the lexicographic order
-      and whose entries sum to ``sum``.
+    - If ``sum`` is an integer, it returns a finite enumerated set
+      containing all integer vectors maximal in their orbit for the
+      lexicographic order and whose entries sum to ``sum``.
 
     EXAMPLES:
 
@@ -164,6 +166,15 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         sage: I.orbit([2,2,2])
         {[2, 2, 2]}
 
+    Even without constraints, for an empty domain the result is
+    a singleton set::
+
+        sage: G = PermutationGroup([], domain=[])
+        sage: sgs = tuple(tuple(s) for s in G.strong_generating_system())
+        sage: list(IntegerVectorsModPermutationGroup(G, sgs=sgs))
+        [[]]
+
+
     TESTS:
 
     Let us check that canonical integer vectors of the symmetric group
@@ -196,15 +207,16 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         18
         23
 
-    We present a last corner case: trivial groups. For the trivial
-    group ``G`` acting on a list of length `n`, all integer vectors of
-    length `n` are canonical::
+    Another corner case is trivial groups. For the trivial group ``G``
+    acting on a list of length `n`, all integer vectors of length `n`
+    are canonical::
 
         sage: # long time
         sage: G = PermutationGroup([[(6,)]])
         sage: G.cardinality()
         1
-        sage: I = IntegerVectorsModPermutationGroup(G)
+        sage: sgs = tuple(tuple(s) for s in G.strong_generating_system())
+        sage: I = IntegerVectorsModPermutationGroup(G, sgs=sgs)
         sage: for i in range(10):
         ....:     d1 = I.subset(i).cardinality()
         ....:     d2 = IntegerVectors(i,6).cardinality()
@@ -220,6 +232,7 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         792
         1287
         2002
+
     """
     @staticmethod
     def __classcall__(cls, G, sum=None, max_part=None, sgs=None):
