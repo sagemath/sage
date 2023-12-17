@@ -3182,13 +3182,13 @@ cdef class Matrix(Matrix1):
 
         """
 
-        # Validate assertions        
+        # Validate assertions
         if not self.is_square():
             raise ValueError("self must be a square matrix")
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-        # Extract parameters        
+        # Extract parameters
         cdef Matrix M  = <Matrix> self
         n  = M._ncols
         R  = M._base_ring
@@ -3196,7 +3196,7 @@ cdef class Matrix(Matrix1):
 
         # Corner cases
         # N.B.  We already tested for M to be square, hence we do not need to
-        # test for 0 x n or m x 0 matrices.      
+        # test for 0 x n or m x 0 matrices.
         if n == 0:
             return S.one()
 
@@ -18662,8 +18662,8 @@ def _matrix_power_symbolic(A, n):
             mk = mk.radical_expression()
 
 
-        # When the variable "mk" is equal to zero, it is advisable to employ the Kronecker delta function 
-        # instead of utilizing the numerical value zero. This choice is made to encompass scenarios where 
+        # When the variable "mk" is equal to zero, it is advisable to employ the Kronecker delta function
+        # instead of utilizing the numerical value zero. This choice is made to encompass scenarios where
         # the power of zero is also equal to zero.
         if mk:
             vk = [(binomial(n, i) * mk._pow_(n-i)).simplify_full()
