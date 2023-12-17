@@ -65,7 +65,7 @@ def make_parent(base_ring, dimension, names=None):
     return HyperplaneArrangements(base_ring, names=names)
 
 
-class HyperplaneArrangementLibrary():
+class HyperplaneArrangementLibrary:
     """
     The library of hyperplane arrangements.
     """

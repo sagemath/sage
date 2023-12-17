@@ -520,8 +520,8 @@ class FanMorphism(FreeModuleMorphism):
           domain fan is mapped to the origin. If it is `j`, then the `i`-th ray
           of the domain fan is mapped onto the `j`-th ray of the codomain fan.
           If there is a ray in the domain fan which is mapped into the relative
-          interior of a higher dimensional cone, a ``ValueError`` exception is
-          raised.
+          interior of a higher dimensional cone, a :class:`ValueError`
+          exception is raised.
 
         .. NOTE::
 
@@ -601,8 +601,8 @@ class FanMorphism(FreeModuleMorphism):
         OUTPUT:
 
         - none, but the domain fan of self is replaced with its minimal
-          refinement, if possible. Otherwise a ``ValueError`` exception is
-          raised.
+          refinement, if possible. Otherwise a :class:`ValueError`
+          exception is raised.
 
         TESTS::
 
@@ -763,11 +763,11 @@ class FanMorphism(FreeModuleMorphism):
 
     def _support_error(self):
         r"""
-        Raise a ``ValueError`` exception due to support incompatibility.
+        Raise a :class:`ValueError` exception due to support incompatibility.
 
         OUTPUT:
 
-        - none, a ``ValueError`` exception is raised.
+        - none, a :class:`ValueError` exception is raised.
 
         TESTS:
 
@@ -806,10 +806,10 @@ class FanMorphism(FreeModuleMorphism):
 
         OUTPUT:
 
-        - none, but a ``ValueError`` exception is raised if there is a cone of
-          the domain fan of ``self`` which is not completely contained in a
-          single cone of the codomain fan of ``self``, or if one of these fans
-          does not sit in the appropriate lattice.
+        - none, but a :class:`ValueError` exception is raised if there is
+          a cone of the domain fan of ``self`` which is not completely
+          contained in a single cone of the codomain fan of ``self``,
+          or if one of these fans does not sit in the appropriate lattice.
 
         EXAMPLES::
 
