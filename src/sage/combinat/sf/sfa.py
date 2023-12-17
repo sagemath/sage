@@ -196,7 +196,7 @@ AUTHORS:
 - Darij Grinberg (2013) Sym over rings that are not characteristic 0
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -210,8 +210,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -306,7 +306,7 @@ def is_SymmetricFunction(x):
     return isinstance(x, SymmetricFunctionAlgebra_generic.Element)
 
 #####################################################################
-## Bases categories
+#  Bases categories
 
 
 from sage.categories.realizations import Category_realization_of_parent
@@ -4620,7 +4620,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         @cached_function
         def hnimage(n):
             return result_parent.sum(tensor([parent(s(lam)), parent(s(lam))])
-                                      for lam in Partitions(n))
+                                     for lam in Partitions(n))
         for lam, a in h(self):
             result += a * prod(hnimage(i) for i in lam)
         return result
@@ -5588,7 +5588,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             True
         """
         s_self = s(self)
-        return all( _nonnegative_coefficients(c) for c in s_self.coefficients() )
+        return all(_nonnegative_coefficients(c) for c in s_self.coefficients())
 
     def degree(self):
         r"""
