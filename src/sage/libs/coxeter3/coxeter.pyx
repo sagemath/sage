@@ -1,6 +1,7 @@
 # distutils: language = c++
 # distutils: libraries = coxeter3
 # sage_setup: distribution = sagemath-coxeter3
+# sage.doctest: optional - coxeter3
 
 """
 Low level part of the interface to Fokko Ducloux's Coxeter 3 library
@@ -35,10 +36,10 @@ cdef class String:
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import String       # optional - coxeter3
-            sage: s = String("hello"); s                              # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import String
+            sage: s = String("hello"); s
             hello
-            sage: del s                                               # optional - coxeter3
+            sage: del s
         """
         self.x = c_String(str_to_bytes(s))
 
@@ -46,9 +47,9 @@ cdef class String:
         """
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import String       # optional - coxeter3
-            sage: s = String('Hi')                                    # optional - coxeter3
-            sage: s                                                   # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import String
+            sage: s = String('Hi')
+            sage: s
             Hi
         """
         return bytes_to_str(self.x.ptr())
@@ -62,9 +63,9 @@ cdef class String:
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import String        # optional - coxeter3
-            sage: s = String('hello')                                  # optional - coxeter3
-            sage: hash(s) == hash('hello')                             # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import String
+            sage: s = String('hello')
+            sage: hash(s) == hash('hello')
             True
         """
         return hash(repr(self))
@@ -73,7 +74,6 @@ cdef class String:
         """
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import String
             sage: ta1 = String('A')
             sage: ta2 = String('A')
@@ -114,9 +114,9 @@ cdef class String:
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import String       # optional - coxeter3
-            sage: s = String('Hi')                                    # optional - coxeter3
-            sage: len(s)                                              # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import String
+            sage: s = String('Hi')
+            sage: len(s)
             2
         """
         return self.x.length()
@@ -125,9 +125,9 @@ cdef class String:
         """
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import String       # optional - coxeter3
-            sage: s = String('Hi')                                    # optional - coxeter3
-            sage: TestSuite(s).run()                                  # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import String
+            sage: s = String('Hi')
+            sage: TestSuite(s).run()
         """
         return (String, (repr(self),) )
 
@@ -139,10 +139,10 @@ cdef class Type:
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import Type         # optional - coxeter3
-            sage: t = Type('A'); t                                    # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import Type
+            sage: t = Type('A'); t
             A
-            sage: del t                                               # optional - coxeter3
+            sage: del t
         """
         self.x = c_Type(str_to_bytes(s))
 
@@ -150,8 +150,8 @@ cdef class Type:
         """
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import Type         # optional - coxeter3
-            sage: t = Type('A'); t                                    # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import Type
+            sage: t = Type('A'); t
             A
         """
         return bytes_to_str(self.x.name().ptr())
@@ -160,9 +160,9 @@ cdef class Type:
         """
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import Type         # optional - coxeter3
-            sage: t = Type('A')                                       # optional - coxeter3
-            sage: t.name()                                            # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import Type
+            sage: t = Type('A')
+            sage: t.name()
             A
         """
         return String(bytes_to_str(self.x.name().ptr()))
@@ -176,7 +176,6 @@ cdef class Type:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import Type
             sage: a = Type('A')
             sage: b = Type('B')
@@ -190,7 +189,6 @@ cdef class Type:
         """
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import Type
             sage: ta1 = Type('A')
             sage: ta2 = Type('A')
@@ -229,9 +227,9 @@ cdef class Type:
         """
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import Type           # optional - coxeter3
-            sage: t = Type('A')                                         # optional - coxeter3
-            sage: TestSuite(t).run()                                    # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import Type
+            sage: t = Type('A')
+            sage: TestSuite(t).run()
         """
         return (Type, (repr(self), ))
 
@@ -241,14 +239,14 @@ cdef class CoxGroup(SageObject):
         """
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup   # optional - coxeter3
-            sage: W = CoxGroup(['A', 5]); W                                         # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5]); W
             Coxeter group of type A and rank 5
 
         Coxeter 3 segfault's on the trivial Coxeter group; so we catch
         this and raise a not implemented error::
 
-            sage: W = CoxGroup(['A', 0]); W                                         # optional - coxeter3
+            sage: W = CoxGroup(['A', 0]); W
             Traceback (most recent call last):
             ...
             NotImplementedError: Coxeter group of type ['A',0] using Coxeter 3 not yet implemented
@@ -256,8 +254,8 @@ cdef class CoxGroup(SageObject):
         Successfully initializes from a relabeled Cartan type::
 
             sage: ctype = CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1})
-            sage: W = CoxGroup(ctype)                                               # optional - coxeter3
-            sage: CoxeterMatrix(W.coxeter_matrix(), ctype.index_set()) == CoxeterMatrix(ctype)  # optional - coxeter3
+            sage: W = CoxGroup(ctype)
+            sage: CoxeterMatrix(W.coxeter_matrix(), ctype.index_set()) == CoxeterMatrix(ctype)
             True
         """
         from sage.combinat.root_system.cartan_type import CartanType
@@ -307,9 +305,9 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup       # optional - coxeter3
-            sage: W = CoxGroup(['A', 5])                                                # optional - coxeter3
-            sage: W._ordering_from_cartan_type(CartanType(['A',5]))                     # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5])
+            sage: W._ordering_from_cartan_type(CartanType(['A',5]))
             [1, 2, 3, 4, 5]
         """
         from sage.arith.srange import srange
@@ -344,9 +342,9 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup       # optional - coxeter3
-            sage: A4 = CoxGroup(['A', 4])                                               # optional - coxeter3
-            sage: d = {A4: True}                                                        # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: A4 = CoxGroup(['A', 4])
+            sage: d = {A4: True}
         """
         return hash((self.__class__.__name__, self.type(), self.rank()))
 
@@ -354,7 +352,6 @@ cdef class CoxGroup(SageObject):
         """
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: A4 = CoxGroup(['A', 4])
             sage: A5 = CoxGroup(['A', 5])
@@ -399,9 +396,9 @@ cdef class CoxGroup(SageObject):
         """
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup      # optional - coxeter3
-            sage: W = CoxGroup(['A', 5])                                               # optional - coxeter3
-            sage: TestSuite((W)).run()                                                 # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5])
+            sage: TestSuite((W)).run()
         """
         return (CoxGroup, (self.cartan_type,))
 
@@ -411,9 +408,9 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup      # optional - coxeter3
-            sage: W = CoxGroup(['A', 5])                                               # optional - coxeter3
-            sage: del W                                                                # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5])
+            sage: del W
         """
         del self.x
 
@@ -423,8 +420,8 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup      # optional - coxeter3
-            sage: W = CoxGroup(['A', 5]); W                                            # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5]); W
             Coxeter group of type A and rank 5
         """
         return "Coxeter group of type %s and rank %s"%(self.type(), self.rank())
@@ -433,9 +430,9 @@ cdef class CoxGroup(SageObject):
         """
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup      # optional - coxeter3
-            sage: W = CoxGroup(['A', 2])                                               # optional - coxeter3
-            sage: list(iter(W))                                                        # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 2])
+            sage: list(iter(W))
             [[], [1], [2], [1, 2], [2, 1], [1, 2, 1]]
         """
         return CoxGroupIterator(self)
@@ -446,9 +443,9 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup      # optional - coxeter3
-            sage: W = CoxGroup(['A', 2])                                               # optional - coxeter3
-            sage: W.bruhat_interval([], [1,2])                                         # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 2])
+            sage: W.bruhat_interval([], [1,2])
             [[], [1], [2], [1, 2]]
         """
         cdef CoxGroupElement ww = CoxGroupElement(self, w)
@@ -474,9 +471,9 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup       # optional - coxeter3
-            sage: W = CoxGroup(['A', 5])                                                # optional - coxeter3
-            sage: W.orderings()                                                         # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5])
+            sage: W.orderings()
             ({1: 1, 2: 2, 3: 3, 4: 4, 5: 5}, {1: 1, 2: 2, 3: 3, 4: 4, 5: 5})
         """
         return self.in_ordering, self.out_ordering
@@ -489,9 +486,9 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup       # optional - coxeter3
-            sage: W = CoxGroup(['A', 5])                                                # optional - coxeter3
-            sage: W.type()                                                              # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5])
+            sage: W.type()
             A
         """
         return Type(bytes_to_str(self.x.type().name().ptr()))
@@ -502,9 +499,9 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup       # optional - coxeter3
-            sage: W = CoxGroup(['A', 5])                                                # optional - coxeter3
-            sage: W.rank()                                                              # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5])
+            sage: W.rank()
             5
         """
         return self.x.rank()
@@ -515,7 +512,6 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: W = CoxGroup(['A', 5])
             sage: W.order()
@@ -536,7 +532,6 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: W = CoxGroup(['A', 5])
             sage: W.is_finite()
@@ -555,7 +550,6 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: W = CoxGroup(['A', 2])
             sage: W.full_context()
@@ -577,13 +571,13 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup       # optional - coxeter3
-            sage: W = CoxGroup(['A', 5])                                                # optional - coxeter3
-            sage: W.long_element()                                                      # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5])
+            sage: W.long_element()
             [1, 2, 1, 3, 2, 1, 4, 3, 2, 1, 5, 4, 3, 2, 1]
 
-            sage: W = CoxGroup(['A', 3, 1])                                             # optional - coxeter3
-            sage: W.long_element()                                                      # optional - coxeter3
+            sage: W = CoxGroup(['A', 3, 1])
+            sage: W.long_element()
             Traceback (most recent call last):
             ...
             TypeError: group needs to be finite
@@ -608,7 +602,6 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: W = CoxGroup(['A', 5])
             sage: w = [1,1,3,5,4,5,4]
@@ -623,9 +616,9 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup      # optional - coxeter3
-            sage: W = CoxGroup(['A', 5])                                               # optional - coxeter3
-            sage: W.coxeter_matrix()                                                   # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 5])
+            sage: W.coxeter_matrix()
             [1 3 2 2 2]
             [3 1 3 2 2]
             [2 3 1 3 2]
@@ -657,7 +650,6 @@ cdef class CoxGroup(SageObject):
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: W = CoxGroup(['A', 5])
             sage: W.coxeter_graph()
@@ -683,7 +675,6 @@ cdef class CoxGroupElement:
         """
         TESTS::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupElement
             sage: W = CoxGroup(['A', 5])
             sage: w = CoxGroupElement(W, [2,1,2,1,1], normal_form=False); w
@@ -714,7 +705,6 @@ cdef class CoxGroupElement:
 
         TESTS::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupElement
             sage: W = CoxGroup(['A', 4])
             sage: w = CoxGroupElement(W, [1,2,3,2,3])
@@ -727,7 +717,6 @@ cdef class CoxGroupElement:
         """
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3])
@@ -741,8 +730,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3])
@@ -759,7 +746,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3])
@@ -775,7 +761,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3])
@@ -810,9 +795,9 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: from sage.libs.coxeter3.coxeter import *          # optional - coxeter3
-            sage: W = CoxGroup(['A',5])                             # optional - coxeter3
-            sage: w = W([1,2,3]); w                                 # optional - coxeter3
+            sage: from sage.libs.coxeter3.coxeter import *
+            sage: W = CoxGroup(['A',5])
+            sage: w = W([1,2,3]); w
             [1, 2, 3]
 
         """
@@ -827,7 +812,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A', 5])
             sage: w = W([1,2,3])
@@ -841,7 +825,6 @@ cdef class CoxGroupElement:
         """
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A', 5])
             sage: V = CoxGroup(['A', 6])
@@ -890,7 +873,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3])
@@ -905,7 +887,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3])
@@ -920,7 +901,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,1])
@@ -935,7 +915,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,1])
@@ -950,7 +929,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3,4,5,4])
@@ -971,7 +949,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',2])
             sage: x = W([1,2,1])
@@ -995,7 +972,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',2])
             sage: W([1,2,1]).coatoms()
@@ -1025,7 +1001,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupElement
             sage: W = CoxGroup(['A', 5])
             sage: w = CoxGroupElement(W, [2,1,2], normal_form=False); w
@@ -1044,7 +1019,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupElement
             sage: W = CoxGroup(['A', 5])
             sage: w = CoxGroupElement(W, [2,1,2,1,1], normal_form=False); w
@@ -1060,7 +1034,6 @@ cdef class CoxGroupElement:
         """
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: W = CoxGroup(['A', 5])
             sage: W([1]) * W([1])
@@ -1079,7 +1052,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: W = CoxGroup(['A', 5])
             sage: W([]).poincare_polynomial()
@@ -1108,7 +1080,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
             sage: W = CoxGroup(['A', 2])
             sage: W([]).kazhdan_lusztig_polynomial([1,2,1])
@@ -1141,7 +1112,6 @@ cdef class CoxGroupElement:
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import *
             sage: W = CoxGroup(['A',5])
             sage: w = W([1,2,3,4,5,4])
@@ -1165,7 +1135,6 @@ cdef LFlags_to_list(CoxGroup parent, LFlags f) noexcept:
 
     EXAMPLES::
 
-            sage: # optional - coxeter3
         sage: from sage.libs.coxeter3.coxeter import *
         sage: W = CoxGroup(['A',5])
         sage: w = W([1,2,1])
@@ -1195,7 +1164,6 @@ class CoxGroupIterator():
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupIterator
             sage: W = CoxGroup(['A', 2])
             sage: it = CoxGroupIterator(W)
@@ -1213,7 +1181,6 @@ class CoxGroupIterator():
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupIterator
             sage: W = CoxGroup(['A', 2])
             sage: it = iter(W)
@@ -1228,7 +1195,6 @@ class CoxGroupIterator():
 
         EXAMPLES::
 
-            sage: # optional - coxeter3
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupIterator
             sage: W = CoxGroup(['A', 2])
             sage: it = CoxGroupIterator(W)
@@ -1251,8 +1217,8 @@ def get_CoxGroup(cartan_type):
     """
     TESTS::
 
-        sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupIterator  # optional - coxeter3
-        sage: W = CoxGroup(['A', 2])                                                             # optional - coxeter3
+        sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup, CoxGroupIterator
+        sage: W = CoxGroup(['A', 2])
     """
     from sage.combinat.root_system.cartan_type import CartanType
     cartan_type = CartanType(cartan_type)
