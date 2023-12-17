@@ -1524,7 +1524,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
 
         EXAMPLES::
 
-            sage: latex.engine()
+            sage: latex.engine()  # random
             'lualatex'
             sage: latex.engine("latex")
             sage: latex.engine()
