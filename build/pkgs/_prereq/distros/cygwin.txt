@@ -13,7 +13,8 @@ binutils
 make
 m4
 # a system python is needed for downloading the sage packages, https://github.com/sagemath/sage/issues/29090
-python39-urllib3 python39
+python39-urllib3
+python39
 perl
 perl-ExtUtils-MakeMaker
 tar
