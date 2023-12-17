@@ -175,6 +175,19 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         [[]]
 
 
+    .. WARNING::
+
+        Because of :issue:`36527`, permutation groups that have
+        different domains but similar generators can be erroneously
+        treated as the same group.  This will silently produce
+        erroneous results.  To avoid this issue, compute a strong
+        generating system for the group as::
+
+            sgs = tuple(s for s in G.strong_generating_system())
+
+        and provide it as the optional `sgs` argument to the
+        constructor.
+
     TESTS:
 
     Let us check that canonical integer vectors of the symmetric group
