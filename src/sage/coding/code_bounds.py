@@ -192,10 +192,10 @@ def _check_n_q_d(n, q, d, field_based=True):
     Check that the length `n`, alphabet size `q` and minimum distance `d` type
     check and make sense for a code over a field.
 
-    More precisely, checks that the parameters are positive integers, that `q`
-    is a prime power for codes over a field, or, more generally, that
-    `q` is of size at least 2, and that `n >= d`. Raises a ``ValueError``
-    otherwise.
+    More precisely, this checks that the parameters are positive
+    integers, that `q` is a prime power for codes over a field, or,
+    more generally, that `q` is of size at least 2, and that `n >= d`.
+    This raises a :class:`ValueError` otherwise.
 
     TESTS::
 
