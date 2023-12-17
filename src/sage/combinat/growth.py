@@ -371,7 +371,7 @@ compute the labels belonging to a filling::
     sage: GrowthDiagram(RulePascal(), [3,1,2])
     Traceback (most recent call last):
     ...
-    AttributeError: 'RulePascal' object has no attribute 'forward_rule'
+    AttributeError: 'RulePascal' object has no attribute 'forward_rule'...
 
 We now re-implement the rule where we provide the dual graded graphs::
 
@@ -487,7 +487,10 @@ from sage.combinat.skew_tableau import SkewTableau
 from sage.combinat.core import Core, Cores
 from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
-from sage.graphs.digraph import DiGraph
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.posets.posets', 'Poset')
 
 
 def _make_partition(l):
@@ -619,8 +622,8 @@ class GrowthDiagram(SageObject):
 
     Passing the permutation matrix instead gives the same result::
 
-        sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())
-        sage: ascii_art([G.P_symbol(), G.Q_symbol()])
+        sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())                                # needs sage.modules
+        sage: ascii_art([G.P_symbol(), G.Q_symbol()])                                   # needs sage.modules
         [   1  2  3    1  3  4 ]
         [   4      ,   2       ]
 
@@ -1358,10 +1361,10 @@ class GrowthDiagram(SageObject):
 
         ``filling`` is a matrix::
 
-            sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())  # indirect doctest
-            sage: G._filling
+            sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())  # indirect doctest        # needs sage.modules
+            sage: G._filling                                                            # needs sage.modules
             {(0, 1): 1, (1, 2): 1, (2, 0): 1, (3, 5): 1, (4, 3): 1, (5, 4): 1}
-            sage: G.shape()
+            sage: G.shape()                                                             # needs sage.modules
             [6, 6, 6, 6, 6, 6] / []
 
         ``filling`` is a permutation::
@@ -1390,7 +1393,8 @@ class GrowthDiagram(SageObject):
 
         ``filling`` is a list of lists and shape is given::
 
-            sage: G = GrowthDiagram(RuleRSK, [[1,0,1],[0,1]], shape=SkewPartition([[3,2],[1]]))  # indirect doctest
+            sage: G = GrowthDiagram(RuleRSK, [[1,0,1],[0,1]],                                    # indirect doctest
+            ....:                   shape=SkewPartition([[3,2],[1]]))
             sage: G._filling
             {(0, 0): 1, (1, 1): 1, (2, 0): 1}
             sage: G.shape()
@@ -2028,7 +2032,8 @@ class RuleShiftedShapes(Rule):
                 .  4'
                    5
             sage: Shifted = GrowthDiagram.rules.ShiftedShapes()
-            sage: labels = [mu if is_even(i) else 0 for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
+            sage: labels = [mu if is_even(i) else 0
+            ....:           for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
             sage: G = Shifted({(1,2):1, (2,1):1}, shape=[5,5,5,5,5], labels=labels)
             sage: G.P_symbol().pp()
              .  .  .  .  2
@@ -2080,7 +2085,8 @@ class RuleShiftedShapes(Rule):
                 .  4'
                    5
             sage: Shifted = GrowthDiagram.rules.ShiftedShapes()
-            sage: labels = [mu if is_even(i) else 0 for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
+            sage: labels = [mu if is_even(i) else 0
+            ....:           for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
             sage: G = Shifted({(1,2):1, (2,1):1}, shape=[5,5,5,5,5], labels=labels)
             sage: G.Q_symbol().pp()
              .  .  .  .  2

@@ -18,8 +18,8 @@ cdef class MonoDict:
     cdef bint weak_values
     cdef eraser
 
-    cdef mono_cell* lookup(self, PyObject* key)
-    cdef get(self, k)
+    cdef mono_cell* lookup(self, PyObject* key) noexcept
+    cdef get(self, k) noexcept
     cdef int set(self, k, value) except -1
     cdef int resize(self) except -1
 
@@ -44,7 +44,7 @@ cdef class TripleDict:
     cdef bint weak_values
     cdef eraser
 
-    cdef triple_cell* lookup(self, PyObject* key1, PyObject* key2, PyObject* key3)
-    cdef get(self, k1, k2, k3)
+    cdef triple_cell* lookup(self, PyObject* key1, PyObject* key2, PyObject* key3) noexcept
+    cdef get(self, k1, k2, k3) noexcept
     cdef int set(self, k1, k2, k3, value) except -1
     cdef int resize(self) except -1

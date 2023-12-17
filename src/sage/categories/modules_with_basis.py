@@ -2456,7 +2456,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: tensor([a, b]).apply_multilinear_morphism(f)                  # needs sage.modules
                     Traceback (most recent call last):
                     ...
-                    AttributeError: 'int' object has no attribute 'parent'
+                    AttributeError: 'int' object has no attribute 'parent'...
 
                 Here we consider an example where the codomain is a
                 module with basis with a different base ring::

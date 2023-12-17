@@ -2510,7 +2510,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             ValueError: invalid embedding specified: should have domain ...
         """
         try:
-            if not embedding.domain() is self.base_field():
+            if embedding.domain() is not self.base_field():
                 raise ValueError("invalid embedding specified: should have domain {}".format(self.base_field()))
             if not isinstance(embedding.codomain(), sage.rings.abc.RealField):
                 raise ValueError("invalid embedding specified: should be real")

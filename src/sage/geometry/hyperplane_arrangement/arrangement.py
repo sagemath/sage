@@ -287,7 +287,7 @@ Miscellaneous methods (see documentation for an explanation)::
     False
     sage: a.sign_vector((1,1,1))
     (-1, 1, -1, 1, -1, 1)
-    sage: a.varchenko_matrix()
+    sage: a.varchenko_matrix()[:6, :6]
     [          1          h2       h2*h4       h2*h3    h2*h3*h4 h2*h3*h4*h5]
     [         h2           1          h4          h3       h3*h4    h3*h4*h5]
     [      h2*h4          h4           1       h3*h4          h3       h3*h5]
@@ -3157,11 +3157,24 @@ class HyperplaneArrangementElement(Element):
 
             sage: a = hyperplane_arrangements.coordinate(3)
             sage: v = a.varchenko_matrix();  v
-            [    1    h2    h1]
-            [   h2     1 h1*h2]
-            [   h1 h1*h2     1]
+            [       1       h2       h1    h1*h2 h0*h1*h2    h0*h1    h0*h2       h0]
+            [      h2        1    h1*h2       h1    h0*h1 h0*h1*h2       h0    h0*h2]
+            [      h1    h1*h2        1       h2    h0*h2       h0 h0*h1*h2    h0*h1]
+            [   h1*h2       h1       h2        1       h0    h0*h2    h0*h1 h0*h1*h2]
+            [h0*h1*h2    h0*h1    h0*h2       h0        1       h2       h1    h1*h2]
+            [   h0*h1 h0*h1*h2       h0    h0*h2       h2        1    h1*h2       h1]
+            [   h0*h2       h0 h0*h1*h2    h0*h1       h1    h1*h2        1       h2]
+            [      h0    h0*h2    h0*h1 h0*h1*h2    h1*h2       h1       h2        1]
             sage: factor(det(v))
-            (h2 - 1) * (h2 + 1) * (h1 - 1) * (h1 + 1)
+            (h2 - 1)^4 * (h2 + 1)^4 * (h1 - 1)^4 * (h1 + 1)^4 * (h0 - 1)^4 * (h0 + 1)^4
+
+        TESTS:
+
+        Verify that :issue:`36490` is fixed::
+
+            sage: hyperplane_arrangements.coordinate(1).varchenko_matrix()
+            [1 h]
+            [h 1]
         """
         from sage.matrix.constructor import identity_matrix
         from sage.misc.misc_c import prod
@@ -3169,9 +3182,10 @@ class HyperplaneArrangementElement(Element):
         R = PolynomialRing(QQ, names, k)
         h = R.gens()
         region = self.regions()
-        v = identity_matrix(R, k, k)
-        for i in range(k):
-            for j in range(i+1, k):
+        n = len(region)
+        v = identity_matrix(R, n, n)
+        for i in range(n):
+            for j in range(i + 1, n):
                 t = prod(h[p] for p in range(k) if
                          self.is_separating_hyperplane(region[i], region[j], self[p]))
                 v[i, j] = v[j, i] = t

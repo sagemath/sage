@@ -3,7 +3,7 @@ from cpython.object cimport (Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE,
                              PyObject_RichCompare)
 
 
-cpdef inline richcmp(x, y, int op):
+cpdef inline richcmp(x, y, int op) noexcept:
     """
     Return the result of the rich comparison of ``x`` and ``y`` with
     operator ``op``.
@@ -50,10 +50,10 @@ cpdef inline richcmp(x, y, int op):
     return PyObject_RichCompare(x, y, op)
 
 
-cpdef richcmp_item(x, y, int op)
+cpdef richcmp_item(x, y, int op) noexcept
 
 
-cpdef inline richcmp_not_equal(x, y, int op):
+cpdef inline richcmp_not_equal(x, y, int op) noexcept:
     """
     Like ``richcmp(x, y, op)`` but assuming that `x` is not equal to `y`.
 
@@ -117,7 +117,7 @@ cpdef inline richcmp_not_equal(x, y, int op):
     return richcmp(x, y, op)
 
 
-cpdef inline bint rich_to_bool(int op, int c):
+cpdef inline bint rich_to_bool(int op, int c) noexcept:
     """
     Return the corresponding ``True`` or ``False`` value for a rich
     comparison, given the result of an old-style comparison.
@@ -184,7 +184,7 @@ cpdef inline bint rich_to_bool(int op, int c):
     return (bits >> (shift & 31)) & 1
 
 
-cpdef inline bint rich_to_bool_sgn(int op, Py_ssize_t c):
+cpdef inline bint rich_to_bool_sgn(int op, Py_ssize_t c) noexcept:
     """
     Same as ``rich_to_bool``, but allow any `c < 0` and `c > 0`
     instead of only `-1` and `1`.
@@ -196,7 +196,7 @@ cpdef inline bint rich_to_bool_sgn(int op, Py_ssize_t c):
     return rich_to_bool(op, (c > 0) - (c < 0))
 
 
-cpdef inline int revop(int op):
+cpdef inline int revop(int op) noexcept:
     """
     Return the reverse operation of ``op``.
 

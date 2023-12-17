@@ -1,28 +1,16 @@
 # sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
-Number Field Ideals
+Ideals of number fields
 
 AUTHORS:
 
-- Steven Sivek (2005-05-16)
-
+- Steven Sivek (2005-05-16): initial version
 - William Stein (2007-09-06): vastly improved the doctesting
-
 - William Stein and John Cremona (2007-01-28): new class
   NumberFieldFractionalIdeal now used for all except the 0 ideal
-
 - Radoslav Kirov and Alyson Deines (2010-06-22):
   prime_to_S_part, is_S_unit, is_S_integral
 
-TESTS:
-
-We test that pickling works::
-
-    sage: x = polygen(ZZ)
-    sage: K.<a> = NumberField(x^2 - 5)
-    sage: I = K.ideal(2/(5+a))
-    sage: I == loads(dumps(I))
-    True
 """
 
 # ****************************************************************************
@@ -68,52 +56,62 @@ ZZ = integer_ring.IntegerRing()
 class NumberFieldIdeal(Ideal_generic):
     """
     An ideal of a number field.
+
+    EXAMPLES::
+
+        sage: x = polygen(ZZ)
+        sage: K.<i> = NumberField(x^2 + 1)
+        sage: K.ideal(7)
+        Fractional ideal (7)
+
+    Initialization from PARI::
+
+        sage: K.ideal(pari(7))
+        Fractional ideal (7)
+        sage: K.ideal(pari(4), pari(4 + 2*i))
+        Fractional ideal (2)
+        sage: K.ideal(pari("i + 2"))
+        Fractional ideal (i + 2)
+        sage: K.ideal(pari("[3,0;0,3]"))
+        Fractional ideal (3)
+        sage: F = pari(K).idealprimedec(5)
+        sage: K.ideal(F[0])
+        Fractional ideal (2*i + 1)
+
+    TESTS:
+
+    Check that ``_pari_prime`` is set when initializing from a PARI
+    prime ideal::
+
+        sage: K.ideal(pari(K).idealprimedec(5)[0])._pari_prime
+        [5, [-2, 1]~, 1, 1, [2, -1; 1, 2]]
+
+    Number fields defined by non-monic and non-integral
+    polynomials are supported (:trac:`252`)::
+
+        sage: K.<a> = NumberField(2*x^2 - 1/3)
+        sage: I = K.ideal(a); I
+        Fractional ideal (a)
+        sage: I.norm()
+        1/6
     """
     def __init__(self, field, gens, coerce=True):
         """
         INPUT:
 
-        -  ``field`` -- a number field
+        - ``field`` -- a number field
 
-        -   ``x`` -- a list of :class:`NumberFieldElement` objects belonging to the field
-
-        EXAMPLES::
-
-            sage: x = polygen(ZZ)
-            sage: K.<i> = NumberField(x^2 + 1)
-            sage: K.ideal(7)
-            Fractional ideal (7)
-
-        Initialization from PARI::
-
-            sage: K.ideal(pari(7))
-            Fractional ideal (7)
-            sage: K.ideal(pari(4), pari(4 + 2*i))
-            Fractional ideal (2)
-            sage: K.ideal(pari("i + 2"))
-            Fractional ideal (i + 2)
-            sage: K.ideal(pari("[3,0;0,3]"))
-            Fractional ideal (3)
-            sage: F = pari(K).idealprimedec(5)
-            sage: K.ideal(F[0])
-            Fractional ideal (2*i + 1)
+        - ``gens`` -- a list of :class:`NumberFieldElement` objects belonging to the field
 
         TESTS:
 
-        Check that ``_pari_prime`` is set when initializing from a PARI
-        prime ideal::
+        We test that pickling works::
 
-            sage: K.ideal(pari(K).idealprimedec(5)[0])._pari_prime
-            [5, [-2, 1]~, 1, 1, [2, -1; 1, 2]]
-
-        Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
-
-            sage: K.<a> = NumberField(2*x^2 - 1/3)
-            sage: I = K.ideal(a); I
-            Fractional ideal (a)
-            sage: I.norm()
-            1/6
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^2 - 5)
+            sage: I = K.ideal(2/(5+a))
+            sage: I == loads(dumps(I))
+            True
         """
         from .number_field import NumberField_generic
         if not isinstance(field, NumberField_generic):
@@ -273,6 +271,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: K.<I>=QQ[i]
             sage: A = K.ideal([5, 2 + I])
             sage: B = K.ideal([13, 5 + 12*I])
@@ -804,11 +803,11 @@ class NumberFieldIdeal(Ideal_generic):
             sage: R.<x> = QQ['x']
             sage: L.<b> = NumberField(x^10 - 10*x^8 - 20*x^7 + 165*x^6 - 12*x^5 - 760*x^3 + 2220*x^2 + 5280*x + 7744)
             sage: z_x = -96698852571685/2145672615243325696*b^9 + 2472249905907/195061146840302336*b^8 + 916693155514421/2145672615243325696*b^7 + 1348520950997779/2145672615243325696*b^6 - 82344497086595/12191321677518896*b^5 + 2627122040194919/536418153810831424*b^4 - 452199105143745/48765286710075584*b^3 + 4317002771457621/536418153810831424*b^2 + 2050725777454935/67052269226353928*b + 3711967683469209/3047830419379724
-            sage: P = EllipticCurve(L, '57a1').lift_x(z_x) * 3
-            sage: ideal = L.fractional_ideal(P[0], P[1])
-            sage: ideal.is_principal(proof=False)
+            sage: P = EllipticCurve(L, '57a1').lift_x(z_x) * 3                          # needs sage.schemes
+            sage: ideal = L.fractional_ideal(P[0], P[1])                                # needs sage.schemes
+            sage: ideal.is_principal(proof=False)                                       # needs sage.schemes
             True
-            sage: len(ideal.gens_reduced(proof=False))
+            sage: len(ideal.gens_reduced(proof=False))                                  # needs sage.schemes
             1
         """
         if len(self.gens()) <= 1:

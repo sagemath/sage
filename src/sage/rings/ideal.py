@@ -1553,7 +1553,7 @@ class Ideal_pid(Ideal_principal):
             sage: J.gcd(I)
             Traceback (most recent call last):
             ...
-            AttributeError: 'Ideal_generic' object has no attribute 'gcd'
+            AttributeError: 'Ideal_generic' object has no attribute 'gcd'...
 
         Note::
 

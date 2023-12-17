@@ -20,7 +20,7 @@ from sage.rings.infinity import Infinity
 
 
 # We assume that H is square
-cpdef hessenbergize_cdvf(Matrix_generic_dense H):
+cpdef hessenbergize_cdvf(Matrix_generic_dense H) noexcept:
     r"""
     Replace `H` with an Hessenberg form of it.
 

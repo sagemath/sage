@@ -1,51 +1,8 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.linbox
 r"""
-Number Fields
+Number fields
 
-AUTHORS:
-
-- William Stein (2004, 2005): initial version
-
-- Steven Sivek (2006-05-12): added support for relative extensions
-
-- William Stein (2007-09-04): major rewrite and documentation
-
-- Robert Bradshaw (2008-10): specified embeddings into ambient fields
-
-- Simon King (2010-05): Improve coercion from GAP
-
-- Jeroen Demeyer (2010-07, 2011-04): Upgrade PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
-
-- Robert Harron (2012-08): added is_CM(), complex_conjugation(), and
-  maximal_totally_real_subfield()
-
-- Christian Stump (2012-11): added conversion to universal cyclotomic field
-
-- Julian Rueth (2014-04-03): absolute number fields are unique parents
-
-- Vincent Delecroix (2015-02): comparisons/floor/ceil using embeddings
-
-- Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
-
-- Peter Bruin (2016-06): make number fields fully satisfy unique representation
-
-- John Jones (2017-07): improve check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
-
-- Anna Haensch (2018-03): added :meth:`quadratic_defect`
-
-- Michael Daub, Chris Wuthrich (2020-09-01): adding Dirichlet characters for abelian fields
-
-
-.. note::
-
-   Unlike in PARI/GP, class group computations *in Sage* do *not* by default
-   assume the Generalized Riemann Hypothesis. To do class groups computations
-   not provably correctly you must often pass the flag ``proof=False`` to
-   functions or call the function ``proof.number_field(False)``. It can easily
-   take 1000's of times longer to do computations with ``proof=True`` (the
-   default).
-
-This example follows one in the Magma reference manual::
+We define a quartic number field and its quadratic extension::
 
     sage: x = polygen(ZZ, 'x')
     sage: K.<y> = NumberField(x^4 - 420*x^2 + 40000)
@@ -82,19 +39,32 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-TESTS:
-
-Check that :trac:`23459` is fixed::
-
-    sage: QuadraticField(4**1000+1)
-    Number Field ...
-
-.. warning::
+.. WARNING::
 
    Doing arithmetic in towers of relative fields that depends on
    canonical coercions is currently VERY SLOW. It is much better to
    explicitly coerce all elements into a common field, then do
    arithmetic with them there (which is quite fast).
+
+AUTHORS:
+
+- William Stein (2004, 2005): initial version
+- Steven Sivek (2006-05-12): added support for relative extensions
+- William Stein (2007-09-04): major rewrite and documentation
+- Robert Bradshaw (2008-10): specified embeddings into ambient fields
+- Simon King (2010-05): improved coercion from GAP
+- Jeroen Demeyer (2010-07, 2011-04): upgraded PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
+- Robert Harron (2012-08): added is_CM(), complex_conjugation(), and
+  maximal_totally_real_subfield()
+- Christian Stump (2012-11): added conversion to universal cyclotomic field
+- Julian Rueth (2014-04-03): absolute number fields are unique parents
+- Vincent Delecroix (2015-02): comparisons/floor/ceil using embeddings
+- Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
+- Peter Bruin (2016-06): made number fields fully satisfy unique representation
+- John Jones (2017-07): improved check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
+- Anna Haensch (2018-03): added :meth:`quadratic_defect`
+- Michael Daub, Chris Wuthrich (2020-09-01): added Dirichlet characters for abelian fields
+
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2007 William Stein <wstein@gmail.com>
@@ -127,7 +97,7 @@ from sage.rings.finite_rings.integer_mod import mod
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import is_odd, lift
-
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.categories.number_fields import NumberFields
@@ -161,6 +131,10 @@ from sage.modules.free_module_element import vector
 from sage.rings.real_mpfr import RR
 
 from sage.interfaces.abc import GapElement
+
+lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
+lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
+
 
 _NumberFields = NumberFields()
 
@@ -199,7 +173,7 @@ def is_NumberFieldHomsetCodomain(codomain):
     Caveat: Gap objects are not (yet) in :class:`Fields`, and therefore
     not accepted as number field homset codomains::
 
-        sage: is_NumberFieldHomsetCodomain(gap.Rationals)
+        sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
     """
     from sage.categories.fields import Fields
@@ -400,7 +374,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: K.<a> = NumberField(x^3-2, embedding=CC.gen()-0.6)
         sage: CC(a)
         -0.629960524947436 + 1.09112363597172*I
-        sage: L = Qp(5)
+        sage: L = Qp(5)                                                                 # needs sage.rings.padics
         sage: f = polygen(L)^3 - 2
         sage: K.<a> = NumberField(x^3-2, embedding=f.roots()[0][0])
         sage: a + L(1)
@@ -781,7 +755,7 @@ def NumberFieldTower(polynomials, names, check=True, embeddings=None, latex_name
 
     The Galois group is a product of 3 groups of order 2::
 
-        sage: k.absolute_field(names='c').galois_group()
+        sage: k.absolute_field(names='c').galois_group()                                # needs sage.groups
         Galois group 8T3 (2[x]2[x]2) with order 8 of x^8 + 36*x^6 + 302*x^4 + 564*x^2 + 121
 
     Repeatedly calling base_field allows us to descend the internally
@@ -989,6 +963,11 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
         False
         sage: QuadraticField(-11, 'a') is QuadraticField(-11, 'a', latex_name=None)
         False
+
+    Check that :trac:`23459` is fixed::
+
+        sage: QuadraticField(4**1000+1)
+        Number Field ...
 
     Check quadratic fields without embedding (:trac:`28932`)::
 
@@ -1204,7 +1183,7 @@ class CyclotomicFieldFactory(UniqueFactory):
 
         TESTS::
 
-            sage: CyclotomicField.create_object(None, (0, None, True))
+            sage: CyclotomicField.create_object(None, (0, None, True))                  # needs sage.libs.gap
             Universal Cyclotomic Field
         """
         n, names, embedding = key
@@ -1329,8 +1308,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     This example was suggested on sage-nt; see :trac:`18942`::
 
-        sage: G = DirichletGroup(80)
-        sage: for chi in G:             # long time
+        sage: G = DirichletGroup(80)                                                    # needs sage.modular
+        sage: for chi in G:             # long time                                     # needs sage.modular
         ....:     D = ModularSymbols(chi, 2, -1).cuspidal_subspace().new_subspace().decomposition()
         ....:     for f in D:
         ....:         elt = f.q_eigenform(10, 'alpha')[3]
@@ -1716,13 +1695,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Check that :trac:`30961` is fixed::
 
+            sage: # needs sage.symbolic
             sage: QQi = i.parent()
-            sage: x = SR.var('x')                                                       # needs sage.symbolic
-            sage: QQi((x, x))                                                           # needs sage.symbolic
+            sage: x = SR.var('x')
+            sage: QQi((x, x))
             Traceback (most recent call last):
             ...
             TypeError: unable to convert x to a rational
-
             sage: QQi(("1", "2"))
             2*I + 1
             sage: QQi((RR(1), RR(2)))
@@ -3823,7 +3802,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.prime_above(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'...
         """
         if degree is not None:
             degree = ZZ(degree)
@@ -3917,7 +3896,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.prime_above(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'prime_factors'...
 
         """
         ids = self.primes_above(x, degree)
@@ -4634,6 +4613,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             (x - 3) * (x^3 + 4*x^2 + 3*x - 1) * (x^4 - 3*x^3 - x^2 + 6*x - 1)
             sage: [NumberField(g,'a').class_group().order() for g,_ in f.factor()]
             [1, 1, 1]
+
+        .. NOTE::
+
+            Unlike in PARI/GP, class group computations *in Sage* do *not* by
+            default assume the Generalized Riemann Hypothesis. To do class
+            groups computations not provably correctly you must often pass the
+            flag ``proof=False`` to functions or call the function
+            ``proof.number_field(False)``. It can easily take 1000's of times
+            longer to do computations with ``proof=True`` (the default).
+
         """
         proof = proof_flag(proof)
         try:
@@ -5926,7 +5915,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: L.factor(0)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NumberFieldIdeal' object has no attribute 'factor'
+            AttributeError: 'NumberFieldIdeal' object has no attribute 'factor'...
 
         AUTHORS:
 
@@ -9334,6 +9323,7 @@ class NumberField_absolute(NumberField_generic):
 
         We embed a cubic field in the complex numbers::
 
+            sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: K.embeddings(CC)
             [
@@ -11349,14 +11339,11 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                 return NumberField_absolute._element_constructor_(self, x)
         elif isinstance(x, pari_gen):
             return NumberField_absolute._element_constructor_(self, x, check=check)
-        elif isinstance(x, (sage.libs.gap.element.GapElement, GapElement)):
+        elif isinstance(x, (LibGapElement, GapElement)):
             return self._coerce_from_gap(x)
         elif isinstance(x, str):
             return self._convert_from_str(x)
-
-        # late import because of speed
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicFieldElement
-        if isinstance(x, UniversalCyclotomicFieldElement):
+        elif isinstance(x, UniversalCyclotomicFieldElement):
             return x.to_cyclotomic_field(self)
         else:
             return self._convert_non_number_field_element(x)
@@ -12055,7 +12042,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         self._standard_embedding = True
 
         # set the generator and element class
-        c, b, a = [QQ(t) for t in self.defining_polynomial().list()]
+        c, b, a = (QQ(t) for t in self.defining_polynomial().list())
         Dpoly = b*b - 4*a*c
         D = (Dpoly.numer() * Dpoly.denom()).squarefree_part(bound=10000)
         self._D = D
@@ -12698,7 +12685,7 @@ def is_real_place(v):
         sage: is_real_place(v_fin)
         Traceback (most recent call last):
         ...
-        AttributeError: 'NumberFieldFractionalIdeal' object has no attribute 'im_gens'
+        AttributeError: 'NumberFieldFractionalIdeal' object has no attribute 'im_gens'...
 
     """
     RR = sage.rings.real_mpfr.RealField(53)
@@ -12724,12 +12711,12 @@ def _splitting_classes_gens_(K, m, d):
         sage: L = K.subfields(20)[0][0]
         sage: L.conductor()
         101
-        sage: _splitting_classes_gens_(L,101,20)
+        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap
         [95]
 
         sage: K = CyclotomicField(44)
         sage: L = K.subfields(4)[0][0]
-        sage: _splitting_classes_gens_(L,44,4)
+        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap
         [37]
 
         sage: K = CyclotomicField(44)
@@ -12741,7 +12728,7 @@ def _splitting_classes_gens_(K, m, d):
          with zeta44_0 = 3.837971894457990?
         sage: L.conductor()
         11
-        sage: _splitting_classes_gens_(L,11,5)
+        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap
         [10]
 
     """

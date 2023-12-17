@@ -246,6 +246,10 @@ REFERENCES:
               Symposium, Volume 51, page 20.
               Australian Computer Society, Inc. 2006.
 
+.. [Ang1997] B. Anglès. 1997. *On some characteristic polynomials attached to
+             finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
+             369–379. https://doi.org/10.1007/BF02677478
+
 .. [AP1986] \S. Arnborg, A. Proskurowski,
             *Characterization and Recognition of Partial 3-Trees*,
             SIAM Journal of Alg. and Discrete Methods,
@@ -963,6 +967,13 @@ REFERENCES:
 .. [BL2003] \S. Brlek, A. Ladouceur, A note on differentiable palindromes,
             Theoret. Comput. Sci. 302 (2003) 167--178.
 
+.. [BLL1998] \F. Bergeron, G. Labelle, and P. Leroux.
+             "Combinatorial species and tree-like structures".
+             Encyclopedia of Mathematics and its Applications, vol. 67, Cambridge Univ. Press. 1998.
+
+.. [BLL2008] François Bergeron, Gilbert Labelle, and Pierre Leroux.
+             "Introduction to the Theory of Species of Structures", March 14, 2008.
+
 .. [BraLea2008] \C. Bracken and Gregor Leander: *New families of functions
              with differential uniformity of 4*, Proceedings of the Conference
              BFCA, Copenhagen, 2008.
@@ -1039,6 +1050,11 @@ REFERENCES:
 .. [BM2016] Gunnar Brinkmann, Brendan McKay,
             *Guide to using plantri*, version 5.0, 2016.
             http://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt
+
+.. [BM2021] Alin Bostan and Ryuhei Mori,
+            *A simple and fast algorithm for computing the N-th term of a linearly recurrent sequence*,
+            Proceedings of Symposium on Simplicity in Algorithms (SOSA), pp. 118--132, 2021.
+            :doi:`10.1137/1.9781611976496.14`
 
 .. [BMBFLR2008] A. Blondin-Massé, S. Brlek, A. Frosini, S. Labbé,
                 S. Rinaldi, *Reconstructing words from a fixed
@@ -1234,6 +1250,9 @@ REFERENCES:
              :doi:`10.1109/SFCS.1989.63516`,
              <http://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf>_
 
+.. [Bro2009] \R. Bröker: *Constructing supersingular elliptic curves*.
+             Journal of Combinatorics and Number Theory 1.3 (2009), pp. 269--273.
+
 .. [Broder2000] Broder, A.Z., Kumar, R., Maghoul, F., Raghavan, P., Rajagopalan,
                 S., Stata, R., Tomkins, A., Wiener, J.L.: Graph structure in
                 the web. Computer Networks 33(1-6), 309–320 (2000)
@@ -1376,6 +1395,10 @@ REFERENCES:
              for closed Riemannian manifolds*, Ann. of Math. (2) 45 (1944),
              747–752.
 
+.. [CP2023] \M. Cati and D.V. Pasechnik.
+            *Implementing Hadamard Matrices in SageMath*.
+            Preprint, :arxiv:`2306.16812`, (2023).
+
 .. [CQ2019] \A. Cassella and C. Quadrelli.
             *Right-angled Artin groups and enhanced Koszul properties*.
             Preprint, :arxiv:`1907.03824`, (2019).
@@ -1472,6 +1495,11 @@ REFERENCES:
 
 .. [CFI1992] Cai, JY., Fürer, M. & Immerman, N. Combinatorica (1992) 12: 389.
              :doi:`10.1007/BF01305232`
+
+.. [CFKLMPPS15] Marek Cygan, Fedor V. Fomin, Łukasz Kowalik, Daniel Lokshtanov,
+                Dániel Marx, Marcin Pilipczuk, Michał Pilipczuk, Saket Saurabh.
+                *Parameterized Algorithms*. Springer International Publishing
+                Switzerland 2015
 
 .. [CFKP1997] James W. Cannon, William J. Floyd, Richard Kenyon and Walter R. Parry.
               *Hyperbolic Geometry*. Flavors of Geometry, MSRI Publications,
@@ -4773,10 +4801,16 @@ REFERENCES:
             Int. Math. Res. Not. (2015).
             :doi:`10.1093/imrn/rnv194`, :arxiv:`1408.0320`.
 
-.. [MS2019] \Y. Musleh and \'E. Schost. Computing the characteristic polynomial
-            of a finite rank two Drinfeld module. In Proceedings of the 2019
+.. [MS2019] \Y. Musleh and \'E. Schost. *Computing the characteristic polynomial
+            of a finite rank two Drinfeld module*. In Proceedings of the 2019
             ACM on International Symposium on Symbolic and Algebraic
             Computation, pages 307–314. ACM, 2019.
+
+.. [MS2023] \Y. Musleh and \'E. Schost. *Computing the Characteristic Polynomial
+            of Endomorphisms of a finite Drinfeld Module using Crystalline
+            Cohomology*. In Proceedings of the 2023 ACM on International
+            Symposium on Symbolic and Algebraic Computation, pages 461–469.
+            ACM, 2023.
 
 .. [MSSY2001] Mateescu, A., Salomaa, A., Salomaa, K. and Yu, S., *A
               sharpening of the Parikh mapping*. Theoret. Informatics Appl. 35

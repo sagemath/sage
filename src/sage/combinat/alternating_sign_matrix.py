@@ -1908,8 +1908,7 @@ class ContreTableaux_n(ContreTableaux):
              [[1, 2, 3], [2, 3], [2]],
              [[1, 2, 3], [2, 3], [3]]]
         """
-        for z in self._iterator_rec(self.n):
-            yield z
+        yield from self._iterator_rec(self.n)
 
 
 def _next_column_iterator(previous_column, height, i=None):

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Lie Conformal Algebra
 
@@ -109,7 +110,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         sage: alpha0.degree()
         Traceback (most recent call last):
         ...
-        AttributeError: 'WeylLieConformalAlgebra_with_category.element_class' object has no attribute 'degree'
+        AttributeError: 'WeylLieConformalAlgebra_with_category.element_class' object has no attribute 'degree'...
 
     TESTS::
 

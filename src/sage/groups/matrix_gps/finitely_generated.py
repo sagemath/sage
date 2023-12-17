@@ -268,7 +268,7 @@ def MatrixGroup(*gens, **kwds):
         sage: SL2C.gens()
         Traceback (most recent call last):
         ...
-        AttributeError: 'LinearMatrixGroup_generic_with_category' object has no attribute 'gens'
+        AttributeError: 'LinearMatrixGroup_generic_with_category' object has no attribute 'gens'...
     """
     if isinstance(gens[-1], dict):   # hack for unpickling
         kwds.update(gens[-1])

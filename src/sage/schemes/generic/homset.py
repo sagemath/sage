@@ -36,6 +36,7 @@ AUTHORS:
 # *****************************************************************************
 
 from sage.categories.homset import HomsetWithBase
+from sage.misc.lazy_import import lazy_import
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Set_generic
 
@@ -48,6 +49,11 @@ from sage.schemes.generic.morphism import (
     SchemeMorphism,
     SchemeMorphism_structure_map,
     SchemeMorphism_spec )
+
+lazy_import('sage.schemes.affine.affine_space', 'AffineSpace_generic', as_='AffineSpace')
+lazy_import('sage.schemes.generic.algebraic_scheme', 'AlgebraicScheme_subscheme')
+lazy_import('sage.schemes.product_projective.space', 'ProductProjectiveSpaces_ring', as_='ProductProjectiveSpaces')
+lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace_ring', as_='ProjectiveSpace')
 
 
 def is_SchemeHomset(H):
@@ -568,9 +574,8 @@ class SchemeHomset_points(SchemeHomset_generic):
         # and the base rings are coercible
         if isinstance(other, CommutativeRing):
             try:
-                from sage.schemes.affine.affine_space import is_AffineSpace
-                if is_AffineSpace(target.ambient_space())\
-                  and target.ambient_space().dimension_relative() == 1:
+                if (isinstance(target.ambient_space(), AffineSpace)
+                        and target.ambient_space().dimension_relative() == 1):
                     return target.base_ring().has_coerce_map_from(other)
                 else:
                     return False
@@ -578,7 +583,6 @@ class SchemeHomset_points(SchemeHomset_generic):
                 return False
         elif isinstance(other, SchemeHomset_points):
         #we are converting between scheme points
-            from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
             source = other.codomain()
             if isinstance(target, AlgebraicScheme_subscheme):
                 #subscheme coerce when there is containment
@@ -592,9 +596,6 @@ class SchemeHomset_points(SchemeHomset_generic):
                 #if the target is an ambient space, we can coerce if the base rings coerce
                 #and they are the same type: affine, projective, etc and have the same
                 #variable names
-                from sage.schemes.projective.projective_space import is_ProjectiveSpace
-                from sage.schemes.affine.affine_space import is_AffineSpace
-                from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
                 try:
                     ta = target.ambient_space()
                     sa = source.ambient_space()
@@ -602,15 +603,15 @@ class SchemeHomset_points(SchemeHomset_generic):
                     return False
                 #for projective and affine varieties, we check dimension
                 #and matching variable names
-                if (is_ProjectiveSpace(ta) and is_ProjectiveSpace(sa))\
-                  or (is_AffineSpace(ta) and is_AffineSpace(sa)):
+                if ((isinstance(ta, ProjectiveSpace) and isinstance(sa, ProjectiveSpace))
+                        or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
                     if (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
                     else:
                         return False
                 #for products of projective spaces, we check dimension of
                 #components and matching variable names
-                elif (is_ProductProjectiveSpaces(ta) and is_ProductProjectiveSpaces(sa)):
+                elif isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
                     if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
                       and (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
@@ -737,11 +738,11 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: toric_varieties.P2().point_set().cardinality()                        # needs sage.geometry.polyhedron
+            sage: toric_varieties.P2().point_set().cardinality()                        # needs sage.geometry.polyhedron sage.graphs
             +Infinity
 
-            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # needs sage.geometry.polyhedron
-            sage: P2.point_set().cardinality()                                          # needs sage.geometry.polyhedron
+            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # needs sage.geometry.polyhedron sage.graphs
+            sage: P2.point_set().cardinality()                                          # needs sage.geometry.polyhedron sage.graphs
             13
         """
         if hasattr(self, 'is_finite') and not self.is_finite():
@@ -761,8 +762,8 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # needs sage.geometry.polyhedron
-            sage: P1.point_set().list()                                                 # needs sage.geometry.polyhedron
+            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # needs sage.geometry.polyhedron sage.graphs
+            sage: P1.point_set().list()                                                 # needs sage.geometry.polyhedron sage.graphs
             ([0 : 1], [1 : 0], [1 : 1], [1 : 2])
         """
         return tuple(self)

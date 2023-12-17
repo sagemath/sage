@@ -35,7 +35,7 @@ from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 
-cdef extern from "sage/graphs/cliquer/cl.c":
+cdef extern from "cliquer/cl.c":
     cdef int sage_clique_max(graph_t *g, int ** list_of_vertices)
     cdef int sage_all_clique_max(graph_t *g, int ** list_of_vertices)
     cdef int sage_clique_number(graph_t *g)

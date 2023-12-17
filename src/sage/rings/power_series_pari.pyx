@@ -9,7 +9,7 @@ PARI by passing the keyword ``implementation='pari'`` to the
 
     sage: R.<q> = PowerSeriesRing(ZZ, implementation='pari'); R
     Power Series Ring in q over Integer Ring
-    sage: S.<t> = PowerSeriesRing(CC, implementation='pari'); S
+    sage: S.<t> = PowerSeriesRing(CC, implementation='pari'); S                         # needs sage.rings.real_mpfr
     Power Series Ring in t over Complex Field with 53 bits of precision
 
 Note that only the type of the elements depends on the implementation,
@@ -19,9 +19,9 @@ not the type of the parents::
     <class 'sage.rings.power_series_ring.PowerSeriesRing_domain_with_category'>
     sage: type(q)
     <class 'sage.rings.power_series_pari.PowerSeries_pari'>
-    sage: type(S)
+    sage: type(S)                                                                       # needs sage.rings.real_mpfr
     <class 'sage.rings.power_series_ring.PowerSeriesRing_over_field_with_category'>
-    sage: type(t)
+    sage: type(t)                                                                       # needs sage.rings.real_mpfr
     <class 'sage.rings.power_series_pari.PowerSeries_pari'>
 
 If `k` is a finite field implemented using PARI, this is the default
@@ -81,7 +81,7 @@ from sage.structure.parent cimport Parent
 from sage.rings.infinity import infinity
 
 
-cdef PowerSeries_pari construct_from_pari(parent, pari_gen g):
+cdef PowerSeries_pari construct_from_pari(parent, pari_gen g) noexcept:
     r"""
     Fast construction of power series from PARI objects of suitable
     type (series, polynomials, scalars and rational functions).
@@ -137,6 +137,7 @@ cdef class PowerSeries_pari(PowerSeries):
 
         TESTS::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<q> = PowerSeriesRing(CC, implementation='pari')
             sage: TestSuite(q).run()
             sage: f = q - q^3 + O(q^10)
@@ -556,7 +557,7 @@ cdef class PowerSeries_pari(PowerSeries):
             return self._parent.laurent_series_ring()(h)
         return construct_from_pari(self._parent, h)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Addition of power series.
 
@@ -573,7 +574,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, self.g + (<PowerSeries_pari>right).g)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtraction of power series.
 
@@ -587,7 +588,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, self.g - (<PowerSeries_pari>right).g)
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiplication of power series.
 
@@ -600,7 +601,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, self.g * (<PowerSeries_pari>right).g)
 
-    cpdef _rmul_(self, Element c):
+    cpdef _rmul_(self, Element c) noexcept:
         """
         Right multiplication by a scalar.
 
@@ -614,7 +615,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, self.g * c)
 
-    cpdef _lmul_(self, Element c):
+    cpdef _lmul_(self, Element c) noexcept:
         """
         Left multiplication by a scalar.
 
@@ -628,7 +629,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, c * self.g)
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Division of power series.
 
@@ -664,6 +665,7 @@ cdef class PowerSeries_pari(PowerSeries):
             sage: f.list()
             [1, 0, 0, -5, 0, 1]
 
+            sage: # needs sage.rings.padics
             sage: S.<u> = PowerSeriesRing(pAdicRing(5), implementation='pari')
             sage: (2 + u).list()
             [2 + O(5^20), 1 + O(5^20)]

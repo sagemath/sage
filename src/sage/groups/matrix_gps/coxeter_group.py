@@ -253,11 +253,11 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         We check that :trac:`16630` is fixed::
 
             sage: CoxeterGroup(['D',4], base_ring=QQ).category()
-            Category of finite irreducible coxeter groups
+            Category of finite irreducible Coxeter groups
 
             sage: # needs sage.rings.number_field
             sage: CoxeterGroup(['H',4], base_ring=QQbar).category()
-            Category of finite irreducible coxeter groups
+            Category of finite irreducible Coxeter groups
             sage: F = CoxeterGroups().Finite()
             sage: all(CoxeterGroup([letter,i]) in F
             ....:     for i in range(2,5) for letter in ['A','B','D'])
@@ -265,9 +265,9 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             sage: all(CoxeterGroup(['E',i]) in F for i in range(6,9))
             True
             sage: CoxeterGroup(['F',4]).category()
-            Category of finite irreducible coxeter groups
+            Category of finite irreducible Coxeter groups
             sage: CoxeterGroup(['G',2]).category()
-            Category of finite irreducible coxeter groups
+            Category of finite irreducible Coxeter groups
             sage: all(CoxeterGroup(['H',i]) in F for i in range(3,5))
             True
             sage: all(CoxeterGroup(['I',i]) in F for i in range(2,5))

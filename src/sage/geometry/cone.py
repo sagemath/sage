@@ -340,7 +340,7 @@ def Cone(rays, lattice=None, check=True, normalize=True):
         sage: Cone([(1,0), (0,1)], check=False, normalize=False)
         Traceback (most recent call last):
         ...
-        AttributeError: 'tuple' object has no attribute 'parent'
+        AttributeError: 'tuple' object has no attribute 'parent'...
 
     You can construct different "not" cones: not full-dimensional, not
     strictly convex, not containing any rays::

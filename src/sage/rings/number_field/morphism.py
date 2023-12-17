@@ -114,6 +114,7 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
 
         ::
 
+            sage: # needs sage.libs.linbox
             sage: F.<b> = QuadraticField(23)
             sage: G.<a> = F.extension(x^3 + 5)
             sage: f = F.embeddings(G)[0]

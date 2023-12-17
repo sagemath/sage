@@ -63,7 +63,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.dynamic_class import DynamicMetaclass
 
 
-cpdef inline check_default_category(default_category, category):
+cpdef inline check_default_category(default_category, category) noexcept:
     ## The resulting category is guaranteed to be
     ## a sub-category of the default.
     if category is None:
@@ -836,11 +836,11 @@ cdef class CategoryObject(SageObject):
             sage: Sets().example().sadfasdf
             Traceback (most recent call last):
             ...
-            AttributeError: 'PrimeNumbers_with_category' object has no attribute 'sadfasdf'
+            AttributeError: 'PrimeNumbers_with_category' object has no attribute 'sadfasdf'...
         """
         return self.getattr_from_category(name)
 
-    cdef getattr_from_category(self, name):
+    cdef getattr_from_category(self, name) noexcept:
         # Lookup a method or attribute from the category abstract classes.
         # See __getattr__ above for documentation.
         try:
@@ -905,7 +905,7 @@ cdef class CategoryObject(SageObject):
         """
         return dir_with_other_class(self, self.category().parent_class)
 
-cpdef normalize_names(Py_ssize_t ngens, names):
+cpdef normalize_names(Py_ssize_t ngens, names) noexcept:
     r"""
     Return a tuple of strings of variable names of length ngens given
     the input names.

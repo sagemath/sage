@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-cdef extern from "sage/ext/ccobject.h":
+cdef extern from "ccobject.h":
     # Print representation of any C++ object
     str ccrepr[T](const T& x)
 

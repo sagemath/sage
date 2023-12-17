@@ -229,7 +229,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
             should_be_coprime = [h, f*h.derivative()**2+f.derivative()**2]
         else:
             # characteristic not 2
-            if not F.degree() in [2*g+1, 2*g+2]:
+            if F.degree() not in [2*g+1, 2*g+2]:
                 raise ValueError("Not a hyperelliptic curve: "
                                  "highly singular at infinity.")
             should_be_coprime = [F, F.derivative()]

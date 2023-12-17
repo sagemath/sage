@@ -753,8 +753,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: next(p.Hrep_generator())
             An inequality (-1, 0, 0) x + 1 >= 0
         """
-        for H in self.Hrepresentation():
-            yield H
+        yield from self.Hrepresentation()
 
     @cached_method
     def n_Hrepresentation(self):
@@ -843,8 +842,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: next(vg)
             A vertex at (1, 1, 1)
         """
-        for V in self.Vrepresentation():
-            yield V
+        yield from self.Vrepresentation()
 
     def inequality_generator(self):
         """

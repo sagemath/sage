@@ -443,7 +443,7 @@ cdef randstate _pari_seed_randstate
 # randstate object was the most recent one to seed it.
 _gp_seed_randstates = weakref.WeakKeyDictionary()
 
-cpdef randstate current_randstate():
+cpdef randstate current_randstate() noexcept:
     r"""
     Return the current random number state.
 
@@ -610,7 +610,7 @@ cdef class randstate:
         self._python_random = rand
         return rand
 
-    cpdef ZZ_seed(self):
+    cpdef ZZ_seed(self) noexcept:
         r"""
         When called on the current :class:`randstate`, returns a 128-bit
         :mod:`Integer <sage.rings.integer_ring>` suitable for seeding another
@@ -625,7 +625,7 @@ cdef class randstate:
         from sage.rings.integer_ring import ZZ
         return ZZ.random_element(long(1)<<128)
 
-    cpdef long_seed(self):
+    cpdef long_seed(self) noexcept:
         r"""
         When called on the current :class:`randstate`, returns a 128-bit
         Python long suitable for seeding another random number generator.
@@ -639,7 +639,7 @@ cdef class randstate:
         from sage.rings.integer_ring import ZZ
         return long(ZZ.random_element(long(1)<<128))
 
-    cpdef set_seed_libc(self, bint force):
+    cpdef set_seed_libc(self, bint force) noexcept:
         r"""
         Checks to see if ``self`` was the most recent :class:`randstate`
         to seed the libc random number generator.  If not, seeds the
@@ -664,7 +664,7 @@ cdef class randstate:
             c_libc_srandom(gmp_urandomb_ui(self.gmp_state, sizeof(int)*8))
             _libc_seed_randstate = self
 
-    cpdef set_seed_ntl(self, bint force):
+    cpdef set_seed_ntl(self, bint force) noexcept:
         r"""
         Checks to see if ``self`` was the most recent :class:`randstate`
         to seed the NTL random number generator.  If not, seeds
@@ -805,7 +805,7 @@ cdef class randstate:
 
             _pari_seed_randstate = self
 
-    cpdef int c_random(self):
+    cpdef int c_random(self) noexcept:
         r"""
         Returns a 31-bit random number.  Intended for internal
         use only; instead of calling ``current_randstate().c_random()``,
@@ -828,7 +828,7 @@ cdef class randstate:
         """
         return gmp_urandomb_ui(self.gmp_state, 31)
 
-    cpdef double c_rand_double(self):
+    cpdef double c_rand_double(self) noexcept:
         r"""
         Returns a random floating-point number between 0 and 1.
 
@@ -922,7 +922,7 @@ cdef class randstate:
         return False
 
 
-cpdef set_random_seed(seed=None):
+cpdef set_random_seed(seed=None) noexcept:
     r"""
     Set the current random number seed from the given ``seed``
     (which must be coercible to a Python long).
@@ -954,7 +954,7 @@ set_random_seed()
 # Create an alias for randstate to be used in context managers
 seed = randstate
 
-cpdef int random():
+cpdef int random() noexcept:
     r"""
     Returns a 31-bit random number.  Intended as a drop-in replacement for
     the libc :func:`random()` function.
@@ -1025,7 +1025,7 @@ def benchmark_mt():
     for i from 0 <= i < 100000:
         gmp_urandomb_ui(rstate.gmp_state, 32)
 
-cpdef int _doctest_libc_random():
+cpdef int _doctest_libc_random() noexcept:
     r"""
     Returns the result of :func:`random()` from libc.
 

@@ -17,6 +17,7 @@ This module defines the IPython backends for
 
 import os
 import sys
+import html
 from IPython.display import publish_display_data
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
@@ -368,7 +369,7 @@ class BackendIPythonCommandline(BackendIPython):
         from sage.doctest import DOCTEST_MODE
         from sage.interfaces.jmoldata import JmolData
         jdata = JmolData()
-        if not jdata.is_jvm_available() and not DOCTEST_MODE:
+        if not jdata.is_jmol_available() and not DOCTEST_MODE:
             raise RuntimeError('jmol cannot run, no suitable java version found')
         launch_script = output_jmol.launch_script_filename()
         jmol_cmd = 'jmol'
@@ -574,7 +575,7 @@ class BackendIPythonNotebook(BackendIPython):
                      'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
-            escaped_html = rich_output.html.get_str().replace('"', '&quot;')
+            escaped_html = html.escape(rich_output.html.get_str())
             iframe = IFRAME_TEMPLATE.format(
                 escaped_html=escaped_html,
                 width='100%',

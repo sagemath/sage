@@ -29,7 +29,7 @@ Mathematical Folk Humor." Notices Amer. Math. Soc. 52, 24-34,
 Index of methods
 ----------------
 
-Here are the method of a :func:`PermutationGroup`
+Here are the methods of a :func:`PermutationGroup`
 
 {METHODS_OF_PermutationGroup_generic}
 
@@ -498,7 +498,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         # Handle the case where only the GAP group is specified.
         if gens is None:
-            gens = [gen for gen in gap_group.GeneratorsOfGroup()]
+            gens = list(gap_group.GeneratorsOfGroup())
 
         if domain is None:
             gens = [standardize_generator(x, as_cycles=True) for x in gens]
@@ -524,8 +524,8 @@ class PermutationGroup_generic(FiniteGroup):
 
         self._domain = domain
         self._deg = len(self._domain)
-        self._domain_to_gap = dict((key, i+1) for i, key in enumerate(self._domain))
-        self._domain_from_gap = dict((i+1, key) for i, key in enumerate(self._domain))
+        self._domain_to_gap = {key: i+1 for i, key in enumerate(self._domain)}
+        self._domain_from_gap = {i+1: key for i, key in enumerate(self._domain)}
 
         if not gens:  # length 0
             gens = [()]
@@ -631,7 +631,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: A4._gap_init_()
             'Group([PermList([1, 3, 4, 2]), PermList([2, 3, 1, 4])])'
         """
-        return 'Group([%s])'%(', '.join([g._gap_init_() for g in self.gens()]))
+        return 'Group([%s])' % (', '.join([g._gap_init_() for g in self.gens()]))
 
     @cached_method
     def gap(self):
@@ -736,7 +736,7 @@ class PermutationGroup_generic(FiniteGroup):
             'PermutationGroup<3 | (1,2,3), (1,2)>'
         """
         g = ', '.join([g._gap_cycle_string() for g in self.gens()])
-        return 'PermutationGroup<%s | %s>'%(self.degree(), g)
+        return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
     def __richcmp__(self, right, op):
         """
@@ -1043,7 +1043,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.list()
             [(), (1,2)]
         """
-        return [x for x in self]
+        return list(self)
 
     def __contains__(self, item):
         """
@@ -3446,11 +3446,11 @@ class PermutationGroup_generic(FiniteGroup):
         - David Joyner and William Stein (2006-01-04)
 
         """
-        G    = self._libgap_()
-        cl   = G.ConjugacyClasses()
-        n    = Integer(cl.Length())
+        G = self._libgap_()
+        cl = G.ConjugacyClasses()
+        n = Integer(cl.Length())
         irrG = G.Irr()
-        ct   = [[irrG[i, j] for j in range(n)] for i in range(n)]
+        ct = [[irrG[i, j] for j in range(n)] for i in range(n)]
 
         from sage.rings.number_field.number_field import CyclotomicField
         e = irrG.Flat().Conductor()

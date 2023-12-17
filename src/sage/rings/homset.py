@@ -12,10 +12,11 @@ Space of homomorphisms between two rings
 
 from sage.categories.homset import HomsetWithBase
 from sage.categories.rings import Rings
+
 _Rings = Rings()
 
-from . import morphism
-from . import quotient_ring
+from sage.rings import morphism, quotient_ring
+
 
 def is_RingHomset(H):
     """

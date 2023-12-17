@@ -465,7 +465,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         indices = set(filtration.pop(infinity, []))
         V = make_subspace(indices)
         filtered_subspaces = [(infinity, V)]
-        for deg in reversed(sorted(filtration.keys())):
+        for deg in sorted(filtration.keys(), reverse=True):
             next_V = V
             indices.update(filtration[deg])
             V = make_subspace(indices)
@@ -775,13 +775,13 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
     def _repr_field_name(self):
         """
-        Return an abbreviated field name as string
+        Return an abbreviated field name as string.
 
         .. NOTE: This should rather be a method of fields and rings.
 
         RAISES:
 
-        ``NotImplementedError``: The field does not have an
+        :class:`NotImplementedError`: The field does not have an
         abbreviated name defined.
 
         EXAMPLES::
@@ -1002,7 +1002,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: v = [(1,0), (0,1)]
             sage: F1 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=QQ)
             sage: F2 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=RDF)
-            sage: F1 + F2
+            sage: F1 + F2                                                               # needs scipy
             RDF^4 >= RDF^2 >= 0
         """
         from sage.structure.element import get_coercion_model
@@ -1067,7 +1067,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: v = [(1,0), (0,1)]
             sage: F1 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=QQ)
             sage: F2 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=RDF)
-            sage: F1 * F2
+            sage: F1 * F2                                                               # needs scipy
             RDF^4 >= RDF^3 >= RDF^1 >= 0
         """
         V = self

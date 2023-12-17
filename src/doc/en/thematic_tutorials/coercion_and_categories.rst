@@ -114,7 +114,6 @@ This base class provides a lot more methods than a general parent::
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
-     '_coerce_try',
      '_default_category',
      '_gens',
      '_ideal_class_',
@@ -1223,7 +1222,7 @@ However, only "elementary" construction functors have a rank::
     sage: (Fract*Poly).rank
     Traceback (most recent call last):
     ...
-    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'
+    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'...
 
 .. end of output
 

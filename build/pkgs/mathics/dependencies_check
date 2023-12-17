@@ -1,1 +1,1 @@
-$(SAGERUNTIME) ipywidgets importlib_metadata sympy mpmath matplotlib
+$(SAGERUNTIME) ipywidgets importlib_metadata sympy sphinx networkx scipy sympy matplotlib pillow mpmath fpylll

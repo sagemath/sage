@@ -706,7 +706,7 @@ class ToricPlotter(SageObject):
             sage: tp.plot_rays()                                                        # needs sage.plot
             Traceback (most recent call last):
             ...
-            AttributeError: 'ToricPlotter' object has no attribute 'rays'
+            AttributeError: 'ToricPlotter' object has no attribute 'rays'...
             sage: tp.set_rays([(0,1)])
             sage: tp.plot_rays()                                                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives

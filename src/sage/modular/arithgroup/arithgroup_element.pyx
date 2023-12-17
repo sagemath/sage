@@ -158,7 +158,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         return '%s' % self.__x._latex_()
 
-    cpdef _richcmp_(self, right_r, int op):
+    cpdef _richcmp_(self, right_r, int op) noexcept:
         """
         Compare self to right, where right is guaranteed to have the same
         parent as self.
@@ -204,7 +204,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         return True
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Return self * right.
 
@@ -334,12 +334,13 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         An example of g acting on a symbolic variable::
 
-            sage: z = var('z')
-            sage: g.acton(z)
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: g.acton(z)                                                            # needs sage.symbolic
             (z + 2)/(15*z + 31)
 
         An example involving the Gaussian numbers::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: g.acton(i)

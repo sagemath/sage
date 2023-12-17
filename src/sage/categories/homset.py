@@ -65,12 +65,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories import morphism
 from sage.categories.category import Category, JoinCategory
-from . import morphism
-from sage.structure.parent import Parent, Set_generic
 from sage.misc.fast_methods import WithEqualityById
-from sage.structure.dynamic_class import dynamic_class
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.lazy_attribute import lazy_attribute
 
 ###################################
@@ -78,8 +75,11 @@ from sage.misc.lazy_attribute import lazy_attribute
 # introduced in github issue #715
 # with weak values, as introduced in
 # github issue #14159
-
 from sage.structure.coerce_dict import TripleDict
+from sage.structure.dynamic_class import dynamic_class
+from sage.structure.parent import Parent, Set_generic
+from sage.structure.unique_representation import UniqueRepresentation
+
 _cache = TripleDict(weak_values=True)
 
 
@@ -632,7 +632,7 @@ class Homset(Set_generic):
             sage: H = MyHomset(X, Y, category=1, base = ZZ, check = False)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'Homsets'
+            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'Homsets'...
             sage: P.<t> = ZZ[]
             sage: f = P.hom([1/2*t])
             sage: f.parent().domain()

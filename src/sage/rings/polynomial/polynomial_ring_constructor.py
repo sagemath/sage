@@ -442,7 +442,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
 
-        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)       # needs sage.libs.singular
+        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
         sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)       # needs sage.libs.singular
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
@@ -611,10 +611,13 @@ def PolynomialRing(base_ring, *args, **kwds):
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>
         sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)             # needs sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
+
+        sage: # needs sage.rings.real_interval_field
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
         sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
         sage: Q.<x> = PolynomialRing(P)
-        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity', '_test_distributivity', '_test_prod'])
+        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity',
+        ....:                        '_test_distributivity', '_test_prod'])
         sage: R.<x,y> = PolynomialRing(RIF,2)
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
     """
