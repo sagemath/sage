@@ -33,6 +33,7 @@ from subprocess import call, run, PIPE
 from tempfile import TemporaryDirectory
 
 from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.sage_object import SageObject
 
 
@@ -513,23 +514,38 @@ class _Latex_prefs_object(SageObject):
             sage: latex_prefs = _Latex_prefs_object()
             sage: TestSuite(latex_prefs).run(skip ="_test_pickling")
         """
-        self._option = {}
-        self._option["blackboard_bold"] = bb
-        self._option["matrix_delimiters"] = list(delimiters)
-        self._option["vector_delimiters"] = list(delimiters)
-        self._option["matrix_column_alignment"] = matrix_column_alignment
-        self._option["macros"] = ""
-        self._option["preamble"] = ""
-        self._option["engine"] = default_engine()[0]
-        self._option["engine_name"] = default_engine()[1]
+        self.__option = {}
+        self.__option["blackboard_bold"] = bb
+        self.__option["matrix_delimiters"] = list(delimiters)
+        self.__option["vector_delimiters"] = list(delimiters)
+        self.__option["matrix_column_alignment"] = matrix_column_alignment
+        self.__option["macros"] = ""
+        self.__option["preamble"] = ""
+
+    @lazy_attribute
+    def _option(self):
+        """
+        This attribute contains the preferences list.
+
+        EXAMPLES::
+
+            sage: from sage.misc.latex import _Latex_prefs_object
+            sage: _Latex_prefs_object()._option  # random
+            {'blackboard_bold': False,
+             'matrix_delimiters': ['(', ')'],
+             'vector_delimiters': ['(', ')'],
+             'matrix_column_alignment': 'r',
+             'macros': '',
+             'preamble': '',
+             'engine': 'lualatex',
+             'engine_name': 'LuaLaTeX'}
+        """
+        self.__option["engine"] = default_engine()[0]
+        self.__option["engine_name"] = default_engine()[1]
+        return self.__option
 
 
 _Latex_prefs = _Latex_prefs_object()
-
-##############################################################
-# The Latex class is used to make slides and LaTeX output in
-# the Sage Notebook
-#########################################
 
 
 def latex_extra_preamble():
@@ -794,6 +810,11 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
             pass
         return "Error latexing slide."
     return return_suffix
+
+
+# -------------------------------------------------------
+# The Latex class is used to make slides and LaTeX output
+# -------------------------------------------------------
 
 
 class LatexCall:
@@ -1530,6 +1551,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         else:
             raise ValueError("%s is not a supported LaTeX engine. Use latex, pdflatex, xelatex, or lualatex" % e)
 
+
 # Note: latex used to be a separate function, which by default was
 # only loaded in command-line mode: in the old notebook,
 # latex was defined by 'latex = Latex(density=130)'.
@@ -1537,13 +1559,10 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
 # function.  This has been changed around so that the contents of the
 # old latex function are now in Latex.__call__; thus the following
 # assignment.
-
-
 latex = Latex()
 # Ensure that latex appear in the sphinx doc as a function
 # so that the link :func:`latex` is correctly set up.
 latex.__doc__ = Latex.__call__.__doc__
-#########################################
 
 
 def _latex_file_(objects, title='SAGE', debug=False,
