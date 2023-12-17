@@ -1509,20 +1509,21 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
     We temporarily need to change the worksheet filename, and to set
     ``first_try=True`` to ensure that the new workspace is created::
 
+        sage: # long time
         sage: ORIGINAL_WORKSPACE = sage.interfaces.gap.WORKSPACE
         sage: saved_first_try = sage.interfaces.gap.first_try
         sage: sage.interfaces.gap.first_try = True
         sage: sage.interfaces.gap.WORKSPACE = tmp_filename()
         sage: from multiprocessing import Process
         sage: import time
-        sage: gap = Gap()  # long time (reset GAP session)
+        sage: gap = Gap()  # reset GAP session
         sage: P = [Process(target=gap, args=("14242",)) for i in range(4)]
-        sage: for p in P:  # long time, indirect doctest
+        sage: for p in P:  # indirect doctest
         ....:     p.start()
         ....:     time.sleep(float(0.2))
-        sage: for p in P:  # long time
+        sage: for p in P:
         ....:     p.join()
-        sage: os.unlink(sage.interfaces.gap.WORKSPACE)  # long time
+        sage: os.unlink(sage.interfaces.gap.WORKSPACE)
         sage: sage.interfaces.gap.WORKSPACE = ORIGINAL_WORKSPACE
         sage: sage.interfaces.gap.first_try = saved_first_try
     """
