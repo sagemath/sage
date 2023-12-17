@@ -1276,7 +1276,19 @@ cdef class CoercionModel:
                 res = mul_method(x)
                 if res is not None and res is not NotImplemented:
                     return res
-
+        
+        try:
+            xe = x.as_operand()
+            return self.bin_op(xe, y, op)
+        except AttributeError:
+            pass
+        
+        try:
+            ye = y.as_operand()
+            return self.bin_op(x, ye, op)
+        except AttributeError:
+            pass
+        
         # We should really include the underlying error.
         # This causes so much headache.
         raise bin_op_exception(op, x, y)
