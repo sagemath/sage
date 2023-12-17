@@ -183,7 +183,7 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         erroneous results.  To avoid this issue, compute a strong
         generating system for the group as::
 
-            sgs = tuple(s for s in G.strong_generating_system())
+            sgs = tuple(tuple(s) for s in G.strong_generating_system())
 
         and provide it as the optional `sgs` argument to the
         constructor.
