@@ -1901,7 +1901,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
 
 def png(x, filename, density=150, debug=False,
-        do_in_background=False, tiny=False, engine='lualatex'):
+        do_in_background=False, tiny=False, engine=None):
     """
     Create a png image representation of ``x`` and save to the given
     filename.
@@ -1921,14 +1921,15 @@ def png(x, filename, density=150, debug=False,
 
     - ``tiny`` -- bool (default: ``False``); use tiny font
 
-    - ``engine`` -- (default: ``'lualatex'``) ``'latex'``, ``'pdflatex'``,
-      ``'xelatex'``  or ``'lualatex'``
+    - ``engine`` -- (default: ``None``) ``'latex'``, ``'pdflatex'``,
+      ``'xelatex'`` or ``'lualatex'``
 
     EXAMPLES::
 
+        sage: # optional - imagemagick latex, needs sage.plot
         sage: from sage.misc.latex import png
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random   # optional - imagemagick latex, needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:  # random
         ....:     png(ZZ[x], f.name)
     """
     import sage.plot.all
@@ -1939,6 +1940,8 @@ def png(x, filename, density=150, debug=False,
     s = _latex_file_([x], math_left='$\\displaystyle', math_right='$', title='',
                      debug=debug, tiny=tiny,
                      extra_preamble='\\textheight=2\\textheight')
+    if engine is None:
+        engine = _Latex_prefs._option["engine"]
     # path name for permanent png output
     abs_path_to_png = os.path.abspath(filename)
     # temporary directory to store stuff
