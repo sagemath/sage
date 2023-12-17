@@ -77,13 +77,16 @@ class Application(object):
         for pkg_name in pc.names:
             print(pkg_name)
 
-    def properties(self, *package_classes, props=['path', 'version', 'type', 'source', 'trees']):
+    def properties(self, *package_classes, props=['path', 'version_with_patchlevel', 'type', 'source', 'trees']):
         """
         Show the properties of given packages
 
         $ sage --package properties maxima
-        version_maxima='5.46.0'
+        path_maxima='........./build/pkgs/maxima'
+        version_with_patchlevel_maxima='5.46.0'
         type_maxima='standard'
+        source_maxima='normal'
+        trees_maxima='SAGE_LOCAL'
         """
         log.debug('Looking up properties')
         pc = PackageClass(*package_classes)
@@ -92,7 +95,7 @@ class Application(object):
             for p in props:
                 value = getattr(package, p)
                 if value is None:
-                    if p == 'version':
+                    if p.startswith('version'):
                         value = 'none'
                     else:
                         value = ''

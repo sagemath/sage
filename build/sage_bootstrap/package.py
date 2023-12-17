@@ -295,6 +295,23 @@ class Package(object):
         return self.__patchlevel
 
     @property
+    def version_with_patchlevel(self):
+        """
+        Return the version, including the Sage-specific patchlevel
+
+        OUTPUT:
+
+        String.
+        """
+        v = self.version
+        if v is None:
+            return v
+        p = self.patchlevel
+        if p < 0:
+            return v
+        return "{0}.p{1}".format(v, p)
+
+    @property
     def type(self):
         """
         Return the package type
