@@ -34,6 +34,16 @@ do
             ;;
         --prompt)
             PROMPT='  $ '
+            CONTINUATION='        '
+            ;;
+        --continuation=*)
+            CONTINUATION="${1#--continuation=}"
+            ;;
+        --wrap)
+            WRAP=78
+            ;;
+        --wrap=*)
+            WRAP="${1#--wrap=}"
             ;;
         --no-install-recommends)
             NO_INSTALL_RECOMMENDS=yes
@@ -79,12 +89,16 @@ function print_shell_command()
         echo ".. CODE-BLOCK:: bash"
         echo
     fi
-    echo -n "${PROMPT}"
-    for a in "$@"; do
-        # shell-quote arguments if necessary
-        printf "%q " $a
-    done
-    echo
+    # shell-quote arguments if necessary
+    quoted=$(for a in "$@"; do printf "%q " $a; done)
+    if [ -z "$WRAP" -o $# -lt 6 ]; then
+        echo "${PROMPT}${quoted}"
+    else
+        if [ -z "$SAGE_BOOTSTRAP_PYTHON" ]; then
+            SAGE_BOOTSTRAP_PYTHON=$(sage-bootstrap-python -c "import sys; print(sys.executable)")
+        fi
+        $SAGE_BOOTSTRAP_PYTHON -c "import textwrap; print(' \\\\\n'.join(textwrap.wrap(r'''${quoted}''', $WRAP, initial_indent=r'''${PROMPT}''', subsequent_indent=r'''${CONTINUATION}''', break_long_words=False, break_on_hyphens=False)))"
+    fi
     if [ -n "$OUTPUT_RST" ]; then
         echo
     fi

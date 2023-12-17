@@ -103,7 +103,7 @@ for system in $systems; do
                 echo "$system:"
                 ;;
         esac
-        sage-print-system-package-command $system --prompt='    $ ' --sudo install $system_packages
+        sage-print-system-package-command $system --wrap --prompt='    $ ' --continuation='          ' --sudo install $system_packages
         echo
 done
 if [ -z "$system" ]; then
