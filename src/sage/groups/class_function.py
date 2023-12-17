@@ -125,7 +125,7 @@ class ClassFunction_gap(SageObject):
         if isinstance(values, GapElement) and gap.IsClassFunction(values):
             self._gap_classfunction = values
         else:
-            self._gap_classfunction = gap.ClassFunction(G, gap(values))
+            self._gap_classfunction = gap.ClassFunction(G, list(values))
 
         e = self._gap_classfunction.Conductor()
         self._base_ring = CyclotomicField(e)
@@ -836,8 +836,7 @@ class ClassFunction_libgap(SageObject):
         if isinstance(values, LibGapElement) and values.IsClassFunction():
             self._gap_classfunction = values
         else:
-            self._gap_classfunction = libgap.ClassFunction(G,
-                                                           libgap(values))
+            self._gap_classfunction = libgap.ClassFunction(G, list(values))
         e = self._gap_classfunction.Conductor().sage()
         self._base_ring = CyclotomicField(e)
 
