@@ -1003,6 +1003,7 @@ if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
             exec tox -c "$SAGE_SRC" "$@"
         else
             echo "Run 'sage -i tox' to install"
+            exit 1
         fi
     else
         echo >&2 "error: Sage source directory or tox.ini not available"
@@ -1024,6 +1025,7 @@ if [ "$1" = '-pytest' -o "$1" = '--pytest' ]; then
             exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@" "$SAGE_SRC"
         else
             echo "Run 'sage -i pytest' to install"
+            exit 1
         fi
     else
         echo >&2 "error: Sage source directory or tox.ini not available"
