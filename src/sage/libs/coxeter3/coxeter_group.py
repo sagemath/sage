@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-coxeter3
+
 """
 Coxeter Groups implemented with Coxeter3
 """
@@ -71,7 +72,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W = CoxeterGroup(['A', 3, 1], implementation='coxeter3'); W   # optional - coxeter3
             Coxeter group of type ['A', 3, 1] implemented by Coxeter3
         """
-        return "Coxeter group of type %s implemented by Coxeter3"%(self.cartan_type())
+        return "Coxeter group of type %s implemented by Coxeter3" % (self.cartan_type())
 
     def __iter__(self):
         """
@@ -320,7 +321,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             basis to the `(T_w)_{w\in W}` of the Hecke algebra of `W` with
             parameters `q` and `q^{-1}`:
 
-                .. MATH:: C_w = \sum_u  P_{u,w} T_w
+                .. MATH:: C_w = \sum_u  P_{u,w} T_u.
 
             In particular, `P_{u,u}=1`::
 

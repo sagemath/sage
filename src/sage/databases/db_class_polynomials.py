@@ -33,7 +33,7 @@ class ClassPolynomialDatabase:
             NotImplementedError: Level (= 2) > 1 not yet implemented
         """
         if level != 1:
-            raise NotImplementedError("Level (= %s) > 1 not yet implemented"%level)
+            raise NotImplementedError("Level (= %s) > 1 not yet implemented" % level)
         n1 = 5000*((abs(disc)-1)//5000)
         s1 = disc_format % (n1+1) #_pad_int(n1+1, disc_length)
         s2 = disc_format % (n1+5000)

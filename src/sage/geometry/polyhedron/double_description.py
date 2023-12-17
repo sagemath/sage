@@ -28,10 +28,10 @@ The implementation works over any exact field that is embedded in
 `\RR`, for example::
 
     sage: from sage.geometry.polyhedron.double_description import StandardAlgorithm
-    sage: A = matrix(AA, [(1,0,1), (0,1,1), (-AA(2).sqrt(),-AA(3).sqrt(),1),  # optional - sage.rings.number_field
+    sage: A = matrix(AA, [(1,0,1), (0,1,1), (-AA(2).sqrt(),-AA(3).sqrt(),1),            # needs sage.rings.number_field
     ....:                 (-AA(3).sqrt(),-AA(2).sqrt(),1)])
-    sage: alg = StandardAlgorithm(A)                                          # optional - sage.rings.number_field
-    sage: alg.run().R                                                         # optional - sage.rings.number_field
+    sage: alg = StandardAlgorithm(A)
+    sage: alg.run().R                                                                   # needs sage.rings.number_field
     [(-0.4177376677004119?, 0.5822623322995881?, 0.4177376677004119?),
      (-0.2411809548974793?, -0.2411809548974793?, 0.2411809548974793?),
      (0.07665629029830300?, 0.07665629029830300?, 0.2411809548974793?),
@@ -411,10 +411,11 @@ class DoubleDescriptionPair:
             sage: DD.matrix_space(3,2)
             Full MatrixSpace of 3 by 2 dense matrices over Rational Field
 
-            sage: K.<sqrt2> = QuadraticField(2)        # optional - sage.rings.number_field
-            sage: A = matrix([[1,sqrt2],[2,0]])        # optional - sage.rings.number_field
-            sage: DD, _  = Problem(A).initial_pair()   # optional - sage.rings.number_field
-            sage: DD.matrix_space(1,2)                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<sqrt2> = QuadraticField(2)
+            sage: A = matrix([[1,sqrt2],[2,0]])
+            sage: DD, _  = Problem(A).initial_pair()
+            sage: DD.matrix_space(1,2)
             Full MatrixSpace of 1 by 2 dense matrices
              over Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
         """
@@ -597,9 +598,9 @@ class Problem:
 
         EXAMPLES::
 
-            sage: A = matrix(AA, [(1, 1), (-1, 1)])  # optional - sage.rings.number_field
+            sage: A = matrix(AA, [(1, 1), (-1, 1)])                                     # needs sage.rings.number_field
             sage: from sage.geometry.polyhedron.double_description import Problem
-            sage: Problem(A).base_ring()             # optional - sage.rings.number_field
+            sage: Problem(A).base_ring()                                                # needs sage.rings.number_field
             Algebraic Real Field
         """
         return self._field

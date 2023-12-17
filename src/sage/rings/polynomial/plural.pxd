@@ -13,10 +13,10 @@ cdef extern from *:
     ctypedef long Py_hash_t
 
 cdef class NCPolynomialRing_plural(Ring):
-    cdef object __ngens
+    cdef object _ngens
     cdef object _c
     cdef object _d
-    cdef object __term_order
+    cdef object _term_order
     cdef public object _has_singular
     cdef public object _magma_gens, _magma_cache
 
@@ -32,14 +32,14 @@ cdef class ExteriorAlgebra_plural(NCPolynomialRing_plural):
 
 cdef class NCPolynomial_plural(RingElement):
     cdef poly *_poly
-    cpdef _add_(self, other)
-    cpdef _mul_(self, other)
-    cpdef _repr_short_(self)
-    cdef long _hash_c(self)
-    cpdef is_constant(self)
+    cpdef _add_(self, other) noexcept
+    cpdef _mul_(self, other) noexcept
+    cpdef _repr_short_(self) noexcept
+    cdef long _hash_c(self) noexcept
+    cpdef is_constant(self) noexcept
 #    cpdef _homogenize(self, int var)
 
-cdef NCPolynomial_plural new_NCP(NCPolynomialRing_plural parent, poly *juice)
+cdef NCPolynomial_plural new_NCP(NCPolynomialRing_plural parent, poly *juice) noexcept
 
-cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring)
-cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring)
+cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring) noexcept
+cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring) noexcept

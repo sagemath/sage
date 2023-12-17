@@ -23,6 +23,7 @@ AUTHOR:
 
 from sage.misc.prandom import randint
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.structure.category_object import normalize_names
 
@@ -36,10 +37,11 @@ from sage.categories.algebras import Algebras
 from sage.rings.ring import _Fields
 
 from sage.categories.morphism import Morphism
-from sage.rings.derivation import RingDerivation
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomialBaseringInjection
+
+lazy_import('sage.rings.derivation', 'RingDerivation')
 
 WORKING_CENTER_MAX_TRIES = 1000
 

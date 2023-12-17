@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups sage.modules
 """
 Weyl Character Rings
 """

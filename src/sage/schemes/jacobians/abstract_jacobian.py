@@ -122,11 +122,11 @@ class Jacobian_generic(Scheme):
             defined by x + y + z) must be defined over a field.
         """
         if not is_Scheme(C):
-            raise TypeError("Argument (=%s) must be a scheme."%C)
+            raise TypeError("Argument (=%s) must be a scheme." % C)
         if C.base_ring() not in _Fields:
-            raise TypeError("C (=%s) must be defined over a field."%C)
+            raise TypeError("C (=%s) must be defined over a field." % C)
         if C.dimension() != 1:
-            raise ValueError("C (=%s) must have dimension 1."%C)
+            raise ValueError("C (=%s) must have dimension 1." % C)
         self.__curve = C
         Scheme.__init__(self, C.base_scheme())
 
@@ -246,8 +246,8 @@ class Jacobian_generic(Scheme):
             sage: Jac = H.jacobian();   Jac
             Jacobian of Hyperelliptic Curve over Rational Field
              defined by y^2 = x^3 - 10*x + 9
-            sage: F.<a> = QQ.extension(x^2 + 1)                                         # optional - sage.rings.number_field
-            sage: Jac.base_extend(F)                                                    # optional - sage.rings.number_field
+            sage: F.<a> = QQ.extension(x^2 + 1)                                         # needs sage.rings.number_field
+            sage: Jac.base_extend(F)                                                    # needs sage.rings.number_field
             Jacobian of Hyperelliptic Curve over Number Field in a with defining
              polynomial x^2 + 1 defined by y^2 = x^3 - 10*x + 9
         """

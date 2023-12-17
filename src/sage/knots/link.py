@@ -386,7 +386,7 @@ class Link(SageObject):
             else:
                 raise ValueError("invalid input: data must be either a list or a braid")
 
-        self._mirror  = None  # set on invocation of :meth:`mirror_image`
+        self._mirror = None  # set on invocation of :meth:`mirror_image`
         self._reverse = None  # set on invocation of :meth:`reverse`
 
     def arcs(self, presentation='pd'):
@@ -726,7 +726,7 @@ class Link(SageObject):
                             C1[C1.index(-a)] = newedge + 1
                             C2 = newPD[newPD.index(tails[-b])]
                             C2[C2.index(-b)] = newedge + 2
-                            newPD.append([newedge + 2, newedge +1, newedge + 3, newedge]) # D
+                            newPD.append([newedge + 2, newedge + 1, newedge + 3, newedge]) # D
                             newPD.append([newedge + 3, -a, -b, newedge]) # E
                             self._braid = Link(newPD).braid()
                             return self._braid
@@ -2054,7 +2054,7 @@ class Link(SageObject):
                 gens = [g for g in H.gens() if g.order() == infinity or ch.divides(g.order())]
                 l = len(gens)
                 if l:
-                    coeff[(h,d)]=l
+                    coeff[(h,d)] = l
         return L(coeff)
 
     def determinant(self):
@@ -3034,7 +3034,7 @@ class Link(SageObject):
         """
         return self.braid().links_gould_polynomial(varnames=varnames)
 
-    def _coloring_matrix(self, n):
+    def _coloring_matrix(self, n=None):
         r"""
         Return the coloring matrix of ``self``.
 
@@ -3043,15 +3043,12 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider
-
-        If ``n`` is not a prime number, it is replaced by the smallest
-        prime number that is larger than ``n``.
+        - ``n`` -- the number of colors to consider (if ommitted the
+          value of the determinant of ``self`` will be taken)
 
         OUTPUT:
 
-        a matrix over the smallest prime field with cardinality
-        larger than or equal to ``n``.
+        a matrix over the residue class ring of integers modulo ``n``.
 
         EXAMPLES::
 
@@ -3062,22 +3059,22 @@ class Link(SageObject):
             [2 2 2]
             sage: K8 = Knot([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
             sage: K8._coloring_matrix(4)
-            [2 0 4 4]
-            [4 4 2 0]
-            [0 4 4 2]
-            [4 2 0 4]
+            [2 0 3 3]
+            [3 3 2 0]
+            [0 3 3 2]
+            [3 2 0 3]
 
         REFERENCES:
 
         - :wikipedia:`Fox_n-coloring`
         """
-        from sage.arith.misc import next_prime
-        from sage.rings.finite_rings.finite_field_constructor import FiniteField
-        p = next_prime(n - 1)
-        F = FiniteField(p)
+        if not n:
+            n = self.determinant()
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+        R = IntegerModRing(n)
         arcs = self.arcs(presentation='pd')
         di = len(arcs)
-        M = matrix(F, di, di)
+        M = matrix(R, di, di)
         crossings = self.pd_code()
         for i in range(di):
             crossing = crossings[i]
@@ -3091,7 +3088,7 @@ class Link(SageObject):
                     M[i, j] -= 1
         return M
 
-    def is_colorable(self, n):
+    def is_colorable(self, n=None):
         r"""
         Return whether the link is ``n``-colorable.
 
@@ -3102,10 +3099,8 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider
-
-        If ``n`` is not a prime number, it is replaced by the smallest
-        prime number that is larger than ``n``.
+        - ``n`` -- the number of colors to consider (if ommitted the
+          value of the determinant of ``self`` will be taken)
 
         EXAMPLES:
 
@@ -3121,26 +3116,45 @@ class Link(SageObject):
             sage: K8.is_colorable(3)
             False
 
+        But it is colorable with respect to the value of its determinant::
+
+            sage: K8.determinant()
+            5
+            sage: K8.is_colorable()
+            True
+
+        An examples with non prime determinant::
+
+            sage: K = Knots().from_table(6, 1)
+            sage: K.determinant()
+            9
+            sage: K.is_colorable()
+            True
+
         REFERENCES:
 
         - :wikipedia:`Fox_n-coloring`
 
         - Chapter 3 of [Liv1993]_
 
-        .. SEEALSO:: :meth:`colorings`
+        .. SEEALSO:: :meth:`colorings` and :meth:`coloring_maps`
         """
-        return self._coloring_matrix(n).nullity() > 1
+        M = self._coloring_matrix(n=n)
+        if M.base_ring().is_field():
+            return self._coloring_matrix(n=n).nullity() > 1
+        else:
+            # nullity is not implemented in this case
+            return M.right_kernel_matrix().dimensions()[0] > 1
 
-    def colorings(self, n):
+    def colorings(self, n=None):
         r"""
         Return the ``n``-colorings of ``self``.
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider
-
-        If ``n`` is not a prime number, it is replaced by the smallest
-        prime number that is larger than ``n``.
+        - ``n`` -- the number of colors to consider (if ommitted the value
+          of the determinant of ``self`` will be taken). Note that there
+          are no colorings if n is coprime to the determinant of ``self``
 
         OUTPUT:
 
@@ -3163,27 +3177,127 @@ class Link(SageObject):
             sage: K.arcs('pd')
             [[1, 2], [3, 4], [5, 6]]
 
+        Note that ``n`` is not the number of different colors to be used. It
+        can be looked upon the size of the color palette::
+
+            sage: K = Knots().from_table(9, 15)
+            sage: cols = K.colorings(13); len(cols)
+            156
+            sage: max(cols[0].values())
+            12
+            sage: max(cols[13].values())
+            9
+
         REFERENCES:
 
         - :wikipedia:`Fox_n-coloring`
 
         - Chapter 3 of [Liv1993]_
 
-        .. SEEALSO:: :meth:`is_colorable`
+        .. SEEALSO:: :meth:`is_colorable` and :meth:`coloring_maps`
         """
-        from sage.arith.misc import next_prime
-        p = next_prime(n-1)
-        M = self._coloring_matrix(n)
-        K = M.right_kernel()
+        from sage.modules.free_module import FreeModule
+        M = self._coloring_matrix(n=n)
+        KM = M.right_kernel_matrix()
+        F = FreeModule(M.base_ring(), KM.dimensions()[0])
+        K = [v*KM for v in F]
         res = set([])
         arcs = self.arcs('pd')
         for coloring in K:
             colors = sorted(set(coloring))
-            if len(colors) == p:
-                colors = {b: a for a, b in enumerate(colors)}
-                res.add(tuple(colors[c] for c in coloring))
+            if len(colors) >= 2:
+                res.add(tuple(coloring))
         return [{tuple(arc): col for arc, col in zip(arcs, c)}
                 for c in sorted(res)]
+
+    def coloring_maps(self, n=None, finitely_presented=False):
+        r"""
+        Return the ``n``-coloring maps of ``self``. These are group
+        homomorphisms from the fundamental group of ``self`` to the
+        ``n``-th dihedral group.
+
+        INPUT:
+
+        - ``n`` -- the number of colors to consider (if ommitted the value
+          of the determinant of ``self`` will be taken). Note that there
+          are no coloring maps if n is coprime to the determinant of ``self``
+
+        - ``finitely_presented`` (default ``False``) whether to choose the
+          dihedral groups as finitely presented groups. If not set to ``True``
+          they are represented as permutation groups.
+
+        OUTPUT:
+
+        a list of group homomporhisms from the fundamental group of ``self``
+        to the ``n``-th dihedral group (represented according to the key
+        argument ``finitely_presented``).
+
+        EXAMPLES::
+
+          sage: L5a1_1 = Link([[8, 2, 9, 1], [10, 7, 5, 8], [4, 10, 1, 9],
+          ....:                [2, 5, 3, 6], [6, 3, 7, 4]])
+          sage: L5a1_1.determinant()
+          8
+          sage: L5a1_1.coloring_maps(2)
+          [Group morphism:
+             From: Finitely presented group < x0, x1, x2, x3, x4 | x4*x1*x0^-1*x1^-1, x0*x4^-1*x3^-1*x4, x2*x0*x1^-1*x0^-1, x1*x3^-1*x2^-1*x3, x3*x2^-1*x4^-1*x2 >
+             To:   Dihedral group of order 4 as a permutation group,
+           Group morphism:
+             From: Finitely presented group < x0, x1, x2, x3, x4 | x4*x1*x0^-1*x1^-1, x0*x4^-1*x3^-1*x4, x2*x0*x1^-1*x0^-1, x1*x3^-1*x2^-1*x3, x3*x2^-1*x4^-1*x2 >
+             To:   Dihedral group of order 4 as a permutation group]
+          sage: col_maps = L5a1_1.coloring_maps(4); len(col_maps)
+          12
+          sage: col_maps = L5a1_1.coloring_maps(5); len(col_maps)
+          0
+          sage: col_maps = L5a1_1.coloring_maps(12); len(col_maps)
+          36
+          sage: col_maps = L5a1_1.coloring_maps(); len(col_maps)
+          56
+
+        applying the map::
+
+          sage: cm1 = col_maps[0]
+          sage: gs = L5a1_1.fundamental_group().gens()
+          sage: d = cm1(gs[0]); d
+          (1,8)(2,7)(3,6)(4,5)
+          sage: d.parent()
+          Dihedral group of order 16 as a permutation group
+
+        using the finitely presented dihedral group::
+
+          sage: col_maps = L5a1_1.coloring_maps(2, finitely_presented=True)
+          sage: d = col_maps[0](gs[1]); d
+          b*a
+          sage: d.parent()
+          Finitely presented group < a, b | a^2, b^2, (a*b)^2 >
+
+        REFERENCES:
+
+        - :wikipedia:`Fox_n-coloring`
+
+        - Chapter 3 of [Liv1993]_
+
+        .. SEEALSO:: :meth:`is_colorable` and :meth:`colorings`
+        """
+        if not n:
+            n = self.determinant()
+
+        if finitely_presented:
+            from sage.groups.finitely_presented_named import DihedralPresentation
+            D = DihedralPresentation(n)
+        else:
+            from sage.groups.perm_gps.permgroup_named import DihedralGroup
+            D = DihedralGroup(n)
+
+        a, b = D.gens()
+        gr = self.fundamental_group()
+        cols = self.colorings(n=n)
+        maps = []
+        for c in cols:
+            t = list(c.values())
+            ims = [b*a**i for i in t]
+            maps.append(gr.hom(ims))
+        return maps
 
     def plot(self, gap=0.1, component_gap=0.5, solver=None,
              color='blue', **kwargs):
@@ -3330,12 +3444,12 @@ class Link(SageObject):
             sphinx_plot(L.plot())
 
         If a coloring is passed, the different arcs are plotted with
-        the corresponding colors::
+        the corresponding colors (see :meth:`colorings`)::
 
             sage: B = BraidGroup(4)
             sage: b = B([1,2,3,1,2,-1,-3,2,3])
             sage: L = Link(b)
-            sage: L.plot(color=L.colorings(3)[0])
+            sage: L.plot(color=L.colorings()[0])
             Graphics object consisting of ... graphics primitives
 
         .. PLOT::
@@ -3344,7 +3458,7 @@ class Link(SageObject):
             B = BraidGroup(4)
             b = B([1, 2, 3, 1, 2, -1, -3, 2, 3])
             L = Link(b)
-            sphinx_plot(L.plot(color=L.colorings(3)[0]))
+            sphinx_plot(L.plot(color=L.colorings()[0]))
 
         TESTS:
 
@@ -3365,10 +3479,8 @@ class Link(SageObject):
             coloring = {int(i): color for i in set(flatten(pd_code))}
         else:
             from sage.plot.colors import rainbow
-            ncolors = len(set(color.values()))
+            ncolors = max([int(i) for i in color.values()]) + 1
             arcs = self.arcs()
-            if len(color) != len(arcs):
-                raise ValueError("Number of entries in the color vector must match the number of arcs")
             rainb = rainbow(ncolors)
             coloring = {int(i): rainb[color[tuple(j)]] for j in arcs for i in j}
         comp = self._isolated_components()
@@ -3691,11 +3803,11 @@ class Link(SageObject):
 
         - :wikipedia:`Markov_theorem`
         """
-        sb      = self.braid()
-        sb_ind  = sb.strands()
+        sb = self.braid()
+        sb_ind = sb.strands()
 
-        ob      = braid
-        ob_ind  = ob.strands()
+        ob = braid
+        ob_ind = ob.strands()
 
         if sb_ind == ob_ind:
             return sb.is_conjugated(ob)
@@ -3752,8 +3864,8 @@ class Link(SageObject):
         """
         from sage.knots.knotinfo import KnotInfoSeries
         pd_code = self.pd_code()
-        cr  = len(pd_code)
-        co  = self.number_of_components()
+        cr = len(pd_code)
+        co = self.number_of_components()
 
         # set the limits for the KnotInfoSeries
         if cr > 11 and co > 1:
@@ -3761,7 +3873,7 @@ class Link(SageObject):
         if cr > 12:
             cr = 12
 
-        Hp  = self.homfly_polynomial(normalization='vz')
+        Hp = self.homfly_polynomial(normalization='vz')
 
         det = None
         if cr > 6:
@@ -3790,7 +3902,7 @@ class Link(SageObject):
             ln = Sn.lower_list(oriented=True, comp=co, det=det, homfly=Hp)
             l = sorted(list(set(la + ln)))
 
-        br  = self.braid()
+        br = self.braid()
         br_ind = br.strands()
 
         res = []
@@ -3837,7 +3949,8 @@ class Link(SageObject):
         If ``mirror_version`` is set to ``False`` then the result is just ``K``
         (that is: ``m`` is suppressed).
 
-        If it is not possible to determine a unique result a ``NotImplementedError``
+        If it is not possible to determine a unique result
+        a :class:`NotImplementedError`
         will be raised. To avoid this you can set ``unique`` to ``False``. You
         will get a list of matching candidates instead.
 
@@ -3914,10 +4027,11 @@ class Link(SageObject):
             sage: l.get_knotinfo(unique=False)        # optional - database_knotinfo
             [(<KnotInfo.K10_25: '10_25'>, False), (<KnotInfo.K10_56: '10_56'>, False)]
 
-            sage: k11  = KnotInfo.K11n_82.link()      # optional - database_knotinfo
-            sage: k11m = k11.mirror_image()           # optional - database_knotinfo
-            sage: k11mr = k11m.reverse()              # optional - database_knotinfo
-            sage: k11mr.get_knotinfo()                # optional - database_knotinfo
+            sage: # optional - database_knotinfo
+            sage: k11  = KnotInfo.K11n_82.link()
+            sage: k11m = k11.mirror_image()
+            sage: k11mr = k11m.reverse()
+            sage: k11mr.get_knotinfo()
             Traceback (most recent call last):
             ...
             NotImplementedError: mirror type of this link cannot be uniquely determined
@@ -4016,18 +4130,20 @@ class Link(SageObject):
         Another pair of confusion (see the corresponding `Warning
         <http://katlas.math.toronto.edu/wiki/10_86>`__)::
 
-           sage: Ks10_86 = snappy.Link('10_86')     # optional - snappy
-           sage: Ks10_83 = snappy.Link('10_83')     # optional - snappy
-           sage: Ks10_86.sage_link().get_knotinfo() # optional - snappy
+           sage: # optional - snappy
+           sage: Ks10_86 = snappy.Link('10_86')
+           sage: Ks10_83 = snappy.Link('10_83')
+           sage: Ks10_86.sage_link().get_knotinfo()
            (<KnotInfo.K10_83: '10_83'>, True)
-           sage: Ks10_83.sage_link().get_knotinfo() # optional - snappy
+           sage: Ks10_83.sage_link().get_knotinfo()
            (<KnotInfo.K10_86: '10_86'>, False)
 
         TESTS::
 
-            sage: L = KnotInfo.L10a171_1_1_0         # optional - database_knotinfo
-            sage: l = L.link(L.items.braid_notation) # optional - database_knotinfo
-            sage: l.get_knotinfo(unique=False)       # optional - database_knotinfo
+            sage: # optional - database_knotinfo
+            sage: L = KnotInfo.L10a171_1_1_0
+            sage: l = L.link(L.items.braid_notation)
+            sage: l.get_knotinfo(unique=False)
             [(<KnotInfo.L10a171_0_1_0: 'L10a171{0,1,0}'>, True),
              (<KnotInfo.L10a171_1_0_1: 'L10a171{1,0,1}'>, True),
              (<KnotInfo.L10a171_1_1_0: 'L10a171{1,1,0}'>, False),
@@ -4051,7 +4167,7 @@ class Link(SageObject):
             achp = L.is_amphicheiral(positive=True)
             if ach is None and achp is None:
                 if unique:
-                    raise NotImplementedError('this link cannot be uniquely determined (unknown chirality)%s' %non_unique_hint)
+                    raise NotImplementedError('this link cannot be uniquely determined (unknown chirality)%s' % non_unique_hint)
             elif L.is_amphicheiral() or L.is_amphicheiral(positive=True):
                 chiral = False
 
@@ -4068,7 +4184,7 @@ class Link(SageObject):
                     # polynomial does not distinguish mirror images (see the above
                     # example ``k11m``).
                     if unique:
-                        raise NotImplementedError('mirror type of this link cannot be uniquely determined%s' %non_unique_hint)
+                        raise NotImplementedError('mirror type of this link cannot be uniquely determined%s' % non_unique_hint)
                     mirrored = '?'
                 elif L in lm:
                     mirrored = True
@@ -4117,7 +4233,7 @@ class Link(SageObject):
                 if set(list(S)) == set(l):
                     return answer_unori(S)
 
-            raise NotImplementedError('this link cannot be uniquely determined%s' %non_unique_hint)
+            raise NotImplementedError('this link cannot be uniquely determined%s' % non_unique_hint)
 
         self_m = self.mirror_image()
         ls, proved_s = self._knotinfo_matching_list()

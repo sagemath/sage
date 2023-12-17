@@ -14,22 +14,22 @@ Coerce actions
 
 import operator
 
-from cpython.int cimport *
+from cpython.long cimport *
 from cpython.number cimport *
 from cysignals.signals cimport sig_check
 
-from .coerce cimport coercion_model
-from .element cimport parent, Element, ModuleElement
-from .parent cimport Parent
-from .coerce_exceptions import CoercionException
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport parent, Element, ModuleElement
+from sage.structure.parent cimport Parent
+from sage.structure.coerce_exceptions import CoercionException
 from sage.categories.action cimport InverseAction, PrecomposedAction
 from sage.arith.long cimport integer_check_long
 
 
-cdef _record_exception():
+cdef _record_exception() noexcept:
     coercion_model._record_exception()
 
-cdef inline an_element(R):
+cdef inline an_element(R) noexcept:
     if isinstance(R, Parent):
         return R.an_element()
     else:
@@ -55,14 +55,15 @@ cdef class GenericAction(Action):
         for otherwise they could be garbage collected, giving rise to
         random errors (see :trac:`18157`). ::
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)         # optional - sage.modular sage.modules
+            sage: from sage.structure.coerce_actions import ActedUponAction, GenericAction
+            sage: M = MatrixSpace(ZZ, 2)                                                # needs sage.modules
+            sage: ActedUponAction(M, Cusps, True)                                       # needs sage.modular sage.modules
             Left action
              by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
              on Set P^1(QQ) of all cusps
 
             sage: Z6 = Zmod(6)
-            sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True)
+            sage: GenericAction(QQ, Z6, True)
             Traceback (most recent call last):
             ...
             NotImplementedError: action for <class 'sage.structure.coerce_actions.GenericAction'> not implemented
@@ -94,15 +95,16 @@ cdef class GenericAction(Action):
         errors (see :trac:`18157`). ::
 
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modular sage.modules
-            sage: A.codomain()                                                          # optional - sage.modular sage.modules
+            sage: M = MatrixSpace(ZZ, 2)                                                # needs sage.modules
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # needs sage.modular sage.modules
+            sage: A.codomain()                                                          # needs sage.modular sage.modules
             Set P^1(QQ) of all cusps
 
-            sage: S3 = SymmetricGroup(3)                                                # optional - sage.groups
-            sage: QQxyz = QQ['x,y,z']                                                   # optional - sage.groups
-            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)       # optional - sage.groups
-            sage: A.codomain()                                                          # optional - sage.groups
+            sage: # needs sage.groups
+            sage: S3 = SymmetricGroup(3)
+            sage: QQxyz = QQ['x,y,z']
+            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)
+            sage: A.codomain()
             Multivariate Polynomial Ring in x, y, z over Rational Field
 
         """
@@ -116,19 +118,19 @@ cdef class ActOnAction(GenericAction):
     """
     Class for actions defined via the _act_on_ method.
     """
-    cpdef _act_(self, g, x):
+    cpdef _act_(self, g, x) noexcept:
         """
         TESTS::
 
-            sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
-            sage: R.<x,y,z> = QQ[]                                                      # optional - sage.groups
-            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)            # optional - sage.groups
-            sage: A(x^2 + y - z, G((1,2)))                                              # optional - sage.groups
+            sage: # needs sage.groups
+            sage: G = SymmetricGroup(3)
+            sage: R.<x,y,z> = QQ[]
+            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)
+            sage: A(x^2 + y - z, G((1,2)))
             y^2 + x - z
-            sage: A(x+2*y+3*z, G((1,3,2)))                                              # optional - sage.groups
+            sage: A(x + 2*y + 3*z, G((1,3,2)))
             2*x + 3*y + z
-
-            sage: type(A)                                                               # optional - sage.groups
+            sage: type(A)
             <... 'sage.structure.coerce_actions.ActOnAction'>
         """
         return (<Element>g)._act_on_(x, self._is_left)
@@ -138,18 +140,18 @@ cdef class ActedUponAction(GenericAction):
     """
     Class for actions defined via the _acted_upon_ method.
     """
-    cpdef _act_(self, g, x):
+    cpdef _act_(self, g, x) noexcept:
         """
         TESTS::
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modular sage.modules
-            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                           # optional - sage.modular sage.modules
+            sage: # needs sage.modular sage.modules
+            sage: M = MatrixSpace(ZZ, 2)
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)
+            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
             Infinity
-            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                               # optional - sage.modular sage.modules
+            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
             Infinity
-
-            sage: type(A)                                                               # optional - sage.modular sage.modules
+            sage: type(A)
             <... 'sage.structure.coerce_actions.ActedUponAction'>
         """
         return (<Element>x)._acted_upon_(g, not self._is_left)
@@ -168,16 +170,16 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
 
         sage: from sage.structure.coerce_actions import detect_element_action
         sage: ZZx = ZZ['x']
-        sage: M = MatrixSpace(ZZ,2)
+        sage: M = MatrixSpace(ZZ, 2)                                                    # needs sage.modules
         sage: detect_element_action(ZZx, ZZ, False)
         Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
         sage: detect_element_action(ZZx, QQ, True)
         Right scalar multiplication by Rational Field
          on Univariate Polynomial Ring in x over Integer Ring
-        sage: detect_element_action(Cusps, M, False)                                    # optional - sage.modular sage.modules
+        sage: detect_element_action(Cusps, M, False)                                    # needs sage.modular sage.modules
         Left action by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
          on Set P^1(QQ) of all cusps
-        sage: detect_element_action(Cusps, M, True),                                    # optional - sage.modular sage.modules
+        sage: detect_element_action(Cusps, M, True),                                    # needs sage.modular sage.modules
         (None,)
         sage: detect_element_action(ZZ, QQ, True),
         (None,)
@@ -404,7 +406,8 @@ cdef class ModuleAction(Action):
             sage: GF5 = GF(5)
             sage: GF5t = GF5[['t']]
             sage: RightModuleAction(GF5, GF5t)
-            Right scalar multiplication by Finite Field of size 5 on Power Series Ring in t over Finite Field of size 5
+            Right scalar multiplication by Finite Field of size 5
+             on Power Series Ring in t over Finite Field of size 5
 
         """
         return "scalar multiplication"
@@ -487,7 +490,8 @@ cdef class ModuleAction(Action):
 
             sage: GF5x = GF(5)['x']
             sage: A = ~RightModuleAction(ZZ, GF5x); A
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in x over Finite Field of size 5
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -496,7 +500,8 @@ cdef class ModuleAction(Action):
 
             sage: GF5xy = GF5x['y']
             sage: A = ~RightModuleAction(ZZ, GF5xy); A
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -520,6 +525,7 @@ cdef class ModuleAction(Action):
 
         See :trac:`19521`::
 
+            sage: # needs sage.symbolic
             sage: Q.<y> = SR.subring(no_variables=True)[[]]
             sage: (y / 1).parent()
             Power Series Ring in y over Symbolic Constants Subring
@@ -580,7 +586,7 @@ cdef class ModuleAction(Action):
 
 
 cdef class LeftModuleAction(ModuleAction):
-    cpdef _act_(self, g, a):
+    cpdef _act_(self, g, a) noexcept:
         """
         A left module action is an action that takes the ring element as the
         first argument (the left side) and the module element as the second
@@ -617,7 +623,7 @@ cdef class LeftModuleAction(ModuleAction):
 
 
 cdef class RightModuleAction(ModuleAction):
-    cpdef _act_(self, g, a):
+    cpdef _act_(self, g, a) noexcept:
         """
         A right module action is an action that takes the module element as the
         first argument (the left side) and the ring element as the second
@@ -682,8 +688,8 @@ cdef class IntegerAction(Action):
         Check that this action can be pickled (:trac:`29031`)::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: act = IntegerMulAction(ZZ, CDF)
-            sage: loads(dumps(act)) is not None
+            sage: act = IntegerMulAction(ZZ, CDF)                                       # needs sage.rings.complex_double
+            sage: loads(dumps(act)) is not None                                         # needs sage.rings.complex_double
             True
         """
         # All base classes must take the signature
@@ -695,8 +701,8 @@ cdef class IntegerAction(Action):
         EXAMPLES::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: act = IntegerMulAction(ZZ, CDF)
-            sage: ~act
+            sage: act = IntegerMulAction(ZZ, CDF)                                       # needs sage.rings.complex_double
+            sage: ~act                                                                  # needs sage.rings.complex_double
             Traceback (most recent call last):
             ...
             TypeError: actions by ZZ cannot be inverted
@@ -737,7 +743,7 @@ cdef class IntegerMulAction(IntegerAction):
         test = m + (-m)  # make sure addition and negation is allowed
         super().__init__(Z, M, is_left, operator.mul)
 
-    cpdef _act_(self, nn, a):
+    cpdef _act_(self, nn, a) noexcept:
         """
         EXAMPLES:
 
@@ -767,13 +773,14 @@ cdef class IntegerMulAction(IntegerAction):
 
         This used to hang before :trac:`17844`::
 
-            sage: E = EllipticCurve(GF(5), [4,0])
-            sage: P = E.random_element()
-            sage: (-2^63)*P
+            sage: E = EllipticCurve(GF(5), [4,0])                                       # needs sage.schemes
+            sage: P = E.random_element()                                                # needs sage.schemes
+            sage: (-2^63)*P                                                             # needs sage.schemes
             (0 : 1 : 0)
 
         Check that large multiplications can be interrupted::
 
+            sage: # needs sage.schemes
             sage: alarm(0.001); 2^(10^7) * P
             Traceback (most recent call last):
             ...
@@ -782,6 +789,7 @@ cdef class IntegerMulAction(IntegerAction):
         Verify that cysignals correctly detects that the above
         exception has been handled::
 
+            sage: # needs sage.schemes
             sage: from cysignals.tests import print_sig_occurred
             sage: print_sig_occurred()
             No current exception
@@ -806,7 +814,8 @@ cdef class IntegerMulAction(IntegerAction):
             sage: from sage.structure.coerce_actions import IntegerMulAction
             sage: GF5 = GF(5)
             sage: IntegerMulAction(ZZ, GF5)
-            Left Integer Multiplication by Integer Ring on Finite Field of size 5
+            Left Integer Multiplication by Integer Ring
+            on Finite Field of size 5
         """
         return "Integer Multiplication"
 
@@ -844,18 +853,18 @@ cdef class IntegerPowAction(IntegerAction):
         Traceback (most recent call last):
         ...
         ValueError: powering must be a right action
-        sage: IntegerPowAction(ZZ, QQ^3)
+        sage: IntegerPowAction(ZZ, QQ^3)                                                # needs sage.modules
         Traceback (most recent call last):
         ...
         TypeError: no integer powering action defined on Vector space of dimension 3 over Rational Field
 
     ::
 
-        sage: var('x,y')
+        sage: var('x,y')                                                                # needs sage.symbolic
         (x, y)
-        sage: RDF('-2.3')^(x+y^3+sin(x))
+        sage: RDF('-2.3')^(x+y^3+sin(x))                                                # needs sage.symbolic
         (-2.3)^(y^3 + x + sin(x))
-        sage: RDF('-2.3')^x
+        sage: RDF('-2.3')^x                                                             # needs sage.symbolic
         (-2.3)^x
     """
     def __init__(self, Z, M, is_left=False, m=None):
@@ -870,7 +879,7 @@ cdef class IntegerPowAction(IntegerAction):
             raise TypeError(f"no integer powering action defined on {M}")
         super().__init__(Z, M, False, operator.pow)
 
-    cpdef _act_(self, n, a):
+    cpdef _act_(self, n, a) noexcept:
         """
         EXAMPLES:
 
@@ -907,7 +916,7 @@ cdef class IntegerPowAction(IntegerAction):
         return "Integer Powering"
 
 
-cdef inline fast_mul(a, n):
+cdef inline fast_mul(a, n) noexcept:
     if n < 0:
         n = -n
         a = -a
@@ -926,7 +935,7 @@ cdef inline fast_mul(a, n):
         n = n >> 1
     return sum
 
-cdef inline fast_mul_long(a, long s):
+cdef inline fast_mul_long(a, long s) noexcept:
     # It's important to change the signed s to an unsigned n,
     # since -LONG_MIN = LONG_MIN.  See Issue #17844.
     cdef unsigned long n

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.number_field
 r"""
 Galois representations for elliptic curves over number fields
 
@@ -432,7 +432,7 @@ def _non_surjective(E, patience=100):
 
     - ``list`` -- A list of primes where mod-`p` representation is very likely
       not surjective. At any prime not in this list, the representation is
-      definitely surjective. If E has CM, a ValueError is raised.
+      definitely surjective. If E has CM, a :class:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -877,7 +877,7 @@ def _semistable_reducible_primes(E, verbose=False):
             last_p = p
 
     Px, Py = precomp
-    x, y = [PP.gens_reduced()[0] for PP in precomp]
+    x, y = (PP.gens_reduced()[0] for PP in precomp)
     EmodPx = E.reduction(Px) if d > 1 else E.reduction(x)
     EmodPy = E.reduction(Py) if d > 1 else E.reduction(y)
     fxpol = EmodPx.frobenius_polynomial()

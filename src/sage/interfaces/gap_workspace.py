@@ -88,7 +88,9 @@ def prepare_workspace_dir(dir=None):
 
     TESTS::
 
-        sage: prepare_workspace_dir(os.path.join(tmp_dir(), "new"))
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     prepare_workspace_dir(os.path.join(d, "new"))
         '.../new'
     """
     if dir is None:

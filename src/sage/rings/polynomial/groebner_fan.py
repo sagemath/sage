@@ -1234,7 +1234,7 @@ class GroebnerFan(SageObject):
             return h
 
     def render(self, file=None, larger=False, shift=0, rgbcolor=(0, 0, 0),
-               polyfill=max_degree, scale_colors=True):
+               polyfill=True, scale_colors=True):
         """
         Render a Groebner fan as sage graphics or save as an xfig file.
 
@@ -1246,27 +1246,27 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``file`` - a filename if you prefer the output
+        -  ``file`` -- a filename if you prefer the output
            saved to a file. This will be in xfig format.
 
-        -  ``shift`` - shift the positions of the variables in
+        -  ``shift`` -- shift the positions of the variables in
            the drawing. For example, with shift=1, the corners will be b
            (right), c (left), and d (top). The shifting is done modulo the
            number of variables in the polynomial ring. The default is 0.
 
-        -  ``larger`` - bool (default: ``False``); if ``True``, make
+        -  ``larger`` -- bool (default: ``False``); if ``True``, make
            the triangle larger so that the shape of the Groebner region
            appears. Affects the xfig file but probably not the sage graphics
            (?)
 
-        -  ``rgbcolor`` - This will not affect the saved xfig
+        -  ``rgbcolor`` -- This will not affect the saved xfig
            file, only the sage graphics produced.
 
-        -  ``polyfill`` - Whether or not to fill the cones with
+        -  ``polyfill`` -- Whether or not to fill the cones with
            a color determined by the highest degree in each reduced Groebner
            basis for that cone.
 
-        -  ``scale_colors`` - if True, this will normalize
+        -  ``scale_colors`` -- if True, this will normalize
            color values to try to maximize the range
 
 
@@ -1274,27 +1274,29 @@ class GroebnerFan(SageObject):
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: G = R.ideal([y^3 - x^2, y^2 - 13*x,z]).groebner_fan()
-            sage: test_render = G.render()
+            sage: test_render = G.render()                                              # needs sage.plot
 
         ::
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: G = R.ideal([x^2*y - z, y^2*z - x, z^2*x - y]).groebner_fan()
-            sage: test_render = G.render(larger=True)
+            sage: test_render = G.render(larger=True)                                   # needs sage.plot
 
         TESTS:
 
         Testing the case where the number of generators is < 3. Currently,
-        this should raise a ``NotImplementedError`` error.
+        this should raise a :class:`NotImplementedError`.
 
         ::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: R.ideal([y^3 - x^2, y^2 - 13*x]).groebner_fan().render()
+            sage: R.ideal([y^3 - x^2, y^2 - 13*x]).groebner_fan().render()              # needs sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
+        if polyfill is True:
+            polyfill = max_degree
         S = self.__ring
         if S.ngens() < 3:
             print("For 2-D fan rendering the polynomial ring must have 3 variables (or more, which are ignored).")
@@ -1460,17 +1462,17 @@ class GroebnerFan(SageObject):
 
             sage: R4.<w,x,y,z> = PolynomialRing(QQ,4)
             sage: gf = R4.ideal([w^2-x,x^2-y,y^2-z,z^2-x]).groebner_fan()
-            sage: three_d = gf.render3d()
+            sage: three_d = gf.render3d()                                               # needs sage.plot
 
         TESTS:
 
         Now test the case where the number of generators is not 4. Currently,
-        this should raise a ``NotImplementedError`` error.
+        this should raise a :class:`NotImplementedError` error.
 
         ::
 
             sage: P.<a,b,c> = PolynomialRing(QQ, 3, order="lex")
-            sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()
+            sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()              # needs sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError

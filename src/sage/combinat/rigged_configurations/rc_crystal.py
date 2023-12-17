@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystal of Rigged Configurations
 
@@ -152,7 +153,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         if isinstance(cartan_type, CartanTypeFolded):
             return CrystalOfNonSimplyLacedRC(cartan_type, wt, WLR)
 
-        return super(CrystalOfRiggedConfigurations, cls).__classcall__(cls, wt, WLR=WLR)
+        return super().__classcall__(cls, wt, WLR=WLR)
 
     def __init__(self, wt, WLR):
         r"""

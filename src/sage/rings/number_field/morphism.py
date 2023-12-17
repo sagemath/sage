@@ -114,6 +114,7 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
 
         ::
 
+            sage: # needs sage.libs.linbox
             sage: F.<b> = QuadraticField(23)
             sage: G.<a> = F.extension(x^3 + 5)
             sage: f = F.embeddings(G)[0]
@@ -268,8 +269,3 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
 class CyclotomicFieldHomomorphism_im_gens(NumberFieldHomomorphism_im_gens):
     pass
-
-
-lazy_import('sage.rings.number_field.homset',
-            ('NumberFieldHomset', 'RelativeNumberFieldHomset', 'CyclotomicFieldHomset'),
-            deprecation=29010)

@@ -42,6 +42,7 @@ def to_libgap(x):
         from sage.libs.gap.libgap import libgap
         return libgap(x)
 
+
 lazy_import('sage.groups.libgap_morphism', 'GroupMorphism_libgap',
             'MatrixGroupMorphism_im_gens', deprecation=25444)
 

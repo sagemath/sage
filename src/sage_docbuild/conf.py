@@ -27,12 +27,14 @@ import dateutil.parser
 import sage.version
 
 from sphinx import highlighting
+from sphinx.transforms import SphinxTransform
 from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
 
 from sage.misc.sagedoc import extlinks
-from sage.env import SAGE_DOC_SRC, SAGE_DOC, THEBE_DIR, PPLPY_DOCS, MATHJAX_DIR
+from sage.env import SAGE_DOC_SRC, SAGE_DOC, PPLPY_DOCS, MATHJAX_DIR
 from sage.misc.latex_macros import sage_mathjax_macros
 from sage.features import PythonModule
+from sage.features.all import all_features
 
 # General configuration
 # ---------------------
@@ -54,17 +56,56 @@ extensions = [
 
 jupyter_execute_default_kernel = 'sagemath'
 
-jupyter_sphinx_thebelab_config = {
-    'requestKernel': True,
-    'binderOptions': {
-        'repo': "sagemath/sage-binder-env",
-    },
-    'kernelOptions': {
-        'name': "sagemath",
-        'kernelName': "sagemath",
-        'path': ".",
-    },
-}
+if os.environ.get('SAGE_LIVE_DOC', 'no')  == 'yes':
+    SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
+    if SAGE_JUPYTER_SERVER.startswith('binder'):
+        # format: "binder" or
+        #         "binder:sagemath/sage-binder-env" or
+        #         "binder:sagemath/sage-binder-env/dev"
+        if SAGE_JUPYTER_SERVER == 'binder':
+            binder_repo = "sagemath/sage-binder-env/master"
+        else:
+            binder_repo = SAGE_JUPYTER_SERVER[7:]
+        s = binder_repo.split('/', 2)
+        if len(s) > 2:
+            binder_options = {
+                'repo': s[0] + '/' + s[1],
+                'ref': s[2]
+            }
+        else:
+            binder_options = {
+                'repo': binder_repo
+            }
+        jupyter_sphinx_thebelab_config = {
+            'requestKernel': False,
+            'binderOptions': binder_options,
+            'kernelOptions': {
+                'name': "sagemath",
+                'kernelName': "sagemath",
+                'path': ".",
+            },
+            'selector': "div.live-doc"
+        }
+    else:  # local jupyter server
+        SAGE_JUPYTER_SERVER_TOKEN = os.environ.get('SAGE_JUPYTER_SERVER_TOKEN', 'secret')
+        jupyter_sphinx_thebelab_config = {
+            'requestKernel': False,
+            'kernelOptions': {
+                'name': "sagemath",
+                'kernelName': "sagemath",
+                'path': ".",
+                'serverSettings': {
+                    'baseUrl': SAGE_JUPYTER_SERVER,
+                    'token': SAGE_JUPYTER_SERVER_TOKEN
+                },
+            },
+            'selector': "div.live-doc"
+        }
+    jupyter_sphinx_thebelab_config.update({
+        'codeMirrorConfig': {
+            'lineNumbers': True,
+        }
+    })
 
 # This code is executed before each ".. PLOT::" directive in the Sphinx
 # documentation. It defines a 'sphinx_plot' function that displays a Sage object
@@ -255,7 +296,7 @@ def set_intersphinx_mappings(app, config):
     intersphinx.normalize_intersphinx_mapping(app, config)
 
 
-# By default document are not master.
+# By default document is master.
 multidocs_is_master = True
 
 # https://sphinx-copybutton.readthedocs.io/en/latest/use.html
@@ -310,7 +351,14 @@ if PythonModule("furo").is_present():
     # or fully qualified paths (eg. https://...)
     html_css_files = [
         'custom-furo.css',
+        'custom-jupyter-sphinx.css',
+        'custom-codemirror-monokai.css',
     ]
+
+    html_js_files = [
+        'jupyter-sphinx-furo.js',
+    ]
+
     # A list of paths that contain extra templates (or templates that overwrite
     # builtin/theme-specific templates). Relative paths are taken as relative
     # to the configuration directory.
@@ -348,8 +396,7 @@ html_favicon = 'favicon.ico'
 # conf.py read by Sphinx was the cause of subtle bugs in builders (see #30418 for
 # instance). Hence now html_common_static_path contains the common paths to static
 # files, and is combined to html_static_path in each conf.py file read by Sphinx.
-html_common_static_path = [os.path.join(SAGE_DOC_SRC, 'common', 'static'),
-                           THEBE_DIR, 'static']
+html_common_static_path = [os.path.join(SAGE_DOC_SRC, 'common', 'static'), 'static']
 
 # Configure MathJax
 # https://docs.mathjax.org/en/latest/options/input/tex.html
@@ -374,8 +421,7 @@ mathjax3_config = {
 if os.environ.get('SAGE_USE_CDNS', 'no') == 'yes':
     mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 else:
-    mathjax_path = 'mathjax/tex-chtml.js'
-    html_common_static_path += [MATHJAX_DIR]
+    mathjax_path = os.path.join(MATHJAX_DIR, 'tex-chtml.js')
 
 # A list of glob-style patterns that should be excluded when looking for source
 # files. They are matched against the source file names relative to the
@@ -692,6 +738,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
         context['reference_root'] = os.path.join(relpath, 'index.html')
         context['refsub'] = True
 
+
 dangling_debug = False
 
 def debug_inf(app, message):
@@ -745,7 +792,7 @@ def find_sage_dangling_links(app, env, node, contnode):
         debug_inf(app, "-- no refdoc in node %s" % node)
         return None
 
-    debug_inf(app, "Searching %s from %s"%(reftarget, doc))
+    debug_inf(app, "Searching %s from %s" % (reftarget, doc))
 
     # Workaround: in Python's doc 'object', 'list', ... are documented as a
     # function rather than a class
@@ -803,7 +850,7 @@ def find_sage_dangling_links(app, env, node, contnode):
                              ', '.join(match[0] for match in matches)),
                  node.line)
     name, obj = matches[0]
-    debug_inf(app, "++ match = %s %s"%(name, obj))
+    debug_inf(app, "++ match = %s %s" % (name, obj))
 
     from docutils import nodes
     newnode = nodes.reference('', '', internal=True)
@@ -812,10 +859,11 @@ def find_sage_dangling_links(app, env, node, contnode):
     else:
         newnode['refuri'] = builder.get_relative_uri(node['refdoc'], obj[0])
         newnode['refuri'] += '#' + name
-        debug_inf(app, "++ DONE at URI %s"%(newnode['refuri']))
+        debug_inf(app, "++ DONE at URI %s" % (newnode['refuri']))
     newnode['reftitle'] = name
     newnode.append(contnode)
     return newnode
+
 
 # lists of basic Python class which are documented as functions
 base_class_as_func = [
@@ -842,6 +890,7 @@ def nitpick_patch_config(app):
     """
     app.config.values['nitpicky'] = (False, 'sage')
     app.config.values['nitpick_ignore'] = ([], 'sage')
+
 
 skip_picklability_check_modules = [
     #'sage.misc.test_nested_class', # for test only
@@ -911,6 +960,69 @@ def skip_member(app, what, name, obj, skip, options):
     return skip
 
 
+from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
+
+class SagecodeTransform(SphinxTransform):
+    """
+    Transform a code block to a live code block enabled by jupyter-sphinx.
+
+    Effectively a code block like::
+
+        EXAMPLE::
+
+            sage: 1 + 1
+            2
+
+    is transformed into::
+
+        EXAMPLE::
+
+            sage: 1 + 1
+            2
+
+        .. ONLY:: html
+
+            .. JUPYTER-EXECUTE::
+                :hide-code:
+                :hide-output:
+                :raises:
+                :stderr:
+
+                1 + 1
+
+    enabling live execution of the code.
+    """
+    # lower than the priority of jupyer_sphinx.execute.ExecuteJupyterCells
+    default_priority = 170
+
+    def apply(self):
+        if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
+            for node in self.document.traverse(nodes.literal_block):
+                if node.get('language') is None and node.astext().startswith('sage:'):
+                    source = node.rawsource
+                    lines = []
+                    for line in source.splitlines():
+                        newline = line.lstrip()
+                        if newline.startswith('sage: ') or newline.startswith('....: '):
+                            lines.append(newline[6:])
+                    cell_node = JupyterCellNode(
+                                execute=False,
+                                hide_code=True,
+                                hide_output=True,
+                                emphasize_lines=[],
+                                raises=False,
+                                stderr=True,
+                                code_below=False,
+                                classes=["jupyter_cell"])
+                    cell_input = CellInputNode(classes=['cell_input','live-doc'])
+                    cell_input += nodes.literal_block(
+                        text='\n'.join(lines),
+                        linenos=False,
+                        linenostart=1)
+                    cell_node += cell_input
+
+                    node.parent.insert(node.parent.index(node) + 1, cell_node)
+
 # This replaces the setup() in sage.misc.sagedoc_conf
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
@@ -922,6 +1034,8 @@ def setup(app):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
     app.connect('autodoc-skip-member', skip_member)
     app.add_transform(SagemathTransform)
+    if os.environ.get('SAGE_LIVE_DOC', 'no') == 'yes':
+        app.add_transform(SagecodeTransform)
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
@@ -938,3 +1052,18 @@ def setup(app):
         app.connect('missing-reference', find_sage_dangling_links)
         app.connect('builder-inited', nitpick_patch_config)
         app.connect('html-page-context', add_page_context)
+
+
+# Conditional content
+# https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#conf-tags
+# https://github.com/readthedocs/readthedocs.org/issues/4603#issuecomment-1411594800
+# Workaround to allow importing this file from other confs
+if 'tags' not in locals():
+    class Tags(set):
+        has = set.__contains__
+    tags = Tags()
+
+
+for feature in all_features():
+    tags.add('feature_' + feature.name.replace('.', '_'))

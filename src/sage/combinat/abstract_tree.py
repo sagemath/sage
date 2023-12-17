@@ -779,8 +779,7 @@ class AbstractTree():
             yield tuple(path)
         else:
             for i in range(len(self)):
-                for p in self[i].paths_at_depth(depth - 1, path + [i]):
-                    yield p
+                yield from self[i].paths_at_depth(depth - 1, path + [i])
 
     def node_number_at_depth(self, depth):
         r"""

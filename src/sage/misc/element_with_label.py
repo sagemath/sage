@@ -25,13 +25,15 @@ class ElementWithLabel():
 
     EXAMPLES::
 
+        sage: # needs sage.combinat sage.graphs
         sage: P = Poset({1: [2,3]})
         sage: labs = {i: P.rank(i) for i in range(1, 4)}
         sage: print(labs)
         {1: 0, 2: 1, 3: 1}
-        sage: print(P.plot(element_labels=labs))
+        sage: print(P.plot(element_labels=labs))                                        # needs sage.plot
         Graphics object consisting of 6 graphics primitives
 
+        sage: # needs sage.combinat sage.graphs sage.modules
         sage: from sage.misc.element_with_label import ElementWithLabel
         sage: W = WeylGroup("A1")
         sage: P = W.bruhat_poset(facade=True)
@@ -65,11 +67,11 @@ class ElementWithLabel():
 
         TESTS::
 
-            sage: var('a_1')
+            sage: var('a_1')                                                            # needs sage.symbolic
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)
-            sage: latex(e)
+            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
+            sage: latex(e)                                                              # needs sage.symbolic
             a_{1}
         """
         return latex(self.label)
@@ -81,11 +83,11 @@ class ElementWithLabel():
 
         TESTS::
 
-            sage: var('a_1')
+            sage: var('a_1')                                                            # needs sage.symbolic
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)
-            sage: str(e)
+            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
+            sage: str(e)                                                                # needs sage.symbolic
             'a_1'
         """
         return str(self.label)
@@ -97,11 +99,11 @@ class ElementWithLabel():
 
         TESTS::
 
-            sage: var('a_1')
+            sage: var('a_1')                                                            # needs sage.symbolic
             a_1
             sage: from sage.misc.element_with_label import ElementWithLabel
-            sage: e = ElementWithLabel(1, a_1)
-            sage: repr(e)
+            sage: e = ElementWithLabel(1, a_1)                                          # needs sage.symbolic
+            sage: repr(e)                                                               # needs sage.symbolic
             'a_1'
         """
         return repr(self.label)

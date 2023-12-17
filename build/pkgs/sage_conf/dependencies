@@ -1,1 +1,1 @@
-$(PYTHON) $(SAGE_ROOT)/pkgs/sage-conf/_sage_conf/_conf.py $(SAGE_ROOT)/pkgs/sage-conf/setup.cfg $(SAGE_ROOT)/pkgs/sage-conf/bin/sage-env-config | $(PYTHON_TOOLCHAIN)
+ $(SAGE_ROOT)/pkgs/sage-conf/_sage_conf/_conf.py $(SAGE_ROOT)/pkgs/sage-conf/setup.cfg $(SAGE_ROOT)/pkgs/sage-conf/bin/sage-env-config | $(PYTHON_TOOLCHAIN) $(PYTHON)

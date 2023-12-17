@@ -286,7 +286,7 @@ def coords_in_U_mod_p(u, U, p):
     """
     coords = U.log(u)
     start = 1 - int(p.divides(U.zeta_order())) # 0 or 1
-    return [c%p for c in coords[start:]]
+    return [c % p for c in coords[start:]]
 
 def basis_for_p_cokernel(S, C, p):
     r"""
@@ -548,7 +548,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
     hK = 1 if K == QQ else K.class_number(proof=proof)
     C = K.class_group() if K == QQ else K.class_group(proof=proof)
 
-    hKp = (hK%p == 0) # flag whether the class number is divisible by p
+    hKp = (hK % p == 0) # flag whether the class number is divisible by p
 
     if K == QQ:
         if p == 2:
@@ -684,7 +684,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
 
         if debug:
             print("B={}".format(B))
-        a3 = B if K==QQ else _ideal_generator(B)
+        a3 = B if K == QQ else _ideal_generator(B)
         if debug:
             print("a3={}".format(a3))
         a /= a3 ** p
@@ -699,7 +699,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
 
         if debug:
             if K == QQ:
-                assert a.abs()==1
+                assert a.abs() == 1
             else:
                 assert K.ideal(a).is_one()
 

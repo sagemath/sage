@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.geometry.polyhedron
 r"""
 Associahedron
 
@@ -336,7 +337,7 @@ class Associahedra_base():
 
     Importantly, the parent knows the dimension of the ambient
     space. If you try to construct an associahedron of a different
-    dimension, a ``ValueError`` is raised::
+    dimension, a :class:`ValueError` is raised::
 
         sage: parent(['A',3])
         Traceback (most recent call last):

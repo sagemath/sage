@@ -50,7 +50,7 @@ from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.functions.log import log
 from sage.misc.functional import denominator
 from sage.misc.misc_c import prod
-import sage.matrix.all as matrix
+from sage.matrix.constructor import matrix
 
 
 @richcmp_method
@@ -113,7 +113,7 @@ class TateCurve(SageObject):
             sage: eq7 == eq5
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
 
         return richcmp((self._E, self._p), (other._E, other._p), op)
@@ -659,7 +659,7 @@ class TateCurve(SageObject):
                                       "for non-split multiplicative reduction.")
 
         basis = self._E.gens()
-        M = matrix.matrix(K, rank, rank, 0)
+        M = matrix(K, rank, rank, 0)
 
         height = self.padic_height(prec=prec)
         point_height = [height(P) for P in basis]

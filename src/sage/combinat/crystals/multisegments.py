@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystal of Bernstein-Zelevinsky Multisegments
 """

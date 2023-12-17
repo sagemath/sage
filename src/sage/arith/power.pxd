@@ -7,12 +7,12 @@ ctypedef fused ulong_or_object:
     object
 
 
-cpdef generic_power(a, n)
-cdef generic_power_long(a, long n)
-cdef generic_power_pos(a, ulong_or_object n)  # n > 0
+cpdef generic_power(a, n) noexcept
+cdef generic_power_long(a, long n) noexcept
+cdef generic_power_pos(a, ulong_or_object n) noexcept  # n > 0
 
 
-cdef inline invert(a):
+cdef inline invert(a) noexcept:
     """
     Return ``a^(-1)``.
     """
@@ -21,7 +21,7 @@ cdef inline invert(a):
     return PyNumber_TrueDivide(type(a)(1), a)
 
 
-cdef inline one(a):
+cdef inline one(a) noexcept:
     """
     Return ``a^0``.
     """

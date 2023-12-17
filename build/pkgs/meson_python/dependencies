@@ -1,4 +1,4 @@
-$(PYTHON) meson pyproject_metadata tomli ninja_build patchelf | $(PYTHON_TOOLCHAIN)
+ meson pyproject_metadata tomli ninja_build patchelf | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

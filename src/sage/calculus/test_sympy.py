@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 A Sample Session using SymPy
 
@@ -102,46 +102,47 @@ instead of SymPy.
 
 And here are some actual tests of sympy::
 
-    sage: from sympy import Symbol, cos, sympify, pprint
-    sage: from sympy.abc import x
+    sage: from sympy import Symbol, cos, sympify, pprint                                # needs sympy
+    sage: from sympy.abc import x                                                       # needs sympy
 
 ::
 
-    sage: e = (1/cos(x)^3)._sympy_(); e
+    sage: e = (1/cos(x)^3)._sympy_(); e                                                 # needs sympy
     cos(x)**(-3)
-    sage: f = e.series(x, 0, int(10)); f
+    sage: f = e.series(x, 0, int(10)); f                                                # needs sympy
     1 + 3*x**2/2 + 11*x**4/8 + 241*x**6/240 + 8651*x**8/13440 + O(x**10)
 
 And the pretty-printer.  Since unicode characters are not working on
 some architectures, we disable it::
 
-    sage: from sympy.printing import pprint_use_unicode
-    sage: prev_use = pprint_use_unicode(False)
-    sage: pprint(e)
+    sage: from sympy.printing import pprint_use_unicode                                 # needs sympy
+    sage: prev_use = pprint_use_unicode(False)                                          # needs sympy
+    sage: pprint(e)                                                                     # needs sympy
        1
     -------
        3
     cos (x)
 
-    sage: pprint(f)
+    sage: pprint(f)                                                                     # needs sympy
            2       4        6         8
         3*x    11*x    241*x    8651*x     / 10\
     1 + ---- + ----- + ------ + ------- + O\x  /
          2       8      240      13440
-    sage: pprint_use_unicode(prev_use)
+    sage: pprint_use_unicode(prev_use)                                                  # needs sympy
     False
 
 And the functionality to convert from sympy format to Sage format::
 
-    sage: e._sage_()
+    sage: e._sage_()                                                                    # needs sympy
     cos(x)^(-3)
-    sage: e._sage_().taylor(x._sage_(), 0, 8)
+    sage: e._sage_().taylor(x._sage_(), 0, 8)                                           # needs sympy
     8651/13440*x^8 + 241/240*x^6 + 11/8*x^4 + 3/2*x^2 + 1
-    sage: f._sage_()
+    sage: f._sage_()                                                                    # needs sympy
     8651/13440*x^8 + 241/240*x^6 + 11/8*x^4 + 3/2*x^2 + Order(x^10) + 1
 
 Mixing SymPy with Sage::
 
+    sage: # needs sympy
     sage: import sympy
     sage: var("x")._sympy_() + var("y")._sympy_()
     x + y
@@ -155,7 +156,7 @@ Mixing SymPy with Sage::
     <class 'sage.symbolic.expression.Expression'>
     sage: t1, t2
     (omega + x, omega + x)
-    sage: e=sympy.sin(var("y"))+sage.all.cos(sympy.Symbol("x"))
+    sage: e = sympy.sin(var("y"))+sage.all.cos(sympy.Symbol("x"))
     sage: type(e)
     <class 'sympy.core.add.Add'>
     sage: e
@@ -172,23 +173,24 @@ Mixing SymPy with Sage::
 
 ::
 
-    sage: a = sympy.Matrix([1, 2, 3])
-    sage: a[1]
+    sage: a = sympy.Matrix([1, 2, 3])                                                   # needs sympy
+    sage: a[1]                                                                          # needs sympy
     2
 
 ::
 
-    sage: sympify(1.5)
+    sage: sympify(1.5)                                                                  # needs sympy
     1.50000000000000
-    sage: sympify(2)
+    sage: sympify(2)                                                                    # needs sympy
     2
-    sage: sympify(-2)
+    sage: sympify(-2)                                                                   # needs sympy
     -2
 
 TESTS:
 
 This was fixed in Sympy, see :trac:`14437`::
 
+    sage: # needs sympy
     sage: from sympy import Function, Symbol, rsolve
     sage: u = Function('u')
     sage: n = Symbol('n', integer=True)

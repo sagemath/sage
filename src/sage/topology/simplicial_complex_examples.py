@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs
 """
 Examples of simplicial complexes
 
@@ -54,22 +54,23 @@ You can also get a list by typing ``simplicial_complexes.`` and hitting the
 EXAMPLES::
 
     sage: S = simplicial_complexes.Sphere(2) # the 2-sphere
-    sage: S.homology()
+    sage: S.homology()                                                                  # needs sage.modules
     {0: 0, 1: 0, 2: Z}
     sage: simplicial_complexes.SurfaceOfGenus(3)
     Triangulation of an orientable surface of genus 3
     sage: M4 = simplicial_complexes.MooreSpace(4)
-    sage: M4.homology()
+    sage: M4.homology()                                                                 # needs sage.modules
     {0: 0, 1: C4, 2: 0}
-    sage: simplicial_complexes.MatchingComplex(6).homology()
+    sage: simplicial_complexes.MatchingComplex(6).homology()                            # needs sage.modules
     {0: 0, 1: Z^16, 2: 0}
 
 TESTS::
 
     sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
-    sage: H = PseudoQuaternionicProjectivePlane()
+    sage: H = PseudoQuaternionicProjectivePlane()                                       # needs sage.groups
     doctest:warning...:
-    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated. Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
+    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated.
+    Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
     See https://github.com/sagemath/sage/issues/34568 for details.
 """
 
@@ -306,7 +307,7 @@ def Sphere(n):
 
         sage: simplicial_complexes.Sphere(2)
         Minimal triangulation of the 2-sphere
-        sage: simplicial_complexes.Sphere(5).homology()
+        sage: simplicial_complexes.Sphere(5).homology()                                 # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: Z}
         sage: [simplicial_complexes.Sphere(n).euler_characteristic() for n in range(6)]
         [2, 0, 2, 0, 2, 0]
@@ -359,7 +360,8 @@ def Torus():
 
     EXAMPLES::
 
-        sage: T = simplicial_complexes.Torus(); T.homology(1)
+        sage: T = simplicial_complexes.Torus()
+        sage: T.homology(1)                                                             # needs sage.modules
         Z x Z
         sage: T.f_vector()
         [1, 7, 21, 14]
@@ -390,6 +392,8 @@ def RealProjectivePlane():
         sage: Q = simplicial_complexes.ProjectivePlane()
         sage: P == Q
         True
+
+        sage: # needs sage.modules
         sage: P.cohomology(1)
         0
         sage: P.cohomology(2)
@@ -500,9 +504,9 @@ def MooreSpace(q):
 
         sage: simplicial_complexes.MooreSpace(2)
         Minimal triangulation of the real projective plane
-        sage: simplicial_complexes.MooreSpace(3).homology()[1]
+        sage: simplicial_complexes.MooreSpace(3).homology()[1]                          # needs sage.modules
         C3
-        sage: simplicial_complexes.MooreSpace(4).suspension().homology()[2]
+        sage: simplicial_complexes.MooreSpace(4).suspension().homology()[2]             # needs sage.modules
         C4
         sage: simplicial_complexes.MooreSpace(8)
         Triangulation of the mod 8 Moore space
@@ -541,9 +545,9 @@ def ComplexProjectivePlane():
         sage: C = simplicial_complexes.ComplexProjectivePlane()
         sage: C.f_vector()
         [1, 9, 36, 84, 90, 36]
-        sage: C.homology(2)
+        sage: C.homology(2)                                                             # needs sage.modules
         Z
-        sage: C.homology(4)
+        sage: C.homology(4)                                                             # needs sage.modules
         Z
     """
     return UniqueSimplicialComplex(
@@ -581,14 +585,14 @@ def QuaternionicProjectivePlane():
 
     EXAMPLES::
 
-        sage: HP2 = simplicial_complexes.QuaternionicProjectivePlane(); HP2             # optional - sage.groups
+        sage: HP2 = simplicial_complexes.QuaternionicProjectivePlane(); HP2             # needs sage.groups
         Simplicial complex with 15 vertices and 490 facets
-        sage: HP2.f_vector()                                                            # optional - sage.groups
+        sage: HP2.f_vector()                                                            # needs sage.groups
         [1, 15, 105, 455, 1365, 3003, 4515, 4230, 2205, 490]
 
     Checking its automorphism group::
 
-        sage: HP2.automorphism_group().is_isomorphic(AlternatingGroup(5))               # optional - sage.groups
+        sage: HP2.automorphism_group().is_isomorphic(AlternatingGroup(5))               # needs sage.groups
         True
     """
     from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -632,9 +636,9 @@ def PoincareHomologyThreeSphere():
 
         sage: S3 = simplicial_complexes.Sphere(3)
         sage: Sigma3 = simplicial_complexes.PoincareHomologyThreeSphere()
-        sage: S3.homology() == Sigma3.homology()
+        sage: S3.homology() == Sigma3.homology()                                        # needs sage.modules
         True
-        sage: Sigma3.fundamental_group().cardinality() # long time
+        sage: Sigma3.fundamental_group().cardinality()  # long time                     # needs sage.groups
         120
     """
     return UniqueSimplicialComplex(
@@ -734,7 +738,7 @@ def RealProjectiveSpace(n):
         sage: P3 = simplicial_complexes.RealProjectiveSpace(3)
         sage: P3.f_vector()
         [1, 11, 51, 80, 40]
-        sage: P3.homology()
+        sage: P3.homology()                                                             # needs sage.modules
         {0: 0, 1: C2, 2: 0, 3: Z}
         sage: P4 = simplicial_complexes.RealProjectiveSpace(4)
         sage: P4.f_vector()
@@ -1002,7 +1006,7 @@ def BarnetteSphere():
         ....:                          [3, 4, 5, 8], [4, 5, 6, 8], [1, 2, 6, 8],
         ....:                          [1, 5, 6, 8], [1, 3, 5, 8], [2, 4, 6, 8],
         ....:                          [1, 3, 5, 7]])
-        sage: BS.is_isomorphic(BS2)                                                     # optional - sage.graphs
+        sage: BS.is_isomorphic(BS2)
         True
     """
     return UniqueSimplicialComplex([(1, 2, 4, 5), (2, 3, 5, 6), (1, 3, 4, 6),
@@ -1075,9 +1079,10 @@ def NotIConnectedGraphs(n, i):
 
     EXAMPLES::
 
-        sage: simplicial_complexes.NotIConnectedGraphs(5, 2).f_vector()
+        sage: NICG52 = simplicial_complexes.NotIConnectedGraphs(5, 2)
+        sage: NICG52.f_vector()
         [1, 10, 45, 120, 210, 240, 140, 20]
-        sage: simplicial_complexes.NotIConnectedGraphs(5, 2).homology(5).ngens()
+        sage: NICG52.homology(5).ngens()                                                # needs sage.modules
         6
     """
     G_list = range(1, n+1)
@@ -1130,11 +1135,12 @@ def MatchingComplex(n):
     EXAMPLES::
 
         sage: M = simplicial_complexes.MatchingComplex(7)
-        sage: H = M.homology(); H
+        sage: H = M.homology(); H                                                       # needs sage.modules
         {0: 0, 1: C3, 2: Z^20}
-        sage: H[2].ngens()
+        sage: H[2].ngens()                                                              # needs sage.modules
         20
-        sage: simplicial_complexes.MatchingComplex(8).homology(2)  # long time (6s on sage.math, 2012)
+        sage: M8 = simplicial_complexes.MatchingComplex(8)
+        sage: M8.homology(2)                    # long time (6s on sage.math, 2012), needs sage.modules
         Z^132
     """
     G_vertices = Set(range(1, n+1))
@@ -1206,7 +1212,7 @@ def ChessboardComplex(n, i):
         sage: C = simplicial_complexes.ChessboardComplex(5, 5)
         sage: C.f_vector()
         [1, 25, 200, 600, 600, 120]
-        sage: simplicial_complexes.ChessboardComplex(3, 3).homology()
+        sage: simplicial_complexes.ChessboardComplex(3, 3).homology()                   # needs sage.modules
         {0: 0, 1: Z x Z x Z x Z, 2: 0}
     """
     A = range(n)
@@ -1310,58 +1316,58 @@ def SumComplex(n, A):
 
         sage: S = simplicial_complexes.SumComplex(10, [0, 1, 2, 3, 6]); S
         Sum complex on vertices Z/10Z associated to {0, 1, 2, 3, 6}
-        sage: S.homology()
+        sage: S.homology()                                                              # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: C2728, 4: 0}
         sage: factor(2728)
         2^3 * 11 * 31
 
         sage: S = simplicial_complexes.SumComplex(11, [0, 1, 3]); S
         Sum complex on vertices Z/11Z associated to {0, 1, 3}
-        sage: S.homology(1)
+        sage: S.homology(1)                                                             # needs sage.modules
         C23
         sage: S = simplicial_complexes.SumComplex(11, [0, 1, 2, 3, 4, 7]); S
         Sum complex on vertices Z/11Z associated to {0, 1, 2, 3, 4, 7}
-        sage: S.homology() # long time
+        sage: S.homology()                      # long time                             # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0, 4: C645679, 5: 0}
         sage: factor(645679)
         23 * 67 * 419
 
         sage: S = simplicial_complexes.SumComplex(13, [0, 1, 3]); S
         Sum complex on vertices Z/13Z associated to {0, 1, 3}
-        sage: S.homology(1)
+        sage: S.homology(1)                                                             # needs sage.modules
         C159
         sage: factor(159)
         3 * 53
         sage: S = simplicial_complexes.SumComplex(13, [0, 1, 2, 5]); S
         Sum complex on vertices Z/13Z associated to {0, 1, 2, 5}
-        sage: S.homology() # long time
+        sage: S.homology()                      # long time                             # needs sage.modules
         {0: 0, 1: 0, 2: C146989209, 3: 0}
         sage: factor(1648910295)
         3^2 * 5 * 53 * 521 * 1327
         sage: S = simplicial_complexes.SumComplex(13, [0, 1, 2, 3, 5]); S
         Sum complex on vertices Z/13Z associated to {0, 1, 2, 3, 5}
-        sage: S.homology() # long time
+        sage: S.homology()                      # long time                             # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: C3 x C237 x C706565607945, 4: 0}
-        sage: factor(706565607945)
+        sage: factor(706565607945)                                                      # needs sage.libs.pari
         3 * 5 * 53 * 79 * 131 * 157 * 547
 
         sage: S = simplicial_complexes.SumComplex(17, [0, 1, 4]); S
         Sum complex on vertices Z/17Z associated to {0, 1, 4}
-        sage: S.homology(1)
+        sage: S.homology(1)                                                             # needs sage.modules
         C140183
         sage: factor(140183)
         103 * 1361
         sage: S = simplicial_complexes.SumComplex(19, [0, 1, 4]); S
         Sum complex on vertices Z/19Z associated to {0, 1, 4}
-        sage: S.homology(1)
+        sage: S.homology(1)                                                             # needs sage.modules
         C5670599
         sage: factor(5670599)
         11 * 191 * 2699
         sage: S = simplicial_complexes.SumComplex(31, [0, 1, 4]); S
         Sum complex on vertices Z/31Z associated to {0, 1, 4}
-        sage: S.homology(1) # long time
+        sage: S.homology(1)                     # long time                             # needs sage.modules
         C5 x C5 x C5 x C5 x C26951480558170926865
-        sage: factor(26951480558170926865)
+        sage: factor(26951480558170926865)                                              # needs sage.libs.pari
         5 * 311 * 683 * 1117 * 11657 * 1948909
     """
     from sage.rings.finite_rings.integer_mod_ring import Integers
@@ -1417,15 +1423,16 @@ def RandomTwoSphere(n):
 
     EXAMPLES::
 
-        sage: G = simplicial_complexes.RandomTwoSphere(6); G                            # optional - sage.graphs
+        sage:
+        sage: G = simplicial_complexes.RandomTwoSphere(6); G
         Simplicial complex with vertex set (0, 1, 2, 3, 4, 5) and 8 facets
-        sage: G.homology()                                                              # optional - sage.graphs
+        sage: G.homology()                                                              # needs sage.modules
         {0: 0, 1: 0, 2: Z}
-        sage: G.is_pure()                                                               # optional - sage.graphs
+        sage: G.is_pure()
         True
-        sage: fg = G.flip_graph(); fg                                                   # optional - sage.graphs
+        sage: fg = G.flip_graph(); fg
         Graph on 8 vertices
-        sage: fg.is_planar() and fg.is_regular(3)                                       # optional - sage.graphs
+        sage: fg.is_planar() and fg.is_regular(3)
         True
     """
     from sage.graphs.generators.random import RandomTriangulation
@@ -1465,14 +1472,15 @@ def ShiftedComplex(generators):
 
     EXAMPLES::
 
-        sage: X = simplicial_complexes.ShiftedComplex([Simplex([1, 6]), (2, 4), [8]])   # optional - sage.combinat
-        sage: sorted(X.facets())                                                        # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: X = simplicial_complexes.ShiftedComplex([Simplex([1, 6]), (2, 4), [8]])
+        sage: sorted(X.facets())
         [(1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (2, 3), (2, 4), (7,), (8,)]
-        sage: X = simplicial_complexes.ShiftedComplex([[2, 3, 5]])                      # optional - sage.combinat
-        sage: sorted(X.facets())                                                        # optional - sage.combinat
+        sage: X = simplicial_complexes.ShiftedComplex([[2, 3, 5]])
+        sage: sorted(X.facets())
         [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (2, 3, 4), (2, 3, 5)]
-        sage: X = simplicial_complexes.ShiftedComplex([[1, 3, 5], [2, 6]])              # optional - sage.combinat
-        sage: sorted(X.facets())                                                        # optional - sage.combinat
+        sage: X = simplicial_complexes.ShiftedComplex([[1, 3, 5], [2, 6]])
+        sage: sorted(X.facets())
         [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (1, 6), (2, 6)]
     """
     from sage.combinat.partition import Partitions
@@ -1500,9 +1508,9 @@ def RudinBall():
         Rudin ball
         sage: R.f_vector()
         [1, 14, 66, 94, 41]
-        sage: R.homology()
+        sage: R.homology()                                                              # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0}
-        sage: R.is_cohen_macaulay()
+        sage: R.is_cohen_macaulay()                                                     # needs sage.modules
         True
     """
     return UniqueSimplicialComplex(
@@ -1533,9 +1541,9 @@ def ZieglerBall():
         Ziegler ball
         sage: Z.f_vector()
         [1, 10, 38, 50, 21]
-        sage: Z.homology()
+        sage: Z.homology()                                                              # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0}
-        sage: Z.is_cohen_macaulay()
+        sage: Z.is_cohen_macaulay()                                                     # needs sage.modules
         True
     """
 
@@ -1561,9 +1569,9 @@ def DunceHat():
         Minimal triangulation of the dunce hat
         sage: D.f_vector()
         [1, 8, 24, 17]
-        sage: D.homology()
+        sage: D.homology()                                                              # needs sage.modules
         {0: 0, 1: 0, 2: 0}
-        sage: D.is_cohen_macaulay()
+        sage: D.is_cohen_macaulay()                                                     # needs sage.modules
         True
     """
     return UniqueSimplicialComplex(
@@ -1595,14 +1603,14 @@ def FareyMap(p):
 
     EXAMPLES::
 
-        sage: S5 = simplicial_complexes.FareyMap(5); S5                                 # optional - sage.groups
+        sage: S5 = simplicial_complexes.FareyMap(5); S5                                 # needs sage.groups
         Simplicial complex with 12 vertices and 20 facets
-        sage: S5.automorphism_group().cardinality()                                     # optional - sage.groups
+        sage: S5.automorphism_group().cardinality()                                     # needs sage.groups
         120
 
-        sage: S7 = simplicial_complexes.FareyMap(7); S7                                 # optional - sage.groups
+        sage: S7 = simplicial_complexes.FareyMap(7); S7                                 # needs sage.groups
         Simplicial complex with 24 vertices and 56 facets
-        sage: S7.f_vector()                                                             # optional - sage.groups
+        sage: S7.f_vector()                                                             # needs sage.groups
         [1, 24, 84, 56]
 
     REFERENCES:
@@ -1660,9 +1668,9 @@ def GenusSix():
     EXAMPLES::
 
         sage: S = simplicial_complexes.GenusSix()
-        sage: S.automorphism_group().cardinality()                                      # optional - sage.groups
+        sage: S.automorphism_group().cardinality()                                      # needs sage.groups
         12
-        sage: S.betti()
+        sage: S.betti()                                                                 # needs sage.modules
         {0: 1, 1: 12, 2: 1}
         sage: S.f_vector()
         [1, 12, 66, 44]

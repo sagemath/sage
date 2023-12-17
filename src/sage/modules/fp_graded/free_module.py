@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Finitely generated free graded left modules over connected graded algebras
 

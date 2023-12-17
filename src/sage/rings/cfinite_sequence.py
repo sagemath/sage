@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 C-Finite Sequences
 
@@ -155,7 +155,7 @@ def CFiniteSequences(base_ring, names=None, category=None):
         raise NotImplementedError("Multidimensional o.g.f. not implemented.")
     if category is None:
         category = Fields()
-    if not(base_ring in (QQ, ZZ)):
+    if not (base_ring in (QQ, ZZ)):
         raise ValueError("O.g.f. base not rational.")
     polynomial_ring = PolynomialRing(base_ring, names)
     return CFiniteSequences_generic(polynomial_ring, category)
@@ -301,7 +301,7 @@ class CFiniteSequence(FieldElement,
         """
 
         br = ogf.base_ring()
-        if not(br in (QQ, ZZ)):
+        if not (br in (QQ, ZZ)):
             br = QQ  # if the base ring of the o.g.f is not QQ, we force it to QQ and see if the o.g.f converts nicely
 
         # trying to figure out the ogf variables
@@ -391,7 +391,6 @@ class CFiniteSequence(FieldElement,
             rem = num % den
             if den != 1:
                 self._a = R(num / den).list()
-                self._aa = (rem.valuation() * [0] + R(rem / den).list())[:self._deg]  # needed for _get_item_
             else:
                 self._a = num.list()
             if len(self._a) < alen:
@@ -645,33 +644,41 @@ class CFiniteSequence(FieldElement,
             [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]
             sage: s = C(x^3 * (1 - x)^-2); s[0:10]
             [0, 0, 0, 1, 2, 3, 4, 5, 6, 7]
+            sage: s = C(1/(1-x^1000)); s[10^18]
+            1
+            sage: s = C(1/(1-x^1000)); s[10^20]
+            1
+
+        REFERENCES:
+
+        - [BM2021]_
         """
         if isinstance(key, slice):
             m = max(key.start, key.stop)
             return [self[ii] for ii in range(*key.indices(m + 1))]
         elif isinstance(key, Integral):
-            from sage.matrix.constructor import Matrix
-            d = self._deg
-            if (self._off <= key and key < self._off + len(self._a)):
-                return self._a[key - self._off]
-            elif d == 0:
+            n = key - self._off
+            if n < 0:
                 return 0
-            (quo, rem) = self.numerator().quo_rem(self.denominator())
-            wp = quo[key - self._off]
-            if key < self._off:
-                return wp
-            A = Matrix(QQ, 1, d, self._c)
-            B = Matrix.identity(QQ, d - 1)
-            C = Matrix(QQ, d - 1, 1, 0)
-            if quo == 0:
-                off = self._off
-                V = Matrix(QQ, d, 1, self._a[:d][::-1])
+            den = self.denominator()
+            num = self.numerator()
+            if self._off >= 0:
+                num = num.shift(-self._off)
             else:
-                off = 0
-                V = Matrix(QQ, d, 1, self._aa[:d][::-1])
-            M = Matrix.block([[A], [B, C]], subdivide=False)
-
-            return wp + list(M ** (key - off) * V)[d - 1][0]
+                den = den.shift(self._off)
+            (quo, num) = num.quo_rem(den)
+            if quo.degree() < n:
+                wp = 0
+            else:
+                wp = quo[n]
+            P = self.parent().polynomial_ring()
+            x = P.gen()
+            while n:
+                nden = den(-x)
+                num = P((num * nden).list()[n % 2::2])
+                den = P((den * nden).list()[::2])
+                n //= 2
+            return wp + num[0] / den[0]
         else:
             raise TypeError("invalid argument type")
 
@@ -1265,10 +1272,11 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 r"""
 .. TODO::
 
-    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6)) # not implemented
-    sage: latex(r)        # not implemented
+    sage: # not implemented
+    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6))
+    sage: latex(r)
     \big\{a_{n\ge0}\big|a_{n+2}=\sum_{i=0}^{1}c_ia_{n+i}, c=\{1,1\}, a_{n<2}=\{0,0,0,1\}\big\}
-    sage: r.egf()      # not implemented
+    sage: r.egf()
     exp(2*x)
-    sage: r = CFiniteSequence(1/(1-y-x*y), x) # not implemented
+    sage: r = CFiniteSequence(1/(1-y-x*y), x)
 """

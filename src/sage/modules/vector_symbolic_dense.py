@@ -54,7 +54,7 @@ Test pickling/unpickling::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from . import free_module_element
+from sage.modules import free_module_element
 from sage.symbolic.expression import Expression
 
 
@@ -107,6 +107,7 @@ def apply_map(phi):
 
 class Vector_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):
     pass
+
 
 # Add elementwise methods.
 for method in ['simplify', 'simplify_factorial',

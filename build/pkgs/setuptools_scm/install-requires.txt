@@ -1,1 +1,2 @@
-setuptools_scm >=4.1.2
+# matplotlib-3.6.2 needs >= 7
+setuptools_scm >=7

@@ -259,7 +259,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         inv = self.invariants()
         if not inv:
             inv = (1,)
-        terms=[]
+        terms = []
         for i in range(len(inv)):
             if inv[i] == 0:
                 terms.append('\\ZZ')
@@ -284,7 +284,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
         invs = [j.additive_order() for j in self.gens()]
         if not invs:
             return "Trivial group"
-        return " + ".join("Z" if j == +oo else "Z/%s"%j for j in invs)
+        return " + ".join("Z" if j == +oo else "Z/%s" % j for j in invs)
 
     def _module_constructor(self, cover, relations, check=True):
         r"""
@@ -450,7 +450,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
         EXAMPLES::
 
             sage: G = AdditiveAbelianGroup([2, 3])
-            sage: G.permutation_group()
+            sage: G.permutation_group()                                                 # needs sage.groups
             Permutation Group with generators [(3,4,5), (1,2)]
 
         TESTS:
@@ -467,5 +467,5 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
         if not self.is_finite():
             raise TypeError('Additive Abelian group must be finite')
         from sage.groups.perm_gps.permgroup import PermutationGroup
-        s = 'Image(IsomorphismPermGroup(AbelianGroup(%s)))'%(list(self.invariants()),)
+        s = 'Image(IsomorphismPermGroup(AbelianGroup(%s)))' % (list(self.invariants()),)
         return PermutationGroup(gap_group=s)

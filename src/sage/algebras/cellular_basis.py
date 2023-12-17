@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Cellular Basis
 ==============
@@ -135,21 +136,21 @@ class CellularBasis(CombinatorialFreeModule):
         sage: len(S.basis())
         6
         sage: a,b,c,d,e,f = C.basis()
-        sage: a
+        sage: f
         C([3], [[1, 2, 3]], [[1, 2, 3]])
         sage: c
         C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
         sage: d
         C([2, 1], [[1, 2], [3]], [[1, 3], [2]])
-        sage: a * a
+        sage: f * f
         C([3], [[1, 2, 3]], [[1, 2, 3]])
-        sage: a * c
+        sage: f * c
         0
         sage: d * c
         C([2, 1], [[1, 2], [3]], [[1, 2], [3]])
         sage: c * d
         C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
-        sage: S(a)
+        sage: S(f)
         1/6*[1, 2, 3] + 1/6*[1, 3, 2] + 1/6*[2, 1, 3] + 1/6*[2, 3, 1]
          + 1/6*[3, 1, 2] + 1/6*[3, 2, 1]
         sage: S(d)
@@ -233,7 +234,7 @@ class CellularBasis(CombinatorialFreeModule):
         sm = latex(m)
         if sm.find('\\text{\\textt') != -1:
             sm = str(m)
-        return "C^{%s}_{%s}"%(sla, sm)
+        return "C^{%s}_{%s}" % (sla, sm)
 
     def cellular_basis_of(self):
         """

@@ -125,10 +125,9 @@ and whose values are the roots, you may use the inverse family::
     The behaviour of this function was changed in :trac:`20027`.
 
 The Weyl group is implemented as a GAP matrix group. You therefore can
-display its character table. The character table is returned as a
-string, which you can print::
+display its character table as follows::
 
-    sage: print(WeylGroup("D4").character_table())
+    sage: WeylGroup("D4").character_table()
     CT1
     <BLANKLINE>
           2  6  4  5  1  3  5  5  4  3  3  1  4  6

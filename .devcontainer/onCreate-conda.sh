@@ -4,7 +4,7 @@ set -e
 # Create conda environment
 ./bootstrap-conda
 conda install mamba -n base -c conda-forge -y
-mamba env create --file src/environment-dev.yml || mamba env update --file src/environment-dev.yml
+mamba env create --file src/environment-dev-3.11.yml || mamba env update --file src/environment-dev-3.11.yml
 conda init bash
 
 # Build sage

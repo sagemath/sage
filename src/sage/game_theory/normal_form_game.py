@@ -1577,8 +1577,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(0, 0, 1, 0), (0, 0, 1)]]
 
-        Running the constant-sum solver on a game which isn't a constant sum game
-        generates a ``ValueError``::
+        Running the constant-sum solver on a game which is not a constant sum
+        game generates a :class:`ValueError`::
 
             sage: cg = NormalFormGame([A, A])
             sage: cg.obtain_nash(algorithm='lp', solver='glpk')

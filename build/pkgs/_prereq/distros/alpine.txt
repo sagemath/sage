@@ -1,0 +1,11 @@
+binutils
+make
+m4
+perl
+python3
+tar
+bc
+gcc
+g++
+ca-certificates
+coreutils

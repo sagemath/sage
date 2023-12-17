@@ -288,6 +288,8 @@ Sage example in ./linalg.tex, line 1841::
 Sage example in ./linalg.tex, line 1855::
 
   sage: A.solve_right(b) == A\b
+  doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+  See https://github.com/sagemath/sage/issues/36394 for details.
   True
 
 Sage example in ./linalg.tex, line 1910::

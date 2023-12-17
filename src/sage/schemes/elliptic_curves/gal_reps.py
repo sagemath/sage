@@ -115,17 +115,19 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ######################################################################
 
+from math import sqrt
+
 from sage.structure.sage_object import SageObject
 import sage.arith.all as arith
 from sage.rings.fast_arith import prime_range
-import sage.misc.all as misc
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod as mul
 from sage.misc.verbose import verbose
-import sage.rings.all as rings
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.real_mpfr import RealField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
-from math import sqrt
-from sage.libs.pari.all import pari
+lazy_import('sage.libs.pari.all', 'pari')
 
 
 def _ex_set(p):
@@ -467,7 +469,7 @@ class GaloisRepresentation(SageObject):
             self.__image_type[p] = "The image is meta-cyclic inside a Borel subgroup as there is a %s-torsion point on the curve." % p
             return False
 
-        R = rings.PolynomialRing(self._E.base_ring(), 'x')
+        R = PolynomialRing(self._E.base_ring(), 'x')
         x = R.gen()
 
         if p == 2:
@@ -676,12 +678,12 @@ class GaloisRepresentation(SageObject):
             C2 = (sqrt(p0)+1)**8
             C = max(C1,C2)
             verbose("j is not integral -- Serre's bound is %s" % C)
-            C3 = 1 + 4*sqrt(6)*int(N)/3 * sqrt(misc.mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
+            C3 = 1 + 4*sqrt(6)*int(N)/3 * sqrt(mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
             C = min(C,C3)
             verbose("conductor = %s, and bound is %s" % (N,C))
         else:
             # Cojocaru's bound (depends on the conductor)
-            C = 1 + 4*sqrt(6)*int(N)/3 * sqrt(misc.mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
+            C = 1 + 4*sqrt(6)*int(N)/3 * sqrt(mul([1+1.0/int(p) for p,_ in arith.factor(N)]))
             verbose("conductor = %s, and bound is %s" % (N,C))
         B = []
         p = 2

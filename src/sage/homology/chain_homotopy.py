@@ -506,20 +506,21 @@ class ChainContraction(ChainHomotopy):
 
         EXAMPLES::
 
-            sage: S2 = simplicial_complexes.Sphere(2)                                   # optional - sage.graphs
-            sage: phi, M = S2.algebraic_topological_model(QQ)                           # optional - sage.graphs
-            sage: phi.pi()                                                              # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S2 = simplicial_complexes.Sphere(2)
+            sage: phi, M = S2.algebraic_topological_model(QQ)
+            sage: phi.pi()
             Chain complex morphism:
               From: Chain complex with at most 3 nonzero terms over Rational Field
               To: Chain complex with at most 3 nonzero terms over Rational Field
-            sage: phi.pi().in_degree(0)  # Every vertex represents a homology class.    # optional - sage.graphs
+            sage: phi.pi().in_degree(0)  # Every vertex represents a homology class.
             [1 1 1 1]
-            sage: phi.pi().in_degree(1)  # No homology in degree 1.                     # optional - sage.graphs
+            sage: phi.pi().in_degree(1)  # No homology in degree 1.
             []
 
         The degree 2 homology generator is detected on a single simplex::
 
-            sage: phi.pi().in_degree(2)                                                 # optional - sage.graphs
+            sage: phi.pi().in_degree(2)                                                 # needs sage.graphs
             [0 0 0 1]
         """
         return self._pi
@@ -530,16 +531,16 @@ class ChainContraction(ChainHomotopy):
 
         EXAMPLES::
 
-            sage: S2 = simplicial_complexes.Sphere(2)                                   # optional - sage.graphs
-            sage: phi, M = S2.algebraic_topological_model(QQ)                           # optional - sage.graphs
-            sage: phi.iota()                                                            # optional - sage.graphs
+            sage: S2 = simplicial_complexes.Sphere(2)                                   # needs sage.graphs
+            sage: phi, M = S2.algebraic_topological_model(QQ)                           # needs sage.graphs
+            sage: phi.iota()                                                            # needs sage.graphs
             Chain complex morphism:
               From: Chain complex with at most 3 nonzero terms over Rational Field
               To: Chain complex with at most 3 nonzero terms over Rational Field
 
         Lifting the degree zero homology class gives a single vertex::
 
-            sage: phi.iota().in_degree(0)                                               # optional - sage.graphs
+            sage: phi.iota().in_degree(0)                                               # needs sage.graphs
             [0]
             [0]
             [0]
@@ -548,7 +549,7 @@ class ChainContraction(ChainHomotopy):
         Lifting the degree two homology class gives the signed sum of
         all of the 2-simplices::
 
-            sage: phi.iota().in_degree(2)                                               # optional - sage.graphs
+            sage: phi.iota().in_degree(2)                                               # needs sage.graphs
             [-1]
             [ 1]
             [-1]
@@ -564,9 +565,9 @@ class ChainContraction(ChainHomotopy):
 
         EXAMPLES::
 
-            sage: S2 = simplicial_complexes.Sphere(2)                                   # optional - sage.graphs
-            sage: phi, M = S2.algebraic_topological_model(QQ)                           # optional - sage.graphs
-            sage: phi.iota()                                                            # optional - sage.graphs
+            sage: S2 = simplicial_complexes.Sphere(2)                                   # needs sage.graphs
+            sage: phi, M = S2.algebraic_topological_model(QQ)                           # needs sage.graphs
+            sage: phi.iota()                                                            # needs sage.graphs
             Chain complex morphism:
               From: Chain complex with at most 3 nonzero terms over Rational Field
               To: Chain complex with at most 3 nonzero terms over Rational Field
@@ -575,22 +576,23 @@ class ChainContraction(ChainHomotopy):
         but the degree zero cohomology class needs to be detected on
         every vertex, and vice versa for degree 2::
 
-            sage: phi.iota().in_degree(0)                                               # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: phi.iota().in_degree(0)
             [0]
             [0]
             [0]
             [1]
-            sage: phi.dual().iota().in_degree(0)                                        # optional - sage.graphs
+            sage: phi.dual().iota().in_degree(0)
             [1]
             [1]
             [1]
             [1]
-            sage: phi.iota().in_degree(2)                                               # optional - sage.graphs
+            sage: phi.iota().in_degree(2)
             [-1]
             [ 1]
             [-1]
             [ 1]
-            sage: phi.dual().iota().in_degree(2)                                        # optional - sage.graphs
+            sage: phi.dual().iota().in_degree(2)
             [0]
             [0]
             [0]

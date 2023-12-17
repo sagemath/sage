@@ -277,7 +277,7 @@ lazy_import('sage.combinat.finite_state_machine_generators',
 lazy_import('sage.combinat.binary_recurrence_sequences',
             'BinaryRecurrenceSequence')
 lazy_import('sage.combinat.recognizable_series', 'RecognizableSeriesSpace')
-lazy_import('sage.combinat.k_regular_sequence', 'kRegularSequenceSpace')
+lazy_import('sage.combinat.regular_sequence', 'RegularSequenceRing')
 
 # Six Vertex Model
 lazy_import('sage.combinat.six_vertex_model', 'SixVertexModel')

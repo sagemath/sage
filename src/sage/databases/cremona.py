@@ -120,7 +120,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
         raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')
     if not os.path.exists(data_tgz):
-        raise IOError("The data file is not at %s"%data_tgz)
+        raise IOError("The data file is not at %s" % data_tgz)
     t = walltime()
 
     if decompress:
@@ -217,7 +217,7 @@ def cremona_letter_code(n):
         Traceback (most recent call last):
         ...
         ValueError: Cremona letter codes are only defined for non-negative integers
-        sage: cremona_letter_code(x)
+        sage: cremona_letter_code(x)                                                    # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: Cremona letter codes are only defined for non-negative integers
@@ -246,7 +246,7 @@ def cremona_letter_code(n):
         return "a"
     s = ""
     while n != 0:
-        s = chr(n%26+97) + s
+        s = chr(n % 26+97) + s
         n //= 26
     return s
 
@@ -287,7 +287,7 @@ def old_cremona_letter_code(n):
         'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC'
     """
     n -= 1
-    k = n%26 + 65
+    k = n % 26 + 65
     label = chr(k)*int(n//26 + 1)
     return label
 
@@ -678,7 +678,7 @@ class MiniCremonaDatabase(SQLDatabase):
             return
         SQLDatabase.__init__(self, db_path, read_only=read_only)
         if self.get_skeleton() != self._expected_skeleton:
-            raise RuntimeError('Database at %s does '%(self.__dblocation__)
+            raise RuntimeError('Database at %s does ' % (self.__dblocation__)
               + 'not appear to be a valid SQL Cremona database.')
 
     def __iter__(self):
@@ -1623,7 +1623,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             curve_data = []
             class_data = []
             for L in open(ftpdata + "/" + F).readlines():
-                N, iso, num, eqn, rank, tor, cp, om, L, reg, sha  = L.split()
+                N, iso, num, eqn, rank, tor, cp, om, L, reg, sha = L.split()
                 if largest_conductor and int(N) > largest_conductor:
                     break
                 cls = N+iso
