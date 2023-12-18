@@ -707,7 +707,7 @@ class Link(SageObject):
             Return the index of an edge in a crossing taking loops into account.
             A loop appears as an edge which occurs twice in the crossing.
             In all cases the second occurrence is the correct one needed in
-            the Vogel algorithm (see `PR 36884 <https://github.com/sagemath/sage/pull/36884>`__).
+            the Vogel algorithm (see :issue:`36884`).
             """
             i = cross.index(edge)
             if cross.count(edge) > 1:
@@ -2422,18 +2422,21 @@ class Link(SageObject):
           Link with 1 component represented by 0 crossings
         """
         pd = self.pd_code()
-        new_pd = [list(cr) for cr in pd if len(set(cr)) == 4]
+        new_pd = []
+        loop_crossings = []
+        for cr in pd:
+            if len(set(cr)) == 4:
+                new_pd.append(list(cr))
+            else:
+                loop_crossings.append(cr)
         if not new_pd:
             # trivial knot
             return type(self)([])
-        elif pd == new_pd:
-            # no loops detected
+        elif not loop_crossings:
             return self
-        from sage.sets.set import Set
-        new_edges = Set(flatten(new_pd))
-        for cr in Set(pd).difference(Set(new_pd)):
-            # cr is a loop crossing
-            rem = list(Set(cr).intersection(new_edges))
+        new_edges = flatten(new_pd)
+        for cr in loop_crossings:
+            rem = set([e for e in cr if e in new_edges])
             if len(rem) == 2:
                 # put remaining edges together
                 a, b = sorted(rem)
