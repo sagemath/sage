@@ -5,7 +5,8 @@ Implementation of flag algebras, with a class for combinatorial theories
 A combinatorial theory is any theory with universal axioms only, 
 (therefore the elements satisfy a heredetary property). This 
 implementation allows the construction of any such theory, and 
-can perform flag algebraic computations on them.
+can perform flag algebraic computations on them. The theory of
+flag algebras is from [Raz2007]_
 
 To find out more about flags, how to create and manipulate them,
 see :mod:`sage.algebras.flag`. This docstring is for combinatorial
@@ -17,7 +18,7 @@ The examples will use ::
 
 To create a `CombinatorialTheory` object we need to first know the signature.
 For example graphs have one relational symbol for the edges, of arity 2.
-We could provide for example edges=2 as a parameter to the constructor, 
+We could provide for example `edges=2` as a parameter to the constructor, 
 showing this fact.
 
 In addition we need two important functions:
@@ -32,8 +33,8 @@ with the following code ::
     ....:    for ii in range(binomial(n, 2)+1):
     ....:        for xx in itertools.combinations(full, int(ii)):
     ....:            yield {'edges': xx}
-    ....: 
     
+
 This function takes `n` integer as input and returns the possible
 ways one can construct such graphs with ordered vertices. Note
 the elements returned are dictionaries. The key is `'edges'` and
@@ -68,7 +69,7 @@ The following common theories are already implemented:
 -PermutationTheory
 -OVGraphTheory (graphs with ordered vertices)
 -OEGraphTheory (graphs with ordered edges)
--RamseyGraphTheory
+-RamseyGraphTheory (see [LiPf2021]_ for explanation)
 
 The rest of this docstring will use `GraphTheory` since the number 
 of structures is realtively small there. `Flag` docstring shows
@@ -78,7 +79,7 @@ To create an edge flag for graphs, use ::
 
     sage: e = GraphTheory(2, edges=[[0, 1]])
 
-To create a `K_3` we can write ::
+To create a triangle `K_3` we can write ::
     
     sage: k3 = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]])
 
@@ -144,7 +145,8 @@ giving that `1/2` is larger than `e` in all large enough structures.
 
 The following longer example shows that the density of K^3_4 is always
 less than 3/8 in K^3_5-free hypergraphs. It uses the ThreeGraphTheory
-object to deal with 3-uniform hypergraphs and hand-picked squares ::
+object to deal with 3-uniform hypergraphs and hand-picked squares.
+These values come from [Bod2023]_::
     
     sage: em5 = ThreeGraphTheory(5, edges=[])
     sage: ThreeGraphTheory.exclude(em5)
@@ -287,7 +289,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             -PermutationTheory
             -OVGraphTheory (graphs with ordered vertices)
             -OEGraphTheory (graphs with ordered edges)
-            -RamseyGraphTheory
+            -RamseyGraphTheory (see [LiPf2021]_ for explanation)
         """
         self._signature = signature
         self._excluded = []
@@ -543,18 +545,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
             sage: from sage.algebras.flag_algebras import *
             sage: GraphTheory.exclude(GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]]))
-            sage: GraphTheory.optimize_problem(GraphTheory(2, edges=[[0, 1]]), 3)
+            sage: x = GraphTheory.optimize_problem(GraphTheory(2, edges=[[0, 1]]), 3)
             ...
             Success: SDP solved
             ...
-        
+            sage: abs(x-0.5)<1e-6
+            True
         
         Generalized Turan problem, for example maximum density of K_3
         in K_5 -free graphs. The complement is calculated, optimizing empty
         E_3 in E_5 -free graphs. They are equivalent
 
             sage: GraphTheory.exclude(GraphTheory(5))
-            sage: GraphTheory.optimize_problem(GraphTheory(3), 5) # long time (5 second)
+            sage: x = GraphTheory.optimize_problem(GraphTheory(3), 5) # long time (5 second)
             ...
             Success: SDP solved
             ...
@@ -572,9 +575,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         
         The minimum number of transitive tournaments is attained at 
-        a random tournament ::
+        a random tournament [CoRa2015]_::
 
-            sage: TournamentTheory.optimize_problem( \
+            sage: x = TournamentTheory.optimize_problem( \
             ....: TournamentTheory(3, edges=[[0, 1], [0, 2], [1, 2]]), \
             ....: 3, maximize=False)
             ...
@@ -583,13 +586,15 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         
         Ramsey's theorem, the K_5 is the largest 2-colorable complete
-        graph without monochromatic K_3 ::
+        graph without monochromatic K_3. (see [LiPf2021]_) ::
 
             sage: RamseyGraphTheory.exclude(RamseyGraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]]))
-            sage: RamseyGraphTheory.optimize_problem(RamseyGraphTheory(2), 4, maximize=False)
+            sage: x = RamseyGraphTheory.optimize_problem(RamseyGraphTheory(2), 4, maximize=False)
             ...
             Success: SDP solved
             ...
+            sage: abs(x-0.2)<1e-6
+            True
         
         .. NOTE::
 

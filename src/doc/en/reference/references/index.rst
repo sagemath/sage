@@ -1056,6 +1056,9 @@ REFERENCES:
              Canadian Mathematical Society Proceedings, 2, Part 1.
              Providence 1982. ISBN 978-0-8218-6003-8.
 
+.. [Bod2023] Levente Bodnár, *Generalized Tur\'an problem for Complete 
+             Hypergraphs*, Preprint, :arxiv:`2302.07571`, (2023)
+
 .. [Bond2007] P. Bonderson, Nonabelian anyons and interferometry,
               Dissertation (2007). https://thesis.library.caltech.edu/2447/
 
@@ -1610,6 +1613,10 @@ REFERENCES:
 
 .. [Conr] Keith Conrad, "Artin-Hasse-Type Series and Roots of Unity",
           http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf
+
+.. [CoRa2015] Leonardo Nagami Coregliano, Alexander A. Razborov, *On the 
+              Density of Transitive Tournaments*, Preprint, 
+              :arxiv:`1501.04074` (2015)
 
 .. [Coron2023] Basile Coron *Supersolvability of built lattices and Koszulness
                of generalized Chow rings*. Preprint, :arxiv:`2302.13072` (2023).
@@ -4379,6 +4386,11 @@ REFERENCES:
 .. [Lin1999] \J. van Lint, Introduction to coding theory, 3rd ed.,
              Springer-Verlag GTM, 86, 1999.
 
+.. [LiPf2021] Bernard Lidický, Florian Pfender, *Semidefinite 
+              Programming and Ramsey Numbers*, SIAM Journal on 
+              Discrete Mathematics, volume 35, 2021, pp. 2328--2344,
+              http://dx.doi.org/10.1137/18M1169473
+
 .. [Liv1993] Charles Livingston, *Knot Theory*, Carus Mathematical
              Monographs, number 24.
 
@@ -5561,6 +5573,10 @@ REFERENCES:
              and Iwahori-Hecke algebras*. Proc. London Math. Soc. (3)
              **75** (1997). 99-133. :arxiv:`math/9511223v1`.
              http://www.ms.unimelb.edu.au/~ram/Publications/1997PLMSv75p99.pdf
+
+.. [Raz2007] Alexander \A. Razborov, *Flag algebras*, Journal of Symbolic Logic 
+             Volume 72, 2007, pp. 1239--1282, 
+             https://people.cs.uchicago.edu/~razborov/files/flag.pdf
 
 .. [RCES1994] Ruskey, R. Cohen, P. Eades, A. Scott.
               *Alley CATs in search of good homes.*
