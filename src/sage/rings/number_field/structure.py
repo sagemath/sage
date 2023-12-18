@@ -1,9 +1,6 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Helper classes for structural embeddings and isomorphisms of number fields
-
-AUTHORS:
-
-- Julian Rueth (2014-04-03): initial version
 
 Consider the following fields `L` and `M`::
 
@@ -42,6 +39,10 @@ structure morphisms::
     sage: N.<a> = L.absolute_field()
     sage: M is N
     True
+
+AUTHORS:
+
+- Julian Rueth (2014-04-03): initial version
 
 """
 #*****************************************************************************

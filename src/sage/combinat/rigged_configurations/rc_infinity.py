@@ -147,7 +147,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             return InfinityCrystalOfNonSimplyLacedRC(cartan_type)
 
         cartan_type = CartanType(cartan_type)
-        return super(InfinityCrystalOfRiggedConfigurations, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         r"""
@@ -241,7 +241,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
                 and self.cartan_type().is_simply_laced()):
                 from sage.combinat.rigged_configurations.bij_infinity import FromTableauIsomorphism
                 return FromTableauIsomorphism(Hom(P, self))
-        return super(InfinityCrystalOfRiggedConfigurations, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _calc_vacancy_number(self, partitions, a, i, **options):
         r"""
@@ -358,7 +358,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             if isinstance(P, InfinityCrystalOfTableaux):
                 from sage.combinat.rigged_configurations.bij_infinity import FromTableauIsomorphism
                 return FromTableauIsomorphism(Hom(P, self))
-        return super(InfinityCrystalOfNonSimplyLacedRC, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _calc_vacancy_number(self, partitions, a, i):
         r"""

@@ -2247,7 +2247,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P3.<x0,x1,x2,x3> = ProjectiveSpace(3, QQ)
             sage: p1 = P3(1, 2, 3, 4)
             sage: p2 = P3(4, 3, 2, 1)
-            sage: P3.line_through(p1, p2)                                               # needs sage.schemes
+            sage: P3.line_through(p1, p2)                                               # needs sage.libs.singular sage.schemes
             Projective Curve over Rational Field defined by
               -5/4*x0 + 5/2*x1 - 5/4*x2,        -5/2*x0 + 15/4*x1 - 5/4*x3,
               -5/4*x0 + 15/4*x2 - 5/2*x3,       -5/4*x1 + 5/2*x2 - 5/4*x3

@@ -70,7 +70,7 @@ from sage.modules.free_module import FreeModule
 #      existing lattice point and then copy it!
 
 
-cpdef tuple parallelotope_points(spanning_points, lattice):
+cpdef tuple parallelotope_points(spanning_points, lattice) noexcept:
     r"""
     Return integral points in the parallelotope starting at the origin
     and spanned by the ``spanning_points``.
@@ -143,7 +143,7 @@ cpdef tuple parallelotope_points(spanning_points, lattice):
     return points
 
 
-cpdef tuple ray_matrix_normal_form(R):
+cpdef tuple ray_matrix_normal_form(R) noexcept:
     r"""
     Compute the Smith normal form of the ray matrix for
     :func:`parallelotope_points`.
@@ -179,7 +179,7 @@ cpdef tuple ray_matrix_normal_form(R):
 # The optimized version avoids constructing new matrices, vectors, and lattice points
 cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
                                            MatrixClass R, lattice,
-                                           A=None, b=None):
+                                           A=None, b=None) noexcept:
     r"""
     The inner loop of :func:`parallelotope_points`.
 
@@ -244,7 +244,7 @@ cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
 
 
 ##############################################################################
-cpdef tuple simplex_points(vertices):
+cpdef tuple simplex_points(vertices) noexcept:
     r"""
     Return the integral points in a lattice simplex.
 
@@ -329,7 +329,7 @@ cpdef tuple simplex_points(vertices):
     return points
 
 
-cdef translate_points(v_list, VectorClass delta):
+cdef translate_points(v_list, VectorClass delta) noexcept:
     r"""
     Add ``delta`` to each vector in ``v_list``.
     """
@@ -348,7 +348,7 @@ cdef translate_points(v_list, VectorClass delta):
 
 cpdef rectangular_box_points(list box_min, list box_max,
                              polyhedron=None, count_only=False,
-                             return_saturated=False):
+                             return_saturated=False) noexcept:
     r"""
     Return the integral points in the lattice bounding box that are
     also contained in the given polyhedron.
@@ -583,7 +583,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     return tuple(points)
 
-cdef list perm_action(list p, list lst):
+cdef list perm_action(list p, list lst) noexcept:
     """
     Return the action of a permutation ``p`` of `(0, ..., n-1)`
     on a list of length `n`.
@@ -592,7 +592,7 @@ cdef list perm_action(list p, list lst):
 
 cdef loop_over_rectangular_box_points(list box_min, list box_max,
                                       InequalityCollection inequalities,
-                                      int d, bint count_only):
+                                      int d, bint count_only) noexcept:
     """
     The inner loop of :func:`rectangular_box_points`.
 
@@ -666,7 +666,7 @@ cdef loop_over_rectangular_box_points(list box_min, list box_max,
 
 cdef loop_over_rectangular_box_points_saturated(list box_min, list box_max,
                                                 InequalityCollection inequalities,
-                                                int d):
+                                                int d) noexcept:
     """
     The analog of :func:`rectangular_box_points` except that it keeps
     track of which inequalities are saturated.
@@ -790,7 +790,7 @@ cdef class Inequality_generic:
         s += ') x + ' + str(self.b) + ' >= 0'
         return s
 
-    cdef prepare_next_to_inner_loop(self, p):
+    cdef prepare_next_to_inner_loop(self, p) noexcept:
         """
         In :class:`Inequality_int` this method is used to peel of the
         next-to-inner loop.
@@ -799,7 +799,7 @@ cdef class Inequality_generic:
         """
         pass
 
-    cdef prepare_inner_loop(self, p):
+    cdef prepare_inner_loop(self, p) noexcept:
         """
         Peel off the inner loop.
 
@@ -956,7 +956,7 @@ cdef class Inequality_int:
         s += ') x + ' + str(self.b) + ' >= 0'
         return s
 
-    cdef prepare_next_to_inner_loop(Inequality_int self, p):
+    cdef prepare_next_to_inner_loop(Inequality_int self, p) noexcept:
         """
         Peel off the next-to-inner loop.
 
@@ -967,7 +967,7 @@ cdef class Inequality_int:
         for j in range(2, self.dim):
             self.cache_next += self.A[j] * p[j]
 
-    cdef prepare_inner_loop(Inequality_int self, p):
+    cdef prepare_inner_loop(Inequality_int self, p) noexcept:
         """
         Peel off the inner loop.
 
@@ -979,10 +979,10 @@ cdef class Inequality_int:
         else:
             self.cache = self.cache_next
 
-    cdef bint is_not_satisfied(Inequality_int self, int inner_loop_variable):
+    cdef bint is_not_satisfied(Inequality_int self, int inner_loop_variable) noexcept:
         return inner_loop_variable * self.coeff + self.cache < 0
 
-    cdef bint is_equality(Inequality_int self, int inner_loop_variable):
+    cdef bint is_equality(Inequality_int self, int inner_loop_variable) noexcept:
         return inner_loop_variable * self.coeff + self.cache == 0
 
 
@@ -1054,7 +1054,7 @@ cdef class InequalityCollection:
             s += str(<Inequality_generic>ineq) + '\n'
         return s.strip()
 
-    cpdef tuple _make_A_b(self, Hrep_obj, list permutation):
+    cpdef tuple _make_A_b(self, Hrep_obj, list permutation) noexcept:
         r"""
         Return the coefficients and constant of the H-representation
         object.
@@ -1124,7 +1124,7 @@ cdef class InequalityCollection:
                 raise TypeError('Cannot extract Hrepresentation data from polyhedron.')
 
     cdef _cinit_from_PPL(self, list max_abs_coordinates, list permutation,
-                         polyhedron):
+                         polyhedron) noexcept:
         """
         Initialize the inequalities from a PPL C_Polyhedron
 
@@ -1173,7 +1173,7 @@ cdef class InequalityCollection:
                     self.ineqs_generic.append(H)
 
     cdef _cinit_from_Polyhedron(self, list max_abs_coordinates,
-                                list permutation, polyhedron):
+                                list permutation, polyhedron) noexcept:
         """
         Initialize the inequalities from a Sage Polyhedron
 
@@ -1225,7 +1225,7 @@ cdef class InequalityCollection:
                 H = Inequality_generic(A, b, Hrep_obj.index())
                 self.ineqs_generic.append(H)
 
-    cpdef prepare_next_to_inner_loop(self, p):
+    cpdef prepare_next_to_inner_loop(self, p) noexcept:
         r"""
         Peel off the next-to-inner loop.
 
@@ -1263,7 +1263,7 @@ cdef class InequalityCollection:
         for ineq in self.ineqs_generic:
             (<Inequality_generic>ineq).prepare_next_to_inner_loop(p)
 
-    cpdef prepare_inner_loop(self, p):
+    cpdef prepare_inner_loop(self, p) noexcept:
         r"""
         Peel off the inner loop.
 
@@ -1302,7 +1302,7 @@ cdef class InequalityCollection:
         for ineq in self.ineqs_generic:
             (<Inequality_generic>ineq).prepare_inner_loop(p)
 
-    cpdef swap_ineq_to_front(self, int i):
+    cpdef swap_ineq_to_front(self, int i) noexcept:
         r"""
         Swap the ``i``-th entry of the list to the front of the list of inequalities.
 
@@ -1377,7 +1377,7 @@ cdef class InequalityCollection:
                 return False
         return True
 
-    cpdef frozenset satisfied_as_equalities(self, inner_loop_variable):
+    cpdef frozenset satisfied_as_equalities(self, inner_loop_variable) noexcept:
         """
         Return the inequalities (by their index) that are satisfied as
         equalities.
@@ -1423,7 +1423,7 @@ cdef class InequalityCollection:
 
 
 
-cpdef print_cache(InequalityCollection inequality_collection):
+cpdef print_cache(InequalityCollection inequality_collection) noexcept:
     r"""
     Print the cached values in :class:`Inequality_int` (for
     debugging/doctesting only).

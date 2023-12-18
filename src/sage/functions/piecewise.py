@@ -473,8 +473,7 @@ class PiecewiseFunction(BuiltinFunction):
                 support is {0}, function is sin(x)
                 support is (0, 2), function is cos(x)
             """
-            for pair in parameters:
-                yield pair
+            yield from parameters
 
         def __call__(self, parameters, variable, value=None, **kwds):
             """

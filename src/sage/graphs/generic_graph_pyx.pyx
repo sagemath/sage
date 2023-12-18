@@ -258,7 +258,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
 
 @cython.cdivision(True)
-cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height):
+cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height) noexcept:
     r"""
     Find a locally optimal layout for this graph, according to the
     constraints that neighboring nodes want to be a fixed distance
@@ -388,7 +388,7 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
 
 
 @cython.cdivision(True)
-cdef inline double sqrt_approx(double x, double y, double xx, double yy):
+cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcept:
     r"""
     Approximation of `\sqrt(x^2+y^2)`.
 
@@ -612,6 +612,7 @@ def binary_string_from_dig6(s, n):
     m = "".join(l)
     return m[:n*n]
 
+
 # Exhaustive search in graphs
 
 cdef class SubgraphSearch:
@@ -831,16 +832,16 @@ cdef class SubgraphSearch:
         # whether both are of the same type)
         self.directed = G.is_directed()
 
-        cdef int i, j, k
+        cdef int i, j
 
         # A vertex is said to be busy if it is already part of the partial copy
         # of H in G.
-        self.busy       = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.tmp_array  = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.stack      = <int *>  self.mem.allocarray(self.nh, sizeof(int))
-        self.vertices   = <int *>  self.mem.allocarray(self.nh, sizeof(int))
+        self.busy = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.tmp_array = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.stack = <int *> self.mem.allocarray(self.nh, sizeof(int))
+        self.vertices = <int *> self.mem.allocarray(self.nh, sizeof(int))
         self.line_h_out = <int **> self.mem.allocarray(self.nh, sizeof(int *))
-        self.line_h_in  = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
+        self.line_h_in = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
 
         self.line_h_out[0] = <int *> self.mem.allocarray(self.nh*self.nh,
                                                          sizeof(int))
@@ -979,7 +980,7 @@ cdef class SubgraphSearch:
         sig_off()
         raise StopIteration
 
-cdef inline bint vectors_equal(int n, int *a, int *b):
+cdef inline bint vectors_equal(int n, int *a, int *b) noexcept:
     r"""
     Tests whether the two given vectors are equal. Two integer vectors
     `a = (a_1, a_2, \dots, a_n)` and `b = (b_1, b_2, \dots, b_n)` are equal
@@ -1002,7 +1003,7 @@ cdef inline bint vectors_equal(int n, int *a, int *b):
             return False
     return True
 
-cdef inline bint vectors_inferior(int n, int *a, int *b):
+cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
     r"""
     Tests whether the second vector of integers is inferior to the first. Let
     `u = (u_1, u_2, \dots, u_k)` and `v = (v_1, v_2, \dots, v_k)` be two
@@ -1029,6 +1030,7 @@ cdef inline bint vectors_inferior(int n, int *a, int *b):
         if a[i] < b[i]:
             return False
     return True
+
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
@@ -1157,7 +1159,7 @@ def _test_vectors_equal_inferior():
 
 
 cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
-                             long backtrack_bound=1000, find_path=False):
+                             long backtrack_bound=1000, find_path=False) noexcept:
     r"""
     Randomized backtracking for finding Hamiltonian cycles and paths.
 

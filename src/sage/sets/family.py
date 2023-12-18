@@ -1508,8 +1508,7 @@ class EnumeratedFamily(LazyFamily):
             sage: [i for i in f]
             [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
         """
-        for i in self.enumset:
-            yield i
+        yield from self.enumset
 
     def __getitem__(self, i):
         """

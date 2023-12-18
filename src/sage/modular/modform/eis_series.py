@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Eisenstein series
 """
@@ -177,14 +177,16 @@ def __common_minimal_basering(chi, psi):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: sage.modular.modform.eis_series.__common_minimal_basering(DirichletGroup(1)[0], DirichletGroup(1)[0])
-        (Dirichlet character modulo 1 of conductor 1, Dirichlet character modulo 1 of conductor 1)
-
+        (Dirichlet character modulo 1 of conductor 1,
+         Dirichlet character modulo 1 of conductor 1)
         sage: sage.modular.modform.eis_series.__common_minimal_basering(DirichletGroup(3).0, DirichletGroup(5).0)
-        (Dirichlet character modulo 3 of conductor 3 mapping 2 |--> -1, Dirichlet character modulo 5 of conductor 5 mapping 2 |--> zeta4)
-
+        (Dirichlet character modulo 3 of conductor 3 mapping 2 |--> -1,
+         Dirichlet character modulo 5 of conductor 5 mapping 2 |--> zeta4)
         sage: sage.modular.modform.eis_series.__common_minimal_basering(DirichletGroup(12).0, DirichletGroup(36).0)
-        (Dirichlet character modulo 12 of conductor 4 mapping 7 |--> -1, 5 |--> 1, Dirichlet character modulo 36 of conductor 4 mapping 19 |--> -1, 29 |--> 1)
+        (Dirichlet character modulo 12 of conductor 4 mapping 7 |--> -1, 5 |--> 1,
+         Dirichlet character modulo 36 of conductor 4 mapping 19 |--> -1, 29 |--> 1)
     """
     chi = chi.minimize_base_ring()
     psi = psi.minimize_base_ring()

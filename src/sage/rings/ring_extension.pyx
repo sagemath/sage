@@ -1007,7 +1007,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             raise RuntimeError("backend is not exposed to the user; cannot print")
         return latex(self._backend)
 
-    cpdef _coerce_map_from_(self, other):
+    cpdef _coerce_map_from_(self, other) noexcept:
         r"""
         Return a coerce map from this extension to ``other`` if defined.
 
@@ -1168,7 +1168,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         """
         return self.bases()[-1]
 
-    cpdef is_defined_over(self, base):
+    cpdef is_defined_over(self, base) noexcept:
         r"""
         Return whether or not ``base`` is one of the bases of this
         extension.
@@ -1216,7 +1216,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             b = (<RingExtension_generic>b)._base
         return b is base
 
-    cpdef CommutativeRing _check_base(self, CommutativeRing base):
+    cpdef CommutativeRing _check_base(self, CommutativeRing base) noexcept:
         r"""
         Check if ``base`` is one of the successive bases of this
         extension and, if it is, normalize it.
@@ -1463,7 +1463,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         base = self._check_base(base)
         return self._degree_over(base)
 
-    cpdef _degree_over(self, CommutativeRing base):
+    cpdef _degree_over(self, CommutativeRing base) noexcept:
         r"""
         Return the degree of this extension over ``base``.
 
@@ -1603,7 +1603,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             b = (<RingExtension_generic?>b)._base
         raise NotImplementedError
 
-    cpdef _is_finite_over(self, CommutativeRing base):
+    cpdef _is_finite_over(self, CommutativeRing base) noexcept:
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -1666,7 +1666,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             b = (<RingExtension_generic?>b)._base
         raise NotImplementedError
 
-    cpdef _is_free_over(self, CommutativeRing base):
+    cpdef _is_free_over(self, CommutativeRing base) noexcept:
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -1782,7 +1782,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         constructor = RingExtensionFractionField, {'ring': self, 'is_backend_exposed': self._is_backend_exposed}
         return RingExtension(ring, defining_morphism, constructors=[constructor])
 
-    cdef Map _defining_morphism_fraction_field(self, bint extend_base):
+    cdef Map _defining_morphism_fraction_field(self, bint extend_base) noexcept:
         r"""
         Return the defining morphism of the fraction field of this extension.
 
@@ -2207,7 +2207,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             b = b.base_ring()
         return base
 
-    cpdef _degree_over(self, CommutativeRing base):
+    cpdef _degree_over(self, CommutativeRing base) noexcept:
         r"""
         Return the degree of this extension over ``base``.
 
@@ -2234,7 +2234,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         else:
             return len(self._basis) * self._base._degree_over(base)
 
-    cpdef _is_finite_over(self, CommutativeRing base):
+    cpdef _is_finite_over(self, CommutativeRing base) noexcept:
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -2253,7 +2253,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             return True
         return self._base._is_finite_over(base)
 
-    cpdef _is_free_over(self, CommutativeRing base):
+    cpdef _is_free_over(self, CommutativeRing base) noexcept:
         r"""
         Return whether or not this extension is free over ``base``.
 
@@ -2314,7 +2314,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         base = self._check_base(base)
         return self._basis_over(base)
 
-    cpdef _basis_over(self, CommutativeRing base):
+    cpdef _basis_over(self, CommutativeRing base) noexcept:
         r"""
         Return a basis of this extension over ``base``.
 

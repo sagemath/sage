@@ -201,7 +201,7 @@ def HarriesGraph(embedding=1):
         # Vertices from o[1]. These are actually the "edges" of the copies of
         # Petersen.
         for v in o[1]:
-            p1, p2 = [gpos[x] for x in g.neighbors(v) if x in o[0]]
+            p1, p2 = (gpos[x] for x in g.neighbors(v) if x in o[0])
             gpos[v] = ((p1[0] + p2[0])/2, (p1[1] + p2[1])/2)
 
         # 15 vertices from o[2]
@@ -4816,8 +4816,8 @@ def JankoKharaghaniGraph(v):
     D = ("--1-11", "-11-1-", "11-1--", "--11-1", "11---1", "1--11-")
     E = ("-1--11", "1-1--1", "-11-1-", "---111", "1-11--", "11-1--")
     F = ("-1-1-1", "11--1-", "--111-", "1-11--", "-11--1", "1---11")
-    B, C, D, E, F = [matrix([map({'1': 1, '-': -1}.get, r) for r in m])
-                     for m in [B, C, D, E, F]]
+    B, C, D, E, F = (matrix([map({'1': 1, '-': -1}.get, r) for r in m])
+                     for m in [B, C, D, E, F])
 
     H = [A, B, C, D, E, F]
     H = [[-x for x in H[6-i:]] + H[:6-i] for i in range(6)]

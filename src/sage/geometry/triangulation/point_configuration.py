@@ -501,8 +501,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: [p.point(i) for i in range(p.n_points())]
             [P(1, 1), P(2, 2), P(3, 3)]
         """
-        for p in self.points():
-            yield p
+        yield from self.points()
 
     def _repr_(self):
         r"""
@@ -719,8 +718,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         if self._regular is False:
             command += ' --nonregular'
 
-        for t in self._TOPCOM_communicate(command, verbose):
-            yield t
+        yield from self._TOPCOM_communicate(command, verbose)
 
     def _TOPCOM_triangulate(self, verbose=True):
         r"""
@@ -988,8 +986,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p.set_engine('internal')
         """
         if self._use_TOPCOM:
-            for triangulation in self._TOPCOM_triangulations(verbose):
-                yield triangulation
+            yield from self._TOPCOM_triangulations(verbose)
         else:
             if not self._connected:
                 raise ValueError('Need TOPCOM to find disconnected triangulations.')

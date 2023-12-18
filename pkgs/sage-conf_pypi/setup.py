@@ -36,14 +36,14 @@ class build_py(setuptools_build_py):
         if os.environ.get('CONDA_PREFIX', ''):
             SETENV = ':'
         else:
-            SETENV = '(. ./.homebrew-build-env 2> /dev/null || :)'
+            SETENV = '. ./.homebrew-build-env 2> /dev/null'
 
         SAGE_LOCAL = os.path.join(SAGE_ROOT, 'local')
 
         if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
             print(f'Reusing configured SAGE_ROOT={SAGE_ROOT}')
         else:
-            cmd = f"cd {SAGE_ROOT} && {SETENV} && ./configure --prefix={SAGE_LOCAL} --with-python={sys.executable} --enable-build-as-root --enable-download-from-upstream-url --with-system-python3=force --with-sage-venv --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc"
+            cmd = f"cd {SAGE_ROOT} && ({SETENV}; ./configure --prefix={SAGE_LOCAL} --with-python={sys.executable} --enable-build-as-root --enable-download-from-upstream-url --with-system-python3=force --with-sage-venv --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc)"
             print(f"Running {cmd}")
             sys.stdout.flush()
             if os.system(cmd) != 0:
@@ -73,10 +73,10 @@ class build_py(setuptools_build_py):
         # (that use native libraries shared with other packages).
         SETMAKE = 'if [ -z "$MAKE" ]; then export MAKE="make -j$(PATH=build/bin:$PATH build/bin/sage-build-num-threads | cut -d" " -f 2)"; fi'
         TARGETS = 'build'
-        cmd = f'cd {SAGE_ROOT} && {SETENV} && {SETMAKE} && $MAKE V=0 {TARGETS}'
+        cmd = f'cd {SAGE_ROOT} && ({SETENV}; {SETMAKE} && $MAKE V=0 ${{SAGE_CONF_TARGETS-{TARGETS}}})'
         print(f"Running {cmd}", flush=True)
         if os.system(cmd) != 0:
-            raise DistutilsSetupError(f"make {TARGETS} failed")
+            raise SetupError(f"make ${{SAGE_CONF_TARGETS-{TARGETS}}} failed")
 
         setuptools_build_py.run(self)
 

@@ -107,7 +107,7 @@ def _is_valid_lex_BFS_order(G, L):
     return True
 
 
-cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred):
+cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred) noexcept:
     r"""
     Perform a lexicographic breadth first search (LexBFS) on the graph.
 
@@ -1735,7 +1735,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     return alpha
 
 
-cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u):
+cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u) noexcept:
     """
     Swap positions of u and v in alpha, where v is be the vertex occupying cell
     new_pos_u in alpha.
@@ -1747,7 +1747,7 @@ cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u):
 
 
 cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_vertex,
-                                                int* alpha, int* alpha_inv, list F, bint* X):
+                                                int* alpha, int* alpha_inv, list F, bint* X) noexcept:
     r"""
     Compute the ordering and the edges of the triangulation produced by MCS-M.
 

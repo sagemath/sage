@@ -14,7 +14,7 @@ from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.gmp.mpz cimport *
 from sage.libs.flint.fmpz_poly cimport Fmpz_poly
 
-cpdef Ek_ZZ(int k, int prec=10):
+cpdef Ek_ZZ(int k, int prec=10) noexcept:
     """
     Return list of prec integer coefficients of the weight k
     Eisenstein series of level 1, normalized so the coefficient of q
@@ -140,7 +140,7 @@ cpdef Ek_ZZ(int k, int prec=10):
     return val
 
 
-cpdef eisenstein_series_poly(int k, int prec = 10) :
+cpdef eisenstein_series_poly(int k, int prec = 10)  noexcept:
     r"""
     Return the q-expansion up to precision ``prec`` of the weight `k`
     Eisenstein series, as a FLINT :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly`

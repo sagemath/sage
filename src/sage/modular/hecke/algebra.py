@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Hecke algebras
 
@@ -180,9 +181,11 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeAlgebra):
         self.__M = M
         CommutativeAlgebra.__init__(self, M.base_ring())
 
-    def _an_element_impl(self):
+    def _an_element_(self):
         r"""
-        Return an element of this algebra. Used by the coercion machinery.
+        Return an element of this algebra.
+
+        Used by the coercion machinery.
 
         EXAMPLES::
 

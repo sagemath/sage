@@ -15,6 +15,7 @@
  */
 
 #include <gmp.h>
+#include <mpfr.h>
 
 /* Save previous definition of ulong if any, as pari also uses it */
 /* Should work on GCC, clang, MSVC */
@@ -33,6 +34,7 @@
 
 #include <flint/arith.h>
 #include <flint/fmpq.h>
+#include <flint/fmpq_vec.h>
 #include <flint/fmpq_mat.h>
 #include <flint/fmpq_poly.h>
 #include <flint/fmpz.h>
@@ -47,6 +49,7 @@
 #include <flint/fq.h>
 #include <flint/fq_nmod.h>
 #include <flint/nmod_poly.h>
+#include <flint/nmod_poly_factor.h>
 #include <flint/nmod_vec.h>
 #include <flint/padic.h>
 #include <flint/padic_poly.h>
