@@ -325,14 +325,10 @@ AC_CHECK_LIB(m,sqrt,[],[
                        AC_MSG_ERROR([Exiting, since a maths library was not found.])
                        ])
 
-# Check for system services
-
 # Check that we are not building in a directory containing spaces
 AS_IF([echo "$ac_pwd" |grep " " >/dev/null],
       AC_MSG_ERROR([the path to the Sage root directory ($ac_pwd) contains a space. Sage will not build correctly in this case])
 )
-
-SAGE_CHECK_OSX_SUPPORTED()
 
 ###############################################################################
 # Collect substitutions for build/make/Makefile.in
