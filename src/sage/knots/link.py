@@ -2409,7 +2409,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
-          sage: b = BraidGroup(4)((3, 2, -1, -1))
+            sage: b = BraidGroup(4)((3, 2, -1, -1))
           sage: L = Link(b)
           sage: L.remove_loops()
           Link with 2 components represented by 2 crossings
