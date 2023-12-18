@@ -2076,7 +2076,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         return MurphyBasis(self)
 
-    @cached_method
+    @cached_method(key=lambda s, X, Y: (StandardTableaux()(X), StandardTableaux()(Y)))
     def murphy_basis_element(self, S, T):
         r"""
         Return the Murphy basis element indexed by ``S`` and ``T``.
@@ -2095,15 +2095,28 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [[1, 3], [2]] [[1, 2], [3]] [1, 3, 2] + [3, 1, 2]
             [[1, 2], [3]] [[1, 3], [2]] [1, 3, 2] + [2, 3, 1]
             [[1, 2], [3]] [[1, 2], [3]] [1, 2, 3] + [3, 2, 1]
+
+        TESTS::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: SGA.murphy_basis_element([[1,2,3,4]], [[1,2],[3,4]])
+            Traceback (most recent call last):
+            ...
+            ValueError: [[1, 2, 3, 4]] is not an element of Standard tableaux of size 3
+            sage: SGA.murphy_basis_element([[1,2,3]], [[1,2],[3]])
+            Traceback (most recent call last):
+            ...
+            ValueError: S and T must have the same shape
         """
+        std_tab = StandardTableaux(self.n)
+        S = std_tab(S)
+        T = std_tab(T)
         S = S.conjugate()
         T = T.conjugate()
 
         la = S.shape()
         if la != T.shape():
             raise ValueError("S and T must have the same shape")
-        if sum(la) != self.n:
-            raise ValueError(f"the shape must be a partition of size {self.n}")
 
         G = self.group()
         ds = G(list(sum((row for row in S), ())))
