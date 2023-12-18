@@ -66,12 +66,7 @@ SAGE_SPKG_CONFIGURE([openblas], [
      ])
     ], [
       dnl No openblas.pc
-      AS_CASE([$host],
-        [*-*-cygwin*], [dnl #29538 - workaround failing build of matplotlib etc.
-                        AS_VAR_SET([HAVE_OPENBLAS], [no])
-                        AC_MSG_RESULT([$HAVE_OPENBLAS, test for OpenBLAS disabled on Cygwin])
-                       ],
-                       [dnl Recent OpenBLAS (>= 0.3.4, Dec 2018) provides the version number as
+                        dnl Recent OpenBLAS (>= 0.3.4, Dec 2018) provides the version number as
                         dnl part of openblas_get_config.  We reject all older versions.
                         AC_SEARCH_LIBS([openblas_get_config], [openblas cblas blas], [
                          AS_IF([test x"$ac_cv_search_openblas_get_config" != x"none required"], [
@@ -109,7 +104,6 @@ SAGE_SPKG_CONFIGURE([openblas], [
                          AC_LANG_POP([C])
                          AC_MSG_RESULT([$HAVE_OPENBLAS])
                        ])
-                      ])
       AC_SEARCH_LIBS([cblas_dgemm], [openblas cblas blas], [
         AS_VAR_SET([HAVE_CBLAS_DGEMM], [yes])
         AS_IF([test x"$ac_cv_search_cblas_dgemm" != x"none required"], [
