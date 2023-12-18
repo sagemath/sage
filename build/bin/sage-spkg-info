@@ -5,11 +5,16 @@
 #
 #  Assumes SAGE_ROOT is set
 PKG_BASE=$1
+if [ -n "$OUTPUT_DIR" ]; then
+    exec > "$OUTPUT_DIR"/$PKG_BASE.rst
+    echo ".. _spkg_$PKG_BASE:"
+fi
 PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
 for ext in rst txt; do
     SPKG_FILE="$PKG_SCRIPTS/SPKG.$ext"
     if [ -f "$SPKG_FILE" ]; then
-        sed "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" "$SPKG_FILE"
+        # for sphinx 4.4 we need to replace all direct links by some "extlink" (issue 33272)
+        sed -e "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" -e "s|https://github.com/sagemath/sage/issues/\([0-9]*\)|:issue:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" "$SPKG_FILE"
         break
     fi
 done
