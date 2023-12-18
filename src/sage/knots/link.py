@@ -664,7 +664,7 @@ class Link(SageObject):
             sage: A.braid()
             s0*s1*s2*s3
 
-        Check that `PR 36884 <https://github.com/sagemath/sage/pull/36884>`__ is solved::
+        Check that :issue:`36884` is solved::
 
             sage: L = Link([[1, 7, 2, 6], [3, 1, 4, 8], [5, 5, 6, 4], [7, 3, 8, 2]])
             sage: L.braid()
