@@ -321,17 +321,6 @@ else
     AC_MSG_ERROR([You do not have a suitable version of Python installed])
 fi
 
-# Check for Latex, the use of which is less important in Sage than
-# it used to be, as it was at one time required to build any documentation
-# but this is no longer so.
-AC_CHECK_PROG(found_latex, latex, yes, no)
-if test x$found_latex != xyes
-then
-    AC_MSG_NOTICE([You do not have 'latex', which is recommended, but not])
-    AC_MSG_NOTICE([required. Latex is only really used for building pdf])
-    AC_MSG_NOTICE([documents and for %latex mode in the AC_PACKAGE_NAME notebook.])
-fi
-
 # Check that perl is available, with version 5.8.0 or later.
 # Some packages need perl, however it is not clear whether Sage really
 # requires version >= 5.8.0.  The R package *used* to require it, but
