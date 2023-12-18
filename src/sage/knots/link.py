@@ -2422,8 +2422,7 @@ class Link(SageObject):
           Link with 1 component represented by 0 crossings
         """
         pd = self.pd_code()
-        from copy import copy
-        new_pd = [copy(cr) for cr in pd if len(set(cr)) == 4]
+        new_pd = [list(cr) for cr in pd if len(set(cr)) == 4]
         if not new_pd:
             # trivial knot
             return type(self)([])
