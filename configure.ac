@@ -136,79 +136,16 @@ AC_CANONICAL_BUILD()
 AC_CANONICAL_HOST()
 
 case $host in
-*-*-sunos*|*-*-solaris2.[1-9])
-AC_MSG_ERROR([[
-Sage is not supported on any version of Solaris earlier than 10.
-Sage has been tested on the first release of Solaris 10
-(03/2005) and works on that. Sage may or may not work with
-your version of Solaris.
-
-More information can be found about Sage on Solaris
-on the Wiki at http://wiki.sagemath.org/solaris]]);;
-
-*-*-darwin[1-7].*)
-AC_MSG_ERROR([[
-Sage has never been built on OS X 10.3 (Panther)
-or earlier. The oldest version of OS X successfully used
-is OS X version 10.4 (Tiger). You might consider updating
-your version of OS X if your hardware permits this, but
-Apple charges for upgrades of OS X]]);;
-
-*-*-hpux*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on HP's HP-UX operating system,
-which is not a supported platform for Sage yet though
-some work has been done on HP-UX. A port does not look to
-be particularly difficult. Some information can be
-found on the Sage Wiki at http://wiki.sagemath.org/HP-UX
-
-If you would like to help port Sage to HP-UX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-aix*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on IBM's AIX operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to AIX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-irix*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on SGI's IRIX operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to IRIX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-osf*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on HP's Tru64 operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to Tru64,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-# The following are all supported platforms.
+dnl The following are all supported platforms.
 *-*-freebsd*);;
 *-*-linux*);;
 *-*-darwin*);;
-*-*-solaris*);;
 
-# Wildcard for other unsupported platforms
+dnl Wildcard for unsupported platforms
 *)
 AC_MSG_ERROR([[
 You are attempting to build Sage on $host,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to $host,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
+which is not a supported platform for Sage]]);;
 esac
 
 
