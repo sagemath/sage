@@ -125,7 +125,7 @@ case $system:$command in
         $IF_VERBOSE echo "${COMMENT}MacPorts does not provide unversioned gfortran executables by default"
         $IF_VERBOSE echo "${COMMENT}To make gfortran available (and build with gcc from XCode), use:"
         $IF_VERBOSE echo "${COMMENT}"
-        $IF_VERBOSE print_shell_command "./configure FC=gfortran-mp-11"
+        $IF_VERBOSE print_shell_command ./configure FC=gfortran-mp-11
         ;;
     *:setup-build-env)
         # Nothing needed
@@ -174,7 +174,7 @@ case $system:$command in
         ;;
     macports*:install)
         [ "$YES" = yes ] && options="$options -N"
-        [ -n "$system_packages" ] && print_shell_command "${SUDO}port $options install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}port $options install $system_packages
         ;;
     slackware*:install)
         [ -n "$system_packages" ] && print_shell_command ${SUDO}slackpkg install $system_packages
