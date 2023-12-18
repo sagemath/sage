@@ -410,7 +410,7 @@ class Singular(ExtraTabCompletion, Expect):
                         verbose_start=False,
                         logfile=logfile,
                         eval_using_file_cutoff=100 if os.uname()[0] == "SunOS" else 1000)
-        self.__libs  = []
+        self.__libs = []
         self._prompt_wait = prompt
         self.__to_clear = []   # list of variable names that need to be cleared.
         self._seed = seed

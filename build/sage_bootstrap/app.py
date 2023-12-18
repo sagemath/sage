@@ -273,7 +273,7 @@ class Application(object):
             update.fix_checksum()
 
     def create(self, package_name, version=None, tarball=None, pkg_type=None, upstream_url=None,
-               description=None, license=None, upstream_contact=None, pypi=False, source='normal'):
+               description=None, license=None, upstream_contact=None, pypi=False, source=None):
         """
         Create a package
 
@@ -288,6 +288,14 @@ class Application(object):
         if '-' in package_name:
             raise ValueError('package names must not contain dashes, use underscore instead')
         if pypi:
+            if source is None:
+                try:
+                    if PyPiVersion(package_name, source='wheel').tarball.endswith('-none-any.whl'):
+                        source = 'wheel'
+                    else:
+                        source = 'normal'
+                except PyPiError:
+                    source = 'normal'
             pypi_version = PyPiVersion(package_name, source=source)
             if source == 'normal':
                 if not tarball:
@@ -312,6 +320,10 @@ class Application(object):
                 license = pypi_version.license
             if not upstream_contact:
                 upstream_contact = pypi_version.package_url
+        if upstream_url and not tarball:
+            tarball = upstream_url.rpartition('/')[2]
+        if tarball and source is None:
+            source = 'normal'
         if tarball and not pkg_type:
             # If we set a tarball, also make sure to create a "type" file,
             # so that subsequent operations (downloading of tarballs) work.

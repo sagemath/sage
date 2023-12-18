@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.all
 r"""
 Interface to Sage
 
@@ -506,9 +507,9 @@ class SageElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)
-            sage: F,s = sr.polynomial_system()
-            sage: F == sage0(F)._sage_()
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.modules sage.rings.finite_rings
+            sage: F,s = sr.polynomial_system()                                          # needs sage.modules sage.rings.finite_rings
+            sage: F == sage0(F)._sage_()                                                # needs sage.modules sage.rings.finite_rings
             True
         """
         P = self.parent()

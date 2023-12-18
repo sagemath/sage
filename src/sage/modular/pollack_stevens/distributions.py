@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 Spaces of distributions for Pollack-Stevens modular symbols
 

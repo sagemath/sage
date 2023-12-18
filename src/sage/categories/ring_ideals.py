@@ -10,9 +10,10 @@ Ring ideals
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from .category_types import Category_ideal
-from .modules import Modules
+from sage.categories.category_types import Category_ideal
+from sage.categories.modules import Modules
 from sage.categories.rings import Rings
+
 _Rings = Rings()
 
 

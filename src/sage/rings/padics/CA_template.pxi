@@ -69,13 +69,13 @@ cdef class CAElement(pAdicTemplateElement):
         TESTS::
 
             sage: R = ZpCA(5)
-            sage: a = R(17,5); a #indirect doctest
+            sage: a = R(17,5); a  # indirect doctest
             2 + 3*5 + O(5^5)
-            sage: a = R(75, absprec = 5, relprec = 4); a #indirect doctest
+            sage: a = R(75, absprec = 5, relprec = 4); a  # indirect doctest
             3*5^2 + O(5^5)
-            sage: a = R(25/9, absprec = 5); a #indirect doctest
+            sage: a = R(25/9, absprec = 5); a  # indirect doctest
             4*5^2 + 2*5^3 + O(5^5)
-            sage: a = R(25/9, absprec = 5, relprec = 4); a #indirect doctest
+            sage: a = R(25/9, absprec = 5, relprec = 4); a  # indirect doctest
             4*5^2 + 2*5^3 + O(5^5)
         """
         IF CELEMENT_IS_PY_OBJECT:
@@ -100,13 +100,14 @@ cdef class CAElement(pAdicTemplateElement):
 
         TESTS::
 
-            sage: R = ZpCA(5); R(6,5) * R(7,8) #indirect doctest
+            sage: R = ZpCA(5); R(6,5) * R(7,8)  # indirect doctest
             2 + 3*5 + 5^2 + O(5^5)
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(25)
             sage: S.<x> = ZZ[]
             sage: W.<w> = R.ext(x^2 - 5)
-            sage: w * (w+1) #indirect doctest
+            sage: w * (w+1)  # indirect doctest
             w + w^2 + O(w^40)
         """
         cdef type t = type(self)
@@ -144,7 +145,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         TESTS::
 
-            sage: ZpCA(5)(1).lift_to_precision(30) # indirect doctest
+            sage: ZpCA(5)(1).lift_to_precision(30)  # indirect doctest
             Traceback (most recent call last):
             ...
             PrecisionError: precision higher than allowed by the precision cap
@@ -204,7 +205,7 @@ cdef class CAElement(pAdicTemplateElement):
 
             sage: R = Zp(5, prec=10, type='capped-abs')
             sage: a = R(1)
-            sage: -a #indirect doctest
+            sage: -a  # indirect doctest
             4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + 4*5^6 + 4*5^7 + 4*5^8 + 4*5^9 + O(5^10)
         """
         cdef CAElement ans = self._new_c()
@@ -220,7 +221,7 @@ cdef class CAElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = ZpCA(13, 4)
-            sage: R(2) + R(3) #indirect doctest
+            sage: R(2) + R(3)  # indirect doctest
             5 + O(13^4)
             sage: R(12) + R(1)
             13 + O(13^4)
@@ -244,7 +245,7 @@ cdef class CAElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = ZpCA(13, 4)
-            sage: R(10) - R(10) #indirect doctest
+            sage: R(10) - R(10)  # indirect doctest
             O(13^4)
             sage: R(10) - R(11)
             12 + 12*13 + 12*13^2 + 12*13^3 + O(13^4)
@@ -276,7 +277,7 @@ cdef class CAElement(pAdicTemplateElement):
             7 + 3*17 + 10*17^2 + 13*17^3 + 6*17^4 + 3*17^5 + 10*17^6 + 13*17^7
              + 6*17^8 + 3*17^9 + 10*17^10 + 13*17^11 + 6*17^12 + 3*17^13
              + 10*17^14 + 13*17^15 + 6*17^16 + 3*17^17 + 10*17^18 + 13*17^19 + O(17^20)
-            sage: ~R(-1) == R(-1) #indirect doctest
+            sage: ~R(-1) == R(-1)  # indirect doctest
             True
         """
         return ~self.parent().fraction_field()(self)
@@ -288,7 +289,7 @@ cdef class CAElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = ZpCA(5)
-            sage: a = R(20,5); b = R(75, 4); a * b #indirect doctest
+            sage: a = R(20,5); b = R(75, 4); a * b  # indirect doctest
             2*5^3 + 2*5^4 + O(5^5)
         """
         cdef CAElement right = _right
@@ -316,7 +317,7 @@ cdef class CAElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = ZpCA(13, 4)
-            sage: R(2) / R(3) # indirect doctest
+            sage: R(2) / R(3)  # indirect doctest
             5 + 4*13 + 4*13^2 + 4*13^3 + O(13^4)
             sage: a = R(169 * 2) / R(13); a
             2*13 + O(13^3)
@@ -337,9 +338,9 @@ cdef class CAElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = ZpCA(3, 5)
-            sage: R(12).quo_rem(R(2)) # indirect doctest
+            sage: R(12).quo_rem(R(2))  # indirect doctest
             (2*3 + O(3^5), O(3^5))
-            sage: R(2).quo_rem(R(12)) # indirect doctest
+            sage: R(2).quo_rem(R(12))  # indirect doctest
             (O(3^4), 2 + O(3^5))
             sage: q, r = R(4).quo_rem(R(12)); q, r
             (1 + 2*3 + 2*3^3 + O(3^4), 1 + O(3^5))
@@ -458,6 +459,8 @@ cdef class CAElement(pAdicTemplateElement):
 
             sage: R(1)^R(0)
             1 + O(19^5)
+
+            sage: # needs sage.libs.flint
             sage: S.<a> = ZqCA(4)
             sage: S(1)^S(0)
             1 + O(2^20)
@@ -803,7 +806,7 @@ cdef class CAElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = ZpCA(37)
-            sage: R(17) == R(17+37^6) # indirect doctest
+            sage: R(17) == R(17+37^6)  # indirect doctest
             False
         """
         cdef CAElement right = _right
@@ -829,7 +832,7 @@ cdef class CAElement(pAdicTemplateElement):
             sage: R = ZpCA(19)
             sage: a = R(19, 7); a
             19 + O(19^7)
-            sage: a.lift_to_precision(12) # indirect doctest
+            sage: a.lift_to_precision(12)  # indirect doctest
             19 + O(19^12)
             sage: a.lift_to_precision(4) is a
             True
@@ -850,6 +853,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(9)
             sage: (9*a)._cache_key()
             (..., ((), (), (0, 1)), 20)
@@ -912,9 +916,10 @@ cdef class CAElement(pAdicTemplateElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<x> = ZZ[]
             sage: K.<a> = ZqCA(25)
-            sage: W.<w> = K.extension(x^3-5)
+            sage: W.<w> = K.extension(x^3 - 5)
             sage: (1 + w + O(w^11))._polynomial_list()
             [1 + O(5^4), 1 + O(5^4)]
             sage: (1 + w + O(w^11))._polynomial_list(pad=True)
@@ -951,6 +956,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(5^3)
             sage: a.polynomial()
             (1 + O(5^20))*x + O(5^20)
@@ -1119,7 +1125,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
         EXAMPLES::
 
             sage: f = ZpCA(5).coerce_map_from(ZZ)
-            sage: g = copy(f) # indirect doctest
+            sage: g = copy(f)  # indirect doctest
             sage: g == f
             True
             sage: g(6)
@@ -1139,7 +1145,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
         EXAMPLES::
 
             sage: f = ZpCA(5).coerce_map_from(ZZ)
-            sage: g = copy(f) # indirect doctest
+            sage: g = copy(f)  # indirect doctest
             sage: g == f
             True
             sage: g(6)
@@ -1183,7 +1189,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
             sage: R = ZpCA(5,4)
             sage: type(R(10,2))
             <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
-            sage: R(10,2) # indirect doctest
+            sage: R(10,2)  # indirect doctest
             2*5 + O(5^2)
             sage: R(10,3,1)
             2*5 + O(5^2)
@@ -1313,7 +1319,7 @@ cdef class pAdicConvert_QQ_CA(Morphism):
         EXAMPLES::
 
             sage: f = ZpCA(5).convert_map_from(QQ)
-            sage: g = copy(f) # indirect doctest
+            sage: g = copy(f)  # indirect doctest
             sage: g == f # todo: comparison not implemented
             True
             sage: g(1/6)
@@ -1332,7 +1338,7 @@ cdef class pAdicConvert_QQ_CA(Morphism):
         EXAMPLES::
 
             sage: f = ZpCA(5).convert_map_from(QQ)
-            sage: g = copy(f) # indirect doctest
+            sage: g = copy(f)  # indirect doctest
             sage: g == f # todo: comparison not implemented
             True
             sage: g(1/6)
@@ -1373,7 +1379,7 @@ cdef class pAdicConvert_QQ_CA(Morphism):
             sage: R = ZpCA(5,4)
             sage: type(R(10/3,2))
             <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
-            sage: R(10/3,2) # indirect doctest
+            sage: R(10/3,2)  # indirect doctest
             4*5 + O(5^2)
             sage: R(10/3,3,1)
             4*5 + O(5^2)
@@ -1416,6 +1422,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: R.<a> = ZqCA(27, implementation='FLINT')
         sage: K = R.fraction_field()
         sage: f = K.coerce_map_from(R); f
@@ -1425,7 +1432,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
     TESTS::
 
-        sage: TestSuite(f).run()
+        sage: TestSuite(f).run()                                                        # needs sage.libs.flint
 
     """
     def __init__(self, R, K):
@@ -1434,6 +1441,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R); type(f)
@@ -1449,6 +1457,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -1477,10 +1486,11 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
-            sage: f(a, 3) # indirect doctest
+            sage: f(a, 3)  # indirect doctest
             a + O(3^3)
             sage: b = 9*a
             sage: f(b, 3)
@@ -1527,6 +1537,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -1549,6 +1560,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -1578,6 +1590,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(9, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -1606,6 +1619,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(9, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -1621,6 +1635,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(9, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -1637,6 +1652,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: R.<a> = ZqCA(27, implementation='FLINT')
         sage: K = R.fraction_field()
         sage: f = R.convert_map_from(K); f
@@ -1650,6 +1666,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); type(f)
@@ -1664,10 +1681,11 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K)
-            sage: f(K.gen()) # indirect doctest
+            sage: f(K.gen())  # indirect doctest
             a + O(3^20)
         """
         cdef CRElement x = _x
@@ -1699,10 +1717,11 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); a = K(a)
-            sage: f(a, 3) # indirect doctest
+            sage: f(a, 3)  # indirect doctest
             a + O(3^3)
             sage: b = 9*a
             sage: f(b, 3)
@@ -1750,6 +1769,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K)
@@ -1778,6 +1798,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(9, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K)

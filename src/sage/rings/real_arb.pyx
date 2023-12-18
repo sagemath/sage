@@ -898,7 +898,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             sage: RBF.gamma(5)
             24.00000000000000
             sage: RBF.gamma(10**20)
-            [+/- ...e+1956570552410610660600]
+            [1.932849514310098...+1956570551809674817225 +/- ...]
             sage: RBF.gamma(1/3)
             [2.678938534707747 +/- ...e-16]
             sage: RBF.gamma(-5)
@@ -1102,7 +1102,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
              15.00000000000000,
              48.00000000000000]
             sage: RBF.double_factorial(2**20)
-            [1.4483729903e+2928836 +/- ...e+2928825]
+            [1.448372990...e+2928836 +/- ...]
             sage: RBF.double_factorial(2**1000)
             Traceback (most recent call last):
             ...
@@ -3950,7 +3950,7 @@ cdef class RealBall(RingElement):
             [0.69314718055995 +/- ...e-15]
             sage: RBF(1/3).polylog(1/2)
             [0.44210883528067 +/- 6.7...e-15]
-            sage: RBF(1/3).polylog(RLF(pi))
+            sage: RBF(1/3).polylog(RLF(pi))                                             # needs sage.symbolic
             [0.34728895057225 +/- ...e-15]
 
         TESTS::

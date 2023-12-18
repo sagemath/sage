@@ -14,7 +14,7 @@ General matrix Constructor and display options
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .args cimport MatrixArgs
+from sage.matrix.args cimport MatrixArgs
 from sage.structure.global_options import GlobalOptions
 
 
@@ -580,7 +580,7 @@ def matrix(*args, **kwds):
 
     Check :trac:`24459`::
 
-        sage: # needs sage.libs.flint
+        sage: # needs sage.libs.linbox
         sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
         Traceback (most recent call last):
         ...
@@ -654,7 +654,7 @@ def matrix(*args, **kwds):
 Matrix = matrix
 
 
-from .special import *
+from sage.matrix.special import *
 
 
 @matrix_method

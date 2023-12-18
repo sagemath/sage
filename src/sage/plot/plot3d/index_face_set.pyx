@@ -62,7 +62,7 @@ from sage.plot.colors import Color, float_to_integer
 from sage.plot.plot3d.base import Graphics3dGroup
 from sage.plot.plot3d.texture import Texture
 
-from .transform cimport Transformation
+from sage.plot.plot3d.transform cimport Transformation
 
 
 # --------------------------------------------------------------------
@@ -1550,7 +1550,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                str(self.fcount + extra_faces),
                faces]
 
-        from .base import flatten_list
+        from sage.plot.plot3d.base import flatten_list
         name = render_params.unique_name('obj')
         all = flatten_list(all)
         if render_params.output_archive:

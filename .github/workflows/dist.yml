@@ -99,7 +99,7 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
-          skip_existing: true
+          skip-existing: true
           verbose: true
         if: env.CAN_DEPLOY == 'true'
 
@@ -180,7 +180,7 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
-          packages_dir: wheelhouse/
-          skip_existing: true
+          packages-dir: wheelhouse/
+          skip-existing: true
           verbose: true
         if: env.CAN_DEPLOY == 'true'

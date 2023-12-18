@@ -282,7 +282,7 @@ def numerical_inverse(C):
     with mpall.workprec(prec):
         Cmp = mpall.matrix([mpall.sage_to_mpmath(list(c), prec) for c in C])
         PLU = mpall.lu(Cmp)
-    P, L, U = [R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU]
+    P, L, U = (R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU)
     return U.inverse() * L.inverse() * P
 
 

@@ -1,6 +1,6 @@
 from sage.libs.gmp.types cimport mpz_t
-from .matrix_dense cimport Matrix_dense
-from .matrix_rational_dense cimport Matrix_rational_dense
+from sage.matrix.matrix_dense cimport Matrix_dense
+from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
 cdef class Matrix_cyclo_dense(Matrix_dense):
 

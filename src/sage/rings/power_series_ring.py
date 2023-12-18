@@ -134,34 +134,36 @@ TESTS::
 
 """
 
-from . import power_series_poly
-from . import power_series_mpoly
-from .power_series_pari import PowerSeries_pari
-from . import power_series_ring_element
-
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-from .polynomial.polynomial_ring_constructor import PolynomialRing
-from . import laurent_series_ring
-from . import laurent_series_ring_element
-from . import integer
-from . import ring
-from .infinity import infinity
-import sage.misc.latex as latex
-from sage.structure.nonexact import Nonexact
-
-from sage.interfaces.abc import MagmaElement
-from sage.rings.fraction_field_element import FractionFieldElement
-from sage.misc.sage_eval import sage_eval
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.category_object import normalize_names
-from sage.structure.element import parent, Expression
 import sage.categories.commutative_rings as commutative_rings
+import sage.misc.latex as latex
+from sage.interfaces.abc import MagmaElement
+from sage.misc.sage_eval import sage_eval
+from sage.rings import (
+    integer,
+    laurent_series_ring,
+    laurent_series_ring_element,
+    power_series_mpoly,
+    power_series_poly,
+    power_series_ring_element,
+    ring,
+)
+from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_pari import PowerSeries_pari
+from sage.structure.category_object import normalize_names
+from sage.structure.element import Expression, parent
+from sage.structure.nonexact import Nonexact
+from sage.structure.unique_representation import UniqueRepresentation
+
 _CommutativeRings = commutative_rings.CommutativeRings()
 import sage.categories.integral_domains as integral_domains
+
 _IntegralDomains = integral_domains.IntegralDomains()
 import sage.categories.fields as fields
+
 _Fields = fields.Fields()
 
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings
@@ -535,7 +537,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             ValueError: default_prec (= -5) must be non-negative
 
         """
-        from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
+        from sage.rings.finite_rings.finite_field_pari_ffelt import (
+            FiniteField_pari_ffelt,
+        )
 
         if implementation is None:
             if isinstance(base_ring, FiniteField_pari_ffelt):

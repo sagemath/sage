@@ -8,7 +8,7 @@
 #*****************************************************************************
 
 from sage.structure.sage_object cimport SageObject
-from .decl cimport *
+from sage.libs.coxeter3.decl cimport *
 
 cdef class String:
     cdef c_String x

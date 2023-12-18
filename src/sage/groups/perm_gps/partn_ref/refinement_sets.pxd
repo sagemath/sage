@@ -17,12 +17,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .data_structures cimport *
-from .automorphism_group_canonical_label cimport (
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+from sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label cimport (
     get_aut_gp_and_can_lab, aut_gp_and_can_lab, agcl_work_space,
     allocate_agcl_output, deallocate_agcl_output,
     allocate_agcl_work_space, deallocate_agcl_work_space)
-from .canonical_augmentation cimport (iterator,
+from sage.groups.perm_gps.partn_ref.canonical_augmentation cimport (iterator,
     canonical_generator_data, allocate_cgd, deallocate_cgd,
     canonical_generator_next,
     setup_canonical_generator, start_canonical_generator)

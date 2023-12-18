@@ -153,7 +153,7 @@ cdef class PowComputer_class(SageObject):
         EXAMPLES::
 
             sage: PC = PowComputer(3, 5, 10)
-            sage: PC.pow_Integer_Integer(2) #indirect doctest
+            sage: PC.pow_Integer_Integer(2)  # indirect doctest
             9
         """
         cdef Integer ans = PY_NEW(Integer)
@@ -175,6 +175,8 @@ cdef class PowComputer_class(SageObject):
             1
             sage: PC.pow_Integer_Integer(10)
             59049
+
+            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC.pow_Integer_Integer(4)
             81
@@ -226,7 +228,7 @@ cdef class PowComputer_class(SageObject):
         to that mpz_t.  So if you try to use the results of two
         calls at once, things will break. ::
 
-            sage: PC._pow_mpz_t_tmp_demo(6, 8) # 244140625 on some architectures and 152587890625 on others: random
+            sage: PC._pow_mpz_t_tmp_demo(6, 8)  # 244140625 on some architectures and 152587890625 on others: random
             244140625
             sage: 5^6*5^8
             6103515625
@@ -265,6 +267,8 @@ cdef class PowComputer_class(SageObject):
             1
             sage: PC._pow_mpz_t_tmp_test(10)
             59049
+
+            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC._pow_mpz_t_tmp_test(4)
             81
@@ -287,7 +291,7 @@ cdef class PowComputer_class(SageObject):
         EXAMPLES::
 
             sage: PC = PowComputer(3, 5, 10)
-            sage: PC._pow_mpz_t_top_test() #indirect doctest
+            sage: PC._pow_mpz_t_top_test()  # indirect doctest
             59049
         """
         raise NotImplementedError
@@ -301,6 +305,8 @@ cdef class PowComputer_class(SageObject):
             sage: PC = PowComputer(3, 5, 10)
             sage: PC._pow_mpz_t_top_test()
             59049
+
+            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC._pow_mpz_t_top_test()
             59049
@@ -423,6 +429,7 @@ cdef class PowComputer_class(SageObject):
             return ~self.pow_Integer(-mpz_get_si(_n.value))
         else:
             return self.pow_Integer(mpz_get_ui(_n.value))
+
 
 cdef class PowComputer_base(PowComputer_class):
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
@@ -556,7 +563,7 @@ cdef class PowComputer_base(PowComputer_class):
         EXAMPLES::
 
             sage: PC = PowComputer(3, 5, 10)
-            sage: PC._pow_mpz_t_top_test() #indirect doctest
+            sage: PC._pow_mpz_t_top_test()  # indirect doctest
             59049
         """
         return self.top_power
@@ -600,7 +607,7 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
 
     EXAMPLES::
 
-        sage: PC = PowComputer(3, 5, 10) # indirect doctest
+        sage: PC = PowComputer(3, 5, 10)  # indirect doctest
         sage: PC(4)
         81
     """
@@ -617,13 +624,13 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
         if PC is not None:
             return PC
     if prec_type == 'capped-rel':
-        from .padic_capped_relative_element import PowComputer_ as PC_class
+        from sage.rings.padics.padic_capped_relative_element import PowComputer_ as PC_class
     elif prec_type == 'capped-abs':
-        from .padic_capped_absolute_element import PowComputer_ as PC_class
+        from sage.rings.padics.padic_capped_absolute_element import PowComputer_ as PC_class
     elif prec_type == 'fixed-mod':
-        from .padic_fixed_mod_element import PowComputer_ as PC_class
+        from sage.rings.padics.padic_fixed_mod_element import PowComputer_ as PC_class
     elif prec_type == 'floating-point':
-        from .padic_floating_point_element import PowComputer_ as PC_class
+        from sage.rings.padics.padic_floating_point_element import PowComputer_ as PC_class
     else:
         PC_class = PowComputer_base
     PC = PC_class(m, mpz_get_ui(cache_limit.value), mpz_get_ui(prec_cap.value), mpz_get_ui(prec_cap.value), in_field)

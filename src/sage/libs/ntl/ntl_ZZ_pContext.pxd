@@ -1,6 +1,6 @@
-from .types cimport ZZ_pContext_c
-from .ntl_ZZ cimport ntl_ZZ
-from .types cimport ZZ_c
+from sage.libs.ntl.types cimport ZZ_pContext_c
+from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
+from sage.libs.ntl.types cimport ZZ_c
 
 
 cdef class ntl_ZZ_pContext_class():

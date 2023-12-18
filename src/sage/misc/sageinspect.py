@@ -178,8 +178,6 @@ def loadable_module_extension():
     r"""
     Return the filename extension of loadable modules, including the dot.
 
-    It is '.dll' on cygwin, '.so' otherwise.
-
     This function is deprecated.
 
     EXAMPLES::
@@ -1807,6 +1805,9 @@ def formatannotation(annotation, base_module=None):
     return repr(annotation)
 
 
+_formatannotation = formatannotation
+
+
 def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        kwonlyargs=(), kwonlydefaults=None, annotations={},
                        formatarg=str,
@@ -1814,7 +1815,7 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        formatvarkw=None,
                        formatvalue=None,
                        formatreturns=None,
-                       formatannotation=formatannotation):
+                       formatannotation=None):
     """
     Format an argument spec from the values returned by getfullargspec.
 
@@ -1851,6 +1852,8 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         formatvalue = lambda value: '=' + repr(value)
     if formatreturns is None:
         formatreturns = lambda text: ' -> ' + text
+    if formatannotation is None:
+        formatannotation = _formatannotation
 
     def formatargandannotation(arg):
         result = formatarg(arg)

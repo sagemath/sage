@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Elements of Hecke modules
 

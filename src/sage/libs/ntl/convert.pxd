@@ -1,4 +1,4 @@
-from .types cimport ZZ_c
+from sage.libs.ntl.types cimport ZZ_c
 from sage.libs.gmp.types cimport mpz_t, mpz_srcptr
 
 cdef void ZZ_to_mpz(mpz_t output, ZZ_c* x) noexcept

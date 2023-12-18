@@ -116,7 +116,7 @@ class DocTestReporter(SageObject):
             sage: DTR = DocTestReporter(DC)
         """
         self.controller = controller
-        self.postscript = dict(lines=[], cputime=0, walltime=0)
+        self.postscript = {"lines": [], "cputime": 0, "walltime": 0}
         self.sources_completed = 0
         self.stats = {}
         self.error_status = 0
@@ -408,7 +408,7 @@ class DocTestReporter(SageObject):
                 ntests, result_dict = results
             except (TypeError, ValueError):
                 ntests = 0
-                result_dict = DictAsObject(dict(err='badresult'))
+                result_dict = DictAsObject({"err": 'badresult'})
             if timeout:
                 fail_msg = "Timed out"
                 if ntests > 0:
@@ -429,7 +429,7 @@ class DocTestReporter(SageObject):
                 log(output)
                 log("*"*70)
                 postscript['lines'].append(cmd + "  # %s" % fail_msg)
-                stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
+                stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
                 if not the_baseline_stats.get('failed', False):
                     self.error_status |= 4
             elif return_code:
@@ -445,7 +445,7 @@ class DocTestReporter(SageObject):
                 log(output)
                 log("*"*70)
                 postscript['lines'].append(cmd + "  # %s" % fail_msg)
-                stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
+                stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
                 if not the_baseline_stats.get('failed', False):
                     self.error_status |= (8 if return_code > 0 else 16)
             else:
@@ -501,9 +501,9 @@ class DocTestReporter(SageObject):
                     if hasattr(result_dict, 'tb'):
                         log(result_dict.tb)
                     if hasattr(result_dict, 'walltime'):
-                        stats[basename] = dict(failed=True, walltime=wall, ntests=ntests)
+                        stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}
                     else:
-                        stats[basename] = dict(failed=True, walltime=1e6, ntests=ntests)
+                        stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
                     self.error_status |= 64
                 if result_dict.err is None or result_dict.err == 'tab':
                     f = result_dict.failures
@@ -515,16 +515,16 @@ class DocTestReporter(SageObject):
                         if not the_baseline_stats.get('failed', False):
                             self.error_status |= 1
                     if f or result_dict.err == 'tab':
-                        stats[basename] = dict(failed=True, walltime=wall, ntests=ntests)
+                        stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}
                     else:
-                        stats[basename] = dict(walltime=wall, ntests=ntests)
+                        stats[basename] = {"walltime": wall, "ntests": ntests}
                     postscript['cputime'] += cpu
                     postscript['walltime'] += wall
 
                     try:
                         optionals = result_dict.optionals
                     except AttributeError:
-                        optionals = dict()
+                        optionals = {}
                     for tag in sorted(optionals):
                         nskipped = optionals[tag]
                         if tag == "long time":

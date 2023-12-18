@@ -32,11 +32,11 @@ debugger.
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from .data_structures cimport *
-from .automorphism_group_canonical_label cimport (
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+from sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label cimport (
     get_aut_gp_and_can_lab, aut_gp_and_can_lab,
     deallocate_agcl_output)
-from .double_coset cimport double_coset
+from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset
 from sage.rings.integer cimport Integer
 
 

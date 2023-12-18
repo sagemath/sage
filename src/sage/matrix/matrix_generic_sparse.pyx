@@ -55,7 +55,7 @@ EXAMPLES::
 """
 cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.structure.element
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 
 cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
@@ -451,7 +451,7 @@ def Matrix_sparse_from_rows(X):
     if not X:
         raise ArithmeticError("X must be nonempty")
 
-    from . import matrix_space
+    from sage.matrix import matrix_space
     entries = {}
     R = X[0].base_ring()
     ncols = X[0].degree()

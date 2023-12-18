@@ -191,8 +191,8 @@ from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.c_graph cimport CGraph
-from .static_sparse_backend cimport StaticSparseCGraph
-from .static_sparse_backend cimport StaticSparseBackend
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 
 
 cdef extern from "fenv.h":
@@ -784,10 +784,8 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     cdef size_t s_nscc = <size_t>nscc
     cdef vector[vector[int]] scc_list = vector[vector[int]](nscc, vector[int]())
     cdef vector[vector[int]] sons = vector[vector[int]](nscc + 1, vector[int]())
-    cdef vector[int].iterator iter
     cdef short *neighbors = <short *> mem.calloc(nscc, sizeof(short))
     cdef long m = 0
-    cdef uint32_t degv
     cdef uint32_t *p_tmp
 
     for v in range(s_nscc):

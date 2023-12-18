@@ -84,11 +84,11 @@ cimport gmpy2
 cdef mul, truediv
 from operator import mul, truediv
 
-from .richcmp cimport rich_to_bool, revop
-from .sage_object cimport SageObject
-from .parent cimport Parent_richcmp_element_without_coercion
-from .element cimport bin_op_exception, parent, Element
-from .coerce_exceptions import CoercionException
+from sage.structure.richcmp cimport rich_to_bool, revop
+from sage.structure.sage_object cimport SageObject
+from sage.structure.parent cimport Parent_richcmp_element_without_coercion
+from sage.structure.element cimport bin_op_exception, parent, Element
+from sage.structure.coerce_exceptions import CoercionException
 from sage.rings.integer_fake cimport is_Integer
 from sage.categories.map cimport Map
 from sage.categories.morphism import IdentityMorphism
@@ -517,6 +517,8 @@ cdef class CoercionModel:
     Check that :trac:`8426` is fixed (see also :trac:`18076`)::
 
         sage: import numpy                                                              # needs numpy
+
+        sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
         sage: numpy.float32('1.5') * x                                                  # needs numpy
         1.50000000000000*x

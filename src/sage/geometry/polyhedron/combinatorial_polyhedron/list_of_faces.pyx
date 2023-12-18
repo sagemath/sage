@@ -92,7 +92,7 @@ AUTHOR:
 
 from sage.matrix.matrix_dense  cimport Matrix_dense
 
-from .face_list_data_structure cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -294,7 +294,7 @@ cdef class ListOfFaces:
 
         # Calculating ``newfaces``
         # such that ``newfaces`` points to all facets of ``faces[n_faces -1]``.
-        cdef size_t new_n_faces = get_next_level(self.data, new_faces.data, empty_forbidden)
+        get_next_level(self.data, new_faces.data, empty_forbidden)
 
         # Undo what ``get_next_level`` does.
         self.data.n_faces += 1

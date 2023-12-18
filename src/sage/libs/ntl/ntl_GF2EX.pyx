@@ -27,10 +27,10 @@ include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
-from .ntl_ZZ import unpickle_class_args
-from .ntl_GF2EContext import ntl_GF2EContext
-from .ntl_GF2EContext cimport ntl_GF2EContext_class
-from .ntl_GF2E cimport ntl_GF2E
+from sage.libs.ntl.ntl_ZZ import unpickle_class_args
+from sage.libs.ntl.ntl_GF2EContext import ntl_GF2EContext
+from sage.libs.ntl.ntl_GF2EContext cimport ntl_GF2EContext_class
+from sage.libs.ntl.ntl_GF2E cimport ntl_GF2E
 
 ##############################################################################
 #

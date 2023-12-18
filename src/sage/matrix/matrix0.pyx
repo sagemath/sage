@@ -47,7 +47,7 @@ from sage.rings.integer_ring import is_IntegerRing
 
 import sage.modules.free_module
 
-from .matrix_misc import row_iterator
+from sage.matrix.matrix_misc import row_iterator
 
 _Fields = Fields()
 _IntegralDomains = IntegralDomains()
@@ -543,11 +543,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         TESTS::
 
-            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):            # needs sage.rings.number_fields
+            sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):            # needs sage.rings.number_field
             ....:     def __bool__(self):
             ....:         raise ValueError
-            sage: mat = matrix(1, 1, MyAlgebraicNumber(1))                              # needs sage.rings.number_fields
-            sage: bool(mat)                                                             # needs sage.rings.number_fields
+            sage: mat = matrix(1, 1, MyAlgebraicNumber(1))                              # needs sage.rings.number_field
+            sage: bool(mat)                                                             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError
@@ -1750,7 +1750,7 @@ cdef class Matrix(sage.structure.element.Matrix):
              100 x 100 dense matrix over Integer Ring]
 
         """
-        from .constructor import options
+        from sage.matrix.constructor import options
         if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str()
         if self.is_sparse():
@@ -2051,7 +2051,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         # only use floating point formatting for inexact types that have
         # custom implementation of __format__
-        from .constructor import options
+        from sage.matrix.constructor import options
         prec = options.precision()
         if prec is None or callable(rep_mapping) or not entries \
                 or type(entries[0]).__format__ is Element.__format__ \
@@ -2135,7 +2135,7 @@ cdef class Matrix(sage.structure.element.Matrix):
               -0.35104242112828943    0.5084492941557279]
                -0.9541798283979341   -0.8948790563276592]
         """
-        from .constructor import options
+        from sage.matrix.constructor import options
         if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str(character_art=True)
         else:
@@ -2164,7 +2164,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: unicode_art(A)
             100 x 100 dense matrix over Integer Ring
         """
-        from .constructor import options
+        from sage.matrix.constructor import options
         if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str(unicode=True, character_art=True)
         else:
@@ -2375,7 +2375,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [  5  25]
             [125 625]
         """
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         return matrix(self.nrows(), self.ncols(), [e(*args, **kwargs) for e in self.list()])
 
     ###################################################
@@ -3850,7 +3850,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ValueError("length of v must be at most the number of rows of self")
         if not self._nrows:
             return self.parent().row_space().zero_vector()
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         v = matrix(list(v)+[0]*(self._nrows-len(v)))
         return (v * self)[0]
 
@@ -3927,7 +3927,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ValueError("length of v must be at most the number of columns of self")
         if not self._ncols:
             return self.parent().column_space().zero_vector()
-        from .constructor import matrix
+        from sage.matrix.constructor import matrix
         v = matrix(self._ncols, 1, list(v)+[0]*(self._ncols-len(v)))
         return (self * v).column(0)
 
@@ -4898,7 +4898,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Over finite fields::
 
             sage: A = matrix(GF(59), 3, [10,56,39,53,56,33,58,24,55])
-            sage: A.multiplicative_order()                                              # needs sage.groups
+            sage: A.multiplicative_order()                                              # needs sage.libs.pari
             580
             sage: (A^580).is_one()
             True
@@ -4918,7 +4918,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Over `\ZZ`::
 
             sage: m = matrix(ZZ, 2, 2, [-1,1,-1,0])
-            sage: m.multiplicative_order()                                              # needs sage.groups
+            sage: m.multiplicative_order()                                              # needs sage.libs.pari
             3
 
             sage: m = posets.ChainPoset(6).coxeter_transformation()                     # needs sage.combinat sage.graphs
@@ -4930,10 +4930,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             10
 
             sage: M = matrix(ZZ, 2, 2, [1, 1, 0, 1])
-            sage: M.multiplicative_order()                                              # needs sage.groups
+            sage: M.multiplicative_order()                                              # needs sage.libs.pari
             +Infinity
 
-            sage: for k in range(600):                                                  # needs sage.groups
+            sage: for k in range(600):                                                  # needs sage.groups sage.modular
             ....:     m = SL2Z.random_element()
             ....:     o = m.multiplicative_order()
             ....:     if o != Infinity and m**o != SL2Z.one():
@@ -4948,7 +4948,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:     else:
             ....:         return ZZ.random_element(-100,100)
             sage: rnd = matrix(ZZ, 8, 8, val)
-            sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()            # needs sage.groups
+            sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()            # needs sage.libs.pari
             24
 
         TESTS::
@@ -5827,9 +5827,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Tests for :trac:`28570`::
 
-            sage: P = posets.TamariLattice(7)                                           # needs sage.combinat sage.graphs
-            sage: M = P._hasse_diagram._leq_matrix                                      # needs sage.combinat sage.graphs
-            sage: M.inverse_of_unit()   # this was very slow, now 1s                    # needs sage.combinat sage.graphs
+            sage: P = posets.TamariLattice(7)                                           # needs sage.graphs
+            sage: M = P._hasse_diagram._leq_matrix                                      # needs sage.graphs
+            sage: M.inverse_of_unit()   # this was very slow, now 1s                    # needs sage.graphs
             429 x 429 sparse matrix over Integer Ring...
 
             sage: m = matrix(Zmod(2**2), 1, 1, [1], sparse=True)
@@ -6178,7 +6178,7 @@ def set_max_rows(n):
     """
     from sage.misc.superseded import deprecation
     deprecation(30552, "'set_max_rows' is replaced by 'matrix.options.max_rows'")
-    from .constructor import options
+    from sage.matrix.constructor import options
     options.max_rows = n-1
 
 def set_max_cols(n):
@@ -6195,5 +6195,5 @@ def set_max_cols(n):
     """
     from sage.misc.superseded import deprecation
     deprecation(30552, "'set_max_cols' is replaced by 'matrix.options.max_cols'")
-    from .constructor import options
+    from sage.matrix.constructor import options
     options.max_cols = n-1

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.ntl
 """
 Frobenius endomorphisms on p-adic fields
 """
@@ -20,7 +21,7 @@ from sage.structure.richcmp cimport (richcmp, rich_to_bool,
                                      richcmp_not_equal)
 
 from sage.rings.morphism cimport RingHomomorphism
-from .padic_generic import pAdicGeneric
+from sage.rings.padics.padic_generic import pAdicGeneric
 
 
 cdef class FrobeniusEndomorphism_padics(RingHomomorphism):

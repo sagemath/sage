@@ -1,7 +1,9 @@
-from .c_graph cimport CGraph, CGraphBackend
-from .static_sparse_graph cimport short_digraph, ushort
 from libc.stdint cimport uint64_t, uint32_t, INT32_MAX, UINT32_MAX
+
 from sage.data_structures.bitset cimport *
+from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
+from sage.graphs.base.static_sparse_graph cimport short_digraph, ushort
+
 
 cdef class StaticSparseCGraph(CGraph):
     cdef short_digraph g
@@ -11,6 +13,7 @@ cdef class StaticSparseCGraph(CGraph):
 
     cpdef int out_degree(self, int u) except -1
     cpdef int in_degree(self, int u) except -1
+
 
 cdef class StaticSparseBackend(CGraphBackend):
     cdef int _order

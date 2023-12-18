@@ -58,11 +58,11 @@ cdef class CVXPYBackend:
 
     Open-source solvers provided by optional packages::
 
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK"); p.solve()            # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK"); p.solve()             # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK_MI"); p.solve()         # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK_MI"); p.solve()          # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CVXOPT"); p.solve()          # optional - cvxopt
+        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CVXOPT"); p.solve()           # needs cvxopt
         0.0
         sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLOP"); p.solve()            # optional - ortools
         0.0
@@ -155,6 +155,8 @@ cdef class CVXPYBackend:
             sage: p.set_objective(b[1] + b[2])
             sage: cp = copy(p.get_backend())
             sage: cp.solve()
+            doctest:warning...:
+            FutureWarning:...
             0
             sage: cp.get_objective_value()  # abs tol 1e-7
             6.0

@@ -14,7 +14,7 @@ Inline cython methods for lists of faces.
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
 
-from .face_data_structure             cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure             cimport *
 from libc.string                      cimport memset
 from cysignals.signals                cimport sig_check
 from cysignals.memory                 cimport check_allocarray, check_calloc, sig_free
@@ -187,7 +187,6 @@ cdef inline size_t find_face(face_t face, face_list_t faces) noexcept:
     cdef size_t n_faces = faces.n_faces
     cdef face_t* faces_pt = faces.faces
     cdef int val
-
 
     while (n_faces > 1):
         # In each iteration step, we will look for ``face`` in
@@ -367,6 +366,6 @@ cdef inline bint face_list_check_alignment(face_list_t faces) noexcept:
     """
     cdef size_t i
     for i in range(faces.n_faces):
-       if not face_check_alignment(faces.faces[i]):
-           return False
+        if not face_check_alignment(faces.faces[i]):
+            return False
     return True

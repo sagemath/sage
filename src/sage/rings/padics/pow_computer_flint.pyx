@@ -69,7 +69,7 @@ cdef class PowComputer_flint(PowComputer_class):
 
             sage: from sage.rings.padics.pow_computer_flint import PowComputer_flint_maker
             sage: R.<x> = ZZ[]; f = x^3 - 8*x - 2
-            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel') # indirect doctest
+            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel')  # indirect doctest
             sage: TestSuite(A).run()
 
         """
@@ -103,8 +103,8 @@ cdef class PowComputer_flint(PowComputer_class):
 
             sage: from sage.rings.padics.pow_computer_flint import PowComputer_flint_maker
             sage: R.<x> = ZZ[]; f = x^3 - 8*x - 2
-            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel') # indirect doctest
-            sage: A._test_pickling() # indirect doctest
+            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel')  # indirect doctest
+            sage: A._test_pickling()  # indirect doctest
 
         """
         return PowComputer_flint_maker, (self.prime, self.cache_limit, self.prec_cap, self.ram_prec_cap, self.in_field, self.polynomial(), self._prec_type)
@@ -641,13 +641,13 @@ def PowComputer_flint_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field
 
     """
     if prec_type == 'capped-rel':
-        from .qadic_flint_CR import PowComputer_
+        from sage.rings.padics.qadic_flint_CR import PowComputer_
     elif prec_type == 'capped-abs':
-        from .qadic_flint_CA import PowComputer_
+        from sage.rings.padics.qadic_flint_CA import PowComputer_
     elif prec_type == 'fixed-mod':
-        from .qadic_flint_FM import PowComputer_
+        from sage.rings.padics.qadic_flint_FM import PowComputer_
     elif prec_type == 'floating-point':
-        from .qadic_flint_FP import PowComputer_
+        from sage.rings.padics.qadic_flint_FP import PowComputer_
     else:
         raise ValueError("unknown prec_type `%s`" % prec_type)
     return PowComputer_(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly)

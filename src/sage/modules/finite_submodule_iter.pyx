@@ -283,7 +283,7 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
             sage: all(Y[i]-X[i] == v for i in range(len(X)))
             True
         """
-        cdef Py_ssize_t d, i, p
+        cdef Py_ssize_t i, p
         cdef list pows, order
 
         F = basis[0].base_ring()
@@ -366,7 +366,6 @@ cdef class FiniteFieldsubspace_projPoint_iterator:
             85
         """
         from sage.matrix.constructor import matrix
-        cdef i
         self._basis = list(basis)
         self._basis_length = len(self._basis)
         self._immutable = immutable

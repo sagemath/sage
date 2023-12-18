@@ -302,7 +302,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: (1/x^2).valuation(p)                                                  # needs sage.libs.pari
             -2
         """
-        from .place import FunctionFieldPlace
+        from sage.rings.function_field.place import FunctionFieldPlace
 
         if not isinstance(place, FunctionFieldPlace):
             # place is an irreducible polynomial
@@ -390,7 +390,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
             sage: f = (x+1)/(x-1)
             sage: f.is_nth_power(1)
             True
-            sage: f.is_nth_power(3)
+            sage: f.is_nth_power(3)                                                     # needs sage.modules
             False
             sage: (f^3).is_nth_power(3)
             True

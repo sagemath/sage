@@ -1428,6 +1428,15 @@ class Gap(Gap_generic):
         """
         return GapElement
 
+    def _an_element_(self):
+        """
+        EXAMPLES::
+
+            sage: gap._an_element_()
+            0
+        """
+        return self(0)
+
     def _function_element_class(self):
         """
         Returns the GapFunctionElement class.
@@ -1699,7 +1708,7 @@ def gfq_gap_to_sage(x, F):
         return F(0)
     i1 = s.index("(")
     i2 = s.index(")")
-    q  = eval(s[i1+1:i2].replace('^','**'))
+    q = eval(s[i1+1:i2].replace('^','**'))
     if not F.cardinality().is_power_of(q):
         raise ValueError('%r has no subfield of size %r' % (F, q))
     if s.find(')^') == -1:

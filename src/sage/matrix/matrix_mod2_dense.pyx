@@ -109,7 +109,7 @@ from cysignals.memory cimport check_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
 cimport sage.matrix.matrix_dense as matrix_dense
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from libc.stdio cimport *
 from sage.structure.element cimport (Matrix, Vector)
 from sage.modules.free_module_element cimport FreeModuleElement

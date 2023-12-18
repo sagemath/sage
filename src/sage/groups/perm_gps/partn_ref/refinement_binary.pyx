@@ -28,10 +28,10 @@ REFERENCE:
 #*****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.rings.integer cimport Integer
 from sage.structure.element import is_Matrix
-from .double_coset cimport double_coset
+from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset
 
 
 cdef class LinearBinaryCodeStruct(BinaryCodeStruct):

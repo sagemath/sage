@@ -351,8 +351,8 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             1
 
             sage: p = x^3 - x^2 - x - 1
-            sage: r = p.roots(RIF, multiplicities=False)[0]
-            sage: p._eval_mpfi_(r)
+            sage: r = p.roots(RIF, multiplicities=False)[0]                             # needs sage.libs.linbox
+            sage: p._eval_mpfi_(r)                                                      # needs sage.libs.linbox
             0.?e-27
         """
         cdef RealIntervalFieldElement res = a._new()
@@ -395,7 +395,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             True
             sage: (t^2+3)(RealBallField(100)(1/3))
             [3.1111111111111111111111111111...]
-            sage: (t^2+3)(ComplexBallField(10)(i))
+            sage: (t^2+3)(ComplexBallField(10)(i))                                      # needs sage.symbolic
             2.00
         """
         cdef Polynomial_integer_dense_flint f
@@ -1354,7 +1354,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: f = 1 - x^2 - x^3 - x^4 + x^6
-            sage: f.real_root_intervals()
+            sage: f.real_root_intervals()                                               # needs sage.libs.linbox
             [((1/2, 3/4), 1), ((1, 3/2), 1)]
         """
 

@@ -112,16 +112,15 @@ easily::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
-import sage.misc.latex as latex
-from . import ring, ideal, quotient_ring_element
-from sage.structure.category_object import normalize_names
-from sage.structure.richcmp import richcmp_method, richcmp
-import sage.structure.parent_gens
-from sage.misc.cachefunc import cached_method
-from sage.categories.rings import Rings
-from sage.categories.commutative_rings import CommutativeRings
-
 import sage.interfaces.abc
+import sage.misc.latex as latex
+import sage.structure.parent_gens
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.rings import Rings
+from sage.misc.cachefunc import cached_method
+from sage.rings import ideal, quotient_ring_element, ring
+from sage.structure.category_object import normalize_names
+from sage.structure.richcmp import richcmp, richcmp_method
 
 _Rings = Rings()
 _CommRings = CommutativeRings()
@@ -302,7 +301,9 @@ def QuotientRing(R, I, names=None, **kwds):
     else:
         names = normalize_names(R.ngens(), names)
     if kwds.get('implementation') == 'pbori':
-        from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor as BooleanPolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import (
+            BooleanPolynomialRing_constructor as BooleanPolynomialRing,
+        )
         kwds.pop('implementation')
         return BooleanPolynomialRing(R.ngens(), names=names, **kwds)
     # workaround to silence warning from #34806
@@ -538,6 +539,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             Finite Field of size 5
         """
         from sage.categories.pushout import QuotientFunctor
+
         # Is there a better generic way to distinguish between things like Z/pZ as a field and Z/pZ as a ring?
         from sage.rings.ring import Field
         try:
@@ -1006,7 +1008,9 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         if len(gens) == 1:
             gens = gens[0]
-        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        from sage.rings.polynomial.multi_polynomial_ring_base import (
+            MPolynomialRing_base,
+        )
         if not (isinstance(self.__R, MPolynomialRing_base) and self.__R._has_singular):
             # pass through
             return super().ideal(gens, **kwds)
@@ -1019,7 +1023,9 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         global MPolynomialIdeal_quotient
         if MPolynomialIdeal_quotient is None:
-            from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal_quotient
+            from sage.rings.polynomial.multi_polynomial_ideal import (
+                MPolynomialIdeal_quotient,
+            )
         return MPolynomialIdeal_quotient(self, gens, **kwds)
 
     def _element_constructor_(self, x, coerce=True):
@@ -1276,7 +1282,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         try:
             Q = self.__singular
-            if not (Q.parent() is singular):
+            if Q.parent() is not singular:
                 raise ValueError
             Q._check_valid()
             return Q

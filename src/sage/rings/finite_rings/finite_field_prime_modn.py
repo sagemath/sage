@@ -105,7 +105,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             sage: 12 % 7
             5
 
-            sage: ZZ.residue_field(7).hom(GF(7))(1)  # See trac 11319                   # needs sage.rings.finite_rings
+            sage: ZZ.residue_field(7).hom(GF(7))(1)  # See trac 11319
             1
 
             sage: # needs sage.rings.finite_rings sage.rings.number_field
@@ -120,12 +120,12 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
         Check that :trac:`19573` is resolved::
 
-            sage: Integers(9).hom(GF(3))                                                # needs sage.rings.finite_rings
+            sage: Integers(9).hom(GF(3))
             Natural morphism:
               From: Ring of integers modulo 9
               To:   Finite Field of size 3
 
-            sage: Integers(9).hom(GF(5))                                                # needs sage.rings.finite_rings
+            sage: Integers(9).hom(GF(5))
             Traceback (most recent call last):
             ...
             TypeError: natural coercion morphism from Ring of integers modulo 9 to Finite Field of size 5 not defined
