@@ -3865,9 +3865,9 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
 
         sage: # needs sage.groups sage.modules
         sage: GSym01 = PermutationGroup([[(0,1),(2,),(3,)]]); GSym01
-        Permutation Group with generators [(0,1)]
+        Permutation Group with generators [(0,1)] and domain {0, 1, 2, 3}
         sage: GASym01 = PermutationGroup([[(0,1),(2,3)]]); GASym01
-        Permutation Group with generators [(0,1)(2,3)]
+        Permutation Group with generators [(0,1)(2,3)] and domain {0, 1, 2, 3}
         sage: from sage.categories.action import Action
         sage: from sage.structure.element import Matrix
         sage: class TensorIndexAction(Action):
@@ -3893,7 +3893,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         [-1 -3]
         [-2 -4]
         sage: Sym01 = M.parent().invariant_module(GSym01, action=GSym01_action); Sym01
-        (Permutation Group with generators [(0,1)])-invariant submodule
+        (Permutation Group with generators [(0,1)] and domain {0, 1, 2, 3})-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
         sage: list(Sym01.basis())
         [B[0], B[1], B[2]]
@@ -3904,7 +3904,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         ]
         sage: ASym01 = M.parent().invariant_module(GASym01, action=GASym01_action)
         sage: ASym01
-        (Permutation Group with generators [(0,1)(2,3)])-invariant submodule
+        (Permutation Group with generators [(0,1)(2,3)] and domain {0, 1, 2, 3})-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
         sage: list(ASym01.basis())
         [B[0]]
@@ -3915,7 +3915,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         ]
         sage: from sage.categories.pushout import pushout
         sage: pushout(Sym01, QQ)
-        (Permutation Group with generators [(0,1)])-invariant submodule
+        (Permutation Group with generators [(0,1)] and domain {0, 1, 2, 3})-invariant submodule
          of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
     """
     def __init__(self, S, action=operator.mul, side='left',
