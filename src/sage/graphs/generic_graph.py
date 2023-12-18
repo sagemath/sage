@@ -23271,7 +23271,7 @@ class GenericGraph(GenericGraph_pyx):
             Permutation Group with generators [(1,4)(2,3)] and domain {0, 1, 2, 3, 4}
 
             sage: G.automorphism_group(edge_labels=True, algorithm="bliss")  # optional - bliss
-            Permutation Group with generators [(1,4)(2,3)]
+            Permutation Group with generators [(1,4)(2,3)] and domain {0, 1, 2, 3, 4}
 
             sage: G.automorphism_group(edge_labels=True, algorithm="sage")              # needs sage.groups
             Permutation Group with generators [(1,4)(2,3)] and domain {0, 1, 2, 3, 4}
