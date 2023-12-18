@@ -322,16 +322,6 @@ AC_CHECK_HEADER([complex.h],[],[
 # First check for something that should be in any maths library (sqrt).
 AC_LANG(C++)
 AC_CHECK_LIB(m,sqrt,[],[
-                       AC_MSG_NOTICE([This system has no maths library installed.])
-                       # On AIX this is not installed by default - strange as that might seem.
-                       # but is in a fileset bos.adt.libm. However, the fileset bos.adt
-                       # includes other things that are probably useful.
-                       if test "x`uname`" = 'xAIX'
-                       then
-                          AC_MSG_NOTICE([On AIX, libm is contained in the bos.adt.libm fileset.])
-                          AC_MSG_NOTICE([Actually, we recommend to install the complete bos.adt fileset.])
-                          AC_MSG_NOTICE([This needs to be performed by a system administrator.])
-                       fi
                        AC_MSG_ERROR([Exiting, since a maths library was not found.])
                        ])
 
