@@ -1,7 +1,14 @@
 #*****************************************************************************
 #       Copyright (C) 2005-2007 William Stein
-#       Copyright (C) 2009-2011 David Kirkby
-#       Copyright (C) 2012-2016 Jeroen Demeyer
+#                     2009-2011 David Kirkby
+#                     2012-2015 Volker Braun
+#                     2012-2019 Jeroen Demeyer
+#                     2014-2017 François Bissey
+#                     2016-2022 Matthias Koeppe
+#                     2017-2018 Erik M. Bray
+#                     2018      Dima Pasechnik
+#                     2020      Jonathan Kliem
+#                     2021-2023 Michael Orlitzky
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
