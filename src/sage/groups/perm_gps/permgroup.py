@@ -2622,12 +2622,32 @@ class PermutationGroup_generic(FiniteGroup):
             Traceback (most recent call last):
             ...
             TypeError: junk does not convert to a permutation group element
+
+        The domain is taken into account properly::
+
+            sage: G = PermutationGroup([['b','c','a']], domain=['a','b','c'])
+            sage: G.conjugate([('a', 'b')])
+            Permutation Group with generators [('a','c','b')] and domain {'a', 'b', 'c'}
         """
+        if self._has_natural_domain():
+            try:
+                g = PermutationConstructor(g)
+            except Exception:
+                raise TypeError("{0} does not convert to a permutation group element".format(g))
+            return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
+
         try:
-            g = PermutationConstructor(g)
-        except Exception:
-            raise TypeError("{0} does not convert to a permutation group element".format(g))
-        return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
+            g = self(g)
+        except (ValueError, KeyError):
+            try:
+                H = PermutationGroup(gens=[g], domain=self.domain())
+                g = H.gen(0)
+            except Exception:
+                gens = [tuple([g(e) for e in x.tuple()]) for x in self.gens()]
+                return PermutationGroup(gens=gens)
+
+        return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g._gap_()),
+                                domain=self.domain())
 
     def direct_product(self, other, maps=True):
         """
