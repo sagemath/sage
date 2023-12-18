@@ -15,8 +15,6 @@ TESTS::
     [(2, 2), (3, 1), (5, 1)]
 """
 
-from sage.misc.lazy_import import lazy_import
+from sage.misc.lazy_import import LazyImport
 
-lazy_import('sage.libs.flint.ulong_extras_sage', 'n_factor_to_list', deprecation=36449)
-
-del lazy_import
+n_factor_to_list = LazyImport('sage.libs.flint.ulong_extras_sage', 'n_factor_to_list', deprecation=36449)

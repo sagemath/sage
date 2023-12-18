@@ -64,11 +64,13 @@ TESTS::
     25/12
 """
 
-from sage.misc.lazy_import import lazy_import
+from sage.misc.lazy_import import LazyImport
 
-lazy_import('sage.libs.flint.arith_sage', ['bell_number', 'bernoulli_number',
-    'euler_number', 'stirling_number_1', 'stirling_number_2',
-    'number_of_partitions', 'dedekind_sum', 'harmonic_number'],
-    deprecation=36449)
-
-del lazy_import
+bell_number = LazyImport('sage.libs.flint.arith_sage', 'bell_number', deprecation=36449)
+bernoulli_number = LazyImport('sage.libs.flint.arith_sage', 'bernoulli_number', deprecation=36449)
+euler_number = LazyImport('sage.libs.flint.arith_sage', 'euler_number', deprecation=36449)
+stirling_number_1 = LazyImport('sage.libs.flint.arith_sage', 'stirling_number_1', deprecation=36449)
+stirling_number_2 = LazyImport('sage.libs.flint.arith_sage', 'stirling_number_2', deprecation=36449)
+number_of_partitions = LazyImport('sage.libs.flint.arith_sage', 'number_of_partitions', deprecation=36449)
+dedekind_sum = LazyImport('sage.libs.flint.arith_sage', 'dedekind_sum', deprecation=36449)
+harmonic_number = LazyImport('sage.libs.flint.arith_sage', 'harmonic_number', deprecation=36449)

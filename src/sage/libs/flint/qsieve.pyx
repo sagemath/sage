@@ -15,8 +15,6 @@ TESTS::
     [(2, 3), (5, 3)]
 """
 
-from sage.misc.lazy_import import lazy_import
+from sage.misc.lazy_import import LazyImport
 
-lazy_import('sage.libs.flint.qsieve_sage', 'qsieve', deprecation=36449)
-
-del lazy_import
+qsieve = LazyImport('sage.libs.flint.qsieve_sage', 'qsieve', deprecation=36449)

@@ -13,8 +13,6 @@ TESTS::
     2  1 1
 """
 
-from sage.misc.lazy_import import lazy_import
+from sage.misc.lazy_import import LazyImport
 
-lazy_import('sage.libs.flint.fmpz_poly_sage', 'Fmpz_poly',  deprecation=36449)
-
-del lazy_import
+Fmpz_poly = LazyImport('sage.libs.flint.fmpz_poly_sage', 'Fmpz_poly',  deprecation=36449)
