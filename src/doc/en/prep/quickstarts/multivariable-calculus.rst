@@ -105,7 +105,7 @@ substitute explicitly.
 
 Here we compute the arclength between :math:`t=0` and :math:`t=1` by
 integrating the normalized derivative. As pointed out in the
-:doc:`calculus tutorial <../Calculus>`, the syntax for
+:doc:`calculus tutorial <../calculus>`, the syntax for
 ``numerical_integral`` is slightly nonstandard -- we just put in the
 endpoints, not the variable.
 
