@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Finite dimensional algebras with basis
 

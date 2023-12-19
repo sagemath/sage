@@ -37,7 +37,7 @@ from sage.algebras.quantum_groups.q_numbers import q_factorial
 
 
 #############################
-## Fock space options
+#  Fock space options
 
 class FockSpaceOptions(GlobalOptions):
     r"""
@@ -84,15 +84,15 @@ class FockSpaceOptions(GlobalOptions):
     NAME = 'FockSpace'
     module = 'sage.algebras.quantum_groups.fock_space'
 
-    display = dict(default="ket",
-                   description='Specifies how terms of the natural basis of Fock space should be printed',
-                   values=dict(ket='displayed as a ket in bra-ket notation',
-                               list='displayed as a list'),
-                   case_sensitive=False)
+    display = {'default': "ket",
+               'description': 'Specifies how terms of the natural basis of Fock space should be printed',
+               'values': {'ket': 'displayed as a ket in bra-ket notation',
+                          'list': 'displayed as a list'},
+               'case_sensitive': False}
 
 
 ###############################################################################
-## Fock space
+#  Fock space
 
 class FockSpace(Parent, UniqueRepresentation):
     r"""
@@ -371,7 +371,7 @@ class FockSpace(Parent, UniqueRepresentation):
              of Univariate Polynomial Ring in q over Integer Ring
         """
         return "Fock space of rank {} of multicharge {} over {}".format(
-                        self._n, self._multicharge, self.base_ring())
+            self._n, self._multicharge, self.base_ring())
 
     def _latex_(self):
         r"""
@@ -568,9 +568,9 @@ class FockSpace(Parent, UniqueRepresentation):
             """
             self._basis_name = "natural"
             # If the cell x is above the cell y
-            if len(F._multicharge) == 1: # For partitions
-                self._above = lambda x,y: x[0] < y[0]
-            else: # For partition tuples
+            if len(F._multicharge) == 1:  # For partitions
+                self._above = lambda x, y: x[0] < y[0]
+            else:  # For partition tuples
                 self._above = lambda x,y: x[0] < y[0] or (x[0] == y[0] and x[1] < y[1])
             self._addable = lambda la,i: [x for x in la.outside_corners()
                                           if la.content(*x, multicharge=F._multicharge) == i]
@@ -666,11 +666,11 @@ class FockSpace(Parent, UniqueRepresentation):
             from sage.typeset.unicode_art import UnicodeArt, unicode_art
             a = unicode_art(m)
             h = a.height()
-            l = UnicodeArt([u'│']*h, baseline=0)
-            r = UnicodeArt([u" "*i + u'╲' for i in range(h//2)], baseline=0)
+            l = UnicodeArt(['│']*h, baseline=0)
+            r = UnicodeArt([" "*i + '╲' for i in range(h//2)], baseline=0)
             if h % 2:
-                r *= UnicodeArt([u" "*(h//2) + u'〉'], baseline=0)
-            r *= UnicodeArt([u" "*i + u'╱' for i in reversed(range(h//2))], baseline=0)
+                r *= UnicodeArt([" "*(h//2) + '〉'], baseline=0)
+            r *= UnicodeArt([" "*i + '╱' for i in reversed(range(h//2))], baseline=0)
             ret = l + a + r
             ret._baseline = h - 1
             return ret

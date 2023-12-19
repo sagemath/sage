@@ -292,6 +292,9 @@ def make_parser():
     parser_download.add_argument(
         '--on-error', choices=['stop', 'warn'], default='stop',
         help='What to do if the tarball cannot be downloaded')
+    parser.add_argument(
+        '--no-check-certificate', action='store_true',
+        help='Do not check SSL certificates for https connections')
 
     parser_upload = subparsers.add_parser(
         'upload', epilog=epilog_upload,
@@ -319,7 +322,7 @@ def make_parser():
         'package_name', default=None, type=str,
         help='Package name.')
     parser_create.add_argument(
-        '--source', type=str, default='normal', help='Package source (one of normal, wheel, script, pip)')
+        '--source', type=str, default=None, help='Package source (one of normal, wheel, script, pip); default depends on provided arguments')
     parser_create.add_argument(
         '--version', type=str, default=None, help='Package version')
     parser_create.add_argument(
@@ -381,6 +384,12 @@ def run():
     elif args.subcommand == 'update-latest':
         app.update_latest_cls(args.package_name, commit=args.commit)
     elif args.subcommand == 'download':
+        if args.no_check_certificate:
+            try:
+                import ssl
+                ssl._create_default_https_context = ssl._create_unverified_context
+            except ImportError:
+                pass
         app.download_cls(args.package_name,
                          allow_upstream=args.allow_upstream,
                          on_error=args.on_error)

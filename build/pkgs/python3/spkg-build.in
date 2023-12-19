@@ -62,17 +62,6 @@ fi
 # common in Cython-generated code.
 export EXTRA_CFLAGS="`testcflags.sh -Wno-unused $OLD_CFLAGS`"
 
-# Remove old symbolic link: it is not needed and its presence can
-# interfere with the Python build.
-rm -f "$SAGE_LOCAL/lib/python"
-
-# Remove old libraries. We really need to do this before building Python
-# since Python tries to import some modules (e.g. ctypes) at build-time.
-# We need to make sure that the old installed libraries in local/lib are
-# not used for that. See https://github.com/sagemath/sage/issues/24605
-rm -f "$SAGE_LOCAL"/lib/lib"$PKG_BASE"*
-
-
     # Note: --without-ensurepip ensures that setuptools+pip are *not* installed
     # automatically when installing python3. They will be installed instead by
     # the separate setuptools and pip packages; see

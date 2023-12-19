@@ -1666,8 +1666,8 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             [(0, 1), (1, 0)]
         """
         I = identity_matrix(self._n)
-        self._path_dict = dict((v, []) for v in map(tuple, I.columns()))
-        self._F_poly_dict = dict((v, self._U(1)) for v in self._path_dict)
+        self._path_dict = {v: [] for v in map(tuple, I.columns())}
+        self._F_poly_dict = {v: self._U(1) for v in self._path_dict}
         self.reset_current_seed()
         self.reset_exploring_iterator()
 
