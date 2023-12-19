@@ -26,7 +26,7 @@ EXAMPLES::
     sage: a.parent()
     Ambient free module of rank 10 over the principal ideal domain Integer Ring
 """
-#******************************************************************************
+# ******************************************************************************
 #
 #                        DGS - Discrete Gaussian Samplers
 #
@@ -56,7 +56,7 @@ EXAMPLES::
 # The views and conclusions contained in the software and documentation are
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of the FreeBSD Project.
-#*****************************************************************************/
+# *****************************************************************************/
 
 from sage.functions.log import exp
 from sage.rings.real_mpfr import RealField
@@ -283,7 +283,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             # is essentially the same, but I can't figure out how to
             # tweak the `.qfrep` call below correctly.
             from warnings import warn
-            warn("Note: `_normalisation_factor_zz` has not been properly "\
+            warn("Note: `_normalisation_factor_zz` has not been properly "
                  "implemented for non-spherical distributions.")
             import itertools
             from sage.functions.log import log
@@ -415,7 +415,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         - ``precision`` -- bit precision `≥ 53`.
 
         - ``sigma_basis`` -- (default: False) When set, ``sigma`` is treated as
-            a basis, i.e. the covariance matrix is computed by ``Σ = SSᵀ``.
+            a (row) basis, i.e. the covariance matrix is computed by ``Σ = SSᵀ``.
 
         EXAMPLES::
 
@@ -461,6 +461,16 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: while v not in counter: add_samples(1000)
             sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1: add_samples(1000)
 
+        The sampler supports passing a basis for the covariance.
+
+            sage: n = 3
+            sage: S = Matrix(ZZ, [[2, 0, 0], [-1, 3, 0], [2, -1, 1]])
+            sage: D = DGL(ZZ^n, S, sigma_basis=True)
+            sage: D.sigma
+            [ 4.00000000000000 -2.00000000000000  4.00000000000000]
+            [-2.00000000000000  10.0000000000000 -5.00000000000000]
+            [ 4.00000000000000 -5.00000000000000  6.00000000000000]
+
         The non-spherical sampler supports offline computation to speed up
         sampling. This will be useful when changing the center `c` is supported.
         The difference is more significant for larger matrices. For 128x128 we
@@ -499,6 +509,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             if self.sigma == self.sigma[0, 0]:
                 self.sigma = self._RR(self.sigma[0, 0])
             else:
+                if sigma_basis:
+                    self.sigma = self.sigma * self.sigma.T
                 if not self.sigma.is_positive_definite():
                     raise RuntimeError(f"Sigma(={self._sigma}) is not positive definite")
                 self.is_spherical = False
@@ -574,11 +586,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
                 self.B2 = Sigma2.cholesky().T
                 self.B2_B_inv = self.B2 * self.B_inv
             except ValueError:
-                raise ValueError("Σ₂ is not positive definite. Is your "\
-                                 f"r(={self.r}) too large? It should be at most "\
+                raise ValueError("Σ₂ is not positive definite. Is your "
+                                 f"r(={self.r}) too large? It should be at most "
                                  f"{self._maximal_r()}")
-
-
 
     def __call__(self):
         r"""
@@ -724,7 +734,6 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         self._c = c
         self._precompute_data()
 
-
     def __repr__(self):
         r"""
         EXAMPLES::
@@ -753,7 +762,6 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         else:
             sigma_str = f"Σ =\n{self._sigma}"
         return f"Discrete Gaussian sampler with Gaussian parameter {sigma_str}, c={self.c} over lattice with basis\n\n{self.B}"
-
 
     def _call_in_lattice(self):
         r"""
@@ -806,7 +814,6 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             c = c - z * B[i]
             v = v + z * B[i]
         return v
-
 
     def add_offline_samples(self, cnt=1):
         """
