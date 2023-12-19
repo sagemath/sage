@@ -155,8 +155,8 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
     This is a special case of Theorem 6.4.3 in [HP2003]_.
     """
     R = IntegerModRing(n)
-    S1 = set(R(x) for x in S1)
-    S2 = set(R(x) for x in S2)
+    S1 = {R(x) for x in S1}
+    S2 = {R(x) for x in S2}
 
     # we first check whether (S1,S2) is a partition of R - {0}
     if (len(S1) + len(S2) != n-1 or len(S1) != len(S2) or
