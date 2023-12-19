@@ -27,9 +27,7 @@ from sage.misc.superseded import deprecation
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
-from sage.categories.fields import Fields
-
-_Fields = Fields()
+from sage.categories.modules import _Fields
 
 
 cdef class IndexedFreeModuleElement(ModuleElement):
