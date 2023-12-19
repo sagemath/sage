@@ -396,9 +396,10 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
       canonical graph of ``G`` or its set of edges
 
     - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider
-      edge labels. The edge labels are assumed to be hashable and sortable. If
-      this is not the case (ie a ``TypeError`` is raised), the algorithm will
-      consider the string representations of the labels instead of the labels.
+      edge labels. The edge labels are assumed to be hashable and
+      sortable. If this is not the case (ie a :class:`TypeError` is
+      raised), the algorithm will consider the string representations
+      of the labels instead of the labels.
 
     - ``certificate`` -- boolean (default: ``False``); when set to ``True``,
       returns the labeling of G into a canonical graph

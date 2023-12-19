@@ -371,18 +371,20 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
     One can embed into any other field::
 
-        sage: K.<a> = NumberField(x^3-2, embedding=CC.gen()-0.6)
+        sage: K.<a> = NumberField(x^3 - 2, embedding=CC.gen() - 0.6)
         sage: CC(a)
         -0.629960524947436 + 1.09112363597172*I
-        sage: L = Qp(5)                                                                 # needs sage.rings.padics
+
+        sage: # needs sage.rings.padics
+        sage: L = Qp(5)
         sage: f = polygen(L)^3 - 2
-        sage: K.<a> = NumberField(x^3-2, embedding=f.roots()[0][0])
+        sage: K.<a> = NumberField(x^3 - 2, embedding=f.roots()[0][0])
         sage: a + L(1)
         4 + 2*5^2 + 2*5^3 + 3*5^4 + 5^5 + 4*5^6 + 2*5^8 + 3*5^9 + 4*5^12
          + 4*5^14 + 4*5^15 + 3*5^16 + 5^17 + 5^18 + 2*5^19 + O(5^20)
-        sage: L.<b> = NumberField(x^6-x^2+1/10, embedding=1)
-        sage: K.<a> = NumberField(x^3-x+1/10, embedding=b^2)
-        sage: a+b
+        sage: L.<b> = NumberField(x^6 - x^2 + 1/10, embedding=1)
+        sage: K.<a> = NumberField(x^3 - x + 1/10, embedding=b^2)
+        sage: a + b
         b^2 + b
         sage: CC(a) == CC(b)^2
         True
@@ -409,7 +411,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
     Note that the codomain of the embedding must be ``QQbar`` or ``AA`` for this to work
     (see :trac:`20184`)::
 
-        sage: N.<g> = NumberField(x^3 + 2,embedding=1)
+        sage: N.<g> = NumberField(x^3 + 2, embedding=1)
         sage: 1 < g
         False
         sage: g > 1
@@ -493,7 +495,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
     The following has been fixed in :trac:`8800`::
 
         sage: P.<x> = QQ[]
-        sage: K.<a> = NumberField(x^3 - 5,embedding=0)
+        sage: K.<a> = NumberField(x^3 - 5, embedding=0)
         sage: L.<b> = K.extension(x^2 + a)
         sage: F, R = L.construction()
         sage: F(R) == L    # indirect doctest
@@ -1561,7 +1563,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ::
 
             sage: P.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3-5,embedding=0)
+            sage: K.<a> = NumberField(x^3-5, embedding=0)
             sage: L.<b> = K.extension(x^2+a)
             sage: a*b
             a*b
@@ -3391,23 +3393,23 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<t> = NumberField(x^3 + x^2 - 36*x - 4)
             sage: K.conductor()
             109
-            sage: K.dirichlet_group()
+            sage: K.dirichlet_group()  # optional - gap_package_polycyclic
             [Dirichlet character modulo 109 of conductor 1 mapping 6 |--> 1,
              Dirichlet character modulo 109 of conductor 109 mapping 6 |--> zeta3,
              Dirichlet character modulo 109 of conductor 109 mapping 6 |--> -zeta3 - 1]
 
             sage: K = CyclotomicField(44)
             sage: L = K.subfields(5)[0][0]
-            sage: X = L.dirichlet_group()
-            sage: X
+            sage: X = L.dirichlet_group()  # optional - gap_package_polycyclic
+            sage: X  # optional - gap_package_polycyclic
             [Dirichlet character modulo 11 of conductor 1 mapping 2 |--> 1,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^2,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^3,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> -zeta5^3 - zeta5^2 - zeta5 - 1]
-            sage: X[4]^2
+            sage: X[4]^2  # optional - gap_package_polycyclic
             Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^3
-            sage: X[4]^2 in X
+            sage: X[4]^2 in X  # optional - gap_package_polycyclic
             True
         """
         # todo : turn this into an abelian group rather than a list.
@@ -8224,7 +8226,7 @@ class NumberField_absolute(NumberField_generic):
         The following was fixed in :trac:`8800`::
 
             sage: P.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3 - 5,embedding=0)
+            sage: K.<a> = NumberField(x^3 - 5, embedding=0)
             sage: L.<b> = K.extension(x^2 + a)
             sage: F,R = L.construction()
             sage: F(R) == L   #indirect doctest
@@ -12711,12 +12713,12 @@ def _splitting_classes_gens_(K, m, d):
         sage: L = K.subfields(20)[0][0]
         sage: L.conductor()
         101
-        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap  # optional - gap_package_polycyclic
         [95]
 
         sage: K = CyclotomicField(44)
         sage: L = K.subfields(4)[0][0]
-        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap  # optional - gap_package_polycyclic
         [37]
 
         sage: K = CyclotomicField(44)
@@ -12728,7 +12730,7 @@ def _splitting_classes_gens_(K, m, d):
          with zeta44_0 = 3.837971894457990?
         sage: L.conductor()
         11
-        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap  # optional - gap_package_polycyclic
         [10]
 
     """
