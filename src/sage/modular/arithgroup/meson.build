@@ -1,4 +1,3 @@
-inc_farey = meson.current_build_dir()
 py.install_sources(
     'all.py',
     'arithgroup_generic.py',
@@ -46,8 +45,7 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/modular/arithgroup',
         install: true,
         override_options : ['cython_language=cpp'],
-        cpp_args: ['-I', inc_farey],
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings, inc_src],
         dependencies: [py_dep, cysignals, flint, gmp, gmpxx],
     )
 endforeach
