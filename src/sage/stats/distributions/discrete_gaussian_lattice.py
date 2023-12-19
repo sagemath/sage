@@ -236,7 +236,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: while v not in counter:
             ....:     add_samples(1000)
 
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.2:     # long time, needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.2:                     # long time, needs sage.symbolic
             ....:     add_samples(1000)
 
             sage: D = DGL(ZZ^8, 0.5)
@@ -278,10 +278,10 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             return R(exp(-x / (2 * sigma**2)))
 
         if not self.is_spherical:
-            # NOTE: This is only a poor approximation placeholder.
+            # TODO: This is only a poor approximation placeholder.
             # It should be easy to implement, since the Fourier transform
             # is essentially the same, but I can't figure out how to
-            # tweak the `.qfrep` call below correctly. TODO.
+            # tweak the `.qfrep` call below correctly.
             from warnings import warn
             warn("Note: `_normalisation_factor_zz` has not been properly "\
                  "implemented for non-spherical distributions.")
@@ -301,7 +301,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         if self.is_spherical and not self._c_in_lattice:
             raise NotImplementedError("Lattice must contain 0 for now.")
 
-        if self.B.base_ring() not in ZZ:
+        if self.B.base_ring() != ZZ:
             raise NotImplementedError("Lattice must be integral for now.")
 
         sigma = self._sigma
@@ -384,14 +384,14 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         """
         return vector(ZZ, [DGI(self.r, c=vi)() for vi in v])
 
-    def __init__(self, B, sigma=1, c=None, r=None, precision=None):
+    def __init__(self, B, sigma=1, c=0, r=None, precision=None, sigma_basis=False):
         r"""
         Construct a discrete Gaussian sampler over the lattice `Λ(B)`
         with parameter ``sigma`` and center `c`.
 
         INPUT:
 
-        - ``B`` -- a basis for the lattice, one of the following:
+        - ``B`` -- a (row) basis for the lattice, one of the following:
 
           - an integer matrix,
           - an object with a ``matrix()`` method, e.g. ``ZZ^n``, or
@@ -401,9 +401,10 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
           - a real number `σ > 0` (spherical),
           - a positive definite matrix `Σ` (non-spherical), or
-          - any matrix-like ``S``, equivalent to ``Σ = SSᵀ``
+          - any matrix-like ``S``, equivalent to ``Σ = SSᵀ``, when
+            ``sigma_basis`` is set
 
-        - ``c`` -- (default: None) center `c`, any vector in `\ZZ^n` is
+        - ``c`` -- (default: 0) center `c`, any vector in `\ZZ^n` is
           supported, but `c ∈ Λ(B)` is faster.
 
         - ``r`` -- (default: None) rounding parameter `r` as defined in
@@ -412,6 +413,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
           definite.
 
         - ``precision`` -- bit precision `≥ 53`.
+
+        - ``sigma_basis`` -- (default: False) When set, ``sigma`` is treated as
+            a basis, i.e. the covariance matrix is computed by ``Σ = SSᵀ``.
 
         EXAMPLES::
 
@@ -459,8 +463,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         The non-spherical sampler supports offline computation to speed up
         sampling. This will be useful when changing the center `c` is supported.
-        The difference is more significant for larger matrices. For 128x128 the
-        author of this sentence see a 4x speedup (86s -> 20s).
+        The difference is more significant for larger matrices. For 128x128 we
+        observe a 4x speedup (86s -> 20s).
 
             sage: D.offline_samples = []
             sage: T = 2**12
@@ -487,15 +491,15 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         # Check if sigma is a (real) number or a scaled identity matrix
         self.is_spherical = True
         try:
-            self._sigma = self._RR(sigma)
+            self.sigma = self._RR(sigma)
         except TypeError:
-            self._sigma = matrix(self._RR, sigma)
+            self.sigma = matrix(self._RR, sigma)
             # Will it be "annoying" if a matrix Sigma has different behaviour
             # sometimes? There should be a parameter in the consrtuctor
-            if self._sigma == self._sigma[0, 0]:
-                self._sigma = self._RR(self._sigma[0, 0])
+            if self.sigma == self.sigma[0, 0]:
+                self.sigma = self._RR(self.sigma[0, 0])
             else:
-                if not self._sigma.is_positive_definite():
+                if not self.sigma.is_positive_definite():
                     raise RuntimeError(f"Sigma(={self._sigma}) is not positive definite")
                 self.is_spherical = False
 
@@ -516,36 +520,36 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         self._G = B.gram_schmidt()[0]
         self._c_in_lattice = False
 
-        try:
-            c = vector(ZZ, self.n, c)
-        except TypeError:
-            try:
-                c = vector(QQ, self.n, c)
-            except TypeError:
-                c = vector(self._RR, self.n, c)
+        self.D = None
+        self.VS = None
+        self._c_mul_B_inv = None
+        self.r = r
 
-        self._c = c
+        self.c = c
 
+    def _precompute_data(self):
+        r"""
+        Precomputes basis data.
+        """
         if self.is_spherical:
             # deal with trivial case first, it is common
             if self._G == 1 and self.c == 0:
                 self._c_in_lattice = True
-                D = DGI(sigma=sigma)
+                D = DGI(sigma=self.sigma)
                 self.D = tuple([D for _ in range(self.B.nrows())])
-                self.VS = FreeModule(ZZ, B.nrows())
-                return
+                self.VS = FreeModule(ZZ, self.B.nrows())
 
             else:
                 try:
-                    w = B.solve_left(c)
-                    if w in ZZ ** B.nrows():
+                    w = self.B.solve_left(self.c)
+                    if w in ZZ ** self.B.nrows():
                         self._c_in_lattice = True
                         D = []
                         for i in range(self.B.nrows()):
-                            sigma_ = self._sigma / self._G[i].norm()
+                            sigma_ = self.sigma / self._G[i].norm()
                             D.append(DGI(sigma=sigma_))
                         self.D = tuple(D)
-                        self.VS = FreeModule(ZZ, B.nrows())
+                        self.VS = FreeModule(ZZ, self.B.nrows())
                 except ValueError:
                     pass
         else:
@@ -555,24 +559,25 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
             # Offline samples of B⁻¹D₁
             self.offline_samples = []
-            self.B_inv = B.inverse()
+            self.B_inv = self.B.inverse()
             self.sigma_inv = self.sigma.inverse()
+            self._c_mul_B_inv = self.c * self.B_inv
 
-            if r is None:
+            if self.r is None:
                 # Compute the maximal r such that (Sigma - r^2 * Q) > 0
-                r = self._maximal_r() * 0.9999
-            r = self._RR(r)
+                self.r = self._maximal_r() * 0.9999
+            self.r = self._RR(self.r)
 
-            Sigma2 = self._sigma - r**2 * self.Q
+            Sigma2 = self._sigma - self.r**2 * self.Q
             try:
-                self.r = r
                 verbose(f"Computing Cholesky decomposition of a {Sigma2.dimensions()} matrix")
                 self.B2 = Sigma2.cholesky().T
                 self.B2_B_inv = self.B2 * self.B_inv
             except ValueError:
                 raise ValueError("Σ₂ is not positive definite. Is your "\
-                                 f"r(={r}) too large? It should be at most "\
+                                 f"r(={self.r}) too large? It should be at most "\
                                  f"{self._maximal_r()}")
+
 
 
     def __call__(self):
@@ -640,6 +645,25 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         """
         return self._sigma
 
+    @sigma.setter
+    def sigma(self, sigma):
+        r"""
+        Modifies center `σ`.
+
+        EXAMPLES::
+
+            sage: from sage.stats.all import DGL
+            sage: D = DGL(ZZ^3, 3.0, c=(1,0,0))
+            sage: D.c = (2, 0, 0)
+            sage: D
+            Discrete Gaussian sampler with Gaussian parameter σ = 3.00000000000000, c=(2, 0, 0) over lattice with basis
+            <BLANKLINE>
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+        """
+        self._sigma = sigma
+
     @property
     def c(self):
         r"""
@@ -663,7 +687,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         return self._c
 
     @c.setter
-    def c(self, _):
+    def c(self, c):
         r"""
         Modifies center `c`
 
@@ -671,14 +695,35 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
             sage: from sage.stats.all import DGL
             sage: D = DGL(ZZ^3, 3.0, c=(1,0,0))
-            sage: D.c = 5
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Modifying c is not yet supported!
+            sage: D.c = (2, 0, 0)
+            sage: D
+            Discrete Gaussian sampler with Gaussian parameter σ = 3.00000000000000, c=(2, 0, 0) over lattice with basis
+            <BLANKLINE>
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
         """
-        # TODO: Isolate code to set `c` here, so that the offline part of
-        # non-spherical sampling can be effectively utilised
-        raise NotImplementedError("Modifying c is not yet supported!")
+        if c is None:
+            self._c = None
+            return
+
+        if c == 0:
+            c = vector(ZZ, self.n)
+        else:
+            try:
+                c = vector(ZZ, self.n, c)
+            except TypeError:
+                try:
+                    c = vector(QQ, self.n, c)
+                except TypeError:
+                    try:
+                        c = vector(self._RR, self.n, c)
+                    except TypeError:
+                        c = vector(self._RR, self.n)
+
+        self._c = c
+        self._precompute_data()
+
 
     def __repr__(self):
         r"""
@@ -703,7 +748,6 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             [0 1 0]
             [0 0 1]
         """
-        # beware of unicode character in ascii string !
         if self.is_spherical:
             sigma_str = f"σ = {self._sigma}"
         else:
@@ -749,7 +793,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
            Do not call this method directly, call :func:`DGL.__call__` instead.
         """
         v = 0
-        c, sigma, B = self._c, self._sigma, self.B
+        c, sigma, B = self.c, self._sigma, self.B
 
         m = self.B.nrows()
 
@@ -805,7 +849,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         """
         if len(self.offline_samples) == 0:
             self.add_offline_samples()
-        vec = self.c * self.B_inv - self.offline_samples.pop()
+        vec = self._c_mul_B_inv - self.offline_samples.pop()
         return self._randomise(vec) * self.B
 
 
