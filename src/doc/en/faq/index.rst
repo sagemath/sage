@@ -22,8 +22,7 @@ __ http://creativecommons.org/licenses/by-sa/3.0/
    faq-usage
    faq-contribute
 
-Indices and tables
-==================
-
+Index and Search
+================
 * :ref:`genindex`
 * :ref:`search`
