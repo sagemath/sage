@@ -380,7 +380,23 @@ case "$PKG_SRC_TYPE" in
                 error_msg "Error copying upstream tarball to directory '$SAGE_SPKG_COPY_UPSTREAM'"
                 exit 1
             fi
-        fi;;
+        fi
+        ;;
+    none)
+        echo >&2
+        echo >&2 "Note: $PKG_BASE is a dummy package that the Sage distribution uses"
+        echo >&2 "to provide information about equivalent system packages."
+        echo >&2 "It cannot be installed using the Sage distribution."
+        echo >&2 "Please install it manually, for example using the system packages"
+        echo >&2 "recommended at the end of a run of './configure'"
+        echo >&2 "See below for package-specific information."
+        echo >&2
+        sage-spkg-info $PKG_BASE
+        echo >&2
+        echo >&2 "Error: $PKG_BASE is a dummy package and "
+        echo >&2 "cannot be installed using the Sage distribution."
+        exit 1
+        ;;
 esac
 } ################################################# ensure_pkg_src
 
