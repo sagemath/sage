@@ -1,8 +1,8 @@
 """
-Local copy of Sloane On-Line Encyclopedia of Integer Sequences
+Local copy of the On-Line Encyclopedia of Integer Sequences
 
-The SloaneEncyclopedia object provides access to a local copy of the database
-containing only the sequences and their names. To use this you must download
+The ``SloaneEncyclopedia`` object provides access to a local copy of the database
+containing only the sequences and their names. To use this, you must download
 and install the database using ``SloaneEncyclopedia.install()``, or
 ``SloaneEncyclopedia.install_from_gz()`` if you have already downloaded the
 database manually.
@@ -11,14 +11,14 @@ To look up a sequence, type
 
 ::
 
-    sage: SloaneEncyclopedia[60843]               # optional - sloane_database
+    sage: SloaneEncyclopedia[60843]  # optional - sloane_database
     [1, 6, 21, 107]
 
 To get the name of a sequence, type
 
 ::
 
-    sage: SloaneEncyclopedia.sequence_name(1)     # optional - sloane_database
+    sage: SloaneEncyclopedia.sequence_name(1)  # optional - sloane_database
     'Number of groups of order n.'
 
 To search locally for a particular subsequence, type
@@ -33,7 +33,7 @@ The default maximum number of results is 30, but to return up to
 
 ::
 
-    sage: SloaneEncyclopedia.find([1,2,3,4,5], 100)    # optional - sloane_database
+    sage: SloaneEncyclopedia.find([1,2,3,4,5], 100)  # optional - sloane_database
     [(15, [1, 2, 3, 4, 5, 7, 7, 8, 9, 11, 11, ...
 
 Results in either case are of the form [ (number, list) ].
@@ -65,11 +65,9 @@ AUTHORS:
   sequence_name() to return the description of a sequence; and changed
   the data type for elements of each sequence from int to Integer.
 
-- Thierry Monteil (2012-02-10): deprecate dead code and update related doc and
+- Thierry Monteil (2012-02-10): deprecated dead code and update related doc and
   tests.
 
-Classes and methods
--------------------
 """
 
 # ****************************************************************************
@@ -265,7 +263,8 @@ class SloaneEncyclopediaClass:
         try:
             file_seq = bz2.BZ2File(self.__file__, 'r')
         except IOError:
-            raise IOError("The Sloane Encyclopedia database must be installed.  Use e.g. 'SloaneEncyclopedia.install()' to download and install it.")
+            raise IOError("The Sloane Encyclopedia database must be installed."
+                          " Use e.g. 'SloaneEncyclopedia.install()' to download and install it.")
 
         self.__data__ = {}
 
@@ -295,7 +294,8 @@ class SloaneEncyclopediaClass:
             self.__loaded_names__ = True
         except KeyError:
             # Some sequence in the names file is not in the database
-            raise KeyError("Sloane OEIS sequence and name files do not match.  Try reinstalling, e.g. SloaneEncyclopedia.install(overwrite=True).")
+            raise KeyError("Sloane OEIS sequence and name files do not match."
+                           " Try reinstalling, e.g. SloaneEncyclopedia.install(overwrite=True).")
         except IOError:
             # The names database is not installed
             self.__loaded_names__ = False
@@ -323,7 +323,8 @@ class SloaneEncyclopediaClass:
         """
         self.load()
         if not self.__loaded_names__:
-            raise IOError("The Sloane OEIS names file is not installed.  Try reinstalling, e.g. SloaneEncyclopedia.install(overwrite=True).")
+            raise IOError("The Sloane OEIS names file is not installed."
+                          " Try reinstalling, e.g. SloaneEncyclopedia.install(overwrite=True).")
 
         if N not in self.__data__:  # sequence N does not exist
             return ''

@@ -22,10 +22,16 @@ Check :trac:`12482` (shall be run in a fresh session)::
     Category of finite enumerated sets
 """
 
-# ****************************************************************************
-#       Copyright (C) 2008 Nicolas Thiery <nthiery at users.sf.net>,
-#                          Mike Hansen <mhansen@gmail.com>,
-#                          Florent Hivert <Florent.Hivert@univ-rouen.fr>
+# *****************************************************************************
+#       Copyright (C) 2008-2017 Nicolas Thiery <nthiery at users.sf.net>
+#                     2008-2009 Mike Hansen <mhansen@gmail.com>
+#                     2008-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
+#                     2013-2021 Travis Scrimshaw
+#                     2014      Nathann Cohen
+#                     2017      Erik M. Bray
+#                     2018      Frédéric Chapoton
+#                     2019      Markus Wageringel
+#                     2022-2023 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,19 +44,18 @@ from copy import copy
 from pprint import pformat, saferepr
 from collections.abc import Iterable
 
-from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
-from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.misc.lazy_import import lazy_import
-from sage.rings.integer import Integer
+from sage.misc.cachefunc import cached_method
 from sage.misc.call import AttrCallObject
-from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.misc.lazy_import import LazyImport
 from sage.rings.infinity import Infinity
-lazy_import('sage.combinat.combinat', 'CombinatorialClass')
+from sage.rings.integer import Integer
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.sets.non_negative_integers import NonNegativeIntegers
+
+CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
 
 
 def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=False, name=None):
@@ -396,8 +401,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
                 return TrivialFamily(indices)
             if isinstance(indices, (FiniteFamily, LazyFamily, TrivialFamily)):
                 return indices
-            if (indices in EnumeratedSets()
-                    or isinstance(indices, CombinatorialClass)):
+            if indices in EnumeratedSets():
                 return EnumeratedFamily(indices)
             if isinstance(indices, Iterable):
                 return TrivialFamily(indices)
@@ -418,7 +422,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
                                       keys=indices)
 
 
-class AbstractFamily(Parent):
+cdef class AbstractFamily(Parent):
     """
     The abstract class for family
 
@@ -436,7 +440,6 @@ class AbstractFamily(Parent):
         """
         return []
 
-    @abstract_method
     def keys(self):
         """
         Return the keys of the family.
@@ -447,8 +450,8 @@ class AbstractFamily(Parent):
             sage: sorted(f.keys())
             [3, 4, 7]
         """
+        raise NotImplementedError
 
-    @abstract_method(optional=True)
     def values(self):
         """
         Return the elements (values) of this family.
@@ -459,6 +462,7 @@ class AbstractFamily(Parent):
             sage: sorted(f.values())
             ['aa', 'bb', 'cc']
         """
+        raise NotImplementedError
 
     def items(self):
         """
@@ -535,7 +539,8 @@ class AbstractFamily(Parent):
         return Family({self[k]: k for k in self.keys()})
 
 
-class FiniteFamily(AbstractFamily):
+
+cdef class FiniteFamily(AbstractFamily):
     r"""
     A :class:`FiniteFamily` is an associative container which models a finite
     family `(f_i)_{i \in I}`. Its elements `f_i` are therefore its
@@ -712,8 +717,8 @@ class FiniteFamily(AbstractFamily):
             False
         """
         return (isinstance(other, self.__class__) and
-                self._keys == other._keys and
-                self._dictionary == other._dictionary)
+                self._keys == (<FiniteFamily> other)._keys and
+                self._dictionary == (<FiniteFamily> other)._dictionary)
 
     def _repr_(self):
         """
@@ -869,15 +874,17 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             ...
             KeyError
         """
-        if i in self._dictionary:
-            return self._dictionary[i]
-
-        if i not in self.hidden_dictionary:
-            if i not in self._hidden_keys:
-                raise KeyError
-            self.hidden_dictionary[i] = self.hidden_function(i)
-
-        return self.hidden_dictionary[i]
+        try:
+            return FiniteFamily.__getitem__(self, i)
+        except KeyError:
+            try:
+                return self.hidden_dictionary[i]
+            except KeyError:
+                if i not in self._hidden_keys:
+                    raise KeyError
+                v = self.hidden_function(i)
+                self.hidden_dictionary[i] = v
+                return v
 
     def hidden_keys(self):
         """
@@ -902,11 +909,11 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
         """
         from sage.misc.fpickle import pickle_function
         f = pickle_function(self.hidden_function)
-        return {'dictionary': self._dictionary,
-                'hidden_keys': self._hidden_keys,
-                'hidden_dictionary': self.hidden_dictionary,
-                'hidden_function': f,
-                'keys': self._keys}
+        state = super().__getstate__()
+        state.update({'hidden_keys': self._hidden_keys,
+                      'hidden_dictionary': self.hidden_dictionary,
+                      'hidden_function': f})
+        return state
 
     def __setstate__(self, d):
         """
@@ -922,7 +929,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             6
         """
         hidden_function = d['hidden_function']
-        if isinstance(hidden_function, str):
+        if isinstance(hidden_function, (str, bytes)):
             # Let's assume that hidden_function is an unpickled function.
             from sage.misc.fpickle import unpickle_function
             hidden_function = unpickle_function(hidden_function)
@@ -1074,7 +1081,7 @@ class LazyFamily(AbstractFamily):
         """
         if self.function_name is not None:
             name = self.function_name + "(i)"
-        elif isinstance(self.function, type(lambda x: 1)):
+        elif isinstance(self.function, types.LambdaType):
             name = self.function.__name__
             name = name + "(i)"
         else:
