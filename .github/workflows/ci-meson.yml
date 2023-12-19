@@ -77,7 +77,7 @@ jobs:
       - name: Build
         shell: bash -l {0}
         run: |
-          pip install --no-build-isolation --config-settings=builddir=builddir .
+          pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
       - name: Test
         shell: bash -l {0}

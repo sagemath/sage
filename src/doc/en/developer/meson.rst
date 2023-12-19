@@ -14,7 +14,7 @@ or ``for f in src/**/*.so ; do mv "$f" "$f.old"; done``
 To compile and install the project in editable install, just use
     
     ```bash
-    pip install --no-build-isolation --config-settings=builddir=builddir --editable .
+    pip install --no-build-isolation --config-settings=builddir=builddir --editable -v .
     ```
 
 Under the hood, pip invokes meson to configure and build the project.
