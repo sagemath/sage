@@ -183,6 +183,7 @@ from copy import copy
 
 from sage.categories.homset import HomsetWithBase
 from sage.structure.all import parent
+from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 
 
@@ -190,7 +191,6 @@ from . import morphism
 
 from sage.rings.infinity import Infinity
 
-from sage.rings.ring import Ring
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix, identity_matrix
 from sage.structure.element import is_Matrix
@@ -749,9 +749,9 @@ class Homspace(HomsetWithBase):
 
 
 # NOTE/WARNING/TODO:  Below in the __init__, etc. we do *not* check
-# that the input gens are give something that spans a sub*ring*, as apposed
+# that the input gens are give something that spans a sub*ring*, as opposed
 # to just a subgroup.
-class EndomorphismSubring(Homspace, Ring):
+class EndomorphismSubring(Homspace):
 
     def __init__(self, A, gens=None, category=None):
         """
@@ -815,7 +815,7 @@ class EndomorphismSubring(Homspace, Ring):
             homset_cat = category
         # Remark: Ring.__init__ will automatically form the join
         # of the category of rings and of homset_cat
-        Ring.__init__(self, A.base_ring(), category=homset_cat.Endsets())
+        Parent.__init__(self, A.base_ring(), category=homset_cat.Endsets())
         Homspace.__init__(self, A, A, cat=homset_cat)
         if gens is None:
             self._gens = None

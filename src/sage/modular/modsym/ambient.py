@@ -94,7 +94,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.rational_field import QQ
-from sage.rings.ring import Ring
+from sage.categories.fields import Fields
 from sage.structure.factorization import Factorization
 from sage.structure.formal_sum import FormalSum
 
@@ -168,7 +168,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             raise TypeError("group must be a congruence subgroup")
 
         sign = int(sign)
-        if not isinstance(base_ring, Ring) and base_ring.is_field():
+        if base_ring not in Fields():
             raise TypeError("base_ring must be a commutative ring")
 
         if character is None and arithgroup.is_Gamma0(group):
