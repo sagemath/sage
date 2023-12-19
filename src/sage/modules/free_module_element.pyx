@@ -4148,6 +4148,37 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     nintegrate=nintegral
 
+    def concatenate(self, other):
+        r"""
+        Return the result of concatenating this vector with another
+        vector over the same ring.
+
+        EXAMPLES::
+
+            sage: v = vector([1, 2, 3])
+            sage: w = vector([4, 5])
+            sage: v.concatenate(w)
+            (1, 2, 3, 4, 5)
+            sage: v.parent()
+            Ambient free module of rank 3 over the principal ideal domain Integer Ring
+            sage: w.parent()
+            Ambient free module of rank 2 over the principal ideal domain Integer Ring
+            sage: v.concatenate(w).parent()
+            Ambient free module of rank 5 over the principal ideal domain Integer Ring
+
+        The method fails when the vectors aren't defined over the same ring::
+
+            sage: w2 = vector(QQ, [4, 5])
+            sage: v.concatenate(w2)
+            Traceback (most recent call last):
+            ...
+            ValueError: can only concatenate vectors over the same base ring
+        """
+        R = self.parent().base_ring()
+        if other.parent().base_ring() != R:
+            raise ValueError('can only concatenate vectors over the same base ring')
+        return vector(R, list(self) + list(other))
+
 #############################################
 # Generic dense element
 #############################################
