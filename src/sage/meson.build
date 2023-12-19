@@ -34,6 +34,13 @@ if openmp.found()
   conf_data.set('OPENMP_CFLAGS', '-fopenmp')
   conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
 endif
+gap_exe = find_program('gap')
+if gap_exe.found()
+  gaprun = run_command(gap_exe, '-r', '-q', '--bare', '--nointeract', '-c', 'Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));', check: true)
+  gap_root_paths = gaprun.stdout().strip()
+  gap_root_paths = '${prefix}/lib/gap;${prefix}/share/gap;' + gaprun.stdout().strip()
+endif
+conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
 
 configure_file(
     input: '../../pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
