@@ -550,10 +550,10 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
 
     It also works with matrices::
 
-        sage: A = matrix(GF(50021), [[10577, 23999, 28893],                             # needs sage.rings.finite_rings
+        sage: A = matrix(GF(50021), [[10577, 23999, 28893],                             # needs sage.modules sage.rings.finite_rings
         ....:                        [14601, 41019, 30188],
         ....:                        [3081, 736, 27092]])
-        sage: discrete_log_rho(A^1234567, A)                                            # needs sage.rings.finite_rings
+        sage: discrete_log_rho(A^1234567, A)                                            # needs sage.modules sage.rings.finite_rings
         1234567
 
     Beware, the order must be prime::
@@ -1234,7 +1234,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: order_from_multiple(w, 230, operation='*')
         23
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.modules sage.rings.finite_rings
         sage: F = GF(2^1279,'a')
         sage: n = F.cardinality() - 1  # Mersenne prime
         sage: order_from_multiple(F.random_element(), n,

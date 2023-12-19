@@ -217,28 +217,29 @@ cdef initialize() noexcept:
     # initialize GAP.
     cdef char* argv[16]
     argv[0] = "sage"
-    argv[1] = "-l"
-    s = str_to_bytes(sage.env.GAP_LIB_DIR + ";" + sage.env.GAP_SHARE_DIR, FS_ENCODING, "surrogateescape")
-    argv[2] = s
+    argv[1] = "-A"
+    argv[2] = "-l"
+    s = str_to_bytes(sage.env.GAP_ROOT_PATHS, FS_ENCODING, "surrogateescape")
+    argv[3] = s
 
-    argv[3] = "-m"
-    argv[4] = "64m"
+    argv[4] = "-m"
+    argv[5] = "64m"
 
-    argv[5] = "-q"    # no prompt!
-    argv[6] = "-E"   # don't use readline as this will interfere with Python
-    argv[7] = "--nointeract"  # Implies -T
-    argv[8] = "-x"    # set the "screen" width so that GAP is less likely to
-    argv[9] = "4096"  # insert newlines when printing objects
+    argv[6] = "-q"    # no prompt!
+    argv[7] = "-E"   # don't use readline as this will interfere with Python
+    argv[8] = "--nointeract"  # Implies -T
+    argv[9] = "-x"    # set the "screen" width so that GAP is less likely to
+    argv[10] = "4096"  # insert newlines when printing objects
                       # 4096 unfortunately is the hard-coded max, but should
                       # be long enough for most cases
-    cdef int argc = 10   # argv[argc] must be NULL
+    cdef int argc = 11   # argv[argc] must be NULL
     gap_mem = sage.env.SAGE_GAP_MEMORY
     if gap_mem is not None:
         argc += 2
-        argv[10] = "-s"
+        argv[11] = "-s"
         s1 = str_to_bytes(gap_mem, FS_ENCODING, "surrogateescape")
-        argv[11] = s1
-        argv[4] = s1
+        argv[12] = s1
+        argv[5] = s1
 
     from sage.libs.gap.saved_workspace import workspace
     workspace, workspace_is_up_to_date = workspace()
