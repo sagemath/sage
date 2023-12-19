@@ -233,17 +233,6 @@ sdh_configure $SAGE_CONFIGURE_GMP $ECM_CONFIGURE
 sdh_make
 
 ###############################################################################
-# Remove old executable/header/libraries/manpage:
-###############################################################################
-
-echo
-echo "Build succeeded.  Now removing old binary, header file, manual page and libraries..."
-rm -f "$SAGE_LOCAL"/bin/ecm
-rm -f "$SAGE_LOCAL"/lib/libecm.*
-rm -f "$SAGE_LOCAL"/include/ecm.h
-rm -f "$SAGE_LOCAL"/share/man/man1/ecm.1
-
-###############################################################################
 # Now install ECM:
 ###############################################################################
 
