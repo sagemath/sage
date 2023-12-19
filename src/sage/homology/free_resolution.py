@@ -275,7 +275,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             sage: FreeResolution.differiental(r, 1)
             Traceback (most recent call last):
             ...
-            AttributeError: type object 'FreeResolution' has no attribute 'differiental'
+            AttributeError: type object 'FreeResolution' has no attribute 'differiental'...
         """
 
     def target(self):

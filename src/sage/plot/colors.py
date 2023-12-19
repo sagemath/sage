@@ -1099,7 +1099,7 @@ class ColorsDict(dict):
             sage: cols.punk
             Traceback (most recent call last):
             ...
-            AttributeError: 'ColorsDict' has no attribute or colormap punk
+            AttributeError: 'ColorsDict' has no attribute or colormap punk...
         """
         try:
             return self[name]
@@ -1599,7 +1599,7 @@ class Colormaps(MutableMapping):
             sage: maps.punk
             Traceback (most recent call last):
             ...
-            AttributeError: 'Colormaps' has no attribute or colormap punk
+            AttributeError: 'Colormaps' has no attribute or colormap punk...
             sage: maps['punk']
             Traceback (most recent call last):
             ...

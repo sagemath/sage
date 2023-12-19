@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Morphisms of Hecke modules
 

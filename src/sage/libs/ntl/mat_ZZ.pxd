@@ -1,4 +1,4 @@
-from .types cimport mat_ZZ_c, ZZ_c, ZZX_c
+from sage.libs.ntl.types cimport mat_ZZ_c, ZZ_c, ZZX_c
 
 
 cdef extern from "ntlwrap.h":

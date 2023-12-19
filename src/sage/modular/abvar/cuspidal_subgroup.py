@@ -209,7 +209,7 @@ class CuspidalSubgroup(CuspidalSubgroup_generic):
             sage: G._repr_()
             'Finite subgroup with invariants [3, 3] over QQ of Abelian variety J0(27) of dimension 1'
         """
-        return "Cuspidal subgroup %sover QQ of %s"%(self._invariants_repr(), self.abelian_variety())
+        return "Cuspidal subgroup %sover QQ of %s" % (self._invariants_repr(), self.abelian_variety())
 
     def lattice(self):
         """
@@ -313,7 +313,7 @@ class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
             sage: G._repr_()
             'Finite subgroup with invariants [3] over QQ of Abelian variety J0(27) of dimension 1'
         """
-        return "Rational cuspidal subgroup %sover QQ of %s"%(self._invariants_repr(), self.abelian_variety())
+        return "Rational cuspidal subgroup %sover QQ of %s" % (self._invariants_repr(), self.abelian_variety())
 
     def lattice(self):
         """

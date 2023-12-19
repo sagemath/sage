@@ -1234,7 +1234,7 @@ class GroebnerFan(SageObject):
             return h
 
     def render(self, file=None, larger=False, shift=0, rgbcolor=(0, 0, 0),
-               polyfill=max_degree, scale_colors=True):
+               polyfill=True, scale_colors=True):
         """
         Render a Groebner fan as sage graphics or save as an xfig file.
 
@@ -1295,6 +1295,8 @@ class GroebnerFan(SageObject):
             ...
             NotImplementedError
         """
+        if polyfill is True:
+            polyfill = max_degree
         S = self.__ring
         if S.ngens() < 3:
             print("For 2-D fan rendering the polynomial ring must have 3 variables (or more, which are ignored).")

@@ -1311,7 +1311,7 @@ class RijndaelGF(SageObject):
                 recur_j = (key_col - self._Nk) - (recur_r * self._Nb)
                 result = self.expand_key_poly(row, recur_j, recur_r)
                 # Identify key_col - 1
-                recur_r = int((key_col- 1)/self._Nb)
+                recur_r = int((key_col - 1)/self._Nb)
                 recur_j = (key_col - 1) - (recur_r * self._Nb)
                 return result + \
                        self.expand_key_poly(row, recur_j, recur_r)

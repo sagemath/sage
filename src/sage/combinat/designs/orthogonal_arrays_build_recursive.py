@@ -64,8 +64,8 @@ def construction_3_3(k,n,m,i,explain_construction=False):
         sage: from sage.combinat.designs.orthogonal_arrays_find_recursive import find_construction_3_3
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_3
         sage: from sage.combinat.designs.orthogonal_arrays import is_orthogonal_array
-        sage: k=11;n=177
-        sage: is_orthogonal_array(construction_3_3(*find_construction_3_3(k,n)[1]),k,n,2)
+        sage: k = 11; n = 177
+        sage: is_orthogonal_array(construction_3_3(*find_construction_3_3(k,n)[1]),k,n,2)           # needs sage.schemes
         True
 
         sage: print(designs.orthogonal_arrays.explain_construction(9,91))
@@ -134,8 +134,8 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
         sage: from sage.combinat.designs.orthogonal_arrays_find_recursive import find_construction_3_4
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_4
         sage: from sage.combinat.designs.orthogonal_arrays import is_orthogonal_array
-        sage: k=8;n=196
-        sage: is_orthogonal_array(construction_3_4(*find_construction_3_4(k,n)[1]),k,n,2)
+        sage: k = 8; n = 196
+        sage: is_orthogonal_array(construction_3_4(*find_construction_3_4(k,n)[1]),k,n,2)           # needs sage.schemes
         True
 
         sage: print(designs.orthogonal_arrays.explain_construction(8,164))
@@ -210,7 +210,7 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_5
         sage: from sage.combinat.designs.orthogonal_arrays import is_orthogonal_array
         sage: k=8;n=111
-        sage: is_orthogonal_array(construction_3_5(*find_construction_3_5(k,n)[1]),k,n,2)
+        sage: is_orthogonal_array(construction_3_5(*find_construction_3_5(k,n)[1]),k,n,2)           # needs sage.schemes
         True
 
         sage: print(designs.orthogonal_arrays.explain_construction(8,90))
@@ -302,7 +302,7 @@ def construction_3_6(k,n,m,i,explain_construction=False):
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_6
         sage: from sage.combinat.designs.orthogonal_arrays import is_orthogonal_array
         sage: k=8;n=95
-        sage: is_orthogonal_array(construction_3_6(*find_construction_3_6(k,n)[1]),k,n,2)
+        sage: is_orthogonal_array(construction_3_6(*find_construction_3_6(k,n)[1]),k,n,2)           # needs sage.schemes
         True
 
         sage: print(designs.orthogonal_arrays.explain_construction(10,756))
@@ -497,7 +497,7 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
     EXAMPLES::
 
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_q_x
-        sage: _ = construction_q_x(9,16,6)
+        sage: _ = construction_q_x(9,16,6)                                                          # needs sage.schemes
 
         sage: print(designs.orthogonal_arrays.explain_construction(9,158))
         (q-x)-construction with q=16,x=6 from:
@@ -650,11 +650,11 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
 
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import thwart_lemma_3_5
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
-        sage: OA = thwart_lemma_3_5(6,23,7,5,7,8)
-        sage: is_orthogonal_array(OA,6,23*7+5+7+8,2)
+        sage: OA = thwart_lemma_3_5(6,23,7,5,7,8)                                                   # needs sage.schemes
+        sage: is_orthogonal_array(OA,6,23*7+5+7+8,2)                                                # needs sage.schemes
         True
 
-        sage: print(designs.orthogonal_arrays.explain_construction(10,408))
+        sage: print(designs.orthogonal_arrays.explain_construction(10,408))                         # needs sage.schemes
         Lemma 4.1 with n=13,m=28 from:
            Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas,
            Thwarts in transversal designs,
@@ -784,7 +784,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
     EXAMPLES::
 
-        sage: print(designs.orthogonal_arrays.explain_construction(10,408))
+        sage: print(designs.orthogonal_arrays.explain_construction(10,408))                         # needs sage.schemes
         Lemma 4.1 with n=13,m=28 from:
            Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas,
            Thwarts in transversal designs,
@@ -960,25 +960,21 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
     EXAMPLES::
 
+        sage: # needs sage.schemes
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import three_factor_product
-
         sage: OA = three_factor_product(4,4,4,4)
         sage: is_orthogonal_array(OA,5,64)
         True
-
         sage: OA = three_factor_product(4,3,4,5)
         sage: is_orthogonal_array(OA,5,60)
         True
-
         sage: OA = three_factor_product(5,4,5,7)
         sage: is_orthogonal_array(OA,6,140)
         True
-
         sage: OA = three_factor_product(9,8,9,9) # long time
         sage: is_orthogonal_array(OA,10,8*9*9)   # long time
         True
-
         sage: print(designs.orthogonal_arrays.explain_construction(10,648))
         Three-factor product with n=8.9.9 from:
            Peter J. Dukes, Alan C.H. Ling,

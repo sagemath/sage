@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Class Groups of Number Fields
+Class groups of number fields
 
 An element of a class group is stored as a pair consisting of both an explicit
 ideal in that ideal class, and a list of exponents giving that ideal class in
@@ -591,8 +591,7 @@ class ClassGroup(AbelianGroupWithValues_class):
             return
         gk = self.gen(k)
         for _ in range(self._gens_orders[k]):
-            for J in self._iter_inner(i0, k + 1):
-                yield J
+            yield from self._iter_inner(i0, k + 1)
             i0 = i0 * gk
         return
 

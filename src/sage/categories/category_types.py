@@ -14,9 +14,10 @@ This is placed in a separate file from categories.py to avoid circular imports
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.unknown import Unknown
-from .category import JoinCategory, Category, CategoryWithParameters
+from sage.categories.category import Category, CategoryWithParameters, JoinCategory
 from sage.misc.lazy_import import lazy_import
+from sage.misc.unknown import Unknown
+
 lazy_import('sage.categories.objects', 'Objects')
 lazy_import('sage.misc.latex', 'latex')
 
@@ -170,6 +171,8 @@ class Category_over_base(CategoryWithParameters):
         r"""
         Initialize ``self``.
 
+        The ``name`` parameter is ignored.
+
         EXAMPLES::
 
             sage: S = Spec(ZZ)
@@ -182,7 +185,7 @@ class Category_over_base(CategoryWithParameters):
             sage: TestSuite(C).run()
         """
         self.__base = base
-        Category.__init__(self, name)
+        Category.__init__(self)
 
     def _test_category_over_bases(self, **options):
         """
@@ -196,6 +199,7 @@ class Category_over_base(CategoryWithParameters):
         """
         tester = self._tester(**options)
         from sage.categories.category_singleton import Category_singleton
+
         from .bimodules import Bimodules
         from .schemes import Schemes
         for cat in self.super_categories():
@@ -527,13 +531,15 @@ class Category_in_ambient(Category):
         """
         Initialize ``self``.
 
+        The parameter ``name`` is ignored.
+
         EXAMPLES::
 
             sage: C = Ideals(IntegerRing())
             sage: TestSuite(C).run()
         """
         self.__ambient = ambient
-        Category.__init__(self, name)
+        Category.__init__(self)
 
     def ambient(self):
         """

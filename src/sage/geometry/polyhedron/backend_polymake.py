@@ -537,7 +537,7 @@ class Polyhedron_polymake(Polyhedron_base):
             self._Hrepresentation = []
             parent = self.parent()
             for g in p.FACETS.sage():
-                if all(x==0 for x in g[1:]):
+                if all(x == 0 for x in g[1:]):
                     # Ignore vertical inequality
                     pass
                 else:

@@ -236,7 +236,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
         (10,4,2)-Balanced Incomplete Block Design
         sage: designs.balanced_incomplete_block_design(50,25,24)                        # needs sage.schemes
         (50,25,24)-Balanced Incomplete Block Design
-        sage: designs.balanced_incomplete_block_design(29,15,15)                        # needs sage.libs.pari
+        sage: designs.balanced_incomplete_block_design(29,15,15)                        # needs sage.libs.pari sage.schemes
         (29,15,15)-Balanced Incomplete Block Design
     """
     # Trivial BIBD
@@ -1125,7 +1125,7 @@ def v_5_1_BIBD(v, check=True):
 
         sage: from sage.combinat.designs.bibd import v_5_1_BIBD
         sage: i = 0
-        sage: while i<200:                                                              # needs sage.libs.pari
+        sage: while i<200:                                                              # needs sage.libs.pari sage.schemes
         ....:    i += 20
         ....:    _ = v_5_1_BIBD(i+1)
         ....:    _ = v_5_1_BIBD(i+5)

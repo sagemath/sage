@@ -132,7 +132,7 @@ cdef class Module(Parent):
             category = Modules(base)
         Parent.__init__(self, base=base, category=category, names=names)
 
-    cpdef _coerce_map_from_(self, M):
+    cpdef _coerce_map_from_(self, M) noexcept:
         """
         Return a coercion map from `M` to ``self``, or None.
 
@@ -205,7 +205,7 @@ cdef class Module(Parent):
         Return the base extension of ``self`` to `R`.
 
         This is the same as ``self.change_ring(R)`` except that a
-        ``TypeError`` is raised if there is no canonical coerce map
+        :class:`TypeError` is raised if there is no canonical coerce map
         from the base ring of ``self`` to `R`.
 
         INPUT:

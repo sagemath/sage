@@ -67,6 +67,7 @@
 #include "archive.h"
 #include "tostring.h"
 #include "utils.h"
+#include "../../cpython/pycore_long.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-register"
@@ -706,18 +707,12 @@ static long _mpq_pythonhash(mpq_t the_rat)
 // Initialize an mpz_t from a Python long integer
 static void _mpz_set_pylong(mpz_t z, PyLongObject* l)
 {
-    Py_ssize_t pylong_size = Py_SIZE(l);
-    int sign = 1;
-
-    if (pylong_size < 0) {
-        pylong_size = -pylong_size;
-        sign = -1;
-    }
+    Py_ssize_t pylong_size = _PyLong_DigitCount(l);
 
     mpz_import(z, pylong_size, -1, sizeof(digit), 0,
-               8*sizeof(digit) - PyLong_SHIFT, l->ob_digit);
+               8*sizeof(digit) - PyLong_SHIFT, ob_digit(l));
 
-    if (sign < 0)
+    if (_PyLong_IsNegative(l))
         mpz_neg(z, z);
 }
 

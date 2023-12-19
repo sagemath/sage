@@ -75,8 +75,8 @@ ARG MAKE_BUILD=make-build
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
-FROM ubuntu:latest as run-time-dependencies
-LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>"
+FROM ubuntu:jammy as run-time-dependencies
+LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>, Sebastian Oehms <seb.oehms@gmail.com>"
 # Set sane defaults for common environment variables.
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8

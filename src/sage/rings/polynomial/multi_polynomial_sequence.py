@@ -173,10 +173,10 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.quotient_ring import is_QuotientRing
 from sage.structure.sequence import Sequence_generic
 
-
 try:
     from sage.interfaces.singular import singular, singular_gb_standard_options
-    from sage.libs.singular.standard_options import libsingular_gb_standard_options
+    from sage.libs.singular.standard_options import \
+        libsingular_gb_standard_options
 except ImportError:
     singular = None
     singular_gb_standard_options = libsingular_gb_standard_options = MethodDecorator
@@ -394,22 +394,22 @@ class PolynomialSequence_generic(Sequence_generic):
         EXAMPLES::
 
             sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
-            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.rings.finite_rings
+            sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
 
-            sage: Sequence([I.gens()], I.ring())  # indirect doctest                    # needs sage.rings.finite_rings
+            sage: Sequence([I.gens()], I.ring())  # indirect doctest                    # needs sage.libs.singular
             [a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
 
         If an ideal is provided, the generators are used.::
 
-            sage: Sequence(I)                                                           # needs sage.rings.finite_rings
+            sage: Sequence(I)                                                           # needs sage.libs.singular
             [a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
 
         If a list of polynomials is provided, the system has only one
         part.::
 
-            sage: Sequence(I.gens(), I.ring())                                          # needs sage.rings.finite_rings
+            sage: Sequence(I.gens(), I.ring())                                          # needs sage.libs.singular
             [a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c]
         """
@@ -637,6 +637,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = Sequence([x, x*y])
             sage: I = S.algebraic_dependence(); I
@@ -644,22 +645,26 @@ class PolynomialSequence_generic(Sequence_generic):
 
         ::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
             sage: I = S.algebraic_dependence(); I
-            Ideal (16 + 32*T2 - 8*T0^2 + 24*T2^2 - 8*T0^2*T2 + 8*T2^3 + 9*T0^4 - 2*T0^2*T2^2 + T2^4 - T0^4*T1 + 8*T0^4*T2 - 2*T0^6 + 2*T0^4*T2^2 + T0^8) of Multivariate Polynomial Ring in T0, T1, T2 over Rational Field
+            Ideal (16 + 32*T2 - 8*T0^2 + 24*T2^2 - 8*T0^2*T2 + 8*T2^3 + 9*T0^4 - 2*T0^2*T2^2
+                    + T2^4 - T0^4*T1 + 8*T0^4*T2 - 2*T0^6 + 2*T0^4*T2^2 + T0^8)
+             of Multivariate Polynomial Ring in T0, T1, T2 over Rational Field
             sage: [F(S) for F in I.gens()]
             [0]
 
         ::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7))
             sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
-            sage: I = S.algebraic_dependence(); I                                       # needs sage.rings.finite_rings
+            sage: I = S.algebraic_dependence(); I
             Ideal (2 - 3*T2 - T0^2 + 3*T2^2 - T0^2*T2 + T2^3 + 2*T0^4 - 2*T0^2*T2^2
                    + T2^4 - T0^4*T1 + T0^4*T2 - 2*T0^6 + 2*T0^4*T2^2 + T0^8)
              of Multivariate Polynomial Ring in T0, T1, T2 over Finite Field of size 7
-            sage: [F(S) for F in I.gens()]                                              # needs sage.rings.finite_rings
+            sage: [F(S) for F in I.gens()]
             [0]
 
         .. NOTE::
@@ -1125,7 +1130,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: Sequence([2*x,y]).reduced()
             [x, y]
 
-            sage: P.<x,y> = CC[]
+            sage: P.<x,y> = CC[]                                                        # needs sage.rings.real_mpfr
             sage: Sequence([2*x,y]).reduced()
             [x, y]
 
@@ -1146,8 +1151,10 @@ class PolynomialSequence_generic(Sequence_generic):
             [y^3 + z, x*y + (1 + 2 + O(2^20))*z, x*z - z]
 
         """
-        from sage.rings.polynomial.multi_polynomial_ideal_libsingular import interred_libsingular
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+        from sage.rings.polynomial.multi_polynomial_ideal_libsingular import \
+            interred_libsingular
+        from sage.rings.polynomial.multi_polynomial_libsingular import \
+            MPolynomialRing_libsingular
 
         R = self.ring()
 
@@ -1164,7 +1171,8 @@ class PolynomialSequence_generic(Sequence_generic):
                     ret.append(f.lc()**(-1)*f) # lead coeffs are not reduced by interred
                 s.option("set",o)
             except TypeError:
-                from sage.rings.polynomial.toy_buchberger import inter_reduction
+                from sage.rings.polynomial.toy_buchberger import \
+                    inter_reduction
                 ret = inter_reduction(self)
 
         ret = sorted(ret, reverse=True)
@@ -1187,6 +1195,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
             sage: I = sage.rings.ideal.Cyclic(R, 4)
             sage: I.basis.is_groebner()
@@ -1321,15 +1330,17 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
             This is called "massaging" in [BCJ2007]_.
         """
-        from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
+        from sage.rings.polynomial.multi_polynomial_ring_base import \
+            BooleanPolynomialRing_base
 
         R = self.ring()
 
         if not isinstance(R, BooleanPolynomialRing_base):
             raise NotImplementedError("Only BooleanPolynomialRing's are supported.")
 
+        from sage.rings.polynomial.pbori.ll import (eliminate, ll_encode,
+                                                    ll_red_nf_redsb)
         from sage.rings.polynomial.pbori.pbori import gauss_on_polys
-        from sage.rings.polynomial.pbori.ll import eliminate, ll_encode, ll_red_nf_redsb
 
         F = self
         reductors = []
@@ -1407,7 +1418,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             sage: F._groebner_strategy()
             <sage.rings.polynomial.pbori.pbori.GroebnerStrategy object at 0x...>
         """
-        from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
+        from sage.rings.polynomial.multi_polynomial_ring_base import \
+            BooleanPolynomialRing_base
 
         R = self.ring()
 
@@ -1531,7 +1543,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if eliminate_linear_variables:
             T, reductors = self.eliminate_linear_variables(return_reductors=True)
             if T.variables() != ():
-                from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
+                from sage.rings.polynomial.pbori.pbori import \
+                    BooleanPolynomialRing
 
                 R_solving = BooleanPolynomialRing( T.nvariables(), [str(_) for _ in list(T.variables())] )
             S = PolynomialSequence( R_solving, [ R_solving(f) for f in T] )
@@ -1615,12 +1628,14 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             ....:             assert g[i].lt() not in t.divisors()
         """
 
-        from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
+        from sage.rings.polynomial.multi_polynomial_ring_base import \
+            BooleanPolynomialRing_base
 
         R = self.ring()
 
         if isinstance(R, BooleanPolynomialRing_base):
-            from sage.rings.polynomial.pbori.interred import interred as inter_red
+            from sage.rings.polynomial.pbori.interred import \
+                interred as inter_red
 
             l = [p for p in self if not p == 0]
             l = sorted(inter_red(l, completely=True), reverse=True)
@@ -1677,5 +1692,6 @@ class PolynomialSequence_gf2e(PolynomialSequence_generic):
 
 
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override("sage.crypto.mq.mpolynomialsystem","MPolynomialSystem_generic", PolynomialSequence_generic)
 register_unpickle_override("sage.crypto.mq.mpolynomialsystem","MPolynomialRoundSystem_generic", PolynomialSequence_generic)

@@ -95,7 +95,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         if not all(isinstance(row, list) for row in t):
             raise ValueError("a composition tableau must be a list of lists")
 
-        if not [len(r) for r in t] in Compositions():
+        if any(not r for r in t):
             raise ValueError("a composition tableau must be a list of non-empty lists")
 
         # Verify rows weakly decrease from left to right

@@ -128,7 +128,7 @@ def cdd_Hrepresentation(cdd_type, ieqs, eqns, file_output=None):
 
     s = 'H-representation\n'
     if eqns is not None:
-        assert len(eqns)>0
+        assert len(eqns) > 0
         n = len(eqns)
         s += "linearity " + repr(n) + ' '
         s += _to_space_separated_string(range(1,n+1)) + '\n'

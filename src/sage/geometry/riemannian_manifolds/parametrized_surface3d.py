@@ -415,7 +415,7 @@ class ParametrizedSurface3D(SageObject):
         name = 'Parametrized surface'
         if self.name is not None:
             name += " ('%s')" % self.name
-        s ='%(designation)s with equation %(eq)s' % \
+        s = '%(designation)s with equation %(eq)s' % \
             {'designation': name, 'eq': str(self.equation)}
         return s
 
@@ -1410,7 +1410,7 @@ class ParametrizedSurface3D(SageObject):
         """
 
         shop = self.shape_operator_coefficients()
-        shop_matrix=matrix([[shop[(1,1)],shop[(1,2)]],
+        shop_matrix = matrix([[shop[(1,1)],shop[(1,2)]],
                             [shop[(2,1)],shop[(2,2)]]])
         return shop_matrix
 
@@ -1492,10 +1492,10 @@ class ParametrizedSurface3D(SageObject):
         for i,j,k in product((1, 2), repeat=3):
             dg[(i,j,k)] = _simplify_full_rad(gg[(j,k)].differentiate(x[i]))
 
-        structfun={}
+        structfun = {}
         for i,j,k in product((1, 2), repeat=3):
             structfun[(i,j,k)] = sum(gi[(k,s)]*(dg[(i,j,s)] + dg[(j,i,s)]
-                                                -dg[(s,i,j)])/2
+                                                - dg[(s,i,j)])/2
                                      for s in (1,2))
             structfun[(i,j,k)] = _simplify_full_rad(structfun[(i,j,k)])
         return structfun

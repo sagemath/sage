@@ -21,12 +21,3 @@ Upstream Contact
 ----------------
 
 -  https://rpy2.bitbucket.io
-
-Special Update/Build Instructions
----------------------------------
-
-Patches
-~~~~~~~
-
--  setup.patch: takes care of a few parsing issues.
--  cygwin.patch: let rpy2 build on Cygwin.

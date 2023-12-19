@@ -731,9 +731,9 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         R = self.base_field()
         S = self.sub_field()
         if R and S in Fields():
-            return "[%s, %s] linear rank metric code over GF(%s)/GF(%s)"%(self.length(), self.dimension(), R.cardinality(), S.cardinality())
+            return "[%s, %s] linear rank metric code over GF(%s)/GF(%s)" % (self.length(), self.dimension(), R.cardinality(), S.cardinality())
         else:
-            return "[%s, %s] linear rank metric code over %s/%s"%(self.length(), self.dimension(), R, S)
+            return "[%s, %s] linear rank metric code over %s/%s" % (self.length(), self.dimension(), R, S)
 
     def _latex_(self):
         r"""

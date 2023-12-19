@@ -246,7 +246,7 @@ Here is an example with higher dimensional varieties involved::
     Traceback (most recent call last):
     ...
     AttributeError: 'SchemeMorphism_fan_toric_variety' object
-    has no attribute 'fiber_generic'
+    has no attribute 'fiber_generic'...
 
 Let's use factorization mentioned above::
 

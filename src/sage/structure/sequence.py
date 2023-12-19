@@ -854,7 +854,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             sage: S.universe()
             Traceback (most recent call last):
             ...
-            AttributeError: 'Sequence_generic' object has no attribute '_Sequence_generic__universe'
+            AttributeError: 'Sequence_generic' object has no attribute '_Sequence_generic__universe'...
             sage: S._Sequence__universe = 'foobar'
             sage: S.universe()
             'foobar'
@@ -867,7 +867,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             sage: hash(S)
             Traceback (most recent call last):
             ...
-            AttributeError: 'Sequence_generic' object has no attribute '_Sequence_generic__hash'
+            AttributeError: 'Sequence_generic' object has no attribute '_Sequence_generic__hash'...
             sage: S._Sequence__hash = int(34)
             sage: hash(S)
             34

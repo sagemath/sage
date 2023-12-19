@@ -137,7 +137,7 @@ freeAlgebra = singular_function("freeAlgebra")
 #####################
 # Auxiliary functions
 
-cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
+cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks) noexcept:
     """
     Create a polynomial ring in block order.
 
@@ -563,7 +563,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         return self.__monoid
 
     # Auxiliar methods
-    cdef str exponents_to_string(self, E):
+    cdef str exponents_to_string(self, E) noexcept:
         """
         This auxiliary method is used for the string representation of elements of this free algebra.
 
@@ -605,7 +605,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         return '*'.join(out)
 
     # Auxiliar methods
-    cdef str exponents_to_latex(self, E):
+    cdef str exponents_to_latex(self, E) noexcept:
         r"""
         This auxiliary method is used for the representation of elements of this free algebra as a latex string.
 
@@ -689,7 +689,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
 
     ###########################
     # Coercion
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         """
         A ring ``R`` coerces into self, if
 

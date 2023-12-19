@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 `\mathcal{B}(\infty)` Crystal Of PBW Monomials
 

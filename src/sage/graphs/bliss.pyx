@@ -65,7 +65,7 @@ cdef extern from "bliss_cpp/bliss_find_automorphisms.h":
     void bliss_find_automorphisms(Graph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
     void bliss_find_automorphisms(Digraph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
 
-cdef int encoding_numbits(int n):
+cdef int encoding_numbits(int n) noexcept:
     r"""
     Return the number of bits needed to encode the `n` numbers from `1` to
     `n`. In other words, the last bit set in `n`.
@@ -79,7 +79,7 @@ cdef int encoding_numbits(int n):
     return i
 
 
-cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
+cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut) noexcept:
     r"""
     Function called each time a new generator of the automorphism group is
     found.
@@ -102,7 +102,6 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
     cdef int cur = 0
     cdef list perm = []
     cdef bint* done = <bint*> check_calloc(n, sizeof(bint))
-    cdef int i
 
     gens, int_to_vertex, N = <object>user_param
 
@@ -129,7 +128,7 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
 # constructing bliss graphs from edge lists
 #####################################################
 
-cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition):
+cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition) noexcept:
     r"""
     Return a bliss graph from the input data
 
@@ -220,7 +219,7 @@ cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels,
 
     return g
 
-cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition):
+cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition) noexcept:
     r"""
     Return a bliss digraph from the input data
 
@@ -301,7 +300,7 @@ cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, lab
 #####################################################
 
 cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list labels=[],
-                                   list partition=None, bint directed=False, bint certificate=False):
+                                   list partition=None, bint directed=False, bint certificate=False) noexcept:
     r"""
     Return an unsorted list of labelled edges of a canonical form.
 
@@ -378,7 +377,7 @@ cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list
     return new_edges
 
 
-cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True, certificate=False):
+cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True, certificate=False) noexcept:
     r"""
     Return a canonical label for the given (di)graph.
 
@@ -397,9 +396,10 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
       canonical graph of ``G`` or its set of edges
 
     - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider
-      edge labels. The edge labels are assumed to be hashable and sortable. If
-      this is not the case (ie a ``TypeError`` is raised), the algorithm will
-      consider the string representations of the labels instead of the labels.
+      edge labels. The edge labels are assumed to be hashable and
+      sortable. If this is not the case (ie a :class:`TypeError` is
+      raised), the algorithm will consider the string representations
+      of the labels instead of the labels.
 
     - ``certificate`` -- boolean (default: ``False``); when set to ``True``,
       returns the labeling of G into a canonical graph
@@ -511,7 +511,6 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     cdef bint directed = G.is_directed()
 
-    cdef int labInd
     cdef list Vout = []
     cdef list Vin = []
     cdef list labels = []
@@ -581,7 +580,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     if return_graph:
         if directed:
-            from sage.graphs.graph import DiGraph
+            from sage.graphs.digraph import DiGraph
             H = DiGraph(new_edges, loops=G.allows_loops(), multiedges=G.allows_multiple_edges())
         else:
             from sage.graphs.graph import Graph
@@ -599,7 +598,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 #####################################################
 
 cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, labels=[],
-                                            int2vert=[], partition=None, bint directed=False):
+                                            int2vert=[], partition=None, bint directed=False) noexcept:
     r"""
     Return an unsorted list of labelled edges of a canonical form.
 
@@ -650,7 +649,7 @@ cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, label
 
     return [[cyc for cyc in gen if cyc[0] is not None] for gen in gens]
 
-cpdef automorphism_group(G, partition=None, use_edge_labels=True):
+cpdef automorphism_group(G, partition=None, use_edge_labels=True) noexcept:
     """
     Return the automorphism group of the given (di)graph.
 
@@ -848,7 +847,7 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 # old direct interactions graphs <-> bliss graphs
 #####################################################
 
-cdef Graph *bliss_graph(G, partition, vert2int, int2vert):
+cdef Graph *bliss_graph(G, partition, vert2int, int2vert) noexcept:
     r"""
     Return a bliss copy of a graph G
 
@@ -882,7 +881,7 @@ cdef Graph *bliss_graph(G, partition, vert2int, int2vert):
     return g
 
 
-cdef Digraph *bliss_digraph(G, partition, vert2int, int2vert):
+cdef Digraph *bliss_digraph(G, partition, vert2int, int2vert) noexcept:
     r"""
     Return a bliss copy of a digraph G
 

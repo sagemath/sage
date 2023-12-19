@@ -3461,7 +3461,7 @@ def verify_same(a, b):
         sage: verify_same(1, 1r)
         Traceback (most recent call last):
         ...
-        AttributeError: 'int' object has no attribute 'parent'
+        AttributeError: 'int' object has no attribute 'parent'...
         sage: verify_same(1r, 1)
         Traceback (most recent call last):
         ...
@@ -3525,7 +3525,7 @@ def verify_si_answer(x, answer, preparse):
         sage: verify_si_answer(1, '1', False)
         Traceback (most recent call last):
         ...
-        AttributeError: 'int' object has no attribute 'parent'
+        AttributeError: 'int' object has no attribute 'parent'...
         sage: verify_si_answer(1, 'ZZ(1)', None)
     """
     from sage.misc.sage_eval import sage_eval

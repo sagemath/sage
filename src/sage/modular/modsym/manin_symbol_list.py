@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Manin symbol lists
 
@@ -901,6 +900,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: eps = DirichletGroup(4).gen(0)
         sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
         sage: m = ManinSymbolList_character(eps,2); m
@@ -922,6 +922,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,2); m
@@ -955,6 +956,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,2); m
@@ -975,6 +977,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: ManinSymbolList_character(eps,4).level()
@@ -1005,6 +1008,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,4)
@@ -1041,6 +1045,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,2); m
@@ -1065,6 +1070,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: ManinSymbolList_character(eps,2)._apply_S_only_0pm1()
@@ -1090,6 +1096,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,2); m
@@ -1123,6 +1130,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,2); m
@@ -1165,6 +1173,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,2); m
@@ -1200,6 +1209,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,2); m
@@ -1229,6 +1239,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,4); m
@@ -1267,6 +1278,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
             sage: m = ManinSymbolList_character(eps,4); m

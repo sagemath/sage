@@ -134,7 +134,7 @@ cdef class Ring(ParentWithGens):
         running ._test_zero_divisors() . . . pass
         sage: TestSuite(QQ['x','y']).run(skip='_test_elements')                         # needs sage.libs.singular
         sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')                         # needs sage.libs.singular
-        sage: TestSuite(ZZ['x','y']['t']).run()                                         # needs sage.libs.singular
+        sage: TestSuite(ZZ['x','y']['t']).run()
 
     Test against another bug fixed in :trac:`9944`::
 
@@ -150,7 +150,7 @@ cdef class Ring(ParentWithGens):
         Category of infinite algebras over (finite dimensional algebras with basis over
          (number fields and quotient fields and metric spaces) and infinite sets)
         sage: PolynomialRing(SteenrodAlgebra(2),'x').category()                         # needs sage.combinat sage.modules
-        Category of infinite algebras over (super hopf algebras with basis
+        Category of infinite algebras over (super Hopf algebras with basis
          over Finite Field of size 2 and supercocommutative super coalgebras
          over Finite Field of size 2)
 
@@ -533,10 +533,10 @@ cdef class Ring(ParentWithGens):
             <class 'sage.rings.quotient_ring.QuotientRingIdeal_principal'>
             sage: S._ideal_class_(2)
             <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
-            sage: T.<z> = S[]                                                           # needs sage.rings.finite_rings
-            sage: T._ideal_class_(5)                                                    # needs sage.rings.finite_rings
+            sage: T.<z> = S[]                                                           # needs sage.libs.singular
+            sage: T._ideal_class_(5)                                                    # needs sage.libs.singular
             <class 'sage.rings.ideal.Ideal_generic'>
-            sage: T._ideal_class_(1)                                                    # needs sage.rings.finite_rings
+            sage: T._ideal_class_(1)                                                    # needs sage.libs.singular
             <class 'sage.rings.ideal.Ideal_principal'>
 
         Since :trac:`7797`, non-commutative rings have ideals as well::
@@ -1447,7 +1447,7 @@ cdef class CommutativeRing(Ring):
             sage: f(1+u)
             1 + u^25
         """
-        from .morphism import FrobeniusEndomorphism_generic
+        from sage.rings.morphism import FrobeniusEndomorphism_generic
         return FrobeniusEndomorphism_generic(self, n)
 
     def derivation_module(self, codomain=None, twist=None):
@@ -1734,7 +1734,7 @@ cdef class IntegralDomain(CommutativeRing):
             sage: Z5.is_integrally_closed()
             Traceback (most recent call last):
             ...
-            AttributeError: 'IntegerModRing_generic_with_category' object has no attribute 'is_integrally_closed'
+            AttributeError: 'IntegerModRing_generic_with_category' object has no attribute 'is_integrally_closed'...
         """
         raise NotImplementedError
 

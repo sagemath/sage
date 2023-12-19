@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Ambient spaces of modular forms
 

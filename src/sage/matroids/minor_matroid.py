@@ -14,11 +14,11 @@ from `E` and keeping all remaining independent sets. This is denoted ``M \ D``
 EXAMPLES::
 
     sage: M = matroids.named_matroids.Fano()
-    sage: M \ ['a', 'c' ] == M.delete(['a', 'c'])
+    sage: M.delete(['a', 'c' ]) == M.delete(['a', 'c'])
     True
     sage: M / 'a' == M.contract('a')
     True
-    sage: M / 'c' \ 'ab' == M.minor(contractions='c', deletions='ab')
+    sage: (M / 'c').delete('ab') == M.minor(contractions='c', deletions='ab')
     True
 
 If a contraction set is not independent (or a deletion set not coindependent),
@@ -27,9 +27,9 @@ this is taken care of::
     sage: M = matroids.named_matroids.Fano()
     sage: M.rank('abf')
     2
-    sage: M / 'abf' == M / 'ab' \ 'f'
+    sage: M / 'abf' == (M / 'ab').delete('f')
     True
-    sage: M / 'abf' == M / 'af' \ 'b'
+    sage: M / 'abf' == (M / 'af').delete('b')
     True
 
 .. SEEALSO::

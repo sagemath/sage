@@ -140,6 +140,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
             return Unknown
         raise NotImplementedError("I don't know how to build a ({},{},1)-RBIBD!".format(v,3))
 
+
 def kirkman_triple_system(v,existence=False):
     r"""
     Return a Kirkman Triple System on `v` points.
@@ -180,7 +181,7 @@ def kirkman_triple_system(v,existence=False):
 
     TESTS::
 
-        sage: for i in range(3,300,6):
+        sage: for i in range(3,300,6):                                                  # needs sage.combinat
         ....:     _ = designs.kirkman_triple_system(i)
     """
     if v % 6 != 3:
@@ -437,6 +438,7 @@ def v_4_1_rbibd(v,existence=False):
     assert BIBD.is_resolvable()
     return BIBD
 
+
 def PBD_4_7(v,check=True, existence=False):
     r"""
     Return a `(v,\{4,7\})`-PBD
@@ -458,7 +460,7 @@ def PBD_4_7(v,check=True, existence=False):
 
     All values `\leq 300`::
 
-        sage: for i in range(1,300,3):
+        sage: for i in range(1,300,3):                                                  # needs sage.schemes
         ....:     if i not in [10,19,31]:
         ....:         assert PBD_4_7(i,existence=True) is True
         ....:         _ = PBD_4_7(i,check=True)
@@ -683,6 +685,7 @@ def PBD_4_7(v,check=True, existence=False):
                                   check=check,
                                   copy=False)
 
+
 def PBD_4_7_from_Y(gdd,check=True):
     r"""
     Return a `(3v+1,\{4,7\})`-PBD from a `(v,\{4,5,7\},\NN-\{3,6,10\})`-GDD.
@@ -711,16 +714,16 @@ def PBD_4_7_from_Y(gdd,check=True):
     EXAMPLES::
 
         sage: from sage.combinat.designs.resolvable_bibd import PBD_4_7_from_Y
-        sage: PBD_4_7_from_Y(designs.transversal_design(7,8))
+        sage: PBD_4_7_from_Y(designs.transversal_design(7,8))                           # needs sage.schemes
         Pairwise Balanced Design on 169 points with sets of sizes in [4, 7]
 
     TESTS::
 
-        sage: PBD_4_7_from_Y(designs.balanced_incomplete_block_design(10,10))
+        sage: PBD_4_7_from_Y(designs.balanced_incomplete_block_design(10,10))           # needs sage.schemes
         Traceback (most recent call last):
         ...
         ValueError: The GDD should only contain blocks of size {4,5,7} but there are other: [10]
-        sage: PBD_4_7_from_Y(designs.transversal_design(4,3))
+        sage: PBD_4_7_from_Y(designs.transversal_design(4,3))                           # needs sage.schemes
         Traceback (most recent call last):
         ...
         RuntimeError: A group has size 3 but I do not know how to build a (10,[4,7])-PBD

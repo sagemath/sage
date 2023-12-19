@@ -329,7 +329,7 @@ def is_partial_cube(G, certificate=False):
         labeled = Graph([contracted.vertices(sort=False), []])
         for v, w in contracted.edge_iterator(labels=False):
             diff = bitvec[v] ^ bitvec[w]
-            if not diff or not bitvec[w] &~ bitvec[v]:
+            if not diff or not bitvec[w] & ~bitvec[v]:
                 continue    # zero edge or wrong direction
             if diff not in neighbors:
                 return fail

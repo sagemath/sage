@@ -75,12 +75,15 @@ from source as follows:
   - Create a new conda environment including all standard packages
     recognized by sage, and activate it::
 
-      $ conda env create --file environment.yml --name sage-build
+      $ conda env create --file environment-3.11.yml --name sage-build
       $ conda activate sage-build
 
-    Alternatively, use ``environment-optional.yml`` in place of
+    Alternatively, use ``environment-optional-3.11.yml`` in place of
     ``environment.yml`` to create an environment with all standard and optional
     packages recognized by sage.
+
+    A different Python version can be selected by replacing ``3.11`` by ``3.9``
+    or ``3.10`` in these commands.
 
   - Then the SageMath distribution will be built using the compilers provided by Conda
     and using many packages installed by Conda::
@@ -93,16 +96,13 @@ from source as follows:
 
 .. _sec-installation-conda-develop:
 
-Using conda to provide all dependencies for the Sage library (experimental)
+Using conda to provide all dependencies for the Sage library
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can build and install the Sage library from source, using conda to
 provide all of its dependencies. This bypasses most of the build
 system of the Sage distribution and is the fastest way to set up an
 environment for Sage development.
-
-Note that this is still an experimental feature and may not work as
-intended.
 
 Here we assume that you are using a git checkout.
 
@@ -126,38 +126,26 @@ Here we assume that you are using a git checkout.
   - Create and activate a new conda environment with the dependencies of Sage
     and a few additional developer tools::
 
-      $ mamba env create --file src/environment-dev.yml --name sage-dev
+      $ mamba env create --file src/environment-dev-3.11.yml --name sage-dev
       $ conda activate sage-dev
 
-    Alternatively, you can use ``src/environment.yml`` or
-    ``src/environment-optional.yml``, which will only install standard
+    Alternatively, you can use ``src/environment-3.11.yml`` or
+    ``src/environment-optional-3.11.yml``, which will only install standard
     (and optional) packages without any additional developer tools.
 
-    By default, the most recent version of Python supported by Sage is
-    installed. You can use the additional option ``python=3.9`` in the above
-    ``env create`` command to select another Python version (here 3.9). 
+    A different Python version can be selected by replacing ``3.11`` by ``3.9``
+    or ``3.10`` in these commands.
 
-  - Run the ``configure`` script::
+  - Bootstrap the source tree and install the build prerequisites and the Sage library::
 
       $ ./bootstrap
-      $ ./configure --with-python=$CONDA_PREFIX/bin/python             \
-                    --prefix=$CONDA_PREFIX                             \
-                    $(for pkg in $(./sage -package list :standard:     \
-                                     --exclude rpy2                    \
-                                     --has-file spkg-configure.m4      \
-                                     --has-file distros/conda.txt); do \
-                          echo --with-system-$pkg=force;               \
-                      done)
-
-  - Install the build prerequisites and the Sage library::
-
-      $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf ./pkgs/sage-setup
-      $ pip install --no-build-isolation -v -v --editable ./src
+      $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf_conda ./pkgs/sage-setup
+      $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
 
   - Verify that Sage has been installed::
 
       $ sage -c 'print(version())'
-      SageMath version 9.6.beta5, Release Date: 2022-03-12
+      SageMath version 10.2.beta4, Release Date: 2023-09-24
 
 Note that ``make`` is not used at all. All dependencies
 (including all Python packages) are provided by conda.
@@ -173,13 +161,21 @@ suffices to restart Sage.
 
 After editing any Cython files, rebuild the Sage library using::
 
-  $ pip install --no-build-isolation -v -v --editable src
+  $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable src
 
 In order to update the conda environment later, you can run::
 
-  $ mamba env update --file src/environment-dev.yml --name sage-dev
+  $ mamba env update --file src/environment-dev-3.11.yml --name sage-dev
 
 To build the documentation, use::
 
   $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
   $ sage --docbuild all html
+
+.. NOTE::
+
+   The switch ``--config-settings editable_mode=compat`` restores the
+   `legacy setuptools implementation of editable installations
+   <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_.
+   Adventurous developers may omit this switch to try the modern,
+   PEP-660 implementation of editable installations, see :issue:`34209`.

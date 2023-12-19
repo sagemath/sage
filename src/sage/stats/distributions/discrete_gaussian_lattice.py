@@ -196,6 +196,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         \exp(-|x|_2^2/(2σ²))`, i.e. the normalisation factor such that the sum
         over all probabilities is 1 for `B`, via Poisson summation.
 
+
         INPUT:
 
         - ``tau`` -- (default: ``None``) all vectors `v` with `|v|_2^2 ≤ τ·σ`

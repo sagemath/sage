@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Direct Sum of Crystals
 """
@@ -141,11 +142,12 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
         if len(crystals) == 0:
             raise ValueError("the direct sum is empty")
         else:
-            assert(crystal.cartan_type() == crystals[0].cartan_type() for crystal in crystals)
+            assert all(crystal.cartan_type() == crystals[0].cartan_type() for crystal in crystals)
             self._cartan_type = crystals[0].cartan_type()
         if keepkey:
-            self.module_generators = tuple([ self((i,b)) for i,B in enumerate(crystals)
-                                             for b in B.module_generators ])
+            self.module_generators = tuple([self((i, b))
+                                            for i, B in enumerate(crystals)
+                                            for b in B.module_generators])
         else:
             self.module_generators = sum((tuple(B.module_generators) for B in crystals), ())
 

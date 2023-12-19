@@ -5,7 +5,7 @@ Jacobian of a general hyperelliptic curve
 # ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.rings.integer import Integer

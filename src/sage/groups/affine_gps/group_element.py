@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Elements of Affine Groups
 
@@ -79,11 +78,14 @@ class AffineGroupElement(MultiplicativeGroupElement):
     EXAMPLES::
 
         sage: G = AffineGroup(2, GF(3))
+
+        sage: # needs sage.libs.gap
         sage: g = G.random_element()
         sage: type(g)
         <class 'sage.groups.affine_gps.affine_group.AffineGroup_with_category.element_class'>
         sage: G(g.matrix()) == g
         True
+
         sage: G(2)
               [2 0]     [0]
         x |-> [0 2] x + [0]
@@ -108,6 +110,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         TESTS::
 
+            sage: # needs sage.libs.gap
             sage: G = AffineGroup(4, GF(5))
             sage: g = G.random_element()
             sage: TestSuite(g).run()
@@ -201,6 +204,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         Composition of affine group elements equals multiplication of
         the matrices::
 
+            sage: # needs sage.libs.gap
             sage: g1 = G.random_element()
             sage: g2 = G.random_element()
             sage: g1.matrix() * g2.matrix() == (g1*g2).matrix()

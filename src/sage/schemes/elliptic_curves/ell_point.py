@@ -1359,9 +1359,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 raise ValueError('Value %s illegal for point order' % value)
             E = self.curve()
             q = E.base_ring().cardinality()
-            low, hi = Hasse_bounds(q)
-            if value > hi:
-                raise ValueError('Value %s illegal: outside max Hasse bound' % value)
+            if q < oo:
+                _, hi = Hasse_bounds(q)
+                if value > hi:
+                    raise ValueError('Value %s illegal: outside max Hasse bound' % value)
             if value * self != E(0):
                 raise ValueError('Value %s illegal: %s * %s is not the identity' % (value, value, self))
             if hasattr(self, '_order') and self._order != value:  # already known
@@ -1931,7 +1932,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         P = self
         E = P.curve()
 
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("Points must both be on the same curve")
 
         K = E.base_ring()
@@ -2139,7 +2140,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         # check for same curve
         E = P.curve()
         O = E(0)
-        if not Q.curve() is E:
+        if Q.curve() is not E:
             raise ValueError("Points must both be on the same curve")
 
         # set q to be the order of the base field
@@ -3035,7 +3036,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         # (with infinite precision) and then trim back to RR or CC.
 
         x = RC(v_inf(self[0]))
-        b2, b4, b6, b8 = [RC(v_inf(b)) for b in E.b_invariants()]
+        b2, b4, b6, b8 = (RC(v_inf(b)) for b in E.b_invariants())
 
         # The following comes from Silverman Theorem 4.2.  Silverman
         # uses decimal precision d, so his term (5/3)d =

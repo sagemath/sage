@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Symmetric Functions
 
@@ -359,8 +360,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             sage: bases = SymmetricFunctionsBases(Sym)
             sage: bases.super_categories()
             [Category of realizations of Symmetric Functions over Rational Field,
-             Category of commutative hopf algebras with basis over Rational Field,
-             Join of Category of realizations of hopf algebras over Rational Field
+             Category of commutative Hopf algebras with basis over Rational Field,
+             Join of Category of realizations of Hopf algebras over Rational Field
                  and Category of graded algebras over Rational Field
                  and Category of graded coalgebras over Rational Field,
              Category of unique factorization domains]
@@ -369,8 +370,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             sage: bases = SymmetricFunctionsBases(Sym)
             sage: bases.super_categories()
             [Category of realizations of Symmetric Functions over Univariate Polynomial Ring in x over Integer Ring,
-             Category of commutative hopf algebras with basis over Univariate Polynomial Ring in x over Integer Ring,
-             Join of Category of realizations of hopf algebras over Univariate Polynomial Ring in x over Integer Ring
+             Category of commutative Hopf algebras with basis over Univariate Polynomial Ring in x over Integer Ring,
+             Join of Category of realizations of Hopf algebras over Univariate Polynomial Ring in x over Integer Ring
                  and Category of graded algebras over Univariate Polynomial Ring in x over Integer Ring
                  and Category of graded coalgebras over Univariate Polynomial Ring in x over Integer Ring]
         """
@@ -1439,21 +1440,21 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] < w[-1])
+                    return w[0] < w[-1]
             elif comparison == 0:
                 def check_word(w):
                     if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] == w[-1])
+                    return w[0] == w[-1]
             elif comparison == 1:
                 def check_word(w):
                     if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
                         return False
                     if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
                         return False
-                    return (w[0] > w[-1])
+                    return w[0] > w[-1]
 
             def coeff_of_m_mu_in_result(mu):
                 # Compute the coefficient of the monomial symmetric
@@ -1531,7 +1532,7 @@ class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
             sage: bases = FilteredSymmetricFunctionsBases(Sym)
             sage: bases.super_categories()
             [Category of bases of Symmetric Functions over Rational Field,
-             Category of commutative filtered hopf algebras with basis over Rational Field]
+             Category of commutative filtered Hopf algebras with basis over Rational Field]
         """
         cat = HopfAlgebras(self.base().base_ring()).Commutative().WithBasis().Filtered()
         return [SymmetricFunctionsBases(self.base()), cat]
@@ -1581,7 +1582,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
             sage: bases = GradedSymmetricFunctionsBases(Sym)
             sage: bases.super_categories()
             [Category of filtered bases of Symmetric Functions over Rational Field,
-             Category of commutative graded hopf algebras with basis over Rational Field]
+             Category of commutative graded Hopf algebras with basis over Rational Field]
         """
         cat = HopfAlgebras(self.base().base_ring()).Commutative().WithBasis().Graded()
         return [FilteredSymmetricFunctionsBases(self.base()), cat]
@@ -4915,8 +4916,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             -q^3 + 2*q^2 - 2*q + 1
             sage: a.scalar_qt(a,5,7) # q=5 and t=7
             490/1539
-            sage: (x,y) = var('x,y')                                                    # optional - sage.symbolic
-            sage: a.scalar_qt(a, q=x, t=y)                                              # optional - sage.symbolic
+            sage: (x,y) = var('x,y')                                                    # needs sage.symbolic
+            sage: a.scalar_qt(a, q=x, t=y)                                              # needs sage.symbolic
             1/3*(x^3 - 1)/(y^3 - 1) + 2/3*(x - 1)^3/(y - 1)^3
             sage: Rn = QQ['q','t','y','z'].fraction_field()
             sage: (q,t,y,z) = Rn.gens()
@@ -6029,7 +6030,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         it is better to obtain an element of the symbolic ring::
 
             sage: h = SymmetricFunctions(QQ).h()
-            sage: (h[3]+h[2]).principal_specialization(q=var("q"))                      # optional - sage.symbolic
+            sage: (h[3]+h[2]).principal_specialization(q=var("q"))                      # needs sage.symbolic
             1/((q^2 - 1)*(q - 1)) - 1/((q^3 - 1)*(q^2 - 1)*(q - 1))
 
         In case ``q`` is in the base ring, it must be passed explicitly::
@@ -6083,7 +6084,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             1
 
         Check that the stable principal specialization at `q = 1`
-        raises a ``ValueError``:
+        raises a :class:`ValueError`:
 
             sage: def test_error(x):
             ....:     message = "the stable principal specialization of %s at q=1 should raise a ValueError"
@@ -6290,11 +6291,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: x = m[3]+m[2,1]+m[1,1,1]
             sage: d = x.homogeneous_degree()
-            sage: var("q t")                                                            # optional - sage.symbolic
+            sage: var("q t")                                                            # needs sage.symbolic
             (q, t)
-            sage: factor((x.principal_specialization()*(1-q)^d*t^d))                    # optional - sage.symbolic
+            sage: factor((x.principal_specialization()*(1-q)^d*t^d))                    # needs sage.symbolic
             t^3/((q^2 + q + 1)*(q + 1))
-            sage: factor(x.exponential_specialization(q=q, t=t))                        # optional - sage.symbolic
+            sage: factor(x.exponential_specialization(q=q, t=t))                        # needs sage.symbolic
             t^3/((q^2 + q + 1)*(q + 1))
 
         TESTS::

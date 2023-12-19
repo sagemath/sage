@@ -59,6 +59,7 @@ Methods
 from sage.combinat.designs.incidence_structures import IncidenceStructure
 from itertools import combinations
 
+
 class TwoGraph(IncidenceStructure):
     r"""
     Two-graphs class.
@@ -199,9 +200,10 @@ def taylor_twograph(q):
     from sage.graphs.generators.classical_geometries import TaylorTwographSRG
     return TaylorTwographSRG(q).twograph()
 
-def is_twograph(T):
+
+def is_twograph(T) -> bool:
     r"""
-    Checks that the incidence system `T` is a two-graph
+    Check whether the incidence system `T` is a two-graph.
 
     INPUT:
 
@@ -237,7 +239,7 @@ def is_twograph(T):
         return False
 
     # A structure for a fast triple existence check
-    v_to_blocks = {v:set() for v in range(T.num_points())}
+    v_to_blocks = {v: set() for v in range(T.num_points())}
     for B in T._blocks:
         B = frozenset(B)
         for x in B:
@@ -248,8 +250,8 @@ def is_twograph(T):
         return bool(v_to_blocks[x] & v_to_blocks[y] & v_to_blocks[z])
 
     # Check that every quadruple contains an even number of triples
-    for quad in combinations(range(T.num_points()),4):
-        if sum(map(has_triple,combinations(quad,3))) % 2 == 1:
+    for quad in combinations(range(T.num_points()), 4):
+        if sum(map(has_triple, combinations(quad, 3))) % 2 == 1:
             return False
 
     return True
@@ -296,10 +298,10 @@ def twograph_descendant(G, v, name=None):
         sage: twograph_descendant(p, 5, name=True)
         descendant of Petersen graph at 5: Graph on 9 vertices
     """
-    G = G.seidel_switching(G.neighbors(v),inplace=False)
+    G = G.seidel_switching(G.neighbors(v), inplace=False)
     G.delete_vertex(v)
     if name:
-        G.name('descendant of '+G.name()+' at '+str(v))
+        G.name('descendant of ' + G.name() + ' at ' + str(v))
     else:
         G.name('')
     return G

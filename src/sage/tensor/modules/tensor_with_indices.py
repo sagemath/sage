@@ -258,8 +258,8 @@ class TensorWithIndices(SageObject):
         indices.
 
         Parse ``indices`` checking usual conventions on repeating indices,
-        wildcard, balanced parentheses/brackets and raises a ValueError if not.
-        Return a couple contravariant/covariant indices.
+        wildcard, balanced parentheses/brackets and raises a :class:`ValueError`
+        if not. Return a couple contravariant/covariant indices.
 
         INPUT:
 

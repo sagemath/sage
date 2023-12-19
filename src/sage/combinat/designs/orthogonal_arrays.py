@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings sage.schemes
 r"""
 Orthogonal arrays (OA)
 
@@ -35,6 +35,7 @@ This module defines the following functions:
     :meth:`TD_product` | Return the product of two transversal designs.
     :meth:`OA_find_disjoint_blocks` | Return `x` disjoint blocks contained in a given `OA(k,n)`.
     :meth:`OA_relabel` | Return a relabelled version of the OA.
+    :meth:`OA_standard_label` | Return a version of the OA relabelled to symbols `(0,\dots,n-1)`.
     :meth:`OA_from_quasi_difference_matrix` | Return an Orthogonal Array from a Quasi-Difference matrix
     :meth:`OA_from_Vmt` | Return an Orthogonal Array from a `V(m,t)`
     :meth:`OA_from_PBD` | Return an `OA(k,n)` from a PBD
@@ -476,6 +477,7 @@ def is_transversal_design(B, k, n, verbose=False):
     """
     return is_orthogonal_array([[x % n for x in R] for R in B],k,n,verbose=verbose)
 
+
 def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
     r"""
     Returns a `OA(k,rm+\sum_i u_i)` from a truncated `OA(k+s,r)` by Wilson's
@@ -681,6 +683,7 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
 
     return OA
 
+
 def TD_product(k,TD1,n1,TD2,n2, check=True):
     r"""
     Return the product of two transversal designs.
@@ -728,6 +731,7 @@ def TD_product(k,TD1,n1,TD2,n2, check=True):
         assert is_transversal_design(TD,k,N)
 
     return TD
+
 
 def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explain_construction=False):
     r"""
@@ -1010,6 +1014,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
 
     return OA
 
+
 def largest_available_k(n,t=2):
     r"""
     Return the largest `k` such that Sage can build an `OA(k,n)`.
@@ -1058,6 +1063,7 @@ def largest_available_k(n,t=2):
     while orthogonal_array(k+1,n,t,existence=True) is True:
         k += 1
     return k
+
 
 def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
     r"""
@@ -1401,6 +1407,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
 
     return OA
 
+
 def OA_find_disjoint_blocks(OA, k, n, x,
                             *, solver=None, integrality_tolerance=1e-3):
     r"""
@@ -1469,7 +1476,8 @@ def OA_find_disjoint_blocks(OA, k, n, x,
     independent_set = [OA[i] for i,v in b.items() if v]
     return independent_set
 
-def OA_relabel(OA,k,n,blocks=tuple(),matrix=None):
+
+def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
     r"""
     Return a relabelled version of the OA.
 
@@ -1498,6 +1506,11 @@ def OA_relabel(OA,k,n,blocks=tuple(),matrix=None):
 
       If set to ``None`` (default) no such relabelling is performed.
 
+    - ``symbol_list`` -- a list of the desired symbols for the
+      relabelled OA. If this is not ``None``, the same relabelling is
+      done on all blocks such that the index of an element in
+      symbol_list is its preimage in the relabelling map.
+
       .. NOTE::
 
           A ``None`` coordinate in one block remains a ``None``
@@ -1515,6 +1528,10 @@ def OA_relabel(OA,k,n,blocks=tuple(),matrix=None):
         sage: from sage.combinat.designs.orthogonal_arrays import is_transversal_design
         sage: is_transversal_design(TD,3,2)
         True
+
+        sage: OA = designs.orthogonal_arrays.build(3,2)
+        sage: OA_relabel(OA, 3, 2, symbol_list=['A', 'B'])
+        [['A', 'A', 'A'], ['A', 'B', 'B'], ['B', 'A', 'B'], ['B', 'B', 'A']]
 
     Making sure that ``[2,2,2,2]`` is a block of `OA(4,3)`. We do this
     by relabelling block ``[0,0,0,0]`` which belongs to the design::
@@ -1545,7 +1562,37 @@ def OA_relabel(OA,k,n,blocks=tuple(),matrix=None):
     if matrix:
         OA = [[matrix[i][j] if j is not None else None for i,j in enumerate(R)] for R in OA]
 
+    if symbol_list:
+        mapping = {index: symbol for index, symbol in enumerate(symbol_list)}
+        OA = [[mapping[element] for element in row] for row in OA]
     return OA
+
+
+def OA_standard_label(OA):
+    r"""
+    Return the inputted OA with entries relabelled as integers [0,...,n-1].
+
+    INPUT:
+
+    - ``OA`` -- a list of lists with symbols as entries that are not
+      necessarily integers.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.orthogonal_arrays import OA_standard_label
+        sage: C = [['a', 'a', 'a', 'b'],
+        ....:      ['a', 'a', 'b', 'a'],
+        ....:      ['a', 'b', 'a', 'a'],
+        ....:      ['b', 'a', 'a', 'a'],
+        ....:      ['b', 'b', 'b', 'b']]
+        sage: OA_standard_label(C)
+        [[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [1, 1, 1, 1]]
+
+    """
+    symbol_list = sorted({x for l in OA for x in l})
+    mapping = {symbol: index for index, symbol in enumerate(symbol_list)}
+    return [[mapping[element] for element in row] for row in OA]
+
 
 def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
     r"""
@@ -1705,6 +1752,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
     Mb = [[e+GG((G.zero(),x*v)) for v in H for e in R] for x, R in zip(Y, A)]
     return OA_from_quasi_difference_matrix(list(zip(*Mb)),GG,add_col=True)
 
+
 def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
     r"""
     Return an Orthogonal Array from a Quasi-Difference matrix
@@ -1824,6 +1872,7 @@ def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
 
     return new_M
 
+
 def OA_from_Vmt(m,t,V):
     r"""
     Return an Orthogonal Array from a `V(m,t)`
@@ -1911,6 +1960,7 @@ def QDM_from_Vmt(m,t,V):
 
     return Fq, M
 
+
 def OA_from_PBD(k,n,PBD, check=True):
     r"""
     Return an `OA(k,n)` from a PBD
@@ -1992,6 +2042,7 @@ def OA_from_PBD(k,n,PBD, check=True):
         assert is_orthogonal_array(OA,k,n,2)
 
     return OA
+
 
 def OA_from_wider_OA(OA,k):
     r"""

@@ -304,7 +304,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
             sage: C.encode(message)
             (1, 0, 4, 2, 0, 3, 2, 3)
         """
-        parity=self.code().base_field().zero()
+        parity = self.code().base_field().zero()
         for i in message.list():
             parity += i
         return vector(self.code().base_field(), message.list() + [-parity])

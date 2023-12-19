@@ -292,7 +292,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
             # Check that the fundamental weights form the dual basis of the simple coroots
             for i in self.index_set():
-                assert(Lambda[i].is_dominant())
+                assert (Lambda[i].is_dominant())
                 for j in self.index_set():
                     tester.assertEqual(Lambda[j].scalar(alphacheck[i]), (1 if i == j else 0))
 
@@ -1087,13 +1087,13 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 iset = P.index_set() + ('delta',)
 
             return sum(cl*sym[iset.index(ml),iset.index(mr)]*cr
-                       for ml,cl in self for mr,cr in la)
+                       for ml, cl in self for mr, cr in la)
 
         #    # This should be in a method to_weight_lattice()
         #    alphac = self.simple_coroots()
         #    Lambda = self.fundamental_weights()
-        #    assert( t == self.plus(t.scalar(alphac[i]) * Lambda[i] for i in self.index_set() ) )
-        #    t = self.plus( t.scalar(alphac[i]) * c[i] * Lambda[i] for i in self.index_set() )
+        #    assert t == self.plus(t.scalar(alphac[i]) * Lambda[i] for i in self.index_set())
+        #    t = self.plus( t.scalar(alphac[i]) * c[i] * Lambda[i] for i in self.index_set())
 
         def to_weight_space(self, base_ring=None):
             r"""

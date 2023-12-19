@@ -1,18 +1,16 @@
 r"""
 The Stein-Watkins table of elliptic curves
 
-Sage gives access to the Stein-Watkins table of elliptic curves, via an
-optional package that you must install. This is a huge database of elliptic
-curves. You can install the database (a 2.6GB package) with the command
-
-::
+Sage gives access to the Stein-Watkins table of elliptic curves, via the
+optional :ref:`database_stein_watkins <spkg_database_stein_watkins>` package
+that you must install. This is a huge database of elliptic curves. You can
+install the database (a 2.6GB package) with the command ::
 
     sage -i database_stein_watkins
 
 You can also automatically download a small version, which takes much less
-time, using the command
-
-::
+time, via the optional :ref:`database_stein_watkins_mini <spkg_database_stein_watkins_mini>`
+package using the command ::
 
     sage -i database_stein_watkins_mini
 
@@ -158,8 +156,7 @@ class SteinWatkinsIsogenyClass:
 
     def __iter__(self):
         try:
-            for E in self.curves:
-                yield E
+            yield from self.curves
         except AttributeError:
             return
 

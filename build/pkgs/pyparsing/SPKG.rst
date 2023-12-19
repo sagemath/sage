@@ -15,6 +15,5 @@ MIT License
 Upstream Contact
 ----------------
 
-- Author: Paul McGuire
-- Home page: http://pyparsing.wikispaces.com
+https://pypi.org/project/pyparsing/
 

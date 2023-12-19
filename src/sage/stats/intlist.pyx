@@ -323,7 +323,7 @@ cdef class IntList:
         cdef Py_ssize_t i
         return [self._values[i] for i in range(self._length)]
 
-    cpdef int sum(self):
+    cpdef int sum(self) noexcept:
         """
         Return the sum of the entries of ``self``.
 
@@ -347,7 +347,7 @@ cdef class IntList:
         sig_off()
         return s
 
-    cpdef int prod(self):
+    cpdef int prod(self) noexcept:
         """
         Return the product of the entries of ``self``.
 
@@ -544,7 +544,7 @@ cdef class IntList:
         return self.time_series().plot_histogram(*args, **kwds)
 
 
-cdef IntList new_int_list(Py_ssize_t length):
+cdef IntList new_int_list(Py_ssize_t length) noexcept:
     """
     Function that is used internally to quickly create a new intlist
     without initializing any of the allocated memory.

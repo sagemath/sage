@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Modular forms over a non-minimal base ring
 """
@@ -24,7 +25,8 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
             sage: M = ModularForms(23,2,base_ring=GF(7)) # indirect doctest
             sage: M
-            Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23) of weight 2 over Finite Field of size 7
+            Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23)
+             of weight 2 over Finite Field of size 7
             sage: M == loads(dumps(M))
             True
         """
@@ -42,6 +44,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
             sage: chi = DirichletGroup(5, base_ring = K).0
             sage: L.<c> = K.extension(x^2 - 402*i)
@@ -65,6 +68,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             sage: M._repr_()
             'Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23) of weight 2 over Finite Field of size 7'
 
+            sage: # needs sage.rings.number_field
             sage: chi = DirichletGroup(109).0 ** 36
             sage: ModularForms(chi, 2, base_ring = chi.base_ring())
             Modular Forms space of dimension 9, character [zeta3] and weight 2 over Cyclotomic Field of order 108 and degree 36
@@ -84,8 +88,8 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             sage: M = ModularForms(23,2,base_ring=GF(7))
             sage: M._compute_q_expansion_basis(10)
             [q + 6*q^3 + 6*q^4 + 5*q^6 + 2*q^7 + 6*q^8 + 2*q^9 + O(q^10),
-            q^2 + 5*q^3 + 6*q^4 + 2*q^5 + q^6 + 2*q^7 + 5*q^8 + O(q^10),
-            1 + 5*q^3 + 5*q^4 + 5*q^6 + 3*q^8 + 5*q^9 + O(q^10)]
+             q^2 + 5*q^3 + 6*q^4 + 2*q^5 + q^6 + 2*q^7 + 5*q^8 + O(q^10),
+             1 + 5*q^3 + 5*q^4 + 5*q^6 + 3*q^8 + 5*q^9 + O(q^10)]
 
         TESTS:
 
@@ -123,7 +127,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
                     newB.append(f)
                     V = A.span(gens)
             if len(newB) != self.dimension():
-                raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements"%(self.dimension(), len(newB)))
+                raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements" % (self.dimension(), len(newB)))
             lst = [R(f) for f in newB]
             return [f/f[f.valuation()] for f in lst]
         else:
@@ -141,7 +145,8 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         EXAMPLES::
 
-            sage: C = CuspForms(7, 4, base_ring=CyclotomicField(5)) # indirect doctest
+            sage: # needs sage.rings.number_field
+            sage: C = CuspForms(7, 4, base_ring=CyclotomicField(5))  # indirect doctest
             sage: type(C)
             <class 'sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_R_with_category'>
         """
@@ -153,10 +158,12 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: chi = DirichletGroup(109, CyclotomicField(3)).0
             sage: M9 = ModularForms(chi, 2, base_ring = CyclotomicField(9))
             sage: M9.change_ring(CyclotomicField(15))
-            Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2 over Cyclotomic Field of order 15 and degree 8
+            Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2
+             over Cyclotomic Field of order 15 and degree 8
             sage: M9.change_ring(QQ)
             Traceback (most recent call last):
             ...

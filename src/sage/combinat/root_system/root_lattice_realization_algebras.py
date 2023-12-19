@@ -313,14 +313,14 @@ class Algebras(AlgebrasCategory):
                 alphacheck = L.simple_coroots()
                 s = L.simple_reflections()
                 for i in self.cartan_type().index_set():
-                    emalphai = self.monomial(-alpha[i]) # X^{-\alpha_i}
+                    emalphai = self.monomial(-alpha[i])  # X^{-\alpha_i}
                     for weight in L.some_elements():
-                        if not weight.scalar(alphacheck[i]) in ZZ:
+                        if weight.scalar(alphacheck[i]) not in ZZ:
                             # Demazure operators are not defined in this case
                             continue
                         x = self.monomial(weight)
                         result = pi[i](x)
-                        tester.assertEqual(result * (self.one()-emalphai),
+                        tester.assertEqual(result * (self.one() - emalphai),
                                            x - emalphai * x.map_support(s[i]))
             except ImportError:
                 pass

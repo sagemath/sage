@@ -104,6 +104,9 @@ EOF
         UPDATE="pacman -Sy &&"
         EXISTS="pacman -Si"
         INSTALL="pacman -Su --noconfirm"
+        cat <<EOF
+RUN sed -i '/^NoExtract/d' /etc/pacman.conf
+EOF
         ;;
     nix*)
         # https://hub.docker.com/r/nixos/nix
@@ -158,8 +161,11 @@ EOF
         RUN="RUN . /opt/conda/etc/profile.d/conda.sh; conda activate base; "  # to activate the conda env
         ;;
     *)
-        echo "Not implemented: package installation for SYSTEM=$SYSTEM" >&2
-        exit 1
+        cat <<EOF
+ARG BASE_IMAGE
+FROM \${BASE_IMAGE} as with-system-packages
+EOF
+        INSTALL=$(sage-print-system-package-command $SYSTEM install " ")
         ;;
 esac
 
@@ -220,6 +226,7 @@ $ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.
 $ADD m4 ./m4
 $ADD pkgs pkgs
 $ADD build ./build
+$ADD .upstream.d ./.upstream.d
 ARG BOOTSTRAP=./bootstrap
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
 
@@ -230,11 +237,11 @@ ARG EXTRA_CONFIGURE_ARGS=""
 EOF
 if [ ${WITH_SYSTEM_SPKG} = "force" ]; then
     cat <<EOF
-$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "********** configuring without forcing ***********"; cat config.log; ./configure --enable-build-as-root; cat config.log; exit 1) $ENDRUN
+$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "********** configuring without forcing ***********"; echo "::group::config.log"; cat config.log; echo "::endgroup::"; ./configure --enable-build-as-root; echo "::group::config.log"; cat config.log; echo "::endgroup::"; exit 1) $ENDRUN
 EOF
 else
     cat <<EOF
-$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (cat config.log; exit 1) $ENDRUN
+$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "::group::config.log"; cat config.log; echo "::endgroup::"; exit 1) $ENDRUN
 EOF
 fi
 cat <<EOF

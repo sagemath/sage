@@ -122,8 +122,8 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
         sage: are_hyperplanes_in_projective_geometry_parameters(40, 13, 4,
         ....:                                                   return_parameters=True)
         (True, (3, 3))
-        sage: PG = designs.ProjectiveGeometryDesign(3, 2, GF(3))
-        sage: PG.is_t_design(return_parameters=True)
+        sage: PG = designs.ProjectiveGeometryDesign(3, 2, GF(3))                        # needs sage.combinat
+        sage: PG.is_t_design(return_parameters=True)                                    # needs sage.combinat
         (True, (2, 40, 13, 4))
 
         sage: are_hyperplanes_in_projective_geometry_parameters(15, 3, 1)
@@ -217,13 +217,13 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
     The set of `d`-dimensional subspaces in a `n`-dimensional projective space
     forms `2`-designs (or balanced incomplete block designs)::
 
-        sage: PG = designs.ProjectiveGeometryDesign(4, 2, GF(2)); PG
+        sage: PG = designs.ProjectiveGeometryDesign(4, 2, GF(2)); PG                    # needs sage.combinat
         Incidence structure with 31 points and 155 blocks
-        sage: PG.is_t_design(return_parameters=True)
+        sage: PG.is_t_design(return_parameters=True)                                    # needs sage.combinat
         (True, (2, 31, 7, 7))
 
-        sage: PG = designs.ProjectiveGeometryDesign(3, 1, GF(4))
-        sage: PG.is_t_design(return_parameters=True)
+        sage: PG = designs.ProjectiveGeometryDesign(3, 1, GF(4))                        # needs sage.combinat
+        sage: PG.is_t_design(return_parameters=True)                                    # needs sage.combinat
         (True, (2, 85, 5, 1))
 
     Check with ``F`` being a prime power::
@@ -707,6 +707,7 @@ def projective_plane(n, check=True, existence=False):
 
     EXAMPLES::
 
+        sage: # needs sage.schemes
         sage: designs.projective_plane(2)
         (7,3,1)-Balanced Incomplete Block Design
         sage: designs.projective_plane(3)
@@ -737,6 +738,7 @@ def projective_plane(n, check=True, existence=False):
 
     TESTS::
 
+        sage: # needs sage.schemes
         sage: designs.projective_plane(2197, existence=True)
         True
         sage: designs.projective_plane(6, existence=True)
@@ -816,6 +818,7 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
 
     EXAMPLES::
 
+        sage: # needs sage.combinat
         sage: BD = designs.AffineGeometryDesign(3, 1, GF(2))
         sage: BD.is_t_design(return_parameters=True)
         (True, (2, 8, 2, 1))
@@ -934,12 +937,13 @@ def WittDesign(n):
 
     EXAMPLES::
 
-        sage: BD = designs.WittDesign(9)                # optional - gap_package_design
-        sage: BD.is_t_design(return_parameters=True)    # optional - gap_package_design
+        sage: # optional - gap_package_design
+        sage: BD = designs.WittDesign(9)
+        sage: BD.is_t_design(return_parameters=True)
         (True, (2, 9, 3, 1))
-        sage: BD                                        # optional - gap_package_design
+        sage: BD
         Incidence structure with 9 points and 12 blocks
-        sage: print(BD)                                 # optional - gap_package_design
+        sage: print(BD)
         Incidence structure with 9 points and 12 blocks
     """
     libgap.load_package("design")
@@ -957,16 +961,18 @@ def HadamardDesign(n):
 
     EXAMPLES::
 
-        sage: designs.HadamardDesign(7)                                                 # needs sage.modules
+        sage: # needs sage.combinat sage.modules
+        sage: designs.HadamardDesign(7)
         Incidence structure with 7 points and 7 blocks
-        sage: print(designs.HadamardDesign(7))                                          # needs sage.modules
+        sage: print(designs.HadamardDesign(7))
         Incidence structure with 7 points and 7 blocks
 
     For example, the Hadamard 2-design with `n = 11` is a design whose parameters are `2-(11, 5, 2)`.
     We verify that `NJ = 5J` for this design. ::
 
-        sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()                  # needs sage.modules
-        sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J                                    # needs sage.modules
+        sage: # needs sage.combinat sage.modules
+        sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()
+        sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
@@ -1010,7 +1016,8 @@ def Hadamard3Design(n):
 
     EXAMPLES::
 
-        sage: designs.Hadamard3Design(12)                                               # needs sage.modules
+        sage: # needs sage.combinat sage.modules
+        sage: designs.Hadamard3Design(12)
         Incidence structure with 12 points and 22 blocks
 
     We verify that any two blocks of the Hadamard `3`-design `3-(8, 4, 1)`
@@ -1020,9 +1027,10 @@ def Hadamard3Design(n):
 
     ::
 
-        sage: D = designs.Hadamard3Design(8)                                            # needs sage.modules
-        sage: N = D.incidence_matrix()                                                  # needs sage.modules
-        sage: N.transpose()*N                                                           # needs sage.modules
+        sage: # needs sage.combinat sage.modules
+        sage: D = designs.Hadamard3Design(8)
+        sage: N = D.incidence_matrix()
+        sage: N.transpose()*N
         [4 2 2 2 2 2 2 2 2 2 2 2 2 0]
         [2 4 2 2 2 2 2 2 2 2 2 2 0 2]
         [2 2 4 2 2 2 2 2 2 2 2 0 2 2]

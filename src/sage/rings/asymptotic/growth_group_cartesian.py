@@ -837,7 +837,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 S.next_custom()
                 O.next_custom()
 
-        assert(len(newS) == len(newO))
+        assert (len(newS) == len(newO))
 
         if (len(Sfactors) == len(newS) and
             len(Ofactors) == len(newO)):

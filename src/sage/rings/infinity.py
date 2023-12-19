@@ -943,12 +943,13 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # needs sympy
-            sage: SR(unsigned_infinity)._sympy_()                                       # needs sympy
+            sage: # needs sympy
+            sage: import sympy
+            sage: SR(unsigned_infinity)._sympy_()
             zoo
-            sage: gamma(-3)._sympy_() is sympy.factorial(-2)                            # needs sympy
+            sage: gamma(-3)._sympy_() is sympy.factorial(-2)
             True
-            sage: gamma(-3) is sympy.factorial(-2)._sage_()                             # needs sympy
+            sage: gamma(-3) is sympy.factorial(-2)._sage_()
             True
         """
         import sympy
@@ -1626,12 +1627,13 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
         EXAMPLES::
 
-            sage: import sympy                                                          # needs sympy
-            sage: bool(-oo == -sympy.oo)                                                # needs sympy
+            sage: # needs sympy
+            sage: import sympy
+            sage: bool(-oo == -sympy.oo)
             True
-            sage: bool(SR(-oo) == -sympy.oo)                                            # needs sympy
+            sage: bool(SR(-oo) == -sympy.oo)
             True
-            sage: bool((-oo)._sympy_() == -sympy.oo)                                    # needs sympy
+            sage: bool((-oo)._sympy_() == -sympy.oo)
             True
 
         """
@@ -1773,17 +1775,15 @@ def test_comparison(ring):
     EXAMPLES::
 
         sage: from sage.rings.infinity import test_comparison
-        sage: rings = [ZZ, QQ, RR, RealField(200), RDF, RLF, RIF]                       # needs sage.rings.real_mpfr
-        sage: for R in rings:                                                           # needs sage.rings.real_mpfr
+        sage: rings = [ZZ, QQ, RDF]
+        sage: rings += [RR, RealField(200)]                                             # needs sage.rings.real_mpfr
+        sage: rings += [RLF, RIF]                                                       # needs sage.rings.real_interval_field
+        sage: for R in rings:
         ....:     print('testing {}'.format(R))
         ....:     test_comparison(R)
         testing Integer Ring
         testing Rational Field
-        testing Real Field with 53 bits of precision
-        testing Real Field with 200 bits of precision
-        testing Real Double Field
-        testing Real Lazy Field
-        testing Real Interval Field with 53 bits of precision
+        testing Real Double Field...
         sage: test_comparison(AA)                                                       # needs sage.rings.number_field
 
     Comparison with number fields does not work::
@@ -1857,7 +1857,7 @@ def test_signed_infinity(pos_inf):
         sage: from sage.rings.infinity import test_signed_infinity
         sage: test_signed_infinity(oo)
         sage: test_signed_infinity(float('+inf'))
-        sage: test_signed_infinity(RLF(oo))
+        sage: test_signed_infinity(RLF(oo))                                             # needs sage.rings.real_interval_field
         sage: test_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
         sage: test_signed_infinity(SR(oo))                                              # needs sage.symbolic
     """
@@ -1865,11 +1865,11 @@ def test_signed_infinity(pos_inf):
     assert InfinityRing(pos_inf) is infinity, msg
     assert InfinityRing(-pos_inf) is minus_infinity, msg
     assert infinity == pos_inf, msg
-    assert not(infinity > pos_inf), msg
-    assert not(infinity < pos_inf), msg
+    assert not (infinity > pos_inf), msg
+    assert not (infinity < pos_inf), msg
     assert minus_infinity == -pos_inf, msg
-    assert not(minus_infinity > -pos_inf), msg
-    assert not(minus_infinity < -pos_inf), msg
+    assert not (minus_infinity > -pos_inf), msg
+    assert not (minus_infinity < -pos_inf), msg
     assert pos_inf > -pos_inf, msg
     assert infinity > -pos_inf, msg
     assert pos_inf > minus_infinity, msg

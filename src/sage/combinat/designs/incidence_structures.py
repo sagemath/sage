@@ -357,18 +357,18 @@ class IncidenceStructure():
 
             sage: str="I had a dream of a time when a 3-lines patch does not kill one hour"
             sage: sets = Subsets(str.split(), 4)
-            sage: IS = IncidenceStructure(sets) # a complete 4-uniform hypergraph
+            sage: IS = IncidenceStructure(sets)  # a complete 4-uniform hypergraph
             sage: ["I", "dream", "of", "one"] in IS
             True
             sage: ["does", "patch", "kill", "dream"] in IS
             True
             sage: ["Am", "I", "finally", "done ?"] in IS
             False
-            sage: IS = designs.ProjectiveGeometryDesign(3, 1, GF(2),                    # needs sage.rings.finite_rings
+            sage: IS = designs.ProjectiveGeometryDesign(3, 1, GF(2),                    # needs sage.combinat
             ....:                                       point_coordinates=False)
-            sage: [3,8,7] in IS                                                         # needs sage.rings.finite_rings
+            sage: [3,8,7] in IS                                                         # needs sage.combinat
             True
-            sage: [3,8,9] in IS
+            sage: [3,8,9] in IS                                                         # needs sage.combinat
             False
         """
         try:
@@ -1513,10 +1513,10 @@ class IncidenceStructure():
             sage: BD.is_t_design(0,6,3,7) or BD.is_t_design(0,7,4,7) or BD.is_t_design(0,7,3,8)
             False
 
-            sage: BD = designs.AffineGeometryDesign(3, 1, GF(2))                        # needs sage.rings.finite_rings
-            sage: BD.is_t_design(1)
+            sage: BD = designs.AffineGeometryDesign(3, 1, GF(2))                        # needs sage.combinat
+            sage: BD.is_t_design(1)                                                     # needs sage.combinat
             True
-            sage: BD.is_t_design(2)
+            sage: BD.is_t_design(2)                                                     # needs sage.combinat
             True
 
         Steiner triple and quadruple systems are other names for `2-(v,3,1)` and
@@ -1538,13 +1538,14 @@ class IncidenceStructure():
 
         Some examples of Witt designs that need the gap database::
 
-            sage: BD = designs.WittDesign(9)         # optional - gap_package_design
-            sage: BD.is_t_design(2,9,3,1)            # optional - gap_package_design
+            sage: # optional - gap_package_design
+            sage: BD = designs.WittDesign(9)
+            sage: BD.is_t_design(2,9,3,1)
             True
-            sage: W12 = designs.WittDesign(12)       # optional - gap_package_design
-            sage: W12.is_t_design(5,12,6,1)          # optional - gap_package_design
+            sage: W12 = designs.WittDesign(12)
+            sage: W12.is_t_design(5,12,6,1)
             True
-            sage: W12.is_t_design(4)                 # optional - gap_package_design
+            sage: W12.is_t_design(4)
             True
 
         Further examples::
@@ -1924,8 +1925,8 @@ class IncidenceStructure():
             sage: TD.is_resolvable()
             True
 
-            sage: AG = designs.AffineGeometryDesign(3,1,GF(2))                          # needs sage.rings.finite_rings
-            sage: AG.is_resolvable()                                                    # needs sage.rings.finite_rings
+            sage: AG = designs.AffineGeometryDesign(3,1,GF(2))                          # needs sage.combinat
+            sage: AG.is_resolvable()                                                    # needs sage.combinat
             True
 
         Their classes::
@@ -1936,10 +1937,11 @@ class IncidenceStructure():
             sage: cls # random
             [[[0, 3], [1, 2]], [[1, 3], [0, 2]]]
 
-            sage: b, cls = AG.is_resolvable(True)                                       # needs sage.rings.finite_rings
+            sage: # needs sage.combinat
+            sage: b, cls = AG.is_resolvable(True)
             sage: b
             True
-            sage: cls # random
+            sage: cls  # random
             [[[6, 7], [4, 5], [0, 1], [2, 3]],
              [[5, 7], [0, 4], [3, 6], [1, 2]],
              [[0, 2], [4, 7], [1, 3], [5, 6]],
@@ -1958,9 +1960,10 @@ class IncidenceStructure():
 
         TESTS::
 
-            sage: _, cls1 = AG.is_resolvable(certificate=True)                          # needs sage.rings.finite_rings
-            sage: _, cls2 = AG.is_resolvable(certificate=True)                          # needs sage.rings.finite_rings
-            sage: cls1 is cls2                                                          # needs sage.rings.finite_rings
+            sage: # needs sage.combinat
+            sage: _, cls1 = AG.is_resolvable(certificate=True)
+            sage: _, cls2 = AG.is_resolvable(certificate=True)
+            sage: cls1 is cls2
             False
         """
         if self._classes is None:

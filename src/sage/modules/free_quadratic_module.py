@@ -71,7 +71,7 @@ import sage.matrix.matrix_space
 import sage.misc.latex as latex
 import sage.rings.ring as ring
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from . import free_module
+from sage.modules import free_module
 
 # #############################################################################
 #
@@ -154,7 +154,7 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
 
     if key in _cache:
         M = _cache[key]()
-        if not (M is None):
+        if M is not None:
             return M
 
     if not base_ring.is_commutative():
@@ -207,7 +207,7 @@ def QuadraticSpace(K, dimension, inner_product_matrix, sparse=False):
         (0, 0, 1)
         ]
 
-    The base must be a field or a ``TypeError`` is raised::
+    The base must be a field or a :class:`TypeError` is raised::
 
         sage: QuadraticSpace(ZZ,5,identity_matrix(ZZ,2))
         Traceback (most recent call last):
@@ -791,7 +791,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             [3 3 0]
 
         The basis vectors must be linearly independent or a
-        ``ValueError`` exception is raised::
+        :class:`ValueError` exception is raised::
 
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
@@ -1341,7 +1341,7 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
         element of ``self`` into a vector over the fraction field of `R`,
         then taking the resulting `R`-module.
 
-        This raises a ``TypeError`` if coercion is not possible.
+        This raises a :class:`TypeError` if coercion is not possible.
 
         INPUT:
 

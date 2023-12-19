@@ -1127,9 +1127,9 @@ class FunctionField_polymod(FunctionField):
         L = M.base_field()
         K = L.base_field()
 
-        assert(isinstance(K, RationalFunctionField))
-        assert(K is not L)
-        assert(L is not M)
+        assert (isinstance(K, RationalFunctionField))
+        assert (K is not L)
+        assert (L is not M)
 
         if not K.constant_field().is_perfect():
             raise NotImplementedError("simple_model() only implemented over perfect constant fields")

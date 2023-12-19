@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Graphs from the World Map
 
@@ -48,7 +47,7 @@ def AfricaMap(continental=False, year=2018):
 
     TESTS::
 
-        sage: Africa.plot()  # long time
+        sage: Africa.plot()                     # long time                             # needs sage.plot
         Graphics object consisting of 159 graphics primitives
     """
     if year != 2018:
