@@ -513,7 +513,7 @@ class AbstractCode(Parent):
             (1, 0, 1, 0, 1, 0, 1)
             True
         """
-        return [x for x in self]
+        return list(self)
 
     def length(self):
         r"""

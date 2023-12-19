@@ -1,37 +1,27 @@
 r"""
-FindStat - the Combinatorial Statistic Finder.
+FindStat - the search engine for combinatorial statistics and maps
 
-The FindStat database can be found at::
+The interface to the FindStat database is ::
 
     sage: findstat()
     The Combinatorial Statistic Finder (https://www.findstat.org/)
 
-Fix the following three notions:
+We use the following three notions
 
 - A *combinatorial collection* is a set `S` with interesting combinatorial properties,
 - a *combinatorial map* is a combinatorially interesting map `f: S \to S'` between combinatorial collections, and
 - a *combinatorial statistic* is a combinatorially interesting map `s: S \to \ZZ`.
 
-You can use the sage interface to FindStat to:
+You can use the FindStat interface to
 
 - identify a combinatorial statistic or map given the values on a few small objects,
 - obtain more terms, formulae, references, etc. for a given statistic or map,
 - edit statistics and maps and submit new statistics.
 
-AUTHORS:
+The main entry points to the database are
 
-- Martin Rubey (2015): initial version.
-- Martin Rubey (2020): rewrite, adapt to new FindStat API
-
-The main entry points
----------------------
-.. csv-table::
-    :class: contentstable
-    :widths: 20, 40
-    :delim: |
-
-    :func:`findstat` | search for matching statistics.
-    :func:`findmap`  | search for matching maps.
+- :func:`findstat` to search for matching statistics,
+- :func:`findmap` to search for matching maps.
 
 A guided tour
 -------------
@@ -194,8 +184,10 @@ replace the value by using :meth:`FindStatFunction.set_description`,
 :meth:`FindStatStatistic.submit` your changes for review by the
 FindStat team.
 
-Classes and methods
--------------------
+AUTHORS:
+
+- Martin Rubey (2015): initial version
+- Martin Rubey (2020): rewrite, adapt to new FindStat API
 
 """
 # ****************************************************************************
@@ -909,7 +901,7 @@ def findstat(query=None, values=None, distribution=None, domain=None,
       must be ``None``.
 
     - a list of pairs of the form ``(object, value)``, or a
-      dictionary from sage objects to integer values.  The keyword
+      dictionary from Sage objects to integer values.  The keyword
       arguments ``depth`` and ``max_values`` are passed to the
       finder, ``values`` and ``distribution`` must be ``None``.
 
@@ -1162,7 +1154,7 @@ def findmap(*args, **kwargs):
       forms:
 
         - a list of pairs of the form ``(object, value)``, or a
-          dictionary from sage objects to sage objects.
+          dictionary from Sage objects to Sage objects.
 
         - a list of pairs of the form ``(list of objects, list of
           values)``, or a single pair of the form ``(list of objects,
@@ -1762,7 +1754,7 @@ class FindStatFunction(SageObject):
 
     def sage_code(self):
         r"""
-        Return the sage code associated with the statistic or map.
+        Return the Sage code associated with the statistic or map.
 
         OUTPUT:
 
@@ -1841,7 +1833,7 @@ class FindStatCombinatorialStatistic(SageObject):
 
         OUTPUT:
 
-        A dictionary from sage objects representing an element of the
+        A dictionary from Sage objects representing an element of the
         appropriate collection to integers.
 
         This method is overridden in :class:`FindStatStatisticQuery`.
@@ -2260,7 +2252,7 @@ class FindStatStatistic(Element,
         INPUT:
 
         - a list of pairs of the form ``(object, value)`` where
-          ``object`` is a sage object representing an element of the
+          ``object`` is a Sage object representing an element of the
           appropriate collection and ``value`` is an integer.
 
         This information is used when submitting the statistic with
@@ -2297,7 +2289,7 @@ class FindStatStatistic(Element,
 
         OUTPUT:
 
-        A string.  Contributors are encouraged to submit sage code in the form::
+        A string.  Contributors are encouraged to submit Sage code in the form::
 
             def statistic(x):
                 ...
@@ -4060,9 +4052,9 @@ class FindStatCollection(Element,
 
     - an integer designating the FindStat id of the collection, or
 
-    - a sage object belonging to a collection, or
+    - a Sage object belonging to a collection, or
 
-    - an iterable producing a sage object belonging to a collection.
+    - an iterable producing a Sage object belonging to a collection.
 
     EXAMPLES::
 
@@ -4276,7 +4268,7 @@ class FindStatCollection(Element,
 
         INPUT:
 
-        - ``element`` -- a sage object that belongs to the collection.
+        - ``element`` -- a Sage object that belongs to the collection.
 
         OUTPUT:
 
@@ -4451,7 +4443,7 @@ class FindStatCollection(Element,
 
         OUTPUT:
 
-        The function that produces the sage object given its FindStat
+        The function that produces the Sage object given its FindStat
         representation as a string.
 
         EXAMPLES::

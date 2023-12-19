@@ -3284,8 +3284,8 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        A DiGraph representing the orientation if it exists. A ``ValueError``
-        exception is raised otherwise.
+        A DiGraph representing the orientation if it exists.
+        A :class:`ValueError` exception is raised otherwise.
 
         ALGORITHM:
 

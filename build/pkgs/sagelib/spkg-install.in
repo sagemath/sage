@@ -51,6 +51,8 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     # and renamed the distribution to "sagemath-standard").  There is no clean way to uninstall
     # them, so we just use rm.
     (cd "$SITEPACKAGESDIR" && rm -rf sage sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
+    # Until https://github.com/sagemath/sage/issues/34209 switches us to PEP 660 editable wheels
+    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
     time sdh_pip_editable_install .
 
     if [ "$SAGE_WHEELS" = yes ]; then

@@ -333,7 +333,7 @@ class EvaluationAGCode(AGCode):
         """
         Return the designed distance of the AG code.
 
-        If the code is of dimension zero, then a ``ValueError`` is raised.
+        If the code is of dimension zero, then a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -577,7 +577,7 @@ class DifferentialAGCode(AGCode):
         """
         Return the designed distance of the differential AG code.
 
-        If the code is of dimension zero, then a ``ValueError`` is raised.
+        If the code is of dimension zero, then a :class:`ValueError` is raised.
 
         EXAMPLES::
 
