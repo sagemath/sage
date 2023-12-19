@@ -15,7 +15,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from copy import copy
 from itertools import product
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
@@ -541,10 +540,8 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         INPUT:
 
         - ``x``, ``y`` -- two elements
-
-        - ``n`` -- an integer, width of the corolla
-
-        - ``N`` -- an integer, truncation order (up to order ``N`` included)
+        - ``n`` -- integer; width of the corolla
+        - ``N`` -- integer; truncation order (up to order ``N`` included)
 
         OUTPUT:
 
@@ -577,11 +574,18 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             sage: A.corolla(a+b,a+b,2,4)
             B[a[a[], a[]]] + 2*B[a[a[], b[]]] + B[a[b[], b[]]] + B[b[a[], a[]]] +
             2*B[b[a[], b[]]] + B[b[b[], b[]]]
+
+        TESTS::
+
+            sage: A = algebras.FreePreLie(QQ,'ab')
+            sage: a, b = A.gens()
+            sage: A.corolla(a,A.zero(),2,2)
+            0
         """
-        basering = self.base_ring()
-        if x == self.zero() or y == self.zero():
+        if not x or not y:
             return self.zero()
 
+        basering = self.base_ring()
         vx = x.valuation()
         vy = y.valuation()
         min_deg = vy * n + vx
@@ -613,9 +617,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
                         coef_y = basering.prod(mc[1] for mc in ly)
                         arbres_y = [mc[0] for mc in ly]
                         step += coef_y * self.sum(self(t)
-                                                  for t in corolla_gen(mx,
-                                                                       arbres_y,
-                                                                       labels))
+                                                  for t in corolla_gen(mx, arbres_y, labels))
                 resu += coef_x * step
         return resu
 
@@ -630,19 +632,13 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         When considered with infinitely many terms and infinite precision,
         this is an analogue of the Baker-Campbell-Hausdorff formula: it
-        defines an associative product on the free pre-Lie algebra.
+        defines an associative product on the completed free pre-Lie algebra.
 
         INPUT:
 
         - ``x``, ``y`` -- two elements
-
-        - ``n`` -- an integer, the maximal width of corollas
-
-        - ``N`` -- an integer (optional, default: 10), truncation order
-
-        OUTPUT:
-
-        an element
+        - ``n`` -- integer; the maximal width of corollas
+        - ``N`` -- integer (default: 10); truncation order
 
         EXAMPLES:
 
@@ -858,6 +854,12 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
                 2
                 sage: (a*b+a).valuation()
                 1
+
+            TESTS::
+
+                sage: z = algebras.FreePreLie(QQ).zero()
+                sage: z.valuation()
+                +Infinity
             """
             if self == self.parent().zero():
                 return Infinity
@@ -1040,20 +1042,18 @@ class PreLieFunctor(ConstructionFunctor):
 
 def tree_from_sortkey(ch, labels=True):
     r"""
-    Transform a list of (valence, label) into a tree and a remainder.
+    Transform a list of ``(valence, label)`` into a tree and a remainder.
 
     This is like an inverse of the ``sort_key`` method.
 
     INPUT:
 
-    - ``ch`` -- a list of pairs (integer, label))
-
-    - ``labels`` -- optional (default ``True``)
-      whether to use labelled trees
+    - ``ch`` -- a list of pairs ``(integer, label)``
+    - ``labels`` -- (default ``True``) whether to use labelled trees
 
     OUTPUT:
 
-    a pair (tree, remainder of the input)
+    a pair ``(tree, remainder of the input)``
 
     EXAMPLES::
 
@@ -1100,11 +1100,8 @@ def corolla_gen(tx, list_ty, labels=True):
 
     INPUT:
 
-    one tree ``tx``, a list of trees ``list_ty``
-
-    OUTPUT:
-
-    trees
+    - ``tx`` -- a tree
+    - ``list_ty`` -- a list of trees
 
     EXAMPLES::
 
@@ -1130,8 +1127,8 @@ def corolla_gen(tx, list_ty, labels=True):
     zx = tx.sort_key()
     nx = len(zx)
     liste_zy = [t.sort_key() for t in list_ty]
-    for list_pos in product(*[list(range(nx))] * n):
-        new_zx = copy(zx)
+    for list_pos in product(range(nx), repeat=n):
+        new_zx = tuple(zx)
         data = zip(list_pos, liste_zy)
         sorted_data = sorted(data, reverse=True)
         for pos_t in sorted_data:
