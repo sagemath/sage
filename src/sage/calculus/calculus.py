@@ -568,8 +568,8 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
     An example of this summation with Giac::
 
-        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='giac')
-        (pi*e^(2*pi) - pi*e^(-2*pi))/(e^(2*pi) + e^(-2*pi) - 2)
+        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='giac').factor()
+        pi*(e^(2*pi) + 1)/((e^pi + 1)*(e^pi - 1))
 
     The same summation is solved by SymPy::
 

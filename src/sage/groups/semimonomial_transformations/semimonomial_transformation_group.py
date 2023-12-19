@@ -266,7 +266,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         """
         R = self.base_ring()
         v = [R.primitive_element()] + [R.one()] * (self.degree() - 1)
-        p = Permutation([self.degree()] + [i for i in range(1, self.degree())])
+        p = Permutation([self.degree()] + list(range(1, self.degree())))
 
         if not R.is_prime_field():
             f = R.hom([R.gen()**R.characteristic()])

@@ -73,7 +73,7 @@ from cysignals.memory cimport check_calloc, sig_free
 cdef extern from "Python.h":
     void PyTuple_SET_ITEM(object tuple, Py_ssize_t index, PyObject* item)
 
-cdef extern from "sage/cpython/pyx_visit.h":
+cdef extern from "../cpython/pyx_visit.h":
     void Py_VISIT3(PyObject*, visitproc, void*)
 
 cdef type KeyedRef, ref

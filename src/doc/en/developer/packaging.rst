@@ -117,8 +117,8 @@ the following source types:
 
    - the file ``package-version.txt`` is optional;
 
-   - installing the package runs the installation script ``spkg-install``
-     (see :ref:`section-spkg-install`);
+   - installing the package runs the installation script ``spkg-install`` or
+     ``spkg-install.in`` (see :ref:`section-spkg-install`);
 
    - Sage records the version number of the package installed using a file in
      ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
@@ -134,8 +134,8 @@ the following source types:
 To summarize: the package source type is determined as follows: if
 there is a file ``requirements.txt``, it is a ``pip`` package. If not,
 then if there is a ``checksums.ini`` file, it is ``normal`` or ``wheel``.
-Otherwise, if it has an ``spkg-install`` script, it is a ``script`` package,
-and if it does not, then it is a ``dummy`` package.
+Otherwise, if it has an ``spkg-install`` or ``spkg-install.in`` script,
+it is a ``script`` package, and if it does not, then it is a ``dummy`` package.
 
 
 .. _section-directory-structure:
@@ -358,13 +358,10 @@ at build time,  which should to the appropriate system-specific
 Install scripts of script packages
 ----------------------------------
 
-A script package has a single install script named ``spkg-install``.
+For script packages, it is also possible to use an install script named ``spkg-install``.
 It needs to be an executable shell script; it is not subject to the templating
-described in the previous section.
-
-Sage runs ``spkg-install`` from the directory ``$SAGE_ROOT/build/pkgs/<package>``
-in the environment obtained by sourcing the files ``src/bin/sage-env``,
-``build/bin/sage-build-env-config``, and ``build/bin/sage-build-env``.
+described in the previous section and will be executed directly from
+the build directory.
 
 .. _section-sdh-helpers:
 
@@ -514,7 +511,6 @@ containing files with names like ::
 
     arch.txt
     conda.txt
-    cygwin.txt
     debian.txt
     homebrew.txt
     ...
@@ -1052,9 +1048,11 @@ Sage mirrors when a new release is prepared.  On GitHub PRs
 upgrading a package, the PR description should no longer contain
 the upstream URL to avoid duplication of information.
 
-Note that, like the ``tarball`` field, the ``tpstream_url`` is a
+Note that, like the ``tarball`` field, the ``upstream_url`` is a
 template; the substring ``VERSION`` is substituted with the actual
-version.
+version. It can also be written as ``${VERSION}``, and it is possible
+to refer to the dot-separated components of a version by ``VERSION_MAJOR``,
+``VERSION_MINOR``, and ``VERSION_MICRO``.
 
 For Python packages available from PyPI, you should use an
 ``upstream_url`` from ``pypi.io``, which follows the format
@@ -1216,7 +1214,7 @@ must meet the following requirements:
   them <http://www.gnu.org/licenses/license-list.html>`_.
 
 - **Build Support**. The code must build on all the fully supported
-  platforms (Linux, macOS, Cygwin); see :ref:`chapter-portability_testing`.
+  platforms (Linux, macOS); see :ref:`chapter-portability_testing`.
   It must be installed either from source as a normal package,
   or as a Python (platform-independent) wheel package, see
   :ref:`section-package-source-types`.

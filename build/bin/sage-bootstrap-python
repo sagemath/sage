@@ -37,7 +37,7 @@ SAGE_ORIG_PATH=${NEW_PATH%%':'}
 
 # Trac #30177: Also check for hashlib.sha1 to guard against broken python2
 # from old homebrew installations.  Also check whether the current directory
-# is accessible by this python; this is to guard on Cygwin against Pythons
+# is accessible by this python; this is to guard on WSL against Pythons
 # installed somewhere else in Windows.
 
 # Trac #29285: Do not accept pythons that manipulate PATH, such as

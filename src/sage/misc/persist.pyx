@@ -1041,8 +1041,6 @@ def picklejar(obj, dir=None):
         ....:     uid = -1
         sage: if uid == 0:
         ....:     print("OK (cannot test this as root)")
-        ....: elif sys.platform == 'cygwin':
-        ....:     print("OK (cannot test this on Cygwin)")
         ....: else:
         ....:     try:
         ....:         sage.misc.persist.picklejar(1, dir + '/noaccess')
