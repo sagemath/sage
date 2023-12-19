@@ -9,6 +9,11 @@ VERSION = "@PACKAGE_VERSION@"
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
 
+# The semicolon-separated list of GAP root paths. This is the list of
+# locations that are searched for GAP packages. This is passed directly
+# to GAP via the -l flag.
+GAP_ROOT_PATHS = "@GAP_ROOT_PATHS@".replace('${prefix}', SAGE_LOCAL)
+
 # The path to the standalone maxima executable.
 MAXIMA = "@SAGE_MAXIMA@".replace('${prefix}', SAGE_LOCAL)
 

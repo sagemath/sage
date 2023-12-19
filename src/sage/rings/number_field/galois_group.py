@@ -10,9 +10,9 @@ AUTHORS:
 """
 
 from sage.structure.sage_object import SageObject
-from sage.groups.galois_group import _alg_key, GaloisGroup_perm, GaloisSubgroup_perm
+from sage.groups.galois_group import _alg_key
+from sage.groups.galois_group_perm import GaloisGroup_perm, GaloisSubgroup_perm
 from sage.groups.perm_gps.permgroup import standardize_generator
-
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.superseded import deprecation
 from sage.misc.cachefunc import cached_method
