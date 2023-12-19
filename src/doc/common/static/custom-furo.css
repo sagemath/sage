@@ -16,7 +16,7 @@ h2 {
 }
 
 h2[data-theme="dark"] {
-  background-color: rgba(101,31,255,.1);
+  background-color: rgba(101,31,255,.2);
 }
 
 /* Copied the style for a.pdf from website/templates/index_furo.html */
