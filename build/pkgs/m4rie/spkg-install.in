@@ -27,12 +27,6 @@ export CFLAGS
 export CPPFLAGS
 export LDFLAGS
 
-# otherwise we might run into problems with old headers
-
-if [ -d "$SAGE_LOCAL/include/m4rie" ]; then
-    rm -rf "$SAGE_LOCAL/include/m4rie"
-fi
-
 # build M4RIE
 
 cd $ROOT_DIR/src/

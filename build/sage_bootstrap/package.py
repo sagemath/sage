@@ -121,6 +121,42 @@ class Package(object):
             self.__tarball = Tarball(self.tarball_filename, package=self)
         return self.__tarball
 
+    def _substitute_variables_once(self, pattern):
+        """
+        Substitute (at most) one occurrence of variables in ``pattern`` by the values.
+
+        These variables are ``VERSION``, ``VERSION_MAJOR``, ``VERSION_MINOR``,
+        ``VERSION_MICRO``, either appearing like this or in the form ``${VERSION_MAJOR}``
+        etc.
+
+        Return a tuple:
+        - the string with the substitution done or the original string
+        - whether a substitution was done
+        """
+        for var in ('VERSION_MAJOR', 'VERSION_MINOR', 'VERSION_MICRO', 'VERSION'):
+            # As VERSION is a substring of the other three, it needs to be tested last.
+            dollar_brace_var = '${' + var + '}'
+            if dollar_brace_var in pattern:
+                value = getattr(self, var.lower())
+                return pattern.replace(dollar_brace_var, value, 1), True
+            elif var in pattern:
+                value = getattr(self, var.lower())
+                return pattern.replace(var, value, 1), True
+        return pattern, False
+
+    def _substitute_variables(self, pattern):
+        """
+        Substitute all occurrences of ``VERSION`` in ``pattern`` by the actual version.
+
+        Likewise for ``VERSION_MAJOR``, ``VERSION_MINOR``, ``VERSION_MICRO``,
+        either appearing like this or in the form ``${VERSION}``, ``${VERSION_MAJOR}``,
+        etc.
+        """
+        not_done = True
+        while not_done:
+            pattern, not_done = self._substitute_variables_once(pattern)
+        return pattern
+
     @property
     def tarball_pattern(self):
         """
@@ -150,7 +186,7 @@ class Package(object):
         """
         pattern = self.tarball_pattern
         if pattern:
-            return pattern.replace('VERSION', self.version)
+            return self._substitute_variables(pattern)
         else:
             return None
 
@@ -177,7 +213,7 @@ class Package(object):
         """
         pattern = self.tarball_upstream_url_pattern
         if pattern:
-            return pattern.replace('VERSION', self.version)
+            return self._substitute_variables(pattern)
         else:
             return None
 
@@ -211,6 +247,39 @@ class Package(object):
         patchlevel.
         """
         return self.__version
+
+    @property
+    def version_major(self):
+        """
+        Return the major version
+
+        OUTPUT:
+
+        String. The package's major version.
+        """
+        return self.version.split('.')[0]
+
+    @property
+    def version_minor(self):
+        """
+        Return the minor version
+
+        OUTPUT:
+
+        String. The package's minor version.
+        """
+        return self.version.split('.')[1]
+
+    @property
+    def version_micro(self):
+        """
+        Return the micro version
+
+        OUTPUT:
+
+        String. The package's micro version.
+        """
+        return self.version.split('.')[2]
 
     @property
     def patchlevel(self):

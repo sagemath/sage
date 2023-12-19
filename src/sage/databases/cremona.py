@@ -9,10 +9,11 @@ If the optional full CremonaDatabase is not installed, a mini-version
 is included by default with Sage.  It contains Weierstrass equations,
 rank, and torsion for curves up to conductor 10000.
 
-The large database includes all curves in John Cremona's tables. It
-also includes data related to the BSD conjecture and modular degrees
-for all of these curves, and generators for the Mordell-Weil
-groups. To install it, run the following in the shell::
+The large database includes all curves in John Cremona's tables. It also
+includes data related to the BSD conjecture and modular degrees for all of
+these curves, and generators for the Mordell-Weil groups. To install it via the
+optional :ref:`database_cremona_ellcurve <spkg_database_cremona_ellcurve>`
+package, run the following command in the shell ::
 
     sage -i database_cremona_ellcurve
 

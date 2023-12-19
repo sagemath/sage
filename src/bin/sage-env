@@ -228,7 +228,7 @@ fi
 # depending on SAGE_ROOT and SAGE_LOCAL which are already defined.
 if [ -n "$SAGE_LOCAL" ]; then
     export SAGE_SHARE="$SAGE_LOCAL/share"
-    export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
+    export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"  # deprecated
 fi
 if [ -n "$SAGE_SHARE" ]; then
     export SAGE_DOC="$SAGE_SHARE/doc/sage"
