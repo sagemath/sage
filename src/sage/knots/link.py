@@ -2429,11 +2429,11 @@ class Link(SageObject):
                 new_pd.append(list(cr))
             else:
                 loop_crossings.append(cr)
+        if not loop_crossings:
+            return self
         if not new_pd:
             # trivial knot
             return type(self)([])
-        elif not loop_crossings:
-            return self
         new_edges = flatten(new_pd)
         for cr in loop_crossings:
             rem = set([e for e in cr if e in new_edges])
