@@ -154,7 +154,7 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.conjugacy_classes import ConjugacyClassGAP
 from sage.structure.richcmp import (richcmp_method,
-                                    richcmp, rich_to_bool, op_EQ, op_NE)
+                                    richcmp, rich_to_bool, op_EQ, op_NE, op_LE, op_LT, op_GE, op_GT)
 
 
 def load_hap():
@@ -500,6 +500,7 @@ class PermutationGroup_generic(FiniteGroup):
         if gens is None:
             gens = list(gap_group.GeneratorsOfGroup())
 
+        self._domain_is_N = False
         if domain is None:
             gens = [standardize_generator(x, as_cycles=True) for x in gens]
             domain = set()
@@ -518,6 +519,7 @@ class PermutationGroup_generic(FiniteGroup):
             # This is needed for backward compatibility
             if all(isinstance(p, (int, Integer)) for p in domain):
                 domain = list(range(min([1] + domain), max([1] + domain)+1))
+                self._domain_is_N = min(domain) == 1
 
         if domain not in FiniteEnumeratedSets():
             domain = FiniteEnumeratedSet(domain)
@@ -791,17 +793,26 @@ class PermutationGroup_generic(FiniteGroup):
         if self is right:
             return rich_to_bool(op, 0)
 
+        if not ((self._domain_is_N and right._domain_is_N)
+                or set(self._domain) == set(right._domain)):
+            # domains differ
+            return op is op_NE
+
         gSelf = self._libgap_()
+        # should conjugate gRight
         gRight = right._libgap_()
-        if op in [op_EQ,op_NE]:
+
+        if op in [op_EQ, op_NE]:
             return gSelf._richcmp_(gRight, op)
-
-        if gSelf.IsSubgroup(gRight):
-            return rich_to_bool(op, 1)
-        if gRight.IsSubgroup(gSelf):
-            return rich_to_bool(op, -1)
-
-        return gSelf._richcmp_(gRight, op)
+        # IsSubset should be sufficient
+        if op is op_LE:
+            return bool(gRight.IsSubgroup(gSelf))
+        if op is op_LT:
+            return gSelf._richcmp_(gRight, op_NE) and bool(gRight.IsSubgroup(gSelf))
+        if op is op_GE:
+            return bool(gSelf.IsSubgroup(gRight))
+        if op is op_GT:
+            return gSelf._richcmp_(gRight, op_NE) and bool(gSelf.IsSubgroup(gRight))
 
     Element = PermutationGroupElement
 

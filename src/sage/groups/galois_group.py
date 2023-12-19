@@ -409,6 +409,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         # Note that we DON'T call the __init__ method for PermutationGroup_generic
         # Instead, the relevant attributes are computed lazily
         super(PermutationGroup_generic, self).__init__(category=category)
+        self._domain_is_N = False
 
     @lazy_attribute
     def _deg(self):
