@@ -40,6 +40,7 @@ py.install_sources(
     'integer_fake.h',
     'integer_fake.pxd',
     'integer_ring.pxd',
+    'integer_ring.pyx',
     'laurent_series_ring.py',
     'laurent_series_ring_element.pxd',
     'lazy_series.py',
