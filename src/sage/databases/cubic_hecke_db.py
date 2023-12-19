@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Cubic Hecke Database
+Cubic Hecke database
 
 This module contains the class :class:`CubicHeckeDataBase` which serves as an
 interface to `Ivan Marin's data files
@@ -31,10 +31,25 @@ The enum :class:`MarkovTraceModuleBasis` serves as basis for the submodule
 of linear forms on the cubic Hecke algebra on at most four strands
 satisfying the Markov trace condition for its cubic Hecke subalgebras.
 
+To use the database, you need to install the optional
+:ref:`database_cubic_hecke <spkg_database_cubic_hecke>` package by the Sage
+command ::
+
+    sage -i database_cubic_hecke
+
+EXAMPLES::
+
+    sage: # optional - database_cubic_hecke
+    sage: from sage.databases.cubic_hecke_db import CubicHeckeDataBase
+    sage: cha_db = CubicHeckeDataBase()
+    sage: cha_db
+    <sage.databases.cubic_hecke_db.CubicHeckeDataBase object at ...>
+
 AUTHORS:
 
-- Sebastian Oehms (May 2020): initial version
-- Sebastian Oehms (March 2022): PyPi version and Markov trace functionality
+- Sebastian Oehms (2020-05): initial version
+- Sebastian Oehms (2022-03): PyPi version and Markov trace functionality
+
 """
 
 ##############################################################################
