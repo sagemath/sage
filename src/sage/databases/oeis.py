@@ -1148,11 +1148,11 @@ class OEISSequence(SageObject, UniqueRepresentation):
             True
         """
         if warn_only:
-            if 'dead' in self.keywords(warn=False):
+            if 'dead' in self.keywords(warn_only):
                 from warnings import warn
                 warn('This sequence is dead: "{}: {}"'.format(self.id(), self.name()), RuntimeWarning)
         else:
-            return 'dead' in self.keywords()
+            return 'dead' in self.keywords(warn_only)
 
     def is_finite(self):
         r"""
@@ -2019,7 +2019,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
             RuntimeWarning: This sequence is dead: ...
             True
         """
-        if self.is_dead(warn_only=True):
+        if self.is_dead():
+            self.is_dead(warn_only=True)
             return True
         filt = self.programs(language='sage')
         if filt:
