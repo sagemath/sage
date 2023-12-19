@@ -475,7 +475,7 @@ Functions and methods
 from . import graph
 
 
-class GraphGenerators():
+class GraphGenerators:
     r"""
     A class consisting of constructors for several common graphs, as well as
     orderly generation of isomorphism class representatives. See the

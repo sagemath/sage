@@ -341,7 +341,7 @@ fi
 PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
 if [ -f "$PKG_SCRIPTS/checksums.ini" ]; then
     # Normal/wheel package
-    PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini" | sed "s/VERSION/$PKG_BASE_VER/"`
+    PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini"`
 fi
 
 # Set the $SAGE_DESTDIR variable to be passed to the spkg-install
@@ -396,11 +396,11 @@ ensure_pkg_src() { ###############################################
 if [ ! -f "$PKG_SRC" ]; then
     if [ -n "$PKG_NAME_UPSTREAM" ]; then
         # Normal or wheel package
-        if ! sage-download-file $SAGE_DOWNLOAD_FILE_OPTIONS "$PKG_NAME_UPSTREAM"; then
-            error_msg "Error downloading $PKG_NAME_UPSTREAM"
+        PKG_SRC=$(sage-package download $SAGE_DOWNLOAD_FILE_OPTIONS $PKG_BASE)
+        if [ $? != 0 ]; then
+            error_msg "Error downloading tarball of $PKG_BASE"
             exit 1
         fi
-        PKG_SRC="$SAGE_DISTFILES/$PKG_NAME_UPSTREAM"
         # Do a final check that PKG_SRC is a file with an absolute path
         cd /
         if [ ! -f "$PKG_SRC" ]; then

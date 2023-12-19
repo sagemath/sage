@@ -32,7 +32,7 @@ Functions and methods
 """
 
 
-class HypergraphGenerators():
+class HypergraphGenerators:
     r"""
     A class consisting of constructors for common hypergraphs.
     """

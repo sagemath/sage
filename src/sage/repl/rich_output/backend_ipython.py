@@ -419,13 +419,6 @@ class BackendIPythonCommandline(BackendIPython):
 
         script = os.path.join(THREEJS_DIR, '{}/three.min.js'.format(_required_threejs_version()))
 
-        if sys.platform == 'cygwin':
-            import cygwin
-
-            def normpath(p):
-                return 'file:///' + cygwin.cygpath(p, 'w').replace('\\', '/')
-            script = normpath(script)
-
         return '\n<script src="{0}"></script>'.format(script)
 
 
