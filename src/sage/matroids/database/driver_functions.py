@@ -2,40 +2,48 @@ r"""
 Functions that access the collections of matroids
 
 This module contains driver functions to easily access the collections of
-matroids in the database. Each of these functions returns a complete list
-of matroids from the corresponding collection. These functions can be viewed
-by typing ``matroids.`` and hitting the ``tab`` button.
+matroids in the database. Each of these functions returns a complete list of
+matroids from the corresponding collection. These functions can be viewed by
+typing ``matroids.`` and hitting :kbd:`Tab`.
 
 AUTHORS:
+
 - Giorgos Mousa (2023-12-08): initial version
 
-Functions
-=========
-
 """
-# **********************************************************************
+
+# ****************************************************************************
 #       Copyright (C) 2023 Giorgos Mousa <gmousa@proton.me>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# **********************************************************************
+# ****************************************************************************
 
 
 def OxleyMatroids():
     """
-    Return a list of (nonparameterized) matroids
-
-    As listed in
-    :mod:`matroids.database.oxley_matroids <sage.matroids.database.oxley_matroids>`,
-    following the Appendix ``Some Interesting Matroids`` in [Oxl2011]_ (p.
-    639-64).
+    Return the list of Oxley's matroids.
 
     EXAMPLES::
 
-        sage: len(matroids.OxleyMatroids())
-        41
+        sage: import random
+        sage: OM = matroids.OxleyMatroids(); len(OM)
+        42
+        sage: M = random.choice(OM)
+        sage: M.is_valid() # long time
+        True
+
+    .. SEEALSO::
+
+        :mod:`matroids.database.oxley_matroids <sage.matroids.database.oxley_matroids>`
+
+    REFERENCES:
+
+    These matroids are the nonparametrized matroids that appear in the
+    Appendix ``Some Interesting Matroids`` in [Oxl2011]_ (p. 639-64).
 
     """
     Matroids = []
@@ -46,8 +54,7 @@ def OxleyMatroids():
         Wheel4, Whirl4,
         K33dual, K33, AG23, TernaryDowling3, Pappus, NonPappus,
         K5, K5dual, R10,  # NonDesargues,
-        R12,  # S_5_6_12,
-        T12,
+        R12, ExtendedTernaryGolayCode, T12,
         PG23
     )
 
@@ -64,7 +71,7 @@ def OxleyMatroids():
         ],
         9: [K33dual, K33, AG23, TernaryDowling3, Pappus, NonPappus],
         10: [K5, K5dual, R10],
-        12: [R12, T12],
+        12: [R12, ExtendedTernaryGolayCode, T12],
         13: [PG23],
     }
     for i in lst:
@@ -75,15 +82,20 @@ def OxleyMatroids():
 
 def BrettellMatroids():
     """
-    Return a list of interesting matroids
-
-    As listed in
-    :mod:`matroids.database.brettell_matroids <sage.matroids.database.brettell_matroids>`.
+    Return the list of Brettell's matroids.
 
     EXAMPLES::
 
-        sage: len(matroids.BrettellMatroids())
+        sage: BM = matroids.BrettellMatroids(); len(BM)
         68
+        sage: import random
+        sage: M = random.choice(BM)
+        sage: M.is_valid() # long time
+        True
+
+    .. SEEALSO::
+
+        :mod:`matroids.database.brettell_matroids <sage.matroids.database.brettell_matroids>`
 
     """
     Matroids = []
@@ -128,15 +140,20 @@ def BrettellMatroids():
 
 def VariousMatroids():
     """
-    Return a list of various other named matroids
-
-    As listed in
-    :mod:`matroids.database.various_matroids <sage.matroids.database.various_matroids>`.
+    Return a list of various other named matroids.
 
     EXAMPLES::
 
-        sage: len(matroids.VariousMatroids())
-        17
+        sage: import random
+        sage: VM = matroids.VariousMatroids(); len(VM)
+        16
+        sage: M = random.choice(VM)
+        sage: M.is_valid() # long time
+        True
+
+    .. SEEALSO::
+
+        :mod:`matroids.database.various_matroids <sage.matroids.database.various_matroids>`
 
     """
     Matroids = []
@@ -145,7 +162,7 @@ def VariousMatroids():
         P9, R9A, R9B, Block_9_4, TicTacToe,
         N1, Block_10_5, Q10,
         BetsyRoss,
-        N2, ExtendedTernaryGolayCode,
+        N2,
         D16, Terrahawk,
         ExtendedBinaryGolayCode
     )
@@ -155,7 +172,7 @@ def VariousMatroids():
         9: [P9, R9A, R9B, Block_9_4, TicTacToe],
         10: [N1, Block_10_5, Q10],
         11: [BetsyRoss],
-        12: [N2, ExtendedTernaryGolayCode],
+        12: [N2],
         16: [D16, Terrahawk],
         24: [ExtendedBinaryGolayCode],
     }

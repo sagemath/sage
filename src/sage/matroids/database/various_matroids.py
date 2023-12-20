@@ -3,7 +3,7 @@ A collection of various matroids
 
 This module contains implementations of various interesting matroids,
 accessible through :mod:`matroids.catalog. <sage.matroids.catalog>` (type
-those lines in Sage and hit ``tab`` for a list).
+those lines in Sage and hit :kbd:`Tab` for a list).
 
 .. TODO::
 
@@ -13,9 +13,6 @@ AUTHORS:
 
 - Michael Welsh, Stefan van Zwam (2013-04-01): initial version
 - Giorgos Mousa, Andreas Triantafyllos (2023-12-08): reorganization
-
-Functions
-=========
 
 """
 # ****************************************************************************
@@ -331,7 +328,7 @@ def Q10():
     we only need to check that all 3-connected single-element extensions have
     an excluded minor for sixth-roots-of-unity. The only excluded minors that
     are quaternary are `U_{2, 5}, U_{3, 5}, F_7, F_7^*`. As it happens, it
-    suffices to check for `U_{2, 5}`:
+    suffices to check for `U_{2, 5}`::
 
         sage: S = matroids.catalog.Q10().linear_extensions(simple=True)          # needs sage.rings.finite_rings
         sage: [M for M in S if not M.has_line_minor(5)]         # long time, needs sage.rings.finite_rings
@@ -409,37 +406,7 @@ def N2():
     return M
 
 
-def ExtendedTernaryGolayCode():
-    """
-    Return the matroid of the extended ternary Golay code.
-
-    See
-    :class:`GolayCode <sage.coding.golay_code.GolayCode>`
-
-    EXAMPLES::
-
-        sage: M = matroids.catalog.ExtendedTernaryGolayCode()
-        sage: C = LinearCode(M.representation())
-        sage: C.is_permutation_equivalent(codes.GolayCode(GF(3)))       # long time, needs sage.rings.finite_rings
-        True
-        sage: M.is_valid()
-        True
-
-    """
-    A = Matrix(GF(3), [
-        [1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 0],
-        [0, 1, 0, 0, 0, 0, 1, 1, 2, 1, 0, 2],
-        [0, 0, 1, 0, 0, 0, 1, 2, 1, 0, 1, 2],
-        [0, 0, 0, 1, 0, 0, 1, 2, 0, 1, 2, 1],
-        [0, 0, 0, 0, 1, 0, 1, 0, 2, 2, 1, 1],
-        [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1]
-    ])
-    M = TernaryMatroid(A, "abcdefghijkl")
-    M.rename('Extended Ternary Golay Code: ' + repr(M))
-    return M
-
-
-def D16():  # A.K.A. the Carolyn Chun Matroid
+def D16(groundset='abcdefghijklmnop'):  # A.K.A. the Carolyn Chun Matroid
     """
     Return the matroid `D_{16}`.
 

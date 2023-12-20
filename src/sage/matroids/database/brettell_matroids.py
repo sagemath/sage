@@ -3,7 +3,7 @@ Collection of Brettell's matroids
 
 This module contains implementations of Brettell's interesting matroids,
 accessible through :mod:`matroids.catalog. <sage.matroids.catalog>` (type
-and hit ``tab`` for a list).
+and hit :kbd:`Tab` for a list).
 
 AUTHORS:
 
@@ -23,9 +23,6 @@ or one of the following references:
   classes of matroids representable over partial fields*, arXiv preprint
   :arxiv:`2302.13175` (2023).
 
-Functions
-=========
-
 """
 from sage.matrix.constructor import Matrix
 from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
@@ -39,7 +36,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 
 def RelaxedNonFano():
     """
-    Return the relaxed NonFano matroid
+    Return the relaxed NonFano matroid.
 
     An excluded minor for `2`-regular matroids. UPF is `K_2`.
 
@@ -60,7 +57,7 @@ def RelaxedNonFano():
 
 def TippedFree3spike():
     """
-    Return the tipped free `3`-spike
+    Return the tipped free `3`-spike.
 
     Unique 3-connected extension of
     :func:`U36 <sage.matroids.database.oxley_matroids.U36>`. Stabilizer for
@@ -88,10 +85,11 @@ def TippedFree3spike():
 
 def AG23minusDY():
     r"""
-    Return the matroid obtained from a `AG(2, 3)\setminus e` by a single
-    `\delta-Y` exchange on a triangle
+    Return the matroid `AG23minusDY`.
 
-    An excluded minor for near-regular matroids. UPF is `S`.
+    The matroid obtained from a `AG(2, 3)\setminus e` by a single `\delta-Y`
+    exchange on a triangle. An excluded minor for near-regular matroids. UPF
+    is `S`.
 
     EXAMPLES::
 
@@ -108,7 +106,7 @@ def AG23minusDY():
 
 def TQ8():
     """
-    Return the matroid `TQ8`
+    Return the matroid `TQ8`.
 
     An excluded minor for `2`-regular matroids.
     UPF is `K_2`. Self-dual.
@@ -134,7 +132,7 @@ def TQ8():
 
 def P8p():
     """
-    Return the matroid `P8^-`
+    Return the matroid `P8^-`.
 
     `P8^-` is obtained by relaxing one of the disjoint circuit-hyperplanes of
     :func:`P8 <sage.matroids.database.oxley_matroids.P8>`. An excluded minor
@@ -161,7 +159,7 @@ def P8p():
 
 def KP8():
     """
-    Return the matroid `KP8`
+    Return the matroid `KP8`.
 
     An excluded minor for `K_2`-representable matroids.
     UPF is `G`. Self-dual. Uniquely `GF(5)`-representable.
@@ -188,7 +186,7 @@ def KP8():
 
 def Sp8():
     """
-    Return the matroid `Sp8`
+    Return the matroid `Sp8`.
 
     An excluded minor for `G`- and `K_2`-representable matroids.
     UPF is `U_1^{(2)}`. Self-dual.
@@ -215,7 +213,7 @@ def Sp8():
 
 def Sp8pp():
     """
-    Return the matroid `Sp8=`
+    Return the matroid `Sp8=`.
 
     An excluded minor for `G`- and `K_2`-representable matroids.
     UPF is `(GF(2)(a,b),<a,b,a+1,b+1,ab+a+b>)`. Self-dual.
@@ -240,7 +238,7 @@ def Sp8pp():
 
 def LP8():
     """
-    Return the matroid `LP8`
+    Return the matroid `LP8`.
 
     An excluded minor for `G`- and `K_2`-representable matroids.
     Self-dual. UPF is `W`.
@@ -267,7 +265,7 @@ def LP8():
 
 def WQ8():
     r"""
-    Return the matroid `WQ8`
+    Return the matroid `WQ8`.
 
     An excluded minor for `G`, `K_2`, `H_4`, and `GF(5)`-representable
     matroids. Self-dual. UPF is `(Z[\zeta,a], <\zeta,a-\zeta>)` where `\zeta`
@@ -297,7 +295,7 @@ def WQ8():
 
 def BB9():
     """
-    Return the matroid `BB9`
+    Return the matroid `BB9`.
 
     An excluded minor for `K_2`-representable matroids, and a restriction of
     the Betsy Ross matroid. The UPF is `G`. Uniquely `GF(5)`-representable.
@@ -331,7 +329,7 @@ def BB9():
 
 def TQ9():
     """
-    Return the matroid `TQ9`
+    Return the matroid `TQ9`.
 
     An excluded minor for `K_2`-representable matroids, and
     a single-element extension of
@@ -367,7 +365,7 @@ def TQ9():
 
 def TQ9p():
     """
-    Return the matroid `TQ9^-`
+    Return the matroid `TQ9^-`.
 
     An excluded minor for `G`- and `K_2`-representable matroids, and
     a single-element extension of
@@ -406,7 +404,7 @@ def TQ9p():
 
 def M8591():
     r"""
-    Return the matroid `M8591`
+    Return the matroid `M8591`.
 
     An excluded minor for `K_2`-representable matroids.
     A `Y-\delta` exchange on the unique triad gives
@@ -434,7 +432,7 @@ def M8591():
 
 def PP9():
     """
-    Return the matroid `PP9`
+    Return the matroid `PP9`.
 
     An excluded minor for `K_2`-representable matroids. A single-element
     extension of `P8^-`. The UPF is `P_4`. Has a
@@ -474,7 +472,7 @@ def PP9():
 
 def BB9gDY():
     r"""
-    Return the matroid `BB9gDY`
+    Return the matroid `BB9gDY`.
 
     An excluded minor for `K_2`-representable matroids. The UPF is `G`. In a
     `DY^*`-equivalence class of 4 matroids, one of which can be obtained from
@@ -512,7 +510,7 @@ def BB9gDY():
 
 def A9():
     """
-    Return the matroid `A9`
+    Return the matroid `A9`.
 
     An excluded minor for `K_2`-representable matroids.
     The UPF is `P_4`. Uniquely `GF(5)`-representable.
@@ -541,7 +539,7 @@ def A9():
 
 def FN9():
     """
-    Return the matroid `FN9`
+    Return the matroid `FN9`.
 
     An excluded minor for `G`- and `K_2`-representable matroids.
     In a `DY^*`-equivalence class of `10` matroids. UPF is `U_1^{(2)}`.
@@ -574,7 +572,7 @@ def FN9():
 
 def FX9():
     """
-    Return the matroid `FX9`
+    Return the matroid `FX9`.
 
     An excluded minor for `G`- and `K_2`-representable matroids.
     UPF is `(Q(a,b), <-1,a,b,a-1,b-1,a-b,a+b,a+b-2,a+b-2ab>)`.
@@ -605,7 +603,7 @@ def FX9():
 
 def KR9():
     """
-    Return the matroid `KR9`
+    Return the matroid `KR9`.
 
     An excluded minor for `G`-representable matroids (and
     `GF(5)`-representable matroids.) In a `DY`-equivalence class of `4`
@@ -641,7 +639,7 @@ def KR9():
 
 def KQ9():
     """
-    Return the matroid `KQ9`
+    Return the matroid `KQ9`.
 
     An excluded minor for `G`-representable matroids (and
     `GF(5)`-representable matroids.) Has a
@@ -684,7 +682,7 @@ def KQ9():
 
 def UG10():
     """
-    Return the matroid `UG10`
+    Return the matroid `UG10`.
 
     An excluded minor for `K_2`- and `P_4`-representable matroids. Self-dual.
     An excluded minor for `H_3`- and `H_2`-representable matroids.
@@ -718,7 +716,7 @@ def UG10():
 
 def FF10():
     """
-    Return the matroid `FF10`
+    Return the matroid `FF10`.
 
     An excluded minor for `K_2`-representable matroids.
     UPF is `P_4`. Self-dual.
@@ -751,7 +749,7 @@ def FF10():
 
 def GP10():
     """
-    Return the matroid `GP10`
+    Return the matroid `GP10`.
 
     An excluded minor for `K_2`-representable matroids.
     UPF is `G`. Self-dual.
@@ -782,7 +780,7 @@ def GP10():
 
 def FZ10():
     """
-    Return the matroid `FZ10`
+    Return the matroid `FZ10`.
 
     An excluded minor for `K_2`- and `G`-representable matroids
     (and `H_2`- and `GF(5)`-representable matroids).
@@ -814,7 +812,7 @@ def FZ10():
 
 def UQ10():
     """
-    Return the matroid `UQ10`
+    Return the matroid `UQ10`.
 
     An excluded minor for `K_2`- and `G`-representable matroids
     (and `H_2`- and `GF(5)`-representable matroids).
@@ -846,7 +844,7 @@ def UQ10():
 
 def FP10():
     """
-    Return the matroid `FP10`
+    Return the matroid `FP10`.
 
     An excluded minor for `K_2`- and `G`-representable matroids
     (and `H_2`- and `GF(5)`-representable matroids).
@@ -878,7 +876,7 @@ def FP10():
 
 def TQ10():
     """
-    Return the matroid `TQ10`
+    Return the matroid `TQ10`.
 
     An excluded minor for `K_2`-representable matroids. UPF is `G`. Self-dual.
     Has :func:`TQ8 <sage.matroids.database.brettell_matroids.TQ8>` as a minor
@@ -915,7 +913,7 @@ def TQ10():
 
 def FY10():
     """
-    Return the matroid `FY10`
+    Return the matroid `FY10`.
 
     An excluded minor for `P_4`-representable matroids. UPF is `G`. Not
     self-dual.
@@ -946,7 +944,7 @@ def FY10():
 
 def PP10():
     """
-    Return the matroid `PP10`
+    Return the matroid `PP10`.
 
     An excluded minor for `P_4`-representable matroids. UPF is `U_1^{(2)}`.
     Has a :func:`TQ8 <sage.matroids.database.brettell_matroids.TQ8>`-minor
@@ -988,7 +986,7 @@ def PP10():
 
 def FU10():
     """
-    Return the matroid `FU10`
+    Return the matroid `FU10`.
 
     An excluded minor for `P_4`-representable matroids. UPF is `G`. Self-dual.
 
@@ -1018,7 +1016,7 @@ def FU10():
 
 def D10():
     """
-    Return the matroid `D10`
+    Return the matroid `D10`.
 
     An excluded minor for `P_4`-representable matroids.
     UPF is `G`. Has a
@@ -1050,7 +1048,7 @@ def D10():
 
 def UK10():
     """
-    Return the matroid `UK10`
+    Return the matroid `UK10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1082,7 +1080,7 @@ def UK10():
 
 def PK10():
     """
-    Return the matroid `PK10`
+    Return the matroid `PK10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1114,7 +1112,7 @@ def PK10():
 
 def GK10():
     """
-    Return the matroid `GK10`
+    Return the matroid `GK10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1146,7 +1144,7 @@ def GK10():
 
 def FT10():
     """
-    Return the matroid `FT10`
+    Return the matroid `FT10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1178,7 +1176,7 @@ def FT10():
 
 def TK10():
     """
-    Return the matroid `TK10`
+    Return the matroid `TK10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1210,7 +1208,7 @@ def TK10():
 
 def KT10():
     """
-    Return the matroid `KT10`
+    Return the matroid `KT10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1242,7 +1240,7 @@ def KT10():
 
 def TU10():
     """
-    Return the matroid `TU10`
+    Return the matroid `TU10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1274,7 +1272,7 @@ def TU10():
 
 def UT10():
     """
-    Return the matroid `UT10`
+    Return the matroid `UT10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1306,7 +1304,7 @@ def UT10():
 
 def FK10():
     """
-    Return the matroid `FK10`
+    Return the matroid `FK10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1338,7 +1336,7 @@ def FK10():
 
 def KF10():
     """
-    Return the matroid `KF10`
+    Return the matroid `KF10`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1373,7 +1371,7 @@ def KF10():
 
 def FA11():
     """
-    Return the matroid `FA11`
+    Return the matroid `FA11`.
 
     An excluded minor for `P_4`-representable matroids. UPF is `PT`. In a
     `DY^*`-equivalence class of `6` matroids. Has an
@@ -1412,7 +1410,7 @@ def FA11():
 
 def FR12():
     """
-    Return the matroid `FR12`
+    Return the matroid `FR12`.
 
     An excluded minor for `K_2`-representable matroids.
     UPF is `P_4`. Self-dual.
@@ -1444,7 +1442,7 @@ def FR12():
 
 def GP12():
     """
-    Return the matroid `GP12`
+    Return the matroid `GP12`.
 
     An excluded minor for `K_2`-representable matroids.
     UPF is `G`. Not self-dual.
@@ -1476,7 +1474,7 @@ def GP12():
 
 def FQ12():
     """
-    Return the matroid `FQ12`
+    Return the matroid `FQ12`.
 
     An excluded minor for `P_4`-representable matroids. UPF is `PT`. Has` a
     :func:`PP9 <sage.matroids.database.brettell_matroids.PP9>`-minor (contract
@@ -1517,7 +1515,7 @@ def FQ12():
 
 def FF12():
     """
-    Return the matroid `FF12`
+    Return the matroid `FF12`.
 
     An excluded minor for `P_4`-representable matroids. Self-dual. UPF is
     `(Q(a,b),<-1,a,b,a-2,a-1,a+1,b-1,ab-a+b,ab-a-b,ab-a-2b>)`. Has an
@@ -1556,7 +1554,7 @@ def FF12():
 
 def FZ12():
     """
-    Return the matroid `FZ12`
+    Return the matroid `FZ12`.
 
     An excluded minor for `K_2`- and `G`-representable matroids
     (and `H_2`- and `GF(5)`-representable matroids).
@@ -1589,7 +1587,7 @@ def FZ12():
 
 def UQ12():
     """
-    Return the matroid `UQ12`
+    Return the matroid `UQ12`.
 
     An excluded minor for `K_2` and `G`-representable matroids
     (and `H2` and `GF(5)`-representable matroids).
@@ -1622,7 +1620,7 @@ def UQ12():
 
 def FP12():
     """
-    Return the matroid `FP12`
+    Return the matroid `FP12`.
 
     An excluded minor for `K_2`- and `G`-representable matroids
     (and `H_2`- and `GF(5)`-representable matroids).
@@ -1655,7 +1653,7 @@ def FP12():
 
 def FS12():
     """
-    Return the matroid `FS12`
+    Return the matroid `FS12`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1687,7 +1685,7 @@ def FS12():
 
 def UK12():
     """
-    Return the matroid `UK12`
+    Return the matroid `UK12`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1720,7 +1718,7 @@ def UK12():
 
 def UA12():
     """
-    Return the matroid `UA12`
+    Return the matroid `UA12`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1753,7 +1751,7 @@ def UA12():
 
 def AK12():
     """
-    Return the matroid `AK12`
+    Return the matroid `AK12`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids).
@@ -1786,7 +1784,7 @@ def AK12():
 
 def FK12():
     """
-    Return the matroid `FK12`
+    Return the matroid `FK12`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids). Self-dual.
@@ -1819,7 +1817,7 @@ def FK12():
 
 def KB12():
     """
-    Return the matroid `KB12`
+    Return the matroid `KB12`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids). Self-dual.
@@ -1852,7 +1850,7 @@ def KB12():
 
 def AF12():
     """
-    Return the matroid `AF12`
+    Return the matroid `AF12`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids). Self-dual.
@@ -1890,7 +1888,7 @@ def complement(groundset, subset):
 
 def NestOfTwistedCubes():
     r"""
-    Return the NestOfTwistedCubes matroid
+    Return the NestOfTwistedCubes matroid.
 
     A matroid with no `U(2,4)`-detachable pairs (only `\{e_i,f_i\}` pairs are
     detachable).
@@ -1952,7 +1950,7 @@ def NestOfTwistedCubes():
 
 def XY13():
     """
-    Return the matroid `XY13`
+    Return the matroid `XY13`.
 
     An excluded minor for `G`-representable matroids
     (and `GF(5)`-representable matroids). UPF is `GF(4)`.
@@ -1987,7 +1985,7 @@ def XY13():
 
 def N3():
     """
-    Return the matroid `N3`
+    Return the matroid `N3`.
 
     An excluded minor for dyadic matroids (and `GF(5)`-representable matroids).
     UPF is `GF(3)`. `4`- (but not `5`-) connected. Self-dual.
@@ -2022,7 +2020,7 @@ def N3():
 
 def N3pp():
     """
-    Return the matroid `N3pp`
+    Return the matroid `N3pp`.
 
     An excluded minor for `K_2`-representable matroids. Self-dual.
     Obtained by relaxing the two complementary circuit-hyperplanes of
@@ -2058,7 +2056,7 @@ def N3pp():
 
 def UP14():
     """
-    Return the matroid `UP14`
+    Return the matroid `UP14`.
 
     An excluded minor for `K_2`-representable matroids.
     Has disjoint circuit-hyperplanes.
@@ -2092,7 +2090,7 @@ def UP14():
 
 def VP14():
     """
-    Return the matroid `VP14`
+    Return the matroid `VP14`.
 
     An excluded minor for `K_2`-representable matroids.
     Has disjoint circuit-hyperplanes.
@@ -2159,7 +2157,7 @@ def FV14():
 
 def OW14():
     """
-    Return the matroid `OW14`
+    Return the matroid `OW14`.
 
     An excluded minor for `P_4`-representable matroids.
     Self-dual. UPF is `Orthrus`.
@@ -2192,7 +2190,7 @@ def OW14():
 
 def FM14():
     """
-    Return the matroid `FM14`
+    Return the matroid `FM14`.
 
     An excluded minor for `P_4`-representable matroids.
     Self-dual. UPF is `PT`.
@@ -2228,7 +2226,7 @@ def FM14():
 
 def FA15():
     """
-    Return the matroid `FA15`
+    Return the matroid `FA15`.
 
     An excluded minor for `O`-representable matroids. UPF is `PT`.
     In a `DY^*`-equivalence class of `6` matroids. Has an
@@ -2265,7 +2263,7 @@ def FA15():
 
 def N4():
     """
-    Return the matroid `N4`
+    Return the matroid `N4`.
 
     An excluded minor for dyadic matroids (and `GF(5)`-representable matroids).
     UPF is `GF(3)`. `4`- (but not `5`-) connected. Self-dual.
@@ -2297,62 +2295,3 @@ def N4():
     n4 = TernaryMatroid(reduced_matrix=A)
     n4.rename("N4: " + repr(n4))
     return n4
-
-
-# 2r elements:
-
-
-def FreeSpike(r, t=True):
-    r"""
-    Return the rank-`r` free spike
-
-    For the tipless free spike (`t` = ``False``), when `r = 3`, it is
-    isomorphic to :func:`U36 <sage.matroids.database.oxley_matroids.U36>`;
-    when `r = 4`, it is the unique tightening of the
-    :func:`Vamos matroid <sage.matroids.database.oxley_matroids.Vamos>`.
-
-    EXAMPLES::
-
-        sage: M = matroids.FreeSpike(3, False)
-        sage: M.is_isomorphic(matroids.Uniform(3, 6))
-        True
-        sage: M = matroids.FreeSpike(8)
-        sage: M.is_3connected()
-        True
-
-    """
-    if t:  # tipped free spike
-        if r == 3:
-            return TippedFree3spike()
-        elif r < 3:
-            raise ValueError("Tipped free spike must have rank at least 3.")
-
-        E = range(2 * r + 1)
-        tris = [[0, 2 * i + 1, 2 * i + 2] for i in range(r)]
-        planes = [
-            [2 * i + 1, 2 * i + 2, 2 * j + 1, 2 * j + 2]
-            for i in range(r)
-            for j in range(i + 1, r)
-        ]
-        CC = {2: tris, 3: planes, r: [E]}
-        spike = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-        spike.rename("Tipped rank-" + str(r) + " free spike: " + repr(spike))
-        return spike
-    else:  # tipless free spike
-        if r == 3:
-            return Uniform(3, 6)
-        elif r < 3:
-            raise ValueError("Tipless free spike must have rank at least 3.")
-
-        E = range(1, 2 * r + 1)
-        circs = [
-            [2 * i + 1, 2 * i + 2, 2 * j + 1, 2 * j + 2]
-            for i in range(r)
-            for j in range(i + 1, r)
-        ]
-        CC = {3: circs, r: [E]}
-        spike = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-        spike.rename(
-            "(Tipless) rank-" + str(r) + " free spike: " + repr(spike)
-        )
-        return spike

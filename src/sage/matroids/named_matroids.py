@@ -4,7 +4,7 @@ Named matroids
 A module containing several interesting matroids that have names in the
 literature. A list of all matroids in this database is available via tab
 completion. Type ``matroids.named_matroids.`` (include the last dot) and hit
-the ``tab`` key to see which matroids are available.
+:kbd:`Tab` to see which matroids are available.
 """
 from sage.matroids.database.oxley_matroids import (
     U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,
@@ -13,7 +13,7 @@ from sage.matroids.database.oxley_matroids import (
     Wheel4, Whirl4,
     K33dual, K33, AG23, TernaryDowling3, Pappus, NonPappus,
     K5, K5dual, R10,
-    R12, T12,
+    R12, ExtendedTernaryGolayCode, T12,
     PG23,
 )
 from sage.matroids.database.brettell_matroids import (
@@ -35,7 +35,7 @@ from sage.matroids.database.various_matroids import (
     P9, R9A, R9B, Block_9_4, TicTacToe,
     N1, Block_10_5, Q10,
     BetsyRoss,
-    N2, ExtendedTernaryGolayCode,
+    N2,
     D16, Terrahawk,
     ExtendedBinaryGolayCode,
 )

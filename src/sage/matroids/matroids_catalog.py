@@ -14,10 +14,11 @@ To create a custom matroid using a variety of inputs, see the function
 - Parametrized matroid constructors (``matroids.<tab>``)
     - :func:`matroids.AG <sage.matroids.database.oxley_matroids.AG>`
     - :func:`matroids.CompleteGraphic <sage.matroids.database.various_matroids.CompleteGraphic>`
-    - :func:`matroids.FreeSpike <sage.matroids.database.brettell_matroids.FreeSpike>`
     - :func:`matroids.CompleteGraphic <sage.matroids.database.various_matroids.CompleteGraphic>`
     - :func:`matroids.PG <sage.matroids.database.oxley_matroids.PG>`
+    - :func:`matroids.Psi <sage.matroids.database.oxley_matroids.Psi>`
     - :func:`matroids.Spike <sage.matroids.database.oxley_matroids.Spike>`
+    - :func:`matroids.Theta <sage.matroids.database.oxley_matroids.Theta>`
     - :func:`matroids.Uniform <sage.matroids.database.oxley_matroids.Uniform>`
     - :func:`matroids.Wheel <sage.matroids.database.oxley_matroids.Wheel>`
     - :func:`matroids.Whirl <sage.matroids.database.oxley_matroids.Whirl>`
@@ -68,6 +69,7 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.catalog.K5dual <sage.matroids.database.oxley_matroids.K5dual>`
     - :func:`matroids.catalog.R10 <sage.matroids.database.oxley_matroids.R10>`
     - :func:`matroids.catalog.R12 <sage.matroids.database.oxley_matroids.R12>`
+    - :func:`matroids.catalog.ExtendedTernaryGolayCode <sage.matroids.database.oxley_matroids.ExtendedTernaryGolayCode>`
     - :func:`matroids.catalog.T12 <sage.matroids.database.oxley_matroids.T12>`
     - :func:`matroids.catalog.PG23 <sage.matroids.database.oxley_matroids.PG23>`
     - :func:`matroids.catalog.RelaxedNonFano <sage.matroids.database.brettell_matroids.RelaxedNonFano>`
@@ -146,7 +148,6 @@ To create a custom matroid using a variety of inputs, see the function
     - :func:`matroids.catalog.Block_9_4 <sage.matroids.database.various_matroids.Block_9_4>`
     - :func:`matroids.catalog.Block_10_5 <sage.matroids.database.various_matroids.Block_10_5>`
     - :func:`matroids.catalog.ExtendedBinaryGolayCode <sage.matroids.database.various_matroids.ExtendedBinaryGolayCode>`
-    - :func:`matroids.catalog.ExtendedTernaryGolayCode <sage.matroids.database.various_matroids.ExtendedTernaryGolayCode>`
     - :func:`matroids.catalog.AG23minus <sage.matroids.database.various_matroids.AG23minus>`
     - :func:`matroids.catalog.NotP8 <sage.matroids.database.various_matroids.NotP8>`
     - :func:`matroids.catalog.D16 <sage.matroids.database.various_matroids.D16>`
@@ -169,9 +170,8 @@ lazy_import(
 )
 lazy_import(
     "sage.matroids.database.oxley_matroids",
-    ("Wheel", "Whirl", "Uniform", "PG", "AG", "Spike", "Z")
+    ("Wheel", "Whirl", "Uniform", "PG", "AG", "Z", "Spike", "Theta", "Psi")
 )
-lazy_import("sage.matroids.database.brettell_matroids", "FreeSpike")
 lazy_import("sage.matroids.database.various_matroids", "CompleteGraphic")
 lazy_import("sage.matroids", "catalog")
 lazy_import("sage.matroids", "named_matroids")

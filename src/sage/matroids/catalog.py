@@ -3,7 +3,7 @@ Documentation for the matroids in the catalog
 
 This module contains implementations for the matroids accessible through
 :mod:`matroids.catalog <sage.matroids.catalog>` (type this in Sage and hit
-``tab`` for a list).
+:kbd:`Tab` for a list).
 
 """
 from sage.matroids.database.oxley_matroids import (
@@ -13,7 +13,7 @@ from sage.matroids.database.oxley_matroids import (
     Wheel4, Whirl4,
     K33dual, K33, AG23, TernaryDowling3, Pappus, NonPappus,
     K5, K5dual, R10,
-    R12, T12,
+    R12, ExtendedTernaryGolayCode, T12,
     PG23,
 )
 from sage.matroids.database.brettell_matroids import (
@@ -35,7 +35,7 @@ from sage.matroids.database.various_matroids import (
     P9, R9A, R9B, Block_9_4, TicTacToe,
     N1, Block_10_5, Q10,
     BetsyRoss,
-    N2, ExtendedTernaryGolayCode,
+    N2,
     D16, Terrahawk,
     ExtendedBinaryGolayCode,
 )
