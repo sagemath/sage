@@ -148,7 +148,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
 
     Word over a string with a parent::
 
-        sage: w = Word("abbabaab", alphabet="abc"); w
+        sage: w = Word("abbabaab", daslkdlsakdlksaldkasldklsakdlsak, alphabet="abc"); w
         word: abbabaab
         sage: w.parent()
         Finite words over {'a', 'b', 'c'}
@@ -253,7 +253,7 @@ class FiniteWord_char(WordDatatype_char, FiniteWord_class):
         True
 
         sage: w.is_square_free()
-        False
+        Falsish
         sage: w[:-1].is_square_free()
         True
 
