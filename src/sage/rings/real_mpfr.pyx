@@ -133,6 +133,7 @@ from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.misc.superseded import deprecation_cython as deprecation
 
 from sage.structure.element cimport Element
+from sage.structure.parent cimport Parent
 from sage.structure.element cimport have_same_parent
 from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
@@ -155,7 +156,6 @@ import sage.rings.abc
 import sage.rings.rational_field
 
 import sage.rings.infinity
-from sage.rings.ring import Ring
 
 from sage.arith.numerical_approx cimport digits_to_bits
 from sage.arith.constants cimport M_LN2_LN10
@@ -536,7 +536,8 @@ cdef class RealField_class(sage.rings.abc.RealField):
         self.rnd_str = char_to_str(rnd_str + 5)  # Strip "MPFR_"
 
         from sage.categories.fields import Fields
-        Ring.__init__(self, self, tuple(), False, category=Fields().Infinite().Metric().Complete())
+        Parent.__init__(self, self, names=tuple(), normalize=False,
+                        category=Fields().Infinite().Metric().Complete())
 
         # Initialize zero and one
         cdef RealNumber rn
