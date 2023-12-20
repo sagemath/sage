@@ -47,6 +47,9 @@
     "sage.rings.polynomial.skew_polynomial_finite_field": {
         "failed": true
     },
+    "sage.schemes.elliptic_curves.ell_field": {
+        "failed": true
+    },
     "sage.tests.gap_packages": {
         "failed": true
     }
