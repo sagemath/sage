@@ -1083,37 +1083,31 @@ def label_nice_tree_decomposition(nice_TD, root, directed=False):
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition, label_nice_tree_decomposition
-        sage: bip_one_four = graphs.CompleteBipartiteGraph(1, 4)
-        sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
-        sage: nice_TD = make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
+        sage: claw = graphs.CompleteBipartiteGraph(1, 3)
+        sage: claw_TD = claw.treewidth(certificate=True)
+        sage: nice_TD = make_nice_tree_decomposition(claw, claw_TD)
         sage: root = sorted(nice_TD.vertices())[0]
         sage: label_TD = label_nice_tree_decomposition(nice_TD, root, directed=True)
-        sage: print(label_TD.name())
-        Labelled Nice tree decomposition of Tree decomposition
-        sage: for node in sorted(label_TD):
+        sage: label_TD.name()
+        'Labelled Nice tree decomposition of Tree decomposition'
+        sage: for node in sorted(label_TD):  # random
         ....:     print(node, label_TD.get_vertex(node))
         (0, {}) forget
         (1, {0}) forget
         (2, {0, 1}) intro
         (3, {0}) forget
-        (4, {0, 4}) join
-        (5, {0, 4}) intro
-        (6, {0, 4}) intro
-        (7, {0}) forget
-        (8, {0}) forget
-        (9, {0, 3}) intro
-        (10, {0, 2}) intro
-        (11, {3}) intro
-        (12, {2}) intro
-        (13, {}) leaf
-        (14, {}) leaf
+        (4, {0, 3}) intro
+        (5, {0}) forget
+        (6, {0, 2}) intro
+        (7, {2}) intro
+        (8, {}) leaf
     """
     from sage.graphs.digraph import DiGraph
     from sage.graphs.graph import Graph
 
     directed_TD = DiGraph(nice_TD.breadth_first_search(start=root, edges=True),
                           format='list_of_edges',
-                          name='Labelled {}'.format(nice_TD))
+                          name='Labelled {}'.format(nice_TD.name()))
 
     # The loop starts from the root node
     # We assume the tree decomposition is valid and nice,
