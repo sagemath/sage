@@ -237,7 +237,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: while v not in counter:
             ....:     add_samples(1000)
 
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.2:                     # long time, needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.2:     # long time, needs sage.symbolic
             ....:     add_samples(1000)
 
             sage: D = DGL(ZZ^8, 0.5)
@@ -486,6 +486,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
             sage: Sigma = Matrix(ZZ, [[0, 1], [1, 0]])
             sage: DGL(ZZ^2, Sigma)
+            Traceback (most recent call last):
             ...
             RuntimeError: Sigma(=[0.000000000000000  1.00000000000000]
             [ 1.00000000000000 0.000000000000000]) is not positive definite
