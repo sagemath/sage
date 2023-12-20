@@ -711,14 +711,14 @@ class LieAlgebras(Category_over_base_ring):
             from sage.algebras.lie_algebras.representation import TrivialRepresentation
             return TrivialRepresentation(self)
 
-        def representation(self, f=None, index_set=None, on_basis=None, **kwargs):
+        def representation(self, f=None, index_set=None, on_basis=False, **kwargs):
             """
             Return a representation of ``self``.
 
             If no arguments are given, then this returns the trivial
             representation.
 
-            Currently the only implementated method of constructing a
+            Currently the only implemented method of constructing a
             representation is by explicitly specifying the action of
 
             * the elements of ``self`` by matrices;
@@ -750,10 +750,8 @@ class LieAlgebras(Category_over_base_ring):
                 sage: L.representation()
                 Trivial representation of Lie algebra on 2 generators (x, y) over Rational Field
             """
-            if f is None and on_basis is None and index_set is None:
+            if f is None and on_basis is False and index_set is None:
                 return self.trivial_representation(**kwargs)
-            if on_basis is None:
-                on_basis = False
             from sage.algebras.lie_algebras.representation import RepresentationByMorphism
             return RepresentationByMorphism(self, f, index_set, on_basis, **kwargs)
 

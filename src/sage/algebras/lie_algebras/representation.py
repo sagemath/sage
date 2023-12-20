@@ -189,16 +189,25 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
 
             sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
             sage: f = {'x': Matrix([[1,0]]), 'y': Matrix([[0,1]])}
-            sage: R = L.representation(f)
+            sage: L.representation(f)
             Traceback (most recent call last):
             ...
             ValueError: all matrices must be square
 
             sage: f = {'x': Matrix([[1,0],[0,0]]), 'y': Matrix([[0]])}
-            sage: R = L.representation(f)
+            sage: L.representation(f)
             Traceback (most recent call last):
             ...
             ValueError: all matrices must be square of size 2
+
+            sage: L.representation(index_set=[1,2,3])
+            Traceback (most recent call last):
+            ...
+            ValueError: either 'f' or 'on_basis' must be specified
+            sage: L.representation(on_basis=lambda x: QQ.zero())
+            Traceback (most recent call last):
+            ...
+            ValueError: the index set needs to be specified
         """
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
         base = lie_algebra.base_ring()

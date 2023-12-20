@@ -1234,7 +1234,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
 
     cpdef _acted_upon_(self, scalar, bint self_on_left) noexcept:
         """
-        Return ``self`` acted upon by ``x``.
+        Return ``self`` acted upon by ``scalar``.
 
         EXAMPLES::
 
