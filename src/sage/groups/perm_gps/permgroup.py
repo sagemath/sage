@@ -2654,7 +2654,8 @@ class PermutationGroup_generic(FiniteGroup):
                 H = PermutationGroup(gens=[g], domain=self.domain())
                 g = H.gen(0)
             except Exception:
-                gens = [tuple([g(e) for e in x.tuple()]) for x in self.gens()]
+                gens = [[tuple([g(e) for e in c]) for c in x.cycle_tuples()]
+                        for x in self.gens()]
                 return PermutationGroup(gens=gens)
 
         return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g._gap_()),
