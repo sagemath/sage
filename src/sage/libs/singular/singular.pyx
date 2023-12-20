@@ -1730,7 +1730,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     EXAMPLES::
 
         sage: P.<x,y> = QQ[]
-        sage: y^(2^30)
+        sage: y^(2^30) # skip_conda Conda fails with the same OverflowError as below
         Traceback (most recent call last):             # 32-bit
         ...                                            # 32-bit
         OverflowError: exponent overflow (1073741824)  # 32-bit

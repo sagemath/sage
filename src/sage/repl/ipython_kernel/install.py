@@ -127,7 +127,7 @@ class SageKernelSpec():
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.use_local_threejs()
             sage: threejs = os.path.join(spec.nbextensions_dir, 'threejs-sage')
-            sage: os.path.isdir(threejs)
+            sage: os.path.isdir(threejs) # skip_conda might exist with conda
             True
         """
         src = THREEJS_DIR

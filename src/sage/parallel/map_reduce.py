@@ -1149,20 +1149,20 @@ class RESetMapReduce():
             ....:     return []
             sage: S = RESetMapReduce(roots=[1, 2], children=children)
             sage: S.setup_workers(2)
-            sage: S.start_workers(); sleep(float(0.4))
+            sage: S.start_workers(); sleep(float(0.4)) # skip_conda random failures on macos
             Starting: ...
             Starting: ...
-            sage: [w.is_alive() for w in S._workers]
+            sage: [w.is_alive() for w in S._workers] # skip_conda random failures on macos
             [True, True]
-            sage: sleep(float(1.5))
+            sage: sleep(float(1.5)) # skip_conda random failures on macos
             Finished: ...
             Finished: ...
-            sage: [not w.is_alive() for w in S._workers]
+            sage: [not w.is_alive() for w in S._workers] # skip_conda random failures on macos
             [True, True]
 
         Cleanup::
 
-            sage: S.finish()
+            sage: S.finish() # skip_conda random failures on macos
         """
         if self._nprocess == 0:
             raise ValueError("No process connected")

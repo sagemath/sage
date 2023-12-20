@@ -1506,7 +1506,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             sage: sol = S.solve(algorithm='sat')        # optional - pycryptosat        # needs sage.rings.polynomial.pbori
             sage: print(reproducible_repr(sol))         # optional - pycryptosat        # needs sage.rings.polynomial.pbori
             [{x: 0, y: 1, z: 0}]
-            sage: S.subs(sol[0])                                                        # needs sage.rings.polynomial.pbori
+            sage: S.subs(sol[0])                        # optional - pycryptosat        # needs sage.rings.polynomial.pbori
             [0, 0, 0]
 
         TESTS:

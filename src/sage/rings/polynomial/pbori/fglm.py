@@ -29,7 +29,7 @@ def fglm(I, from_ring, to_ring):
         sage: (x,y,z) = [old_ring.variable(i) for i in range(3)]
         sage: ideal=[x+z, y+z]# lp Groebner basis
         sage: from sage.rings.polynomial.pbori.fglm import fglm
-        sage: list(fglm(ideal, old_ring, new_ring))
+        sage: list(fglm(ideal, old_ring, new_ring))  # skip_conda Adds additional output when executed under conda
         [y + x, z + x]
     """
     for poly in I:

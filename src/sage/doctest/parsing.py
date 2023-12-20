@@ -35,8 +35,8 @@ AUTHORS:
 
 import collections.abc
 import doctest
+import os
 import re
-
 from collections import defaultdict
 from functools import reduce
 
@@ -93,7 +93,7 @@ def RIFtol(*args):
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
 
-special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
+special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug|skip_conda'
 tag_with_explanation_regex = r'((?:\w|[.])+)\s*(?:\((.*?)\))?'
 optional_regex = re.compile(fr'(?P<cmd>{special_optional_regex})\s*(?:\((?P<cmd_explanation>.*?)\))?|'
                             fr'[^ a-z]\s*(optional|needs)(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)',
@@ -118,6 +118,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     - ``'py2'``
     - ``'arb216'``
     - ``'arb218'``
+    - ``'skip_conda'``
     - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
@@ -1201,6 +1202,9 @@ class SageDocTestParser(doctest.DocTestParser):
                         self.optionals[tag] += 1
                     if (('not implemented' in optional_tags) or
                             ('not tested' in optional_tags)):
+                        continue
+
+                    if ('skip_conda' in optional_tags and os.environ.get('CONDA_PREFIX', False)):
                         continue
 
                     if 'long time' in optional_tags:

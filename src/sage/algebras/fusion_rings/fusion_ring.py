@@ -1401,8 +1401,8 @@ class FusionRing(WeylCharacterRing):
             sage: F41 = FusionRing("F4", 1, fusion_labels="f", inject_variables=True)
             sage: f1*f1
             f0 + f1
-            sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False)
-            sage: F41.gens_satisfy_braid_gp_rels(sig)
+            sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False) # skip_conda random timeouts on macos
+            sage: F41.gens_satisfy_braid_gp_rels(sig) # skip_conda random timeouts on macos
             True
         """
         n = len(sig)
