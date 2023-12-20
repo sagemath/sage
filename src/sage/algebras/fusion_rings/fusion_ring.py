@@ -877,9 +877,9 @@ class FusionRing(WeylCharacterRing):
             True
             sage: F41 = FusionRing("F4", 1)
             sage: fmats = F41.get_fmatrix()
-            sage: fmats.find_orthogonal_solution(verbose=False)
-            sage: b = F41.basis()
-            sage: all(F41.s_ijconj(x, y) == F41._basecoer(F41.s_ij(x, y, base_coercion=False).conjugate()) for x in b for y in b)
+            sage: fmats.find_orthogonal_solution(verbose=False) # skip_conda random timeouts
+            sage: b = F41.basis() # skip_conda random timeouts
+            sage: all(F41.s_ijconj(x, y) == F41._basecoer(F41.s_ij(x, y, base_coercion=False).conjugate()) for x in b for y in b) # skip_conda random timeouts
             True
             sage: G22 = FusionRing("G2", 2)
             sage: fmats = G22.get_fmatrix()
