@@ -166,7 +166,7 @@ class CellularBasis(CombinatorialFreeModule):
          - C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
          + C([3], [[1, 2, 3]], [[1, 2, 3]])
     """
-    def __init__(self, A, to_algebra=None, from_algebra=None, **kwargs):
+    def __init__(self, A, to_algebra=None, from_algebra=None, category=None, **kwargs):
         r"""
         Initialize ``self``.
 
@@ -185,6 +185,7 @@ class CellularBasis(CombinatorialFreeModule):
         #   operations are defined by coercion?
         prefix = kwargs.pop('prefix', 'C')
         cat = Algebras(A.category().base_ring()).FiniteDimensional().WithBasis().Cellular()
+        cat = cat.or_subcategory(category)
         CombinatorialFreeModule.__init__(self, A.base_ring(), I,
                                          prefix=prefix, bracket=False,
                                          category=cat, **kwargs)

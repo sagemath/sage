@@ -51,6 +51,7 @@ REFERENCES:
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.abstract_method import abstract_method
 from sage.misc.misc_c import prod
 from sage.misc.bindable_class import BindableClass
 from sage.structure.parent import Parent
@@ -64,12 +65,14 @@ from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.integer_ring import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
+from sage.combinat.partition_tuple import PartitionTuples
+from sage.combinat.tableau_tuple import StandardTableauTuples
+from sage.algebras.cellular_basis import CellularBasis
 from sage.sets.family import Family
 from sage.data_structures.blas_dict import iaxpy
 
+
 # ABC for basis classes
-
-
 class _Basis(CombinatorialFreeModule, BindableClass):
     r"""
     Abstract base class for bases of the Ariki-Koike algebra.
@@ -113,6 +116,89 @@ class _Basis(CombinatorialFreeModule, BindableClass):
             ((0, 0, 0), [1, 2, 3])
         """
         return (self._zero_tuple, self._one_perm)
+
+    @cached_method
+    def cell_poset(self):
+        """
+        Return the cell poset of ``self``.
+
+        EXAMPLES::
+
+            sage: LT = algebras.ArikiKoike(5, 3).LT()
+            sage: LT.cell_poset()
+            Finite poset containing 65 elements
+        """
+        from sage.combinat.posets.posets import Poset
+        return Poset([PartitionTuples(self._r, self._n), lambda x, y: y.dominates(x)])
+
+    def cell_module_indices(self, la):
+        r"""
+        Return the indices of the cell module of ``self``
+        indexed by ``la`` .
+
+        This is the finite set `M(\lambda)`.
+
+        EXAMPLES::
+
+            sage: LT = algebras.ArikiKoike(5, 3).LT()
+            sage: LT.cell_module_indices([[1], [], [1,1], []])
+            Standard tableau tuples of shape ([1], [], [1, 1], [])
+        """
+        return StandardTableauTuples(shape=la)
+
+    def cellular_basis(self):
+        r"""
+        Return the cellular basis of ``self``.
+
+        EXAMPLES::
+
+            sage: LT = algebras.ArikiKoike(3, 2).LT()
+            sage: LT.cellular_basis()
+            Cellular basis of Symmetric group algebra of order 3
+             over Rational Field
+        """
+        return self.realization_of().Murphy()
+
+
+class _CellularBasis(CellularBasis, BindableClass):
+    r"""
+    Abstract base class for cellular bases of the Ariki-Koike algebra.
+    """
+    def __init__(self, algebra, **kwds):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: M = algebras.ArikiKoike(2, 3).Murphy()
+            sage: TestSuite(M).run()  # not tested
+        """
+        self._r = algebra._r
+        self._n = algebra._n
+        self._q = algebra._q
+        self._u = algebra._u
+        CellularBasis.__init__(self, algebra.LT(),
+                               to_algebra=self._to_LT,
+                               from_algebra=self._from_LT,
+                               prefix=self._prefix,
+                               category=algebra._BasesCategory(), **kwds)
+
+    @abstract_method(optional=True)
+    def _to_LT(self, m):
+        r"""
+        Convert the basis element indexed by ``m`` from ``self``
+        to the LT basis.
+        """
+
+    @abstract_method(optional=True)
+    def _from_LT(self, m):
+        r"""
+        Convert the basis element indexed by ``m`` from the LT basis
+        to ``self``.
+        """
+
+    def _repr_term(self, m):
+        return self._prefix + "[{}, {}]".format(m[1]._repr_compact(), m[2]._repr_compact())
 
 
 class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
@@ -340,7 +426,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
         self._n = n
         self._q = q
         self._u = u
-        self._category = Algebras(R).FiniteDimensional().WithBasis()
+        self._category = Algebras(R).FiniteDimensional().WithBasis().Cellular()
         Parent.__init__(self, base=R, category=self._category.WithRealizations())
 
         T = self.T()
@@ -601,6 +687,60 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 from sage.algebras.hecke_algebras.ariki_koike_specht_modules import SpechtModule
                 return SpechtModule(self.realization_of(), la)
 
+            @cached_method(key=lambda s, la: PartitionTuples()(la))
+            def central_orthogonal_idempotent(self, la):
+                r"""
+                Return the central orthogonal idempotent `F_{\lambda}`
+                in ``self``.
+                """
+                la = PartitionTuples(self._r, self._n)(la)
+                return self.sum(self.primitive_idempotent(t)
+                                for t in StandardTableauTuples(la))
+
+            def central_orthogonal_idempotents(self):
+                """
+                Return all central orthogonal idempotents of ``self``.
+                """
+                return [self.central_orthogonal_idempotent(la)
+                        for la in PartitionTuples(self._r, self._n)]
+
+            @cached_method(key=lambda s, t: StandardTableauTuples()(t))
+            def primitive_idempotent(self, t):
+                r"""
+                Return the primitive idempotent `F_t` in ``self``.
+                """
+                t = StandardTableauTuples(self._r, self._n)(t)
+                ret = self.one()
+                denom = self.base_ring().one()
+                q = self._q
+                u = self._u
+                for k in range(1, self._n+1):
+                    res = t.cells_containing(k)[0]
+                    if len(res) == 2:  # level 1
+                        res = q**(res[1]-res[0]) * u[0]
+                    else:
+                        res = q**(res[2]-res[1]) * u[res[0]]
+                    Lk = self.L(k)
+                    for s in range(self._r):
+                        for d in range(1-k, k):
+                            c = q**d * u[s]
+                            if res == c:
+                                continue
+                            ret *= (Lk - c)
+                            denom *= (res - c)
+                return ret / denom
+
+
+        class ElementMethods:
+            def trace(self):
+                r"""
+                Return the trace of ``self``.
+
+                The trace form `\tau` on the Ariki-Koike algebra
+                is defined as the coefficient of `1`.
+                """
+                return self[self.parent().one_basis()]
+
     # -----------------------------------------------------
     # Basis classes
     # -----------------------------------------------------
@@ -618,16 +758,19 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             r"""
             Initialize ``self``.
 
-            EXAMPLES::
+            EXAMPLES:
+
+            We skip the cellular tests as they require inverting
+            a large matrix::
 
                 sage: LT = algebras.ArikiKoike(5, 3).LT()
-                sage: TestSuite(LT).run()
+                sage: TestSuite(LT).run(skip="_test_cellular")
                 sage: LT = algebras.ArikiKoike(1, 4).LT()
                 sage: TestSuite(LT).run()
                 sage: LT = algebras.ArikiKoike(2, 3).LT()
-                sage: TestSuite(LT).run()
+                sage: TestSuite(LT).run(skip="_test_cellular")
                 sage: LT = algebras.ArikiKoike(3, 4).LT()
-                sage: TestSuite(LT).run()  # long time
+                sage: TestSuite(LT).run(skip="_test_cellular")  # long time
             """
             _Basis.__init__(self, algebra, prefix='LT')
             self._assign_names(self.algebra_generators().keys())
@@ -762,12 +905,18 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 [L1, T[1], T[2]]
                 sage: LT.T(0)
                 L1
+
+                sage: LT = algebras.ArikiKoike(1, 3).LT()
+                sage: LT.T()
+                [u, T[1], T[2]]
+                sage: LT.T(0)
+                u
             """
             G = self.algebra_generators()
             if i is None:
-                return [G['L1']] + [G['T%s' % j] for j in range(1, self._n)]
+                return [self.L(1)] + [G['T%s' % j] for j in range(1, self._n)]
             if i == 0:
-                return G['L1']
+                return G[self.L(1)]
             return G['T%s' % i]
 
         def L(self, i=None):
@@ -785,21 +934,21 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: LT.L(2)
                 L2
                 sage: LT.L()
-                [L1, L2, L3]
+                (L1, L2, L3)
 
                 sage: LT = algebras.ArikiKoike(1, 3).LT()
                 sage: LT.L(2)
                 u - (u*q^-1-u)*T[1]
                 sage: LT.L()
-                [u,
-                 u - (u*q^-1-u)*T[1],
-                 u - (u*q^-1-u)*T[2] - (u*q^-2-u*q^-1)*T[2,1,2]]
+                (u,
+                 u + (-u*q^-1+u)*T[1],
+                 u + (-u*q^-1+u)*T[2] + (-u*q^-2+u*q^-1)*T[2,1,2])
             """
             G = self.algebra_generators()
             if i is None:
                 if self._r == 1:
-                    return [self._Li_power(j, 1) for j in range(1, self._n+1)]
-                return [G['L%s' % j] for j in range(1, self._n+1)]
+                    return tuple([self._Li_power(j, 1) for j in range(1, self._n+1)])
+                return tuple([G['L%s' % j] for j in range(1, self._n+1)])
             if self._r == 1:
                 return self._Li_power(i, 1)
             return G['L%s' % i]
@@ -1161,6 +1310,14 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             m = self.T(i).leading_support()
             return self._from_dict({m: ~self._q, self.one_basis(): c})
 
+        def cellular_involution(self, m):
+            """
+            Return the cellular involution of the basis element indexed by
+            ``m`` in ``self``.
+            """
+            T = self.T()
+            return self.prod(T[i] for i in reversed(m[1].reduced_word())) * self.monomial((m[0], self._one_perm))
+
         class Element(CombinatorialFreeModule.Element):
             def __invert__(self):
                 r"""
@@ -1204,16 +1361,19 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             r"""
             Initialize ``self``.
 
-            EXAMPLES::
+            EXAMPLES:
+
+            We skip the cellular tests as they require inverting
+            a large matrix::
 
                 sage: T = algebras.ArikiKoike(5, 3).T()
-                sage: TestSuite(T).run()
+                sage: TestSuite(T).run(skip="_test_cellular")
                 sage: T = algebras.ArikiKoike(1, 4).T()
                 sage: TestSuite(T).run()
                 sage: T = algebras.ArikiKoike(2, 3).T()
-                sage: TestSuite(T).run()
+                sage: TestSuite(T).run(skip="_test_cellular")
                 sage: T = algebras.ArikiKoike(3, 4).T()
-                sage: TestSuite(T).run() # long time
+                sage: TestSuite(T).run(skip="_test_cellular") # long time
             """
             _Basis.__init__(self, algebra, prefix='T')
             self._assign_names(['T%s' % i for i in range(self._n)])
@@ -1363,7 +1523,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: T.L(2)
                 (q^-1)*T[1,0,1]
                 sage: T.L()
-                [T[0], (q^-1)*T[1,0,1], (q^-2)*T[2,1,0,1,2]]
+                (T[0], (q^-1)*T[1,0,1], (q^-2)*T[2,1,0,1,2])
 
                 sage: T0,T1,T2 = T.T()
                 sage: q = T.q()
@@ -1378,9 +1538,9 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: T.L(2)
                 u - (u*q^-1-u)*T[1]
                 sage: T.L()
-                [u,
-                 u - (u*q^-1-u)*T[1],
-                 u - (u*q^-1-u)*T[2] - (u*q^-2-u*q^-1)*T[2,1,2]]
+                (u,
+                 u + (-u*q^-1+u)*T[1],
+                 u + (-u*q^-1+u)*T[2] + (-u*q^-2+u*q^-1)*T[2,1,2])
 
             TESTS:
 
@@ -1403,7 +1563,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 True
             """
             if i is None:
-                return [self.L(j) for j in range(1, self._n+1)]
+                return tuple([self.L(j) for j in range(1, self._n+1)])
 
             if i == 1:
                 if self._r == 1:
@@ -1793,3 +1953,299 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     iaxpy(1, temp, ret)
 
             return self._from_dict(ret, remove_zeros=False)
+
+        def cellular_involution(self, m):
+            """
+            Return the cellular involution of the basis element indexed by
+            ``m`` in ``self``.
+            """
+            for i, k in enumerate(m[0]):
+                if not k:
+                    continue
+                redword += list(reversed(range(1,i+1))) + [0]*k
+            redword += m[1].reduced_word()
+            T = self.T()
+            return self.prod(T[i] for i in reversed(redword))
+
+    # -----------------------------------------------------
+    # Cellular basis classes
+    # -----------------------------------------------------
+
+    class Murphy(_CellularBasis):
+        """
+        The Murphy basis of the Ariki-Koike algebra.
+        """
+        _prefix = 'M'
+
+        @cached_method
+        def one_basis(self):
+            r"""
+            Return the index of the basis element of `1`.
+
+            EXAMPLES::
+
+                sage: M = algebras.ArikiKoike(2, 3).Murphy()
+                sage: M.one_basis()
+                ((0, 0, 0), [1, 2, 3])
+            """
+            la = PartitionTuples()([[]]*(self._r-1) + [[self._r]])
+            return (la, StandardTableauTuples(la)[0], StandardTableauTuples(la)[0])
+
+        @cached_method
+        def _m_elt(self, la):
+            r"""
+            Return the element `m_{\lambda}` in ``self``.
+            """
+            LT = self.realization_of().LT()
+            Pn = LT._Pn
+            zt = LT._zero_tuple
+            xla = LT.sum_of_monomials((zt, Pn(w.tuple())) for w in la.young_subgroup())
+            u = LT._u
+            L = LT.L()
+            uplus = LT.prod(L[k] - u[s] for s in range(1, LT._r)
+                            for k in range(sum(sum(part) for part in la[:s])))
+            return xla * uplus
+
+        @cached_method
+        def _to_LT(self, m):
+            r"""
+            Return the basis element indexed by ``m`` in ``self``
+            in the TL basis.
+            """
+            la, s, t = m
+            LT = self.realization_of().LT()
+            T = LT.T()
+            Pn = LT._Pn
+            ds = Pn(list(sum((row for tab in s for row in tab), ())))
+            dt = Pn(list(sum((row for tab in t for row in tab), ())))
+            return (LT.monomial((LT._zero_tuple, ds))
+                    * self._m_elt(la)
+                    * LT.prod(T[i] for i in reversed(dt.reduced_word())))
+
+        @cached_method
+        def L(self, i=None):
+            r"""
+            Return the Jucys-Murphy element(s) `L_i`.
+            """
+            if i is None:
+                return tuple([self.L(j) for j in range(1, self._n+1)])
+            return self(self._algebra.L(i))
+
+    class Seminormal(_CellularBasis):
+        """
+        The seminormal basis of the Ariki-Koike algebra.
+        """
+        _prefix = 'S'
+
+        @cached_method
+        def one(self):
+            r"""
+            Return the element of `1`.
+
+            EXAMPLES::
+
+                sage: S = algebras.ArikiKoike(2, 3).Seminormal()
+                sage: S.one()
+                S[-|1/2/3, -|1/2/3] + S[-|1,2/3, -|1,2/3] + S[-|1,3/2, -|1,3/2]
+                 + S[-|1,2,3, -|1,2,3] + S[1|2/3, 1|2/3] + S[2|1/3, 2|1/3]
+                 + S[3|1/2, 3|1/2] + S[1|2,3, 1|2,3] + S[2|1,3, 2|1,3]
+                 + S[3|1,2, 3|1,2] + S[1/2|3, 1/2|3] + S[1/3|2, 1/3|2]
+                 + S[2/3|1, 2/3|1] + S[1/2/3|-, 1/2/3|-] + S[1,2|3, 1,2|3]
+                 + S[1,3|2, 1,3|2] + S[2,3|1, 2,3|1] + S[1,2/3|-, 1,2/3|-]
+                 + S[1,3/2|-, 1,3/2|-] + S[1,2,3|-, 1,2,3|-]
+            """
+            one = self.base_ring().one()
+            return self.element_class(self, {(la, t, t): one
+                                             for la in PartitionTuples(self._r, self._n)
+                                             for t in StandardTableauTuples(la)})
+
+        @cached_method
+        def L(self, i=None):
+            r"""
+            Return the Jucys-Murphy element(s) `L_i`.
+
+            By Corollary 2.18 in [Mathas2002]_, the Jucys-Murphy element
+            `L_i` is equal to
+
+            .. MATH::
+
+                L_i = \sum_t \mathrm{res}_t(i) F_t,
+
+            where `F_t` is the :meth:`primitive_idempotent` and
+            `\mathrm{res}_t(i) = q^{c-r} u_s` is the *residue* of `i`
+            in `t` (which occurs in row `r` and column `c` of the `s`-th
+            tableau of `t`).
+
+            INPUT:
+
+            - ``i`` -- (default: ``None``) the Jucys-Murphy element `L_i`
+              or if ``None``, then the list of all `L_i`
+
+            EXAMPLES::
+
+                sage: S = algebras.ArikiKoike(2, 3).Seminormal()
+                sage: S.L(2)
+                (q^-1)*T[1,0,1]
+                sage: S.L()
+                [T[0], (q^-1)*T[1,0,1], (q^-2)*T[2,1,0,1,2]]
+
+                sage: S = algebras.ArikiKoike(8, 3).Seminormal()
+                sage: T0,T1,T2 = S.T()
+                sage: q = T.q()
+                sage: S.L(1) == T0
+                True
+                sage: S.L(2) == q^-1 * T1*T0*T1
+                True
+                sage: S.L(3) == q^-2 * T2*T1*T0*T1*T2
+                True
+
+                sage: S = algebras.ArikiKoike(1, 3).Seminormal()
+                sage: S.L(2)
+                (u*q^-1)*S[1/2/3, 1/2/3] + u*q*S[1,2/3, 1,2/3]
+                 + (u*q^-1)*S[1,3/2, 1,3/2] + u*q*S[1,2,3, 1,2,3]
+                sage: S.L()
+                [u,
+                 u + (-u*q^-1+u)*T[1],
+                 u + (-u*q^-1+u)*T[2] + (-u*q^-2+u*q^-1)*T[2,1,2]]
+
+            TESTS:
+
+            Check that the Jucys-Murphy elements form a commutative
+            subring::
+
+                sage: S = algebras.ArikiKoike(8, 4).Seminormal()
+                sage: L = S.L()
+                sage: all(x*y == y*x for x in L for y in L)
+                True
+
+                sage: S = algebras.ArikiKoike(2, 3).Seminormal()
+                sage: L = S.L()
+                sage: all(x*y == y*x for x in L for y in L)
+                True
+
+                sage: S = algebras.ArikiKoike(1, 4).Seminormal()
+                sage: L = S.L()
+                sage: all(x*y == y*x for x in L for y in L)
+                True
+            """
+            if i is None:
+                return tuple([self.L(j) for j in range(1, self._n+1)])
+            return self._from_dict({(la, t, t): self._res(t, i)
+                                    for la in PartitionTuples(self._r, self._n)
+                                    for t in StandardTableauTuples(la)})
+
+        @cached_method
+        def T(self, i=None):
+            r"""
+            Return the generator(s) `T_i` of ``self``.
+
+            INPUT:
+
+            - ``i`` -- (default: ``None``) the generator `T_i` or
+              if ``None``, then the list of all generators `T_i`
+            """
+            if i is None:
+                return [self.T(j) for j in range(self._n)]
+            if i == 0:
+                return self.L(1)
+            # Compute the action 1 * T(i)
+            return self.sum(self._T_action_on_basis(i, (la, t, t))
+                            for la in PartitionTuples(self._r, self._n)
+                            for t in StandardTableauTuples(la))
+
+        def primitive_idempotent(self, t):
+            r"""
+            Return the primitive idempotent `F_t` in ``self``.
+
+            These are precisely the basis elements `S_{tt}` of ``self``.
+
+            EXAMPLES::
+
+                sage: S = algebras.ArikiKoike(8, 4).Seminormal()
+                sage: B = S.basis()
+                sage: STT = B.keys()[1]
+            """
+            t = StandardTableauTuples(self._r, self._n)(t)
+            la = t.shape()
+            t = self.cell_module_indices(la)(t)
+            return self.basis()[la, t, t]
+
+        def _res(self, t, i):
+            """
+            Return the residue of ``i`` in ``t`` in ``self``.
+            """
+            if t.level() == 1:
+                t = [t]
+            for l, tableau in enumerate(t):
+                for r, row in enumerate(tableau):
+                    try:
+                        return self._q**(row.index(i) - r) * self._u[l]
+                    except ValueError:
+                        pass
+            assert False, f"BUG: no residue for {i} in {t}"
+
+        @cached_method
+        def gamma(self, t):
+            Pn = self._algebra._Pn
+            val_cells = {val: (l, r, c) for l, tableau in enumerate(t)
+                         for r, row in enumerate(tableau)
+                         for c, val in enumerate(row)}
+
+            la = t.shape()
+            alpha = sum((val-1) * val for lak in la for val in lak) / ZZ(2)
+            dt = Pn(list(sum((row for tab in t for row in tab), ())))
+
+            return q ** (dt.length() + alpha) * ret
+
+        @cached_method
+        def _from_LT(self, m):
+            Lprod = self.prod(self.L(i)**val for val in m[0])
+            Tprod = self.prod(self.T(i) for val in m[1].reduced_word())
+            return Lprod * Tprod
+
+        @cached_method
+        def _to_LT(self, m):
+            pass
+
+        def _T_action_on_basis(self, i, m):
+            if i == 0:
+                return self._L_on_basis(1, m)
+            la, v, t = m
+            R = self.base_ring()
+
+            ct = t.cells_containing(i)[0]
+            cs = t.cells_containing(i+1)[0]
+            if len(ct) == 2: # it is of level 1 and a regular tableau
+                ct = (0,) + ct
+                cs = (0,) + cs
+
+            if ct[0] == cs[0] and ct[2] == cs[2]: # same column
+                return self.element_class(self, {(la, v, t): -R.one()})
+
+            if ct[0] == cs[0] and ct[1] == cs[1]: # same row
+                return self.element_class(self, {(la, v, t): self._q})
+
+            # result is standard
+            s = t.symmetric_group_action_on_entries(self._Pn.simple_reflection(i))
+            assert s.parent() is t.parent()
+
+            def res(cell):
+                return self._q**(cell[2] - cell[1]) * self._u[cell[0]]
+
+            # Note that the residue of i in t is given by the cell c
+            #   and of i in s corresponds to cell cp because the
+            #   corresponding action of the permutation on t.
+            one = self.base_ring().one()
+            denom = res(cs) - res(ct)
+            coefft = (self._q - one) * res(cs) / denom
+            coeffs = (self._q * res(ct) - res(cs)) / denom
+            return self.element_class(self, {(la, v, t): R(coefft), (la, v, s): R(coeffs)})
+
+        def _L_action_on_basis(self, i, m):
+            return self.term(m, self._res(m[2], i))
+
+        @cached_method
+        def product_on_basis(self, m1, m2):
+            if m1[2] != m2[1]:
+                return self.zero()
+            return self.term((m1[0], m1[1], m2[2]), self.gamma(m1[2]))
