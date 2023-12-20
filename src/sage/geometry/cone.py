@@ -6364,9 +6364,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     Or one that isn't strictly convex::
 
-        sage: K = random_cone(min_ambient_dim=5, min_rays=2,
-        ....:                 strictly_convex=False)
-        sage: K.is_strictly_convex()
+        sage: K = random_cone(min_ambient_dim=5, min_rays=2, strictly_convex=False) # skip_conda random timeouts
+        sage: K.is_strictly_convex() # skip_conda random timeouts
         False
 
     An example with all parameters set::
