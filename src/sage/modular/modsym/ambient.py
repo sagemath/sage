@@ -169,7 +169,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         sign = int(sign)
         if base_ring not in Fields():
-            raise TypeError("base_ring must be a commutative ring")
+            raise TypeError("base_ring must be a field")
 
         if character is None and arithgroup.is_Gamma0(group):
             character = TrivialCharacter(group.level(), base_ring)
@@ -2983,7 +2983,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             self._hecke_matrices = {}
         except KeyError:
             pass
-        tm = verbose("Computing Hecke operator T_%s" % p)
+        tm = verbose(f"Computing Hecke operator T_{p}")
 
         H = heilbronn.HeilbronnCremona(p)
         # H = heilbronn.HeilbronnMerel(p)
