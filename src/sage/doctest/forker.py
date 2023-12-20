@@ -522,8 +522,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         - ``optionflags`` -- Controls the comparison with the expected
           output.  See :mod:`testmod` for more information.
 
-        - ``baseline`` -- ``None`` or a dictionary, the ``baseline_stats``
-          value
+        - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
         EXAMPLES::
 
@@ -538,9 +537,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         O = kwds.pop('outtmpfile', None)
         self.msgfile = kwds.pop('msgfile', None)
         self.options = kwds.pop('sage_options')
-        self.baseline = kwds.pop('baseline', None)
-        if self.baseline is None:
-            self.baseline = {}
+        self.baseline = kwds.pop('baseline', {})
         doctest.DocTestRunner.__init__(self, *args, **kwds)
         self._fakeout = SageSpoofInOut(O)
         if self.msgfile is None:
@@ -1727,12 +1724,8 @@ class DocTestDispatcher(SageObject):
         """
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
-            basename = source.basename
-            if self.controller.baseline_stats:
-                the_baseline_stats = self.controller.baseline_stats.get(basename, {})
-            else:
-                the_baseline_stats = {}
-            if the_baseline_stats.get('failed', False):
+            baseline = self.controller.source_baseline(source)
+            if baseline.get('failed', False):
                 heading += "  # [failed in baseline]"
             if not self.controller.options.only_errors:
                 self.controller.log(heading)
@@ -1740,7 +1733,7 @@ class DocTestDispatcher(SageObject):
             with tempfile.TemporaryFile() as outtmpfile:
                 result = DocTestTask(source)(self.controller.options,
                                              outtmpfile, self.controller.logger,
-                                             baseline=the_baseline_stats)
+                                             baseline=baseline)
                 outtmpfile.seek(0)
                 output = bytes_to_str(outtmpfile.read())
 
@@ -1999,16 +1992,12 @@ class DocTestDispatcher(SageObject):
                             # Start a new worker.
                             import copy
                             worker_options = copy.copy(opt)
-                            basename = source.basename
-                            if self.controller.baseline_stats:
-                                the_baseline_stats = self.controller.baseline_stats.get(basename, {})
-                            else:
-                                the_baseline_stats = {}
+                            baseline = self.controller.source_baseline(source)
                             if target_endtime is not None:
                                 worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
-                            w = DocTestWorker(source, options=worker_options, baseline=the_baseline_stats, funclist=[sel_exit])
+                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
                             heading = self.controller.reporter.report_head(w.source)
-                            if the_baseline_stats.get('failed', False):
+                            if baseline.get('failed', False):
                                 heading += "  # [failed in baseline]"
                             if not self.controller.options.only_errors:
                                 w.messages = heading + "\n"
@@ -2149,6 +2138,8 @@ class DocTestWorker(multiprocessing.Process):
     - ``funclist`` -- a list of callables to be called at the start of
       the child process.
 
+    - ``baseline`` -- dictionary, the ``baseline_stats`` value
+
     EXAMPLES::
 
         sage: from sage.doctest.forker import DocTestWorker, DocTestTask
@@ -2264,7 +2255,8 @@ class DocTestWorker(multiprocessing.Process):
         os.close(self.rmessages)
         msgpipe = os.fdopen(self.wmessages, "w")
         try:
-            task(self.options, self.outtmpfile, msgpipe, self.result_queue, baseline=self.baseline)
+            task(self.options, self.outtmpfile, msgpipe, self.result_queue,
+                 baseline=self.baseline)
         finally:
             msgpipe.close()
             self.outtmpfile.close()
@@ -2548,8 +2540,7 @@ class DocTestTask():
         - ``result_queue`` -- an instance of :class:`multiprocessing.Queue`
           to store the doctest result. For testing, this can also be None.
 
-        - ``baseline`` -- ``None`` or a dictionary, the ``baseline_stats``
-          value.
+        - ``baseline`` -- a dictionary, the ``baseline_stats`` value.
 
         OUTPUT:
 
