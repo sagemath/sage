@@ -260,6 +260,18 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             Traceback (most recent call last):
             ...
             NotImplementedError: Basis must be a square matrix for now.
+
+            sage: D = DGL(ZZ^3, c=(1/2, 0, 0))
+            sage: D._normalisation_factor_zz()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Lattice must contain 0 for now.
+
+            sage: D = DGL(Matrix(3, 3, 1/2))
+            sage: D._normalisation_factor_zz()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Lattice must be integral for now.
         """
 
         # If σ > 1:
@@ -359,7 +371,6 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: e_vals = (D.sigma - r^2 * D.Q).eigenvalues()
             sage: assert all(e_val >= -1e-12 for e_val in e_vals)
         """
-        # TODO: Write doctest
         if self.is_spherical:
             raise RuntimeError("You have encountered a bug. File it! :)")
 
@@ -450,6 +461,15 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
             ....:     add_samples(1000)
 
+        Spherical covariance are automatically handled.
+
+            sage: DGL(ZZ^3, sigma=Matrix(3, 3, 2))
+            Discrete Gaussian sampler with Gaussian parameter σ = 2.00000000000000, c=(0, 0, 0) over lattice with basis
+            <BLANKLINE>
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+
         The sampler supports non-spherical covariance in the form of a Gram
         matrix.
 
@@ -461,6 +481,14 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             63.76927...
             sage: while v not in counter: add_samples(1000)
             sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1: add_samples(1000)
+
+        If the covariance provided is not positive definite, an error is thrown.
+
+            sage: Sigma = Matrix(ZZ, [[0, 1], [1, 0]])
+            sage: DGL(ZZ^2, Sigma)
+            ...
+            RuntimeError: Sigma(=[0.000000000000000  1.00000000000000]
+            [ 1.00000000000000 0.000000000000000]) is not positive definite
 
         The sampler supports passing a basis for the covariance.
 
@@ -553,18 +581,15 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
                 self.VS = FreeModule(ZZ, self.B.nrows())
 
             else:
-                try:
-                    w = self.B.solve_left(self.c)
-                    if w in ZZ ** self.B.nrows():
-                        self._c_in_lattice = True
-                        D = []
-                        for i in range(self.B.nrows()):
-                            sigma_ = self.sigma / self._G[i].norm()
-                            D.append(DGI(sigma=sigma_))
-                        self.D = tuple(D)
-                        self.VS = FreeModule(ZZ, self.B.nrows())
-                except ValueError:
-                    pass
+                w = self.B.solve_left(self.c)
+                if w in ZZ ** self.B.nrows():
+                    self._c_in_lattice = True
+                    D = []
+                    for i in range(self.B.nrows()):
+                        sigma_ = self.sigma / self._G[i].norm()
+                        D.append(DGI(sigma=sigma_))
+                    self.D = tuple(D)
+                    self.VS = FreeModule(ZZ, self.B.nrows())
         else:
             # Variables Sigma2 and r are from [Pei2010]_
             # TODO: B is implicitly assumed to be full-rank for the
