@@ -6,7 +6,7 @@
 # We require it here to prepare Sage for the use of the major new features
 # added in 2.7 and 2.8 (https://pallini.di.uniroma1.it/changes24-28.txt).
 AC_DEFUN([SAGE_TEST_NAUTY_PROGS], [
-    m4_foreach([nautyprog], [directg, gentourng, geng, genbg, gentreeg, converseg, genposetg], [
+    m4_foreach([nautyprog], [directg, gentourng, geng, genbg, gentreeg, genktreeg, converseg, genposetg], [
       AC_PATH_PROG([$2]nautyprog, [[$1]nautyprog])
       AS_IF([test x$[$2]nautyprog = x], [sage_spkg_install_nauty=yes])
     ])
