@@ -1,24 +1,10 @@
 # sage.doctest: needs sage.rings.number_field sage.rings.padics
 r"""
-Solve S-unit equation x + y = 1
+Solver for the `S`-unit equation `x + y = 1`
 
-Inspired by work of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the LLL methods in Sage to implement an algorithm that returns all `S`-unit solutions to the equation `x + y = 1`.
-
-REFERENCES:
-
-- [MR2016]_
-
-- [Sma1995]_
-
-- [Sma1998]_
-
-- [Yu2007]_
-
-- [AKMRVW]_
-
-AUTHORS:
-
-- Alejandra Alvarado, Angelos Koutsianas, Beth Malmskog, Christopher Rasmussen, David Roe, Christelle Vincent, Mckenzie West (2018-04-25 to 2018-11-09): original version
+Inspired by works of Tzanakis--de Weger, Baker--Wustholz and Smart, we use the
+LLL methods to implement an algorithm that returns all `S`-unit solutions to
+the equation `x + y = 1`.
 
 EXAMPLES::
 
@@ -37,6 +23,21 @@ EXAMPLES::
 .. TODO::
 
     - Use Cython to improve timings on the sieve
+
+REFERENCES:
+
+- [MR2016]_
+- [Sma1995]_
+- [Sma1998]_
+- [Yu2007]_
+- [AKMRVW]_
+
+AUTHORS:
+
+- Alejandra Alvarado, Angelos Koutsianas, Beth Malmskog, Christopher Rasmussen,
+  David Roe, Christelle Vincent, Mckenzie West (2018-04-25 to 2018-11-09):
+  original version
+
 """
 
 

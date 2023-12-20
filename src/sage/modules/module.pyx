@@ -205,7 +205,7 @@ cdef class Module(Parent):
         Return the base extension of ``self`` to `R`.
 
         This is the same as ``self.change_ring(R)`` except that a
-        ``TypeError`` is raised if there is no canonical coerce map
+        :class:`TypeError` is raised if there is no canonical coerce map
         from the base ring of ``self`` to `R`.
 
         INPUT:

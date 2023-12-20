@@ -71,6 +71,43 @@ class JmolData(SageObject):
         java_version_number = int(re.sub(r'.*version "(0\.|1\.)?(\d*)[\s\S]*', r'\2', version, flags=re.S))
         return java_version_number >= 7
 
+    def jmolpath(self):
+        """
+        Return the path to the jar file.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.jmoldata import JmolData
+            sage: JData = JmolData()
+            sage: JData.jmolpath()
+            '.../JmolData.jar'
+
+        """
+        jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
+
+        return jmolpath
+
+    def is_jmol_available(self):
+        """
+        Returns True if jmol is available and False if not.
+
+        EXAMPLES:
+
+        Check that it returns a boolean::
+
+            sage: from sage.interfaces.jmoldata import JmolData
+            sage: JData = JmolData()
+            sage: type(JData.is_jmol_available())
+            <... 'bool'>
+        """
+        if not os.path.isfile(self.jmolpath()):
+            return False
+
+        if not self.is_jvm_available():
+            return False
+
+        return True
+
     def export_image(self,
                      targetfile,
                      datafile,  # name (path) of data file Jmol can read or script file telling it what to read or load
@@ -88,8 +125,6 @@ class JmolData(SageObject):
 
         - datafile -- full path to the data file Jmol can read or
           text of a script telling Jmol what to read or load.
-          If it is a script and the platform is cygwin, the filenames in
-          the script should be in native windows format.
 
         - datafile_cmd -- (default ``'script'``)  ``'load'`` or ``'script'``
           should be ``"load"`` for a data file.
@@ -139,10 +174,6 @@ class JmolData(SageObject):
             sage: archive = NamedTemporaryFile(suffix=".zip")
             sage: D.export_jmol(archive.name)                                           # needs sage.plot
             sage: archive_native = archive.name
-            sage: import sys
-            sage: if sys.platform == 'cygwin':
-            ....:     import cygwin
-            ....:     archive_native = cygwin.cygpath(archive_native, 'w')
             sage: script  = f'set defaultdirectory "f{archive_native}"\n'
             sage: script += 'script SCRIPT\n'
             sage: with NamedTemporaryFile(suffix=".png") as testfile:   # optional - java, needs sage.plot
@@ -154,15 +185,8 @@ class JmolData(SageObject):
             sage: archive.close()
         """
         # Set up paths, file names and scripts
-        jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
+        jmolpath = self.jmolpath()
         target_native = targetfile
-
-        if sys.platform == 'cygwin':
-            import cygwin
-            jmolpath = cygwin.cygpath(jmolpath, 'w')
-            target_native = cygwin.cygpath(target_native, 'w')
-            if datafile_cmd != 'script':
-                datafile = cygwin.cygpath(datafile, 'w')
 
         launchscript = ""
         if (datafile_cmd != 'script'):

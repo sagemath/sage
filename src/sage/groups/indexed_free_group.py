@@ -363,7 +363,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
             1
         """
         if isinstance(x, (list, tuple)):
-            d = dict()
+            d = {}
             for k, v in x:
                 if k in d:
                     d[k] += v
