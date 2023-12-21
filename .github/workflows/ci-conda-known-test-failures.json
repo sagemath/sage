@@ -1,15 +1,18 @@
 {
+    "doc.en.constructions.calculus": {
+        "failed": "unreported random failures in plotting"
+    },
     "sage_setup.clean": {
-        "failed": true
+        "failed": "_find_stale_files finds some stale files under sage/tests when executed under conda"
     },
     "sage.algebras.fusion_rings.fusion_ring": {
-        "failed": "see https://github.com/sagemath/sage/pull/36372"
+        "failed": "unreported random timeouts"
     },
     "sage.combinat.cluster_algebra_quiver.quiver": {
         "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6836592771/job/18591690058#step:11:10059"
     },
     "sage.geometry.cone": {
-        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6827937663/job/18571052628#step:11:12362"
+        "failed": "unreported random timeouts seen in https://github.com/sagemath/sage/actions/runs/6827937663/job/18571052628#step:11:12362"
     },
     "sage.groups.matrix_gps.finitely_generated_gap": {
         "failed": true
@@ -36,13 +39,16 @@
         "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6870325919/job/18684964234#step:11:10059"
     },
     "sage.modular.modform.l_series_gross_zagier": {
-        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6859244281/job/18651257775#step:11:10102"
+        "failed": "unreported failure seen in https://github.com/sagemath/sage/actions/runs/6859244281/job/18651257775#step:11:10102"
     },
     "sage.parallel.map_reduce": {
         "failed": "random failure https://github.com/sagemath/sage/issues/36939"
     },
+    "sage.plot.plot": {
+        "failed": "unreported random failure (macOS)"
+    },
     "sage.rings.function_field.drinfeld_modules.morphism": {
-        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6840502530/job/18599835766#step:11:10107"
+        "failed": "unreported random failure seen in https://github.com/sagemath/sage/actions/runs/6840502530/job/18599835766#step:11:10107"
     },
     "sage.rings.polynomial.multi_polynomial_ideal": {
         "failed": true
@@ -51,7 +57,7 @@
         "failed": true
     },
     "sage.rings.polynomial.polynomial_element": {
-        "failed": "see https://github.com/sagemath/sage/pull/36372"
+        "failed": "unreported random failure in symbolic 'roots' (macOS)"
     },
     "sage.rings.polynomial.skew_polynomial_finite_field": {
         "failed": true
@@ -60,7 +66,7 @@
         "failed": "random failure https://github.com/sagemath/sage/issues/36832"
     },
     "sage.sets.recursively_enumerated_set": {
-        "failed": "see https://github.com/sagemath/sage/pull/36372"
+        "failed": "random failures related to AlarmInterrupt (macOS)"
     },
     "sage.structure.coerce_actions": {
         "failed": "random failure https://github.com/sagemath/sage/issues/35973"
