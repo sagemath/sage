@@ -625,7 +625,7 @@ class GraphLatex(SageObject):
 
         - ``option_name`` -- a string for a latex option contained in the list
           ``sage.graphs.graph_latex.GraphLatex.__graphlatex_options``.
-          A ``ValueError`` is raised if the option is not allowed.
+          A :class:`ValueError` is raised if the option is not allowed.
 
         - ``option_value`` -- a value for the option.  If omitted, or set to
           ``None``, the option will use the default value.

@@ -5,6 +5,8 @@ EXAMPLES::
 
     sage: G = Sp(4, GF(7));  G
     Symplectic Group of degree 4 over Finite Field of size 7
+
+    sage: # needs sage.libs.gap
     sage: g = prod(G.gens());  g
     [3 0 3 0]
     [1 0 0 0]
@@ -138,6 +140,7 @@ def Sp(n, R, var='a', invariant_form=None):
         sage: groups.matrix.Sp(2, 3)                                                    # needs sage.modules sage.rings.finite_rings
         Symplectic Group of degree 2 over Finite Field of size 3
 
+        sage: # needs sage.libs.gap
         sage: G = Sp(4,5)
         sage: TestSuite(G).run()
     """

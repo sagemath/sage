@@ -1224,7 +1224,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         n = len(G.columns())
         k = len(G.rows())
         G0 = [[x**q0 for x in g.list()] for g in G.rows()]
-        G1 = [[x for x in g.list()] for g in G.rows()]
+        G1 = [list(g.list()) for g in G.rows()]
         G2 = G0+G1
         MS = MatrixSpace(F,2*k,n)
         G3 = MS(G2)
@@ -1342,7 +1342,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         .. NOTE::
 
-            When using GAP, this raises a ``NotImplementedError`` if
+            When using GAP, this raises a :class:`NotImplementedError` if
             the base field of the code has size greater than 256 due
             to limitations in GAP.
 
@@ -1657,7 +1657,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                     size = Gp.Size()
                     print("\n Using the %s codewords of weight %s \n Supergroup size: \n %s\n " % (wts[wt], wt, size))
                 Cwt = filter(lambda c: c.WeightCodeword() == wt, eltsC)   # bottleneck 2 (repeated
-                matCwt = list(map(lambda c: c.VectorCodeword(), Cwt))            # for each i until stop = 1)
+                matCwt = [c.VectorCodeword() for c in Cwt]            # for each i until stop = 1)
                 if len(matCwt) > 0:
                     A = libgap(matCwt).MatrixAutomorphisms()
                     Gp = A.Intersection2(Gp)  #  bottleneck 3
