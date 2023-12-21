@@ -2,6 +2,9 @@
     "sage_setup.clean": {
         "failed": true
     },
+    "sage.algebras.fusion_rings.fusion_ring": {
+        "failed": true
+    },
     "sage.combinat.cluster_algebra_quiver.quiver": {
         "failed": true
     },
@@ -47,10 +50,16 @@
     "sage.rings.polynomial.multi_polynomial_libsingular": {
         "failed": true
     },
+    "sage.rings.polynomial.polynomial_element": {
+        "failed": true
+    },
     "sage.rings.polynomial.skew_polynomial_finite_field": {
         "failed": true
     },
     "sage.schemes.elliptic_curves.ell_field": {
+        "failed": true
+    },
+    "sage.sets.recursively_enumerated_set": {
         "failed": true
     },
     "sage.structure.coerce_actions": {
