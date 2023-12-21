@@ -174,7 +174,7 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     i = s.find("<PRE>")
     j = s.find("</PRE>")
     if i == -1 or j == -1:
-        raise IOError("Error parsing data (missing pre tags).")
+        raise OSError("Error parsing data (missing pre tags).")
     return s[i+5:j].strip()
 
 
