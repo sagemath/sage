@@ -131,11 +131,12 @@ def Sphere(n):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.kenzo import Sphere # optional - kenzo
-        sage: s2 = Sphere(2)                           # optional - kenzo
-        sage: s2                                       # optional - kenzo
+        sage: # optional - kenzo
+        sage: from sage.interfaces.kenzo import Sphere
+        sage: s2 = Sphere(2)
+        sage: s2
         [K1 Simplicial-Set]
-        sage: [s2.homology(i) for i in range(8)]       # optional - kenzo
+        sage: [s2.homology(i) for i in range(8)]
         [Z, 0, Z, 0, 0, 0, 0, 0]
     """
     kenzosphere = __sphere__(n)
@@ -162,11 +163,12 @@ def MooreSpace(m, n):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.kenzo import MooreSpace   # optional - kenzo
-        sage: m24 = MooreSpace(2,4)                          # optional - kenzo
-        sage: m24                                            # optional - kenzo
+        sage: # optional - kenzo
+        sage: from sage.interfaces.kenzo import MooreSpace
+        sage: m24 = MooreSpace(2,4)
+        sage: m24
         [K10 Simplicial-Set]
-        sage: [m24.homology(i) for i in range(8)]            # optional - kenzo
+        sage: [m24.homology(i) for i in range(8)]
         [Z, 0, 0, 0, C2, 0, 0, 0]
     """
     kenzomoore = __moore__(m, n)
@@ -387,10 +389,11 @@ class KenzoSpectralSequence(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import Sphere # optional - kenzo
-            sage: S2 = Sphere(2)                           # optional - kenzo
-            sage: EMS = S2.em_spectral_sequence()          # optional - kenzo
-            sage: EMS.table(0, -2, 2, -2, 2)               # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import Sphere
+            sage: S2 = Sphere(2)
+            sage: EMS = S2.em_spectral_sequence()
+            sage: EMS.table(0, -2, 2, -2, 2)
               0   Z   0   0   0
               0   0   0   0   0
               0   0   Z   0   0
@@ -431,11 +434,12 @@ class KenzoChainComplex(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import Sphere   # optional - kenzo
-            sage: s2 = Sphere(2)                             # optional - kenzo
-            sage: s2                                         # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import Sphere
+            sage: s2 = Sphere(2)
+            sage: s2
             [K1 Simplicial-Set]
-            sage: s2.homology(2)                             # optional - kenzo
+            sage: s2.homology(2)
             Z
         """
         echcm1 = __echcm__(self._kenzo)
@@ -490,15 +494,16 @@ class KenzoChainComplex(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex   # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
-            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)         # optional - kenzo
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                                # optional - kenzo
-            sage: kenzo_chcm                                                           # optional - kenzo
+            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: for i in range(6):                                                   # optional - kenzo
+            sage: for i in range(6):
             ....:     print("Basis in dimension %i: %s" % (i, kenzo_chcm.basis(i)))
             Basis in dimension 0: ['G0G0', 'G0G1', 'G0G2']
             Basis in dimension 1: ['G1G0', 'G1G1']
@@ -506,7 +511,6 @@ class KenzoChainComplex(KenzoObject):
             Basis in dimension 3: ['G3G0', 'G3G1']
             Basis in dimension 4: ['G4G0', 'G4G1']
             Basis in dimension 5: ['G5G0', 'G5G1', 'G5G2']
-
         """
         return __basis_aux1__(self._kenzo, dim).python()
 
@@ -603,26 +607,27 @@ class KenzoChainComplex(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex                 # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
             sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                           # optional - kenzo
-            sage: kenzo_chcm                                                      # optional - kenzo
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: kenzo_chcm.basis(4)                                             # optional - kenzo
+            sage: kenzo_chcm.basis(4)
             ['G4G0', 'G4G1']
-            sage: kenzo_chcm.differential(4, [1, 'G4G0'])                         # optional - kenzo
+            sage: kenzo_chcm.differential(4, [1, 'G4G0'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 3}
             <1 * G3G0>
             <3 * G3G1>
             ------------------------------------------------------------------------------
             <BLANKLINE>
-            sage: kenzo_chcm.basis(5)                                             # optional - kenzo
+            sage: kenzo_chcm.basis(5)
             ['G5G0', 'G5G1', 'G5G2']
-            sage: kenzo_chcm.differential(5, [1, 'G5G0', 2, 'G5G2'])              # optional - kenzo
+            sage: kenzo_chcm.differential(5, [1, 'G5G0', 2, 'G5G2'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <6 * G4G0>
@@ -748,10 +753,11 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import Sphere      # optional - kenzo
-            sage: s2 = Sphere(2)                                # optional - kenzo
-            sage: p = s2.cartesian_product(s2)                  # optional - kenzo
-            sage: p.homotopy_group(3)                           # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import Sphere
+            sage: s2 = Sphere(2)
+            sage: p = s2.cartesian_product(s2)
+            sage: p.homotopy_group(3)
             Multiplicative Abelian group isomorphic to Z x Z
 
 
@@ -780,10 +786,11 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import Sphere # optional - kenzo
-            sage: S2 = Sphere(2)                           # optional - kenzo
-            sage: EMS = S2.em_spectral_sequence()          # optional - kenzo
-            sage: EMS.table(0, -2, 2, -2, 2)               # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import Sphere
+            sage: S2 = Sphere(2)
+            sage: EMS = S2.em_spectral_sequence()
+            sage: EMS.table(0, -2, 2, -2, 2)
               0   Z   0   0   0
               0   0   0   0   0
               0   0   Z   0   0
@@ -1090,15 +1097,16 @@ def KChainComplex(chain_complex):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.kenzo import KChainComplex                 # optional - kenzo
+        sage: # optional - kenzo
+        sage: from sage.interfaces.kenzo import KChainComplex
         sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
         sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
         sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
-        sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)    # optional - kenzo
-        sage: kenzo_chcm = KChainComplex(sage_chcm)                           # optional - kenzo
-        sage: kenzo_chcm                                                      # optional - kenzo
+        sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
+        sage: kenzo_chcm = KChainComplex(sage_chcm)
+        sage: kenzo_chcm
         [K... Chain-Complex]
-        sage: kenzo_chcm.homology(5)                                          # optional - kenzo
+        sage: kenzo_chcm.homology(5)
         Z x Z
     """
     d = chain_complex.differential()
@@ -1242,8 +1250,9 @@ def KFiniteSimplicialSet(sset):
 
     EXAMPLES::
 
+        sage: # optional - kenzo
         sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
-        sage: from sage.interfaces.kenzo import KFiniteSimplicialSet    # optional - kenzo
+        sage: from sage.interfaces.kenzo import KFiniteSimplicialSet
         sage: s0 = AbstractSimplex(0, name='s0')
         sage: s1 = AbstractSimplex(0, name='s1')
         sage: s2 = AbstractSimplex(0, name='s2')
@@ -1253,15 +1262,15 @@ def KFiniteSimplicialSet(sset):
         sage: s012 = AbstractSimplex(2, name='s012')
         sage: Triangle = SimplicialSet({s01: (s1, s0),\
         ....: s02: (s2, s0), s12: (s2, s1)}, base_point = s0)
-        sage: KTriangle = KFiniteSimplicialSet(Triangle)                # optional - kenzo
-        sage: KTriangle.homology(1)                                     # optional - kenzo
+        sage: KTriangle = KFiniteSimplicialSet(Triangle)
+        sage: KTriangle.homology(1)
         Z
-        sage: KTriangle.basis(1)                                        # optional - kenzo
+        sage: KTriangle.basis(1)
         ['CELL_1_0', 'CELL_1_1', 'CELL_1_2']
         sage: S1 = simplicial_sets.Sphere(1)
         sage: S3 = simplicial_sets.Sphere(3)
-        sage: KS1vS3 = KFiniteSimplicialSet(S1.wedge(S3))               # optional - kenzo
-        sage: KS1vS3.homology(3)                                        # optional - kenzo
+        sage: KS1vS3 = KFiniteSimplicialSet(S1.wedge(S3))
+        sage: KS1vS3.homology(3)
         Z
     """
     from sage.topology.simplicial_set_constructions import ProductOfSimplicialSets
@@ -1389,18 +1398,19 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex                # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
-            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)   # optional - kenzo
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                          # optional - kenzo
-            sage: kenzo_chcm                                                     # optional - kenzo
+            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: differential_morphism = kenzo_chcm.differential()              # optional - kenzo
-            sage: differential_morphism                                          # optional - kenzo
+            sage: differential_morphism = kenzo_chcm.differential()
+            sage: differential_morphism
             [K... Morphism (degree -1): K... -> K...]
-            sage: differential_morphism.source_complex()                         # optional - kenzo
+            sage: differential_morphism.source_complex()
             [K... Chain-Complex]
         """
         return KenzoChainComplex(__sorc_aux__(self._kenzo))
@@ -1415,18 +1425,19 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex                # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
-            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)   # optional - kenzo
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                          # optional - kenzo
-            sage: kenzo_chcm                                                     # optional - kenzo
+            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: differential_morphism = kenzo_chcm.differential()              # optional - kenzo
-            sage: differential_morphism                                          # optional - kenzo
+            sage: differential_morphism = kenzo_chcm.differential()
+            sage: differential_morphism
             [K... Morphism (degree -1): K... -> K...]
-            sage: differential_morphism.target_complex()                         # optional - kenzo
+            sage: differential_morphism.target_complex()
             [K... Chain-Complex]
         """
         return KenzoChainComplex(__trgt_aux__(self._kenzo))
@@ -1441,22 +1452,23 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex                # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
-            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)   # optional - kenzo
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                          # optional - kenzo
-            sage: kenzo_chcm                                                     # optional - kenzo
+            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree=-1)
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: differential_morphism = kenzo_chcm.differential()              # optional - kenzo
-            sage: differential_morphism                                          # optional - kenzo
+            sage: differential_morphism = kenzo_chcm.differential()
+            sage: differential_morphism
             [K... Morphism (degree -1): K... -> K...]
-            sage: differential_morphism.degree()                                 # optional - kenzo
+            sage: differential_morphism.degree()
             -1
-            sage: differential_morphism.composite(differential_morphism).degree() # optional - kenzo
+            sage: differential_morphism.composite(differential_morphism).degree()
             -2
-            sage: kenzo_chcm.null_morphism().degree()                            # optional - kenzo
+            sage: kenzo_chcm.null_morphism().degree()
             0
         """
         return __degr_aux__(self._kenzo).python()
@@ -1485,51 +1497,52 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex                 # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
             sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                           # optional - kenzo
-            sage: kenzo_chcm                                                      # optional - kenzo
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: differential_morphism = kenzo_chcm.differential()               # optional - kenzo
-            sage: differential_morphism                                           # optional - kenzo
+            sage: differential_morphism = kenzo_chcm.differential()
+            sage: differential_morphism
             [K... Morphism (degree -1): K... -> K...]
-            sage: dif_squared = differential_morphism.composite(differential_morphism)  # optional - kenzo
-            sage: dif_squared                                                     # optional - kenzo
+            sage: dif_squared = differential_morphism.composite(differential_morphism)
+            sage: dif_squared
             [K... Morphism (degree -2): K... -> K...]
-            sage: kenzo_chcm.basis(5)                                             # optional - kenzo
+            sage: kenzo_chcm.basis(5)
             ['G5G0', 'G5G1', 'G5G2']
-            sage: kenzo_chcm.differential(5, [1, 'G5G0', 2, 'G5G2'])              # optional - kenzo
+            sage: kenzo_chcm.differential(5, [1, 'G5G0', 2, 'G5G2'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <6 * G4G0>
             <-3 * G4G1>
             ------------------------------------------------------------------------------
             <BLANKLINE>
-            sage: differential_morphism.evaluation(5, [1, 'G5G0', 2, 'G5G2'])     # optional - kenzo
+            sage: differential_morphism.evaluation(5, [1, 'G5G0', 2, 'G5G2'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <6 * G4G0>
             <-3 * G4G1>
             ------------------------------------------------------------------------------
             <BLANKLINE>
-            sage: dif_squared.evaluation(5, [1, 'G5G0', 2, 'G5G2'])               # optional - kenzo
+            sage: dif_squared.evaluation(5, [1, 'G5G0', 2, 'G5G2'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 3}
             ------------------------------------------------------------------------------
             <BLANKLINE>
-            sage: idnt = kenzo_chcm.identity_morphism()                             # optional - kenzo
-            sage: idx2 = idnt.sum(idnt)                                             # optional - kenzo
-            sage: idnt.evaluation(5, [1, 'G5G0', 2, 'G5G2'])                        # optional - kenzo
+            sage: idnt = kenzo_chcm.identity_morphism()
+            sage: idx2 = idnt.sum(idnt)
+            sage: idnt.evaluation(5, [1, 'G5G0', 2, 'G5G2'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 5}
             <1 * G5G0>
             <2 * G5G2>
             ------------------------------------------------------------------------------
             <BLANKLINE>
-            sage: idx2.evaluation(5, [1, 'G5G0', 2, 'G5G2'])                      # optional - kenzo
+            sage: idx2.evaluation(5, [1, 'G5G0', 2, 'G5G2'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 5}
             <2 * G5G0>
@@ -1556,30 +1569,31 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex                # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
-            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)   # optional - kenzo
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                          # optional - kenzo
-            sage: kenzo_chcm                                                     # optional - kenzo
+            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: idnt = kenzo_chcm.identity_morphism()                          # optional - kenzo
-            sage: idnt                                                           # optional - kenzo
+            sage: idnt = kenzo_chcm.identity_morphism()
+            sage: idnt
             [K... Morphism (degree 0): K... -> K...]
-            sage: opps_id = idnt.opposite()                                      # optional - kenzo
-            sage: opps_id                                                        # optional - kenzo
+            sage: opps_id = idnt.opposite()
+            sage: opps_id
             [K... Morphism (degree 0): K... -> K...]
-            sage: kenzo_chcm.basis(4)                                            # optional - kenzo
+            sage: kenzo_chcm.basis(4)
             ['G4G0', 'G4G1']
-            sage: idnt.evaluation(4, [2, 'G4G0', -5, 'G4G1'])                    # optional - kenzo
+            sage: idnt.evaluation(4, [2, 'G4G0', -5, 'G4G1'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <2 * G4G0>
             <-5 * G4G1>
             ------------------------------------------------------------------------------
             <BLANKLINE>
-            sage: opps_id.evaluation(4, [2, 'G4G0', -5, 'G4G1'])                 # optional - kenzo
+            sage: opps_id.evaluation(4, [2, 'G4G0', -5, 'G4G1'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <-2 * G4G0>
@@ -1653,36 +1667,37 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex                # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
-            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)   # optional - kenzo
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                          # optional - kenzo
-            sage: kenzo_chcm                                                     # optional - kenzo
+            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: idnt = kenzo_chcm.identity_morphism()                          # optional - kenzo
-            sage: idnt                                                           # optional - kenzo
+            sage: idnt = kenzo_chcm.identity_morphism()
+            sage: idnt
             [K... Morphism (degree 0): K... -> K...]
-            sage: opps_id = idnt.opposite()                                      # optional - kenzo
-            sage: opps_id                                                        # optional - kenzo
+            sage: opps_id = idnt.opposite()
+            sage: opps_id
             [K... Morphism (degree 0): K... -> K...]
-            sage: null = kenzo_chcm.null_morphism()                              # optional - kenzo
-            sage: null                                                           # optional - kenzo
+            sage: null = kenzo_chcm.null_morphism()
+            sage: null
             [K... Morphism (degree 0): K... -> K...]
-            sage: idx2 = idnt.sum(idnt)                                          # optional - kenzo
-            sage: idx5 = idx2.sum(                                               # optional - kenzo
+            sage: idx2 = idnt.sum(idnt)
+            sage: idx5 = idx2.sum(
             ....:   (opps_id, idnt, idnt, null, idx2.sum(idnt), opps_id))
-            sage: kenzo_chcm.basis(4)                                            # optional - kenzo
+            sage: kenzo_chcm.basis(4)
             ['G4G0', 'G4G1']
-            sage: idx2.evaluation(4, [2, 'G4G0', -5, 'G4G1'])                    # optional - kenzo
+            sage: idx2.evaluation(4, [2, 'G4G0', -5, 'G4G1'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <4 * G4G0>
             <-10 * G4G1>
             ------------------------------------------------------------------------------
             <BLANKLINE>
-            sage: idx5.evaluation(4, [2, 'G4G0', -5, 'G4G1'])                    # optional - kenzo
+            sage: idx5.evaluation(4, [2, 'G4G0', -5, 'G4G1'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <10 * G4G0>
@@ -1719,36 +1734,37 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.kenzo import KChainComplex                # optional - kenzo
+            sage: # optional - kenzo
+            sage: from sage.interfaces.kenzo import KChainComplex
             sage: m1 = matrix(ZZ, 3, 2, [-1, 1, 3, -4, 5, 6])
             sage: m4 = matrix(ZZ, 2, 2, [1, 2, 3, 6])
             sage: m5 = matrix(ZZ, 2, 3, [2, 2, 2, -1, -1, -1])
-            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)   # optional - kenzo
-            sage: kenzo_chcm = KChainComplex(sage_chcm)                          # optional - kenzo
-            sage: kenzo_chcm                                                     # optional - kenzo
+            sage: sage_chcm = ChainComplex({1: m1, 4: m4, 5: m5}, degree = -1)
+            sage: kenzo_chcm = KChainComplex(sage_chcm)
+            sage: kenzo_chcm
             [K... Chain-Complex]
-            sage: idnt = kenzo_chcm.identity_morphism()                          # optional - kenzo
-            sage: idnt                                                           # optional - kenzo
+            sage: idnt = kenzo_chcm.identity_morphism()
+            sage: idnt
             [K... Morphism (degree 0): K... -> K...]
-            sage: opps_id = idnt.opposite()                                      # optional - kenzo
-            sage: opps_id                                                        # optional - kenzo
+            sage: opps_id = idnt.opposite()
+            sage: opps_id
             [K... Morphism (degree 0): K... -> K...]
-            sage: null = kenzo_chcm.null_morphism()                              # optional - kenzo
-            sage: null                                                           # optional - kenzo
+            sage: null = kenzo_chcm.null_morphism()
+            sage: null
             [K... Morphism (degree 0): K... -> K...]
-            sage: idx2 = idnt.substract(opps_id)                                 # optional - kenzo
-            sage: opps_idx2 = idx2.substract(                                    # optional - kenzo
+            sage: idx2 = idnt.substract(opps_id)
+            sage: opps_idx2 = idx2.substract(
             ....:   (opps_id, idnt, idnt, null, idx2.substract(opps_id)))
-            sage: kenzo_chcm.basis(4)                                            # optional - kenzo
+            sage: kenzo_chcm.basis(4)
             ['G4G0', 'G4G1']
-            sage: idx2.evaluation(4, [2, 'G4G0', -5, 'G4G1'])                    # optional - kenzo
+            sage: idx2.evaluation(4, [2, 'G4G0', -5, 'G4G1'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <4 * G4G0>
             <-10 * G4G1>
             ------------------------------------------------------------------------------
             <BLANKLINE>
-            sage: opps_idx2.evaluation(4, [2, 'G4G0', -5, 'G4G1'])               # optional - kenzo
+            sage: opps_idx2.evaluation(4, [2, 'G4G0', -5, 'G4G1'])
             <BLANKLINE>
             ----------------------------------------------------------------------{CMBN 4}
             <-4 * G4G0>
@@ -1954,16 +1970,16 @@ def KChainComplexMorphism(morphism):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.kenzo import KChainComplexMorphism           # optional - kenzo
+        sage: # optional - kenzo
+        sage: from sage.interfaces.kenzo import KChainComplexMorphism
         sage: C = ChainComplex({0: identity_matrix(ZZ, 1)})
         sage: D = ChainComplex({0: zero_matrix(ZZ, 1), 1: zero_matrix(ZZ, 1)})
         sage: f = Hom(C,D)({0: identity_matrix(ZZ, 1), 1: zero_matrix(ZZ, 1)})
-        sage: g = KChainComplexMorphism(f)                                      # optional - kenzo
-        sage: g                                                                 # optional - kenzo
+        sage: g = KChainComplexMorphism(f); g
         [K... Morphism (degree 0): K... -> K...]
-        sage: g.source_complex()                                                # optional - kenzo
+        sage: g.source_complex()
         [K... Chain-Complex]
-        sage: g.target_complex()                                                # optional - kenzo
+        sage: g.target_complex()
         [K... Chain-Complex]
     """
     source = KChainComplex(morphism.domain())
@@ -2017,21 +2033,22 @@ def BicomplexSpectralSequence(l):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.kenzo import BicomplexSpectralSequence # optional - kenzo
+        sage: # optional - kenzo
+        sage: from sage.interfaces.kenzo import BicomplexSpectralSequence
         sage: C1 = ChainComplex({1: matrix(ZZ, 0, 2, [])}, degree_of_differential=-1)
         sage: C2 = ChainComplex({1: matrix(ZZ, 1, 2, [1, 0])},degree_of_differential=-1)
         sage: C3 = ChainComplex({0: matrix(ZZ, 0,2 , [])},degree_of_differential=-1)
         sage: M1 = Hom(C2,C1)({1: matrix(ZZ, 2, 2, [2, 0, 0, 2])})
         sage: M2 = Hom(C3,C2)({0: matrix(ZZ, 1, 2, [2, 0])})
         sage: l = [M1, M2]
-        sage: E = BicomplexSpectralSequence(l)                        # optional - kenzo
-        sage: E.group(2,0,1)                                          # optional - kenzo
+        sage: E = BicomplexSpectralSequence(l)
+        sage: E.group(2,0,1)
         Additive abelian group isomorphic to Z/2 + Z
-        sage: E.table(3,0,2,0,2)                                      # optional - kenzo
+        sage: E.table(3,0,2,0,2)
         0           0   0
         Z/2 + Z/4   0   0
         0           0   Z
-        sage: E.matrix(2,2,0)                                         # optional - kenzo
+        sage: E.matrix(2,2,0)
         [ 0  0]
         [-4  0]
     """

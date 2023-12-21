@@ -25,6 +25,7 @@ AUTHORS:
 
 
 from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
 
@@ -61,6 +62,13 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         self._one_element = self.element_class(self, R.one())
         CommutativeRing.__init__(self, R.base_ring(), names=names,
                                  category=R.category())
+        ernames = []
+        for n in names:
+            ernames.append(n)
+            ernames.append(n + "inv")
+        ER = PolynomialRing(R.base_ring(), ernames)
+        self._extended_ring = ER
+        self._extended_ring_ideal = ER.ideal([ER.gen(2*i)*ER.gen(2*i+1)-1 for i in range(self._n)])
 
     def ngens(self):
         """

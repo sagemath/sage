@@ -5518,7 +5518,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``BR`` -- (default: `\QQ`) the base ring
+        - ``base_ring`` -- (default: `\QQ`) the base ring
 
         EXAMPLES::
 
@@ -5533,6 +5533,43 @@ class Partition(CombinatorialElement):
             return StandardTableaux(self).cardinality()
         from sage.combinat.specht_module import specht_module_rank
         return specht_module_rank(self, base_ring)
+
+    def simple_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the simple module corresponding to ``self``.
+
+        When the base ring is a field of characteristic `0`, this is equal
+        to the dimension of the Specht module.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: Partition([2,2,1]).simple_module_dimension()
+            5
+            sage: Partition([2,2,1]).specht_module_dimension(GF(3))                     # optional - sage.rings.finite_rings
+            5
+            sage: Partition([2,2,1]).simple_module_dimension(GF(3))                     # optional - sage.rings.finite_rings
+            4
+
+            sage: for la in Partitions(6, regular=3):
+            ....:     print(la, la.specht_module_dimension(), la.simple_module_dimension(GF(3)))
+            [6] 1 1
+            [5, 1] 5 4
+            [4, 2] 9 9
+            [4, 1, 1] 10 6
+            [3, 3] 5 1
+            [3, 2, 1] 16 4
+            [2, 2, 1, 1] 9 9
+        """
+        from sage.categories.fields import Fields
+        if base_ring is None or (base_ring in Fields() and base_ring.characteristic() == 0):
+            from sage.combinat.tableau import StandardTableaux
+            return StandardTableaux(self).cardinality()
+        from sage.combinat.specht_module import simple_module_rank
+        return simple_module_rank(self, base_ring)
 
 
 ##############

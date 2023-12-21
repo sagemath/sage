@@ -46,7 +46,7 @@ equivalent::
     sage: type(_)
     <class 'sage.rings.integer.Integer'>
 
-    sage: libgap.eval('5/3 + 7*E(3)').sage()
+    sage: libgap.eval('5/3 + 7*E(3)').sage()                                            # needs sage.rings.number_field
     7*zeta3 + 5/3
 
     sage: gens_of_group = libgap.AlternatingGroup(4).GeneratorsOfGroup()
@@ -265,7 +265,7 @@ class Gap(Parent):
 
             sage: libgap.has_coerce_map_from(ZZ)
             True
-            sage: libgap.has_coerce_map_from(CyclotomicField(5)['x','y'])
+            sage: libgap.has_coerce_map_from(CyclotomicField(5)['x','y'])               # needs sage.rings.number_field
             True
         """
         return True
@@ -362,11 +362,12 @@ class Gap(Parent):
 
         We gracefully handle the case that the conversion fails (:trac:`18039`)::
 
-            sage: F.<a> = GF(9, modulus="first_lexicographic")
-            sage: libgap(Matrix(F, [[a]]))
+            sage: F.<a> = GF(9, modulus="first_lexicographic")                          # needs sage.rings.finite_rings
+            sage: libgap(Matrix(F, [[a]]))                                              # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            NotImplementedError: conversion of (Givaro) finite field element to GAP not implemented except for fields defined by Conway polynomials.
+            NotImplementedError: conversion of (Givaro) finite field element to GAP
+            not implemented except for fields defined by Conway polynomials.
         """
         ring = M.base_ring()
         try:

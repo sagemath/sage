@@ -102,7 +102,6 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut) noe
     cdef int cur = 0
     cdef list perm = []
     cdef bint* done = <bint*> check_calloc(n, sizeof(bint))
-    cdef int i
 
     gens, int_to_vertex, N = <object>user_param
 
@@ -397,9 +396,10 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
       canonical graph of ``G`` or its set of edges
 
     - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider
-      edge labels. The edge labels are assumed to be hashable and sortable. If
-      this is not the case (ie a ``TypeError`` is raised), the algorithm will
-      consider the string representations of the labels instead of the labels.
+      edge labels. The edge labels are assumed to be hashable and
+      sortable. If this is not the case (ie a :class:`TypeError` is
+      raised), the algorithm will consider the string representations
+      of the labels instead of the labels.
 
     - ``certificate`` -- boolean (default: ``False``); when set to ``True``,
       returns the labeling of G into a canonical graph
@@ -511,7 +511,6 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     cdef bint directed = G.is_directed()
 
-    cdef int labInd
     cdef list Vout = []
     cdef list Vin = []
     cdef list labels = []
@@ -581,7 +580,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     if return_graph:
         if directed:
-            from sage.graphs.graph import DiGraph
+            from sage.graphs.digraph import DiGraph
             H = DiGraph(new_edges, loops=G.allows_loops(), multiedges=G.allows_multiple_edges())
         else:
             from sage.graphs.graph import Graph

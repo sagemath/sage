@@ -29,7 +29,7 @@ treewidth of a tree equal to one.
 The *length* of a tree decomposition, as proposed in [DG2006]_, is the maximum
 *diameter* in `G` of its bags, where the diameter of a bag `X_i` is the largest
 distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v \in X_i}
-dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the minimum length
+\dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the minimum length
 among all possible tree decompositions of `G`.
 
 While deciding whether a graph has treelength 1 can be done in linear time
@@ -80,6 +80,7 @@ The treewidth of a clique is `n-1` and its treelength is 1::
     :meth:`is_valid_tree_decomposition` | Check whether `T` is a valid tree-decomposition for `G`.
     :meth:`reduced_tree_decomposition` | Return a reduced tree-decomposition of `T`.
     :meth:`width_of_tree_decomposition` | Return the width of the tree decomposition `T` of `G`.
+    :meth:`length_of_tree_decomposition` | Return the length of the tree decomposition `T` of `G`.
 
 
 .. TODO:
@@ -817,6 +818,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
     INPUT:
 
     - ``graph`` -- a Sage graph
+
     - ``tree_decomp`` -- a tree decomposition
 
     OUTPUT:
@@ -852,6 +854,46 @@ def make_nice_tree_decomposition(graph, tree_decomp):
         sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
         sage: make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
         Nice tree decomposition of Tree decomposition: Graph on 15 vertices
+
+    Check that :issue:`36843` is fixed::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: triangle = graphs.CompleteGraph(3)
+        sage: triangle_TD = triangle.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(triangle, triangle_TD)
+        Nice tree decomposition of Tree decomposition: Graph on 7 vertices
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: graph = graphs.CompleteBipartiteGraph(2, 5)
+        sage: graph_TD = graph.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(graph, graph_TD)
+        Nice tree decomposition of Tree decomposition: Graph on 25 vertices
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: empty_graph = graphs.EmptyGraph()
+        sage: tree_decomp = empty_graph.treewidth(certificate=True)
+        sage: len(make_nice_tree_decomposition(empty_graph, tree_decomp))
+        0
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: singleton = graphs.CompleteGraph(1)
+        sage: tree_decomp = singleton.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(singleton, tree_decomp)
+        Nice tree decomposition of Tree decomposition: Graph on 3 vertices
+
+    ::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition
+        sage: an_edge = graphs.CompleteGraph(2)
+        sage: tree_decomp = an_edge.treewidth(certificate=True)
+        sage: make_nice_tree_decomposition(an_edge, tree_decomp)
+        Nice tree decomposition of Tree decomposition: Graph on 5 vertices
     """
     if not is_valid_tree_decomposition(graph, tree_decomp):
         raise ValueError("input must be a valid tree decomposition for this graph")
@@ -863,11 +905,19 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     # Step 1: Ensure the tree is directed and has a root
     # Choose a root and orient the edges from root-to-leaves direction
-    leaves = [u for u in tree_decomp if tree_decomp.degree(u) == 1]
-    root = leaves.pop()
+    #
+    # Testing <= 1 for the special case when one bag containing all vertices
+    leaves = [u for u in tree_decomp if tree_decomp.degree(u) <= 1]
+
     from sage.graphs.digraph import DiGraph
-    directed_tree = DiGraph(tree_decomp.breadth_first_search(start=root, edges=True),
-                            format='list_of_edges')
+    if len(leaves) == 1:
+        root = leaves[0]
+        directed_tree = DiGraph(tree_decomp)
+    else:
+        root = leaves.pop()
+
+        directed_tree = DiGraph(tree_decomp.breadth_first_search(start=root, edges=True),
+                                format='list_of_edges')
 
     # Relabel the graph in range (0, |tree_decomp| - 1)
     bags_to_int = directed_tree.relabel(inplace=True, return_map=True)
@@ -904,7 +954,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
             children = directed_tree.neighbors_out(ui)
             children.pop() # one vertex remains a child of ui
 
-            directed_tree.delete_edges((ui, vi) for v in children)
+            directed_tree.delete_edges((ui, vi) for vi in children)
 
             new_nodes = [directed_tree.add_vertex() for _ in range(len(children) - 1)]
 
@@ -1011,7 +1061,8 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     return nice_tree_decomp
 
-def label_nice_tree_decomposition(nice_TD, root):
+
+def label_nice_tree_decomposition(nice_TD, root, directed=False):
     r"""
     Return a nice tree decomposition with nodes labelled accordingly.
 
@@ -1021,6 +1072,10 @@ def label_nice_tree_decomposition(nice_TD, root):
 
     - ``root`` -- the root of the nice tree decomposition
 
+    - ``directed`` -- boolean (default: ``False``); whether to return the nice
+      tree decomposition as a directed graph rooted at vertex ``root`` or as an
+      undirected graph
+
     OUTPUT:
 
     A nice tree decomposition with nodes labelled.
@@ -1028,45 +1083,39 @@ def label_nice_tree_decomposition(nice_TD, root):
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition, label_nice_tree_decomposition
-        sage: bip_one_four = graphs.CompleteBipartiteGraph(1, 4)
-        sage: bip_one_four_TD = bip_one_four.treewidth(certificate=True)
-        sage: nice_TD = make_nice_tree_decomposition(bip_one_four, bip_one_four_TD)
+        sage: claw = graphs.CompleteBipartiteGraph(1, 3)
+        sage: claw_TD = claw.treewidth(certificate=True)
+        sage: nice_TD = make_nice_tree_decomposition(claw, claw_TD)
         sage: root = sorted(nice_TD.vertices())[0]
-        sage: label_TD = label_nice_tree_decomposition(nice_TD, root)
-        sage: for node in sorted(label_TD):
+        sage: label_TD = label_nice_tree_decomposition(nice_TD, root, directed=True)
+        sage: label_TD.name()
+        'Labelled Nice tree decomposition of Tree decomposition'
+        sage: for node in sorted(label_TD):  # random
         ....:     print(node, label_TD.get_vertex(node))
-        (0, {}) root
+        (0, {}) forget
         (1, {0}) forget
         (2, {0, 1}) intro
         (3, {0}) forget
-        (4, {0, 4}) join
-        (5, {0, 4}) intro
-        (6, {0, 4}) intro
-        (7, {0}) forget
-        (8, {0}) forget
-        (9, {0, 3}) intro
-        (10, {0, 2}) intro
-        (11, {3}) intro
-        (12, {2}) intro
-        (13, {}) leaf
-        (14, {}) leaf
+        (4, {0, 3}) intro
+        (5, {0}) forget
+        (6, {0, 2}) intro
+        (7, {2}) intro
+        (8, {}) leaf
     """
     from sage.graphs.digraph import DiGraph
     from sage.graphs.graph import Graph
 
     directed_TD = DiGraph(nice_TD.breadth_first_search(start=root, edges=True),
-                          format='list_of_edges')
+                          format='list_of_edges',
+                          name='Labelled {}'.format(nice_TD.name()))
 
     # The loop starts from the root node
     # We assume the tree decomposition is valid and nice,
     # hence saving time on checking.
     for node in directed_TD:
-        in_deg = directed_TD.in_degree(node)
         out_deg = directed_TD.out_degree(node)
 
-        if in_deg == 0:
-            directed_TD.set_vertex(node, 'root')
-        elif out_deg == 2:
+        if out_deg == 2:
             directed_TD.set_vertex(node, 'join')
         elif out_deg == 1:
             current_bag = node[1]
@@ -1079,12 +1128,124 @@ def label_nice_tree_decomposition(nice_TD, root):
         else:
             directed_TD.set_vertex(node, 'leaf')
 
+    if directed:
+        return directed_TD
     return Graph(directed_TD, name=nice_TD.name())
 
 
 #
 # Treelength
 #
+
+def length_of_tree_decomposition(G, T, check=True):
+    r"""
+    Return the length of the tree decomposition `T` of `G`.
+
+    The *length* of a tree decomposition, as proposed in [DG2006]_, is the
+    maximum *diameter* in `G` of its bags, where the diameter of a bag `X_i` is
+    the largest distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v
+    \in X_i} \dist_G(u, v)`). See the documentation of the
+    :mod:`~sage.graphs.graph_decompositions.tree_decomposition` module for more
+    details.
+
+    INPUT:
+
+    - ``G`` -- a graph
+
+    - ``T`` -- a tree-decomposition for `G`
+
+    - ``check`` -- boolean (default: ``True``); whether to check that the
+      tree-decomposition `T` is valid for `G`
+
+    EXAMPLES:
+
+    Trees and cliques have treelength 1::
+
+        sage: from sage.graphs.graph_decompositions.tree_decomposition import length_of_tree_decomposition
+        sage: G = graphs.CompleteGraph(5)
+        sage: tl, T = G.treelength(certificate=True)
+        sage: tl
+        1
+        sage: length_of_tree_decomposition(G, T, check=True)
+        1
+        sage: G = graphs.RandomTree(20)
+        sage: tl, T = G.treelength(certificate=True)
+        sage: tl
+        1
+        sage: length_of_tree_decomposition(G, T, check=True)
+        1
+
+    The Petersen graph has treelength 2::
+
+        sage: G = graphs.PetersenGraph()
+        sage: tl, T = G.treelength(certificate=True)
+        sage: tl
+        2
+        sage: length_of_tree_decomposition(G, T)
+        2
+
+    When a tree-decomposition has a single bag containing all vertices of a
+    graph, the length of this tree-decomposition is the diameter of the graph::
+
+        sage: G = graphs.Grid2dGraph(2, 5)
+        sage: G.treelength()
+        2
+        sage: G.diameter()
+        5
+        sage: T = Graph({Set(G): []})
+        sage: length_of_tree_decomposition(G, T)
+        5
+
+    TESTS::
+
+        sage: G = Graph()
+        sage: _, T = G.treelength(certificate=True)
+        sage: length_of_tree_decomposition(G, T, check=True)
+        0
+        sage: length_of_tree_decomposition(Graph(1), T, check=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: the tree-decomposition is not valid for this graph
+    """
+    if check and not is_valid_tree_decomposition(G, T):
+        raise ValueError("the tree-decomposition is not valid for this graph")
+
+    cdef unsigned int n = G.order()
+
+    if n < 2:
+        return 0
+    if any(len(bag) == n for bag in T):
+        return G.diameter()
+
+    cdef unsigned int i, j
+
+    # We map vertices to integers in range 0..n-1
+    cdef list int_to_vertex = list(G)
+    cdef dict vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
+
+    # We compute the distance matrix.
+    cdef unsigned short * c_distances = c_distances_all_pairs(G, vertex_list=int_to_vertex)
+    cdef unsigned short ** distances = <unsigned short **>sig_calloc(n, sizeof(unsigned short *))
+    for i in range(n):
+        distances[i] = c_distances + i * n
+
+    # We now compute the maximum lengths of the bags
+    from itertools import combinations
+    cdef list bag_int
+    cdef unsigned short dij
+    cdef unsigned short length = 0
+    for bag in T:
+        bag_int = [vertex_to_int[u] for u in bag]
+        for i, j in combinations(bag_int, 2):
+            dij = distances[i][j]
+            if dij > length:
+                length = dij
+
+    sig_free(c_distances)
+    sig_free(distances)
+
+    return length
+
 
 def treelength_lowerbound(G):
     r"""
@@ -1583,7 +1744,7 @@ def treelength(G, k=None, certificate=False):
     The *length* of a tree decomposition, as proposed in [DG2006]_, is the
     maximum *diameter* in `G` of its bags, where the diameter of a bag `X_i` is
     the largest distance in `G` between the vertices in `X_i` (i.e., `\max_{u, v
-    \in X_i} dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the
+    \in X_i} \dist_G(u, v)`). The *treelength* `tl(G)` of a graph `G` is the
     minimum length among all possible tree decompositions of `G`.
     See the documentation of the
     :mod:`~sage.graphs.graph_decompositions.tree_decomposition` module for more

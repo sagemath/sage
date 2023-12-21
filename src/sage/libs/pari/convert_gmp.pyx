@@ -172,7 +172,7 @@ cdef Gen rational_matrix(mpq_t** B, long nr, long nc) noexcept:
 
     EXAMPLES::
 
-        sage: matrix(QQ,2,[1..6]).__pari__()   # indirect doctest
+        sage: matrix(QQ,2,[1..6]).__pari__()   # indirect doctest                       # needs sage.modules
         [1, 2, 3; 4, 5, 6]
     """
     sig_on()

@@ -451,7 +451,7 @@ Apparently it does not in a very substantial way:
   merely a heuristic. Looking at the source of "entropy", through
   ``log`` from :mod:`sage.misc.functional`, a runtime dependency on
   symbolics comes in. In fact, for this reason, two doctests there are
-  already marked as ``# optional - sage.symbolic``.
+  already marked as ``# needs sage.symbolic``.
 
 So if packaged as **sagemath-coding**, now a domain expert would have
 to decide whether these dependencies on symbolics are strong enough to

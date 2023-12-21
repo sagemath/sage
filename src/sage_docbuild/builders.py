@@ -654,11 +654,11 @@ class ReferenceTopBuilder(DocBuilder):
         os.makedirs(d, exist_ok=True)
         return d
 
-    def pdf(self):
+    def html(self):
         """
-        Build top-level document.
+        Build the top-level document.
         """
-        super().pdf()
+        super().html()
 
         # We want to build master index file which lists all of the PDF file.
         # We modify the file index.html from the "reference_top" target, if it
@@ -668,12 +668,8 @@ class ReferenceTopBuilder(DocBuilder):
         reference_dir = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         output_dir = self._output_dir('html')
 
-        # Check if the top reference index.html exists.
-        try:
-            with open(os.path.join(reference_dir, 'index.html')) as f:
-                html = f.read()
-        except FileNotFoundError:
-            return
+        with open(os.path.join(reference_dir, 'index.html')) as f:
+            html = f.read()
 
         # Install in output_dir a symlink to the directory containing static files.
         # Prefer relative path for symlinks.
@@ -720,14 +716,14 @@ class ReferenceTopBuilder(DocBuilder):
         #
         # Change the third form to
         #
-        #   <a href="module/module.pdf">blah <img src="_static/pdf.png" /></a>
+        #   <a href="module/module.pdf"><img src="_static/pdf.png">blah</a>
         #
         rst = re.sub(r'`([^`\n]*)`__.*\n\n__ (.*)',
                      r'<a href="\2">\1</a>.', rst)
         rst = re.sub(r'`([^<\n]*)\s+<(.*)>`_',
                      r'<a href="\2">\1</a>', rst)
         rst = re.sub(r':doc:`([^<]*?)\s+<(.*)/index>`',
-                     r'<a href="../../../pdf/en/reference/\2/\2.pdf"><img src="_static/pdf.png"/></a>&nbsp;<a href="\2/index.html">\1</a> ', rst)
+                     r'<a title="PDF" class="pdf" href="../../../pdf/en/reference/\2/\2.pdf"><img src="_static/pdf.png"></a><a href="\2/index.html">\1</a> ', rst)
         # Body: add paragraph <p> markup.
         start = rst.rfind('*\n') + 1
         end = rst.find('\nUser Interfaces')
