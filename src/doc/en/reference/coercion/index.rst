@@ -507,8 +507,6 @@ That's all there is to it. Now we can test it out:
     sage: R(3/4) * 7
     LocalElt(21/4)
 
-    sage: R.get_action(ZZ)
-    Right scalar multiplication by Integer Ring on Integer Ring localized at [2]
     sage: cm = sage.structure.element.get_coercion_model()
     sage: cm.explain(R, ZZ, operator.add)
     Coercion on right operand via
@@ -520,8 +518,11 @@ That's all there is to it. Now we can test it out:
     Integer Ring localized at [2]
 
     sage: cm.explain(R, ZZ, operator.mul)
-    Action discovered.
-       Right scalar multiplication by Integer Ring on Integer Ring localized at [2]
+    Coercion on right operand via
+        Coercion map:
+          From: Integer Ring
+          To:   Integer Ring localized at [2]
+    Arithmetic performed after coercions.
     Result lives in Integer Ring localized at [2]
     Integer Ring localized at [2]
 
