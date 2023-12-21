@@ -6,7 +6,7 @@ include(`sage_spkg_versions_toml.m4')dnl' -*- conf-toml -*-
 # but it is not part of the install-requires.
 requires = [
     "sage_setup[autogen]",
-    SPKG_INSTALL_REQUIRES_setuptools_wheel
+    SPKG_INSTALL_REQUIRES_setuptools
     SPKG_INSTALL_REQUIRES_wheel
     SPKG_INSTALL_REQUIRES_sage_setup
     SPKG_INSTALL_REQUIRES_pkgconfig
