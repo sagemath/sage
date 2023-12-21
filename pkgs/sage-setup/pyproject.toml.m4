@@ -1,22 +1,14 @@
 include(`sage_spkg_versions_toml.m4')dnl' -*- conf-toml -*-
 [build-system]
-# Minimum requirements for the build system to execute.
 requires = [
     SPKG_INSTALL_REQUIRES_setuptools
-    SPKG_INSTALL_REQUIRES_sage_setup
-    SPKG_INSTALL_REQUIRES_sagemath_environment
-    SPKG_INSTALL_REQUIRES_cython
-    SPKG_INSTALL_REQUIRES_cysignals
-    SPKG_INSTALL_REQUIRES_pkgconfig
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sagemath-tdlib"
-description = "Sage: Open Source Mathematics Software: Tree decompositions with tdlib"
-dependencies = [
-    SPKG_INSTALL_REQUIRES_cysignals
-]
+name = "sage-setup"
+description = "Sage: Open Source Mathematics Software: Build system of the Sage library"
+dependencies = []
 dynamic = ["version"]
 include(`pyproject_toml_metadata.m4')dnl'
 
@@ -24,7 +16,19 @@ include(`pyproject_toml_metadata.m4')dnl'
 file = "README.rst"
 content-type = "text/x-rst"
 
+[project.optional-dependencies]
+autogen = [
+    SPKG_INSTALL_REQUIRES_jinja2
+]
+
 [tool.setuptools]
+packages = [
+    "sage_setup",
+    "sage_setup.autogen",
+    "sage_setup.autogen.interpreters",
+    "sage_setup.autogen.interpreters.specs",
+    "sage_setup.command",
+]
 include-package-data = false
 
 [tool.setuptools.dynamic]
