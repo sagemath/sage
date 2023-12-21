@@ -192,7 +192,7 @@ class DocTestReporter(SageObject):
             sage: DD.long = True
             sage: print(DTR.report_head(FDS))
             sage -t --long .../sage/doctest/reporting.py
-            sage: print(DTR.report_head(FDS), "Failed by self-sabotage")
+            sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
             sage -t --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
         cmd = "sage -t"
