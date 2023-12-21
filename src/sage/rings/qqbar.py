@@ -1646,6 +1646,16 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             True
             sage: pi in QQbar                                                           # needs sage.symbolic
             False
+
+        TESTS::
+
+        Check if :trac:`12745` is fixed::
+
+            sage: x = exp(2*I*pi/7) + exp(-2*I*pi/7)
+            sage: QQbar(x) in AA
+            True
+            sage: AA(x)
+            1.246979603717467?
         """
         if isinstance(x, AlgebraicNumber):
             return x
