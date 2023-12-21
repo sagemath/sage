@@ -1725,8 +1725,6 @@ class DocTestDispatcher(SageObject):
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
             baseline = self.controller.source_baseline(source)
-            if baseline.get('failed', False):
-                heading += "  # [failed in baseline]"
             if not self.controller.options.only_errors:
                 self.controller.log(heading)
 
@@ -1996,8 +1994,6 @@ class DocTestDispatcher(SageObject):
                                 worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
                             w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
                             heading = self.controller.reporter.report_head(w.source)
-                            if baseline.get('failed', False):
-                                heading += "  # [failed in baseline]"
                             if not self.controller.options.only_errors:
                                 w.messages = heading + "\n"
                             # Store length of heading to detect if the
