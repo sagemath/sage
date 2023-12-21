@@ -1094,7 +1094,7 @@ def lazy_import(module, names, as_=None, *,
         sage: from sage.features import PythonModule
         sage: lazy_import('ppl', 'equation',
         ....:             feature=PythonModule('ppl', spkg='pplpy', type='standard'))
-        sage: equation                                                                  # needs pplpy # skip_conda Reported as built-in function under conda
+        sage: equation                                                                  # needs pplpy
         <cyfunction equation at ...>
         sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
         sage: NmzListConeProperties  # optional - pynormaliz
