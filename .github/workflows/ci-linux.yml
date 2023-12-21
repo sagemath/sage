@@ -146,6 +146,8 @@ jobs:
       docker_targets: "with-system-packages configured with-targets-pre"
       # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
+      tox_system_factors: >-
+        ["ubuntu-focal"]
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
@@ -167,6 +169,8 @@ jobs:
       # FIXME: duplicated from env.TARGETS
       targets: build doc-html
       targets_optional: ptest
+      tox_system_factors: >-
+        ["ubuntu-focal"]
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
