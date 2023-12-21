@@ -1588,7 +1588,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: P.monomial_quotient(P(3/2),P(2/3), coeff=True)
             9/4
 
-            sage: P.monomial_quotient(x,y) # Note the wrong result # skip_conda gives the same result as the 32 bit version
+            sage: P.monomial_quotient(x,y)
             x*y^65535*z^65535      # 32-bit
             x*y^1048575*z^1048575  # 64-bit
 
@@ -4636,7 +4636,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             -6*y^2 + 2*y
 
             sage: f = 3*x
-            sage: f.reduce([2*x,y]) # skip_conda Still resports this as 3*x
+            sage: f.reduce([2*x,y])
             x
 
         The reduction is not canonical when ``I`` is not a Groebner

@@ -60,7 +60,7 @@ We compute in a quotient of a polynomial ring over `\ZZ/17\ZZ`::
 
 Note that the result of a computation is not necessarily reduced::
 
-    sage: (a+b)^17 # skip_conda yields "256*a*b^16 + 256*b^17" when executed under conda
+    sage: (a+b)^17
     a*b^16 + b^17
     sage: S(17) == 0
     True
