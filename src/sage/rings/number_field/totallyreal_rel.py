@@ -1,5 +1,5 @@
 r"""
-Enumeration of Totally Real Fields: Relative Extensions
+Enumeration of totally real fields: relative extensions
 
 This module contains functions to enumerate primitive extensions `L / K`, where
 `K` is a given totally real number field, with given degree and small root
@@ -51,7 +51,7 @@ with root discriminant `\le 10`.
     sage: [ f[0] for f in ls ]
     [725, 1125, 1600, 2000, 2225, 2525, 3600, 4225, 4400, 4525, 5125, 5225, 5725, 6125, 7225, 7600, 7625, 8000, 8525, 8725, 9225]
 
-    sage: [NumberField(ZZx(x[1]), 't').is_galois() for x in ls]
+    sage: [NumberField(ZZx(x[1]), 't').is_galois() for x in ls]                         # needs sage.groups
     [False, True, True, True, False, False, True, True, False, False, False, False, False, True, True, False, False, True, False, False, False]
 
 Eight out of 21 such fields are Galois (with Galois group `C_4`
@@ -78,7 +78,7 @@ Check that :trac:`27646` is fixed::
 
 AUTHORS:
 
-- John Voight (2007-11-03): Initial version.
+- John Voight (2007-11-03): initial version
 """
 
 # ****************************************************************************

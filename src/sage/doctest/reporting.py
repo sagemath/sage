@@ -399,10 +399,7 @@ class DocTestReporter(SageObject):
             postscript = self.postscript
             stats = self.stats
             basename = source.basename
-            if self.controller.baseline_stats:
-                the_baseline_stats = self.controller.baseline_stats.get(basename, {})
-            else:
-                the_baseline_stats = {}
+            baseline = self.controller.source_baseline(source)
             cmd = self.report_head(source)
             try:
                 ntests, result_dict = results
@@ -423,14 +420,14 @@ class DocTestReporter(SageObject):
                         fail_msg += " (and interrupt failed)"
                     else:
                         fail_msg += " (with %s after interrupt)" % signal_name(sig)
-                if the_baseline_stats.get('failed', False):
+                if baseline.get('failed', False):
                     fail_msg += " [failed in baseline]"
                 log("    %s\n%s\nTests run before %s timed out:" % (fail_msg, "*"*70, process_name))
                 log(output)
                 log("*"*70)
                 postscript['lines'].append(cmd + "  # %s" % fail_msg)
                 stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
-                if not the_baseline_stats.get('failed', False):
+                if not baseline.get('failed', False):
                     self.error_status |= 4
             elif return_code:
                 if return_code > 0:
@@ -439,14 +436,14 @@ class DocTestReporter(SageObject):
                     fail_msg = "Killed due to %s" % signal_name(-return_code)
                 if ntests > 0:
                     fail_msg += " after testing finished"
-                if the_baseline_stats.get('failed', False):
+                if baseline.get('failed', False):
                     fail_msg += " [failed in baseline]"
                 log("    %s\n%s\nTests run before %s failed:" % (fail_msg,"*"*70, process_name))
                 log(output)
                 log("*"*70)
                 postscript['lines'].append(cmd + "  # %s" % fail_msg)
                 stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
-                if not the_baseline_stats.get('failed', False):
+                if not baseline.get('failed', False):
                     self.error_status |= (8 if return_code > 0 else 16)
             else:
                 if hasattr(result_dict, 'walltime') and hasattr(result_dict.walltime, '__len__') and len(result_dict.walltime) > 0:
@@ -509,10 +506,10 @@ class DocTestReporter(SageObject):
                     f = result_dict.failures
                     if f:
                         fail_msg = "%s failed" % (count_noun(f, "doctest"))
-                        if the_baseline_stats.get('failed', False):
+                        if baseline.get('failed', False):
                             fail_msg += " [failed in baseline]"
                         postscript['lines'].append(cmd + "  # %s" % fail_msg)
-                        if not the_baseline_stats.get('failed', False):
+                        if not baseline.get('failed', False):
                             self.error_status |= 1
                     if f or result_dict.err == 'tab':
                         stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}

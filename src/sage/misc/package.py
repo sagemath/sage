@@ -390,7 +390,7 @@ def _spkg_inst_dirs():
     """
     Generator for the installation manifest directories as resolved paths.
 
-    It yields first ``SAGE_SPKG_INST``, then ``SAGE_VENV_SPKG_INST``,
+    It yields first ``SAGE_LOCAL_SPKG_INST``, then ``SAGE_VENV_SPKG_INST``,
     if defined; but it both resolve to the same directory, it only yields
     one element.
 
@@ -402,7 +402,7 @@ def _spkg_inst_dirs():
 
     """
     last_inst_dir = None
-    for inst_dir in (sage.env.SAGE_SPKG_INST, sage.env.SAGE_VENV_SPKG_INST):
+    for inst_dir in (sage.env.SAGE_LOCAL_SPKG_INST, sage.env.SAGE_VENV_SPKG_INST):
         if inst_dir:
             inst_dir = Path(inst_dir).resolve()
             if inst_dir.is_dir() and inst_dir != last_inst_dir:

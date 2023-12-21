@@ -1,51 +1,8 @@
 # sage.doctest: needs sage.libs.linbox
 r"""
-Number Fields
+Number fields
 
-AUTHORS:
-
-- William Stein (2004, 2005): initial version
-
-- Steven Sivek (2006-05-12): added support for relative extensions
-
-- William Stein (2007-09-04): major rewrite and documentation
-
-- Robert Bradshaw (2008-10): specified embeddings into ambient fields
-
-- Simon King (2010-05): Improve coercion from GAP
-
-- Jeroen Demeyer (2010-07, 2011-04): Upgrade PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
-
-- Robert Harron (2012-08): added is_CM(), complex_conjugation(), and
-  maximal_totally_real_subfield()
-
-- Christian Stump (2012-11): added conversion to universal cyclotomic field
-
-- Julian Rueth (2014-04-03): absolute number fields are unique parents
-
-- Vincent Delecroix (2015-02): comparisons/floor/ceil using embeddings
-
-- Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
-
-- Peter Bruin (2016-06): make number fields fully satisfy unique representation
-
-- John Jones (2017-07): improve check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
-
-- Anna Haensch (2018-03): added :meth:`quadratic_defect`
-
-- Michael Daub, Chris Wuthrich (2020-09-01): adding Dirichlet characters for abelian fields
-
-
-.. note::
-
-   Unlike in PARI/GP, class group computations *in Sage* do *not* by default
-   assume the Generalized Riemann Hypothesis. To do class groups computations
-   not provably correctly you must often pass the flag ``proof=False`` to
-   functions or call the function ``proof.number_field(False)``. It can easily
-   take 1000's of times longer to do computations with ``proof=True`` (the
-   default).
-
-This example follows one in the Magma reference manual::
+We define a quartic number field and its quadratic extension::
 
     sage: x = polygen(ZZ, 'x')
     sage: K.<y> = NumberField(x^4 - 420*x^2 + 40000)
@@ -82,19 +39,32 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-TESTS:
-
-Check that :trac:`23459` is fixed::
-
-    sage: QuadraticField(4**1000+1)
-    Number Field ...
-
-.. warning::
+.. WARNING::
 
    Doing arithmetic in towers of relative fields that depends on
    canonical coercions is currently VERY SLOW. It is much better to
    explicitly coerce all elements into a common field, then do
    arithmetic with them there (which is quite fast).
+
+AUTHORS:
+
+- William Stein (2004, 2005): initial version
+- Steven Sivek (2006-05-12): added support for relative extensions
+- William Stein (2007-09-04): major rewrite and documentation
+- Robert Bradshaw (2008-10): specified embeddings into ambient fields
+- Simon King (2010-05): improved coercion from GAP
+- Jeroen Demeyer (2010-07, 2011-04): upgraded PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
+- Robert Harron (2012-08): added is_CM(), complex_conjugation(), and
+  maximal_totally_real_subfield()
+- Christian Stump (2012-11): added conversion to universal cyclotomic field
+- Julian Rueth (2014-04-03): absolute number fields are unique parents
+- Vincent Delecroix (2015-02): comparisons/floor/ceil using embeddings
+- Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
+- Peter Bruin (2016-06): made number fields fully satisfy unique representation
+- John Jones (2017-07): improved check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
+- Anna Haensch (2018-03): added :meth:`quadratic_defect`
+- Michael Daub, Chris Wuthrich (2020-09-01): added Dirichlet characters for abelian fields
+
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2007 William Stein <wstein@gmail.com>
@@ -401,18 +371,20 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
     One can embed into any other field::
 
-        sage: K.<a> = NumberField(x^3-2, embedding=CC.gen()-0.6)
+        sage: K.<a> = NumberField(x^3 - 2, embedding=CC.gen() - 0.6)
         sage: CC(a)
         -0.629960524947436 + 1.09112363597172*I
-        sage: L = Qp(5)                                                                 # needs sage.rings.padics
+
+        sage: # needs sage.rings.padics
+        sage: L = Qp(5)
         sage: f = polygen(L)^3 - 2
-        sage: K.<a> = NumberField(x^3-2, embedding=f.roots()[0][0])
+        sage: K.<a> = NumberField(x^3 - 2, embedding=f.roots()[0][0])
         sage: a + L(1)
         4 + 2*5^2 + 2*5^3 + 3*5^4 + 5^5 + 4*5^6 + 2*5^8 + 3*5^9 + 4*5^12
          + 4*5^14 + 4*5^15 + 3*5^16 + 5^17 + 5^18 + 2*5^19 + O(5^20)
-        sage: L.<b> = NumberField(x^6-x^2+1/10, embedding=1)
-        sage: K.<a> = NumberField(x^3-x+1/10, embedding=b^2)
-        sage: a+b
+        sage: L.<b> = NumberField(x^6 - x^2 + 1/10, embedding=1)
+        sage: K.<a> = NumberField(x^3 - x + 1/10, embedding=b^2)
+        sage: a + b
         b^2 + b
         sage: CC(a) == CC(b)^2
         True
@@ -439,7 +411,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
     Note that the codomain of the embedding must be ``QQbar`` or ``AA`` for this to work
     (see :trac:`20184`)::
 
-        sage: N.<g> = NumberField(x^3 + 2,embedding=1)
+        sage: N.<g> = NumberField(x^3 + 2, embedding=1)
         sage: 1 < g
         False
         sage: g > 1
@@ -523,7 +495,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
     The following has been fixed in :trac:`8800`::
 
         sage: P.<x> = QQ[]
-        sage: K.<a> = NumberField(x^3 - 5,embedding=0)
+        sage: K.<a> = NumberField(x^3 - 5, embedding=0)
         sage: L.<b> = K.extension(x^2 + a)
         sage: F, R = L.construction()
         sage: F(R) == L    # indirect doctest
@@ -993,6 +965,11 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
         False
         sage: QuadraticField(-11, 'a') is QuadraticField(-11, 'a', latex_name=None)
         False
+
+    Check that :trac:`23459` is fixed::
+
+        sage: QuadraticField(4**1000+1)
+        Number Field ...
 
     Check quadratic fields without embedding (:trac:`28932`)::
 
@@ -1586,7 +1563,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ::
 
             sage: P.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3-5,embedding=0)
+            sage: K.<a> = NumberField(x^3-5, embedding=0)
             sage: L.<b> = K.extension(x^2+a)
             sage: a*b
             a*b
@@ -3416,23 +3393,23 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<t> = NumberField(x^3 + x^2 - 36*x - 4)
             sage: K.conductor()
             109
-            sage: K.dirichlet_group()
+            sage: K.dirichlet_group()  # optional - gap_package_polycyclic
             [Dirichlet character modulo 109 of conductor 1 mapping 6 |--> 1,
              Dirichlet character modulo 109 of conductor 109 mapping 6 |--> zeta3,
              Dirichlet character modulo 109 of conductor 109 mapping 6 |--> -zeta3 - 1]
 
             sage: K = CyclotomicField(44)
             sage: L = K.subfields(5)[0][0]
-            sage: X = L.dirichlet_group()
-            sage: X
+            sage: X = L.dirichlet_group()  # optional - gap_package_polycyclic
+            sage: X  # optional - gap_package_polycyclic
             [Dirichlet character modulo 11 of conductor 1 mapping 2 |--> 1,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^2,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^3,
              Dirichlet character modulo 11 of conductor 11 mapping 2 |--> -zeta5^3 - zeta5^2 - zeta5 - 1]
-            sage: X[4]^2
+            sage: X[4]^2  # optional - gap_package_polycyclic
             Dirichlet character modulo 11 of conductor 11 mapping 2 |--> zeta5^3
-            sage: X[4]^2 in X
+            sage: X[4]^2 in X  # optional - gap_package_polycyclic
             True
         """
         # todo : turn this into an abelian group rather than a list.
@@ -4638,6 +4615,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             (x - 3) * (x^3 + 4*x^2 + 3*x - 1) * (x^4 - 3*x^3 - x^2 + 6*x - 1)
             sage: [NumberField(g,'a').class_group().order() for g,_ in f.factor()]
             [1, 1, 1]
+
+        .. NOTE::
+
+            Unlike in PARI/GP, class group computations *in Sage* do *not* by
+            default assume the Generalized Riemann Hypothesis. To do class
+            groups computations not provably correctly you must often pass the
+            flag ``proof=False`` to functions or call the function
+            ``proof.number_field(False)``. It can easily take 1000's of times
+            longer to do computations with ``proof=True`` (the default).
+
         """
         proof = proof_flag(proof)
         try:
@@ -8239,7 +8226,7 @@ class NumberField_absolute(NumberField_generic):
         The following was fixed in :trac:`8800`::
 
             sage: P.<x> = QQ[]
-            sage: K.<a> = NumberField(x^3 - 5,embedding=0)
+            sage: K.<a> = NumberField(x^3 - 5, embedding=0)
             sage: L.<b> = K.extension(x^2 + a)
             sage: F,R = L.construction()
             sage: F(R) == L   #indirect doctest
@@ -12726,12 +12713,12 @@ def _splitting_classes_gens_(K, m, d):
         sage: L = K.subfields(20)[0][0]
         sage: L.conductor()
         101
-        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,101,20)                                        # needs sage.libs.gap  # optional - gap_package_polycyclic
         [95]
 
         sage: K = CyclotomicField(44)
         sage: L = K.subfields(4)[0][0]
-        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,44,4)                                          # needs sage.libs.gap  # optional - gap_package_polycyclic
         [37]
 
         sage: K = CyclotomicField(44)
@@ -12743,7 +12730,7 @@ def _splitting_classes_gens_(K, m, d):
          with zeta44_0 = 3.837971894457990?
         sage: L.conductor()
         11
-        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap
+        sage: _splitting_classes_gens_(L,11,5)                                          # needs sage.libs.gap  # optional - gap_package_polycyclic
         [10]
 
     """

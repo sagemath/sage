@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Coxeter Groups
 """
@@ -633,8 +632,8 @@ class CoxeterGroups(Category_singleton):
             if not self.is_irreducible() or not self.is_well_generated():
                 raise ValueError("this method is available for irreducible, well-generated complex reflection groups")
             from sage.combinat.permutation import Permutations
-            return set(self.from_reduced_word(w)
-                       for w in Permutations(self.index_set()))
+            return {self.from_reduced_word(w)
+                    for w in Permutations(self.index_set())}
 
         def grassmannian_elements(self, side="right"):
             """
@@ -1061,7 +1060,7 @@ class CoxeterGroups(Category_singleton):
                 return Poset([[x], []])
             if not x.bruhat_le(y):
                 return Poset()
-            curlayer = set([y])
+            curlayer = {y}
             d = {}
             while curlayer:
                 nextlayer = set()
@@ -1263,8 +1262,8 @@ class CoxeterGroups(Category_singleton):
                         tester.assertEqual(opi[i](w), w.apply_simple_projection(i, side=side, length_increasing=False))
                         tester.assertTrue(pi[i](w).has_descent(i, side=side))
                         tester.assertFalse(opi[i](w).has_descent(i, side=side))
-                        tester.assertEqual(set([pi[i](w), opi[i](w)]),
-                                           set([w, w.apply_simple_reflection(i, side=side)]))
+                        tester.assertEqual({pi[i](w), opi[i](w)},
+                                           {w, w.apply_simple_reflection(i, side=side)})
 
         def _test_has_descent(self, **options):
             """

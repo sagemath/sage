@@ -6,8 +6,10 @@ See :pari:`polgalois` for the PARI documentation of these objects.
 """
 
 from sage.libs.pari import pari
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.groups.perm_gps.permgroup_named import TransitiveGroup
+
+lazy_import('sage.groups.perm_gps.permgroup_named', 'TransitiveGroup')
 
 
 class PariGroup():

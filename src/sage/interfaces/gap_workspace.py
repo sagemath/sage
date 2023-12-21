@@ -17,7 +17,7 @@ import os
 import time
 import hashlib
 import subprocess
-from sage.env import DOT_SAGE, HOSTNAME, GAP_LIB_DIR, GAP_SHARE_DIR
+from sage.env import DOT_SAGE, HOSTNAME, GAP_ROOT_PATHS
 
 
 def gap_workspace_file(system="gap", name="workspace", dir=None):
@@ -60,8 +60,12 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    data = f'{GAP_LIB_DIR}:{GAP_SHARE_DIR}'
-    for path in GAP_LIB_DIR, GAP_SHARE_DIR:
+    data = f'{GAP_ROOT_PATHS}'
+    for path in GAP_ROOT_PATHS.split(";"):
+        if not path:
+            # If GAP_ROOT_PATHS begins or ends with a semicolon,
+            # we'll get one empty path.
+            continue
         sysinfo = os.path.join(path, "sysinfo.gap")
         if os.path.exists(sysinfo):
             data += subprocess.getoutput(f'. "{sysinfo}" && echo ":$GAP_VERSION:$GAParch"')

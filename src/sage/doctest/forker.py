@@ -513,7 +513,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``stdout`` -- an open file to restore for debugging
 
-        - ``checker`` -- None, or an instance of
+        - ``checker`` -- ``None``, or an instance of
           :class:`doctest.OutputChecker`
 
         - ``verbose`` -- boolean, determines whether verbose printing
@@ -521,6 +521,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``optionflags`` -- Controls the comparison with the expected
           output.  See :mod:`testmod` for more information.
+
+        - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
         EXAMPLES::
 
@@ -535,6 +537,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         O = kwds.pop('outtmpfile', None)
         self.msgfile = kwds.pop('msgfile', None)
         self.options = kwds.pop('sage_options')
+        self.baseline = kwds.pop('baseline', {})
         doctest.DocTestRunner.__init__(self, *args, **kwds)
         self._fakeout = SageSpoofInOut(O)
         if self.msgfile is None:
@@ -1232,16 +1235,40 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         out = [self.DIVIDER]
         with OriginalSource(example):
-            if test.filename:
-                if test.lineno is not None and example.lineno is not None:
-                    lineno = test.lineno + example.lineno + 1
-                else:
-                    lineno = '?'
-                out.append('File "%s", line %s, in %s' %
-                           (test.filename, lineno, test.name))
-            else:
-                out.append('Line %s, in %s' % (example.lineno + 1, test.name))
-            out.append(message)
+            match self.options.format:
+                case 'sage':
+                    if test.filename:
+                        if test.lineno is not None and example.lineno is not None:
+                            lineno = test.lineno + example.lineno + 1
+                        else:
+                            lineno = '?'
+                        out.append('File "%s", line %s, in %s' %
+                                   (test.filename, lineno, test.name))
+                    else:
+                        out.append('Line %s, in %s' % (example.lineno + 1, test.name))
+                    out.append(message)
+                case 'github':
+                    # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
+                    if message.startswith('Warning: '):
+                        command = f'::warning title={message}'
+                        message = message[len('Warning: '):]
+                    elif self.baseline.get('failed', False):
+                        command = f'::notice title={message}'
+                        message += ' [failed in baseline]'
+                    else:
+                        command = f'::error title={message}'
+                    if extra := getattr(example, 'extra', None):
+                        message += f': {extra}'
+                    if test.filename:
+                        command += f',file={test.filename}'
+                        if test.lineno is not None and example.lineno is not None:
+                            lineno = test.lineno + example.lineno + 1
+                            command += f',line={lineno}'
+                        lineno = None
+                    else:
+                        command += f',line={example.lineno + 1}'
+                    command += f'::{message}'
+                    out.append(command)
             source = example.source
             out.append(doctest._indent(source))
             return '\n'.join(out)
@@ -1414,6 +1441,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
+            example.extra = f'Got: {got!r}'
             returnval = doctest.DocTestRunner.report_failure(self, out, test, example, got)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
@@ -1564,6 +1592,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
+
+            example.extra = "Exception raised: " + repr("".join(traceback.format_exception(*exc_info)))
             returnval = doctest.DocTestRunner.report_unexpected_exception(self, out, test, example, exc_info)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
@@ -1721,12 +1751,16 @@ class DocTestDispatcher(SageObject):
         """
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
+            baseline = self.controller.source_baseline(source)
+            if baseline.get('failed', False):
+                heading += "  # [failed in baseline]"
             if not self.controller.options.only_errors:
                 self.controller.log(heading)
 
             with tempfile.TemporaryFile() as outtmpfile:
                 result = DocTestTask(source)(self.controller.options,
-                                             outtmpfile, self.controller.logger)
+                                             outtmpfile, self.controller.logger,
+                                             baseline=baseline)
                 outtmpfile.seek(0)
                 output = bytes_to_str(outtmpfile.read())
 
@@ -1802,6 +1836,16 @@ class DocTestDispatcher(SageObject):
 
         """
         opt = self.controller.options
+
+        job_client = None
+        try:
+            from gnumake_tokenpool import JobClient, NoJobServer
+            try:
+                job_client = JobClient()
+            except NoJobServer:
+                pass
+        except ImportError:
+            pass
 
         source_iter = iter(self.controller.sources)
 
@@ -1925,6 +1969,9 @@ class DocTestDispatcher(SageObject):
                             w.copied_pid = w.pid
                             w.close()
                             finished.append(w)
+                            if job_client:
+                                job_client.release()
+
                     workers = new_workers
 
                     # Similarly, process finished workers.
@@ -1959,19 +2006,25 @@ class DocTestDispatcher(SageObject):
                         break
 
                     # Start new workers if possible
-                    while source_iter is not None and len(workers) < opt.nthreads:
+                    while (source_iter is not None and len(workers) < opt.nthreads
+                           and (not job_client or job_client.acquire())):
                         try:
                             source = next(source_iter)
                         except StopIteration:
                             source_iter = None
+                            if job_client:
+                                job_client.release()
                         else:
                             # Start a new worker.
                             import copy
                             worker_options = copy.copy(opt)
+                            baseline = self.controller.source_baseline(source)
                             if target_endtime is not None:
                                 worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
-                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit])
+                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
                             heading = self.controller.reporter.report_head(w.source)
+                            if baseline.get('failed', False):
+                                heading += "  # [failed in baseline]"
                             if not self.controller.options.only_errors:
                                 w.messages = heading + "\n"
                             # Store length of heading to detect if the
@@ -2040,6 +2093,8 @@ class DocTestDispatcher(SageObject):
                         sleep(die_timeout)
                         for w in workers:
                             w.kill()
+                            if job_client:
+                                job_client.release()
                     finally:
                         os._exit(0)
 
@@ -2109,6 +2164,8 @@ class DocTestWorker(multiprocessing.Process):
     - ``funclist`` -- a list of callables to be called at the start of
       the child process.
 
+    - ``baseline`` -- dictionary, the ``baseline_stats`` value
+
     EXAMPLES::
 
         sage: from sage.doctest.forker import DocTestWorker, DocTestTask
@@ -2128,7 +2185,7 @@ class DocTestWorker(multiprocessing.Process):
         sage: reporter.report(FDS, False, W.exitcode, result, "")
             [... tests, ... s]
     """
-    def __init__(self, source, options, funclist=[]):
+    def __init__(self, source, options, funclist=[], baseline=None):
         """
         Initialization.
 
@@ -2152,6 +2209,7 @@ class DocTestWorker(multiprocessing.Process):
         self.source = source
         self.options = options
         self.funclist = funclist
+        self.baseline = baseline
 
         # Open pipe for messages. These are raw file descriptors,
         # not Python file objects!
@@ -2223,7 +2281,8 @@ class DocTestWorker(multiprocessing.Process):
         os.close(self.rmessages)
         msgpipe = os.fdopen(self.wmessages, "w")
         try:
-            task(self.options, self.outtmpfile, msgpipe, self.result_queue)
+            task(self.options, self.outtmpfile, msgpipe, self.result_queue,
+                 baseline=self.baseline)
         finally:
             msgpipe.close()
             self.outtmpfile.close()
@@ -2489,7 +2548,8 @@ class DocTestTask():
         """
         self.source = source
 
-    def __call__(self, options, outtmpfile=None, msgfile=None, result_queue=None):
+    def __call__(self, options, outtmpfile=None, msgfile=None, result_queue=None, *,
+                 baseline=None):
         """
         Calling the task does the actual work of running the doctests.
 
@@ -2505,6 +2565,8 @@ class DocTestTask():
 
         - ``result_queue`` -- an instance of :class:`multiprocessing.Queue`
           to store the doctest result. For testing, this can also be None.
+
+        - ``baseline`` -- a dictionary, the ``baseline_stats`` value.
 
         OUTPUT:
 
@@ -2541,7 +2603,8 @@ class DocTestTask():
                 outtmpfile=outtmpfile,
                 msgfile=msgfile,
                 sage_options=options,
-                optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+                optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS,
+                baseline=baseline)
             runner.basename = self.source.basename
             runner.filename = self.source.path
             N = options.file_iterations

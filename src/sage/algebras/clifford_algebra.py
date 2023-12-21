@@ -2783,15 +2783,15 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         elif op == op_GT:
             return other.__richcmp__(self, op_LT)
 
-        s_gens = set(g for g in self.gens() if g)
-        o_gens = set(g for g in other.gens() if g)
+        s_gens = {g for g in self.gens() if g}
+        o_gens = {g for g in other.gens() if g}
 
         if self.side() != other.side():
             if other.side() == "right":
-                X = set(t * f for t in self.ring().basis() for f in s_gens)
+                X = {t * f for t in self.ring().basis() for f in s_gens}
                 s_gens.update(X)
             elif other.side() == "left":
-                X = set(f * t for t in self.ring().basis() for f in s_gens)
+                X = {f * t for t in self.ring().basis() for f in s_gens}
                 s_gens.update(X)
 
         if set(s_gens) == set(o_gens):
@@ -2805,10 +2805,10 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
         if self.side() != other.side():
             if self.side() == "right":
-                X = set(t * f for t in self.ring().basis() for f in o_gens)
+                X = {t * f for t in self.ring().basis() for f in o_gens}
                 s_gens.update(X)
             elif self.side() == "left":
-                X = set(f * t for t in self.ring().basis() for f in o_gens)
+                X = {f * t for t in self.ring().basis() for f in o_gens}
                 s_gens.update(X)
 
         contains = all(f in self for f in o_gens)

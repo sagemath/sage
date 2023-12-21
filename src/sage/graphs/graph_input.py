@@ -559,7 +559,7 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
         for u in D:
             if len(set(D[u])) != len(D[u]):
                 if multiedges is False:
-                    v = next((v for v in D[u] if D[u].count(v) > 1))
+                    v = next(v for v in D[u] if D[u].count(v) > 1)
                     raise ValueError("non-multigraph got several edges (%s, %s)" % (u, v))
                 multiedges = True
                 break

@@ -349,7 +349,7 @@ def automorphisms(self):
         48
         sage: 2^3 * factorial(3)
         48
-        sage: len(Q.automorphisms())
+        sage: len(Q.automorphisms())                                                    # needs sage.libs.gap
         48
 
     ::
@@ -357,14 +357,14 @@ def automorphisms(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
         sage: Q.number_of_automorphisms()
         16
-        sage: aut = Q.automorphisms()
-        sage: len(aut)
+        sage: aut = Q.automorphisms()                                                   # needs sage.libs.gap
+        sage: len(aut)                                                                  # needs sage.libs.gap
         16
-        sage: all(Q(M) == Q for M in aut)
+        sage: all(Q(M) == Q for M in aut)                                               # needs sage.libs.gap
         True
 
         sage: Q = QuadraticForm(ZZ, 3, [2, 1, 2, 2, 1, 3])
-        sage: sorted(Q.automorphisms())
+        sage: sorted(Q.automorphisms())                                                 # needs sage.libs.gap
         [
         [-1  0  0]  [1 0 0]
         [ 0 -1  0]  [0 1 0]

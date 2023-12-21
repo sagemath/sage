@@ -139,6 +139,7 @@ class DocTestDefaults(SageObject):
         self.show_skipped = False
         self.target_walltime = -1
         self.baseline_stats_path = None
+        self.format = "sage"
 
         # sage-runtests contains more optional tags. Technically, adding
         # auto_optional_tags here is redundant, since that is added
@@ -1096,6 +1097,34 @@ class DocTestController(SageObject):
                 basename = source.basename
                 return -self.stats.get(basename, default).get('walltime', 0), basename
             self.sources = sorted(self.sources, key=sort_key)
+
+    def source_baseline(self, source):
+        r"""
+        Return the ``baseline_stats`` value of ``source``.
+
+        INPUT:
+
+        - ``source`` -- a :class:`DocTestSource` instance
+
+        OUTPUT:
+
+        A dictionary.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: from sage.env import SAGE_SRC
+            sage: import os
+            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: DD = DocTestDefaults()
+            sage: DC = DocTestController(DD, [filename])
+            sage: DC.source_baseline(DC.sources[0])
+            {}
+        """
+        if self.baseline_stats:
+            basename = source.basename
+            return self.baseline_stats.get(basename, {})
+        return {}
 
     def run_doctests(self):
         """

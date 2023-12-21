@@ -21,8 +21,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      fail-fast: ${{ github.event_name == 'pull_request' }}
-      max-parallel: ${{ github.event_name == 'pull_request' && 2 || 6 }}
       matrix:
         os: [ubuntu-latest, macos-latest]
         python: ['3.9', '3.10', '3.11']
@@ -94,7 +92,7 @@ jobs:
       - name: Test
         if: success() || failure()
         shell: bash -l {0}
-        run: ./sage -t --all -p0
+        run: ./sage -t --all --baseline-stats-path=.github/workflows/ci-conda-known-test-failures.json -p0
 
       - name: Print logs
         if: always()

@@ -968,7 +968,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
                 for gen_ind in ele_Tietze:
                     gen_matrix_list = self._image_on_gen(gen_ind)
                     if matrix_list is None:
-                        matrix_list = [m for m in gen_matrix_list]
+                        matrix_list = list(gen_matrix_list)
                     else:
                         for i in range(len(matrix_list)):
                             matrix_list[i] *= gen_matrix_list[i]
