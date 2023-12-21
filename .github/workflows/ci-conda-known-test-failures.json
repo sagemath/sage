@@ -53,6 +53,9 @@
     "sage.schemes.elliptic_curves.ell_field": {
         "failed": true
     },
+    "sage.structure.coerce_actions": {
+        "failed": true
+    },
     "sage.tests.gap_packages": {
         "failed": true
     }
