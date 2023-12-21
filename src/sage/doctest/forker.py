@@ -1235,16 +1235,40 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         out = [self.DIVIDER]
         with OriginalSource(example):
-            if test.filename:
-                if test.lineno is not None and example.lineno is not None:
-                    lineno = test.lineno + example.lineno + 1
-                else:
-                    lineno = '?'
-                out.append('File "%s", line %s, in %s' %
-                           (test.filename, lineno, test.name))
-            else:
-                out.append('Line %s, in %s' % (example.lineno + 1, test.name))
-            out.append(message)
+            match self.options.format:
+                case 'sage':
+                    if test.filename:
+                        if test.lineno is not None and example.lineno is not None:
+                            lineno = test.lineno + example.lineno + 1
+                        else:
+                            lineno = '?'
+                        out.append('File "%s", line %s, in %s' %
+                                   (test.filename, lineno, test.name))
+                    else:
+                        out.append('Line %s, in %s' % (example.lineno + 1, test.name))
+                    out.append(message)
+                case 'github':
+                    # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
+                    if message.startswith('Warning: '):
+                        command = f'::warning title={message}'
+                        message = message[len('Warning: '):]
+                    elif self.baseline.get('failed', False):
+                        command = f'::notice title={message}'
+                        message += ' [failed in baseline]'
+                    else:
+                        command = f'::error title={message}'
+                    if extra := getattr(example, 'extra', None):
+                        message += f': {extra}'
+                    if test.filename:
+                        command += f',file={test.filename}'
+                        if test.lineno is not None and example.lineno is not None:
+                            lineno = test.lineno + example.lineno + 1
+                            command += f',line={lineno}'
+                        lineno = None
+                    else:
+                        command += f',line={example.lineno + 1}'
+                    command += f'::{message}'
+                    out.append(command)
             source = example.source
             out.append(doctest._indent(source))
             return '\n'.join(out)
@@ -1417,6 +1441,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
+            example.extra = f'Got: {got!r}'
             returnval = doctest.DocTestRunner.report_failure(self, out, test, example, got)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
@@ -1567,6 +1592,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
+
+            example.extra = "Exception raised: " + repr("".join(traceback.format_exception(*exc_info)))
             returnval = doctest.DocTestRunner.report_unexpected_exception(self, out, test, example, exc_info)
             if self.options.debug:
                 self._fakeout.stop_spoofing()

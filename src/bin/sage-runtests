@@ -34,6 +34,8 @@ if __name__ == "__main__":
     what.add_argument("--installed", action="store_true", default=False, help="test all installed modules of the Sage library")
     parser.add_argument("--logfile", type=argparse.FileType('a'), metavar="FILE", help="log all output to FILE")
 
+    parser.add_argument("--format", choices=["sage", "github"], default="sage",
+                        help="set format of error messages and warnings")
     parser.add_argument("-l", "--long", action="store_true", default=False, help="include lines with the phrase 'long time'")
     parser.add_argument("-s", "--short", dest="target_walltime", nargs='?',
                         type=int, default=-1, const=300, metavar="SECONDS",
