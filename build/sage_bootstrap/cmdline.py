@@ -292,7 +292,7 @@ def make_parser():
     parser_download.add_argument(
         '--on-error', choices=['stop', 'warn'], default='stop',
         help='What to do if the tarball cannot be downloaded')
-    parser.add_argument(
+    parser_download.add_argument(
         '--no-check-certificate', action='store_true',
         help='Do not check SSL certificates for https connections')
 
