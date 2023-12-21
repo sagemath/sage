@@ -1117,6 +1117,7 @@ class DocTestController(SageObject):
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
             sage: DD = DocTestDefaults()
             sage: DC = DocTestController(DD, [filename])
+            sage: DC.expand_files_into_sources()
             sage: DC.source_baseline(DC.sources[0])
             {}
         """
