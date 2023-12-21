@@ -69,7 +69,7 @@ def setprint(X):
     Note that for iterables, the effect can be undesirable::
 
         sage: from sage.matroids.advanced import setprint
-        sage: M = matroids.named_matroids.Fano().delete('efg')
+        sage: M = matroids.catalog.Fano().delete('efg')
         sage: M.bases()
         Iterator over a system of subsets
         sage: setprint(M.bases())
@@ -210,7 +210,7 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
 
         sage: from sage.matroids.utilities import setprint
         sage: from sage.matroids.utilities import sanitize_contractions_deletions
-        sage: M = matroids.named_matroids.Fano()
+        sage: M = matroids.catalog.Fano()
         sage: setprint(sanitize_contractions_deletions(M, 'abc', 'defg'))
         [{'a', 'b', 'c'}, {'d', 'e', 'f', 'g'}]
         sage: setprint(sanitize_contractions_deletions(M, 'defg', 'abc'))

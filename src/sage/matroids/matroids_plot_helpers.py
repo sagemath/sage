@@ -763,10 +763,10 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: M = matroids.named_matroids.P7()
+        sage: M = matroids.catalog.P7()
         sage: G = matroids_plot_helpers.geomrep(M)                                      # needs sage.plot
         sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)                                  # needs sage.plot
-        sage: M = matroids.named_matroids.P7()
+        sage: M = matroids.catalog.P7()
         sage: G = matroids_plot_helpers.geomrep(M, lineorders1=[['f','e','d']])         # needs sage.plot
         sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)                                  # needs sage.plot
 

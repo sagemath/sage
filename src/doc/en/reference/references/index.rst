@@ -5053,6 +5053,9 @@ REFERENCES:
              :doi:`10.1016/j.ipl.2009.03.018`.
              http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf
 
+.. [Oxl1987] James Oxley, *The binary matroids with no 4-wheel minor*, 1987,
+             Transactions of the American Mathematical Society, 301(1), 63-75.
+
 .. [Oxl1992] James Oxley, *Matroid theory*, Oxford University
              Press, 1992.
 

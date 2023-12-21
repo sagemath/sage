@@ -1,12 +1,12 @@
 r"""
-Documentation for the matroids in the catalog
+Individual matroids in the catalog
 
-This module contains implementations for the matroids accessible through
-:mod:`matroids.catalog <sage.matroids.catalog>` (type this in Sage and hit
-:kbd:`Tab` for a list).
+This module imports the individual matroids accessible through
+:mod:`matroids.catalog <sage.matroids.catalog>` (type this and hit :kbd:`Tab`
+for a list).
 
 """
-from sage.matroids.database.oxley_matroids import (
+from sage.matroids.database_matroids import (
     U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,
     Fano, FanoDual, NonFano, NonFanoDual, O7, P7,
     AG32, AG32prime, R8, F8, Q8, L8, S8, Vamos, T8, J, P8, P8pp,
@@ -16,7 +16,7 @@ from sage.matroids.database.oxley_matroids import (
     R12, ExtendedTernaryGolayCode, T12,
     PG23,
 )
-from sage.matroids.database.brettell_matroids import (
+from sage.matroids.database_matroids import (
     RelaxedNonFano, TippedFree3spike,
     AG23minusDY, TQ8, P8p, KP8, Sp8, Sp8pp, LP8, WQ8,
     BB9, TQ9, TQ9p, M8591, PP9, BB9gDY, A9, FN9, FX9, KR9, KQ9,
@@ -30,7 +30,7 @@ from sage.matroids.database.brettell_matroids import (
     FA15,
     N4,
 )
-from sage.matroids.database.various_matroids import (
+from sage.matroids.database_matroids import (
     NonVamos, NotP8, AG23minus,
     P9, R9A, R9B, Block_9_4, TicTacToe,
     N1, Block_10_5, Q10,

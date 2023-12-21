@@ -59,7 +59,7 @@ cdef class CutNode:
 
         EXAMPLES::
 
-            sage: len(list(matroids.named_matroids.Fano().linear_subclasses()))  # indirect doctest
+            sage: len(list(matroids.catalog.Fano().linear_subclasses()))  # indirect doctest
             16
         """
         cdef CutNode node
@@ -316,7 +316,7 @@ cdef class LinearSubclasses:
             ....:     print(len(mc))
             3
             15
-            sage: M = BasisMatroid(matroids.named_matroids.BetsyRoss()); M
+            sage: M = BasisMatroid(matroids.catalog.BetsyRoss()); M
             Matroid of rank 3 on 11 elements with 140 bases
             sage: e = 'k'; f = 'h'; Me = M.delete(e); Mf=M.delete(f)
             sage: for mc in LinearSubclasses(Mf, splice=Me):
@@ -451,7 +451,7 @@ cdef class MatroidExtensions(LinearSubclasses):
         ....:                                             [4, 5]]): print(N)
         Matroid of rank 3 on 7 elements with 32 bases
         Matroid of rank 3 on 7 elements with 20 bases
-        sage: M = BasisMatroid(matroids.named_matroids.BetsyRoss()); M
+        sage: M = BasisMatroid(matroids.catalog.BetsyRoss()); M
         Matroid of rank 3 on 11 elements with 140 bases
         sage: e = 'k'; f = 'h'; Me = M.delete(e); Mf=M.delete(f)
         sage: for N in MatroidExtensions(Mf, f, splice=Me): print(N)

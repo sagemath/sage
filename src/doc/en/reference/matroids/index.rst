@@ -10,17 +10,15 @@ Basics
    sage/matroids/constructor
    sage/matroids/matroid
 
-Built-in families and individual matroids
------------------------------------------
+Database of matroids
+--------------------
 
 .. toctree::
    :maxdepth: 1
 
    sage/matroids/matroids_catalog
-   sage/matroids/database/oxley_matroids
-   sage/matroids/database/brettell_matroids
-   sage/matroids/database/various_matroids
-   sage/matroids/database/driver_functions
+   sage/matroids/database_functions
+   sage/matroids/database_matroids
 
 Concrete implementations
 ------------------------

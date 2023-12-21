@@ -38,7 +38,7 @@ cdef class SetSystem:
     contents. One is most likely to encounter these as output from some
     Matroid methods::
 
-        sage: M = matroids.named_matroids.Fano()
+        sage: M = matroids.catalog.Fano()
         sage: M.circuits()
         Iterator over a system of subsets
 

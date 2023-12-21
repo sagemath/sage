@@ -1150,7 +1150,7 @@ class GraphicMatroid(Matroid):
 
             sage: M1 = Matroid(range(4), graphs.CycleGraph(4))
             sage: M2 = Matroid(range(4), graphs.CompleteBipartiteGraph(2,2))
-            sage: M1._isomorphism(matroids.named_matroids.BetsyRoss())
+            sage: M1._isomorphism(matroids.catalog.BetsyRoss())
             sage: M1._isomorphism(M2)
             {0: 0, 1: 1, 2: 2, 3: 3}
             sage: M3 = matroids.Uniform(3,4)

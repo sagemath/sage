@@ -535,7 +535,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: X = M._max_independent(set(['a', 'c', 'd', 'e', 'f']))
             sage: M.is_independent(X)
             True
@@ -568,7 +568,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(sage.matroids.matroid.Matroid._circuit(M,
             ....:                             set(['a', 'c', 'd', 'e', 'f'])))
             ['c', 'd', 'e', 'f']
@@ -608,7 +608,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M._fundamental_circuit(frozenset('defg'), 'c'))
             ['c', 'd', 'e', 'f']
         """
@@ -629,7 +629,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M._closure(set(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
 
@@ -658,7 +658,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._corank(set(['a', 'e', 'g', 'd', 'h']))
             4
 
@@ -680,7 +680,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: X = M._max_coindependent(set(['a', 'c', 'd', 'e', 'f']))
             sage: M.is_coindependent(X)
             True
@@ -713,7 +713,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(sage.matroids.matroid.Matroid._cocircuit(M,
             ....:                             set(['a', 'c', 'd', 'e', 'f'])))
             ['c', 'd', 'e', 'f']
@@ -753,7 +753,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M._fundamental_cocircuit('abch', 'c'))
             ['c', 'd', 'e', 'f']
         """
@@ -774,7 +774,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M._coclosure(set(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
 
@@ -808,7 +808,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: X = set(['a']); Y = set(['e', 'f', 'g', 'h'])
             sage: Z = M._augment(X, Y)
             sage: M.is_independent(Z.union(X))
@@ -843,7 +843,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._is_independent(set(['a', 'b', 'c']))
             True
             sage: M._is_independent(set(['a', 'b', 'c', 'd']))
@@ -873,7 +873,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._is_basis(set(['a', 'b', 'c', 'e']))
             True
             sage: M._is_basis(set(['a', 'b', 'c', 'd']))
@@ -903,7 +903,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._is_circuit(set(['a', 'b', 'c', 'd']))
             True
             sage: M._is_circuit(set(['a', 'b', 'c', 'e']))
@@ -938,7 +938,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._is_closed(set(['a', 'b', 'c', 'd']))
             True
             sage: M._is_closed(set(['a', 'b', 'c', 'e']))
@@ -970,7 +970,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._is_coindependent(set(['a', 'b', 'c']))
             True
             sage: M._is_coindependent(set(['a', 'b', 'c', 'd']))
@@ -999,7 +999,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._is_cobasis(set(['a', 'b', 'c', 'e']))
             True
             sage: M._is_cobasis(set(['a', 'b', 'c', 'd']))
@@ -1025,7 +1025,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._is_cocircuit(set(['a', 'b', 'c', 'd']))
             True
             sage: M._is_cocircuit(set(['a', 'b', 'c', 'e']))
@@ -1060,7 +1060,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._is_coclosed(set(['a', 'b', 'c', 'd']))
             True
             sage: M._is_coclosed(set(['a', 'b', 'c', 'e']))
@@ -1103,7 +1103,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: N = M._minor(contractions=set(['a']), deletions=set([]))
             sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
             M / {'a'} \ {'b', 'c'}, where M is Vamos:
@@ -1134,7 +1134,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M._has_minor(matroids.Whirl(3))
             False
             sage: M._has_minor(matroids.Uniform(2, 4))
@@ -1189,10 +1189,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus()
+            sage: M = matroids.catalog.Pappus()
             sage: M._line_length(['d'])
             5
-            sage: M = matroids.named_matroids.NonPappus()
+            sage: M = matroids.catalog.NonPappus()
             sage: M._line_length(['d'])
             6
         """
@@ -1241,7 +1241,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sage.matroids.matroid.Matroid._repr_(M)
             'Matroid of rank 4 on 8 elements'
         """
@@ -1260,7 +1260,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: len(M)
             8
         """
@@ -1276,7 +1276,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.size()
             8
         """
@@ -1363,7 +1363,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.rank()
             3
             sage: M.rank(['a', 'b', 'f'])
@@ -1390,7 +1390,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.full_rank()
             4
             sage: M.dual().full_rank()
@@ -1416,7 +1416,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus()
+            sage: M = matroids.catalog.Pappus()
             sage: B = M.basis()
             sage: M.is_basis(B)
             True
@@ -1443,7 +1443,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: X = M.max_independent(['a', 'c', 'd', 'e', 'f'])
             sage: M.is_independent(X)
             True
@@ -1479,7 +1479,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M.circuit(['a', 'c', 'd', 'e', 'f']))
             ['c', 'd', 'e', 'f']
             sage: sorted(M.circuit(['a', 'c', 'd']))
@@ -1522,7 +1522,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M.fundamental_circuit('defg', 'c'))
             ['c', 'd', 'e', 'f']
         """
@@ -1551,7 +1551,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M.closure(set(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
             sage: M.closure(['x'])
@@ -1628,7 +1628,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: X = set(['a']); Y = M.groundset()
             sage: Z = M.augment(X, Y)
             sage: M.is_independent(Z.union(X))
@@ -1674,7 +1674,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.corank()
             4
             sage: M.corank('cdeg')
@@ -1704,7 +1704,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.full_corank()
             4
         """
@@ -1732,7 +1732,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus()
+            sage: M = matroids.catalog.Pappus()
             sage: B = M.cobasis()
             sage: M.is_cobasis(B)
             True
@@ -1769,7 +1769,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: X = M.max_coindependent(['a', 'c', 'd', 'e', 'f'])
             sage: sorted(X)  # random
             ['a', 'c', 'd', 'f']
@@ -1806,7 +1806,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M.coclosure(set(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
             sage: M.coclosure(['x'])
@@ -1845,7 +1845,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M.cocircuit(['a', 'c', 'd', 'e', 'f']))
             ['c', 'd', 'e', 'f']
             sage: sorted(M.cocircuit(['a', 'c', 'd']))
@@ -1892,7 +1892,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: sorted(M.fundamental_cocircuit('abch', 'c'))
             ['c', 'd', 'e', 'f']
         """
@@ -1916,7 +1916,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.loops()
             frozenset()
             sage: (M / ['a', 'b']).loops()
@@ -1938,7 +1938,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_independent('abc')
             True
             sage: M.is_independent('abcd')
@@ -1964,7 +1964,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_dependent('abc')
             False
             sage: M.is_dependent('abcd')
@@ -1990,7 +1990,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_basis('abc')
             False
             sage: M.is_basis('abce')
@@ -2026,7 +2026,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_closed('abc')
             False
             sage: M.is_closed('abcd')
@@ -2109,7 +2109,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_circuit('abc')
             False
             sage: M.is_circuit('abcd')
@@ -2140,7 +2140,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().dual()
+            sage: M = matroids.catalog.Fano().dual()
             sage: M.coloops()
             frozenset()
             sage: (M.delete(['a', 'b'])).coloops()
@@ -2169,7 +2169,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_coindependent('abc')
             True
             sage: M.is_coindependent('abcd')
@@ -2202,7 +2202,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_codependent('abc')
             False
             sage: M.is_codependent('abcd')
@@ -2236,7 +2236,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_cobasis('abc')
             False
             sage: M.is_cobasis('abce')
@@ -2273,7 +2273,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_cocircuit('abc')
             False
             sage: M.is_cocircuit('abcd')
@@ -2306,7 +2306,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_coclosed('abc')
             False
             sage: M.is_coclosed('abcd')
@@ -2340,7 +2340,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_valid()
             True
 
@@ -2386,7 +2386,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted([sorted(C) for C in M.circuits()])
             [['a', 'b', 'c', 'g'], ['a', 'b', 'd', 'e'], ['a', 'b', 'f'],
             ['a', 'c', 'd', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
@@ -2418,7 +2418,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted([sorted(C) for C in M.nonspanning_circuits()])
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
@@ -2444,7 +2444,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted([sorted(C) for C in M.cocircuits()])
             [['a', 'b', 'c', 'g'], ['a', 'b', 'd', 'e'], ['a', 'c', 'd', 'f'],
             ['a', 'e', 'f', 'g'], ['b', 'c', 'e', 'f'], ['b', 'd', 'f', 'g'],
@@ -2473,7 +2473,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().dual()
+            sage: M = matroids.catalog.Fano().dual()
             sage: sorted([sorted(C) for C in M.noncospanning_cocircuits()])
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
@@ -2499,7 +2499,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: CC = M.circuit_closures()
             sage: len(CC[2])
             7
@@ -2536,7 +2536,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: CC = M.nonspanning_circuit_closures()
             sage: len(CC[2])
             7
@@ -2570,7 +2570,7 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Uniform(2, 4)
             sage: list(M.nonbases())
             []
-            sage: [sorted(X) for X in matroids.named_matroids.P6().nonbases()]
+            sage: [sorted(X) for X in matroids.catalog.P6().nonbases()]
             [['a', 'b', 'c']]
 
         ALGORITHM:
@@ -2598,11 +2598,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.dependent_r_sets(3)
             []
             sage: sorted([sorted(X) for X in
-            ....: matroids.named_matroids.Vamos().dependent_r_sets(4)])
+            ....: matroids.catalog.Vamos().dependent_r_sets(4)])
             [['a', 'b', 'c', 'd'], ['a', 'b', 'e', 'f'], ['a', 'b', 'g', 'h'],
             ['c', 'd', 'e', 'f'], ['e', 'f', 'g', 'h']]
 
@@ -2659,7 +2659,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus()
+            sage: M = matroids.catalog.Pappus()
             sage: I = M.independent_sets()
             sage: len(I)
             121
@@ -2708,7 +2708,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus()
+            sage: M = matroids.catalog.Pappus()
             sage: M.independent_r_sets(4)
             []
             sage: S = M.independent_r_sets(3)
@@ -2739,7 +2739,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: F = M._flags(1)
             sage: sorted(M._extend_flags(F)) == sorted(M._flags(2))
             True
@@ -2779,7 +2779,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted([M._flags(1)])
             [[[frozenset({'a'}), {'a'}, frozenset({'b', 'c', 'd', 'e', 'f', 'g'})],
               [frozenset({'b'}), {'b'}, frozenset({'c', 'd', 'e', 'f', 'g'})],
@@ -2817,7 +2817,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted([sorted(F) for F in M.flats(2)])
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
@@ -2846,7 +2846,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Q6()                                      # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q6()                                      # needs sage.rings.finite_rings
             sage: sorted([sorted(F) for F in M.coflats(2)])                             # needs sage.rings.finite_rings
             [['a', 'b'], ['a', 'c'], ['a', 'd', 'f'], ['a', 'e'], ['b', 'c'],
             ['b', 'd'], ['b', 'e'], ['b', 'f'], ['c', 'd'], ['c', 'e', 'f'],
@@ -2860,7 +2860,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.lattice_of_flats()                                                  # needs sage.graphs
             Finite lattice containing 16 elements
         """
@@ -2906,7 +2906,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.BetsyRoss()
+            sage: M = matroids.catalog.BetsyRoss()
             sage: M.f_vector()
             [1, 11, 20, 1]
 
@@ -3133,7 +3133,7 @@ cdef class Matroid(SageObject):
             A 7-dimensional polyhedron in ZZ^8 defined as the convex hull
             of 46 vertices
 
-            sage: M = matroids.named_matroids.NonFano()
+            sage: M = matroids.catalog.NonFano()
             sage: M.matroid_polytope()                                                  # needs sage.geometry.polyhedron sage.rings.finite_rings
             A 6-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 29 vertices
@@ -3176,7 +3176,7 @@ cdef class Matroid(SageObject):
             A 8-dimensional polyhedron in ZZ^8 defined as the convex hull
             of 135 vertices
 
-            sage: M = matroids.named_matroids.NonFano()
+            sage: M = matroids.catalog.NonFano()
             sage: M.independence_matroid_polytope()                                     # needs sage.geometry.polyhedron sage.rings.finite_rings
             A 7-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 58 vertices
@@ -3230,8 +3230,8 @@ cdef class Matroid(SageObject):
             TypeError: can only test for isomorphism between matroids.
 
 
-            sage: M1 = matroids.named_matroids.Fano()
-            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1 = matroids.catalog.Fano()
+            sage: M2 = matroids.catalog.NonFano()
             sage: M1.is_isomorphic(M2)
             False
             sage: M1.is_isomorphic(M2, certificate=True)
@@ -3270,8 +3270,8 @@ cdef class Matroid(SageObject):
             sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
 
-            sage: M1 = matroids.named_matroids.Fano()
-            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1 = matroids.catalog.Fano()
+            sage: M2 = matroids.catalog.NonFano()
             sage: M1._is_isomorphic(M2)
             False
 
@@ -3312,8 +3312,8 @@ cdef class Matroid(SageObject):
             ...
             TypeError: can only give isomorphism between matroids.
 
-            sage: M1 = matroids.named_matroids.Fano()
-            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1 = matroids.catalog.Fano()
+            sage: M2 = matroids.catalog.NonFano()
             sage: M1.isomorphism(M2) is not None
             False
         """
@@ -3342,8 +3342,8 @@ cdef class Matroid(SageObject):
             sage: morphism = M1.isomorphism(M2)                                         # needs sage.graphs
             sage: M1.is_isomorphism(M2, morphism)                                       # needs sage.graphs
             True
-            sage: M1 = matroids.named_matroids.Fano()
-            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1 = matroids.catalog.Fano()
+            sage: M2 = matroids.catalog.NonFano()
             sage: M1.isomorphism(M2) is not None
             False
         """
@@ -3388,7 +3388,7 @@ cdef class Matroid(SageObject):
         yields ``False``, even if the matroids are equal::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano(); M
+            sage: M = matroids.catalog.Fano(); M
             Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
             sage: M1 = BasisMatroid(M)
             sage: M2 = Matroid(groundset='abcdefg', reduced_matrix=[
@@ -3471,12 +3471,12 @@ cdef class Matroid(SageObject):
 
         ::
 
-            sage: M = matroids.named_matroids.Pappus()
-            sage: N = matroids.named_matroids.NonPappus()
+            sage: M = matroids.catalog.Pappus()
+            sage: N = matroids.catalog.NonPappus()
             sage: N.is_isomorphism(M, {e:e for e in M.groundset()})
             False
 
-            sage: M = matroids.named_matroids.Fano().delete(['g'])
+            sage: M = matroids.catalog.Fano().delete(['g'])
             sage: N = matroids.Wheel(3)
             sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
             sage: M.is_isomorphism(N, morphism)
@@ -3485,14 +3485,14 @@ cdef class Matroid(SageObject):
         A morphism can be specified as a dictionary (above), a permutation,
         a function, and many other types of maps::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: P = PermutationGroup([[('a', 'b', 'c'),                               # needs sage.rings.finite_rings
             ....:                        ('d', 'e', 'f'), ('g')]]).gen()
             sage: M.is_isomorphism(M, P)                                                # needs sage.rings.finite_rings
             True
 
-            sage: M = matroids.named_matroids.Pappus()
-            sage: N = matroids.named_matroids.NonPappus()
+            sage: M = matroids.catalog.Pappus()
+            sage: N = matroids.catalog.NonPappus()
             sage: def f(x):
             ....:     return x
             ....:
@@ -3599,12 +3599,12 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus()
-            sage: N = matroids.named_matroids.NonPappus()
+            sage: M = matroids.catalog.Pappus()
+            sage: N = matroids.catalog.NonPappus()
             sage: N._is_isomorphism(M, {e:e for e in M.groundset()})
             False
 
-            sage: M = matroids.named_matroids.Fano().delete(['g'])
+            sage: M = matroids.catalog.Fano().delete(['g'])
             sage: N = matroids.Wheel(3)
             sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
             sage: M._is_isomorphism(N, morphism)
@@ -3635,11 +3635,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.BetsyRoss()
-            sage: N = matroids.named_matroids.BetsyRoss()
+            sage: M = matroids.catalog.BetsyRoss()
+            sage: N = matroids.catalog.BetsyRoss()
             sage: hash(M) == hash(N)
             True
-            sage: O = matroids.named_matroids.TicTacToe()
+            sage: O = matroids.catalog.TicTacToe()
             sage: hash(M) == hash(O)
             False
         """
@@ -3745,7 +3745,7 @@ cdef class Matroid(SageObject):
         The sets of contractions and deletions need not be independent,
         respectively coindependent::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.rank('abf')
             2
             sage: M.minor(contractions='abf')
@@ -3753,7 +3753,7 @@ cdef class Matroid(SageObject):
 
         However, they need to be subsets of the groundset, and disjoint::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: N = M.minor('abc', 'defg')
             sage: N
             M / {'a', 'b', 'c'} \ {'d', 'e', 'f', 'g'}, where M is Vamos:
@@ -3851,7 +3851,7 @@ cdef class Matroid(SageObject):
 
         ::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
             sage: M.contract(['a', 'c'])
@@ -3869,7 +3869,7 @@ cdef class Matroid(SageObject):
 
         Note that one can iterate over strings::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M / 'abc'
             Binary matroid of rank 0 on 4 elements, type (0, 0)
 
@@ -3929,7 +3929,7 @@ cdef class Matroid(SageObject):
 
         ::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
             sage: M.delete(['a', 'c'])
@@ -3947,7 +3947,7 @@ cdef class Matroid(SageObject):
 
         Note that one can iterate over strings::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.delete('abc')
             Binary matroid of rank 3 on 4 elements, type (0, 5)
 
@@ -3997,7 +3997,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus()
+            sage: M = matroids.catalog.Pappus()
             sage: N = M.dual()
             sage: N.rank()
             6
@@ -4032,7 +4032,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: N = M.truncation()
             sage: N.is_isomorphic(matroids.Uniform(2, 7))
             True
@@ -4072,14 +4072,14 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.Whirl(3)
-            sage: matroids.named_matroids.Fano().has_minor(M)
+            sage: matroids.catalog.Fano().has_minor(M)
             False
-            sage: matroids.named_matroids.NonFano().has_minor(M)
+            sage: matroids.catalog.NonFano().has_minor(M)
             True
-            sage: matroids.named_matroids.NonFano().has_minor(M, certificate=True)
+            sage: matroids.catalog.NonFano().has_minor(M, certificate=True)
             (True, (frozenset(), frozenset({'g'}),
                 {0: 'b', 1: 'c', 2: 'a', 3: 'd', 4: 'e', 5: 'f'}))
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.has_minor(M, True)
             (True,
              (frozenset(),
@@ -4121,7 +4121,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: M.has_line_minor(4)
             True
             sage: M.has_line_minor(5)
@@ -4183,7 +4183,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.NonPappus()
+            sage: M = matroids.catalog.NonPappus()
             sage: M._has_line_minor(5, M.flats(1))
             True
             sage: M._has_line_minor(5, M.flats(1), certificate=True)
@@ -4269,7 +4269,7 @@ cdef class Matroid(SageObject):
 
         Putting an element in parallel with another::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: N = M.extension('z', ['c'])
             sage: N.rank('cz')
             1
@@ -4342,7 +4342,7 @@ cdef class Matroid(SageObject):
 
         Put an element in series with another::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: N = M.coextension('z', ['c'])
             sage: N.corank('cz')
             1
@@ -4397,7 +4397,7 @@ cdef class Matroid(SageObject):
         the lines through elements `\{a, b\}` and through `\{c, d\}` is an
         extension by a loop::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: frozenset([]) in M.modular_cut(['ab', 'cd'])
             True
 
@@ -4405,14 +4405,14 @@ cdef class Matroid(SageObject):
         lines through `\{c, g\}` and `\{a, e\}` also is on the line through
         `\{b, f\}`::
 
-            sage: M = matroids.named_matroids.S8()
+            sage: M = matroids.catalog.S8()
             sage: N = M.delete('h')
             sage: frozenset('bf') in N.modular_cut(['cg', 'ae'])
             True
 
         The modular cut of the full groundset is equal to just the groundset::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.modular_cut([M.groundset()]).difference(
             ....:                               [frozenset(M.groundset())])
             set()
@@ -4484,7 +4484,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: len(list(M.linear_subclasses()))
             16
             sage: len(list(M.linear_subclasses(line_length=3)))
@@ -4553,7 +4553,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.P8()
+            sage: M = matroids.catalog.P8()
             sage: len(list(M.extensions()))
             1705
             sage: len(list(M.extensions(line_length=4)))
@@ -4621,7 +4621,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.P8()
+            sage: M = matroids.catalog.P8()
             sage: len(list(M.coextensions()))
             1705
             sage: len(list(M.coextensions(coline_length=4)))
@@ -4662,7 +4662,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().contract('a')
+            sage: M = matroids.catalog.Fano().contract('a')
             sage: M.size() - M.simplify().size()
             3
 
@@ -4701,7 +4701,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().dual().delete('a')
+            sage: M = matroids.catalog.Fano().dual().delete('a')
             sage: M.cosimplify().size()
             3
 
@@ -4736,7 +4736,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.is_simple()
             True
             sage: N = M / 'a'
@@ -4772,7 +4772,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano().dual()
+            sage: M = matroids.catalog.Fano().dual()
             sage: M.is_cosimple()
             True
             sage: N = M.delete('a')
@@ -4851,7 +4851,7 @@ cdef class Matroid(SageObject):
             ....:                              [0, 0, 1, 0, 0, 1]])
             sage: M.is_connected()
             False
-            sage: matroids.named_matroids.Pappus().is_connected()
+            sage: matroids.catalog.Pappus().is_connected()
             True
 
         """
@@ -4894,7 +4894,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.BetsyRoss()
+            sage: M = matroids.catalog.BetsyRoss()
             sage: M.connectivity('ab')
             2
             sage: M.connectivity('ab', 'cd')
@@ -4941,7 +4941,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.BetsyRoss()
+            sage: M = matroids.catalog.BetsyRoss()
             sage: M._connectivity(set('ab'), set('cd'))
             2
         """
@@ -4977,7 +4977,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.BetsyRoss()
+            sage: M = matroids.catalog.BetsyRoss()
             sage: S = set('ab')
             sage: T = set('cd')
             sage: I, X = M.link(S, T)
@@ -5026,7 +5026,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.BetsyRoss()
+            sage: M = matroids.catalog.BetsyRoss()
             sage: S = set('ab')
             sage: T = set('cd')
             sage: I, X = M._link(S, T)
@@ -5117,11 +5117,11 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N.is_kconnected(3)
             False
-            sage: matroids.named_matroids.BetsyRoss().is_kconnected(3)                  # needs sage.graphs
+            sage: matroids.catalog.BetsyRoss().is_kconnected(3)                  # needs sage.graphs
             True
             sage: matroids.AG(5,2).is_kconnected(4)
             True
-            sage: M = matroids.named_matroids.R6()
+            sage: M = matroids.catalog.R6()
             sage: M.is_kconnected(3)                                                    # needs sage.graphs
             False
             sage: B, X = M.is_kconnected(3,True)
@@ -5261,9 +5261,9 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N.is_3connected()
             False
-            sage: matroids.named_matroids.BetsyRoss().is_3connected()                   # needs sage.graphs
+            sage: matroids.catalog.BetsyRoss().is_3connected()                   # needs sage.graphs
             True
-            sage: M = matroids.named_matroids.R6()
+            sage: M = matroids.catalog.R6()
             sage: M.is_3connected()                                                     # needs sage.graphs
             False
             sage: B, X = M.is_3connected(True)
@@ -5368,9 +5368,9 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N._is_3connected_CE()
             False
-            sage: matroids.named_matroids.BetsyRoss()._is_3connected_CE()
+            sage: matroids.catalog.BetsyRoss()._is_3connected_CE()
             True
-            sage: M = matroids.named_matroids.R6()
+            sage: M = matroids.catalog.R6()
             sage: M._is_3connected_CE()
             False
             sage: B, X = M._is_3connected_CE(True)
@@ -5496,9 +5496,9 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N._is_3connected_shifting()                                           # needs sage.graphs
             False
-            sage: matroids.named_matroids.BetsyRoss()._is_3connected_shifting()         # needs sage.graphs
+            sage: matroids.catalog.BetsyRoss()._is_3connected_shifting()         # needs sage.graphs
             True
-            sage: M = matroids.named_matroids.R6()
+            sage: M = matroids.catalog.R6()
             sage: M._is_3connected_shifting()                                           # needs sage.graphs
             False
             sage: B, X = M._is_3connected_shifting(True)                                # needs sage.graphs
@@ -5830,9 +5830,9 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N._is_3connected_BC()
             False
-            sage: matroids.named_matroids.BetsyRoss()._is_3connected_BC()               # needs sage.graphs
+            sage: matroids.catalog.BetsyRoss()._is_3connected_BC()               # needs sage.graphs
             True
-            sage: M = matroids.named_matroids.R6()
+            sage: M = matroids.catalog.R6()
             sage: M._is_3connected_BC()                                                 # needs sage.graphs
             False
         """
@@ -5878,7 +5878,7 @@ cdef class Matroid(SageObject):
             sage: M._is_3connected_BC_recursion(B,
             ....:   [M.fundamental_cocircuit(B, e) for e in B])
             True
-            sage: M = matroids.named_matroids.R6()
+            sage: M = matroids.catalog.R6()
             sage: B = M.basis()
             sage: M._is_3connected_BC_recursion(B,                                      # needs sage.graphs
             ....:   [M.fundamental_cocircuit(B, e) for e in B])
@@ -5972,11 +5972,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: N = matroids.named_matroids.Fano()
+            sage: N = matroids.catalog.Fano()
             sage: M = N._local_binary_matroid()
             sage: N.is_isomorphism(M, {e:e for e in N.groundset()})
             True
-            sage: N = matroids.named_matroids.NonFano()
+            sage: N = matroids.catalog.NonFano()
             sage: M = N._local_binary_matroid()
             sage: N.is_isomorphism(M, {e:e for e in N.groundset()})
             False
@@ -6030,10 +6030,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.binary_matroid()
             Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            sage: N = matroids.named_matroids.NonFano()
+            sage: N = matroids.catalog.NonFano()
             sage: N.binary_matroid() is None
             True
 
@@ -6082,10 +6082,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: N = matroids.named_matroids.Fano()
+            sage: N = matroids.catalog.Fano()
             sage: N.is_binary()
             True
-            sage: N = matroids.named_matroids.NonFano()
+            sage: N = matroids.catalog.NonFano()
             sage: N.is_binary()
             False
 
@@ -6123,11 +6123,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: N = matroids.named_matroids.Fano()
+            sage: N = matroids.catalog.Fano()
             sage: M = N._local_ternary_matroid()                                        # needs sage.graphs
             sage: N.is_isomorphism(M, {e:e for e in N.groundset()})                     # needs sage.graphs
             False
-            sage: N = matroids.named_matroids.NonFano()
+            sage: N = matroids.catalog.NonFano()
             sage: M = N._local_ternary_matroid()                                        # needs sage.graphs
             sage: N.is_isomorphism(M, {e:e for e in N.groundset()})                     # needs sage.graphs
             True
@@ -6217,10 +6217,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.ternary_matroid() is None                                           # needs sage.graphs
             True
-            sage: N = matroids.named_matroids.NonFano()
+            sage: N = matroids.catalog.NonFano()
             sage: N.ternary_matroid()                                                   # needs sage.graphs
             NonFano: Ternary matroid of rank 3 on 7 elements, type 0-
 
@@ -6269,10 +6269,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: N = matroids.named_matroids.Fano()
+            sage: N = matroids.catalog.Fano()
             sage: N.is_ternary()                                                        # needs sage.graphs
             False
-            sage: N = matroids.named_matroids.NonFano()
+            sage: N = matroids.catalog.NonFano()
             sage: N.is_ternary()                                                        # needs sage.graphs
             True
 
@@ -6339,7 +6339,7 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Uniform(2,4)
             sage: [M._is_circuit_chordal(C) for C in M.circuits()]
             [False, False, False, False]
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M._is_circuit_chordal(frozenset(['b','c','d']))
             False
             sage: M._is_circuit_chordal(frozenset(['b','c','d']), certificate=True)
@@ -6388,7 +6388,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.is_circuit_chordal(['b','c','d'])
             False
             sage: M.is_circuit_chordal(['b','c','d'], certificate=True)
@@ -6440,10 +6440,10 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Uniform(2,4)
             sage: [M.is_chordal(i) for i in range(4, 8)]
             [True, True, True, True]
-            sage: M = matroids.named_matroids.NonFano()
+            sage: M = matroids.catalog.NonFano()
             sage: [M.is_chordal(i) for i in range(4, 8)]
             [False, True, True, True]
-            sage: M = matroids.named_matroids.N2()
+            sage: M = matroids.catalog.N2()
             sage: [M.is_chordal(i) for i in range(4, 10)]
             [False, False, False, False, True, True]
             sage: M.is_chordal(4, 5)
@@ -6476,10 +6476,10 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Uniform(2,4)
             sage: M.chordality()
             4
-            sage: M = matroids.named_matroids.NonFano()
+            sage: M = matroids.catalog.NonFano()
             sage: M.chordality()
             5
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.chordality()
             4
         """
@@ -6522,7 +6522,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: X = M.max_weight_independent()
             sage: M.is_basis(X)
             True
@@ -6609,7 +6609,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: X = M.max_weight_coindependent()
             sage: M.is_cobasis(X)
             True
@@ -6704,7 +6704,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.is_max_weight_independent_generic()
             False
 
@@ -6854,7 +6854,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.is_max_weight_coindependent_generic()
             False
 
@@ -7002,8 +7002,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: M = matroids.catalog.T12()
+            sage: N = matroids.catalog.ExtendedTernaryGolayCode()
             sage: w = {'a':30, 'b':10, 'c':11, 'd':20, 'e':70, 'f':21, 'g':90,
             ....:      'h':12, 'i':80, 'j':13, 'k':40, 'l':21}
             sage: Y = M.intersection(N, w)
@@ -7011,7 +7011,7 @@ cdef class Matroid(SageObject):
             ['a', 'd', 'e', 'g', 'i', 'k']
             sage: sum([w[y] for y in Y])
             330
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: N = matroids.Uniform(4, 7)
             sage: M.intersection(N)
             Traceback (most recent call last):
@@ -7061,8 +7061,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: M = matroids.catalog.T12()
+            sage: N = matroids.catalog.ExtendedTernaryGolayCode()
             sage: w = {'a':30, 'b':10, 'c':11, 'd':20, 'e':70, 'f':21, 'g':90,
             ....:      'h':12, 'i':80, 'j':13, 'k':40, 'l':21}
             sage: Y = M._intersection(N, w)
@@ -7107,8 +7107,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: M = matroids.catalog.T12()
+            sage: N = matroids.catalog.ExtendedTernaryGolayCode()
             sage: w = {'a':30, 'b':10, 'c':11, 'd':20, 'e':70, 'f':21, 'g':90,
             ....:      'h':12, 'i':80, 'j':13, 'k':40, 'l':21}
             sage: Y = M.intersection(N, w)
@@ -7188,11 +7188,11 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: M = matroids.catalog.T12()
+            sage: N = matroids.catalog.ExtendedTernaryGolayCode()
             sage: len(M.intersection_unweighted(N))
             6
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: N = matroids.Uniform(4, 7)
             sage: M.intersection_unweighted(N)
             Traceback (most recent call last):
@@ -7229,8 +7229,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: M = matroids.catalog.T12()
+            sage: N = matroids.catalog.ExtendedTernaryGolayCode()
             sage: len(M._intersection_unweighted(N))
             6
         """
@@ -7263,8 +7263,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.T12()
-            sage: N = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: M = matroids.catalog.T12()
+            sage: N = matroids.catalog.ExtendedTernaryGolayCode()
             sage: Y = M.intersection(N)
             sage: M._intersection_augmentation_unweighted(N, Y)[0]
             False
@@ -7388,7 +7388,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Block_9_4()
+            sage: M = matroids.catalog.Block_9_4()
             sage: P = M.partition()
             sage: all(map(M.is_independent,P))
             True
@@ -7469,7 +7469,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted(M._internal({'a', 'b', 'c'}))
             ['a', 'b', 'c']
             sage: sorted(M._internal({'e', 'f', 'g'}))
@@ -7508,7 +7508,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted(M._external({'a', 'b', 'c'}))
             []
             sage: sorted(M._external({'e', 'f', 'g'}))
@@ -7561,7 +7561,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.tutte_polynomial()
             y^4 + x^3 + 3*y^3 + 4*x^2 + 7*x*y + 6*y^2 + 3*x + 3*y
             sage: M.tutte_polynomial(1, 1) == M.bases_count()
@@ -7609,7 +7609,7 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import setprint
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: setprint(M.flat_cover())                                              # needs sage.rings.finite_rings
             [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
              {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'},
@@ -7677,7 +7677,7 @@ cdef class Matroid(SageObject):
 
         We construct a more interesting example using the Fano matroid::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: A = M.chow_ring(QQ); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
              type (3, 0) over Rational Field
@@ -7766,7 +7766,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: G = M.plot()                                                          # needs sage.plot sage.rings.finite_rings
             sage: type(G)                                                               # needs sage.plot sage.rings.finite_rings
             <class 'sage.plot.graphics.Graphics'>
@@ -7823,7 +7823,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.TernaryDowling3()
+            sage: M = matroids.catalog.TernaryDowling3()
             sage: M.show(B=['a','b','c'])                                               # needs sage.plot sage.rings.finite_rings
             sage: M.show(B=['a','b','c'], lineorders=[['f','e','i']])                   # needs sage.plot sage.rings.finite_rings
             sage: pos = {'a':(0,0), 'b': (0,1), 'c':(1,0), 'd':(1,1),                   # needs sage.plot
@@ -7861,7 +7861,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M=matroids.named_matroids.BetsyRoss()
+            sage: M=matroids.catalog.BetsyRoss()
             sage: pos={}
             sage: s="abcde"
             sage: t="fghij"
@@ -7930,7 +7930,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: B = M.bergman_complex(); B                                            # needs sage.graphs
             Simplicial complex with 14 vertices and 21 facets
 
@@ -7969,7 +7969,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: A = M.augmented_bergman_complex(); A                                  # needs sage.graphs
             Simplicial complex with 22 vertices and 91 facets
 
@@ -8060,8 +8060,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
-            sage: N = M.union(matroids.named_matroids.NonFano()); N
+            sage: M = matroids.catalog.Fano()
+            sage: N = M.union(matroids.catalog.NonFano()); N
             Matroid of rank 6 on 7 elements as matroid union of
             Binary matroid of rank 3 on 7 elements, type (3, 0)
             Ternary matroid of rank 3 on 7 elements, type 0-
@@ -8102,8 +8102,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus()
-            sage: N = matroids.named_matroids.Fano().direct_sum(M); N
+            sage: M = matroids.catalog.Pappus()
+            sage: N = matroids.catalog.Fano().direct_sum(M); N
             Matroid of rank 6 on 16 elements as matroid sum of
             Binary matroid of rank 3 on 7 elements, type (3, 0)
             Matroid of rank 3 on 9 elements with circuit-closures

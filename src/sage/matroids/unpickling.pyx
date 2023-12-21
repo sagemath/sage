@@ -71,7 +71,7 @@ def unpickle_basis_matroid(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
-        sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+        sage: M = BasisMatroid(matroids.catalog.Vamos())
         sage: M == loads(dumps(M))  # indirect doctest
         True
 
@@ -119,7 +119,7 @@ def unpickle_circuit_closures_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Vamos()
+        sage: M = matroids.catalog.Vamos()
         sage: M == loads(dumps(M))  # indirect doctest
         True
     """
@@ -161,7 +161,7 @@ def unpickle_dual_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Vamos().dual()
+        sage: M = matroids.catalog.Vamos().dual()
         sage: M == loads(dumps(M))  # indirect doctest
         True
     """
@@ -583,7 +583,7 @@ def unpickle_regular_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.R10()
+        sage: M = matroids.catalog.R10()
         sage: M == loads(dumps(M))  # indirect doctest
         True
         sage: M.rename("R_{10}")
@@ -633,7 +633,7 @@ def unpickle_minor_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Vamos().minor('abc', 'g')
+        sage: M = matroids.catalog.Vamos().minor('abc', 'g')
         sage: M == loads(dumps(M))  # indirect doctest
         True
     """

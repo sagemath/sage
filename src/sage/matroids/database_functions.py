@@ -1,10 +1,10 @@
 r"""
-Functions that access the collections of matroids
+Collections of matroids
 
-This module contains driver functions to easily access the collections of
-matroids in the database. Each of these functions returns a complete list of
-matroids from the corresponding collection. These functions can be viewed by
-typing ``matroids.`` and hitting :kbd:`Tab`.
+This module contains functions that access the collections of matroids in the
+database. Each of these functions returns a complete list of the
+nonparametrized matroids from the corresponding collection. These functions
+can be viewed by typing ``matroids.`` + :kbd:`Tab`.
 
 AUTHORS:
 
@@ -38,7 +38,7 @@ def OxleyMatroids():
 
     .. SEEALSO::
 
-        :mod:`matroids.database.oxley_matroids <sage.matroids.database.oxley_matroids>`
+        :mod:`matroids.database_matroids <sage.matroids.database_matroids>`
 
     REFERENCES:
 
@@ -47,12 +47,13 @@ def OxleyMatroids():
 
     """
     Matroids = []
-    from sage.matroids.database.oxley_matroids import (
+    from sage.matroids.database_matroids import (
         U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,
         Fano, FanoDual, NonFano, NonFanoDual, O7, P7,
         AG32, AG32prime, R8, F8, Q8, L8, S8, Vamos, T8, J, P8, P8pp,
         Wheel4, Whirl4,
-        K33dual, K33, AG23, TernaryDowling3, Pappus, NonPappus,
+        K33dual, K33, AG23, TernaryDowling3,  # R9
+        Pappus, NonPappus,
         K5, K5dual, R10,  # NonDesargues,
         R12, ExtendedTernaryGolayCode, T12,
         PG23
@@ -95,11 +96,11 @@ def BrettellMatroids():
 
     .. SEEALSO::
 
-        :mod:`matroids.database.brettell_matroids <sage.matroids.database.brettell_matroids>`
+        :mod:`matroids.database_matroids <sage.matroids.database_matroids>`
 
     """
     Matroids = []
-    from sage.matroids.database.brettell_matroids import (
+    from sage.matroids.database_matroids import (
         RelaxedNonFano, TippedFree3spike,
         AG23minusDY, TQ8, P8p, KP8, Sp8, Sp8pp, LP8, WQ8,
         BB9, TQ9, TQ9p, M8591, PP9, BB9gDY, A9, FN9, FX9, KR9, KQ9,
@@ -153,11 +154,11 @@ def VariousMatroids():
 
     .. SEEALSO::
 
-        :mod:`matroids.database.various_matroids <sage.matroids.database.various_matroids>`
+        :mod:`matroids.database_matroids <sage.matroids.database_matroids>`
 
     """
     Matroids = []
-    from sage.matroids.database.various_matroids import (
+    from sage.matroids.database_matroids import (
         NonVamos, NotP8, AG23minus,
         P9, R9A, R9B, Block_9_4, TicTacToe,
         N1, Block_10_5, Q10,
