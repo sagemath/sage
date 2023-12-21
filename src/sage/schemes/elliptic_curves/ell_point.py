@@ -1359,9 +1359,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 raise ValueError('Value %s illegal for point order' % value)
             E = self.curve()
             q = E.base_ring().cardinality()
-            low, hi = Hasse_bounds(q)
-            if value > hi:
-                raise ValueError('Value %s illegal: outside max Hasse bound' % value)
+            if q < oo:
+                _, hi = Hasse_bounds(q)
+                if value > hi:
+                    raise ValueError('Value %s illegal: outside max Hasse bound' % value)
             if value * self != E(0):
                 raise ValueError('Value %s illegal: %s * %s is not the identity' % (value, value, self))
             if hasattr(self, '_order') and self._order != value:  # already known
