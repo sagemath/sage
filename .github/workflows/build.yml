@@ -158,7 +158,7 @@ jobs:
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./sage -t --new -p2
+          ./sage -t --new -p2 --format github
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -185,9 +185,9 @@ jobs:
       - name: Test all files (sage -t --all --long)
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
-          ../sage -python -m pip install coverage
-          ../sage -python -m coverage run ./bin/sage-runtests --all --long -p2 --random-seed=286735480429121101562228604801325644303
-        working-directory: ./worktree-image/src
+          ./sage -python -m pip install coverage
+          ./sage -python -m coverage run ./src/bin/sage-runtests --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
+        working-directory: ./worktree-image
 
       - name: Prepare coverage results
         if: (success() || failure()) && steps.build.outcome == 'success'
