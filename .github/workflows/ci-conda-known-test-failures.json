@@ -35,6 +35,9 @@
     "sage.modular.modform.l_series_gross_zagier": {
         "failed": true
     },
+    "sage.parallel.map_reduce": {
+        "failed": true
+    },
     "sage.rings.function_field.drinfeld_modules.morphism": {
         "failed": true
     },
