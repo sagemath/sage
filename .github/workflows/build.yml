@@ -121,9 +121,46 @@ jobs:
 
       # Testing
 
+      - name: Test changed files (sage -t --new)
+        if: (success() || failure()) && steps.build.outcome == 'success'
+        run: |
+          # We run tests with "sage -t --new"; this only tests the uncommitted changes.
+          ./sage -t --new -p2 --format github
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
+          SAGE_NUM_THREADS: 2
+
+      - name: Test modularized distributions
+        if: (success() || failure()) && steps.build.outcome == 'success'
+        run: make V=0 tox && make pypi-wheels-check
+        working-directory: ./worktree-image
+        env:
+          MAKE: make -j2 --output-sync=recurse
+          SAGE_NUM_THREADS: 2
+
+      - name: Pytest
+        if: contains(github.ref, 'pytest')
+        run: |
+          ../sage -python -m pip install coverage pytest-xdist
+          ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
+        working-directory: ./worktree-image/src
+        env:
+          # Increase the length of the lines in the "short summary"
+          COLUMNS: 120
+
       - name: Test all files (sage -t --all --long)
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           ./sage -python -m pip install coverage
-          ./sage -python -m coverage run ./src/bin/sage-runtests --format github --baseline-stats-path=.github/workflows/ci-conda-known-test-failures.json -p4 --random-seed=286735480429121101562228604801325644303 src/sage/combinat/words src/sage/plot/plot.py src/sage_setup/clean.py
+          ./sage -python -m coverage run ./src/bin/sage-runtests --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
+        working-directory: ./worktree-image
+
+      - name: Prepare coverage results
+        if: (success() || failure()) && steps.build.outcome == 'success'
+        run: |
+          ./venv/bin/python3 -m coverage combine src/.coverage/
+          ./venv/bin/python3 -m coverage xml
+          mkdir -p coverage-report
+          mv coverage.xml coverage-report/
         working-directory: ./worktree-image

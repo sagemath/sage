@@ -1235,40 +1235,41 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         out = [self.DIVIDER]
         with OriginalSource(example):
-            match self.options.format:
-                case 'sage':
-                    if test.filename:
-                        if test.lineno is not None and example.lineno is not None:
-                            lineno = test.lineno + example.lineno + 1
-                        else:
-                            lineno = '?'
-                        out.append('File "%s", line %s, in %s' %
-                                   (test.filename, lineno, test.name))
+            if self.options.format == 'sage':
+                if test.filename:
+                    if test.lineno is not None and example.lineno is not None:
+                        lineno = test.lineno + example.lineno + 1
                     else:
-                        out.append('Line %s, in %s' % (example.lineno + 1, test.name))
-                    out.append(message)
-                case 'github':
-                    # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
-                    if message.startswith('Warning: '):
-                        command = f'::warning title={message}'
-                        message = message[len('Warning: '):]
-                    elif self.baseline.get('failed', False):
-                        command = f'::notice title={message}'
-                        message += ' [failed in baseline]'
-                    else:
-                        command = f'::error title={message}'
-                    if extra := getattr(example, 'extra', None):
-                        message += f': {extra}'
-                    if test.filename:
-                        command += f',file={test.filename}'
-                        if test.lineno is not None and example.lineno is not None:
-                            lineno = test.lineno + example.lineno + 1
-                            command += f',line={lineno}'
-                        lineno = None
-                    else:
-                        command += f',line={example.lineno + 1}'
-                    command += f'::{message}'
-                    out.append(command)
+                        lineno = '?'
+                    out.append('File "%s", line %s, in %s' %
+                               (test.filename, lineno, test.name))
+                else:
+                    out.append('Line %s, in %s' % (example.lineno + 1, test.name))
+                out.append(message)
+            elif self.options.format == 'github':
+                # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
+                if message.startswith('Warning: '):
+                    command = f'::warning title={message}'
+                    message = message[len('Warning: '):]
+                elif self.baseline.get('failed', False):
+                    command = f'::notice title={message}'
+                    message += ' [failed in baseline]'
+                else:
+                    command = f'::error title={message}'
+                if extra := getattr(example, 'extra', None):
+                    message += f': {extra}'
+                if test.filename:
+                    command += f',file={test.filename}'
+                    if test.lineno is not None and example.lineno is not None:
+                        lineno = test.lineno + example.lineno + 1
+                        command += f',line={lineno}'
+                    lineno = None
+                else:
+                    command += f',line={example.lineno + 1}'
+                command += f'::{message}'
+                out.append(command)
+            else:
+                raise ValueError(f'unknown format option: {self.options.format}')
             source = example.source
             out.append(doctest._indent(source))
             return '\n'.join(out)
