@@ -6471,7 +6471,7 @@ cdef class FGLMStrategy:
             sage: new_ring.gen(2) > new_ring.gen(1) > new_ring.gen(0)
             False
             sage: ideal = BooleanPolynomialVector([x+z, y+z])
-            sage: FGLMStrategy(old_ring, new_ring, ideal)  # skip_conda Adds additional output when executed under conda
+            sage: FGLMStrategy(old_ring, new_ring, ideal)
             <sage.rings.polynomial.pbori.pbori.FGLMStrategy object at 0x...>
 
         Check that :trac:`13883` is fixed::
@@ -6514,7 +6514,7 @@ cdef class FGLMStrategy:
             [x + z, y + z]
             sage: old_ring = B
             sage: new_ring = B.clone(ordering=dp_asc)
-            sage: list(FGLMStrategy(old_ring, new_ring, ideal).main()) # skip_conda Adds additional output when executed under conda
+            sage: list(FGLMStrategy(old_ring, new_ring, ideal).main())
             [y + x, z + x]
         """
         return new_BPV_from_PBPolyVector(self._parent, deref(self._strat).main())
