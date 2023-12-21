@@ -19,6 +19,9 @@ class GapPackage(Feature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of a GAP package.
 
+    A GAP package is "present" if it *can be* loaded, not if it *has
+    been* loaded.
+
     .. SEEALSO::
 
         :class:`Feature sage.libs.gap <~sage.features.sagemath.sage__libs__gap>`
@@ -42,9 +45,10 @@ class GapPackage(Feature):
 
     def _is_present(self):
         r"""
-        Return whether the package is available in GAP.
+        Return whether or not the GAP package is present.
 
-        This does not check whether this package is functional.
+        If the package is installed but not yet loaded, it is loaded
+        first. This does *not* check that the package is functional.
 
         EXAMPLES::
 
@@ -57,8 +61,11 @@ class GapPackage(Feature):
         except ImportError:
             return FeatureTestResult(self, False,
                                      reason="sage.libs.gap is not available")
-        command = 'TestPackageAvailability("{package}")'.format(package=self.package)
+
+        # This returns "true" even if the package is already loaded.
+        command = 'LoadPackage("{package}")'.format(package=self.package)
         presence = libgap.eval(command)
+
         if presence:
             return FeatureTestResult(self, True,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))

@@ -1048,9 +1048,11 @@ Sage mirrors when a new release is prepared.  On GitHub PRs
 upgrading a package, the PR description should no longer contain
 the upstream URL to avoid duplication of information.
 
-Note that, like the ``tarball`` field, the ``tpstream_url`` is a
+Note that, like the ``tarball`` field, the ``upstream_url`` is a
 template; the substring ``VERSION`` is substituted with the actual
-version.
+version. It can also be written as ``${VERSION}``, and it is possible
+to refer to the dot-separated components of a version by ``VERSION_MAJOR``,
+``VERSION_MINOR``, and ``VERSION_MICRO``.
 
 For Python packages available from PyPI, you should use an
 ``upstream_url`` from ``pypi.io``, which follows the format

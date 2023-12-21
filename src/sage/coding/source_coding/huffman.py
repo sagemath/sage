@@ -367,9 +367,9 @@ class Huffman(SageObject):
         # Build the binary tree of a Huffman code, where the root of the tree
         # is associated with the empty string.
         self._build_code_from_tree(self._tree, d, prefix="")
-        self._index = dict((i, s) for i, (s, w) in enumerate(symbols))
-        self._character_to_code = dict(
-            (s, d[i]) for i, (s, w) in enumerate(symbols))
+        self._index = {i: s for i, (s, w) in enumerate(symbols)}
+        self._character_to_code = {
+            s: d[i] for i, (s, w) in enumerate(symbols)}
 
     def encode(self, string):
         r"""
