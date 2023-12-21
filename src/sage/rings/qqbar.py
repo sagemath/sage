@@ -1647,7 +1647,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             sage: pi in QQbar                                                           # needs sage.symbolic
             False
 
-        TESTS::
+        TESTS:
 
         Check if :trac:`12745` is fixed::
 
