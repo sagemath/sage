@@ -3,13 +3,13 @@
         "failed": true
     },
     "sage.algebras.fusion_rings.fusion_ring": {
-        "failed": true
+        "failed": "see https://github.com/sagemath/sage/pull/36372"
     },
     "sage.combinat.cluster_algebra_quiver.quiver": {
-        "failed": true
+        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6836592771/job/18591690058#step:11:10059"
     },
     "sage.geometry.cone": {
-        "failed": true
+        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6827937663/job/18571052628#step:11:12362"
     },
     "sage.groups.matrix_gps.finitely_generated_gap": {
         "failed": true
@@ -18,31 +18,31 @@
         "failed": true
     },
     "sage.libs.gap.element": {
-        "failed": true
+        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6840579851/job/18600012965#step:11:13016"
     },
     "sage.libs.singular.singular": {
         "failed": true
     },
     "sage.matrix.matrix2": {
-        "failed": true
+        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6835143781/job/18588599649#step:11:16939"
     },
     "sage.matrix.matrix_integer_sparse": {
-        "failed": true
+        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6827937663/job/18571052628#step:11:12362"
     },
     "sage.misc.lazy_import": {
         "failed": true
     },
     "sage.misc.weak_dict": {
-        "failed": true
+        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6870325919/job/18684964234#step:11:10059"
     },
     "sage.modular.modform.l_series_gross_zagier": {
-        "failed": true
+        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6859244281/job/18651257775#step:11:10102"
     },
     "sage.parallel.map_reduce": {
-        "failed": true
+        "failed": "random failure https://github.com/sagemath/sage/issues/36939"
     },
     "sage.rings.function_field.drinfeld_modules.morphism": {
-        "failed": true
+        "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6840502530/job/18599835766#step:11:10107"
     },
     "sage.rings.polynomial.multi_polynomial_ideal": {
         "failed": true
@@ -51,19 +51,19 @@
         "failed": true
     },
     "sage.rings.polynomial.polynomial_element": {
-        "failed": true
+        "failed": "see https://github.com/sagemath/sage/pull/36372"
     },
     "sage.rings.polynomial.skew_polynomial_finite_field": {
         "failed": true
     },
     "sage.schemes.elliptic_curves.ell_field": {
-        "failed": true
+        "failed": "random failure https://github.com/sagemath/sage/issues/36832"
     },
     "sage.sets.recursively_enumerated_set": {
-        "failed": true
+        "failed": "see https://github.com/sagemath/sage/pull/36372"
     },
     "sage.structure.coerce_actions": {
-        "failed": true
+        "failed": "random failure https://github.com/sagemath/sage/issues/35973"
     },
     "sage.tests.gap_packages": {
         "failed": true
