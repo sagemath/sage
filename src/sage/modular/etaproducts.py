@@ -633,7 +633,7 @@ def EtaProduct(level, dic) -> EtaGroupElement:
     -  ``dic`` -- (dictionary): a dictionary indexed by
        divisors of N such that the coefficient of `\eta(q^d)` is
        r[d]. Only nonzero coefficients need be specified. If Ligozat's
-       criteria are not satisfied, a ``ValueError`` will be raised.
+       criteria are not satisfied, a :class:`ValueError` will be raised.
 
     OUTPUT:
 

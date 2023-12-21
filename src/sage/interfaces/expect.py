@@ -802,7 +802,7 @@ If this all works, you can then make calls like:
         os.system(cmd)
 
     def _remove_tmpfile_from_server(self):
-        if not (self.__remote_tmpfile is None):
+        if self.__remote_tmpfile is not None:
             raise NotImplementedError
 
     def _eval_line_using_file(self, line, restart_if_needed=True):

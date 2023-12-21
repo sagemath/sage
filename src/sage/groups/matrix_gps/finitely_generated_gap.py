@@ -120,16 +120,14 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             21499084800
             sage: P = G.as_permutation_group()
             sage: Psmaller = G.as_permutation_group(algorithm="smaller", seed=6)
-            sage: P == Psmaller
-            False
             sage: P.cardinality()
             21499084800
             sage: P.degree()
             144
             sage: Psmaller.cardinality()
             21499084800
-            sage: Psmaller.degree()                     # random
-            80
+            sage: Psmaller.degree() <= P.degree()
+            True
 
         .. NOTE::
 

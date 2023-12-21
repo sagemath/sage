@@ -288,132 +288,6 @@ WSL post-installation notes
 
 When the installation is complete, you may be interested in :ref:`sec-launching-wsl-post-installation`.
 
-.. _section_cygwinprereqs:
-
-Cygwin prerequisite installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Previous versions of Sage targeted the Windows platform using `Cygwin
-<https://cygwin.com/>`_.
-
-As of Sage 9.7, we no longer recommend attempting to build Sage on
-Cygwin and instead suggest that users on Windows 10 and 11 switch to
-installing Sage using Windows Subsystem for Linux (WSL), which gives a
-better performance and user/developer experience than Cygwin.
-
-Users on hardware configurations that do not support running WSL, as
-well as users on legacy versions of Windows such as Windows 8 may find
-it necessary to build Sage on Cygwin.
-
-.. WARNING::
-
-   As of Sage 9.7, :trac:`known issues with several packages
-   <query?status=closed&status=needs_info&status=needs_review&status=needs_work&status=new&status=positive_review&component=porting%3A+Cygwin&milestone=sage-9.8&milestone=sage-9.7&milestone=sage-9.6&milestone=sage-9.5&milestone=sage-9.4&milestone=sage-9.3&milestone=sage-9.2&milestone=sage-9.1&col=id&col=summary&col=milestone&col=status&col=priority&col=changetime&col=author&col=reviewer&desc=1&order=changetime>`
-   will prevent a successful installation. Users need to be prepared
-   to contribute to Sage by fixing these issues.
-
-Use the following instructions to get started.
-
-1.  Download `the 64-bit version of Cygwin <https://cygwin.com/install.html>`_
-    (do not get the 32-bit version; it is not supported by Sage).
-
-2.  Run the ``setup-x86_64.exe`` graphical installer.  Pick the default
-    options in most cases.  At the package selection screen, use the
-    search bar to find and select at least the following packages:
-    ``bzip2``, ``coreutils``, ``curl``, ``gawk``, ``gzip``, ``tar``, ``wget``, ``git``.
-
-3.  Start the Cygwin terminal and ensure you get a working bash prompt.
-
-4.  Make sure the path of your Cygwin home directory does not contain
-    space characters. Also avoid building in home directories of Windows domain
-    users or in paths with capital letters.
-
-    By default, your username in Cygwin is the same as your username in
-    Windows.  This might contain spaces and other traditionally
-    non-UNIX-friendly characters, e.g., if it is your full name.  You
-    can check this as follows::
-
-        $ whoami
-        Erik M. Bray
-
-    This means your default home directory on Cygwin contains this
-    username verbatim; in the above example, ``/home/Erik M. Bray``.
-    It will save some potential trouble if you change your Cygwin home
-    directory to contain only alphanumeric characters, for example,
-    ``/home/embray``.  The easiest way to do this is to first create
-    the home directory you want to use instead, then create an
-    ``/etc/passwd`` file specifying that directory as your home, as follows::
-
-        $ whocanibe=embray
-        $ mkdir /home/$whocanibe
-        $ mkpasswd.exe -l -u "$(whoami)" | sed -r 's,/home/[^:]+,/home/'$whocanibe, > /etc/passwd
-
-    After this, close all Cygwin terminals (ensure nothing in
-    ``C:\cygwin64`` is running), then start a new Cygwin terminal and
-    your home directory should have moved.
-
-    There are `other ways to do
-    this <https://stackoverflow.com/questions/1494658/how-can-i-change-my-cygwin-home-folder-after-installation>`_,
-    but the above seems to be the simplest that's still supported.
-
-5.  (Optional) Although it is possible to install Sage's dependencies using the
-    Cygwin graphical installer, it is recommended to install the
-    `apt-cyg <https://github.com/transcode-open/apt-cyg>`_
-    command-line package installer, which is used for the remainder of
-    these instructions.  To install ``apt-cyg``, run::
-
-        $ curl -OL https://rawgit.com/transcode-open/apt-cyg/master/apt-cyg
-        $ install apt-cyg /usr/local/bin
-        $ rm -f apt-cyg
-
-6.  Then, to install the current set of system packages known to work for building
-    Sage, run the following command (or use the graphical installer to
-    select and install these packages):
-
-    .. literalinclude:: cygwin.txt
-
-    Optional packages that are also known to be installable via system packages
-    include:
-
-    .. literalinclude:: cygwin-optional.txt
-
-.. NOTE::
-
-   On Cygwin, at any point in time after building/installing software,
-   it may be required to  "rebase" ``dll`` files.
-   Sage provides some scripts, located in :file:`$SAGE_LOCAL/bin`, to do so:
-
-   - ``sage-rebaseall.sh``, a shell script which calls Cygwin's
-     ``rebaseall`` program.  It must be run within a ``dash`` shell
-     from the :envvar:`SAGE_ROOT` directory after all other Cygwin
-     processes have been shut down and needs write-access to the
-     system-wide rebase database located at
-     :file:`/etc/rebase.db.i386`, which usually means administrator
-     privileges.  It updates the system-wide database and adds Sage
-     dlls to it, so that subsequent calls to ``rebaseall`` will take
-     them into account.
-
-   - ``sage-rebase.sh``, a shell script which calls Cygwin's ``rebase`` program
-     together with the ``-O/--oblivious`` option.
-     It must be run within a shell from :envvar:`SAGE_ROOT` directory.
-     Contrary to the ``sage-rebaseall.sh`` script, it neither updates the
-     system-wide database, nor adds Sage dlls to it.
-     Therefore, subsequent calls to ``rebaseall`` will not take them into account.
-
-   - ``sage-rebaseall.bat`` (respectively ``sage-rebase.bat``), an MS-DOS batch
-     file which calls the ``sage-rebaseall.sh`` (respectively ``sage-rebase.sh``)
-     script.
-     It must be run from a Windows command prompt, after adjusting
-     :envvar:`SAGE_ROOT` to the Windows location of Sage's home directory, and, if
-     Cygwin is installed in a non-standard location, adjusting
-     :envvar:`CYGWIN_ROOT` as well.
-
-   Some systems may encounter this problem frequently enough to make building or
-   testing difficult.
-   If executing the above scripts or directly calling ``rebaseall`` does not solve
-   rebasing issues, deleting the system-wide database and then regenerating it
-   from scratch, e.g., by executing ``sage-rebaseall.sh``, might help.
-
 
 Other platforms
 ^^^^^^^^^^^^^^^
@@ -446,13 +320,25 @@ If you don't want conda to be used by sage, deactivate conda (for the current sh
   operating system, or its own compilers.
 
 
-Tcl/Tk
-^^^^^^
+Tcl/Tk (and system's Python)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, you need
-to install the Tcl/Tk and its development headers before building Sage.  Sage's
-Python will then automatically recognize your system's install of Tcl/Tk.
+If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, and you
+are going to use your OS's Python3 as Sage's Python, you merely need to install
+its **Tkinter** module.  On Linux systems, it is usually provided by the
+**python3-tk** or a similarly named (e.g. **python3-tkinter**) package,
+which can be installed using::
 
+    $ sudo apt-get install python3-tk
+
+or similar commands.
+
+Tcl/Tk (and Sage's own Python)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage,
+and you are going to build Sage's Python from source, you need to install
+these, and the corresponding headers.
 On Linux systems, these are usually provided by the **tk** and **tk-dev**
 (or **tk-devel**) packages which can be installed using::
 
@@ -460,6 +346,8 @@ On Linux systems, these are usually provided by the **tk** and **tk-dev**
 
 or similar commands.
 
+
+Sage's Python will then automatically recognize your system's install of Tcl/Tk.
 If you installed Sage first, all is not lost. You just need to rebuild
 Sage's Python and any part of Sage relying on it::
 
@@ -512,7 +400,7 @@ Installation steps
    If the log files are very large (and many are), then don't paste the whole
    file, but make sure to include any error messages.
    It would also be helpful to include the type of operating system
-   (Linux, macOS, Solaris, OpenSolaris, Cygwin, or any other system),
+   (Linux, macOS, Solaris, OpenSolaris, or any other system),
    the version and release date of that operating system and the version of
    the copy of Sage you are using.
    (There are no formal requirements for bug reports -- just send them;
@@ -782,14 +670,21 @@ Here are some of the more commonly used variables affecting the build process:
       Some users on single-core macOS machines have reported problems when
       building Sage with ``MAKE='make -jNUM'`` with ``NUM`` greater than one.
 
-- :envvar:`SAGE_NUM_THREADS` - if set to a number, then when building the
-  documentation, parallel doctesting, or running ``sage -b``, use this many
-  threads.
+- :envvar:`SAGE_NUM_THREADS` - if set to a number, then when rebuilding with
+  ``sage -b`` or parallel doctesting with ``sage -t -p 0``, use at most this
+  many threads.
+
   If this is not set, then determine the number of threads using the value of
   the :envvar:`MAKE` (see above) or :envvar:`MAKEFLAGS` environment variables.
-  If none of these specifies a number of jobs, use one thread (except for
-  parallel testing: there we use a default of the number of CPU cores, with a
-  maximum of 8 and a minimum of 2).
+  If none of these specifies a number of jobs,
+
+  - ``sage -b`` only uses one thread
+
+  - ``sage -t -p 0`` uses a default of the number of CPU cores, with a
+    maximum of 8 and a minimum of 2.
+
+  When ``sage -t -p`` runs under the control of the GNU ``make``
+  jobserver, then Sage will request as most this number of job slots.
 
 - :envvar:`V` - if set to ``0``, silence the build.  Instead of
   showing a detailed compilation log, only one line of output is shown
@@ -1016,7 +911,7 @@ Environment variables dealing with specific Sage packages:
 - :envvar:`PARI_CONFIGURE` - use this to pass extra parameters to
   PARI's ``Configure`` script, for example to specify graphics
   support (which is disabled by default). See the file
-  :file:`build/pkgs/pari/spkg-install` for more information.
+  :file:`build/pkgs/pari/spkg-install.in` for more information.
 
 - :envvar:`SAGE_TUNE_PARI` - if yes, enable PARI self-tuning. Note that
   this can be time-consuming. If you set this variable to "yes", you

@@ -170,16 +170,9 @@ sdh_configure() {
     if [ -z "$CONFIG_SHELL" ]; then
         export CONFIG_SHELL=`command -v bash`
     fi
-    if [ "$UNAME" = "CYGWIN" ]; then
-        # TODO: To use --disable-static for all packages on Cygwin, need
-        # #30814: Cygwin: Fix remaining packages to build shared libraries, using AM_LDFLAGS=-no-undefined
-        DISABLE_STATIC=
-    else
-        DISABLE_STATIC=--disable-static
-    fi
-    ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" $DISABLE_STATIC --disable-maintainer-mode --disable-dependency-tracking "$@"
+    ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" --disable-static --disable-maintainer-mode --disable-dependency-tracking "$@"
     if [ $? -ne 0 ]; then # perhaps it is a non-autoconf'd project
-      ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" $DISABLE_STATIC "$@"
+      ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" --disable-static "$@"
       if [ $? -ne 0 ]; then
         if [ -f "$(pwd)/config.log" ]; then
             sdh_die <<_EOF_
@@ -296,8 +289,6 @@ sdh_pip_install() {
 
 sdh_pip_editable_install() {
     echo "Installing $PKG_NAME (editable mode)"
-    # Until https://github.com/sagemath/sage/issues/34209 switches us to PEP 660 editable wheels
-    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
     python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable "$@" || \
         sdh_die "Error installing $PKG_NAME"
 }

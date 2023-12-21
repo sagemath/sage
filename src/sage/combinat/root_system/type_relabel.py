@@ -10,7 +10,7 @@ Root system data for relabelled Cartan types
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.sets.family import FiniteFamily
+from sage.sets.family import Family, FiniteFamily
 from sage.combinat.root_system import cartan_type
 from sage.combinat.root_system import ambient_space
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
@@ -173,10 +173,10 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: rI5 = CartanType(['I',5]).relabel({1:0,2:1})
             sage: rI5.root_system().ambient_space()
         """
-        assert isinstance(relabelling, FiniteFamily)
         cartan_type.CartanType_decorator.__init__(self, type)
-        self._relabelling = relabelling._dictionary
-        self._relabelling_inverse = relabelling.inverse_family()._dictionary
+        relabelling = Family(relabelling)
+        self._relabelling = dict(relabelling.items())
+        self._relabelling_inverse = dict(relabelling.inverse_family().items())
         self._index_set = tuple(sorted(relabelling[i] for i in type.index_set()))
         # TODO: design an appropriate infrastructure to handle this
         # automatically? Maybe using categories and axioms?

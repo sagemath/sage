@@ -6,22 +6,17 @@
 # distutils: language = c++
 # sage.doctest: needs sage.libs.linbox
 """
-Number field elements (implementation using NTL)
+Elements of number fields (implemented using NTL)
 
 AUTHORS:
 
-- William Stein: version before it got Cython'd
-
-- Joel B. Mohler (2007-03-09): First reimplementation in Cython
-
-- William Stein (2007-09-04): add doctests
-
-- Robert Bradshaw (2007-09-15): specialized classes for relative and
-  absolute elements
-
-- John Cremona (2009-05-15): added support for local and global
-  logarithmic heights.
-
+- William Stein: initial version
+- Joel B. Mohler (2007-03-09): reimplemented in Cython
+- William Stein (2007-09-04): added doctests
+- Robert Bradshaw (2007-09-15): specialized classes for relative and absolute
+  elements
+- John Cremona (2009-05-15): added support for local and global logarithmic
+  heights
 - Robert Harron (2012-08): conjugate() now works for all fields contained in
   CM fields
 

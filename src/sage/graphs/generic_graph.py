@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Generic graphs (common to directed/undirected)
 
@@ -2933,8 +2932,8 @@ class GenericGraph(GenericGraph_pyx):
           ``_embedding``
 
         - ``boolean`` -- boolean (default: ``True``); -- whether to return a
-          boolean answer or raise a ``ValueError`` exception if the embedding is
-          invalid
+          boolean answer or raise a :class:`ValueError` exception
+          if the embedding is invalid
 
         EXAMPLES::
 
@@ -3443,8 +3442,8 @@ class GenericGraph(GenericGraph_pyx):
         .. WARNING::
 
             ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            ``TypeError`` might be raised when working with non-comparable
-            objects in Python 3.
+            :class:`TypeError` might be raised when working with non-comparable
+            objects.
 
         EXAMPLES:
 
@@ -4092,7 +4091,7 @@ class GenericGraph(GenericGraph_pyx):
             if n < 2:
                 return Rational(0)
             if self._directed:
-                return Rational(self.size()) / Rational((n ** 2 - n))
+                return Rational(self.size()) / Rational(n ** 2 - n)
             return Rational(self.size()) / Rational((n ** 2 - n) / 2)
 
     def is_bipartite(self, certificate=False):
@@ -18894,8 +18893,8 @@ class GenericGraph(GenericGraph_pyx):
         .. WARNING::
 
             ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            ``TypeError`` might be raised when working with non-comparable
-            objects in Python 3.
+            :class:`TypeError` might be raised when working with non-comparable
+            objects.
 
         - ``immutable`` -- boolean (default: ``Non``); whether to create a
           mutable/immutable copy. ``immutable=None`` (default) means that the
@@ -25341,7 +25340,7 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
             for el, part in edge_partition:
                 # The multiplicity of a label is the number of edges from u to v
                 # it represents
-                m = sum((y[1] for y in el))
+                m = sum(y[1] for y in el)
                 if m in tmp:
                     tmp[m].append(part)
                 else:

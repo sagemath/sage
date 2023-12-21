@@ -21,32 +21,7 @@ from sage.env import SAGE_LOCAL
 # Replacements (as needed) for Python stdlib functions to provide
 # better platform compatibility
 #################################################################
-if sys.platform == 'cygwin':
-    # find_library that works in cygwin adapted from
-    # http://cygwin-ports.svn.sourceforge.net/viewvc/cygwin-ports/ports/trunk/lang/python/2.5.2-ctypes-util-find_library.patch?revision=8245&view=markup
-    def _find_library(name):
-        libdirs = []
-        if SAGE_LOCAL:
-            libdirs.append(os.path.join(SAGE_LOCAL, 'lib'))
-        libdirs.extend(['/usr/local/lib', '/usr/lib'])
-        for libdir in libdirs:
-            for libext in ['dll.a', 'a']:
-                implib = os.path.join(libdir,
-                                      'lib{0}.{1}'.format(name, libext))
-                if not os.path.exists(implib):
-                    continue
-
-                cmd = ['dlltool', '-I', implib]
-
-                p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                          stderr=subprocess.PIPE,
-                                          universal_newlines=True)
-
-                stdout, stderr = p.communicate()
-
-                if p.returncode == 0:
-                    return stdout.strip()
-elif sys.platform == 'darwin':
+if sys.platform == 'darwin':
     # On OSX non-standard library paths are not automatically found by the
     # find_library implementation without setting DYLD_LIBRARY_PATH; see
     # https://github.com/sagemath/sage/issues/21399#comment:25
