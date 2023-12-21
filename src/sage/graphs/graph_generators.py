@@ -1239,7 +1239,7 @@ class GraphGenerators:
 
         A `k`-tree is a maximal graph with treewidth `k`::
 
-            sage: # optional - nauty
+            sage: # needs nauty
             sage: gen = graphs.nauty_genktreeg("10 -k4")
             sage: G = next(gen); G
             Graph on 10 vertices
@@ -1249,7 +1249,7 @@ class GraphGenerators:
         A list of all 2-trees with 6, 7 and 8 vertices. This agrees with
         :oeis:`A054581`::
 
-            sage: # optional - nauty
+            sage: # needs nauty
             sage: gen = graphs.nauty_genktreeg("6")
             sage: len(list(gen))
             5
@@ -1267,15 +1267,15 @@ class GraphGenerators:
         the first returned value might be an empty string if ``debug`` is
         ``True``::
 
-            sage: gen = graphs.nauty_genktreeg("7", debug=True)         # optional - nauty
-            sage: print(next(gen))                                      # optional - nauty
+            sage: gen = graphs.nauty_genktreeg("7", debug=True)                         # needs nauty
+            sage: print(next(gen))                                                      # needs nauty
             >A ...genktreeg k=2 n=7
 
         TESTS:
 
         Wrong input::
 
-            sage: # optional - nauty
+            sage: # needs nauty
             sage: list(graphs.nauty_genktreeg("4 -k5", debug=True))
             ['>E genktreeg: n cannot be less than k\n']
             sage: list(graphs.nauty_genktreeg("10 -k 4", debug=True))
