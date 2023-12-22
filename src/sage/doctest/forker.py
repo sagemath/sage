@@ -1807,7 +1807,7 @@ class DocTestDispatcher(SageObject):
         try:
             from gnumake_tokenpool import JobClient, NoJobServer
             try:
-                job_client = JobClient()
+                job_client = JobClient(use_cysignals=True)
             except NoJobServer:
                 pass
         except ImportError:
