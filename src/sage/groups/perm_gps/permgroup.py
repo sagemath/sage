@@ -786,6 +786,21 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G != H
             False
 
+        Check that different orderings of the domain do not matter::
+
+            sage: gens = [("a", "b", "c"), ("d", "e")]
+            sage: domain = ["a", "b", "c", "d", "e"]
+            sage: G = PermutationGroup(gens, domain=domain)
+            sage: H = PermutationGroup(gens, domain=domain[::-1])
+            sage: G == H
+            True
+
+            sage: gens = [("a", "b", "c", "d")]
+            sage: domain = ("a", "b", "c", "d")
+            sage: G = PermutationGroup(gens, domain=domain)
+            sage: all(G == PermutationGroup(gens, domain=pi) for pi in Permutations(domain))
+            True
+
         """
         if not isinstance(right, PermutationGroup_generic):
             return NotImplemented
@@ -798,8 +813,15 @@ class PermutationGroup_generic(FiniteGroup):
             # domains differ
             return op is op_NE
 
-        gSelf = self._libgap_()
-        # should conjugate gRight
+        if ((self._domain_is_N and right._domain_is_N)
+            or self._domain == right._domain):
+            gSelf = self._libgap_()
+        else:
+            n = len(self.domain())
+            g = [right._domain_to_gap[self._domain_from_gap[i]]
+                 for i in range(1, n + 1)]
+            g = PermutationConstructor(g)
+            gSelf = libgap.ConjugateGroup(self._libgap_(), g)
         gRight = right._libgap_()
 
         if op in [op_EQ, op_NE]:
@@ -5129,7 +5151,6 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             True
             sage: G.subgroup([G((1,2,3))]) == G.subgroup([G((1,3,2))])
             True
-
         """
         if self is other:
             return rich_to_bool(op, 0)
