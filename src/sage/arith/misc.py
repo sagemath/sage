@@ -6230,7 +6230,7 @@ def dedekind_sum(p, q, algorithm='default'):
     - :wikipedia:`Dedekind\_sum`
     """
     if algorithm == 'default' or algorithm == 'flint':
-        from sage.libs.flint.arith import dedekind_sum as flint_dedekind_sum
+        from sage.libs.flint.arith_sage import dedekind_sum as flint_dedekind_sum
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':
