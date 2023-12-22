@@ -10,11 +10,11 @@ TESTS::
       Status   Package   GAP Output
     +--------+---------+------------+
 
-    sage: test_packages(['atlasrep', 'tomlib'])
+    sage: test_packages(['primgrp', 'smallgrp'])
       Status   Package    GAP Output
     +--------+----------+------------+
-               atlasrep   true
-               tomlib     true
+               primgrp    true
+               smallgrp   true
 """
 
 import os
@@ -115,6 +115,16 @@ def all_installed_packages(ignore_dot_gap=False, gap=None):
         paths = [str(p) for p in gap.eval('GAPInfo.RootPaths')]
     else:
         paths = [str(p) for p in gap('GAPInfo.RootPaths')]
+
+    # When GAP_ROOT_PATHS begins or ends with a semicolon (to append
+    # or prepend to the default list), the list of "gap" root paths
+    # will sometimes contain duplicates while the list for libgap will
+    # not. I don't know why this is: the appending/prepending does
+    # work as intended, even for libgap, so the issue is not that
+    # appending/prepending don't work at all for libgap. For lack of a
+    # better idea, we deduplicate here to avoid listing the same
+    # packages twice for the non-lib "gap" interface.
+    paths = set(paths)
 
     packages = []
     for path in paths:

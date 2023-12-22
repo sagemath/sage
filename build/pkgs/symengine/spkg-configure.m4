@@ -1,7 +1,7 @@
 SAGE_SPKG_CONFIGURE([symengine], [
     m4_pushdef(SAGE_SYMENGINE_VERSION_MAJOR, [0])
     m4_pushdef(SAGE_SYMENGINE_VERSION_MINOR, [11])
-    SAGE_SPKG_DEPCHECK([gmp arb ecm flint mpc mpfr], [
+    SAGE_SPKG_DEPCHECK([gmp ecm flint mpc mpfr], [
         AC_CHECK_HEADER([symengine/symengine_config.h], [], [sage_spkg_install_symengine=yes])
         AC_MSG_CHECKING([whether we can link a program using symengine])
         SYMENGINE_SAVED_LIBS=$LIBS

@@ -177,7 +177,8 @@ SAGE_VENV_SPKG_INST = var("SAGE_VENV_SPKG_INST", join(SAGE_VENV, "var", "lib", "
 SAGE_LOCAL = var("SAGE_LOCAL", SAGE_VENV)
 SAGE_SHARE = var("SAGE_SHARE", join(SAGE_LOCAL, "share"))
 SAGE_DOC = var("SAGE_DOC", join(SAGE_SHARE, "doc", "sage"))
-SAGE_SPKG_INST = var("SAGE_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
+SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
+SAGE_SPKG_INST = var("SAGE_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))  # deprecated
 
 # source tree of the Sage distribution
 SAGE_ROOT = var("SAGE_ROOT")  # no fallback for SAGE_ROOT
@@ -198,8 +199,7 @@ SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
 ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
-GAP_LIB_DIR = var("GAP_LIB_DIR", join(SAGE_LOCAL, "lib", "gap"))
-GAP_SHARE_DIR = var("GAP_SHARE_DIR", join(SAGE_SHARE, "gap"))
+
 COMBINATORIAL_DESIGN_DATA_DIR = var("COMBINATORIAL_DESIGN_DATA_DIR", join(SAGE_SHARE, "combinatorial_designs"))
 CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR", join(SAGE_SHARE, "cremona"))
 CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR", join(SAGE_SHARE, "cremona"))
@@ -243,11 +243,13 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 # GAP memory and args
 
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
-_gap_cmd = "gap -r"
-if SAGE_GAP_MEMORY is not None:
-    _gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
-SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', _gap_cmd)
+SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', None)
 
+# The semicolon-separated search path for GAP packages. It is passed
+# directly to GAP via the -l flag.
+GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
+                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
+                               join(SAGE_LOCAL, "share", "gap")]))
 
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:

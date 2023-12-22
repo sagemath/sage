@@ -35,9 +35,9 @@ def is_Group(x):
 
     EXAMPLES::
 
-        sage: F.<a,b> = FreeGroup()                                                     # needs sage.combinat
+        sage: F.<a,b> = FreeGroup()                                                     # needs sage.groups
         sage: from sage.groups.group import is_Group
-        sage: is_Group(F)                                                               # needs sage.combinat
+        sage: is_Group(F)                                                               # needs sage.groups
         True
         sage: is_Group("a string")
         False
@@ -140,7 +140,7 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()                                             # needs sage.modules sage.rings.finite_rings
+            sage: SL(2, 7).is_commutative()                                             # needs sage.libs.gap sage.modules sage.rings.finite_rings
             False
         """
         return self.is_abelian()
@@ -245,8 +245,8 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup([2,3,4,5])                                           # needs sage.groups
-            sage: G.an_element()                                                        # needs sage.groups
+            sage: G = AbelianGroup([2,3,4,5])                                           # needs sage.modules
+            sage: G.an_element()                                                        # needs sage.modules
             f0*f1*f2*f3
         """
         return self.prod(self.gens())
