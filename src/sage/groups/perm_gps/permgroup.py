@@ -269,6 +269,8 @@ def PermutationGroup(gens=None, *args, **kwds):
 
     -  ``gens`` -- (default: ``None``) list of generators
 
+    - ``domain`` -- (default: ``None``) the set the generators act on
+
     -  ``gap_group`` -- (optional) a gap permutation group
 
     -  ``canonicalize`` -- boolean (default: ``True``); if ``True``,
@@ -278,11 +280,29 @@ def PermutationGroup(gens=None, *args, **kwds):
 
     - a permutation group
 
+    .. NOTE::
+
+        If the domain is not specified, and all generators act on
+        integers, the domain is the interval of integers between the
+        smallest and the largest integer appearing.  Otherwise, the
+        domain is the set of elements the generators act on.
+
     EXAMPLES::
 
         sage: G = PermutationGroup([[(1,2,3),(4,5)],[(3,4)]])
         sage: G
         Permutation Group with generators [(3,4), (1,2,3)(4,5)]
+
+    Permutation groups can work on any domain. In the following
+    examples, the permutations are specified in list notation,
+    according to the order of the elements of the domain::
+
+        sage: list(PermutationGroup([['b','c','a']], domain=['a','b','c']))
+        [(), ('a','b','c'), ('a','c','b')]
+        sage: list(PermutationGroup([['b','c','a']], domain=['b','c','a']))
+        [()]
+        sage: list(PermutationGroup([['b','c','a']], domain=['a','c','b']))
+        [(), ('a','b')]
 
     We can also make permutation groups from PARI groups::
 
@@ -302,17 +322,6 @@ def PermutationGroup(gens=None, *args, **kwds):
         (1,2)(3,7)(4,6)(5,8)
         sage: PermutationGroup([p])
         Permutation Group with generators [(1,2)(3,7)(4,6)(5,8)]
-
-    Permutation groups can work on any domain. In the following
-    examples, the permutations are specified in list notation,
-    according to the order of the elements of the domain::
-
-        sage: list(PermutationGroup([['b','c','a']], domain=['a','b','c']))
-        [(), ('a','b','c'), ('a','c','b')]
-        sage: list(PermutationGroup([['b','c','a']], domain=['b','c','a']))
-        [()]
-        sage: list(PermutationGroup([['b','c','a']], domain=['a','c','b']))
-        [(), ('a','b')]
 
     There is an underlying gap object that implements each
     permutation group::
@@ -745,49 +754,26 @@ class PermutationGroup_generic(FiniteGroup):
         """
         Compare ``self`` and ``right``.
 
-        The comparison extends the subgroup relation. Hence, it is first checked
-        whether one of the groups is subgroup of the other. If this is not the
-        case then the ordering is whatever it is in GAP.
+        Two permutation groups are equal if and only if their domains
+        and their underlying groups coincide.
+
+        The relation `G < H` means that the domains of `G` and `H`
+        coincide and that the underlying group of `G` is a strict
+        subgroup of `H`.
+
+        The meaning of the other relations is analogous.
+
+        Therefore, the comparison does not provide a total ordering.
 
         .. NOTE::
 
-            The comparison does not provide a total ordering, as can be seen
-            in the examples below.
+            The domain of a permutation group given by generators
+            only, and whose generators are all tuples of positive
+            integers, is the set of all positive integers.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: G1 = PermutationGroup([[(1,2,3),(4,5)],[(3,4)]])
-            sage: G2 = PermutationGroup([[(1,2,3),(4,5)]])
-            sage: G1 > G2 # since G2 is a subgroup of G1
-            True
-            sage: G1 < G2
-            False
-
-        The following example shows that the comparison does not yield a total
-        ordering::
-
-            sage: H1 = PermutationGroup([[(1,2)],[(5,6)]])
-            sage: H2 = PermutationGroup([[(3,4)]])
-            sage: H3 = PermutationGroup([[(1,2)]])
-            sage: H1 < H2 # according to GAP's ordering
-            True
-            sage: H2 < H3 # according to GAP's ordering
-            True
-            sage: H3 < H1 # since H3 is a subgroup of H1
-            True
-
-        TESTS:
-
-        Check that :trac:`29624` is fixed::
-
-            sage: G = SymmetricGroup(2)
-            sage: H = PermutationGroup([(1,2)])
-            sage: not G == H
-            False
-            sage: G != H
-            False
-
-        Check that different orderings of the domain do not matter::
+        Different orderings of the domain do not matter::
 
             sage: gens = [("a", "b", "c"), ("d", "e")]
             sage: domain = ["a", "b", "c", "d", "e"]
@@ -801,6 +787,48 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup(gens, domain=domain)
             sage: all(G == PermutationGroup(gens, domain=pi) for pi in Permutations(domain))
             True
+
+            sage: G1 = PermutationGroup([[(1,2,3),(4,5)],[(3,4)]])
+            sage: G2 = PermutationGroup([[(1,2,3),(4,5)]])
+            sage: G1 > G2 # since G2 is a subgroup of G1
+            True
+            sage: G1 < G2
+            False
+
+        The following example shows that the comparison does not yield a total
+        ordering::
+
+            sage: H1 = PermutationGroup([[(1,2)],[(5,6)]])
+            sage: H2 = PermutationGroup([[(3,4)]])
+            sage: H1 < H2
+            False
+            sage: H2 < H1
+            False
+
+        The domain of `H1` are the positive integers.  Therefore the
+        following group is a subgroup::
+
+            sage: H3 = PermutationGroup([[(1,2)]])
+            sage: H3 < H1
+            True
+
+        This is particular to the positive integers::
+
+            sage: G1 = PermutationGroup([[(0,1)],[(4,5)]])
+            sage: G3 = PermutationGroup([[(0,1)]])
+            sage: G3 < G1
+            False
+
+        TESTS:
+
+        Check that :trac:`29624` is fixed::
+
+            sage: G = SymmetricGroup(2)
+            sage: H = PermutationGroup([(1,2)])
+            sage: not G == H
+            False
+            sage: G != H
+            False
 
         """
         if not isinstance(right, PermutationGroup_generic):

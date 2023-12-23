@@ -983,8 +983,9 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: G1234 == PermutationGroup([[(2,3)], [(1,2),(3,4)]])
             True
             sage: G = Z3square.restricted_automorphism_group()
-            sage: G == PermutationGroup([[((1,2),(2,1))], [((0,0),(1,2)),
-            ....:                         ((2,1),(3,3))], [((0,0),(3,3))]])
+            sage: H = PermutationGroup([[((1,2),(2,1))], [((0,0),(1,2)),
+            ....:                        ((2,1),(3,3))], [((0,0),(3,3))]])
+            sage: G.conjugate(tuple) == H
             True
             sage: set(G.domain()) == set(Z3square.vertices())
             True
