@@ -244,7 +244,7 @@ sdh_pip_install() {
                 # Our default after #33789 (Sage 9.7): We allow the package to provision
                 # its build environment using the stored wheels.
                 # We pass --find-links.
-                # The SPKG needs to declare "setuptools_wheel" as a dependency.
+                # The SPKG needs to declare "setuptools" as a dependency.
                 build_isolation_option="--find-links=$SAGE_SPKG_WHEELS"
                 ;;
             --no-build-isolation)
