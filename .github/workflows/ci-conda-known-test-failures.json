@@ -62,6 +62,9 @@
     "sage.rings.polynomial.skew_polynomial_finite_field": {
         "failed": true
     },
+    "sage.schemes.elliptic_curves.descent_two_isogeny": {
+        "failed": "random segfault (macOS) https://github.com/sagemath/sage/issues/36949"
+    },
     "sage.schemes.elliptic_curves.ell_field": {
         "failed": "random failure https://github.com/sagemath/sage/issues/36832"
     },
