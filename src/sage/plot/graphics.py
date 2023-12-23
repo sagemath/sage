@@ -1818,7 +1818,7 @@ class Graphics(WithEqualityById, SageObject):
         some examples.::
 
             sage: G = list_plot([10**i for i in range(10)])                         # long time, needs sage.symbolic
-            sage: G.show(scale='semilogy')                                          # long time
+            sage: G.show(scale='semilogy')                                          # long time, needs sage.symbolic
 
         ::
 
