@@ -3627,6 +3627,7 @@ def graphics_array(array, nrows=None, ncols=None):
     It is possible to use ``figsize`` to change the size of the plot
     as a whole::
 
+        sage: x = var('x')
         sage: L = [plot(sin(k*x), (x,-pi,pi)) for k in [1..3]]
         sage: ga = graphics_array(L)
         sage: ga.show(figsize=[5,3])  # smallish and compact
