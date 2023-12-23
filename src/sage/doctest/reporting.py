@@ -511,7 +511,8 @@ class DocTestReporter(SageObject):
                         stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}
                     else:
                         stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
-                    self.error_status |= 64
+                    if not baseline.get('failed', False):  # e.g. AlarmInterrupt in doctesting framework
+                        self.error_status |= 64
                 if result_dict.err is None or result_dict.err == 'tab':
                     f = result_dict.failures
                     if f:
