@@ -1900,11 +1900,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             x0^2*x1 + x0*x1^2 + x0^2*x2
             + (2*q*t^2 - q*t - q  + t^2 + t - 2)/(q*t^2 - 1)*x0*x1*x2
             + x1^2*x2 + x0*x2^2 + x1*x2^2
-            sage: fe = f.expand(g.parent().gens()); fe
+            sage: fe = f.expand(g.parent().gens()); fe                                  # needs sage.libs.gap
             x0^2*x1 + x0*x1^2 + x0^2*x2
             + (2*q*v^4 - q*v^2 - q + v^4 + v^2 - 2)/(q*v^4 - 1)*x0*x1*x2
             + x1^2*x2 + x0*x2^2 + x1*x2^2
-            sage: g.map_coefficients(lambda x: x.subs(t=v*v)) == fe
+            sage: g.map_coefficients(lambda x: x.subs(t=v*v)) == fe                     # needs sage.libs.gap
             True
 
             sage: E = NonSymmetricMacdonaldPolynomials(['C',3,1], q, v, -1/v)
