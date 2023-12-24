@@ -1144,8 +1144,9 @@ are available:
   (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
   the run of the ``configure`` script,
 
-* ``-with-targets-pre`` contains the full source tree and a full
-  installation of all non-Python packages (:envvar:`SAGE_LOCAL`),
+* ``-with-targets-pre`` contains a partial source tree
+  (:envvar:`SAGE_ROOT`) and a full installation
+  of all non-Python packages (:envvar:`SAGE_LOCAL`),
 
 * ``-with-targets`` contains the full source tree and a full
   installation of Sage, including the HTML documentation, but ``make

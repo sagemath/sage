@@ -14,7 +14,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets-optional
 
 .. |codespace-ubuntu-trusty-toolchain-gcc_9-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-trusty-toolchain-gcc_9-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-trusty-toolchain-gcc_9-minimal%2Fdevcontainer.json
 
 .. |image-ubuntu-trusty-toolchain-gcc_9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-trusty-toolchain-gcc_9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-trusty-toolchain-gcc_9-standard-with-system-packages
@@ -32,7 +32,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-trusty-toolchain-gcc_9-standard-with-targets-optional
 
 .. |codespace-ubuntu-trusty-toolchain-gcc_9-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-trusty-toolchain-gcc_9-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-trusty-toolchain-gcc_9-standard%2Fdevcontainer.json
 
 .. |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-minimal-with-system-packages
@@ -50,7 +50,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets-optional
 
 .. |codespace-ubuntu-xenial-toolchain-gcc_9-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-xenial-toolchain-gcc_9-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-xenial-toolchain-gcc_9-minimal%2Fdevcontainer.json
 
 .. |image-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages
@@ -68,7 +68,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-xenial-toolchain-gcc_9-standard-with-targets-optional
 
 .. |codespace-ubuntu-xenial-toolchain-gcc_9-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-xenial-toolchain-gcc_9-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-xenial-toolchain-gcc_9-standard%2Fdevcontainer.json
 
 .. |image-ubuntu-bionic-gcc_8-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-minimal-with-system-packages
@@ -86,7 +86,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-minimal-with-targets-optional
 
 .. |codespace-ubuntu-bionic-gcc_8-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-minimal%2Fdevcontainer.json
 
 .. |image-ubuntu-bionic-gcc_8-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-standard-with-system-packages
@@ -104,7 +104,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-standard-with-targets-optional
 
 .. |codespace-ubuntu-bionic-gcc_8-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-standard%2Fdevcontainer.json
 
 .. |image-ubuntu-focal-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-focal-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-focal-minimal-with-system-packages
@@ -122,7 +122,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-focal-minimal-with-targets-optional
 
 .. |codespace-ubuntu-focal-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-focal-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-focal-minimal%2Fdevcontainer.json
 
 .. |image-ubuntu-focal-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-focal-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-system-packages
@@ -140,7 +140,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets-optional
 
 .. |codespace-ubuntu-focal-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-focal-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-focal-standard%2Fdevcontainer.json
 
 .. |image-ubuntu-jammy-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-jammy-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-system-packages
@@ -158,7 +158,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-targets-optional
 
 .. |codespace-ubuntu-jammy-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-jammy-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-jammy-minimal%2Fdevcontainer.json
 
 .. |image-ubuntu-jammy-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-jammy-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-jammy-standard-with-system-packages
@@ -176,7 +176,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-jammy-standard-with-targets-optional
 
 .. |codespace-ubuntu-jammy-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-jammy-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-jammy-standard%2Fdevcontainer.json
 
 .. |image-ubuntu-lunar-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-minimal-with-system-packages
@@ -194,7 +194,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-minimal-with-targets-optional
 
 .. |codespace-ubuntu-lunar-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-lunar-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-lunar-minimal%2Fdevcontainer.json
 
 .. |image-ubuntu-lunar-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-lunar-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-standard-with-system-packages
@@ -212,7 +212,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-lunar-standard-with-targets-optional
 
 .. |codespace-ubuntu-lunar-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-lunar-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-lunar-standard%2Fdevcontainer.json
 
 .. |image-ubuntu-mantic-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-minimal-with-system-packages
@@ -230,7 +230,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-minimal-with-targets-optional
 
 .. |codespace-ubuntu-mantic-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-mantic-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-mantic-minimal%2Fdevcontainer.json
 
 .. |image-ubuntu-mantic-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-mantic-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-standard-with-system-packages
@@ -248,7 +248,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-mantic-standard-with-targets-optional
 
 .. |codespace-ubuntu-mantic-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-mantic-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-mantic-standard%2Fdevcontainer.json
 
 .. |image-debian-buster-gcc_spkg-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-system-packages
@@ -266,7 +266,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-targets-optional
 
 .. |codespace-debian-buster-gcc_spkg-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-buster-gcc_spkg-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-buster-gcc_spkg-minimal%2Fdevcontainer.json
 
 .. |image-debian-buster-gcc_spkg-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-system-packages
@@ -284,7 +284,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-targets-optional
 
 .. |codespace-debian-buster-gcc_spkg-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-buster-gcc_spkg-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-buster-gcc_spkg-standard%2Fdevcontainer.json
 
 .. |image-debian-bullseye-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-minimal-with-system-packages
@@ -302,7 +302,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-minimal-with-targets-optional
 
 .. |codespace-debian-bullseye-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-minimal%2Fdevcontainer.json
 
 .. |image-debian-bullseye-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-standard-with-system-packages
@@ -320,7 +320,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-standard-with-targets-optional
 
 .. |codespace-debian-bullseye-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-standard%2Fdevcontainer.json
 
 .. |image-debian-bookworm-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bookworm-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-bookworm-minimal-with-system-packages
@@ -338,7 +338,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-bookworm-minimal-with-targets-optional
 
 .. |codespace-debian-bookworm-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-bookworm-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bookworm-minimal%2Fdevcontainer.json
 
 .. |image-debian-bookworm-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bookworm-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-bookworm-standard-with-system-packages
@@ -356,7 +356,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-bookworm-standard-with-targets-optional
 
 .. |codespace-debian-bookworm-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-bookworm-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bookworm-standard%2Fdevcontainer.json
 
 .. |image-debian-trixie-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-minimal-with-system-packages
@@ -374,7 +374,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-minimal-with-targets-optional
 
 .. |codespace-debian-trixie-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-trixie-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-trixie-minimal%2Fdevcontainer.json
 
 .. |image-debian-trixie-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-trixie-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-standard-with-system-packages
@@ -392,7 +392,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-trixie-standard-with-targets-optional
 
 .. |codespace-debian-trixie-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-trixie-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-trixie-standard%2Fdevcontainer.json
 
 .. |image-debian-sid-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-sid-minimal-with-system-packages
@@ -410,7 +410,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-sid-minimal-with-targets-optional
 
 .. |codespace-debian-sid-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-sid-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-sid-minimal%2Fdevcontainer.json
 
 .. |image-debian-sid-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-sid-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-sid-standard-with-system-packages
@@ -428,7 +428,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-sid-standard-with-targets-optional
 
 .. |codespace-debian-sid-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-sid-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-sid-standard%2Fdevcontainer.json
 
 .. |image-linuxmint-20.1-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.1-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.1-minimal-with-system-packages
@@ -446,7 +446,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.1-minimal-with-targets-optional
 
 .. |codespace-linuxmint-20.1-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.1-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.1-minimal%2Fdevcontainer.json
 
 .. |image-linuxmint-20.1-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.1-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.1-standard-with-system-packages
@@ -464,7 +464,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.1-standard-with-targets-optional
 
 .. |codespace-linuxmint-20.1-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.1-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.1-standard%2Fdevcontainer.json
 
 .. |image-linuxmint-20.2-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.2-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.2-minimal-with-system-packages
@@ -482,7 +482,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.2-minimal-with-targets-optional
 
 .. |codespace-linuxmint-20.2-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.2-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.2-minimal%2Fdevcontainer.json
 
 .. |image-linuxmint-20.2-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.2-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.2-standard-with-system-packages
@@ -500,7 +500,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.2-standard-with-targets-optional
 
 .. |codespace-linuxmint-20.2-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.2-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.2-standard%2Fdevcontainer.json
 
 .. |image-linuxmint-20.3-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.3-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.3-minimal-with-system-packages
@@ -518,7 +518,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.3-minimal-with-targets-optional
 
 .. |codespace-linuxmint-20.3-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.3-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.3-minimal%2Fdevcontainer.json
 
 .. |image-linuxmint-20.3-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-20.3-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.3-standard-with-system-packages
@@ -536,7 +536,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-20.3-standard-with-targets-optional
 
 .. |codespace-linuxmint-20.3-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.3-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-20.3-standard%2Fdevcontainer.json
 
 .. |image-linuxmint-21-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21-minimal-with-system-packages
@@ -554,7 +554,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21-minimal-with-targets-optional
 
 .. |codespace-linuxmint-21-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-21-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21-minimal%2Fdevcontainer.json
 
 .. |image-linuxmint-21-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21-standard-with-system-packages
@@ -572,7 +572,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21-standard-with-targets-optional
 
 .. |codespace-linuxmint-21-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-21-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21-standard%2Fdevcontainer.json
 
 .. |image-linuxmint-21.1-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.1-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.1-minimal-with-system-packages
@@ -590,7 +590,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.1-minimal-with-targets-optional
 
 .. |codespace-linuxmint-21.1-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.1-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.1-minimal%2Fdevcontainer.json
 
 .. |image-linuxmint-21.1-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.1-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.1-standard-with-system-packages
@@ -608,7 +608,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.1-standard-with-targets-optional
 
 .. |codespace-linuxmint-21.1-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.1-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.1-standard%2Fdevcontainer.json
 
 .. |image-linuxmint-21.2-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.2-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.2-minimal-with-system-packages
@@ -626,7 +626,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.2-minimal-with-targets-optional
 
 .. |codespace-linuxmint-21.2-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.2-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.2-minimal%2Fdevcontainer.json
 
 .. |image-linuxmint-21.2-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-linuxmint-21.2-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.2-standard-with-system-packages
@@ -644,7 +644,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-linuxmint-21.2-standard-with-targets-optional
 
 .. |codespace-linuxmint-21.2-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.2-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-linuxmint-21.2-standard%2Fdevcontainer.json
 
 .. |image-fedora-30-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-30-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-30-minimal-with-system-packages
@@ -662,7 +662,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-30-minimal-with-targets-optional
 
 .. |codespace-fedora-30-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-30-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-30-minimal%2Fdevcontainer.json
 
 .. |image-fedora-30-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-30-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-30-standard-with-system-packages
@@ -680,7 +680,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-30-standard-with-targets-optional
 
 .. |codespace-fedora-30-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-30-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-30-standard%2Fdevcontainer.json
 
 .. |image-fedora-31-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-31-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-31-minimal-with-system-packages
@@ -698,7 +698,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-31-minimal-with-targets-optional
 
 .. |codespace-fedora-31-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-31-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-31-minimal%2Fdevcontainer.json
 
 .. |image-fedora-31-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-31-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-31-standard-with-system-packages
@@ -716,7 +716,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-31-standard-with-targets-optional
 
 .. |codespace-fedora-31-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-31-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-31-standard%2Fdevcontainer.json
 
 .. |image-fedora-32-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-32-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-32-minimal-with-system-packages
@@ -734,7 +734,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-32-minimal-with-targets-optional
 
 .. |codespace-fedora-32-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-32-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-32-minimal%2Fdevcontainer.json
 
 .. |image-fedora-32-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-32-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-32-standard-with-system-packages
@@ -752,7 +752,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-32-standard-with-targets-optional
 
 .. |codespace-fedora-32-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-32-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-32-standard%2Fdevcontainer.json
 
 .. |image-fedora-33-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-33-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-33-minimal-with-system-packages
@@ -770,7 +770,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-33-minimal-with-targets-optional
 
 .. |codespace-fedora-33-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-33-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-33-minimal%2Fdevcontainer.json
 
 .. |image-fedora-33-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-33-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-33-standard-with-system-packages
@@ -788,7 +788,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-33-standard-with-targets-optional
 
 .. |codespace-fedora-33-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-33-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-33-standard%2Fdevcontainer.json
 
 .. |image-fedora-34-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-34-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-34-minimal-with-system-packages
@@ -806,7 +806,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-34-minimal-with-targets-optional
 
 .. |codespace-fedora-34-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-34-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-34-minimal%2Fdevcontainer.json
 
 .. |image-fedora-34-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-34-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-34-standard-with-system-packages
@@ -824,7 +824,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-34-standard-with-targets-optional
 
 .. |codespace-fedora-34-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-34-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-34-standard%2Fdevcontainer.json
 
 .. |image-fedora-35-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-35-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-35-minimal-with-system-packages
@@ -842,7 +842,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-35-minimal-with-targets-optional
 
 .. |codespace-fedora-35-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-35-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-35-minimal%2Fdevcontainer.json
 
 .. |image-fedora-35-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-35-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-35-standard-with-system-packages
@@ -860,7 +860,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-35-standard-with-targets-optional
 
 .. |codespace-fedora-35-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-35-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-35-standard%2Fdevcontainer.json
 
 .. |image-fedora-36-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-36-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-36-minimal-with-system-packages
@@ -878,7 +878,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-36-minimal-with-targets-optional
 
 .. |codespace-fedora-36-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-36-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-36-minimal%2Fdevcontainer.json
 
 .. |image-fedora-36-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-36-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-36-standard-with-system-packages
@@ -896,7 +896,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-36-standard-with-targets-optional
 
 .. |codespace-fedora-36-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-36-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-36-standard%2Fdevcontainer.json
 
 .. |image-fedora-37-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-37-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-37-minimal-with-system-packages
@@ -914,7 +914,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-37-minimal-with-targets-optional
 
 .. |codespace-fedora-37-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-37-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-37-minimal%2Fdevcontainer.json
 
 .. |image-fedora-37-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-37-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-37-standard-with-system-packages
@@ -932,7 +932,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-37-standard-with-targets-optional
 
 .. |codespace-fedora-37-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-37-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-37-standard%2Fdevcontainer.json
 
 .. |image-fedora-38-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-38-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-38-minimal-with-system-packages
@@ -950,7 +950,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-38-minimal-with-targets-optional
 
 .. |codespace-fedora-38-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-38-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-38-minimal%2Fdevcontainer.json
 
 .. |image-fedora-38-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-38-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-38-standard-with-system-packages
@@ -968,7 +968,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-38-standard-with-targets-optional
 
 .. |codespace-fedora-38-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-38-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-38-standard%2Fdevcontainer.json
 
 .. |image-fedora-39-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-39-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-39-minimal-with-system-packages
@@ -986,7 +986,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-39-minimal-with-targets-optional
 
 .. |codespace-fedora-39-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-39-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-39-minimal%2Fdevcontainer.json
 
 .. |image-fedora-39-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-fedora-39-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-fedora-39-standard-with-system-packages
@@ -1004,7 +1004,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-fedora-39-standard-with-targets-optional
 
 .. |codespace-fedora-39-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-fedora-39-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-fedora-39-standard%2Fdevcontainer.json
 
 .. |image-centos-7-devtoolset-gcc_11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-system-packages
@@ -1022,7 +1022,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-minimal-with-targets-optional
 
 .. |codespace-centos-7-devtoolset-gcc_11-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-centos-7-devtoolset-gcc_11-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-7-devtoolset-gcc_11-minimal%2Fdevcontainer.json
 
 .. |image-centos-7-devtoolset-gcc_11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-system-packages
@@ -1040,7 +1040,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-centos-7-devtoolset-gcc_11-standard-with-targets-optional
 
 .. |codespace-centos-7-devtoolset-gcc_11-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-centos-7-devtoolset-gcc_11-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-7-devtoolset-gcc_11-standard%2Fdevcontainer.json
 
 .. |image-centos-stream-8-python3.9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-8-python3.9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-8-python3.9-minimal-with-system-packages
@@ -1058,7 +1058,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-8-python3.9-minimal-with-targets-optional
 
 .. |codespace-centos-stream-8-python3.9-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-centos-stream-8-python3.9-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-8-python3.9-minimal%2Fdevcontainer.json
 
 .. |image-centos-stream-8-python3.9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-8-python3.9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-8-python3.9-standard-with-system-packages
@@ -1076,7 +1076,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-8-python3.9-standard-with-targets-optional
 
 .. |codespace-centos-stream-8-python3.9-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-centos-stream-8-python3.9-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-8-python3.9-standard%2Fdevcontainer.json
 
 .. |image-centos-stream-9-python3.9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-system-packages
@@ -1094,7 +1094,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-minimal-with-targets-optional
 
 .. |codespace-centos-stream-9-python3.9-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.9-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.9-minimal%2Fdevcontainer.json
 
 .. |image-centos-stream-9-python3.9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-system-packages
@@ -1112,7 +1112,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-centos-stream-9-python3.9-standard-with-targets-optional
 
 .. |codespace-centos-stream-9-python3.9-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.9-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-centos-stream-9-python3.9-standard%2Fdevcontainer.json
 
 .. |image-almalinux-8-python3.9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-system-packages
@@ -1130,7 +1130,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-minimal-with-targets-optional
 
 .. |codespace-almalinux-8-python3.9-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-almalinux-8-python3.9-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-8-python3.9-minimal%2Fdevcontainer.json
 
 .. |image-almalinux-8-python3.9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-8-python3.9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-standard-with-system-packages
@@ -1148,7 +1148,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-8-python3.9-standard-with-targets-optional
 
 .. |codespace-almalinux-8-python3.9-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-almalinux-8-python3.9-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-8-python3.9-standard%2Fdevcontainer.json
 
 .. |image-almalinux-9-python3.11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-system-packages
@@ -1166,7 +1166,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-minimal-with-targets-optional
 
 .. |codespace-almalinux-9-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-minimal%2Fdevcontainer.json
 
 .. |image-almalinux-9-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-almalinux-9-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-standard-with-system-packages
@@ -1184,7 +1184,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-almalinux-9-python3.11-standard-with-targets-optional
 
 .. |codespace-almalinux-9-python3.11-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-almalinux-9-python3.11-standard%2Fdevcontainer.json
 
 .. |image-gentoo-python3.10-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-system-packages
@@ -1202,7 +1202,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-minimal-with-targets-optional
 
 .. |codespace-gentoo-python3.10-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-minimal%2Fdevcontainer.json
 
 .. |image-gentoo-python3.10-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.10-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-system-packages
@@ -1220,7 +1220,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.10-standard-with-targets-optional
 
 .. |codespace-gentoo-python3.10-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.10-standard%2Fdevcontainer.json
 
 .. |image-gentoo-python3.11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-minimal-with-system-packages
@@ -1238,7 +1238,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-minimal-with-targets-optional
 
 .. |codespace-gentoo-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.11-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.11-minimal%2Fdevcontainer.json
 
 .. |image-gentoo-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-gentoo-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-standard-with-system-packages
@@ -1256,7 +1256,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-gentoo-python3.11-standard-with-targets-optional
 
 .. |codespace-gentoo-python3.11-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.11-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-gentoo-python3.11-standard%2Fdevcontainer.json
 
 .. |image-archlinux-latest-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-archlinux-latest-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-archlinux-latest-minimal-with-system-packages
@@ -1274,7 +1274,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-archlinux-latest-minimal-with-targets-optional
 
 .. |codespace-archlinux-latest-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-archlinux-latest-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-archlinux-latest-minimal%2Fdevcontainer.json
 
 .. |image-archlinux-latest-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-archlinux-latest-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-archlinux-latest-standard-with-system-packages
@@ -1292,7 +1292,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-archlinux-latest-standard-with-targets-optional
 
 .. |codespace-archlinux-latest-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-archlinux-latest-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-archlinux-latest-standard%2Fdevcontainer.json
 
 .. |image-opensuse-15.3-gcc_11-python3.9-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.3-gcc_11-python3.9-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.3-gcc_11-python3.9-minimal-with-system-packages
@@ -1310,7 +1310,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.3-gcc_11-python3.9-minimal-with-targets-optional
 
 .. |codespace-opensuse-15.3-gcc_11-python3.9-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-15.3-gcc_11-python3.9-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-15.3-gcc_11-python3.9-minimal%2Fdevcontainer.json
 
 .. |image-opensuse-15.3-gcc_11-python3.9-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.3-gcc_11-python3.9-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.3-gcc_11-python3.9-standard-with-system-packages
@@ -1328,7 +1328,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.3-gcc_11-python3.9-standard-with-targets-optional
 
 .. |codespace-opensuse-15.3-gcc_11-python3.9-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-15.3-gcc_11-python3.9-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-15.3-gcc_11-python3.9-standard%2Fdevcontainer.json
 
 .. |image-opensuse-15.4-gcc_11-python3.10-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.4-gcc_11-python3.10-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.4-gcc_11-python3.10-minimal-with-system-packages
@@ -1346,7 +1346,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.4-gcc_11-python3.10-minimal-with-targets-optional
 
 .. |codespace-opensuse-15.4-gcc_11-python3.10-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-15.4-gcc_11-python3.10-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-15.4-gcc_11-python3.10-minimal%2Fdevcontainer.json
 
 .. |image-opensuse-15.4-gcc_11-python3.10-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.4-gcc_11-python3.10-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.4-gcc_11-python3.10-standard-with-system-packages
@@ -1364,7 +1364,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.4-gcc_11-python3.10-standard-with-targets-optional
 
 .. |codespace-opensuse-15.4-gcc_11-python3.10-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-15.4-gcc_11-python3.10-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-15.4-gcc_11-python3.10-standard%2Fdevcontainer.json
 
 .. |image-opensuse-15.5-gcc_11-python3.11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-minimal-with-system-packages
@@ -1382,7 +1382,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-minimal-with-targets-optional
 
 .. |codespace-opensuse-15.5-gcc_11-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-15.5-gcc_11-python3.11-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-15.5-gcc_11-python3.11-minimal%2Fdevcontainer.json
 
 .. |image-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages
@@ -1400,7 +1400,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-15.5-gcc_11-python3.11-standard-with-targets-optional
 
 .. |codespace-opensuse-15.5-gcc_11-python3.11-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-15.5-gcc_11-python3.11-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-15.5-gcc_11-python3.11-standard%2Fdevcontainer.json
 
 .. |image-opensuse-tumbleweed-python3.10-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-system-packages
@@ -1418,7 +1418,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-minimal-with-targets-optional
 
 .. |codespace-opensuse-tumbleweed-python3.10-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-minimal%2Fdevcontainer.json
 
 .. |image-opensuse-tumbleweed-python3.10-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-system-packages
@@ -1436,7 +1436,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-python3.10-standard-with-targets-optional
 
 .. |codespace-opensuse-tumbleweed-python3.10-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-python3.10-standard%2Fdevcontainer.json
 
 .. |image-opensuse-tumbleweed-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-system-packages
@@ -1454,7 +1454,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-minimal-with-targets-optional
 
 .. |codespace-opensuse-tumbleweed-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-minimal%2Fdevcontainer.json
 
 .. |image-opensuse-tumbleweed-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-opensuse-tumbleweed-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-standard-with-system-packages
@@ -1472,7 +1472,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-opensuse-tumbleweed-standard-with-targets-optional
 
 .. |codespace-opensuse-tumbleweed-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-opensuse-tumbleweed-standard%2Fdevcontainer.json
 
 .. |image-conda-forge-python3.11-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-minimal-with-system-packages
@@ -1490,7 +1490,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-minimal-with-targets-optional
 
 .. |codespace-conda-forge-python3.11-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-conda-forge-python3.11-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-conda-forge-python3.11-minimal%2Fdevcontainer.json
 
 .. |image-conda-forge-python3.11-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-conda-forge-python3.11-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-standard-with-system-packages
@@ -1508,7 +1508,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-conda-forge-python3.11-standard-with-targets-optional
 
 .. |codespace-conda-forge-python3.11-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-conda-forge-python3.11-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-conda-forge-python3.11-standard%2Fdevcontainer.json
 
 .. |image-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages
@@ -1526,7 +1526,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-minimal-with-targets-optional
 
 .. |codespace-ubuntu-bionic-gcc_8-i386-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-i386-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-i386-minimal%2Fdevcontainer.json
 
 .. |image-ubuntu-bionic-gcc_8-i386-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-system-packages
@@ -1544,7 +1544,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-ubuntu-bionic-gcc_8-i386-standard-with-targets-optional
 
 .. |codespace-ubuntu-bionic-gcc_8-i386-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-i386-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-bionic-gcc_8-i386-standard%2Fdevcontainer.json
 
 .. |image-debian-bullseye-i386-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-minimal-with-system-packages
@@ -1562,7 +1562,7 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-minimal-with-targets-optional
 
 .. |codespace-debian-bullseye-i386-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-i386-minimal%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-i386-minimal%2Fdevcontainer.json
 
 .. |image-debian-bullseye-i386-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-i386-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=cadetblue
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-standard-with-system-packages
@@ -1580,714 +1580,541 @@
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-i386-standard-with-targets-optional
 
 .. |codespace-debian-bullseye-i386-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/mkoeppe/sage/pull/36954?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-i386-standard%2Fdevcontainer.json
+   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-i386-standard%2Fdevcontainer.json
 
 .. list-table::
-   :widths: 15 10 75
-   :header-rows: 0
-   :stub-columns: 1
+   :widths: 25 15 60
+   :header-rows: 1
+   :stub-columns: 0
 
+   * - Platform
+     - System packages
+     - 
    * - ubuntu-trusty-toolchain-gcc_9
      - minimal
-     - |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-system-packages|
+     - |codespace-ubuntu-trusty-toolchain-gcc_9-minimal|
    * - 
      - 
-     - |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets-pre| |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets| |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets-optional|
-       |codespace-ubuntu-trusty-toolchain-gcc_9-minimal|
-
+     - |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-system-packages| |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets-pre| |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets| |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-ubuntu-trusty-toolchain-gcc_9-standard-with-system-packages|
+     - |codespace-ubuntu-trusty-toolchain-gcc_9-standard|
    * - 
      - 
-     - |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets-pre| |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets| |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets-optional|
-       |codespace-ubuntu-trusty-toolchain-gcc_9-standard|
-
+     - |image-ubuntu-trusty-toolchain-gcc_9-standard-with-system-packages| |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets-pre| |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets| |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets-optional|
    * - ubuntu-xenial-toolchain-gcc_9
      - minimal
-     - |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-system-packages|
+     - |codespace-ubuntu-xenial-toolchain-gcc_9-minimal|
    * - 
      - 
-     - |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets-pre| |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets| |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets-optional|
-       |codespace-ubuntu-xenial-toolchain-gcc_9-minimal|
-
+     - |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-system-packages| |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets-pre| |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets| |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages|
+     - |codespace-ubuntu-xenial-toolchain-gcc_9-standard|
    * - 
      - 
-     - |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets-pre| |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets| |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets-optional|
-       |codespace-ubuntu-xenial-toolchain-gcc_9-standard|
-
+     - |image-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages| |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets-pre| |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets| |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets-optional|
    * - ubuntu-bionic-gcc_8
      - minimal
-     - |image-ubuntu-bionic-gcc_8-minimal-with-system-packages|
+     - |codespace-ubuntu-bionic-gcc_8-minimal|
    * - 
      - 
-     - |image-ubuntu-bionic-gcc_8-minimal-with-targets-pre| |image-ubuntu-bionic-gcc_8-minimal-with-targets| |image-ubuntu-bionic-gcc_8-minimal-with-targets-optional|
-       |codespace-ubuntu-bionic-gcc_8-minimal|
-
+     - |image-ubuntu-bionic-gcc_8-minimal-with-system-packages| |image-ubuntu-bionic-gcc_8-minimal-with-targets-pre| |image-ubuntu-bionic-gcc_8-minimal-with-targets| |image-ubuntu-bionic-gcc_8-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-ubuntu-bionic-gcc_8-standard-with-system-packages|
+     - |codespace-ubuntu-bionic-gcc_8-standard|
    * - 
      - 
-     - |image-ubuntu-bionic-gcc_8-standard-with-targets-pre| |image-ubuntu-bionic-gcc_8-standard-with-targets| |image-ubuntu-bionic-gcc_8-standard-with-targets-optional|
-       |codespace-ubuntu-bionic-gcc_8-standard|
-
+     - |image-ubuntu-bionic-gcc_8-standard-with-system-packages| |image-ubuntu-bionic-gcc_8-standard-with-targets-pre| |image-ubuntu-bionic-gcc_8-standard-with-targets| |image-ubuntu-bionic-gcc_8-standard-with-targets-optional|
    * - ubuntu-focal
      - minimal
-     - |image-ubuntu-focal-minimal-with-system-packages|
+     - |codespace-ubuntu-focal-minimal|
    * - 
      - 
-     - |image-ubuntu-focal-minimal-with-targets-pre| |image-ubuntu-focal-minimal-with-targets| |image-ubuntu-focal-minimal-with-targets-optional|
-       |codespace-ubuntu-focal-minimal|
-
+     - |image-ubuntu-focal-minimal-with-system-packages| |image-ubuntu-focal-minimal-with-targets-pre| |image-ubuntu-focal-minimal-with-targets| |image-ubuntu-focal-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-ubuntu-focal-standard-with-system-packages|
+     - |codespace-ubuntu-focal-standard|
    * - 
      - 
-     - |image-ubuntu-focal-standard-with-targets-pre| |image-ubuntu-focal-standard-with-targets| |image-ubuntu-focal-standard-with-targets-optional|
-       |codespace-ubuntu-focal-standard|
-
+     - |image-ubuntu-focal-standard-with-system-packages| |image-ubuntu-focal-standard-with-targets-pre| |image-ubuntu-focal-standard-with-targets| |image-ubuntu-focal-standard-with-targets-optional|
    * - ubuntu-jammy
      - minimal
-     - |image-ubuntu-jammy-minimal-with-system-packages|
+     - |codespace-ubuntu-jammy-minimal|
    * - 
      - 
-     - |image-ubuntu-jammy-minimal-with-targets-pre| |image-ubuntu-jammy-minimal-with-targets| |image-ubuntu-jammy-minimal-with-targets-optional|
-       |codespace-ubuntu-jammy-minimal|
-
+     - |image-ubuntu-jammy-minimal-with-system-packages| |image-ubuntu-jammy-minimal-with-targets-pre| |image-ubuntu-jammy-minimal-with-targets| |image-ubuntu-jammy-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-ubuntu-jammy-standard-with-system-packages|
+     - |codespace-ubuntu-jammy-standard|
    * - 
      - 
-     - |image-ubuntu-jammy-standard-with-targets-pre| |image-ubuntu-jammy-standard-with-targets| |image-ubuntu-jammy-standard-with-targets-optional|
-       |codespace-ubuntu-jammy-standard|
-
+     - |image-ubuntu-jammy-standard-with-system-packages| |image-ubuntu-jammy-standard-with-targets-pre| |image-ubuntu-jammy-standard-with-targets| |image-ubuntu-jammy-standard-with-targets-optional|
    * - ubuntu-lunar
      - minimal
-     - |image-ubuntu-lunar-minimal-with-system-packages|
+     - |codespace-ubuntu-lunar-minimal|
    * - 
      - 
-     - |image-ubuntu-lunar-minimal-with-targets-pre| |image-ubuntu-lunar-minimal-with-targets| |image-ubuntu-lunar-minimal-with-targets-optional|
-       |codespace-ubuntu-lunar-minimal|
-
+     - |image-ubuntu-lunar-minimal-with-system-packages| |image-ubuntu-lunar-minimal-with-targets-pre| |image-ubuntu-lunar-minimal-with-targets| |image-ubuntu-lunar-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-ubuntu-lunar-standard-with-system-packages|
+     - |codespace-ubuntu-lunar-standard|
    * - 
      - 
-     - |image-ubuntu-lunar-standard-with-targets-pre| |image-ubuntu-lunar-standard-with-targets| |image-ubuntu-lunar-standard-with-targets-optional|
-       |codespace-ubuntu-lunar-standard|
-
+     - |image-ubuntu-lunar-standard-with-system-packages| |image-ubuntu-lunar-standard-with-targets-pre| |image-ubuntu-lunar-standard-with-targets| |image-ubuntu-lunar-standard-with-targets-optional|
    * - ubuntu-mantic
      - minimal
-     - |image-ubuntu-mantic-minimal-with-system-packages|
+     - |codespace-ubuntu-mantic-minimal|
    * - 
      - 
-     - |image-ubuntu-mantic-minimal-with-targets-pre| |image-ubuntu-mantic-minimal-with-targets| |image-ubuntu-mantic-minimal-with-targets-optional|
-       |codespace-ubuntu-mantic-minimal|
-
+     - |image-ubuntu-mantic-minimal-with-system-packages| |image-ubuntu-mantic-minimal-with-targets-pre| |image-ubuntu-mantic-minimal-with-targets| |image-ubuntu-mantic-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-ubuntu-mantic-standard-with-system-packages|
+     - |codespace-ubuntu-mantic-standard|
    * - 
      - 
-     - |image-ubuntu-mantic-standard-with-targets-pre| |image-ubuntu-mantic-standard-with-targets| |image-ubuntu-mantic-standard-with-targets-optional|
-       |codespace-ubuntu-mantic-standard|
-
+     - |image-ubuntu-mantic-standard-with-system-packages| |image-ubuntu-mantic-standard-with-targets-pre| |image-ubuntu-mantic-standard-with-targets| |image-ubuntu-mantic-standard-with-targets-optional|
    * - debian-buster-gcc_spkg
      - minimal
-     - |image-debian-buster-gcc_spkg-minimal-with-system-packages|
+     - |codespace-debian-buster-gcc_spkg-minimal|
    * - 
      - 
-     - |image-debian-buster-gcc_spkg-minimal-with-targets-pre| |image-debian-buster-gcc_spkg-minimal-with-targets| |image-debian-buster-gcc_spkg-minimal-with-targets-optional|
-       |codespace-debian-buster-gcc_spkg-minimal|
-
+     - |image-debian-buster-gcc_spkg-minimal-with-system-packages| |image-debian-buster-gcc_spkg-minimal-with-targets-pre| |image-debian-buster-gcc_spkg-minimal-with-targets| |image-debian-buster-gcc_spkg-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-debian-buster-gcc_spkg-standard-with-system-packages|
+     - |codespace-debian-buster-gcc_spkg-standard|
    * - 
      - 
-     - |image-debian-buster-gcc_spkg-standard-with-targets-pre| |image-debian-buster-gcc_spkg-standard-with-targets| |image-debian-buster-gcc_spkg-standard-with-targets-optional|
-       |codespace-debian-buster-gcc_spkg-standard|
-
+     - |image-debian-buster-gcc_spkg-standard-with-system-packages| |image-debian-buster-gcc_spkg-standard-with-targets-pre| |image-debian-buster-gcc_spkg-standard-with-targets| |image-debian-buster-gcc_spkg-standard-with-targets-optional|
    * - debian-bullseye
      - minimal
-     - |image-debian-bullseye-minimal-with-system-packages|
+     - |codespace-debian-bullseye-minimal|
    * - 
      - 
-     - |image-debian-bullseye-minimal-with-targets-pre| |image-debian-bullseye-minimal-with-targets| |image-debian-bullseye-minimal-with-targets-optional|
-       |codespace-debian-bullseye-minimal|
-
+     - |image-debian-bullseye-minimal-with-system-packages| |image-debian-bullseye-minimal-with-targets-pre| |image-debian-bullseye-minimal-with-targets| |image-debian-bullseye-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-debian-bullseye-standard-with-system-packages|
+     - |codespace-debian-bullseye-standard|
    * - 
      - 
-     - |image-debian-bullseye-standard-with-targets-pre| |image-debian-bullseye-standard-with-targets| |image-debian-bullseye-standard-with-targets-optional|
-       |codespace-debian-bullseye-standard|
-
+     - |image-debian-bullseye-standard-with-system-packages| |image-debian-bullseye-standard-with-targets-pre| |image-debian-bullseye-standard-with-targets| |image-debian-bullseye-standard-with-targets-optional|
    * - debian-bookworm
      - minimal
-     - |image-debian-bookworm-minimal-with-system-packages|
+     - |codespace-debian-bookworm-minimal|
    * - 
      - 
-     - |image-debian-bookworm-minimal-with-targets-pre| |image-debian-bookworm-minimal-with-targets| |image-debian-bookworm-minimal-with-targets-optional|
-       |codespace-debian-bookworm-minimal|
-
+     - |image-debian-bookworm-minimal-with-system-packages| |image-debian-bookworm-minimal-with-targets-pre| |image-debian-bookworm-minimal-with-targets| |image-debian-bookworm-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-debian-bookworm-standard-with-system-packages|
+     - |codespace-debian-bookworm-standard|
    * - 
      - 
-     - |image-debian-bookworm-standard-with-targets-pre| |image-debian-bookworm-standard-with-targets| |image-debian-bookworm-standard-with-targets-optional|
-       |codespace-debian-bookworm-standard|
-
+     - |image-debian-bookworm-standard-with-system-packages| |image-debian-bookworm-standard-with-targets-pre| |image-debian-bookworm-standard-with-targets| |image-debian-bookworm-standard-with-targets-optional|
    * - debian-trixie
      - minimal
-     - |image-debian-trixie-minimal-with-system-packages|
+     - |codespace-debian-trixie-minimal|
    * - 
      - 
-     - |image-debian-trixie-minimal-with-targets-pre| |image-debian-trixie-minimal-with-targets| |image-debian-trixie-minimal-with-targets-optional|
-       |codespace-debian-trixie-minimal|
-
+     - |image-debian-trixie-minimal-with-system-packages| |image-debian-trixie-minimal-with-targets-pre| |image-debian-trixie-minimal-with-targets| |image-debian-trixie-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-debian-trixie-standard-with-system-packages|
+     - |codespace-debian-trixie-standard|
    * - 
      - 
-     - |image-debian-trixie-standard-with-targets-pre| |image-debian-trixie-standard-with-targets| |image-debian-trixie-standard-with-targets-optional|
-       |codespace-debian-trixie-standard|
-
+     - |image-debian-trixie-standard-with-system-packages| |image-debian-trixie-standard-with-targets-pre| |image-debian-trixie-standard-with-targets| |image-debian-trixie-standard-with-targets-optional|
    * - debian-sid
      - minimal
-     - |image-debian-sid-minimal-with-system-packages|
+     - |codespace-debian-sid-minimal|
    * - 
      - 
-     - |image-debian-sid-minimal-with-targets-pre| |image-debian-sid-minimal-with-targets| |image-debian-sid-minimal-with-targets-optional|
-       |codespace-debian-sid-minimal|
-
+     - |image-debian-sid-minimal-with-system-packages| |image-debian-sid-minimal-with-targets-pre| |image-debian-sid-minimal-with-targets| |image-debian-sid-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-debian-sid-standard-with-system-packages|
+     - |codespace-debian-sid-standard|
    * - 
      - 
-     - |image-debian-sid-standard-with-targets-pre| |image-debian-sid-standard-with-targets| |image-debian-sid-standard-with-targets-optional|
-       |codespace-debian-sid-standard|
-
+     - |image-debian-sid-standard-with-system-packages| |image-debian-sid-standard-with-targets-pre| |image-debian-sid-standard-with-targets| |image-debian-sid-standard-with-targets-optional|
    * - linuxmint-20.1
      - minimal
-     - |image-linuxmint-20.1-minimal-with-system-packages|
+     - |codespace-linuxmint-20.1-minimal|
    * - 
      - 
-     - |image-linuxmint-20.1-minimal-with-targets-pre| |image-linuxmint-20.1-minimal-with-targets| |image-linuxmint-20.1-minimal-with-targets-optional|
-       |codespace-linuxmint-20.1-minimal|
-
+     - |image-linuxmint-20.1-minimal-with-system-packages| |image-linuxmint-20.1-minimal-with-targets-pre| |image-linuxmint-20.1-minimal-with-targets| |image-linuxmint-20.1-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-linuxmint-20.1-standard-with-system-packages|
+     - |codespace-linuxmint-20.1-standard|
    * - 
      - 
-     - |image-linuxmint-20.1-standard-with-targets-pre| |image-linuxmint-20.1-standard-with-targets| |image-linuxmint-20.1-standard-with-targets-optional|
-       |codespace-linuxmint-20.1-standard|
-
+     - |image-linuxmint-20.1-standard-with-system-packages| |image-linuxmint-20.1-standard-with-targets-pre| |image-linuxmint-20.1-standard-with-targets| |image-linuxmint-20.1-standard-with-targets-optional|
    * - linuxmint-20.2
      - minimal
-     - |image-linuxmint-20.2-minimal-with-system-packages|
+     - |codespace-linuxmint-20.2-minimal|
    * - 
      - 
-     - |image-linuxmint-20.2-minimal-with-targets-pre| |image-linuxmint-20.2-minimal-with-targets| |image-linuxmint-20.2-minimal-with-targets-optional|
-       |codespace-linuxmint-20.2-minimal|
-
+     - |image-linuxmint-20.2-minimal-with-system-packages| |image-linuxmint-20.2-minimal-with-targets-pre| |image-linuxmint-20.2-minimal-with-targets| |image-linuxmint-20.2-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-linuxmint-20.2-standard-with-system-packages|
+     - |codespace-linuxmint-20.2-standard|
    * - 
      - 
-     - |image-linuxmint-20.2-standard-with-targets-pre| |image-linuxmint-20.2-standard-with-targets| |image-linuxmint-20.2-standard-with-targets-optional|
-       |codespace-linuxmint-20.2-standard|
-
+     - |image-linuxmint-20.2-standard-with-system-packages| |image-linuxmint-20.2-standard-with-targets-pre| |image-linuxmint-20.2-standard-with-targets| |image-linuxmint-20.2-standard-with-targets-optional|
    * - linuxmint-20.3
      - minimal
-     - |image-linuxmint-20.3-minimal-with-system-packages|
+     - |codespace-linuxmint-20.3-minimal|
    * - 
      - 
-     - |image-linuxmint-20.3-minimal-with-targets-pre| |image-linuxmint-20.3-minimal-with-targets| |image-linuxmint-20.3-minimal-with-targets-optional|
-       |codespace-linuxmint-20.3-minimal|
-
+     - |image-linuxmint-20.3-minimal-with-system-packages| |image-linuxmint-20.3-minimal-with-targets-pre| |image-linuxmint-20.3-minimal-with-targets| |image-linuxmint-20.3-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-linuxmint-20.3-standard-with-system-packages|
+     - |codespace-linuxmint-20.3-standard|
    * - 
      - 
-     - |image-linuxmint-20.3-standard-with-targets-pre| |image-linuxmint-20.3-standard-with-targets| |image-linuxmint-20.3-standard-with-targets-optional|
-       |codespace-linuxmint-20.3-standard|
-
+     - |image-linuxmint-20.3-standard-with-system-packages| |image-linuxmint-20.3-standard-with-targets-pre| |image-linuxmint-20.3-standard-with-targets| |image-linuxmint-20.3-standard-with-targets-optional|
    * - linuxmint-21
      - minimal
-     - |image-linuxmint-21-minimal-with-system-packages|
+     - |codespace-linuxmint-21-minimal|
    * - 
      - 
-     - |image-linuxmint-21-minimal-with-targets-pre| |image-linuxmint-21-minimal-with-targets| |image-linuxmint-21-minimal-with-targets-optional|
-       |codespace-linuxmint-21-minimal|
-
+     - |image-linuxmint-21-minimal-with-system-packages| |image-linuxmint-21-minimal-with-targets-pre| |image-linuxmint-21-minimal-with-targets| |image-linuxmint-21-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-linuxmint-21-standard-with-system-packages|
+     - |codespace-linuxmint-21-standard|
    * - 
      - 
-     - |image-linuxmint-21-standard-with-targets-pre| |image-linuxmint-21-standard-with-targets| |image-linuxmint-21-standard-with-targets-optional|
-       |codespace-linuxmint-21-standard|
-
+     - |image-linuxmint-21-standard-with-system-packages| |image-linuxmint-21-standard-with-targets-pre| |image-linuxmint-21-standard-with-targets| |image-linuxmint-21-standard-with-targets-optional|
    * - linuxmint-21.1
      - minimal
-     - |image-linuxmint-21.1-minimal-with-system-packages|
+     - |codespace-linuxmint-21.1-minimal|
    * - 
      - 
-     - |image-linuxmint-21.1-minimal-with-targets-pre| |image-linuxmint-21.1-minimal-with-targets| |image-linuxmint-21.1-minimal-with-targets-optional|
-       |codespace-linuxmint-21.1-minimal|
-
+     - |image-linuxmint-21.1-minimal-with-system-packages| |image-linuxmint-21.1-minimal-with-targets-pre| |image-linuxmint-21.1-minimal-with-targets| |image-linuxmint-21.1-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-linuxmint-21.1-standard-with-system-packages|
+     - |codespace-linuxmint-21.1-standard|
    * - 
      - 
-     - |image-linuxmint-21.1-standard-with-targets-pre| |image-linuxmint-21.1-standard-with-targets| |image-linuxmint-21.1-standard-with-targets-optional|
-       |codespace-linuxmint-21.1-standard|
-
+     - |image-linuxmint-21.1-standard-with-system-packages| |image-linuxmint-21.1-standard-with-targets-pre| |image-linuxmint-21.1-standard-with-targets| |image-linuxmint-21.1-standard-with-targets-optional|
    * - linuxmint-21.2
      - minimal
-     - |image-linuxmint-21.2-minimal-with-system-packages|
+     - |codespace-linuxmint-21.2-minimal|
    * - 
      - 
-     - |image-linuxmint-21.2-minimal-with-targets-pre| |image-linuxmint-21.2-minimal-with-targets| |image-linuxmint-21.2-minimal-with-targets-optional|
-       |codespace-linuxmint-21.2-minimal|
-
+     - |image-linuxmint-21.2-minimal-with-system-packages| |image-linuxmint-21.2-minimal-with-targets-pre| |image-linuxmint-21.2-minimal-with-targets| |image-linuxmint-21.2-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-linuxmint-21.2-standard-with-system-packages|
+     - |codespace-linuxmint-21.2-standard|
    * - 
      - 
-     - |image-linuxmint-21.2-standard-with-targets-pre| |image-linuxmint-21.2-standard-with-targets| |image-linuxmint-21.2-standard-with-targets-optional|
-       |codespace-linuxmint-21.2-standard|
-
+     - |image-linuxmint-21.2-standard-with-system-packages| |image-linuxmint-21.2-standard-with-targets-pre| |image-linuxmint-21.2-standard-with-targets| |image-linuxmint-21.2-standard-with-targets-optional|
    * - fedora-30
      - minimal
-     - |image-fedora-30-minimal-with-system-packages|
+     - |codespace-fedora-30-minimal|
    * - 
      - 
-     - |image-fedora-30-minimal-with-targets-pre| |image-fedora-30-minimal-with-targets| |image-fedora-30-minimal-with-targets-optional|
-       |codespace-fedora-30-minimal|
-
+     - |image-fedora-30-minimal-with-system-packages| |image-fedora-30-minimal-with-targets-pre| |image-fedora-30-minimal-with-targets| |image-fedora-30-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-30-standard-with-system-packages|
+     - |codespace-fedora-30-standard|
    * - 
      - 
-     - |image-fedora-30-standard-with-targets-pre| |image-fedora-30-standard-with-targets| |image-fedora-30-standard-with-targets-optional|
-       |codespace-fedora-30-standard|
-
+     - |image-fedora-30-standard-with-system-packages| |image-fedora-30-standard-with-targets-pre| |image-fedora-30-standard-with-targets| |image-fedora-30-standard-with-targets-optional|
    * - fedora-31
      - minimal
-     - |image-fedora-31-minimal-with-system-packages|
+     - |codespace-fedora-31-minimal|
    * - 
      - 
-     - |image-fedora-31-minimal-with-targets-pre| |image-fedora-31-minimal-with-targets| |image-fedora-31-minimal-with-targets-optional|
-       |codespace-fedora-31-minimal|
-
+     - |image-fedora-31-minimal-with-system-packages| |image-fedora-31-minimal-with-targets-pre| |image-fedora-31-minimal-with-targets| |image-fedora-31-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-31-standard-with-system-packages|
+     - |codespace-fedora-31-standard|
    * - 
      - 
-     - |image-fedora-31-standard-with-targets-pre| |image-fedora-31-standard-with-targets| |image-fedora-31-standard-with-targets-optional|
-       |codespace-fedora-31-standard|
-
+     - |image-fedora-31-standard-with-system-packages| |image-fedora-31-standard-with-targets-pre| |image-fedora-31-standard-with-targets| |image-fedora-31-standard-with-targets-optional|
    * - fedora-32
      - minimal
-     - |image-fedora-32-minimal-with-system-packages|
+     - |codespace-fedora-32-minimal|
    * - 
      - 
-     - |image-fedora-32-minimal-with-targets-pre| |image-fedora-32-minimal-with-targets| |image-fedora-32-minimal-with-targets-optional|
-       |codespace-fedora-32-minimal|
-
+     - |image-fedora-32-minimal-with-system-packages| |image-fedora-32-minimal-with-targets-pre| |image-fedora-32-minimal-with-targets| |image-fedora-32-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-32-standard-with-system-packages|
+     - |codespace-fedora-32-standard|
    * - 
      - 
-     - |image-fedora-32-standard-with-targets-pre| |image-fedora-32-standard-with-targets| |image-fedora-32-standard-with-targets-optional|
-       |codespace-fedora-32-standard|
-
+     - |image-fedora-32-standard-with-system-packages| |image-fedora-32-standard-with-targets-pre| |image-fedora-32-standard-with-targets| |image-fedora-32-standard-with-targets-optional|
    * - fedora-33
      - minimal
-     - |image-fedora-33-minimal-with-system-packages|
+     - |codespace-fedora-33-minimal|
    * - 
      - 
-     - |image-fedora-33-minimal-with-targets-pre| |image-fedora-33-minimal-with-targets| |image-fedora-33-minimal-with-targets-optional|
-       |codespace-fedora-33-minimal|
-
+     - |image-fedora-33-minimal-with-system-packages| |image-fedora-33-minimal-with-targets-pre| |image-fedora-33-minimal-with-targets| |image-fedora-33-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-33-standard-with-system-packages|
+     - |codespace-fedora-33-standard|
    * - 
      - 
-     - |image-fedora-33-standard-with-targets-pre| |image-fedora-33-standard-with-targets| |image-fedora-33-standard-with-targets-optional|
-       |codespace-fedora-33-standard|
-
+     - |image-fedora-33-standard-with-system-packages| |image-fedora-33-standard-with-targets-pre| |image-fedora-33-standard-with-targets| |image-fedora-33-standard-with-targets-optional|
    * - fedora-34
      - minimal
-     - |image-fedora-34-minimal-with-system-packages|
+     - |codespace-fedora-34-minimal|
    * - 
      - 
-     - |image-fedora-34-minimal-with-targets-pre| |image-fedora-34-minimal-with-targets| |image-fedora-34-minimal-with-targets-optional|
-       |codespace-fedora-34-minimal|
-
+     - |image-fedora-34-minimal-with-system-packages| |image-fedora-34-minimal-with-targets-pre| |image-fedora-34-minimal-with-targets| |image-fedora-34-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-34-standard-with-system-packages|
+     - |codespace-fedora-34-standard|
    * - 
      - 
-     - |image-fedora-34-standard-with-targets-pre| |image-fedora-34-standard-with-targets| |image-fedora-34-standard-with-targets-optional|
-       |codespace-fedora-34-standard|
-
+     - |image-fedora-34-standard-with-system-packages| |image-fedora-34-standard-with-targets-pre| |image-fedora-34-standard-with-targets| |image-fedora-34-standard-with-targets-optional|
    * - fedora-35
      - minimal
-     - |image-fedora-35-minimal-with-system-packages|
+     - |codespace-fedora-35-minimal|
    * - 
      - 
-     - |image-fedora-35-minimal-with-targets-pre| |image-fedora-35-minimal-with-targets| |image-fedora-35-minimal-with-targets-optional|
-       |codespace-fedora-35-minimal|
-
+     - |image-fedora-35-minimal-with-system-packages| |image-fedora-35-minimal-with-targets-pre| |image-fedora-35-minimal-with-targets| |image-fedora-35-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-35-standard-with-system-packages|
+     - |codespace-fedora-35-standard|
    * - 
      - 
-     - |image-fedora-35-standard-with-targets-pre| |image-fedora-35-standard-with-targets| |image-fedora-35-standard-with-targets-optional|
-       |codespace-fedora-35-standard|
-
+     - |image-fedora-35-standard-with-system-packages| |image-fedora-35-standard-with-targets-pre| |image-fedora-35-standard-with-targets| |image-fedora-35-standard-with-targets-optional|
    * - fedora-36
      - minimal
-     - |image-fedora-36-minimal-with-system-packages|
+     - |codespace-fedora-36-minimal|
    * - 
      - 
-     - |image-fedora-36-minimal-with-targets-pre| |image-fedora-36-minimal-with-targets| |image-fedora-36-minimal-with-targets-optional|
-       |codespace-fedora-36-minimal|
-
+     - |image-fedora-36-minimal-with-system-packages| |image-fedora-36-minimal-with-targets-pre| |image-fedora-36-minimal-with-targets| |image-fedora-36-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-36-standard-with-system-packages|
+     - |codespace-fedora-36-standard|
    * - 
      - 
-     - |image-fedora-36-standard-with-targets-pre| |image-fedora-36-standard-with-targets| |image-fedora-36-standard-with-targets-optional|
-       |codespace-fedora-36-standard|
-
+     - |image-fedora-36-standard-with-system-packages| |image-fedora-36-standard-with-targets-pre| |image-fedora-36-standard-with-targets| |image-fedora-36-standard-with-targets-optional|
    * - fedora-37
      - minimal
-     - |image-fedora-37-minimal-with-system-packages|
+     - |codespace-fedora-37-minimal|
    * - 
      - 
-     - |image-fedora-37-minimal-with-targets-pre| |image-fedora-37-minimal-with-targets| |image-fedora-37-minimal-with-targets-optional|
-       |codespace-fedora-37-minimal|
-
+     - |image-fedora-37-minimal-with-system-packages| |image-fedora-37-minimal-with-targets-pre| |image-fedora-37-minimal-with-targets| |image-fedora-37-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-37-standard-with-system-packages|
+     - |codespace-fedora-37-standard|
    * - 
      - 
-     - |image-fedora-37-standard-with-targets-pre| |image-fedora-37-standard-with-targets| |image-fedora-37-standard-with-targets-optional|
-       |codespace-fedora-37-standard|
-
+     - |image-fedora-37-standard-with-system-packages| |image-fedora-37-standard-with-targets-pre| |image-fedora-37-standard-with-targets| |image-fedora-37-standard-with-targets-optional|
    * - fedora-38
      - minimal
-     - |image-fedora-38-minimal-with-system-packages|
+     - |codespace-fedora-38-minimal|
    * - 
      - 
-     - |image-fedora-38-minimal-with-targets-pre| |image-fedora-38-minimal-with-targets| |image-fedora-38-minimal-with-targets-optional|
-       |codespace-fedora-38-minimal|
-
+     - |image-fedora-38-minimal-with-system-packages| |image-fedora-38-minimal-with-targets-pre| |image-fedora-38-minimal-with-targets| |image-fedora-38-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-38-standard-with-system-packages|
+     - |codespace-fedora-38-standard|
    * - 
      - 
-     - |image-fedora-38-standard-with-targets-pre| |image-fedora-38-standard-with-targets| |image-fedora-38-standard-with-targets-optional|
-       |codespace-fedora-38-standard|
-
+     - |image-fedora-38-standard-with-system-packages| |image-fedora-38-standard-with-targets-pre| |image-fedora-38-standard-with-targets| |image-fedora-38-standard-with-targets-optional|
    * - fedora-39
      - minimal
-     - |image-fedora-39-minimal-with-system-packages|
+     - |codespace-fedora-39-minimal|
    * - 
      - 
-     - |image-fedora-39-minimal-with-targets-pre| |image-fedora-39-minimal-with-targets| |image-fedora-39-minimal-with-targets-optional|
-       |codespace-fedora-39-minimal|
-
+     - |image-fedora-39-minimal-with-system-packages| |image-fedora-39-minimal-with-targets-pre| |image-fedora-39-minimal-with-targets| |image-fedora-39-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-fedora-39-standard-with-system-packages|
+     - |codespace-fedora-39-standard|
    * - 
      - 
-     - |image-fedora-39-standard-with-targets-pre| |image-fedora-39-standard-with-targets| |image-fedora-39-standard-with-targets-optional|
-       |codespace-fedora-39-standard|
-
+     - |image-fedora-39-standard-with-system-packages| |image-fedora-39-standard-with-targets-pre| |image-fedora-39-standard-with-targets| |image-fedora-39-standard-with-targets-optional|
    * - centos-7-devtoolset-gcc_11
      - minimal
-     - |image-centos-7-devtoolset-gcc_11-minimal-with-system-packages|
+     - |codespace-centos-7-devtoolset-gcc_11-minimal|
    * - 
      - 
-     - |image-centos-7-devtoolset-gcc_11-minimal-with-targets-pre| |image-centos-7-devtoolset-gcc_11-minimal-with-targets| |image-centos-7-devtoolset-gcc_11-minimal-with-targets-optional|
-       |codespace-centos-7-devtoolset-gcc_11-minimal|
-
+     - |image-centos-7-devtoolset-gcc_11-minimal-with-system-packages| |image-centos-7-devtoolset-gcc_11-minimal-with-targets-pre| |image-centos-7-devtoolset-gcc_11-minimal-with-targets| |image-centos-7-devtoolset-gcc_11-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-centos-7-devtoolset-gcc_11-standard-with-system-packages|
+     - |codespace-centos-7-devtoolset-gcc_11-standard|
    * - 
      - 
-     - |image-centos-7-devtoolset-gcc_11-standard-with-targets-pre| |image-centos-7-devtoolset-gcc_11-standard-with-targets| |image-centos-7-devtoolset-gcc_11-standard-with-targets-optional|
-       |codespace-centos-7-devtoolset-gcc_11-standard|
-
+     - |image-centos-7-devtoolset-gcc_11-standard-with-system-packages| |image-centos-7-devtoolset-gcc_11-standard-with-targets-pre| |image-centos-7-devtoolset-gcc_11-standard-with-targets| |image-centos-7-devtoolset-gcc_11-standard-with-targets-optional|
    * - centos-stream-8-python3.9
      - minimal
-     - |image-centos-stream-8-python3.9-minimal-with-system-packages|
+     - |codespace-centos-stream-8-python3.9-minimal|
    * - 
      - 
-     - |image-centos-stream-8-python3.9-minimal-with-targets-pre| |image-centos-stream-8-python3.9-minimal-with-targets| |image-centos-stream-8-python3.9-minimal-with-targets-optional|
-       |codespace-centos-stream-8-python3.9-minimal|
-
+     - |image-centos-stream-8-python3.9-minimal-with-system-packages| |image-centos-stream-8-python3.9-minimal-with-targets-pre| |image-centos-stream-8-python3.9-minimal-with-targets| |image-centos-stream-8-python3.9-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-centos-stream-8-python3.9-standard-with-system-packages|
+     - |codespace-centos-stream-8-python3.9-standard|
    * - 
      - 
-     - |image-centos-stream-8-python3.9-standard-with-targets-pre| |image-centos-stream-8-python3.9-standard-with-targets| |image-centos-stream-8-python3.9-standard-with-targets-optional|
-       |codespace-centos-stream-8-python3.9-standard|
-
+     - |image-centos-stream-8-python3.9-standard-with-system-packages| |image-centos-stream-8-python3.9-standard-with-targets-pre| |image-centos-stream-8-python3.9-standard-with-targets| |image-centos-stream-8-python3.9-standard-with-targets-optional|
    * - centos-stream-9-python3.9
      - minimal
-     - |image-centos-stream-9-python3.9-minimal-with-system-packages|
+     - |codespace-centos-stream-9-python3.9-minimal|
    * - 
      - 
-     - |image-centos-stream-9-python3.9-minimal-with-targets-pre| |image-centos-stream-9-python3.9-minimal-with-targets| |image-centos-stream-9-python3.9-minimal-with-targets-optional|
-       |codespace-centos-stream-9-python3.9-minimal|
-
+     - |image-centos-stream-9-python3.9-minimal-with-system-packages| |image-centos-stream-9-python3.9-minimal-with-targets-pre| |image-centos-stream-9-python3.9-minimal-with-targets| |image-centos-stream-9-python3.9-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-centos-stream-9-python3.9-standard-with-system-packages|
+     - |codespace-centos-stream-9-python3.9-standard|
    * - 
      - 
-     - |image-centos-stream-9-python3.9-standard-with-targets-pre| |image-centos-stream-9-python3.9-standard-with-targets| |image-centos-stream-9-python3.9-standard-with-targets-optional|
-       |codespace-centos-stream-9-python3.9-standard|
-
+     - |image-centos-stream-9-python3.9-standard-with-system-packages| |image-centos-stream-9-python3.9-standard-with-targets-pre| |image-centos-stream-9-python3.9-standard-with-targets| |image-centos-stream-9-python3.9-standard-with-targets-optional|
    * - almalinux-8-python3.9
      - minimal
-     - |image-almalinux-8-python3.9-minimal-with-system-packages|
+     - |codespace-almalinux-8-python3.9-minimal|
    * - 
      - 
-     - |image-almalinux-8-python3.9-minimal-with-targets-pre| |image-almalinux-8-python3.9-minimal-with-targets| |image-almalinux-8-python3.9-minimal-with-targets-optional|
-       |codespace-almalinux-8-python3.9-minimal|
-
+     - |image-almalinux-8-python3.9-minimal-with-system-packages| |image-almalinux-8-python3.9-minimal-with-targets-pre| |image-almalinux-8-python3.9-minimal-with-targets| |image-almalinux-8-python3.9-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-almalinux-8-python3.9-standard-with-system-packages|
+     - |codespace-almalinux-8-python3.9-standard|
    * - 
      - 
-     - |image-almalinux-8-python3.9-standard-with-targets-pre| |image-almalinux-8-python3.9-standard-with-targets| |image-almalinux-8-python3.9-standard-with-targets-optional|
-       |codespace-almalinux-8-python3.9-standard|
-
+     - |image-almalinux-8-python3.9-standard-with-system-packages| |image-almalinux-8-python3.9-standard-with-targets-pre| |image-almalinux-8-python3.9-standard-with-targets| |image-almalinux-8-python3.9-standard-with-targets-optional|
    * - almalinux-9-python3.11
      - minimal
-     - |image-almalinux-9-python3.11-minimal-with-system-packages|
+     - |codespace-almalinux-9-python3.11-minimal|
    * - 
      - 
-     - |image-almalinux-9-python3.11-minimal-with-targets-pre| |image-almalinux-9-python3.11-minimal-with-targets| |image-almalinux-9-python3.11-minimal-with-targets-optional|
-       |codespace-almalinux-9-python3.11-minimal|
-
+     - |image-almalinux-9-python3.11-minimal-with-system-packages| |image-almalinux-9-python3.11-minimal-with-targets-pre| |image-almalinux-9-python3.11-minimal-with-targets| |image-almalinux-9-python3.11-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-almalinux-9-python3.11-standard-with-system-packages|
+     - |codespace-almalinux-9-python3.11-standard|
    * - 
      - 
-     - |image-almalinux-9-python3.11-standard-with-targets-pre| |image-almalinux-9-python3.11-standard-with-targets| |image-almalinux-9-python3.11-standard-with-targets-optional|
-       |codespace-almalinux-9-python3.11-standard|
-
+     - |image-almalinux-9-python3.11-standard-with-system-packages| |image-almalinux-9-python3.11-standard-with-targets-pre| |image-almalinux-9-python3.11-standard-with-targets| |image-almalinux-9-python3.11-standard-with-targets-optional|
    * - gentoo-python3.10
      - minimal
-     - |image-gentoo-python3.10-minimal-with-system-packages|
+     - |codespace-gentoo-python3.10-minimal|
    * - 
      - 
-     - |image-gentoo-python3.10-minimal-with-targets-pre| |image-gentoo-python3.10-minimal-with-targets| |image-gentoo-python3.10-minimal-with-targets-optional|
-       |codespace-gentoo-python3.10-minimal|
-
+     - |image-gentoo-python3.10-minimal-with-system-packages| |image-gentoo-python3.10-minimal-with-targets-pre| |image-gentoo-python3.10-minimal-with-targets| |image-gentoo-python3.10-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-gentoo-python3.10-standard-with-system-packages|
+     - |codespace-gentoo-python3.10-standard|
    * - 
      - 
-     - |image-gentoo-python3.10-standard-with-targets-pre| |image-gentoo-python3.10-standard-with-targets| |image-gentoo-python3.10-standard-with-targets-optional|
-       |codespace-gentoo-python3.10-standard|
-
+     - |image-gentoo-python3.10-standard-with-system-packages| |image-gentoo-python3.10-standard-with-targets-pre| |image-gentoo-python3.10-standard-with-targets| |image-gentoo-python3.10-standard-with-targets-optional|
    * - gentoo-python3.11
      - minimal
-     - |image-gentoo-python3.11-minimal-with-system-packages|
+     - |codespace-gentoo-python3.11-minimal|
    * - 
      - 
-     - |image-gentoo-python3.11-minimal-with-targets-pre| |image-gentoo-python3.11-minimal-with-targets| |image-gentoo-python3.11-minimal-with-targets-optional|
-       |codespace-gentoo-python3.11-minimal|
-
+     - |image-gentoo-python3.11-minimal-with-system-packages| |image-gentoo-python3.11-minimal-with-targets-pre| |image-gentoo-python3.11-minimal-with-targets| |image-gentoo-python3.11-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-gentoo-python3.11-standard-with-system-packages|
+     - |codespace-gentoo-python3.11-standard|
    * - 
      - 
-     - |image-gentoo-python3.11-standard-with-targets-pre| |image-gentoo-python3.11-standard-with-targets| |image-gentoo-python3.11-standard-with-targets-optional|
-       |codespace-gentoo-python3.11-standard|
-
+     - |image-gentoo-python3.11-standard-with-system-packages| |image-gentoo-python3.11-standard-with-targets-pre| |image-gentoo-python3.11-standard-with-targets| |image-gentoo-python3.11-standard-with-targets-optional|
    * - archlinux-latest
      - minimal
-     - |image-archlinux-latest-minimal-with-system-packages|
+     - |codespace-archlinux-latest-minimal|
    * - 
      - 
-     - |image-archlinux-latest-minimal-with-targets-pre| |image-archlinux-latest-minimal-with-targets| |image-archlinux-latest-minimal-with-targets-optional|
-       |codespace-archlinux-latest-minimal|
-
+     - |image-archlinux-latest-minimal-with-system-packages| |image-archlinux-latest-minimal-with-targets-pre| |image-archlinux-latest-minimal-with-targets| |image-archlinux-latest-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-archlinux-latest-standard-with-system-packages|
+     - |codespace-archlinux-latest-standard|
    * - 
      - 
-     - |image-archlinux-latest-standard-with-targets-pre| |image-archlinux-latest-standard-with-targets| |image-archlinux-latest-standard-with-targets-optional|
-       |codespace-archlinux-latest-standard|
-
+     - |image-archlinux-latest-standard-with-system-packages| |image-archlinux-latest-standard-with-targets-pre| |image-archlinux-latest-standard-with-targets| |image-archlinux-latest-standard-with-targets-optional|
    * - opensuse-15.3-gcc_11-python3.9
      - minimal
-     - |image-opensuse-15.3-gcc_11-python3.9-minimal-with-system-packages|
+     - |codespace-opensuse-15.3-gcc_11-python3.9-minimal|
    * - 
      - 
-     - |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets-pre| |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets| |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets-optional|
-       |codespace-opensuse-15.3-gcc_11-python3.9-minimal|
-
+     - |image-opensuse-15.3-gcc_11-python3.9-minimal-with-system-packages| |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets-pre| |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets| |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-opensuse-15.3-gcc_11-python3.9-standard-with-system-packages|
+     - |codespace-opensuse-15.3-gcc_11-python3.9-standard|
    * - 
      - 
-     - |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets-pre| |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets| |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets-optional|
-       |codespace-opensuse-15.3-gcc_11-python3.9-standard|
-
+     - |image-opensuse-15.3-gcc_11-python3.9-standard-with-system-packages| |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets-pre| |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets| |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets-optional|
    * - opensuse-15.4-gcc_11-python3.10
      - minimal
-     - |image-opensuse-15.4-gcc_11-python3.10-minimal-with-system-packages|
+     - |codespace-opensuse-15.4-gcc_11-python3.10-minimal|
    * - 
      - 
-     - |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets-pre| |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets| |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets-optional|
-       |codespace-opensuse-15.4-gcc_11-python3.10-minimal|
-
+     - |image-opensuse-15.4-gcc_11-python3.10-minimal-with-system-packages| |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets-pre| |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets| |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-opensuse-15.4-gcc_11-python3.10-standard-with-system-packages|
+     - |codespace-opensuse-15.4-gcc_11-python3.10-standard|
    * - 
      - 
-     - |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets-pre| |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets| |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets-optional|
-       |codespace-opensuse-15.4-gcc_11-python3.10-standard|
-
+     - |image-opensuse-15.4-gcc_11-python3.10-standard-with-system-packages| |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets-pre| |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets| |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets-optional|
    * - opensuse-15.5-gcc_11-python3.11
      - minimal
-     - |image-opensuse-15.5-gcc_11-python3.11-minimal-with-system-packages|
+     - |codespace-opensuse-15.5-gcc_11-python3.11-minimal|
    * - 
      - 
-     - |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets-pre| |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets| |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets-optional|
-       |codespace-opensuse-15.5-gcc_11-python3.11-minimal|
-
+     - |image-opensuse-15.5-gcc_11-python3.11-minimal-with-system-packages| |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets-pre| |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets| |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages|
+     - |codespace-opensuse-15.5-gcc_11-python3.11-standard|
    * - 
      - 
-     - |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets-pre| |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets| |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets-optional|
-       |codespace-opensuse-15.5-gcc_11-python3.11-standard|
-
+     - |image-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages| |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets-pre| |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets| |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets-optional|
    * - opensuse-tumbleweed-python3.10
      - minimal
-     - |image-opensuse-tumbleweed-python3.10-minimal-with-system-packages|
+     - |codespace-opensuse-tumbleweed-python3.10-minimal|
    * - 
      - 
-     - |image-opensuse-tumbleweed-python3.10-minimal-with-targets-pre| |image-opensuse-tumbleweed-python3.10-minimal-with-targets| |image-opensuse-tumbleweed-python3.10-minimal-with-targets-optional|
-       |codespace-opensuse-tumbleweed-python3.10-minimal|
-
+     - |image-opensuse-tumbleweed-python3.10-minimal-with-system-packages| |image-opensuse-tumbleweed-python3.10-minimal-with-targets-pre| |image-opensuse-tumbleweed-python3.10-minimal-with-targets| |image-opensuse-tumbleweed-python3.10-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-opensuse-tumbleweed-python3.10-standard-with-system-packages|
+     - |codespace-opensuse-tumbleweed-python3.10-standard|
    * - 
      - 
-     - |image-opensuse-tumbleweed-python3.10-standard-with-targets-pre| |image-opensuse-tumbleweed-python3.10-standard-with-targets| |image-opensuse-tumbleweed-python3.10-standard-with-targets-optional|
-       |codespace-opensuse-tumbleweed-python3.10-standard|
-
+     - |image-opensuse-tumbleweed-python3.10-standard-with-system-packages| |image-opensuse-tumbleweed-python3.10-standard-with-targets-pre| |image-opensuse-tumbleweed-python3.10-standard-with-targets| |image-opensuse-tumbleweed-python3.10-standard-with-targets-optional|
    * - opensuse-tumbleweed
      - minimal
-     - |image-opensuse-tumbleweed-minimal-with-system-packages|
+     - |codespace-opensuse-tumbleweed-minimal|
    * - 
      - 
-     - |image-opensuse-tumbleweed-minimal-with-targets-pre| |image-opensuse-tumbleweed-minimal-with-targets| |image-opensuse-tumbleweed-minimal-with-targets-optional|
-       |codespace-opensuse-tumbleweed-minimal|
-
+     - |image-opensuse-tumbleweed-minimal-with-system-packages| |image-opensuse-tumbleweed-minimal-with-targets-pre| |image-opensuse-tumbleweed-minimal-with-targets| |image-opensuse-tumbleweed-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-opensuse-tumbleweed-standard-with-system-packages|
+     - |codespace-opensuse-tumbleweed-standard|
    * - 
      - 
-     - |image-opensuse-tumbleweed-standard-with-targets-pre| |image-opensuse-tumbleweed-standard-with-targets| |image-opensuse-tumbleweed-standard-with-targets-optional|
-       |codespace-opensuse-tumbleweed-standard|
-
+     - |image-opensuse-tumbleweed-standard-with-system-packages| |image-opensuse-tumbleweed-standard-with-targets-pre| |image-opensuse-tumbleweed-standard-with-targets| |image-opensuse-tumbleweed-standard-with-targets-optional|
    * - conda-forge-python3.11
      - minimal
-     - |image-conda-forge-python3.11-minimal-with-system-packages|
+     - |codespace-conda-forge-python3.11-minimal|
    * - 
      - 
-     - |image-conda-forge-python3.11-minimal-with-targets-pre| |image-conda-forge-python3.11-minimal-with-targets| |image-conda-forge-python3.11-minimal-with-targets-optional|
-       |codespace-conda-forge-python3.11-minimal|
-
+     - |image-conda-forge-python3.11-minimal-with-system-packages| |image-conda-forge-python3.11-minimal-with-targets-pre| |image-conda-forge-python3.11-minimal-with-targets| |image-conda-forge-python3.11-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-conda-forge-python3.11-standard-with-system-packages|
+     - |codespace-conda-forge-python3.11-standard|
    * - 
      - 
-     - |image-conda-forge-python3.11-standard-with-targets-pre| |image-conda-forge-python3.11-standard-with-targets| |image-conda-forge-python3.11-standard-with-targets-optional|
-       |codespace-conda-forge-python3.11-standard|
-
+     - |image-conda-forge-python3.11-standard-with-system-packages| |image-conda-forge-python3.11-standard-with-targets-pre| |image-conda-forge-python3.11-standard-with-targets| |image-conda-forge-python3.11-standard-with-targets-optional|
    * - ubuntu-bionic-gcc_8-i386
      - minimal
-     - |image-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages|
+     - |codespace-ubuntu-bionic-gcc_8-i386-minimal|
    * - 
      - 
-     - |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-pre| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-optional|
-       |codespace-ubuntu-bionic-gcc_8-i386-minimal|
-
+     - |image-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-pre| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-ubuntu-bionic-gcc_8-i386-standard-with-system-packages|
+     - |codespace-ubuntu-bionic-gcc_8-i386-standard|
    * - 
      - 
-     - |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-pre| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-optional|
-       |codespace-ubuntu-bionic-gcc_8-i386-standard|
-
+     - |image-ubuntu-bionic-gcc_8-i386-standard-with-system-packages| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-pre| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-optional|
    * - debian-bullseye-i386
      - minimal
-     - |image-debian-bullseye-i386-minimal-with-system-packages|
+     - |codespace-debian-bullseye-i386-minimal|
    * - 
      - 
-     - |image-debian-bullseye-i386-minimal-with-targets-pre| |image-debian-bullseye-i386-minimal-with-targets| |image-debian-bullseye-i386-minimal-with-targets-optional|
-       |codespace-debian-bullseye-i386-minimal|
-
+     - |image-debian-bullseye-i386-minimal-with-system-packages| |image-debian-bullseye-i386-minimal-with-targets-pre| |image-debian-bullseye-i386-minimal-with-targets| |image-debian-bullseye-i386-minimal-with-targets-optional|
    * - 
      - standard
-     - |image-debian-bullseye-i386-standard-with-system-packages|
+     - |codespace-debian-bullseye-i386-standard|
    * - 
      - 
-     - |image-debian-bullseye-i386-standard-with-targets-pre| |image-debian-bullseye-i386-standard-with-targets| |image-debian-bullseye-i386-standard-with-targets-optional|
-       |codespace-debian-bullseye-i386-standard|
-
+     - |image-debian-bullseye-i386-standard-with-system-packages| |image-debian-bullseye-i386-standard-with-targets-pre| |image-debian-bullseye-i386-standard-with-targets| |image-debian-bullseye-i386-standard-with-targets-optional|
