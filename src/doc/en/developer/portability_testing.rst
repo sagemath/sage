@@ -927,21 +927,21 @@ Options for build testing with the local technology
 The environments using the ``local`` technology can be customized
 by setting environment variables.
 
- - If ``SKIP_SYSTEM_PKG_INSTALL`` is set to ``1`` (or ``yes``),
-   then all steps of installing system packages are skipped in this run.
-   When reusing a previously created tox environment, this option can
-   save time and also give developers more control for experiments
-   with system packages.
+- If ``SKIP_SYSTEM_PKG_INSTALL`` is set to ``1`` (or ``yes``),
+  then all steps of installing system packages are skipped in this run.
+  When reusing a previously created tox environment, this option can
+  save time and also give developers more control for experiments
+  with system packages.
 
- - If ``SKIP_BOOTSTRAP`` is set to ``1`` (or ``yes``), then the
-   bootstrapping phase is skipped.  When reusing a previously created
-   tox environment, this option can save time.
+- If ``SKIP_BOOTSTRAP`` is set to ``1`` (or ``yes``), then the
+  bootstrapping phase is skipped.  When reusing a previously created
+  tox environment, this option can save time.
 
- - If ``SKIP_CONFIGURE`` is set to ``1`` (or ``yes``), then the
-   ``configure`` script is not run explicitly.  When reusing a
-   previously created tox environment, this option can save time.
-   (The ``Makefile`` may still rerun configuration using
-   ``config.status --recheck``.)
+- If ``SKIP_CONFIGURE`` is set to ``1`` (or ``yes``), then the
+  ``configure`` script is not run explicitly.  When reusing a
+  previously created tox environment, this option can save time.
+  (The ``Makefile`` may still rerun configuration using
+  ``config.status --recheck``.)
 
 The ``local`` technology also defines a special target ``bash``:
 Instead of building anything with ``make``, it just starts an
@@ -1137,19 +1137,21 @@ Also `smaller images corresponding to earlier build stages
 <https://github.com/orgs/sagemath/packages?tab=packages&q=sage-debian-bullseye-standard>`_
 are available:
 
- * ``-with-system-packages`` provides a system installation with
-   system packages installed, no source tree,
+* ``-with-system-packages`` provides a system installation with
+  system packages installed, no source tree,
 
- * ``-configured`` contains a partial source tree
-   (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
-   the run of the ``configure`` script,
+* ``-configured`` contains a partial source tree
+  (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
+  the run of the ``configure`` script,
 
- * ``-with-targets-pre`` contains the full source tree and a full
-   installation of all non-Python packages (:envvar:`SAGE_LOCAL`),
+* ``-with-targets-pre`` contains the full source tree and a full
+  installation of all non-Python packages (:envvar:`SAGE_LOCAL`),
 
- * ``-with-targets`` contains the full source tree and a full
-   installation of Sage, including the HTML documentation, but ``make
-   ptest`` has not been run yet.
+* ``-with-targets`` contains the full source tree and a full
+  installation of Sage, including the HTML documentation, but ``make
+  ptest`` has not been run yet.
+
+.. include:: portability_platform_table.rst
 
 
 Testing GitHub Actions locally
