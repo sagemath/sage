@@ -1,10 +1,13 @@
 from sage.structure.sage_object cimport SageObject
+from sage.matroids.set_system cimport SetSystem
 
 cdef class Matroid(SageObject):
     cdef public _SageObject__custom_name
     cdef public _cached_info
     cdef int _stored_full_rank
     cdef int _stored_size
+    cdef SetSystem _B # bases
+    cdef SetSystem _C # circuits
 
     # virtual methods
     cpdef groundset(self) noexcept

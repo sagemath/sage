@@ -1655,7 +1655,9 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: len([B for B in M.bases()])
             184
         """
-        return self.independent_r_sets(self.full_rank())
+        if not self._B:
+            self._B = self.independent_r_sets(self.full_rank())
+        return self._B
 
     cpdef dependent_r_sets(self, long r) noexcept:
         """
@@ -1893,31 +1895,33 @@ cdef class BasisExchangeMatroid(Matroid):
              ['c', 'f', 'g'], ['d', 'e', 'f', 'g']]
         """
         cdef SetSystem NSC
-        NSC = SetSystem(self._E)
-        if self._groundset_size == 0:
-            return NSC
-        bitset_clear(self._input)
-        bitset_set_first_n(self._input, self._matroid_rank)
         cdef long e, f
-        repeat = True
-        while repeat:
-            if self.__is_independent(self._input):
-                bitset_complement(self._input2, self._current_basis)
-                e = bitset_first(self._current_basis)
-                while e >= 0:
-                    self.__fundamental_cocircuit(self._output, e)
-                    if e > bitset_first(self._output):
-                        bitset_intersection(self._input2, self._input2, self._output)
-                    e = bitset_next(self._current_basis, e + 1)
-                f = bitset_first(self._input2)
-                while f >= 0:
-                    self.__fundamental_circuit(self._output, f)
-                    if f == bitset_first(self._output):
-                        NSC._append(self._output)
-                    f = bitset_next(self._input2, f + 1)
-            repeat = nxksrd(self._input, self._groundset_size, self._matroid_rank, True)
-        NSC.resize()
-        return NSC
+        if not self._C:
+            NSC = SetSystem(self._E)
+            if self._groundset_size == 0:
+                return NSC
+            bitset_clear(self._input)
+            bitset_set_first_n(self._input, self._matroid_rank)
+            repeat = True
+            while repeat:
+                if self.__is_independent(self._input):
+                    bitset_complement(self._input2, self._current_basis)
+                    e = bitset_first(self._current_basis)
+                    while e >= 0:
+                        self.__fundamental_cocircuit(self._output, e)
+                        if e > bitset_first(self._output):
+                            bitset_intersection(self._input2, self._input2, self._output)
+                        e = bitset_next(self._current_basis, e + 1)
+                    f = bitset_first(self._input2)
+                    while f >= 0:
+                        self.__fundamental_circuit(self._output, f)
+                        if f == bitset_first(self._output):
+                            NSC._append(self._output)
+                        f = bitset_next(self._input2, f + 1)
+                repeat = nxksrd(self._input, self._groundset_size, self._matroid_rank, True)
+            NSC.resize()
+            self._C = NSC
+        return self._C
 
     # isomorphism
 

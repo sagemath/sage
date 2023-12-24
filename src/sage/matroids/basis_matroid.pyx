@@ -601,17 +601,19 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             28
         """
         cdef long r, n
-        r = self.full_rank()
-        n = len(self)
         cdef SetSystem BB
-        BB = SetSystem(self._E, capacity=bitset_len(self._bb))
         cdef long b
-        b = bitset_first(self._bb)
-        while b >= 0:
-            index_to_set(self._b, b, r, n)
-            BB._append(self._b)
-            b = bitset_next(self._bb, b + 1)
-        return BB
+        if not self._B:
+            r = self.full_rank()
+            n = len(self)
+            BB = SetSystem(self._E, capacity=bitset_len(self._bb))
+            b = bitset_first(self._bb)
+            while b >= 0:
+                index_to_set(self._b, b, r, n)
+                BB._append(self._b)
+                b = bitset_next(self._bb, b + 1)
+            self._B = BB
+        return self._B
 
     cpdef nonbases(self) noexcept:
         r"""
