@@ -3,13 +3,13 @@
 //      from .devcontainer/portability-devcontainer.json.in
 // See https://aka.ms/devcontainer.json for format details.
 {
-    "name": "ubuntu-jammy-standard",
+    "name": "almalinux-9-python3.11-minimal",
     "build": {
         "dockerfile": "portability-Dockerfile",
         // See tox.ini for definitions
         "args": {
-            "SYSTEM_FACTOR": "ubuntu-jammy",
-            "PACKAGE_FACTOR": "standard",
+            "SYSTEM_FACTOR": "almalinux-9-python3.11",
+            "PACKAGE_FACTOR": "minimal",
             "DOCKER_TARGET": "with-targets",
             "DOCKER_TAG": "dev"
         }
