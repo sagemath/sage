@@ -1234,7 +1234,7 @@ Open Folder in Container", and hit :kbd:`Enter`, and choose the directory
 ``$SAGE_ROOT`` of your local Sage repository.
 
 VS Code then prompts you to choose a dev container configuration.
-For example, choose "Ubuntu jammy" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
+For example, choose "ubuntu-jammy-standard" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
 <https://github.com/sagemath/sage/tree/develop/.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json>`_,
 which uses the Docker image based on ``ubuntu-jammy-standard``, the most recent
 development version of Sage (``dev`` tag), and a full installation of
@@ -1274,6 +1274,13 @@ in a terminal, `open a new terminal in VS Code
    ``$SAGE_ROOT/sage`` will not work. Hence after working with the dev container,
    you will want to remove ``logs`` if it is a symbolic link, and rerun the
    ``configure`` script.
+
+The Sage source tree contains premade configuration files for all platforms
+for which our portability CI builds Docker images, both in the ``minimal`` and
+``standard`` system package configurations. The configuration files can be
+generated using the command ``tox -e update_docker_platforms`` (see
+`$SAGE_ROOT/tox.ini <https://github.com/sagemath/sage/tree/develop/tox.ini>`_
+for environment variables that take effect).
 
 You can edit a copy of the configuration file to change to a different platform, another
 version, or build stage.  After editing the configuration file, run "Dev Containers: Rebuild Container" from the command
