@@ -15,8 +15,10 @@ on:
       tox_system_factors:
         description: 'Stringified JSON object listing tox system factors'
         type: string
+        # 'tox -e update_docker_platforms' updates below
         default: >-
-          ["ubuntu-trusty-toolchain-gcc_9",
+          [
+           "ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
            "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
@@ -60,7 +62,8 @@ on:
            "conda-forge-python3.11",
            "ubuntu-bionic-gcc_8-i386",
            "debian-bullseye-i386",
-           ]
+          ]
+        # 'tox -e update_docker_platforms' updates above
       tox_packages_factors:
         description: 'Stringified JSON object listing tox packages factors'
         type: string
