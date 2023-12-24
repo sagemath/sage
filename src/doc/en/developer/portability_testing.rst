@@ -1152,7 +1152,9 @@ are available:
   installation of Sage, including the HTML documentation, but ``make
   ptest`` has not been run yet.
 
-.. include:: portability_platform_table.rst
+.. only:: html
+
+   .. include:: portability_platform_table.rst
 
 
 Testing GitHub Actions locally
