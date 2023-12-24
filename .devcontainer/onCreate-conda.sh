@@ -8,6 +8,8 @@ df -h
 mamba env create --quiet --file src/environment-dev-3.11-linux.yml || mamba env update --quiet --file src/environment-dev-3.11-linux.yml
 conda init bash
 df -h
+mamba clean --all --quiet
+df -h
 
 # Build sage
 conda run -n sage-dev ./bootstrap
