@@ -740,10 +740,11 @@ def _exceptionals(E, L, patience=1000):
 
 def _over_numberfield(E):
     r"""
-    Return `E`, defined over a ``NumberField`` object.
+    Return `E`, defined over an absolute ``NumberField``.
 
     This is necessary since if `E` is defined over `\QQ`, then we
-    cannot use Sage commands available for number fields.
+    cannot use Sage commands available for number fields, and if the
+    base field is relative then other problems result.
 
     INPUT:
 
@@ -751,26 +752,27 @@ def _over_numberfield(E):
 
     OUTPUT:
 
-    - If `E` is defined over a NumberField, returns E.
+    - If `E` is defined over an absolute number field, returns `E`.
 
-    - If `E` is defined over QQ, returns E defined over the NumberField QQ.
+    - If `E` is defined over a relative number field, returns `E` defined over the absolute base field.
+
+    - If `E` is defined over `\QQ`, returns `E` defined over the number field `\QQ`.
 
     EXAMPLES::
 
         sage: E = EllipticCurve([1, 2])
         sage: sage.schemes.elliptic_curves.gal_reps_number_field._over_numberfield(E)
         Elliptic Curve defined by y^2 = x^3 + x + 2 over Number Field in a with defining polynomial x
-    """
 
+    """
     K = E.base_field()
 
     if K == QQ:
-        x = QQ['x'].gen()
-        K = NumberField(x, 'a')
-        E = E.change_ring(K)
-
-    return E
-
+        from sage.rings.polynomial.polynomial_ring import polygen
+        K = NumberField(polygen(QQ), 'a')
+    else:
+        K = K.absolute_field('a')
+    return E.change_ring(K)
 
 def deg_one_primes_iter(K, principal_only=False):
     r"""
