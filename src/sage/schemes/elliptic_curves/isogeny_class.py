@@ -410,7 +410,7 @@ class IsogenyClass_EC(SageObject):
             M = self.matrix(fill=False)
             n = len(self)
             G = Graph(M, format='weighted_adjacency_matrix')
-            D = dict([(v,self.curves[v]) for v in G.vertices(sort=False)])
+            D = {v: self.curves[v] for v in G.vertices(sort=False)}
             G.set_vertices(D)
             if self._qfmat:  # i.e. self.E.has_rational_cm():
                 for i in range(n):
@@ -424,7 +424,7 @@ class IsogenyClass_EC(SageObject):
         n = M.nrows() # = M.ncols()
         G = Graph(M, format='weighted_adjacency_matrix')
         N = self.matrix(fill=True)
-        D = dict([(v,self.curves[v]) for v in G.vertices(sort=False)])
+        D = {v: self.curves[v] for v in G.vertices(sort=False)}
         # The maximum degree classifies the shape of the isogeny
         # graph, though the number of vertices is often enough.
         # This only holds over Q, so this code will need to change
@@ -876,17 +876,17 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         else:
             key_function = lambda E: flatten([list(ai) for ai in E.ainvs()])
 
-        self.curves = sorted(curves,key=key_function)
-        perm = dict([(ind, self.curves.index(Ei))
-                     for ind, Ei in enumerate(curves)])
+        self.curves = sorted(curves, key=key_function)
+        perm = {ind: self.curves.index(Ei)
+                for ind, Ei in enumerate(curves)}
         if verbose:
             print("Sorting permutation = %s" % perm)
 
         mat = MatrixSpace(ZZ, ncurves)(0)
         self._maps = [[0] * ncurves for _ in range(ncurves)]
-        for i,j,l,phi in tuples:
+        for i, j, l, phi in tuples:
             if phi != 0:
-                mat[perm[i],perm[j]] = l
+                mat[perm[i], perm[j]] = l
                 self._maps[perm[i]][perm[j]] = phi
         self._mat = fill_isogeny_matrix(mat)
         if verbose:
@@ -1109,7 +1109,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
                         curves.append(Edash)
                     ijl_triples.append((i,j,l,phi))
                 if l_list is None:
-                    l_list = [d for d in set([ZZ(f.degree()) for f in isogs])]
+                    l_list = list({ZZ(f.degree()) for f in isogs})
                 i += 1
             self.curves = tuple(curves)
             ncurves = len(curves)

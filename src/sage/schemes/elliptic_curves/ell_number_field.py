@@ -672,9 +672,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         K = self.base_field()
         ai = self.a_invariants()
-        Ps = set(ff[0]
-                 for a in ai if not a.is_integral()
-                 for ff in a.denominator_ideal().factor())
+        Ps = {ff[0] for a in ai if not a.is_integral()
+              for ff in a.denominator_ideal().factor()}
         for P in Ps:
             pi = K.uniformizer(P, 'positive')
             e = min((ai[i].valuation(P)/[1,2,3,4,6][i])

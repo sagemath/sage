@@ -860,7 +860,7 @@ def _semistable_reducible_primes(E, verbose=False):
 
     deg_one_primes = deg_one_primes_iter(K, principal_only=True)
 
-    bad_primes = set([]) # This will store the output.
+    bad_primes = set()  # This will store the output.
 
     # We find two primes (of distinct residue characteristics) which are
     # of degree 1, unramified in K/Q, and at which E has good reduction.
@@ -1098,7 +1098,7 @@ def _possible_normalizers(E, SA):
 
         W = W + V.span([splitting_vector])
 
-    bad_primes = set([])
+    bad_primes = set()
 
     for i in traces_list:
         for p in i.prime_factors():
