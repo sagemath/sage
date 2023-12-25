@@ -75,10 +75,13 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
         PYTHONUSERBASE="${HOME}/.sage/local"
       ])
 
+      dnl double-quote SAGE_PKG_VERSPEC because platform-specific
+      dnl dependencies like python_version<'3.11' will have single
+      dnl quotes in them.
       AS_IF(
         [PYTHONUSERBASE="${PYTHONUSERBASE}" config.venv/bin/python3 -c dnl
            "import pkg_resources;                                      dnl
-            pkg_resources.require('${SAGE_PKG_VERSPEC}'.splitlines())" dnl
+            pkg_resources.require(\"${SAGE_PKG_VERSPEC}\".splitlines())" dnl
 	 2>&AS_MESSAGE_LOG_FD],
         [AC_MSG_RESULT(yes)],
         [AC_MSG_RESULT(no); sage_spkg_install_$1=yes]
