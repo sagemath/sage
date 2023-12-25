@@ -860,13 +860,25 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: f = ex.fraction();f
                     -1/(t^5 - 5*t^4 + 10*t^3 - 10*t^2 + 5*t - 1)
 
-                    sage: F = QQ[['t']]
-                    sage: F(f).O(6)
-                    1 + 5*t + 15*t^2 + 35*t^3 + 70*t^4 + 126*t^5 + O(t^6)
+                    sage: F = LazyPowerSeriesRing(QQ, 't')
+                    sage: F(f)
+                    1 + 5*t + 15*t^2 + 35*t^3 + 70*t^4 + 126*t^5 + 210*t^6 + O(t^7)
 
                     sage: poly = ex.polynomial()
                     sage: [poly(i) for i in range(6)]
                     [1, 5, 15, 35, 70, 126]
+
+                    sage: y = polygen(QQ, 'y')
+                    sage: penta = A.from_polynomial(7/2*y^2 + 7/2*y + 1)
+                    sage: penta.fraction()
+                    (-t^2 - 5*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
+
+                TESTS::
+
+                    sage: A.zero().fraction()
+                    0
+                    sage: A.zero().fraction().parent()
+                    Fraction Field of Univariate Polynomial Ring in t over Integer Ring
                 """
                 v = self.h_vector()
                 d = len(v)
