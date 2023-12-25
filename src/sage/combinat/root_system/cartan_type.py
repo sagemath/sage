@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Cartan types
 
@@ -603,7 +602,7 @@ class CartanTypeFactory(SageObject):
                 return CartanType(t[:-1]).dual()
             elif t[-1] == "~":
                 return CartanType(t[:-1]).affine()
-            elif t in ["Aoo", u"A∞"]:
+            elif t in ["Aoo", "A∞"]:
                 return CartanType(['A', Infinity])
             elif t == "A+oo":
                 from . import type_A_infinity
@@ -974,7 +973,7 @@ CartanType = CartanTypeFactory()
 CartanType.__doc__ = __doc__
 
 
-class CartanType_abstract():
+class CartanType_abstract:
     r"""
     Abstract class for Cartan types
 
@@ -3075,7 +3074,7 @@ class SuperCartanType_standard(UniqueRepresentation, SageObject):
 # For backward compatibility
 
 
-class CartanType_simple_finite():
+class CartanType_simple_finite:
     def __setstate__(self, dict):
         """
         Implements the unpickling of Cartan types pickled by Sage <= 4.0.
