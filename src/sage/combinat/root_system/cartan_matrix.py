@@ -1140,10 +1140,25 @@ def find_cartan_type_from_matrix(CM):
 
     Check that :issue:`35987` is fixed::
 
-        sage: cm = CartanMatrix(['A',7]).subtype([2,3,5])
         sage: from sage.combinat.root_system.cartan_matrix import find_cartan_type_from_matrix
+        sage: cm = CartanMatrix(['A',7]).subtype([2,3,5])
         sage: find_cartan_type_from_matrix(cm)
         A2xA1 relabelled by {1: 2, 2: 3, 3: 5}
+
+        sage: cm = CartanMatrix(['B',10,1]).subtype([0,1,2,3,5,6,8,9,10])
+        sage: ct = find_cartan_type_from_matrix(cm); ct
+        D4xB3xA2 relabelled by {1: 0, 2: 2, 3: 1, 4: 3, 5: 8, 6: 9, 7: 10, 8: 5, 9: 6}
+        sage: ct.dynkin_diagram()
+            O 3
+            |
+            |
+        O---O---O
+        0   2   1
+        O---O=>=O
+        8   9   10
+        O---O
+        5   6
+        D4xB3xA2 relabelled by {1: 0, 2: 2, 3: 1, 4: 3, 5: 8, 6: 9, 7: 10, 8: 5, 9: 6}
     """
     types = []
     relabel = []
@@ -1214,6 +1229,7 @@ def find_cartan_type_from_matrix(CM):
     ct = CartanType(types)
     # ct._index_relabelling is a dict ``(ind, j): i``, where i is an index of
     #   ``ct``, ``ind`` is the position in the list of types, and j is the
-    #   corresponding index of the type number ``ind``
+    #   corresponding index of the type number ``ind``.
+    # In other words, the j-th node of ``types[ind]`` is the i-th node of ``ct``.
     mapping = {i: relabel[d[0]][d[1]] for d, i in ct._index_relabelling.items()}
     return ct.relabel(mapping)
