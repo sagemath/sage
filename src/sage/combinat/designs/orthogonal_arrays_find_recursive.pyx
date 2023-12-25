@@ -755,46 +755,45 @@ cpdef find_brouwer_separable_design(int k,int n) noexcept:
 
             # i)
             if (x == 0 and
-                is_available(k, t)  and
-                is_available(k,t+q)):
-                return brouwer_separable_design, (k,t,q,x)
+                is_available(k, t) and is_available(k, t+q)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # ii)
             elif (x == t+q and
-                  is_available(k+e3,  t  ) and
-                  is_available(  k , t+q ) and
+                  is_available(k+e3, t) and
+                  is_available(k, t+q) and
                   is_available(k+1 ,t+q+1)):
-                return brouwer_separable_design, (k,t,q,x)
+                return brouwer_separable_design, (k, t, q, x)
 
             # iii)
             elif (x == q**2-q+1-t and
-                  is_available(  k  ,  x  ) and
-                  is_available( k+e2, t+1 ) and
-                  is_available( k+1 , t+q )):
-                return brouwer_separable_design, (k,t,q,x)
+                  is_available(k, x) and
+                  is_available(k+e2, t+1)
+                  and is_available(k+1, t+q)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # iv)
             elif (x == q**2+1 and
-                  is_available(  k  ,  x  ) and
-                  is_available( k+e4, t+1 ) and
-                  is_available( k+1 ,t+q+1)):
-                return brouwer_separable_design, (k,t,q,x)
+                  is_available(k, x) and
+                  is_available(k+e4, t+1) and
+                  is_available(k+1 ,t+q+1)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # v)
             elif (0<x and x<q**2-q+1-t and (e1 or e2) and
-                  is_available(  k  ,  x  ) and
-                  is_available( k+e1,  t  ) and
-                  is_available( k+e2, t+1 ) and
-                  is_available( k+1 , t+q )):
-                return brouwer_separable_design, (k,t,q,x)
+                  is_available(k, x) and
+                  is_available(k+e1, t) and
+                  is_available(k+e2, t+1) and
+                  is_available(k+1, t+q)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # vi)
             elif (t+q<x and x<q**2+1 and (e3 or e4) and
-                  is_available(  k  ,  x  ) and
-                  is_available( k+e3,  t  ) and
-                  is_available( k+e4, t+1 ) and
-                  is_available( k+1 ,t+q+1)):
-                return brouwer_separable_design, (k,t,q,x)
+                  is_available(k, x) and
+                  is_available(k+e3, t) and
+                  is_available(k+e4, t+1) and
+                  is_available(k+1, t+q+1)):
+                return brouwer_separable_design, (k, t, q, x)
 
     return False
 
@@ -808,7 +807,7 @@ for x in _QDM.itervalues():
         if u>1:
             if n not in ioa_indexed_by_n_minus_x:
                 ioa_indexed_by_n_minus_x[n] = []
-            ioa_indexed_by_n_minus_x[n].append((k,u))
+            ioa_indexed_by_n_minus_x[n].append((k, u))
 
 
 def int_as_sum(int value, list S, int k_max):

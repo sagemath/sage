@@ -182,8 +182,9 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: hmm.GaussianMixtureDistribution([(1,-1,0)], eps=1e-3)
             1.0*N(-1.0,0.001)
         """
-        B = [[c if c>=0 else 0,  mu,  std if std>0 else eps] for c,mu,std in B]
-        if len(B) == 0:
+        B = [[c if c >= 0 else 0,  mu, std if std > 0 else eps]
+             for c, mu, std in B]
+        if not B:
             raise ValueError("must specify at least one component of the mixture model")
         cdef double s
         if normalize:
