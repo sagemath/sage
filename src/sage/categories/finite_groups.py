@@ -101,11 +101,10 @@ class FiniteGroups(CategoryWithAxiom):
                 sage: G.cardinality()
                 384
             """
-
-            # Note for developers - self will have _deg attribute if it is derived from  MatrixGroup_generic class
-            if hasattr(self, '_deg'):
-                return self._deg
-
+            # If the group is special group and finite then there is only one possibility that the degree
+            # and cardinality will be one.
+            if hasattr(self,'_special') and self._special==True:
+                return 1
             try:
                 o = self.order
                 return o()
