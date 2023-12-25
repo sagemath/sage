@@ -1257,9 +1257,6 @@ class SageDocTestParser(doctest.DocTestParser):
                             system_platform = (
                                 platform.system().lower().replace("darwin", "macos")
                             )
-                            print(
-                                f"bug_platform: {bug_platform}, system_platform: {system_platform}"
-                            )
                             if not bug_platform or bug_platform == system_platform:
                                 continue
                         elif extra:
