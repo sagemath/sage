@@ -322,9 +322,8 @@ toolchain-deps:
 all-toolchain: base-toolchain
 	+$(MAKE_REC) toolchain-deps
 
-# All packages needed as a prerequisite to install other Python packages with
-# pip or which are otherwise used by the Python build tools; these should be
-# given as a prerequisite to any pip-installed packages
+# Shorthand for a list of packages sufficient for building and installing
+# typical Python packages from source. Wheel packages only need pip.
 PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel setuptools_wheel
 
 # Trac #32056: Avoid installed setuptools leaking into the build of python3 by uninstalling it.
@@ -725,7 +724,7 @@ $(1)-$(4)-no-deps:
 	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
 	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \
-	elif [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
+	elif [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' -o -r '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install.in' ]; then \
 	    rm -rf '$$($(4))/var/lib/sage/scripts/$(1)'; \
 	    cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
@@ -740,9 +739,9 @@ $(1)-$(4)-no-deps:
 		SAGE_SPKG_SCRIPTS=$$($(4))/var/lib/sage/scripts \
 		SAGE_INST_LOCAL=$$($(4)) \
 		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install && if [ $$$$SAGE_CHECK != no -a -x $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check ]; then $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check; fi' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
-	    rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)"-* && \
-	    touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
+		sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
+		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
+		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
 	else ( \
 	    echo; \
 	    echo "Note: $(1) is a dummy package that the Sage distribution uses"; \
@@ -781,14 +780,10 @@ $(1)-$(4)-check:
 $(1)-check: $(1)-$(4)-check
 
 $(1)-$(4)-uninstall:
-	-$(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
-		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
-		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
-		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-uninstall'
-	-rm -f "$$($(4))/$(SPKG_INST_RELDIR)/$(1)"-*
+	if [ -d '$$($(4))' ]; then \
+	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
+		$(1) '$$($(4))'; \
+	fi
 
 $(1)-uninstall: $(1)-$(4)-uninstall
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Sage code for computing k-distant crossing numbers.
 

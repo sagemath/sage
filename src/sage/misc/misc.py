@@ -45,7 +45,7 @@ import pdb
 import sys
 import warnings
 
-from .lazy_string import lazy_string
+from sage.misc.lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 

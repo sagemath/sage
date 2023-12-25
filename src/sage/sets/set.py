@@ -813,7 +813,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             raise NotImplementedError(
                 "this method is only implemented for finite sets")
         from sage.combinat.posets.lattices import FiniteLatticePoset
-        from sage.graphs.graph import DiGraph
+        from sage.graphs.digraph import DiGraph
         from sage.rings.integer import Integer
         n = self.cardinality()
         # list, contains at position 0 <= i < 2^n

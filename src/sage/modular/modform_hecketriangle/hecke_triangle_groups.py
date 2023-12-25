@@ -757,7 +757,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         OUTPUT:
 
         The corresponding embedding if it was found.
-        Otherwise a ``ValueError`` is raised.
+        Otherwise a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -803,7 +803,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             else:
                 K = AlgebraicField()
 
-        L = [emb for emb in F.embeddings(K)]
+        L = list(F.embeddings(K))
 
         # Three possibilities up to numerical artefacts:
         # (1) emb = e, purely imaginary

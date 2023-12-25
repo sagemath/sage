@@ -567,7 +567,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             return sum([c * self._coerce_in_manin_symbol(v) for c, v in S])
 
         elif is_FreeModuleElement(x):
-            y = {i: xi for i, xi in enumerate(x)}
+            y = dict(enumerate(x))
             return BoundarySpaceElement(self, y)
 
         raise TypeError("Coercion of %s (of type %s) into %s not (yet) defined." % (x, type(x), self))

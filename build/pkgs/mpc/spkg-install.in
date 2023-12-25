@@ -8,21 +8,9 @@ unset CFLAGS
 
 EXTRA=""
 
-if [ $UNAME = "CYGWIN" ]; then
-    EXTRA="--disable-static --enable-shared"
-fi
-
 # Building
 sdh_configure $SAGE_CONFIGURE_GMP $SAGE_CONFIGURE_MPFR $EXTRA
 sdh_make
-
-# Cleaning
-echo "Deleting old headers"
-rm -f "$SAGE_LOCAL"/include/mpc.h
-# Do not delete old libraries as this causes gcc to break during
-# parallel builds.
-# echo "Deleting old libraries"
-# rm -f "$SAGE_LOCAL"/lib/libmpc.*
 
 # Installing
 sdh_make_install

@@ -2999,7 +2999,16 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: PermutationGroupElement([(1,4)]) in cs
             True
         """
-        return self.conjugate().row_stabilizer()
+        # Ensure that the permutations involve all elements of the
+        # tableau, by including the identity permutation on the set [1..k].
+        k = self.size()
+        gens = [list(range(1, k + 1))]
+        ell = len(self)
+        while ell > 1:
+            ell -= 1
+            for i, val in enumerate(self[ell]):
+                gens.append((val, self[ell-1][i]))
+        return PermutationGroup(gens)
 
     def height(self):
         """

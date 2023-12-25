@@ -37,7 +37,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             sage: from sage.categories.triangular_kac_moody_algebras import TriangularKacMoodyAlgebras
             sage: TriangularKacMoodyAlgebras(QQ).super_categories()
-            [Join of Category of graded lie algebras with basis over Rational Field
+            [Join of Category of graded Lie algebras with basis over Rational Field
                  and Category of kac moody algebras over Rational Field]
 
         """

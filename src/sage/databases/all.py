@@ -23,7 +23,7 @@ This file gathers together all the tables in Sage.
 EXAMPLES::
 
     sage: ConwayPolynomials()
-    Frank Luebeck's database of Conway polynomials
+    Frank Lübeck's database of Conway polynomials
 
     sage: CremonaDatabase()
     Cremona's database of elliptic curves with conductor...

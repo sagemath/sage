@@ -6,7 +6,7 @@ The ``timeit`` command
 This uses the function :func:`~sage.misc.sage_timeit.sage_timeit`.
 """
 
-from . import sage_timeit
+from sage.misc import sage_timeit
 
 
 class SageTimeit:
