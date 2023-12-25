@@ -263,7 +263,7 @@ class DiscreteValuationFields(Category_singleton):
 
         def _matrix_hessenbergize(self, H):
             r"""
-            Replace `H` with an Hessenberg form of it.
+            Replace `H` with a Hessenberg form of it.
 
             EXAMPLES::
 

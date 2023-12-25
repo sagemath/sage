@@ -323,7 +323,7 @@ Methods to implement
   the function is called on the potential codomain.  To indicate that
   there is no coercion from S to R (self), return ``False`` or
   ``None``. This is the default behavior.  If there is a coercion,
-  return ``True`` (in which case an morphism using
+  return ``True`` (in which case a morphism using
   ``R._element_constructor_`` will be created) or an actual
   :class:`Morphism` object with S as the domain and R as the codomain.
 

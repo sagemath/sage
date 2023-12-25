@@ -509,7 +509,7 @@ class lazy_attribute(_lazy_attribute):
 
 class lazy_class_attribute(lazy_attribute):
     """
-    A lazy class attribute for an class is like a usual class attribute,
+    A lazy class attribute for a class is like a usual class attribute,
     except that, instead of being computed when the class is constructed, it
     is computed on the fly the first time it is accessed, either through the
     class itself or trough on of its objects.

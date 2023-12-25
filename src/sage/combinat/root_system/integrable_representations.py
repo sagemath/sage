@@ -426,7 +426,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
     def _inner_pp(self, pelt1, pelt2):
         """
-        Symmetric form between an two elements of the weight lattice
+        Symmetric form between two elements of the weight lattice
         associated to ``self``.
 
         EXAMPLES::
