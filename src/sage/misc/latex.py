@@ -806,7 +806,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
         try:
             with open(base + '/' + filename + '.log') as f:
                 print(f.read())
-        except IOError:
+        except OSError:
             pass
         return "Error latexing slide."
     return return_suffix
