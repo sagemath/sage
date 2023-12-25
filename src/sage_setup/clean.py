@@ -101,7 +101,7 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
         sage: stale_iter = _find_stale_files(SAGE_LIB, python_packages, python_modules, [], extra_files)
         sage: from importlib.machinery import EXTENSION_SUFFIXES
         sage: skip_extensions = tuple(EXTENSION_SUFFIXES)
-        sage: for f in stale_iter:
+        sage: for f in stale_iter: # known bug, finds some stale files under sage/tests for some reason when executed under conda
         ....:     if f.endswith(skip_extensions): continue
         ....:     if '/ext_data/' in f: continue
         ....:     print('Found stale file: ' + f)

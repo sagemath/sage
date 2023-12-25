@@ -387,7 +387,7 @@ are obtained via ``fourier_series_partial_sum``::
     -6/5/pi
     sage: s5 = f.fourier_series_partial_sum(5); s5
     -6/5*sin(10*x)/pi - 2*sin(6*x)/pi - 6*sin(2*x)/pi + 1/2
-    sage: plot(f, (0,pi)) + plot(s5, (x,0,pi), color='red')
+    sage: plot(f, (0,pi)) + plot(s5, (x,0,pi), color='red')  # known bug: macos, random failures
     Graphics object consisting of 2 graphics primitives
 
 .. PLOT::

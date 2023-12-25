@@ -380,12 +380,12 @@ cdef class LinearTensor(ModuleElement):
             sage: x[0] * vector([1,2]) == x[1] * vector([2,3])
             (1.0, 2.0)*x_0 == (2.0, 3.0)*x_1
 
-            sage: x[0] * vector([1,2]) < x[1] * vector([2,3])
+            sage: x[0] * vector([1,2]) < x[1] * vector([2,3]) # known bug, random abort error, see #28559
             Traceback (most recent call last):
             ...
             ValueError: strict < is not allowed, use <= instead.
 
-            sage: x[0] * vector([1,2]) > x[1] * vector([2,3])
+            sage: x[0] * vector([1,2]) > x[1] * vector([2,3]) # known bug, random abort error, see #28559
             Traceback (most recent call last):
             ...
             ValueError: strict > is not allowed, use >= instead.

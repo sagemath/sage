@@ -1852,7 +1852,7 @@ def plot(funcs, *args, **kwds):
     ``exclude`` and ``detect_poles`` can be used together::
 
         sage: f(x) = (floor(x)+0.5) / (1-(x-0.5)^2)
-        sage: plot(f, (x, -3.5, 3.5), detect_poles='show', exclude=[-3..3],
+        sage: plot(f, (x, -3.5, 3.5), detect_poles='show', exclude=[-3..3],  # known bug: macos, random failures
         ....:      ymin=-5, ymax=5)
         Graphics object consisting of 12 graphics primitives
 

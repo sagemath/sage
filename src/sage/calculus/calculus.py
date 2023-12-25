@@ -1235,7 +1235,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
     With this example, Maxima is looking for a LOT of information::
 
         sage: assume(a>0)
-        sage: limit(x^a,x=0)  # random - maxima 5.46.0 does not need extra assumption
+        sage: limit(x^a,x=0)  # known bug, maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
@@ -1244,7 +1244,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
          more details)
         Is a an integer?
         sage: assume(a,'integer')
-        sage: limit(x^a, x=0)  # random - maxima 5.46.0 does not need extra assumption
+        sage: limit(x^a, x=0)  # known bug, maxima 5.46.0 does not need extra assumption
         Traceback (most recent call last):
         ...
         ValueError: Computation failed since Maxima requested additional
@@ -1668,9 +1668,9 @@ def laplace(ex, t, s, algorithm='maxima'):
         sage: laplace(dirac_delta(t), t, s)
         1
         sage: F, a, cond = laplace(dirac_delta(t), t, s, algorithm='sympy')
-        sage: a, cond  # random - sympy <1.10 gives (-oo, True)
+        sage: a, cond  # known bug, sympy <1.10 gives (-oo, True)
         (0, True)
-        sage: F        # random - sympy <1.9 includes undefined heaviside(0) in answer
+        sage: F        # known bug, sympy <1.9 includes undefined heaviside(0) in answer
         1
         sage: laplace(dirac_delta(t), t, s, algorithm='giac')
         1

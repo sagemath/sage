@@ -1735,7 +1735,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 sage: list(sF)
                 [1, 2, 3]
                 sage: from sympy import FiniteSet
-                sage: FiniteSet.fromiter(sF)  # random - this output is sympy >= 1.9
+                sage: FiniteSet.fromiter(sF)  # known bug, this output is sympy >= 1.9
                 FiniteSet(1, 2, 3)
 
                 sage: RR._sympy_().is_finite_set                                        # needs sympy

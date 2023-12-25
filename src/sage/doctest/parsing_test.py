@@ -64,7 +64,6 @@ def test_parse_known_bug_returns_code_on_not_affected_os():
     assert len(parsed) == 3
     assert parsed[1].sage_source == "x = int('1'*4301) # known bug: macos\n"
 
-
 @onlyLinux
 def test_parse_known_bug_returns_empty_on_affected_os():
     parser = SageDocTestParser(("sage",))

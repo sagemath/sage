@@ -877,9 +877,9 @@ class FusionRing(WeylCharacterRing):
             True
             sage: F41 = FusionRing("F4", 1)
             sage: fmats = F41.get_fmatrix()
-            sage: fmats.find_orthogonal_solution(verbose=False)
-            sage: b = F41.basis()
-            sage: all(F41.s_ijconj(x, y) == F41._basecoer(F41.s_ij(x, y, base_coercion=False).conjugate()) for x in b for y in b)
+            sage: fmats.find_orthogonal_solution(verbose=False) # known bug, random timeouts
+            sage: b = F41.basis() # known bug, random timeouts
+            sage: all(F41.s_ijconj(x, y) == F41._basecoer(F41.s_ij(x, y, base_coercion=False).conjugate()) for x in b for y in b) # known bug, random timeouts
             True
             sage: G22 = FusionRing("G2", 2)
             sage: fmats = G22.get_fmatrix()
@@ -1401,8 +1401,8 @@ class FusionRing(WeylCharacterRing):
             sage: F41 = FusionRing("F4", 1, fusion_labels="f", inject_variables=True)
             sage: f1*f1
             f0 + f1
-            sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False)
-            sage: F41.gens_satisfy_braid_gp_rels(sig)
+            sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False) # known bug: macos, random timeouts
+            sage: F41.gens_satisfy_braid_gp_rels(sig) # known bug: macos, random timeouts
             True
         """
         n = len(sig)

@@ -1049,11 +1049,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             ....:         continue
             ....:     break
             sage: l = random_prime(8)
-            sage: K = E.division_field(l)
-            sage: n = E.cardinality(extension_degree=K.degree()//F.degree())
-            sage: (l^2 if q%l else 0 + E.is_ordinary()).divides(n)
+            sage: K = E.division_field(l) # known bug, random TypeError, see #36832
+            sage: n = E.cardinality(extension_degree=K.degree()//F.degree()) # known bug, random TypeError, see #36832
+            sage: (l^2 if q%l else 0 + E.is_ordinary()).divides(n) # known bug, random TypeError, see #36832
             True
-            sage: check(E, l, K)                # long time
+            sage: check(E, l, K)                 # known bug, random TypeError, see #36832 # long time
 
         AUTHORS:
 

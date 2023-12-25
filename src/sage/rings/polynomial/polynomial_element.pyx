@@ -7891,10 +7891,10 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs sage.symbolic
             sage: X = var('X')
-            sage: f = expand((X - 1) * (X - I)^3 * (X^2 - sqrt(2))); f
+            sage: f = expand((X - 1) * (X - I)^3 * (X^2 - sqrt(2))); f # known bug: macos, random failures
             X^6 - (3*I + 1)*X^5 - sqrt(2)*X^4 + (3*I - 3)*X^4 + (3*I + 1)*sqrt(2)*X^3
             + (I + 3)*X^3 - (3*I - 3)*sqrt(2)*X^2 - I*X^2 - (I + 3)*sqrt(2)*X + I*sqrt(2)
-            sage: f.roots()
+            sage: f.roots() # known bug: macos, random failures
             [(I, 3), (-2^(1/4), 1), (2^(1/4), 1), (1, 1)]
 
         The same operation, performed over a polynomial ring

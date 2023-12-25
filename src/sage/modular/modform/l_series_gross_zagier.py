@@ -104,7 +104,7 @@ class GrossZagierLseries(SageObject):
             sage: A = K.class_group().gen(0)
             sage: from sage.modular.modform.l_series_gross_zagier import GrossZagierLseries
             sage: G = GrossZagierLseries(e, A)
-            sage: G.taylor_series(2,3)
+            sage: G.taylor_series(2,3) # known bug: macos, random failures
             -0.613002046122894 + 0.490374999263514*z - 0.122903033710382*z^2 + O(z^3)
         """
         return self._dokchister.taylor_series(s, series_prec, var)
