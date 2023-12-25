@@ -35,10 +35,11 @@ AUTHORS:
 
 import collections.abc
 import doctest
+import platform
 import re
-
 from collections import defaultdict
 from functools import reduce
+from typing import Literal, Union, overload
 
 from sage.misc.cachefunc import cached_function
 from sage.repl.preparse import preparse, strip_string_literals
@@ -93,10 +94,9 @@ def RIFtol(*args):
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
 ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
 
-special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|known bug'
-tag_with_explanation_regex = r'((?:\w|[.])+)\s*(?:\((.*?)\))?'
-optional_regex = re.compile(fr'(?P<cmd>{special_optional_regex})\s*(?:\((?P<cmd_explanation>.*?)\))?|'
-                            fr'[^ a-z]\s*(optional|needs)(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)',
+special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|optional|needs|known bug'
+tag_with_explanation_regex = r'((?:\w|[.])+)\s*(?:\((?P<cmd_explanation>.*?)\))?'
+optional_regex = re.compile(fr'(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)',
                             re.IGNORECASE)
 special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
 tag_with_explanation_regex = re.compile(tag_with_explanation_regex, re.IGNORECASE)
@@ -105,8 +105,11 @@ nodoctest_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
 optionaltag_regex = re.compile(r'^(\w|[.])+$')
 optionalfiledirective_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)')
 
-
-def parse_optional_tags(string, *, return_string_sans_tags=False):
+@overload
+def parse_optional_tags(string: str) -> dict[str, Union[str, None]]: pass
+@overload
+def parse_optional_tags(string: str, *, return_string_sans_tags: Literal[True]) -> tuple[dict[str, Union[str, None]], str, bool]: pass
+def parse_optional_tags(string: str, *, return_string_sans_tags: bool=False) -> Union[tuple[dict[str, Union[str, None]], str, bool], dict[str, Union[str, None]]]:
     r"""
     Return a dictionary whose keys are optional tags from the following
     set that occur in a comment on the first line of the input string.
@@ -114,7 +117,7 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
     - ``'long time'``
     - ``'not implemented'``
     - ``'not tested'``
-    - ``'known bug'``
+    - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
     - ``'arb216'``
     - ``'arb218'``
@@ -219,17 +222,19 @@ def parse_optional_tags(string, *, return_string_sans_tags=False):
             # no tag comment
             return {}, string, False
 
-    tags = {}
+    tags: dict[str, Union[str, None]] = {}
     for m in optional_regex.finditer(comment):
-        cmd = m.group('cmd')
-        if cmd and cmd.lower() == 'known bug':
-            tags['bug'] = None  # so that such tests will be run by sage -t ... -only-optional=bug
-        elif cmd:
+        cmd = m.group('cmd').lower()
+        if cmd == 'known bug':
+            # rename 'known bug' to 'bug' so that such tests will be run by sage -t ... -only-optional=bug
+            tags['bug'] = m.group('tags') or None
+        elif cmd not in ['optional', 'needs']:
             tags[cmd.lower()] = m.group('cmd_explanation') or None
         else:
-            # optional/needs
-            tags.update({m.group(1).lower(): m.group(2) or None
-                         for m in tag_with_explanation_regex.finditer(m.group('tags'))})
+            # other tags with additional values
+            tags_with_value = {m.group(1).lower(): m.group(2) or None
+                            for m in tag_with_explanation_regex.finditer(m.group('tags'))}
+            tags.update(tags_with_value)
 
     if return_string_sans_tags:
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
@@ -837,6 +842,14 @@ class SageDocTestParser(doctest.DocTestParser):
     A version of the standard doctest parser which handles Sage's
     custom options and tolerances in floating point arithmetic.
     """
+    
+    long: bool
+    file_optional_tags: set[str]
+    optional_tags: Union[bool, set[str]]
+    optional_only: bool
+    optionals: dict[str, int]
+    probed_tags: set[str]
+    
     def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
         r"""
         INPUT:
@@ -874,7 +887,7 @@ class SageDocTestParser(doctest.DocTestParser):
                 self.optional_tags.remove('sage')
             else:
                 self.optional_only = True
-        self.probed_tags = probed_tags
+        self.probed_tags = set(probed_tags)
         self.file_optional_tags = set(file_optional_tags)
 
     def __eq__(self, other):
@@ -1178,8 +1191,8 @@ class SageDocTestParser(doctest.DocTestParser):
 
         for item in res:
             if isinstance(item, doctest.Example):
-                optional_tags, source_sans_tags, is_persistent = parse_optional_tags(item.source, return_string_sans_tags=True)
-                optional_tags = set(optional_tags)
+                optional_tags_with_values, _, is_persistent = parse_optional_tags(item.source, return_string_sans_tags=True)
+                optional_tags = set(optional_tags_with_values)
                 if is_persistent:
                     check_and_clear_tag_counts()
                     persistent_optional_tags = optional_tags
@@ -1196,6 +1209,7 @@ class SageDocTestParser(doctest.DocTestParser):
                 optional_tags.update(persistent_optional_tags)
                 item.optional_tags = frozenset(optional_tags)
                 item.probed_tags = set()
+                print(f"optional tags: {optional_tags}")
                 if optional_tags:
                     for tag in optional_tags:
                         self.optionals[tag] += 1
@@ -1214,7 +1228,15 @@ class SageDocTestParser(doctest.DocTestParser):
                                  for tag in optional_tags
                                  if (tag not in self.optional_tags
                                      and tag not in available_software)}
-                        if extra:
+                        if extra and any(tag in ['bug'] for tag in extra):
+                            # Bug only occurs on a specific platform?
+                            bug_platform = optional_tags_with_values.get('bug')
+                            # System platform as either linux or macos
+                            system_platform = platform.system().lower().replace('darwin', 'macos')
+                            print(f"bug_platform: {bug_platform}, system_platform: {system_platform}")
+                            if not bug_platform or bug_platform == system_platform:
+                                continue
+                        elif extra:
                             if any(tag in external_software for tag in extra):
                                 # never probe "external" software
                                 continue
