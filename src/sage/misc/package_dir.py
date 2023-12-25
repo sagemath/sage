@@ -116,7 +116,7 @@ def read_distribution(src_file):
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'tdlib.pyx'))
         'sagemath-tdlib'
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))
-        ''
+        'sagemath-graphs'
     """
     with open(src_file, encoding='utf-8', errors='ignore') as fh:
         for line in fh:
@@ -200,8 +200,8 @@ def update_distribution(src_file, distribution, *, verbose=False):
     try:
         with open(src_file, 'r') as f:
             src_lines = f.read().splitlines()
-    except UnicodeDecodeError:
-        # Silently skip binary files
+    except (UnicodeDecodeError, FileNotFoundError):
+        # Silently skip binary files, nonexisting files
         return
     any_found = False
     any_change = False
