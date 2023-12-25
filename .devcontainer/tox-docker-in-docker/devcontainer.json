@@ -8,5 +8,5 @@
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {}
     },
-    "onCreateCommand": "apt-get update && apt-get install tox",
+    "onCreateCommand": "sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends tox"
 }
