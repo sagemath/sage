@@ -967,10 +967,10 @@ This is defined in the files
 - `$SAGE_ROOT/.github/workflows/ci-linux.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-linux.yml>`_
   (which calls `$SAGE_ROOT/.github/workflows/docker.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_),
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_) and
 
 - `$SAGE_ROOT/.github/workflows/ci-macos.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_, and
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_.
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
