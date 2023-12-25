@@ -92,24 +92,41 @@ def RIFtol(*args):
 
 
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
-ansi_escape_sequence = re.compile(r'(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])')
+ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])")
 
-special_optional_regex = 'arb216|arb218|py2|long time|not implemented|not tested|optional|needs|known bug'
-tag_with_explanation_regex = r'((?:\w|[.])+)\s*(?:\((?P<cmd_explanation>.*?)\))?'
-optional_regex = re.compile(fr'(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)',
-                            re.IGNORECASE)
+special_optional_regex = (
+    "arb216|arb218|py2|long time|not implemented|not tested|optional|needs|known bug"
+)
+tag_with_explanation_regex = r"((?:\w|[.])+)\s*(?:\((?P<cmd_explanation>.*?)\))?"
+optional_regex = re.compile(
+    rf"(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)",
+    re.IGNORECASE,
+)
 special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
 tag_with_explanation_regex = re.compile(tag_with_explanation_regex, re.IGNORECASE)
 
 nodoctest_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
-optionaltag_regex = re.compile(r'^(\w|[.])+$')
-optionalfiledirective_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)')
+optionaltag_regex = re.compile(r"^(\w|[.])+$")
+optionalfiledirective_regex = re.compile(
+    r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)'
+)
+
 
 @overload
-def parse_optional_tags(string: str) -> dict[str, Union[str, None]]: pass
+def parse_optional_tags(string: str) -> dict[str, Union[str, None]]:
+    pass
+
+
 @overload
-def parse_optional_tags(string: str, *, return_string_sans_tags: Literal[True]) -> tuple[dict[str, Union[str, None]], str, bool]: pass
-def parse_optional_tags(string: str, *, return_string_sans_tags: bool=False) -> Union[tuple[dict[str, Union[str, None]], str, bool], dict[str, Union[str, None]]]:
+def parse_optional_tags(
+    string: str, *, return_string_sans_tags: Literal[True]
+) -> tuple[dict[str, Union[str, None]], str, bool]:
+    pass
+
+
+def parse_optional_tags(
+    string: str, *, return_string_sans_tags: bool = False
+) -> Union[tuple[dict[str, Union[str, None]], str, bool], dict[str, Union[str, None]]]:
     r"""
     Return a dictionary whose keys are optional tags from the following
     set that occur in a comment on the first line of the input string.
@@ -224,16 +241,18 @@ def parse_optional_tags(string: str, *, return_string_sans_tags: bool=False) -> 
 
     tags: dict[str, Union[str, None]] = {}
     for m in optional_regex.finditer(comment):
-        cmd = m.group('cmd').lower()
-        if cmd == 'known bug':
+        cmd = m.group("cmd").lower()
+        if cmd == "known bug":
             # rename 'known bug' to 'bug' so that such tests will be run by sage -t ... -only-optional=bug
-            tags['bug'] = m.group('tags') or None
-        elif cmd not in ['optional', 'needs']:
-            tags[cmd.lower()] = m.group('cmd_explanation') or None
+            tags["bug"] = m.group("tags") or None
+        elif cmd not in ["optional", "needs"]:
+            tags[cmd.lower()] = m.group("cmd_explanation") or None
         else:
             # other tags with additional values
-            tags_with_value = {m.group(1).lower(): m.group(2) or None
-                            for m in tag_with_explanation_regex.finditer(m.group('tags'))}
+            tags_with_value = {
+                m.group(1).lower(): m.group(2) or None
+                for m in tag_with_explanation_regex.finditer(m.group("tags"))
+            }
             tags.update(tags_with_value)
 
     if return_string_sans_tags:
@@ -842,14 +861,14 @@ class SageDocTestParser(doctest.DocTestParser):
     A version of the standard doctest parser which handles Sage's
     custom options and tolerances in floating point arithmetic.
     """
-    
+
     long: bool
     file_optional_tags: set[str]
     optional_tags: Union[bool, set[str]]
     optional_only: bool
     optionals: dict[str, int]
     probed_tags: set[str]
-    
+
     def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
         r"""
         INPUT:
@@ -1224,16 +1243,24 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = {tag
-                                 for tag in optional_tags
-                                 if (tag not in self.optional_tags
-                                     and tag not in available_software)}
-                        if extra and any(tag in ['bug'] for tag in extra):
+                        extra = {
+                            tag
+                            for tag in optional_tags
+                            if (
+                                tag not in self.optional_tags
+                                and tag not in available_software
+                            )
+                        }
+                        if extra and any(tag in ["bug"] for tag in extra):
                             # Bug only occurs on a specific platform?
-                            bug_platform = optional_tags_with_values.get('bug')
+                            bug_platform = optional_tags_with_values.get("bug")
                             # System platform as either linux or macos
-                            system_platform = platform.system().lower().replace('darwin', 'macos')
-                            print(f"bug_platform: {bug_platform}, system_platform: {system_platform}")
+                            system_platform = (
+                                platform.system().lower().replace("darwin", "macos")
+                            )
+                            print(
+                                f"bug_platform: {bug_platform}, system_platform: {system_platform}"
+                            )
                             if not bug_platform or bug_platform == system_platform:
                                 continue
                         elif extra:
