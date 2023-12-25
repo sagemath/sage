@@ -1204,13 +1204,13 @@ Using our pre-built Docker images for development in VS Code
 
 `VS Code <https://code.visualstudio.com/>`_ is very
 convenient for developing with Docker containers thanks to the `Visual
-Studio Code Remote - Containers
-<https://code.visualstudio.com/docs/remote/containers>`_ extension.
+Studio Code Dev Containers
+<https://code.visualstudio.com/docs/devcontainers/containers>`_ extension.
 
 If the extension is not already installed, then in VS Code, click the
 "Extension" icon on the left (or press :kbd:`Ctrl` + :kbd:`Shift` + :kbd:`X`;
 on macOS, :kbd:`Command` + :kbd:`Shift` + :kbd:`X`) to open a list of
-extensions. Search for "Remote - Containers" and install it.
+extensions. Search for "Dev Containers" and install it.
 
 The extension needs a ``devcontainer.json`` configuration file to work. Sage
 provides sample ``devcontainer.json`` configuration files
@@ -1220,11 +1220,11 @@ purpose.
 
 If you open the sage folder in VS Code, it may prompt you whether you would like to open the current
 directory in the dev container (yes).  If it does not, use the command palette
-(:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`), enter the command "Remote-Containers:
+(:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`), enter the command "Dev Containers:
 Reopen Folder in Container" , and hit :kbd:`Enter`.
 
 If the above ``code .`` command does not work, start VS Code as a regular
-application, then in the command palette of VS Code, enter "Remote-Containers:
+application, then in the command palette of VS Code, enter "Dev Containers:
 Open Folder in Container", and hit :kbd:`Enter`, and choose the directory
 ``$SAGE_ROOT`` of your local Sage repository.
 
@@ -1271,7 +1271,7 @@ in a terminal, `open a new terminal in VS Code
    ``configure`` script.
 
 You can edit a copy of the configuration file to change to a different platform, another
-version, or build stage.  After editing the configuration file, run "Remote-Containers: Rebuild Container" from the command
+version, or build stage.  After editing the configuration file, run "Dev Containers: Rebuild Container" from the command
 palette. See the `VS Code devcontainer.json reference
 <https://code.visualstudio.com/docs/remote/devcontainerjson-reference>`_
 and the `GitHub introduction to dev containers
