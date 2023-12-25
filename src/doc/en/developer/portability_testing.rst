@@ -60,13 +60,33 @@ Make sure that your Docker client is configured to provide enough RAM
 to the containers (8 GB are a good choice). In Docker Desktop this
 setting is in Preferences -> Resources -> Advanced.
 
+As an alternative, you can also run Docker in GitHub Codespaces
+(or another cloud service) using a container with the Docker-in-Docker
+feature. Sage provides a suitable dev container configuration
+`.devcontainer/tox-docker-in-docker
+<https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_.
+
+.. only:: html
+
+   .. |codespace-tox-docker-in-docker| image:: https://github.com/codespaces/badge.svg
+      :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Ftox-docker-in-docker%2Fdevcontainer.json
+
+   .. list-table::
+      :widths: 25 60
+      :header-rows: 0
+
+      * - `tox-docker-in-docker
+          <https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_
+        - |codespace-tox-docker-in-docker|
+
 All examples in this section were obtained using Docker Desktop for
 Mac; but the `command-line user interface
 <https://docs.docker.com/engine/reference/commandline/cli/>`_ for the
 other platforms is identical.
 
 All major Linux distributions provide ready-to-use Docker images,
-which are published via `Docker Hub <https://hub.docker.com>`_.  For
+which are published via `Docker Hub <https://hub.docker.com>`_
+or other container registries.  For
 example, to run the current stable (LTS) version of Ubuntu
 interactively, you can use the shell command::
 
@@ -578,14 +598,22 @@ Automatic Docker-based build testing using tox
 `tox <https://tox.readthedocs.io/en/latest/>`_ is a Python package that
 is widely used for automating tests of Python projects.
 
-Install ``tox`` for use with your system Python, for example using::
+If you are using Docker locally, install ``tox`` for use with your system Python,
+for example using::
 
   [mkoeppe@sage sage]$ pip install --user tox
 
+If you run Docker-in-Docker on GitHub Codespaces using our dev container
+configuration `.devcontainer/tox-docker-in-docker
+<https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_,
+``tox`` is already installed.
+
+Sage provides a sophisticated tox configuration in the file
+``$SAGE_ROOT/tox.ini`` for the purpose of portability testing.
+
 A tox "environment" is identified by a symbolic name composed of
 several `Tox "factors"
-<https://tox.readthedocs.io/en/latest/config.html#complex-factor-conditions>`_,
-which are defined in the file ``$SAGE_ROOT/tox.ini``.
+<https://tox.readthedocs.io/en/latest/config.html#complex-factor-conditions>`_.
 
 The **technology** factor describes how the environment is run:
 
