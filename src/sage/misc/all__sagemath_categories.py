@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 
 from sage.misc.all__sagemath_objects import *
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 The symbolic ring
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-coxeter3
 
 #*****************************************************************************
 #       Copyright (C) 2009-2013 Mike Hansen <mhansen@gmail.com>

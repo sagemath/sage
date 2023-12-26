@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Morphisms defined by a matrix
 

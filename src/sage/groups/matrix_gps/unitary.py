@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Unitary Groups `GU(n,q)` and `SU(n,q)`
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.combinat.all__sagemath_categories import *
 
 from sage.combinat.free_module import CombinatorialFreeModule

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.complex_double sage.symbolic
 r"""
 Regions in fundamental domains of period lattices

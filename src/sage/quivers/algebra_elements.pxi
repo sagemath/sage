@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.graphs
 """
 Boilerplate functions for a cython implementation of elements of path algebras

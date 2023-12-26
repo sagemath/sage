@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-eclib
 
 from sage.libs.eclib.constructor import CremonaModularSymbols
 from sage.libs.eclib.interface import mwrank_EllipticCurve, mwrank_MordellWeil

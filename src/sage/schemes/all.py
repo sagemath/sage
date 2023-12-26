@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 all.py -- export of schemes to Sage
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 
 from cypari2.convert cimport new_gen_from_double
 

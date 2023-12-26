@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 # sage.doctest: needs scipy
 r"""
 Hyperbolic Isometries

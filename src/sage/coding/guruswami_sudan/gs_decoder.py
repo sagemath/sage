@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules sage.rings.finite_rings sage.symbolic
 r"""
 Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-bliss
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
 # distutils: libraries = bliss

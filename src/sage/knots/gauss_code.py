@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 """
 Helper functions related to Gauss codes of knots
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 
 from sage.rings.integer cimport Integer
 from sage.rings.real_mpfr cimport RealNumber

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """nodoctest
 all.py -- export of projective schemes to Sage
 """

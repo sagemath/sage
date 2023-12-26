@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.libs.gap sage.modules sage.rings.finite_rings
 r"""
 Database of two-weight codes

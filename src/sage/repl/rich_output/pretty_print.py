@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 The ``pretty_print`` command
 

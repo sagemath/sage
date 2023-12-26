@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-mcqd
 # distutils: language = c++
 
 from cysignals.signals cimport sig_on, sig_off

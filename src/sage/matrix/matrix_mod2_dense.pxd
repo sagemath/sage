@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.libs.m4ri cimport *
 

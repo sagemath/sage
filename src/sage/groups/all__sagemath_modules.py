@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.groups.all__sagemath_categories import *
 
 from sage.groups.additive_abelian.all import *

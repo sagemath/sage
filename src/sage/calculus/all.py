@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 from sage.calculus.all__sagemath_modules import *
 
 from sage.calculus import desolvers

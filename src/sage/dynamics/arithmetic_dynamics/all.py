@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 from sage.misc.lazy_import import lazy_import
 
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem

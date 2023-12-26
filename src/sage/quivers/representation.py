@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 Quiver Representations

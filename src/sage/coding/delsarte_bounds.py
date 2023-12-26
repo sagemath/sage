@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 <<<<<<< HEAD
 # sage.doctest: needs sage.numerical.mip
 =======

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Tests for deprecations of imports in global namespace from :trac:`28064`::
 

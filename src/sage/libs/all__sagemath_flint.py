@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 
 try:
     from sage.libs.all__sagemath_pari import *

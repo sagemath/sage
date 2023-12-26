@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 
 from sage.rings.padics.all__sagemath_categories import *
 

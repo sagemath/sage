@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # distutils: libraries = gmp flint
 # distutils: depends = acb_elliptic.h
 

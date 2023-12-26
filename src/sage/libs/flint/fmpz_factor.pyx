@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 from cysignals.signals cimport sig_check
 from sage.libs.flint.fmpz cimport fmpz_get_mpz
 from sage.rings.integer cimport Integer

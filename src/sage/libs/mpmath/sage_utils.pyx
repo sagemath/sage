@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-mpmath
 r"""
 Utility functions called by the Sage library
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-eclib
 
 from sage.misc.lazy_import import lazy_import
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.graphs
 r"""
 Base class for polyhedra: Graph-theoretic methods

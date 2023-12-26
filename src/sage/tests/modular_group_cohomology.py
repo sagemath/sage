@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # sage.doctest: optional - p_group_cohomology
 r"""
 Tests for the optional ``p_group_cohomology`` package.

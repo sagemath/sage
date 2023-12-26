@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Top level of the distribution package sagemath-pari
 

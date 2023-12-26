@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.stats.basic_stats import (mean, mode, std, variance, median, moving_average)
 from sage.stats.hmm import all as hmm
 

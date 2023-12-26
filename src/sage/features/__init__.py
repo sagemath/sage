@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Testing for features of the environment at runtime
 

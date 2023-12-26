@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 
 # TODO:
 # Implement group homset, conversion of generator images to morphism

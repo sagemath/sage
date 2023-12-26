@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 # Import basic functionality
 r"""
 This module defines an initial ring, and patches the declare_ring to use

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Top level of the distribution package sagemath-polyhedra
 

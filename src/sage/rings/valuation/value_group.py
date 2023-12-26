@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Value groups of discrete valuations
 

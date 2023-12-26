@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 
 from sage.libs.mpfi.types cimport mpfi_ptr
 

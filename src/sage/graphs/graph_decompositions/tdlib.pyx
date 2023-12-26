@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-tdlib
 # distutils: language = c++
 
 r"""

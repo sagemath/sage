@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 
 from sage.rings.all__sagemath_ntl import *
 

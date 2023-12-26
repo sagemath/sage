@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 """
 Misc matrix algorithms
 """

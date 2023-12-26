@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 
 from sage.quadratic_forms.binary_qf import BinaryQF, BinaryQF_reduced_representatives
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-giac
 """
 Wrappers for Giac functions
 
