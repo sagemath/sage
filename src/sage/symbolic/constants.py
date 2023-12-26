@@ -592,8 +592,8 @@ class Pi(Constant):
         """
         EXAMPLES::
 
-        sage: pi._real_double_(RDF)
-        3.141592653589793
+            sage: pi._real_double_(RDF)
+            3.141592653589793
         """
         return R.pi()
 

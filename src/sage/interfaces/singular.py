@@ -1228,16 +1228,16 @@ class Singular(ExtraTabCompletion, Expect):
         else:
             return None
 
-    def _tab_completion(self):
+    def _tab_completion(self) -> list:
         """
         Return a list of all Singular commands.
 
         EXAMPLES::
 
-        sage: singular._tab_completion()
-        ['exteriorPower',
-        ...
-        'crossprod']
+            sage: singular._tab_completion()
+            ['exteriorPower',
+            ...
+            'crossprod']
         """
         p = re.compile("// *([a-z0-9A-Z_]*).*") #compiles regular expression
         proclist = self.eval("listvar(proc)").splitlines()
