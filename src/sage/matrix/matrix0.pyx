@@ -386,7 +386,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         of this matrix. If i, j are out of range, an IndexError is
         raised.
         """
-        if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
+        if i < 0 or i >= self._nrows or j<0 or j >= self._ncols:
             raise IndexError("matrix index out of range")
 
     cdef check_mutability(self) noexcept:
@@ -419,7 +419,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         else:
             self._cache = None
 
-        if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
+        if i < 0 or i >= self._nrows or j < 0 or j >= self._ncols:
             raise IndexError("matrix index out of range")
 
     def set_immutable(self):
@@ -3706,7 +3706,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     if positive and not d[i] > 0:
                         return False
                     for j in d:
-                        if d[i] * self.get_unsafe(i, j) != sign * d[j] * self.get_unsafe(j,i):
+                        if d[i] * self.get_unsafe(i, j) != sign * d[j] * self.get_unsafe(j, i):
                             return False
         return L
 
@@ -4297,7 +4297,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         for i from 0 <= i < self._nrows:
             for j from 0 <= j <= i:
-                if self.get_unsafe(i, j) != -self.get_unsafe(j,i):
+                if self.get_unsafe(i, j) != -self.get_unsafe(j, i):
                     return False
         return True
 
@@ -4843,10 +4843,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t j
         tmp = []
 
-        if i<0 or i >= self._ncols:
+        if i < 0 or i >= self._ncols:
             raise IndexError("matrix column index out of range")
         for j from 0 <= j < self._nrows:
-            if not self.get_is_zero_unsafe(j,i):
+            if not self.get_is_zero_unsafe(j, i):
                 tmp.append(j)
         return tmp
 
