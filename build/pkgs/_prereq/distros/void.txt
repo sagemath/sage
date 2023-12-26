@@ -17,3 +17,5 @@ perl
 python3
 tar
 which
+# needed by gfortran
+diffutils
