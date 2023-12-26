@@ -1531,7 +1531,7 @@ def isotopism(p):
     if isinstance(p, tuple):
         # We have a single cycle:
         if isinstance(p[0], Integer):
-            return Permutation(tuple((x+1 for x in p)))
+            return Permutation(tuple(x+1 for x in p))
 
         # We have a tuple of cycles:
         if isinstance(p[0], tuple):

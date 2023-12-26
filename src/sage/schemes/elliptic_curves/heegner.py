@@ -842,7 +842,7 @@ class GaloisGroup(SageObject):
         # so we just find a generator.
         for sigma in self:
             if sigma.order() == self.cardinality():
-                return tuple([sigma])
+                return (sigma,)
 
         raise NotImplementedError
 
@@ -2566,7 +2566,7 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
         N = self.level()
         R = Integers(4*N)
         m = 2*N
-        return tuple(sorted( set([a % m for a in R(D).sqrt(all=True)]) ))
+        return tuple(sorted( {a % m for a in R(D).sqrt(all=True)} ))
 
     @cached_method
     def points(self, beta=None):
@@ -3774,7 +3774,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         N = self.__E.conductor()
         R = Integers(4*N)
         m = 2*N
-        return sorted( set([a % m for a in R(self.discriminant()).sqrt(all=True)]) )
+        return sorted( {a % m for a in R(self.discriminant()).sqrt(all=True)} )
 
     def _trace_numerical_conductor_1(self, prec=53):
         """

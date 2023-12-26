@@ -141,6 +141,7 @@ from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.libs.mpfr cimport *
+from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.misc.superseded import deprecation_cython as deprecation
 from sage.rings.integer cimport Integer
@@ -150,10 +151,9 @@ from sage.rings.ring import Ring
 from sage.structure.element cimport Element
 from sage.structure.element cimport have_same_parent
 from sage.structure.richcmp cimport rich_to_bool_sgn
+
 cdef bin_op
 from sage.structure.element import bin_op
-
-from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
 
 try:
     from cypari2 import Gen

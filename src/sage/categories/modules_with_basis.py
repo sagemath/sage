@@ -1081,7 +1081,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``indices`` -- an list (or iterable) of indices of basis
+            - ``indices`` -- a list (or iterable) of indices of basis
               elements
 
             EXAMPLES::

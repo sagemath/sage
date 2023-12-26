@@ -169,4 +169,4 @@ class ElementWithLabel():
             sage: a != x
             False
         """
-        return not(self == other)
+        return not (self == other)

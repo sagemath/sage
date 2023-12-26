@@ -78,10 +78,8 @@ def basis_of_short_vectors(self, show_lengths=False):
         vector_list_by_length[l].append(vector([-x for x in v]))
 
     # Make a matrix from the column vectors (in order of ascending length).
-    sorted_list = []
-    for i in range(len(vector_list_by_length)):
-        for v in vector_list_by_length[i]:
-            sorted_list.append(v)
+    sorted_list = [v for i in range(len(vector_list_by_length))
+                   for v in vector_list_by_length[i]]
     sorted_matrix = Matrix(sorted_list).transpose()
 
     # Determine a basis of vectors of minimal length
@@ -205,7 +203,7 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     parilens = pari(r"(M,v) -> vector(#v, i, (v[i]~ * M * v[i])\2)")(self, parilist)
 
     # Sort the vectors into lists by their length
-    vec_sorted_list = [list() for i in range(len_bound)]
+    vec_sorted_list = [[] for i in range(len_bound)]
     for i in range(len(parilist)):
         length = int(parilens[i])
         # In certain trivial cases, PARI can sometimes return longer

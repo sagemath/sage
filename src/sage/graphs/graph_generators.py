@@ -1192,6 +1192,121 @@ class GraphGenerators:
             G = BipartiteGraph(s[:-1], format='graph6', partition=partition)
             yield G
 
+    def nauty_genktreeg(self, options="", debug=False):
+        r"""
+        Return a generator which creates all `k`-trees using nauty..
+
+        A `k`-tree is an undirected graph formed by starting with a complete
+        graph on `k + 1` vertices and then repeatedly add vertices in such a
+        way that each added vertex `v` has exactly `k` neighbors `U` such that,
+        together, the `k + 1` vertices formed by `v` and `U` form a clique.
+        See the :wikipedia:`K-tree` for more details.
+
+        INPUT:
+
+        - ``options`` -- string (default: ``""``); a string passed to
+          ``genktreeg`` as if it was run at a system command line. At a minimum,
+          you *must* pass the number of vertices you desire. Sage expects the
+          graphs to be in nauty's "graph6" format, do not set an option to
+          change this default or results will be unpredictable.
+
+        - ``debug`` -- boolean (default: ``False``); if ``True`` the first line
+          of ``genktreeg``'s output to standard error is captured and the first
+          call to the generator's ``next()`` function will return this line as a
+          string. A line leading with ">A" indicates a successful initiation of
+          the program with some information on the arguments, while a line
+          beginning with ">E" indicates an error with the input.
+
+        The possible options, obtained as output of ``genktreeg --help``::
+
+                 n       : the number of vertices
+                -k<int>  : the value of `k`(default: 2)
+              res/mod    : only generate subset res out of subsets 0..mod-1
+                -l       : canonically label output graphs
+
+        Options which cause ``genktreeg`` to use an output format different than
+        the graph6 format are not listed above (-u, -s, -h) as they will confuse
+        the creation of a Sage graph. The res/mod option can be useful when
+        using the output in a routine run several times in parallel.
+
+        OUTPUT:
+
+        A generator which will produce the graphs as Sage graphs.
+        These will be simple graphs: no loops, no multiple edges, no
+        directed edges.
+
+        EXAMPLES:
+
+        A `k`-tree is a maximal graph with treewidth `k`::
+
+            sage: # needs nauty
+            sage: gen = graphs.nauty_genktreeg("10 -k4")
+            sage: G = next(gen); G
+            Graph on 10 vertices
+            sage: G.treewidth()
+            4
+
+        A list of all 2-trees with 6, 7 and 8 vertices. This agrees with
+        :oeis:`A054581`::
+
+            sage: # needs nauty
+            sage: gen = graphs.nauty_genktreeg("6")
+            sage: len(list(gen))
+            5
+            sage: gen = graphs.nauty_genktreeg("7")
+            sage: len(list(gen))
+            12
+            sage: gen = graphs.nauty_genktreeg("8")
+            sage: len(list(gen))
+            39
+
+        The ``debug`` switch can be used to examine ``geng``'s reaction to the
+        input in the ``options`` string.  We illustrate success.  (A failure
+        will be a string beginning with ">E".)  Passing the "-q" switch to
+        ``geng`` will suppress the indicator of a successful initiation, and so
+        the first returned value might be an empty string if ``debug`` is
+        ``True``::
+
+            sage: gen = graphs.nauty_genktreeg("7", debug=True)                         # needs nauty
+            sage: print(next(gen))                                                      # needs nauty
+            >A ...genktreeg k=2 n=7
+
+        TESTS:
+
+        Wrong input::
+
+            sage: # needs nauty
+            sage: list(graphs.nauty_genktreeg("4 -k5", debug=True))
+            ['>E genktreeg: n cannot be less than k\n']
+            sage: list(graphs.nauty_genktreeg("10 -k 4", debug=True))
+            ['>E genktreeg -k: missing argument value\n']
+            sage: list(graphs.nauty_genktreeg("-c3", debug=False))
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong format of parameter option
+        """
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        geng_path = NautyExecutable("genktreeg").absolute_filename()
+        sp = subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
+                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, close_fds=True,
+                              encoding='latin-1')
+        msg = sp.stderr.readline()
+        if debug:
+            yield msg
+        elif msg.startswith('>E'):
+            raise ValueError('wrong format of parameter option')
+        gen = sp.stdout
+        while True:
+            try:
+                s = next(gen)
+            except StopIteration:
+                # Exhausted list of graphs from nauty geng
+                return
+            G = graph.Graph(s[:-1], format='graph6')
+            yield G
+
     def cospectral_graphs(self, vertices, matrix_function=None, graphs=None):
         r"""
         Find all sets of graphs on ``vertices`` vertices (with

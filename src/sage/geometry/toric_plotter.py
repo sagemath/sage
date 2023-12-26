@@ -746,7 +746,7 @@ def _unrecognized_option(option):
 
     OUTPUT:
 
-    - none, a ``KeyError`` exception is raised.
+    - none, a :class:`KeyError` exception is raised.
 
     TESTS::
 

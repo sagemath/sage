@@ -166,7 +166,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
     To go between the canonical basis and the natural basis, for level 1
     Fock space, we follow the LLT algorithm [LLT1996]_. Indeed, we first
-    construct an basis `\{ A(\nu) \}` that is an approximation to the
+    construct a basis `\{ A(\nu) \}` that is an approximation to the
     lower global crystal basis, in the sense that it is bar-invariant,
     and then use Gaussian elimination to construct the lower global
     crystal basis. For higher level Fock space, we follow [Fayers2010]_,

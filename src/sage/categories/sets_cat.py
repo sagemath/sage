@@ -1830,7 +1830,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             .. NOTE::
 
                 This is an optional method. A default implementation
-                raising ``NotImplementedError`` could be provided instead.
+                raising :class:`NotImplementedError` could be provided instead.
             """
 
         def is_injective(self):

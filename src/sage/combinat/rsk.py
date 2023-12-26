@@ -2970,7 +2970,7 @@ class RuleStar(Rule):
             return DecreasingHeckeFactorization(df)
 
 
-class InsertionRules():
+class InsertionRules:
     r"""
     Catalog of rules for RSK-like insertion algorithms.
     """

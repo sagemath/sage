@@ -344,6 +344,13 @@ cdef class Cache_ntl_gf2e(Cache_base):
             return libgap(e).sage(ring=self._parent)
 
         else:
+            try:
+                from sage.libs.gap.element import GapElement_FiniteField
+            except ImportError:
+                pass
+            else:
+                if isinstance(e, GapElement_FiniteField):
+                    return e.sage(ring=self._parent)
             raise TypeError("unable to coerce %r" % type(e))
 
         cdef GEN t

@@ -552,7 +552,7 @@ class ChowGroupFactory(UniqueFactory):
         if base_ring not in [ZZ, QQ]:
             raise ValueError('base ring must be either ZZ or QQ')
 
-        key = tuple([toric_variety, base_ring])
+        key = (toric_variety, base_ring)
         extra = {'check': check}
         return key, extra
 

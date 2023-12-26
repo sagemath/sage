@@ -685,7 +685,7 @@ class KlyachkoBundle_class(SageObject):
         C = self.cohomology_complex(weight)
         space_dim = self._variety.dimension()
         C_homology = C.homology()
-        HH = dict()
+        HH = {}
         for d in range(space_dim+1):
             try:
                 HH[d] = C_homology[d]

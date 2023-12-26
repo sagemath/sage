@@ -1202,7 +1202,7 @@ def two_adic_symbol(A, val):
     return [[s[0]+m0] + s[1:] for s in sym + two_adic_symbol(A, val)]
 
 
-class Genus_Symbol_p_adic_ring():
+class Genus_Symbol_p_adic_ring:
     r"""
     Local genus symbol over a `p`-adic ring.
 
@@ -2132,7 +2132,7 @@ class Genus_Symbol_p_adic_ring():
 
     def excess(self):
         r"""
-        Returns the `p`-excess of the quadratic form whose Hessian
+        Return the `p`-excess of the quadratic form whose Hessian
         matrix is the symmetric matrix `A`.  When `p = 2`, the `p`-excess is
         called the oddity.
 
@@ -2242,7 +2242,7 @@ class Genus_Symbol_p_adic_ring():
             sage: G = Genus(matrix(ZZ,2,[0, 1, 1, 0]))
             sage: G.local_symbol(2).norm()
             2
-            """
+        """
         if self.rank() == 0:
             return ZZ(0)
         p = self.prime()
@@ -2321,7 +2321,7 @@ class Genus_Symbol_p_adic_ring():
         return canonical_2_adic_compartments(symbol)
 
 
-class GenusSymbol_global_ring():
+class GenusSymbol_global_ring:
     r"""
     This represents a collection of local genus symbols (at primes)
     and signature information which represent the genus of a

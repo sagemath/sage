@@ -55,7 +55,7 @@ def polygon_spline(pts):
         ....:                 [lambda x: ps.derivative(real(x))], 0)
         sage: show(m.plot_colored() + m.plot_spiderweb())                               # needs sage.plot
 
-    Polygon approximation of an circle::
+    Polygon approximation of a circle::
 
         sage: # needs sage.symbolic
         sage: pts = [e^(I*t / 25) for t in range(25)]

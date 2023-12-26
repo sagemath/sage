@@ -38,7 +38,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     - ``subfield`` -- the base field of ``self``.
 
-    - ``embedding`` -- (default: ``None``) an homomorphism from ``subfield`` to
+    - ``embedding`` -- (default: ``None``) a homomorphism from ``subfield`` to
       ``original_code``'s base field. If ``None`` is provided, it will default
       to the first homomorphism of the list of homomorphisms Sage can build.
 

@@ -204,19 +204,18 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.misc.latex as latex
 
-from sage.rings.ring import CommutativeRing
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.infinity import infinity
+from sage.rings.multi_power_series_ring_element import MPowerSeries
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.power_series_ring import PowerSeriesRing, PowerSeriesRing_generic, is_PowerSeriesRing
-
-from sage.rings.infinity import infinity
-import sage.misc.latex as latex
+from sage.rings.ring import CommutativeRing
 from sage.structure.nonexact import Nonexact
 
-from sage.rings.multi_power_series_ring_element import MPowerSeries
 from sage.categories.commutative_rings import CommutativeRings
 _CommutativeRings = CommutativeRings()
 
@@ -224,7 +223,7 @@ from sage.categories.integral_domains import IntegralDomains
 _IntegralDomains = IntegralDomains()
 
 try:
-    from .laurent_series_ring import LaurentSeriesRing
+    from sage.rings.laurent_series_ring import LaurentSeriesRing
 except ImportError:
     LaurentSeriesRing = ()
 

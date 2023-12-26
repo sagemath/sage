@@ -4347,7 +4347,7 @@ class RuleDomino(Rule):
 #####################################################################
 
 
-class Rules():
+class Rules:
     """
     Catalog of rules for growth diagrams.
     """

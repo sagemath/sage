@@ -216,10 +216,10 @@ cdef class Matrix(Matrix1):
         from sage.matrix.constructor import matrix
         if self.is_sparse():
             return matrix({ij: self[ij].subs(*args, **kwds) for ij in self.nonzero_positions()},
-                    nrows=self._nrows, ncols=self._ncols, sparse=True)
+                          nrows=self._nrows, ncols=self._ncols, sparse=True)
         else:
             return matrix([a.subs(*args, **kwds) for a in self.list()],
-                        nrows=self._nrows, ncols=self._ncols, sparse=False)
+                          nrows=self._nrows, ncols=self._ncols, sparse=False)
 
     def solve_left(self, B, check=True):
         """
@@ -3193,14 +3193,12 @@ cdef class Matrix(Matrix1):
         """
 
         # Validate assertions
-        #
         if not self.is_square():
             raise ValueError("self must be a square matrix")
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         # Extract parameters
-        #
         cdef Matrix M  = <Matrix> self
         n  = M._ncols
         R  = M._base_ring
@@ -3209,7 +3207,6 @@ cdef class Matrix(Matrix1):
         # Corner cases
         # N.B.  We already tested for M to be square, hence we do not need to
         # test for 0 x n or m x 0 matrices.
-        #
         if n == 0:
             return S.one()
 
@@ -3225,7 +3222,6 @@ cdef class Matrix(Matrix1):
         #
         # N.B.  The documentation is still 1-based, although the code, after
         # having been ported from Magma to Sage, is 0-based.
-        #
         from sage.matrix.constructor import matrix
 
         F = [R.zero()] * n
@@ -3236,18 +3232,15 @@ cdef class Matrix(Matrix1):
         for t in range(1,n):
 
             # Set a(1, t) to be M(<=t, t)
-            #
             for i in range(t+1):
                 a.set_unsafe(0, i, M.get_unsafe(i, t))
 
             # Set A[1, t] to be the (t)th entry in a[1, t]
-            #
             A[0] = M.get_unsafe(t, t)
 
             for p in range(1, t):
 
                 # Set a(p, t) to the product of M[<=t, <=t] * a(p-1, t)
-                #
                 for i in range(t+1):
                     s = R.zero()
                     for j in range(t+1):
@@ -3255,11 +3248,9 @@ cdef class Matrix(Matrix1):
                     a.set_unsafe(p, i, s)
 
                 # Set A[p, t] to be the (t)th entry in a[p, t]
-                #
                 A[p] = a.get_unsafe(p, t)
 
             # Set A[t, t] to be M[t, <=t] * a(p-1, t)
-            #
             s = R.zero()
             for j in range(t+1):
                 s = s + M.get_unsafe(t, j) * a.get_unsafe(t-1, j)
@@ -3272,7 +3263,7 @@ cdef class Matrix(Matrix1):
                 F[p] = s - A[p]
 
         X = S.gen(0)
-        f = X ** n + S(list(reversed(F)))
+        f = X**n + S(list(reversed(F)))
 
         return f
 
@@ -3644,7 +3635,7 @@ cdef class Matrix(Matrix1):
         # using the rows of a matrix.)  Also see Cohen's first GTM,
         # Algorithm 2.2.9.
 
-        cdef Py_ssize_t i, m, n,
+        cdef Py_ssize_t i, m, n
         n = self._nrows
 
         cdef Matrix c
@@ -18630,8 +18621,8 @@ def _matrix_power_symbolic(A, n):
 
         sage: A = matrix(ZZ, [[1,-1], [-1,1]])
         sage: A^(2*n+1)                                                                 # needs sage.symbolic
-        [ 1/2*2^(2*n + 1) -1/2*2^(2*n + 1)]
-        [-1/2*2^(2*n + 1)  1/2*2^(2*n + 1)]
+        [ 1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1) -1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)]
+        [-1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)  1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)]
 
     Check if :trac:`23215` is fixed::
 
@@ -18641,12 +18632,25 @@ def _matrix_power_symbolic(A, n):
          -1/2*I*(a + I*b)^k + 1/2*I*(a - I*b)^k,
          1/2*I*(a + I*b)^k - 1/2*I*(a - I*b)^k,
          1/2*(a + I*b)^k + 1/2*(a - I*b)^k]
+
+    Check if :trac:`36838` is fixed:Checking symbolic power of
+    nilpotent matrix::
+
+        sage: A = matrix([[0,1],[0,0]]); A
+        [0 1]
+        [0 0]
+        sage: n = var('n'); n
+        n
+        sage: B = A^n; B
+        [  kronecker_delta(0, n) n*kronecker_delta(1, n)]
+        [                      0   kronecker_delta(0, n)]
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix
     from sage.functions.other import binomial
     from sage.symbolic.ring import SR
     from sage.rings.qqbar import QQbar
+    from sage.functions.generalized import kronecker_delta
 
     got_SR = A.base_ring() == SR
 
@@ -18679,8 +18683,17 @@ def _matrix_power_symbolic(A, n):
         # D^i(f) / i! with f = x^n and D = differentiation wrt x
         if hasattr(mk, 'radical_expression'):
             mk = mk.radical_expression()
-        vk = [(binomial(n, i) * mk**(n-i)).simplify_full()
-              for i in range(nk)]
+
+
+        # When the variable "mk" is equal to zero, it is advisable to employ the Kronecker delta function
+        # instead of utilizing the numerical value zero. This choice is made to encompass scenarios where
+        # the power of zero is also equal to zero.
+        if mk:
+            vk = [(binomial(n, i) * mk._pow_(n-i)).simplify_full()
+                  for i in range(nk)]
+        else:
+            vk = [(binomial(n, i).simplify_full() * kronecker_delta(n,i))
+                  for i in range(nk)]
 
         # Form block Mk and insert it in M
         Mk = matrix(SR, [[SR.zero()]*i + vk[:nk-i] for i in range(nk)])

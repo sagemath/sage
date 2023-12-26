@@ -486,11 +486,11 @@ class SkewPartition(CombinatorialElement):
         out, inn = self
         inn = inn + [0] * (len(out) - len(inn))
         if not any(self._list):
-            return UnicodeArt(u'∅')
+            return UnicodeArt('∅')
         if self.parent().options.convention == "French":
-            s, t, b, l, r, tr, tl, br, bl, x, h = list(u' ┴┬├┤┘└┐┌┼─')
+            s, t, b, l, r, tr, tl, br, bl, x, h = list(' ┴┬├┤┘└┐┌┼─')
         else:
-            s, t, b, l, r, tr, tl, br, bl, x, h = list(u' ┬┴├┤┐┌┘└┼─')
+            s, t, b, l, r, tr, tl, br, bl, x, h = list(' ┬┴├┤┐┌┘└┼─')
 
         # working with English conventions
         txt = [s * inn[0] + tl + t * (out[0] - inn[0] - 1) + tr]
@@ -501,10 +501,10 @@ class SkewPartition(CombinatorialElement):
             i1 = inn[i + 1]
 
             if i0 == i1:
-                start = u' ' * i1 + l
+                start = ' ' * i1 + l
                 d0 = 1
             else:
-                start = u' ' * i1 + tl
+                start = ' ' * i1 + tl
                 d0 = 0
 
             if o0 == o1:

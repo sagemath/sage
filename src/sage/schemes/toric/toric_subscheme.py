@@ -221,7 +221,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         try:
             return self._affine_patches[i]
         except AttributeError:
-            self._affine_patches = dict()
+            self._affine_patches = {}
         except KeyError:
             pass
         ambient_patch = self.ambient_space().affine_patch(i)
@@ -316,9 +316,9 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         R, I, dualcone = ambient._semigroup_ring(cone, names)
 
         # inhomogenize the Cox homogeneous polynomial with respect to the given cone
-        inhomogenize = dict( (ambient.coordinate_ring().gen(i), 1)
-                             for i in range(0,fan.nrays())
-                             if i not in cone.ambient_ray_indices() )
+        inhomogenize = {ambient.coordinate_ring().gen(i): 1
+                        for i in range(fan.nrays())
+                        if i not in cone.ambient_ray_indices()}
         polynomials = [p.subs(inhomogenize) for p in self.defining_polynomials()]
 
         # map the monomial x^{D_m} to m, see reference.
@@ -403,7 +403,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         # that it is numerically stable to dehomogenize, see the
         # corresponding method for projective varieties.
         point = list(point)
-        zeros = set(i for i, coord in enumerate(point) if coord == 0)
+        zeros = {i for i, coord in enumerate(point) if coord == 0}
         for cone_idx, cone in enumerate(self.ambient_space().fan().generating_cones()):
             if zeros.issubset(cone.ambient_ray_indices()):
                 return cone_idx
@@ -411,7 +411,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
     def neighborhood(self, point):
         r"""
-        Return an toric algebraic scheme isomorphic to neighborhood of
+        Return a toric algebraic scheme isomorphic to neighborhood of
         the ``point``.
 
         INPUT:
@@ -678,8 +678,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         SR = SR.change_ring(R)
 
         def restrict(cone):
-            patch = dict()
-            divide = dict()
+            patch = {}
+            divide = {}
             for i in cone.ambient_ray_indices():
                 patch[R.gen(i)] = R.zero()   # restrict to torus orbit
                 # divide out highest power of R.gen(i)

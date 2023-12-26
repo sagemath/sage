@@ -291,7 +291,7 @@ class OreFunction(AlgebraElement):
         r"""
         Return the pair `(s,t)` if this element reads `t s^{-1}`.
 
-        This is an helper function. Do not call it directly.
+        This is a helper function. Do not call it directly.
 
         TESTS::
 
@@ -650,7 +650,7 @@ class OreFunction(AlgebraElement):
             False
 
         This behavior ensures that the Hilbert shift by a fixed element
-        defines an homomorphism of fields::
+        defines a homomorphism of fields::
 
             sage: # needs sage.rings.finite_rings
             sage: U = K.random_element(degree=5)

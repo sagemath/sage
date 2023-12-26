@@ -578,7 +578,7 @@ class Crystals(Category_singleton):
             The sole purpose of this method is to construct the homset
             as a :class:`~sage.categories.crystals.CrystalHomset`. If
             ``category`` is specified and is not a subcategory of
-            :class:`Crystals`, a ``TypeError`` is raised instead.
+            :class:`Crystals`, a :class:`TypeError` is raised instead.
 
             This method is not meant to be called directly. Please use
             :func:`sage.categories.homset.Hom` instead.

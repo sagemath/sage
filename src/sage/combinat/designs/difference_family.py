@@ -1113,7 +1113,7 @@ def mcfarland_1973_construction(q, s):
     D = []
     for k, H in zip(K, V.subspaces(s)):
         for v in H:
-            D.append(G((tuple(v) + (k,))))
+            D.append(G(tuple(v) + (k,)))
 
     return G,[D]
 

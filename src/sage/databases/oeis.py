@@ -721,7 +721,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         except AttributeError:
             pass
 
-    def _field(self, key):
+    def _field(self, key, warn=True):
         r"""
         Return the ``key`` field of the entry of ``self``.
 
@@ -740,7 +740,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             for line in self.raw_entry().splitlines():
                 fields[line[1]].append(line[11:])
             self._fields = fields
-            self.is_dead(warn_only=True)
+            self.is_dead(warn_only=warn)
             return self._fields[key]
 
     def id(self, format='A'):
@@ -958,7 +958,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         return self._field('A')[0]
 
-    def keywords(self):
+    def keywords(self, warn=True):
         r"""
         Return the keywords associated to the sequence ``self``.
 
@@ -984,7 +984,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s.keywords()
             ('nonn', 'hard')
         """
-        return tuple(self._field('K')[0].split(','))
+        return tuple(self._field('K', warn=warn)[0].split(','))
 
     def natural_object(self):
         r"""
@@ -1107,8 +1107,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         EXAMPLES:
 
-        A warn_only test is triggered as soon as some information on the
-        sequence is queried::
+        A warning is triggered if any field of a dead sequence is accessed,
+        unless :meth:`is_dead` is called before::
 
             sage: s = oeis(17)
             sage: s                                 # optional -- internet
@@ -1137,11 +1137,11 @@ class OEISSequence(SageObject, UniqueRepresentation):
             True
         """
         if warn_only:
-            if 'dead' in self.keywords():
+            if 'dead' in self.keywords(warn_only):
                 from warnings import warn
                 warn('This sequence is dead: "{}: {}"'.format(self.id(), self.name()), RuntimeWarning)
         else:
-            return 'dead' in self.keywords()
+            return 'dead' in self.keywords(warn_only)
 
     def is_finite(self):
         r"""
@@ -2009,6 +2009,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             True
         """
         if self.is_dead():
+            self.is_dead(warn_only=True)
             return True
         filt = self.programs(language='sage')
         if filt:

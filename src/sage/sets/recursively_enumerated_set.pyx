@@ -976,7 +976,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: R.to_digraph()                                                        # needs sage.graphs
             Looped multi-digraph on 10 vertices
 
-        Digraph of an recursively enumerated set with a symmetric structure of
+        Digraph of a recursively enumerated set with a symmetric structure of
         infinite cardinality using ``max_depth`` argument::
 
             sage: def succ(a):
@@ -994,7 +994,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             sage: C.to_digraph()                                                        # needs sage.graphs
             Looped multi-digraph on 25 vertices
 
-        Digraph of an recursively enumerated set with a graded structure::
+        Digraph of a recursively enumerated set with a graded structure::
 
             sage: def f(a):
             ....:     return [a + 1, a + I]

@@ -906,7 +906,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
         OUTPUT:
 
-        - An polynomial of degree less than ``self.code().order()``.
+        - A polynomial of degree less than ``self.code().order()``.
 
         EXAMPLES::
 

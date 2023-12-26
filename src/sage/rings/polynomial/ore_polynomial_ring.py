@@ -462,7 +462,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
 
         OUTPUT:
 
-        An zero-degree Ore polynomial in ``self``, equal to ``a``.
+        A zero-degree Ore polynomial in ``self``, equal to ``a``.
 
         EXAMPLES::
 

@@ -1669,7 +1669,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             return super()._coerce_map_from_(R)
 
 
-class CartesianProductWithFlattening():
+class CartesianProductWithFlattening:
     """
     A class for Cartesian product constructor, with partial flattening
     """
