@@ -3394,7 +3394,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         Verifying Example 4.5 from [BCHOPSY2017]_::
 
-            sage: B = crystals.Minimaj(3, 4, 2) # for `Val_{4,1}^{(3)}`                 # needs sage.modules
+            sage: B = crystals.Minimaj(3, 4, 2)  # for `Val_{4,1}^{(3)}`                # needs sage.modules
             sage: B.val()                                                               # needs sage.modules
             (q^2+q+1)*s[2, 1, 1] + q*s[2, 2]
         """
