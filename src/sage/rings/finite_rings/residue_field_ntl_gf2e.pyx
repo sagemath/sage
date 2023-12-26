@@ -45,6 +45,7 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
         sage: c = OK(a)
         sage: b = k(c)
         sage: b*c^2
+        doctest:warning ...
         7
         sage: b*c
         13*abar + 5

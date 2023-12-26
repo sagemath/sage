@@ -99,10 +99,12 @@ with ideals in non-maximal orders.
     sage: K.<a> = NumberField(x^3 + 2)
     sage: R = K.order(3*a)
     sage: R.ideal(5)
+    doctest:warning ... FutureWarning: ...
+    Ideal (5, 15*a, 45*a^2) of Order in Number Field in a with defining polynomial x^3 + 2
+    sage: R.ideal(5).factor()
     Traceback (most recent call last):
     ...
-    NotImplementedError: ideals of non-maximal orders not
-    yet supported.
+    AttributeError: 'NumberFieldOrderIdeal_generic' object has no attribute 'factor'
 
 
 Relative Extensions
