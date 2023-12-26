@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-pari
-# -*- coding: utf-8 -*-
 r"""
 Value groups of discrete valuations
 
