@@ -1113,6 +1113,24 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             L = L, F_to_K.post_compose(K_to_L)
         return L
 
+    def _Hom_(*args, **kwds):
+        r"""
+        Hook to make :class:`~sage.categories.homset.Hom`
+        set the correct parent
+        :class:`~sage.schemes.elliptic_curves.homset.EllipticCurveHomset`
+        for
+        :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+        objects.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(19), [1,0])
+            sage: type(E._Hom_(E))
+            <class 'sage.schemes.elliptic_curves.homset.EllipticCurveHomset_with_category'>
+        """
+        from . import homset
+        return homset.EllipticCurveHomset(*args, **kwds)
+
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""
         Return an elliptic-curve isogeny from this elliptic curve.
