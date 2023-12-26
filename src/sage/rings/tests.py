@@ -450,7 +450,7 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     Zero-tests over ``QQbar`` are currently very slow, so we test only very small examples::
 
-        sage: test_karatsuba_multiplication(QQbar, 3, 3, numtests=2) # known bug: macos (sporadic timeouts, see #35715>), long time, needs sage.rings.number_field
+        sage: test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)  # known bug: macos (sporadic timeouts, see #35715>), long time, needs sage.rings.number_field
 
     Larger degrees (over ``ZZ``, using FLINT)::
 

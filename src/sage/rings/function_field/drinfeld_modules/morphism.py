@@ -540,12 +540,12 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z> = Fq.extension(3)
             sage: coeffs = [z] + [K.random_element() for _ in range(10)]
             sage: phi = DrinfeldModule(A, coeffs)
-            sage: f = phi.hom(K.random_element()) # known bug: macos (sporadic ValueError: the input does not define an isogeny)
-            sage: g = ~f # known bug: macos (sporadic ValueError: the input does not define an isogeny)eny
+            sage: f = phi.hom(K.random_element())  # known bug: macos (sporadic ValueError: the input does not define an isogeny)
+            sage: g = ~f  # known bug: macos (sporadic ValueError: the input does not define an isogeny)eny
 
-            sage: (f*g).is_identity() # known bug: macos (sporadic ValueError: the input does not define an isogeny)
+            sage: (f*g).is_identity()  # known bug: macos (sporadic ValueError: the input does not define an isogeny)
             True
-            sage: (g*f).is_identity() # known bug: macos (sporadic ValueError: the input does not define an isogeny)
+            sage: (g*f).is_identity()  # known bug: macos (sporadic ValueError: the input does not define an isogeny)
             True
 
         """

@@ -622,7 +622,7 @@ def _sympysage_ff(self):
         sage: from sympy import Symbol, ff
         sage: _ = var('x, y')
         sage: ffxy = ff(Symbol('x'), Symbol('y'))
-        sage: assert falling_factorial(x,y)._sympy_() == ffxy.rewrite('gamma') # known bug
+        sage: assert falling_factorial(x,y)._sympy_() == ffxy.rewrite('gamma')  # known bug
         sage: assert falling_factorial(x,y) == ffxy._sage_()
     """
     from sage.arith.misc import falling_factorial

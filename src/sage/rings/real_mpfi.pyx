@@ -223,9 +223,9 @@ specified if given a non-interval and an interval::
         sage: ref = RealIntervalField(100)(ComplexBallField(100).one().airy_ai().real())
         sage: ref
         0.135292416312881415524147423515?
-        sage: val = RIF(airy_ai(1)); val # known bug
+        sage: val = RIF(airy_ai(1)); val  # known bug
         0.13529241631288142?
-        sage: val.overlaps(ref)          # known bug
+        sage: val.overlaps(ref)           # known bug
         False
 
 TESTS::

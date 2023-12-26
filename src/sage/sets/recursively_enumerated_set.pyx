@@ -1159,11 +1159,11 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
             sage: next(it)
             {-1, 1}
             sage: from cysignals.alarm import alarm
-            sage: alarm(0.02); next(it) # known bug: macos (sporadic failures)
+            sage: alarm(0.02); next(it)  # known bug: macos (sporadic failures)
             Traceback (most recent call last):
             ...
             AlarmInterrupt
-            sage: next(it) # known bug: macos (sporadic failures)
+            sage: next(it)  # known bug: macos (sporadic failures)
             Traceback (most recent call last):
             ...
             StopIteration

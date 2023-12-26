@@ -5129,7 +5129,7 @@ class SandpileDivisor(dict):
 
             sage: S = sandpiles.Cycle(3)
             sage: D = SandpileDivisor(S, [0,1,1])
-            sage: D._set_linear_system() # known bug (won't fix due to deprecation optional - 4ti2)
+            sage: D._set_linear_system()  # known bug (won't fix due to deprecation optional - 4ti2)
 
         .. WARNING::
 

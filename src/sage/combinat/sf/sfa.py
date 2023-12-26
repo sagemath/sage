@@ -6455,7 +6455,7 @@ def _variables_recursive(R, include=None, exclude=None):
         sage: _variables_recursive(R.fraction_field(), exclude=[b])
         [a]
 
-        sage: _variables_recursive(S.fraction_field(), exclude=[b]) # known bug
+        sage: _variables_recursive(S.fraction_field(), exclude=[b])  # known bug
         [a, t]
     """
     if include is not None and exclude is not None:

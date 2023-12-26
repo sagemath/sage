@@ -31,9 +31,9 @@ heavily modified:
         sage: ref = ComplexIntervalField(100)(ComplexBallField(100).one().airy_ai())
         sage: ref
         0.135292416312881415524147423515?
-        sage: val = CIF(airy_ai(1)); val # known bug
+        sage: val = CIF(airy_ai(1)); val  # known bug
         0.13529241631288142?
-        sage: val.overlaps(ref)          # known bug
+        sage: val.overlaps(ref)           # known bug
         False
 
 .. TODO::

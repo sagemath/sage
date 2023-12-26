@@ -102,7 +102,7 @@ doing random summations::
     2*2^m*m - 2*2^m + 2
     2*2^m*m^2 - 4*2^m*m + 6*2^m - 6
     2*2^m*m^3 - 6*2^m*m^2 + 18*2^m*m - 26*2^m + 26
-    sage: (1 / (n^2 + sqrt(5)*n - 1)).gosper_sum(n,0,m) # known bug
+    sage: (1 / (n^2 + sqrt(5)*n - 1)).gosper_sum(n,0,m)  # known bug
     ....:                            # TODO: algebraic solutions
     sage: check((n^4 * 4^n / binomial(2*n, n)), n, 0, 10, 20)
     sage: check((factorial(3*n) / (factorial(n) * factorial(n+1) * factorial(n+2) * 27^n)), n,0,10,20)

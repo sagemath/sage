@@ -2446,7 +2446,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: d = E.coboundary({(0,1): z, (1,2):x, (2,0):y})
-            sage: TestSuite(d).run() # known bug (morphisms are properly in a category)
+            sage: TestSuite(d).run()  # known bug (morphisms are properly in a category)
         """
         # Construct the dictionary of costructure coefficients, i.e. given
         # [x_j, x_k] = \sum_i s_{jk}^i x_i, we get x^i |-> \sum_{j<k} s_{jk}^i x^j x^k.
