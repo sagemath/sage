@@ -5451,6 +5451,8 @@ cdef class Polynomial(CommutativePolynomial):
         if self.degree() <= 1:
             return R.fraction_field()
 
+        from sage.rings.number_field.number_field import is_NumberField, NumberField
+
         if is_IntegerRing(R):
             from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
@@ -6926,7 +6928,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: S.<y> = PolynomialRing(R,'y')
             sage: p = ((1/b^2*d^2+1/a)*x*y^2+a*b/c*y+e+x^2)
             sage: q = -4*c^2*y^3+1
-            sage: p.resultant(q)                                                        # needs sage.libs.pari
+            sage: p.resultant(q)                                                        # needs sage.libs.pari sage.modules
             (16*c^4)*x^6 + (48*c^4)*e*x^4 + (1/(b^6)*d^6 + 3/(a*b^4)*d^4
             + (-12*a^3*b*c + 3)/(a^2*b^2)*d^2 + (-12*a^3*b*c + 1)/(a^3))*x^3
             + (48*c^4)*e^2*x^2 + ((-12*a*c)/b*d^2*e + (-12*b*c)*e)*x + (16*c^4)*e^3 + (4*a^3*b^3)/c
@@ -6938,7 +6940,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = PolynomialRing(CDF)
             sage: f = R(1 - I*x + (0.5)*x^2 + (1.7)*x^3)
             sage: g = f.derivative()
-            sage: f.resultant(g)
+            sage: f.resultant(g)                                                        # needs sage.modules
             133.92599999999996 + 37.56999999999999*I
         """
         variable = self.variable_name()
@@ -7730,7 +7732,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^3 - 1
             sage: f.roots()
             [(1, 1)]
-            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc     # needs sage.rings.real_mpfr
+            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc   # needs sage.rings.real_mpfr
             [(1.00000000000000, 1),
              (-0.500000000000000 - 0.86602540378443...*I, 1),
              (-0.500000000000000 + 0.86602540378443...*I, 1)]
@@ -8105,6 +8107,7 @@ cdef class Polynomial(CommutativePolynomial):
             ....:     f2 = x2^3 - fld_out(2)
             ....:     for algo in (None, 'pari', 'numpy'):
             ....:         rts = f.roots(ring=fld_out, multiplicities=False)
+            ....:         rts = sorted(rts, key=lambda x: x.imag())
             ....:         if fld_in == fld_out and algo is None:
             ....:             print("{} {}".format(fld_in, rts))
             ....:         for rt in rts:
@@ -8113,9 +8116,9 @@ cdef class Polynomial(CommutativePolynomial):
             Real Field with 53 bits of precision [1.25992104989487]
             Real Double Field [1.25992104989...]
             Real Field with 100 bits of precision [1.2599210498948731647672106073]
-            Complex Field with 53 bits of precision [1.25992104989487, -0.62996052494743... - 1.09112363597172*I, -0.62996052494743... + 1.09112363597172*I]
-            Complex Double Field [1.25992104989..., -0.629960524947... - 1.0911236359717...*I, -0.629960524947... + 1.0911236359717...*I]
-            Complex Field with 100 bits of precision [1.2599210498948731647672106073, -0.62996052494743658238360530364 - 1.0911236359717214035600726142*I, -0.62996052494743658238360530364 + 1.0911236359717214035600726142*I]
+            Complex Field with 53 bits of precision [-0.62996052494743... - 1.09112363597172*I, 1.25992104989487, -0.62996052494743... + 1.09112363597172*I]
+            Complex Double Field [-0.629960524947... - 1.0911236359717...*I, 1.25992104989487..., -0.629960524947... + 1.0911236359717...*I]
+            Complex Field with 100 bits of precision [-0.62996052494743658238360530364 - 1.0911236359717214035600726142*I, 1.2599210498948731647672106073, -0.62996052494743658238360530364 + 1.0911236359717214035600726142*I]
 
         Note that we can find the roots of a polynomial with algebraic
         coefficients::
@@ -8150,11 +8153,11 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: p = x + bigc
-            sage: p.roots(ring=RR, algorithm='numpy')                                   # needs numpy
+            sage: p.roots(ring=RR, algorithm='numpy')                                   # needs numpy sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             LinAlgError: Array must not contain infs or NaNs
-            sage: p.roots(ring=RR, algorithm='pari')                                    # needs sage.libs.pari
+            sage: p.roots(ring=RR, algorithm='pari')                                    # needs sage.libs.pari sage.rings.real_mpfr
             [(-3.50746621104340e451, 1)]
             sage: p.roots(ring=AA)                                                      # needs sage.rings.number_field
             [(-3.5074662110434039?e451, 1)]

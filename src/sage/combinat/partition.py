@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integer partitions
 
@@ -668,23 +667,23 @@ class Partition(CombinatorialElement):
         from sage.typeset.unicode_art import UnicodeArt
 
         if not self._list:
-            return UnicodeArt(u'∅', baseline=0)
+            return UnicodeArt('∅', baseline=0)
         if self.parent().options.convention == "English":
             data = list(self)
         else:
             data = list(reversed(self))
 
-        txt = [u'┌' + u'┬' * (data[0] - 1) + u'┐']
+        txt = ['┌' + '┬' * (data[0] - 1) + '┐']
         for i in range(len(data) - 1):
             p = data[i]
             q = data[i + 1]
             if p < q:
-                txt += [u'├' + u'┼' * p + u'┬' * (q - p - 1) + u'┐']
+                txt += ['├' + '┼' * p + '┬' * (q - p - 1) + '┐']
             elif p == q:
-                txt += [u'├' + u'┼' * (p - 1) + u'┤']
+                txt += ['├' + '┼' * (p - 1) + '┤']
             else:
-                txt += [u'├' + u'┼' * q + u'┴' * (p - q - 1) + u'┘']
-        txt += [u'└' + u'┴' * (data[-1] - 1) + u'┘']
+                txt += ['├' + '┼' * q + '┴' * (p - q - 1) + '┘']
+        txt += ['└' + '┴' * (data[-1] - 1) + '┘']
 
         return UnicodeArt(txt, baseline=0)
 
@@ -4900,14 +4899,14 @@ class Partition(CombinatorialElement):
         :class:`Partitions_with_constraints`::
 
             sage: Partition([5,3,1]).remove_horizontal_border_strip(5)
-            The subpartitions of [5, 3, 1] obtained by removing an horizontal border strip of length 5
+            The subpartitions of [5, 3, 1] obtained by removing a horizontal border strip of length 5
 
         TESTS::
 
             sage: Partition([3,2,2]).remove_horizontal_border_strip(2).list()
             [[3, 2], [2, 2, 1]]
             sage: Partition([3,2,2]).remove_horizontal_border_strip(2).first().parent()
-            The subpartitions of [3, 2, 2] obtained by removing an horizontal border strip of length 2
+            The subpartitions of [3, 2, 2] obtained by removing a horizontal border strip of length 2
             sage: Partition([]).remove_horizontal_border_strip(0).list()
             [[]]
             sage: Partition([]).remove_horizontal_border_strip(6).list()
@@ -4919,7 +4918,7 @@ class Partition(CombinatorialElement):
                                            floor=self[1:] + [0],
                                            ceiling=self[:],
                                            max_slope=0,
-                                           name=f"The subpartitions of {self} obtained by removing an horizontal border strip of length {k}")
+                                           name=f"The subpartitions of {self} obtained by removing a horizontal border strip of length {k}")
 
     def k_conjugate(self, k):
         r"""
@@ -5549,9 +5548,9 @@ class Partition(CombinatorialElement):
 
             sage: Partition([2,2,1]).simple_module_dimension()
             5
-            sage: Partition([2,2,1]).specht_module_dimension(GF(3))                     # optional - sage.rings.finite_rings
+            sage: Partition([2,2,1]).specht_module_dimension(GF(3))                     # needs sage.rings.finite_rings
             5
-            sage: Partition([2,2,1]).simple_module_dimension(GF(3))                     # optional - sage.rings.finite_rings
+            sage: Partition([2,2,1]).simple_module_dimension(GF(3))                     # needs sage.rings.finite_rings
             4
 
             sage: for la in Partitions(6, regular=3):
@@ -6736,9 +6735,9 @@ class Partitions_n(Partitions):
 
         EXAMPLES::
 
-            sage: Partitions(5).random_element() # random                               # needs sage.libs.flint
+            sage: Partitions(5).random_element()  # random                              # needs sage.libs.flint
             [2, 1, 1, 1]
-            sage: Partitions(5).random_element(measure='Plancherel') # random           # needs sage.libs.flint
+            sage: Partitions(5).random_element(measure='Plancherel')  # random          # needs sage.libs.flint
             [2, 1, 1, 1]
         """
         if measure == 'uniform':
@@ -6756,7 +6755,7 @@ class Partitions_n(Partitions):
 
             sage: Partitions(5).random_element_uniform()  # random                      # needs sage.libs.flint
             [2, 1, 1, 1]
-            sage: Partitions(20).random_element_uniform() # random                      # needs sage.libs.flint
+            sage: Partitions(20).random_element_uniform()  # random                     # needs sage.libs.flint
             [9, 3, 3, 2, 2, 1]
 
         TESTS::

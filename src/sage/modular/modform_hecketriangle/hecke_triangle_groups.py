@@ -757,7 +757,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         OUTPUT:
 
         The corresponding embedding if it was found.
-        Otherwise a ``ValueError`` is raised.
+        Otherwise a :class:`ValueError` is raised.
 
         EXAMPLES::
 

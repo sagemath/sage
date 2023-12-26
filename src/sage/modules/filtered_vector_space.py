@@ -465,7 +465,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         indices = set(filtration.pop(infinity, []))
         V = make_subspace(indices)
         filtered_subspaces = [(infinity, V)]
-        for deg in reversed(sorted(filtration.keys())):
+        for deg in sorted(filtration.keys(), reverse=True):
             next_V = V
             indices.update(filtration[deg])
             V = make_subspace(indices)
@@ -775,13 +775,13 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
     def _repr_field_name(self):
         """
-        Return an abbreviated field name as string
+        Return an abbreviated field name as string.
 
         .. NOTE: This should rather be a method of fields and rings.
 
         RAISES:
 
-        ``NotImplementedError``: The field does not have an
+        :class:`NotImplementedError`: The field does not have an
         abbreviated name defined.
 
         EXAMPLES::

@@ -921,7 +921,7 @@ class TernaryQF(SageObject):
 
         Test that it works with (0, 0, 1)::
 
-            sage: Q.find_p_neighbor_from_vec(3, (0,0,1))
+            sage: Q.find_p_neighbor_from_vec(3, (0,0,1))                                # needs sage.libs.pari
             Ternary quadratic form with integer coefficients:
             [1 3 3]
             [-2 0 -1]

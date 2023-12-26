@@ -117,10 +117,12 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 from copy import copy
 
+from sage.arith.misc import integer_ceil, integer_floor, xlcm
+from sage.arith.srange import xsrange
+from sage.misc.functional import log
 from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
-from sage.arith.srange import xsrange
 
 #
 # Lists of names (as strings) which the user may use to identify one
@@ -486,7 +488,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         raise ValueError("no solution in bsgs()")
 
     m = ran.isqrt() + 1  # we need sqrt(ran) rounded up
-    table = dict()       # will hold pairs (a^(lb+i),lb+i) for i in range(m)
+    table = {}       # will hold pairs (a^(lb+i),lb+i) for i in range(m)
 
     d = c
     for i0 in xsrange(m):
@@ -550,10 +552,10 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
 
     It also works with matrices::
 
-        sage: A = matrix(GF(50021), [[10577, 23999, 28893],                             # needs sage.rings.finite_rings
+        sage: A = matrix(GF(50021), [[10577, 23999, 28893],                             # needs sage.modules sage.rings.finite_rings
         ....:                        [14601, 41019, 30188],
         ....:                        [3081, 736, 27092]])
-        sage: discrete_log_rho(A^1234567, A)                                            # needs sage.rings.finite_rings
+        sage: discrete_log_rho(A^1234567, A)                                            # needs sage.modules sage.rings.finite_rings
         1234567
 
     Beware, the order must be prime::
@@ -1041,7 +1043,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     width = Integer(ub - lb)
     N = width.isqrt() + 1
 
-    M = dict()
+    M = {}
     for s in range(10):  # to avoid infinite loops
         # random walk function setup
         k = 0
@@ -1060,7 +1062,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
             c += r
         if mut:
             H.set_immutable()
-        mem = set([H])
+        mem = {H}
         # second random walk
         H = a
         d = 0
@@ -1234,7 +1236,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: order_from_multiple(w, 230, operation='*')
         23
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.modules sage.rings.finite_rings
         sage: F = GF(2^1279,'a')
         sage: n = F.cardinality() - 1  # Mersenne prime
         sage: order_from_multiple(F.random_element(), n,
@@ -1396,8 +1398,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     if d > 1:
         Q = multiple(P, d, operation=operation)
         lb, ub = bounds
-        bounds = (sage.arith.all.integer_ceil(lb / d),
-                  sage.arith.all.integer_floor(ub / d))
+        bounds = (integer_ceil(lb / d), integer_floor(ub / d))
 
     # Use generic bsgs to find  n=d*m with lb<=n<=ub and n*P=0
 
@@ -1486,7 +1487,7 @@ def merge_points(P1, P2, operation='+',
     if n2.divides(n1):
         return (g1, n1)
 
-    m, k1, k2 = sage.arith.all.xlcm(n1, n2)
+    m, k1, k2 = xlcm(n1, n2)
     m1 = n1 // k1
     m2 = n2 // k2
     g1 = multiple(g1, m1, operation=operation)
