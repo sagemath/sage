@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Inspect Python, Sage, and Cython objects
 
@@ -16,7 +17,7 @@ Cython modules::
     sage: sage_getdoc(sage.rings.rational).lstrip()
     'Rational Numbers...'
     sage: sage_getsource(sage.rings.rational)
-    '# sage_setup: distribution = sagemath-objects...# distutils: ...Rational Numbers...'
+    '# sage_setup: distribution = sagemath-categories...# distutils: ...Rational Numbers...'
 
 Python modules::
 
