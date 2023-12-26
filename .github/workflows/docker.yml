@@ -248,9 +248,7 @@ jobs:
       - name: Copy logs from the Docker image or build container
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"
-          cp -r .tox/$TOX_ENV/Dockerfile .tox/$TOX_ENV/log "artifacts/$LOGS_ARTIFACT_NAME"
-          if [ -f .tox/$TOX_ENV/Dockertags ]; then CONTAINERS=$(docker create $(tail -1 .tox/$TOX_ENV/Dockertags) /bin/bash || true); fi
-          if [ -n "$CONTAINERS" ]; then for CONTAINER in $CONTAINERS; do for ARTIFACT in /sage/logs; do docker cp $CONTAINER:$ARTIFACT artifacts/$LOGS_ARTIFACT_NAME && HAVE_LOG=1; done; if [ -n "$HAVE_LOG" ]; then break; fi; done; fi
+          cp -r .tox/$TOX_ENV/* "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
       - uses: actions/upload-artifact@v3
         with:
