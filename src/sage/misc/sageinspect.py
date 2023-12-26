@@ -16,7 +16,7 @@ Cython modules::
     sage: sage_getdoc(sage.rings.rational).lstrip()
     'Rational Numbers...'
     sage: sage_getsource(sage.rings.rational)
-    '# distutils: ...Rational Numbers...'
+    '# sage_setup: distribution = ...# distutils: ...Rational Numbers...'
 
 Python modules::
 
@@ -24,7 +24,8 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
+
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
@@ -2269,8 +2270,8 @@ def sage_getsourcelines(obj):
         sage: from sage.misc.sageinspect import sage_getsourcelines
         sage: from sage.matrix.constructor import matrix                                # needs sage.modules
         sage: sage_getsourcelines(matrix)[1]                                            # needs sage.modules
-        21
-        sage: sage_getsourcelines(matrix)[0][0]
+        22
+        sage: sage_getsourcelines(matrix)[0][0]                                         # needs sage.modules
         'def matrix(*args, **kwds):\n'
 
     Some classes customize this using a ``_sage_src_lines_`` method,
@@ -2298,7 +2299,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(test_func)
         (['def base(x):\n',
         ...
-        '    return x\n'], 7)
+        '    return x\n'], 8)
 
     Here are some cases that were covered in :issue:`11298`;
     note that line numbers may easily change, and therefore we do
