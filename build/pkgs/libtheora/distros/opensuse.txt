@@ -1,1 +1,1 @@
-"pkgconfig(theora)"
+pkgconfig(theora)

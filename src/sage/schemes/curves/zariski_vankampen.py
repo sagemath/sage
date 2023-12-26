@@ -68,7 +68,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from .constructor import Curve
 
-roots_interval_cache = dict()
+roots_interval_cache = {}
 
 
 def braid_from_piecewise(strands):
@@ -815,7 +815,7 @@ def populate_roots_interval_cache(inputs):
 
 
 @parallel
-def braid_in_segment(glist, x0, x1, precision=dict()):
+def braid_in_segment(glist, x0, x1, precision={}):
     """
     Return the braid formed by the `y` roots of ``f`` when `x` moves
     from ``x0`` to ``x1``.
@@ -1897,7 +1897,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         bm, dic, dv, d1 = braid_data
     elif len(flist1) == 0:
         bm = []
-        dic = dict()
+        dic = {}
         dv = {j: j for j, f in flist1}
         d1 = 0
     else:
@@ -1916,7 +1916,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         hom = g.hom(codomain=g, im_gens=list(g.gens()), check=False)
     g1 = hom.codomain()
     if len(flist) == 0:
-        return (g1, dict())
+        return (g1, {})
     dic1 = {}
     for i in range(len(flist1)):
         L = [j1 for j1 in dic if dic[j1] == i]

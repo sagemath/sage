@@ -553,7 +553,7 @@ class ShiftedPrimedTableau(ClonableArray,
                 else:
                     l1 += uh + h*width
                 if unicode:
-                    l2 += u"{}{:^{width}}".format(v, e, width=width)
+                    l2 += "{}{:^{width}}".format(v, e, width=width)
                 else:
                     l2 += "{}{:^{width}}".format(v, e, width=width)
             if i <= n:

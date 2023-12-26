@@ -576,7 +576,8 @@ def function_name(fn):
     Given a function, return a string giving a name for the function.
 
     For functions we recognize, we use our standard opcode name for the
-    function (so operator.add becomes 'add', and sage.all.sin becomes 'sin').
+    function (so :func:`operator.add` becomes ``'add'``, and :func:`sage.functions.trig.sin`
+    becomes ``'sin'``).
 
     For functions we don't recognize, we try to come up with a name,
     but the name will be wrapped in braces; this is a signal that
