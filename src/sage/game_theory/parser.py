@@ -220,8 +220,10 @@ class Parser():
         The Parser class outputs the equilibrium::
 
             sage: nasheq = Parser(LCP_output).format_gambit(g)  # optional - gambit
-            sage: nasheq  # optional - gambit
-            [[(1.0, 0.0), (1.0, 0.0)], [(0.6666666667, 0.3333333333), (0.3333333333, 0.6666666667)], [(0.0, 1.0), (0.0, 1.0)]]
+            sage: nasheq                                        # optional - gambit
+            [[(1.0, 0.0), (1.0, 0.0)],
+             [(0.6666666667, 0.3333333333), (0.3333333333, 0.6666666667)],
+             [(0.0, 1.0), (0.0, 1.0)]]
 
         Here is another game::
 
