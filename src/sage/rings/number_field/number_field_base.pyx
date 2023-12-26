@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.number_field
 """
 Base class of number fields

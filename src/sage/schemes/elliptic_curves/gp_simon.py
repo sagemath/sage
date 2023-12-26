@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari
 """
 Denis Simon's PARI scripts

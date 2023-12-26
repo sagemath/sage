@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.libs.singular
 r"""
 Helper Functions For Freeness Of Hyperplane Arrangements

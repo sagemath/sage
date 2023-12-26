@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic `L`-functions of elliptic curves

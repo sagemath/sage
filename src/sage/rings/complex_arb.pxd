@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 from sage.libs.arb.acb cimport acb_t
 from sage.rings.complex_interval cimport ComplexIntervalFieldElement
 from sage.rings.real_arb cimport RealBall

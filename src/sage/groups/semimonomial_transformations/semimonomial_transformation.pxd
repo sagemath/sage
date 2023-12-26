@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-groups
 from sage.structure.element cimport Element, MonoidElement, MultiplicativeGroupElement
 
 cdef class SemimonomialTransformation(MultiplicativeGroupElement):

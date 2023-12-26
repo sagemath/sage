@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Enumeration of rational points on affine schemes
 

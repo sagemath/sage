@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 r"""
 Top level of the distribution package sagemath-flint
 

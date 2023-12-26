@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Pseudo-Riemannian Metrics and Degenerate Metrics
 

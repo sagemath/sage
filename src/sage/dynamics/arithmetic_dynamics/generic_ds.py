@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Generic dynamical systems on schemes
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.modules
 
 cpdef int _flip_c(W, set positions, list extended_root_conf_indices,

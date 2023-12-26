@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 H(yperplane) and V(ertex) representation objects for polyhedra
 """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 r"""
 Interface between flint matrices and linbox
 

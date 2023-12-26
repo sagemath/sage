@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.ring.padics
 r"""
 `p`-adic `L`-series attached to overconvergent eigensymbols

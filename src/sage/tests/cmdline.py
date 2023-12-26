@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 This file contains some tests that Sage command line options actually
 do something.

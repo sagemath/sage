@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.combinat
 r"""
 Generating Function of Polyhedron's Integral Points

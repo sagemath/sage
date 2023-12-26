@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.homology.chain_complex import ChainComplex
 
 from sage.homology.chain_complex_morphism import ChainComplexMorphism

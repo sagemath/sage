@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 # distutils: extra_compile_args = LINBOX_CFLAGS
 # distutils: include_dirs = LINBOX_INCDIR
 # distutils: libraries = LINBOX_LIBRARIES

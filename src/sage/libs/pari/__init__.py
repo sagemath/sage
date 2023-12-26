@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.rings.real_mpfr
 """
 Interface between Sage and PARI

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Wigner, Clebsch-Gordan, Racah, and Gaunt coefficients
 

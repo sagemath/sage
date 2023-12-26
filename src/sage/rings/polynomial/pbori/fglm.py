@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 from .pbori import BooleSet, FGLMStrategy
 from .PyPolyBoRi import BoolePolynomialVector, Polynomial
 

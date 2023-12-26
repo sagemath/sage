@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.libs.mpfr.types cimport mpfr_t
 
 cdef extern from "mpc.h":

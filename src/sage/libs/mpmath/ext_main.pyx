@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-mpmath
 """
 mpmath floating-point numbers
 

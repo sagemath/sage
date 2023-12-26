@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 "Access to Maxima methods"
 
 ###############################################################################

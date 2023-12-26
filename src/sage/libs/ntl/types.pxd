@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: depends = NTL/ZZ.h
 
 cdef extern from "ntlwrap.h":

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-mpmath
 r"""
 Sage functions called by the vendored copy of mpmath
 

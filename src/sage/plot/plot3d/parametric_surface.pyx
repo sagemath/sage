@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 r"""
 Parametric surface

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.matrix.matrix_sparse cimport Matrix_sparse
 
 

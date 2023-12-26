@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 
 from sage.libs.flint.types cimport fmpz_poly_t
 from sage.libs.mpfr.types cimport mpfr_t

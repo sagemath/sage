@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 def n_factor_to_list(unsigned long n, int proved):
     """
     A wrapper around ``n_factor``.

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 A parser for symbolic equations and expressions
 

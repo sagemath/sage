@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 cimport sage.rings.ring
 from sage.structure.parent cimport Parent
 

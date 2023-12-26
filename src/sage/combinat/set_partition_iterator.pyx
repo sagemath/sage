@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # cython: binding=True
 r"""
 Fast set partition iterators

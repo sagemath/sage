@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 r"""
 Victor Shoup's NTL C++ Library
 

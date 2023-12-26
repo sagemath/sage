@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Group of Tangent-Space Automorphism Fields
 

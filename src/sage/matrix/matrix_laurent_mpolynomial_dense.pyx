@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Dense matrices over multivariate polynomials over fields.
 

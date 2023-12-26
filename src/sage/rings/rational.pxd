@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 from sage.libs.gmp.types cimport mpq_t
 
 cimport sage.structure.element

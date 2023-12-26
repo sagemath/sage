@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.rings.complex_double
 
 from cysignals.signals cimport sig_on, sig_off

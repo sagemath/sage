@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Hasse diagrams of posets
 

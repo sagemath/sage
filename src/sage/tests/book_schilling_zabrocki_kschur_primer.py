@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.combinat sage.graphs sage.groups
 r"""
 This file contains doctests for the Chapter "k-Schur function primer"

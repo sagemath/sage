@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Ranges and the ``[1,2,..,n]`` notation
 

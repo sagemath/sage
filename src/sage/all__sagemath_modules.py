@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Top level of the distribution package sagemath-modules
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 """
 Arithmetic Engine for Polynomials as Tuples
 """

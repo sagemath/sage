@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Double Precision Real Numbers, implementation using GSL
 """

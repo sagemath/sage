@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Support for (lib)GAP workspace files
 """

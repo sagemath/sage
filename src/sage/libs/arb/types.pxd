@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # distutils: depends = mag.h arf.h arb.h acb.h acb_mat.h acb_poly.h acb_calc.h
 
 # mag.h

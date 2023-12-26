@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # distutils: include_dirs = GSL_INCDIR
 from libc.stdio cimport FILE
 

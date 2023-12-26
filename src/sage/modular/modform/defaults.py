@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 #########################################################################
 #       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>
 #

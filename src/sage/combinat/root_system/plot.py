@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.geometry.polyhedron sage.plot sage.symbolic
 r"""
 Tutorial: visualizing root systems

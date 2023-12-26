@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Standard C helper code for Cython modules
 """

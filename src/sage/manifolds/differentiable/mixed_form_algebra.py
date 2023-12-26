@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Graded Algebra of Mixed Differential Forms
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 r"""
 Interface with Cliquer (clique-related problems)

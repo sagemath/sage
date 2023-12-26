@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.graphs
 """
 Path algebra elements

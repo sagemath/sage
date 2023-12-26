@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: optional - lrcalc_python
 r"""
 Littlewood-Richardson tableaux

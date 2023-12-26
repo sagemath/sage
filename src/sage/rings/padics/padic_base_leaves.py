@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 `p`-adic Base Leaves
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Root system data for folded Cartan types
 

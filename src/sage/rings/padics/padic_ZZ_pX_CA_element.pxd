@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 from sage.libs.gmp.types cimport mpq_t
 from sage.rings.padics.padic_ZZ_pX_element cimport pAdicZZpXElement
 from sage.structure.element cimport RingElement, ModuleElement

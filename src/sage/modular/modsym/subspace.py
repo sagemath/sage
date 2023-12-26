@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint
 """
 Subspace of ambient spaces of modular symbols

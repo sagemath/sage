@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from cpython.object cimport PyObject
 cdef extern from "Python.h":
     ctypedef struct PyDictObject

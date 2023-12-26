@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Fraction field elements of Ore polynomial rings
 

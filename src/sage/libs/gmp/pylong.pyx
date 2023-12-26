@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Various functions to deal with conversion mpz <-> Python int/long
 

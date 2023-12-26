@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 """
 Combinatorial triangles for posets and fans
 

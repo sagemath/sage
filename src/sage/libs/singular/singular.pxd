@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 from sage.libs.singular.decl cimport ring, poly, number, intvec
 from sage.libs.singular.function cimport Resolution
 

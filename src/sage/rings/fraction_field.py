@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Fraction Field of Integral Domains
 

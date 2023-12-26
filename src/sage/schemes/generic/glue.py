@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Scheme obtained by gluing two other schemes
 """

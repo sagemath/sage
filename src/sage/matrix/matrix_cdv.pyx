@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Special methods for matrices over discrete valuation rings/fields.
 """

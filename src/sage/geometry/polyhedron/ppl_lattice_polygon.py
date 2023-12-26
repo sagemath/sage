@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 Fast Lattice Polygons using PPL
 

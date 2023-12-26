@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Space of homomorphisms between two rings
 """

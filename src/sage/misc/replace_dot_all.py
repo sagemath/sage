@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Implementation of the command ``sage --fiximports``.
 

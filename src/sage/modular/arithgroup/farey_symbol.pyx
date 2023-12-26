@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
 # sage.doctest: needs sage.libs.pari
 r"""

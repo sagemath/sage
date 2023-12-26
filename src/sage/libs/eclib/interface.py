@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-eclib
 r"""
 Sage interface to Cremona's ``eclib`` library (also known as ``mwrank``)
 

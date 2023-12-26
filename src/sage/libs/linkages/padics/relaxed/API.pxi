@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 r"""
 This file defines the common API for relaxed `p`-adic numbers.
 

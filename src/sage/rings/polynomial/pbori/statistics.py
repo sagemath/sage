@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 from .pbori import top_index, BooleConstant
 from .PyPolyBoRi import Monomial, Polynomial
 

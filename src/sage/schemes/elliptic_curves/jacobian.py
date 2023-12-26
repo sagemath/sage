@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Construct elliptic curves as Jacobians
 

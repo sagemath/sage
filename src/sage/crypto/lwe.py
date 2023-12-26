@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs scipy sage.symbolic
 """
 (Ring-)LWE oracle generators

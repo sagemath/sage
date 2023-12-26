@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 """
 Convert Sage/Python objects to real/complex intervals
 """

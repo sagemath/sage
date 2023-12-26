@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.number_field
 r"""
 Elliptic curves over number fields

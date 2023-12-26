@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 try:
     from .integral_points_integer_dense import (
         parallelotope_points,

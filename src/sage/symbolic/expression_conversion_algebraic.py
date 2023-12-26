@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Conversion of symbolic expressions to algebraic numbers
 """

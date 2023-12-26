@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-groups
 from sage.groups.all__sagemath_modules import *
 
 try:

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Educational version of the `d`-Groebner basis algorithm over PIDs
 

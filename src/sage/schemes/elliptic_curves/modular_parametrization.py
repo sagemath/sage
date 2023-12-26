@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Modular parametrization of elliptic curves over `\QQ`
 

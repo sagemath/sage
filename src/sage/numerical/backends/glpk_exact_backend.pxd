@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-glpk
 #*****************************************************************************
 #       Copyright (C) 2016 Matthias Koeppe
 #

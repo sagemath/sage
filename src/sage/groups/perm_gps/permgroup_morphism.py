@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Permutation group homomorphisms
 

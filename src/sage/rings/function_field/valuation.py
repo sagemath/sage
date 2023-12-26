@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 Discrete valuations on function fields
 

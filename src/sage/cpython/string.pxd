@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # ****************************************************************************
 #       Copyright (C) 2017 Erik M. Bray <erik.bray@lri.fr>
 #

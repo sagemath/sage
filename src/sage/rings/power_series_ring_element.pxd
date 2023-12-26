@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 from sage.structure.element cimport AlgebraElement, RingElement
 
 cdef class PowerSeries(AlgebraElement):

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 """
 Context Managers for LibGAP
 

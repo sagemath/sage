@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 
 from sage.rings.all__sagemath_pari import *
 

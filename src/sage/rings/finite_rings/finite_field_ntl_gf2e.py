@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 """
 Finite fields of characteristic 2
 """

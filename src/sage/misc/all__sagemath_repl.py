@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 
 from sage.misc.all__sagemath_objects import *
 

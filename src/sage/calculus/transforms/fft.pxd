@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.libs.gsl.fft cimport *
 
 cdef class FastFourierTransform_base:

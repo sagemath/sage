@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 from sage.structure.parent cimport Parent, Parent_richcmp_element_without_coercion
 from sage.structure.element cimport ModuleElement, RingElement, Element
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Subschemes of projective space
 

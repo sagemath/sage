@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 

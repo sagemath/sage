@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Integrated Curves and Geodesics in Manifolds
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 cimport numpy as np
 from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.number_field.number_field_element cimport NumberFieldElement_absolute

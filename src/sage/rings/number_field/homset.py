@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 """
 Sets of homomorphisms between number fields
 """

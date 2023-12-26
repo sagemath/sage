@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # distutils: libraries = gmp
 # distutils: extra_compile_args = -D_XPG6
 

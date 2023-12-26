@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 r"""
 Catalog of common polyhedral convex cones
 

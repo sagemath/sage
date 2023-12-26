@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 
 from sage.libs.flint.types cimport nmod_poly_t
 

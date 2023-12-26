@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Discrete Gaussian Samplers over Lattices
 

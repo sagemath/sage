@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 # sage.doctest: optional - gap3
 r"""
 Finite real reflection groups

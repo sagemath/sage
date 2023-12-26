@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Map to the Weierstrass form of a toric elliptic curve

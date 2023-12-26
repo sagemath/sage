@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Root lattices and root spaces
 """

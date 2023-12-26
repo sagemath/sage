@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Pure python code for abstract base class for objects with generators
 """

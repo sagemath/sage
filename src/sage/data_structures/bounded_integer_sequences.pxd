@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 from sage.libs.gmp.types cimport *
 from sage.data_structures.bitset cimport *
 

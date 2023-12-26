@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Dynamic documentation for instances of classes
 

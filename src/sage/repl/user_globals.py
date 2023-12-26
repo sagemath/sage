@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.modules
 r"""
 User-interface globals

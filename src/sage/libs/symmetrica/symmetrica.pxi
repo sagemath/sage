@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 
 # We put all definitions together, whether they appear in def.h or

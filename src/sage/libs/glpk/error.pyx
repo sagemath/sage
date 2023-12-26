@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-glpk
 """
 Error handler for the GLPK library
 """

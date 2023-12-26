@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-eclib
 """
 Modular symbols using eclib newforms
 """

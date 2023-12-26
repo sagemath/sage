@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs
 r"""
 Methods of constructing simplicial sets

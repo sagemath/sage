@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.flint
 r"""
 Template for relaxed `p`-adic rings and fields.

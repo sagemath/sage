@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 r"""
 Inline conversions between LinBox and Sage
 

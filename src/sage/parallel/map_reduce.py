@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Parallel computations using RecursivelyEnumeratedSet and Map-Reduce
 

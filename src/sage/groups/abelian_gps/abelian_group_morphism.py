@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 """
 Homomorphisms of abelian groups
 

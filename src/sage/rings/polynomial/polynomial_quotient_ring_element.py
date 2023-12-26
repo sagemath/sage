@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.pari
 r"""
 Elements of Quotients of Univariate Polynomial Rings

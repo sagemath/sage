@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 from sage.tests.memcheck.verify_no_leak import verify_no_leak
 
 

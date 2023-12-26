@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 This file contains doctests of the article ::

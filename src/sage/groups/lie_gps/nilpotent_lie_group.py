@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-groups
 r"""
 Nilpotent Lie groups
 

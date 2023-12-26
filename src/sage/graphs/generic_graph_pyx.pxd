@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 from sage.structure.sage_object cimport SageObject
 from sage.graphs.base.dense_graph cimport DenseGraph
 from memory_allocator cimport MemoryAllocator

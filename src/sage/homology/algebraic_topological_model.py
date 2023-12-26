@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.graphs
 r"""
 Algebraic topological model for a cell complex

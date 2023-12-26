@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Isomorphisms between Weierstrass models of elliptic curves
 

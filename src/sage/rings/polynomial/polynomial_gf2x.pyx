@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 # distutils: libraries = gmp NTL_LIBRARIES
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA

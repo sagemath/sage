@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Dense Matrices over a general ring
 """

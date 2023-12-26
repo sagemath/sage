@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 Co-operative Games With Finite Players
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 def input_signals(p):
     return list((p + p.lex_lead()).vars_as_monomial().variables())
 

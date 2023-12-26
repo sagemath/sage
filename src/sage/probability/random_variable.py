@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Random variables and probability spaces
 

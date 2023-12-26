@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 from sage.misc.lazy_import import lazy_import
 from sage.features.databases import DatabaseKnotInfo
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 
 from cypari2.types cimport GEN
 from cypari2.gen cimport Gen

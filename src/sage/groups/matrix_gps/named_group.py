@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Base for Classical Matrix Groups
 

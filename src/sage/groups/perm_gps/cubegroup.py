@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Rubik's cube group functions
 

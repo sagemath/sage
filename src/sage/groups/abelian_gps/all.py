@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-groups
 """
 all.py -- export of abelian groups to Sage
 """

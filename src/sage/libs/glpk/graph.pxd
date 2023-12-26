@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-glpk
 # distutils: libraries = glpk z gmp
 
 #*****************************************************************************

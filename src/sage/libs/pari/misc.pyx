@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 
 from cysignals.signals cimport sig_on
 from cypari2.paridecl cimport *

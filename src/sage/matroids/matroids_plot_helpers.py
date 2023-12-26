@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - scipy
 r"""
 Helper functions for plotting the geometric representation of matroids

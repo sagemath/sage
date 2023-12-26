@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 r"""
 A catalog of normal form games
 

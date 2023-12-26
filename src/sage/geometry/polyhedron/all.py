@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')

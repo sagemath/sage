@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # All of sage.misc.all except for development tools, session management,
 # and deprecated functionality
 

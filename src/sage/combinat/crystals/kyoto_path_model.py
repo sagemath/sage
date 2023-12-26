@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Kyoto Path Model for Affine Highest Weight Crystals

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Iterators for linear subclasses
 

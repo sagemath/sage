@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Elements of Laurent polynomial rings
 """

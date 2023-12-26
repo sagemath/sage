@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 Symmetric functions in non-commuting variables
 

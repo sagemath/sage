@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Exterior powers of free modules
 

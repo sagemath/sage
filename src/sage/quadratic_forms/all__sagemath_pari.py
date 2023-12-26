@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 
 from sage.quadratic_forms.bqf_class_group import BQFClassGroup
 

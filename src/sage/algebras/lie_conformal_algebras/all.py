@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # ******************************************************************************
 #       Copyright (C) 2020 Reimundo Heluani <heluani@potuz.net>
 #

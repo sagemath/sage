@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 from sage.misc.lazy_import import lazy_import
 

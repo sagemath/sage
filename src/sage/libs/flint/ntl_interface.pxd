@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # distutils: language = c++
 # distutils: libraries = flint
 # distutils: depends = flint/NTL-interface.h

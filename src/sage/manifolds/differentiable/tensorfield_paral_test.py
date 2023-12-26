@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 # pylint: disable=missing-function-docstring,missing-class-docstring
 import pytest
 

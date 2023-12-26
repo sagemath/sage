@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Submodules and subquotients of free modules
 

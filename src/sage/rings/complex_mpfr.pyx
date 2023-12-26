@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Arbitrary Precision Floating Point Complex Numbers
 

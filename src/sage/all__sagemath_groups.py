@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-groups
 r"""
 Top level of the distribution package sagemath-groups
 

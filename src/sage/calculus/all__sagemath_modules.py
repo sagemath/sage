@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.calculus.all__sagemath_categories import *
 
 from sage.calculus.integration import numerical_integral, monte_carlo_integral

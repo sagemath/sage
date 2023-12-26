@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Rational point sets on a Jacobian
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 """
 Enumeration of totally real fields: PHC interface
 

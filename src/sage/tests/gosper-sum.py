@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.symbolic
 """
 Some tests about Gosper sums.

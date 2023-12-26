@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Optimized computing of relation matrices in certain cases
 """

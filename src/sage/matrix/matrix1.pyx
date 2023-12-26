@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Base class for matrices, part 1
 

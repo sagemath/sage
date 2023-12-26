@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # cython: binding=True
 """
 General matrix Constructor and display options

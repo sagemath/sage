@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 This linkage file implements the padics API for ramified extensions using Sage
 Polynomials.

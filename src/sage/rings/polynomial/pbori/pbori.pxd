@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 from libcpp.memory cimport unique_ptr, shared_ptr, make_shared
 
 from sage.rings.polynomial.multi_polynomial_ring_base cimport MPolynomialRing_base, BooleanPolynomialRing_base

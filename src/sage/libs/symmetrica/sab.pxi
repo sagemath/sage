@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 cdef extern from 'symmetrica/def.h':
     INT dimension_symmetrization(OP n, OP part, OP a)
     INT bdg(OP part, OP perm, OP D)

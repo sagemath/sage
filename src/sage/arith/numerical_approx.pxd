@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # sage.doctest: needs sage.rings.real_mpfr
 
 cpdef inline long digits_to_bits(d) except -1:

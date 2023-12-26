@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 from sage.libs.ntl.types cimport ZZ_c
 from sage.libs.gmp.types cimport mpz_t, mpz_srcptr
 

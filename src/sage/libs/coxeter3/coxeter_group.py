@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-coxeter3
 
 """
 Coxeter Groups implemented with Coxeter3

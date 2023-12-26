@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 from copy import copy
 from itertools import chain
 from inspect import getfullargspec as getargspec

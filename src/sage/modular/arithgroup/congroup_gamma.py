@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Congruence subgroup `\Gamma(N)`
 """

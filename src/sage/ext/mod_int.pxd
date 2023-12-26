@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 The `mod_int` Data Type
 
