@@ -233,24 +233,24 @@ class ProductTree:
         the same moduli::
 
             sage: vs = prime_range(1000,2000)
-            sage: rs = list(range(len(vs)))
+            sage: rs = lambda: [randrange(1,100) for _ in vs]
             sage: tree = ProductTree(vs)
-            sage: %timeit CRT(rs,vs)                # not tested
-            324 µs ± 637 ns per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
-            sage: %timeit tree.interpolation(rs)    # not tested
-            102 µs ± 92.5 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+            sage: %timeit CRT(rs(), vs)             # not tested
+            372 µs ± 3.34 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+            sage: %timeit tree.interpolation(rs())  # not tested
+            146 µs ± 479 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
         """
         if self._crt_bases is None:
             from sage.arith.misc import CRT_basis
             self._crt_bases = []
             for V in self.layers[:-1]:
-                B = tuple(CRT_basis(V[i:i+2]) for i in range(0,len(V),2))
+                B = tuple(CRT_basis(V[i:i+2]) for i in range(0, len(V), 2))
                 self._crt_bases.append(B)
         if len(xs) != len(self.layers[0]):
             raise ValueError('number of given elements must equal the number of leaves')
-        for basis,layer in zip(self._crt_bases, self.layers[1:]):
-            xs = [sum(c*x for c,x in zip(cs,xs[2*i:2*i+2])) % mod
-                  for i,(cs,mod) in enumerate(zip(basis,layer))]
+        for basis, layer in zip(self._crt_bases, self.layers[1:]):
+            xs = [sum(c*x for c, x in zip(cs, xs[2*i:2*i+2])) % mod
+                  for i, (cs, mod) in enumerate(zip(basis, layer))]
         assert len(xs) == 1
         return xs[0]
 
