@@ -1956,7 +1956,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
             We think of the origin as of the smallest cone containing no rays
             at all. If there is no ray in ``self`` that contains all ``rays``,
-            a ``ValueError`` exception will be raised.
+            a :class:`ValueError` exception will be raised.
 
         EXAMPLES::
 
@@ -2352,8 +2352,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         or
         :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.facet_of`. The
         cone returned by this method will have ``self`` as ambient. If ``cone``
-        does not represent a valid cone of ``self``, ``ValueError`` exception
-        is raised.
+        does not represent a valid cone of ``self``, :class:`ValueError`
+        exception is raised.
 
         .. NOTE::
 
@@ -3504,8 +3504,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         OUTPUT:
 
         The complex associated to the fan as a :class:`ChainComplex
-        <sage.homology.chain_complex.ChainComplex>`. Raises a
-        ``ValueError`` if the extended complex is requested for a
+        <sage.homology.chain_complex.ChainComplex>`. This raises a
+        :class:`ValueError` if the extended complex is requested for a
         non-complete fan.
 
         EXAMPLES::

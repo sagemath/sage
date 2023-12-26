@@ -442,9 +442,9 @@ def is_rationally_isometric(self, other, return_matrix=False):
         sage: V.is_rationally_isometric(W)
         Traceback (most recent call last):
         ...
-        NotImplementedError: This only tests regular forms
+        NotImplementedError: this only tests regular forms
 
-    Forms must have the same base ring otherwise a `TypeError` is raised::
+    Forms must have the same base ring otherwise a :class:`TypeError` is raised::
 
         sage: # needs sage.rings.number_field
         sage: K1.<a> = QuadraticField(5)
@@ -491,7 +491,7 @@ def is_rationally_isometric(self, other, return_matrix=False):
         True
     """
     if self.Gram_det() == 0 or other.Gram_det() == 0:
-        raise NotImplementedError("This only tests regular forms")
+        raise NotImplementedError("this only tests regular forms")
 
     if self.base_ring() != other.base_ring():
         raise TypeError("forms must have the same base ring.")

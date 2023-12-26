@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Geodesics
 
@@ -622,7 +621,7 @@ class HyperbolicGeodesic(SageObject):
     def ideal_endpoints(self):
         r"""
         Return the ideal endpoints in bounded models.  Raise a
-        ``NotImplementedError`` in models that are not bounded.
+        :class:`NotImplementedError` in models that are not bounded.
 
         EXAMPLES::
 
@@ -660,7 +659,7 @@ class HyperbolicGeodesic(SageObject):
     def complete(self):
         r"""
         Return the geodesic with ideal endpoints in bounded models.  Raise a
-        ``NotImplementedError`` in models that are not bounded.
+        :class:`NotImplementedError` in models that are not bounded.
         In the following examples we represent complete geodesics by a dashed
         line.
 
@@ -817,7 +816,7 @@ class HyperbolicGeodesic(SageObject):
         r"""
         Return the unique hyperbolic geodesic perpendicular to two given
         geodesics, if such a geodesic exists.  If none exists, raise a
-        ``ValueError``.
+        :class:`ValueError`.
 
         INPUT:
 
@@ -1278,7 +1277,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         r"""
         Return the unique hyperbolic geodesic perpendicular to ``self``
         and ``other``, if such a geodesic exists; otherwise raise a
-        ``ValueError``.
+        :class:`ValueError`.
 
         INPUT:
 
