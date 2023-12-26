@@ -6,9 +6,10 @@
     "name": "tox with docker-in-docker",
     "image": "mcr.microsoft.com/devcontainers/base:bookworm",
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers-contrib/features/tox:2": {},
     },
-    "onCreateCommand": "sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends tox",
     "customizations": {
         "codespaces": {
             "openFiles": [
