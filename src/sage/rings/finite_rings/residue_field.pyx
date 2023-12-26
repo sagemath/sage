@@ -128,7 +128,7 @@ First over a small non-prime field::
      Residue field in ubar of Fractional ideal
       (47, 517/55860*u^5 + 235/3724*u^4 + 9829/13965*u^3
             + 54106/13965*u^2 + 64517/27930*u + 755696/13965)
-    sage: I.groebner_basis()
+    sage: I.groebner_basis()                                                            # needs sage.libs.singular
     [X + (-19*ubar^2 - 5*ubar - 17)*Y]
 
 And now over a large prime field::
@@ -144,11 +144,11 @@ And now over a large prime field::
     4398046511119
     sage: S.<X, Y, Z> = PolynomialRing(Rf, order='lex')
     sage: I = ideal([2*X - Y^2, Y + Z])
-    sage: I.groebner_basis()
+    sage: I.groebner_basis()                                                            # needs sage.libs.singular
     [X + 2199023255559*Z^2, Y + Z]
     sage: S.<X, Y, Z> = PolynomialRing(Rf, order='deglex')
     sage: I = ideal([2*X - Y^2, Y + Z])
-    sage: I.groebner_basis()
+    sage: I.groebner_basis()                                                            # needs sage.libs.singular
     [Z^2 + 4398046511117*X, Y + Z]
 """
 

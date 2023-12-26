@@ -2,18 +2,19 @@
 r"""
 Highest Weight Crystals
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010    Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import (Crystals, CrystalHomset,
                                       CrystalMorphismByGenerators)
 from sage.categories.tensor import TensorProductsCategory
+
 
 class HighestWeightCrystals(Category_singleton):
     """
@@ -410,7 +411,8 @@ class HighestWeightCrystals(Category_singleton):
             The sole purpose of this method is to construct the homset as a
             :class:`~sage.categories.highest_weight_crystals.HighestWeightCrystalHomset`.
             If ``category`` is specified and is not a subcategory of
-            :class:`HighestWeightCrystals`, a ``TypeError`` is raised instead
+            :class:`HighestWeightCrystals`, a :class:`TypeError` is raised
+            instead
 
             This method is not meant to be called directly. Please use
             :func:`sage.categories.homset.Hom` instead.

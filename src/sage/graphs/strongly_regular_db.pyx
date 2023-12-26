@@ -2829,7 +2829,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
         ...
         ValueError: There exists no (5, 5, 5, 5)-strongly regular graph
 
-    An set of parameters proved in a paper to be infeasible::
+    A set of parameters proved in a paper to be infeasible::
 
         sage: graphs.strongly_regular_graph(324,57,0,12,existence=True)                 # needs sage.combinat sage.modules
         False

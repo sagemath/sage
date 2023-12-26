@@ -772,7 +772,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
 
 def basis_seq(V, vecs):
     """
-    This converts a list vecs of vectors in V to an Sequence of
+    This converts a list vecs of vectors in V to a Sequence of
     immutable vectors.
 
     Should it? I.e. in most ``other`` parts of the system the return type

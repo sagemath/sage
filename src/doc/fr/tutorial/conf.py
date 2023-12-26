@@ -39,9 +39,6 @@ latex_documents = [
    'The Sage Group', 'manual'),
 ]
 
-# Additional LaTeX stuff for the French version
-#latex_elements['preamble'] += '\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}\n'
-
 # the definition of \\at in the standard preamble of the sphinx doc
 # conflicts with that in babel/french[b]
 latex_elements['preamble'] += '\\let\\at\\undefined'

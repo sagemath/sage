@@ -95,7 +95,7 @@ class NumberFields(Category_singleton):
     def _call_(self, x):
         r"""
         Construct an object in this category from the data in ``x``,
-        or raise a ``TypeError``.
+        or raise a :class:`TypeError`.
 
         EXAMPLES::
 

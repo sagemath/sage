@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Root lattice realizations
 """
@@ -1117,7 +1116,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RS = R.root_lattice()
                 sage: P = RS.nonnesting_partition_lattice(); P                          # needs sage.graphs
                 Finite lattice containing 14 elements
-                sage: P.coxeter_transformation()**10 == 1                               # needs sage.graphs
+                sage: P.coxeter_transformation()**10 == 1                               # needs sage.graphs sage.libs.flint
                 True
 
                 sage: # needs sage.graphs
@@ -1125,7 +1124,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RS = R.root_lattice()
                 sage: P = RS.nonnesting_partition_lattice(); P
                 Finite lattice containing 20 elements
-                sage: P.coxeter_transformation()**7 == 1
+                sage: P.coxeter_transformation()**7 == 1                                # needs sage.libs.flint
                 True
 
             REFERENCES:
@@ -1157,7 +1156,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RS = R.root_lattice()
                 sage: P = RS.generalized_nonnesting_partition_lattice(2); P             # needs sage.graphs
                 Finite lattice containing 12 elements
-                sage: P.coxeter_transformation()**20 == 1                               # needs sage.graphs
+                sage: P.coxeter_transformation()**20 == 1                               # needs sage.graphs sage.libs.flint
                 True
             """
             Phi_plus = self.positive_roots()
@@ -1789,8 +1788,8 @@ class RootLatticeRealizations(Category_over_base_ring):
             We explore the example of [CFZ2002]_ Eq.(1.3)::
 
                 sage: S = RootSystem(['A',2]).root_lattice()
-                sage: taup, taum = S.tau_plus_minus()                                   # needs sage.graphs
-                sage: for beta in S.almost_positive_roots():                            # needs sage.graphs
+                sage: taup, taum = S.tau_plus_minus()                                   # needs sage.graphs sage.libs.gap
+                sage: for beta in S.almost_positive_roots():                            # needs sage.graphs sage.libs.gap
                 ....:     print("{} , {} , {}".format(beta, taup(beta), taum(beta)))
                 -alpha[1] , alpha[1] , -alpha[1]
                 alpha[1] , -alpha[1] , alpha[1] + alpha[2]
@@ -1817,14 +1816,14 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: RootSystem(['A',2]).root_lattice().almost_positive_roots_decomposition()      # needs sage.graphs
+                sage: RootSystem(['A',2]).root_lattice().almost_positive_roots_decomposition()      # needs sage.graphs sage.libs.gap
                 [[-alpha[1], alpha[1], alpha[1] + alpha[2], alpha[2], -alpha[2]]]
 
-                sage: RootSystem(['B',2]).root_lattice().almost_positive_roots_decomposition()      # needs sage.graphs
+                sage: RootSystem(['B',2]).root_lattice().almost_positive_roots_decomposition()      # needs sage.graphs sage.libs.gap
                 [[-alpha[1], alpha[1], alpha[1] + 2*alpha[2]],
                  [-alpha[2], alpha[2], alpha[1] + alpha[2]]]
 
-                sage: RootSystem(['D',4]).root_lattice().almost_positive_roots_decomposition()      # needs sage.graphs
+                sage: RootSystem(['D',4]).root_lattice().almost_positive_roots_decomposition()      # needs sage.graphs sage.libs.gap
                 [[-alpha[1], alpha[1], alpha[1] + alpha[2], alpha[2] + alpha[3] + alpha[4]],
                  [-alpha[2], alpha[2], alpha[1] + alpha[2] + alpha[3] + alpha[4],
                      alpha[1] + 2*alpha[2] + alpha[3] + alpha[4]],
@@ -4262,8 +4261,8 @@ class RootLatticeRealizations(Category_over_base_ring):
             Acting by an element of the Coxeter or Weyl group on a vector in its own
             lattice of definition (implemented by matrix multiplication on a vector)::
 
-                sage: w = wl.weyl_group().from_reduced_word([1, 2])                     # needs sage.graphs
-                sage: mudom.weyl_action(w)                                              # needs sage.graphs
+                sage: w = wl.weyl_group().from_reduced_word([1, 2])                     # needs sage.graphs sage.libs.gap
+                sage: mudom.weyl_action(w)                                              # needs sage.graphs sage.libs.gap
                 Lambda[1] - 2*Lambda[3]
 
             Acting by an element of an isomorphic Coxeter or Weyl group (implemented by the
