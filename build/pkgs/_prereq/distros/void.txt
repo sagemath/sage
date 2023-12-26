@@ -19,3 +19,5 @@ tar
 which
 # needed by gfortran
 diffutils
+# needed by ppl
+gzip
