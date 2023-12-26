@@ -1417,8 +1417,8 @@ def has_order(P, n, operation='+'):
 
     INPUT:
 
-    - `P` -- group element with respect to the specified ``operation``
-    - `n` -- positive integer, or its :class:`~sage.structure.factorization.Factorization`
+    - ``P`` -- group element with respect to the specified ``operation``
+    - ``n`` -- positive integer, or its :class:`~sage.structure.factorization.Factorization`
     - ``operation`` -- string, either ``'+'`` (default) or ``'*'``
 
     EXAMPLES::
@@ -1474,10 +1474,10 @@ def has_order(P, n, operation='+'):
         n = n.factor()
 
     G = P.parent()
-    if operation == '+':
+    if operation in addition_names:
         isid = lambda el: not el
         mult = lambda el, n: multiple(el, n, operation='+')
-    elif operation == '*':
+    elif operation in multiplication_names:
         isid = lambda el: el.is_one()
         mult = multiple
     else:
@@ -1488,14 +1488,15 @@ def has_order(P, n, operation='+'):
             return isid(Q)
 
         if len(fn) == 1:
-            p,k = fn[0]
-            for i in range(k):
+            p, k = fn[0]
+            for _ in range(k):
                 if isid(Q):
                     return False
                 Q = mult(Q, p)
             return isid(Q)
 
-        fl, fr = fn[::2], fn[1::2]
+        fl = fn[::2]
+        fr = fn[1::2]
         l = prod(p**k for p,k in fl)
         r = prod(p**k for p,k in fr)
         L, R = mult(Q, r), mult(Q, l)
