@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-combinat
+# -*- coding: utf-8 -*-
 """
 Automatic Semigroups
 

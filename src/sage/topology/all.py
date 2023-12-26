@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs
 from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 

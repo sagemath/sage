@@ -1,5 +1,6 @@
-# Deprecated header file; use sage/libs/flint/mag.pxd instead
-# See https://github.com/sagemath/sage/pull/36449
+# sage_setup: distribution = sagemath-flint
+# distutils: libraries = gmp flint
+# distutils: depends = mag.h
 
 from sage.libs.flint.types cimport mag_t
 

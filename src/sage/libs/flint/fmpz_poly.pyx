@@ -1,5 +1,7 @@
-r"""
-Deprecated module
+# sage_setup: distribution = sagemath-flint
+# distutils: extra_compile_args = -D_XPG6
+"""
+FLINT fmpz_poly class wrapper
 
 TESTS::
 

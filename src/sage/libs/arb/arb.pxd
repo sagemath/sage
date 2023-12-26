@@ -1,5 +1,6 @@
-# Deprecated header file; use sage/libs/flint/arb.pxd instead
-# See https://github.com/sagemath/sage/pull/36449
+# sage_setup: distribution = sagemath-flint
+# distutils: libraries = gmp flint
+# distutils: depends = arb.h
 
 from sage.libs.flint.types cimport arb_struct, arb_t, arb_ptr, arb_srcptr
 

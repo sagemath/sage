@@ -1,5 +1,6 @@
-# Deprecated header file; use sage/libs/flint/acb.pxd instead
-# See https://github.com/sagemath/sage/pull/36449
+# sage_setup: distribution = sagemath-flint
+# distutils: libraries = gmp flint
+# distutils: depends = acb.h
 
 from sage.libs.flint.types cimport acb_struct, acb_t, acb_ptr, acb_srcptr
 

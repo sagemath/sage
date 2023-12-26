@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 
 from sage.plot.plot3d.plot3d import plot3d, cylindrical_plot3d, spherical_plot3d, Spherical, SphericalElevation, Cylindrical
 from sage.plot.plot3d.parametric_plot3d import parametric_plot3d

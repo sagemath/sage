@@ -1,4 +1,5 @@
-from sage.libs.flint.types cimport acb_mat_t
+# sage_setup: distribution = sagemath-flint
+from sage.libs.arb.types cimport acb_mat_t
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.structure.parent cimport Parent

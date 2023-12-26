@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # interfaces to other interpreters
 
 from sage.interfaces.sage0 import sage0, sage0_version, Sage

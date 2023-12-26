@@ -1,9 +1,5 @@
-from sage.rings.function_field.all__sagemath_modules import *
-
-try:
-    from sage.rings.function_field.all__sagemath_symbolics import *
-except ImportError:
-    pass
+# sage_setup: distribution = sagemath-categories
+from .constructor import FunctionField
 
 from sage.misc.lazy_import import lazy_import
 

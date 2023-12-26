@@ -1,1 +1,2 @@
-from sage.tensor.modules.all import *
+# sage_setup: distribution = sagemath-modules
+from .modules.all import *

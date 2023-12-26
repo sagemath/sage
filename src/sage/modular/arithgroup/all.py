@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # Note: the is_xxx functions are imported to here, but not from here up to sage.modular.all, so
 # they are invisible to the user but easy to import all in one go by other code that needs them.
 
