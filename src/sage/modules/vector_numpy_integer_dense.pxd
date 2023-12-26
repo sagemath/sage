@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.modules.vector_numpy_dense cimport Vector_numpy_dense
 
 

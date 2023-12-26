@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 Local Density Interfaces
 """

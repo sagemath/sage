@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Some tools for developers
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: optional - sage.graphs
 r"""
 Finite polyhedral complexes

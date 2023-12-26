@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 
 from .calculus import maxima as maxima_calculus
 from .calculus import (laplace, inverse_laplace,

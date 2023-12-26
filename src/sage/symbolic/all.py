@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 from .ring import SR
 from .constants import (pi, e, NaN, golden_ratio, log2, euler_gamma, catalan,
                        khinchin, twinprime, mertens, glaisher)

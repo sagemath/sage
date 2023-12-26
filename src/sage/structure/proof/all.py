@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 
 
 def arithmetic(t=None):

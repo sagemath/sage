@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.gap sage.libs.pari
 r"""
 Congruence arithmetic subgroups of `\SL_2(\ZZ)`

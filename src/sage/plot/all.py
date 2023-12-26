@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 from .graphics import Graphics
 from .plot import (plot, graphics_array, multi_graphics, list_plot,
                    parametric_plot, polar_plot, plot_loglog, plot_semilogx,

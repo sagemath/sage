@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 from sage.libs.gmp.types cimport *
 from sage.libs.flint.types cimport fmpz_mat_t
 

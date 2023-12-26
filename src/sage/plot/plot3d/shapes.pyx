@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 """
 Basic objects such as Sphere, Box, Cone, etc.
 

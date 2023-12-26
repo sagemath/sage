@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.symbolic
 """
 Tests for the fast univariate series expansion in Pynac

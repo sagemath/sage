@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 # -*- coding: utf-8 -*-
 # distutils: libraries = M4RI_LIBRARIES GDLIB_LIBRARIES LIBPNG_LIBRARIES ZLIB_LIBRARIES
 # distutils: library_dirs = M4RI_LIBDIR GDLIB_LIBDIR LIBPNG_LIBDIR ZLIB_LIBDIR

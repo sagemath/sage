@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 # -*- encoding: utf-8 -*-
 r"""
 Graphics objects

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # sage.doctest: needs sage.libs.ntl sage.rings.finite_rings
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS

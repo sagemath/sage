@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 from sage.misc.lazy_import import lazy_import
 
 from .pari_group import PariGroup

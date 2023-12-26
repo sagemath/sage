@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Access functions to online databases for coding theory

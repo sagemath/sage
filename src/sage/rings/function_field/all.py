@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from .constructor import FunctionField
 
 from sage.misc.lazy_import import lazy_import

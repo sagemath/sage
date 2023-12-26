@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 """
 Indexed face sets
 

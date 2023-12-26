@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Documentation for the matroids in the catalog
 
