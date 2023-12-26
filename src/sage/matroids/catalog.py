@@ -11,8 +11,8 @@ from sage.matroids.database_matroids import (
     Fano, FanoDual, NonFano, NonFanoDual, O7, P7,
     AG32, AG32prime, R8, F8, Q8, L8, S8, Vamos, T8, J, P8, P8pp,
     Wheel4, Whirl4,
-    K33dual, K33, AG23, TernaryDowling3, Pappus, NonPappus,
-    K5, K5dual, R10,
+    K33dual, K33, AG23, TernaryDowling3, R9, Pappus, NonPappus,
+    K5, K5dual, R10, NonDesargues,
     R12, ExtendedTernaryGolayCode, T12,
     PG23,
 )

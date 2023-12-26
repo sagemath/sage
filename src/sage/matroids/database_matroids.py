@@ -1250,10 +1250,38 @@ def TernaryDowling3():
     return M
 
 
-# R9
+def R9():
+    r"""
+    Return the matroid `R_9`.
+
+    The ternary Reid geometry. The only `9`-element rank-`3` simple ternary
+    matroids are `R_9`, `Q_3(GF(3)^\times)`, and `AG(2, 3)`. It is not graphic,
+    not cographic, and not regular.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.R9(); M
+        R9: Matroid of rank 3 on 9 elements with 69 bases
+        sage: M.is_valid()
+        True
+        sage: len(M.nonspanning_circuits())
+        15
+        sage: M.is_simple() and M.is_ternary()
+        True
+
+    REFERENCES:
+
+    [Oxl2011]_, p. 654.
+
+    """
+    NSC = ['abc', 'abd', 'acd', 'aef', 'agh', 'bcd', 'bfh', 'bgi',
+           'ceg', 'cfi', 'deh', 'dei', 'dfg', 'dhi', 'ehi']
+    M = Matroid(rank=3, nonspanning_circuits=NSC)
+    M.rename("R9: " + repr(M))
+    return M
 
 
-def Pappus():
+def Pappus(groundset=None):
     """
     Return the Pappus matroid.
 
@@ -1432,10 +1460,35 @@ def R10():
     return M
 
 
-# NonDesargues
+def NonDesargues(groundset=None):
+    """
+    Return the NonDesargues matroid.
+
+    The NonDesargues matroid is a `10`-element matroid of rank-`3`. It is not
+    representable over any division ring. It is not graphic, not cographic, and
+    not regular.
+
+    EXAMPLES::
+
+        sage: M = matroids.catalog.NonDesargues(); M
+        NonDesargues: Matroid of rank 3 on 10 elements with 111 bases
+        sage: M.is_valid()
+        True
+        sage: len(M.nonspanning_circuits())
+        9
+
+    REFERENCES:
+
+    [Oxl2011]_, p. 657.
+
+    """
+    NSC = ['acj', 'aef', 'bce', 'bfj', 'bgi', 'chi', 'dfg', 'dij', 'egh']
+    M = Matroid(rank=3, nonspanning_circuits=NSC)
+    M.rename("NonDesargues: " + repr(M))
+    return M
 
 
-def R12():
+def R12(groundset='abcdefghijkl'):
     """
     Return the matroid `R_{12}`, represented over the regular partial field.
 
@@ -1900,10 +1953,16 @@ def Z(r, t=True):
 
     EXAMPLES::
 
-        sage: import random
+        sage: matroids.Z(8)
+        Z_8: Binary matroid of rank 8 on 17 elements, type (7, 1)
+        sage: matroids.Z(9)
+        Z_9: Binary matroid of rank 9 on 19 elements, type (9, None)
+        sage: matroids.Z(20, False)
+        Z_20\t: Binary matroid of rank 20 on 40 elements, type (20, 0)
 
     It holds that `Z_3 \setminus e \cong M(K4)`, for all `e`::
 
+        sage: import random
         sage: Z3 = matroids.Z(3)
         sage: e = random.choice(list(Z3.groundset()))
         sage: Z3.delete(e).is_isomorphic(matroids.catalog.K4())
@@ -1983,9 +2042,12 @@ def Spike(r, t=True, C3=[]):
 
     EXAMPLES::
 
-        sage: M = matroids.Spike(3, False)
+        sage: M = matroids.Spike(3, False); M
+        Free 3-spike\t: Matroid of rank 3 on 6 elements with 20 bases
         sage: M.is_isomorphic(matroids.Uniform(3, 6))
         True
+        sage: len(matroids.Spike(8).bases())
+        4864
         sage: import random
         sage: r = random.choice(range(3, 8))
         sage: M = matroids.Spike(r)
@@ -2042,38 +2104,36 @@ def Spike(r, t=True, C3=[]):
     E += X
     E += Y
 
-    for S in C3:
-        for xy in S:
-            if xy not in X+Y:
-                raise ValueError(
-                    "The sets in C3 must contain elements x_i and y_i only"
-                )
-        for T in C3:
-            if S != T and len(set(S).intersection(set(T))) > r - 2:
-                raise ValueError(
-                    "Every pair of sets in C3 must not have more than r - 2 "
-                    + "common elements"
-                )
+    if C3 == [] and r > 3:
+        # free spike (can be defined fast through circuit closures)
+        lines = [['t', 'x'+str(i), 'y'+str(i)] for i in range(1, r+1)]
+        planes = [['t', 'x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]
+                  for i in range(1, r+1) for j in range(i+1, r+1)]
+        CC = {2: lines, 3: planes, r: [E]}
+        M = Matroid(groundset=E, circuit_closures=CC)
+    else:
+        for S in C3:
+            for xy in S:
+                if xy not in X+Y:
+                    raise ValueError(
+                        "The sets in C3 must contain elements xi and yi only."
+                    )
+            for T in C3:
+                if S != T and len(set(S).intersection(set(T))) > r - 2:
+                    raise ValueError(
+                        "Every pair of sets in C3 must not have more than "
+                        + "r - 2 common elements."
+                    )
 
-    NSC = []  # nonspanning_circuits
-    NSC += C3
-    for i in range(1, len(X)+1):
-        NSC += [['t', 'x'+str(i), 'y'+str(i)]]
-        for j in range(i+1, len(Y)+1):
-            NSC += [['x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]]
+        NSC = []  # nonspanning_circuits
+        NSC += C3
+        for i in range(1, r+1):
+            NSC += [['t', 'x'+str(i), 'y'+str(i)]]
+            for j in range(i+1, r+1):
+                NSC += [['t', 'x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]]
 
-    import itertools
-    B = []  # bases
-    for b in itertools.combinations(E, r):
-        flag = True
-        for C in NSC:
-            if set(b) >= set(C):
-                flag = False
-                break
-        if flag:
-            B += [list(b)]
+        M = Matroid(groundset=E, rank=r, nonspanning_circuits=NSC)
 
-    M = Matroid(groundset=E, bases=B)
     free = "Free " if C3 == [] else ""
     tip = "" if t else "\\t"
     M = M if t else M.delete('t')
@@ -2126,22 +2186,22 @@ def Theta(n):
     [Oxl2011]_, p. 663-4.
 
     """
-    X = ['x'+str(i) for i in range(1, n+1)]
-    Y = ['y'+str(i) for i in range(1, n+1)]
+    X = ['x'+str(i) for i in range(n)]
+    Y = ['y'+str(i) for i in range(n)]
     E = X + Y
 
     import itertools
     C = []
     C += list(itertools.combinations(X, 3))
-    for i in range(1, n+1):
-        Yi = [Y[j] for j in range(len(Y)) if j != i-1]
+    for i in range(n):
+        Yi = [Y[j] for j in range(len(Y)) if j != i]
         C += [Yi + ['x'+str(i)]]
 
-    for u in range(1, n+1):
-        for s in range(1, n+1):
-            for t in range(1, n+1):
+    for u in range(n):
+        for s in range(n):
+            for t in range(s+1, n):
                 if u != s and u != t and s != t:
-                    Yu = [Y[i] for i in range(len(Y)) if i != u-1]
+                    Yu = [Y[i] for i in range(len(Y)) if i != u]
                     C += [Yu + ['x'+str(s)] + ['x'+str(t)]]
 
     M = Matroid(groundset=E, circuits=C)
@@ -2163,7 +2223,10 @@ def Psi(r):
 
     a matroid (`\Psi_r`)
 
-    EXAMPLES:
+    EXAMPLES::
+
+        sage: matroids.Psi(7)
+        Psi_7: Matroid of rank 7 on 14 elements with 2060 bases
 
     The matroid `\Psi_r` is `3`-connected but, for all `r \ge 4`, not
     `4`-connected::
@@ -2520,12 +2583,16 @@ def BB9():
 
         sage: BB = matroids.catalog.BB9()
         sage: BR = matroids.catalog.BetsyRoss()
-        sage: for M in BB.extensions(): # long time
-        ....:     for N in M.extensions():
-        ....:         if N.is_isomorphic(BR):
-        ....:             print(True)
-        True
-        True
+        sage: from itertools import combinations
+        sage: pairs = combinations(sorted(BR.groundset()), 2)
+        sage: for pair in pairs:
+        ....:     if BR.delete(pair).is_isomorphic(BB):
+        ....:         print(pair)
+        ('a', 'h')
+        ('b', 'i')
+        ('c', 'j')
+        ('d', 'f')
+        ('e', 'g')
 
     """
     GF4 = GF(4, 'w')
@@ -4783,9 +4850,10 @@ def Q10():
     r"""
     Return the matroid `Q_{10}`, represented over `\GF{4}`.
 
-    `Q_{10}` is a 10-element, rank-5, self-dual matroid. It is representable
-    over `\GF{3}` and `\GF{4}`, and hence is a sixth-roots-of-unity matroid.
-    `Q_{10}` is a splitter for the class of sixth-root-of-unity matroids.
+    `Q_{10}` is a `10`-element, rank-`5`, self-dual matroid. It is
+    representable over `\GF{3}` and `\GF{4}`, and hence is a
+    sixth-roots-of-unity matroid. `Q_{10}` is a splitter for the class of
+    sixth-root-of-unity matroids.
 
     EXAMPLES::
 

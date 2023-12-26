@@ -177,6 +177,8 @@ def Matroid(groundset=None, data=None, **kwds):
       matroid.
     - ``independent_sets`` -- The list of independent sets of the matroid.
     - ``circuits`` -- The list of circuits of the matroid.
+    - ``nonspanning_circuits`` -- The list of nonspanning_circuits of the
+      matroid.
     - ``graph`` -- A graph, whose edges form the elements of the matroid.
     - ``matrix`` -- A matrix representation of the matroid.
     - ``reduced_matrix`` -- A reduced representation of the matroid: if
@@ -696,9 +698,9 @@ def Matroid(groundset=None, data=None, **kwds):
     # "key" is the kind of data we got
     key = None
     if data is None:
-        for k in ['bases', 'independent_sets', 'circuits', 'graph',
-                'matrix', 'reduced_matrix', 'rank_function', 'revlex',
-                'circuit_closures', 'matroid']:
+        for k in ['bases', 'independent_sets', 'circuits',
+                  'nonspanning_circuits', 'graph', 'matrix', 'reduced_matrix',
+                  'rank_function', 'revlex', 'circuit_closures', 'matroid']:
             if k in kwds:
                 data = kwds.pop(k)
                 key = k
@@ -771,6 +773,30 @@ def Matroid(groundset=None, data=None, **kwds):
         BB = [frozenset(B) for B in combinations(groundset, rk)
               if not any(frozenset(C).issubset(B) for C in data)]
         M = BasisMatroid(groundset=groundset, bases=BB)
+
+    # Nonspanning circuits:
+    elif key == 'nonspanning_circuits':
+        try:
+            rk = kwds.pop("rank")
+        except TypeError:
+            raise TypeError("the rank needs to be specified alongside the " +
+                            "nonspanning circuits")
+        # Determine groundset (note that this cannot detect coloops)
+        if groundset is None:
+            groundset = set()
+            for C in data:
+                groundset.update(C)
+        # Construct the basis matroid of appropriate rank. Note: slow!
+        B = []  # bases
+        for b in combinations(groundset, rk):
+            flag = True
+            for C in data:
+                if set(b) >= set(C):
+                    flag = False
+                    break
+            if flag:
+                B += [list(b)]
+        M = BasisMatroid(groundset=groundset, bases=B)
 
     # Graphs:
 

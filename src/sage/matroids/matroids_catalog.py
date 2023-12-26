@@ -59,11 +59,13 @@ matroids type ``matroids.catalog.`` + :kbd:`Tab`.
     - :func:`matroids.catalog.K33 <sage.matroids.database_matroids.K33>`
     - :func:`matroids.catalog.AG23 <sage.matroids.database_matroids.AG23>`
     - :func:`matroids.catalog.TernaryDowling3 <sage.matroids.database_matroids.TernaryDowling3>`
+    - :func:`matroids.catalog.R9 <sage.matroids.database_matroids.R9>`
     - :func:`matroids.catalog.Pappus <sage.matroids.database_matroids.Pappus>`
     - :func:`matroids.catalog.NonPappus <sage.matroids.database_matroids.NonPappus>`
     - :func:`matroids.catalog.K5 <sage.matroids.database_matroids.K5>`
     - :func:`matroids.catalog.K5dual <sage.matroids.database_matroids.K5dual>`
     - :func:`matroids.catalog.R10 <sage.matroids.database_matroids.R10>`
+    - :func:`matroids.catalog.NonDesargues <sage.matroids.database_matroids.NonDesargues>`
     - :func:`matroids.catalog.R12 <sage.matroids.database_matroids.R12>`
     - :func:`matroids.catalog.ExtendedTernaryGolayCode <sage.matroids.database_matroids.ExtendedTernaryGolayCode>`
     - :func:`matroids.catalog.T12 <sage.matroids.database_matroids.T12>`
