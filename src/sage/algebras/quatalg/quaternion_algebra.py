@@ -1769,7 +1769,7 @@ class QuaternionOrder(Parent):
         - ``check`` -- bool (default: ``True``)
 
         - ``is_basis`` -- bool (default: ``False``); if ``True`` then ``gens``
-          must be a `\ZZ`-basis of the ideal.
+          must be a `\ZZ`-basis of the ideal
 
         EXAMPLES::
 
@@ -1812,7 +1812,7 @@ class QuaternionOrder(Parent):
         - ``check`` -- bool (default: ``True``)
 
         - ``is_basis`` -- bool (default: ``False``); if ``True`` then ``gens``
-          must be a `\ZZ`-basis of the ideal.
+          must be a `\ZZ`-basis of the ideal
 
         EXAMPLES::
 
