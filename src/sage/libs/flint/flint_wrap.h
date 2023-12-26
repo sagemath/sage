@@ -15,6 +15,7 @@
  */
 
 #include <gmp.h>
+#include <mpfr.h>
 
 /* Save previous definition of ulong if any, as pari also uses it */
 /* Should work on GCC, clang, MSVC */
