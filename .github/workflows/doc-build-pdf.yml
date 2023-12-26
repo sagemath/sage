@@ -113,7 +113,7 @@ jobs:
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
           eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive texlive_luatex free_fonts xindy)
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Build docs (PDF)

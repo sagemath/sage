@@ -677,7 +677,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             by Sublattice <N(1, 8, 0), N(0, 12, 0)>
 
         Attempting to quotient one lattice by a sublattice of another
-        will result in a ``ValueError``::
+        will result in a :class:`ValueError`::
 
             sage: N = ToricLattice(3)
             sage: M = ToricLattice(3, name='M')
@@ -1467,7 +1467,7 @@ class ToricLattice_quotient(FGP_Module_class):
             sage: ToricLattice_quotient(N, N.span([N(1,2,3)]))
             2-d lattice, quotient of 3-d lattice N by Sublattice <N(1, 2, 3)>
 
-        An ``ArithmeticError`` will be raised if ``W`` is not a
+        An :class:`ArithmeticError` will be raised if ``W`` is not a
         sublattice of ``V``::
 
             sage: N = ToricLattice(3)

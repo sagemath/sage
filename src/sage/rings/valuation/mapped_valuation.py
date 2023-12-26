@@ -560,7 +560,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
 
     def lower_bound(self, x):
         r"""
-        Return an lower bound of this valuation at ``x``.
+        Return a lower bound of this valuation at ``x``.
 
         Use this method to get an approximation of the valuation of ``x``
         when speed is more important than accuracy.

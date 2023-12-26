@@ -1525,7 +1525,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             (12) * (x - 0.5773502691896258?) * (x + 0.5773502691896258?)
             sage: AA._factor_univariate_polynomial(12*x^2 + 4)
             (12) * (x^2 + 0.3333333333333334?)
-            sage: AA._factor_univariate_polynomial(EllipticCurve('11a1').change_ring(AA).division_polynomial(5))    # needs sage.schemes
+            sage: AA._factor_univariate_polynomial(EllipticCurve('11a1').change_ring(AA).division_polynomial(5))        # needs sage.schemes
             (5) * (x - 16.00000000000000?) * (x - 5.000000000000000?) * (x - 1.959674775249769?) * (x + 2.959674775249769?) * (x^2 - 2.854101966249685?*x + 15.47213595499958?) * (x^2 + 1.909830056250526?*x + 1.660606461254312?) * (x^2 + 3.854101966249685?*x + 6.527864045000421?) * (x^2 + 13.09016994374948?*x + 93.33939353874569?)
 
         """
@@ -2901,7 +2901,7 @@ def cmp_elements_with_same_minpoly(a, b, p):
     Compare the algebraic elements ``a`` and ``b`` knowing that they have the
     same minimal polynomial ``p``.
 
-    This is an helper function for comparison of algebraic elements (i.e. the
+    This is a helper function for comparison of algebraic elements (i.e. the
     methods :meth:`AlgebraicNumber._richcmp_` and
     :meth:`AlgebraicReal._richcmp_`).
 

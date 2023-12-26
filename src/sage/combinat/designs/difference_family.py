@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Difference families
 
@@ -1114,7 +1113,7 @@ def mcfarland_1973_construction(q, s):
     D = []
     for k, H in zip(K, V.subspaces(s)):
         for v in H:
-            D.append(G((tuple(v) + (k,))))
+            D.append(G(tuple(v) + (k,)))
 
     return G,[D]
 
@@ -1749,7 +1748,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import supplementary_difference_set_from_rel_diff_set
-        sage: supplementary_difference_set_from_rel_diff_set(17) #random                # needs sage.libs.pari
+        sage: supplementary_difference_set_from_rel_diff_set(17)  #random               # needs sage.libs.pari
         (Additive abelian group isomorphic to Z/16,
          [[(1), (5), (6), (7), (9), (13), (14), (15)],
           [(0), (2), (3), (5), (6), (10), (11), (13), (14)],
