@@ -97,9 +97,9 @@ ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])"
 special_optional_regex = (
     "arb216|arb218|py2|long time|not implemented|not tested|optional|needs|known bug"
 )
-tag_with_explanation_regex = r"((?:\w|[.])+)\s*(?:\((?P<cmd_explanation>.*?)\))?"
+tag_with_explanation_regex = r"((?:\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
 optional_regex = re.compile(
-    rf"(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)",
+    rf"[^ a-z]\s*(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)",
     re.IGNORECASE,
 )
 special_optional_regex = re.compile(special_optional_regex, re.IGNORECASE)
@@ -240,12 +240,20 @@ def parse_optional_tags(
             return {}, string, False
 
     tags: dict[str, Union[str, None]] = {}
+    print(f"comment={comment}")
     for m in optional_regex.finditer(comment):
         cmd = m.group("cmd").lower()
         if cmd == "known bug":
+            value = None
+            if m.groups("tags") and m.group("tags").strip().lower().startswith("linux"):
+                value = "linux"
+            if m.groups("tags") and m.group("tags").strip().lower().startswith("macos"):
+                value = "macos"
+
             # rename 'known bug' to 'bug' so that such tests will be run by sage -t ... -only-optional=bug
-            tags["bug"] = m.group("tags") or None
+            tags["bug"] = value
         elif cmd not in ["optional", "needs"]:
+            print(f"cmd={cmd}, m={m}")
             tags[cmd.lower()] = m.group("cmd_explanation") or None
         else:
             # other tags with additional values
