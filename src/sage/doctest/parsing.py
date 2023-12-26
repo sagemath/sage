@@ -241,7 +241,10 @@ def parse_optional_tags(
 
     tags: dict[str, Union[str, None]] = {}
     for m in optional_regex.finditer(comment):
-        cmd = m.group("cmd").lower()
+        cmd = m.group("cmd").lower().strip()
+        if cmd == "":
+            # skip empty tags
+            continue
         if cmd == "known bug":
             value = None
             if m.groups("tags") and m.group("tags").strip().lower().startswith("linux"):
@@ -252,13 +255,14 @@ def parse_optional_tags(
             # rename 'known bug' to 'bug' so that such tests will be run by sage -t ... -only-optional=bug
             tags["bug"] = value
         elif cmd not in ["optional", "needs"]:
-            tags[cmd.lower()] = m.group("cmd_explanation") or None
+            tags[cmd] = m.group("cmd_explanation") or None
         else:
             # other tags with additional values
             tags_with_value = {
-                m.group(1).lower(): m.group(2) or None
+                m.group(1).lower().strip(): m.group(2) or None
                 for m in tag_with_explanation_regex.finditer(m.group("tags"))
             }
+            tags_with_value.pop("", None)
             tags.update(tags_with_value)
 
     if return_string_sans_tags:
