@@ -726,7 +726,11 @@ def _random_for_testing():
         sage: random_ideal().ring() is O
         True
     """
-    from sage.all import choice, randrange, QuadraticField, primes, Zmod, prod
+    from sage.misc.prandom import choice, randrange
+    from sage.rings.number_field.number_field import QuadraticField
+    from sage.arith.misc import primes
+    from sage.rings.finite_rings.integer_mod_ring import Zmod
+    from sage.misc.misc_c import prod
     while True:
         d = ZZ(choice((-1,+1)) * randrange(1,10**5))
         if not d.is_square():
@@ -743,11 +747,12 @@ def _random_for_testing():
     for l in primes(1000):
         vs = poly.roots(ring=Zmod(l), multiplicities=False)
         base += [NumberFieldOrderIdeal(O, [l, f*g-ZZ(v)]) for v in vs]
+
     def random_ideal():
         I = NumberFieldOrderIdeal(O, [1])
         for _ in range(randrange(20)):
             J = choice(base)
             I = NumberFieldOrderIdeal(O, [x*y for x in I.gens() for y in J.gens()])
         return I
-    return O, random_ideal
 
+    return O, random_ideal
