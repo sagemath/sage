@@ -721,7 +721,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         ....:     _ = F.write(s)
         sage: L = ["sage", "--ipynb2rst", input, output]
         sage: _ = test_executable(L)                # long time  # optional - pandoc
-        sage: print(open(output, 'r').read() == t)  # long time  # optional - pandoc  # known bug #32697
+        sage: print(open(output, 'r').read() == t)  # long time  # optional - pandoc  # known bug (#32697)
         True
     """
     pexpect_env = dict(os.environ)

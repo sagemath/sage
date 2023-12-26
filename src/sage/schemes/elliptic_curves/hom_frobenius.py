@@ -67,7 +67,7 @@ Computing the dual of Frobenius is supported as well::
           over Finite Field in z6 of size 17^6
     sage: pihat.is_separable()
     True
-    sage: pihat * pi == EllipticCurveHom_scalar(E,17)   # known bug -- #6413
+    sage: pihat * pi == EllipticCurveHom_scalar(E,17)   # known bug (#6413)
     True
 
 A supersingular example (with purely inseparable dual)::
@@ -462,7 +462,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
             True
             sage: f * f.dual() == EllipticCurveHom_scalar(f.codomain(), p**n)
             True
-            sage: f.dual().dual() == f  # known bug -- broken in characteristic 2,3
+            sage: f.dual().dual() == f  # known bug (broken in characteristic 2,3)
             True
             sage: p in (2,3) or f.dual().dual() == f
             True
