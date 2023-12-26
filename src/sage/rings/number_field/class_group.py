@@ -320,7 +320,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             Fractional ideal class (2, 1/2*w - 1/2)
             sage: c.gens()
             (2, 1/2*w - 1/2)
-       """
+        """
         return self.ideal().gens()
 
 

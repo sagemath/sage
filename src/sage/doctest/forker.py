@@ -1211,7 +1211,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
 
-       Without the source swapping::
+        Without the source swapping::
 
             sage: import doctest
             sage: print(doctest.DocTestRunner._failure_header(DTR, doctests[0], ex))

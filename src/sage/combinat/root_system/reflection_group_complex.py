@@ -996,7 +996,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W = ReflectionGroup(23)
             sage: sum(len(C) for C in W.conjugacy_classes()) == W.cardinality()
             True
-       """
+        """
         return Family(self.conjugacy_classes_representatives(),
                       lambda w: w.conjugacy_class())
 
@@ -1160,7 +1160,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             (1,23,26,29,22,16,8,11,14,7)(2,10,4,9,18,17,25,19,24,3)(5,21,27,30,28,20,6,12,15,13) [1/10, 1/2, 9/10]
             (1,24,17,16,9,2)(3,12,13,18,27,28)(4,21,29,19,6,14)(5,25,26,20,10,11)(7,23,30,22,8,15) [1/6, 1/2, 5/6]
             (1,29,8,7,26,16,14,23,22,11)(2,9,25,3,4,17,24,10,18,19)(5,30,6,13,27,20,15,21,28,12) [3/10, 1/2, 7/10]
-            """
+        """
         class_representatives = self.conjugacy_classes_representatives()
         Ev_list = self._gap_group.ReflectionEigenvalues().sage()
         return Family(class_representatives,

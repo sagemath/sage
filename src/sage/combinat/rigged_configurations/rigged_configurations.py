@@ -1111,7 +1111,7 @@ class RCNonSimplyLaced(RiggedConfigurations):
             sage: TestSuite(RC).run() # long time
             sage: RC = RiggedConfigurations(['A',5,2], [[2,1]])
             sage: TestSuite(RC).run() # long time
-         """
+        """
         self._folded_ct = cartan_type.as_folding()
         RiggedConfigurations.__init__(self, cartan_type, dims)
 

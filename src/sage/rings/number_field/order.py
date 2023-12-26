@@ -803,7 +803,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: sum([O.basis()[j]*acoords[j] for j in range(2)]) == a
             True
 
-       """
+        """
         K = self.number_field()
         V, from_V, to_V = K.absolute_vector_space()
 

@@ -3150,7 +3150,7 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
 
         sage: ModularSymbols(Gamma1(7),3)
         Modular Symbols space of dimension 8 for Gamma_1(7) of weight 3 with sign 0 over Rational Field
-        """
+    """
 
     def __init__(self, level, weight, sign, F, custom_init=None, category=None):
         r"""

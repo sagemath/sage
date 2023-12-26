@@ -3177,7 +3177,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             -... - 3.9434754031032964088448153963*I
             sage: E.period_lattice().elliptic_exponential(z)
             (0.00000000000000000000000000000 : 1.0000000000000000000000000000 : 0.00000000000000000000000000000)
-"""
+        """
         phi = self.__E.modular_parametrization()
         tau = self.heegner_point_on_X0N().tau()
         return phi.map_to_complex_numbers(tau, prec)

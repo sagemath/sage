@@ -2247,7 +2247,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: phi(x[1] + x[3])                                              # needs sage.modules
                     0
 
-               We check that the homset category is properly set up::
+                We check that the homset category is properly set up::
 
                     sage: # needs sage.modules
                     sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename("X")

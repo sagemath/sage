@@ -4122,7 +4122,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         A list of all primes `p < B` which split completely in ``K``.
 
-       EXAMPLES::
+        EXAMPLES::
 
             sage: x = polygen(QQ, 'x')
             sage: K.<xi> = NumberField(x^3 - 3*x + 1)
@@ -4733,7 +4733,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         OUTPUT: A list of generators of the unit group.
 
-       .. note::
+        .. note::
 
             For more functionality see the function :func:`S_unit_group`.
 
