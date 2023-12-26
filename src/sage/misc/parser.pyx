@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-categories
-# -*- coding: utf-8 -*-
 """
 A parser for symbolic equations and expressions
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integer-valued polynomial rings
 
