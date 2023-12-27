@@ -292,7 +292,14 @@ jobs:
                  fi
                  echo " FROM_DOCKER_TAG=${TAG#*:} tox -e $TOX_ENV_SANS_INCREMENTAL-incremental"
              done
+          elif [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags ]; then
+             echo "Unable to push Docker images to $DOCKER_PUSH_REPOSITORY."
+             echo "This is normal in a pull request to sagemath/sage or to another user's repository."
+             echo
+             echo "If you need Docker images, "
+             echo " - either run this GitHub Actions workflow in your repository fork"
+             echo " - or use the method described in https://doc.sagemath.org/html/en/developer/portability_testing.html#automatic-docker-based-build-testing-using-tox
           else
-             echo "No Docker images pushed"
+             echo "No Docker images created."
           fi
-        if: always()
+        if: always() && ${{ inputs.docker_push_repository }}
