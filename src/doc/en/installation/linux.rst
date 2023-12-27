@@ -10,6 +10,9 @@ As of Sage 10.2, we can recommend the following distributions, which
 provide well-maintained and up-to-date SageMath packages:
 `Arch Linux <https://archlinux.org/>`_
 and `Void Linux <https://voidlinux.org/>`_.
+Gentoo users might want to give the
+`sage-on-gentoo <https://github.com/cschwan/sage-on-gentoo>`_ overlay
+a try.
 
 .. only:: html
 
@@ -25,6 +28,9 @@ and `Void Linux <https://voidlinux.org/>`_.
    .. |package-downstream-voidlinux-latest| image:: https://repology.org/badge/version-for-repo/void_x86_64/sagemath.svg
       :target: https://repology.org/project/sagemath/versions
 
+   .. |codespace-downstream-gentoo-overlay| image:: https://github.com/codespaces/badge.svg
+      :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fdownstream-gentoo-overlay%2Fdevcontainer.json
+
    .. list-table::
       :widths: 35 30 35
       :header-rows: 0
@@ -39,9 +45,10 @@ and `Void Linux <https://voidlinux.org/>`_.
         - |package-downstream-voidlinux-latest|
         - |codespace-downstream-voidlinux-latest|
 
-
-Gentoo users might want to give a try to
-`sage-on-gentoo <https://github.com/cschwan/sage-on-gentoo>`_.
+      * - `downstream-gentoo-overlay
+          <https://github.com/sagemath/sage/tree/develop/.devcontainer/downstream-gentoo-overlay>`_
+        -
+        - |codespace-downstream-gentoo-overlay|
 
 **Do not install a version of Sage older than 9.5.**
 If you are on an older version of your distribution and a recent
