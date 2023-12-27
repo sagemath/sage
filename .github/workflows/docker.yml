@@ -262,13 +262,13 @@ jobs:
         if: always()
       - name: List Docker images
         run: |
-          if [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags ]; then
-             set -- $(cat .tox/$TOX_ENV/Dockertags)
+          if [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags.pushed ]; then
+             set -- $(cat .tox/$TOX_ENV/Dockertags.pushed)
              case $# in
                  1) images="image";  one_image="the image";;
                  *) images="images"; one_image="one of the images";;
              esac
-             echo "::notice title=Docker $images pushed::Pushed $images $(echo $(cat .tox/$TOX_ENV/Dockertags))"
+             echo "::notice title=Docker $images pushed::Pushed $images $*)"
              echo
              echo "To pull $one_image and enter the container, type:"
              echo
@@ -292,5 +292,7 @@ jobs:
                  fi
                  echo " FROM_DOCKER_TAG=${TAG#*:} tox -e $TOX_ENV_SANS_INCREMENTAL-incremental"
              done
+          else
+             echo "No Docker images pushed"
           fi
         if: always()
