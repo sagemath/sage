@@ -50,6 +50,10 @@ a try.
         -
         - |codespace-downstream-gentoo-overlay|
 
+See `repology.org: sagemath
+<https://repology.org/project/sagemath/versions>`_ for information
+about versions of SageMath packages in various other distributions.
+
 **Do not install a version of Sage older than 9.5.**
 If you are on an older version of your distribution and a recent
 version of SageMath is only available on a newer version of the
@@ -57,9 +61,7 @@ distribution, consider upgrading your distribution.
 
 See `the _sagemath dummy package <../reference/spkg/_sagemath.html>`_
 for the names of packages that provide a standard installation of
-SageMath, including documentation and Jupyter.  See also `repology.org: sagemath
-<https://repology.org/project/sagemath/versions>`_ for information
-about versions of SageMath packages in various distributions.
+SageMath, including documentation and Jupyter.
 
 The  `GitHub wiki page Distribution <https://github.com/sagemath/sage/wiki/Distribution>`_ collects information
 regarding packaging and distribution of SageMath.
