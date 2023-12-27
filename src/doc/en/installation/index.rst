@@ -106,8 +106,8 @@ Linux
   - No development: **Do you have root access (sudo)?**
 
     - **Yes, root access:** Then the easiest way to install SageMath is
-      through a Linux distribution that provides it as a package.  Most
-      major Linux distributions have up-to-date versions of SageMath,
+      through a Linux distribution that provides it as a package.  Some
+      Linux distributions have up-to-date versions of SageMath,
       see `repology.org: sagemath
       <https://repology.org/project/sagemath/versions>`_ for an
       overview.  See :ref:`sec-GNU-Linux` for additional information.
