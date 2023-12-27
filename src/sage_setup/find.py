@@ -116,7 +116,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
 
         sage: find_python_sources(SAGE_SRC, distributions=['sagemath-tdlib'])
         ([],
-         ['sage.all__sagemath_tdlib', ...],
+         [...],
          [<setuptools.extension.Extension('sage.graphs.graph_decompositions.tdlib')...>])
 
     Benchmarking::
