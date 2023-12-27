@@ -357,7 +357,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs sage.rings.number_field
+            sage: # needs sage.graphs sage.libs.gap
             sage: CoxeterType(['A', 2, 1]).bilinear_form()
             [   1 -1/2 -1/2]
             [-1/2    1 -1/2]

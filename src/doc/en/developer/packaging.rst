@@ -512,10 +512,15 @@ containing files with names like ::
     arch.txt
     conda.txt
     debian.txt
+    fedora.txt
     homebrew.txt
     ...
 
-corresponding to different packaging systems.
+corresponding to different packaging systems. Each system package
+should appear on a separate line. If the shell-style variable reference
+``${PYTHON_MINOR}`` appears, it is replaced by the minor version of
+Python, e.g., 12 for Python 3.12.x. Everything on a line after a ``#``
+character is ignored, so comments can be included in the files.
 
 For example, if ``./configure`` detects that the Homebrew packaging
 system is in use, and if the current package can be provided by a
@@ -1048,9 +1053,11 @@ Sage mirrors when a new release is prepared.  On GitHub PRs
 upgrading a package, the PR description should no longer contain
 the upstream URL to avoid duplication of information.
 
-Note that, like the ``tarball`` field, the ``tpstream_url`` is a
+Note that, like the ``tarball`` field, the ``upstream_url`` is a
 template; the substring ``VERSION`` is substituted with the actual
-version.
+version. It can also be written as ``${VERSION}``, and it is possible
+to refer to the dot-separated components of a version by ``VERSION_MAJOR``,
+``VERSION_MINOR``, and ``VERSION_MICRO``.
 
 For Python packages available from PyPI, you should use an
 ``upstream_url`` from ``pypi.io``, which follows the format

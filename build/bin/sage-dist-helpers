@@ -244,7 +244,7 @@ sdh_pip_install() {
                 # Our default after #33789 (Sage 9.7): We allow the package to provision
                 # its build environment using the stored wheels.
                 # We pass --find-links.
-                # The SPKG needs to declare "setuptools_wheel" as a dependency.
+                # The SPKG needs to declare "setuptools" as a dependency.
                 build_isolation_option="--find-links=$SAGE_SPKG_WHEELS"
                 ;;
             --no-build-isolation)
@@ -289,8 +289,6 @@ sdh_pip_install() {
 
 sdh_pip_editable_install() {
     echo "Installing $PKG_NAME (editable mode)"
-    # Until https://github.com/sagemath/sage/issues/34209 switches us to PEP 660 editable wheels
-    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
     python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable "$@" || \
         sdh_die "Error installing $PKG_NAME"
 }

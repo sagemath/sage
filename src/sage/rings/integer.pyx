@@ -4076,7 +4076,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         if self.is_zero():
             raise ArithmeticError("support of 0 not defined")
-        return sage.arith.all.prime_factors(self)
+        from sage.arith.misc import prime_factors
+
+        return prime_factors(self)
 
     def coprime_integers(self, m):
         """
@@ -7539,7 +7541,7 @@ def _check_global_dummy_Integer():
 # It operates on the following principles:
 #
 # - The pool starts out empty.
-# - When an new integer is needed, one from the pool is returned
+# - When a new integer is needed, one from the pool is returned
 #   if available, otherwise a new Integer object is created
 # - When an integer is collected, it will add it to the pool
 #   if there is room, otherwise it will be deallocated.

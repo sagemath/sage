@@ -208,11 +208,19 @@ AUTHORS:
 import numbers
 
 import sage.rings.abc
+
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp import rich_to_bool, richcmp_method
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.combinat.words.abstract_word', 'Word_class')
+lazy_import('sage.combinat.words.finite_word', 'FiniteWord_class')
+lazy_import('sage.combinat.words.infinite_word', 'InfiniteWord_class')
+lazy_import('sage.combinat.words.word', 'Word')
+
 
 ZZ_0 = Integer(0)
 ZZ_1 = Integer(1)
@@ -2490,7 +2498,10 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
 
     cf = None
 
-    from sage.rings.real_mpfr import RealLiteral
+    try:
+        from sage.rings.real_mpfr import RealLiteral
+    except ImportError:
+        RealLiteral = ()
     if isinstance(x, RealLiteral):
         from sage.rings.real_mpfi import RealIntervalField
         x = RealIntervalField(x.prec())(x)
@@ -2661,7 +2672,6 @@ def continued_fraction(x, value=None):
         pass
 
     # input for finite or ultimately periodic partial quotient expansion
-    from sage.combinat.words.finite_word import FiniteWord_class
     if isinstance(x, FiniteWord_class):
         x = list(x)
 
@@ -2675,12 +2685,10 @@ def continued_fraction(x, value=None):
         return ContinuedFraction_periodic(x1, x2)
 
     # input for infinite partial quotient expansion
-    from sage.combinat.words.infinite_word import InfiniteWord_class
     from sage.misc.lazy_list import lazy_list_generic
     if isinstance(x, (lazy_list_generic, InfiniteWord_class)):
         return ContinuedFraction_infinite(x, value)
 
-    from sage.combinat.words.abstract_word import Word_class
     if isinstance(x, Word_class):
         raise ValueError("word with unknown length cannot be converted "
                          "to continued fractions")

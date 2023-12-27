@@ -370,7 +370,7 @@ def cython(filename, verbose=0, compile_message=False,
                 try:
                     with open(name + ".lis") as f:
                         cython_messages = f.read()
-                except IOError:
+                except OSError:
                     cython_messages = "Error compiling Cython file"
     except CompileError:
         raise RuntimeError(cython_messages.strip())
