@@ -74,7 +74,7 @@ jobs:
           if [ -d worktree-base ]; then
             (echo "# $GITHUB_BASE_REF"; SAGE_ROOT=worktree-base sage-package metrics :all:) > base-metrics.txt
             (echo "# $GITHUB_REF"; sage-package metrics :all:) > metrics.txt
-            diff --color --side-by-side base-metrics.txt metrics.txt || true
+            diff --color=always --width=100 --side-by-side --left-column base-metrics.txt metrics.txt || true
           else
             sage-package metrics :all:
           fi
