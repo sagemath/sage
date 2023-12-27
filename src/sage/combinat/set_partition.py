@@ -73,7 +73,7 @@ class AbstractSetPartition(ClonableArray,
             sage: S([[1,3],[2,4]])
             {{1, 3}, {2, 4}}
         """
-        return '{' + ', '.join(('{' + repr(sorted(x))[1:-1] + '}' for x in self)) + '}'
+        return '{' + ', '.join('{' + repr(sorted(x))[1:-1] + '}' for x in self) + '}'
 
     def __hash__(self):
         """

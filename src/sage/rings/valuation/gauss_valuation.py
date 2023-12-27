@@ -788,7 +788,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
     def lower_bound(self, f):
         r"""
-        Return an lower bound of this valuation at ``f``.
+        Return a lower bound of this valuation at ``f``.
 
         Use this method to get an approximation of the valuation of ``f``
         when speed is more important than accuracy.

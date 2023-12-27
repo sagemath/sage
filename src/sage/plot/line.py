@@ -559,6 +559,7 @@ def line2d(points, **options):
 
     A purple plot of the Riemann zeta function `\zeta(1/2 + it)`, `0 < t < 30`::
 
+        sage: # needs sage.libs.pari sage.rings.complex_double
         sage: i = CDF.gen()
         sage: v = [zeta(0.5 + n/10 * i) for n in range(300)]
         sage: L = [(z.real(), z.imag()) for z in v]
@@ -590,6 +591,7 @@ def line2d(points, **options):
 
     A red, blue, and green "cool cat"::
 
+        sage: # needs sage.symbolic
         sage: G = plot(-cos(x), -2, 2, thickness=5, rgbcolor=(0.5,1,0.5))
         sage: P = polygon([[1,2], [5,6], [5,0]], rgbcolor=(1,0,0))
         sage: Q = polygon([(-x,y) for x,y in P[0]], rgbcolor=(0,0,1))

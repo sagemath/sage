@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Free modules
 """
@@ -937,7 +936,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         EXAMPLES::
 
             sage: QS2 = SymmetricGroupAlgebra(QQ,2)                                     # needs sage.combinat
-            sage: QS2.get_order() # note: order changed on 2009-03-13                   # needs sage.combinat
+            sage: QS2.get_order()  # note: order changed on 2009-03-13                  # needs sage.combinat
             [[2, 1], [1, 2]]
         """
         if self._order is None:
@@ -1670,7 +1669,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             return super()._coerce_map_from_(R)
 
 
-class CartesianProductWithFlattening():
+class CartesianProductWithFlattening:
     """
     A class for Cartesian product constructor, with partial flattening
     """
