@@ -298,7 +298,7 @@ jobs:
              echo
              echo "If you need Docker images, "
              echo " - either run this GitHub Actions workflow in your repository fork"
-             echo " - or use the method described in https://doc.sagemath.org/html/en/developer/portability_testing.html#automatic-docker-based-build-testing-using-tox
+             echo " - or use the method described in https://doc.sagemath.org/html/en/developer/portability_testing.html#automatic-docker-based-build-testing-using-tox"
           else
              echo "No Docker images created."
           fi
