@@ -121,7 +121,7 @@ If a PR is closed for a reason other than positive review, use one of the
 ``r: worksforme``. Add a comment explaining why the issue has been closed if
 that's not already clear from the discussion.
 
-If you think an issue has been prematurely be closed, feel free to reopen it.
+If you think an issue has been prematurely closed, feel free to reopen it.
 
 
 Reasons to invalidate PRs
