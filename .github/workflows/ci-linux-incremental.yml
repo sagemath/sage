@@ -72,10 +72,9 @@ jobs:
         run: |
           export PATH=build/bin:$PATH
           if [ -d worktree-base ]; then
-            SAGE_ROOT=worktree-base sage-package metrics :all: > base-metrics.txt
-            sage-package metrics :all: > metrics.txt
-            diff --side-by-side base-metrics.txt metrics.txt
-            echo "Base: $GITHUB_BASE_REF"
+            (echo "# $GITHUB_BASE_REF"; SAGE_ROOT=worktree-base sage-package metrics :all:) > base-metrics.txt
+            (echo "# $GITHUB_REF"; sage-package metrics :all:) > metrics.txt
+            diff --color --side-by-side base-metrics.txt metrics.txt || true
           else
             sage-package metrics :all:
           fi
