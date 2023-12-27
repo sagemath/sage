@@ -115,7 +115,7 @@ Linux
       If you are on an older version of your distribution and a recent
       version of SageMath is only available on a newer version of the
       distribution, consider upgrading your distribution.
-      In particular, do not install a version of Sage older than 9.2.
+      In particular, do not install a version of Sage older than 9.5.
 
     - **No root access, or on an older distribution:** Install SageMath from
       the `conda-forge <https://conda-forge.org/>`_ project, as described in section
