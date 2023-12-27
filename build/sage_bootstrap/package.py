@@ -380,14 +380,15 @@ class Package(object):
 
         integer; 0 if the file cannot be read, 1 if it is a symlink
         """
-        filename = os.path.join(self.path, filename)
-        if os.path.islink(filename):
+        path = os.path.join(self.path, filename)
+        if os.path.islink(path):
             return 1
-        if os.path.isdir(filename):
+        if os.path.isdir(path):
             return sum(self.line_count_file(os.path.join(filename, entry))
-                       for entry in os.listdir(filename))
+                       for entry in os.listdir(path))
         try:
-            return len(list(open(filename, "rb")))
+            with open(path, "rb") as f:
+                return len(list(f))
         except OSError:
             return 0
 
