@@ -5,11 +5,26 @@
 #
 #  Assumes SAGE_ROOT is set
 PKG_BASE=$1
+if [ -n "$OUTPUT_DIR" ]; then
+    exec > "$OUTPUT_DIR"/$PKG_BASE.rst
+fi
+if [ -n "$OUTPUT_RST" ]; then
+    echo ".. _spkg_$PKG_BASE:"
+    echo
+    ref ()   { echo ":ref:\`$1\`"; }
+    issue () { echo ":issue:\`$1\`"; }
+    code ()  { echo "\`\`$*\`\`"; }
+else
+    ref ()   { echo "$1"; }
+    issue () { echo "https://github.com/sagemath/sage/issues/$1"; }
+    code ()  { echo "$1"; }
+fi
 PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
 for ext in rst txt; do
     SPKG_FILE="$PKG_SCRIPTS/SPKG.$ext"
     if [ -f "$SPKG_FILE" ]; then
-        sed "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" "$SPKG_FILE"
+        # for sphinx 4.4 we need to replace all direct links by some "extlink" (issue 33272)
+        sed -e "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" -e "s|https://github.com/sagemath/sage/issues/\([0-9]*\)|:issue:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" "$SPKG_FILE"
         break
     fi
 done
@@ -39,9 +54,9 @@ for dep_file in dependencies dependencies_order_only; do
                 # Dependencies like $(BLAS)
                 \$\(*)      echo "- $dep";;
                 # Looks like a package
-                *)          if [ -n "$OUTPUT_RST" -a -r "$SAGE_ROOT/build/pkgs/$dep/SPKG.rst" ]; then
+                *)          if [ -r "$SAGE_ROOT/build/pkgs/$dep/SPKG.rst" ]; then
                                 # This RST label is set in src/doc/bootstrap
-                                echo "- :ref:\`spkg_$dep\`"
+                                echo "- $(ref spkg_$dep)"
                             else
                                 echo "- $dep"
                             fi;;
@@ -103,7 +118,7 @@ for system in $systems; do
                 echo "$system:"
                 ;;
         esac
-        sage-print-system-package-command $system --prompt='    $ ' --sudo install $system_packages
+        sage-print-system-package-command $system --wrap --prompt='    $ ' --continuation='          ' --sudo install $system_packages
         echo
 done
 if [ -z "$system" ]; then
@@ -114,15 +129,15 @@ else
     if [ -f "${SPKG_CONFIGURE}" ]; then
         if grep -q SAGE_PYTHON_PACKAGE_CHECK "${SPKG_CONFIGURE}"; then
             echo "If the system package is installed and if the (experimental) option"
-            echo "--enable-system-site-packages is passed to ./configure, then ./configure"
+            echo "$(code --enable-system-site-packages) is passed to $(code ./configure), then $(code ./configure)"
             echo "will check if the system package can be used."
         else
-            echo "If the system package is installed, ./configure will check if it can be used."
+            echo "If the system package is installed, $(code ./configure) will check if it can be used."
         fi
     else
         echo "However, these system packages will not be used for building Sage"
-        echo "because spkg-configure.m4 has not been written for this package;"
-        echo "see https://github.com/sagemath/sage/issues/27330"
+        echo "because $(code spkg-configure.m4) has not been written for this package;"
+        echo "see $(issue 27330)"
     fi
 fi
 echo

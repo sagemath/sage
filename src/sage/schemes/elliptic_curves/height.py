@@ -155,7 +155,7 @@ class UnionOfIntervals:
 
     def __add__(left, right):
         r"""
-        If both left an right are unions of intervals, take their union,
+        If both left and right are unions of intervals, take their union,
         otherwise treat the non-union of intervals as a scalar and shift.
 
         EXAMPLES::

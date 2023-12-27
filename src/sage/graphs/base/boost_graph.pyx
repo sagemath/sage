@@ -2298,7 +2298,7 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     Return the diameter of a weighted directed graph.
 
     The ``DiFUB`` (Directed iterative Fringe Upper Bound) algorithm calculates
-    the exact value of the diameter of an weighted directed graph [CGLM2012]_.
+    the exact value of the diameter of a weighted directed graph [CGLM2012]_.
 
     This algorithm starts from a vertex found through a 2Dsweep call (a directed
     version of the 2sweep method). The worst case time complexity of the DiFUB
@@ -2492,11 +2492,11 @@ cpdef diameter(G, algorithm=None, source=None,
     - ``algorithm`` -- string (default: ``None``); specifies the algorithm to
       use among:
 
-      - ``'2Dsweep'`` -- Computes lower bound on the diameter of an weighted
+      - ``'2Dsweep'`` -- Computes lower bound on the diameter of a weighted
         directed graph using the weighted version of the algorithm proposed in
         [Broder2000]_. See the code's documentation for more details.
 
-      - ``'DiFUB'`` -- Computes the diameter of an weighted directed graph
+      - ``'DiFUB'`` -- Computes the diameter of a weighted directed graph
         using the weighted version of the algorithm proposed in [CGLM2012]_.
         See the code's documentation for more details.
 
