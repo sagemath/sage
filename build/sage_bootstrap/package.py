@@ -335,6 +335,13 @@ class Package(object):
 
     @property
     def trees(self):
+        """
+        Return the installation trees for the package
+
+        OUTPUT:
+
+        A white-space-separated string of environment variable names
+        """
         if self.__trees is not None:
             return self.__trees
         if self.__install_requires is not None:
