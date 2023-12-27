@@ -11,6 +11,35 @@ provide well-maintained and up-to-date SageMath packages:
 `Arch Linux <https://archlinux.org/>`_
 and `Void Linux <https://voidlinux.org/>`_.
 
+.. only:: html
+
+   .. |codespace-downstream-archlinux-latest| image:: https://github.com/codespaces/badge.svg
+      :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fdownstream-archlinux-latest%2Fdevcontainer.json
+
+   .. |package-downstream-archlinux-latest| image:: https://repology.org/badge/version-for-repo/arch/sagemath.svg
+      :target: https://repology.org/project/sagemath/versions
+
+   .. |codespace-downstream-voidlinux-latest| image:: https://github.com/codespaces/badge.svg
+      :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fdownstream-voidlinux-latest%2Fdevcontainer.json
+
+   .. |package-downstream-voidlinux-latest| image:: https://repology.org/badge/version-for-repo/void_x86_64/sagemath.svg
+      :target: https://repology.org/project/sagemath/versions
+
+   .. list-table::
+      :widths: 35 30 35
+      :header-rows: 0
+
+      * - `downstream-archlinux-latest
+          <https://github.com/sagemath/sage/tree/develop/.devcontainer/downstream-archlinux-latest>`_
+        - |package-downstream-archlinux-latest|
+        - |codespace-downstream-archlinux-latest|
+
+      * - `downstream-voidlinux-latest
+          <https://github.com/sagemath/sage/tree/develop/.devcontainer/downstream-voidlinux-latest>`_
+        - |package-downstream-voidlinux-latest|
+        - |codespace-downstream-voidlinux-latest|
+
+
 Gentoo users might want to give a try to
 `sage-on-gentoo <https://github.com/cschwan/sage-on-gentoo>`_.
 
