@@ -263,19 +263,24 @@ jobs:
       - name: List Docker images
         run: |
           if [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags ]; then
-             echo "::notice title=Docker images pushed::$(echo $(cat .tox/$TOX_ENV/Dockertags))"
+             set -- $(cat .tox/$TOX_ENV/Dockertags)
+             case $# in
+                 1) images="image";  one_image="the image";;
+                 *) images="images"; one_image="one of the images";;
+             esac
+             echo "::notice title=Docker $images pushed::Pushed $images $(echo $(cat .tox/$TOX_ENV/Dockertags))"
              echo
-             echo "To pull an image and enter the container, type:"
+             echo "To pull $one_image and enter the container, type:"
              echo
-             for TAG in $(cat .tox/$TOX_ENV/Dockertags); do
+             for TAG in $*; do
                  echo "  \$ docker run -it $TAG bash"
              done
              echo
-             echo "To use an image as the base for an incremental build, type:"
+             echo "To use $one_image as the base for an incremental build, type:"
              echo
              TOX_ENV_SANS_INCREMENTAL=${TOX_ENV/-incremental/}
              DOCKER_IMAGE=${TOX_ENV_SANS_INCREMENTAL#docker-}
-             for TAG in $(cat .tox/$TOX_ENV/Dockertags); do
+             for TAG in $*; do
                  echo -n "  \$"
                  if [ "$DOCKER_PUSH_REPOSITORY" != "ghcr.io/sagemath/sage/" ]; then
                      echo -n " FROM_DOCKER_REPOSITORY=$DOCKER_PUSH_REPOSITORY"
