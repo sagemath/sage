@@ -285,6 +285,26 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: H.affine_fundamental_group()
             Finitely presented group
             < x0, x1, x2 | x0*x1*x2*x1^-1*x0^-1*x2^-1, x1*x2*x0*x1^-1*x0^-1*x2^-1 >
+            sage: H.affine_fundamental_group()  # repeat to use the attribute
+            Finitely presented group
+            < x0, x1, x2 | x0*x1*x2*x1^-1*x0^-1*x2^-1, x1*x2*x0*x1^-1*x0^-1*x2^-1 >
+            sage: T.<t> = QQ[]
+            sage: K.<a> = NumberField(t^3 + t + 1)
+            sage: L.<x, y> = OrderedHyperplaneArrangements(K)
+            sage: H = L(a*x + y -1, x + a*y + 1, x - 1, y - 1)
+            sage: H.affine_fundamental_group()
+            Traceback (most recent call last):
+            ...
+            TypeError: the base field is not in QQbar
+            sage: L.<t> = OrderedHyperplaneArrangements(QQ)
+            sage: L([t - j for j in range(4)]).affine_fundamental_group()
+            Finitely presented group < x0, x1, x2, x3 |  >
+            sage: L.<x, y, z> = OrderedHyperplaneArrangements(QQ)
+            sage: L(L.gens() + (x + y + z + 1,)).affine_fundamental_group()
+            Finitely presented group
+            < x0, x1, x2, x3 | x1*x0*x1^-1*x0^-1, x2*x0*x2^-1*x0^-1,
+                               x2*x1*x2^-1*x1^-1, x3*x0*x3^-1*x0^-1,
+                               x3*x1*x3^-1*x1^-1, x3*x2*x3^-1*x2^-1 >
 
         .. WARNING::
 
@@ -406,6 +426,10 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: g = H.projective_fundamental_group()
             sage: g.is_abelian(), g.abelian_invariants()
             (True, (0, 0, 0, 0))
+            sage: L(t0, t1, t2, t3, t4, t0 - 1).projective_fundamental_group()
+            Traceback (most recent call last):
+            ...
+            TypeError: the arrangement is not projective
 
         .. WARNING::
 
@@ -414,7 +438,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         K = self.base_ring()
         if not K.is_subring(QQbar):
             raise TypeError('the base field is not in QQbar')
-        if not self.is_central():
+        if not self.is_linear():
             raise TypeError('the arrangement is not projective')
         if self._projective_fundamental_group:
             return self._projective_fundamental_group
@@ -534,6 +558,8 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         EXAMPLES::
 
             sage: L.<x, y> = OrderedHyperplaneArrangements(QQ)
+            sage: L._element_constructor_(x)
+            Arrangement <x>
             sage: L._element_constructor_(x, y)
             Arrangement <x | y>
             sage: L._element_constructor_([x, y])

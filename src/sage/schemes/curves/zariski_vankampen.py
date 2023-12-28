@@ -656,14 +656,14 @@ def fieldI(field):
     if I0 in field:
         return field
     field_a = field[I0]
-    field_b = field_a.absolute_field('b0')
+    field_b = field_a.absolute_field('b_0')
     b0 = field_b.gen()
     q = b0.minpoly()
     qembd = field_b.embeddings(QQbar)
     for h1 in qembd:
         b1 = h1(b0)
         b2 = h1(field_b(field_a.gen(0)))
-        b3 = field.gen(0)
+        b3 = QQbar(field.gen(0))
         F1 = NumberField(q, 'prim', embedding=b1)
         if b3 in F1 and b2.imag() > 0:
             return F1
