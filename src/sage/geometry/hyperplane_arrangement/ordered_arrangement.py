@@ -235,9 +235,17 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             H1b = A1(mat_rows)
             return H1b
         P = self.intersection_poset(element_label="subspace")
-        n1 = self.center().dimension()
-        U = [p.linear_part().basis()[0] for p in P if p.dimension() == n1 + 1]
+        center = P.maximal_elements()[0].linear_part()
+        n1 = center.dimension()
+        U = []
+        for p in P:
+            if p.dimension() == n1 + 1:
+                B = [u for u in p.linear_part().basis() if u not in center]
+                U.append(B[0])
+        # U = [p.linear_part().basis()[0] for p in P if p.dimension() == n1 + 1]
         U0 = sum(U)
+        # We look for a linear hyperplane with integer coefficients
+        # defining a transversal hyperplane
         for v in ZZ**n0:
             v1 = v + U0
             if 0 not in [w * v1 for w in U]:

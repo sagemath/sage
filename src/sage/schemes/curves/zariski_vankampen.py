@@ -372,7 +372,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
             print(prec)
 
 
-def voronoi_cells(V, vertical_lines=[]):
+def voronoi_cells(V, vertical_lines=()):
     r"""
     Compute the graph, the boundary graph, a base point, a positive orientation
     of the boundary graph, and the dual graph of a corrected Voronoi diagram.
@@ -381,7 +381,7 @@ def voronoi_cells(V, vertical_lines=[]):
 
     - ``V`` -- a corrected Voronoi diagram
 
-    - ``vertical_lines`` -- list (default: ``[]``); indices of the
+    - ``vertical_lines`` -- list (default: ``()``); indices of the
       vertical lines
 
     OUTPUT:
@@ -460,7 +460,7 @@ def voronoi_cells(V, vertical_lines=[]):
     regions = V.regions()
     points = [p for p in V.regions().keys() if V.regions()[p].is_compact()]
     compact_regions = [regions[p] for p in points]
-    vertical_regions = dict()
+    vertical_regions = {}
     non_compact_regions = [_ for _ in V.regions().values()
                            if not _.is_compact()]
     G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)],
@@ -638,9 +638,9 @@ def fieldI(field):
         sage: a0 = p.roots(QQbar, multiplicities=False)[0]
         sage: F0.<a> = NumberField(p, embedding=a0)
         sage: fieldI(F0)
-        Number Field in primitif_element with defining polynomial
+        Number Field in prim with defining polynomial
         x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10
-        with primitif_element = 0.4863890359345430? + 1.000000000000000?*I
+        with prim = 0.4863890359345430? + 1.000000000000000?*I
 
     If ``I`` is already in the field, the result is the field itself::
 
@@ -656,7 +656,7 @@ def fieldI(field):
     if I0 in field:
         return field
     field_a = field[I0]
-    field_b = field_a.absolute_field('imaginary_unit')
+    field_b = field_a.absolute_field('b0')
     b0 = field_b.gen()
     q = b0.minpoly()
     qembd = field_b.embeddings(QQbar)
@@ -664,7 +664,7 @@ def fieldI(field):
         b1 = h1(b0)
         b2 = h1(field_b(field_a.gen(0)))
         b3 = field.gen(0)
-        F1 = NumberField(q, 'primitif_element', embedding=b1)
+        F1 = NumberField(q, 'prim', embedding=b1)
         if b3 in F1 and b2.imag() > 0:
             return F1
 
@@ -933,7 +933,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
     return initialbraid * centralbraid * finalbraid
 
 
-def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
+def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}):
     r"""
     Return a geometric basis, based on a vertex.
 
@@ -952,10 +952,11 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
       ``E`` is the boundary of the non-bounded component of the complement.
       The edges are labelled as the dual edges and the vertices are labelled
       by a tuple whose first element is the an integer for the position and the
-      second one is the cyclic ordered list of vertices in the region.
+      second one is the cyclic ordered list of vertices in the region
 
-    - ``vertical_regions`` -- dictionary with keys the vertices of
-      ``dual_graph`` to fix regions associated with vertical lines
+    - ``vertical_regions`` -- dictionary (default: `{}`); its keys are
+      the vertices of ``dual_graph`` to fix regions associated with
+      vertical lines
 
     OUTPUT: A geometric basis and a dictionary.
 
@@ -973,7 +974,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
         sage: points = (0, -1, I, 1, -I)
         sage: V = corrected_voronoi_diagram(points)
         sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=[0, 1, 2, 3, 4])
-        sage: gb, vd = geometric_basis(G, E, EC, p, DG, VR)
+        sage: gb, vd = geometric_basis(G, E, EC, p, DG, vertical_regions=VR)
         sage: gb
         [[A vertex at (5/2, -5/2), A vertex at (5/2, 5/2), A vertex at (-5/2, 5/2),
           A vertex at (-1/2, 1/2), A vertex at (-1/2, -1/2), A vertex at (1/2, -1/2),
@@ -1098,8 +1099,8 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
         EC1 = list(EC[qi:] + EC[1:ri]) + list(reversed(cutpath))
         EC2 = cutpath + list(EC[ri + 1:qi + 1])
 
-    gb1, vd1 = geometric_basis(G1, E1, EC1, q, Gd1, vertical_regions)
-    gb2, vd2 = geometric_basis(G2, E2, EC2, q, Gd2, vertical_regions)
+    gb1, vd1 = geometric_basis(G1, E1, EC1, q, Gd1, vertical_regions=vertical_regions)
+    gb2, vd2 = geometric_basis(G2, E2, EC2, q, Gd2, vertical_regions=vertical_regions)
 
     vd = {j: vd1[j] for j in vd1}
     m = len(gb1)
@@ -1350,7 +1351,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         i = strands[j]
         k = arrangement1.index(arrangement_h[i])
         strands1[j] = k
-    geombasis, vd = geometric_basis(G, E, EC, p, DG, VR)
+    geombasis, vd = geometric_basis(G, E, EC, p, DG, vertical_regions=VR)
     segs = set()
     for p in geombasis:
         for s in zip(p[:-1], p[1:]):
