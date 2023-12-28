@@ -868,7 +868,7 @@ class ToricVarietyFactory(SageObject):
 
         .. NOTE::
 
-            * This is an example of an non-polyhedral fan.
+            * This is an example of a non-polyhedral fan.
 
             * Its Chow group has torsion: `A_2(X)=\ZZ^5 \oplus \ZZ_2`
 

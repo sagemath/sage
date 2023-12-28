@@ -324,7 +324,7 @@ all-toolchain: base-toolchain
 
 # Shorthand for a list of packages sufficient for building and installing
 # typical Python packages from source. Wheel packages only need pip.
-PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel setuptools_wheel
+PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel flit_core hatchling
 
 # Trac #32056: Avoid installed setuptools leaking into the build of python3 by uninstalling it.
 # It will have to be reinstalled anyway because of its dependency on $(PYTHON).

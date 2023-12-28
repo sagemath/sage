@@ -76,6 +76,7 @@ class OreFunction(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
@@ -85,6 +86,7 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: f = 1/x^3; f
             x^(-3)
             sage: f * x^5
@@ -139,6 +141,7 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
@@ -156,12 +159,12 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.function_field
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: der = R.derivation(1, twist=sigma)
             sage: S.<delta> = R['delta', der]
             sage: K = S.fraction_field()
-
             sage: P = K.random_element()
             sage: Q = K.random_element()
             sage: D = K.random_element()
@@ -197,18 +200,19 @@ class OreFunction(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: s = x + a
             sage: t = x^2 + a*x + a^2
-
             sage: f = s^(-1) * t
             sage: f.left_denominator()
             x + a
 
         In the example below, a simplification occurs::
 
+            sage: # needs sage.rings.finite_rings
             sage: u = S.random_element(degree=2)
             sage: g = (u*s)^(-1) * (u*t)
             sage: g.left_denominator()
@@ -222,13 +226,13 @@ class OreFunction(AlgebraElement):
             sage: S.<x> = R['x', sigma]
             sage: s = (x + z)^2
             sage: t = (x + z) * (x^2 + z^2)
-            sage: f = s^(-1) * t
-            sage: f.left_denominator()
+            sage: f = s^(-1) * t                                                        # needs sage.rings.function_field
+            sage: f.left_denominator()                                                  # needs sage.rings.function_field
             x^2 + (z^2 + z)*x + z^2
 
         However, the following always holds true::
 
-            sage: f == f.left_denominator()^(-1) * f.right_numerator()
+            sage: f == f.left_denominator()^(-1) * f.right_numerator()                  # needs sage.rings.function_field
             True
 
         .. SEEALSO::
@@ -258,18 +262,19 @@ class OreFunction(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: s = x + a
             sage: t = x^2 + a*x + a^2
-
             sage: f = s^(-1) * t
             sage: f.right_numerator()
             x^2 + a*x + a^2
 
         In the example below, a simplification occurs::
 
+            sage: # needs sage.rings.finite_rings
             sage: u = S.random_element(degree=2)
             sage: g = (u*s)^(-1) * (u*t)
             sage: g.right_numerator()
@@ -286,15 +291,15 @@ class OreFunction(AlgebraElement):
         r"""
         Return the pair `(s,t)` if this element reads `t s^{-1}`.
 
-        This is an helper function. Do not call it directly.
+        This is a helper function. Do not call it directly.
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(11^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a+1, twist=Frob)
             sage: S.<x> = k['x', der]
-
             sage: P = S.random_element(degree=5)
             sage: Q = S.random_element(degree=5)
             sage: f = P / Q
@@ -330,18 +335,19 @@ class OreFunction(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: s = x + a
             sage: t = x^2 + a*x + a^2
-
             sage: f = t/s
             sage: f.right_denominator()
             x + a
 
         In the example below, a simplification occurs::
 
+            sage: # needs sage.rings.finite_rings
             sage: u = S.random_element(degree=2)
             sage: g = (t*u) / (s*u)
             sage: g.right_denominator()
@@ -356,11 +362,12 @@ class OreFunction(AlgebraElement):
             sage: R.<z> = GF(11)[]
             sage: sigma = R.hom([z^2])
             sage: S.<x> = R['x', sigma]
-            sage: f = (x + z) / (x - z)
-            sage: f.right_denominator()
+            sage: f = (x + z) / (x - z)                                                 # needs sage.rings.function_field
+            sage: f.right_denominator()                                                 # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
-            NotImplementedError: inversion of the twisting morphism Ring endomorphism of Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 11
+            NotImplementedError: inversion of the twisting morphism Ring endomorphism
+            of Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 11
               Defn: z |--> z^2
         """
         return self._reverse_fraction()[1]
@@ -384,18 +391,19 @@ class OreFunction(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: s = x + a
             sage: t = x^2 + a*x + a^2
-
             sage: f = t/s
             sage: f.left_numerator()
             x^2 + a*x + a^2
 
         In the example below, a simplification occurs::
 
+            sage: # needs sage.rings.finite_rings
             sage: u = S.random_element(degree=2)
             sage: g = (t*u) / (s*u)
             sage: g.left_numerator()
@@ -430,12 +438,12 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^2)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a, twist=Frob)
             sage: S.<x> = k['x', der]
             sage: K = S.fraction_field()
-
             sage: f = K.random_element()
             sage: g = K.random_element()
             sage: h = K.random_element()
@@ -458,12 +466,12 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^2)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a, twist=Frob)
             sage: S.<x> = k['x', der]
             sage: K = S.fraction_field()
-
             sage: f = K.random_element()
             sage: g = K.random_element()
             sage: h = K.random_element()
@@ -480,12 +488,12 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^2)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a, twist=Frob)
             sage: S.<x> = k['x', der]
             sage: K = S.fraction_field()
-
             sage: f = K.random_element()
             sage: g = -f
             sage: (f+g).is_zero()
@@ -503,12 +511,12 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^2)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a, twist=Frob)
             sage: S.<x> = k['x', der]
             sage: K = S.fraction_field()
-
             sage: f = K.random_element()
             sage: g = K.random_element()
             sage: h = K.random_element()
@@ -538,18 +546,17 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^2)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a, twist=Frob)
             sage: S.<x> = k['x', der]
             sage: K = S.fraction_field()
-
             sage: f = K.random_element()
             sage: g = K.random_element()
             sage: h = K.random_element()
             sage: g == 0 or h == 0 or f / (g / h) == f*h / g
             True
-
             sage: 0/f
             0
             sage: f/0
@@ -559,7 +566,7 @@ class OreFunction(AlgebraElement):
 
         We check that :trac:`32109` is fixed::
 
-            sage: K(0)/K(0)
+            sage: K(0)/K(0)                                                             # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: cannot divide by zero
@@ -579,17 +586,16 @@ class OreFunction(AlgebraElement):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^2)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a, twist=Frob)
             sage: S.<x> = k['x', der]
             sage: K = S.fraction_field()
-
             sage: f = K.random_element()
             sage: g = ~f
             sage: f * g
             1
-
             sage: ~K(0)
             Traceback (most recent call last):
             ...
@@ -629,23 +635,24 @@ class OreFunction(AlgebraElement):
         When the twisting morphism is not trivial, the output lies
         in a different Ore polynomial ring::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: K = S.fraction_field()
-
             sage: f = (x-a)^(-2)
             sage: g = f.hilbert_shift(a); g
             x^(-2)
-
             sage: g.parent()
-            Ore Function Field in x over Finite Field in a of size 5^3 twisted by a |--> a^5 and a*([a |--> a^5] - id)
+            Ore Function Field in x over Finite Field in a of size 5^3
+             twisted by a |--> a^5 and a*([a |--> a^5] - id)
             sage: g.parent() is S
             False
 
         This behavior ensures that the Hilbert shift by a fixed element
-        defines an homomorphism of fields::
+        defines a homomorphism of fields::
 
+            sage: # needs sage.rings.finite_rings
             sage: U = K.random_element(degree=5)
             sage: V = K.random_element(degree=5)
             sage: s = k.random_element()
@@ -669,17 +676,17 @@ class ConstantOreFunctionSection(Map):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.polynomial.ore_polynomial_element import ConstantOrePolynomialSection
         sage: k.<a> = GF(5^3)
         sage: Frob = k.frobenius_endomorphism()
         sage: S.<x> = k['x', Frob]
         sage: K = S.fraction_field()
-
         sage: iota = K.coerce_map_from(k)
-        sage: sigma = iota.section()
-        sage: sigma
+        sage: sigma = iota.section(); sigma
         Generic map:
-          From: Ore Function Field in x over Finite Field in a of size 5^3 twisted by a |--> a^5
+          From: Ore Function Field in x over Finite Field in a of size 5^3
+                twisted by a |--> a^5
           To:   Finite Field in a of size 5^3
     """
     def _call_(self, x):
@@ -693,14 +700,12 @@ class ConstantOreFunctionSection(Map):
             sage: F = R.fraction_field()
             sage: sigma = R.hom([t^2])
             sage: S.<x> = R['x', sigma]
-
             sage: P = S._random_nonzero_element()
-            sage: f = (t*P) / P
-            sage: F(f)
+            sage: f = (t*P) / P                                                         # needs sage.rings.function_field
+            sage: F(f)                                                                  # needs sage.rings.function_field
             t
-
-            sage: g = x / (x+t)
-            sage: F(g)
+            sage: g = x / (x+t)                                                         # needs sage.rings.function_field
+            sage: F(g)                                                                  # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             TypeError: not a constant function
@@ -727,9 +732,8 @@ class OreFunctionBaseringInjection(Morphism):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
-            sage: K = S.fraction_field()
-
-            sage: K.coerce_map_from(K.base_ring())  # indirect doctest
+            sage: K = S.fraction_field()                                                # needs sage.rings.function_field
+            sage: K.coerce_map_from(K.base_ring())  # indirect doctest                  # needs sage.rings.function_field
             Ore Function base injection morphism:
               From: Fraction Field of Univariate Polynomial Ring in t over Rational Field
               To:   Ore Function Field in x over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by t |--> t + 1
@@ -746,6 +750,7 @@ class OreFunctionBaseringInjection(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -766,6 +771,7 @@ class OreFunctionBaseringInjection(Morphism):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -789,6 +795,7 @@ class OreFunctionBaseringInjection(Morphism):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -796,7 +803,8 @@ class OreFunctionBaseringInjection(Morphism):
             sage: m = K.coerce_map_from(k)
             sage: m.section()
             Generic map:
-              From: Ore Function Field in x over Finite Field in t of size 5^3 twisted by t |--> t^5
+              From: Ore Function Field in x over Finite Field in t of size 5^3
+                    twisted by t |--> t^5
               To:   Finite Field in t of size 5^3
         """
         return ConstantOreFunctionSection(self.codomain(), self.domain())
@@ -812,12 +820,12 @@ class OreFunction_with_large_center(OreFunction):
 
     TESTS::
 
+        sage: # needs sage.rings.finite_rings
         sage: k.<a> = GF(5^3)
         sage: Frob = k.frobenius_endomorphism()
         sage: S.<x> = k['x', Frob]
         sage: K = S.fraction_field()
         sage: f = K.random_element()
-
         sage: from sage.rings.polynomial.ore_function_element import OreFunction_with_large_center
         sage: isinstance(f, OreFunction_with_large_center)
         True
@@ -835,11 +843,11 @@ class OreFunction_with_large_center(OreFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: K = S.fraction_field()
-
             sage: a = 1 / (x^2 + t)
             sage: tr = a.reduced_trace(); tr
             3/(z^2 + 2)
@@ -847,6 +855,7 @@ class OreFunction_with_large_center(OreFunction):
         The reduced trace lies in the center of `S`, which is the fraction field
         of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`::
 
+            sage: # needs sage.rings.finite_rings
             sage: tr.parent()
             Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 5
             sage: tr.parent() is K.center()
@@ -854,7 +863,7 @@ class OreFunction_with_large_center(OreFunction):
 
         We can use explicit conversion to view ``tr`` as a Ore function::
 
-            sage: K(tr)
+            sage: K(tr)                                                                 # needs sage.rings.finite_rings
             (x^6 + 2)^(-1) * 3
 
         By default, the name of the central variable is usually ``z`` (see
@@ -862,13 +871,14 @@ class OreFunction_with_large_center(OreFunction):
         for more details about this).
         However, the user can specify a different variable name if desired::
 
-            sage: a.reduced_trace(var='u')
+            sage: a.reduced_trace(var='u')                                              # needs sage.rings.finite_rings
             3/(u^2 + 2)
 
         TESTS:
 
         We check that the reduced trace is additive::
 
+            sage: # needs sage.rings.finite_rings
             sage: a = K.random_element(degree=5)
             sage: b = K.random_element(degree=7)
             sage: a.reduced_trace() + b.reduced_trace() == (a+b).reduced_trace()
@@ -876,7 +886,7 @@ class OreFunction_with_large_center(OreFunction):
 
         ::
 
-            sage: (a*b).reduced_trace() == (b*a).reduced_trace()
+            sage: (a*b).reduced_trace() == (b*a).reduced_trace()                        # needs sage.rings.finite_rings
             True
         """
         ring = self.parent()._ring
@@ -896,11 +906,11 @@ class OreFunction_with_large_center(OreFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: K = S.fraction_field()
-
             sage: a = (x + t) / (x^2 + t^2)
             sage: N = a.reduced_norm(); N
             (z + 2)/(z^2 + 4)
@@ -908,6 +918,7 @@ class OreFunction_with_large_center(OreFunction):
         The reduced norm lies in the center of `S`, which is the fraction field
         of a univariate polynomial ring in the variable `z = x^3` over `GF(5)`. ::
 
+            sage: # needs sage.rings.finite_rings
             sage: N.parent()
             Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 5
             sage: N.parent() is K.center()
@@ -915,7 +926,7 @@ class OreFunction_with_large_center(OreFunction):
 
         We can use explicit conversion to view ``N`` as a skew polynomial::
 
-            sage: K(N)
+            sage: K(N)                                                                  # needs sage.rings.finite_rings
             (x^6 + 4)^(-1) * (x^3 + 2)
 
         By default, the name of the central variable is usually ``z`` (see
@@ -923,13 +934,14 @@ class OreFunction_with_large_center(OreFunction):
         for more details about this).
         However, the user can specify a different variable name if desired::
 
-            sage: a.reduced_norm(var='u')
+            sage: a.reduced_norm(var='u')                                               # needs sage.rings.finite_rings
             (u + 2)/(u^2 + 4)
 
         TESTS:
 
         We check that the reduced norm is a multiplicative map::
 
+            sage: # needs sage.rings.finite_rings
             sage: a = K.random_element()
             sage: b = K.random_element()
             sage: a.reduced_norm() * b.reduced_norm() == (a*b).reduced_norm()

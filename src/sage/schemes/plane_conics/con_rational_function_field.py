@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Projective plane conics over a rational function field
 

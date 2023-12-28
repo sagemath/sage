@@ -1806,12 +1806,13 @@ class DocTestDispatcher(SageObject):
         job_client = None
         try:
             from gnumake_tokenpool import JobClient, NoJobServer
-            try:
-                job_client = JobClient()
-            except NoJobServer:
-                pass
         except ImportError:
             pass
+        else:
+            try:
+                job_client = JobClient(use_cysignals=True)
+            except NoJobServer:
+                pass
 
         source_iter = iter(self.controller.sources)
 

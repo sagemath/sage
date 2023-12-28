@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Morphisms on projective schemes
 
@@ -735,9 +734,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def scale_by(self, t):
         """
-        Scales each coordinate by a factor of ``t``.
+        Scale each coordinate by a factor of ``t``.
 
-        A ``TypeError`` occurs if the point is not in the coordinate ring
+        A :class:`TypeError` occurs if the point is not in the coordinate ring
         of the parent after scaling.
 
         INPUT:

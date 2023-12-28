@@ -197,8 +197,8 @@ def Watson_mass_at_2(self):
     s_max = max(scale_list)
 
     # Step 1: Compute dictionaries of the diagonal block and 2x2 block for each scale
-    diag_dict = dict((i, Null_Form) for i in range(s_min - 2, s_max + 4))     # Initialize with the zero form
-    dim2_dict = dict((i, Null_Form) for i in range(s_min, s_max + 4))       # Initialize with the zero form
+    diag_dict = {i: Null_Form for i in range(s_min - 2, s_max + 4)}     # Initialize with the zero form
+    dim2_dict = {i: Null_Form for i in range(s_min, s_max + 4)}       # Initialize with the zero form
     for s, L in Jordan_Blocks:
         i = 0
         while i < L.dim() - 1 and L[i, i + 1] == 0:      # Find where the 2x2 blocks start
@@ -210,8 +210,8 @@ def Watson_mass_at_2(self):
             diag_dict[s] = L
 
     # Step 2: Compute three dictionaries of invariants (for n_j, m_j, nu_j)
-    n_dict = dict((j, 0) for j in range(s_min + 1, s_max + 2))
-    m_dict = dict((j, 0) for j in range(s_min, s_max + 4))
+    n_dict = {j: 0 for j in range(s_min + 1, s_max + 2)}
+    m_dict = {j: 0 for j in range(s_min, s_max + 4)}
     for s, L in Jordan_Blocks:
         n_dict[s + 1] = L.dim()
         if diag_dict[s].dim() == 0:
@@ -219,8 +219,8 @@ def Watson_mass_at_2(self):
         else:
             m_dict[s + 1] = ZZ(L.dim() - 1) // ZZ(2)
 
-    nu_dict = dict((j, n_dict[j + 1] - 2 * m_dict[j + 1])
-                   for j in range(s_min, s_max + 1))
+    nu_dict = {j: n_dict[j + 1] - 2 * m_dict[j + 1]
+               for j in range(s_min, s_max + 1)}
     nu_dict[s_max + 1] = 0
 
     # Step 3: Compute the e_j dictionary
@@ -280,8 +280,8 @@ def Kitaoka_mass_at_2(self):
     s_max = max(scale_list)
 
     # Step 1: Compute dictionaries of the diagonal block and 2x2 block for each scale
-    diag_dict = dict((i, Null_Form) for i in range(s_min - 2, s_max + 4))   # Initialize with the zero form
-    dim2_dict = dict((i, Null_Form) for i in range(s_min, s_max + 4))       # Initialize with the zero form
+    diag_dict = {i: Null_Form for i in range(s_min - 2, s_max + 4)}   # Initialize with the zero form
+    dim2_dict = {i: Null_Form for i in range(s_min, s_max + 4)}       # Initialize with the zero form
     for s, L in Jordan_Blocks:
         i = 0
         while i < L.dim() - 1 and L[i, i + 1] == 0:      # Find where the 2x2 blocks start

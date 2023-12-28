@@ -48,7 +48,7 @@ def abstract_method(f=None, optional=False):
         sage: A.my_method
         <abstract method my_method at ...>
 
-    The current policy is that a ``NotImplementedError`` is raised
+    The current policy is that a :class:`NotImplementedError` is raised
     when accessing the method through an instance, even before the
     method is called::
 
@@ -193,7 +193,7 @@ class AbstractMethod():
             sage: src[0]
             'def version():\n'
             sage: lines
-            19
+            18
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)
