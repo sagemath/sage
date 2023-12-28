@@ -125,7 +125,7 @@ jobs:
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./sage -t --new -p2 --format github
+          ./sage -t --new -p2
         working-directory: ./worktree-image
         env:
           MAKE: make -j2 --output-sync=recurse
@@ -159,7 +159,7 @@ jobs:
       - name: Prepare coverage results
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
-          ./venv/bin/python3 -m coverage combine src/.coverage/
+          ./venv/bin/python3 -m coverage combine .coverage/
           ./venv/bin/python3 -m coverage xml
           mkdir -p coverage-report
           mv coverage.xml coverage-report/
