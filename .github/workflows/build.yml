@@ -172,7 +172,7 @@ jobs:
           MAKE: make -j2 --output-sync=recurse
           SAGE_NUM_THREADS: 2
 
-      - name: Imports
+      - name: Check that all modules can be imported
         run: |
           ../sage -python -m pip install pytest-xdist
           ../sage -python -m pytest -c tox.ini -qq --doctest --collect-only || true
