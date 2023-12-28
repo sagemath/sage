@@ -260,6 +260,29 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         return self.free_module().index_in(self.ring().free_module())
 
+def _positive_sqrt(R, D):
+    r"""
+    Return the "positive" square root of `D` in `R`, which must be
+    a quadratic field or an order in a quadratic field.
+
+    EXAMPLES::
+
+        sage: from sage.rings.number_field.order_ideal import _positive_sqrt
+        sage: K = QuadraticField(-77)
+        sage: _positive_sqrt(K, 0)
+        0
+        sage: _positive_sqrt(K, -77)
+        a
+        sage: x = polygen(ZZ)
+        sage: O.<t> = EquationOrder(x^2 - x - 1)
+        sage: _positive_sqrt(O, O.number_field().discriminant())
+        2*t - 1
+    """
+    if D.is_zero():
+        return R.zero()
+    sqrtD, = (s for s in R(D).sqrt(all=True) if s.real() > 0 or s.imag() > 0)
+    return sqrtD
+
 def _gens_from_bqf(O, Q):
     r"""
     Helper function to compute generators of the ideal associated to
@@ -313,7 +336,7 @@ def _gens_from_bqf(O, Q):
     if Q.discriminant() != O.discriminant():
         raise ValueError('order and form must have the same discriminant')
     a, b, c = Q
-    sqrtD, = (s for s in O(D).sqrt(all=True) if s.real() > 0 or s.imag() > 0)
+    sqrtD = _positive_sqrt(O.number_field(), D)
     g = (- b + sqrtD) / 2
     t = sqrtD if a < 0 else 1
     return a*t, g*t
@@ -329,7 +352,8 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         general number fields.
 
         The preferred way to construct objects of this class is via
-        the :meth:`~sage.rings.number_field.order.Order.ideal` method.
+        the :meth:`~sage.rings.number_field.order.Order.ideal` method
+        (or the ``O*a`` convenience syntax).
 
         EXAMPLES::
 
@@ -337,6 +361,8 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             sage: O = K.order(t)
             sage: type(O.ideal(7))
             <class 'sage.rings.number_field.order_ideal.NumberFieldOrderIdeal_quadratic'>
+            sage: O*7 == O.ideal(7)
+            True
         """
         from sage.quadratic_forms.binary_qf import BinaryQF
         if isinstance(gens, BinaryQF):
@@ -620,6 +646,10 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         The correspondence itself is classical.
         Implemented after [Coh1993]_, §5.2.
 
+        .. SEEALSO::
+
+            :meth:`sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal.quadratic_form`
+
         EXAMPLES::
 
             sage: K.<t> = QuadraticField(-419)
@@ -676,7 +706,9 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             sage: J = random_ideal()
             sage: F = I.quadratic_form()
             sage: G = J.quadratic_form()
-            sage: H = (I*J).quadratic_form()
+            sage: # Once future=1 is the default, the following line can be K = I * J
+            sage: K = O.ideal([g*h for g in I.gens() for h in J.gens()], future=1)
+            sage: H = K.quadratic_form()
             sage: F.discriminant() == G.discriminant() == H.discriminant() == O.discriminant()
             True
             sage: H.is_equivalent(F*G)
@@ -684,7 +716,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
 
         Constructing an ideal from a form is indeed a one-sided inverse::
 
-            sage: II = O.ideal(F)
+            sage: II = O.ideal(F, future=1)
             sage: II.quadratic_form().is_equivalent(F)
             True
         """
@@ -693,23 +725,27 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
                 return BinaryQF(0), (self.ring().zero(),)*2
             return BinaryQF(0)
 
-        # find a ZZ-basis of the ideal with a in QQ
+        O = self.ring()
+        sqrtD = _positive_sqrt(O.number_field(), O.discriminant())
+
+        # find a "good" ZZ-basis of the ideal
         M = self._module.basis_matrix()[:,::-1]
         M = M.row_space(ZZ).basis_matrix()[:,::-1]
-        b,a = map(self.ring(), M.rows())
-        if b.real() < 0 or b.imag() < 0:
-            b = -b
+        beta, alpha = map(O, M.rows())
+        assert alpha in QQ
+        if QQ(alpha * (beta - beta.galois_conjugate()) / sqrtD) < 0:
+            alpha = -alpha
 
         # compute the (reduced) norm form of the ideal
-        A,B = (g.matrix() for g in (a,b))
+        A,B = (g.matrix() for g in (alpha, beta))
         x,y = polygens(QQ, 'x,y')
         Q = (x*A - y*B).determinant() / self.norm()
         Q = Q.change_ring(ZZ)
 
         from sage.quadratic_forms.binary_qf import BinaryQF
-        if basis:
-            return BinaryQF(Q), (a,-b)
-        return BinaryQF(Q)
+        Q = BinaryQF(Q)
+        assert Q.discriminant() == O.discriminant()
+        return (Q, (alpha, -beta)) if basis else Q
 
 
 def _random_for_testing():
