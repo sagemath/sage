@@ -755,7 +755,7 @@ cdef class SageObject:
 
     def _libgap_(self):
         from sage.libs.gap.libgap import libgap
-        return libgap.eval(self._gap_init_())
+        return libgap.eval(self)
 
     def _gp_(self, G=None):
         if G is None:
