@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Points on elliptic curves
 
@@ -1359,9 +1358,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 raise ValueError('Value %s illegal for point order' % value)
             E = self.curve()
             q = E.base_ring().cardinality()
-            low, hi = Hasse_bounds(q)
-            if value > hi:
-                raise ValueError('Value %s illegal: outside max Hasse bound' % value)
+            if q < oo:
+                _, hi = Hasse_bounds(q)
+                if value > hi:
+                    raise ValueError('Value %s illegal: outside max Hasse bound' % value)
             if value * self != E(0):
                 raise ValueError('Value %s illegal: %s * %s is not the identity' % (value, value, self))
             if hasattr(self, '_order') and self._order != value:  # already known
@@ -1456,7 +1456,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         - ``Q`` -- a nonzero point on self.curve().
 
-        - ``n`` -- an nonzero integer. If `n<0` then return `Q`
+        - ``n`` -- a nonzero integer. If `n<0` then return `Q`
                    evaluated at `1/(v_{nP}*f_{n,P})` (used in the ate pairing).
 
         OUTPUT:

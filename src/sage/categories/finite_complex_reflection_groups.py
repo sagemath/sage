@@ -555,29 +555,29 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 sage: sum(x**P.rank(elt) for elt in P)
                 18*x^2 + 15*x + 1
 
-                sage: W = ReflectionGroup(4)                     # optional - gap3
-                sage: P = W.milnor_fiber_poset()                 # optional - gap3
-                sage: P                                          # optional - gap3
+                sage: # optional - gap3
+                sage: W = ReflectionGroup(4)
+                sage: P = W.milnor_fiber_poset(); P
                 Finite meet-semilattice containing 41 elements
-                sage: sum(x**P.rank(elt) for elt in P)           # optional - gap3
+                sage: sum(x**P.rank(elt) for elt in P)
                 24*x^2 + 16*x + 1
 
-                sage: W = ReflectionGroup([4,2,2])               # optional - gap3
-                sage: W.is_well_generated()                      # optional - gap3
+                sage: # optional - gap3
+                sage: W = ReflectionGroup([4,2,2])
+                sage: W.is_well_generated()
                 False
-                sage: P = W.milnor_fiber_poset()                 # optional - gap3
-                sage: P                                          # optional - gap3
+                sage: P = W.milnor_fiber_poset(); P
                 Finite poset containing 47 elements
-                sage: sum(x**P.rank(elt) for elt in P)           # optional - gap3
+                sage: sum(x**P.rank(elt) for elt in P)
                 16*x^3 + 24*x^2 + 6*x + 1
-                sage: P.is_meet_semilattice()                    # optional - gap3
+                sage: P.is_meet_semilattice()
                 False
             """
             I = self.index_set()
             data = {}
-            next_reprs = {(): [g for g in self]}
+            next_reprs = {(): list(self)}
             next_cosets = {(): [frozenset([g]) for g in next_reprs[()]]}
-            next_level = set((i, ()) for i in range(len(next_cosets[()])))
+            next_level = {(i, ()) for i in range(len(next_cosets[()]))}
             while next_level:
                 cur = next_level
                 cosets = next_cosets
@@ -966,7 +966,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 else:
                     L = [(pi, pi.reflection_length()) for pi in L]
                 rels = []
-                ref_lens = {pi: l for (pi, l) in L}
+                ref_lens = dict(L)
                 for (pi, l) in L:
                     for t in R:
                         tau = pi * t
@@ -1215,7 +1215,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     for g in self:
                         if any(g in C for C in cosets[Ip]):
                             continue
-                        H = set([g])
+                        H = {g}
                         to_test = [(g, j) for j in Ip]
                         while to_test:
                             h, j = to_test.pop()

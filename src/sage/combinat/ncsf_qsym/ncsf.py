@@ -66,7 +66,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
     one generator in each degree::
 
         sage: NCSF.category()
-        Join of Category of hopf algebras over Rational Field
+        Join of Category of Hopf algebras over Rational Field
             and Category of graded algebras over Rational Field
             and Category of monoids with realizations
             and Category of graded coalgebras over Rational Field
@@ -1999,7 +1999,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     return x[i-1] * image_of_L_k(k - 1, i - 1) + image_of_L_k(k, i - 1)
 
                 def on_basis(comp):
-                    return P.prod((image_of_L_k(k, n) for k in comp))
+                    return P.prod(image_of_L_k(k, n) for k in comp)
                 return L._apply_module_morphism(L(self), on_basis, codomain=P)
 
     class MultiplicativeBases(Category_realization_of_parent):
@@ -2134,7 +2134,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     sage: f(2*Psi[[]] + 3 * Psi[1,3,2] + Psi[2,4] )
                     2*Psi[] - 3*Psi[1, 3, 2] + Psi[2, 4]
                     sage: f.category()
-                    Category of endsets of hopf algebras over Rational Field and graded modules over Rational Field
+                    Category of endsets of Hopf algebras over Rational Field and graded modules over Rational Field
 
                 If ``anti`` is true, this returns an anti-algebra morphism::
 

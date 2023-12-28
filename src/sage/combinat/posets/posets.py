@@ -3745,9 +3745,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.magnitude() == m1*m2
             True
 
-            sage: Poset({}).magnitude()
+            sage: Poset({}).magnitude()                                                 # needs sage.libs.flint
             0
-            sage: Poset({1:[]}).magnitude()
+            sage: Poset({1: []}).magnitude()                                            # needs sage.libs.flint
             1
         """
         H = self._hasse_diagram
@@ -4314,7 +4314,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: posets.PentagonPoset().coxeter_transformation()
+            sage: posets.PentagonPoset().coxeter_transformation()                       # needs sage.libs.flint
             [ 0  0  0  0 -1]
             [ 0  0  0  1 -1]
             [ 0  1  0  0 -1]
@@ -4327,8 +4327,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: M = posets.PentagonPoset().coxeter_transformation()
-            sage: M ** 8 == 1
+            sage: M = posets.PentagonPoset().coxeter_transformation()                   # needs sage.libs.flint
+            sage: M ** 8 == 1                                                           # needs sage.libs.flint
             True
         """
         return self._hasse_diagram.coxeter_transformation()
@@ -4348,11 +4348,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.PentagonPoset()
-            sage: P.coxeter_polynomial()
+            sage: P.coxeter_polynomial()                                                # needs sage.libs.flint
             x^5 + x^4 + x + 1
 
             sage: p = posets.SymmetricGroupWeakOrderPoset(3)                            # needs sage.groups
-            sage: p.coxeter_polynomial()                                                # needs sage.groups
+            sage: p.coxeter_polynomial()                                                # needs sage.groups sage.libs.flint
             x^6 + x^5 - x^3 + x + 1
 
         .. SEEALSO::
@@ -4398,7 +4398,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         TESTS::
 
            sage: P = posets.PentagonPoset()
-           sage: P.coxeter_smith_form(algorithm='sage')
+           sage: P.coxeter_smith_form(algorithm='sage')                                 # needs sage.libs.flint
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
            sage: P.coxeter_smith_form(algorithm='gap')                                  # needs sage.libs.gap
            [1, 1, 1, 1, x^5 + x^4 + x + 1]
@@ -8099,33 +8099,33 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: P = Poset({0: [1, 2, 3], 1: [4, 5], 2: [4, 6], 3: [5, 6],
             ....:            4: [7, 8], 5: [7, 8], 6: [7, 8], 7: [9], 8: [9]})
-            sage: P.is_eulerian()
+            sage: P.is_eulerian()                                                       # needs sage.libs.flint
             True
             sage: P = Poset({0: [1, 2, 3], 1: [4, 5, 6], 2: [4, 6], 3: [5,6],
             ....:            4: [7], 5:[7], 6:[7]})
-            sage: P.is_eulerian()
+            sage: P.is_eulerian()                                                       # needs sage.libs.flint
             False
 
         Canonical examples of Eulerian posets are the face lattices of
         convex polytopes::
 
             sage: P = polytopes.cube().face_lattice()                                   # needs sage.geometry.polyhedron
-            sage: P.is_eulerian()                                                       # needs sage.geometry.polyhedron
+            sage: P.is_eulerian()                                                       # needs sage.geometry.polyhedron sage.libs.flint
             True
 
         A poset that is 3- but not 4-eulerian::
 
             sage: P = Poset(DiGraph('MWW@_?W?@_?W??@??O@_?W?@_?W?@??O??')); P
             Finite poset containing 14 elements
-            sage: P.is_eulerian(k=3)
+            sage: P.is_eulerian(k=3)                                                    # needs sage.libs.flint
             True
-            sage: P.is_eulerian(k=4)
+            sage: P.is_eulerian(k=4)                                                    # needs sage.libs.flint
             False
 
         Getting an interval that is not Eulerian::
 
             sage: P = posets.DivisorLattice(12)
-            sage: P.is_eulerian(certificate=True)
+            sage: P.is_eulerian(certificate=True)                                       # needs sage.libs.flint
             (False, (1, 4))
 
         TESTS::
@@ -8143,7 +8143,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             ...
             ValueError: the poset is not graded
 
-            sage: posets.BooleanLattice(3).is_eulerian(k=123, certificate=True)
+            sage: posets.BooleanLattice(3).is_eulerian(k=123, certificate=True)         # needs sage.libs.flint
             (True, None)
         """
         if k is not None:

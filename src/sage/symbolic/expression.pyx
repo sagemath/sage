@@ -922,7 +922,7 @@ cdef class Expression(Expression_abc):
         if state[0] != 0 or len(state) != 3:
             raise ValueError("unknown state information")
         # set parent
-        from .ring import SR
+        from sage.symbolic.ring import SR
         self._parent = SR
         # get variables
         cdef GExList sym_lst
@@ -966,7 +966,7 @@ cdef class Expression(Expression_abc):
             True
 
         """
-        from .ring import SR
+        from sage.symbolic.ring import SR
         SR.cleanup_var(self)
         return False
 
@@ -3250,7 +3250,7 @@ cdef class Expression(Expression_abc):
             sage: x.is_trivially_equal(QQbar(1/2))
             True
         """
-        from .ring import SR
+        from sage.symbolic.ring import SR
         cdef Expression _other = <Expression>(SR(other))
         sig_on()
         try:
@@ -12130,7 +12130,7 @@ cdef class Expression(Expression_abc):
             ...
             ValueError: cannot convert
         """
-        from . import units
+        from sage.symbolic import units
         return units.convert(self, target)
 
     ###################################################################

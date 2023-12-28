@@ -152,7 +152,6 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
         if not kuratowski:
             return False
         g_dict = {}
-        from sage.graphs.graph import Graph
         for i in range(1, theGraph.N + 1):
             linked_list = []
             j = theGraph.V[i].link[1]

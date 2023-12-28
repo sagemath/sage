@@ -21,7 +21,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import homset
+from sage.categories import homset
 import weakref
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.arith.power cimport generic_power
@@ -1889,7 +1889,7 @@ cdef class FormalCompositeMap(Map):
         """
         Tell whether ``self`` is injective.
 
-        It raises ``NotImplementedError`` if it can't be determined.
+        It raises :class:`NotImplementedError` if it cannot be determined.
 
         EXAMPLES::
 
@@ -1964,7 +1964,7 @@ cdef class FormalCompositeMap(Map):
         """
         Tell whether ``self`` is surjective.
 
-        It raises ``NotImplementedError`` if it can't be determined.
+        It raises :class:`NotImplementedError` if it cannot be determined.
 
         EXAMPLES::
 

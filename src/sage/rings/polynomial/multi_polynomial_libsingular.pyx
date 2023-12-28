@@ -253,7 +253,7 @@ from sage.misc.sage_eval import sage_eval
 import sage.rings.polynomial.polynomial_singular_interface
 
 cimport cypari2.gen
-from . import polynomial_element
+from sage.rings.polynomial import polynomial_element
 
 permstore=[]
 cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
@@ -3197,7 +3197,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         INPUT:
 
         - ``as_ETuples`` -- (default: ``True``) if ``True`` returns the
-          result as an list of ETuples, otherwise returns a list of tuples
+          result as a list of ETuples, otherwise returns a list of tuples
 
         EXAMPLES::
 

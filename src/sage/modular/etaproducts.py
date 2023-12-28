@@ -558,7 +558,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
             nf = (i < S.ncols() and S[i, i]) or 0  # ?
             good_vects.append((vect * 24 / gcd(nf, 24)).list())
         for v in good_vects:
-            v.append(-sum([r for r in v]))
+            v.append(-sum(list(v)))
         dicts = []
         for v in good_vects:
             dicts.append({})
@@ -633,7 +633,7 @@ def EtaProduct(level, dic) -> EtaGroupElement:
     -  ``dic`` -- (dictionary): a dictionary indexed by
        divisors of N such that the coefficient of `\eta(q^d)` is
        r[d]. Only nonzero coefficients need be specified. If Ligozat's
-       criteria are not satisfied, a ``ValueError`` will be raised.
+       criteria are not satisfied, a :class:`ValueError` will be raised.
 
     OUTPUT:
 

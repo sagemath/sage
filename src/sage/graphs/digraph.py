@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Directed graphs
 
@@ -444,9 +443,9 @@ class DiGraph(GenericGraph):
     #. An igraph directed Graph (see also
        :meth:`~sage.graphs.generic_graph.GenericGraph.igraph_graph`)::
 
-           sage: import igraph                                  # optional - python_igraph
-           sage: g = igraph.Graph([(0,1),(0,2)], directed=True) # optional - python_igraph
-           sage: DiGraph(g)                                     # optional - python_igraph
+           sage: import igraph                                   # optional - python_igraph
+           sage: g = igraph.Graph([(0,1),(0,2)], directed=True)  # optional - python_igraph
+           sage: DiGraph(g)                                      # optional - python_igraph
            Digraph on 3 vertices
 
        If ``vertex_labels`` is ``True``, the names of the vertices are given by
@@ -462,8 +461,9 @@ class DiGraph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)], directed=True, edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
-           sage: DiGraph(g).edges(sort=True)               # optional - python_igraph
+           sage: g = igraph.Graph([(0, 1), (0, 2)], directed=True,                  # optional - python_igraph
+           ....:                  edge_attrs={'name':['a', 'b'], 'weight':[1, 3]})
+           sage: DiGraph(g).edges(sort=True)                                        # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
 
@@ -621,8 +621,8 @@ class DiGraph(GenericGraph):
 
         Sage DiGraph from igraph undirected graph::
 
-            sage: import igraph           # optional - python_igraph
-            sage: DiGraph(igraph.Graph()) # optional - python_igraph
+            sage: import igraph            # optional - python_igraph
+            sage: DiGraph(igraph.Graph())  # optional - python_igraph
             Traceback (most recent call last):
             ...
             ValueError: a *directed* igraph graph was expected. To build an undirected graph, call the Graph constructor
@@ -1194,7 +1194,7 @@ class DiGraph(GenericGraph):
         """
         Return an iterator over the in-neighbors of ``vertex``.
 
-        An vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
+        A vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
 
         EXAMPLES::
 
@@ -1671,7 +1671,7 @@ class DiGraph(GenericGraph):
             p = MixedIntegerLinearProgram(constraint_generation=True,
                                           maximization=False, solver=solver)
 
-            # An variable for each edge
+            # A variable for each edge
             b = p.new_variable(binary=True)
 
             # Variables are binary, and their coefficient in the objective is
@@ -3186,9 +3186,9 @@ class DiGraph(GenericGraph):
         """
         Return a topological sort of the digraph if it is acyclic.
 
-        If the digraph contains a directed cycle, a ``TypeError`` is raised. As
-        topological sorts are not necessarily unique, different implementations
-        may yield different results.
+        If the digraph contains a directed cycle, a :class:`TypeError`
+        is raised. As topological sorts are not necessarily unique,
+        different implementations may yield different results.
 
         A topological sort is an ordering of the vertices of the digraph such
         that each vertex comes before all of its successors. That is, if `u`
@@ -3268,7 +3268,8 @@ class DiGraph(GenericGraph):
         Return an iterator over all topological sorts of the digraph if
         it is acyclic.
 
-        If the digraph contains a directed cycle, a ``TypeError`` is raised.
+        If the digraph contains a directed cycle, a :class:`TypeError`
+        is raised.
 
         A topological sort is an ordering of the vertices of the digraph such
         that each vertex comes before all of its successors. That is, if u comes
