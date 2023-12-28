@@ -701,7 +701,7 @@ class CoxeterGroups(Category_singleton):
             for x in tester.some_elements():
                 red = x.reduced_word()
                 tester.assertEqual(self.from_reduced_word(red), x)
-                tester.assertEqual(self.prod((s[i] for i in red)), x)
+                tester.assertEqual(self.prod(s[i] for i in red), x)
 
         def simple_projection(self, i, side='right', length_increasing=True):
             r"""

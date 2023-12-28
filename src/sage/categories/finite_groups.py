@@ -153,9 +153,9 @@ class FiniteGroups(CategoryWithAxiom):
             Return a list with all the conjugacy classes of the group.
 
             This will eventually be a fall-back method for groups not defined
-            over GAP. Right now just raises a ``NotImplementedError``, until
-            we include a non-GAP way of listing the conjugacy classes
-            representatives.
+            over GAP. Right now, it just raises a
+            :class:`NotImplementedError`, until we include a non-GAP
+            way of listing the conjugacy classes representatives.
 
             EXAMPLES::
 

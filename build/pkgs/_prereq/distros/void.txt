@@ -1,3 +1,12 @@
+# This file, build/pkgs/_prereq/distros/void.txt, contains names of
+# Void Linux packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/void.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
 bc
 binutils
 gcc

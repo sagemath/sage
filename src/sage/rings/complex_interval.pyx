@@ -290,7 +290,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         Exact and nearly exact points are still visible::
 
-            sage: # needs sage.plot
+            sage: # needs sage.plot sage.symbolic
             sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
             Graphics object consisting of 6 graphics primitives
 
