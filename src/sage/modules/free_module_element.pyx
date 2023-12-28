@@ -4166,14 +4166,22 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.concatenate(w).parent()
             Ambient free module of rank 5 over the principal ideal domain Integer Ring
 
-        The method fails when the vectors aren't defined over the same ring::
+        The method fails when the inputs aren't both vectors, or the vectors
+        aren't defined over the same ring::
 
+            sage: w2 = polygen(QQ)^4 + 5
+            sage: v.concatenate(w2)
+            Traceback (most recent call last):
+            ...
+            TypeError: can only concatenate two vectors
             sage: w2 = vector(QQ, [4, 5])
             sage: v.concatenate(w2)
             Traceback (most recent call last):
             ...
             ValueError: can only concatenate vectors over the same base ring
         """
+        if not isinstance(other, FreeModuleElement):
+            raise TypeError('can only concatenate two vectors')
         R = self.parent().base_ring()
         if other.parent().base_ring() != R:
             raise ValueError('can only concatenate vectors over the same base ring')
