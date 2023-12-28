@@ -128,7 +128,7 @@ First over a small non-prime field::
      Residue field in ubar of Fractional ideal
       (47, 517/55860*u^5 + 235/3724*u^4 + 9829/13965*u^3
             + 54106/13965*u^2 + 64517/27930*u + 755696/13965)
-    sage: I.groebner_basis()
+    sage: I.groebner_basis()                                                            # needs sage.libs.singular
     [X + (-19*ubar^2 - 5*ubar - 17)*Y]
 
 And now over a large prime field::
@@ -144,11 +144,11 @@ And now over a large prime field::
     4398046511119
     sage: S.<X, Y, Z> = PolynomialRing(Rf, order='lex')
     sage: I = ideal([2*X - Y^2, Y + Z])
-    sage: I.groebner_basis()
+    sage: I.groebner_basis()                                                            # needs sage.libs.singular
     [X + 2199023255559*Z^2, Y + Z]
     sage: S.<X, Y, Z> = PolynomialRing(Rf, order='deglex')
     sage: I = ideal([2*X - Y^2, Y + Z])
-    sage: I.groebner_basis()
+    sage: I.groebner_basis()                                                            # needs sage.libs.singular
     [Z^2 + 4398046511117*X, Y + Z]
 """
 
@@ -386,7 +386,7 @@ class ResidueFieldFactory(UniqueFactory):
                 q = characteristic**(f.degree())
                 if q < zech_log_bound and (impl is None or impl == 'givaro'):
                     try:
-                        from .residue_field_givaro import ResidueFiniteField_givaro
+                        from sage.rings.finite_rings.residue_field_givaro import ResidueFiniteField_givaro
                     except ImportError:
                         if impl is not None:
                             raise
@@ -394,7 +394,7 @@ class ResidueFieldFactory(UniqueFactory):
                         return ResidueFiniteField_givaro(p, q, names, f, None, None, None)
                 if q % 2 == 0 and (impl is None or impl == 'ntl'):
                     try:
-                        from .residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
+                        from sage.rings.finite_rings.residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
                     except ImportError:
                         if impl is not None:
                             raise
@@ -402,7 +402,7 @@ class ResidueFieldFactory(UniqueFactory):
                         return ResidueFiniteField_ntl_gf2e(q, names, f, "poly", p, None, None, None)
                 if impl is None or impl == 'pari':
                     try:
-                        from .residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
+                        from sage.rings.finite_rings.residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
                     except ImportError:
                         if impl is not None:
                             raise
@@ -462,7 +462,7 @@ class ResidueFieldFactory(UniqueFactory):
             q = characteristic**(f.degree())
             if q < zech_log_bound and (impl is None or impl == 'givaro'):
                 try:
-                    from .residue_field_givaro import ResidueFiniteField_givaro
+                    from sage.rings.finite_rings.residue_field_givaro import ResidueFiniteField_givaro
                 except ImportError:
                     if impl is not None:
                         raise
@@ -470,7 +470,7 @@ class ResidueFieldFactory(UniqueFactory):
                     return ResidueFiniteField_givaro(p, q, names, f, to_vs, to_order, PB)
             elif q % 2 == 0 and (impl is None or impl == 'ntl'):
                 try:
-                    from .residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
+                    from sage.rings.finite_rings.residue_field_ntl_gf2e import ResidueFiniteField_ntl_gf2e
                 except ImportError:
                     if impl is not None:
                         raise
@@ -478,7 +478,7 @@ class ResidueFieldFactory(UniqueFactory):
                     return ResidueFiniteField_ntl_gf2e(q, names, f, "poly", p, to_vs, to_order, PB)
             if impl is None or impl == 'pari':
                 try:
-                    from .residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
+                    from sage.rings.finite_rings.residue_field_pari_ffelt import ResidueFiniteField_pari_ffelt
                 except ImportError:
                     if impl is not None:
                         raise

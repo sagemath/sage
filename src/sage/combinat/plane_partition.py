@@ -387,9 +387,9 @@ class PlanePartition(ClonableArray,
         drawing = [[" " for i in range(2 * x + y + z)]
                    for j in range(y + z + 1)]
 
-        hori = u"_" if use_unicode else "_"
-        down = u"╲" if use_unicode else "\\"
-        up = u"╱" if use_unicode else "/"
+        hori = "_" if use_unicode else "_"
+        down = "╲" if use_unicode else "\\"
+        up = "╱" if use_unicode else "/"
 
         def superpose(l, c, letter):
             # add the given letter at line l and column c
@@ -449,10 +449,10 @@ class PlanePartition(ClonableArray,
                 check = False
 
         if not drawing:
-            return u"∅" if use_unicode else ""
+            return "∅" if use_unicode else ""
 
         if use_unicode:
-            return u'\n'.join(u"".join(row) for row in drawing)
+            return '\n'.join("".join(row) for row in drawing)
         return '\n'.join("".join(row) for row in drawing)
 
     def _ascii_art_(self):
@@ -1548,7 +1548,7 @@ class PlanePartitions_box(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([4,3,2])
-            sage: TestSuite(PP).run()                                       # long time, needs sage.modules
+            sage: TestSuite(PP).run()           # long time                             # needs sage.modules
         """
         super().__init__(box_size, category=FiniteEnumeratedSets())
 

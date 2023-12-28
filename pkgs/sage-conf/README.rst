@@ -66,8 +66,8 @@ this symlink is necessary for the prebuilt libraries and programs to
 work.
 
 ``/var/tmp`` is a sticky directory on all Linux distributions
-following the Filesystem Hierarchy Standard, as well as on macOS and
-on Cygwin.  On multi-user systems, only one user can use a given
+following the Filesystem Hierarchy Standard, as well as on macOS.
+On multi-user systems, only one user can use a given
 version of the distribution; other installation schemes are recommended
 for systems with multiple Sage users.
 

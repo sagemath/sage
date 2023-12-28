@@ -464,7 +464,7 @@ cdef class pAdicPrinter_class(SageObject):
                 raise ValueError("max_terse_terms must be positive and fit in a long")
         else:
             self.max_terse_terms = _printer_defaults._max_terse_terms
-        from .factory import _canonicalize_show_prec
+        from sage.rings.padics.factory import _canonicalize_show_prec
         self.show_prec = _canonicalize_show_prec(self.ring._prec_type(), mode, show_prec)
 
         # Incompatibilities

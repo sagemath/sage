@@ -54,7 +54,7 @@ def ntl_GF2E_random(ntl_GF2EContext_class ctx):
 
     INPUT:
 
-    - ``ctx`` -- the GF2E context for which an random element should be created
+    - ``ctx`` -- the GF2E context for which a random element should be created
 
     EXAMPLES::
 

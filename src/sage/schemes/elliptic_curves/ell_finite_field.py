@@ -13,6 +13,8 @@ AUTHORS:
 - Mariah Lenox (2011-03): Added ``set_order`` method
 
 - Lorenz Panny, John Cremona (2023-02): ``.twists()``
+
+- Lorenz Panny (2023): ``special_supersingular_curve()``
 """
 
 # ****************************************************************************
@@ -2414,3 +2416,200 @@ def is_j_supersingular(j, proof=True):
     # expensive since it involves counting the number of points on E):
 
     return E.trace_of_frobenius() % p == 0
+
+def special_supersingular_curve(F, *, endomorphism=False):
+    r"""
+    Given a finite field ``F``, construct a "special" supersingular
+    elliptic curve `E` defined over ``F``.
+
+    Such a curve
+
+    - has coefficients in `\mathbb F_p`;
+
+    - has group structure `E(\mathbb F_p) \cong \ZZ/(p+1)` and
+      `E(\mathbb F_{p^2}) \cong \ZZ/(p+1) \times \ZZ/(p+1)`;
+
+    - has an endomorphism `\vartheta` of small degree `q` that
+      anticommutes with the `\mathbb F_p`-Frobenius on `E`.
+
+    (The significance of `\vartheta` is that any such endomorphism,
+    together with the `\mathbb F_p`-Frobenius, generates the endomorphism
+    algebra `\mathrm{End}(E) \otimes \QQ`.)
+
+    INPUT:
+
+    - ``F`` -- finite field `\mathbb F_{p^r}`;
+
+    - ``endomorphism`` -- boolean (optional, default ``False``):
+      When set to ``True``, it is required that `2 \mid r`, and
+      the function then additionally returns `\vartheta`.
+
+    EXAMPLES::
+
+        sage: special_supersingular_curve(GF(1013^2), endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 1013^2,
+         Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 1013^2 to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 1013^2)
+
+        sage: special_supersingular_curve(GF(1019^2), endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1019^2,
+         Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1019^2
+           Via:  (u,r,s,t) = (389*z2 + 241, 0, 0, 0))
+
+        sage: special_supersingular_curve(GF(1021^2), endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + 785*x + 794 over Finite Field in z2 of size 1021^2,
+         Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + 785*x + 794 over Finite Field in z2 of size 1021^2 to Elliptic Curve defined by y^2 = x^3 + 785*x + 794 over Finite Field in z2 of size 1021^2)
+
+        sage: special_supersingular_curve(GF(1031^2), endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1031^2,
+         Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1031^2
+           Via:  (u,r,s,t) = (747*z2 + 284, 0, 0, 0))
+
+        sage: special_supersingular_curve(GF(1033^2), endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + 53*x + 980 over Finite Field in z2 of size 1033^2,
+         Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + 53*x + 980 over Finite Field in z2 of size 1033^2 to Elliptic Curve defined by y^2 = x^3 + 53*x + 980 over Finite Field in z2 of size 1033^2)
+
+        sage: special_supersingular_curve(GF(1039^2), endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1039^2,
+         Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1039^2
+           Via:  (u,r,s,t) = (626*z2 + 200, 0, 0, 0))
+
+        sage: special_supersingular_curve(GF(1049^2), endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 1049^2,
+         Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 1049^2 to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 1049^2)
+
+        sage: special_supersingular_curve(GF(1051^2), endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1051^2,
+         Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1051^2
+           Via:  (u,r,s,t) = (922*z2 + 129, 0, 0, 0))
+
+    TESTS::
+
+        sage: p = random_prime(1000)
+        sage: E = special_supersingular_curve(GF(p))
+        sage: E.is_supersingular()
+        True
+        sage: E.order() == p + 1
+        True
+        sage: F.<t> = GF((p,2))
+        sage: E, endo = special_supersingular_curve(F, endomorphism=True)
+        sage: E.is_supersingular()
+        True
+        sage: E.j_invariant() in GF(p)
+        True
+        sage: E.abelian_group().invariants() == (p+1, p+1)
+        True
+        sage: endo.domain() is endo.codomain() is E
+        True
+        sage: endo.trace()
+        0
+        sage: pi = E.frobenius_isogeny()
+        sage: pi.codomain() is pi.domain() is E
+        True
+        sage: pi * endo == -endo * pi
+        True
+
+    Also try it for larger-degree fields::
+
+        sage: k = ZZ(randrange(3, 10, 2))
+        sage: E = special_supersingular_curve(GF((p, k)))
+        sage: E.is_supersingular()
+        True
+        sage: F.<t> = GF((p, 2*k))
+        sage: E, endo = special_supersingular_curve(F, endomorphism=True)
+        sage: E.is_supersingular()
+        True
+        sage: E.j_invariant() in GF(p)
+        True
+        sage: endo.domain() is endo.codomain() is E
+        True
+        sage: endo.trace()
+        0
+        sage: pi = E.frobenius_isogeny()
+        sage: pi.codomain() is pi.domain() is E
+        True
+        sage: pi * endo == -endo * pi
+        True
+
+    .. NOTE::
+
+        This function makes no guarantees about the distribution of
+        the output. The current implementation is deterministic in
+        many cases.
+
+    ALGORITHM: [Bro2009]_, Algorithm 2.4
+    """
+    if not isinstance(F, FiniteField):
+        raise TypeError('input must be a finite field')
+    p = F.characteristic()
+    deg = F.degree()
+
+    if endomorphism and deg % 2:
+        raise ValueError('endomorphism was requested but is not defined over given field')
+
+    E = None
+
+    # first find the degree q of our special endomorphism
+    if p == 2:
+        q = 3
+        E = EllipticCurve(F, [0,0,1,0,0])
+
+    elif p % 4 == 3:
+        q = 1
+        E = EllipticCurve(F, [1,0])
+
+    elif p % 3 == 2:
+        q = 3
+        E = EllipticCurve(F, [0,1])
+
+    elif p % 8 == 5:
+        q = 2
+        E = EllipticCurve(F, [-4320, 96768])
+
+    else:
+        from sage.arith.misc import legendre_symbol
+        for q in map(ZZ, range(3,p,4)):
+            if not q.is_prime():
+                continue
+            if legendre_symbol(-q, p) == -1:
+                break
+        else:
+            assert False  # should never happen
+
+    if E is None:
+        from sage.arith.misc import fundamental_discriminant
+        from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
+        H = hilbert_class_polynomial(fundamental_discriminant(-q))
+        j = H.change_ring(GF(p)).any_root()
+        a = 27 * j / (4 * (1728-j))
+        E = EllipticCurve(F, [a,-a])
+
+    if ZZ(2).divides(deg):
+        k = deg//2
+        E.set_order((p**k - (-1)**k)**2)
+    else:
+        E.set_order(p**deg - (-1)**deg)
+
+    if not endomorphism:
+        return E
+
+    if q == 1 or p <= 13:
+        if q == 1:
+            endos = E.automorphisms()
+        else:
+            endos = (iso*phi for phi in E.isogenies_prime_degree(q)
+                             for iso in phi.codomain().isomorphisms(E))
+        endo = next(endo for endo in endos if endo.trace().is_zero())
+
+    else:
+        from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+        iso = WeierstrassIsomorphism(None, (F(-q).sqrt(),0,0,0), E)
+        if q == 3 and E.a_invariants() == (0,0,0,0,1):
+            # workaround for #21883
+            endo = E.isogeny(E(0,1))
+        else:
+            endo = E.isogeny(None, iso.domain(), degree=q)
+        endo = iso * endo
+
+    endo._degree = ZZ(q)
+    endo.trace.set_cache(ZZ.zero())
+    return E, endo

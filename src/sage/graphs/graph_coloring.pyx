@@ -1437,7 +1437,6 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
     cdef list L = [g] if g.is_connected() else g.connected_components_subgraphs()
     cdef int chi = 0
     cdef list classes = [], vertices
-    cdef list values
 
     if vizing:
         classes = _vizing_edge_coloring(g)
@@ -1684,12 +1683,13 @@ def _vizing_edge_coloring(g):
         rotate_fan(fan_center, fan)
         e_colors[frozenset((fan_center, fan[-1]))] = d
 
-    matchings = dict()
+    matchings = {}
     for edge, c in e_colors.items():
         matchings[c] = matchings.get(c, []) + [tuple(edge)]
     classes = list(matchings.values())
 
     return classes
+
 
 def round_robin(n):
     r"""

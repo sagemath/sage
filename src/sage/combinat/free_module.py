@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Free modules
 """
@@ -777,20 +776,6 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                                lambda x: self.sum_of_terms((G(g), K(c))
                                                            for c, g in x))
 
-    def _an_element_impl(self):  # TODO: REMOVE?
-        """
-        Return an element of ``self``, namely the zero element.
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-            sage: F._an_element_impl()
-            0
-            sage: _.parent() is F
-            True
-        """
-        return self.element_class(self, {})
-
     def _first_ngens(self, n):
         """
         Used by the preparser for ``F.<x> = ...``.
@@ -951,7 +936,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         EXAMPLES::
 
             sage: QS2 = SymmetricGroupAlgebra(QQ,2)                                     # needs sage.combinat
-            sage: QS2.get_order() # note: order changed on 2009-03-13                   # needs sage.combinat
+            sage: QS2.get_order()  # note: order changed on 2009-03-13                  # needs sage.combinat
             [[2, 1], [1, 2]]
         """
         if self._order is None:
@@ -1684,7 +1669,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             return super()._coerce_map_from_(R)
 
 
-class CartesianProductWithFlattening():
+class CartesianProductWithFlattening:
     """
     A class for Cartesian product constructor, with partial flattening
     """

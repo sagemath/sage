@@ -196,7 +196,7 @@ AUTHORS:
 - Darij Grinberg (2013) Sym over rings that are not characteristic 0
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -210,8 +210,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -306,7 +306,7 @@ def is_SymmetricFunction(x):
     return isinstance(x, SymmetricFunctionAlgebra_generic.Element)
 
 #####################################################################
-## Bases categories
+#  Bases categories
 
 
 from sage.categories.realizations import Category_realization_of_parent
@@ -360,8 +360,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             sage: bases = SymmetricFunctionsBases(Sym)
             sage: bases.super_categories()
             [Category of realizations of Symmetric Functions over Rational Field,
-             Category of commutative hopf algebras with basis over Rational Field,
-             Join of Category of realizations of hopf algebras over Rational Field
+             Category of commutative Hopf algebras with basis over Rational Field,
+             Join of Category of realizations of Hopf algebras over Rational Field
                  and Category of graded algebras over Rational Field
                  and Category of graded coalgebras over Rational Field,
              Category of unique factorization domains]
@@ -370,8 +370,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             sage: bases = SymmetricFunctionsBases(Sym)
             sage: bases.super_categories()
             [Category of realizations of Symmetric Functions over Univariate Polynomial Ring in x over Integer Ring,
-             Category of commutative hopf algebras with basis over Univariate Polynomial Ring in x over Integer Ring,
-             Join of Category of realizations of hopf algebras over Univariate Polynomial Ring in x over Integer Ring
+             Category of commutative Hopf algebras with basis over Univariate Polynomial Ring in x over Integer Ring,
+             Join of Category of realizations of Hopf algebras over Univariate Polynomial Ring in x over Integer Ring
                  and Category of graded algebras over Univariate Polynomial Ring in x over Integer Ring
                  and Category of graded coalgebras over Univariate Polynomial Ring in x over Integer Ring]
         """
@@ -1429,30 +1429,30 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             # be folly.
             if comparison is None:
                 def check_word(w):
-                    if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
+                    if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
                         return False
-                    if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
+                    if sum(1 for i in range(n-1) if w[i] == w[i+1]) != s:
                         return False
                     return True
             elif comparison == -1:
                 def check_word(w):
-                    if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
+                    if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
                         return False
-                    if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
+                    if sum(1 for i in range(n-1) if w[i] == w[i+1]) != s:
                         return False
                     return w[0] < w[-1]
             elif comparison == 0:
                 def check_word(w):
-                    if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
+                    if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
                         return False
-                    if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
+                    if sum(1 for i in range(n-1) if w[i] == w[i+1]) != s:
                         return False
                     return w[0] == w[-1]
             elif comparison == 1:
                 def check_word(w):
-                    if sum((1 for i in range(n-1) if w[i] > w[i+1])) != d:
+                    if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
                         return False
-                    if sum((1 for i in range(n-1) if w[i] == w[i+1])) != s:
+                    if sum(1 for i in range(n-1) if w[i] == w[i+1]) != s:
                         return False
                     return w[0] > w[-1]
 
@@ -1532,7 +1532,7 @@ class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
             sage: bases = FilteredSymmetricFunctionsBases(Sym)
             sage: bases.super_categories()
             [Category of bases of Symmetric Functions over Rational Field,
-             Category of commutative filtered hopf algebras with basis over Rational Field]
+             Category of commutative filtered Hopf algebras with basis over Rational Field]
         """
         cat = HopfAlgebras(self.base().base_ring()).Commutative().WithBasis().Filtered()
         return [SymmetricFunctionsBases(self.base()), cat]
@@ -1582,7 +1582,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
             sage: bases = GradedSymmetricFunctionsBases(Sym)
             sage: bases.super_categories()
             [Category of filtered bases of Symmetric Functions over Rational Field,
-             Category of commutative graded hopf algebras with basis over Rational Field]
+             Category of commutative graded Hopf algebras with basis over Rational Field]
         """
         cat = HopfAlgebras(self.base().base_ring()).Commutative().WithBasis().Graded()
         return [FilteredSymmetricFunctionsBases(self.base()), cat]
@@ -4619,10 +4619,10 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         @cached_function
         def hnimage(n):
-            return result_parent.sum((tensor([parent(s(lam)), parent(s(lam))])
-                                      for lam in Partitions(n)))
+            return result_parent.sum(tensor([parent(s(lam)), parent(s(lam))])
+                                     for lam in Partitions(n))
         for lam, a in h(self):
-            result += a * prod((hnimage(i) for i in lam))
+            result += a * prod(hnimage(i) for i in lam)
         return result
 
     kronecker_coproduct = internal_coproduct
@@ -5588,7 +5588,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             True
         """
         s_self = s(self)
-        return all(( _nonnegative_coefficients(c) for c in s_self.coefficients() ))
+        return all(_nonnegative_coefficients(c) for c in s_self.coefficients())
 
     def degree(self):
         r"""

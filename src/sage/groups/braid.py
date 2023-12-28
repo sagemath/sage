@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Braid groups
 
@@ -73,7 +72,7 @@ from sage.categories.groups import Groups
 from sage.combinat.permutation import Permutation
 from sage.combinat.permutation import Permutations
 from sage.combinat.subset import Subsets
-from sage.features import PythonModule
+from sage.features.sagemath import sage__libs__braiding
 from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
 from sage.groups.finitely_presented import FinitelyPresentedGroup
 from sage.groups.finitely_presented import GroupMorphismWithGensImages
@@ -81,7 +80,6 @@ from sage.groups.free_group import FreeGroup, is_FreeGroup
 from sage.functions.generalized import sign
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroupElement
-from sage.knots.knot import Knot
 from sage.libs.gap.libgap import libgap
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.lazy_attribute import lazy_attribute
@@ -99,7 +97,8 @@ lazy_import('sage.libs.braiding',
             ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits'],
-            feature=PythonModule('sage.libs.braiding', spkg='libbraiding', type='standard'))
+            feature=sage__libs__braiding())
+lazy_import('sage.knots.knot', 'Knot')
 
 
 class Braid(FiniteTypeArtinGroupElement):
@@ -2068,7 +2067,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: br.is_conjugated(b)
             False
         """
-        t = [i for i in self.Tietze()]
+        t = list(self.Tietze())
         t.reverse()
         return self.parent()(tuple(t))
 
@@ -2842,7 +2841,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             # quantum trace operator on two fold tensor space
             E = mu.parent().one()
             mu2 = E.tensor_product(mu)
-            return tuple([[R, RI], mu2])
+            return ([R, RI], mu2)
 
         from sage.matrix.matrix_space import MatrixSpace
         Ed = MatrixSpace(BR, d, d, sparse=sparse).one()

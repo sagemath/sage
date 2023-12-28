@@ -238,7 +238,7 @@ class DocTestSource():
                 # Line number refers to the end of the docstring
                 sigon = doctest.Example(sig_on_count_doc_doctest, "0\n", lineno=docstring.count("\n"))
                 sigon.sage_source = sig_on_count_doc_doctest
-                sigon.optional_tags = frozenset()
+                sigon.optional_tags = frozenset(self.file_optional_tags)
                 sigon.probed_tags = frozenset()
                 dt.examples.append(sigon)
             doctests.append(dt)
