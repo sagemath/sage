@@ -250,7 +250,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         Return the fundamental group of the complement of an affine
         hyperplane arrangement in `\CC^n` whose equations have
-        coefficients in a subfield of `\overline{\QQ}.`
+        coefficients in a subfield of `\QQbar`.
 
         OUTPUT:
 
@@ -354,7 +354,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         OUTPUT:
 
         The finitely presented group of the complement
-        in `\PP^n` whose equations have
+        in the projective space whose equations have
         coefficients in a subfield of `\bar\QQ`.
 
         EXAMPLES::
