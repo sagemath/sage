@@ -394,7 +394,7 @@ def voronoi_cells(V, vertical_lines=[]):
     - ``DG`` -- the dual graph of ``V``, where the vertices are labelled
       by the compact regions of ``V`` and the edges by their dual edges.
     - ``vertical_regions`` -- dictionary for the regions associated
-      with vertical lines.
+      with vertical lines
 
     EXAMPLES::
 
@@ -1007,20 +1007,20 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
     InternalEdges = [_ for _ in G.edges(sort=True) if _ not in
                      E.edges(sort=True)]
     InternalVertices = [v for e in InternalEdges for v in e[:2]]
-    Intern = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
+    Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
-        if ECi in Intern:
+        if ECi in Internal:
             EI = [v for v in E if v in
-                  Intern.connected_component_containing_vertex(ECi, sort=True)
+                  Internal.connected_component_containing_vertex(ECi, sort=True)
                   and v != ECi]
             if len(EI) > 0:
                 q = ECi
                 connecting_path = list(EC[:i])
                 break
-        if EC[-i] in Intern:
+        if EC[-i] in Internal:
             EI = [v for v in E if v in
-                  Intern.connected_component_containing_vertex(EC[-i],
-                                                               sort=True)
+                  Internal.connected_component_containing_vertex(EC[-i],
+                                                                 sort=True)
                   and v != EC[-i]]
             if len(EI) > 0:
                 q = EC[-i]
@@ -1028,10 +1028,10 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions):
                 break
     # Precompute distances from q in E and I
     E_dist_q = E.shortest_path_lengths(q)
-    I_dist_q = Intern.shortest_path_lengths(q)
+    I_dist_q = Internal.shortest_path_lengths(q)
     distancequotients = [(E_dist_q[v]**2 / I_dist_q[v], v) for v in EI]
     r = max(distancequotients)[1]
-    cutpath = Intern.shortest_path(q, r)
+    cutpath = Internal.shortest_path(q, r)
     for i, v in enumerate(cutpath):
         if i > 0 and v in EC:
             r = v
@@ -1218,8 +1218,8 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     - ``f`` -- a polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
-    - ``arrangement`` -- tuple (default: ``[]``); an optional tuple
-      of polynomials whose product equals ``f``.
+    - ``arrangement`` -- tuple (default: ``()``); an optional tuple
+      of polynomials whose product equals ``f``
 
     - ``vertical`` -- boolean (default: ``False`); if set to ``True``,
       ``arrangements`` contains more than one polynomial, some of them

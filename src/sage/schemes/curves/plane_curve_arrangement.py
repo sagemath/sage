@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Affine and Projective Plane Curve Arrangements
 
@@ -15,9 +14,9 @@ The individual curves will be in  :class:`AffinePlaneCurve` or in :class:`Projec
     sage: C[0].parent()
     <class 'sage.schemes.curves.affine_curve.IntegralAffinePlaneCurve_with_category'>
 
-The default base field is `\mathbb{Q}`, the rational numbers.
+The default base field is `\QQ`, the rational numbers.
 Number fields are also possible (also with fixed embeddings in
-`\overline{\mathbb{Q}}`)::
+`\QQbar`)::
 
     sage: # needs sage.rings.number_field
     sage: x = polygen(QQ, 'x')
@@ -442,7 +441,7 @@ class AffinePlaneCurveArrangementsElement(Element):
                           projective=False):
         r"""
         The fundamental group of the complement of the union
-        of affine plane curves in `\mathbb{C}^2`.
+        of affine plane curves in `\CC^2`.
 
         INPUT:
 
@@ -601,7 +600,7 @@ class AffinePlaneCurveArrangementsElement(Element):
     def braid_monodromy(self, vertical=True):
         r"""
         It computes the braid monodromy of the complement of the union
-        of affine plane curves in `\mathbb{C}^2`. If there are vertical
+        of affine plane curves in `\CC^2`. If there are vertical
         asymptotes a change of variable is done.
 
         INPUT:
@@ -774,7 +773,7 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
     def fundamental_group(self, simplified=True):
         r"""
         The fundamental group of the complement of the union
-        of projective plane curves in `\mathbb{P}^2`.
+        of projective plane curves in the projective plane.
 
         INPUT:
 
@@ -930,7 +929,7 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
         return self._meridians_simplified
 
 
-class AffinePlaneCurveArrangements(Parent, UniqueRepresentation):
+class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
     """
     Affine curve arrangements.
 
@@ -1087,10 +1086,6 @@ class AffinePlaneCurveArrangements(Parent, UniqueRepresentation):
             arg = tuple(args[0])
         else:
             arg = tuple(args)
-        # process keyword arguments
-        if len(kwds) > 0:
-            raise ValueError('unknown keyword argument')
-        # process positional arguments
         ambient_space = self.ambient_space()
         R = ambient_space.coordinate_ring()
         curves = ()

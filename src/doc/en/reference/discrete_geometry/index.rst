@@ -12,6 +12,7 @@ Hyperplane arrangements
    :maxdepth: 1
 
    sage/geometry/hyperplane_arrangement/arrangement
+   sage/geometry/hyperplane_arrangement/ordered_arrangement
    sage/geometry/hyperplane_arrangement/library
    sage/geometry/hyperplane_arrangement/hyperplane
    sage/geometry/hyperplane_arrangement/affine_subspace
