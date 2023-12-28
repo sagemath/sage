@@ -545,7 +545,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         INPUT:
 
-        - `n` -- integer, or its :class:`~sage.structure.factorization.Factorization`
+        - ``n`` -- integer, or its :class:`~sage.structure.factorization.Factorization`
 
         ALGORITHM:
 
@@ -568,6 +568,31 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             72.4 ms ± 773 µs per loop (mean ± std. dev. of 7 runs, 1 loop each)
             sage: %timeit P = E.random_point(); P.has_order(p+1)            # not tested
             32.8 ms ± 3.12 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+            sage: fac = factor(p+1)
+            sage: %timeit P = E.random_point(); P.has_order(fac)            # not tested
+            30.6 ms ± 3.48 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+
+        The order is cached once it has been confirmed once::
+
+            sage: P, = E.gens()
+            sage: delattr(P, '_order')
+            sage: %time P.has_order(p+1)  # not tested
+            CPU times: user 62.1 ms, sys: 6.27 ms, total: 68.3 ms
+            Wall time: 68.8 ms
+            True
+            sage: %time P.has_order(p+1)  # not tested
+            CPU times: user 5 µs, sys: 0 ns, total: 5 µs
+            Wall time: 5.48 µs
+            True
+            sage: delattr(P, '_order')
+            sage: %time P.has_order(fac)  # not tested
+            CPU times: user 69.7 ms, sys: 14 µs, total: 69.8 ms
+            Wall time: 70.3 ms
+            True
+            sage: %time P.has_order(fac)  # not tested
+            CPU times: user 15 µs, sys: 0 ns, total: 15 µs
+            Wall time: 17.4 µs
+            True
         """
         if hasattr(self, '_order'):                 # already known
             if not isinstance(n, Integer):
