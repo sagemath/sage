@@ -303,7 +303,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
     TESTS::
 
         sage: R.<a> = ZqFM(27,1000)                                                     # needs sage.libs.flint
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4) # long time                 # needs sage.libs.flint
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)     # long time             # needs sage.libs.flint
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         """

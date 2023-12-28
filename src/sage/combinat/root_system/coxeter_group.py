@@ -86,7 +86,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
         [3 1 5]
         [2 5 1]
 
-        sage: W = CoxeterGroup(["H",3], implementation="reflection"); W                 # needs sage.rings.number_field
+        sage: W = CoxeterGroup(["H",3], implementation="reflection"); W                 # needs sage.libs.gap sage.rings.number_field
         Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5
          with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
@@ -116,7 +116,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
 
     TESTS::
 
-        sage: W = groups.misc.CoxeterGroup(["H",3])                                     # needs sage.groups
+        sage: W = groups.misc.CoxeterGroup(["H",3])                                     # needs sage.graphs sage.groups
     """
     if implementation not in ["permutation", "matrix", "coxeter3", "reflection", "chevie", None]:
         raise ValueError("invalid type implementation")

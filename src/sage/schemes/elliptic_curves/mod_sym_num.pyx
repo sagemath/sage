@@ -1315,7 +1315,7 @@ cdef class ModularSymbolNumerical:
         if self._ans is NULL or self._ans_num is NULL:
             if self._ans is not NULL: sig_free(self._ans)
             if self._ans_num is not NULL: sig_free(self._ans_num)
-            raise MemoryError("Memory error with an coefficients.")
+            raise MemoryError("Memory error with coefficients.")
 
         verbose("   not enough precomputed coefficients, "
                 "adding %s"%(T - self._lans), level=3)

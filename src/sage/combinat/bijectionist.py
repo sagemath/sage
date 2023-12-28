@@ -2455,7 +2455,7 @@ class Bijectionist(SageObject):
         yield from self._bmilp.solutions_iterator(False, [])
 
 
-class _BijectionistMILP():
+class _BijectionistMILP:
     r"""
     Wrapper class for the MixedIntegerLinearProgram (MILP).
 

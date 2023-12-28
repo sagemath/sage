@@ -906,7 +906,7 @@ class FinitePosets(CategoryWithAxiom):
             encoded to be understood by Sage. This implementation allows
             `\mathbf{K}` to be a semifield, not just a field. The birational
             `v`-toggle is only a rational map, so an exception (most
-            likely, ``ZeroDivisionError``) will be thrown if the
+            likely, :class:`ZeroDivisionError`) will be thrown if the
             denominator is zero.
 
             INPUT:
@@ -1121,7 +1121,7 @@ class FinitePosets(CategoryWithAxiom):
             encoded to be understood by Sage. This implementation allows
             `\mathbf{K}` to be a semifield, not just a field. The birational
             `v`-toggle is only a rational map, so an exception (most
-            likely, ``ZeroDivisionError``) will be thrown if the
+            likely, :class:`ZeroDivisionError`) will be thrown if the
             denominator is zero.
 
             INPUT:
@@ -1194,9 +1194,10 @@ class FinitePosets(CategoryWithAxiom):
             `\mathbf{K}`-labellings and for an explanation of how
             `\mathbf{K}`-labellings are to be encoded to be understood
             by Sage. This implementation allows `\mathbf{K}` to be a
-            semifield, not just a field. Birational rowmotion is only a
-            rational map, so an exception (most likely, ``ZeroDivisionError``)
-            will be thrown if the denominator is zero.
+            semifield, not just a field. Birational rowmotion is only
+            a rational map, so an exception (most likely,
+            :class:`ZeroDivisionError`) will be thrown if the
+            denominator is zero.
 
             INPUT:
 

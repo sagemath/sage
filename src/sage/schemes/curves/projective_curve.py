@@ -495,7 +495,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         phi = K(l)
         G = [phi(f) for f in J.gens()]
         C = PP2.curve(G)
-        return tuple([psi, C])
+        return (psi, C)
 
     def plane_projection(self, PP=None):
         r"""
@@ -577,7 +577,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             psi = K(phi.defining_polynomials())
             H = Hom(self, L[1].ambient_space())
             phi = H([psi(L[0].defining_polynomials()[i]) for i in range(len(L[0].defining_polynomials()))])
-        return tuple([phi, C])
+        return (phi, C)
 
 
 class ProjectivePlaneCurve(ProjectiveCurve):
@@ -1104,7 +1104,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         T = []
         for item in G.dict().items():
             tup = tuple([item[0][i] - degs[i] for i in range(len(L))])
-            T.append(tuple([tup, item[1]]))
+            T.append((tup, item[1]))
         G = R(dict(T))
         H = Hom(self, PP.curve(G))
         phi = H(coords)
