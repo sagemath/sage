@@ -355,7 +355,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         The finitely presented group of the complement
         in the projective space whose equations have
-        coefficients in a subfield of `\bar\QQ`.
+        coefficients in a subfield of `\QQbar`.
 
         EXAMPLES::
 
