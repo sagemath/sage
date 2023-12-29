@@ -192,7 +192,7 @@ jobs:
       - name: Prepare coverage results
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
-          ./venv/bin/python3 -m coverage combine .coverage/
+          ./venv/bin/python3 -m coverage combine
           ./venv/bin/python3 -m coverage xml
           mkdir -p coverage-report
           mv coverage.xml coverage-report/
