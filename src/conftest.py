@@ -16,13 +16,13 @@ import pytest
 from _pytest.doctest import (
     DoctestItem,
     DoctestModule,
-    _get_continue_on_failure,
-    _get_runner,
     _is_mocked,
     _patch_unwrap_mock_aware,
     get_optionflags,
 )
 from _pytest.pathlib import ImportMode, import_path
+from sage.doctest.control import DocTestDefaults
+from sage.doctest.forker import SageDocTestRunner
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 
@@ -106,11 +106,13 @@ class SageDoctestModule(DoctestModule):
         optionflags = get_optionflags(self)
         from sage.features import FeatureNotPresentError
 
-        runner = _get_runner(
+        # TODO: replace "SageDocTestRunner" by pytest's "_get_runner"
+        runner = SageDocTestRunner(
             verbose=False,
             optionflags=optionflags,
             checker=SageOutputChecker(),
-            continue_on_failure=_get_continue_on_failure(self.config),
+            #continue_on_failure=_get_continue_on_failure(self.config),
+            sage_options=DocTestDefaults(),
         )
         try:
             for test in finder.find(module, module.__name__):
