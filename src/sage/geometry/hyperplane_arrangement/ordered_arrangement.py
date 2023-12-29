@@ -300,11 +300,11 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: L([t - j for j in range(4)]).affine_fundamental_group()
             Finitely presented group < x0, x1, x2, x3 |  >
             sage: L.<x, y, z> = OrderedHyperplaneArrangements(QQ)
-            sage: L(L.gens() + (x + y + z + 1,)).affine_fundamental_group()
+            sage: L(L.gens() + (x + y + z + 1,)).affine_fundamental_group().sorted_presentation()
             Finitely presented group
-            < x0, x1, x2, x3 | x1*x0*x1^-1*x0^-1, x2*x0*x2^-1*x0^-1,
-                               x2*x1*x2^-1*x1^-1, x3*x0*x3^-1*x0^-1,
-                               x3*x1*x3^-1*x1^-1, x3*x2*x3^-1*x2^-1 >
+            < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x3*x1,
+                               x3^-1*x0^-1*x3*x0, x2^-1*x1^-1*x2*x1,
+                               x2^-1*x0^-1*x2*x0, x1^-1*x0^-1*x1*x0 >
 
         .. WARNING::
 

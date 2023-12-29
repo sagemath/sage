@@ -295,6 +295,10 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: h.deletion(C)
             Arrangement (x*y, x + y + 1, -y^5 + x^3, x^5 + y^5 + x^2*y^2)
             in Affine Space of dimension 2 over Rational Field
+            sage: h.deletion(x)
+            Traceback (most recent call last):
+            ...
+            ValueError: curve is not in the arrangement
             """
         parent = self.parent()
         curves = parent(curves)
@@ -386,6 +390,8 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: A = H(x * y, x^2 + x* y^3)
             sage: A.have_common_factors()
             True
+            sage: H(x * y, x + y^3).have_common_factors()
+            False
         """
         L = [c.defining_polynomial() for c in self]
         C = Combinations(L, 2)
@@ -440,7 +446,7 @@ class AffinePlaneCurveArrangementsElement(Element):
     def fundamental_group(self, simplified=True, vertical=True,
                           projective=False):
         r"""
-        The fundamental group of the complement of the union
+        Return the fundamental group of the complement of the union
         of affine plane curves in `\CC^2`.
 
         INPUT:
@@ -551,7 +557,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
     def meridians(self, simplified=True, vertical=True):
         r"""
-        Meridians of each irreducible component.
+        Return the meridians of each irreducible component.
 
         OUTPUT:
 
@@ -599,7 +605,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
     def braid_monodromy(self, vertical=True):
         r"""
-        It computes the braid monodromy of the complement of the union
+        Return the braid monodromy of the complement of the union
         of affine plane curves in `\CC^2`. If there are vertical
         asymptotes a change of variable is done.
 
@@ -653,7 +659,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
     def strands(self):
         r"""
-        Strands for each member of the arrangement.
+        Return the strands for each member of the arrangement.
 
         OUTPUT:
 
@@ -680,7 +686,8 @@ class AffinePlaneCurveArrangementsElement(Element):
 
     def vertical_strands(self):
         r"""
-        Vertical strands for each member of the arrangement.
+        Return the strands if the braid monodromy has been computed with
+        the vertical option.
 
         OUTPUT:
 
@@ -693,9 +700,10 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: # needs sirocco
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
-            sage: bm = A.braid_monodromy(vertical=True)
             sage: A.vertical_strands()
             {0: 1, 1: 0, 2: 0}
+            sage: A.braid_monodromy(vertical=True)
+            [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
 
         .. WARNING::
 
@@ -707,7 +715,7 @@ class AffinePlaneCurveArrangementsElement(Element):
 
     def vertical_lines_in_braid_mon(self):
         r"""
-        Vertical lines in the arrangement.
+        Return the vertical lines in the arrangement.
 
         OUTPUT:
 
@@ -719,10 +727,10 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: # needs sirocco
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
-            sage: A.braid_monodromy(vertical=True)
-            [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
             sage: A.vertical_lines_in_braid_mon()
             {1: 2}
+            sage: A.braid_monodromy(vertical=True)
+            [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
 
         .. WARNING::
 
@@ -772,8 +780,9 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
 
     def fundamental_group(self, simplified=True):
         r"""
-        The fundamental group of the complement of the union
-        of projective plane curves in the projective plane.
+        Return the fundamental group of the complement of the union
+        of an arragnement of projective plane curves
+        in the projective plane.
 
         INPUT:
 
@@ -788,6 +797,10 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
 
             sage: # needs sirocco
             sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
+            sage: H(z).fundamental_group()
+            Finitely presented group <  |  >
+            sage: H(x*y).fundamental_group()
+            Finitely presented group < x |  >
             sage: A = H(y^2 + x*z, y + x - z, x)
             sage: A.fundamental_group().sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
@@ -881,7 +894,7 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
 
     def meridians(self, simplified=True):
         r"""
-        Meridians of each irreducible component.
+        Return the meridians of each irreducible component.
 
         OUTPUT:
 
