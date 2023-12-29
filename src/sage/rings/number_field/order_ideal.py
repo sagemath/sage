@@ -328,7 +328,7 @@ def _gens_from_bqf(O, Q):
         sage: G = F.matrix_action_left(M)
         sage: G.discriminant() == F.discriminant()
         True
-        sage: J = O.ideal(G)
+        sage: J = O.ideal(G, future=1)
         sage: J.quadratic_form().is_equivalent(G)
         True
     """
@@ -432,7 +432,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             2
             sage: all(g in O for g in gs2)
             True
-            sage: O.ideal(gs2) == I
+            sage: O.ideal(gs2, future=1) == I
             True
         """
         O = self.ring()
@@ -531,7 +531,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             True
             sage: (len(gs) == 1) == I.is_principal()
             True
-            sage: O.ideal(gs) == I
+            sage: O.ideal(gs, future=1) == I
             True
         """
         if self.is_zero():
@@ -693,7 +693,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             sage: D = O.discriminant()
             sage: gen = (O.random_element() for _ in iter(int,1))
             sage: g = next(el for el in gen if el.norm() > 0)
-            sage: I = O.ideal(g)
+            sage: I = O.ideal(g, future=1)
             sage: F = I.quadratic_form()
             sage: F.is_equivalent(BinaryQF.principal(D))
             True
