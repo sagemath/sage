@@ -187,7 +187,7 @@ jobs:
       - name: Pytest
         run: |
           ../sage -python -m pip install coverage pytest-xdist
-          ../sage -python -m coverage run -m pytest --doctest -rs .
+          ../sage -python -m coverage run -m pytest --doctest -rfEs .
         working-directory: ./worktree-image/src
         env:
           # Increase the length of the lines in the "short summary"
