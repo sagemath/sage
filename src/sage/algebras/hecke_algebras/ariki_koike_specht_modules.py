@@ -63,6 +63,44 @@ class SpechtModule(CombinatorialFreeModule):
     of irreducible modules for `H_{r,n}(q, u)` [AK1994]_. (The condition
     on the base ring can be  weakened; see Theorem 3.2 of [Mathas2002]_.)
 
+    EXAMPLES:
+
+    We construct the Specht module `S^{(2,1,21)}` for `H_{3,6}(q, u)` with
+    generic parameters `q, u` over `\GF(3)` and perform some basic
+    computations. We change the tableaux to use the compact representation
+    to condense the output::
+
+        sage: TableauTuples.options.display = 'compact'
+
+        sage: R = PolynomialRing(GF(3), 'u', 3)
+        sage: u = R.gens()
+        sage: q = R['q'].gen()
+        sage: H = algebras.ArikiKoike(3, 6, q, u, use_fraction_field=True)
+        sage: LT = H.LT()
+        sage: T0, T1, T2, T3, T4, T5 = LT.T()
+        sage: S = H.specht_module([[2], [1], [2,1]])
+        sage: S.dimension()
+        120
+        sage: elt = S.an_element(); elt
+        S[1,2|3|4,5/6] - S[1,3|2|4,5/6] + S[1,3|4|2,5/6]
+        sage: elt * LT.L(3)
+        u1*S[1,2|3|4,5/6] + (-u0*q)*S[1,3|2|4,5/6] + u0*q*S[1,3|4|2,5/6]
+        sage: elt * T2
+        (((-u0-u1)*q-u1)/(-u0*q+u1))*S[1,2|3|4,5/6]
+         + (((-u0+u2)*q)/(u0*q-u2))*S[1,2|4|3,5/6]
+         + ((-u0*q^2-u0*q-u1)/(-u0*q+u1))*S[1,3|2|4,5/6]
+         + ((u0*q^2-u0*q)/(u0*q-u2))*S[1,3|4|2,5/6]
+        sage: (elt * T3) * T2 == elt * (T3 * T2)
+        True
+        sage: elt * T2 * T3 * T2 == elt * T3 * T2 * T3
+        True
+        sage: elt * T0 * T1 * T0 * T1 == elt * T1 * T0 * T1 * T0
+        True
+        sage: elt * T2 * T5 == elt * T5 * T2
+        True
+
+        sage: TableauTuples.options._reset()
+
     REFERENCES:
 
     - [AK1994]_
