@@ -200,6 +200,14 @@ def pytest_addoption(parser):
     )
 
 
+# Use the rich output backend for doctest
+from sage.repl.rich_output import get_display_manager
+from sage.repl.rich_output.backend_doctest import BackendDoctest
+
+display_manager = get_display_manager()
+display_manager.switch_backend(BackendDoctest())
+
+
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
     """
