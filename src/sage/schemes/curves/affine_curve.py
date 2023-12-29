@@ -1892,8 +1892,10 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
             The projection over the `x` axis is used if there are no vertical asymptotes.
             Otherwise, a linear change of variables is done to fall into the previous case.
-            This functionality requires the ``sirocco`` package to be installed.
 
+        .. NOTE::
+
+            This functionality requires the ``sirocco`` package to be installed.
 
         EXAMPLES::
 

@@ -452,14 +452,14 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         INPUT:
 
-        - ``vertical`` -- boolean (default: True); if it is ``True``, there
+        - ``vertical`` -- boolean (default: ``True``); if it is ``True``, there
           are no vertical asymptotes, and there are vertical lines, then a
           simplified braid braid_monodromy is used.
 
-        - ``simplified`` -- boolean (default: True); if it is ``True``, the
+        - ``simplified`` -- boolean (default: ``True``); if it is ``True``, the
           group is simplified.
 
-        - ``projective`` -- boolean (default: False); to be used in the
+        - ``projective`` -- boolean (default: ``False``); to be used in the
           method for projective curves.
 
         OUTPUT:
@@ -568,7 +568,7 @@ class AffinePlaneCurveArrangementsElement(Element):
         .. NOTE::
 
            This functionality requires the ``sirocco`` package to be installed
-           and :func:`AffinePlaneCurveArrangements.fundamental_group` with the same options,
+           and :meth:`AffinePlaneCurveArrangements.fundamental_group` with the same options,
            where some examples are shown.
 
         EXAMPLES::

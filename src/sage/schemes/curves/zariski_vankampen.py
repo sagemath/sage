@@ -382,7 +382,7 @@ def voronoi_cells(V, vertical_lines=()):
 
     - ``V`` -- a corrected Voronoi diagram
 
-    - ``vertical_lines`` -- list (default: ``()``); indices of the
+    - ``vertical_lines`` -- tuple (default: ``()``); indices of the
       vertical lines
 
     OUTPUT:
@@ -657,7 +657,7 @@ def fieldI(field):
     if I0 in field:
         return field
     field_a = field[I0]
-    field_b = field_a.absolute_field('b_0')
+    field_b = field_a.absolute_field('b0')
     b0 = field_b.gen()
     q = b0.minpoly()
     qembd = field_b.embeddings(QQbar)

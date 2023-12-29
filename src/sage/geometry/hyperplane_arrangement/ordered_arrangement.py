@@ -19,8 +19,9 @@ by the user::
     sage: H(t0 - t1, t1 - t2, t0 - t2)
     Arrangement <t0 - t1 | t1 - t2 | t0 - t2>
 
-Some methods are adapted and some new ones are created, regarding
-hyperplane sections and fundamental groups, e.g., ``hyperplanes``::
+Some methods are adapted, e.g., :meth: `arrangement.hyperplanes``,
+and some new ones are created, regarding
+hyperplane sections and fundamental groups::
 
     sage: H.<x,y> = HyperplaneArrangements(QQ)
     sage: H1.<x,y> = OrderedHyperplaneArrangements(QQ)
@@ -30,7 +31,7 @@ hyperplane sections and fundamental groups, e.g., ``hyperplanes``::
     sage: A1.hyperplanes()
     (Hyperplane x + 0*y + 0, Hyperplane 0*x + y + 0)
 
-We see the differences in ``union``::
+We see the differences in :meth: `arrangment.union`::
 
     sage: H.<x,y> = HyperplaneArrangements(QQ)
     sage: H1.<x,y> = OrderedHyperplaneArrangements(QQ)
@@ -41,7 +42,7 @@ We see the differences in ``union``::
     sage: [C1.hyperplanes().index(h) for h in C.hyperplanes()]
     [0, 5, 6, 1, 2, 3, 7, 4]
 
-Also in ``cone``::
+Also in meth: `arrangement.cone`::
 
     sage: # needs sage.combinat
     sage: a.<x,y,z> = hyperplane_arrangements.semiorder(3)
@@ -51,7 +52,7 @@ Also in ``cone``::
     sage: [b1.hyperplanes().index(h) for h in b.hyperplanes()]
     [0, 2, 4, 6, 1, 3, 5]
 
-And in ``restriction``::
+And in :meth: `arrangement.restriction`::
 
     sage: # needs sage.graphs
     sage: A.<u, x, y, z> = hyperplane_arrangements.braid(4)
@@ -106,7 +107,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         :class:`OrderedHyperplaneArrangementElement` instances directly,
         always use the parent.
     """
-
     def __init__(self, parent, hyperplanes, check=True, backend=None):
         """
         Construct an ordered hyperplane arrangement.
@@ -117,10 +117,10 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         - ``hyperplanes`` -- a tuple of hyperplanes
 
-        - ``check`` -- boolean (optional; default ``True``); whether
+        - ``check`` -- boolean (default ``True``); whether
           to check input
 
-        - ``backend`` -- string (optional; default: ``None``); the backend to
+        - ``backend`` -- string (default: ``None``); the backend to
           use for the related polyhedral objects
 
         EXAMPLES::
@@ -343,7 +343,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
     def affine_meridians(self):
         r"""
-        Return the meridians of each hyperplane (including the one at infinity)
+        Return the meridians of each hyperplane (including the one at infinity).
 
         OUTPUT:
 
@@ -481,7 +481,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
            This functionality requires the ``sirocco`` package to be installed.
 
-
         EXAMPLES::
 
             sage: # needs sirocco
@@ -549,10 +548,10 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
           hyperplane; alternatively, a single polytope or a single
           hyperplane arrangement
 
-        - ``signed`` -- boolean (optional, default: ``True``); whether to
+        - ``signed`` -- boolean (default: ``True``); whether to
           preserve signs of hyperplane equations
 
-        - ``check`` -- boolean (optional, default: ``True``); whether to
+        - ``check`` -- boolean (default: ``True``); whether to
           perform argument checking.
 
         EXAMPLES::
