@@ -1832,22 +1832,21 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         EXAMPLES::
 
-            sage: # needs sirocco
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve(y^2 - x^3 - x^2)
-            sage: C.fundamental_group(puiseux=False)
+            sage: C.fundamental_group(puiseux=False)                        # needs sirocco
             Finitely presented group < x0 |  >
-            sage: bm = C.braid_monodromy()
-            sage: g = C.fundamental_group(simplified=False)
-            sage: g.sorted_presentation()
+            sage: bm = C.braid_monodromy()                                  # needs sirocco
+            sage: g = C.fundamental_group(simplified=False)                 # needs sirocco
+            sage: g.sorted_presentation()                                   # needs sirocco
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x1^-1*x0 >
-            sage: g.simplified()
+            sage: g.simplified()                                            # needs sirocco
             Finitely presented group < x0 |  >
 
         In the case of number fields, they need to have an embedding
         to the algebraic field::
 
-            sage: # needs sage.rings.number_field sirocco
+            sage: # needs sage.rings.number_field
             sage: T.<t> = QQ[]
             sage: a = (t^2 + 5).roots(QQbar)[0][0]
             sage: F = NumberField(a.minpoly(), 'a', embedding=a)
@@ -1855,15 +1854,15 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             Defining a
             sage: A.<x,y> = AffineSpace(F, 2)
             sage: C = A.curve(y^2 - a*x^3 - x^2)
-            sage: C.fundamental_group()
+            sage: C.fundamental_group()                     # needs sirocco
             Finitely presented group < x0 |  >
             sage: C = A.curve(x * (x - 1))
-            sage: C.fundamental_group()
+            sage: C.fundamental_group()                     # needs sirocco
             Finitely presented group < x0, x1 |  >
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
         bm = self.braid_monodromy()
-        if bm == []:
+        if not bm:
             f = self.defining_polynomial()
             x, y = f.parent().gens()
             d0 = f.degree(y)
@@ -1898,10 +1897,9 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         EXAMPLES::
 
-            sage: # needs sirocco
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve((x^2-y^3)*(x+3*y-5))
-            sage: C.braid_monodromy()
+            sage: C.braid_monodromy()                                   # needs sirocco
             [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
              s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
              s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
@@ -1909,7 +1907,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: T.<t> = QQ[]
             sage: K.<a> = NumberField(t^3 + 2, 'a')
             sage: A.<x, y> = AffineSpace(K, 2)
-            sage: Curve(y^2 + a * x).braid_monodromy()
+            sage: Curve(y^2 + a * x).braid_monodromy()                  # needs sirocco
             Traceback (most recent call last):
             ...
             NotImplementedError: the base field must have an embedding to the algebraic field

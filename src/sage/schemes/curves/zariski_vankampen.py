@@ -8,7 +8,7 @@ using Zariski-Van Kampen approach. It depends on the package ``sirocco``.
 
 The current implementation allows to compute a presentation of the
 fundamental group of curves over the rationals or number fields with
-a fixed embedding on `\overline{\mathbb{Q}}`.
+a fixed embedding on `\QQbar`.
 
 Instead of computing a representation of the braid monodromy, we
 choose several base points and a system of paths joining them that
@@ -23,7 +23,7 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: # optional - sirocco
+    sage: # needs sirocco
     sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
@@ -87,7 +87,7 @@ def braid_from_piecewise(strands):
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_from_piecewise
         sage: paths = [[(0, 0, 1), (0.2, -1, -0.5), (0.8, -1, 0), (1, 0, -1)],
         ....:          [(0, -1, 0), (0.5, 0, -1), (1, 1, 0)],
@@ -177,11 +177,11 @@ def discrim(pols):
     INPUT:
 
     - ``pols`` -- a list or tuple of polynomials in two variables with
-      coefficients in a number field with a fixed embedding in `\overline{\mathbb{Q}}`.
+      coefficients in a number field with a fixed embedding in `QQbar`.
 
     OUTPUT:
 
-    A tuple with the roots of the discriminant in `\overline{\mathbb{Q}}`.
+    A tuple with the roots of the discriminant in `\QQbar`.
 
     EXAMPLES::
 
@@ -512,7 +512,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53):
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import followstrand
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
@@ -835,7 +835,6 @@ def braid_in_segment(glist, x0, x1, precision={}):
 
     EXAMPLES::
 
-        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_in_segment, fieldI
         sage: R.<x, y> = QQ[]
         sage: K = fieldI(QQ)
@@ -843,14 +842,14 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: f = f.change_ring(K)
         sage: x0 = 1
         sage: x1 = 1 + I / 2
-        sage: braid_in_segment(tuple(_[0] for _ in f.factor()), x0, x1)
+        sage: braid_in_segment(tuple(_[0] for _ in f.factor()), x0, x1)     # needs sirocco
         s1
 
     TESTS:
 
     Check that :trac:`26503` is fixed::
 
-        sage: # needs sage.rings.real_mpfr sage.symbolic sirocco
+        sage: # needs sage.rings.real_mpfr sage.symbolic
         sage: wp = QQ['t']([1, 1, 1]).roots(QQbar)[0][0]
         sage: Kw.<wp> = NumberField(wp.minpoly(), embedding=wp)
         sage: R.<x, y> = Kw[]
@@ -867,7 +866,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: p2a = CC(p2)
         sage: p2b = QQ(p2a.real()) + I*QQ(p2a.imag())
         sage: glist = tuple([_[0] for _ in g.factor()])
-        sage: B = braid_in_segment(glist, p1b, p2b); B
+        sage: B = braid_in_segment(glist, p1b, p2b); B              # needs sirocco
         s5*s3^-1
     """
     precision1 = {_: precision[_] for _ in precision.keys()}
@@ -1189,7 +1188,7 @@ def strand_components(f, flist, p1):
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import strand_components
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
@@ -1238,7 +1237,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     OUTPUT:
 
     - A list of braids, images by the braid monodromy of a geometric
-      basis of the complement of the discriminant of `f` in `\mathbb{C}`.
+      basis of the complement of the discriminant of `f` in `\CC`.
 
     - A dictionary: ``i``, index of a strand is sent to the index of
       the corresponding factor in ``arrangement``.
@@ -1260,7 +1259,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
         sage: R.<x, y> = QQ[]
         sage: f = (x^2 - y^3) * (x + 3*y - 5)
@@ -1411,7 +1410,7 @@ def conjugate_positive_form(braid):
 
     INPUT:
 
-    - ``braid`` -- a braid `\sigma`.
+    - ``braid`` -- a braid `\sigma`
 
     OUTPUT:
 
@@ -1595,28 +1594,27 @@ def fundamental_group_from_braid_mon(bm, degree=None,
 
     EXAMPLES::
 
-        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
         sage: B.<s0, s1, s2> = BraidGroup(4)
         sage: bm = [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1,
         ....:       s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1,
         ....:       (s0*s1)^2]
-        sage: g = fundamental_group_from_braid_mon(bm, projective=True); g
+        sage: g = fundamental_group_from_braid_mon(bm, projective=True); g      # needs sirocco
         Finitely presented group < x0, x1 | x1*x0^2*x1,
                                             x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
-        sage: print (g.order(), g.abelian_invariants())
+        sage: print (g.order(), g.abelian_invariants())                         # needs sirocco
         12 (4,)
         sage: B2 = BraidGroup(2)
         sage: bm = [B2(3 * [1])]
-        sage: g = fundamental_group_from_braid_mon(bm, vertical=[0]); g
+        sage: g = fundamental_group_from_braid_mon(bm, vertical=[0]); g         # needs sirocco
         Finitely presented group
         < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1,
                        x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
-        sage: fundamental_group_from_braid_mon([]) is None
+        sage: fundamental_group_from_braid_mon([]) is None                      # needs sirocco
         True
-        sage: fundamental_group_from_braid_mon([], degree=2)
+        sage: fundamental_group_from_braid_mon([], degree=2)                    # needs sirocco
         Finitely presented group < x0, x1 |  >
-        sage: fundamental_group_from_braid_mon([SymmetricGroup(1).one()])
+        sage: fundamental_group_from_braid_mon([SymmetricGroup(1).one()])       # needs sirocco
         Finitely presented group < x |  >
     """
     vertical0 = sorted(vertical)
@@ -1674,7 +1672,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
 
     - ``f`` -- a polynomial in two variables, with coefficients in either
       the rationals or a number field with a fixed embedding in
-      `\overline{\mathbb{Q}}`
+      `\QQbar`
 
     - ``simplified`` -- boolean (default: ``True``); if set to ``True`` the
       presentation will be simplified (see below)
@@ -1699,7 +1697,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
@@ -1716,7 +1714,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
 
     ::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: R.<x, y> = QQ[]
         sage: f = y^3 + x^3
@@ -1725,9 +1723,8 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
                                                 x2*x0*x1*x2^-1*x1^-1*x0^-1 >
 
     It is also possible to have coefficients in a number field with a
-    fixed embedding in `\overline{\mathbb{Q}}`::
+    fixed embedding in `\QQbar`::
 
-        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: zeta = QQbar['x']('x^2 + x+ 1').roots(multiplicities=False)[0]
         sage: zeta
@@ -1737,7 +1734,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         Defining zeta
         sage: R.<x, y> = F[]
         sage: f = y^3 + x^3 + zeta * x + 1
-        sage: fundamental_group(f)
+        sage: fundamental_group(f)                                  # needs sirocco
         Finitely presented group < x0 |  >
 
     We compute the fundamental group of the complement of a
@@ -1831,7 +1828,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
         sage: R.<x, y> = QQ[]

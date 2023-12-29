@@ -1,14 +1,13 @@
 r"""
 Ordered Hyperplane Arrangements
 
-The :class:`HyperplaneArrangements` ordered the arrangements in a hyperplane
-independently of the way the hyperplanes are introduced. With the class
-:class:`OrderedHyperplaneArrangements` it is allowed to fix an order by
-the user, what is needed for some properties, e.g., topological one.
-Besides this fact, it inherits the rest of the properties from :class:`HyperplaneArrangements.`
-
-Ordered arrangements
---------------------
+The :class:`HyperplaneArrangements` orders the hyperplanes in a arrangement
+independently of the way the hyperplanes are introduced. The class
+:class:`OrderedHyperplaneArrangements` fixes an order specified by
+the user. This can be needed for certain properties, e.g., fundamental group with
+information about meridians, braid monodromy with information about the strands;
+in the future, it may be useful for combinatorial properties.
+There are no other differences with usual hyperplane arrangements.
 
 An ordered arrangement is an arrangement where the hyperplanes are sorted
 by the user::

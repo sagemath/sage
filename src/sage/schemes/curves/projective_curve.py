@@ -1736,18 +1736,17 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
 
         EXAMPLES::
 
-            sage: # needs sirocco
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = P.curve(x^2*z - y^3)
-            sage: C.fundamental_group()
+            sage: C.fundamental_group()                                 # needs sirocco
             Finitely presented group < x0 | x0^3 >
-            sage: P.curve(z*(x^2*z - y^3)).fundamental_group()
+            sage: P.curve(z*(x^2*z - y^3)).fundamental_group()          # needs sirocco
             Finitely presented group < x0, x1 | x1*x0*x1*x0^-1*x1^-1*x0^-1 >
 
         In the case of number fields, they need to have an embedding
         into the algebraic field::
 
-            sage: # needs sage.rings.number_field sirocco
+            sage: # needs sage.rings.number_field
             sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]
             sage: a
             -2.236067977499790?*I
@@ -1756,12 +1755,11 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: F.inject_variables()
             Defining a
             sage: C = P.curve(x^2 + a * y^2)
-            sage: C.fundamental_group()
+            sage: C.fundamental_group()                         # needs sirocco
             Finitely presented group < x0 |  >
 
         TESTS::
 
-            sage: # needs sirocco
             sage: F.<x0, x1> = FreeGroup()
             sage: G = F / [x1^-1*(x1^-1*x0^-1*x1*x0^-1)^2, (x1^-1*x0^-1)^2*x1^-1*(x0*x1)^2*x0]
             sage: G.order()
@@ -1770,12 +1768,12 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: G0 = C.fundamental_group()
-            sage: G.is_isomorphic(G0)
+            sage: G0 = C.fundamental_group()                    # needs sirocco
+            sage: G.is_isomorphic(G0)                           # needs sirocco
             #I  Forcing finiteness test
             True
             sage: C = P.curve(z)
-            sage: C.fundamental_group()
+            sage: C.fundamental_group()                         # needs sirocco
             Finitely presented group <  |  >
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group

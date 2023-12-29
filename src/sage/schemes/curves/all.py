@@ -19,11 +19,12 @@ Plane curves
 #
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
+from sage.misc.lazy_import import lazy_import
 
 from .constructor import Curve
 
 from .projective_curve import Hasse_bounds
 
-from .plane_curve_arrangement import AffinePlaneCurveArrangements
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'AffinePlaneCurveArrangements')
 
-from .plane_curve_arrangement import ProjectivePlaneCurveArrangements
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'ProjectivePlaneCurveArrangements')

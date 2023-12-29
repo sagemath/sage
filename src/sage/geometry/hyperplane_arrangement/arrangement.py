@@ -351,7 +351,6 @@ arrangements.
 # - create ties with the Sage matroid methods
 # - hyperplane arrangements over other fields
 
-# from sage.geometry.hyperplane_arrangement.ordered_arrangement import OrderedHyperplaneArrangements
 from sage.geometry.hyperplane_arrangement.hyperplane import AmbientVectorSpace, Hyperplane
 from sage.matrix.constructor import matrix, vector
 from sage.misc.cachefunc import cached_method
@@ -375,7 +374,6 @@ class HyperplaneArrangementElement(Element):
         :class:`HyperplaneArrangementElement` instances directly,
         always use the parent.
     """
-
     def __init__(self, parent, hyperplanes, check=True, backend=None):
         """
         Construct a hyperplane arrangement.
@@ -500,10 +498,6 @@ class HyperplaneArrangementElement(Element):
         OUTPUT:
 
         A tuple
-
-        REMARK:
-
-        It applies also to ordered arrangements..
 
         EXAMPLES::
 
@@ -714,7 +708,7 @@ class HyperplaneArrangementElement(Element):
 
     def cone(self, variable='t'):
         r"""
-        Return the cone over the hyperplane arrangement `H_1,\dots,H_n`.
+        Return the cone over the hyperplane arrangement.
 
         INPUT:
 
@@ -735,7 +729,7 @@ class HyperplaneArrangementElement(Element):
             ``self.hyperplanes()`` will match the order in which their
             counterparts in ``self.cone()`` will appear in
             ``self.cone().hyperplanes()``! This warning does not apply
-            to ordered hyperplane arrangements,
+            to ordered hyperplane arrangements.
 
         EXAMPLES::
 
@@ -769,8 +763,8 @@ class HyperplaneArrangementElement(Element):
         hyperplanes.append([0, 1] + [0] * self.dimension())
         P = self.parent()
         names = (variable,) + P._names
-        if 'Ordered' in str(type(self)):
-            from sage.geometry.hyperplane_arrangement.ordered_arrangement import OrderedHyperplaneArrangements
+        from sage.geometry.hyperplane_arrangement.ordered_arrangement import OrderedHyperplaneArrangements
+        if isinstance(P, OrderedHyperplaneArrangements):
             H = OrderedHyperplaneArrangements(self.parent().base_ring(), names=names)
         else:
             H = HyperplaneArrangements(self.parent().base_ring(), names=names)
@@ -1308,8 +1302,8 @@ class HyperplaneArrangementElement(Element):
             hyperplanes.append([A, b])
         names = list(parent._names)
         names.pop(pivot)
-        if 'Ordered' in str(type(self)):
-            from sage.geometry.hyperplane_arrangement.ordered_arrangement import OrderedHyperplaneArrangements
+        from sage.geometry.hyperplane_arrangement.ordered_arrangement import OrderedHyperplaneArrangements
+        if isinstance(parent, OrderedHyperplaneArrangements):
             H = OrderedHyperplaneArrangements(parent.base_ring(), names=tuple(names))
             if not repetitions:
                 L = list(hyperplanes)
@@ -2829,12 +2823,10 @@ class HyperplaneArrangementElement(Element):
         normal = Polyhedron(vertices=[[0]*self.dimension()],
                             lines=[hyperplane.normal() for hyperplane in self],
                             backend=self._backend)
-
-        def transverse(poly):
-            if normal.dim() == 0:
-                return poly
-            return poly.intersection(normal)
-
+        if normal.dim() == 0:
+            transverse = lambda poly: poly
+        else:
+            transverse = lambda poly: poly.intersection(normal)
         return tuple(i for i, region in enumerate(self.regions())
                      if transverse(region).is_compact())
 
@@ -2952,7 +2944,7 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage:# needs sage.combinat
+            sage: # needs sage.combinat
             sage: A = hyperplane_arrangements.Shi(3)
             sage: A.whitney_data()
             (
