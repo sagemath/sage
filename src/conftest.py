@@ -122,6 +122,11 @@ class SageDoctestModule(DoctestModule):
             pytest.skip(
                 f"unable to import module { self.path } due to missing feature { exception.feature.name }"
             )
+        except ModuleNotFoundError as exception:
+            # TODO: Remove this once all optional things are using Features
+            pytest.skip(
+                f"unable to import module { self.path } due to missing feature { exception.name }"
+            )
 
 
 class IgnoreCollector(pytest.Collector):
