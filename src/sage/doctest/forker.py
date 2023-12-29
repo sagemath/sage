@@ -1248,16 +1248,21 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 out.append(message)
             elif self.options.format == 'github':
                 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
+                from urllib.parse import quote
+
+                def q(string):
+                    return quote(string, safe=' /,"\'')
+
                 if message.startswith('Warning: '):
-                    command = f'::warning title={message}'
+                    command = f'::warning title={q(message)}'
                     message = message[len('Warning: '):]
                 elif self.baseline.get('failed', False):
-                    command = f'::notice title={message}'
+                    command = f'::notice title={q(message)}'
                     message += ' [failed in baseline]'
                 else:
-                    command = f'::error title={message}'
+                    command = f'::error title={q(message)}'
                 if extra := getattr(example, 'extra', None):
-                    message += f': {extra}'
+                    message += f': {q(extra)}'
                 if test.filename:
                     command += f',file={test.filename}'
                     if test.lineno is not None and example.lineno is not None:
@@ -1266,7 +1271,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     lineno = None
                 else:
                     command += f',line={example.lineno + 1}'
-                command += f'::{message}'
+                command += f'::{q(message)}'
                 out.append(command)
             else:
                 raise ValueError(f'unknown format option: {self.options.format}')
@@ -1442,7 +1447,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
-            example.extra = f'Got: {got!r}'
+            example.extra = f'Got: {got}'
             returnval = doctest.DocTestRunner.report_failure(self, out, test, example, got)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
@@ -1594,7 +1599,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
 
-            example.extra = "Exception raised: " + repr("".join(traceback.format_exception(*exc_info)))
+            example.extra = "Exception raised:\n" + "".join(traceback.format_exception(*exc_info))
             returnval = doctest.DocTestRunner.report_unexpected_exception(self, out, test, example, exc_info)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
