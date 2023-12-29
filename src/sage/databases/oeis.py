@@ -891,7 +891,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
 
             sage: f.old_IDs()                           # optional -- internet
-            ('M0692', 'N0256'...)
+            ('M0692', 'N0256')
 
         TESTS::
 
@@ -899,7 +899,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s.old_IDs()
             ('M9999', 'N9999')
         """
-        return tuple(self._field('I')[0].split(' '))
+        s = self._field('I')[0]
+        # We remove all parts after '#'
+        s = s.split('#')[0].strip()
+        if not s:
+            return ()
+        return tuple(s.split(' '))
 
     def offsets(self):
         r"""
@@ -1804,7 +1809,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             URL
             https://oeis.org/A012345
             <BLANKLINE>
-            ...
             AUTHOR
             Patrick Demichel (patrick.demichel(AT)hp.com)
             <BLANKLINE>
