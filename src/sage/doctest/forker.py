@@ -1248,21 +1248,16 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 out.append(message)
             elif self.options.format == 'github':
                 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
-                from urllib.parse import quote
-
-                def q(string):
-                    return quote(string, safe=' /,"\'')
-
                 if message.startswith('Warning: '):
-                    command = f'::warning title={q(message)}'
+                    command = f'::warning title={message}'
                     message = message[len('Warning: '):]
                 elif self.baseline.get('failed', False):
-                    command = f'::notice title={q(message)}'
+                    command = f'::notice title={message}'
                     message += ' [failed in baseline]'
                 else:
-                    command = f'::error title={q(message)}'
+                    command = f'::error title={message}'
                 if extra := getattr(example, 'extra', None):
-                    message += f': {q(extra)}'
+                    message += f': {extra}'
                 if test.filename:
                     command += f',file={test.filename}'
                     if test.lineno is not None and example.lineno is not None:
@@ -1271,7 +1266,23 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     lineno = None
                 else:
                     command += f',line={example.lineno + 1}'
-                command += f'::{q(message)}'
+                #
+                # Urlencoding trick for multi-line annotations
+                # https://github.com/actions/starter-workflows/issues/68#issuecomment-581479448
+                #
+                # This only affects the display in the workflow Summary, after clicking "Show more";
+                # the message needs to be long enough so that "Show more" becomes available.
+                # https://github.com/actions/toolkit/issues/193#issuecomment-1867084340
+                #
+                # Unfortunately, this trick does not make the annotations in the diff view multi-line.
+                #
+                if '\n' in message:
+                    message = message.replace('\n', '%0A')
+                    # The actual threshold for "Show more" to appear depends on the window size.
+                    show_more_threshold = 500
+                    if (pad := show_more_threshold - len(message)) > 0:
+                        message += ' ' * pad
+                command += f'::{message}'
                 out.append(command)
             else:
                 raise ValueError(f'unknown format option: {self.options.format}')
