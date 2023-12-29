@@ -1746,7 +1746,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
 
         In the case of number fields, they need to have an embedding
         into the algebraic field::
-.
+
             sage: # needs sage.rings.number_field sirocco
             sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]
             sage: a
