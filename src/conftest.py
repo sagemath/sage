@@ -71,7 +71,6 @@ class SageDoctestModule(DoctestModule):
                 if _is_mocked(obj):
                     return
                 with _patch_unwrap_mock_aware():
-
                     # Type ignored because this is a private function.
                     super()._find(  # type:ignore[misc]
                         tests, obj, name, module, source_lines, globs, seen
@@ -90,34 +89,48 @@ class SageDoctestModule(DoctestModule):
                     mode=ImportMode.importlib,
                     root=self.config.rootpath,
                 )
-            except ImportError:
+            except ImportError as exception:
                 if self.config.getvalue("doctest_ignore_import_errors"):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
+                    if isinstance(exception, ModuleNotFoundError):
+                        # Ignore some missing features/modules for now
+                        # TODO: Remove this once all optional things are using Features
+                        if exception.name in ("valgrind", "rpy2"):
+                            pytest.skip(
+                                f"unable to import module { self.path } due to missing feature { exception.name }"
+                            )
                     raise
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self)
+        from sage.features import FeatureNotPresentError
+
         runner = _get_runner(
             verbose=False,
             optionflags=optionflags,
             checker=SageOutputChecker(),
             continue_on_failure=_get_continue_on_failure(self.config),
         )
-
-        for test in finder.find(module, module.__name__):
-            if test.examples:  # skip empty doctests
-                yield DoctestItem.from_parent(
-                    self, name=test.name, runner=runner, dtest=test
-                )
+        try:
+            for test in finder.find(module, module.__name__):
+                if test.examples:  # skip empty doctests
+                    yield DoctestItem.from_parent(
+                        self, name=test.name, runner=runner, dtest=test
+                    )
+        except FeatureNotPresentError as exception:
+            pytest.skip(
+                f"unable to import module { self.path } due to missing feature { exception.feature.name }"
+            )
 
 
 class IgnoreCollector(pytest.Collector):
     """
     Ignore a file.
     """
+
     def __init__(self, parent: pytest.Collector) -> None:
-        super().__init__('ignore', parent)
+        super().__init__("ignore", parent)
 
     def collect(self) -> Iterable[pytest.Item | pytest.Collector]:
         return []
@@ -141,11 +154,30 @@ def pytest_collect_file(
         return IgnoreCollector.from_parent(parent)
     elif file_path.suffix == ".py":
         if parent.config.option.doctest:
-            if file_path.name == "__main__.py":
-                # We don't allow tests to be defined in __main__.py files (because their import will fail).
+            if file_path.name == "__main__.py" or file_path.name == "setup.py":
+                # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
                 return IgnoreCollector.from_parent(parent)
-            if file_path.name == "postprocess.py" and file_path.parent.name == "nbconvert":
+            if (
+                file_path.name == "postprocess.py"
+                and file_path.parent.name == "nbconvert"
+            ) or (
+                file_path.name == "giacpy-mkkeywords.py"
+                and file_path.parent.name == "autogen"
+            ):
                 # This is an executable file.
+                return IgnoreCollector.from_parent(parent)
+            if (
+                (
+                    file_path.name == "finite_dimensional_lie_algebras_with_basis.py"
+                    and file_path.parent.name == "categories"
+                )
+                or (
+                    file_path.name == "__init__.py"
+                    and file_path.parent.name == "crypto"
+                )
+                or (file_path.name == "__init__.py" and file_path.parent.name == "mq")
+            ):
+                # TODO: Fix these (import fails with "RuntimeError: dictionary changed size during iteration")
                 return IgnoreCollector.from_parent(parent)
             return SageDoctestModule.from_parent(parent, path=file_path)
 
@@ -161,6 +193,7 @@ def pytest_addoption(parser):
         help="Run doctests in all .py modules",
         dest="doctest",
     )
+
 
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
