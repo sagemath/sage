@@ -186,7 +186,7 @@ jobs:
 
       - name: Pytest
         run: |
-          ../sage -python -m pip install coverage pytest-xdist
+          ../sage -python -m pip install coverage pytest-xdist pytest-github-actions-annotate-failures
           ../sage -python -m coverage run -m pytest --doctest -s -rfEs .
         working-directory: ./worktree-image/src
         env:

@@ -61,7 +61,7 @@ jobs:
 
       - name: Install test tools
         shell: bash -l {0}
-        run: conda install -c conda-forge pytest-xdist coverage
+        run: conda install -c conda-forge pytest-xdist pytest-github-actions-annotate-failures coverage
 
       - name: Print Conda environment
         shell: bash -l {0}
