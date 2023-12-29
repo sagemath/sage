@@ -19,7 +19,7 @@ by the user::
     sage: H(t0 - t1, t1 - t2, t0 - t2)
     Arrangement <t0 - t1 | t1 - t2 | t0 - t2>
 
-Some methods are adapted, e.g., :meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.hyperplanes``,
+Some methods are adapted, e.g., :meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.hyperplanes`,
 and some new ones are created, regarding
 hyperplane sections and fundamental groups::
 
