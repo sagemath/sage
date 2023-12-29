@@ -128,6 +128,7 @@ def braid_from_piecewise(strands):
         if x > y:
             return -1
         return 0
+
     for i in range(len(totalpoints[0]) - 1):
         l1 = [totalpoints[j][i] for j in range(len(L))]
         l2 = [totalpoints[j][i + 1] for j in range(len(L))]
@@ -1148,6 +1149,8 @@ def vertical_lines_in_braidmon(flist):
         sage: flist += [x * y - 1]
         sage: vertical_lines_in_braidmon(flist)
         []
+        sage: vertical_lines_in_braidmon([])
+        []
     """
     if not flist:
         return []
@@ -1613,6 +1616,8 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         True
         sage: fundamental_group_from_braid_mon([], degree=2)
         Finitely presented group < x0, x1 |  >
+        sage: fundamental_group_from_braid_mon([SymmetricGroup(1).one()])
+        Finitely presented group < x |  >
     """
     vertical0 = sorted(vertical)
     v = len(vertical0)

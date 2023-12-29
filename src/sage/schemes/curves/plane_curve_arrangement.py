@@ -326,10 +326,11 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 - x^3, x, y, y^2 + x * y + x^2)
-            sage: K.<a> = CyclotomicField(3)  # optional - sage.rings.number_field
-            sage: A.change_ring(K)            # optional - sage.rings.number_field
+            sage: K.<a> = CyclotomicField(3)
+            sage: A.change_ring(K)
             Arrangement (-x^3 + y^2, x, y, x^2 + x*y + y^2) in Affine Space of
             dimension 2 over Cyclotomic Field of order 3 and degree 2
         """
@@ -465,6 +466,10 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         A finitely presented group.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -507,10 +512,6 @@ class AffinePlaneCurveArrangementsElement(Element):
             < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x3*x1,
                                x3^-1*x0^-1*x3*x0, x2^-1*x1^-1*x2*x1,
                                x2^-1*x0^-1*x2*x0, x1^-1*x0^-1*x1*x0 >
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if self._fundamental_group and not vertical and not simplified:
             return self._fundamental_group
@@ -564,6 +565,12 @@ class AffinePlaneCurveArrangementsElement(Element):
         A dictionary which associates the index of each curve with its meridians,
         including the line at infinity if it can be omputed
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed
+           and :func:`AffinePlaneCurveArrangements.fundamental_group` with the same options,
+           where some examples are shown.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -575,14 +582,6 @@ class AffinePlaneCurveArrangementsElement(Element):
                                x3*x0*x3^-1*x0^-1, x3*x1*x3^-1*x1^-1 >
             sage: A.meridians()
             {0: [x2], 1: [x0], 2: [x3], 3: [x1], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
-
-        This function needs
-        :func:`AffinePlaneCurveArrangements.fundamental_group` with the same options,
-        where some examples are shown.
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if not vertical and not simplified:
             computed = bool(self._meridians)
@@ -620,6 +619,10 @@ class AffinePlaneCurveArrangementsElement(Element):
         A braid monodromy with dictionnaries identifying strands with components
         and braids with vertical lines.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -633,10 +636,6 @@ class AffinePlaneCurveArrangementsElement(Element):
              s1*s0*s1*s2*s1*s2^-1*s1^-1*s2*s0^-1*s1^-1]
             sage: A.braid_monodromy(vertical=True)
             [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if not vertical and self._braid_monodromy is not None:
             return self._braid_monodromy
@@ -667,6 +666,10 @@ class AffinePlaneCurveArrangementsElement(Element):
         its associated component if the braid monodromy has been
         calculated with ``vertical=False``.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -675,10 +678,6 @@ class AffinePlaneCurveArrangementsElement(Element):
             sage: bm = A.braid_monodromy()
             sage: A.strands()
             {0: 2, 1: 1, 2: 0, 3: 0}
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if not self._strands:
             self._braid_monodromy = self.braid_monodromy(vertical=False)
@@ -695,6 +694,10 @@ class AffinePlaneCurveArrangementsElement(Element):
         its associated component if the braid monodromy has been
         calculated with ``vertical=True``.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -704,10 +707,6 @@ class AffinePlaneCurveArrangementsElement(Element):
             {0: 1, 1: 0, 2: 0}
             sage: A.braid_monodromy(vertical=True)
             [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if not self._strands_with_vertical:
             self.braid_monodromy(vertical=True)
@@ -722,6 +721,10 @@ class AffinePlaneCurveArrangementsElement(Element):
         A dictionary which associates the index of a braid
         to the index of the vertical line associated to the braid.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -731,10 +734,6 @@ class AffinePlaneCurveArrangementsElement(Element):
             {1: 2}
             sage: A.braid_monodromy(vertical=True)
             [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if not self._vertical_lines_in_braid_mon:
             self.braid_monodromy(vertical=True)
@@ -793,6 +792,10 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
 
         A finitely presented group.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -823,10 +826,6 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             Finitely presented group
             < x0, x1, x2 | x2*x0*x1*x0^-1*x2^-1*x1^-1,
                            x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if self._fundamental_group and not simplified:
             return self._fundamental_group
@@ -902,6 +901,12 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
         its meridians, including the line at infinity if it can be
         computed
 
+        .. NOTE::
+
+           This function requires the ``sirocco`` package to be installed and
+           :func:`ProjectivePlaneCurveArrangements.fundamental_group`
+           with the same options, where some examples are shown.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -922,14 +927,6 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
                                                     x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
             sage: A.meridians()
             {0: [x0, x2*x0*x2^-1], 1: [x2, x0^-1*x2^-1*x1^-1*x0^-1], 2: [x1]}
-
-        This function needs
-        :func:`ProjectivePlaneCurveArrangements.fundamental_group`
-        with the same options, where some examples are shown.
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if not simplified:
             computed = bool(self._meridians)

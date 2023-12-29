@@ -781,32 +781,35 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         The other affine patches of the same curve::
 
-            sage: C.plot(patch=0)                                                       # needs sage.plot
+            sage: # needs sage.plot
+            sage: C.plot(patch=0)
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)                                                       # needs sage.plot
+            sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
 
         An elliptic curve::
 
+            sage: # needs sage.plot
             sage: E = EllipticCurve('101a')
             sage: C = Curve(E)
-            sage: C.plot()                                                              # needs sage.plot
+            sage: C.plot()
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=0)                                                       # needs sage.plot
+            sage: C.plot(patch=0)
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)                                                       # needs sage.plot
+            sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
 
         A hyperelliptic curve::
 
+            sage: # needs sage.plot
             sage: P.<x> = QQ[]
             sage: f = 4*x^5 - 30*x^3 + 45*x - 22
             sage: C = HyperellipticCurve(f)
-            sage: C.plot()                                                              # needs sage.plot
+            sage: C.plot()
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=0)                                                       # needs sage.plot
+            sage: C.plot(patch=0)
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)                                                       # needs sage.plot
+            sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
         """
         # if user has not specified a favorite affine patch, take the
@@ -862,16 +865,17 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         Over `\CC`::
 
+            sage: # needs sage.rings.function_field
             sage: F = CC
             sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
             sage: C = Curve(X)
-            sage: C.is_singular()                                                       # needs sage.rings.function_field
+            sage: C.is_singular()
             False
             sage: D = Curve(Y^2*Z - X^3)
-            sage: D.is_singular()                                                       # needs sage.rings.function_field
+            sage: D.is_singular()
             True
             sage: E = Curve(Y^2*Z - X^3 + Z^3)
-            sage: E.is_singular()                                                       # needs sage.rings.function_field
+            sage: E.is_singular()
             False
 
         Showing that :trac:`12187` is fixed::
@@ -883,10 +887,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         ::
 
+            sage: # needs sage.fings.function_field
             sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
             sage: C = Curve([y^4 - x^3*z], P)
             sage: Q = P([0,0,1])
-            sage: C.is_singular()                                                       # needs sage.rings.function_field
+            sage: C.is_singular()
             True
         """
         if P is None:
@@ -1725,17 +1730,24 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             The curve must be defined over the rationals or a number field
             with an embedding over `\QQbar`.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
+            sage: # needs sirocco
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = P.curve(x^2*z - y^3)
-            sage: C.fundamental_group()                         # optional - sirocco
+            sage: C.fundamental_group()
             Finitely presented group < x0 | x0^3 >
+            sage: P.curve(z*(x^2*z - y^3)).fundamental_group()
+            Finitely presented group < x0, x1 | x1*x0*x1*x0^-1*x1^-1*x0^-1 >
 
         In the case of number fields, they need to have an embedding
         into the algebraic field::
-
-            sage: # needs sage.rings.number_field
+.
+            sage: # needs sage.rings.number_field sirocco
             sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]
             sage: a
             -2.236067977499790?*I
@@ -1744,15 +1756,12 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: F.inject_variables()
             Defining a
             sage: C = P.curve(x^2 + a * y^2)
-            sage: C.fundamental_group()                         # optional - sirocco
+            sage: C.fundamental_group()
             Finitely presented group < x0 |  >
-
-        .. WARNING::
-
-            This functionality requires the ``sirocco`` package to be installed.
 
         TESTS::
 
+            sage: # needs sirocco
             sage: F.<x0, x1> = FreeGroup()
             sage: G = F / [x1^-1*(x1^-1*x0^-1*x1*x0^-1)^2, (x1^-1*x0^-1)^2*x1^-1*(x0*x1)^2*x0]
             sage: G.order()
@@ -1761,8 +1770,8 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: G0 = C.fundamental_group()                 # optional - sirocco
-            sage: G.is_isomorphic(G0)                        # optional - sirocco
+            sage: G0 = C.fundamental_group()
+            sage: G.is_isomorphic(G0)
             #I  Forcing finiteness test
             True
             sage: C = P.curve(z)
@@ -2296,9 +2305,10 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)                                 # needs sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)                                  # needs sage.rings.finite_rings
-            sage: C.genus()  # indirect doctest                                         # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: C.genus()  # indirect doctest
             1
         """
         return self._open_affine.genus()

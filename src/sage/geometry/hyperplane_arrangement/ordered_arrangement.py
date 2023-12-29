@@ -264,6 +264,10 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         A finitely presented fundamental group`.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -305,10 +309,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x3*x1,
                                x3^-1*x0^-1*x3*x0, x2^-1*x1^-1*x2*x1,
                                x2^-1*x0^-1*x2*x0, x1^-1*x0^-1*x1*x0 >
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         K = self.base_ring()
         if not K.is_subring(QQbar):
@@ -350,6 +350,10 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         A dictionary
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -365,10 +369,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: H = A(x, y, x + y)
             sage: H.affine_meridians()
             {0: [x2], 1: [x1], 2: [x0], 3: [x2^-1*x1^-1*x0^-1]}
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if not self._affine_meridians:
             self.affine_fundamental_group()
@@ -384,6 +384,10 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         The finitely presented group of the complement
         in the projective space whose equations have
         coefficients in a subfield of `\QQbar`.
+
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
 
         EXAMPLES::
 
@@ -430,10 +434,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             Traceback (most recent call last):
             ...
             TypeError: the arrangement is not projective
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         K = self.base_ring()
         if not K.is_subring(QQbar):
@@ -478,6 +478,11 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         A dictionary
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
+
         EXAMPLES::
 
             sage: # needs sirocco
@@ -504,10 +509,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: H = L(H)
             sage: H.projective_meridians()
             {0: [x2], 1: [x3], 2: [x0], 3: [x3^-1*x2^-1*x1^-1*x0^-1], 4: [x1]}
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
         """
         if not self._projective_meridians:
             self.projective_fundamental_group()
