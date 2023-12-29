@@ -19,7 +19,7 @@ by the user::
     sage: H(t0 - t1, t1 - t2, t0 - t2)
     Arrangement <t0 - t1 | t1 - t2 | t0 - t2>
 
-Some methods are adapted, e.g., :meth: `arrangement.hyperplanes``,
+Some methods are adapted, e.g., :meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.hyperplanes``,
 and some new ones are created, regarding
 hyperplane sections and fundamental groups::
 
@@ -31,7 +31,7 @@ hyperplane sections and fundamental groups::
     sage: A1.hyperplanes()
     (Hyperplane x + 0*y + 0, Hyperplane 0*x + y + 0)
 
-We see the differences in :meth: `arrangment.union`::
+We see the differences in :meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.union`::
 
     sage: H.<x,y> = HyperplaneArrangements(QQ)
     sage: H1.<x,y> = OrderedHyperplaneArrangements(QQ)
@@ -42,7 +42,7 @@ We see the differences in :meth: `arrangment.union`::
     sage: [C1.hyperplanes().index(h) for h in C.hyperplanes()]
     [0, 5, 6, 1, 2, 3, 7, 4]
 
-Also in meth: `arrangement.cone`::
+Also in meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.cone`::
 
     sage: # needs sage.combinat
     sage: a.<x,y,z> = hyperplane_arrangements.semiorder(3)
@@ -52,7 +52,7 @@ Also in meth: `arrangement.cone`::
     sage: [b1.hyperplanes().index(h) for h in b.hyperplanes()]
     [0, 2, 4, 6, 1, 3, 5]
 
-And in :meth: `arrangement.restriction`::
+And in :meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.restriction`::
 
     sage: # needs sage.graphs
     sage: A.<u, x, y, z> = hyperplane_arrangements.braid(4)
