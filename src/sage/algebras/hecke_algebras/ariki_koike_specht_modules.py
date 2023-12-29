@@ -326,6 +326,7 @@ class SpechtModule(CombinatorialFreeModule):
                 sage: S = AK.specht_module([[1],[2,1]])
                 sage: B = list(LT.basis())[::55]
                 sage: all(b * x == b * T(x) for b in S.basis() for x in B)  # long time
+                True
             """
             ret = super()._acted_upon_(scalar, self_on_left)
             if ret is not None:

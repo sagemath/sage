@@ -2316,7 +2316,7 @@ REFERENCES:
                *Nessie proposal: NOEKEON*; in First Open NESSIE Workshop, (2000).
 
 .. [DR2001] \J. Du and H. Rui. *Specht modules for Ariki–Koike algebras*,
-			Comm. Alg., **29** (2001), 4710-4719.
+            Comm. Alg., **29** (2001), 4710-4719.
 
 .. [DR2002] Joan Daemen, Vincent Rijmen. *The Design of
             Rijndael*. Springer-Verlag Berlin Heidelberg, 2002.

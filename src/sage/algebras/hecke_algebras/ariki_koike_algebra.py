@@ -425,8 +425,11 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
             sage: AK = algebras.ArikiKoike(4, 6)
             sage: AK.specht_module([[2], [], [1,1,1], [1]])
+            Specht module of shape ([2], [], [1, 1, 1], [1]) for
+             Ariki-Koike algebra of rank 4 and order 6 with q=q and u=(u0, u1, u2, u3)
+             over ... over Integer Ring
         """
-        from sage.algebras.hecke_algebras.ariki_koike_algebra_modules import SpechtModule
+        from sage.algebras.hecke_algebras.ariki_koike_specht_modules import SpechtModule
         return SpechtModule(self, la)
 
     class _BasesCategory(Category_realization_of_parent):
@@ -590,15 +593,14 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
                     sage: AK = algebras.ArikiKoike(4, 3)
                     sage: LT = AK.LT()
-                    sage: S1 = LT.specht_module([[1], [], [1,1]])
+                    sage: S1 = LT.specht_module([[1], [], [1,1], []])
                     sage: T = AK.T()
-                    sage: S2 = T.specht_module([[1], [], [1,1]])
+                    sage: S2 = T.specht_module([[1], [], [1,1], []])
                     sage: S1 is S2
                     True
                 """
-                from sage.algebras.hecke_algebras.ariki_koike_algebra_modules import SpechtModule
+                from sage.algebras.hecke_algebras.ariki_koike_specht_modules import SpechtModule
                 return SpechtModule(self.realization_of(), la)
-
 
     # -----------------------------------------------------
     # Basis classes
@@ -1256,7 +1258,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
                 sage: T = algebras.ArikiKoike(4, 3).T()
                 sage: T._latex_term( ((1,0,2), Permutation([3,2,1])) )
-                'T_{0}T_{1}T_{0}T_{0}T_{2}T_{1}T_{2}'
+                'T_{0}T_{2}T_{1}T_{0}T_{0}T_{2}T_{1}T_{2}'
             """
             redword = self._basis_to_word(t)
             if not redword:
