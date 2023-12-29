@@ -59,6 +59,10 @@ jobs:
           activate-environment: sage
           environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}.yml
 
+      - name: Install test tools
+        shell: bash -l {0}
+        run: conda install -c conda-forge pytest-xdist coverage
+
       - name: Print Conda environment
         shell: bash -l {0}
         run: |
@@ -92,7 +96,7 @@ jobs:
       - name: Test
         if: success() || failure()
         shell: bash -l {0}
-        run: ./sage -t --all --baseline-stats-path=.github/workflows/ci-conda-known-test-failures.json -p0
+        run: ./sage -python -m pytest -c tox.ini --doctest src
 
       - name: Print logs
         if: always()
