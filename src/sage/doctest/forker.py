@@ -46,35 +46,41 @@ AUTHORS:
 # ****************************************************************************
 
 
-import os
-import sys
-import time
-import signal
-import linecache
-import hashlib
-import multiprocessing
-import warnings
-import re
-import errno
 import doctest
-import traceback
+import errno
+import gc
+import hashlib
+import linecache
+import multiprocessing
+import os
+import re
+import signal
+import sys
 import tempfile
+import time
+import traceback
+import warnings
 from collections import defaultdict
 from dis import findlinestarts
 from queue import Empty
-import gc
-import IPython.lib.pretty
 
+import IPython.lib.pretty
 import sage.misc.randstate as randstate
-from sage.misc.timing import walltime
-from .util import Timer, RecordingDict, count_noun
-from .sources import DictAsObject
-from .parsing import OriginalSource, reduce_hex
-from sage.structure.sage_object import SageObject
-from .parsing import SageOutputChecker, pre_hash, get_source, unparse_optional_tags
-from sage.repl.user_globals import set_globals
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
+from sage.doctest.parsing import (
+    OriginalSource,
+    SageOutputChecker,
+    get_source,
+    pre_hash,
+    reduce_hex,
+    unparse_optional_tags,
+)
+from sage.doctest.sources import DictAsObject
+from sage.doctest.util import RecordingDict, Timer, count_noun
+from sage.misc.timing import walltime
+from sage.repl.user_globals import set_globals
+from sage.structure.sage_object import SageObject
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
@@ -500,6 +506,7 @@ class SageSpoofInOut(SageObject):
 
 
 from collections import namedtuple
+
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
@@ -536,8 +543,9 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.msgfile = kwds.pop('msgfile', None)
         self.options = kwds.pop('sage_options')
         doctest.DocTestRunner.__init__(self, *args, **kwds)
-        self._fakeout = SageSpoofInOut(O)
-        if self.msgfile is None:
+        if O is not None:
+            self._fakeout = SageSpoofInOut(O)
+        if self.msgfile is None and O is not None:
             self.msgfile = self._fakeout.real_stdout
         self.history = []
         self.references = []
@@ -1442,8 +1450,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         print(src)
                         if ex.want:
                             print(doctest._indent(ex.want[:-1]))
-                    from sage.repl.configuration import sage_ipython_config
                     from IPython.terminal.embed import InteractiveShellEmbed
+                    from sage.repl.configuration import sage_ipython_config
                     cfg = sage_ipython_config.default()
                     # Currently this doesn't work: prompts only work in pty
                     # We keep simple_prompt=True, prompts will be "In [0]:"
