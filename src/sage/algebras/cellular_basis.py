@@ -113,6 +113,8 @@ from typing import Self
 from sage.categories.algebras import Algebras
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.misc.mrange import cartesian_product_iterator
 
 
 class CellularBasis(CombinatorialFreeModule):
@@ -138,21 +140,21 @@ class CellularBasis(CombinatorialFreeModule):
         sage: len(S.basis())
         6
         sage: a,b,c,d,e,f = C.basis()
-        sage: f
+        sage: a
         C([3], [[1, 2, 3]], [[1, 2, 3]])
         sage: c
         C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
         sage: d
         C([2, 1], [[1, 2], [3]], [[1, 3], [2]])
-        sage: f * f
+        sage: a * a
         C([3], [[1, 2, 3]], [[1, 2, 3]])
-        sage: f * c
+        sage: a * c
         0
         sage: d * c
         C([2, 1], [[1, 2], [3]], [[1, 2], [3]])
         sage: c * d
         C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
-        sage: S(f)
+        sage: S(a)
         1/6*[1, 2, 3] + 1/6*[1, 3, 2] + 1/6*[2, 1, 3] + 1/6*[2, 3, 1]
          + 1/6*[3, 1, 2] + 1/6*[3, 2, 1]
         sage: S(d)
@@ -177,9 +179,18 @@ class CellularBasis(CombinatorialFreeModule):
             sage: TestSuite(C).run()
         """
         self._algebra = A
-        I = [(la, s, t) for la in A.cell_poset()
-             for s in A.cell_module_indices(la)
-             for t in A.cell_module_indices(la)]
+        # We use cartesian_product_iterator as we don't need any fancy elements
+        #   but we only want to have lazily iteration and know the cardinality.
+        if A.cell_poset_indices is NotImplemented:
+            X = A.cell_poset()
+        else:
+            X = A.cell_poset_indices()
+        self.cell_poset = A.cell_poset
+        self.cell_poset_indices = A.cell_poset_indices
+        self.cell_poset_comparison = A.cell_poset_comparison
+        fam = {la: cartesian_product_iterator([[la], A.cell_module_indices(la), A.cell_module_indices(la)])
+               for la in X}
+        I = DisjointUnionEnumeratedSets(fam)
 
         # TODO: Use instead A.category().Realizations() so
         #   operations are defined by coercion?

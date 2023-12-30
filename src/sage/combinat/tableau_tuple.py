@@ -415,7 +415,11 @@ class TableauTuple(CombinatorialElement):
             False
         """
         # By calling Tableau we implicitly check that the shape is a PartitionTuple
-        t = [Tableau(s) for s in t]
+        if check:
+            t = [Tableau(s) for s in t]
+        else:
+            Tab = Tableaux_all()
+            t = [Tab.element_class(Tab, s, check=False) for s in t]
         CombinatorialElement.__init__(self, parent, t)
         self._level = len(self._list)
 
@@ -642,6 +646,18 @@ class TableauTuple(CombinatorialElement):
             return self[k][r][c]
         except IndexError:
             raise IndexError("the cell (%s, %s, %s) is not contained in the tableau" % (k, r, c))
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: t = TableauTuple([[[1,2,3],[4,5]],[[6,7]],[[8],[9]]])
+            sage: hash(t) == hash(tuple(t))
+            True
+        """
+        return hash(tuple(self._list))
 
     def level(self):
         """
@@ -1553,13 +1569,20 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
         # example, generates RowStandardTableauTuples of level 1. These tableaux
         # should have RowStandardTableauTuples as their parent so we have to cope
         # with level 1 tableau after all.
-        try:
-            t = [Tableau(s) for s in t]
-        except (TypeError, ValueError):
+        if check:
             try:
-                t = [Tableau(t)]
-            except ValueError:
-                raise ValueError('not a valid row standard tableau tuple')
+                t = [Tableau(s) for s in t]
+            except (TypeError, ValueError):
+                try:
+                    t = [Tableau(t)]
+                except ValueError:
+                    raise ValueError('not a valid row standard tableau tuple')
+        elif t:  # make sure t is non-empty
+            Tab = Tableaux_all()
+            try:
+                t = [Tab.element_class(Tab, s, check=False) for s in t]
+            except (TypeError, ValueError):
+                t = [Tab.element_class(Tab, t, check=False)]
 
         super().__init__(parent, t)
 
@@ -3481,6 +3504,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
             inserting t_1,..,t_n in order into the rows of mu, from left to right
             in each component and then left to right along the components.
             """
+            # TODO: Try to optimize this; this currently takes the most time when iterating
             return self.element_class(self,
                                       [[tab[clen[c]:clen[c+1]][cclen[c][r]:cclen[c][r+1]]
                                         for r in range(len(mu[c]))]
@@ -3757,6 +3781,7 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
             sage: StandardTableau([[1,3],[2]]).residue_sequence(3).row_standard_tableaux().an_element()
             [[1, 3], [2]]
             sage: RowStandardTableauTuple([[[4]],[[2,3],[1]]]).residue_sequence(3,(0,1)).row_standard_tableaux().an_element()                                   # needs sage.libs.flint
+            ([[1], []])
             sage: StandardTableauTuple([[[4]],[[1,3],[2]]]).residue_sequence(3,(0,1)).row_standard_tableaux().an_element()                                      # needs sage.libs.flint
             ([[4], [3], [1], [2]], [])
         """

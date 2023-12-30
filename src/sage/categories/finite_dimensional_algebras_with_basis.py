@@ -1462,7 +1462,12 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 tester = self._tester(**options)
                 cell_basis = self.cellular_basis()
                 B = cell_basis.basis()
-                P = self.cell_poset()
+                if self.cell_poset_comparison is not NotImplemented:
+                    P = self.cell_poset_indices()
+                    cp = self.cell_poset_comparison
+                else:
+                    P = self.cell_poset()
+                    cp = P.lt
                 for mu in P:
                     C = self.cell_module_indices(mu)
                     for s in C:
@@ -1471,19 +1476,18 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                         basis_elt = B[(mu, s, t)]
                         for a in B:
                             elt = a * basis_elt
-                            tester.assertTrue( all(P.lt(i[0], mu) or i[2] == t
+                            tester.assertTrue( all(cp(i[0], mu) or i[2] == t
                                                    for i in elt.support()) )
                             vals.append([elt[(mu, u, t)] for u in C])
                         for t in C[1:]:
                             basis_elt = B[(mu, s, t)]
                             for i,a in enumerate(B):
                                 elt = a * basis_elt
-                                tester.assertTrue( all(P.lt(i[0], mu) or i[2] == t
+                                tester.assertTrue( all(cp(i[0], mu) or i[2] == t
                                                        for i in elt.support()) )
                                 tester.assertEqual(vals[i], [elt[(mu, u, t)]
                                                              for u in C])
 
-            @abstract_method
             def cell_poset(self):
                 """
                 Return the cell poset of ``self``.
@@ -1493,6 +1497,39 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: S = SymmetricGroupAlgebra(QQ, 4)                              # needs sage.groups sage.modules
                     sage: S.cell_poset()                                                # needs sage.groups sage.modules
                     Finite poset containing 5 elements
+                """
+                from sage.combinat.posets.posets import Poset
+                # We iterate in reverse lex order, and lex is compatible with dominance order
+                # Hence, we only need to compare in order
+                L = list(self.cell_poset_indices())
+                cp = self.cell_poset_comparison
+                return Poset([L, [[x, y] for x in L for y in L if cp(x,y)]])
+
+            @abstract_method(optional=True)
+            def cell_poset_indices(self):
+                """
+                Return the underlying set defining the cell poset of ``self``.
+
+                EXAMPLES::
+
+                    sage: S = SymmetricGroupAlgebra(QQ, 4)
+                    sage: S.cell_poset_indices()
+                    Partitions of the integer 4
+                """
+
+            @abstract_method(optional=True)
+            def cell_poset_comparison(self, x, y):
+                r"""
+                Perform the comparison between ``x`` and ``y`` defining the
+                cell poset of ``self``.
+
+                EXAMPLES::
+
+                    sage: S = SymmetricGroupAlgebra(QQ, 4)
+                    sage: P = S.cell_poset()
+                    sage: all(S.cell_poset_comparison(x, y)
+                    ....:     for x in P for y in P if P.lt(x, y))
+                    True
                 """
 
             @abstract_method
@@ -1562,7 +1599,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 C = self.cellular_basis()
                 if C is self:
                     M = x.monomial_coefficients(copy=False)
-                    return self._from_dict({(i[0], i[2], i[1]): M[i] for i in M},
+                    return self._from_dict({(i[0], i[2], i[1]): c for i, c in M.items()},
                                            remove_zeros=False)
                 return self(C(x).cellular_involution())
 
