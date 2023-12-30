@@ -21,8 +21,6 @@ from _pytest.doctest import (
     get_optionflags,
 )
 from _pytest.pathlib import ImportMode, import_path
-from sage.doctest.control import DocTestDefaults
-from sage.doctest.forker import SageDocTestRunner
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 
