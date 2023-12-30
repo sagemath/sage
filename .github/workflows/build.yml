@@ -185,6 +185,7 @@ jobs:
           COLUMNS: 120
 
       - name: Pytest
+        if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           ../sage -python -m pip install coverage pytest-xdist pytest-github-actions-annotate-failures
           ../sage -python -m coverage run -m pytest --doctest -s -rfEs .
