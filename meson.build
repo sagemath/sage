@@ -1,11 +1,10 @@
 project(
   'SageMath',
-  ['ccache','c', 'cpp', 'cython'],
+  ['c', 'cpp', 'cython'],
   version: files('src/VERSION.txt'),
   license: 'GPL v3',
   meson_version: '>= 1.2.0',
 )
-# Have to specify ccache explicitly for now: https://github.com/mesonbuild/meson/issues/12612
 
 # Python module
 # https://mesonbuild.com/Python-module.html
