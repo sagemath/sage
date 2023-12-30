@@ -46,41 +46,35 @@ AUTHORS:
 # ****************************************************************************
 
 
-import doctest
-import errno
-import gc
-import hashlib
-import linecache
-import multiprocessing
 import os
-import re
-import signal
 import sys
-import tempfile
 import time
-import traceback
+import signal
+import linecache
+import hashlib
+import multiprocessing
 import warnings
+import re
+import errno
+import doctest
+import traceback
+import tempfile
 from collections import defaultdict
 from dis import findlinestarts
 from queue import Empty
-
+import gc
 import IPython.lib.pretty
+
 import sage.misc.randstate as randstate
+from sage.misc.timing import walltime
+from .util import Timer, RecordingDict, count_noun
+from .sources import DictAsObject
+from .parsing import OriginalSource, reduce_hex
+from sage.structure.sage_object import SageObject
+from .parsing import SageOutputChecker, pre_hash, get_source, unparse_optional_tags
+from sage.repl.user_globals import set_globals
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
-from sage.doctest.parsing import (
-    OriginalSource,
-    SageOutputChecker,
-    get_source,
-    pre_hash,
-    reduce_hex,
-    unparse_optional_tags,
-)
-from sage.doctest.sources import DictAsObject
-from sage.doctest.util import RecordingDict, Timer, count_noun
-from sage.misc.timing import walltime
-from sage.repl.user_globals import set_globals
-from sage.structure.sage_object import SageObject
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
@@ -506,11 +500,10 @@ class SageSpoofInOut(SageObject):
 
 
 from collections import namedtuple
-
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
-class SageDocTestRunner(doctest.DocTestRunner):
+class SageDocTestRunner(doctest.DocTestRunner, object):
     def __init__(self, *args, **kwds):
         """
         A customized version of DocTestRunner that tracks dependencies
@@ -543,9 +536,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.msgfile = kwds.pop('msgfile', None)
         self.options = kwds.pop('sage_options')
         doctest.DocTestRunner.__init__(self, *args, **kwds)
-        if O is not None:
-            self._fakeout = SageSpoofInOut(O)
-        if self.msgfile is None and O is not None:
+        self._fakeout = SageSpoofInOut(O)
+        if self.msgfile is None:
             self.msgfile = self._fakeout.real_stdout
         self.history = []
         self.references = []
@@ -695,10 +687,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 # findlinestarts() returns pairs (index, lineno) where
                 # "index" is the index in the bytecode where the line
                 # number changes to "lineno".
-                linenumbers1 = {lineno for (index, lineno)
-                                in findlinestarts(code)}
-                linenumbers2 = {lineno for (index, lineno)
-                                in findlinestarts(execcode)}
+                linenumbers1 = set(lineno for (index, lineno)
+                                   in findlinestarts(code))
+                linenumbers2 = set(lineno for (index, lineno)
+                                   in findlinestarts(execcode))
                 if linenumbers1 != linenumbers2:
                     raise SyntaxError("doctest is not a single statement")
 
@@ -909,16 +901,13 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 self.msgfile.write(s)
                 self.msgfile.flush()
 
-        # if 'start_spoofing' is defined
-        if hasattr(self._fakeout, 'start_spoofing'):
-            self._fakeout.start_spoofing()
+        self._fakeout.start_spoofing()
         # If self.options.initial is set, we show only the first failure in each doctest block.
         self.no_failure_yet = True
         try:
             return self._run(test, compileflags, out)
         finally:
-            if hasattr(self._fakeout, 'stop_spoofing'):
-                self._fakeout.stop_spoofing()
+            self._fakeout.stop_spoofing()
             linecache.getlines = self.save_linecache_getlines
             if clear_globs:
                 test.globs.clear()
@@ -1427,8 +1416,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             self.no_failure_yet = False
             returnval = doctest.DocTestRunner.report_failure(self, out, test, example, got)
             if self.options.debug:
-                if hasattr(self._fakeout, 'stop_spoofing'):
-                    self._fakeout.stop_spoofing()
+                self._fakeout.stop_spoofing()
                 restore_tcpgrp = None
                 try:
                     if os.isatty(0):
@@ -1454,8 +1442,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         print(src)
                         if ex.want:
                             print(doctest._indent(ex.want[:-1]))
-                    from IPython.terminal.embed import InteractiveShellEmbed
                     from sage.repl.configuration import sage_ipython_config
+                    from IPython.terminal.embed import InteractiveShellEmbed
                     cfg = sage_ipython_config.default()
                     # Currently this doesn't work: prompts only work in pty
                     # We keep simple_prompt=True, prompts will be "In [0]:"
@@ -1476,8 +1464,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         signal.signal(signal.SIGTTIN, signal.SIG_DFL)
                         signal.signal(signal.SIGTTOU, signal.SIG_DFL)
                     print("Returning to doctests...")
-                    if hasattr(self._fakeout, 'start_spoofing'):
-                        self._fakeout.start_spoofing()
+                    self._fakeout.start_spoofing()
             return returnval
 
     def report_overtime(self, out, test, example, got, *, check_duration=0):
@@ -1579,8 +1566,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             self.no_failure_yet = False
             returnval = doctest.DocTestRunner.report_unexpected_exception(self, out, test, example, exc_info)
             if self.options.debug:
-                if hasattr(self._fakeout, 'stop_spoofing'):
-                    self._fakeout.stop_spoofing()
+                self._fakeout.stop_spoofing()
                 restore_tcpgrp = None
                 try:
                     if os.isatty(0):
@@ -1612,8 +1598,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         os.tcsetpgrp(0, restore_tcpgrp)
                         signal.signal(signal.SIGTTIN, signal.SIG_DFL)
                         signal.signal(signal.SIGTTOU, signal.SIG_DFL)
-                    if hasattr(self._fakeout, 'start_spoofing'):
-                        self._fakeout.start_spoofing()
+                    self._fakeout.start_spoofing()
             return returnval
 
     def update_results(self, D):
@@ -1741,7 +1726,7 @@ class DocTestDispatcher(SageObject):
 
             with tempfile.TemporaryFile() as outtmpfile:
                 result = DocTestTask(source)(self.controller.options,
-                                             outtmpfile, self.controller.logger)
+                        outtmpfile, self.controller.logger)
                 outtmpfile.seek(0)
                 output = bytes_to_str(outtmpfile.read())
 
@@ -1817,17 +1802,6 @@ class DocTestDispatcher(SageObject):
 
         """
         opt = self.controller.options
-
-        job_client = None
-        try:
-            from gnumake_tokenpool import JobClient, NoJobServer
-        except ImportError:
-            pass
-        else:
-            try:
-                job_client = JobClient(use_cysignals=True)
-            except NoJobServer:
-                pass
 
         source_iter = iter(self.controller.sources)
 
@@ -1951,9 +1925,6 @@ class DocTestDispatcher(SageObject):
                             w.copied_pid = w.pid
                             w.close()
                             finished.append(w)
-                            if job_client:
-                                job_client.release()
-
                     workers = new_workers
 
                     # Similarly, process finished workers.
@@ -1988,14 +1959,11 @@ class DocTestDispatcher(SageObject):
                         break
 
                     # Start new workers if possible
-                    while (source_iter is not None and len(workers) < opt.nthreads
-                           and (not job_client or job_client.acquire())):
+                    while source_iter is not None and len(workers) < opt.nthreads:
                         try:
                             source = next(source_iter)
                         except StopIteration:
                             source_iter = None
-                            if job_client:
-                                job_client.release()
                         else:
                             # Start a new worker.
                             import copy
@@ -2072,8 +2040,6 @@ class DocTestDispatcher(SageObject):
                         sleep(die_timeout)
                         for w in workers:
                             w.kill()
-                            if job_client:
-                                job_client.release()
                     finally:
                         os._exit(0)
 
@@ -2368,7 +2334,7 @@ class DocTestWorker(multiprocessing.Process):
         try:
             self.result = self.result_queue.get(block=False)
         except Empty:
-            self.result = (0, DictAsObject({'err': 'noresult'}))
+            self.result = (0, DictAsObject(dict(err='noresult')))
         del self.result_queue
 
         self.outtmpfile.seek(0)
@@ -2570,17 +2536,17 @@ class DocTestTask():
         result = None
         try:
             runner = SageDocTestRunner(
-                SageOutputChecker(),
-                verbose=options.verbose,
-                outtmpfile=outtmpfile,
-                msgfile=msgfile,
-                sage_options=options,
-                optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+                    SageOutputChecker(),
+                    verbose=options.verbose,
+                    outtmpfile=outtmpfile,
+                    msgfile=msgfile,
+                    sage_options=options,
+                    optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
             runner.basename = self.source.basename
             runner.filename = self.source.path
             N = options.file_iterations
-            results = DictAsObject({'walltime': [], 'cputime': [],
-                                    'err': None, 'walltime_skips': 0})
+            results = DictAsObject(dict(walltime=[], cputime=[],
+                                        err=None, walltime_skips=0))
 
             # multiprocessing.Process instances don't run exit
             # functions, so we run the functions added by doctests
@@ -2605,7 +2571,7 @@ class DocTestTask():
         except BaseException:
             exc_info = sys.exc_info()
             tb = "".join(traceback.format_exception(*exc_info))
-            result = (0, DictAsObject({'err': exc_info[0], 'tb': tb}))
+            result = (0, DictAsObject(dict(err=exc_info[0], tb=tb)))
 
         if result_queue is not None:
             result_queue.put(result, False)
