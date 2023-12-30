@@ -1,6 +1,7 @@
 py.install_sources(
     'all.py',
     'quaternion_algebra.py',
+    'quaternion_algebra_element.pxd',
     subdir: 'sage/algebras/quatalg',
 )
 

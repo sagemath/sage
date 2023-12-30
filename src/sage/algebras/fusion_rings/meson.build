@@ -1,8 +1,12 @@
 py.install_sources(
     'all.py',
     'f_matrix.py',
+    'fast_parallel_fmats_methods.pxd',
+    'fast_parallel_fusion_ring_braid_repn.pxd',
     'fusion_double.py',
     'fusion_ring.py',
+    'poly_tup_engine.pxd',
+    'shm_managers.pxd',
     subdir: 'sage/algebras/fusion_rings',
 )
 

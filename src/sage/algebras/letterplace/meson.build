@@ -1,5 +1,7 @@
 py.install_sources(
     'all.py',
+    'free_algebra_element_letterplace.pxd',
+    'free_algebra_letterplace.pxd',
     subdir: 'sage/algebras/letterplace',
 )
 
