@@ -1091,7 +1091,8 @@ def Wheel4():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.Wheel4()
+        sage: M = matroids.catalog.Wheel4(); M
+        Wheel(4): Regular matroid of rank 4 on 8 elements with 45 bases
         sage: M.is_valid() and M.is_graphic() and M.dual().is_graphic()
         True
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
@@ -1103,7 +1104,6 @@ def Wheel4():
 
     """
     M = Wheel(4)
-    M.rename("Wheel(4): " + repr(M))
     return M
 
 
@@ -1116,7 +1116,8 @@ def Whirl4():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.Whirl4()
+        sage: M = matroids.catalog.Whirl4(); M
+        Whirl(4): Ternary matroid of rank 4 on 8 elements, type 0+
         sage: M.is_valid()
         True
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
@@ -1124,7 +1125,6 @@ def Whirl4():
 
     """
     M = Whirl(4)
-    M.rename("Whirl(4): " + repr(M))
     return M
 
 
@@ -1195,8 +1195,9 @@ def AG23():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.AG23()
-        sage: M.is_valid() and M.is_3connected()
+        sage: M = matroids.catalog.AG23(); M
+        AG(2, 3): Ternary matroid of rank 3 on 9 elements, type 3+
+        sage: M.is_valid() and M.is_3connected() and M.is_ternary()
         True
         sage: M.has_minor(matroids.catalog.K4())
         False
@@ -1211,7 +1212,6 @@ def AG23():
 
     """
     M = AG(2, 3)
-    M.rename("AG(2, 3): " + repr(M))
     return M
 
 
@@ -1366,7 +1366,8 @@ def K5():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.K5()
+        sage: M = matroids.catalog.K5(); M
+        M(K5): Graphic matroid of rank 4 on 10 elements
         sage: M.is_valid()
         True
 
@@ -1387,7 +1388,8 @@ def K5dual():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.K5dual()
+        sage: M = matroids.catalog.K5dual(); M
+        M*(K5): Dual of 'M(K5): Graphic matroid of rank 4 on 10 elements'
         sage: M.is_3connected()
         True
 
@@ -1470,12 +1472,9 @@ def NonDesargues(groundset=None):
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.NonDesargues(); M
-        NonDesargues: Matroid of rank 3 on 10 elements with 111 bases
+        sage: M = matroids.catalog.NonDesargues()
         sage: M.is_valid()
         True
-        sage: len(M.nonspanning_circuits())
-        9
 
     REFERENCES:
 
@@ -1535,7 +1534,9 @@ def ExtendedTernaryGolayCode():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.ExtendedTernaryGolayCode()
+        sage: M = matroids.catalog.ExtendedTernaryGolayCode(); M
+        Extended Ternary Golay Code: Ternary matroid of rank 6 on 12 elements,
+        type 6+
         sage: C = LinearCode(M.representation())
         sage: C.is_permutation_equivalent(codes.GolayCode(GF(3)))  # long time
         True
@@ -1598,8 +1599,7 @@ def T12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.T12()
-        sage: M
+        sage: M = matroids.catalog.T12(); M
         T12: Binary matroid of rank 6 on 12 elements, type (2, None)
         sage: M.is_valid()
         True
@@ -1636,7 +1636,8 @@ def PG23():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.PG23()
+        sage: M = matroids.catalog.PG23(); M
+        PG(2, 3): Ternary matroid of rank 3 on 13 elements, type 3+
         sage: M.is_3connected()
         True
 
@@ -1646,7 +1647,6 @@ def PG23():
 
     """
     M = PG(2, 3)
-    M.rename("PG(2, 3): " + repr(M))
     return M
 
 
@@ -2322,7 +2322,8 @@ def RelaxedNonFano():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.RelaxedNonFano()
+        sage: M = matroids.catalog.RelaxedNonFano(); M
+        F7=: Quaternary matroid of rank 3 on 7 elements
         sage: M.is_valid()
         True
 
@@ -2344,7 +2345,8 @@ def TippedFree3spike():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.TippedFree3spike()
+        sage: M = matroids.catalog.TippedFree3spike(); M
+        Tipped rank-3 free spike: Quaternary matroid of rank 3 on 7 elements
         sage: M.has_minor(matroids.Uniform(3,6))
         True
 
@@ -2372,7 +2374,8 @@ def AG23minusDY():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.AG23minusDY()
+        sage: M = matroids.catalog.AG23minusDY(); M
+        Delta-Y of AG(2,3)\e: Ternary matroid of rank 4 on 8 elements, type 0-
         sage: M.is_valid()
         True
 
@@ -2391,7 +2394,8 @@ def TQ8():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.TQ8()
+        sage: M = matroids.catalog.TQ8(); M
+        TQ8: Quaternary matroid of rank 4 on 8 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -2418,7 +2422,8 @@ def P8p():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.P8p()
+        sage: M = matroids.catalog.P8p(); M
+        P8-: Quaternary matroid of rank 4 on 8 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -2445,7 +2450,8 @@ def KP8():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.KP8()
+        sage: M = matroids.catalog.KP8(); M
+        KP8: Quaternary matroid of rank 4 on 8 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -2472,7 +2478,8 @@ def Sp8():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.Sp8()
+        sage: M = matroids.catalog.Sp8(); M
+        Sp8: Quaternary matroid of rank 4 on 8 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -2499,7 +2506,8 @@ def Sp8pp():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.Sp8pp()
+        sage: M = matroids.catalog.Sp8pp(); M
+        Sp8=: Quaternary matroid of rank 4 on 8 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -2524,7 +2532,8 @@ def LP8():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.LP8()
+        sage: M = matroids.catalog.LP8(); M
+        LP8: Quaternary matroid of rank 4 on 8 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -2551,7 +2560,8 @@ def WQ8():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.WQ8()
+        sage: M = matroids.catalog.WQ8(); M
+        WQ8: Quaternary matroid of rank 4 on 8 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -2581,7 +2591,8 @@ def BB9():
 
     EXAMPLES::
 
-        sage: BB = matroids.catalog.BB9()
+        sage: BB = matroids.catalog.BB9(); BB
+        BB9: Quaternary matroid of rank 3 on 9 elements
         sage: BR = matroids.catalog.BetsyRoss()
         sage: from itertools import combinations
         sage: pairs = combinations(sorted(BR.groundset()), 2)
@@ -2622,7 +2633,8 @@ def TQ9():
     EXAMPLES::
 
         sage: TQ8 = matroids.catalog.TQ8()
-        sage: TQ9 = matroids.catalog.TQ9()
+        sage: TQ9 = matroids.catalog.TQ9(); TQ9
+        TQ9: Quaternary matroid of rank 4 on 9 elements
         sage: for M in TQ8.extensions():
         ....:     if M.is_isomorphic(TQ9):
         ....:         print(True)
@@ -2658,7 +2670,8 @@ def TQ9p():
     EXAMPLES::
 
         sage: TQ8 = matroids.catalog.TQ8()
-        sage: TQ9p = matroids.catalog.TQ9p()
+        sage: TQ9p = matroids.catalog.TQ9p(); TQ9p
+        TQ9': Quaternary matroid of rank 4 on 9 elements
         sage: for M in TQ8.extensions():
         ....:     if M.is_isomorphic(TQ9p):
         ....:         print(True)
@@ -2694,7 +2707,8 @@ def M8591():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.M8591()
+        sage: M = matroids.catalog.M8591(); M
+        M8591: Quaternary matroid of rank 4 on 9 elements
         sage: M.is_valid()
         True
 
@@ -2725,7 +2739,8 @@ def PP9():
     EXAMPLES::
 
         sage: P8p = matroids.catalog.P8p()
-        sage: PP9 = matroids.catalog.PP9()
+        sage: PP9 = matroids.catalog.PP9(); PP9
+        PP9: Quaternary matroid of rank 4 on 9 elements
         sage: for M in P8p.extensions():
         ....:     if M.is_isomorphic(PP9):
         ....:         print(True)
@@ -2764,7 +2779,9 @@ def BB9gDY():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.BB9gDY()
+        sage: M = matroids.catalog.BB9gDY(); M
+        Segment cosegment exchange on BB9: Quaternary matroid of rank 5 on 9
+        elements
         sage: M.is_valid()
         True
 
@@ -2800,7 +2817,8 @@ def A9():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.A9()
+        sage: M = matroids.catalog.A9(); M
+        A9: Quaternary matroid of rank 3 on 9 elements
         sage: M.is_valid()
         True
 
@@ -2829,7 +2847,8 @@ def FN9():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FN9()
+        sage: M = matroids.catalog.FN9(); M
+        FN9: Quaternary matroid of rank 3 on 9 elements
         sage: M.is_valid()
         True
 
@@ -2863,7 +2882,8 @@ def FX9():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FX9()
+        sage: M = matroids.catalog.FX9(); M
+        FX9: Quaternary matroid of rank 4 on 9 elements
         sage: M.is_valid()
         True
 
@@ -2896,7 +2916,8 @@ def KR9():
 
     EXAMPLES::
 
-        sage: KR9 = matroids.catalog.KR9()
+        sage: KR9 = matroids.catalog.KR9(); KR9
+        KR9: Quaternary matroid of rank 4 on 9 elements
         sage: KP8 = matroids.catalog.KP8()
         sage: KP8.is_isomorphic(KR9.delete(8))
         True
@@ -2932,7 +2953,8 @@ def KQ9():
 
     EXAMPLES::
 
-        sage: KQ9 = matroids.catalog.KQ9()
+        sage: KQ9 = matroids.catalog.KQ9(); KQ9
+        KQ9: Quaternary matroid of rank 4 on 9 elements
         sage: TQ8 = matroids.catalog.TQ8()
         sage: TQ8.is_isomorphic(KQ9.delete(6))
         True
@@ -2974,7 +2996,8 @@ def UG10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UG10()
+        sage: M = matroids.catalog.UG10(); M
+        UG10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3005,7 +3028,8 @@ def FF10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FF10()
+        sage: M = matroids.catalog.FF10(); M
+        FF10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3037,7 +3061,8 @@ def GP10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.GP10()
+        sage: M = matroids.catalog.GP10(); M
+        GP10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3068,7 +3093,8 @@ def FZ10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FZ10()
+        sage: M = matroids.catalog.FZ10(); M
+        FZ10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -3100,7 +3126,8 @@ def UQ10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UQ10()
+        sage: M = matroids.catalog.UQ10(); M
+        UQ10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3131,7 +3158,8 @@ def FP10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FP10()
+        sage: M = matroids.catalog.FP10(); M
+        FP10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3163,7 +3191,8 @@ def TQ10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.TQ10()
+        sage: M = matroids.catalog.TQ10(); M
+        TQ10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
         sage: N = M.delete('d').contract('c')
@@ -3199,7 +3228,8 @@ def FY10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FY10()
+        sage: M = matroids.catalog.FY10(); M
+        FY10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -3233,7 +3263,8 @@ def PP10():
 
     EXAMPLES::
 
-        sage: PP10 = matroids.catalog.PP10()
+        sage: PP10 = matroids.catalog.PP10(); PP10
+        PP10: Quaternary matroid of rank 5 on 10 elements
         sage: M = PP10.delete('a').contract('e')
         sage: M.is_isomorphic(matroids.catalog.TQ8())
         True
@@ -3270,7 +3301,8 @@ def FU10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FU10()
+        sage: M = matroids.catalog.FU10(); M
+        FU10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3302,7 +3334,8 @@ def D10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.D10()
+        sage: M = matroids.catalog.D10(); M
+        D10: Quaternary matroid of rank 4 on 10 elements
         sage: M.has_minor(matroids.catalog.TQ8())
         True
 
@@ -3332,7 +3365,8 @@ def UK10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UK10()
+        sage: M = matroids.catalog.UK10(); M
+        UK10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -3363,7 +3397,8 @@ def PK10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.PK10()
+        sage: M = matroids.catalog.PK10(); M
+        PK10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -3394,7 +3429,8 @@ def GK10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.GK10()
+        sage: M = matroids.catalog.GK10(); M
+        GK10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -3411,9 +3447,9 @@ def GK10():
             [1, w, w, w + 1, 1],
         ],
     )
-    gk10 = QuaternaryMatroid(reduced_matrix=A)
-    gk10.rename("GK10: " + repr(gk10))
-    return gk10
+    M = QuaternaryMatroid(reduced_matrix=A)
+    M.rename("GK10: " + repr(M))
+    return M
 
 
 def FT10():
@@ -3425,7 +3461,8 @@ def FT10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FT10()
+        sage: M = matroids.catalog.FT10(); M
+        FT10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3456,7 +3493,8 @@ def TK10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.TK10()
+        sage: M = matroids.catalog.TK10(); M
+        TK10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3487,7 +3525,8 @@ def KT10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.KT10()
+        sage: M = matroids.catalog.KT10(); M
+        KT10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3518,7 +3557,8 @@ def TU10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.TU10()
+        sage: M = matroids.catalog.TU10(); M
+        TU10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3549,7 +3589,8 @@ def UT10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UT10()
+        sage: M = matroids.catalog.UT10(); M
+        UT10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3580,7 +3621,8 @@ def FK10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FK10()
+        sage: M = matroids.catalog.FK10(); M
+        FK10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3611,7 +3653,8 @@ def KF10():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.KF10()
+        sage: M = matroids.catalog.KF10(); M
+        KF10: Quaternary matroid of rank 5 on 10 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3646,7 +3689,8 @@ def FA11():
 
     EXAMPLES::
 
-        sage: FA11 = matroids.catalog.FA11()
+        sage: FA11 = matroids.catalog.FA11(); FA11
+        FA11: Quaternary matroid of rank 5 on 11 elements
         sage: FF10 = matroids.catalog.FF10()
         sage: FF10.is_isomorphic(FA11.delete(10))
         True
@@ -3683,7 +3727,8 @@ def FR12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FR12()
+        sage: M = matroids.catalog.FR12(); M
+        FR12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3715,7 +3760,8 @@ def GP12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.GP12()
+        sage: M = matroids.catalog.GP12(); M
+        GP12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -3750,7 +3796,8 @@ def FQ12():
 
     EXAMPLES::
 
-        sage: FQ12 = matroids.catalog.FQ12()
+        sage: FQ12 = matroids.catalog.FQ12(); FQ12
+        FQ12: Quaternary matroid of rank 6 on 12 elements
         sage: PP9 = matroids.catalog.PP9()
         sage: PP9.is_isomorphic(FQ12.contract([4,7]).delete(6))
         True
@@ -3790,7 +3837,8 @@ def FF12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FF12()
+        sage: M = matroids.catalog.FF12(); M
+        FF12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         True
         sage: FF10 = matroids.catalog.FF10()
@@ -3827,7 +3875,8 @@ def FZ12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FZ12()
+        sage: M = matroids.catalog.FZ12(); M
+        FZ12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -3859,7 +3908,8 @@ def UQ12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UQ12()
+        sage: M = matroids.catalog.UQ12(); M
+        UQ12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3891,7 +3941,8 @@ def FP12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FP12()
+        sage: M = matroids.catalog.FP12(); M
+        FP12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3923,7 +3974,8 @@ def FS12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FS12()
+        sage: M = matroids.catalog.FS12(); M
+        FS12: Quaternary matroid of rank 5 on 12 elements
         sage: M.rank()
         5
 
@@ -3954,7 +4006,8 @@ def UK12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UK12()
+        sage: M = matroids.catalog.UK12(); M
+        UK12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -3986,7 +4039,8 @@ def UA12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UA12()
+        sage: M = matroids.catalog.UA12(); M
+        UA12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -4018,7 +4072,8 @@ def AK12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.AK12()
+        sage: M = matroids.catalog.AK12(); M
+        AK12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -4050,7 +4105,8 @@ def FK12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UT10()
+        sage: M = matroids.catalog.FK12(); M
+        FK12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -4082,7 +4138,8 @@ def KB12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UT10()
+        sage: M = matroids.catalog.KB12(); M
+        KB12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -4114,7 +4171,8 @@ def AF12():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UT10()
+        sage: M = matroids.catalog.AF12(); M
+        AF12: Quaternary matroid of rank 6 on 12 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -4213,7 +4271,8 @@ def XY13():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.XY13()
+        sage: M = matroids.catalog.XY13(); M
+        XY13: Quaternary matroid of rank 6 on 13 elements
         sage: M.is_3connected()
         True
 
@@ -4248,7 +4307,8 @@ def N3():
 
     EXAMPLES::
 
-        sage: N3 = matroids.catalog.N3()
+        sage: N3 = matroids.catalog.N3(); N3
+        N3: Ternary matroid of rank 7 on 14 elements, type 0+
         sage: N3.is_isomorphic(N3.dual())
         True
         sage: N3.is_kconnected(4)
@@ -4286,7 +4346,8 @@ def N3pp():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.N3pp()
+        sage: M = matroids.catalog.N3pp(); M
+        N3=: Quaternary matroid of rank 7 on 14 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -4319,7 +4380,8 @@ def UP14():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.UP14()
+        sage: M = matroids.catalog.UP14(); M
+        UP14: Quaternary matroid of rank 7 on 14 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -4352,7 +4414,8 @@ def VP14():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.VP14()
+        sage: M = matroids.catalog.VP14(); M
+        VP14: Quaternary matroid of rank 7 on 14 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -4385,7 +4448,8 @@ def FV14():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FV14()
+        sage: M = matroids.catalog.FV14(); M
+        FV14: Quaternary matroid of rank 7 on 14 elements
         sage: M.is_isomorphic(M.dual())
         False
 
@@ -4418,7 +4482,8 @@ def OW14():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.OW14()
+        sage: M = matroids.catalog.OW14(); M
+        OW14: Quaternary matroid of rank 7 on 14 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -4450,7 +4515,8 @@ def FM14():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FM14()
+        sage: M = matroids.catalog.FM14(); M
+        FM14: Quaternary matroid of rank 7 on 14 elements
         sage: M.is_isomorphic(M.dual())
         True
 
@@ -4487,7 +4553,8 @@ def FA15():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.FA15()
+        sage: M = matroids.catalog.FA15(); M
+        FA15: Quaternary matroid of rank 7 on 15 elements
         sage: M.has_minor(matroids.catalog.N3pp())
         True
 
@@ -4523,7 +4590,8 @@ def N4():
 
     EXAMPLES::
 
-        sage: N4 = matroids.catalog.N4()
+        sage: N4 = matroids.catalog.N4(); N4
+        N4: Ternary matroid of rank 8 on 16 elements, type 0+
         sage: N4.is_isomorphic(N4.dual())
         True
         sage: N4.is_kconnected(4)
@@ -4602,7 +4670,8 @@ def NotP8():
     EXAMPLES::
 
         sage: M = matroids.catalog.P8()
-        sage: N = matroids.catalog.NotP8()
+        sage: N = matroids.catalog.NotP8(); N
+        NotP8: Ternary matroid of rank 4 on 8 elements, type 0-
         sage: M.is_isomorphic(N)
         False
         sage: M.is_valid()
@@ -4633,7 +4702,12 @@ def AG23minus():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.AG23minus()
+        sage: M = matroids.catalog.AG23minus(); M
+        AG23minus: Matroid of rank 3 on 8 elements with circuit-closures
+        {2: {{'a', 'b', 'c'}, {'a', 'd', 'f'}, {'a', 'e', 'g'},
+        {'b', 'd', 'h'}, {'b', 'e', 'f'}, {'c', 'd', 'g'},
+        {'c', 'e', 'h'}, {'f', 'g', 'h'}},
+        3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: M.is_valid()
         True
 
@@ -4656,8 +4730,7 @@ def P9():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.P9()
-        sage: M
+        sage: M = matroids.catalog.P9(); M
         P9: Binary matroid of rank 4 on 9 elements, type (1, 1)
         sage: M.is_valid()
         True
@@ -4793,7 +4866,8 @@ def N1():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.N1()
+        sage: M = matroids.catalog.N1(); M
+        N1: Ternary matroid of rank 5 on 10 elements, type 0+
         sage: M.is_field_isomorphic(M.dual())
         True
         sage: M.is_valid()
@@ -4892,7 +4966,7 @@ def BetsyRoss():
     """
     Return the Betsy Ross matroid, represented by circuit closures.
 
-    An extremal golden-mean matroid. That is, if `M` is simple, rank 3, has
+    An extremal golden-mean matroid. That is, if `M` is simple, rank `3`, has
     the Betsy Ross matroid as a restriction and is a Golden Mean matroid, then
     `M` is the Betsy Ross matroid.
 
@@ -4924,7 +4998,8 @@ def N2():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.N2()
+        sage: M = matroids.catalog.N2(); M
+        N2: Ternary matroid of rank 6 on 12 elements, type 0+
         sage: M.is_field_isomorphic(M.dual())
         True
         sage: M.is_valid()
@@ -4959,8 +5034,7 @@ def D16(groundset='abcdefghijklmnop'):  # A.K.A. the Carolyn Chun Matroid
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.D16()
-        sage: M
+        sage: M = matroids.catalog.D16(); M
         D16: Binary matroid of rank 8 on 16 elements, type (0, 0)
         sage: M.is_valid()
         True
@@ -4994,8 +5068,7 @@ def Terrahawk():  # A.K.A. the Dillon Mayhew Matroid
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.Terrahawk()
-        sage: M
+        sage: M = matroids.catalog.Terrahawk(); M
         Terrahawk: Binary matroid of rank 8 on 16 elements, type (0, 4)
         sage: M.is_valid()
         True
@@ -5026,7 +5099,9 @@ def ExtendedBinaryGolayCode():
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.ExtendedBinaryGolayCode()
+        sage: M = matroids.catalog.ExtendedBinaryGolayCode(); M
+        Extended Binary Golay Code: Binary matroid of rank 12 on 24 elements,
+        type (12, 0)
         sage: C = LinearCode(M.representation())
         sage: C.is_permutation_equivalent(codes.GolayCode(GF(2)))
         True
