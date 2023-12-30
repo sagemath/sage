@@ -496,7 +496,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return m.length()
 
-    def casimir_element(self, order=2):
+    def casimir_element(self, order=2, *args, **kwds):
         r"""
         Return the Casimir element of ``self``.
 
@@ -534,7 +534,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         from sage.rings.infinity import Infinity
         if self._g.dimension() == Infinity:
             raise ValueError("the Lie algebra must be finite dimensional")
-        return self._g.casimir_element(order=order, UEA=self)
+        return self._g.casimir_element(order=order, UEA=self, *args, **kwds)
 
     class Element(CombinatorialFreeModule.Element):
         def _act_on_(self, x, self_on_left):
