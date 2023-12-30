@@ -909,13 +909,16 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 self.msgfile.write(s)
                 self.msgfile.flush()
 
-        self._fakeout.start_spoofing()
+        # if 'start_spoofing' is defined
+        if hasattr(self._fakeout, 'start_spoofing'):
+            self._fakeout.start_spoofing()
         # If self.options.initial is set, we show only the first failure in each doctest block.
         self.no_failure_yet = True
         try:
             return self._run(test, compileflags, out)
         finally:
-            self._fakeout.stop_spoofing()
+            if hasattr(self._fakeout, 'stop_spoofing'):
+                self._fakeout.stop_spoofing()
             linecache.getlines = self.save_linecache_getlines
             if clear_globs:
                 test.globs.clear()
@@ -1424,7 +1427,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             self.no_failure_yet = False
             returnval = doctest.DocTestRunner.report_failure(self, out, test, example, got)
             if self.options.debug:
-                self._fakeout.stop_spoofing()
+                if hasattr(self._fakeout, 'stop_spoofing'):
+                    self._fakeout.stop_spoofing()
                 restore_tcpgrp = None
                 try:
                     if os.isatty(0):
@@ -1472,7 +1476,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         signal.signal(signal.SIGTTIN, signal.SIG_DFL)
                         signal.signal(signal.SIGTTOU, signal.SIG_DFL)
                     print("Returning to doctests...")
-                    self._fakeout.start_spoofing()
+                    if hasattr(self._fakeout, 'start_spoofing'):
+                        self._fakeout.start_spoofing()
             return returnval
 
     def report_overtime(self, out, test, example, got, *, check_duration=0):
@@ -1574,7 +1579,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             self.no_failure_yet = False
             returnval = doctest.DocTestRunner.report_unexpected_exception(self, out, test, example, exc_info)
             if self.options.debug:
-                self._fakeout.stop_spoofing()
+                if hasattr(self._fakeout, 'stop_spoofing'):
+                    self._fakeout.stop_spoofing()
                 restore_tcpgrp = None
                 try:
                     if os.isatty(0):
@@ -1606,7 +1612,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         os.tcsetpgrp(0, restore_tcpgrp)
                         signal.signal(signal.SIGTTIN, signal.SIG_DFL)
                         signal.signal(signal.SIGTTOU, signal.SIG_DFL)
-                    self._fakeout.start_spoofing()
+                    if hasattr(self._fakeout, 'start_spoofing'):
+                        self._fakeout.start_spoofing()
             return returnval
 
     def update_results(self, D):
