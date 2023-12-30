@@ -56,155 +56,43 @@ print(cypari2.__file__.replace('__init__.py', ''))
 cypari2 = declare_dependency(
     include_directories: inc_cypari2,
 )
-pari = declare_dependency(
-  dependencies: [
-    cc.find_library('pari'),
-  ]
-)
+pari = cc.find_library('pari')
 
-mpfr = declare_dependency(
-  dependencies: [
-    cc.find_library('mpfr'),
-  ]
-)
+mpfr = cc.find_library('mpfr')
 
 # Cannot be found by pkg-config
-flint = declare_dependency(
-  dependencies: [
-    cc.find_library('flint'),
-  ]
-)
+flint = cc.find_library('flint')
 
 cblas = dependency('cblas')
 gsl = dependency('gsl', fallback: ['gsl', 'gsl_dep'], version : '>=2.5', required: true)
-gd = declare_dependency(
-  dependencies: [
-    cc.find_library('gd'),
-  ]
-)
-iml = declare_dependency(
-  dependencies: [
-    cc.find_library('iml'),
-  ]
-)
-m = declare_dependency(
-  dependencies: [
-    cc.find_library('m'),
-  ]
-)
-m4ri = declare_dependency(
-  dependencies: [
-    cc.find_library('m4ri'),
-  ]
-)
-m4rie = declare_dependency(
-  dependencies: [
-    cc.find_library('m4rie'),
-  ]
-)
-mtx = declare_dependency(
-  dependencies: [
-    cc.find_library('mtx', required: false),
-  ]
-)
-png = declare_dependency(
-  dependencies: [
-    cc.find_library('png'),
-  ]
-)
-zlib = declare_dependency(
-  dependencies: [
-    cc.find_library('z'),
-  ]
-)
-intl = declare_dependency(
-  dependencies: [
-    cc.find_library('intl', required: false),
-  ]
-)
-curl = declare_dependency(
-  dependencies: [
-    cc.find_library('curl'),
-  ]
-)
+gd = cc.find_library('gd')
+iml = cc.find_library('iml')
+m = cc.find_library('m')
+m4ri = cc.find_library('m4ri')
+m4rie = cc.find_library('m4rie')
+mtx = cc.find_library('mtx', required: false)
+png = cc.find_library('png')
+zlib = cc.find_library('z')
+intl = cc.find_library('intl', required: false)
+curl = cc.find_library('curl')
 # Cannot be found via pkg-config
-ec = declare_dependency(
-  dependencies: [
-    cc.find_library('ec'),
-  ]
-)
-ecm = declare_dependency(
-  dependencies: [
-    cc.find_library('ecm'),
-  ]
-)
+ec = cc.find_library('ec')
+ecm = cc.find_library('ecm')
 # Cannot be found via pkg-config
 glpk = cc.find_library('glpk')
-ppl = declare_dependency(
-  dependencies: [
-    cc.find_library('ppl'),
-  ]
-)
-gmpxx = declare_dependency(
-  dependencies: [
-    cc.find_library('gmpxx'),
-  ]
-)
-readline = declare_dependency(
-  dependencies: [
-    cc.find_library('readline'),
-  ]
-)
-lfunction = declare_dependency(
-  dependencies: [
-    cc.find_library('Lfunction', required: false),
-  ]
-)
-fflas = declare_dependency(
-  dependencies: [
-    cc.find_library('fflas'),
-  ]
-)
-givaro = declare_dependency(
-  dependencies: [
-    cc.find_library('givaro'),
-  ]
-)
-linbox = declare_dependency(
-  dependencies: [
-    cc.find_library('linbox'),
-  ]
-)
-braiding = declare_dependency(
-  dependencies: [
-    cc.find_library('braiding'),
-  ]
-)
-gc = declare_dependency(
-  dependencies: [
-    cc.find_library('gc'),
-  ]
-)
-homfly = declare_dependency(
-  dependencies: [
-    cc.find_library('homfly'),
-  ]
-)
-mpc = declare_dependency(
-  dependencies: [
-    cc.find_library('mpc'),
-  ]
-)
-mpfi = declare_dependency(
-  dependencies: [
-    cc.find_library('mpfi'),
-  ]
-)
-mpc = declare_dependency(
-  dependencies: [
-    cc.find_library('mpc'),
-  ]
-)
+ppl = cc.find_library('ppl')
+gmpxx = cc.find_library('gmpxx')
+readline = cc.find_library('readline')
+lfunction = cc.find_library('Lfunction', required: false)
+fflas = cc.find_library('fflas')
+givaro = cc.find_library('givaro')
+linbox = cc.find_library('linbox')
+braiding = cc.find_library('braiding')
+gc = cc.find_library('gc')
+homfly = cc.find_library('homfly')
+mpc = cc.find_library('mpc')
+mpfi = cc.find_library('mpfi')
+mpc = cc.find_library('mpc')
 # Cannot be found via pkg-config
 gap = cc.find_library('gap')
 
