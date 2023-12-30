@@ -65,10 +65,10 @@ class SpechtModule(CombinatorialFreeModule):
 
     EXAMPLES:
 
-    We construct the Specht module `S^{(2,1,21)}` for `H_{3,6}(q, u)` with
-    generic parameters `q, u` over `\GF(3)` and perform some basic
-    computations. We change the tableaux to use the compact representation
-    to condense the output::
+    We construct the Specht module `S^{(2,1,21)}` for `H_{3,6}(q, u)`
+    with generic parameters `q, u` over `\GF(3)` and perform some basic
+    computations. We first change the tableaux to use the compact
+    representation to condense the output::
 
         sage: TableauTuples.options.display = 'compact'
 
@@ -98,6 +98,39 @@ class SpechtModule(CombinatorialFreeModule):
         True
         sage: elt * T2 * T5 == elt * T5 * T2
         True
+
+    Next, we work over `\QQ` and verify that the central orthogonal idempotent
+    `F_{\lambda}` of `H_{3,2}` acts on `S^{\mu}` as `\delta_{\lambda\mu}`::
+
+        sage: AK = algebras.ArikiKoike(3, 2, use_fraction_field=True)
+        sage: LT = AK.LT()
+        sage: for la in PartitionTuples(AK.r(), AK.n()):  # long time
+        ....:     print(la)
+        ....:     S = AK.specht_module(la)
+        ....:     elt = sum(S.basis())
+        ....:     for mu in PartitionTuples(AK.r(), AK.n()):
+        ....:         ret = elt * LT.central_orthogonal_idempotent(mu)
+        ....:         if ret:
+        ....:             assert ret == elt
+        ....:             print("found by:", mu)
+        ([2], [], [])
+        found by: ([2], [], [])
+        ([1, 1], [], [])
+        found by: ([1, 1], [], [])
+        ([1], [1], [])
+        found by: ([1], [1], [])
+        ([1], [], [1])
+        found by: ([1], [], [1])
+        ([], [2], [])
+        found by: ([], [2], [])
+        ([], [1, 1], [])
+        found by: ([], [1, 1], [])
+        ([], [1], [1])
+        found by: ([], [1], [1])
+        ([], [], [2])
+        found by: ([], [], [2])
+        ([], [], [1, 1])
+        found by: ([], [], [1, 1])
 
         sage: TableauTuples.options._reset()
 
