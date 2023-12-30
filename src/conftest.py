@@ -106,13 +106,11 @@ class SageDoctestModule(DoctestModule):
         optionflags = get_optionflags(self)
         from sage.features import FeatureNotPresentError
 
-        # TODO: replace "SageDocTestRunner" by pytest's "_get_runner"
-        runner = SageDocTestRunner(
+        runner = _get_runner(
             verbose=False,
             optionflags=optionflags,
             checker=SageOutputChecker(),
-            #continue_on_failure=_get_continue_on_failure(self.config),
-            sage_options=DocTestDefaults(),
+            continue_on_failure=_get_continue_on_failure(self.config),
         )
         try:
             for test in finder.find(module, module.__name__):
@@ -208,6 +206,29 @@ from sage.repl.rich_output.backend_doctest import BackendDoctest
 
 display_manager = get_display_manager()
 display_manager.switch_backend(BackendDoctest())
+
+# Monkey patch exception printing to replace the full qualified name of the exception by its short name
+# TODO: Remove this hack
+import traceback
+
+old_format_exception_only = traceback.format_exception_only
+def format_exception_only(etype: type, value: BaseException) -> list[str]:
+    formatted_exception = old_format_exception_only(etype, value)
+    exception_name = etype.__name__
+    if etype.__module__:
+        exception_full_name = etype.__module__ + "." + etype.__qualname__
+    else:
+        exception_full_name = etype.__qualname__
+
+    for i, line in enumerate(formatted_exception):
+        if line.startswith(exception_full_name):
+            formatted_exception[i] = line.replace(
+                exception_full_name, exception_name, 1
+            )
+    return formatted_exception
+
+
+traceback.format_exception_only = format_exception_only
 
 
 @pytest.fixture(autouse=True, scope="session")
