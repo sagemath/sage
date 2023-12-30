@@ -65,53 +65,53 @@ class SymmetricGroupRepresentation:
 
         where `\chi` is the character of the `S_n`-module ``self``,
         `p_{\lambda}` is the powersum symmetric function basis element
-        indexed by `\lambda`, and `\rho(w)` is partition of the cycle type
-        of `w`. Specifically, this map takes irreducible representations
+        indexed by `\lambda`, and `\rho(w)` is the cycle type of `w` as a
+        partition. Specifically, this map takes irreducible representations
         indexed by `\lambda` to the Schur function `s_{\lambda}`.
 
         EXAMPLES::
 
             sage: s = SymmetricFunctions(QQ).s()
             sage: SM = Partition([2,2,1]).specht_module(QQ)
-            sage: s(SM.frobenius_image())
+            sage: SM.frobenius_image()
             s[2, 2, 1]
             sage: SM = Partition([4,1]).specht_module(CyclotomicField(5))
-            sage: s(SM.frobenius_image())
+            sage: SM.frobenius_image()
             s[4, 1]
 
         We verify the regular representation::
 
             sage: from sage.combinat.diagram import Diagram
             sage: D = Diagram([(0,0), (1,1), (2,2), (3,3), (4,4)])
-            sage: F = s(D.specht_module(QQ).frobenius_image()); F
+            sage: F = D.specht_module(QQ).frobenius_image(); F
             s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 5*s[2, 2, 1]
              + 6*s[3, 1, 1] + 5*s[3, 2] + 4*s[4, 1] + s[5]
             sage: F == sum(StandardTableaux(la).cardinality() * s[la]
             ....:          for la in Partitions(5))
             True
-            sage: all(s[la] == s(la.specht_module(QQ).frobenius_image())
+            sage: all(s[la] == la.specht_module(QQ).frobenius_image()
             ....:     for n in range(1, 5) for la in Partitions(n))
             True
 
             sage: D = Diagram([(0,0), (1,1), (1,2), (2,3), (2,4)])
             sage: SM = D.specht_module(QQ)
-            sage: s(SM.frobenius_image())
+            sage: SM.frobenius_image()
             s[2, 2, 1] + s[3, 1, 1] + 2*s[3, 2] + 2*s[4, 1] + s[5]
 
         An example using the tabloid module::
 
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: TM = SGA.tabloid_module([2, 2, 1])
-            sage: s(TM.frobenius_image())
+            sage: TM.frobenius_image()
             s[2, 2, 1] + s[3, 1, 1] + 2*s[3, 2] + 2*s[4, 1] + s[5]
         """
         from sage.combinat.sf.sf import SymmetricFunctions
-        BR = self.base_ring()
-        p = SymmetricFunctions(BR).p()
+        p = SymmetricFunctions(QQ).p()
+        s = SymmetricFunctions(QQ).s()
         G = self._semigroup
         CCR = [(elt, elt.cycle_type()) for elt in G.conjugacy_classes_representatives()]
-        return p.sum(self.representation_matrix(elt).trace() / la.centralizer_size() * p[la]
-                     for elt, la in CCR)
+        return s(p.sum(QQ(self.representation_matrix(elt).trace()) / la.centralizer_size() * p[la]
+                       for elt, la in CCR))
 
     # TODO: Move these methods up to methods of general representations
 
@@ -493,6 +493,23 @@ class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation):
                 9*S[[1, 2, 3], [4]] + 17*S[[1, 2, 4], [3]] + 14*S[[1, 3, 4], [2]]
                 sage: 4 * SM.an_element()
                 12*S[[1, 2, 3], [4]] + 8*S[[1, 2, 4], [3]] + 8*S[[1, 3, 4], [2]]
+
+            TESTS::
+
+                sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+                sage: SM = SGA.specht_module([3,1])
+                sage: SM.an_element() * SGA.an_element()
+                Traceback (most recent call last):
+                ...
+                TypeError: unsupported operand parent(s) for *:
+                 'Specht module of [3, 1] over Rational Field'
+                 and 'Symmetric group algebra of order 4 over Rational Field'
+                sage: groups.permutation.Dihedral(3).an_element() * SM.an_element()
+                Traceback (most recent call last):
+                ...
+                TypeError: unsupported operand parent(s) for *:
+                 'Dihedral group of order 6 as a permutation group'
+                 and 'Specht module of [3, 1] over Rational Field'
             """
             # Check for a scalar first
             ret = super()._acted_upon_(x, self_on_left)
@@ -506,6 +523,7 @@ class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation):
                 else:
                     return P.retract(P._SGA(x) * self.lift())
             return None
+
 
 class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
     r"""
@@ -595,6 +613,8 @@ class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
             sage: v = sum(TM.basis())
             sage: TM.bilinear_form(u, v)
             7
+            sage: TM.bilinear_form(u, TM.zero())
+            0
         """
         if len(v) < len(u):
             u, v = v, u
@@ -622,6 +642,12 @@ class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
                  + 12*T[{1, 2}, {3, 4}, {5}] + 15*T[{1, 2}, {3, 5}, {4}] + 15*T[{1, 2}, {4, 5}, {3}]
                 sage: 4 * SM.an_element()
                 8*T[{1, 2}, {3, 4}, {5}] + 8*T[{1, 2}, {3, 5}, {4}] + 12*T[{1, 2}, {4, 5}, {3}]
+                sage: SM.an_element() * SGA.an_element()
+                Traceback (most recent call last):
+                ...
+                TypeError: unsupported operand parent(s) for *:
+                 'Tabloid module of [2, 2, 1] over Rational Field'
+                 and 'Symmetric group algebra of order 5 over Rational Field'
             """
             # first check for the base action
             ret = super()._acted_upon_(x, self_on_left)
@@ -665,13 +691,9 @@ class SpechtModuleTableauxBasis(SpechtModule):
         self._diagram = ambient._shape
         SymmetricGroupRepresentation.__init__(self, ambient._SGA)
 
-        from sage.combinat.symmetric_group_algebra import e
         ambient_basis = ambient.basis()
         tabloids = ambient_basis.keys()
         support_order = list(tabloids)
-
-        G = self._SGA.basis().keys()
-        BR = self._SGA.base_ring()
 
         def elt(T):
             tab = tabloids.from_tableau(T)
@@ -720,6 +742,10 @@ class SpechtModuleTableauxBasis(SpechtModule):
 
             sage: Y.retract(X.zero())
             0
+            sage: Y.retract(sum(X.basis()))
+            Traceback (most recent call last):
+            ...
+            ValueError: ... is not in the image
         """
         B = self.basis()
         COB = matrix([b.lift().to_vector() for b in B]).T
@@ -867,12 +893,19 @@ class MaximalSpechtSubmodule(SubmoduleWithBasis, SymmetricGroupRepresentation):
             Traceback (most recent call last):
             ...
             NotImplementedError: only implemented for 3-regular partitions
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: SM = SGA.specht_module([3,2])
+            sage: U = SM.maximal_submodule()
+            sage: TestSuite(U).run(skip="_test_cardinality")  # skip due to bug for 0 dimensional modules
+            sage: U.dimension()
+            0
         """
         SymmetricGroupRepresentation.__init__(self, specht_module._SGA)
 
         p = specht_module.base_ring().characteristic()
         if p == 0:
-            basis = []
+            basis = Family([])
         else:
             TM = specht_module._ambient
             if not TM._shape.is_regular(p):

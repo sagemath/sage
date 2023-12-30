@@ -115,6 +115,10 @@ class Tabloid(ClonableArray):
             \lr{6}\\\cline{1-1}
             \end{array}$}
             }
+
+            sage: T = Tabloids([])
+            sage: latex(T([]))
+            {\emptyset}
         """
         if not self:
             return "{\\emptyset}"
