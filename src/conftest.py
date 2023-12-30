@@ -8,9 +8,12 @@ See https://docs.pytest.org/en/latest/index.html for more details.
 
 from __future__ import annotations
 
+import doctest
 import inspect
+import sys
+import warnings
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Optional
 
 import pytest
 from _pytest.doctest import (
@@ -23,6 +26,10 @@ from _pytest.doctest import (
     get_optionflags,
 )
 from _pytest.pathlib import ImportMode, import_path
+from sage.doctest.forker import (
+    init_sage,
+    showwarning_with_traceback,
+)
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 
@@ -199,19 +206,13 @@ def pytest_addoption(parser):
         dest="doctest",
     )
 
-
-# Use the rich output backend for doctest
-from sage.repl.rich_output import get_display_manager
-from sage.repl.rich_output.backend_doctest import BackendDoctest
-
-display_manager = get_display_manager()
-display_manager.switch_backend(BackendDoctest())
-
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
 # TODO: Remove this hack
 import traceback
 
 old_format_exception_only = traceback.format_exception_only
+
+
 def format_exception_only(etype: type, value: BaseException) -> list[str]:
     formatted_exception = old_format_exception_only(etype, value)
     exception_name = etype.__name__
@@ -230,6 +231,20 @@ def format_exception_only(etype: type, value: BaseException) -> list[str]:
 
 traceback.format_exception_only = format_exception_only
 
+# Display warnings in doctests
+warnings.showwarning = showwarning_with_traceback
+
+from sage.repl.rich_output import get_display_manager
+
+# Initialize Sage-specific doctest stuff
+init_sage()
+
+# Monkey patch doctest to use our custom printer etc
+old_run = doctest.DocTestRunner.run
+def doctest_run(self: doctest.DocTestRunner, test: doctest.DocTest, compileflags: Optional[int] = None, out: Any = None, clear_globs: bool = True) -> doctest.TestResults:
+    setattr(sys, "__displayhook__", get_display_manager().displayhook)
+    return old_run(self, test, compileflags, out, clear_globs)
+doctest.DocTestRunner.run = doctest_run
 
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
@@ -240,6 +255,7 @@ def add_imports(doctest_namespace: dict[str, Any]):
     """
     # Inject sage.all into each doctest
     import sage.all
+
     dict_all = sage.all.__dict__
 
     # Remove '__package__' item from the globals since it is not
