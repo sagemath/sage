@@ -45,9 +45,9 @@ jobs:
             ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11.yml') }}
 
       - name: Compiler cache
-        uses:  actions/cache@v3
+        uses: hendrikmuhs/ccache-action@v1.2
         with:
-          path: ${{ github.workspace }}/.ccache
+          create-symlink: true
           key: ${{ runner.os }}-meson-${{ matrix.python }}-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-meson-${{ matrix.python }}-
 
