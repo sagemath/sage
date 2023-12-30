@@ -16,6 +16,8 @@ import pytest
 from _pytest.doctest import (
     DoctestItem,
     DoctestModule,
+    _get_continue_on_failure,
+    _get_runner,
     _is_mocked,
     _patch_unwrap_mock_aware,
     get_optionflags,
