@@ -527,7 +527,8 @@ class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation):
 
 class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
     r"""
-    The vector space of all tabloids with the natural symmetric group action.
+    The vector space of all :class:`~sage.combinat.tabloid.Tabloids` of a
+    fixed shape with the natural symmetric group action.
     """
     @staticmethod
     def __classcall_private__(cls, SGA, shape):
@@ -897,7 +898,7 @@ class MaximalSpechtSubmodule(SubmoduleWithBasis, SymmetricGroupRepresentation):
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: SM = SGA.specht_module([3,2])
             sage: U = SM.maximal_submodule()
-            sage: TestSuite(U).run(skip="_test_cardinality")  # skip due to bug for 0 dimensional modules
+            sage: TestSuite(U).run()
             sage: U.dimension()
             0
         """
