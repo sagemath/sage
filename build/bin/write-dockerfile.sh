@@ -129,7 +129,7 @@ EOF
         ;;
     void*)
 	# https://hub.docker.com/r/voidlinux/masterdir-x86_64-musl
-        UPDATE="xbps-install -Su &&"
+        UPDATE="xbps-install -Suy &&"
         EXISTS="xbps-query"
         INSTALL="xbps-install --yes"
         ;;
