@@ -1,1 +1,1 @@
-cysignals >=1.10.2
+# This is merely an indicator file, version is defined in pyproject.toml

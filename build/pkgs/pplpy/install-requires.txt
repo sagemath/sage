@@ -1,2 +1,1 @@
-# Trac #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
-pplpy >=0.8.6
+# This is merely an indicator file, version is defined in pyproject.toml

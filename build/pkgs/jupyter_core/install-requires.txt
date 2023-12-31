@@ -1,1 +1,1 @@
-jupyter_core >=4.6.3
+# This is merely an indicator file, version is defined in pyproject.toml

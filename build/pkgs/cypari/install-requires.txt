@@ -1,1 +1,1 @@
-cypari2 >=2.1.1
+# This is merely an indicator file, version is defined in pyproject.toml
