@@ -672,9 +672,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         K = self.base_field()
         ai = self.a_invariants()
-        Ps = set(ff[0]
-                 for a in ai if not a.is_integral()
-                 for ff in a.denominator_ideal().factor())
+        Ps = {ff[0] for a in ai if not a.is_integral()
+              for ff in a.denominator_ideal().factor()}
         for P in Ps:
             pi = K.uniformizer(P, 'positive')
             e = min((ai[i].valuation(P)/[1,2,3,4,6][i])
@@ -2919,6 +2918,18 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E = EllipticCurve([a+1, 1, 1, 0, 0])
             sage: C = E.isogeny_class(); len(C) # long time
             4
+
+        Check that :issue:`36780` is fixed::
+
+            sage: L5.<r5> = NumberField(x^2-5)
+            sage: F = EllipticCurve(L5,[0,-4325477943600 *r5-4195572876000])
+            sage: F.isogeny_class().matrix()
+            [ 1 25 75  3  5 15]
+            [25  1  3 75  5 15]
+            [75  3  1 25 15  5]
+            [ 3 75 25  1 15  5]
+            [ 5  5 15 15  1  3]
+            [15 15  5  5  3  1]
         """
         try:
             return self._isoclass
@@ -3283,10 +3294,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
         For curves without CM the list returned is exactly the finite
         set of primes `\ell` for which the mod-`\ell` Galois
         representation is reducible.  For curves with CM this set is
-        infinite; we return a finite list of primes `\ell` such that
-        every curve isogenous to this curve can be obtained by a
-        finite sequence of isogenies of degree one of the primes in
-        the list.
+        infinite; we return a (not necessarily minimal) finite list
+        of primes `\ell` such that every curve isogenous to this curve
+        can be obtained by a finite sequence of isogenies of degree one
+        of the primes in the list.
 
         INPUT:
 
@@ -3328,7 +3339,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: rho.reducible_primes() # CM curves always return [0]
             [0]
             sage: E.reducible_primes()
-            [2]
+            [2, 5]
             sage: E = EllipticCurve_from_j(K(0)) # CM but NOT over K
             sage: rho = E.galois_representation()
             sage: rho.reducible_primes() # long time

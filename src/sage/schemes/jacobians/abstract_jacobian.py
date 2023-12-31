@@ -177,7 +177,7 @@ class Jacobian_generic(Scheme):
 
         OUTPUT:
 
-        This method always raises a ``NotImplementedError``; it is
+        This method always raises a :class:`NotImplementedError`; it is
         only abstract.
 
         EXAMPLES::

@@ -117,10 +117,12 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 from copy import copy
 
+from sage.arith.misc import integer_ceil, integer_floor, xlcm
+from sage.arith.srange import xsrange
+from sage.misc.functional import log
 from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
-from sage.arith.srange import xsrange
 
 #
 # Lists of names (as strings) which the user may use to identify one
@@ -1396,8 +1398,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     if d > 1:
         Q = multiple(P, d, operation=operation)
         lb, ub = bounds
-        bounds = (sage.arith.all.integer_ceil(lb / d),
-                  sage.arith.all.integer_floor(ub / d))
+        bounds = (integer_ceil(lb / d), integer_floor(ub / d))
 
     # Use generic bsgs to find  n=d*m with lb<=n<=ub and n*P=0
 
@@ -1486,7 +1487,7 @@ def merge_points(P1, P2, operation='+',
     if n2.divides(n1):
         return (g1, n1)
 
-    m, k1, k2 = sage.arith.all.xlcm(n1, n2)
+    m, k1, k2 = xlcm(n1, n2)
     m1 = n1 // k1
     m2 = n2 // k2
     g1 = multiple(g1, m1, operation=operation)

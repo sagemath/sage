@@ -1108,7 +1108,7 @@ class SimplicialSets(Category_singleton):
                 return Infinity
 
         class Finite(CategoryWithAxiom):
-            class ParentMethods():
+            class ParentMethods:
 
                 def unset_base_point(self):
                     """

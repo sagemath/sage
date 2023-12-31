@@ -138,7 +138,7 @@ class RationalFunctionField(FunctionField):
 
             sage: K.<t> = FunctionField(CC); K                                          # needs sage.rings.real_mpfr
             Rational function field in t over Complex Field with 53 bits of precision
-            sage: TestSuite(K).run()               # long time (5s)                     # needs sage.rings.real_mpfr
+            sage: TestSuite(K).run()            # long time (5s)                        # needs sage.rings.real_mpfr
 
             sage: FunctionField(QQ[I], 'alpha')                                         # needs sage.rings.number_field
             Rational function field in alpha over

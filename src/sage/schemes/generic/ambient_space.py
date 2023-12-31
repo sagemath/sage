@@ -219,8 +219,8 @@ class AmbientSpace(Scheme):
 
         .. NOTE::
 
-            A ``ValueError`` is raised if there is no such natural map. If
-            you need to drop this condition, use ``self.change_ring(R)``.
+            A :class:`ValueError` is raised if there is no such natural map.
+            If you need to drop this condition, use ``self.change_ring(R)``.
 
         EXAMPLES::
 

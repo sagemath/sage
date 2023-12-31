@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Points on elliptic curves
 
@@ -1457,7 +1456,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         - ``Q`` -- a nonzero point on self.curve().
 
-        - ``n`` -- an nonzero integer. If `n<0` then return `Q`
+        - ``n`` -- a nonzero integer. If `n<0` then return `Q`
                    evaluated at `1/(v_{nP}*f_{n,P})` (used in the ate pairing).
 
         OUTPUT:

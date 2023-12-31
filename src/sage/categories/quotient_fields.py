@@ -632,7 +632,7 @@ class QuotientFields(Category_singleton):
             Returns the derivative of this rational function with respect to the
             variable ``var``.
 
-            Over an ring with a working gcd implementation, the derivative of a
+            Over a ring with a working gcd implementation, the derivative of a
             fraction `f/g`, supposed to be given in lowest terms, is computed as
             `(f'(g/d) - f(g'/d))/(g(g'/d))`, where `d` is a greatest common
             divisor of `f` and `g`.

@@ -1763,7 +1763,7 @@ def plot(funcs, *args, **kwds):
 
     .. PLOT::
 
-        g = plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7],[-1/2,0,1/2]])
+        g = plot(sin(pi*x), (x, -8, 8), ticks=[[-7,-3,0,3,7], [-1/2,0,1/2]])
         sphinx_plot(g)
 
     ::
@@ -1799,7 +1799,7 @@ def plot(funcs, *args, **kwds):
 
     .. PLOT::
 
-        g = plot(x**2, (x,0,3), ticks=[[1,2.5],[0.5,1,2]], tick_formatter=[["$x_1$","$x_2$"],["$y_1$","$y_2$","$y_3$"]])
+        g = plot(x**2, (x,0,3), ticks=[[1,2.5],[0.5,1,2]], tick_formatter=[["$x_1$","$x_2$"], ["$y_1$","$y_2$","$y_3$"]])
         sphinx_plot(g)
 
     You can force Type 1 fonts in your figures by providing the relevant
@@ -1891,7 +1891,7 @@ def plot(funcs, *args, **kwds):
 
         sage: plot(arcsec(x/2), -2, 2)  # plot should be empty; no valid points
         Graphics object consisting of 0 graphics primitives
-        sage: plot(sqrt(x^2-1), -2, 2)  # [-1, 1] is excluded automatically
+        sage: plot(sqrt(x^2 - 1), -2, 2)  # [-1, 1] is excluded automatically
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -2573,7 +2573,7 @@ def parametric_plot(funcs, *args, **kwargs):
     is 1, so that circles look like circles. ::
 
         sage: t = var('t')
-        sage: parametric_plot( (cos(t), sin(t)), (t, 0, 2*pi))
+        sage: parametric_plot((cos(t), sin(t)), (t, 0, 2*pi))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -2613,23 +2613,25 @@ def parametric_plot(funcs, *args, **kwargs):
 
     .. PLOT::
 
-        t =var('t')
+        t = var('t')
         g = parametric_plot((t, t**2), (t, -4, 4), fill=True)
         sphinx_plot(g)
 
     A filled Hypotrochoid::
 
-        sage: parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill=True)
+        sage: parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)],
+        ....:                 (x, 0, 8*pi), fill=True)
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
 
-        g = parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x,0, 8*pi), fill=True)
+        g = parametric_plot([cos(x) + 2 * cos(x/4), sin(x) - 2 * sin(x/4)], (x, 0, 8*pi), fill=True)
         sphinx_plot(g)
 
     ::
 
-        sage: parametric_plot( (5*cos(x), 5*sin(x), x), (x,-12, 12), plot_points=150, color="red") # long time
+        sage: parametric_plot((5*cos(x), 5*sin(x), x), (x, -12, 12),  # long time
+        ....:                 plot_points=150, color="red")
         Graphics3d Object
 
     .. PLOT::
@@ -2829,7 +2831,8 @@ def polar_plot(funcs, *args, **kwds):
 
     Fill the area between two functions::
 
-        sage: polar_plot(cos(4*x) + 1.5, 0, 2*pi, fill=0.5 * cos(4*x) + 2.5, fillcolor='orange')
+        sage: polar_plot(cos(4*x) + 1.5, 0, 2*pi, fill=0.5 * cos(4*x) + 2.5,
+        ....:            fillcolor='orange')
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -2839,7 +2842,8 @@ def polar_plot(funcs, *args, **kwds):
 
     Fill the area between several spirals::
 
-        sage: polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi, fill={0: [1], 2: [3], 4: [5]})
+        sage: polar_plot([(1.2+k*0.2)*log(x) for k in range(6)], 1, 3 * pi,
+        ....:            fill={0: [1], 2: [3], 4: [5]})
         Graphics object consisting of 9 graphics primitives
 
     .. PLOT::
@@ -2895,7 +2899,7 @@ def list_plot(data, plotjoined=False, **kwargs):
 
     EXAMPLES::
 
-        sage: list_plot([i^2 for i in range(5)]) # long time
+        sage: list_plot([i^2 for i in range(5)])  # long time
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -3008,7 +3012,9 @@ def list_plot(data, plotjoined=False, **kwargs):
         sage: list_plot(x_coords, y_coords)
         Traceback (most recent call last):
         ...
-        TypeError: The second argument 'plotjoined' should be boolean (True or False).  If you meant to plot two lists 'x' and 'y' against each other, use 'list_plot(list(zip(x,y)))'.
+        TypeError: The second argument 'plotjoined' should be boolean (True or False).
+        If you meant to plot two lists 'x' and 'y' against each other,
+        use 'list_plot(list(zip(x,y)))'.
 
     Dictionaries with numeric keys and values can be plotted::
 
@@ -3055,12 +3061,12 @@ def list_plot(data, plotjoined=False, **kwargs):
 
         Instead this will work. We drop the point `(0,1)`.::
 
-            sage: list_plot(list(zip(range(1,len(yl)), yl[1:])), scale='loglog') # long time
+            sage: list_plot(list(zip(range(1,len(yl)), yl[1:])), scale='loglog')  # long time
             Graphics object consisting of 1 graphics primitive
 
     We use :func:`list_plot_loglog` and plot in a different base.::
 
-        sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])), base=2) # long time
+        sage: list_plot_loglog(list(zip(range(1,len(yl)), yl[1:])), base=2)  # long time
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -3267,22 +3273,22 @@ def plot_semilogy(funcs, *args, **kwds):
 
     EXAMPLES::
 
-        sage: plot_semilogy(exp, (1,10)) # long time # plot in semilogy scale, base 10
+        sage: plot_semilogy(exp, (1, 10))  # long time # plot in semilogy scale, base 10
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot_semilogy(exp, (1,10)) # long time # plot in semilogy scale, base 10
+        g = plot_semilogy(exp, (1,10))  # long time # plot in semilogy scale, base 10
         sphinx_plot(g)
 
     ::
 
-        sage: plot_semilogy(exp, (1,10), base=2) # long time # with base 2
+        sage: plot_semilogy(exp, (1, 10), base=2)  # long time # with base 2
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        g = plot_semilogy(exp, (1,10), base=2) # long time # with base 2
+        g = plot_semilogy(exp, (1,10), base=2)  # long time # with base 2
         sphinx_plot(g)
 
     """
@@ -3505,13 +3511,14 @@ def reshape(v, n, m):
 
     ::
 
-        sage: M = [[plot(sin(k*x),(x,-pi,pi)) for k in range(3)],[plot(cos(j*x),(x,-pi,pi)) for j in [3..5]]]
+        sage: M = [[plot(sin(k*x), (x,-pi,pi)) for k in range(3)],
+        ....:      [plot(cos(j*x), (x,-pi,pi)) for j in [3..5]]]
         sage: graphics_array(M,6,1)  # long time (up to 4s on sage.math, 2012)
         Graphics Array of size 6 x 1
 
     TESTS::
 
-        sage: L = [plot(sin(k*x),(x,-pi,pi)) for k in [1..3]]
+        sage: L = [plot(sin(k*x), (x,-pi,pi)) for k in [1..3]]
         sage: graphics_array(L,0,-1) # indirect doctest
         Traceback (most recent call last):
         ...
@@ -3620,6 +3627,7 @@ def graphics_array(array, nrows=None, ncols=None):
     It is possible to use ``figsize`` to change the size of the plot
     as a whole::
 
+        sage: x = var('x')
         sage: L = [plot(sin(k*x), (x,-pi,pi)) for k in [1..3]]
         sage: ga = graphics_array(L)
         sage: ga.show(figsize=[5,3])  # smallish and compact
@@ -3860,7 +3868,8 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
     TESTS::
 
         sage: from sage.plot.plot import adaptive_refinement
-        sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01, adaptive_recursion=0)
+        sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01,
+        ....:                     adaptive_recursion=0)
         []
         sage: adaptive_refinement(sin, (0,0), (pi,0), adaptive_tolerance=0.01)
         [(0.125*pi, 0.3826834323650898), (0.1875*pi, 0.5555702330196022),
@@ -3881,7 +3890,8 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
         sage: f(x) = sin(1/x)
         sage: n1 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_tolerance=0.01)); n1
         15
-        sage: n2 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_recursion=10, adaptive_tolerance=0.01)); n2
+        sage: n2 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_recursion=10,
+        ....:                              adaptive_tolerance=0.01)); n2
         79
         sage: n3 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_tolerance=0.001)); n3
         26

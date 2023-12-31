@@ -7,7 +7,7 @@ configuration class. This is an internal class used by the rigged
 configurations and KR tableaux during the bijection, and is not to be used by
 the end-user.
 
-We hold the partitions as an 1-dim array of positive integers where each
+We hold the partitions as a 1-dim array of positive integers where each
 value corresponds to the length of the row. This is the shape of the
 partition which can be accessed by the regular index.
 

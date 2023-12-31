@@ -4225,7 +4225,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         r"""
         Add markings to a partially marked strong tableau.
 
-        Given an partially marked standard tableau and a list of cells where the marks
+        Given a partially marked standard tableau and a list of cells where the marks
         should be placed along with a ``weight``, return the semi-standard marked strong
         tableau.  The marking should complete the marking so that the result is a
         strong standard marked tableau.

@@ -861,7 +861,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         return _is_restricted(self.to_list(), KP._multicharge, KP._convention)
 
 
-class KleshchevCrystalMixin():
+class KleshchevCrystalMixin:
     """
     Mixin class for the crystal structure of a Kleshchev partition.
     """

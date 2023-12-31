@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Construct elliptic curves as Jacobians
 

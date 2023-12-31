@@ -3830,7 +3830,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         In its simplest form, computes the inverse of
         ``p``-th root of this element.
 
-        This is an helper function used in :meth:`nth_root`
+        This is a helper function used in :meth:`nth_root`
         and :meth:`primitive_root_of_unity`.
 
         INPUT:

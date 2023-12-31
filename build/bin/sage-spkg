@@ -509,7 +509,9 @@ else
         # just copy to dist/ and create a simple install script.
         mkdir -p dist
         cp "$PKG_SRC" dist/
-        echo "sdh_store_and_pip_install_wheel ." > spkg-install.in
+        if [ ! -f spkg-install.in ]; then
+            echo "sdh_store_and_pip_install_wheel ." > spkg-install.in
+        fi
         ;;
     *)
         # Source tarball

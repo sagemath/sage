@@ -488,11 +488,11 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         X = mat * vector(list(self))
         return dom.codomain()(list(X))
 
-    def scale_by(self,t):
+    def scale_by(self, t):
         """
         Scale the coordinates of the point by ``t``.
 
-        A ``TypeError`` occurs if the point is not in the
+        A :class:`TypeError` occurs if the point is not in the
         base_ring of the codomain after scaling.
 
         INPUT:

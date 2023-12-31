@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 "Birch and Swinnerton-Dyer formulas"
 
 from sage.arith.misc import prime_divisors

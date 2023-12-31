@@ -563,7 +563,7 @@ class F_algebra(CombinatorialFreeModule):
 
         OUTPUT:
 
-        an homogeneous element of :func:`F_ring` over this base ring
+        a homogeneous element of :func:`F_ring` over this base ring
 
         .. SEEALSO:: :meth:`F_algebra.homogeneous_to_vector`
 

@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.plot
+# sage.doctest: needs sage.plot sage.symbolic
 """
 Surfaces of revolution
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Elements with labels.
 
@@ -170,4 +169,4 @@ class ElementWithLabel():
             sage: a != x
             False
         """
-        return not(self == other)
+        return not (self == other)

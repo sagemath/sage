@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Common words
 
@@ -314,7 +313,7 @@ class LowerChristoffelWord(FiniteWord_list):
         return self.__class__, (self.__p, self.__q, self.parent().alphabet())
 
 
-class WordGenerator():
+class WordGenerator:
     r"""
     Constructor of several famous words.
 

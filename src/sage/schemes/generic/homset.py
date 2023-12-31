@@ -175,7 +175,7 @@ class SchemeHomsetFactory(UniqueFactory):
         if not category:
             from sage.categories.schemes import Schemes
             category = Schemes(base_spec)
-        key = tuple([id(X), id(Y), category, as_point_homset])
+        key = (id(X), id(Y), category, as_point_homset)
         extra = {'X':X, 'Y':Y, 'base_ring':base_ring, 'check':check}
         return key, extra
 
@@ -313,7 +313,7 @@ class SchemeHomset_generic(HomsetWithBase):
         OUTPUT:
 
         A :class:`SchemeMorphism` if there is a natural map from
-        domain to codomain. Otherwise, a ``NotImplementedError`` is
+        domain to codomain. Otherwise, a :class:`NotImplementedError` is
         raised.
 
         EXAMPLES::

@@ -104,7 +104,7 @@ Properties
     :meth:`~FiniteStateMachine.has_state` | Checks for a state
     :meth:`~FiniteStateMachine.has_initial_state` | Checks for an initial state
     :meth:`~FiniteStateMachine.has_initial_states` | Checks for initial states
-    :meth:`~FiniteStateMachine.has_final_state` | Checks for an final state
+    :meth:`~FiniteStateMachine.has_final_state` | Checks for a final state
     :meth:`~FiniteStateMachine.has_final_states` | Checks for final states
     :meth:`~FiniteStateMachine.has_transition` | Checks for a transition
     :meth:`~FiniteStateMachine.is_deterministic` | Checks for a deterministic machine
@@ -3667,7 +3667,7 @@ class FiniteStateMachine(SageObject):
             sage: H.states()
             [('A', 1), ('B', 1), ('B', 2)]
 
-        An automaton or transducer can also act on an input (an list
+        An automaton or transducer can also act on an input (a list
         or other iterable of letters)::
 
             sage: binary_inverter = Transducer({'A': [('A', 0, 1), ('A', 1, 0)]},
@@ -12144,7 +12144,7 @@ class Transducer(FiniteStateMachine):
     This creates a transducer, which is a finite state machine, whose
     transitions have input and output labels.
 
-    An transducer has additional features like creating a simplified
+    A transducer has additional features like creating a simplified
     transducer.
 
     See class :class:`FiniteStateMachine` for more information.

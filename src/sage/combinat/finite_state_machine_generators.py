@@ -97,7 +97,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-class AutomatonGenerators():
+class AutomatonGenerators:
     r"""
     A collection of constructors for several common automata.
 
@@ -346,7 +346,7 @@ class AutomatonGenerators():
             final_states=[word])
 
 
-class TransducerGenerators():
+class TransducerGenerators:
     r"""
     A collection of constructors for several common transducers.
 

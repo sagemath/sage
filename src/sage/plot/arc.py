@@ -56,6 +56,7 @@ class Arc(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: A = arc((2,3),1,1,pi/4,(0,pi))
             sage: A[0].x == 2
             True

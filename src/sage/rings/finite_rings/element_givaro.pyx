@@ -56,10 +56,11 @@ from cysignals.signals cimport sig_on, sig_off
 
 from cypari2.paridecl cimport *
 
+import sage.arith.misc
+
 from sage.misc.randstate cimport current_randstate
 from sage.rings.finite_rings.element_pari_ffelt cimport FiniteFieldElement_pari_ffelt
 from sage.structure.richcmp cimport richcmp
-import sage.arith.all
 
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
@@ -414,9 +415,6 @@ cdef class Cache_givaro(Cache_base):
             # Reduce to pari
             e = e.__pari__()
 
-        elif isinstance(e, sage.libs.gap.element.GapElement_FiniteField):
-            return e.sage(ring=self.parent)
-
         elif isinstance(e, GapElement):
             from sage.libs.gap.libgap import libgap
             return libgap(e).sage(ring=self.parent)
@@ -434,6 +432,13 @@ cdef class Cache_givaro(Cache_base):
             return ret
 
         else:
+            try:
+                from sage.libs.gap.element import GapElement_FiniteField
+            except ImportError:
+                pass
+            else:
+                if isinstance(e, GapElement_FiniteField):
+                    return e.sage(ring=self.parent)
             raise TypeError("unable to coerce %r" % type(e))
 
         cdef GEN t
@@ -524,7 +529,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``n`` -- integer representation of an finite field element
+        - ``n`` -- integer representation of a finite field element
 
         OUTPUT:
 
@@ -1568,7 +1573,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
                 raise ArithmeticError("Multiplicative order of 0 not defined.")
             n = (self._cache).order_c() - 1
             order = Integer(1)
-            for p, e in sage.arith.all.factor(n):
+            for p, e in sage.arith.misc.factor(n):
                 # Determine the power of p that divides the order.
                 a = self**(n / (p**e))
                 while a != 1:

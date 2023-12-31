@@ -2382,7 +2382,6 @@ class SimplicialSet_arbitrary(Parent):
             sage: Y = S2.unset_base_point()
             sage: Z = K.unset_base_point()
 
-            sage:
             sage: S2.coproduct(K).is_pointed()
             True
             sage: S2.coproduct(K)

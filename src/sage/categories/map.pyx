@@ -1880,7 +1880,7 @@ cdef class FormalCompositeMap(Map):
         """
         Tell whether ``self`` is injective.
 
-        It raises ``NotImplementedError`` if it can't be determined.
+        It raises :class:`NotImplementedError` if it cannot be determined.
 
         EXAMPLES::
 
@@ -1955,7 +1955,7 @@ cdef class FormalCompositeMap(Map):
         """
         Tell whether ``self`` is surjective.
 
-        It raises ``NotImplementedError`` if it can't be determined.
+        It raises :class:`NotImplementedError` if it cannot be determined.
 
         EXAMPLES::
 

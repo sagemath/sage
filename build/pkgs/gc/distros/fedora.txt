@@ -1,1 +1,2 @@
-gc gc-devel
+gc
+gc-devel

@@ -258,6 +258,8 @@ from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT, Py_GE
 
 from cysignals.signals cimport sig_on, sig_off
 
+import sage.arith.misc
+
 from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
 from sage.libs.mpfi cimport *
@@ -5035,7 +5037,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         known_bits = -self.relative_diameter().log2()
 
-        return sage.arith.all.algdep(self.center(), n, known_bits=known_bits)
+        return sage.arith.misc.algdep(self.center(), n, known_bits=known_bits)
 
     def factorial(self):
         """

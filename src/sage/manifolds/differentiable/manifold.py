@@ -814,7 +814,7 @@ class DifferentiableManifold(TopologicalManifold):
             sage: U.default_chart() is X.restrict(U)
             True
 
-        An point in ``U``::
+        A point in ``U``::
 
             sage: p = U.an_element(); p
             Point on the 2-dimensional differentiable manifold M

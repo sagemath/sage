@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Temporary file handling
 
@@ -353,7 +352,7 @@ class atomic_write():
         wmode = 'w+' + ('b' if self.binary else '')
 
         try:
-            self.tempfile = io.open(name, wmode, **self.kwargs)
+            self.tempfile = open(name, wmode, **self.kwargs)
         except Exception:
             # Some invalid arguments were passed to io.open
             os.unlink(name)
@@ -364,9 +363,9 @@ class atomic_write():
         os.chmod(name, self.mode)
         if self.append:
             try:
-                with io.open(self.target, rmode, **self.kwargs) as f:
+                with open(self.target, rmode, **self.kwargs) as f:
                     r = f.read()
-            except IOError:
+            except OSError:
                 pass
             else:
                 self.tempfile.write(r)

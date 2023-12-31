@@ -253,7 +253,7 @@ class QuantuminoState(SageObject):
     r"""
     A state of the Quantumino puzzle.
 
-    Used to represent an solution or a partial solution of the Quantumino
+    Used to represent a solution or a partial solution of the Quantumino
     puzzle.
 
     INPUT:

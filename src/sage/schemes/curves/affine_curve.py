@@ -684,13 +684,13 @@ class AffinePlaneCurve(AffineCurve):
             if t > 0:
                 fact.append(vars[0])
                 # divide T by that power of vars[0]
-                T = self.ambient_space().coordinate_ring()(dict([((v[0] - t, v[1]), h) for (v, h) in T.dict().items()]))
+                T = self.ambient_space().coordinate_ring()({(v[0] - t, v[1]): h for (v, h) in T.dict().items()})
             t = min([e[1] for e in T.exponents()])
             # vars[1] divides T
             if t > 0:
                 fact.append(vars[1])
                 # divide T by that power of vars[1]
-                T = self.ambient_space().coordinate_ring()(dict([((v[0], v[1] - t), h) for (v, h) in T.dict().items()]))
+                T = self.ambient_space().coordinate_ring()({(v[0], v[1] - t): h for (v, h) in T.dict().items()})
             # T is homogeneous in var[0], var[1] if nonconstant, so dehomogenize
             if T not in self.base_ring():
                 if T.degree(vars[0]) > 0:
@@ -1032,7 +1032,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             C = AA2.curve(G)
         except (TypeError, ValueError):
             C = AA2.subscheme(G)
-        return tuple([psi, C])
+        return (psi, C)
 
     def plane_projection(self, AP=None):
         r"""
@@ -1397,7 +1397,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             homvars.insert(i, 1)
             coords = [(p_A.gens()[0] - P[i])*homvars[j] + P[j] for j in range(n)]
             proj_maps.append(H(coords))
-        return tuple([tuple(patches), tuple(t_maps), tuple(proj_maps)])
+        return (tuple(patches), tuple(t_maps), tuple(proj_maps))
 
     def resolution_of_singularities(self, extend=False):
         r"""
@@ -1688,7 +1688,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         patches = [res[i][0] for i in range(len(res))]
         t_maps = [tuple(res[i][1]) for i in range(len(res))]
         p_maps = [res[i][2] for i in range(len(res))]
-        return tuple([tuple(patches), tuple(t_maps), tuple(p_maps)])
+        return (tuple(patches), tuple(t_maps), tuple(p_maps))
 
     def tangent_line(self, p):
         """
@@ -2600,7 +2600,7 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C.places_at_infinity()
             [Place (1/x, 1/x*z^2)]
         """
-        return list(set(p for f in self._coordinate_functions if f for p in f.poles()))
+        return list({p for f in self._coordinate_functions if f for p in f.poles()})
 
     def places_on(self, point):
         """

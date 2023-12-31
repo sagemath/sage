@@ -27,9 +27,9 @@ We can create Tate algebras using the constructor
 :func:`sage.rings.tate_algebra.TateAlgebra`::
 
     sage: K = Qp(2, 5, print_mode='digits')
-    sage: A.<x,y> = TateAlgebra(K)
-    sage: A
-    Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 5
+    sage: A.<x,y> = TateAlgebra(K); A
+    Tate Algebra in x (val >= 0), y (val >= 0)
+     over 2-adic Field with capped relative precision 5
 
 As we observe, the default value for the log radii of convergence
 is `0` (the series then converge on the closed unit disc).
@@ -37,13 +37,15 @@ is `0` (the series then converge on the closed unit disc).
 We can specify different log radii using the following syntax::
 
     sage: B.<u,v> = TateAlgebra(K, log_radii=[1,2]); B
-    Tate Algebra in u (val >= -1), v (val >= -2) over 2-adic Field with capped relative precision 5
+    Tate Algebra in u (val >= -1), v (val >= -2)
+     over 2-adic Field with capped relative precision 5
 
 Note that if we pass in the ring of integers of `p`-adic field,
 the same Tate algebra is returned::
 
     sage: A1.<x,y> = TateAlgebra(K.integer_ring()); A1
-    Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 5
+    Tate Algebra in x (val >= 0), y (val >= 0)
+     over 2-adic Field with capped relative precision 5
     sage: A is A1
     True
 
@@ -51,9 +53,9 @@ However the method :meth:`integer_ring` constructs the integer ring
 of a Tate algebra, that is the subring consisting of series bounded
 by `1` on the domain of convergence::
 
-    sage: Ao = A.integer_ring()
-    sage: Ao
-    Integer ring of the Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 5
+    sage: Ao = A.integer_ring(); Ao
+    Integer ring of the Tate Algebra in x (val >= 0), y (val >= 0)
+     over 2-adic Field with capped relative precision 5
 
 Now we can build elements::
 
@@ -67,7 +69,8 @@ and perform all usual arithmetic operations on them::
     sage: f + g
     ...00001*x^3*y + ...00101 + ...000010*x*y^3 + ...000010*x*y + ...0000100*x^2*y^2
     sage: f * g
-    ...00101*x^3*y + ...000010*x^4*y^4 + ...001010*x*y + ...0000100*x^5*y^3 + ...0000100*x^2*y^4 + ...00001000*x^3*y^3
+    ...00101*x^3*y + ...000010*x^4*y^4 + ...001010*x*y
+     + ...0000100*x^5*y^3 + ...0000100*x^2*y^4 + ...00001000*x^3*y^3
 
 An element in the integer ring is invertible if and only if its
 reduction modulo `p` is a nonzero constant. In our example,
@@ -193,7 +196,8 @@ class TateAlgebraFactory(UniqueFactory):
         sage: R = Zp(2, 10, print_mode='digits'); R
         2-adic Ring with capped relative precision 10
         sage: A.<x,y> = TateAlgebra(R, order='lex'); A
-        Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 10
+        Tate Algebra in x (val >= 0), y (val >= 0)
+         over 2-adic Field with capped relative precision 10
 
     We observe that the result is the Tate algebra over the fraction
     field of `R` and not `R` itself::
@@ -207,7 +211,8 @@ class TateAlgebraFactory(UniqueFactory):
     we must use the method :meth:`integer_ring`::
 
         sage: Ao = A.integer_ring(); Ao
-        Integer ring of the Tate Algebra in x (val >= 0), y (val >= 0) over 2-adic Field with capped relative precision 10
+        Integer ring of the Tate Algebra in x (val >= 0), y (val >= 0)
+         over 2-adic Field with capped relative precision 10
         sage: Ao.base_ring()
         2-adic Ring with capped relative precision 10
         sage: Ao.base_ring() is R
@@ -847,15 +852,19 @@ class TateAlgebra_generic(Parent):
 
             sage: A.<u,v> = TateAlgebra(R, log_radii=[1,2])
             sage: A1 = pushout(A, R1); A1
-            Tate Algebra in u (val >= -1), v (val >= -2) over 2-adic Unramified Extension Field in a defined by x^2 + x + 1
+            Tate Algebra in u (val >= -1), v (val >= -2)
+             over 2-adic Unramified Extension Field in a defined by x^2 + x + 1
             sage: A2 = pushout(A, R2); A2
-            Tate Algebra in u (val >= -2), v (val >= -4) over 2-adic Eisenstein Extension Field in pi defined by x^2 - 2
+            Tate Algebra in u (val >= -2), v (val >= -4)
+             over 2-adic Eisenstein Extension Field in pi defined by x^2 - 2
 
             sage: Ao = A.integer_ring()
             sage: pushout(Ao, R1)
-            Integer ring of the Tate Algebra in u (val >= -1), v (val >= -2) over 2-adic Unramified Extension Field in a defined by x^2 + x + 1
+            Integer ring of the Tate Algebra in u (val >= -1), v (val >= -2)
+             over 2-adic Unramified Extension Field in a defined by x^2 + x + 1
             sage: pushout(Ao, R2.fraction_field())
-            Tate Algebra in u (val >= -2), v (val >= -4) over 2-adic Eisenstein Extension Field in pi defined by x^2 - 2
+            Tate Algebra in u (val >= -2), v (val >= -4)
+             over 2-adic Eisenstein Extension Field in pi defined by x^2 - 2
 
         TESTS::
 
@@ -1243,20 +1252,23 @@ class TateAlgebra_generic(Parent):
             sage: R = Zp(2, prec=10, print_mode="digits")
             sage: A.<x,y> = TateAlgebra(R)
             sage: A.random_element()  # random
-            (...00101000.01)*y + ...1111011111*x^2 + ...0010010001*x*y + ...110000011 + ...010100100*y^2
+            (...00101000.01)*y + ...1111011111*x^2 + ...0010010001*x*y
+              + ...110000011 + ...010100100*y^2
 
             sage: A.random_element(degree=5, terms=3)  # random
             (...0101100.01)*x^2*y + (...01000011.11)*y^2 + ...00111011*x*y
 
             sage: A.random_element(integral=True)  # random
-            ...0001111101*x + ...1101110101 + ...00010010110*y + ...101110001100*x*y + ...000001100100*y^2
+            ...0001111101*x + ...1101110101 + ...00010010110*y
+             + ...101110001100*x*y + ...000001100100*y^2
 
         Note that if we are already working on the ring of integers,
         specifying ``integral=False`` has no effect::
 
             sage: Ao = A.integer_ring()
             sage: f = Ao.random_element(integral=False); f  # random
-            ...1100111011*x^2 + ...1110100101*x + ...1100001101*y + ...1110110001 + ...01011010110*y^2
+            ...1100111011*x^2 + ...1110100101*x + ...1100001101*y
+             + ...1110110001 + ...01011010110*y^2
             sage: f in Ao
             True
 
@@ -1265,7 +1277,9 @@ class TateAlgebra_generic(Parent):
 
             sage: B.<x,y> = TateAlgebra(R, log_radii=[-1,-2])
             sage: B.random_element(integral=True)  # random
-            (...1111111.001)*x*y + (...111000101.1)*x + (...11010111.01)*y^2 + ...0010011011*y + ...0010100011000
+            (...1111111.001)*x*y + (...111000101.1)*x + (...11010111.01)*y^2
+             + ...0010011011*y + ...0010100011000
+
         """
         if integral or self._integral:
             polring = self._polynomial_ring.change_ring(self._field.integer_ring())

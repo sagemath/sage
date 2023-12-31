@@ -3969,7 +3969,7 @@ cdef class TriconnectivitySPQR:
                         self.in_adj[eh_index] = e_virt_node
                         # end type-1 search
 
-                # if an path starts at edge e, empty the tstack.
+                # if a path starts at edge e, empty the tstack.
                 if self.starts_path[e_index]:
                     while self.__tstack_not_eos():
                         self.t_stack_top -= 1

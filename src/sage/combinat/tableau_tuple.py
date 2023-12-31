@@ -279,7 +279,7 @@ class TableauTuple(CombinatorialElement):
     The :meth:`level` of a tableau tuple is the length of the tuples. This
     corresponds to the level of the corresponding highest weight module.
 
-    In sage a :class:`TableauTuple` looks an behaves like a real tuple of
+    In sage a :class:`TableauTuple` looks and behaves like a real tuple of
     (level 1) :class:`Tableaux`. Many of the operations which are defined
     on :class:`Tableau` extend to :class:`TableauTuples`. Tableau tuples of
     level 1 are just ordinary :class:`Tableau`.

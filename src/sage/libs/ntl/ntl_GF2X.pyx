@@ -507,7 +507,7 @@ cdef class ntl_GF2X():
 
     def hex(ntl_GF2X self):
         r"""
-        Return an hexadecimal representation of this element.
+        Return a hexadecimal representation of this element.
 
         It is the same as setting \code{ntl.GF2XHexOutput(True)} and
         representing this element afterwards. However it should be faster and

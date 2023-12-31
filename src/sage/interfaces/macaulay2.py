@@ -239,7 +239,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def __reduce__(self):
         """
-        Used in serializing an Macaulay2 interface.
+        Used in serializing a Macaulay2 interface.
 
         EXAMPLES::
 

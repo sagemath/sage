@@ -500,7 +500,7 @@ The downsides of this workaround are:
       (bilinearity). Of course this should be implemented at the level
       of :class:`~.magmatic_algebras.MagmaticAlgebras`, if not higher.
 
-    - :class:`Bialgebras`: defining an bialgebra as an algebra and
+    - :class:`Bialgebras`: defining a bialgebra as an algebra and
       coalgebra where the coproduct is a morphism for the product.
 
     - :class:`Bimodules`: defining a bimodule as a left and right
@@ -2667,7 +2667,7 @@ class Blahs(Category_singleton):
         This currently fails because ``Blahs`` is the category where
         the axiom ``Blue`` is defined, and the specifications
         currently impose that a category defining an axiom should also
-        implement it (here in an category with axiom
+        implement it (here in a category with axiom
         ``Blahs.Blue``). In practice, due to this violation of the
         specifications, the axiom is lost during the join calculation.
 

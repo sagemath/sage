@@ -332,7 +332,7 @@ cdef inline int celement_pow(ZZ_pEX_c* res, ZZ_pEX_c* x, long e, ZZ_pEX_c *modul
         sage: (x+1)^(-2)
         1/(x^2 + 2*x + 1)
         sage: f = x+(a+1)
-        sage: f**50 == sum(binomial(50,i)*(a+1)**i*x**(50-i) for i in range(51))
+        sage: f**50 == sum(binomial(50,i)*(a+1)**i*x**(50-i) for i in range(51))        # needs sage.symbolic
         True
 
     TESTS:

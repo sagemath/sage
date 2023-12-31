@@ -158,7 +158,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In finite type `A`, we recover the natural representation of the
     symmetric group as group of permutation matrices::
 
-        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.pari
+        sage: RootSystem(["A",2]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.gap sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -169,7 +169,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     In type `B`, `C`, and `D`, we recover the natural representation
     of the Weyl group as groups of signed permutation matrices::
 
-        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.pari
+        sage: RootSystem(["B",3]).ambient_space().weyl_group().simple_reflections()     # needs sage.libs.gap sage.libs.pari
         Finite family {1: [0 1 0]
                           [1 0 0]
                           [0 0 1],
@@ -203,15 +203,17 @@ class RootSystem(UniqueRepresentation, SageObject):
     Here is the orbit of the identity under the action of the finite
     group::
 
-        sage: W = L.weyl_group()                                                        # needs sage.libs.pari
-        sage: S3 = [ w.action(id) for w in W.classical() ]                              # needs sage.graphs sage.libs.pari
-        sage: [L.classical()(x) for x in S3]                                            # needs sage.graphs sage.libs.pari
+        sage: # needs sage.graphs sage.libs.gap sage.libs.pari
+        sage: W = L.weyl_group()
+        sage: S3 = [ w.action(id) for w in W.classical() ]
+        sage: [L.classical()(x) for x in S3]
         [(1, 2, 3), (3, 1, 2), (2, 3, 1), (2, 1, 3), (1, 3, 2), (3, 2, 1)]
 
     And the action of `s_0` on these yields::
 
-        sage: s = W.simple_reflections()                                                # needs sage.libs.pari
-        sage: [L.classical()(s[0].action(x)) for x in S3]                               # needs sage.graphs sage.libs.pari
+        sage: # needs sage.graphs sage.libs.gap sage.libs.pari
+        sage: s = W.simple_reflections()
+        sage: [L.classical()(s[0].action(x)) for x in S3]
         [(0, 2, 4), (-1, 1, 6), (-2, 3, 5), (0, 1, 5), (-1, 3, 4), (-2, 2, 6)]
 
     We can also plot various components of the ambient spaces::

@@ -300,11 +300,11 @@ for hints on how to do that).
 
     def sage2matlab_matrix_string(self, A):
         """
-        Return an matlab matrix from a Sage matrix.
+        Return a matlab matrix from a Sage matrix.
 
         INPUT: A Sage matrix with entries in the rationals or reals.
 
-        OUTPUT: A string that evaluates to an Matlab matrix.
+        OUTPUT: A string that evaluates to a Matlab matrix.
 
         EXAMPLES::
 

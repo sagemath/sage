@@ -117,49 +117,43 @@ Make sure we don't have a new field for every new literal::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-import math # for log
-import sys
+import math  # for log
+import operator
 import re
+import sys
 
 from cpython.object cimport Py_NE, Py_EQ
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.ext.stdsage cimport PY_NEW
-from sage.libs.gmp.pylong cimport mpz_set_pylong
-from sage.libs.gmp.mpz cimport *
-from sage.libs.mpfr cimport *
-from sage.misc.randstate cimport randstate, current_randstate
-from sage.cpython.string cimport char_to_str, str_to_bytes
-from sage.misc.superseded import deprecation_cython as deprecation
-
-from sage.structure.element cimport Element
-from sage.structure.element cimport have_same_parent
-from sage.structure.richcmp cimport rich_to_bool_sgn
-cdef bin_op
-from sage.structure.element import bin_op
-
+import sage.arith.misc
 import sage.misc.weak_dict
-
-import operator
-
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
-
-from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
-
-from sage.categories.map cimport Map
-
-from sage.rings.real_double cimport RealDoubleElement
-
 import sage.rings.abc
+import sage.rings.infinity
 import sage.rings.rational_field
 
-import sage.rings.infinity
-from sage.rings.ring import Ring
-
-from sage.arith.numerical_approx cimport digits_to_bits
 from sage.arith.constants cimport M_LN2_LN10
 from sage.arith.long cimport is_small_python_int
+from sage.arith.numerical_approx cimport digits_to_bits
+from sage.categories.map cimport Map
+from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.ext.stdsage cimport PY_NEW
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.pylong cimport mpz_set_pylong
+from sage.libs.mpfr cimport *
+from sage.libs.mpmath.utils cimport mpfr_to_mpfval
+from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.superseded import deprecation_cython as deprecation
+from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
+from sage.rings.real_double cimport RealDoubleElement
+from sage.rings.ring import Ring
+from sage.structure.element cimport Element
+from sage.structure.element cimport have_same_parent
+from sage.structure.parent_gens cimport ParentWithGens
+from sage.structure.richcmp cimport rich_to_bool_sgn
+
+cdef bin_op
+from sage.structure.element import bin_op
 
 try:
     from cypari2 import Gen
@@ -1284,6 +1278,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: k = RealField(100)
             sage: R.<x> = k[]
             sage: k._factor_univariate_polynomial( x )
@@ -5324,7 +5319,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: r.algebraic_dependency(5)
             x^2 - 2
         """
-        return sage.arith.all.algdep(self,n)
+        return sage.arith.misc.algdep(self,n)
 
     algdep = algebraic_dependency
 
@@ -6011,6 +6006,11 @@ cdef class int_toRR(Map):
             raise TypeError("argument cannot be converted to a Python int/long")
 
         return y
+
+
+# Hook into Rational
+from sage.rings.rational import _register_real_number_class
+_register_real_number_class(RealNumber)
 
 
 # Support Python's numbers abstract base class

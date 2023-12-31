@@ -586,8 +586,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             Finite Field in a of size 19^2
             sage: b = a**20
             sage: p = FinitePolyExtElement.charpoly(b, "x", algorithm="pari")
-            sage: q = FinitePolyExtElement.charpoly(b, "x", algorithm="matrix")   # needs sage.modules
-            sage: q == p                                                          # needs sage.modules
+            sage: q = FinitePolyExtElement.charpoly(b, "x", algorithm="matrix")         # needs sage.modules
+            sage: q == p                                                                # needs sage.modules
             True
             sage: p
             x^2 + 15*x + 4

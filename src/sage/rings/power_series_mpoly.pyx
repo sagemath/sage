@@ -7,6 +7,12 @@ from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from sage.rings import power_series_poly
 
 
+try:
+    from sage.libs.pari.all import PariError
+except ImportError:
+    PariError = ()
+
+
 cdef class PowerSeries_mpoly(PowerSeries):
 
     def __init__(self, parent, f=0, prec=infinity, int check=1, is_gen=0):

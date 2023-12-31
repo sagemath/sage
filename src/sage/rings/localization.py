@@ -584,7 +584,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
     Accordingly, this class is inherited from :class:`IntegralDomain` and can only be used in that context.
     Furthermore, the base ring should support :meth:`sage.structure.element.CommutativeRingElement.divides` and
     the exact division operator `//` (:meth:`sage.structure.element.Element.__floordiv__`) in order to guarantee
-    an successful application.
+    a successful application.
 
     INPUT:
 

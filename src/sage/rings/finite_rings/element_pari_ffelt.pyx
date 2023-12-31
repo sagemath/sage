@@ -611,6 +611,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: k.<a> = GF(2^20, impl='pari_ffelt')
             sage: e = k.random_element()
             sage: f = loads(dumps(e))

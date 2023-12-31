@@ -134,7 +134,7 @@ the patches have been applied to a given release, the issue would
 remain in limbo.
 
 **No Patch Bombs**: Code that goes into Sage is peer-reviewed. If
-you show up with an 80,000 lines of code bundle that completely
+you show up with 80,000 lines of code bundle that completely
 rips out a subsystem and replaces it with something else, you can
 imagine that the review process will be a little tedious. These
 huge patch bombs are problematic for several reasons and we prefer

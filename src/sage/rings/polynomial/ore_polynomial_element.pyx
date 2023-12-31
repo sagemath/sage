@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Univariate Ore polynomials
 
@@ -639,7 +640,6 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(11)[]
             sage: der = R.derivation()
             sage: S.<x> = R['x', der]
@@ -667,6 +667,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -680,7 +681,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Divisibility by `0` does not make sense::
 
-            sage: c.is_left_divisible_by(S(0))
+            sage: c.is_left_divisible_by(S(0))                                          # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero is not valid
@@ -2196,7 +2197,7 @@ cdef void lmul_gen(list A, Morphism m, d) noexcept:
     replace it by the list of coefficients of ``X*P`` (where ``X``
     is the variable in the Ore polynomial ring).
 
-    This is an helper function.
+    This is a helper function.
 
     INPUT:
 
@@ -2683,7 +2684,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         Return the list of coefficients of the product of this
         Ore polynomial by that whose coefficients are given by ``A``.
 
-        This is an helper function.
+        This is a helper function.
         """
         cdef list BA = [self.base_ring().zero()] * (len(self._coeffs) + len(A) - 1)
         cdef Morphism m = self._parent._morphism
@@ -2921,7 +2922,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             False
 
         This behavior ensures that the Hilbert shift by a fixed element
-        defines an homomorphism of rings::
+        defines a homomorphism of rings::
 
             sage: # needs sage.rings.finite_rings
             sage: U = S.random_element(degree=5)

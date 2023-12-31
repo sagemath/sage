@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Accurate timing information for Sage commands
 
@@ -90,9 +89,9 @@ class SageTimeitResult():
             1 loop, best of 2: 3.14 ns per loop
         """
         if self.stats[0] > 1:
-            s = u"%d loops, best of %d: %.*g %s per loop" % self.stats
+            s = "%d loops, best of %d: %.*g %s per loop" % self.stats
         else:
-            s = u"%d loop, best of %d: %.*g %s per loop" % self.stats
+            s = "%d loop, best of %d: %.*g %s per loop" % self.stats
 
         if isinstance(s, str):
             return s
@@ -217,7 +216,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     if stmt == "":
         return ''
 
-    units = [u"s", u"ms", u"μs", u"ns"]
+    units = ["s", "ms", "μs", "ns"]
     scaling = [1, 1e3, 1e6, 1e9]
 
     timer = timeit_.Timer()

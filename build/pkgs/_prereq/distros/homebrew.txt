@@ -1,12 +1,11 @@
-# This file, build/pkgs/homebrew.txt, contains names of homebrew packages
-# needed for installation of Sage from source (in addition to XCode).
+# This file, build/pkgs/_prereq/distros/homebrew.txt, contains names of
+# Homebrew packages needed for installation of Sage from source.
 #
-# In addition, the files build/pkgs/SPKG/homebrew.txt contain the names
-# of packages that provide the equivalent of SPKG.
+# In addition, the files build/pkgs/SPKG/distros/homebrew.txt contain
+# the names of packages that provide the equivalent of SPKG.
 #
-# See build/bin/sage-spkg, where this information is processed
-# for use in "sage -info SPKG".
-#
+# One package per line. No need to escape special characters.
 # Everything on a line after a # character is ignored.
+#
 
 # No packages needed

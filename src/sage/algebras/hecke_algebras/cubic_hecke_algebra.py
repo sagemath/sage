@@ -1458,7 +1458,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     def _an_element_(self):
         r"""
         Overwrite the original method from :mod:`~sage.combinat.free_module`
-        to obtain an more interesting element for ``TestSuite``.
+        to obtain a more interesting element for ``TestSuite``.
 
         EXAMPLES::
 
@@ -2233,7 +2233,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             sage: CHA5._basis_extension
             [[4], [-4], [4, 1]]
 
-        case where the braid already has an corresponding basis element::
+        case where the braid already has a corresponding basis element::
 
             sage: CHA5._braid_image_by_basis_extension((1,)) # optional - database_cubic_hecke
             c0

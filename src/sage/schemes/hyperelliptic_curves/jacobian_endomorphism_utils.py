@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Some functions regarding geometric endomorphism rings of Jacobians of
 hyperelliptic curves.

@@ -215,7 +215,7 @@ class PerfectMatching(SetPartition):
             sage: PerfectMatching([3,8,1,7,6,5,4,2])
             [(1, 3), (2, 8), (4, 7), (5, 6)]
         """
-        return '[' + ', '.join(('(' + repr(sorted(x))[1:-1] + ')' for x in self)) + ']'
+        return '[' + ', '.join('(' + repr(sorted(x))[1:-1] + ')' for x in self) + ']'
 
     def _latex_(self):
         r"""

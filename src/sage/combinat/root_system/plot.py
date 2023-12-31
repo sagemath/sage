@@ -830,7 +830,7 @@ lazy_import("sage.combinat.root_system.root_lattice_realizations",
             "RootLatticeRealizations")
 
 
-class PlotOptions():
+class PlotOptions:
     r"""
     A class for plotting options for root lattice realizations.
 

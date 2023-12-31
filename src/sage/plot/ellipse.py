@@ -220,7 +220,7 @@ class Ellipse(GraphicPrimitive):
         TESTS::
 
             sage: from sage.plot.ellipse import Ellipse
-            sage: Ellipse(0,0,2,1,pi/4,{}).plot3d()
+            sage: Ellipse(0,0,2,1,pi/4,{}).plot3d()                                     # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError

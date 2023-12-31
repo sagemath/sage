@@ -501,7 +501,7 @@ def length_and_string_from_graph6(s):
 
     INPUT:
 
-    - ``s`` -- a graph6 string describing an binary vector (and encoding its
+    - ``s`` -- a graph6 string describing a binary vector (and encoding its
       length).
 
     EXAMPLES::
@@ -1349,7 +1349,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     find_path = (find_path > 0)
 
     if G.is_clique(induced=False):
-        # We have an hamiltonian path since n >= 2, but we have an hamiltonian
+        # We have a hamiltonian path since n >= 2, but we have a hamiltonian
         # cycle only if n >= 3
         return find_path or n >= 3, list(G)
 

@@ -425,7 +425,7 @@ class WordPaths_all(FiniteWords):
 
         #Construction of the steps
         from sage.structure.element import Vector
-        if all((isinstance(x, Vector) for x in steps)):
+        if all(isinstance(x, Vector) for x in steps):
             vsteps = steps
         else:
             try:

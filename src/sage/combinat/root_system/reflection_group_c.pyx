@@ -1,4 +1,5 @@
 # cython: wraparound=False, boundscheck=False
+# sage.doctest: needs sage.graphs
 r"""
 This contains a few time-critical auxiliary cython functions for
 finite complex or real reflection groups.

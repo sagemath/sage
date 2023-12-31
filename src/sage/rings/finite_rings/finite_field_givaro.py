@@ -462,7 +462,7 @@ class FiniteField_givaro(FiniteField):
 
         INPUT:
 
-        - ``n`` -- integer representation of an finite field element
+        - ``n`` -- integer representation of a finite field element
 
         OUTPUT:
 

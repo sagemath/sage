@@ -119,7 +119,7 @@ cpdef tuple parallelotope_points(spanning_points, lattice) noexcept:
         sage: parallelotope_points(c.rays(), c.lattice())
         (N(0, 0), N(1, 1))
 
-    A ``ValueError`` is raised if the ``spanning_points`` are not
+    A :class:`ValueError` is raised if the ``spanning_points`` are not
     linearly independent::
 
         sage: rays = list(map(ToricLattice(2), [(1,1)]*2))
@@ -853,9 +853,9 @@ cdef class Inequality_int:
 
     OUTPUT:
 
-    Inequality `A x + b \geq 0`. A ``OverflowError`` is raised if a
+    Inequality `A x + b \geq 0`. A :class:`OverflowError` is raised if a
     machine integer is not long enough to hold the results. A
-    ``ValueError`` is raised if some of the input is not integral.
+    :class:`ValueError` is raised if some of the input is not integral.
 
     EXAMPLES::
 

@@ -224,8 +224,8 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 TODO: optimize this implementation!
                 """
-                basic = tensor_signed((module.monomial(x0) * module.monomial(x1)
-                                      for (module, x0, x1) in zip(self._sets, t0, t1)))
+                basic = tensor_signed(module.monomial(x0) * module.monomial(x1)
+                                      for (module, x0, x1) in zip(self._sets, t0, t1))
                 n = len(self._sets)
                 parity0 = [self._sets[idx].degree_on_basis(x0)
                            for (idx, x0) in enumerate(t0)]

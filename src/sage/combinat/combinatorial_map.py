@@ -197,7 +197,7 @@ combinatorial_map = combinatorial_map_trivial
 # combinatorial_map = combinatorial_map_wrapper
 
 
-class CombinatorialMap():
+class CombinatorialMap:
     r"""
     This is a wrapper class for methods that are *combinatorial maps*.
 

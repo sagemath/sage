@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Tate-Shafarevich group
 
@@ -1065,7 +1064,7 @@ class Sha(SageObject):
         if not ignore_nonsurj_hypothesis:
             for p in E.galois_representation().non_surjective():
                 B.append(p)
-        B = sorted(set(int(x) for x in B))
+        B = sorted({int(x) for x in B})
         return B, n
 
     def bound_kato(self):

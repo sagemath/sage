@@ -147,22 +147,31 @@ class DiscreteValuationRings(Category_singleton):
             Return the quotient and remainder for Euclidean division
             of ``self`` by ``other``.
 
-            TESTS::
+            EXAMPLES::
 
                 sage: R.<q> = GF(5)[[]]
                 sage: (q^2 + q).quo_rem(q)
                 (1 + q, 0)
                 sage: (q + 1).quo_rem(q^2)
                 (0, 1 + q)
+
+            TESTS::
+
                 sage: q.quo_rem(0)
                 Traceback (most recent call last):
                 ...
                 ZeroDivisionError: Euclidean division by the zero element not defined
 
+                sage: L = PowerSeriesRing(QQ, 't')
+                sage: t = L.gen()
+                sage: F = algebras.Free(L, ['A', 'B'])
+                sage: A, B = F.gens()
+                sage: f = t*A+t**2*B/2
             """
             if not other:
                 raise ZeroDivisionError("Euclidean division by the zero element not defined")
             P = self.parent()
+            other = P(other)
             if self.valuation() >= other.valuation():
                 return P(self / other), P.zero()
             else:
@@ -263,7 +272,7 @@ class DiscreteValuationFields(Category_singleton):
 
         def _matrix_hessenbergize(self, H):
             r"""
-            Replace `H` with an Hessenberg form of it.
+            Replace `H` with a Hessenberg form of it.
 
             EXAMPLES::
 

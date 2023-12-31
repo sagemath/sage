@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Binary Trees
 
@@ -593,7 +592,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                   o   o   o   o
         """
         def node_to_str(bt):
-            return str(bt.label()) if hasattr(bt, "label") else u"o"
+            return str(bt.label()) if hasattr(bt, "label") else "o"
 
         if self.is_empty():
             from sage.typeset.unicode_art import empty_unicode_art
@@ -609,14 +608,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             node = node_to_str(self)
             rr_tree = self[1]._unicode_art_()
             if rr_tree._root > 2:
-                f_line = u" " * (rr_tree._root - 3) + node
-                s_line = u" " * (len(node) + rr_tree._root - 3) + u"╲"
+                f_line = " " * (rr_tree._root - 3) + node
+                s_line = " " * (len(node) + rr_tree._root - 3) + "╲"
                 t_repr = UnicodeArt([f_line, s_line]) * rr_tree
                 t_repr._root = rr_tree._root - 2
             else:
                 f_line = node
-                s_line = u" ╲"
-                t_line = u" " * (len(node) + 1)
+                s_line = " ╲"
+                t_line = " " * (len(node) + 1)
                 t_repr = UnicodeArt([f_line, s_line]) * (UnicodeArt([t_line]) + rr_tree)
                 t_repr._root = rr_tree._root
             t_repr._baseline = t_repr._h - 1
@@ -625,8 +624,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         if self[1].is_empty():
             node = node_to_str(self)
             lr_tree = self[0]._unicode_art_()
-            f_line = u" " * (lr_tree._root + 1) + node
-            s_line = u" " * lr_tree._root + u"╱"
+            f_line = " " * (lr_tree._root + 1) + node
+            s_line = " " * lr_tree._root + "╱"
             t_repr = UnicodeArt([f_line, s_line]) * lr_tree
             t_repr._root = lr_tree._root + 2
             t_repr._baseline = t_repr._h - 1
@@ -638,10 +637,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         nb_ = lr_tree._l - lr_tree._root + rr_tree._root - 1
         nb_L = nb_ // 2
         nb_R = nb_L + (nb_ % 2)
-        f_line = u" " * (lr_tree._root + 1) + u"_" * nb_L + node
-        f_line += u"_" * nb_R
-        s_line = u" " * lr_tree._root + u"╱" + u" " * (len(node) + rr_tree._root - 1 + (lr_tree._l - lr_tree._root)) + u"╲"
-        t_repr = UnicodeArt([f_line, s_line]) * (lr_tree + UnicodeArt([u" " * (len(node) + 2)]) + rr_tree)
+        f_line = " " * (lr_tree._root + 1) + "_" * nb_L + node
+        f_line += "_" * nb_R
+        s_line = " " * lr_tree._root + "╱" + " " * (len(node) + rr_tree._root - 1 + (lr_tree._l - lr_tree._root)) + "╲"
+        t_repr = UnicodeArt([f_line, s_line]) * (lr_tree + UnicodeArt([" " * (len(node) + 2)]) + rr_tree)
         t_repr._root = lr_tree._root + nb_L + 2
         t_repr._baseline = t_repr._h - 1
         return t_repr
@@ -4262,7 +4261,7 @@ class BinaryTrees_size(BinaryTrees):
 
         EXAMPLES::
 
-            sage: BinaryTrees(5).random_element() # random                              # needs sage.combinat
+            sage: BinaryTrees(5).random_element()  # random                             # needs sage.combinat
             [., [., [., [., [., .]]]]]
             sage: BinaryTrees(0).random_element()                                       # needs sage.combinat
             .

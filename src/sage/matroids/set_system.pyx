@@ -591,7 +591,7 @@ cdef class SetSystem:
 
     cpdef _heuristic_partition(self, SetSystem P=None, EP=None) noexcept:
         """
-        Return an heuristic ordered partition into singletons of the ground
+        Return a heuristic ordered partition into singletons of the ground
         set of the hypergraph whose edges are the subsets in this SetSystem.
 
         This partition obtained as follows: make an equitable

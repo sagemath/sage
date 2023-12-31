@@ -1928,7 +1928,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
     if D > 0:           # Indefinite
         if D.is_square():
             b = D.sqrt()
-            c = ZZ(0)
+            c = ZZ.zero()
             # -b/2 < a <= b/2
             for a in xsrange((-b/2).floor() + 1, (b/2).floor() + 1):
                 if not primitive_only or (gcd([a, b, c]) == 1):

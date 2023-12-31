@@ -2158,7 +2158,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
             return self.support()
 
 
-class UnitDiagramMixin():
+class UnitDiagramMixin:
     """
     Mixin class for diagram algebras that have the unit indexed by
     the :func:`identity_set_partition`.
@@ -4558,59 +4558,59 @@ def is_planar(sp):
         sage: da.is_planar( da.to_set_partition([[1,-1],[2,-2]]))
         True
     """
-    #Singletons don't affect planarity
+    # Singletons don't affect planarity
     to_consider = [x for x in map(list, sp) if len(x) > 1]
     n = len(to_consider)
 
     for i in range(n):
-        #Get the positive and negative entries of this part
+        # Get the positive and negative entries of this part
         ap = [x for x in to_consider[i] if x > 0]
         an = [abs(x) for x in to_consider[i] if x < 0]
 
-        #Check if a includes numbers in both the top and bottom rows
+        # Check if a includes numbers in both the top and bottom rows
         if ap and an:
             for j in range(n):
                 if i == j:
                     continue
-                #Get the positive and negative entries of this part
+                # Get the positive and negative entries of this part
                 bp = [x for x in to_consider[j] if x > 0]
                 bn = [abs(x) for x in to_consider[j] if x < 0]
 
-                #Skip the ones that don't involve numbers in both
-                #the bottom and top rows
+                # Skip the ones that don't involve numbers in both
+                # the bottom and top rows
                 if not bn or not bp:
                     continue
 
-                #Make sure that if min(bp) > max(ap)
-                #then min(bn) >  max(an)
+                # Make sure that if min(bp) > max(ap)
+                # then min(bn) >  max(an)
                 if max(bp) > max(ap):
                     if min(bn) < min(an):
                         return False
 
-        #Go through the bottom and top rows
+        # Go through the bottom and top rows
         for row in [ap, an]:
             if len(row) > 1:
                 row.sort()
                 for s in range(len(row)-1):
                     if row[s] + 1 == row[s+1]:
-                        #No gap, continue on
+                        # No gap, continue on
                         continue
 
                     rng = list(range(row[s] + 1, row[s+1]))
 
-                    #Go through and make sure any parts that
-                    #contain numbers in this range are completely
-                    #contained in this range
+                    # Go through and make sure any parts that
+                    # contain numbers in this range are completely
+                    # contained in this range
                     for j in range(n):
                         if i == j:
                             continue
 
-                        #Make sure we make the numbers negative again
-                        #if we are in the bottom row
+                        # Make sure we make the numbers negative again
+                        # if we are in the bottom row
                         if row is ap:
                             sr = set(rng)
                         else:
-                            sr = set((-1*x for x in rng))
+                            sr = set(-x for x in rng)
 
                         sj = set(to_consider[j])
                         intersection = sr.intersection(sj)
@@ -4773,12 +4773,11 @@ def to_set_partition(l, k=None):
         [{-1, 1}, {-2, 3}, {2}, {-4, 4}, {-5, 5}, {-3}]
     """
     if k is None:
-        if l == []:
+        if not l:
             return []
-        else:
-            k = max( (max( map(abs, x) ) for x in l) )
+        k = max(max(map(abs, x)) for x in l)
 
-    to_be_added = set( list(range(1, ceil(k+1))) + [-1*x for x in range(1, ceil(k+1))] )
+    to_be_added = set(list(range(1, ceil(k+1))) + [-x for x in range(1, ceil(k+1))])
 
     sp = []
     for part in l:
@@ -4790,7 +4789,7 @@ def to_set_partition(l, k=None):
         i = to_be_added.pop()
         if -i in to_be_added:
             to_be_added.remove(-i)
-            sp.append(set([i,-i]))
+            sp.append(set([i, -i]))
         else:
             sp.append(set([i]))
 

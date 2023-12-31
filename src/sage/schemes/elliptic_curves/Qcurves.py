@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Testing whether elliptic curves over number fields are `\QQ`-curves
 

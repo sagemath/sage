@@ -1,1 +1,4 @@
-sci-libs/amd sci-libs/cholmod sci-libs/suitesparseconfig sci-libs/umfpack
+sci-libs/amd
+sci-libs/cholmod
+sci-libs/suitesparseconfig
+sci-libs/umfpack

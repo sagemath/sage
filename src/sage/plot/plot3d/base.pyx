@@ -1998,9 +1998,10 @@ end_scene""".format(
 
         This works when faces have more then 3 sides::
 
-            sage: P = polytopes.dodecahedron()                                          # needs sage.geometry.polyhedron
-            sage: Q = P.plot().all[-1]                                                  # needs sage.geometry.polyhedron
-            sage: print(Q.stl_binary()[:40].decode('ascii'))                            # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.groups
+            sage: P = polytopes.dodecahedron()
+            sage: Q = P.plot().all[-1]
+            sage: print(Q.stl_binary()[:40].decode('ascii'))
             STL binary file / made by SageMath / ###
         """
         import struct
@@ -2060,9 +2061,10 @@ end_scene""".format(
 
         Now works when faces have more then 3 sides::
 
-            sage: P = polytopes.dodecahedron()                                          # needs sage.geometry.polyhedron
-            sage: Q = P.plot().all[-1]                                                  # needs sage.geometry.polyhedron
-            sage: print(Q.stl_ascii_string().splitlines()[:7])                          # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.groups
+            sage: P = polytopes.dodecahedron()
+            sage: Q = P.plot().all[-1]
+            sage: print(Q.stl_ascii_string().splitlines()[:7])
             ['solid surface',
              'facet normal 0.0 0.5257311121191338 0.8506508083520399',
              '    outer loop',

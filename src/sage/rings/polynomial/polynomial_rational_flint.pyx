@@ -2109,7 +2109,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.groups sage.libs.pari
             sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(); G
@@ -2130,7 +2130,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(pari_group=True); G
             PARI group [24, -1, 5, "S4"] of degree 4
-            sage: PermutationGroup(G)
+            sage: PermutationGroup(G)                                                   # needs sage.groups
             Transitive group number 5 of degree 4
 
         You can use KASH or GAP to compute Galois groups as well.  The advantage is

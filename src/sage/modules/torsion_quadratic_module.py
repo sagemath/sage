@@ -323,9 +323,9 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``V`` -- an module
+        - ``V`` -- a module
 
-        - ``W`` -- an submodule of ``V`` over the same base ring
+        - ``W`` -- a submodule of ``V`` over the same base ring
 
         - ``check`` -- bool (default: ``False``);
 

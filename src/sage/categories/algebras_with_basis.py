@@ -1,13 +1,13 @@
 r"""
 Algebras With Basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# *****************************************************************************
 
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
@@ -106,7 +106,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         sage: TestSuite(AlgebrasWithBasis(QQ)).run()
     """
 
-    def example(self, alphabet=('a','b','c')):
+    def example(self, alphabet=('a', 'b', 'c')):
         """
         Return an example of algebra with basis.
 
@@ -259,7 +259,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     ....:                    SymmetricGroupAlgebra(QQ, 4)]).one()
                     B[(0, [1, 2, 3])] + B[(1, [1, 2, 3, 4])]
                 """
-                return self.sum_of_monomials( zip( self._sets_keys(), (set.one_basis() for set in self._sets)) )
+                return self.sum_of_monomials(zip(self._sets_keys(), (set.one_basis() for set in self._sets)))
 
             @lazy_attribute
             def one(self):
@@ -370,7 +370,8 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 TODO: optimize this implementation!
                 """
-                return tensor( (module.monomial(x1)*module.monomial(x2) for (module, x1, x2) in zip(self._sets, t1, t2)) ) #.
+                return tensor(module.monomial(x1) * module.monomial(x2)
+                              for module, x1, x2 in zip(self._sets, t1, t2))
 
         class ElementMethods:
             """

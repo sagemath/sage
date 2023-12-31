@@ -116,7 +116,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
             sage: c = L.generating_series()[:3]
-            sage: L._check() #False due to isomorphism types not being implemented      # needs sage.libs.flint
+            sage: L._check()  #False due to isomorphism types not being implemented     # needs sage.libs.flint
             False
             sage: L == loads(dumps(L))
             True
@@ -234,7 +234,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies()
             sage: C = species.CycleSpecies(weight=t)
             sage: S = E(C)
-            sage: S.isotype_generating_series()[:5] #indirect                           # needs sage.modules
+            sage: S.isotype_generating_series()[:5]  #indirect                          # needs sage.modules
             [1, t, t^2 + t, t^3 + t^2 + t, t^4 + t^3 + 2*t^2 + t]
 
         We do the same thing with set partitions weighted by the number of

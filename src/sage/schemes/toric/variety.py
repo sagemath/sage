@@ -1,5 +1,4 @@
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
-# -*- coding: utf-8 -*-
 r"""
 Toric varieties
 
@@ -709,9 +708,9 @@ class ToricVariety_field(AmbientSpace):
             if coordinate not in base_field:
                 raise TypeError("coordinate %s is not an element of %s"
                                 % (coordinate, base_field))
-        zero_positions = set(position
-                            for position, coordinate in enumerate(coordinates)
-                            if coordinate == 0)
+        zero_positions = {position
+                          for position, coordinate in enumerate(coordinates)
+                          if coordinate == 0}
         if not zero_positions:
             return True
         for i in range(n - self._torus_factor_dim, n):
@@ -2731,7 +2730,7 @@ class ToricVariety_field(AmbientSpace):
         star_rays = set()
         for star_cone in cone.star_generators():
             star_rays.update(star_cone.rays())
-        ray_map = dict( (ray, self._orbit_closure_projection(cone, ray)) for ray in star_rays)
+        ray_map = {ray: self._orbit_closure_projection(cone, ray) for ray in star_rays}
         from sage.schemes.toric.morphism import SchemeMorphism_orbit_closure_toric_variety
         orbit_closure._embedding_morphism = \
             SchemeMorphism_orbit_closure_toric_variety(orbit_closure.Hom(self), cone, ray_map)

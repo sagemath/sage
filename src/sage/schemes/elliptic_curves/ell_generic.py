@@ -169,7 +169,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             - (x**3 + a2*x**2*z + a4*x*z**2 + a6*z**3)
         plane_curve.ProjectivePlaneCurve.__init__(self, PP, f)
 
-        self.__divpolys = (dict(), dict(), dict())
+        self.__divpolys = ({}, {}, {})
 
         # See #1975: we deliberately set the class to
         # EllipticCurvePoint_finite_field for finite rings, so that we
@@ -1732,7 +1732,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             x = polygen(self.base_ring())
         else:
             # For other inputs, we use a temporary cache.
-            cache = dict()
+            cache = {}
 
         b2, b4, b6, b8 = self.b_invariants()
 
@@ -2119,7 +2119,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             try:
                 cache = self.__mulxnums
             except AttributeError:
-                cache = self.__mulxnums = dict()
+                cache = self.__mulxnums = {}
             try:
                 return cache[n]
             except KeyError:
@@ -2216,7 +2216,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             try:
                 cache = self.__mulxdens
             except AttributeError:
-                cache = self.__mulxdens = dict()
+                cache = self.__mulxdens = {}
             try:
                 return cache[n]
             except KeyError:

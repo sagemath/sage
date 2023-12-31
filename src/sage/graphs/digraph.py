@@ -1194,7 +1194,7 @@ class DiGraph(GenericGraph):
         """
         Return an iterator over the in-neighbors of ``vertex``.
 
-        An vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
+        A vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
 
         EXAMPLES::
 
@@ -1671,7 +1671,7 @@ class DiGraph(GenericGraph):
             p = MixedIntegerLinearProgram(constraint_generation=True,
                                           maximization=False, solver=solver)
 
-            # An variable for each edge
+            # A variable for each edge
             b = p.new_variable(binary=True)
 
             # Variables are binary, and their coefficient in the objective is

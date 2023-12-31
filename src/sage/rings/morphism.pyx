@@ -1255,7 +1255,7 @@ cdef class RingHomomorphism(RingMap):
         Ideals in quotient rings over ``QQbar`` do not support reduction yet,
         so the graph is constructed in the ambient ring instead::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.libs.singular sage.rings.number_field
             sage: A.<z,w> = QQbar['z,w'].quotient('z*w - 1')
             sage: B.<x,y> = QQbar['x,y'].quotient('2*x^2 + y^2 - 1')
             sage: f = A.hom([QQbar(2).sqrt()*x + QQbar(I)*y,
@@ -1447,7 +1447,7 @@ cdef class RingHomomorphism(RingMap):
         An isomorphism between the algebraic torus and the circle over a number
         field::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.libs.singular sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
             sage: A.<z,w> = K['z,w'].quotient('z*w - 1')
             sage: B.<x,y> = K['x,y'].quotient('x^2 + y^2 - 1')

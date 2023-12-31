@@ -163,7 +163,7 @@ one solution::
     sage: T = TilingSolver(L, box=(8,8), reflection=True)
     sage: solution = next(T.solve())                                    # long time (7s)
     sage: G = sum([piece.show2d() for piece in solution], Graphics())   # long time (<1s), needs sage.plot
-    sage: G.show(aspect_ratio=1, axes=False)                            # long time (2s),  needs sage.plot
+    sage: G.show(aspect_ratio=1, axes=False)                            # long time (2s), needs sage.plot
 
 Compute the number of solutions::
 
@@ -199,7 +199,7 @@ Solve the puzzle and show one solution::
     sage: T = TilingSolver(L, box=(8,8,1))
     sage: solution = next(T.solve())                                    # long time (8s)
     sage: G = sum([p.show3d(size=0.85) for p in solution], Graphics())  # long time (<1s), needs sage.plot
-    sage: G.show(aspect_ratio=1, viewer='tachyon')                      # long time (2s),  needs sage.plot
+    sage: G.show(aspect_ratio=1, viewer='tachyon')                      # long time (2s), needs sage.plot
 
 Let us compute the number of solutions::
 

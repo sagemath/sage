@@ -44,7 +44,7 @@ case "$SYSTEM" in
             fi
         fi
         SYSTEM_PACKAGES_FILE_NAMES="distros/$SYSTEM.txt"
-        STRIP_COMMENTS="sed s/#.*//;"
+        STRIP_COMMENTS="sed s/#.*//;s/\${PYTHON_MINOR}/${PYTHON_MINOR}/g"
         FROM_PYPROJECT_TOML=0
         COLLECT=echo
         ;;

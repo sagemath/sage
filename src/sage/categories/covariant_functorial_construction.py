@@ -96,7 +96,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
        specify information and generic operations for elements of this
        category.
 
-     - ``_functor_name`` - an string which specifies the name of the
+     - ``_functor_name`` - a string which specifies the name of the
        functor, and also (when relevant) of the method on parents and
        elements used for calling the construction.
 

@@ -1999,7 +1999,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     return x[i-1] * image_of_L_k(k - 1, i - 1) + image_of_L_k(k, i - 1)
 
                 def on_basis(comp):
-                    return P.prod((image_of_L_k(k, n) for k in comp))
+                    return P.prod(image_of_L_k(k, n) for k in comp)
                 return L._apply_module_morphism(L(self), on_basis, codomain=P)
 
     class MultiplicativeBases(Category_realization_of_parent):

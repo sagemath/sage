@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Attribute and method calling
 """

@@ -308,7 +308,7 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
             sage: C.distance_bound()
             3
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             5
         """
         return 1 + (self._generating_pol).degree()

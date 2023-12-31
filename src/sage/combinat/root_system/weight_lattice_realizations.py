@@ -551,7 +551,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             Translations by elements of the root lattice induce a
             trivial Dynkin diagram automorphism::
 
-                sage: # needs sage.graphs
+                sage: # needs sage.graphs sage.libs.gap
                 sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[0].translation)
                 {0: 0, 1: 1, 2: 2}
                 sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[1].translation)
@@ -565,19 +565,19 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: omega1 = Lambda[1] - Lambda[0]
                 sage: omega2 = Lambda[2] - Lambda[0]
 
-                sage: # needs sage.graphs
+                sage: # needs sage.graphs sage.libs.gap
                 sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega1.translation)
                 {0: 1, 1: 2, 2: 0}
                 sage: R.dynkin_diagram_automorphism_of_alcove_morphism(omega2.translation)
                 {0: 2, 1: 0, 2: 1}
 
-                sage: # needs sage.graphs
+                sage: # needs sage.graphs sage.libs.gap
                 sage: R = RootSystem(['C',2,1]).weight_lattice()
                 sage: alpha = R.simple_roots()
                 sage: R.dynkin_diagram_automorphism_of_alcove_morphism(alpha[1].translation)
                 {0: 2, 1: 1, 2: 0}
 
-                sage: # needs sage.graphs
+                sage: # needs sage.graphs sage.libs.gap
                 sage: R = RootSystem(['D',5,1]).weight_lattice()
                 sage: Lambda = R.fundamental_weights()
                 sage: omega1 = Lambda[1] - Lambda[0]
@@ -704,9 +704,14 @@ class WeightLatticeRealizations(Category_over_base_ring):
             # dictionary assigning a simple root to its index
             rank_simple_roots = dict( (alpha[i],i) for i in self.index_set() )
 
+            try:
+                W = self.weyl_group()
+            except ImportError:
+                return
+
             for t in elements:
                 t = t - self.base_ring()(t.level()/Lambda[0].level()) * Lambda[0]
-                w = self.weyl_group().from_reduced_word(self.reduced_word_of_translation(t))
+                w = W.from_reduced_word(self.reduced_word_of_translation(t))
                 if self.null_root().is_zero():
                     # The following formula is only valid when the null root is zero
                     tester.assertEqual(w.action(rho), rho + rho.level()*t)

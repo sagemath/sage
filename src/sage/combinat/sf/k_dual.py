@@ -284,7 +284,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             return 0
         ans = self.zero()
         for la in Partitions(m, max_part=self.k):
-            ans += g.homogeneous_basis_noncommutative_variables_zero_Hecke((la)).coefficient(w) * mon(la)
+            ans += g.homogeneous_basis_noncommutative_variables_zero_Hecke(la).coefficient(w) * mon(la)
         return ans
 
     def _AffineGrothendieck(self, w, m):

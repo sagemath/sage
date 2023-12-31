@@ -512,10 +512,15 @@ containing files with names like ::
     arch.txt
     conda.txt
     debian.txt
+    fedora.txt
     homebrew.txt
     ...
 
-corresponding to different packaging systems.
+corresponding to different packaging systems. Each system package
+should appear on a separate line. If the shell-style variable reference
+``${PYTHON_MINOR}`` appears, it is replaced by the minor version of
+Python, e.g., 12 for Python 3.12.x. Everything on a line after a ``#``
+character is ignored, so comments can be included in the files.
 
 For example, if ``./configure`` detects that the Homebrew packaging
 system is in use, and if the current package can be provided by a

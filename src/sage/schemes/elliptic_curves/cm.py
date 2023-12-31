@@ -973,7 +973,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
 
     if j in ZZ:
         j = ZZ(j)
-        table = dict([(jj,(d,f)) for d,f,jj in cm_j_invariants_and_orders(QQ)])
+        table = {jj: (d,f) for d,f,jj in cm_j_invariants_and_orders(QQ)}
         if j in table:
             return True, table[j]
         return False, None

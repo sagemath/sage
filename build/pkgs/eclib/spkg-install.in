@@ -5,22 +5,9 @@ export CFLAGS CXXFLAGS
 
 cd src/
 
-#############################################################
-# the workaround with SAGE_CONFIGURE_FLINT_ECLIB
-# introduced by #28401 may be removed once
-# github.com/JohnCremona/eclib/pull/57 is in  Sage
-#############################################################
-if test x$SAGE_FLINT_PREFIX = x; then
-   SAGE_CONFIGURE_FLINT_ECLIB="--with-flint"
-else
-   SAGE_CONFIGURE_FLINT_ECLIB="--with-flint=$SAGE_FLINT_PREFIX"
-fi
-
-echo $SAGE_CONFIGURE_FLINT_ECLIB
-
 sdh_configure $SAGE_CONFIGURE_NTL \
               $SAGE_CONFIGURE_PARI \
-              $SAGE_CONFIGURE_FLINT_ECLIB \
+              --with-flint=$SAGE_FLINT_PREFIX \
               --with-boost="no" \
               --disable-allprogs
 sdh_make

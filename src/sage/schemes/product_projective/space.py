@@ -624,7 +624,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         - ``polynomial`` -- a polynomial in the coordinate_ring
 
         OUTPUT: A tuple of integers, one for each projective space component. A
-        ``ValueError`` is raised if the polynomial is not multihomogeneous.
+        :class:`ValueError` is raised if the polynomial is not multihomogeneous.
 
         EXAMPLES::
 
@@ -694,7 +694,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
     def _validate(self, polynomials):
         r"""
         If ``polynomials`` is a tuple of valid polynomial functions on this space,
-        return ``polynomials``, otherwise raise a ``TypeError``.
+        return ``polynomials``, otherwise raise a :class:`TypeError`.
 
         Since this is a product of projective spaces, the polynomials must be multi-homogeneous.
 

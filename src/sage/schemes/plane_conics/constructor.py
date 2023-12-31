@@ -92,7 +92,7 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     - ``unique`` -- Used only if ``F`` is a list of points in the plane.
       If the conic through the points is not unique, then
-      raise ``ValueError`` if and only if ``unique`` is True
+      raise :class:`ValueError` if and only if ``unique`` is ``True``
 
     OUTPUT:
 

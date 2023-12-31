@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Isometries
 
@@ -489,7 +488,7 @@ class HyperbolicIsometry(Morphism):
     def translation_length(self):
         r"""
         For hyperbolic elements, return the translation length;
-        otherwise, raise a ``ValueError``.
+        otherwise, raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -512,7 +511,7 @@ class HyperbolicIsometry(Morphism):
     def axis(self):
         r"""
         For a hyperbolic isometry, return the axis of the
-        transformation; otherwise raise a ``ValueError``.
+        transformation; otherwise raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -593,7 +592,7 @@ class HyperbolicIsometry(Morphism):
     def repelling_fixed_point(self):
         r"""
         For a hyperbolic isometry, return the attracting fixed point;
-        otherwise raise a ``ValueError``.
+        otherwise raise a :class:`ValueError`.
 
         OUTPUT:
 
@@ -612,7 +611,7 @@ class HyperbolicIsometry(Morphism):
     def attracting_fixed_point(self):
         r"""
         For a hyperbolic isometry, return the attracting fixed point;
-        otherwise raise a `ValueError``.
+        otherwise raise a :class:`ValueError`.
 
         OUTPUT:
 
@@ -735,7 +734,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
     def translation_length(self): #UHP
         r"""
         For hyperbolic elements, return the translation length;
-        otherwise, raise a ``ValueError``.
+        otherwise, raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -843,9 +842,11 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return self.domain().get_geodesic(*pts)
         return pts
 
-    def repelling_fixed_point(self): #UHP
+    def repelling_fixed_point(self):  # UHP
         r"""
-        Return the repelling fixed point; otherwise raise a ``ValueError``.
+        Return the repelling fixed point.
+
+        Otherwise, this raises a :class:`ValueError`.
 
         OUTPUT:
 
@@ -867,9 +868,11 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return self.domain().get_point(infinity)
         return self.domain().get_point(v[0] / v[1])
 
-    def attracting_fixed_point(self): #UHP
+    def attracting_fixed_point(self):  # UHP
         r"""
-        Return the attracting fixed point; otherwise raise a ``ValueError``.
+        Return the attracting fixed point.
+
+        Otherwise, this raises a :class:`ValueError`.
 
         OUTPUT:
 

@@ -531,7 +531,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
             possible_norm_set.add(m * class_group_rep_norms[n])
     bdd_ideals = bdd_norm_pr_ideal_gens(K, possible_norm_set)
 
-    # Stores it in form of an dictionary and gives lambda(g)_approx for key g
+    # Stores it in form of a dictionary and gives lambda(g)_approx for key g
     for norm in possible_norm_set:
         gens = bdd_ideals[norm]
         for g in gens:

@@ -70,7 +70,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class PrefixClosedSet():
+class PrefixClosedSet:
     def __init__(self, words):
         r"""
         A prefix-closed set.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Isogenies
 
@@ -1953,7 +1952,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         """
         a1, a2, a3, a4, _ = self._domain.a_invariants()
 
-        self.__kernel_mod_sign = dict()
+        self.__kernel_mod_sign = {}
         v = w = 0
 
         for Q in self.__kernel_list:
@@ -3464,6 +3463,15 @@ def compute_isogeny_stark(E1, E2, ell):
         sage: E2 = phi.codomain()
         sage: compute_isogeny_stark(E, E2, 2)
         x
+
+    TESTS:
+
+    Check for :issue:`21883`::
+
+        sage: E1 = EllipticCurve([0,1])
+        sage: E2 = EllipticCurve([0,-27])
+        sage: E1.isogeny(None, E2, degree=3)
+        Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 27 over Rational Field
     """
     K = E1.base_field()
     R, x = PolynomialRing(K, 'x').objgen()
@@ -3477,8 +3485,8 @@ def compute_isogeny_stark(E1, E2, ell):
     for i in range(2*ell + 1):
         pe1 += wp1[2*i] * Z**i
         pe2 += wp2[2*i] * Z**i
-    pe1 = pe1.add_bigoh(2*ell+2)
-    pe2 = pe2.add_bigoh(2*ell+2)
+    pe1 = pe1.add_bigoh(2*ell+3)
+    pe2 = pe2.add_bigoh(2*ell+3)
 
     n = 1
     q = [R.one(), R.zero()]

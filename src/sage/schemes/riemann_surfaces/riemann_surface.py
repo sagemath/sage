@@ -1688,10 +1688,10 @@ class RiemannSurface():
                 # that entry, and the corresponding cycle. (also, forms it
                 # into a loop)
                 if P[i][j] != 0:
-                    acycles[i] += [(P[i][j], [x for x in cycles[j]] + [cycles[j][0]])]
+                    acycles[i] += [(P[i][j], list(cycles[j]) + [cycles[j][0]])]
                 if P[self.genus + i][j] != 0:
                     bcycles[i] += [
-                        (P[self.genus + i][j], [x for x in cycles[j]] + [cycles[j][0]])
+                        (P[self.genus + i][j], list(cycles[j]) + [cycles[j][0]])
                     ]
         return acycles + bcycles
 
@@ -2326,7 +2326,7 @@ class RiemannSurface():
             integral_dict = self._integral_dict
         else:
             fcd = [fast_callable(omega, domain=self._CC) for omega in differentials]
-            integral_dict = dict()
+            integral_dict = {}
 
         if integration_method == "heuristic":
             line_int = lambda edge: self.simple_vector_line_integral(edge, fcd)

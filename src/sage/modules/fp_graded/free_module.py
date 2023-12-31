@@ -985,7 +985,7 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``k`` -- an non-negative integer
+        - ``k`` -- a non-negative integer
         - ``top_dim`` -- stop the computation at this degree. Ignored,
           for compatibility with
           :meth:`sage.modules.fp_graded.module.FPModule.resolution`.

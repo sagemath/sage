@@ -274,8 +274,8 @@ def histogram(datalist, **options):
 
         sage: nv = normalvariate
         sage: H = histogram([nv(0, 1) for _ in range(1000)], bins=20, density=True, range=[-5, 5])
-        sage: P = plot(1/sqrt(2*pi)*e^(-x^2/2), (x, -5, 5), color='red', linestyle='--')
-        sage: H+P
+        sage: P = plot(1/sqrt(2*pi)*e^(-x^2/2), (x, -5, 5), color='red', linestyle='--')            # needs sage.symbolic
+        sage: H + P                                                                     # needs sage.symbolic
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::

@@ -1155,7 +1155,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         INPUT:
 
-        - ``k`` -- an non-negative integer
+        - ``k`` -- a non-negative integer
         - ``top_dim`` -- stop the computation at this degree
           (optional, default ``None``, but required if the algebra is
           not finite-dimensional)

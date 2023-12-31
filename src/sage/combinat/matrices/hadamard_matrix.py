@@ -324,7 +324,7 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
     r"""
     Construct Hadamard matrix using the Miyamoto construction.
 
-    If `q = n/4` is a prime power, and there exists an Hadamard matrix of order
+    If `q = n/4` is a prime power, and there exists a Hadamard matrix of order
     `q-1`, then a Hadamard matrix of order `n` can be constructed (see [Miy1991]_).
 
     INPUT:
@@ -442,7 +442,7 @@ def hadamard_matrix_williamson_type(a, b, c, d, check=True):
     - ``d`` -- (1,-1) list; the 1st row of `C`
     - ``c`` -- (1,-1) list; the 1st row of `D`
     - ``check`` -- boolean (default: ``True``); whether to check that the output
-      is an Hadamard matrix before returning it
+      is a Hadamard matrix before returning it
 
     EXAMPLES::
 
@@ -640,7 +640,7 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
 
 def hadamard_matrix_156():
     r"""
-    Construct an Hadamard matrix of order 156.
+    Construct a Hadamard matrix of order 156.
 
     The matrix is created using the construction detailed in [BH1965]_.
     This uses four circulant matrices of size `13\times 13`,
@@ -1030,13 +1030,13 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
 def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check=True):
     r"""
-    Create an Hadamard matrix using the contruction detailed in [CW1972]_.
+    Create a Hadamard matrix using the contruction detailed in [CW1972]_.
 
     Given four circulant matrices `X_1`, X_2, X_3, X_4` of order `n` with entries (0, 1, -1)
     such that the entrywise product of two distinct matrices is always equal to `0` and that
     `\sum_{i=1}^{4}X_iX_i^\top = nI_n` holds, and four matrices `A, B, C, D` of order `m` with
     elements (1, -1) such that `MN^\top = NM^\top` for all distinct `M`, `N` and
-    `AA^\top + BB^\top + CC^\top + DD^\top =  4mI_n` holds, we construct an Hadamard matrix
+    `AA^\top + BB^\top + CC^\top + DD^\top =  4mI_n` holds, we construct a Hadamard matrix
     of order `4nm`.
 
     INPUT:
@@ -1125,7 +1125,7 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
 
     - ``n`` -- integer; the order of the matrix to be constructed
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
-      is an Hadamard matrix before returning
+      is a Hadamard matrix before returning
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists.
 
@@ -1298,7 +1298,7 @@ def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
     - ``e3`` -- Matrix; the third Baumert-Hall unit
     - ``e4`` -- Matrix; the fourth Baumert-Hall unit
     - ``check`` -- boolean (default: ``True``); whether to check that the output
-      is an Hadamard matrix before returning it
+      is a Hadamard matrix before returning it
 
     EXAMPLES::
 
@@ -1352,11 +1352,11 @@ def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
 
 def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
     r"""
-    Construct an Hadamard matrix of order `n` from available 4-symbol `\delta` codes and Williamson quadruples.
+    Construct a Hadamard matrix of order `n` from available 4-symbol `\delta` codes and Williamson quadruples.
 
     The function looks for Baumert-Hall units and Williamson type matrices from
     :func:`four_symbol_delta_code_smallcases` and :func:`williamson_type_quadruples_smallcases`
-    and use them to construct an Hadamard matrix with the Turyn construction
+    and use them to construct a Hadamard matrix with the Turyn construction
     defined in :func:`hadamard_matrix_turyn_type`.
 
     INPUT:
@@ -1365,7 +1365,7 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
     - ``existence`` -- boolean (default: ``False``): if ``True``, only check if
       the matrix exists
     - ``check`` -- boolean (default: ``True``): if ``True``, check that the matrix
-      is an Hadamard matrix before returning
+      is a Hadamard matrix before returning
 
     EXAMPLES::
 
@@ -1407,7 +1407,7 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
 
 def hadamard_matrix_spence_construction(n, existence=False, check=True):
     r"""
-    Create an Hadamard matrix of order `n` using the Spence construction.
+    Create a Hadamard matrix of order `n` using the Spence construction.
 
     This construction (detailed in [Spe1975]_), uses supplementary difference sets implemented in
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_from_rel_diff_set` to create the
@@ -1419,7 +1419,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists
     - ``check`` -- bolean (default: ``True``); if ``True``, check that the matrix
-      is an Hadamard matrix before returning
+      is a Hadamard matrix before returning
 
     OUTPUT:
 
@@ -2968,7 +2968,7 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
     - ``existence`` -- boolean (default:  ``False``); If ``True``, only return
       whether the Hadamard matrix can be constructed
     - ``check`` -- boolean (default: ``True``): if ``True``, check that the matrix
-      is an Hadamard matrix before returning it
+      is a Hadamard matrix before returning it
 
     OUTPUT:
 

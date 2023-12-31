@@ -583,7 +583,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - word represented by an str
+        - ``other`` - word represented by a str
 
         OUTPUT:
 

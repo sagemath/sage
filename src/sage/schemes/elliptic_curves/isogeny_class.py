@@ -410,7 +410,7 @@ class IsogenyClass_EC(SageObject):
             M = self.matrix(fill=False)
             n = len(self)
             G = Graph(M, format='weighted_adjacency_matrix')
-            D = dict([(v,self.curves[v]) for v in G.vertices(sort=False)])
+            D = {v: self.curves[v] for v in G.vertices(sort=False)}
             G.set_vertices(D)
             if self._qfmat:  # i.e. self.E.has_rational_cm():
                 for i in range(n):
@@ -424,7 +424,7 @@ class IsogenyClass_EC(SageObject):
         n = M.nrows() # = M.ncols()
         G = Graph(M, format='weighted_adjacency_matrix')
         N = self.matrix(fill=True)
-        D = dict([(v,self.curves[v]) for v in G.vertices(sort=False)])
+        D = {v: self.curves[v] for v in G.vertices(sort=False)}
         # The maximum degree classifies the shape of the isogeny
         # graph, though the number of vertices is often enough.
         # This only holds over Q, so this code will need to change
@@ -876,17 +876,17 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         else:
             key_function = lambda E: flatten([list(ai) for ai in E.ainvs()])
 
-        self.curves = sorted(curves,key=key_function)
-        perm = dict([(ind, self.curves.index(Ei))
-                     for ind, Ei in enumerate(curves)])
+        self.curves = sorted(curves, key=key_function)
+        perm = {ind: self.curves.index(Ei)
+                for ind, Ei in enumerate(curves)}
         if verbose:
             print("Sorting permutation = %s" % perm)
 
         mat = MatrixSpace(ZZ, ncurves)(0)
         self._maps = [[0] * ncurves for _ in range(ncurves)]
-        for i,j,l,phi in tuples:
+        for i, j, l, phi in tuples:
             if phi != 0:
-                mat[perm[i],perm[j]] = l
+                mat[perm[i], perm[j]] = l
                 self._maps[perm[i]][perm[j]] = phi
         self._mat = fill_isogeny_matrix(mat)
         if verbose:
@@ -1109,7 +1109,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
                         curves.append(Edash)
                     ijl_triples.append((i,j,l,phi))
                 if l_list is None:
-                    l_list = [d for d in set([ZZ(f.degree()) for f in isogs])]
+                    l_list = list({ZZ(f.degree()) for f in isogs})
                 i += 1
             self.curves = tuple(curves)
             ncurves = len(curves)
@@ -1135,7 +1135,8 @@ def isogeny_degrees_cm(E, verbose=False):
 
     A finite list of primes `\ell` such that every curve isogenous to
     this curve can be obtained by a finite sequence of isogenies of
-    degree one of the primes in the list.
+    degree one of the primes in the list.  This list is not
+    necessarily minimal.
 
     ALGORITHM:
 
@@ -1188,8 +1189,20 @@ def isogeny_degrees_cm(E, verbose=False):
         downward split primes: {2, 3}
         downward inert primes: {5}
         primes generating the class group: [2]
-        Complete set of primes: {2, 3, 5}
-        [2, 3, 5]
+        Set of primes before filtering: {2, 3, 5}
+        List of primes after filtering: [2, 3]
+        [2, 3]
+
+    TESTS:
+
+    Check that :issue:`36780` is fixed::
+
+        sage: L5.<r5> = NumberField(x^2-5)
+        sage: E = EllipticCurve(L5,[0,-4325477943600 *r5-4195572876000])
+        sage: from sage.schemes.elliptic_curves.isogeny_class import isogeny_degrees_cm
+        sage: isogeny_degrees_cm(E)
+        [3, 5]
+
     """
     if not E.has_cm():
         raise ValueError("possible_isogeny_degrees_cm(E) requires E to be an elliptic curve with CM")
@@ -1205,6 +1218,11 @@ def isogeny_degrees_cm(E, verbose=False):
     n = E.base_field().absolute_degree()
     if not E.has_rational_cm():
         n *= 2
+    # For discriminants with extra units there's an extra factor in the class number formula:
+    if d == -4:
+        n *= 2
+    if d == -3:
+        n *= 3
     divs = n.divisors()
 
     data = pari(d).quadclassunit()
@@ -1232,7 +1250,7 @@ def isogeny_degrees_cm(E, verbose=False):
     # of the order O of discriminant d.  The latter case can only
     # happen when l^2 divides d.
 
-    # Compute the ramified primes
+    # (a) ramified primes
 
     ram_l = d.odd_part().prime_factors()
 
@@ -1247,25 +1265,22 @@ def isogeny_degrees_cm(E, verbose=False):
 
     else:
 
-        # Find the "upward" primes (index divided by l):
+        # "Upward" primes (index divided by l):
 
         L1 = Set([l for l in ram_l if d.valuation(l) > 1])
         L += L1
         if verbose:
             print("upward primes: %s" % L1)
 
-        # Find the "downward" primes (index multiplied by l, class
-        # number multiplied by l-kronecker_symbol(d,l)):
-
-        # (a) ramified primes; the suborder has class number l*h, so l
-        # must divide n/2h:
+        # "Downward" ramified primes; index multiplied by l, class
+        # number multiplied by l, so l must divide n/2h:
 
         L1 = Set([l for l in ram_l if l.divides(n_over_2h)])
         L += L1
         if verbose:
             print("downward ramified primes: %s" % L1)
 
-    # (b) split primes; the suborder has class number (l-1)*h, so
+    # (b) Downward split primes; the suborder has class number (l-1)*h, so
     # l-1 must divide n/2h:
 
     L1 = Set([lm1+1 for lm1 in divs
@@ -1274,7 +1289,7 @@ def isogeny_degrees_cm(E, verbose=False):
     if verbose:
         print("downward split primes: %s" % L1)
 
-    # (c) inert primes; the suborder has class number (l+1)*h, so
+    # (c) Downward inert primes; the suborder has class number (l+1)*h, so
     # l+1 must divide n/2h:
 
     L1 = Set([lp1-1 for lp1 in divs
@@ -1283,10 +1298,9 @@ def isogeny_degrees_cm(E, verbose=False):
     if verbose:
         print("downward inert primes: %s" % L1)
 
-    # Now find primes represented by each form of discriminant d.
-    # In the rational CM case, we use all forms associated to
-    # generators of the class group, otherwise only forms of order
-    # 2:
+    # Horizontal primes (rational CM only): same order, degrees are
+    # all integers represented by some binary quadratic form of
+    # discriminant d, so we find a prime represented by each form.
 
     if E.has_rational_cm():
         from sage.quadratic_forms.binary_qf import BinaryQF
@@ -1300,10 +1314,14 @@ def isogeny_degrees_cm(E, verbose=False):
     # Return sorted list
 
     if verbose:
-        print("Complete set of primes: %s" % L)
+        print("Set of primes before filtering: %s" % L)
 
-    return sorted(L)
-
+    # This filter will quickly eliminate most false entries in the set
+    from .gal_reps_number_field import Frobenius_filter
+    L = Frobenius_filter(E, sorted(L))
+    if verbose:
+        print("List of primes after filtering: %s" % L)
+    return L
 
 def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
                              num_l=None, exact=True, verbose=False):
@@ -1434,8 +1452,9 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
         downward split primes: {2, 3}
         downward inert primes: {5}
         primes generating the class group: [2]
-        Complete set of primes: {2, 3, 5}
-        [2, 3, 5]
+        Set of primes before filtering: {2, 3, 5}
+        List of primes after filtering: [2, 3]
+        [2, 3]
     """
     if E.has_cm():
         return isogeny_degrees_cm(E, verbose)

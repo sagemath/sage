@@ -23,7 +23,7 @@ from sage.geometry.riemannian_manifolds.parametrized_surface3d import \
     ParametrizedSurface3D
 
 
-class SurfaceGenerators():
+class SurfaceGenerators:
     """
     A class consisting of generators for several common parametrized surfaces
     in 3D.

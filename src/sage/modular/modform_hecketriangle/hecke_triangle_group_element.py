@@ -117,7 +117,6 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         EXAMPLES::
 
-            sage:
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup, HeckeTriangleGroupElement
             sage: lam = PolynomialRing(ZZ, 'lam').gen()
             sage: M = matrix([[-1, 0], [-lam^4 + 5*lam^2 + lam - 5, -1]])

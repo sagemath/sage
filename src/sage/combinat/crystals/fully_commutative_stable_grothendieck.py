@@ -769,7 +769,7 @@ def _check_decreasing_hecke_factorization(t):
     """
     if not isinstance(t, DecreasingHeckeFactorization):
         if not isinstance(t, (tuple, list)):
-            raise ValueError("t should be an list or tuple")
+            raise ValueError("t should be a list or tuple")
         for factor in t:
             if not isinstance(factor, (tuple, list)):
                 raise ValueError("each factor in t should be a list or tuple")

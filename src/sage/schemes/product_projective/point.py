@@ -368,8 +368,8 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Scale the coordinates of the point by ``t``, done componentwise.
 
-        A ``TypeError`` occurs if the point is not in the base ring of the
-        codomain after scaling.
+        A :class:`TypeError` occurs if the point is not in the base ring
+        of the codomain after scaling.
 
         INPUT:
 

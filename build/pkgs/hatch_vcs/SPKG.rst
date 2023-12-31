@@ -9,6 +9,8 @@ Hatch plugin for versioning with your preferred VCS
 License
 -------
 
+MIT
+
 Upstream Contact
 ----------------
 

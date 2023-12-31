@@ -23,6 +23,8 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import is_prime, primitive_root
+
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
 cdef sage.rings.fast_arith.arith_int arith_int
@@ -135,12 +137,12 @@ def bernoulli_mod_p(int p):
     if p <= 2:
         raise ValueError("p (=%s) must be a prime >= 3" % p)
 
-    if not sage.arith.all.is_prime(p):
+    if not is_prime(p):
         raise ValueError("p (=%s) must be a prime" % p)
 
     cdef int g, gSqr, gInv, gInvSqr, isOdd
 
-    g = sage.arith.all.primitive_root(p)
+    g = primitive_root(p)
     gInv = arith_int.c_inverse_mod_int(g, p)
     gSqr = ((<llong> g) * g) % p
     gInvSqr = ((<llong> gInv) * gInv) % p
@@ -303,7 +305,7 @@ def bernoulli_mod_p_single(long p, long k):
     if p <= 2:
         raise ValueError("p (=%s) must be a prime >= 3" % p)
 
-    if not sage.arith.all.is_prime(p):
+    if not is_prime(p):
         raise ValueError("p (=%s) must be a prime" % p)
 
     cdef long x = bernmm_bern_modp(p, k)

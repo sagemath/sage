@@ -398,7 +398,7 @@ class Arrow(GraphicPrimitive):
             class CheckNthSubPath():
                 def __init__(self, patch, n):
                     """
-                    creates an callable object that returns True if the
+                    creates a callable object that returns True if the
                     provided path is the n-th path from the patch.
                     """
                     self._patch = patch

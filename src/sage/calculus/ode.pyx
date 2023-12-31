@@ -37,27 +37,27 @@ cdef class PyFunctionWrapper:
         self.y_n = x
 
 cdef class ode_system:
-    cdef int  c_j(self,double t, double *y, double *dfdy,double *dfdt) noexcept: #void *params):
+    cdef int c_j(self, double t, double *y, double *dfdy, double *dfdt) noexcept:
         return 0
 
-    cdef int c_f(self,double t, double* y, double* dydt) noexcept:  #void *params):
+    cdef int c_f(self, double t, double* y, double* dydt) noexcept:
         return 0
 
-cdef int c_jac_compiled(double t, double *y, double *dfdy,double *dfdt, void * params) noexcept:
+cdef int c_jac_compiled(double t, const double *y, double *dfdy, double *dfdt, void *params) noexcept:
     cdef int status
     cdef ode_system wrapper
     wrapper = <ode_system> params
-    status = wrapper.c_j(t,y,dfdy,dfdt)    #Could add parameters
+    status = wrapper.c_j(t, y, dfdy, dfdt)    # Could add parameters
     return status
 
-cdef int c_f_compiled(double t, double *y, double *dydt, void *params) noexcept:
+cdef int c_f_compiled(double t, const double *y, double *dydt, void *params) noexcept:
     cdef int status
     cdef ode_system wrapper
     wrapper = <ode_system> params
-    status =  wrapper.c_f(t,y,dydt)  #Could add parameters
+    status =  wrapper.c_f(t, y, dydt)  # Could add parameters
     return status
 
-cdef int c_jac(double t,double *y,double *dfdy,double *dfdt,void *params) noexcept:
+cdef int c_jac(double t, const double *y, double *dfdy, double *dfdt, void *params) noexcept:
     cdef int i
     cdef int j
     cdef int y_n
@@ -84,7 +84,7 @@ cdef int c_jac(double t,double *y,double *dfdy,double *dfdt,void *params) noexce
     except Exception:
         return -1
 
-cdef int c_f(double t,double* y, double* dydt,void *params) noexcept:
+cdef int c_f(double t, const double *y, double *dydt, void *params) noexcept:
     cdef int i
     cdef int y_n
     cdef int param_n

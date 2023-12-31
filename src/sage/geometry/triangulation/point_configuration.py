@@ -733,7 +733,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         OUTPUT:
 
         A :class:`~sage.geometry.triangulation.element.Triangulation`
-        satisfying all restrictions imposed. Raises a ``ValueError``
+        satisfying all restrictions imposed. This raises a :class:`ValueError`
         if no such triangulation exists.
 
         EXAMPLES::
@@ -1037,7 +1037,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         OUTPUT:
 
         A :class:`~sage.geometry.triangulation.element.Triangulation`
-        satisfying all restrictions imposed. Raises a ``ValueError``
+        satisfying all restrictions imposed. This raises a :class:`ValueError`
         if no such triangulation exists.
 
         EXAMPLES::

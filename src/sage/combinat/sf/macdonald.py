@@ -1843,7 +1843,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             INPUT:
 
             - ``self`` -- an element of the Macdonald `S` basis
-            - ``k`` -- an positive integer at least as big as the
+            - ``k`` -- a positive integer at least as big as the
               length of ``part``
             - ``part`` -- a partition
 

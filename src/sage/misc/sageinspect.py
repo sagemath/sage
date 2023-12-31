@@ -2256,7 +2256,7 @@ def _sage_getsourcelines_name_with_dot(obj):
             if B is None:
                 raise AttributeError
         except AttributeError:
-            raise IOError("could not get source code")
+            raise OSError("could not get source code")
         return sage_getsourcelines(B)
     # M should just be the top-most module.
     # Hence, normally it is just 'sage'
@@ -2269,14 +2269,14 @@ def _sage_getsourcelines_name_with_dot(obj):
             if B is None:
                 raise AttributeError
         except AttributeError:
-            raise IOError("could not get source code")
+            raise OSError("could not get source code")
         return sage_getsourcelines(B)
 
     lines, base_lineno = sage_getsourcelines(M)
     # the rest of the function is copied from
     # inspect.findsource
     if not lines:
-        raise IOError('could not get source code')
+        raise OSError('could not get source code')
 
     if inspect.ismodule(obj):
         return lines, base_lineno
@@ -2301,7 +2301,7 @@ def _sage_getsourcelines_name_with_dot(obj):
             candidates.sort()
             return inspect.getblock(lines[candidates[0][1]:]), candidates[0][1]+base_lineno
         else:
-            raise IOError('could not find class definition')
+            raise OSError('could not find class definition')
 
     if inspect.ismethod(obj):
         obj = obj.__func__
@@ -2313,7 +2313,7 @@ def _sage_getsourcelines_name_with_dot(obj):
         obj = obj.f_code
     if inspect.iscode(obj):
         if not hasattr(obj, 'co_firstlineno'):
-            raise IOError('could not find function definition')
+            raise OSError('could not find function definition')
         pat = re.compile(r'^(\s*def\s)|(.*(?<!\w)lambda(:|\s))|^(\s*@)')
         pmatch = pat.match
         # fperez - fix: sometimes, co_firstlineno can give a number larger than
@@ -2325,7 +2325,7 @@ def _sage_getsourcelines_name_with_dot(obj):
             lnum -= 1
 
         return inspect.getblock(lines[lnum:]), lnum+base_lineno
-    raise IOError('could not find code object')
+    raise OSError('could not find code object')
 
 
 def sage_getsourcelines(obj):
@@ -2493,7 +2493,7 @@ def sage_getsourcelines(obj):
             # and str (=unicode) in python3
             return inspect.getsourcelines(obj)
 
-        except (IOError, TypeError) as err:
+        except (OSError, TypeError) as err:
             try:
                 objinit = obj.__init__
             except AttributeError:
@@ -2517,14 +2517,14 @@ def sage_getsourcelines(obj):
     try:
         with open(filename) as f:
             source_lines = f.readlines()
-    except IOError:
+    except OSError:
         try:
             from sage.misc.temporary_file import spyx_tmp
             raw_name = filename.split('/')[-1]
             newname = os.path.join(spyx_tmp(), '_'.join(raw_name.split('_')[:-1]), raw_name)
             with open(newname) as f:
                 source_lines = f.readlines()
-        except IOError:
+        except OSError:
             return None
 
     # It is possible that the source lines belong to the __init__ method,

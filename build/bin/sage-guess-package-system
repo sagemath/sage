@@ -11,6 +11,8 @@ if conda --version > /dev/null 2>&1; then
 fi
 if brew --version > /dev/null 2>&1; then
     echo homebrew
+elif port version > /dev/null 2>&1; then
+    echo macports
 elif emerge --version > /dev/null 2>&1; then
     echo gentoo
 elif apt-get --version > /dev/null 2>&1; then

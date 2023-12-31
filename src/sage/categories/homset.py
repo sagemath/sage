@@ -178,7 +178,7 @@ def Hom(X, Y, category=None, check=True):
     A parent (or a parent class of a category) may specify how to
     construct certain homsets by implementing a method ``_Hom_(self,
     codomain, category)``. This method should either construct the
-    requested homset or raise a ``TypeError``. This hook is currently
+    requested homset or raise a :class:`TypeError`. This hook is currently
     mostly used to create homsets in some specific subclass of
     :class:`Homset` (e.g. :class:`sage.rings.homset.RingHomset`)::
 

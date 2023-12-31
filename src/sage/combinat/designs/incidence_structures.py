@@ -48,7 +48,7 @@ from sage.sets.set import Set
 lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
-class IncidenceStructure():
+class IncidenceStructure:
     r"""
     A base class for incidence structures (i.e. hypergraphs, i.e. set systems)
 

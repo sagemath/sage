@@ -1,5 +1,3 @@
-cd src
-
 # pip can install its own wheel! But first we need to ensure that the pip
-# source directory in on the PYTHONPATH
-export PYTHONPATH="$(pwd)/src"
+# wheelfile is on the PYTHONPATH
+export PYTHONPATH=$(pwd)/$(echo *.whl)

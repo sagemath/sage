@@ -610,9 +610,16 @@ class Link(SageObject):
         """
         return not self.__eq__(other)
 
-    def braid(self):
+    def braid(self, remove_loops=False):
         r"""
         Return a braid representation of ``self``.
+
+        INPUT:
+
+        - ``remove_loops`` -- boolean (default: ``False``). If set to ``True``
+          loops will be removed first. This can reduce the number of strands
+          needed for an ambient isotopic braid closure. However, this can lead
+          to a loss of the regular isotopy.
 
         OUTPUT: an element in the braid group
 
@@ -634,6 +641,14 @@ class Link(SageObject):
             sage: L.braid()
             (s0*s1^-1)^2*s1^-1
 
+        using ``remove_loops=True``::
+
+            sage: L = Link([[2, 7, 1, 1], [7, 3, 9, 2], [4, 11, 3, 9], [11, 5, 5, 4]])
+            sage: L.braid()
+            s0*s1^-1*s2*s3^-1
+            sage: L.braid(remove_loops=True)
+            1
+
         TESTS::
 
             sage: L = Link([])
@@ -648,7 +663,20 @@ class Link(SageObject):
             sage: A = Link([[[1, 2, -2, -1, -3, -4, 4, 3]], [1, 1, 1, 1]])
             sage: A.braid()
             s0*s1*s2*s3
+
+        Check that :issue:`36884` is solved::
+
+            sage: L = Link([[1, 7, 2, 6], [3, 1, 4, 8], [5, 5, 6, 4], [7, 3, 8, 2]])
+            sage: L.braid()
+            s0^3*s1*s0*s1^-1
+            sage: L.braid(remove_loops=True)
+            s^3
         """
+        if remove_loops:
+            L = self.remove_loops()
+            if L != self:
+                return L.braid(remove_loops=remove_loops)
+
         if self._braid is not None:
             return self._braid
 
@@ -657,8 +685,8 @@ class Link(SageObject):
         if len(comp) > 1:
             L1 = Link(comp[0])
             L2 = Link(flatten(comp[1:], max_level=1))
-            b1 = L1.braid()
-            b2 = L2.braid()
+            b1 = L1.braid(remove_loops=remove_loops)
+            b2 = L2.braid(remove_loops=remove_loops)
             n1 = b1.parent().strands()
             n2 = b2.parent().strands()
             t1 = list(b1.Tietze())
@@ -667,12 +695,25 @@ class Link(SageObject):
             self._braid = B(t1 + t2)
             return self._braid
 
-        # look for possible Vogel moves, perform them and call recursively to the modified link
         pd_code = self.pd_code()
         if not pd_code:
             B = BraidGroup(2)
             self._braid = B.one()
             return self._braid
+
+        # look for possible Vogel moves, perform them and call recursively to the modified link
+        def idx(cross, edge):
+            r"""
+            Return the index of an edge in a crossing taking loops into account.
+            A loop appears as an edge which occurs twice in the crossing.
+            In all cases the second occurrence is the correct one needed in
+            the Vogel algorithm (see :issue:`36884`).
+            """
+            i = cross.index(edge)
+            if cross.count(edge) > 1:
+                return cross.index(edge, i+1)
+            else:
+                return i
 
         seifert_circles = self.seifert_circles()
         newedge = max(flatten(pd_code)) + 1
@@ -702,12 +743,12 @@ class Link(SageObject):
                             # C1   C2   existing crossings
                             # -------------------------------------------------
                             C1 = newPD[newPD.index(heads[a])]
-                            C1[C1.index(a)] = newedge + 1
+                            C1[idx(C1, a)] = newedge + 1
                             C2 = newPD[newPD.index(tails[b])]
-                            C2[C2.index(b)] = newedge + 2
+                            C2[idx(C2, b)] = newedge + 2
                             newPD.append([newedge + 3, newedge, b, a]) # D
                             newPD.append([newedge + 2, newedge, newedge + 3, newedge + 1]) # E
-                            self._braid = Link(newPD).braid()
+                            self._braid = Link(newPD).braid(remove_loops=remove_loops)
                             return self._braid
                         else:
                             # -------------------------------------------------
@@ -723,12 +764,12 @@ class Link(SageObject):
                             #  /   \
                             # -------------------------------------------------
                             C1 = newPD[newPD.index(heads[-a])]
-                            C1[C1.index(-a)] = newedge + 1
+                            C1[idx(C1, -a)] = newedge + 1
                             C2 = newPD[newPD.index(tails[-b])]
-                            C2[C2.index(-b)] = newedge + 2
+                            C2[idx(C2, -b)] = newedge + 2
                             newPD.append([newedge + 2, newedge + 1, newedge + 3, newedge]) # D
                             newPD.append([newedge + 3, -a, -b, newedge]) # E
-                            self._braid = Link(newPD).braid()
+                            self._braid = Link(newPD).braid(remove_loops=remove_loops)
                             return self._braid
 
         # We are in the case where no Vogel moves are necessary.
@@ -2361,6 +2402,50 @@ class Link(SageObject):
                     available_edges.remove(edge)
             regions.append(region)
         return regions
+
+    def remove_loops(self):
+        r"""
+        Return an ambient isotopic link in which all loops are removed.
+
+        EXAMPLES::
+
+            sage: b = BraidGroup(4)((3, 2, -1, -1))
+          sage: L = Link(b)
+          sage: L.remove_loops()
+          Link with 2 components represented by 2 crossings
+          sage: K4 = Link([[1, 7, 2, 6], [3, 1, 4, 8], [5, 5, 6, 4], [7, 3, 8, 2]])
+          sage: K3 = K4.remove_loops()
+          sage: K3.pd_code()
+          [[1, 7, 2, 4], [3, 1, 4, 8], [7, 3, 8, 2]]
+          sage: U = Link([[1, 2, 2, 1]])
+          sage: U.remove_loops()
+          Link with 1 component represented by 0 crossings
+        """
+        pd = self.pd_code()
+        new_pd = []
+        loop_crossings = []
+        for cr in pd:
+            if len(set(cr)) == 4:
+                new_pd.append(list(cr))
+            else:
+                loop_crossings.append(cr)
+        if not loop_crossings:
+            return self
+        if not new_pd:
+            # trivial knot
+            return type(self)([])
+        new_edges = flatten(new_pd)
+        for cr in loop_crossings:
+            rem = set([e for e in cr if e in new_edges])
+            if len(rem) == 2:
+                # put remaining edges together
+                a, b = sorted(rem)
+                for ncr in new_pd:
+                    if b in ncr:
+                        ncr[ncr.index(b)] = a
+                        break
+        res = type(self)(new_pd)
+        return res.remove_loops()
 
     @cached_method
     def mirror_image(self):

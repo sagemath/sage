@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Library of commonly used, famous, or interesting polytopes
 
@@ -489,7 +488,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
     return m.right_kernel_matrix(basis='computed').columns()
 
 
-class Polytopes():
+class Polytopes:
     """
     A class of constructors for commonly used, famous, or interesting
     polytopes.
@@ -1003,7 +1002,7 @@ class Polytopes():
             sage: TestSuite(rd_norm).run()                                      # optional - pynormaliz
         """
         v = [[2,0,0],[-2,0,0],[0,2,0],[0,-2,0],[0,0,2],[0,0,-2]]
-        v.extend((itertools.product([1, -1], repeat=3)))
+        v.extend(itertools.product([1, -1], repeat=3))
         return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
 
     def cuboctahedron(self, backend=None):
@@ -2552,7 +2551,7 @@ class Polytopes():
             sage: perm4.graph().is_isomorphic(graphs.BubbleSortGraph(4))                # needs sage.graphs
             True
 
-        As both Hrepresentation an Vrepresentation are known, the permutahedron can be set
+        As both Hrepresentation and Vrepresentation are known, the permutahedron can be set
         up with both using the backend ``field``. The following takes very very long time
         to recompute, e.g. with backend ``ppl``::
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Word morphisms/substitutions
 
@@ -150,7 +149,7 @@ def get_cycles(f, domain):
     return cycles
 
 
-class PeriodicPointIterator():
+class PeriodicPointIterator:
     r"""
     (Lazy) constructor of the periodic points of a word morphism.
 
@@ -3158,7 +3157,7 @@ class WordMorphism(SageObject):
             []
         """
         if not self.is_self_composable():
-            raise TypeError(f'self ({self}) is not an self-composable')
+            raise TypeError(f'self ({self}) is not a self-composable')
 
         forward = {}
         backward = {letter: set() for letter in self._morph}

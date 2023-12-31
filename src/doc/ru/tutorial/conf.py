@@ -38,6 +38,3 @@ latex_documents = [
   ('index', 'SageTutorial_ru.tex', 'Sage Tutorial in Russian',
    'The Sage Development Team', 'manual'),
 ]
-
-# Additional LaTeX stuff if necessary:
-#latex_elements['preamble'] += '\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}\n'

@@ -1,1 +1,2 @@
-libmpc libmpc-devel
+libmpc
+libmpc-devel
