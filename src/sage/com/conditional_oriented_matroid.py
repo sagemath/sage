@@ -1,16 +1,15 @@
 r"""
 Conditional Oriented Matroids
 
-Conditional oriented matroids are abstractions
-for diverse mathematical objects like apartments of hyperplane arrangements also
-called realizable COMs, and partial cubes with gated antipodal subgraphs. They are
-common generalizations of oriented matroids and lopsided systems in particular. The
-following programs allow to manipulate of these objects. Among other functions, the
-checks if a set corresponds to a conditional oriented matroid, an oriented matroid,
-or a lopsided system are implemented. Functions generating of a conditional oriented
-matroid from its tope set, computing the Varchenko determinant of a conditional
-oriented matroid, and resolving the Aguiar-Mahajan linear system of an oriented
-matroid are also programmed.
+Conditional oriented matroids are abstractions for diverse mathematical objects
+like apartments of hyperplane arrangements, and partial cubes with gated antipodal
+subgraphs. They are common generalizations of oriented matroids and lopsided
+systems in particular. The following programs allow to manipulate of these objects.
+Among other functions, the checks if a set corresponds to a conditional oriented
+matroid, an oriented matroid, or a lopsided system are implemented. Functions
+generating of a conditional oriented matroid from its tope set, computing the
+Varchenko determinant of a conditional oriented matroid, and resolving the
+Aguiar-Mahajan linear system of an oriented matroid are also programmed.
 
 REFERENCES: For more information on conditional oriented matroids, see [BCK2018]_.
 
@@ -31,6 +30,7 @@ AUTHOR:
 # ****************************************************************************
 
 
+from sage.sets.set import Set, union, intersection, difference, random_element
 
 
 # 1 Conditional Oriented Matroids
@@ -39,13 +39,24 @@ AUTHOR:
 # 1.1 Sign Systems
 
 
+r"""
+A sign system is a pair `(E,\,\mathcal{L})` containing a finite set `E` and a
+subset `\mathcal{L}` of `\{-1,\,0,\,1\}^E`. The elements of `\mathcal{L}` are
+called sign vectors.
+"""
+
+
 def neg(X):
-    """
-    Return the negative of a sign vector.
+    r"""
+    Return the negative `-X` of a sign vector `X`.
     
     INPUT:
     
     - ``X`` -- a sign vector
+    
+    .. MATH::
+    
+        -X := (-X_e\ |\ e \in E)
     
     EXAMPLES::
     
@@ -55,17 +66,21 @@ def neg(X):
     return tuple(-X[i] for i in range(len(X)))
     
 
-def Zero(X):
-    """
-    Return the zero set of a sign vector.
+def zero(X):
+    r"""
+    Return the zero set `X^0` of a sign vector `X`.
     
     INPUT:
     
     - ``X`` -- a sign vector
     
+    .. MATH::
+    
+        X^0 := \{e \in E\ |\ X_e = 0\}
+    
     EXAMPLES::
     
-        sage: Zero((0, 1, -1, -1, 0, 0, 1))
+        sage: zero((0, 1, -1, -1, 0, 0, 1))
         {0, 4, 5}
     """
     z = Set()
@@ -75,17 +90,21 @@ def Zero(X):
     return z
 
 
-def Support(X):
-    """
-    Return the support of a sign vector.
+def support(X):
+    r"""
+    Return the support `\underline{X}` of a sign vector `X`.
     
     INPUT:
     
     - ``X`` -- a sign vector
     
+    .. MATH::
+    
+        \underline{X} := E \setminus X^0
+        
     EXAMPLES::
     
-        sage: Support((0, 1, -1, -1, 0, 0, 1))
+        sage: support((0, 1, -1, -1, 0, 0, 1))
         {1, 2, 3, 6}
     """
     s = Set()
@@ -95,18 +114,22 @@ def Support(X):
     return s
 
 
-def Separation(X, Y):
-    """
-    Return the separation set of two sign vectors.
+def separation(X, Y):
+    r"""
+    Return the separation set `\mathrm{S}(X,\,Y)` of two sign vectors `X` and `Y`.
     
     INPUT:
     
     - ``X`` -- a sign vector
     - ``Y`` -- a sign vector
     
+    .. MATH::
+    
+        \mathrm{S}(X,\,Y) := \big\{e \in E\ \big|\ X_e = -Y_e \neq 0\big\}
+        
     EXAMPLES::
     
-        sage: Separation((1, -1, 0, 0, 1), (0, 1, 0, 1, -1))
+        sage: separation((1, -1, 0, 0, 1), (0, 1, 0, 1, -1))
         {1, 4}
     """
     s = Set()
@@ -117,18 +140,24 @@ def Separation(X, Y):
     return s
 
 
-def Composition(X, Y):
-    """
-    Return the composition of the first sign vector with the second.
+def composition(X, Y):
+    r"""
+    Return the composition `X \circ Y` of the sign vectors `X` and `Y`.
     
     INPUT:
     
     - ``X`` -- a sign vector
     - ``Y`` -- a sign vector
     
+    .. MATH::
+    
+        \forall e \in E,\,
+        (X \circ Y)_e := \begin{cases} X_e & \text{if}\ X_e \neq 0, \\
+        Y_e & \text{otherwise}.
+        
     EXAMPLES::
     
-        sage: Composition((1, -1, 0, 0, 1), (0, 1, 0, 1, -1))
+        sage: composition((1, -1, 0, 0, 1), (0, 1, 0, 1, -1))
         (1, -1, 0, 1, 1)
     """
     def sigma(a, b):
@@ -140,14 +169,18 @@ def Composition(X, Y):
     
     
 def prec(X, Y):
-    """
-    Return whether the first sign vector is smaller that the second.
+    r"""
+    Return whether `X \preceq Y` for the partial order `\preceq`.
     
     INPUT:
     
     - ``X`` -- a sign vector
     - ``Y`` -- a sign vector
     
+    .. MATH::
+    
+        \forall X, Y \in \mathcal{L}:\ X \preceq Y \ \Longleftrightarrow \ \forall e \in E,\, X_e \in \{0,\, Y_e\}
+        
     EXAMPLES::
     
         sage: prec((1, -1, 0, 0, 1), (0, 1, 0, 1, -1))
@@ -159,9 +192,9 @@ def prec(X, Y):
     return a
     
     
-def IsMax(L, X):
-    """
-    Return whether this sign vector is maximal in this sign system.
+def is_max(L, X):
+    r"""
+    Return whether the sign vector `X` is maximal in this sign system `\mathcal{L}`.
     
     INPUT:
     
@@ -174,7 +207,7 @@ def IsMax(L, X):
         ....: (0, 1, 0, 0, 1), (0, 0, 1, -1, 0), (0, 1, 0, 0, 0), (1, 1, 0,
         ....: -1, -1), (0, 1, 0, 1, -1)])
         sage: X = (1, -1, 0, 0, 1)
-        sage: IsMax(L, X)
+        sage: is_max(L, X)
         True
     """
     a = True
@@ -185,22 +218,26 @@ def IsMax(L, X):
     return a
 
 
-def Face(L, X):
-    """
-    Return the face of a sign vector in a sign system.
+def face(L, X):
+    r"""
+    Return the face `\mathrm{F}(X)` of a sign vector `X` in a sign system `\mathcal{L}`.
     
     INPUT:
     
     - ``L`` -- a sign system
     - ``X`` -- a sign vector
     
+    .. MATH::
+    
+        \mathrm{F}(X) := \{Y \in \mathcal{L}\ |\ X \preceq Y\}
+        
     EXAMPLES::
     
         sage: L = Set([(1, -1, 0, 0, 1), (0, 1, 1, -1, 0), (1, 1, 1, -1, 0),
         ....: (0, 1, 0, 0, 1), (0, 0, 1, -1, 0), (0, 1, 0, 0, 0), (1, 1, 0,
         ....: -1, -1), (0, 1, 0, 1, -1)])
         sage: X = (0, 1, 0, 0, 0)
-        sage: Face(L, X)
+        sage: face(L, X)
         {(1, 1, 1, -1, 0), (0, 1, 0, 0, 0), (1, 1, 0, -1, -1), (0, 1, 0, 1, -1),
         (0, 1, 0, 0, 1), (0, 1, 1, -1, 0)}
     """
@@ -211,26 +248,30 @@ def Face(L, X):
     return S
 
 
-def Restriction(X, A):
-    """
-    Return the restriction of a sign vector relative to a set.
+def restriction(X, A):
+    r"""
+    Return the restriction `X \setminus A` of a sign vector `X` relative to a set `A`.
     
     INPUT:
     
     - ``X`` -- a sign vector
     - ``A`` -- a set
     
+    .. MATH::
+    
+        X \setminus A \in \{-1,\,0,\,1\}^{E \setminus A},\, (X \setminus A)_e = X_e, \, \forall e \in E \setminus A
+        
     EXAMPLES::
     
-        sage: Restriction((1, -1, 0, 0, 1), Set([1, 3, 4]))
+        sage: restriction((1, -1, 0, 0, 1), Set([1, 3, 4]))
         (1, 0)
     """
     return tuple(X[i] for i in Set(range(len(X))).difference(A))
 
 
-def Fiber(L, X, A):
-    """
-    Return the fiber in a sign system relative to a sign vector and a set.
+def fiber(L, X, A):
+    r"""
+    Return the fiber `\mathrm{F}(X,\,A)` in a sign system `\mathcal{L}` relative to a sign vector `X` and a set `A`.
     
     INPUT:
     
@@ -238,6 +279,10 @@ def Fiber(L, X, A):
     - ``X`` -- a sign vector
     - ``A`` -- a set
     
+    .. MATH::
+    
+        \mathrm{F}(X,\,A) := \{Y \in \mathcal{L}\ |\ Y \setminus A = X \setminus A\}
+        
     EXAMPLES::
     
         sage: L = Set([(1, -1, 0, 0, 1), (0, 1, 1, -1, 0), (1, 1, 1, -1, 0),
@@ -245,12 +290,12 @@ def Fiber(L, X, A):
         ....: -1, -1), (0, 1, 0, 1, -1)])
         sage: X = (1, -1, 0, 0, 1)
         sage: A = Set([1, 3, 4])
-        sage: Fiber(L, X, A)
+        sage: fiber(L, X, A)
         {(1, 1, 0, -1, -1), (1, -1, 0, 0, 1)}
     """
     F = Set()
     for Y in L:
-        if Restriction(Y, A) == Restriction(X, A):
+        if restriction(Y, A) == restriction(X, A):
             F = F.union(Set([Y]))
     return F
 
@@ -258,9 +303,13 @@ def Fiber(L, X, A):
 # 1.2 Conditional Oriented Matroids
 
 
-def COM(L):
-    """
-    Return whether this sign system is a conditional oriented matroid.
+def com(L):
+    r"""
+    Return whether `\mathcal{L}` corresponds to a conditional oriented matroid.
+    A conditional oriented matroid is a sign system `(E,\,\mathcal{L})` such that `\mathcal{L}` satisfies the following conditions:
+    (FS) if `X,Y \in \mathcal{L}`, then `X \circ -Y \in \mathcal{L}`,
+    (SE) for each pair `X,Y \in \mathcal{L}`, and every `e \in \mathrm{S}(X,\,Y)`, there exists `Z \in \mathcal{L}` such that
+        `Z_e = 0` and `\forall f \in E \setminus \mathrm{S}(X,\,Y)`, `Z_f = (X \circ Y)_f = (Y \circ X)_f`.
     
     INPUT:
     
@@ -274,35 +323,37 @@ def COM(L):
         ....: 0, 1, 0), (1, -1, 0, 0, 0), (1, -1, 1, 0, 0), (1, -1, -1, 1, 0), (1,
         ....: -1, -1, -1, 0), (1, -1, 1, -1, 0), (1, -1, -1, 0, 0), (1, -1, 0, -1,
         ....: 0)])
-        sage: COM(L1)
+        sage: com(L1)
         False
-        sage: COM(L2)
+        sage: com(L2)
         True
     """
-    def FS(M):
+    def fs(M):
         a = True
         for X in M:
             for Y in M:
-                a = a & (Composition(X, neg(Y)) in M)
+                a = a & (composition(X, neg(Y)) in M)
         return a
-    def SE(N):
+    def se(N):
         a = True
         for X in N:
             for Y in N:
                 S = Set()
-                for Z in Fiber(N, Composition(X, Y), Separation(X, Y)):
-                    S = S.union(Zero(Z))
-                a = a & (S.intersection(Separation(X, Y)) == Separation(X, Y))
+                for Z in fiber(N, composition(X, Y), separation(X, Y)):
+                    S = S.union(zero(Z))
+                a = a & (S.intersection(separation(X, Y)) == separation(X, Y))
         return a
-    return FS(L) & SE(L)
+    return fs(L) & se(L)
 
 
 # 1.3 Oriented Matroids
 
 
-def OM(L):
-    """
-    Return whether this sign system is an oriented matroid.
+def om(L):
+    r"""
+    Return whether `\mathcal{L}` corresponds to an oriented matroid.
+    An oriented matroid is a conditional oriented matroid `(E,\,\mathcal{L})` such that `\mathcal{L}` satisfies the following condition:
+    (Z) the zero element `(0,\, \dots,\, 0)` belongs to `\mathcal{L}`.
     
     INPUT:
     
@@ -318,23 +369,24 @@ def OM(L):
         ....: 1, 0, -1, 0), (0, 1, 1, -1, 0), (0, 1, 1, 0, 0), (0, 1, 1, 1, 0), (0,
         ....: 0, 1, 1, 0), (0, -1, 1, 1, 0), (0, -1, 0, 1, 0), (0, -1, -1, 1, 0),
         ....: (0, -1, -1, 0, 0), (0, -1, -1, -1, 0)])
-        sage: OM(L2)
+        sage: om(L2)
         False
-        sage: OM(L3)
+        sage: om(L3)
         True
     """
-    def Z(M):
+    def z(M):
         return (tuple(0 for i in range(len(M.random_element()))) in M)
-    return COM(L) & Z(L)
+    return com(L) & z(L)
 
 
 # 1.4 Lopsided Systems
 
 
-def LS(L):
-    """
-    Return whether this sign system is a lopsided system.
-    
+def ls(L):
+    r"""
+    Return whether `\mathcal{L}` corresponds to a lopsided system.
+    A lopsided system is a conditional oriented matroid `(E,\,\mathcal{L})` such that `\mathcal{L}` satisfies the following condition:
+    (TC) `\forall X \in \mathcal{L},\,\forall Y \in \{-1,\,1\}^E,\ X \circ Y \in \mathcal{L}`
     INPUT:
     
     - ``L`` -- a sign system
@@ -348,41 +400,45 @@ def LS(L):
         sage: L4 = Set([(1, -1, 1, 0, 0), (1, -1, 1, -1, 0), (1, -1, 1, 1, 0), (1,
         ....: -1, 1, 0, -1), (1, -1, 1, 0, 1), (1, -1, 1, -1, -1), (1, -1, 1, -1,
         ....: 1), (1, -1, 1, 1, -1), (1, -1, 1, 1, 1)])
-        sage: LS(L3)
+        sage: ls(L3)
         False
-        sage: LS(L4)
+        sage: ls(L4)
         True
     """
-    def TC(M):
+    def tc(M):
         a = True
         for X in M:
             for Y in Tuples([-1, 1], len(M.random_element())):
-                a = a & (Composition(X, Y) in M)
+                a = a & (composition(X, Y) in M)
         return a
-    return COM(L) & TC(L)
+    return com(L) & tc(L)
     
     
-def Tope(L):
-    """
-    Return the tope set of a conditional oriented matroid.
+def tope(L):
+    r"""
+    Return the tope set `\mathcal{T}` of a conditional oriented matroid `(E,\,\mathcal{L})`.
     
     INPUT:
     
     - ``L`` -- a conditional oriented matroid
     
+    .. MATH::
+    
+        \mathcal{T} := \{X \in \mathcal{L}\ |\ \nexists Y \in \mathcal{L},\, X \prec Y\}
+        
     EXAMPLES::
     
         sage: L2 = Set([(1, 1, 1, 1, 0), (1, 0, 1, 1, 0), (1, -1, 1, 1, 0), (1, -1,
         ....: 0, 1, 0), (1, -1, 0, 0, 0), (1, -1, 1, 0, 0), (1, -1, -1, 1, 0), (1,
         ....: -1, -1, -1, 0), (1, -1, 1, -1, 0), (1, -1, -1, 0, 0), (1, -1, 0, -1,
         ....: 0)])
-        sage: Tope(L2)
+        sage: tope(L2)
         {(1, -1, -1, -1, 0), (1, -1, -1, 1, 0), (1, -1, 1, 1, 0), (1, 1, 1, 1, 0),
         (1, -1, 1, -1, 0)}
     """
     S = Set()
     for X in L:
-        if IsMax(L, X):
+        if is_max(L, X):
             S = S.union(Set([X]))
     return S
 
@@ -393,14 +449,18 @@ def Tope(L):
 # 2.1 Deletion and Contraction
 
 
-def Deletion(L, A):
-    """
-    Return the deletion of a conditional oriented matroid relative to a set.
+def deletion(L, A):
+    r"""
+    Return the set `\mathcal{L}\A` of the deletion `(E \setminus A,\, \mathcal{L} \setminus A)` of a conditional oriented matroid `(E,\, \mathcal{L})` relative to a set `A`.
     
     INPUT:
     
     - ``L`` -- a conditional oriented matroid
     - ``A`` -- a set
+    
+    .. MATH::
+    
+        `\mathcal{L} \setminus A = \{X \setminus A\ |\ X \in \mathcal{L}\}`
         
     EXAMPLES::
     
@@ -408,20 +468,24 @@ def Deletion(L, A):
         ....: 0, 1, 0), (1, -1, 0, 0, 0), (1, -1, 1, 0, 0), (1, -1, -1, 1, 0), (1,
         ....: -1, -1, -1, 0), (1, -1, 1, -1, 0), (1, -1, -1, 0, 0), (1, -1, 0, -1,
         ....: 0)])
-        sage: Deletion(L2, Set([2, 4]))
+        sage: deletion(L2, Set([2, 4]))
         {(1, 0, 1), (1, -1, 0), (1, -1, 1), (1, 1, 1), (1, -1, -1)}
     """
-    return Set([Restriction(X, A) for X in L])
+    return Set([restriction(X, A) for X in L])
 
 
-def Contraction(L, A):
-    """
-    Return the deletion of a conditional oriented matroid relative to a set.
+def contraction(L, A):
+    r"""
+    Return the set `\mathcal{L}/A` of the contraction `(E \setminus A,\, \mathcal{L}/A)` of a conditional oriented matroid `(E,\, \mathcal{L})` relative to a set `A`.
     
     INPUT:
     
     - ``L`` -- a conditional oriented matroid
     - ``A`` -- a set
+    
+    .. MATH::
+    
+        `\mathcal{L}/A := \{X \setminus A\ |\ X \in \mathcal{L},\, \underline{X} \cap A = \varnothing\}`
         
     EXAMPLES::
     
@@ -429,22 +493,23 @@ def Contraction(L, A):
         ....: 0, 1, 0), (1, -1, 0, 0, 0), (1, -1, 1, 0, 0), (1, -1, -1, 1, 0), (1,
         ....: -1, -1, -1, 0), (1, -1, 1, -1, 0), (1, -1, -1, 0, 0), (1, -1, 0, -1,
         ....: 0)])
-        sage: Contraction(L2, Set([2, 4]))
+        sage: contraction(L2, Set([2, 4]))
         {(1, -1, 0), (1, -1, 1), (1, -1, -1)}
     """
     C = Set()
     for X in L:
-        if Support(X).intersection(A) == Set():
-            C = C.union(Set([Restriction(X, A)]))
+        if support(X).intersection(A) == Set():
+            C = C.union(Set([restriction(X, A)]))
     return C
 
 
 # 2.2 Simplification
 
 
-def Coloop(L):
-    """
-    Return the coloop set for a conditional oriented matroid.
+def coloop(L):
+    r"""
+    Return the coloop set for a conditional oriented matroid `(E,\, \mathcal{L})`.
+    An element `e \in E` is a coloop if `\{X_e\ |\ X \in \mathcal{L}\} \subseteq \big\{\{-1\},\, \{0\},\, \{1\}\big\}`.
     
     INPUT:
     
@@ -456,7 +521,7 @@ def Coloop(L):
         ....: 0, 1, 0), (1, -1, 0, 0, 0), (1, -1, 1, 0, 0), (1, -1, -1, 1, 0), (1,
         ....: -1, -1, -1, 0), (1, -1, 1, -1, 0), (1, -1, -1, 0, 0), (1, -1, 0, -1,
         ....: 0)])
-        sage: Coloop(L2)
+        sage: coloop(L2)
         {0, 4}
     """
     C = Set()
@@ -467,9 +532,10 @@ def Coloop(L):
     return C
 
 
-def Parallel_Element(L):
-    """
-    Return the list of parallel elements for a conditional oriented matroid.
+def parallel_element(L):
+    r"""
+    Return the list of parallel elements for a conditional oriented matroid `(E,\, \mathcal{L})`.
+    Two elements `e,f \in E` are parallel if either `X_e = X_f` for all `X \in \mathcal{L}`, or `X_e = -X_f` for all `X \in \mathcal{L}.
     
     INPUT:
     
@@ -481,7 +547,7 @@ def Parallel_Element(L):
         ....: 1, 0, -1, 0), (0, 1, 1, -1, 0), (0, 1, 1, 0, 0), (0, 1, 1, 1, 0), (0,
         ....: 0, 1, 1, 0), (0, -1, 1, 1, 0), (0, -1, 0, 1, 0), (0, -1, -1, 1, 0),
         ....: (0, -1, -1, 0, 0), (0, -1, -1, -1, 0)])
-        sage: Parallel_Element(L3)
+        sage: parallel_element(L3)
         [{0, 4}, {1}, {2}, {3}]
     """
     def parallel(M, e, f):
@@ -502,9 +568,13 @@ def Parallel_Element(L):
     return P
 
 
-def Simplification(L):
-    """
-    Return the simplification of a conditional oriented matroid.
+def simplification(L):
+    r"""
+    Return a simplification of a conditional oriented matroid `(E,\, \mathcal{L})`.
+    A conditional oriented matroid is simple if it has neither coloops nor distinct parallel elements.
+    A homomorphism between two conditional oriented matroids `(E,\, \mathcal{L})` and `(F,\, \mathcal{M})` is a function `h: \mathcal{L} \rightarrow \mathcal{M}` such that `\forall X, Y \in \mathcal{L},\ X \preceq Y \Longrightarrow h(X) \preceq h(Y)`.
+    One says that the homomorphism `h` is an isomorphism if it is additionally bijective.
+    A simplification of `(E,\, \mathcal{L})` is a simple conditional oriented matroid which is isomorphic to `(E,\, \mathcal{L})`.
     
     INPUT:
     
@@ -517,29 +587,31 @@ def Simplification(L):
         sage: L4 = Set([(1, -1, 1, 0, 0), (1, -1, 1, -1, 0), (1, -1, 1, 1, 0), (1,
         ....: -1, 1, 0, -1), (1, -1, 1, 0, 1), (1, -1, 1, -1, -1), (1, -1, 1, -1,
         ....: 1), (1, -1, 1, 1, -1), (1, -1, 1, 1, 1)])
-        sage: Simplification(L4)
+        sage: simplification(L4)
         {(0, 1), (-1, -1), (0, 0), (-1, 1), (1, 1), (1, -1), (-1, 0), (1, 0),
         (0, -1)}
+        
+    REFERENCES:
+    
+    For more information, see Proposition 2.3 of [Ran2024]_.
     """
-    P = Parallel_Element(L)
+    P = parallel_element(L)
     F = Set()
     for Q in P:
         R = Q.difference(Set([Q.random_element()]))
         F = F.union(R)
     E = Set(range(len(L.random_element())))
-    A = F.union(Coloop(L))
-    return Deletion(L, A)
+    A = F.union(coloop(L))
+    return deletion(L, A)
 
 
 # 2.3 Generating from Topes
 
 
-def Generalized_Mandel(T):
-    """
-    Return the conditional oriented matroid generated by a tope set.
-    
-    It implements Algorithm 1 of the following article: H. Randriamaro,
-    A Generalization of a Theorem of Mandel, Eng. Math. Lett. (2023), Article ID 1.
+def generalized_mandel(T):
+    r"""
+    Return the set `\mathcal{L}` associated to a conditional oriented matroid `(E,\, \mathcal{L})` generated by its tope set `\mathcal{T}`.
+    The algorithm is based on the formula `\mathcal{L} = \big\{X \in \{-1,\,0,\,1\}^E\ \big|\ \forall T \in \mathcal{T},\, X \circ -T \in \mathcal{T}\big\}`.
     
     INPUT:
     
@@ -551,7 +623,7 @@ def Generalized_Mandel(T):
     
         sage: T = Set([(-1, -1, -1, -1), (1, -1, -1, -1), (1, 1, -1, -1), (1, -1, 1
         ....: , -1), (1, 1, 1, -1), (1, 1, 1, 1)])
-        sage: Generalized_Mandel(T)
+        sage: generalized_mandel(T)
         {(1, -1, -1, -1), (1, 0, 1, -1), (0, -1, -1, -1), (1, 0, -1, -1), (-1, -1,
         -1, -1), (1, -1, 1, -1), (1, 1, 1, 0), (1, 0, 0, -1), (1, 1, 0, -1), (1, -1
         , 0, -1), (1, 1, 1, -1), (1, 1, 1, 1), (1, 1, -1, -1)}
@@ -564,7 +636,7 @@ def Generalized_Mandel(T):
     for X in Tuples([-1, 0, 1], len(T.random_element())):
         a = True
         for Y in T:
-            a = a & (Composition(X, neg(Y)) in T)
+            a = a & (composition(X, neg(Y)) in T)
         if a == True:
             M = M.union(Set([tuple(X)]))
     return M
@@ -577,7 +649,7 @@ def Generalized_Mandel(T):
 
 
 def v(X, Y):
-    """
+    r"""
     Return the Aguiar-Mahajan distance between two topes.
     
     INPUT:
@@ -585,6 +657,10 @@ def v(X, Y):
     - ``X`` -- a tope
     - ``Y`` -- a tope
     
+    .. MATH::
+    
+        `\mathrm{v}(X,\,Y) := \prod_{e \in \mathrm{S}(X,\,Y)} q_{e,X_e}` with `q_{e,X_e} = ae` if `X_e = -1` and `q_{e,X_e} = be` otherwise
+        
     EXAMPLES::
     
         sage: v((1, -1, -1, 1, 1), (-1, -1, 1, 1, -1))
@@ -604,13 +680,13 @@ def v(X, Y):
         if l == 1:
             return(b[k])
     x=1
-    for i in Separation(X, Y):
+    for i in separation(X, Y):
         x = x*q(i, X[i])
     return x
 
 
-def V(L):
-    """
+def v_matrix(L):
+    r"""
     Return the Varchenko matrix of a conditional oriented matroid.
     
     INPUT:
@@ -618,6 +694,10 @@ def V(L):
     - ``L`` -- a conditional oriented matroid
     
     OUTPUT: the Varchenko matrix of the simplification of L
+    
+    .. MATH::
+    
+        `\mathrm{V}(\mathcal{L}) := \big(\mathrm{v}(U,\,T)\big)_{T,U \in \mathcal{T}}`
         
     EXAMPLES::
     
@@ -625,7 +705,7 @@ def V(L):
         ....: 0, 1, 0), (1, -1, 0, 0, 0), (1, -1, 1, 0, 0), (1, -1, -1, 1, 0), (1,
         ....: -1, -1, -1, 0), (1, -1, 1, -1, 0), (1, -1, -1, 0, 0), (1, -1, 0, -1,
         ....: 0)])
-        sage: V(L2)
+        sage: v_matrix(L2)
         [       1       a2       b1    a0*a2    a2*b1]
         [      b2        1    b1*b2       a0       b1]
         [      a1    a1*a2        1 a0*a1*a2       a2]
@@ -636,12 +716,12 @@ def V(L):
         
         :mod:`sage.geometry.hyperplane_arrangement.hyperplane`.
     """
-    M = Tope(Simplification(L))
+    M = tope(simplification(L))
     return matrix([[v(X, Y) for Y in M] for X in M])
 
 
-def Varchenko(L):
-    """
+def varchenko(L):
+    r"""
     Return the Varchenko determinant of a conditional oriented matroid.
     
     INPUT:
@@ -649,6 +729,11 @@ def Varchenko(L):
     - ``L`` -- a conditional oriented matroid
     
     OUTPUT: the Varchenko determinant of the simplification of L
+    
+    .. MATH::
+    
+        `\det \mathrm{V}(\mathcal{L}) = \prod_{X \in \mathcal{L} \setminus \mathcal{T}} \Big(1 - \prod_{e \in X^0} q_{e,-1} q_{e,1}\Big)^{\theta(X)}`
+        where `\theta(X) = \frac{\#\big\{T \in \mathcal{T}\ \big|\ \mathrm{Max}\,\{Y \in \mathcal{L}\ |\ Y \prec T,\, Y_f = 0\} = \{X\}\big\}}{2}` and `f \in X^0`.
         
     EXAMPLES::
     
@@ -656,7 +741,7 @@ def Varchenko(L):
         ....: 0, 1, 0), (1, -1, 0, 0, 0), (1, -1, 1, 0, 0), (1, -1, -1, 1, 0), (1,
         ....: -1, -1, -1, 0), (1, -1, 1, -1, 0), (1, -1, -1, 0, 0), (1, -1, 0, -1,
         ....: 0)])
-        sage: Varchenko(L2)
+        sage: varchenko(L2)
         -(a0*b0 - 1)*(a1*b1 - 1)^2*(a2*b2 - 1)^2
         
     REFERENCES:
@@ -673,7 +758,7 @@ def Varchenko(L):
     """
     def Weight(X):
         x=1
-        for i in Zero(X):
+        for i in zero(X):
             x = x*a[i]*b[i]
         return x
     def iBoundary(L, i, X):
@@ -684,28 +769,31 @@ def Varchenko(L):
         return S
     def Theta(L, X):
         M = []
-        i = Zero(X).random_element()
-        for Y in Tope(L):
-            if IsMax(iBoundary(L, i, Y), X):
+        i = zero(X).random_element()
+        for Y in tope(L):
+            if is_max(iBoundary(L, i, Y), X):
                 M.append(Y)
         return len(M)/2
-    M = Simplification(L)
-    return prod([(1-Weight(X))^(Theta(M, X)) for X in M.difference(Tope(M))])
+    M = simplification(L)
+    return prod([(1-Weight(X))^(Theta(M, X)) for X in M.difference(tope(M))])
 
 
 # 3.2 The Aguiar-Mahajan Equation System
 
 
-def AguiarMahajan(L, o):
-    """
+def aguiar_mahajan(L, o):
+    r"""
     Return the solution of an Aguiar-Mahajan linear system.
+    Let `(E,\, \mathcal{L})` be an oriented matroid. Assign a variable `x_X` to each element `X \in \mathcal{L}`.
+    The Aguiar-Mahajan system for `(E,\,\mathcal{L})` is the linear equation system `\sum_{\substack{X \in \mathcal{L} \\ Y \circ X = Y}} x_X\,\mathrm{v}(X,\,Y) = 0` indexed by `Y \in \mathcal{L} \setminus (0,\dots,0)`.
+    It has a unique solution which can be computed recursively with the formula `x_Y = \frac{-1}{1 - \mathrm{v}(Y,\,-Y) \, \mathrm{v}(-Y,\,Y)} \sum_{\substack{X \in \mathcal{L} \\ X \prec Y}} \big(x_X + (-1)^{\mathrm{drk}\,Y}x_{-X} \, \mathrm{v}(-Y,\,Y)\big` with `\mathrm{drk}\,Y := \mathrm{rank}\,\mathcal{L} - \mathrm{corank}\,Y`.
     
     INPUT:
     
     - ``L`` -- an oriented matroid
     - ``o`` -- an initial value associated to the zero vector
     
-    OUTPUT: it gives X --> solution corresponding to X, for each covector X of L
+    OUTPUT: it gives X --> solution corresponding to X, for each element X of L
     
     EXAMPLES::
     
@@ -713,7 +801,7 @@ def AguiarMahajan(L, o):
         ....: 1, 0, -1, 0), (0, 1, 1, -1, 0), (0, 1, 1, 0, 0), (0, 1, 1, 1, 0), (0,
         ....: 0, 1, 1, 0), (0, -1, 1, 1, 0), (0, -1, 0, 1, 0), (0, -1, -1, 1, 0),
         ....: (0, -1, -1, 0, 0), (0, -1, -1, -1, 0)])
-        sage: AguiarMahajan(L3, 1)
+        sage: aguiar_mahajan(L3, 1)
         (0, -1, -1)  -->  -(b1*b2 - 1)/(a1*a2*b1*b2 - 1)
         (-1, 0, 1)  -->  -(a2*b0 - 1)/(a0*a2*b0*b2 - 1)
         (1, 0, -1)  -->  -(a0*b2 - 1)/(a0*a2*b0*b2 - 1)
@@ -750,7 +838,7 @@ def AguiarMahajan(L, o):
     
     - [Ran2022]_
     """
-    def Min(L):
+    def min_system(L):
         X = L.random_element()
         for Y in L:
             if prec(Y, X):
@@ -758,11 +846,11 @@ def AguiarMahajan(L, o):
         return X
     def crk(L, X):
         k=0
-        F = Face(L, X).difference(Set([X]))
+        F = face(L, X).difference(Set([X]))
         while not (F == Set()):
             k = k+1
-            Y = Min(F)
-            F = Face(L, Y).difference(Set([Y]))
+            Y = min_system(F)
+            F = face(L, Y).difference(Set([Y]))
         return k
     def rk(L):
         k=0
@@ -777,13 +865,13 @@ def AguiarMahajan(L, o):
             if prec(Y, X):
                 S = S.union(Set([Y]))
         return S
-    def AM(L, X, o):
+    def am(L, X, o):
         S = Inf(L, X)
-        if X == Min(L):
+        if X == min_system(L):
             return o
         else:
-            return (-1/(1-v(X, neg(X))*v(neg(X), X))) * sum(AM(L, Y, o)+
-            (-1)^(drk(L, X))*v(neg(X), X)*AM(L, neg(Y), o) for Y in S)
-    M = Simplification(L)
+            return (-1/(1-v(X, neg(X))*v(neg(X), X))) * sum(am(L, Y, o)+
+            (-1)^(drk(L, X))*v(neg(X), X)*am(L, neg(Y), o) for Y in S)
+    M = simplification(L)
     for X in M:
-        print (X, " --> ", AM(M, X, o))
+        print (X, " --> ", am(M, X, o))
