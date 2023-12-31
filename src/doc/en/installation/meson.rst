@@ -18,7 +18,7 @@ Assume we're starting from a clean repo and a fully set up conda environment::
     ```
 
 Alternatively, install all build requirements as described in section
-:ref:`_section-prereqs`.
+:ref:`section-prereqs`.
 
 .. NOTE::
 
