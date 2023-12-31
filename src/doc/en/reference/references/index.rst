@@ -4527,6 +4527,10 @@ REFERENCES:
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
 
+.. [Mathas2004] Andrew Mathas.
+                *Matrix units and generic degrees for the Ariki-Koike algebras*.
+                J. Algebra. **281** (2004) pp. 695-730.
+
 .. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
              in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
              405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.

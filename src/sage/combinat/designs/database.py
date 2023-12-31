@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Database of small combinatorial designs
 

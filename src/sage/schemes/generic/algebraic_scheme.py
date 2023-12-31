@@ -371,7 +371,7 @@ class AlgebraicScheme(scheme.Scheme):
           or neighborhood of a point then the embedding is the
           embedding into the original scheme.
 
-        * A ``NotImplementedError`` is raised if the construction of
+        * A :class:`NotImplementedError` is raised if the construction of
           the embedding morphism is not implemented yet.
 
         EXAMPLES::
@@ -465,9 +465,8 @@ class AlgebraicScheme(scheme.Scheme):
 
         OUTPUT:
 
-        A point of ``self``. Raises ``AttributeError`` if there is no
-        distinguished point, depending on how ``self`` was
-        constructed.
+        A point of ``self``. This raises :class:`AttributeError` if there
+        is no distinguished point, depending on how ``self`` was constructed.
 
         EXAMPLES::
 
@@ -1133,7 +1132,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
                 mult = lcm([c.denominator() for c in P.coefficients()])
                 P = mult*P
                 # stores the common factor from all coefficients
-                div = gcd([_ for _ in P.coefficients()])
+                div = gcd(list(P.coefficients()))
                 poly_ring = P.parent() # need to coerce, since division might change base ring
                 P = poly_ring((BR.one()/div)*P)
                 normalized_polys.append(P)

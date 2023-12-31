@@ -73,7 +73,7 @@ class SolitonCellularAutomata(SageObject):
           current state:
           34......224....2223
 
-    We then apply an standard evolution::
+    We then apply a standard evolution::
 
         sage: B.evolve()
         sage: B
