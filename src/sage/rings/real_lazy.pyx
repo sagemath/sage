@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.rings.real_mpfr
+# sage.doctest: needs sage.rings.real_interval_field sage.rings.real_mpfr
 """
 Lazy real and complex numbers
 
@@ -50,12 +50,16 @@ from sage.rings.integer import Integer
 cdef QQ, RR, CC, RealField, ComplexField
 from sage.rings.rational_field import QQ
 
-try:
-    from sage.rings.real_mpfr import RR, RealField
-    from sage.rings.complex_mpfr import ComplexField
-    from sage.rings.cc import CC
-except ImportError:
-    pass
+cdef late_import():
+    global RR, CC, RealField, ComplexField
+    if CC is not None:
+        return
+    try:
+        from sage.rings.real_mpfr import RR, RealField
+        from sage.rings.complex_mpfr import ComplexField
+        from sage.rings.cc import CC
+    except ImportError:
+        pass
 
 cdef _QQx = None
 
@@ -1611,6 +1615,9 @@ cdef class LazyAlgebraic(LazyFieldElement):
         if self._poly.degree() == 2:
             c, b, a = self._poly.list()
             self._quadratic_disc = b*b - 4*a*c
+
+        late_import()
+
         if isinstance(parent, RealLazyField_class):
             if not self._poly.number_of_real_roots():
                 raise ValueError("%s has no real roots" % self._poly)

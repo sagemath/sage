@@ -1232,9 +1232,9 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         return type(self)(self._parent, negate(self._t_dict),
                           -self._c_coeff, -self._d_coeff)
 
-    cpdef _acted_upon_(self, x, bint self_on_left) noexcept:
+    cpdef _acted_upon_(self, scalar, bint self_on_left) noexcept:
         """
-        Return ``self`` acted upon by ``x``.
+        Return ``self`` acted upon by ``scalar``.
 
         EXAMPLES::
 
@@ -1246,9 +1246,21 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             sage: -2 * x
             (-2*E[alpha[1]])#t^0 + (-2*h1)#t^-1 + -6*c + 4/5*d
         """
-        return type(self)(self._parent, scal(x, self._t_dict, self_on_left),
-                          x * self._c_coeff,
-                          x * self._d_coeff)
+        # This was copied and IDK if it still applies (TCS):
+        # With the current design, the coercion model does not have
+        # enough information to detect apriori that this method only
+        # accepts scalars; so it tries on some elements(), and we need
+        # to make sure to report an error.
+        scalar_parent = parent(scalar)
+        if scalar_parent != self._parent.base_ring():
+            # Temporary needed by coercion (see Polynomial/FractionField tests).
+            if self._parent.base_ring().has_coerce_map_from(scalar_parent):
+                scalar = self._parent.base_ring()(scalar)
+            else:
+                return None
+        return type(self)(self._parent, scal(scalar, self._t_dict, self_on_left),
+                          scalar * self._c_coeff,
+                          scalar * self._d_coeff)
 
     cpdef monomial_coefficients(self, bint copy=True) noexcept:
         """
@@ -1660,6 +1672,25 @@ cdef class LieGenerator(LieObject):
             ('x',)
         """
         return self._word
+
+    cpdef lift(self, dict UEA_gens_dict):
+        """
+        Lift ``self`` to the universal enveloping algebra.
+
+        ``UEA_gens_dict`` should be the dictionary for the
+        generators of the universal enveloping algebra.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, 'x,y,z')
+            sage: Lyn = L.Lyndon()
+            sage: x,y,z = Lyn.gens()
+            sage: x.lift()
+            x
+            sage: x.lift().parent()
+            Free Algebra on 3 generators (x, y, z) over Rational Field
+        """
+        return UEA_gens_dict[self._name]
 
 cdef class LieBracket(LieObject):
     """

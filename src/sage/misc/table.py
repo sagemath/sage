@@ -293,7 +293,7 @@ class table(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.plot
+            sage: # needs sage.modules sage.plot sage.symbolic
             sage: rows = [['a', 'b', 'c'], [1,plot(sin(x)),3], [4,5,identity_matrix(2)]]
             sage: T = table(rows, header_row=True)
             sage: T2 = table(rows, header_row=True)
