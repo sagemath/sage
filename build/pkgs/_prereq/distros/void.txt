@@ -16,6 +16,7 @@ make
 perl
 python3
 tar
+bash
 which
 # needed by gfortran
 diffutils
