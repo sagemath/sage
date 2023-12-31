@@ -47,8 +47,7 @@ jobs:
       - name: Compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ runner.os }}-meson-${{ matrix.python }}-${{ github.run_id }}
-          restore-keys: ${{ runner.os }}-meson-${{ matrix.python }}-
+          key: ${{ runner.os }}-meson-${{ matrix.python }}
 
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v2
