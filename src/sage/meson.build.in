@@ -148,12 +148,3 @@ inc_ext = include_directories('sage/ext')
 inc_interpreters = include_directories('sage/ext/interpreters')
 inc_partn_ref2 = include_directories('sage/groups/perm_gps/partn_ref2')
 inc_src = include_directories('.')
-
-pthread = declare_dependency(
-  dependencies: [
-    cc.find_library('pthread'),
-  ]
-)
-
-inc_ginac = include_directories('symbolic/ginac')
-inc_pynac = include_directories('symbolic')
