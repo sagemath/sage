@@ -150,12 +150,3 @@ inc_ext = include_directories('ext')
 inc_interpreters = include_directories('ext/interpreters')
 inc_partn_ref2 = include_directories('groups/perm_gps/partn_ref2')
 inc_src = include_directories('.')
-
-pthread = declare_dependency(
-  dependencies: [
-    cc.find_library('pthread'),
-  ]
-)
-
-inc_ginac = include_directories('symbolic/ginac')
-inc_pynac = include_directories('symbolic')
