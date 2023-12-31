@@ -1,0 +1,1 @@
+coxeter3 = cc.find_library('coxeter3', required: false)
