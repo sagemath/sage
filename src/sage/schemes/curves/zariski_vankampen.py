@@ -652,6 +652,11 @@ def fieldI(field):
         sage: F1 = fieldI(F0)
         sage: F0 == F1
         True
+        sage: F0 = CyclotomicField(5)
+        sage: fieldI(F0)
+        Number Field in prim with defining polynomial
+        x^8 - 2*x^7 + 7*x^6 - 10*x^5 + 16*x^4 - 10*x^3 - 2*x^2 + 4*x + 1
+        with prim = -0.3090169943749474? + 0.04894348370484643?*I
     """
     I0 = QQbar.gen()
     if I0 in field:

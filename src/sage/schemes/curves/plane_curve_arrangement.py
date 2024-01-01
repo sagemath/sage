@@ -61,6 +61,7 @@ from sage.schemes.curves.projective_curve import ProjectiveSpace
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
 from sage.schemes.curves.zariski_vankampen import braid_monodromy
 from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
+from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
@@ -958,6 +959,11 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
     """
     Element = AffinePlaneCurveArrangementsElement
 
+    @staticmethod
+    def __classcall__(cls, base, names=()):
+        names = normalize_names(len(names), names)
+        return super().__classcall__(cls, base, names)
+
     def __init__(self, base_ring, names=tuple()):
         """
         Initialize ``self``.
@@ -978,25 +984,7 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
-        super().__init__(category=Sets())
-        self._base_ring = base_ring
-        self._names = names
-
-    def base_ring(self):
-        """
-        Return the base ring.
-
-        OUTPUT:
-
-        The base ring of the curve arrangement.
-
-        EXAMPLES::
-
-            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: L.base_ring()
-            Rational Field
-        """
-        return self._base_ring
+        super().__init__(base_ring, names=names, category=Sets())
 
     def coordinate_ring(self):
         """
@@ -1012,7 +1000,7 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.coordinate_ring()
             Multivariate Polynomial Ring in x, y over Rational Field
         """
-        return PolynomialRing(self._base_ring, self._names)
+        return PolynomialRing(self.base_ring(), self.variable_names())
 
     def change_ring(self, base_ring):
         """
@@ -1040,7 +1028,7 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.change_ring(QQ) is L
             True
         """
-        return AffinePlaneCurveArrangements(base_ring, names=self._names)
+        return AffinePlaneCurveArrangements(base_ring, names=self.variable_names())
 
     @cached_method
     def ambient_space(self):
@@ -1053,7 +1041,7 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.ambient_space()
             Affine Space of dimension 2 over Rational Field
         """
-        return AffineSpace(self.base_ring(), 2, self._names)
+        return AffineSpace(self.base_ring(), 2, self.variable_names())
 
     def _repr_(self):
         """
@@ -1090,10 +1078,11 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L._element_constructor_(y, x) == A
             False
        """
-        if len(args) == 1 and not (isinstance(args[0], (tuple, list))):
-            arg = (args[0], )
-        elif len(args) == 1:
-            arg = tuple(args[0])
+        if len(args) == 1:
+            if not isinstance(args[0], (tuple, list)):
+                arg = (args[0], )
+            else:
+                arg = tuple(args[0])
         else:
             arg = tuple(args)
         ambient_space = self.ambient_space()
@@ -1148,7 +1137,7 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.ngens()
             3
         """
-        return len(self._names)
+        return len(self.variable_names())
 
     @cached_method
     def gens(self):
