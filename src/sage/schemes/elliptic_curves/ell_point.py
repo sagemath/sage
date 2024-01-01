@@ -559,6 +559,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             True
             sage: P._order
             7
+            sage: P.has_order(7)
+            True
 
         It also works with a :class:`~sage.structure.factorization.Factorization` object::
 
@@ -568,6 +570,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             True
             sage: P._order
             21
+            sage: P.has_order(factor(21))
+            True
 
         This method can be much faster than computing the order and comparing::
 
@@ -613,6 +617,14 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             CPU times: user 10 µs, sys: 1e+03 ns, total: 11 µs
             Wall time: 14.5 µs
             5326738796327623094747867617954605554069371494832722337612446642054009560026576537626892113026381253624626941643949444792662881241621373288942880288065660
+
+        TESTS::
+
+            sage: E = EllipticCurve([1,2,3,4,5])
+            sage: E(0).has_order(1)
+            True
+            sage: E(0).has_order(Factorization([]))
+            True
         """
         if hasattr(self, '_order'):                 # already known
             if not isinstance(n, Integer):
