@@ -1,1 +1,0 @@
-# This is merely an indicator file, version is defined in pyproject.toml

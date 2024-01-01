@@ -185,6 +185,19 @@ __pycache__/
 build/temp.*/
 build/bin/sage-build-env-config
 
+# Generated files in build
+build/pkgs/cypari/install-requires.txt
+build/pkgs/cysignals/install-requires.txt
+build/pkgs/cython/install-requires.txt
+build/pkgs/gmpy2/install-requires.txt
+build/pkgs/jupyter_core/install-requires.txt
+build/pkgs/memory_allocator/install-requires.txt
+build/pkgs/numpy/install-requires.txt
+build/pkgs/pkgconfig/install-requires.txt
+build/pkgs/pplpy/install-requires.txt
+build/pkgs/setuptools/install-requires.txt
+build/pkgs/wheel/install-requires.txt
+
 # Generated files in the top-level source trees
 /pkgs/*/build
 /pkgs/*/dist
