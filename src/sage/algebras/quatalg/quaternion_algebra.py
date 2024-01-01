@@ -1988,8 +1988,8 @@ class QuaternionOrder(Parent):
 
         .. NOTE::
 
-            This method is currently only implemented for definite
-            quaternion orders over `\QQ`. For a general algorithm,
+            This method is currently only implemented for maximal orders in
+            definite quaternion orders over `\QQ`. For a general algorithm,
             see [KV2010]_ (Problem ``IsConjugate``).
 
         EXAMPLES::
@@ -2072,6 +2072,8 @@ class QuaternionOrder(Parent):
 
         if not self.quadratic_form().is_positive_definite():
             raise NotImplementedError('only implemented for definite quaternion orders')
+        if not (self.discriminant() == Q.discriminant() == other.discriminant()):
+            raise NotImplementedError('only implemented for maximal orders')
 
         N = self.intersection(other).free_module().index_in(self.free_module())
         I = N * self * other
