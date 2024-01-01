@@ -60,7 +60,6 @@ EXAMPLES::
     sage: M1._cached_info = {'plot_positions': pos_dict, 'plot_lineorders': None}
     sage: matroids_plot_helpers.geomrep(M1, sp=True)                                    # needs sage.plot sage.rings.finite_rings
     Graphics object consisting of 22 graphics primitives
-
 """
 # *****************************************************************************
 #       Copyright (C) 2013 Jayant Apte <jayant91089@gmail.com>
@@ -210,7 +209,6 @@ def trigrid(tripts):
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     pairs = [[0, 1], [1, 2], [0, 2]]
     cpt = list((float(tripts[0][0]+tripts[1][0]+tripts[2][0])/3,
@@ -266,7 +264,6 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     tripts = [list(ptsdict[p]) for p in tripts_labels]
     pairs = [[0, 1], [1, 2], [0, 2]]
@@ -343,7 +340,6 @@ def createline(ptsdict, ll, lineorders2=None):
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     x, lo = line_hasorder(ll, lineorders2)
     flip = False
@@ -425,7 +421,6 @@ def slp(M1, pos_dict=None, B=None):
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     L = set(M1.loops())
     nP = L | set(M1.simplify().groundset())
@@ -497,7 +492,6 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     if G is None:
         G = Graphics()
@@ -633,7 +627,6 @@ def lineorders_union(lineorders1, lineorders2):
         sage: matroids_plot_helpers.lineorders_union([['a','b','c'],
         ....: ['p','q','r'],['i','j','k','l']],[['r','p','q']])
         [['a', 'b', 'c'], ['p', 'q', 'r'], ['i', 'j', 'k', 'l']]
-
     """
     if lineorders1 is not None and lineorders2 is not None:
         lineorders = lineorders1

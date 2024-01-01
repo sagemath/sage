@@ -146,7 +146,6 @@ class DualMatroid(Matroid):
             sage: M = matroids.catalog.NonPappus().dual()
             sage: M._rank(['a', 'b', 'c'])
             3
-
         """
         return self._matroid._corank(X)
 
@@ -222,7 +221,6 @@ class DualMatroid(Matroid):
             Traceback (most recent call last):
             ...
             ValueError: no circuit in independent set.
-
         """
         return self._matroid._cocircuit(X)
 
@@ -244,7 +242,6 @@ class DualMatroid(Matroid):
             sage: M = matroids.catalog.Vamos().dual()
             sage: sorted(M._closure(set(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
-
         """
         return self._matroid._coclosure(X)
 
@@ -292,7 +289,6 @@ class DualMatroid(Matroid):
             sage: M = matroids.catalog.Vamos().dual()
             sage: sorted(M._coclosure(set(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
-
         """
         return self._matroid._closure(X)
 
@@ -516,7 +512,6 @@ class DualMatroid(Matroid):
             True
             sage: M.groundset() is N.groundset()
             True
-
         """
         N = DualMatroid(self._matroid)
         N.rename(self.get_custom_name())

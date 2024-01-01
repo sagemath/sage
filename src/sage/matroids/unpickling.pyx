@@ -74,7 +74,6 @@ def unpickle_basis_matroid(version, data):
         sage: M = BasisMatroid(matroids.catalog.Vamos())
         sage: M == loads(dumps(M))  # indirect doctest
         True
-
     """
     cdef BasisMatroid M
     if version != 0:

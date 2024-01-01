@@ -206,7 +206,6 @@ cdef class BasisExchangeMatroid(Matroid):
         NOTE:
         For internal use. Matroids are immutable but this method does modify the matroid. The use this method will only
         be safe in very limited circumstances, such as perhaps on a fresh copy of a matroid.
-
         """
         cdef long i
         E = []
@@ -521,7 +520,6 @@ cdef class BasisExchangeMatroid(Matroid):
             7
             sage: len(M.groundset())
             7
-
         """
         return self._groundset_size
 
@@ -599,7 +597,6 @@ cdef class BasisExchangeMatroid(Matroid):
             2
             sage: sorted(M.basis())
             ['a', 'c', 'd']
-
         """
         return self.__unpack(self._current_basis)
 
@@ -628,7 +625,6 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M._move_current_basis('ef', 'a')
             sage: sorted(M.basis())
             ['b', 'c', 'e', 'f']
-
         """
         self._pack(self._input, X)
         self._pack(self._input2, Y)
@@ -659,7 +655,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if
             the input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.max_independent>`.
-
         """
         self._pack(self._input, F)
         self.__max_independent(self._output, self._input)
@@ -690,7 +685,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if
             the input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.rank>`.
-
         """
         self._pack(self._input, F)
         self.__max_independent(self._output, self._input)
@@ -785,7 +779,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if the
             input is indeed a subset of the ground set, see
             :meth:`<sage.matroids.matroid.Matroid.closure>`.
-
         """
         self._pack(self._input, F)
         self.__closure(self._output, self._input)
@@ -816,7 +809,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if the
             input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.max_coindependent>`.
-
         """
         self._pack(self._input, F)
         self.__max_coindependent(self._output, self._input)
@@ -941,7 +933,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if the
             input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.coclosure>`.
-
         """
         self._pack(self._input, F)
         self._coclosure_internal(self._output, self._input)
@@ -971,7 +962,6 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(M._augment(set(['a']), set(['e', 'f', 'g', 'h'])))
             ['e', 'f', 'g']
-
         """
         self._pack(self._input, X)
         self._pack(self._input2, Y)
@@ -1258,7 +1248,6 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M = matroids.catalog.S8()
             sage: M.f_vector()
             [1, 8, 22, 14, 1]
-
         """
         cdef bitset_t *flats
         cdef bitset_t *todo
@@ -1622,7 +1611,6 @@ cdef class BasisExchangeMatroid(Matroid):
             184
             sage: [len(M.independent_r_sets(r)) for r in range(M.full_rank() + 1)]
             [1, 10, 45, 120, 201, 184]
-
         """
         cdef SetSystem BB
         BB = SetSystem(self._E)
@@ -1676,7 +1664,6 @@ cdef class BasisExchangeMatroid(Matroid):
             68
             sage: [len(M.dependent_r_sets(r)) for r in range(M.full_rank() + 1)]
             [0, 0, 0, 0, 9, 68]
-
         """
         cdef SetSystem NB
         NB = SetSystem(self._E)
@@ -2300,7 +2287,6 @@ cdef class BasisExchangeMatroid(Matroid):
             False
             sage: M1._is_isomorphic(M2, certificate=True)
             (False, None)
-
         """
         if certificate:
             return self._is_isomorphic(other), self._isomorphism(other)

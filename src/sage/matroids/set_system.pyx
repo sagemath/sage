@@ -117,7 +117,6 @@ cdef class SetSystem:
             [1, 2]
             [3, 4]
             [1, 2, 4]
-
         """
         if subsets is not None:
             for e in subsets:
@@ -198,7 +197,6 @@ cdef class SetSystem:
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: repr(S)  # indirect doctest
             'Iterator over a system of subsets'
-
         """
         return "Iterator over a system of subsets"
 
@@ -221,7 +219,6 @@ cdef class SetSystem:
         OUTPUT:
 
         ``None``.
-
         """
         cdef long i
         E = []
@@ -249,7 +246,6 @@ cdef class SetSystem:
             [3, 4]
             [1, 2]
             [3]
-
         """
         cdef SetSystem S
         if self._groundset_size == 0:
@@ -346,7 +342,6 @@ cdef class SetSystem:
             sage: S = SetSystem([1], [])
             sage: S.is_connected()
             True
-
         """
         if self._groundset_size <= 1:
             return True

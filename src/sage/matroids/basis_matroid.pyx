@@ -257,7 +257,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M = BasisMatroid(matroids.catalog.Fano())
             sage: repr(M)  # indirect doctest
             'Matroid of rank 3 on 7 elements with 28 bases'
-
         """
         return Matroid._repr_(self) + " with " + str(self.bases_count()) + " bases"
 
@@ -283,7 +282,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         NOTE: this is an internal function, supporting the parent class
         BasisExchangeMatroid of BasisMatroid.
-
         """
         bitset_copy(self._b, self._current_basis)
         bitset_discard(self._b, x)
@@ -358,7 +356,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         yields a bitvector that indicates whether the complement of an
         `(n - r)`-set is a basis, i.e. gives the bitvector of the bases of the
         dual.
-
         """
         cdef long i, N
         cdef BasisMatroid D
@@ -402,7 +399,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: M._minor(contractions=set(['a']), deletions=set(['b', 'c']))
             Matroid of rank 3 on 5 elements with 10 bases
-
         """
         E = self.groundset() - (contractions | deletions)
         mr = self.full_rank() - len(contractions)
@@ -436,7 +432,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             [1, 12, 66, 190, 258, 99, 1]
             sage: M.truncation().f_vector()
             [1, 12, 66, 190, 258, 1]
-
         """
         if self.full_rank() == 0:
             return None
@@ -516,7 +511,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             Matroid of rank 3 on 7 elements with 28 bases
             sage: M._with_coloop('x')
             Matroid of rank 4 on 8 elements with 28 bases
-
         """
         cdef frozenset se = frozenset([e])
         return BasisMatroid(groundset=self._E + (e,), bases=[B | se for B in self.bases()])
@@ -554,7 +548,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: N = M.relabel({'g':'x'})
             sage: sorted(N.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'x']
-
         """
         M = BasisMatroid(M=self)
         M._relabel(l)
@@ -847,7 +840,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M = BasisMatroid(matroids.catalog.N1())
             sage: sorted([e for e in M.groundset() if M.is_distinguished(e)])
             ['c', 'g', 'h', 'j']
-
         """
         P = self._bases_partition()
         p = P[0]
@@ -1180,7 +1172,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: N = copy(M)  # indirect doctest
             sage: M == N
             True
-
         """
         N = BasisMatroid(M=self)
         N.rename(self.get_custom_name())

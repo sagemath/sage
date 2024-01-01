@@ -480,7 +480,6 @@ cdef class MatroidExtensions(LinearSubclasses):
             ....:                                            [4, 5]]): print(N)
             Matroid of rank 3 on 7 elements with 32 bases
             Matroid of rank 3 on 7 elements with 20 bases
-
         """
         if M.full_rank() == 0:
             pass

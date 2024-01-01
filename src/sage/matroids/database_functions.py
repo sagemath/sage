@@ -9,7 +9,6 @@ typing ``matroids.`` + :kbd:`Tab`.
 AUTHORS:
 
 - Giorgos Mousa (2023-12-08): initial version
-
 """
 
 # ****************************************************************************
@@ -45,7 +44,6 @@ def OxleyMatroids():
 
     These matroids are the nonparametrized matroids that appear in the
     Appendix ``Some Interesting Matroids`` in [Oxl2011]_ (p. 639-64).
-
     """
     from sage.matroids.database_matroids import (
         U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,
@@ -91,7 +89,6 @@ def BrettellMatroids():
 
         :mod:`Matroid catalog <sage.matroids.matroids_catalog>`, under
         ``Brettell's matroid collection``.
-
     """
     from sage.matroids.database_matroids import (
         RelaxedNonFano, TippedFree3spike,
@@ -141,7 +138,6 @@ def VariousMatroids():
 
         :mod:`Matroid catalog <sage.matroids.matroids_catalog>`, under
         ``Collection of various matroids``.
-
     """
     from sage.matroids.database_matroids import (
         NonVamos, NotP8, AG23minus,

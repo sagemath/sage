@@ -11,7 +11,6 @@ See also :mod:`sage.matroids.advanced`.
 AUTHORS:
 
 - Stefan van Zwam (2011-06-24): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
@@ -172,7 +171,6 @@ def newlabel(groundset):
         63
         sage: t[0]
         'e'
-
     """
     char_list = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
     char_list.difference_update([str(e) for e in groundset])
@@ -227,7 +225,6 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
         Traceback (most recent call last):
         ...
         ValueError: contraction and deletion sets are not disjoint.
-
     """
     if not contractions:
         contractions = frozenset()
@@ -557,7 +554,6 @@ def lift_cross_ratios(A, lift_map=None):
         [-z + 1, z]
         sage: M.is_isomorphism(N, {e:e for e in M.groundset()})                         # needs sage.rings.finite_rings sage.rings.number_field
         True
-
     """
     from sage.graphs.graph import Graph
 
@@ -711,7 +707,6 @@ def lift_map(target):
         ....:         for z in lm:
         ....:             if (x*y==z) and not (lm[x]*lm[y]==lm[z]):
         ....:                 print('not a proper lift map')
-
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
 
