@@ -105,14 +105,19 @@ class EllipticCurveHomset(SchemeHomset_generic):
         super().__init__(*args, **kwds)
 
         if self.domain() == self.codomain():
+
             # set up automated coercion of integers to scalar multiplications
             from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
+
             class ScalarMultiplicationEmbedding(Morphism):
+
                 def __init__(self, End):
                     assert End.domain() is End.codomain()
                     super().__init__(ZZ, End)
+
                 def _call_(self, m):
                     return EllipticCurveHom_scalar(self.codomain().domain(), m)
+
             self.register_coercion(ScalarMultiplicationEmbedding(self))
 
     def _repr_(self):
@@ -144,4 +149,3 @@ class EllipticCurveHomset(SchemeHomset_generic):
         s += f'\n  From: {self.domain()}'
         s += f'\n  To:   {self.codomain()}'
         return s
-
