@@ -963,6 +963,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         else:
             ys = [y1, y2]
         ys.sort()  # ensure deterministic behavior
+        x = M(x)
         one = M.one()
         if all:
             return [EM.point([x, y, one], check=False) for y in ys]
