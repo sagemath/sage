@@ -1986,6 +1986,12 @@ class QuaternionOrder(Parent):
         `O' = \gamma^{-1} O \gamma`,
         rather than the ring isomorphism it defines.
 
+        .. NOTE::
+
+            This method is currently only implemented for definite
+            quaternion orders over `\QQ`. For a general algorithm,
+            see [KV2010]_ (Problem ``IsConjugate``).
+
         EXAMPLES::
 
             sage: Quat.<i,j,k> = QuaternionAlgebra(-1, -19)
@@ -2063,6 +2069,9 @@ class QuaternionOrder(Parent):
         Q = self.quaternion_algebra()
         if other.quaternion_algebra() != Q:
             raise TypeError('not an order in the same quaternion algebra')
+
+        if not self.quadratic_form().is_positive_definite():
+            raise NotImplementedError('only implemented for definite quaternion orders')
 
         N = self.intersection(other).free_module().index_in(self.free_module())
         I = N * self * other
@@ -2590,8 +2599,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: el.reduced_norm()
             282
         """
-        parif = self.quadratic_form().__pari__()
-        _,v = parif.qfminim(None, None, 1)
+        qf = self.quadratic_form()
+        if not qf.is_positive_definite():
+            raise ValueError('quaternion algebra must be definite')
+        pariqf = qf.__pari__()
+        _,v = pariqf.qfminim(None, None, 1)
         return sum(ZZ(c)*g for c,g in zip(v, self.basis()))
 
     def theta_series(self, B, var='q'):
