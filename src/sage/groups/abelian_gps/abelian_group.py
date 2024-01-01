@@ -445,6 +445,7 @@ def AbelianGroup(n, gens_orders=None, names="f"):
     M = AbelianGroup_class(gens_orders, names)
     return M
 
+
 def is_AbelianGroup(x):
     """
     Return True if ``x`` is an Abelian group.
@@ -536,7 +537,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         assert isinstance(names, (str, tuple))
         assert isinstance(generator_orders, tuple)
-        assert all(isinstance(order,Integer) for order in generator_orders)
+        assert all(isinstance(order, Integer) for order in generator_orders)
         self._gens_orders = generator_orders if gens_orders is None else gens_orders
         n = len(generator_orders)
         names = normalize_names(n, names)
@@ -944,7 +945,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: [g.order() for g in F.gens()]
             [+Infinity, +Infinity, +Infinity, 3, 2]
         """
-        return tuple( self.gen(i) for i in range(self.ngens()) )
+        return tuple(self.gen(i) for i in range(self.ngens()))
 
     def gens_orders(self):
         """
@@ -1176,7 +1177,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             order = g.order()
             if order is infinity:
                 order = 42  # infinite order; randomly chosen maximum
-            result *= g**(randint(0,order))
+            result *= g**(randint(0, order))
         return result
 
     def _repr_(self):
@@ -1554,8 +1555,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         rel_lattice = X.span([X.gen(i) * self.gens_orders()[i] for i in range(d)])
         isect = elt_lattice.intersection(rel_lattice)
         mat = matrix([elt_lattice.coordinate_vector(x) for x in isect.gens()]).change_ring(ZZ)
-        D,U,V = mat.smith_form()
-        new_basis = [(elt_lattice.linear_combination_of_basis((~V).row(i)).list(), D[i,i]) for i in range(U.ncols())]
+        D, U, V = mat.smith_form()
+        new_basis = [(elt_lattice.linear_combination_of_basis((~V).row(i)).list(), D[i, i]) for i in range(U.ncols())]
         return self.subgroup([self([x[0][i] % self.gens_orders()[i]
                                     for i in range(d)]) for x in new_basis if x[1] != 1])
 
@@ -1773,8 +1774,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
                 ZZ, len(self._gens), len(amb_inv),
                 [g.list() for g in self._gens]
             )
-            return (vector(ZZ, x.list())
-                in inv_basis.stack(gens_basis).row_module())
+            return (vector(ZZ, x.list()) in inv_basis.stack(gens_basis).row_module())
         return False
 
     def ambient_group(self):
