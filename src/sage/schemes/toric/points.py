@@ -96,7 +96,7 @@ class InfinitePointEnumerator():
         rays = self.fan().rays() + self.fan().virtual_rays()
         n = len(rays)
         if n == 0:
-            yield tuple()
+            yield ()
         else:
             R = self.ring
             p = [R.one() for k in range(n)]
@@ -242,7 +242,7 @@ class NaiveFinitePointEnumerator():
             ((1, 2, 4), (1, 4, 2))
         """
         if self.fan.is_smooth():
-            return tuple()
+            return ()
         image = self.rays().column_matrix().image()
         torsion = image.saturation().quotient(image)
         result = set()
@@ -539,7 +539,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
             ((1, 2, 4),)
         """
         if self.fan.is_smooth():
-            return tuple()
+            return ()
         image = self.rays().column_matrix().image()
         torsion = image.saturation().quotient(image)
         result = set()

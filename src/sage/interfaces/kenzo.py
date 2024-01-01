@@ -430,7 +430,7 @@ class KenzoChainComplex(KenzoObject):
 
         OUTPUT:
 
-        - An homology group.
+        - A homology group.
 
         EXAMPLES::
 
