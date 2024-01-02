@@ -66,8 +66,6 @@ reconfigure:
 	        exit 1; \
 	fi
 
-
-
 # This is used to monitor progress towards Python 3 and prevent
 # regressions. Should be removed after the full switch to python3.
 #
