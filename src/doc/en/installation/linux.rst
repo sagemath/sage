@@ -47,7 +47,7 @@ a try.
 
       * - `downstream-gentoo-overlay
           <https://github.com/sagemath/sage/tree/develop/.devcontainer/downstream-gentoo-overlay>`_
-        -
+        - `cschwan/sage-on-gentoo <https://github.com/cschwan/sage-on-gentoo>`_
         - |codespace-downstream-gentoo-overlay|
 
 See `repology.org: sagemath
