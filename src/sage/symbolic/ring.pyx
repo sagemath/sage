@@ -760,7 +760,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         - ``n`` -- (optional) positive integer; number of symbolic variables, indexed from `0` to `n-1`
 
-        - ``domain`` -- (optional) specify the domain of the variable(s); it is the complex plane
+        - ``domain`` -- (optional) specify the domain of the variable(s); it is None
           by default, and possible options are (non-exhaustive list, see note below):
           ``'real'``, ``'complex'``, ``'positive'``, ``'integer'`` and ``'noninteger'``
 
@@ -862,16 +862,6 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             Traceback (most recent call last):
             ...
             ValueError: cannot specify n for multiple symbol names
-        
-        Check that :trac:`36833` is fixed: Variables whose domain is not
-        defined should be considered in complex plane as described in documentation::
-
-            sage: y = SR.var("y"); y
-            y
-            sage: f = y * conjugate(y); f
-            f
-            sage: f.factor()
-            y*conjugate(y)
         """
         if isinstance(name, Expression):
             return name
