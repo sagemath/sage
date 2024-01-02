@@ -1080,8 +1080,8 @@ class DocTestController(SageObject):
             sage.doctest.test
             sage.doctest.sources
             sage.doctest.reporting
-            sage.doctest.parsing
             sage.doctest.parsing_test
+            sage.doctest.parsing
             sage.doctest.forker
             sage.doctest.fixtures
             sage.doctest.external
