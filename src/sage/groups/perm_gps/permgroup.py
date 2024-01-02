@@ -283,9 +283,10 @@ def PermutationGroup(gens=None, *args, **kwds):
     .. NOTE::
 
         If the domain is not specified, and all generators act on
-        integers, the domain is the interval of integers between the
-        smallest and the largest integer appearing.  Otherwise, the
-        domain is the set of elements the generators act on.
+        integers, the domain is the smallest interval of integers
+        containing all numbers appearing in the generators and the
+        number `1`.  Otherwise, the domain is the set of elements the
+        generators act on.
 
     EXAMPLES::
 
