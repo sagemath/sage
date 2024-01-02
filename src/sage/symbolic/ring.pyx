@@ -780,7 +780,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         EXAMPLES:
 
-        Create a variable `zz` (complex by default)::
+        Create a variable `zz`::
 
             sage: zz = SR.var('zz'); zz
             zz
