@@ -1,2 +1,2 @@
-FROM ghcr.io/void-linux/void-glibc
+FROM ghcr.io/void-linux/void-glibc-full
 RUN xbps-install -Suy bash nodejs gnupg2 openssh
