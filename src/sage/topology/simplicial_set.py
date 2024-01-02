@@ -294,6 +294,7 @@ class AbstractSimplex_class(SageObject):
     Users should not call this directly, but instead use
     :func:`AbstractSimplex`. See that function for more documentation.
     """
+
     def __init__(self, dim, degeneracies=(), underlying=None, name=None,
                  latex_name=None):
         """
@@ -2381,7 +2382,6 @@ class SimplicialSet_arbitrary(Parent):
             sage: Y = S2.unset_base_point()
             sage: Z = K.unset_base_point()
 
-            sage:
             sage: S2.coproduct(K).is_pointed()
             True
             sage: S2.coproduct(K)
@@ -3202,6 +3202,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         sage: X
         Y
     """
+
     def __init__(self, data, base_point=None, name=None, check=True,
                  category=None, latex_name=None):
         r"""

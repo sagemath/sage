@@ -228,7 +228,7 @@ fi
 # depending on SAGE_ROOT and SAGE_LOCAL which are already defined.
 if [ -n "$SAGE_LOCAL" ]; then
     export SAGE_SHARE="$SAGE_LOCAL/share"
-    export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
+    export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"  # deprecated
 fi
 if [ -n "$SAGE_SHARE" ]; then
     export SAGE_DOC="$SAGE_SHARE/doc/sage"
@@ -268,11 +268,7 @@ if [ -n "$SAGE_LOCAL" -a -f "$SAGE_LOCAL"/toolchain/toolchain-env ]; then
 fi
 
 # setting of the variable UNAME (describing the o.s.)
-# On Cygwin the result of `uname` depends on the version of Windows
-# it is running on, e.g. CYGWIN_NT-5.1 on 32 bits Windows XP or
-# CYGWIN_NT-6.1-WOW64 on 64 bits Windows 7.
-# Currently, this information is of no use to us so we discard it.
-export UNAME=`uname | sed 's/CYGWIN.*/CYGWIN/' `
+export UNAME=`uname`
 
 # Mac OS X-specific setup
 if [ "$UNAME" = "Darwin" ]; then
@@ -545,15 +541,6 @@ fi
 
 if [ "$TOUCH" = "" ]; then
     TOUCH="touch"  && export TOUCH
-fi
-
-if [ "$UNAME" = "CYGWIN" -a -n "$SAGE_LOCAL" ]; then
-    # Cygwin needs pathnames in PATH to resolve runtime dependencies
-    PATH="$SAGE_LOCAL/lib/R/lib:$SAGE_LOCAL/lib:$PATH" && export PATH
-    # And "dlopen" needs them in LD_LIBRARY_PATH, just as on Linuces,
-    # except that on Cygwin shared libraries are usually stored in "bin"
-    # and not in "lib"
-    LD_LIBRARY_PATH="$SAGE_LOCAL/bin:$LD_LIBRARY_PATH" && export LD_LIBRARY_PATH
 fi
 
 # Handle parallel building/testing/...

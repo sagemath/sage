@@ -71,6 +71,7 @@ Methods
 
 from sage.misc.superseded import deprecation
 
+
 def is_connected(G):
     """
     Check whether the (di)graph is connected.
@@ -2041,7 +2042,7 @@ def bridges(G, labels=True):
     if G.order() < 2 or not is_connected(G):
         return
 
-    B, C = G.blocks_and_cut_vertices()
+    B, _ = G.blocks_and_cut_vertices()
 
     # A block of size 2 is a bridge, unless the vertices are connected with
     # multiple edges.
@@ -2209,8 +2210,9 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
     # If a vertex cut is given, we check that it is valid. Otherwise, we compute
     # a small vertex cut
     if cut_vertices is None:
-        cut_size, cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
-                                                       integrality_tolerance=integrality_tolerance)
+        _, cut_vertices = G.vertex_connectivity(value_only=False,
+                                                solver=solver, verbose=verbose,
+                                                integrality_tolerance=integrality_tolerance)
         if not cut_vertices:
             # Typical example is a clique
             raise ValueError("the input graph has no vertex cut")
@@ -2218,7 +2220,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
         cut_vertices = list(cut_vertices)
         for u in cut_vertices:
             if u not in G:
-                raise ValueError("vertex {} is not a vertex of the input graph".format(u))
+                raise ValueError(f"vertex {u} is not a vertex of the input graph")
 
     H = G.copy(immutable=False)
     H.delete_vertices(cut_vertices)
@@ -3967,7 +3969,7 @@ cdef class TriconnectivitySPQR:
                         self.in_adj[eh_index] = e_virt_node
                         # end type-1 search
 
-                # if an path starts at edge e, empty the tstack.
+                # if a path starts at edge e, empty the tstack.
                 if self.starts_path[e_index]:
                     while self.__tstack_not_eos():
                         self.t_stack_top -= 1

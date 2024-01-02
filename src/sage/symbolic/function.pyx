@@ -148,10 +148,10 @@ from sage.structure.richcmp cimport richcmp
 
 from sage.misc.fpickle import pickle_function, unpickle_function
 
-from .symbols import symbol_table, register_symbol
+from sage.symbolic.symbols import symbol_table, register_symbol
 
 try:
-    from .expression import (
+    from sage.symbolic.expression import (
         call_registered_function, find_registered_function, register_or_update_function,
         get_sfunction_from_hash, get_sfunction_from_serial as get_sfunction_from_serial
     )
@@ -528,7 +528,7 @@ cdef class Function(SageObject):
         # to a numeric type at the end
         symbolic_input = any(isinstance(arg, Expression) for arg in args)
 
-        from .ring import SR
+        from sage.symbolic.ring import SR
 
         if coerce:
             try:
@@ -606,7 +606,7 @@ cdef class Function(SageObject):
             sage: sin.default_variable()                                                # needs sage.symbolic
             x
         """
-        from .ring import SR
+        from sage.symbolic.ring import SR
         return SR.var('x')
 
     def _is_numerical(self, x):
@@ -642,10 +642,11 @@ cdef class Function(SageObject):
             sage: hurwitz_zeta(1/2, b)
             hurwitz_zeta(1/2, [1.500000000 +/- 1.01e-10])
 
-            sage: iv = RIF(1, 1.0001)
-            sage: airy_ai(iv)
+            sage: iv = RIF(1, 1.0001)                                                   # needs sage.rings.real_interval_field
+
+            sage: airy_ai(iv)                                                           # needs sage.rings.real_interval_field
             airy_ai(1.0001?)
-            sage: airy_ai(CIF(iv))
+            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field
             airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
@@ -1052,7 +1053,7 @@ cdef class BuiltinFunction(Function):
             if (self._preserved_arg
                     and isinstance(args[self._preserved_arg-1], Element)):
                 arg_parent = parent(args[self._preserved_arg-1])
-                from .ring import SR
+                from sage.symbolic.ring import SR
                 if arg_parent is SR:
                     return res
                 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative

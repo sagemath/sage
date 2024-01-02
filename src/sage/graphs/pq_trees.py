@@ -558,7 +558,7 @@ class P(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a ``ValueError`` exception.
+        raises a :class:`ValueError` exception.
 
         EXAMPLES:
 
@@ -837,7 +837,7 @@ class Q(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a ``ValueError`` exception.
+        raises a :class:`ValueError` exception.
 
         EXAMPLES:
 

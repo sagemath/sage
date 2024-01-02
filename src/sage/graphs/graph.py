@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Undirected graphs
 
@@ -213,9 +212,9 @@ covered here.
 
 - an igraph Graph::
 
-       sage: import igraph                                # optional - python_igraph
-       sage: g = Graph(igraph.Graph([(1,3),(3,2),(0,2)])) # optional - python_igraph
-       sage: g                                            # optional - python_igraph
+       sage: import igraph                                 # optional - python_igraph
+       sage: g = Graph(igraph.Graph([(1,3),(3,2),(0,2)]))  # optional - python_igraph
+       sage: g                                             # optional - python_igraph
        Graph on 4 vertices
 
 Generators
@@ -421,7 +420,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
 from sage.graphs.generic_graph import GenericGraph
-from sage.graphs.digraph import DiGraph
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
@@ -820,9 +818,9 @@ class Graph(GenericGraph):
     #. An igraph Graph (see also
        :meth:`~sage.graphs.generic_graph.GenericGraph.igraph_graph`)::
 
-           sage: import igraph                      # optional - python_igraph
-           sage: g = igraph.Graph([(0, 1), (0, 2)]) # optional - python_igraph
-           sage: Graph(g)                           # optional - python_igraph
+           sage: import igraph                       # optional - python_igraph
+           sage: g = igraph.Graph([(0, 1), (0, 2)])  # optional - python_igraph
+           sage: Graph(g)                            # optional - python_igraph
            Graph on 3 vertices
 
        If ``vertex_labels`` is ``True``, the names of the vertices are given by
@@ -838,8 +836,8 @@ class Graph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)], edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
-           sage: Graph(g).edges(sort=True)                                                               # optional - python_igraph
+           sage: g = igraph.Graph([(0,1),(0,2)], edge_attrs={'name':['a','b'], 'weight':[1,3]})  # optional - python_igraph
+           sage: Graph(g).edges(sort=True)                                                       # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
 
@@ -883,10 +881,10 @@ class Graph(GenericGraph):
         ...
         ValueError: Unknown input format 'HeyHeyHey'
 
-        sage: Graph(igraph.Graph(directed=True)) # optional - python_igraph
+        sage: Graph(igraph.Graph(directed=True))  # optional - python_igraph
         Traceback (most recent call last):
         ...
-        ValueError: An *undirected* igraph graph was expected. To build an directed graph, call the DiGraph constructor.
+        ValueError: An *undirected* igraph graph was expected. To build a directed graph, call the DiGraph constructor.
 
         sage: # needs sage.modules
         sage: m = matrix([[0, -1], [-1, 0]])
@@ -1207,7 +1205,7 @@ class Graph(GenericGraph):
         elif format == 'igraph':
             if data.is_directed():
                 raise ValueError("An *undirected* igraph graph was expected. "
-                                 "To build an directed graph, call the DiGraph "
+                                 "To build a directed graph, call the DiGraph "
                                  "constructor.")
 
             self.add_vertices(range(data.vcount()))
@@ -3286,8 +3284,8 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        A DiGraph representing the orientation if it exists. A ``ValueError``
-        exception is raised otherwise.
+        A DiGraph representing the orientation if it exists.
+        A :class:`ValueError` exception is raised otherwise.
 
         ALGORITHM:
 
@@ -3514,6 +3512,7 @@ class Graph(GenericGraph):
         if name:
             name = 'An orientation of ' + name
 
+        from sage.graphs.digraph import DiGraph
         if not self.size():
             D = DiGraph(data=[self.vertices(sort=False), []],
                         format='vertices_and_edges',
@@ -7175,7 +7174,7 @@ class Graph(GenericGraph):
 
         Testing mcqd::
 
-            sage: graphs.PetersenGraph().vertex_cover(algorithm="mcqd", value_only=True) # optional - mcqd
+            sage: graphs.PetersenGraph().vertex_cover(algorithm="mcqd", value_only=True)  # optional - mcqd
             6
 
         Given a wrong algorithm::
@@ -7985,7 +7984,7 @@ class Graph(GenericGraph):
           vertex of `C` has a neighbor outside of it.
 
         * An anticomponent `C` (or the union of some --but not all-- of them) of
-          an non-anticonnected graph `G`, for the same reason (it is just the
+          a non-anticonnected graph `G`, for the same reason (it is just the
           complement of the previous graph !).
 
         These modules being of special interest, the disjoint union of graphs is
