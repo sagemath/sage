@@ -8358,7 +8358,7 @@ class GenericGraph(GenericGraph_pyx):
 
         EXAMPLES:
 
-        The `3 \times 3`-grid has an Hamiltonian path, an hamiltonian path
+        The `3 \times 3`-grid has a Hamiltonian path, a hamiltonian path
         starting from vertex `(0, 0)` and ending at vertex `(2, 2)`, but no
         Hamiltonian path starting from `(0, 0)` and ending at `(0, 1)`::
 
@@ -8530,7 +8530,7 @@ class GenericGraph(GenericGraph_pyx):
         g.add_edge(v, new_s, 0)
 
         #
-        # We now search for an Hamiltonian Cycle in g
+        # We now search for a Hamiltonian Cycle in g
         #
         from sage.categories.sets_cat import EmptySetError
         try:
@@ -14064,7 +14064,7 @@ class GenericGraph(GenericGraph_pyx):
 
         .. SEEALSO::
 
-            - :meth:`~GenericGraph.subgraph_search` -- finds an subgraph
+            - :meth:`~GenericGraph.subgraph_search` -- finds a subgraph
               isomorphic to `H` inside of a graph `G`
 
             - :meth:`~GenericGraph.subgraph_search_iterator` -- iterator over
@@ -14173,7 +14173,7 @@ class GenericGraph(GenericGraph_pyx):
 
         .. SEEALSO::
 
-            - :meth:`~GenericGraph.subgraph_search` -- finds an subgraph
+            - :meth:`~GenericGraph.subgraph_search` -- finds a subgraph
               isomorphic to `H` inside of `G`
 
             - :meth:`~GenericGraph.subgraph_search_count` -- counts the number
@@ -21633,7 +21633,7 @@ class GenericGraph(GenericGraph_pyx):
 
           - a HSV sequence in a string such as ``".52,.386,.22"``
 
-          - an hexadecimal code such as ``"#DA3305"``
+          - a hexadecimal code such as ``"#DA3305"``
 
           - a 3-tuple of floating point (to be interpreted as RGB tuple). In
             this case the 3-tuple is converted in hexadecimal code.
