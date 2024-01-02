@@ -510,7 +510,6 @@ class PermutationGroup_generic(FiniteGroup):
         if gens is None:
             gens = list(gap_group.GeneratorsOfGroup())
 
-        self._domain_is_N = False
         if domain is None:
             gens = [standardize_generator(x, as_cycles=True) for x in gens]
             domain = set()
@@ -529,7 +528,6 @@ class PermutationGroup_generic(FiniteGroup):
             # This is needed for backward compatibility
             if all(isinstance(p, (int, Integer)) for p in domain):
                 domain = list(range(min([1] + domain), max([1] + domain)+1))
-                self._domain_is_N = min(domain) == 1
 
         if domain not in FiniteEnumeratedSets():
             domain = FiniteEnumeratedSet(domain)
@@ -751,25 +749,19 @@ class PermutationGroup_generic(FiniteGroup):
         return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
     def __richcmp__(self, right, op):
-        """
+        r"""
         Compare ``self`` and ``right``.
 
         Two permutation groups are equal if and only if their domains
-        and their underlying groups coincide.
+        coincide as sets and their underlying groups are equal.
 
         The relation `G < H` means that the domains of `G` and `H`
-        coincide and that the underlying group of `G` is a strict
-        subgroup of `H`.
+        coincide as sets and that the underlying group of `G` is a
+        strict subgroup of `H`.
 
         The meaning of the other relations is analogous.
 
         Therefore, the comparison does not provide a total ordering.
-
-        .. NOTE::
-
-            The domain of a permutation group given by generators
-            only, and whose generators are all tuples of positive
-            integers, is the set of all positive integers.
 
         EXAMPLES:
 
@@ -805,18 +797,12 @@ class PermutationGroup_generic(FiniteGroup):
             sage: H2 < H1
             False
 
-        The domain of `H1` are the positive integers.  Therefore the
-        following group is a subgroup::
+        The domain of `H1` is `\{1,2,3,4,5,6\}`, whereas the domain
+        of the permutation group `H3` below is `\{1,2\}`.  Therefore
+        `H3` is not a permutation subgroup of `H1`::
 
             sage: H3 = PermutationGroup([[(1,2)]])
             sage: H3 < H1
-            True
-
-        This is particular to the positive integers::
-
-            sage: G1 = PermutationGroup([[(0,1)],[(4,5)]])
-            sage: G3 = PermutationGroup([[(0,1)]])
-            sage: G3 < G1
             False
 
         TESTS:
@@ -837,13 +823,11 @@ class PermutationGroup_generic(FiniteGroup):
         if self is right:
             return rich_to_bool(op, 0)
 
-        if not ((self._domain_is_N and right._domain_is_N)
-                or set(self._domain) == set(right._domain)):
+        if set(self._domain) != set(right._domain):
             # domains differ
             return op is op_NE
 
-        if ((self._domain_is_N and right._domain_is_N)
-            or self._domain == right._domain):
+        if self._domain == right._domain:
             gSelf = self._libgap_()
         else:
             n = len(self.domain())
@@ -4473,12 +4457,19 @@ class PermutationGroup_generic(FiniteGroup):
         """
         Return ``True`` if ``self`` is a subgroup of ``other``.
 
+        This method only considers the underlying groups and
+        disregards the domains.  More precisely, ``self`` is a
+        subgroup of ``other``, if all group elements of ``self`` can
+        be regarded as group elements of ``other`` by restricting to
+        the moved points.
+
         EXAMPLES::
 
             sage: G = AlternatingGroup(5)
             sage: H = SymmetricGroup(5)
             sage: G.is_subgroup(H)
             True
+
         """
         return all((x in other) for x in self.gens())
 

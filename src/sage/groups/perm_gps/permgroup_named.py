@@ -271,7 +271,6 @@ class SymmetricGroup(PermutationGroup_symalt):
                              FiniteWeylGroups().Irreducible()])
         super(PermutationGroup_generic, self).__init__(category=cat)
 
-        self._domain_is_N = False
         self._domain = domain
         self._deg = len(self._domain)
         self._domain_to_gap = {key: i+1 for i, key in enumerate(self._domain)}
