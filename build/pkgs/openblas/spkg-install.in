@@ -59,9 +59,6 @@ if ! (sdh_make libs $OPENBLAS_CONFIGURE && sdh_make netlib $OPENBLAS_CONFIGURE &
     fi
 fi
 
-# See https://github.com/sagemath/sage/issues/30335
-rm -f "$SAGE_LOCAL/lib/pkgconfig/cblas.pc" "$SAGE_LOCAL/lib/pkgconfig/blas.pc" "$SAGE_LOCAL/lib/pkgconfig/lapack.pc"
-
 sdh_make_install PREFIX="$SAGE_LOCAL" NO_STATIC=1 $OPENBLAS_CONFIGURE
 cd ..
 ./write_pc_file.py

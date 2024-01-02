@@ -665,7 +665,6 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                     sage: C.unrank(54213)
                     ('a', 86, [7, 5, 4, 4])
                 """
-                from builtins import zip
                 from sage.rings.integer_ring import ZZ
                 x = self(x)
                 b = ZZ.one()

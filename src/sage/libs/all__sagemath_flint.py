@@ -11,6 +11,6 @@ except ImportError:
 
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.libs.flint.qsieve', 'qsieve')
+lazy_import('sage.libs.flint.qsieve_sage', 'qsieve')
 
 del lazy_import

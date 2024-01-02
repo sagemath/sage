@@ -658,7 +658,7 @@ class ModularForm_abstract(ModuleElement):
         specified, and in (a suitable extension of) the base field of
         ``self`` otherwise.
 
-        If ``self`` is not an eigenform for `W_d`, a ``ValueError`` is
+        If ``self`` is not an eigenform for `W_d`, a :class:`ValueError` is
         raised.
 
         .. SEEALSO::
@@ -2588,7 +2588,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         OUTPUT:
 
         The Atkin-Lehner eigenvalue of `W_d` on ``self``. If ``self`` is not an
-        eigenform for `W_d`, a ``ValueError`` is raised.
+        eigenform for `W_d`, a :class:`ValueError` is raised.
 
         .. SEEALSO::
 

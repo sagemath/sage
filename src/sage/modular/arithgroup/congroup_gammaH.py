@@ -352,7 +352,7 @@ class GammaH_class(CongruenceSubgroup):
             sage: Gamma0(2) == Gamma1(2)
             True
 
-            sage: [x._list_of_elements_in_H() for x in sorted(Gamma0(24).gamma_h_subgroups())]
+            sage: [x._list_of_elements_in_H() for x in sorted(Gamma0(24).gamma_h_subgroups())]  # optional - gap_package_polycyclic
             [[1],
             [1, 5],
             [1, 7],
@@ -1055,7 +1055,7 @@ class GammaH_class(CongruenceSubgroup):
 
         EXAMPLES::
 
-            sage: [G.index() for G in Gamma0(40).gamma_h_subgroups()]
+            sage: [G.index() for G in Gamma0(40).gamma_h_subgroups()]  # optional - gap_package_polycyclic
             [72, 144, 144, 144, 144, 288, 288, 288, 288, 144, 288, 288, 576, 576, 144, 288, 288, 576, 576, 144, 288, 288, 576, 576, 288, 576, 1152]
         """
         from .all import Gamma1
@@ -1068,7 +1068,7 @@ class GammaH_class(CongruenceSubgroup):
 
         EXAMPLES::
 
-            sage: [H.nu2() for n in [1..10] for H in Gamma0(n).gamma_h_subgroups()]
+            sage: [H.nu2() for n in [1..10] for H in Gamma0(n).gamma_h_subgroups()]  # optional - gap_package_polycyclic
             [1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0]
             sage: GammaH(33,[2]).nu2()
             0
@@ -1095,7 +1095,7 @@ class GammaH_class(CongruenceSubgroup):
 
         EXAMPLES::
 
-            sage: [H.nu3() for n in [1..10] for H in Gamma0(n).gamma_h_subgroups()]
+            sage: [H.nu3() for n in [1..10] for H in Gamma0(n).gamma_h_subgroups()]  # optional - gap_package_polycyclic
             [1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             sage: GammaH(33,[2]).nu3()
             0
@@ -1279,7 +1279,7 @@ class GammaH_class(CongruenceSubgroup):
 
         TESTS::
 
-            sage: for n in [2..20]:
+            sage: for n in [2..20]:  # optional - gap_package_polycyclic
             ....:     for g in Gamma0(n).gamma_h_subgroups():
             ....:         G = g.image_mod_n()
             ....:         assert G.order() == Gamma(n).index() / g.index()

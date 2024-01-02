@@ -764,12 +764,12 @@ class GroupMixinLibGAP():
         """
         #code from function in permgroup.py, but modified for
         #how gap handles these groups.
-        G    = self._gap_()
-        cl   = self.conjugacy_classes()
+        G = self._gap_()
+        cl = self.conjugacy_classes()
         from sage.rings.integer import Integer
-        n    = Integer(len(cl))
+        n = Integer(len(cl))
         irrG = G.Irr()
-        ct   = [[irrG[i][j] for j in range(n)] for i in range(n)]
+        ct = [[irrG[i][j] for j in range(n)] for i in range(n)]
 
         from sage.rings.number_field.number_field import CyclotomicField
         e = irrG.Flat().Conductor()

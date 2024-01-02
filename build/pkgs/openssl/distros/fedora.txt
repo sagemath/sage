@@ -1,1 +1,2 @@
-openssl openssl-devel
+openssl
+openssl-devel

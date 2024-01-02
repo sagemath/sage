@@ -1683,7 +1683,7 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
         F1_coeffs = transpose_list(F1.coeffs())
         F1_modp_coeffs = F1_coeffs[int((M-2)*p):]
         # make a copy, because reduce_all will destroy the coefficients:
-        F1_modp_coeffs = [[cell for cell in row] for row in F1_modp_coeffs]
+        F1_modp_coeffs = [list(row) for row in F1_modp_coeffs]
         F1_modp_offset = offset - (M-2)*p
         F1_modp_reduced = reduce_all(Q, p, F1_modp_coeffs, F1_modp_offset)
 

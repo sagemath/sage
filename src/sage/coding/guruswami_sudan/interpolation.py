@@ -130,7 +130,7 @@ def _interpolation_matrix_given_monomials(points, s, monomials):
         eqs = []
         for i in range(s):
             for j in range(s - i):
-                eq = dict()
+                eq = {}
                 for monomial in monomials:
                     ihat = monomial[0]
                     jhat = monomial[1]

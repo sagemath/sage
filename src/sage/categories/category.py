@@ -565,7 +565,7 @@ class Category(UniqueRepresentation, SageObject):
     def __call__(self, x, *args, **opts):
         """
         Construct an object in this category from the data in ``x``,
-        or throw ``TypeError`` or ``NotImplementedError``.
+        or throw :class:`TypeError` or :class:`NotImplementedError`.
 
         If ``x`` is readily in ``self`` it is returned unchanged.
         Categories wishing to extend this minimal behavior should
@@ -583,7 +583,7 @@ class Category(UniqueRepresentation, SageObject):
     def _call_(self, x):
         """
         Construct an object in this category from the data in ``x``,
-        or throw ``NotImplementedError``.
+        or throw :class:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -2647,9 +2647,8 @@ def category_graph(categories=None):
         categories = category_sample()
     # Include all the super categories
     # Get rid of join categories
-    categories = set(cat
-                     for category in categories
-                     for cat in category.all_super_categories(proper=isinstance(category, JoinCategory)))
+    categories = {cat for category in categories
+                  for cat in category.all_super_categories(proper=isinstance(category, JoinCategory))}
     g = graphs.digraph.DiGraph()
     for cat in categories:
         g.add_vertex(cat._repr_object_names())
@@ -2859,7 +2858,7 @@ class CategoryWithParameters(Category):
              <class 'sage.categories.posets.Posets.element_class'>)
         """
 
-    _make_named_class_cache = dict()
+    _make_named_class_cache = {}
 
     _cmp_key = _cmp_key_named
 

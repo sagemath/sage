@@ -22,7 +22,8 @@ from sage.databases.db_modular_polynomials import ClassicalModularPolynomialData
 _db = ClassicalModularPolynomialDatabase()
 
 _cache_bound = 100
-_cache = dict()
+_cache = {}
+
 
 def classical_modular_polynomial(l, j=None):
     r"""
@@ -143,6 +144,7 @@ def classical_modular_polynomial(l, j=None):
     # and simply evaluating it.
     return classical_modular_polynomial(l)(j, Y)
 
+
 def _set_cache_bound(bnd):
     r"""
     Internal helper function to allow setting the caching cutoff for
@@ -163,5 +165,6 @@ def _set_cache_bound(bnd):
     """
     global _cache_bound
     _cache_bound = bnd
+
 
 classical_modular_polynomial.set_cache_bound = _set_cache_bound

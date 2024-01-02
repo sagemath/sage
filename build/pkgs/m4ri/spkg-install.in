@@ -24,9 +24,6 @@ else
     DISABLE_SSE2=""
 fi
 
-# otherwise we might run into problems with old headers
-rm -rf "$SAGE_LOCAL/include/m4ri"
-
 cd src
 
 # Configure and build M4RI

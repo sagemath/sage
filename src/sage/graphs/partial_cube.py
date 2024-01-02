@@ -363,7 +363,7 @@ def is_partial_cube(G, certificate=False):
     # Make a digraph with edges labeled by the equivalence classes in unionfind
     g = DiGraph({v: {w: unionfind.find((v, w)) for w in G[v]} for v in G})
 
-    # Associates to a vertex the token that acts on it, an check that
+    # Associates to a vertex the token that acts on it, and check that
     # no two edges on a single vertex have the same label
     action = {}
     for v in g:
