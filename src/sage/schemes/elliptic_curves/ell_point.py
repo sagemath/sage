@@ -1823,7 +1823,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         - ``q`` -- positive integer: size of base field (the "big"
           field is `GF(q^k)`. `q` needs to be set only if its value
           cannot be deduced.)
-    
+
         - ``algorithm`` (default: ``None``) -- choices are ``pari``
           and ``sage``. PARI is usually significantly faster, but it
           only works over finite fields. When ``None`` is given, a
@@ -1943,8 +1943,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         ALGORITHM:
 
         - For ``algorithm='pari'``: :pari:`elltatepairing` computes the
-        non-reduced tate pairing and the exponentiation is handled by 
-        Sage using user input for `k`.
+          non-reduced tate pairing and the exponentiation is handled by
+          Sage using user input for `k`.
 
         - For ``algorithm='sage'``:
           This function uses Miller's algorithm, followed by a naive
@@ -1984,12 +1984,12 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 algorithm = 'sage'
 
         if algorithm == 'pari':
-            if pari.ellmul(E,P,n) != [0]:
+            if pari.ellmul(E, P, n) != [0]:
                 raise ValueError("The point P must be in the n-torsion")
             # Note: Pari returns the non-reduced Tate pairing, so we
             # must perform the exponentation ourselves using the supplied
             # k value
-            ePQ =  pari.elltatepairing(E, P, Q, n)
+            ePQ = pari.elltatepairing(E, P, Q, n)
             e = Integer((q**k - 1)/n)
             return E.base_field()(ePQ**e)
 
