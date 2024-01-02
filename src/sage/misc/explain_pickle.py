@@ -461,8 +461,8 @@ class PickleExplainer():
             sage: sib(pe.run_pickle('T\5\0\0\0hello.'))  # py2
             {atomic:'hello'}
         """
-        for (op, arg, pos) in genops(p):
-            assert(not(self.stopped))
+        for op, arg, pos in genops(p):
+            assert not self.stopped
             try:
                 handler = getattr(self, op.name)
             except AttributeError:
@@ -472,8 +472,8 @@ class PickleExplainer():
             else:
                 handler(arg)
 
-        assert(self.stopped)
-        assert(len(self.stack) == 1)
+        assert self.stopped
+        assert len(self.stack) == 1
         return self.stack[0]
 
     def check_value(self, v):
@@ -493,7 +493,7 @@ class PickleExplainer():
             AssertionError
             sage: pe.check_value(sib(7))
         """
-        assert(isinstance(v, (SageInputExpression, PickleObject)))
+        assert isinstance(v, (SageInputExpression, PickleObject))
 
     def push(self, v):
         r"""
@@ -2442,13 +2442,13 @@ def unpickle_build(obj, state):
         slots = None
 
     if state is not None:
-        assert(isinstance(state, dict))
+        assert isinstance(state, dict)
         d = obj.__dict__
         for k, v in state.items():
             d[k] = v
 
     if slots is not None:
-        assert(isinstance(slots, dict))
+        assert isinstance(slots, dict)
         for k, v in slots.items():
             setattr(obj, k, v)
 
@@ -2635,11 +2635,11 @@ def test_pickle(p, verbose_eval=False, pedantic=False, args=()):
     if cpickle_ok:
         cpickle_repr = repr(cpickle_res)
 
-        assert(current_repr == generic_repr == cpickle_repr)
+        assert current_repr == generic_repr == cpickle_repr
 
         print("result: " + current_repr)
     else:
-        assert(current_repr == generic_repr)
+        assert current_repr == generic_repr
         print("result: " + current_repr + " (cPickle raised an exception!)")
 
 

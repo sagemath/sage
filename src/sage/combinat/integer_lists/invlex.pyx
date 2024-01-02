@@ -99,7 +99,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
       value is `\infty`.
 
     - ``min_slope`` -- an integer or `-\infty` (default: `-\infty`):
-      an lower bound on the slope between consecutive parts:
+      a lower bound on the slope between consecutive parts:
       ``min_slope <= l[i+1]-l[i]`` for ``0 <= i < len(l)-1``
 
     - ``max_slope`` -- an integer or `+\infty` (defaults: `+\infty`)
@@ -796,7 +796,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
 cdef class IntegerListsBackend_invlex(IntegerListsBackend):
     """
-    Cython back-end of an set of lists of integers with specified
+    Cython back-end of a set of lists of integers with specified
     constraints enumerated in inverse lexicographic order.
     """
     def __init__(self, *args, check=True, **kwds):

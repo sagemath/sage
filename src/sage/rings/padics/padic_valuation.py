@@ -1360,7 +1360,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
 
     TESTS::
 
-        sage: TestSuite(v).run(skip='_test_shift')  # long time                         # needs sage.rings.number_field
+        sage: TestSuite(v).run(skip='_test_shift')      # long time                     # needs sage.rings.number_field
 
     The ``_test_shift`` test fails because the parent of the shift is
     incorrect, see :trac:`23971`::

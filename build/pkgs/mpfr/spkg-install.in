@@ -145,14 +145,6 @@ mpfr_build()
 {
     mpfr_configure
     sdh_make
-
-    echo
-    echo "Building MPFR succeeded.  Now deleting old headers..."
-    rm -f "$SAGE_LOCAL"/include/*mpfr*
-    # Do not delete old libraries as this causes gcc to break during
-    # parallel builds.
-    # rm -f "$SAGE_LOCAL"/lib/libmpfr.*
-
     sdh_make_install
 }
 
