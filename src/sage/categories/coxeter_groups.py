@@ -1950,7 +1950,10 @@ class CoxeterGroups(Category_singleton):
             Return the absolute length of ``self``.
 
             The absolute length is the length of the shortest expression
-            of the element as a product of reflections.
+            of the element as a product of reflections. For finite Coxeter
+            groups, the absolute length is the codimension of the
+            1-eigenspace of the element (Lemmas 1-3 in [Car1972a]_). For all
+            other Coxeter types, we use Theorem 1.1 in [Dy2001]_.
 
             For permutations in the symmetric groups, the absolute
             length is the size minus the number of its disjoint
@@ -1971,9 +1974,26 @@ class CoxeterGroups(Category_singleton):
                 sage: s = W.simple_reflections()                                        # needs sage.groups
                 sage: (s[3]*s[2]*s[1]).absolute_length()                                # needs sage.combinat sage.groups
                 3
+
+                sage: W = CoxeterGroup(["A",2,1])
+                sage: (r, s, t) = W.simple_reflections()
+                sage: (r * s * r * t).absolute_length()
+                2
             """
-            M = self.canonical_matrix()
-            return (M - 1).image().dimension()
+            P = self.parent()
+            if P.is_finite():
+                M = self.canonical_matrix()
+                return (M - 1).image().dimension()
+
+            import itertools
+            w = self.reduced_word()
+            s = P.simple_reflections()
+            one = P.one()
+            n = self.length()
+            for ell in range(n - 1, -1, -1):
+                for wd in itertools.combinations(w, ell):
+                    if P.prod(s[i] for i in wd) == one:
+                        return n - ell
 
         def absolute_le(self, other):
             r"""
