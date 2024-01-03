@@ -1381,7 +1381,7 @@ REFERENCES:
              Pure and Applied Mathematics. John Wiley and Sons, 1972.
 
 .. [Car1972a] \R. W. Carter. *Conjugacy classes in the Weyl group*, Comp. Math.
-             Vol 26 (1972) 1-59.
+              Vol 26 (1972) 1-59.
 
 .. [Cha2005] \F. Chapoton, *Une Base Symétrique de l'algèbre des
              Coinvariants Quasi-Symétriques*, Electronic Journal of
