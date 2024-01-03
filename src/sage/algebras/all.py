@@ -67,13 +67,3 @@ lazy_import('sage.algebras.q_system', 'QSystem')
 lazy_import('sage.algebras.cluster_algebra', 'ClusterAlgebra')
 
 lazy_import('sage.algebras.yangian', 'Yangian')
-
-lazy_import('sage.algebras.flag_algebras', ['CombinatorialTheory', 
-                                            'GraphTheory', 
-                                            'DiGraphTheory', 
-                                            'ThreeGraphTheory', 
-                                            'TournamentTheory', 
-                                            'PermutationTheory', 
-                                            'OEGraphTheory', 
-                                            'OVGraphTheory', 
-                                            'RamseyGraphTheory'])

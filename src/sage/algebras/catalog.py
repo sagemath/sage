@@ -27,6 +27,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.Exterior <sage.algebras.clifford_algebra.ExteriorAlgebra>`
 - :class:`algebras.FiniteDimensional
   <sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra>`
+- :class:`algebras.FlagAlgebra` <sage.algebras.flag_algebras.FlagAlgebra>
 - :class:`algebras.FQSym <sage.combinat.fqsym.FreeQuasisymmetricFunctions>`
 - :class:`algebras.Free <sage.algebras.free_algebra.FreeAlgebraFactory>`
 - :class:`algebras.FreeZinbiel <sage.algebras.free_zinbiel_algebra.FreeZinbielAlgebra>`
@@ -143,5 +144,8 @@ lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
 lazy_import('sage.algebras.down_up_algebra', 'DownUpAlgebra', 'DownUp')
 lazy_import('sage.algebras.yangian', 'Yangian')
 lazy_import('sage.algebras.octonion_algebra', 'OctonionAlgebra', 'Octonion')
+lazy_import('sage.algebras.flag_algebras', 'FlagAlgebra', 'FlagAlgebra')
+
+from . import flag_theories_catalog as flag_theories
 
 del lazy_import  # We remove the object from here so it doesn't appear under tab completion

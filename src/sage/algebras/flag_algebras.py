@@ -137,6 +137,7 @@ as a sum of squares ::
     sage: pe = GraphTheory(2, ftype=[0]) - 1/2
     sage: 1/2 >= pe.mul_project(pe) * 2 + e
     True
+    sage: GraphTheory.exclude()
 
 :func:`mul_project` is short for multiplication and projection, the 
 non-negativity of self multiplication is preserved after projection so
@@ -178,6 +179,7 @@ These values come from [Bod2023]_::
     sage: sos = 2/3 * sq1 + 1/6 * sq2 + 13/12 * sq3 + 11/12 * sq4 + 2 * sq5 + 1/2 * sq6 # todo: not implemented
     sage: 3/8 >= sos + em4 # todo: not implemented
     True
+    sage: ThreeGraphTheory.exclude()
 
 
 .. SEEALSO::
@@ -257,7 +259,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         OUTPUT: A CombinatorialTheory object
 
-        EXAMPLES::
+        EXAMPLES:
 
         This example shows how to create the theory for graphs 
         with ordered vertices (or equivalently 0-1 matrices)::
@@ -328,7 +330,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         OUTPUT: A Flag with the given parameters
 
-        EXAMPLES::
+        EXAMPLES:
 
         Create an empty graph on 3 vertices ::
 
@@ -402,10 +404,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if not provided then returns an element with empty ftype
 
         OUTPUT: A Flag with matching parameters
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphTheory._an_element_(1)
+            Flag on 1 points, ftype from [] with edges=[]
         """
-        if ftype==None:
+        if ftype is None:
             ftype = self.empty_element()
-        if n==None or n==ftype.size():
+        if n is None or n<=ftype.size():
             return ftype
         ls = self.generate_flags(n, ftype)
         return ls[randint(0, len(ls)-1)]
@@ -413,6 +421,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def some_elements(self):
         r"""
         Returns a list of elements
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphTheory.some_elements() #random
+            [Ftype on 0 points with edges=[],
+             Flag on 2 points, ftype from [] with edges=[[0, 1]],
+             Ftype on 1 points with edges=[],
+             Flag on 2 points, ftype from [0] with edges=[[0, 1]]]
+
         """
         pt = self.element_class(self, 1, ftype=[0])
         return [self._an_element_(), 
@@ -433,6 +451,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         OUTPUT: The identifier of the structure defined by the
             ``identifier`` function in the __init__
 
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphTheory.identify(3, [0], edges=[[0, 1]])
+            (3, (0,), ((0, 2),))
+
         .. SEEALSO::
 
             :func:`Flag.unique`
@@ -446,6 +470,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         r"""
         The hidden _identify, the inputs are in a tuple form
         and is cached for some speed
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphTheory._identify(3, (0, ), edges=((0, 1), ))
+            (3, (0,), ((0, 2),))
         """
         return self._identifier(n, ftype_points, **blocks)
     
@@ -463,7 +493,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             The list of flags to exclude, flags are treated as
             a singleton list
 
-        EXAMPLES::
+        EXAMPLES:
 
         How to create triangle-free graphs ::
 
@@ -501,6 +531,14 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def _check_excluded(self, elms):
         r"""
         Helper to check the excluded structures in generation
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphTheory._check_excluded([GraphTheory.empty(), []])
+            True
+            sage: GraphTheory._check_excluded([GraphTheory.empty(), [GraphTheory.empty()]])
+            False
         """
         flg = elms[0]
         for xx in elms[1]:
@@ -537,7 +575,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             certificate is requested then returns the entire
             output of the csdpy
 
-        EXAMPLES::
+        EXAMPLES:
         
         
         Mantel's theorem, calculate the maximum density
@@ -611,7 +649,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             -OEGraphTheory: 4
         """
         from csdpy import solve_sdp
-        if ftypes==None:
+        if ftypes is None:
             flags = [flag for kk in range(2-target_size%2, target_size-1, 2) 
                       for flag in self.generate_flags(kk)]
             ftypes = [flag.subflag([], ftype_points=list(range(flag.size()))) \
@@ -668,13 +706,21 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         r"""
         Cached version of generate flags excluded
 
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphTheory._gfe(tuple(), 2, GraphTheory.empty())
+            (Flag on 2 points, ftype from [] with edges=[],
+            Flag on 2 points, ftype from [] with edges=[[0, 1]])
+
+
         .. SEEALSO::
 
             :func:`generate_flags`
         """
         import multiprocessing as mp
         
-        if ftype==None or ftype.size()==0: #just generate empty elements
+        if ftype is None or ftype.size()==0: #just generate empty elements
             if n==0:
                 return (self.empty_element(), )
             if len(excluded)==0: #just return the output of the generator
@@ -692,11 +738,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         pool = mp.Pool(mp.cpu_count()-1)
         pares = pool.map(ftype._ftypes_inside, empstrs)
         pool.close(); pool.join()
-        ret = []
-        for coll in pares:
-            for xx in coll:
-                if xx not in ret:
-                    ret.append(xx)
+        ret = [xx for coll in pares for xx in coll]
         return tuple(ret)
     
     def generate_flags(self, n, ftype=None):
@@ -710,7 +752,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         OUTPUT: List of all flags with given size and ftype
 
-        EXAMPLES::
+        EXAMPLES:
 
         There are 4 graphs on 3 vertices. Flags with empty
         ftype correspond to elements of the theory ::
@@ -731,7 +773,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             See the notes on :func:`optimize_problem`. A large `n` can
             result in large number of structures.
         """
-        if ftype==None:
+        if ftype is None:
             ftype = self.empty()
         else:
             if not ftype.is_ftype():
@@ -797,7 +839,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             1/6
         """
         large_size = large_ftype.size()
-        if ftype_inj==None:
+        if ftype_inj is None:
             ftype_inj = tuple(range(large_size))
         else:
             ftype_inj = tuple(ftype_inj)
@@ -811,6 +853,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def _mpte(self, excluded, n1, n2, large_ftype, ftype_inj):
         r"""
         The (hidden) cached version of :func:`mul_project_table`
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphTheory._mpte(tuple(), 2, 2, GraphTheory(1, ftype=[0]), tuple())
+            (
+            [1 0]  [1/3 1/3]  [  0 1/3]  [0 0]
+            [0 0], [1/3   0], [1/3 1/3], [0 1]
+            )
+
         """
         from sage.matrix.args import MatrixArgs
         import multiprocessing as mp
@@ -839,7 +891,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def _density_wrapper(self, ar):
         r"""
         Helper function used in the parallelization of calculating densities
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: g = GraphTheory(3, edges=[[0, 1]])
+            sage: p = GraphTheory(1, ftype=[0])
+            sage: n1flgs = GraphTheory.generate_flags(2, p)
+            sage: n2flgs = n1flgs
+            sage: arr = [g, 2, n1flgs, 2, n2flgs, [0], p, GraphTheory.empty()]
+            sage: GraphTheory._density_wrapper(arr)
+            (2, 2, {(0, 0): 2, (0, 1): 2, (1, 0): 2})
         """
+        
         return ar[0].densities(ar[1], ar[2], ar[3], ar[4], ar[5], ar[6], ar[7])
 
 class FlagAlgebraElement(CommutativeAlgebraElement):
@@ -859,6 +923,15 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         .. NOTE::
 
             It is recommended to use the FlagAlgebra element constructor
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphFA = FlagAlgebra(QQ, GraphTheory, GraphTheory.empty())
+            sage: FlagAlgebraElement(GraphFA, 2, [7/11, 1/2])
+            Flag Algebra Element over Rational Field
+            7/11 - Flag on 2 points, ftype from [] with edges=[]
+            1/2  - Flag on 2 points, ftype from [] with edges=[[0, 1]]
 
         .. SEEALSO::
 
@@ -882,7 +955,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
 
         OUTPUT: The ftype of the parent FlagAlgebra. A :class:`Flag` element
 
-        EXAMPLES::
+        EXAMPLES:
 
         The ftype of a :class:`Flag` is the same as the ftype of the 
         :class:`FlagAlgebraElement` we can construct from it ::
@@ -929,7 +1002,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
 
         OUTPUT: The list of flags
 
-        EXAMPLES::
+        EXAMPLES:
 
         3 vertex graphs with empty ftype ::
 
@@ -975,7 +1048,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         
         OUTPUT: A vector
 
-        EXAMPLES::
+        EXAMPLES:
 
         A flag transformed to a flag algebra element has 
         all zeroes except one entry, itself ::
@@ -1000,7 +1073,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         
         OUTPUT: A vector
 
-        EXAMPLES::
+        EXAMPLES:
 
         A flag transformed to a flag algebra element has 
         all zeroes except one entry, itself ::
@@ -1076,7 +1149,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         then only shows nonzero entries.
 
 
-        EXAMPLES::
+        EXAMPLES:
 
         Short list, so display all ::
 
@@ -1089,18 +1162,15 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
             0 - Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]]
             0 - Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]]
             
-        Long list, only the nonzero entries are displayed 
-        (for some reason this is failing the doctest, but should show 
-        `Flag Algebra Element over Rational Field
-        1 - Flag on 5 points, ftype from [] with edges=[]
-        1 - Flag on 5 points, ftype from [] with edges=[[0, 3], [1, 4]]
-        
-        ` I can't figure out why)::
-        
+        Long list, only the nonzero entries are displayed ::
+            
+            sage: GraphTheory.exclude()
             sage: g1 = GraphTheory(5)
             sage: g2 = GraphTheory(5, edges=[[0, 1], [3, 4]])
             sage: g1+g2
-            ...
+            Flag Algebra Element over Rational Field
+            1 - Flag on 5 points, ftype from [] with edges=[]
+            1 - Flag on 5 points, ftype from [] with edges=[[0, 3], [1, 4]]
             
         .. SEEALSO::
 
@@ -1122,6 +1192,20 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         Only here to allow calling this function on
         both flags and flag algebra elements
 
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: g = GraphTheory(2)
+            sage: h = g.afae()
+            sage: h
+            Flag Algebra Element over Rational Field
+            1 - Flag on 2 points, ftype from [] with edges=[]
+            0 - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+            sage: h.afae()
+            Flag Algebra Element over Rational Field
+            1 - Flag on 2 points, ftype from [] with edges=[]
+            0 - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+
         .. SEEALSO::
 
             :func:`Flag.afae`
@@ -1136,7 +1220,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
 
         OUTPUT: The sum
 
-        EXAMPLES::
+        EXAMPLES:
 
         The smaller size is shifted to match the larger ::
 
@@ -1168,7 +1252,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         r"""
         Subtract a FlagAlgebraElement from this
 
-        EXAMPLES::
+        EXAMPLES:
 
         This also shifts the smaller flag to match the larger ::
 
@@ -1199,7 +1283,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         The result will have size 
         `self.size() + other.size() - self.ftype().size()`
 
-        EXAMPLES::
+        EXAMPLES:
 
         Two empty edges multiplied together has size 4 ::
 
@@ -1258,7 +1342,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
 
         OUTPUT: The `FlagAlgebraElement` resulting from the division
 
-        EXAMPLES::
+        EXAMPLES:
 
         If 1 can be divided by that, then the division is allowed ::
 
@@ -1289,7 +1373,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         The result will have size equal to 
         `self.size() + amount`, but the elements will be equal
         
-        EXAMPLES::
+        EXAMPLES:
 
         Edge shifted to size `3` ::
 
@@ -1322,12 +1406,12 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``ftype_inj`` -- tuple (default: (, )); the injection of the
+        - ``ftype_inj`` -- tuple (default: tuple()); the injection of the
             projected ftype inside the larger ftype
 
         OUTPUT: the `FlagAlgebraElement` resulting from the projection
 
-        EXAMPLES::
+        EXAMPLES:
 
         If the center of a cherry is flagged, then the projection has
         coefficient 1/3 ::
@@ -1356,13 +1440,13 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``ftype_inj`` -- tuple (default: (, )); the injection of the
+        - ``ftype_inj`` -- tuple (default: tuple()); the injection of the
             projected ftype inside the larger ftype
 
         OUTPUT: the `FlagAlgebraElement` resulting from the multiplication
             and projection
 
-        EXAMPLES::
+        EXAMPLES:
 
         Pointed edge multiplied with itself and projected ::
 
@@ -1401,7 +1485,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         Randomly choosing self.size() points in other, the
         probability of getting self.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Density of an edge in the cherry graph is 2/3 ::
 
@@ -1431,7 +1515,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         Since the parent agrees, the ftype too. They are shifted to the
         same size and the values compared elementwise.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Trivial example `g <= 2*g` ::
 
@@ -1460,6 +1544,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
             sage: f = GraphTheory(2, ftype=[0]) - 1/2
             sage: 1/2 >= f.mul_project(f)*2 + GraphTheory(2)
             True
+            sage: GraphTheory.exclude()
 
         .. NOTE::
             
@@ -1492,7 +1577,7 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
 
         OUTPUT: The resulting FlagAlgebra
 
-        EXAMPLES::
+        EXAMPLES:
 
         Create the FlagAlgebra for GraphTheory (without any ftype) ::
 
@@ -1506,7 +1591,7 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
             sage: FlagAlgebra(QQ, TournamentTheory, TournamentTheory(1, ftype_points=[0]))
             Flag Algebra with Ftype on 1 points with edges=[] over Rational Field
         """
-        if ftype==None:
+        if ftype is None:
             ftype = theory.empty_element()
         else:
             if not ftype.is_ftype():
@@ -1536,7 +1621,7 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
         size value and a list of coefficients, whose length must be precisely the
         number of flags.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Construct from a constant ::
 
@@ -1597,6 +1682,21 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
     def _coerce_map_from_(self, S):
         r"""
         Checks if it can be coerced from S
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphFA = FlagAlgebra(QQ, GraphTheory)
+            sage: GraphFA._coerce_map_from_(QQ['x'])
+            False
+            sage: GraphFA._coerce_map_from_(ZZ)
+            True
+            sage: GraphFA._coerce_map_from_(GraphFA)
+            True
+            sage: GraphFA._coerce_map_from_(GraphTheory)
+            True
+            sage: GraphFA._coerce_map_from_(ThreeGraphTheory)
+            False
         """
         if self.base().has_coerce_map_from(S):
             return True
@@ -1610,6 +1710,13 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
     def _pushout_(self, S):
         r"""
         Constructs the pushout FlagAlgebra
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphFA = FlagAlgebra(QQ, GraphTheory)
+            sage: GraphFA._pushout_(QQ['x'])
+            Flag Algebra with Ftype on 0 points with edges=[] over Univariate Polynomial Ring in x over Rational Field
         """
         if S.has_coerce_map_from(self.base()):
             return FlagAlgebra(S, self.theory(), self.ftype())
@@ -1635,7 +1742,7 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
         r"""
         Returns the ftype of this FlagAlgebra.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Without specifying anything in the constructor, the ftype
         is empty ::
@@ -1662,7 +1769,7 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
         Returns the :class:`CombinatorialTheory` object, whose
         flags form the basis of this FlagAlgebra
 
-        EXAMPLES::
+        EXAMPLES:
 
         This is the same as provided in the constructor ::
 
@@ -1705,7 +1812,7 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
         
         Same as `characteristic` of the `base` provided in the constructor
 
-        EXAMPLES::
+        EXAMPLES:
 
             sage: from sage.algebras.flag_algebras import *
             sage: FA = FlagAlgebra(QQ, GraphTheory)
@@ -1730,12 +1837,30 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
         .. SEEALSO::
 
             :func:`CombinatorialTheory.generate_flags`
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphFA = FlagAlgebra(QQ, GraphTheory)
+            sage: GraphFA.generate_flags(2)
+            (Flag on 2 points, ftype from [] with edges=[],
+             Flag on 2 points, ftype from [] with edges=[[0, 1]])
+
         """
         return self.theory().generate_flags(n, self.ftype())
     
     def _an_element_(self):
         r"""
         Returns an element
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphFA = FlagAlgebra(QQ, GraphTheory)
+            sage: GraphFA._an_element_()
+            Flag Algebra Element over Rational Field
+            1/2 - Flag on 1 points, ftype from [] with edges=[]
+
         """
         a = self.base().an_element()
         f = self.combinatorial_theory()._an_element_(n=self.ftype().size() + 1, ftype=self.ftype())
@@ -1744,6 +1869,16 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
     def some_elements(self):
         r"""
         Returns a small list of elements
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphFA = FlagAlgebra(QQ, GraphTheory)
+            sage: GraphFA.some_elements()
+            [Flag Algebra Element over Rational Field
+             1/2 - Flag on 1 points, ftype from [] with edges=[],
+             Flag Algebra Element over Rational Field
+             1/2 - Ftype on 0 points with edges=[]]
         """
         return [self.an_element(),self(self.base().an_element())]
     
@@ -1757,6 +1892,18 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
         .. SEEALSO::
 
             :func:`CombinatorialTheory.mul_project_table`
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphFAp = FlagAlgebra(QQ, GraphTheory, GraphTheory(1, ftype=[0]))
+            sage: GraphFAp.mul_project_table(2, 2, tuple())
+            (
+            [1 0]  [1/3 1/3]  [  0 1/3]  [0 0]
+            [0 0], [1/3   0], [1/3 1/3], [0 1]
+            )
+
+
         """
         return self.theory().mul_project_table(n1, n2, self.ftype(), ftype_inj)
     
