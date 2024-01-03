@@ -758,7 +758,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         The relation `G < H` means that the domains of `G` and `H`
         coincide as sets and that the underlying group of `G` is a
-        strict subgroup of `H`.
+        proper subgroup of `H`.
 
         The meaning of the other relations is analogous.
 
@@ -806,6 +806,11 @@ class PermutationGroup_generic(FiniteGroup):
             sage: H3 < H1
             False
 
+        It is, however, a subgroup::
+
+            sage: H3.is_subgroup(H1)
+            True
+
         TESTS:
 
         Check that :trac:`29624` is fixed::
@@ -817,6 +822,26 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G != H
             False
 
+        A comprehensive test::
+
+            sage: A = PermutationGroup([(1,3)])
+            sage: B = PermutationGroup([(1,3)], domain=[1,2,3,4])
+            sage: C = PermutationGroup([(1,3), (2,4)])
+            sage: D = PermutationGroup([(1,3)], domain=[1,3,4])
+            sage: E = PermutationGroup([(1,3)], domain=[1,4,3])
+            sage: F = PermutationGroup([(1,3)], domain=[1,3])
+            sage: G = PermutationGroup([("a","c")], domain="abcd")
+            sage: H = PermutationGroup([("a","c"), ("b", "d")])
+            sage: groups = [A, B, C, D, E, F, G, H]
+            sage: [[ZZ(X >= Y) for X in groups] for Y in groups]
+            [[1, 0, 0, 0, 0, 0, 0, 0],
+             [0, 1, 1, 0, 0, 0, 0, 0],
+             [0, 0, 1, 0, 0, 0, 0, 0],
+             [0, 0, 0, 1, 1, 0, 0, 0],
+             [0, 0, 0, 1, 1, 0, 0, 0],
+             [0, 0, 0, 0, 0, 1, 0, 0],
+             [0, 0, 0, 0, 0, 0, 1, 1],
+             [0, 0, 0, 0, 0, 0, 0, 1]]
         """
         if not isinstance(right, PermutationGroup_generic):
             return NotImplemented
@@ -2158,8 +2183,25 @@ class PermutationGroup_generic(FiniteGroup):
             'Permutation Group with generators [(2,3,4), (1,2,3)]'
             sage: AlternatingGroup(4)._repr_()
             'Alternating group of order 4!/2 as a permutation group'
+
+        The domain is printed if it is not of the form `{1,...,n}`,
+        where `n` is the largest moved point::
+
+            sage: PermutationGroup([(1,3)], domain=[1,3])
+            Permutation Group with generators [(1,3)] and domain {1, 3}
+
+            sage: PermutationGroup([(1,3)], domain=[1,2,3])
+            Permutation Group with generators [(1,3)]
+
+            sage: PermutationGroup([(1,3)], domain=[1,3,2])
+            Permutation Group with generators [(1,3)] and domain {1, 3, 2}
+
+            sage: PermutationGroup([(1,3)], domain=[1,2,3,4])
+            Permutation Group with generators [(1,3)] and domain {1, 2, 3, 4}
+
         """
-        if self._has_natural_domain():
+        if (self._has_natural_domain()
+            and self.largest_moved_point() == max(self.domain())):
             return "Permutation Group with generators %s" % list(self.gens())
         return "Permutation Group with generators %s and domain %s" % (list(self.gens()), self.domain())
 
