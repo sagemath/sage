@@ -1,1 +1,2 @@
 libbraiding
+libbraiding-devel
