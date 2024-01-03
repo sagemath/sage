@@ -1149,7 +1149,7 @@ cdef class GapElement(RingElement):
             ...
             AlarmInterrupt
 
-            sage: libgap.CyclicGroup(2) ^ 2
+            sage: libgap.CyclicGroup(2) ^ 2 # known bug: linux (sporadic segmentation fault)
             Traceback (most recent call last):
             ...
             GAPError: Error, no method found!
