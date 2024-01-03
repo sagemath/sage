@@ -68,11 +68,12 @@ AUTHOR:
 import builtins
 import types
 
-# We want the caller's locals, but locals() is emulated in Cython
-cdef caller_locals = builtins.locals
-
 # Sage imports
 from sage.misc.persist import load, save, loads, dumps
+from sage.misc.lazy_import import LazyImport
+
+# We want the caller's locals, but locals() is emulated in Cython
+cdef caller_locals = builtins.locals
 
 # This module-scope variables is used to save the
 # global state of the sage environment at the moment
@@ -162,9 +163,13 @@ def _is_new_var(x, v, hidden):
     # definitely new.
     if x not in state_at_init:
         return True
+    # A lazy import that was there at init time is not new
+    if isinstance(v, LazyImport):
+        return False
     # A variable could also be new even if it was there at init, say if
     # its value changed.
-    return x not in state_at_init or state_at_init[x] is not v
+    return state_at_init[x] is not v
+
 
 def show_identifiers(hidden=False):
     r"""
@@ -219,17 +224,8 @@ def show_identifiers(hidden=False):
         sage: show_identifiers(hidden=True)        # random output
         ['__', '_i', '_6', '_4', '_3', '_1', '_ii', '__doc__', '__builtins__', '___', '_9', '__name__', '_', 'a', '_i12', '_i14', 'factor', '__file__', '_hello', '_i13', '_i11', '_i10', '_i15', '_i5', '_13', '_10', '_iii', '_i9', '_i8', '_i7', '_i6', '_i4', '_i3', '_i2', '_i1', '_init_cmdline', '_14']
     """
-    from sage.doctest.forker import DocTestTask
     state = caller_locals()
-    # Ignore extra variables injected into the global namespace by the doctest
-    # runner
-    _none = object()
-
-    def _in_extra_globals(name, val):
-        return val == DocTestTask.extra_globals.get(name, _none)
-
-    return sorted([x for x, v in state.items() if _is_new_var(x, v, hidden)
-                   and not _in_extra_globals(x, v)])
+    return sorted([x for x, v in state.items() if _is_new_var(x, v, hidden)])
 
 
 def save_session(name='sage_session', verbose=False):
@@ -303,6 +299,15 @@ def save_session(name='sage_session', verbose=False):
         Saving...
         Not saving g: g is a cython function or method
         ...
+
+    And the same for a lazy import::
+
+        sage: from sage.misc.lazy_import import LazyImport
+        sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
+        sage: save_session(tmp_f, verbose=True)
+        ...
+        Not saving lazy_ZZ: lazy_ZZ is a lazy import
+        ...
     """
     state = caller_locals()
     # This dict D will contain the session -- as a dict -- that we will save to disk.
@@ -321,6 +326,9 @@ def save_session(name='sage_session', verbose=False):
 
             if getattr(type(x), '__name__', None) == 'cython_function_or_method':
                 raise TypeError('{} is a cython function or method'.format(k))
+
+            if isinstance(x, LazyImport):
+                raise TypeError('{} is a lazy import'.format(k))
 
             # We attempt to pickle *and* unpickle every variable to
             # make *certain* that we can pickled D at the end below.
