@@ -2199,9 +2199,14 @@ class PermutationGroup_generic(FiniteGroup):
             sage: PermutationGroup([(1,3)], domain=[1,2,3,4])
             Permutation Group with generators [(1,3)] and domain {1, 2, 3, 4}
 
+        TESTS::
+
+            sage: PermutationGroup([], domain=[])
+            Permutation Group with generators [()]
+
         """
         if (self._has_natural_domain()
-            and self.largest_moved_point() == max(self.domain())):
+            and self.largest_moved_point() == max(self.domain(), default=0)):
             return "Permutation Group with generators %s" % list(self.gens())
         return "Permutation Group with generators %s and domain %s" % (list(self.gens()), self.domain())
 
