@@ -27,7 +27,7 @@ This saves a dictionary with ``w`` as one of the keys::
 
     sage: z = load(os.path.join(d.name, 'session'))
     sage: list(z)
-    ['d', 'w']
+    ['w', 'd']
     sage: z['w']
     2/3
 
@@ -200,7 +200,7 @@ def show_identifiers(hidden=False):
         sage: a = 10
         sage: factor = 20
         sage: show_identifiers()
-        ['a', 'factor']
+        ['factor', 'a']
 
     To get the actual value of a variable from the list, use the
     :func:`globals()` function.::
@@ -214,7 +214,7 @@ def show_identifiers(hidden=False):
 
         sage: _hello = 10
         sage: show_identifiers()
-        ['a', 'factor']
+        ['factor', 'a']
         sage: '_hello' in show_identifiers(hidden=True)
         True
 
@@ -222,10 +222,13 @@ def show_identifiers(hidden=False):
     least in command line mode.::
 
         sage: show_identifiers(hidden=True)        # random output
-        ['__', '_i', '_6', '_4', '_3', '_1', '_ii', '__doc__', '__builtins__', '___', '_9', '__name__', '_', 'a', '_i12', '_i14', 'factor', '__file__', '_hello', '_i13', '_i11', '_i10', '_i15', '_i5', '_13', '_10', '_iii', '_i9', '_i8', '_i7', '_i6', '_i4', '_i3', '_i2', '_i1', '_init_cmdline', '_14']
+        ['__builtin__', '_ih', '_oh', '_dh', 'exit', 'quit', '_', '__', '___',
+        '_i', '_ii', '_iii', '_i1', 'factor', '_i2', '_2', '_i3', 'a', '_i4',
+        '_i5', '_5', '_i6', '_6', '_i7', '_hello', '_i8', '_8', '_i9', '_9',
+        '_i10']
     """
     state = caller_locals()
-    return sorted([x for x, v in state.items() if _is_new_var(x, v, hidden)])
+    return [x for x, v in state.items() if _is_new_var(x, v, hidden)]
 
 
 def save_session(name='sage_session', verbose=False):
@@ -288,17 +291,15 @@ def save_session(name='sage_session', verbose=False):
         sage: f = lambda x : x^2
         sage: save_session(tmp_f)
         sage: save_session(tmp_f, verbose=True)
-        Saving...
-        Not saving f: f is a function or method
         ...
+        Not saving f: f is a function or method
 
     Something similar happens for cython-defined functions::
 
         sage: g = cython_lambda('double x', 'x*x + 1.5')
         sage: save_session(tmp_f, verbose=True)
-        Saving...
-        Not saving g: g is a cython function or method
         ...
+        Not saving g: g is a cython function or method
 
     And the same for a lazy import::
 
@@ -307,7 +308,6 @@ def save_session(name='sage_session', verbose=False):
         sage: save_session(tmp_f, verbose=True)
         ...
         Not saving lazy_ZZ: lazy_ZZ is a lazy import
-        ...
     """
     state = caller_locals()
     # This dict D will contain the session -- as a dict -- that we will save to disk.
