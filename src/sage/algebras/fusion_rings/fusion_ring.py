@@ -405,7 +405,7 @@ class FusionRing(WeylCharacterRing):
             sage: A21.test_braid_representation(max_strands=4)
             True
             sage: F41 = FusionRing("F4", 1)            # long time
-            sage: F41.test_braid_representation()      # long time
+            sage: F41.test_braid_representation()      # long time # known bug (sporadic timeouts, #36992)
             True
         """
         if not self.is_multiplicity_free(): # Braid group representation is not available if self is not multiplicity free
@@ -877,9 +877,9 @@ class FusionRing(WeylCharacterRing):
             True
             sage: F41 = FusionRing("F4", 1)
             sage: fmats = F41.get_fmatrix()
-            sage: fmats.find_orthogonal_solution(verbose=False)  # known bug (sporadic timeouts)
-            sage: b = F41.basis()  # known bug (sporadic timeouts)
-            sage: all(F41.s_ijconj(x, y) == F41._basecoer(F41.s_ij(x, y, base_coercion=False).conjugate()) for x in b for y in b)  # known bug (sporadic timeouts)
+            sage: fmats.find_orthogonal_solution(verbose=False)  # known bug (sporadic timeouts, #36992)
+            sage: b = F41.basis()  # known bug (sporadic timeouts, #36992)
+            sage: all(F41.s_ijconj(x, y) == F41._basecoer(F41.s_ij(x, y, base_coercion=False).conjugate()) for x in b for y in b)  # known bug (sporadic timeouts, #36992)
             True
             sage: G22 = FusionRing("G2", 2)
             sage: fmats = G22.get_fmatrix()
@@ -1401,8 +1401,8 @@ class FusionRing(WeylCharacterRing):
             sage: F41 = FusionRing("F4", 1, fusion_labels="f", inject_variables=True)
             sage: f1*f1
             f0 + f1
-            sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False)  # known bug (sporadic timeouts)
-            sage: F41.gens_satisfy_braid_gp_rels(sig)  # known bug (sporadic timeouts)
+            sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False)  # known bug (sporadic timeouts, #36992)
+            sage: F41.gens_satisfy_braid_gp_rels(sig)  # known bug (sporadic timeouts, #36992)
             True
         """
         n = len(sig)
