@@ -80,7 +80,6 @@ from sage.misc.persist import load, save, loads, dumps
 
 state_at_init = None
 
-CythonFunctionType = type(lambda: None)
 
 def init(state=None):
     """
@@ -294,7 +293,7 @@ def save_session(name='sage_session', verbose=False):
         sage: save_session(tmp_f)
         sage: save_session(tmp_f, verbose=True)
         Saving...
-        Not saving f: f is a function, method, class or type
+        Not saving f: f is a function or method
         ...
 
     Something similar happens for cython-defined functions::
@@ -302,7 +301,7 @@ def save_session(name='sage_session', verbose=False):
         sage: g = cython_lambda('double x', 'x*x + 1.5')
         sage: save_session(tmp_f, verbose=True)
         Saving...
-        Not saving g: g is a function, method, class or type
+        Not saving g: g is a cython function or method
         ...
     """
     state = caller_locals()
@@ -310,11 +309,18 @@ def save_session(name='sage_session', verbose=False):
     D = {}
     # We iterate only over the new variables that were defined in this
     # session, since those are the only ones we will save.
-    for k in show_identifiers(hidden = True):
+    for k in show_identifiers(hidden=True):
         try:
             x = state[k]
-            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType, CythonFunctionType, type)):
-                raise TypeError('{} is a function, method, class or type'.format(k))
+
+            if isinstance(x, type):
+                raise TypeError('{} is a class or type'.format(k))
+
+            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType)):
+                raise TypeError('{} is a function or method'.format(k))
+
+            if getattr(type(x), '__name__', None) == 'cython_function_or_method':
+                raise TypeError('{} is a cython function or method'.format(k))
 
             # We attempt to pickle *and* unpickle every variable to
             # make *certain* that we can pickled D at the end below.
