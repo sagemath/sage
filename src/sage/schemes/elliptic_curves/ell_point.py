@@ -1917,12 +1917,32 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         TESTS:
 
+        Check that the PARI output matches the original Sage implementation::
+
+            sage: # needs sage.rings.finite_rings
+            sage: GF(65537^2).inject_variables()
+            Defining z2
+            sage: E = EllipticCurve(GF(65537^2), [0,1])
+            sage: P = E(22, 28891)
+            sage: Q = E(-93, 40438*z2 + 31573)
+            sage: P.tate_pairing(Q, 7282, 2)
+            34585*z2 + 4063
+
         The point ``P (self)`` must have ``n`` torsion::
 
             P.tate_pairing(Q, 163, 2)
             Traceback (most recent call last):
             ...
-            ValueError:  The point P must be in the n-torsion
+            ValueError: The point P must be in the n-torsion
+
+        The Tate pairing is only defined for points on curves defined over finite fields::
+
+            sage: E = EllipticCurve([0,1])
+            sage: P = E(2,3)
+            sage: P.tate_pairing(P, 6, 1)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Reduced Tate pairing is currently only implemented for fintie fields
 
         ALGORITHM:
 
@@ -1943,7 +1963,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         K = E.base_ring()
         if not K.is_finite():
-            raise NotImplementedError("Reduced Tate pairing is currently only implemented for fintie fields")
+            raise NotImplementedError("Reduced Tate pairing is currently only implemented for finite fields")
 
         d = K.degree()
         if q is None:
@@ -1961,6 +1981,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         # must perform the exponentation ourselves using the supplied
         # k value
         ePQ = pari.elltatepairing(E, P, Q, n)
+        # TODO: if n or k is chosen badly, this could error, should we
+        # handle this explicitly by ensuring n divides q^k - 1?
         exp = Integer((q**k - 1)/n)
         return K(ePQ**exp) # Cast the PARI type back to the base ring
 
