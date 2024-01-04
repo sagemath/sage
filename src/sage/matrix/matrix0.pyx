@@ -383,10 +383,10 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         This function gets called when you're about to access the i,j entry
-        of this matrix. If i, j are out of range, an IndexError is
+        of this matrix. If i, j are out of range, an :class:`IndexError` is
         raised.
         """
-        if i < 0 or i >= self._nrows or j<0 or j >= self._ncols:
+        if i < 0 or i >= self._nrows or j < 0 or j >= self._ncols:
             raise IndexError("matrix index out of range")
 
     cdef check_mutability(self) noexcept:
