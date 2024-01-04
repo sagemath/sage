@@ -755,7 +755,7 @@ cpdef find_brouwer_separable_design(int k,int n) noexcept:
 
             # i)
             if (x == 0 and
-                is_available(k, t) and is_available(k, t + q)):
+                    is_available(k, t) and is_available(k, t + q)):
                 return brouwer_separable_design, (k, t, q, x)
 
             # ii)
@@ -803,8 +803,8 @@ from sage.combinat.designs.database import QDM as __QDM
 cdef dict _QDM = __QDM
 cdef dict ioa_indexed_by_n_minus_x = {}
 for x in _QDM.itervalues():
-    for (n,_,_,u),(k,_) in x.items():
-        if u>1:
+    for (n, _, _, u), (k, _) in x.items():
+        if u > 1:
             if n not in ioa_indexed_by_n_minus_x:
                 ioa_indexed_by_n_minus_x[n] = []
             ioa_indexed_by_n_minus_x[n].append((k, u))
