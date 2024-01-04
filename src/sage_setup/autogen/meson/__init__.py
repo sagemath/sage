@@ -1,24 +1,12 @@
 # Small script that generates a meson.build file in the given folder.
 # The generated build file contains all python files as `install_sources` and all cython files as `extension_module`
 
-import argparse
 import sys
 from pathlib import Path
 from types import SimpleNamespace
 
-parser = argparse.ArgumentParser(description='Generate meson.build file for a given folder.')
-parser.add_argument('folder', type=str, nargs='?', default='.',
-                    help='folder for which the meson.build file will be generated')
-parser.add_argument('--dry-run', '-n', action='store_true',
-                    help='do not write any files, just print the output')
-parser.add_argument('--force', '-f', action='store_true',
-                    help='overwrite existing meson.build file')
 
-args = parser.parse_args()
-
-def run(folder: Path):
-    dry_run = args.dry_run
-    force = args.force
+def run(folder: Path, dry_run=False, force=False):
 
     if not folder.is_dir():
         print(f'Error: {folder} is not a directory')
@@ -194,5 +182,20 @@ def run(folder: Path):
                 meson_build.write(f"subdir('{subdir.name}')\n")
                 run(subdir)
 
-folder = Path(args.folder)
-run(folder)
+
+def generate_meson():
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Generate meson.build file for a given folder.')
+    parser.add_argument('folder', type=str, nargs='?', default='.',
+                        help='folder for which the meson.build file will be generated')
+    parser.add_argument('--dry-run', '-n', action='store_true',
+                        help='do not write any files, just print the output')
+    parser.add_argument('--force', '-f', action='store_true',
+                        help='overwrite existing meson.build file')
+
+    args = parser.parse_args()
+
+    folder = Path(args.folder)
+    run(folder, dry_run=args.dry_run, force=args.force)
+    return 0
