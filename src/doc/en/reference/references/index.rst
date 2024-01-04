@@ -1381,7 +1381,7 @@ REFERENCES:
              Pure and Applied Mathematics. John Wiley and Sons, 1972.
 
 .. [Car1972a] \R. W. Carter. *Conjugacy classes in the Weyl group*, Comp. Math.
-             Vol 26 (1972) 1-59.
+              Vol 26 (1972) 1-59.
 
 .. [Cha2005] \F. Chapoton, *Une Base Symétrique de l'algèbre des
              Coinvariants Quasi-Symétriques*, Electronic Journal of
@@ -2351,7 +2351,7 @@ REFERENCES:
             Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
 
 .. [Dy2001] \M. J. Dyer. *On minimal lengths of expressions of Coxeter group elements as
-            products of reflections* Proc. Amer. Math. Soc. Vol 129 (9) (Sep 2001) 2591-2595
+            products of reflections*. Proc. Amer. Math. Soc. Vol 129 (9) (Sep 2001) pp. 2591-2595
 
 .. _ref-E:
 
