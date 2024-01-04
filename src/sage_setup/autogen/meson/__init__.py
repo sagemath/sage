@@ -16,7 +16,6 @@ def run(folder: Path, dry_run=False, force=False):
     python_files = sorted(list(folder.glob('*.py')) + list(folder.glob('*.pxd')) + list(folder.glob('*.h')))
     cython_files = sorted(list(folder.glob('*.pyx')))
 
-
     if not python_files and not cython_files:
         print(f'Error: {folder} does not contain any python or cython files')
         return
@@ -43,7 +42,7 @@ def run(folder: Path, dry_run=False, force=False):
                         .replace('CBLAS_LIBRARIES', 'cblas')
                         .replace('ZLIB_LIBRARIES', 'zlib')
                         .replace('Lfunction', 'lfunction')
-                          for library in libraries]
+                        for library in libraries]
                     try:
                         libraries.remove('CYGWIN_SQLITE3_LIBS')
                     except ValueError:
@@ -147,7 +146,7 @@ def run(folder: Path, dry_run=False, force=False):
             meson_build.write(f"        dependencies: [py_dep{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
             meson_build.write('    )\n')
             meson_build.write('endforeach\n')
-        
+
         if cython_cpp_files:
             meson_build.write('\n')
             meson_build.write('extension_data_cpp = {\n')
@@ -175,7 +174,7 @@ def run(folder: Path, dry_run=False, force=False):
                 continue
             if not list(subdir.glob('*.py*')):
                 continue
-            
+
             if not list(subdir.glob('*.pyx')):
                 meson_build.write(f"install_subdir('{subdir.name}', install_dir: sage_install_dir / '{folder_rel_to_src.relative_to('sage')}')\n")
             else:
