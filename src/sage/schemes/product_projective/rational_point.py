@@ -393,7 +393,7 @@ def sieve(X, bound):
         of the ambient space.
         """
 
-        M = dict() # stores optimal list of primes, corresponding to list size
+        M = {}  # stores optimal list of primes, corresponding to list size
         small_primes = sufficient_primes(B)
         max_length = len(small_primes)
         M[max_length] = small_primes

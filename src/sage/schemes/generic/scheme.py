@@ -498,7 +498,7 @@ class Scheme(Parent):
         OUTPUT:
 
         The global coordinate ring of this scheme, if
-        defined. Otherwise raise a ``ValueError``.
+        defined. Otherwise this raises a :class:`ValueError`.
 
         EXAMPLES::
 
