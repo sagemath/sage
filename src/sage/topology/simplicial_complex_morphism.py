@@ -244,20 +244,43 @@ class SimplicialComplexMorphism(Morphism):
             (0, 1)
             sage: g(Simplex([0,1]), orientation=True)                                   # needs sage.modules
             ((0, 1), -1)
+
+        TESTS:
+
+        Test that the problem in :issue:`36849` has been fixed::
+
+            sage: S = SimplicialComplex([[1,2]],is_mutable=False).barycentric_subdivision()
+            sage: T = SimplicialComplex([[1,2],[2,3],[1,3]],is_mutable=False).barycentric_subdivision()
+            sage: f = {x[0]:x[0] for x in S.cells()[0]}
+            sage: H = Hom(S,T)
+            sage: z = H(f)
+            sage: z.associated_chain_complex_morphism()
+            Chain complex morphism:
+              From: Chain complex with at most 2 nonzero terms over Integer Ring
+              To:   Chain complex with at most 2 nonzero terms over Integer Ring
         """
         dim = self.domain().dimension()
         if not isinstance(x, Simplex) or x.dimension() > dim or x not in self.domain().faces()[x.dimension()]:
             raise ValueError("x must be a simplex of the source of f")
         tup = x.tuple()
-        fx = []
-        for j in tup:
-            fx.append(self._vertex_dictionary[j])
+        fx = [self._vertex_dictionary[j] for j in tup]
         if orientation:
             from sage.algebras.steenrod.steenrod_algebra_misc import convert_perm
             from sage.combinat.permutation import Permutation
 
             if len(set(fx)) == len(tup):
-                oriented = Permutation(convert_perm(fx)).signature()
+                # We need to compare the image simplex, as given in
+                # the order specified by self, with its orientation in
+                # the codomain.
+                image = Simplex(set(fx))
+                Y_faces = self.codomain()._n_cells_sorted(image.dimension())
+                idx = Y_faces.index(image)
+                actual_image = Y_faces[idx]
+                # The signature of the permutation specified by self:
+                sign_image = Permutation(convert_perm(fx)).signature()
+                # The signature of the permutation of the simplex in the domain:
+                sign_simplex = Permutation(convert_perm(actual_image)).signature()
+                oriented = sign_image * sign_simplex
             else:
                 oriented = 1
             return (Simplex(set(fx)), oriented)

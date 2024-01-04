@@ -3,28 +3,8 @@ r"""
 Universal cyclotomic field
 
 The universal cyclotomic field is the smallest subfield of the complex field
-containing all roots of unity. It is also the maximal Galois Abelian extension
+containing all roots of unity. It is also the maximal abelian extension
 of the rational numbers.
-
-The implementation simply wraps GAP Cyclotomic. As mentioned in their
-documentation: arithmetical operations are quite expensive, so the use of
-internally represented cyclotomics is not recommended for doing arithmetic over
-number fields, such as calculations with matrices of cyclotomics.
-
-.. NOTE::
-
-    There used to be a native Sage version of the universal cyclotomic field
-    written by Christian Stump (see :trac:`8327`). It was slower on most
-    operations and it was decided to use a version based on GAP instead (see
-    :trac:`18152`). One main difference in the design choices is that GAP stores
-    dense vectors whereas the native ones used Python dictionaries (storing only
-    nonzero coefficients). Most operations are faster with GAP except some
-    operation on very sparse elements. All details can be found in
-    :trac:`18152`.
-
-REFERENCES:
-
-- [Bre1997]
 
 EXAMPLES::
 
@@ -102,6 +82,26 @@ One can create matrices and polynomials::
     sage: E(3) * x - 1
     E(3)*x - 1
 
+The implementation simply wraps GAP Cyclotomic. As mentioned in their
+documentation: arithmetical operations are quite expensive, so the use of
+internally represented cyclotomics is not recommended for doing arithmetic over
+number fields, such as calculations with matrices of cyclotomics.
+
+.. NOTE::
+
+    There used to be a native Sage version of the universal cyclotomic field
+    written by Christian Stump (see :trac:`8327`). It was slower on most
+    operations and it was decided to use a version based on GAP instead (see
+    :trac:`18152`). One main difference in the design choices is that GAP stores
+    dense vectors whereas the native ones used Python dictionaries (storing only
+    nonzero coefficients). Most operations are faster with GAP except some
+    operation on very sparse elements. All details can be found in
+    :trac:`18152`.
+
+REFERENCES:
+
+- [Bre1997]_
+
 TESTS::
 
     sage: UCF.one()
@@ -157,11 +157,10 @@ Check that :trac:`25686` is fixed::
 AUTHORS:
 
 - Christian Stump (2013): initial Sage version (see :trac:`8327`)
+- Vincent Delecroix (2015): completed rewriting using libgap (see :trac:`18152`)
+- Sebastian Oehms (2018): deleted the method is_finite since it returned the wrong result (see :trac:`25686`)
+- Sebastian Oehms (2019): added :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
 
-- Vincent Delecroix (2015): complete rewriting using libgap (see :trac:`18152`)
-
-- Sebastian Oehms (2018): deleting the method is_finite since it returned the wrong result (see :trac:`25686`)
-- Sebastian Oehms (2019): add :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
 """
 
 import sage.rings.abc

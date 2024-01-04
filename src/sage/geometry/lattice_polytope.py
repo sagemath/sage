@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Lattice and reflexive polytopes
 
@@ -131,7 +130,6 @@ from sage.geometry.point_collection import (PointCollection,
                                             is_PointCollection,
                                             read_palp_point_collection)
 from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
-from sage.graphs.graph import DiGraph, Graph
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 
 from sage.misc.lazy_import import lazy_import
@@ -2058,6 +2056,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         else:
             # Get face lattice as a sublattice of the ambient one
             allowed_indices = frozenset(self._ambient_vertex_indices)
+            from sage.graphs.digraph import DiGraph
             L = DiGraph()
             empty = self._ambient.face_lattice().bottom()
             L.add_vertex(0) # In case it is the only one
@@ -3966,6 +3965,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: g.edges(sort=True)                                                    # needs palp sage.graphs
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
         """
+        from sage.graphs.graph import Graph
         skeleton = Graph()
         skeleton.add_vertices(self.skeleton_points(1))
         for edge in self.edges():
@@ -5016,8 +5016,8 @@ class NefPartition(SageObject, Hashable):
             Since a nef-partition induces a partition on the set of boundary
             lattice points of `\Delta^\circ`, the value of `j` is well-defined
             for all `i` but the one that corresponds to the origin, in which
-            case this method will raise a ``ValueError`` exception. (The origin
-            always belongs to all `\nabla_j`.)
+            case this method will raise a :class:`ValueError` exception.
+            (The origin always belongs to all `\nabla_j`.)
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.

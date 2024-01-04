@@ -1018,7 +1018,7 @@ class InterfaceElement(Element):
             return
         if hasattr(self,'_name'):
             P = self.parent()
-            if not (P is None):
+            if P is not None:
                 P.clear(self._name)
 
     def _sage_repr(self):

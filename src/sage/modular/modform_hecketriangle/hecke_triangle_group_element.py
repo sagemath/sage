@@ -117,7 +117,6 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         EXAMPLES::
 
-            sage:
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup, HeckeTriangleGroupElement
             sage: lam = PolynomialRing(ZZ, 'lam').gen()
             sage: M = matrix([[-1, 0], [-lam^4 + 5*lam^2 + lam - 5, -1]])
@@ -183,7 +182,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         of ``self`` as a product of the generators ``S`` and ``T``
         together with a sign correction ``sgn``.
 
-        If this decomposition is not possible a ``TypeError``
+        If this decomposition is not possible a :class:`TypeError`
         is raised. In particular this function can be used to
         check the membership in ``parent`` of an arbitrary matrix
         over the base ring.
@@ -257,7 +256,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         of ``L`` are either the generator ``S`` or a non-trivial
         integer power of the generator ``T``. ``sgn`` is +- the identity.
 
-        If this decomposition is not possible a ``TypeError`` is raised.
+        If this decomposition is not possible a :class:`TypeError` is raised.
 
         EXAMPLES::
 

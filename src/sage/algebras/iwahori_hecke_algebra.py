@@ -1886,7 +1886,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         Iwahori--Hecke algebra was initialized in the "standard" presentation
         where `\{q_1,q_2\} = \{v^2,1\}` as sets or the "normalized"
         presentation where `\{q_1,q_2\} = \{v,-v^{-1}\}` as sets, the function
-        :func::`product_on_basis` in this class computes products in the
+        :func:`product_on_basis` in this class computes products in the
         `C^{\prime}`-basis directly in the basis itself, using ``coxeter3`` to
         calculate certain `\mu`-coefficients quickly. If the above conditions
         are not all met, the function computes such products indirectly, by

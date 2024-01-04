@@ -216,10 +216,10 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
     cdef _log_base(self, double log_of_base) noexcept:
         if self._value == 0:
-            from .real_double import RDF
+            from sage.rings.real_double import RDF
             return RDF(-1)/RDF(0)
         elif self._value < 0:
-            from .real_double import RDF
+            from sage.rings.real_double import RDF
             return RDF.NaN()
         sig_on()
         a = self._new_c(gsl_sf_log(self._value) / log_of_base)

@@ -213,7 +213,7 @@ def repr_factored(w, latex_output=False):
                 return ''
             denom = ' '.join('\\partial {}{}'.format(latex(g), exp(e))
                              for e, g in zip(k, gens) if e != 0)
-            return ''.join(' \\frac{{\\partial{}}}{{{}}}'.format(exp(total), denom) )
+            return ''.join(' \\frac{{\\partial{}}}{{{}}}'.format(exp(total), denom))
         repr_x = latex
     else:
         def exp(e):
@@ -313,7 +313,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
                     return '1'
                 ret = ' '.join('{}{}'.format(latex(R.gen(i)), exp(power)) if polynomial
                                else '\\partial {}{}'.format(latex(R.gen(i)), exp(power))
-                               for i,power in enumerate(mon) if power > 0)
+                               for i, power in enumerate(mon) if power > 0)
                 if not polynomial:
                     return '\\frac{{\\partial{}}}{{{}}}'.format(exp(total), ret)
                 return ret
@@ -810,9 +810,9 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         """
         NAME = 'DifferentialWeylAlgebra'
         module = 'sage.algebras.weyl_algebra'
-        factor_representation = dict(default=False,
-                 description='Controls whether to factor the differentials out or not in the output representations',
-                 checker=lambda x: x in [True, False])
+        factor_representation = {'default': False,
+                                 'description': 'Controls whether to factor the differentials out or not in the output representations',
+                                 'checker': lambda x: x in [True, False]}
 
     def _element_constructor_(self, x):
         """

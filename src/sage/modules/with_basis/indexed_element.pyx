@@ -27,6 +27,7 @@ from sage.misc.superseded import deprecation
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
+from sage.categories.modules import _Fields
 
 
 cdef class IndexedFreeModuleElement(ModuleElement):
@@ -958,6 +959,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand type(s) for /: 'str' and 'CombinatorialFreeModule_with_category.element_class'
+
+            sage: L = LazyPowerSeriesRing(QQ, 't')
+            sage: t = L.gen()
+            sage: F = algebras.Free(L, ['A', 'B'])
+            sage: A, B = F.gens()
+            sage: f = t*A + t**2*B/2
         """
         if not isinstance(left, IndexedFreeModuleElement):
             return NotImplemented
@@ -966,7 +973,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         F = self._parent
         B = self.base_ring()
         D = self._monomial_coefficients
-        if not B.is_field():
+        if B not in _Fields:
             return type(self)(F, {k: c._divide_if_possible(x)
                                   for k, c in D.items()})
 

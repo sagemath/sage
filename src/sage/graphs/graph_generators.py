@@ -475,7 +475,7 @@ Functions and methods
 from . import graph
 
 
-class GraphGenerators():
+class GraphGenerators:
     r"""
     A class consisting of constructors for several common graphs, as well as
     orderly generation of isomorphism class representatives. See the
@@ -1192,6 +1192,121 @@ class GraphGenerators():
             G = BipartiteGraph(s[:-1], format='graph6', partition=partition)
             yield G
 
+    def nauty_genktreeg(self, options="", debug=False):
+        r"""
+        Return a generator which creates all `k`-trees using nauty..
+
+        A `k`-tree is an undirected graph formed by starting with a complete
+        graph on `k + 1` vertices and then repeatedly add vertices in such a
+        way that each added vertex `v` has exactly `k` neighbors `U` such that,
+        together, the `k + 1` vertices formed by `v` and `U` form a clique.
+        See the :wikipedia:`K-tree` for more details.
+
+        INPUT:
+
+        - ``options`` -- string (default: ``""``); a string passed to
+          ``genktreeg`` as if it was run at a system command line. At a minimum,
+          you *must* pass the number of vertices you desire. Sage expects the
+          graphs to be in nauty's "graph6" format, do not set an option to
+          change this default or results will be unpredictable.
+
+        - ``debug`` -- boolean (default: ``False``); if ``True`` the first line
+          of ``genktreeg``'s output to standard error is captured and the first
+          call to the generator's ``next()`` function will return this line as a
+          string. A line leading with ">A" indicates a successful initiation of
+          the program with some information on the arguments, while a line
+          beginning with ">E" indicates an error with the input.
+
+        The possible options, obtained as output of ``genktreeg --help``::
+
+                 n       : the number of vertices
+                -k<int>  : the value of `k`(default: 2)
+              res/mod    : only generate subset res out of subsets 0..mod-1
+                -l       : canonically label output graphs
+
+        Options which cause ``genktreeg`` to use an output format different than
+        the graph6 format are not listed above (-u, -s, -h) as they will confuse
+        the creation of a Sage graph. The res/mod option can be useful when
+        using the output in a routine run several times in parallel.
+
+        OUTPUT:
+
+        A generator which will produce the graphs as Sage graphs.
+        These will be simple graphs: no loops, no multiple edges, no
+        directed edges.
+
+        EXAMPLES:
+
+        A `k`-tree is a maximal graph with treewidth `k`::
+
+            sage: # needs nauty
+            sage: gen = graphs.nauty_genktreeg("10 -k4")
+            sage: G = next(gen); G
+            Graph on 10 vertices
+            sage: G.treewidth()
+            4
+
+        A list of all 2-trees with 6, 7 and 8 vertices. This agrees with
+        :oeis:`A054581`::
+
+            sage: # needs nauty
+            sage: gen = graphs.nauty_genktreeg("6")
+            sage: len(list(gen))
+            5
+            sage: gen = graphs.nauty_genktreeg("7")
+            sage: len(list(gen))
+            12
+            sage: gen = graphs.nauty_genktreeg("8")
+            sage: len(list(gen))
+            39
+
+        The ``debug`` switch can be used to examine ``geng``'s reaction to the
+        input in the ``options`` string.  We illustrate success.  (A failure
+        will be a string beginning with ">E".)  Passing the "-q" switch to
+        ``geng`` will suppress the indicator of a successful initiation, and so
+        the first returned value might be an empty string if ``debug`` is
+        ``True``::
+
+            sage: gen = graphs.nauty_genktreeg("7", debug=True)                         # needs nauty
+            sage: print(next(gen))                                                      # needs nauty
+            >A ...genktreeg k=2 n=7
+
+        TESTS:
+
+        Wrong input::
+
+            sage: # needs nauty
+            sage: list(graphs.nauty_genktreeg("4 -k5", debug=True))
+            ['>E genktreeg: n cannot be less than k\n']
+            sage: list(graphs.nauty_genktreeg("10 -k 4", debug=True))
+            ['>E genktreeg -k: missing argument value\n']
+            sage: list(graphs.nauty_genktreeg("-c3", debug=False))
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong format of parameter option
+        """
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        geng_path = NautyExecutable("genktreeg").absolute_filename()
+        sp = subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
+                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, close_fds=True,
+                              encoding='latin-1')
+        msg = sp.stderr.readline()
+        if debug:
+            yield msg
+        elif msg.startswith('>E'):
+            raise ValueError('wrong format of parameter option')
+        gen = sp.stdout
+        while True:
+            try:
+                s = next(gen)
+            except StopIteration:
+                # Exhausted list of graphs from nauty geng
+                return
+            G = graph.Graph(s[:-1], format='graph6')
+            yield G
+
     def cospectral_graphs(self, vertices, matrix_function=None, graphs=None):
         r"""
         Find all sets of graphs on ``vertices`` vertices (with
@@ -1450,17 +1565,17 @@ class GraphGenerators():
         There are 1812 isomers of `\textrm{C}_{60}`, i.e., 1812 fullerene graphs
         on 60 vertices::
 
-            sage: gen = graphs.fullerenes(60)  # optional buckygen
-            sage: len(list(gen))  # optional buckygen
+            sage: gen = graphs.fullerenes(60)  # optional - buckygen
+            sage: len(list(gen))               # optional - buckygen
             1812
 
         However, there is only one IPR fullerene graph on 60 vertices: the famous
         Buckminster Fullerene::
 
-            sage: gen = graphs.fullerenes(60, ipr=True)  # optional buckygen
-            sage: next(gen)  # optional buckygen
+            sage: gen = graphs.fullerenes(60, ipr=True)  # optional - buckygen
+            sage: next(gen)                              # optional - buckygen
             Graph on 60 vertices
-            sage: next(gen)  # optional buckygen
+            sage: next(gen)                              # optional - buckygen
             Traceback (most recent call last):
             ...
             StopIteration
@@ -1557,26 +1672,26 @@ class GraphGenerators():
 
         There is a unique fusene with 2 hexagons::
 
-            sage: gen = graphs.fusenes(2)  # optional benzene
-            sage: len(list(gen))  # optional benzene
+            sage: gen = graphs.fusenes(2)  # optional - benzene
+            sage: len(list(gen))           # optional - benzene
             1
 
         This fusene is naphthalene (`\textrm{C}_{10}\textrm{H}_{8}`).
         In the fusene graph the H-atoms are not stored, so this is
         a graph on just 10 vertices::
 
-            sage: gen = graphs.fusenes(2)  # optional benzene
-            sage: next(gen)  # optional benzene
+            sage: gen = graphs.fusenes(2)  # optional - benzene
+            sage: next(gen)                # optional - benzene
             Graph on 10 vertices
-            sage: next(gen)  # optional benzene
+            sage: next(gen)                # optional - benzene
             Traceback (most recent call last):
             ...
             StopIteration
 
         There are 6505 benzenoids with 9 hexagons::
 
-            sage: gen = graphs.fusenes(9, benzenoids=True)  # optional benzene
-            sage: len(list(gen))  # optional benzene
+            sage: gen = graphs.fusenes(9, benzenoids=True)  # optional - benzene
+            sage: len(list(gen))                            # optional - benzene
             6505
         """
         if hexagon_count < 0:
@@ -1760,7 +1875,7 @@ class GraphGenerators():
         An overview of the number of quadrangulations on up to 12 vertices. This
         agrees with :oeis:`A113201`::
 
-            sage: for i in range(4, 13):                        # optional plantri
+            sage: for i in range(4, 13):                        # optional - plantri
             ....:     cmd = '-qm2c2 {}'.format(i)
             ....:     L = len(list(graphs.plantri_gen(cmd)))
             ....:     print("{:2d}   {:3d}".format(i, L))
@@ -1778,9 +1893,9 @@ class GraphGenerators():
 
         Wrong input, ``"-c=3"`` instead of ``"-c3"``::
 
-            sage: list(graphs.plantri_gen("6 -c3"))  # optional plantri
+            sage: list(graphs.plantri_gen("6 -c3"))  # optional - plantri
             [Graph on 6 vertices, Graph on 6 vertices]
-            sage: list(graphs.plantri_gen("6 -c=3"))  # optional plantri
+            sage: list(graphs.plantri_gen("6 -c=3"))  # optional - plantri
             Traceback (most recent call last):
             ...
             AttributeError: invalid options '6 -c=3'
@@ -1879,20 +1994,20 @@ class GraphGenerators():
 
         There are 6 planar graphs on 4 vertices::
 
-            sage: gen = graphs.planar_graphs(4)  # optional plantri
-            sage: len(list(gen))  # optional plantri
+            sage: gen = graphs.planar_graphs(4)  # optional - plantri
+            sage: len(list(gen))                 # optional - plantri
             6
 
         Three of these planar graphs are bipartite::
 
-            sage: gen = graphs.planar_graphs(4, only_bipartite=True)  # optional plantri
-            sage: len(list(gen))  # optional plantri
+            sage: gen = graphs.planar_graphs(4, only_bipartite=True)  # optional - plantri
+            sage: len(list(gen))                                      # optional - plantri
             3
 
         Setting ``dual=True`` gives the planar dual graphs::
 
-            sage: gen = graphs.planar_graphs(4, dual=True)  # optional plantri
-            sage: [u for u in list(gen)]  # optional plantri
+            sage: gen = graphs.planar_graphs(4, dual=True)  # optional - plantri
+            sage: [u for u in list(gen)]                    # optional - plantri
             [Graph on 4 vertices,
             Multi-graph on 3 vertices,
             Multi-graph on 2 vertices,
@@ -1903,8 +2018,8 @@ class GraphGenerators():
         The cycle of length 4 is the only 2-connected bipartite planar graph
         on 4 vertices::
 
-            sage: l = list(graphs.planar_graphs(4, minimum_connectivity=2, only_bipartite=True))  # optional plantri
-            sage: l[0].get_embedding()  # optional plantri
+            sage: l = list(graphs.planar_graphs(4, minimum_connectivity=2, only_bipartite=True))  # optional - plantri
+            sage: l[0].get_embedding()                                                            # optional - plantri
             {1: [2, 3],
              2: [1, 4],
              3: [1, 4],
@@ -1913,9 +2028,9 @@ class GraphGenerators():
         There is one planar graph with one vertex. This graph obviously has
         minimum degree equal to 0::
 
-            sage: list(graphs.planar_graphs(1))  # optional plantri
+            sage: list(graphs.planar_graphs(1))                    # optional - plantri
             [Graph on 1 vertex]
-            sage: list(graphs.planar_graphs(1, minimum_degree=1))  # optional plantri
+            sage: list(graphs.planar_graphs(1, minimum_degree=1))  # optional - plantri
             []
 
         Specifying lower and upper bounds on the number of edges::
@@ -1932,9 +2047,9 @@ class GraphGenerators():
 
         Specifying the maximum size of a face::
 
-            sage: len(list(graphs.planar_graphs(4, maximum_face_size=3)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, maximum_face_size=3)))  # optional - plantri
             1
-            sage: len(list(graphs.planar_graphs(4, maximum_face_size=4)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, maximum_face_size=4)))  # optional - plantri
             3
 
         TESTS:
@@ -2102,28 +2217,28 @@ class GraphGenerators():
         The unique planar embedding of the `K_4` is the only planar triangulations
         on 4 vertices::
 
-            sage: gen = graphs.triangulations(4)    # optional plantri
-            sage: [g.get_embedding() for g in gen]  # optional plantri
+            sage: gen = graphs.triangulations(4)    # optional - plantri
+            sage: [g.get_embedding() for g in gen]  # optional - plantri
             [{1: [2, 3, 4], 2: [1, 4, 3], 3: [1, 2, 4], 4: [1, 3, 2]}]
 
         but, of course, this graph is not Eulerian::
 
-            sage: gen = graphs.triangulations(4, only_eulerian=True)  # optional plantri
-            sage: len(list(gen))                                      # optional plantri
+            sage: gen = graphs.triangulations(4, only_eulerian=True)  # optional - plantri
+            sage: len(list(gen))                                      # optional - plantri
             0
 
         The unique Eulerian triangulation on 6 vertices is isomorphic to the octahedral
         graph. ::
 
-            sage: gen = graphs.triangulations(6, only_eulerian=True)  # optional plantri
-            sage: g = next(gen)                                       # optional plantri
-            sage: g.is_isomorphic(graphs.OctahedralGraph())           # optional plantri
+            sage: gen = graphs.triangulations(6, only_eulerian=True)  # optional - plantri
+            sage: g = next(gen)                                       # optional - plantri
+            sage: g.is_isomorphic(graphs.OctahedralGraph())           # optional - plantri
             True
 
         An overview of the number of 5-connected triangulations on up to 22 vertices. This
         agrees with :oeis:`A081621`::
 
-            sage: for i in range(12, 23):                                             # optional plantri
+            sage: for i in range(12, 23):                                             # optional - plantri
             ....:     L = len(list(graphs.triangulations(i, minimum_connectivity=5)))
             ....:     print("{}   {:3d}".format(i,L))
             12     1
@@ -2140,7 +2255,8 @@ class GraphGenerators():
 
         The minimum connectivity can be at most the minimum degree::
 
-            sage: gen = next(graphs.triangulations(10, minimum_degree=3, minimum_connectivity=5))  # optional plantri
+            sage: gen = next(graphs.triangulations(10, minimum_degree=3,     # optional - plantri
+            ....:                                  minimum_connectivity=5))
             Traceback (most recent call last):
             ...
             ValueError: Minimum connectivity can be at most the minimum degree.
@@ -2148,19 +2264,23 @@ class GraphGenerators():
         There are 5 triangulations with 9 vertices and minimum degree equal to 4
         that are 3-connected, but only one of them is not 4-connected::
 
-            sage: len([g for g in graphs.triangulations(9, minimum_degree=4, minimum_connectivity=3)]) # optional plantri
+            sage: len([g for g in graphs.triangulations(9, minimum_degree=4,        # optional - plantri
+            ....:                                       minimum_connectivity=3)])
             5
-            sage: len([g for g in graphs.triangulations(9, minimum_degree=4, minimum_connectivity=3, exact_connectivity=True)]) # optional plantri
+            sage: len([g for g in graphs.triangulations(9, minimum_degree=4,        # optional - plantri
+            ....:                                       minimum_connectivity=3,
+            ....:                                       exact_connectivity=True)])
             1
 
         Setting ``dual=True`` gives the planar dual graphs::
 
-            sage: [len(g) for g in graphs.triangulations(9, minimum_degree=4, minimum_connectivity=3, dual=True)]  # optional plantri
+            sage: [len(g) for g in graphs.triangulations(9, minimum_degree=4,       # optional plantri
+            ....:                                        minimum_connectivity=3, dual=True)]
             [14, 14, 14, 14, 14]
 
         TESTS::
 
-            sage: [g.size() for g in graphs.triangulations(6, minimum_connectivity=3)] # optional plantri
+            sage: [g.size() for g in graphs.triangulations(6, minimum_connectivity=3)]  # optional - plantri
             [12, 12]
         """
         if order < 0:
@@ -2282,7 +2402,7 @@ class GraphGenerators():
         An overview of the number of quadrangulations on up to 12 vertices. This
         agrees with :oeis:`A113201`::
 
-            sage: for i in range(4,13):                          # optional plantri
+            sage: for i in range(4,13):                          # optional - plantri
             ....:     L =  len(list(graphs.quadrangulations(i)))
             ....:     print("{:2d}   {:3d}".format(i,L))
              4     1
@@ -2298,12 +2418,12 @@ class GraphGenerators():
         There are 2 planar quadrangulation on 12 vertices that do not have a
         non-facial quadrangle::
 
-            sage: len([g for g in graphs.quadrangulations(12, no_nonfacial_quadrangles=True)])  # optional plantri
+            sage: len([g for g in graphs.quadrangulations(12, no_nonfacial_quadrangles=True)])  # optional - plantri
             2
 
         Setting ``dual=True`` gives the planar dual graphs::
 
-            sage: [len(g) for g in graphs.quadrangulations(12, no_nonfacial_quadrangles=True, dual=True)]  # optional plantri
+            sage: [len(g) for g in graphs.quadrangulations(12, no_nonfacial_quadrangles=True, dual=True)]  # optional - plantri
             [10, 10]
         """
         if order < 0:

@@ -385,7 +385,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         if deg == 1:
             return self._parent(self._x[0].nth_root(self._parent.characteristic()))
 
-        from .function_field_rational import RationalFunctionField
+        from sage.rings.function_field.function_field_rational import RationalFunctionField
         if not isinstance(self.base_ring(), RationalFunctionField):
             raise NotImplementedError("only implemented for simple extensions of function fields")
         # compute a representation of the generator y of the field in terms of powers of y^p

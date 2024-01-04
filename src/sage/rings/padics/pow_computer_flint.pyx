@@ -641,13 +641,13 @@ def PowComputer_flint_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field
 
     """
     if prec_type == 'capped-rel':
-        from .qadic_flint_CR import PowComputer_
+        from sage.rings.padics.qadic_flint_CR import PowComputer_
     elif prec_type == 'capped-abs':
-        from .qadic_flint_CA import PowComputer_
+        from sage.rings.padics.qadic_flint_CA import PowComputer_
     elif prec_type == 'fixed-mod':
-        from .qadic_flint_FM import PowComputer_
+        from sage.rings.padics.qadic_flint_FM import PowComputer_
     elif prec_type == 'floating-point':
-        from .qadic_flint_FP import PowComputer_
+        from sage.rings.padics.qadic_flint_FP import PowComputer_
     else:
         raise ValueError("unknown prec_type `%s`" % prec_type)
     return PowComputer_(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly)

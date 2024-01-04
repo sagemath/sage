@@ -217,7 +217,7 @@ class Scilab(Expect):
           505.
     """
     def __init__(self, maxread=None, script_subdirectory=None,
-                 logfile=None, server=None,server_tmpdir=None,
+                 logfile=None, server=None, server_tmpdir=None,
                  seed=None):
         """
         Initializes the Scilab class.
@@ -249,11 +249,12 @@ class Scilab(Expect):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.scilab import Scilab # optional - scilab
-            sage: s = Scilab() # optional - scilab
-            sage: s.set_seed(1) # optional - scilab
+            sage: # optional - scilab
+            sage: from sage.interfaces.scilab import Scilab
+            sage: s = Scilab()
+            sage: s.set_seed(1)
             1
-            sage: [s.rand() for i in range(5)] # optional - scilab
+            sage: [s.rand() for i in range(5)]
             [
             <BLANKLINE>
                  0.6040239,
@@ -324,8 +325,8 @@ class Scilab(Expect):
             sage: scilab.eval("d=44")                   # optional - scilab
             'd  =\n \n    44.'
         """
-        s = Expect.eval(self, command, **kwds).replace("\x1b[?1l\x1b>","").strip()
-        return s
+        s = Expect.eval(self, command, **kwds)
+        return s.replace("\x1b[?1l\x1b>", "").strip()
 
     def whos(self, name=None, typ=None):
         """
@@ -358,14 +359,14 @@ class Scilab(Expect):
             sage: scilab.get('a')               # optional - scilab
             '\n \n    123.'
         """
-        cmd = '%s=%s;' % (var,value)
+        cmd = '%s=%s;' % (var, value)
         out = self.eval(cmd)
         if out.find("error") != -1:
             raise TypeError("Error executing code in Scilab\nCODE:\n\t%s\nScilab ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         """
-        Get the value of the variable var.
+        Get the value of the variable ``var``.
 
         EXAMPLES::
 
@@ -374,7 +375,7 @@ class Scilab(Expect):
             sage: scilab.get('b')                       # optional - scilab
             '\n \n    124.'
         """
-        s = self.eval('%s' % var)
+        s = self.eval(f'{var}')
         i = s.find('=')
         return s[i+1:]
 
@@ -408,7 +409,7 @@ class Scilab(Expect):
             A Sage matrix with entries in the rationals or reals.
 
         OUTPUT:
-            A string that evaluates to an Scilab matrix.
+            A string that evaluates to a Scilab matrix.
 
         EXAMPLES::
 
@@ -416,9 +417,9 @@ class Scilab(Expect):
             sage: A = M33([1,2,3,4,5,6,7,8,0])          # optional - scilab
             sage: scilab.sage2scilab_matrix_string(A)   # optional - scilab
             '[1, 2, 3; 4, 5, 6; 7, 8, 0]'
-
         """
-        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')','')
+        s = str(A.rows())
+        return s.replace('), (', '; ').replace('(', '').replace(')', '')
 
     def _object_class(self):
         """
@@ -535,7 +536,7 @@ def scilab_console():
 
     EXAMPLES::
 
-        sage: from sage.interfaces.scilab import scilab_console # optional - scilab
+        sage: from sage.interfaces.scilab import scilab_console  # optional - scilab
         sage: scilab_console()                               # optional - scilab; not tested
                 ___________________________________________
                                scilab-5.0.3
@@ -569,7 +570,7 @@ def scilab_version():
 
     EXAMPLES::
 
-        sage: from sage.interfaces.scilab import scilab_version # optional - scilab
+        sage: from sage.interfaces.scilab import scilab_version  # optional - scilab
         sage: scilab_version()    # optional - scilab
         'scilab-...'
     """

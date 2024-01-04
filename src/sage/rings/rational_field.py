@@ -18,9 +18,9 @@ function).
 
     sage: RealField(9).pi()                                                             # needs sage.rings.real_mpfr
     3.1
-    sage: QQ(RealField(9).pi())                                                         # needs sage.rings.real_mpfr
+    sage: QQ(RealField(9).pi())                                                         # needs sage.rings.real_interval_field sage.rings.real_mpfr
     22/7
-    sage: QQ(RealField().pi())                                                          # needs sage.rings.real_mpfr
+    sage: QQ(RealField().pi())                                                          # needs sage.rings.real_interval_field sage.rings.real_mpfr
     245850922/78256779
     sage: QQ(35)
     35

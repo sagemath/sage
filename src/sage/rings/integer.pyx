@@ -2536,7 +2536,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         cdef int pow_2
         cdef size_t upper,lower,middle
 
-        from .real_mpfi import RIF as R
+        from sage.rings.real_mpfi import RIF as R
 
         rif_self = R(self)
 
@@ -2722,7 +2722,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 # (suggested by David Harvey and Carl Witty)
                 # "for randomly distributed integers, the chance of this
                 # interval-based comparison failing is absurdly low"
-                from .real_mpfi import RIF
+                from sage.rings.real_mpfi import RIF
                 approx_compare = RIF(m)**guess
                 if self > approx_compare:
                     guess_filled = 1
@@ -4076,7 +4076,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         if self.is_zero():
             raise ArithmeticError("support of 0 not defined")
-        return sage.arith.all.prime_factors(self)
+        from sage.arith.misc import prime_factors
+
+        return prime_factors(self)
 
     def coprime_integers(self, m):
         """
@@ -7539,7 +7541,7 @@ def _check_global_dummy_Integer():
 # It operates on the following principles:
 #
 # - The pool starts out empty.
-# - When an new integer is needed, one from the pool is returned
+# - When a new integer is needed, one from the pool is returned
 #   if available, otherwise a new Integer object is created
 # - When an integer is collected, it will add it to the pool
 #   if there is room, otherwise it will be deallocated.

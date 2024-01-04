@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Generic graphs (common to directed/undirected)
 
@@ -1622,8 +1621,8 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(1, 2, 'a'), (2, 3, 'b')])
             sage: E = list(G.edge_iterator())
-            sage: H = G.igraph_graph(edge_attrs={'label': [e[2] for e in E]}) # optional - python_igraph
-            sage: H.es['label']                                               # optional - python_igraph
+            sage: H = G.igraph_graph(edge_attrs={'label': [e[2] for e in E]})  # optional - python_igraph
+            sage: H.es['label']                                                # optional - python_igraph
             ['a', 'b']
 
 
@@ -1632,84 +1631,86 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = Graph([(1, 2, {'weight': 1}), (2, 3, {'weight': 2})])
             sage: E = list(G.edge_iterator())
-            sage: H = G.igraph_graph(edge_attrs={'weight': [e[2]['weight'] for e in E]}) # optional - python_igraph
-            sage: H.is_weighted()                                                        # optional - python_igraph
+            sage: H = G.igraph_graph(edge_attrs={'weight': [e[2]['weight'] for e in E]})  # optional - python_igraph
+            sage: H.is_weighted()                                                         # optional - python_igraph
             True
-            sage: H.es['weight']                                                         # optional - python_igraph
+            sage: H.es['weight']                                                          # optional - python_igraph
             [1, 2]
 
         Adding vertex attributes::
 
             sage: G = graphs.GridGraph([2, 2])
-            sage: H = G.igraph_graph(vertex_attrs={'name': G.vertices(sort=True)}) # optional - python_igraph
-            sage: H.vs()['name']                                          # optional - python_igraph
+            sage: H = G.igraph_graph(vertex_attrs={'name': G.vertices(sort=True)})  # optional - python_igraph
+            sage: H.vs()['name']                                                    # optional - python_igraph
             [(0, 0), (0, 1), (1, 0), (1, 1)]
 
         Providing a mapping from vertices to consecutive integers::
 
             sage: G = graphs.GridGraph([2, 2])
             sage: V = list(G)
-            sage: H = G.igraph_graph(vertex_list=V, vertex_attrs={'name': V}) # optional - python_igraph
-            sage: H.vs()['name'] == V                                         # optional - python_igraph
+            sage: H = G.igraph_graph(vertex_list=V, vertex_attrs={'name': V})  # optional - python_igraph
+            sage: H.vs()['name'] == V                                          # optional - python_igraph
             True
 
         Sometimes, Sage integer/floats are not compatible with igraph::
 
             sage: G = Graph([(0, 1, 2)])
             sage: E = list(G.edge_iterator())
-            sage: H = G.igraph_graph(edge_attrs={'capacity': [e[2] for e in E]}) # optional - python_igraph
-            sage: H.maxflow_value(0, 1, 'capacity')                              # optional - python_igraph
+            sage: H = G.igraph_graph(edge_attrs={'capacity': [e[2] for e in E]})  # optional - python_igraph
+            sage: H.maxflow_value(0, 1, 'capacity')                               # optional - python_igraph
             1.0
-            sage: H = G.igraph_graph(edge_attrs={'capacity': [float(e[2]) for e in E]}) # optional - python_igraph
-            sage: H.maxflow_value(0, 1, 'capacity')                                     # optional - python_igraph
+            sage: H = G.igraph_graph(edge_attrs={'capacity': [float(e[2]) for e in E]})  # optional - python_igraph
+            sage: H.maxflow_value(0, 1, 'capacity')                                      # optional - python_igraph
             2.0
 
         TESTS:
 
         Converting a DiGraph back and forth::
 
+            sage: # optional - python_igraph
             sage: G = DiGraph([('a', 'b', {'w': 1}), ('b', 'c', {'w': 2})])
             sage: vertex_attrs = {'name': G.vertices(sort=False)}
             sage: E = list(G.edge_iterator())
             sage: edge_attrs = {'w': [e[2]['w'] for e in E]}
-            sage: H = DiGraph(G.igraph_graph(vertex_attrs=vertex_attrs, edge_attrs=edge_attrs)) # optional - python_igraph
-            sage: G == H                                                                        # optional - python_igraph
+            sage: H = DiGraph(G.igraph_graph(vertex_attrs=vertex_attrs, edge_attrs=edge_attrs))
+            sage: G == H
             True
-            sage: G.edges(sort=True) == H.edges(sort=True)                                      # optional - python_igraph
+            sage: G.edges(sort=True) == H.edges(sort=True)
             True
-            sage: H = DiGraph(G.igraph_graph(edge_attrs=edge_attrs))                            # optional - python_igraph
-            sage: G == H                                                                        # optional - python_igraph
+            sage: H = DiGraph(G.igraph_graph(edge_attrs=edge_attrs))
+            sage: G == H
             False
 
         When checking for equality, edge labels are not taken into account::
 
-            sage: H = DiGraph(G.igraph_graph(vertex_attrs=vertex_attrs)) # optional - python_igraph
-            sage: G == H                                                 # optional - python_igraph
+            sage: H = DiGraph(G.igraph_graph(vertex_attrs=vertex_attrs))  # optional - python_igraph
+            sage: G == H                                                  # optional - python_igraph
             True
-            sage: G.edges(sort=True) == H.edges(sort=True)               # optional - python_igraph
+            sage: G.edges(sort=True) == H.edges(sort=True)                # optional - python_igraph
             False
 
         Converting a Graph back and forth::
 
+            sage: # optional - python_igraph
             sage: G = Graph([('a', 'b', {'w': 1}), ('b', 'c', {'w': 2})])
             sage: vertex_attrs = {'name': G.vertices(sort=False)}
             sage: E = list(G.edge_iterator())
             sage: edge_attrs = {'w': [e[2]['w'] for e in E]}
-            sage: H = Graph(G.igraph_graph(vertex_attrs=vertex_attrs, edge_attrs=edge_attrs)) # optional - python_igraph
-            sage: G == H                                                                      # optional - python_igraph
+            sage: H = Graph(G.igraph_graph(vertex_attrs=vertex_attrs, edge_attrs=edge_attrs))
+            sage: G == H
             True
-            sage: G.edges(sort=True) == H.edges(sort=True)                                    # optional - python_igraph
+            sage: G.edges(sort=True) == H.edges(sort=True)
             True
-            sage: H = Graph(G.igraph_graph(edge_attrs=edge_attrs))                            # optional - python_igraph
-            sage: G == H                                                                      # optional - python_igraph
+            sage: H = Graph(G.igraph_graph(edge_attrs=edge_attrs))
+            sage: G == H
             False
 
         When checking for equality, edge labels are not taken into account::
 
-            sage: H = Graph(G.igraph_graph(vertex_attrs=vertex_attrs)) # optional - python_igraph
-            sage: G == H                                               # optional - python_igraph
+            sage: H = Graph(G.igraph_graph(vertex_attrs=vertex_attrs))  # optional - python_igraph
+            sage: G == H                                                # optional - python_igraph
             True
-            sage: G.edges(sort=True) == H.edges(sort=True)             # optional - python_igraph
+            sage: G.edges(sort=True) == H.edges(sort=True)              # optional - python_igraph
             False
 
         Check input parameter ``vertex_list``::
@@ -2931,8 +2932,8 @@ class GenericGraph(GenericGraph_pyx):
           ``_embedding``
 
         - ``boolean`` -- boolean (default: ``True``); -- whether to return a
-          boolean answer or raise a ``ValueError`` exception if the embedding is
-          invalid
+          boolean answer or raise a :class:`ValueError` exception
+          if the embedding is invalid
 
         EXAMPLES::
 
@@ -3441,8 +3442,8 @@ class GenericGraph(GenericGraph_pyx):
         .. WARNING::
 
             ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            ``TypeError`` might be raised when working with non-comparable
-            objects in Python 3.
+            :class:`TypeError` might be raised when working with non-comparable
+            objects.
 
         EXAMPLES:
 
@@ -4090,7 +4091,7 @@ class GenericGraph(GenericGraph_pyx):
             if n < 2:
                 return Rational(0)
             if self._directed:
-                return Rational(self.size()) / Rational((n ** 2 - n))
+                return Rational(self.size()) / Rational(n ** 2 - n)
             return Rational(self.size()) / Rational((n ** 2 - n) / 2)
 
     def is_bipartite(self, certificate=False):
@@ -7331,7 +7332,7 @@ class GenericGraph(GenericGraph_pyx):
            ....:    g.set_edge_label(u,v,round(random(),5))
            sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="LP")   # needs sage.numerical.mip
            True
-           sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="igraph") # optional - python_igraph
+           sage: g.edge_cut(0, 1, algorithm="FF") == g.edge_cut(0, 1, algorithm="igraph")  # optional - python_igraph
            True
 
         Rounded return value when using the LP method::
@@ -8357,7 +8358,7 @@ class GenericGraph(GenericGraph_pyx):
 
         EXAMPLES:
 
-        The `3 \times 3`-grid has an Hamiltonian path, an hamiltonian path
+        The `3 \times 3`-grid has a Hamiltonian path, a hamiltonian path
         starting from vertex `(0, 0)` and ending at vertex `(2, 2)`, but no
         Hamiltonian path starting from `(0, 0)` and ending at `(0, 1)`::
 
@@ -8529,7 +8530,7 @@ class GenericGraph(GenericGraph_pyx):
         g.add_edge(v, new_s, 0)
 
         #
-        # We now search for an Hamiltonian Cycle in g
+        # We now search for a Hamiltonian Cycle in g
         #
         from sage.categories.sets_cat import EmptySetError
         try:
@@ -9583,8 +9584,8 @@ class GenericGraph(GenericGraph_pyx):
            sage: flow_lp = g.flow(0, 1, algorithm="LP")                                 # needs sage.numerical.mip
            sage: abs(flow_ff - flow_lp) < 0.01                                          # needs sage.numerical.mip
            True
-           sage: flow_igraph = g.flow(0, 1, algorithm="igraph") # optional python_igraph
-           sage: abs(flow_ff - flow_igraph) < 0.00001           # optional python_igraph
+           sage: flow_igraph = g.flow(0, 1, algorithm="igraph")  # optional - python_igraph
+           sage: abs(flow_ff - flow_igraph) < 0.00001            # optional - python_igraph
            True
         """
         self._scream_if_not_simple(allow_loops=True)
@@ -14063,7 +14064,7 @@ class GenericGraph(GenericGraph_pyx):
 
         .. SEEALSO::
 
-            - :meth:`~GenericGraph.subgraph_search` -- finds an subgraph
+            - :meth:`~GenericGraph.subgraph_search` -- finds a subgraph
               isomorphic to `H` inside of a graph `G`
 
             - :meth:`~GenericGraph.subgraph_search_iterator` -- iterator over
@@ -14172,7 +14173,7 @@ class GenericGraph(GenericGraph_pyx):
 
         .. SEEALSO::
 
-            - :meth:`~GenericGraph.subgraph_search` -- finds an subgraph
+            - :meth:`~GenericGraph.subgraph_search` -- finds a subgraph
               isomorphic to `H` inside of `G`
 
             - :meth:`~GenericGraph.subgraph_search_count` -- counts the number
@@ -18892,8 +18893,8 @@ class GenericGraph(GenericGraph_pyx):
         .. WARNING::
 
             ``'min'`` and ``'max'`` only works if the labels can be compared. A
-            ``TypeError`` might be raised when working with non-comparable
-            objects in Python 3.
+            :class:`TypeError` might be raised when working with non-comparable
+            objects.
 
         - ``immutable`` -- boolean (default: ``Non``); whether to create a
           mutable/immutable copy. ``immutable=None`` (default) means that the
@@ -21632,7 +21633,7 @@ class GenericGraph(GenericGraph_pyx):
 
           - a HSV sequence in a string such as ``".52,.386,.22"``
 
-          - an hexadecimal code such as ``"#DA3305"``
+          - a hexadecimal code such as ``"#DA3305"``
 
           - a 3-tuple of floating point (to be interpreted as RGB tuple). In
             this case the 3-tuple is converted in hexadecimal code.
@@ -23268,7 +23269,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.automorphism_group(edge_labels=True)                                # needs sage.groups
             Permutation Group with generators [(1,4)(2,3)]
 
-            sage: G.automorphism_group(edge_labels=True, algorithm="bliss") # optional - bliss
+            sage: G.automorphism_group(edge_labels=True, algorithm="bliss")  # optional - bliss
             Permutation Group with generators [(1,4)(2,3)]
 
             sage: G.automorphism_group(edge_labels=True, algorithm="sage")              # needs sage.groups
@@ -25339,7 +25340,7 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
             for el, part in edge_partition:
                 # The multiplicity of a label is the number of edges from u to v
                 # it represents
-                m = sum((y[1] for y in el))
+                m = sum(y[1] for y in el)
                 if m in tmp:
                     tmp[m].append(part)
                 else:
