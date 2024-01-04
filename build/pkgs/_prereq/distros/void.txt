@@ -17,3 +17,15 @@ perl
 python3
 tar
 which
+# needed by gfortran
+diffutils
+# needed by ppl
+gzip
+# void may need special patches for musl libc support in python3,
+# so require full python 3 and its prereqs
+python3-devel
+bzip2-devel
+xz
+liblzma-devel
+libffi-devel
+zlib-devel
