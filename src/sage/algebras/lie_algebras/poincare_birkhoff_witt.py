@@ -584,7 +584,6 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         from sage.algebras.lie_algebras.center_uea import CenterUEA
         return CenterUEA(self._g, self)
 
-
     class Element(CombinatorialFreeModule.Element):
         def _act_on_(self, x, self_on_left):
             """

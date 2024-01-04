@@ -454,6 +454,9 @@ class CenterUEA(CombinatorialFreeModule):
         sage: all(v * g == g * v for g in U.algebra_generators() for v in elts)  # long time
         True
 
+    The Heisenberg Lie algebra `H_4` over a finite field; note the basis
+    elements `b^p \in Z(U(H_4))` for the basis elements `b \in H_4`::
+
         sage: g = lie_algebras.Heisenberg(GF(3), 4)
         sage: U = g.pbw_basis()
         sage: Z = U.center()
@@ -461,9 +464,39 @@ class CenterUEA(CombinatorialFreeModule):
         sage: it = iter(B)
         sage: center_elts = [next(it) for _ in range(12)]; center_elts
         [1, Z[0], Z[0]^2, Z[0]^3, Z[1], Z[2], Z[3], Z[4], Z[5], Z[6], Z[7], Z[8]]
-        sage: elts = [U(v) for v in center_elts]; set(elts)
-        {1, PBW['p1']^3, PBW['p2']^3, PBW['p3']^3, PBW['p4']^3, PBW['q1']^3,
-         PBW['q2']^3, PBW['q3']^3, PBW['q4']^3, PBW['z'], PBW['z']^2, PBW['z']^3}
+        sage: elts = [U(v) for v in center_elts]; elts
+        [1, PBW['z'], PBW['z']^2, PBW['z']^3, PBW['p1']^3, PBW['p2']^3, PBW['p3']^3,
+         PBW['p4']^3, PBW['q1']^3, PBW['q2']^3, PBW['q3']^3, PBW['q4']^3]
+        sage: all(v * g == g * v for g in U.algebra_generators() for v in elts)
+        True
+
+    An example with a free 4-step nilpotent Lie algebras on 2 generators::
+
+        sage: L = LieAlgebra(QQ, 2, step=4); L
+        Free Nilpotent Lie algebra on 8 generators
+         (X_1, X_2, X_12, X_112, X_122, X_1112, X_1122, X_1222) over Rational Field
+        sage: U = L.pbw_basis()
+        sage: Z = U.center()
+        sage: it = iter(Z.basis())
+        sage: center_elts = [next(it) for _ in range(10)]; center_elts
+        [1, Z[0], Z[1], Z[2], Z[0]^2, Z[0]*Z[1], Z[0]*Z[2], Z[1]^2, Z[1]*Z[2], Z[2]^2]
+        sage: elts = [U(v) for v in center_elts]; elts
+        [1, PBW[(1, 1, 1, 2)], PBW[(1, 1, 2, 2)], PBW[(1, 2, 2, 2)], PBW[(1, 1, 1, 2)]^2,
+         PBW[(1, 1, 1, 2)]*PBW[(1, 1, 2, 2)], PBW[(1, 1, 1, 2)]*PBW[(1, 2, 2, 2)],
+         PBW[(1, 1, 2, 2)]^2, PBW[(1, 1, 2, 2)]*PBW[(1, 2, 2, 2)], PBW[(1, 2, 2, 2)]^2]
+        sage: all(v * g == g * v for g in U.algebra_generators() for v in elts)
+        True
+
+    Using the Engel Lie algebra::
+
+        sage: L.<X,Y,Z> = LieAlgebra(QQ, {('X','Y'): {'Z': 1}}, nilpotent=True)
+        sage: U = L.pbw_basis()
+        sage: Z = U.center()
+        sage: it = iter(Z.basis())
+        sage: center_elts = [next(it) for _ in range(6)]; center_elts
+        [1, Z[0], Z[0]^2, Z[0]^3, Z[0]^4, Z[0]^5]
+        sage: elts = [U(v) for v in center_elts]; elts
+        [1, PBW['Z'], PBW['Z']^2, PBW['Z']^3, PBW['Z']^4, PBW['Z']^5]
         sage: all(v * g == g * v for g in U.algebra_generators() for v in elts)
         True
     """
