@@ -152,7 +152,7 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, 3, [1,2,4,2,3,1,0,1,2])
             sage: B = matrix(QQ, 3, 2, [1,7,5, 2,1,3])
-            sage: C = A._backslash_(B); C
+            sage: C = A._backslash_(B); C # known bug (sporadic timeouts)
             doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
             See https://github.com/sagemath/sage/issues/36394 for details.
             [  -1    1]
