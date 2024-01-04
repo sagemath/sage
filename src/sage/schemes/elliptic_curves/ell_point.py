@@ -1930,7 +1930,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         The point ``P (self)`` must have ``n`` torsion::
 
-            P.tate_pairing(Q, 163, 2)
+            sage: P.tate_pairing(Q, 163, 2)
             Traceback (most recent call last):
             ...
             ValueError: The point P must be in the n-torsion
