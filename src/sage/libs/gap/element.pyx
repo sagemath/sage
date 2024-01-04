@@ -1149,13 +1149,13 @@ cdef class GapElement(RingElement):
             ...
             AlarmInterrupt
 
-            sage: libgap.CyclicGroup(2) ^ 2 # known bug: linux (sporadic segmentation fault)
+            sage: libgap.CyclicGroup(2) ^ 2 # known bug (sporadic segmentation fault)
             Traceback (most recent call last):
             ...
             GAPError: Error, no method found!
             Error, no 1st choice method found for `^' on 2 arguments
 
-            sage: libgap(3) ^ Infinity
+            sage: libgap(3) ^ Infinity  # known bug (sporadic segmentation fault)
             Traceback (most recent call last):
             ...
             GAPError: Error, no method found! Error, no 1st choice
@@ -1174,7 +1174,7 @@ cdef class GapElement(RingElement):
         """
         TESTS::
 
-            sage: libgap(5)._pow_int(int(2))
+            sage: libgap(5)._pow_int(int(2))  # known bug (sporadic segmentation fault)
             25
         """
         return self._pow_(self._parent(other))
@@ -1189,11 +1189,11 @@ cdef class GapElement(RingElement):
 
         EXAMPLES::
 
-            sage: a = libgap.eval("NormalSubgroups")
-            sage: a.is_function()
+            sage: a = libgap.eval("NormalSubgroups")  # known bug (sporadic segmentation fault)
+            sage: a.is_function()  # known bug (sporadic segmentation fault)
             True
-            sage: a = libgap(2/3)
-            sage: a.is_function()
+            sage: a = libgap(2/3)  # known bug (sporadic segmentation fault)
+            sage: a.is_function()  # known bug (sporadic segmentation fault)
             False
         """
         return IS_FUNC(self.value)
@@ -1208,9 +1208,9 @@ cdef class GapElement(RingElement):
 
         EXAMPLES::
 
-            sage: libgap.eval('[1, 2,,,, 5]').is_list()
+            sage: libgap.eval('[1, 2,,,, 5]').is_list()  # known bug (sporadic segmentation fault)
             True
-            sage: libgap.eval('3/2').is_list()
+            sage: libgap.eval('3/2').is_list()  # known bug (sporadic segmentation fault)
             False
         """
         return GAP_IsList(self.value)
@@ -1225,9 +1225,9 @@ cdef class GapElement(RingElement):
 
         EXAMPLES::
 
-            sage: libgap.eval('[1, 2,,,, 5]').is_record()
+            sage: libgap.eval('[1, 2,,,, 5]').is_record() # known bug (sporadic segmentation fault)
             False
-            sage: libgap.eval('rec(a:=1, b:=3)').is_record()
+            sage: libgap.eval('rec(a:=1, b:=3)').is_record() # known bug (sporadic segmentation fault)
             True
         """
         return GAP_IsRecord(self.value)
@@ -1242,7 +1242,7 @@ cdef class GapElement(RingElement):
 
         EXAMPLES::
 
-            sage: libgap(True).is_bool()
+            sage: libgap(True).is_bool() # known bug (sporadic segmentation fault)
             True
         """
         libgap = self.parent()
@@ -1275,9 +1275,9 @@ cdef class GapElement(RingElement):
 
         EXAMPLES::
 
-            sage: perm = libgap.PermList( libgap([1,5,2,3,4]) );  perm
+            sage: perm = libgap.PermList( libgap([1,5,2,3,4]) );  perm # known bug (sporadic segmentation fault)
             (2,5,4,3)
-            sage: perm.is_permutation()
+            sage: perm.is_permutation() # known bug (sporadic segmentation fault)
             True
             sage: libgap('this is a string').is_permutation()
             False
@@ -1291,22 +1291,22 @@ cdef class GapElement(RingElement):
 
         EXAMPLES::
 
-            sage: libgap(1).sage()
+            sage: libgap(1).sage() # known bug (sporadic segmentation fault)
             1
-            sage: type(_)
+            sage: type(_) # known bug (sporadic segmentation fault)
             <class 'sage.rings.integer.Integer'>
 
-            sage: libgap(3/7).sage()
+            sage: libgap(3/7).sage() # known bug (sporadic segmentation fault)
             3/7
-            sage: type(_)
+            sage: type(_) # known bug (sporadic segmentation fault)
             <class 'sage.rings.rational.Rational'>
 
-            sage: libgap.eval('5 + 7*E(3)').sage()
+            sage: libgap.eval('5 + 7*E(3)').sage() # known bug (sporadic segmentation fault)
             7*zeta3 + 5
 
-            sage: libgap(Infinity).sage()
+            sage: libgap(Infinity).sage() # known bug (sporadic segmentation fault)
             +Infinity
-            sage: libgap(-Infinity).sage()
+            sage: libgap(-Infinity).sage() # known bug (sporadic segmentation fault)
             -Infinity
 
             sage: libgap(True).sage()
@@ -1321,34 +1321,34 @@ cdef class GapElement(RingElement):
             sage: type(_)
             <... 'str'>
 
-            sage: x = libgap.Integers.Indeterminate("x")
+            sage: x = libgap.Integers.Indeterminate("x") # known bug (sporadic segmentation fault)
 
-            sage: p = x^2 - 2*x + 3
-            sage: p.sage()
+            sage: p = x^2 - 2*x + 3 # known bug (sporadic segmentation fault)
+            sage: p.sage() # known bug (sporadic segmentation fault)
             x^2 - 2*x + 3
-            sage: p.sage().parent()
+            sage: p.sage().parent() # known bug (sporadic segmentation fault)
             Univariate Polynomial Ring in x over Integer Ring
 
-            sage: p = x^-2 + 3*x
-            sage: p.sage()
+            sage: p = x^-2 + 3*x # known bug (sporadic segmentation fault)
+            sage: p.sage() # known bug (sporadic segmentation fault)
             x^-2 + 3*x
-            sage: p.sage().parent()
+            sage: p.sage().parent() # known bug (sporadic segmentation fault)
             Univariate Laurent Polynomial Ring in x over Integer Ring
 
-            sage: p = (3 * x^2 + x) / (x^2 - 2)
-            sage: p.sage()
+            sage: p = (3 * x^2 + x) / (x^2 - 2) # known bug (sporadic segmentation fault)
+            sage: p.sage() # known bug (sporadic segmentation fault)
             (3*x^2 + x)/(x^2 - 2)
-            sage: p.sage().parent()
+            sage: p.sage().parent() # known bug (sporadic segmentation fault)
             Fraction Field of Univariate Polynomial Ring in x over Integer Ring
 
         TESTS:
 
         Check :trac:`30496`::
 
-            sage: x = libgap.Integers.Indeterminate("x")
+            sage: x = libgap.Integers.Indeterminate("x") # known bug (sporadic segmentation fault)
 
-            sage: p = x^2 - 2*x
-            sage: p.sage()
+            sage: p = x^2 - 2*x # known bug (sporadic segmentation fault)
+            sage: p.sage() # known bug (sporadic segmentation fault)
             x^2 - 2*x
         """
         if self.value is NULL:
@@ -1407,9 +1407,9 @@ cdef GapElement_Integer make_GapElement_Integer(parent, Obj obj) noexcept:
 
     EXAMPLES::
 
-        sage: libgap(123)
+        sage: libgap(123) # known bug (sporadic segmentation fault)
         123
-        sage: type(_)
+        sage: type(_) # known bug (sporadic segmentation fault)
         <class 'sage.libs.gap.element.GapElement_Integer'>
     """
     cdef GapElement_Integer r = GapElement_Integer.__new__(GapElement_Integer)
@@ -1423,10 +1423,10 @@ cdef class GapElement_Integer(GapElement):
 
     EXAMPLES::
 
-        sage: i = libgap(123)
-        sage: type(i)
+        sage: i = libgap(123) # known bug (sporadic segmentation fault)
+        sage: type(i) # known bug (sporadic segmentation fault)
         <class 'sage.libs.gap.element.GapElement_Integer'>
-        sage: ZZ(i)
+        sage: ZZ(i) # known bug (sporadic segmentation fault)
         123
     """
 
@@ -1444,12 +1444,12 @@ cdef class GapElement_Integer(GapElement):
 
         EXAMPLES::
 
-            sage: n = libgap(1)
-            sage: type(n)
+            sage: n = libgap(1) # known bug (sporadic segmentation fault)
+            sage: type(n) # known bug (sporadic segmentation fault)
             <class 'sage.libs.gap.element.GapElement_Integer'>
-            sage: n.is_C_int()
+            sage: n.is_C_int() # known bug (sporadic segmentation fault)
             True
-            sage: n.IsInt()
+            sage: n.IsInt() # known bug (sporadic segmentation fault)
             true
 
             sage: N = libgap(2^130)
