@@ -2079,7 +2079,7 @@ class CoxeterGroups(Category_singleton):
                 sage: s = W.simple_reflections()
                 sage: w0 = s[1]
                 sage: w1 = s[1]*s[2]*s[3]
-                sage: w0.absolute_covers()
+                sage: list(w0.absolute_covers())
                 [
                 [0 0 1 0]  [0 1 0 0]  [0 1 0 0]  [0 0 0 1]  [0 1 0 0]
                 [1 0 0 0]  [1 0 0 0]  [0 0 1 0]  [1 0 0 0]  [0 0 0 1]
@@ -2088,8 +2088,9 @@ class CoxeterGroups(Category_singleton):
                 ]
             """
             W = self.parent()
-            return [self * t for t in W.reflections()
-                    if self.absolute_length() < (self * t).absolute_length()]
+            for t in W.reflections():
+                if self.absolute_length() < (self * t).absolute_length():
+                    yield self * t
 
         def canonical_matrix(self):
             r"""
