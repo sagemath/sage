@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 `L`-series for elliptic curves
 

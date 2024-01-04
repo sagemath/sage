@@ -285,7 +285,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         strsig = ''.join( x[0] for x in sig)
         reducedsig = strsig
         while re.search(r"\+\s*-",reducedsig):
-            reducedsig = re.sub(r"\+\s*-", lambda match : str().ljust(len(match.group(int(0)))) , reducedsig)
+            reducedsig = re.sub(r"\+\s*-", lambda match : ''.ljust(len(match.group(0))) , reducedsig)
         return (sig,reducedsig)
 
     def signature(self, i):

@@ -55,9 +55,10 @@ class AmbientSpace(CombinatorialFreeModule):
 
     TESTS::
 
-        sage: types = CartanType.samples(crystallographic = True)+[CartanType(["A",2],["C",5])]
+        sage: # needs sage.libs.gap
+        sage: types = CartanType.samples(crystallographic=True) + [CartanType(["A",2],["C",5])]
         sage: for e in [ct.root_system().ambient_space() for ct in types]:
-        ....:          TestSuite(e).run()
+        ....:     TestSuite(e).run()
 
         sage: e1 = RootSystem(['A',3]).ambient_lattice()
         sage: e2 = RootSystem(['B',3]).ambient_lattice()

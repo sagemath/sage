@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Galois representations attached to elliptic curves
 
