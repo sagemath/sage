@@ -1942,7 +1942,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P.tate_pairing(P, 6, 1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Reduced Tate pairing is currently only implemented for fintie fields
+            NotImplementedError: Reduced Tate pairing is currently only implemented for finite fields
 
         ALGORITHM:
 
