@@ -253,7 +253,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             sage: crystals.LSPaths(['B',3],[1,1,0]) # indirect doctest
             The crystal of LS paths of type ['B', 3] and weight Lambda[1] + Lambda[2]
         """
-        return "The crystal of LS paths of type %s and weight %s" % (self._cartan_type, self.weight)
+        return f"The crystal of LS paths of type {self._cartan_type} and weight {self.weight}"
 
     def weight_lattice_realization(self):
         r"""
@@ -350,7 +350,6 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: b.split_step(0,1/3)
                 (1/3*Lambda[1] + 1/3*Lambda[2], 2/3*Lambda[1] + 2/3*Lambda[2])
             """
-            #assert 0 <= which_step <= len(self.value)
             v = self.value[which_step]
             return self.parent()(self.value[:which_step] + (r*v,(1-r)*v) + self.value[which_step+1:])
 
@@ -367,8 +366,6 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: b.reflect_step(0,2)
                 (2*Lambda[1] - Lambda[2],)
             """
-            #assert i in self.index_set()
-            #assert 0 <= which_step and which_step <= len(self.value)
             return self.parent()(self.value[:which_step]+tuple([self.value[which_step].simple_reflection(i)])+self.value[which_step+1:])
 
         def _string_data(self, i):
@@ -468,7 +465,6 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: c.e(1,length_only=True)
                 0
             """
-            #assert i in self.index_set()
             data = self._string_data(i)
             # compute the minimum i-height M on the path
             if not data:
@@ -500,21 +496,21 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 if ix == 0:
                     prev_ht = M + p
                 else:
-                    prev_ht = min(data[ix-1][1],M+p)
+                    prev_ht = min(data[ix-1][1], M+p)
                 # if necessary split the step. Then reflect the wet part.
                 if data[ix][1] - data[ix][2] > prev_ht:
-                    ws = ws.split_step(j,1-(prev_ht-data[ix][1])/(-data[ix][2]))
-                    ws = ws.reflect_step(j+1,i)
+                    ws = ws.split_step(j, 1-(prev_ht-data[ix][1])/(-data[ix][2]))
+                    ws = ws.reflect_step(j+1, i)
                 else:
-                    ws = ws.reflect_step(j,i)
-                ix = ix - 1
+                    ws = ws.reflect_step(j, i)
+                ix -= 1
             #!!! at this point we should return the fancy crystal graph element
             #!!! corresponding to the humble vector sequence ws
             return P(ws.compress())
 
         def dualize(self):
             r"""
-            Return the dualized path.
+            Return the dualized path of ``self``.
 
             EXAMPLES::
 
@@ -622,7 +618,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 -Lambda[0] + 2*Lambda[1] - delta
             """
             P = self.parent().weight_lattice_realization()
-            return sum(self.value, P.zero())
+            return P.sum(self.value)
 
         def _latex_(self):
             r"""
