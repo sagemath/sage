@@ -856,6 +856,19 @@ cdef class NCPolynomialRing_plural(Ring):
 
         return new_NCP(self,_p)
 
+    def algerbra_generators(self):
+        r"""
+        Return the algebra generators of ``self``.
+
+        EXAMPLES::
+
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
+            sage: P.algebra_generators()
+            (x, y, z)
+        """
+        return self.gens()
+
     def ideal(self, *gens, **kwds):
         """
         Create an ideal in this polynomial ring.
@@ -2178,7 +2191,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         return (<NCPolynomialRing_plural>self._parent)._base._zero_element
 
-    def dict(self):
+    cpdef dict dict(self) noexcept:
         """
         Return a dictionary representing ``self``. This dictionary is in
         the same format as the generic MPolynomial: The dictionary
@@ -2204,7 +2217,8 @@ cdef class NCPolynomial_plural(RingElement):
             rChangeCurrRing(r)
         base = (<NCPolynomialRing_plural>self._parent)._base
         p = self._poly
-        pd = dict()
+        cdef dict d
+        cdef dict pd = dict()
         while p:
             d = dict()
             for v from 1 <= v <= r.N:
@@ -2216,6 +2230,30 @@ cdef class NCPolynomial_plural(RingElement):
 
             p = pNext(p)
         return pd
+
+    cpdef dict monomial_coefficients(self, bint copy=True) noexcept:
+        """
+        Return a dictonary representation of ``self`` with the keys
+        the exponent vectors and the values the corresponding coefficients.
+
+        INPUT:
+
+        * "copy" -- ignored
+
+        EXAMPLES::
+
+            sage: A.<x,z,y> = FreeAlgebra(GF(389), 3)
+            sage: R = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
+            sage: R.inject_variables()
+            Defining x, z, y
+            sage: f = (2*x*y^3*z^2 + (7)*x^2 + (3))
+            sage: d = f.monomial_coefficients(False); d
+            {(0, 0, 0): 3, (1, 2, 3): 2, (2, 0, 0): 7}
+            sage: d.clear()
+            sage: f.monomial_coefficients()
+            {(0, 0, 0): 3, (1, 2, 3): 2, (2, 0, 0): 7}
+        """
+        return self.dict()
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
