@@ -50,6 +50,9 @@ script-files = [
     "bin/sage-version.sh",
     # Auxiliary script for invoking Python in the Sage environment
     "bin/sage-python",
+    # The following is freshly un-deprecated as a temporary workaround
+    # for defects in Cython 3.0.x support for PEP 420 implicit namespace packages
+    "bin/sage-cython",
     # Not included:
     # - bin/sage-env-config                  -- installed by sage_conf
     # - bin/sage-env-config.in               -- not to be installed
