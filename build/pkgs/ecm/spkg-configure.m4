@@ -1,5 +1,6 @@
 SAGE_SPKG_CONFIGURE([ecm], [
     m4_pushdef([SAGE_ECM_MINVER],[7.0.4])
+    SAGE_ECM_BIN=ecm
     SAGE_SPKG_DEPCHECK([gmp], [
         AC_CHECK_HEADER(ecm.h, [
             AX_ABSOLUTE_HEADER([ecm.h])
@@ -18,8 +19,9 @@ SAGE_SPKG_CONFIGURE([ecm], [
                         AC_SEARCH_LIBS([ecm_factor], [ecm], [], [sage_spkg_install_ecm=yes])
                     ])
                 ])
-                AC_PATH_PROG([ECMBIN], [ecm])
+                AC_PATH_PROGS([ECMBIN], [ecm gmp-ecm])
                 if test x$ECMBIN != x; then
+                    SAGE_ECM_BIN=`basename $ECMBIN`
                     ecmbin_version=`echo 121 | $ECMBIN 4 | grep ^GMP |
                       $SED -n -e 's/GMP\-ECM \([[0-9]]*\.[[0-9]]*\.[[0-9]]*\).*/\1/p'`
                 fi
@@ -34,4 +36,5 @@ SAGE_SPKG_CONFIGURE([ecm], [
         ], [sage_spkg_install_ecm=yes])
     ])
     m4_popdef([SAGE_ECM_MINVER])
+    AC_SUBST(SAGE_ECMBIN, $SAGE_ECM_BIN)
 ])
