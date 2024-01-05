@@ -126,7 +126,6 @@ from itertools import repeat
 from sage.rings.integer import Integer
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
-from sage.env import COMBINATORIAL_DESIGN_DATA_DIR
 
 
 def are_mutually_orthogonal_latin_squares(l, verbose=False):
@@ -521,9 +520,7 @@ def MOLS_table(start,stop=None,compare=False,width=None):
         return
 
     if compare:
-        handbook_file = open("{}/MOLS_table.txt".format(COMBINATORIAL_DESIGN_DATA_DIR), 'r')
-        hb = [int(_) for _ in handbook_file.readlines()[9].split(',')]
-        handbook_file.close()
+        from .MOLS_table import handbook_data as hb
 
     # choose an appropriate width (needs to be >= 3 because "+oo" should fit)
     if width is None:
