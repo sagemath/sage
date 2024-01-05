@@ -2,8 +2,12 @@
 # The generated build file contains all python files as `install_sources` and all cython files as `extension_module`
 
 import sys
+
+from collections import defaultdict
 from pathlib import Path
 from types import SimpleNamespace
+
+from sage.misc.package_dir import read_distribution
 
 
 def run(folder: Path, dry_run=False, force=False):
@@ -24,9 +28,16 @@ def run(folder: Path, dry_run=False, force=False):
         with open(path, 'r') as file:
             metadata = SimpleNamespace()
             metadata.path = path
+            metadata.distribution = read_distribution(path)
+
+            if path.suffix not in [".pxd", ".pxi", ".pyx"]:
+                return metadata
+
             metadata.libraries = []
             for line in file:
-                if line.startswith('# distutils: libraries ='):
+                if not line:
+                    pass
+                elif line.startswith('# distutils: libraries ='):
                     libraries = line.split('libraries =')[1].strip().split()
                     libraries = [
                         library
@@ -48,6 +59,10 @@ def run(folder: Path, dry_run=False, force=False):
                     except ValueError:
                         pass
                     metadata.libraries += libraries
+                elif line.startswith('#'):
+                    pass
+                else:
+                    break
 
             metadata.inc_dirs = []
             c_file = path.with_suffix('.c')
@@ -108,6 +123,7 @@ def run(folder: Path, dry_run=False, force=False):
 
             return metadata
 
+    python_files = [get_metadata(file) for file in python_files]
     cython_files = [get_metadata(file) for file in cython_files]
     cython_c_files = [file for file in cython_files if not file.is_cpp]
     cython_cpp_files = [file for file in cython_files if file.is_cpp]
@@ -120,55 +136,76 @@ def run(folder: Path, dry_run=False, force=False):
         print(f'Error: {meson_build_path} already exists, use --force to overwrite')
         return
 
+    print(f'Writing {meson_build_path}', file=sys.stderr)
     with open(meson_build_path, 'w') if not dry_run else sys.stdout as meson_build:
-        meson_build.write('py.install_sources(\n')
-        for file in python_files:
-            meson_build.write(f"    '{file.name}',\n")
-        meson_build.write(f"    subdir: '{folder_rel_to_src}',\n")
-        meson_build.write(')\n')
 
-        if cython_c_files:
+        by_distribution = defaultdict(lambda: SimpleNamespace(python_files=[],
+                                                              cython_c_files=[],
+                                                              cython_cpp_files=[]))
+        for python_file in python_files:
+            by_distribution[python_file.distribution].python_files.append(python_file)
+        for cython_c_file in cython_c_files:
+            by_distribution[cython_c_file.distribution].cython_c_files.append(cython_c_file)
+        for cython_cpp_file in cython_cpp_files:
+            by_distribution[cython_cpp_file.distribution].cython_cpp_files.append(cython_cpp_file)
+
+        for distribution, files in by_distribution.items():
+
+            distribution_variable = 'distribution_' + distribution.replace('-', '_')
+            meson_build.write(f"if get_variable('{distribution_variable}', false)\n")
+
+            if files.python_files:
+                meson_build.write('py.install_sources(\n')
+                for file in files.python_files:
+                    meson_build.write(f"    '{file.path.name}',\n")
+                meson_build.write(f"    subdir: '{folder_rel_to_src}',\n")
+                meson_build.write(')\n')
+
+            if files.cython_c_files:
+                meson_build.write('\n')
+                meson_build.write('extension_data = {\n')
+                for file in files.cython_c_files:
+                    if file.not_yet_on_conda:
+                        meson_build.write(f"    # '{file.path.stem}': files('{file.path.name}'), # not yet on conda\n")
+                    else:
+                        meson_build.write(f"    '{file.path.stem}': files('{file.path.name}'),\n")
+                meson_build.write('}\n\n')
+
+                meson_build.write('foreach name, pyx : extension_data\n')
+                meson_build.write("    py.extension_module(name,\n")
+                meson_build.write("        sources: pyx,\n")
+                meson_build.write(f"        subdir: '{folder_rel_to_src}',\n")
+                meson_build.write('        install: true,\n')
+                meson_build.write(f"        include_directories: [{', '.join(all_inc_dirs)}],\n")
+                meson_build.write(f"        dependencies: [py_dep{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
+                meson_build.write('    )\n')
+                meson_build.write('endforeach\n')
+
+            if files.cython_cpp_files:
+                meson_build.write('\n')
+                meson_build.write('extension_data_cpp = {\n')
+                for file in files.cython_cpp_files:
+                    if file.not_yet_on_conda:
+                        meson_build.write(f"    # '{file.path.stem}': files('{file.path.name}'), # not yet on conda\n")
+                    else:
+                        meson_build.write(f"    '{file.path.stem}': files('{file.path.name}'),\n")
+                meson_build.write('}\n\n')
+
+                meson_build.write('foreach name, pyx : extension_data_cpp\n')
+                meson_build.write("    py.extension_module(name,\n")
+                meson_build.write("        sources: pyx,\n")
+                meson_build.write(f"        subdir: '{folder_rel_to_src}',\n")
+                meson_build.write('        install: true,\n')
+                meson_build.write('        override_options : [\'cython_language=cpp\'],\n')
+                meson_build.write(f"        include_directories: [{', '.join(all_inc_dirs)}],\n")
+                meson_build.write(f"        dependencies: [py_dep{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
+                meson_build.write('    )\n')
+                meson_build.write('endforeach\n')
+
+            meson_build.write('endif\n')
             meson_build.write('\n')
-            meson_build.write('extension_data = {\n')
-            for file in cython_c_files:
-                if file.not_yet_on_conda:
-                    meson_build.write(f"    # '{file.path.stem}': files('{file.path.name}'), # not yet on conda\n")
-                else:
-                    meson_build.write(f"    '{file.path.stem}': files('{file.path.name}'),\n")
-            meson_build.write('}\n\n')
 
-            meson_build.write('foreach name, pyx : extension_data\n')
-            meson_build.write("    py.extension_module(name,\n")
-            meson_build.write("        sources: pyx,\n")
-            meson_build.write(f"        subdir: '{folder_rel_to_src}',\n")
-            meson_build.write('        install: true,\n')
-            meson_build.write(f"        include_directories: [{', '.join(all_inc_dirs)}],\n")
-            meson_build.write(f"        dependencies: [py_dep{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
-            meson_build.write('    )\n')
-            meson_build.write('endforeach\n')
-
-        if cython_cpp_files:
-            meson_build.write('\n')
-            meson_build.write('extension_data_cpp = {\n')
-            for file in cython_cpp_files:
-                if file.not_yet_on_conda:
-                    meson_build.write(f"    # '{file.path.stem}': files('{file.path.name}'), # not yet on conda\n")
-                else:
-                    meson_build.write(f"    '{file.path.stem}': files('{file.path.name}'),\n")
-            meson_build.write('}\n\n')
-
-            meson_build.write('foreach name, pyx : extension_data_cpp\n')
-            meson_build.write("    py.extension_module(name,\n")
-            meson_build.write("        sources: pyx,\n")
-            meson_build.write(f"        subdir: '{folder_rel_to_src}',\n")
-            meson_build.write('        install: true,\n')
-            meson_build.write('        override_options : [\'cython_language=cpp\'],\n')
-            meson_build.write(f"        include_directories: [{', '.join(all_inc_dirs)}],\n")
-            meson_build.write(f"        dependencies: [py_dep{', ' if all_libraries else ''}{', '.join(all_libraries)}],\n")
-            meson_build.write('    )\n')
-            meson_build.write('endforeach\n')
-
-        meson_build.write('\n')
+        recurse_subdirs = []
         for subdir in subdirs:
             if subdir.name.startswith('_') or subdir.name.startswith('.'):
                 continue
@@ -179,7 +216,10 @@ def run(folder: Path, dry_run=False, force=False):
                 meson_build.write(f"install_subdir('{subdir.name}', install_dir: sage_install_dir / '{folder_rel_to_src.relative_to('sage')}')\n")
             else:
                 meson_build.write(f"subdir('{subdir.name}')\n")
-                run(subdir)
+                recurse_subdirs.append(subdir)
+
+        for subdir in recurse_subdirs:
+            run(subdir, dry_run=dry_run, force=force)
 
 
 def generate_meson():
