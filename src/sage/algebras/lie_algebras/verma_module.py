@@ -120,7 +120,7 @@ class VermaModule(CombinatorialFreeModule):
                                          category=Modules(R).WithBasis().Graded())
 
     def _triangular_key(self, x):
-        """
+        r"""
         Return a key for sorting for the index ``x`` that respects
         the triangular decomposition by `U^-, U^0, U^+`.
 
@@ -242,7 +242,7 @@ class VermaModule(CombinatorialFreeModule):
             sage: L = lie_algebras.sp(QQ, 4)
             sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
             sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
-            sage: f1, f2 = L.f(1), L.f(2)
+            sage: f1, f2 = L.f()
             sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
             sage: v = x * M.highest_weight_vector()
             sage: M._repr_generator(v.leading_support())
@@ -269,7 +269,7 @@ class VermaModule(CombinatorialFreeModule):
             sage: L = lie_algebras.sp(QQ, 4)
             sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
             sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
-            sage: f1, f2 = L.f(1), L.f(2)
+            sage: f1, f2 = L.f()
             sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
             sage: v = x * M.highest_weight_vector()
             sage: M._latex_generator(v.leading_support())
@@ -450,6 +450,47 @@ class VermaModule(CombinatorialFreeModule):
         if isinstance(x, self._pbw.element_class):
             return self.highest_weight_vector()._acted_upon_(x, False)
         return super()._element_constructor_(self, x)
+
+    def contravariant_form(self, x, y):
+        r"""
+        Return the contravariant form of ``x`` and ``y``.
+
+        Let `C(x, y)` denote the (universal) contravariant form on
+        `U(\mathfrak{g})`. Then the contravariant form on `M(\lambda)` is
+        given by evaluating `C(x, y) \in U(\mathfrak{h})` at `\lambda`.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 1])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: M = g.verma_module(2*La[1])
+            sage: U = M.pbw_basis()
+            sage: v = M.highest_weight_vector()
+            sage: e, h, f = U.algebra_generators()
+            sage: elts = [f^k * v for k in range(8)]; elts
+            [v[2*Lambda[1]], f[-alpha[1]]*v[2*Lambda[1]],
+             f[-alpha[1]]^2*v[2*Lambda[1]], f[-alpha[1]]^3*v[2*Lambda[1]],
+             f[-alpha[1]]^4*v[2*Lambda[1]], f[-alpha[1]]^5*v[2*Lambda[1]],
+             f[-alpha[1]]^6*v[2*Lambda[1]], f[-alpha[1]]^7*v[2*Lambda[1]]]
+            sage: matrix([[M.contravariant_form(x, y) for x in elts] for y in elts])
+            [1 0 0 0 0 0 0 0]
+            [0 2 0 0 0 0 0 0]
+            [0 0 4 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+        """
+        pbw = self._pbw
+        I = pbw._indices
+        xlift = pbw.element_class(pbw, {I(m._monomial): c for m, c in x._monomial_coefficients.items()})
+        ylift = pbw.element_class(pbw, {I(m._monomial): c for m, c in y._monomial_coefficients.items()})
+        univ = pbw.contravariant_form(xlift, ylift)
+        la = self._weight
+        R = self.base_ring()
+        return R.sum(c * R.prod(la.scalar(k) ** e for k, e in m._monomial.items())
+                     for m, c in univ._monomial_coefficients.items())
 
     @lazy_attribute
     def _dominant_data(self):
@@ -800,7 +841,7 @@ class VermaModuleMorphism(Morphism):
             sage: M = L.verma_module(La[1] + La[2])
             sage: Mp = L.verma_module(M.highest_weight().dot_action([1,2]))
             sage: pbw = M.pbw_basis()
-            sage: f1, f2 = pbw(L.f(1)), pbw(L.f(2))
+            sage: f1, f2 = pbw.f()
             sage: v = Mp.highest_weight_vector()
             sage: phi = Hom(Mp, M).natural_map()
             sage: phi(f1 * v) == f1 * phi(v)
@@ -833,7 +874,7 @@ class VermaModuleMorphism(Morphism):
             sage: M = L.verma_module(La[1] + La[2])
             sage: Mp = L.verma_module(M.highest_weight().dot_action([1,2]))
             sage: pbw = M.pbw_basis()
-            sage: f1, f2 = pbw(L.f(1)), pbw(L.f(2))
+            sage: f1, f2 = pbw.f()
             sage: v = Mp.highest_weight_vector()
             sage: phi = Hom(Mp, M).natural_map()
             sage: phi._on_basis((f1 * v).leading_support()) == f1 * phi(v)
@@ -1087,12 +1128,16 @@ class VermaModuleHomset(Homset):
         ALGORITHM:
 
         We essentially follow the algorithm laid out in [deG2005]_.
-        We use the `\mathfrak{sl}_2` relation on
-        `M_{s_i \cdot \lambda} \to M_{\lambda}`, where
-        `\langle \lambda + \delta, \alpha_i^{\vee} \rangle = m > 0`,
-        i.e., the weight `\lambda` is `i`-dominant with respect to
-        the dot action. From here, we construct the singular vector
-        `f_i^m v_{\lambda}`. We iterate this until we reach `\mu`.
+        We split the main computation into two cases. If there exists
+        an `i` such that `\langle \lambda + \rho, \alpha_i^{\vee}
+        \rangle = m > 0` (i.e., the weight `\lambda` is `i`-dominant
+        with respect to the dot action), then we use the `\mathfrak{sl}_2`
+        relation on `M_{s_i \cdot \lambda} \to M_{\lambda}` to
+        construct the singular vector `f_i^m v_{\lambda}`. Otherwise
+        we find the shortest root `\alpha` such that `\langle \lambda
+        + \rho, \alpha^{\vee} \rangle > 0` and explicitly compute the
+        kernel with respect to the weight basis elements. We iterate
+        this until we reach `\mu`.
 
         EXAMPLES::
 
@@ -1103,13 +1148,15 @@ class VermaModuleHomset(Homset):
             sage: M = L.verma_module(la)
             sage: Mp = L.verma_module(mu)
             sage: H = Hom(Mp, M)
-            sage: H.singular_vector()
+            sage: v = H.singular_vector(); v
             f[-alpha[2]]*f[-alpha[1]]^3*v[Lambda[1] - Lambda[3]]
              + 3*f[-alpha[1]]^2*f[-alpha[1] - alpha[2]]*v[Lambda[1] - Lambda[3]]
+            sage: v.degree() == Mp.highest_weight()
+            True
 
         ::
 
-            sage: L = LieAlgebra(QQ, cartan_type=['F',4])
+            sage: L = LieAlgebra(QQ, cartan_type=['F', 4])
             sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
             sage: la = La[1] + La[2] - La[3]
             sage: mu = la.dot_action([1,2,3,2])
@@ -1119,7 +1166,9 @@ class VermaModuleHomset(Homset):
             sage: v = H.singular_vector()
             sage: pbw = M.pbw_basis()
             sage: E = [pbw(e) for e in L.e()]
-            sage: all(e * v == M.zero() for e in E)
+            sage: all(e * v == M.zero() for e in E)  # long time
+            True
+            sage: v.degree() == Mp.highest_weight()
             True
 
         When `w \cdot \lambda \notin \lambda + Q^-`, there does not
@@ -1133,6 +1182,24 @@ class VermaModuleHomset(Homset):
             sage: Mp = L.verma_module(mu)
             sage: H = Hom(Mp, M)
             sage: H.singular_vector() is None
+            True
+
+        When we need to apply a non-simple reflection, we can compute
+        the singular vector (see :issue:`36793`)::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: M = g.verma_module((0*La[1]).dot_action([1]))
+            sage: Mp = g.verma_module((0*La[1]).dot_action([1,2]))
+            sage: H = Hom(Mp, M)
+            sage: v = H.singular_vector(); v
+            1/2*f[-alpha[2]]*f[-alpha[1]]*v[-2*Lambda[1] + Lambda[2]]
+             + f[-alpha[1] - alpha[2]]*v[-2*Lambda[1] + Lambda[2]]
+            sage: pbw = M.pbw_basis()
+            sage: E = [pbw(e) for e in g.e()]
+            sage: all(e * v == M.zero() for e in E)
+            True
+            sage: v.degree() == Mp.highest_weight()
             True
 
         TESTS::
@@ -1154,29 +1221,100 @@ class VermaModuleHomset(Homset):
             return None
 
         from sage.combinat.root_system.coxeter_group import CoxeterGroup
+        from sage.matrix.constructor import matrix
         W = CoxeterGroup(self.domain()._g._cartan_type)
-        wp = W.from_reduced_word(self.domain()._dominant_data[1])
-        w = W.from_reduced_word(self.codomain()._dominant_data[1])
+        # We take the inverse to account for the left versus right action
+        wp = W.from_reduced_word(reversed(self.domain()._dominant_data[1]))
+        w = W.from_reduced_word(reversed(self.codomain()._dominant_data[1]))
         if not w.bruhat_le(wp):
             return None
         C = self.codomain()
         pbw = C._pbw
-        f = C._g.f()
-        F = {i: pbw(f[i]) for i in f.keys()}
-        red_word = (wp * ~w).reduced_word()
+        F = pbw.f()
+        E = pbw.e()
+        index_set = F.keys()
+        cur_w = w
         rho = C._weight.parent().rho()
         ac = C._weight.parent().simple_coroots()
         elt = pbw.one()
         wt = C._weight
-        # Construct the singular vector by iterated embeddings of Verma
-        #   modules (without constructing the modules themselves)
-        for i in reversed(red_word):
-            exp = (wt + rho).scalar(ac[i])
-            if exp not in ZZ or exp < 0:
-                return None
-            elt = F[i]**ZZ(exp) * elt
-            wt = wt.dot_action([i])
-        return C.highest_weight_vector()._acted_upon_(elt, False)
+        pos_roots_by_ht = C._g._cartan_type.root_system().root_lattice().positive_roots_by_height()
+        assert all(sum(rt.coefficients()) == 1 for rt in pos_roots_by_ht[:len(index_set)])
+        # for this, we don't need to check the simple roots
+        pos_roots_by_ht = pos_roots_by_ht[len(index_set):]
+
+        while cur_w != wp:
+            ind = None
+            for i in cur_w.descents(side='right', positive=True):
+                exp = (wt + rho).scalar(ac[i])
+                if exp not in ZZ or exp <= 0:
+                    continue
+                # We need to check that the result is still smaller in Bruhat order
+                next_w = cur_w.apply_simple_reflection_right(i)
+                if not next_w.bruhat_le(wp):
+                    continue
+                ind = i
+                # favor a path in weak order so we only do sl_2 relations
+                if not next_w.weak_le(wp, side="right"):
+                    continue
+                break
+            if ind is None:  # no simple root; need a more general approach
+                # We search for the shortest root that can be applied to minimize
+                #   the size of the basis needed to compute the kernel.
+                for rt in pos_roots_by_ht:
+                    exp = (wt + rho).scalar(rt.associated_coroot())
+                    # We need to check that the result is still smaller in Bruhat order
+                    i, wd = rt.to_simple_root(reduced_word=True)
+                    refl = wd + (i,) + tuple(reversed(wd))
+                    next_w = cur_w.apply_reflections(refl, side='right', word_type="simple")
+                    if exp not in ZZ or exp <= 0:
+                        continue
+                    if not next_w.bruhat_le(wp):
+                        continue
+                    # We construct the Verma module of the appropriate weight in
+                    #   order to reduce the dimension and number of multiplications.
+                    Mp = C._g.verma_module(wt)
+                    basis = sorted(Mp._homogeneous_component_f(-rt.to_vector()), key=str)
+                    for i in index_set:
+                        image = [E[i] * b for b in basis]
+                        supp = set()
+                        for vec in image:
+                            supp.update(vec._monomial_coefficients)
+                        supp = sorted(supp, key=pbw._monomial_key)
+                        if not supp:  # everything is in the kernel
+                            continue
+                        M = matrix(pbw.base_ring(), [[v[s] for v in image] for s in supp])
+                        ker = M.right_kernel_matrix()
+                        basis = [C.linear_combination((basis[j], c) for j, c in kv.iteritems())
+                                 for kv in ker.rows()]
+
+                    assert len(basis) == 1
+                    if Mp is C:  # We've constructed the element in the codomain
+                        assert next_w == wp
+                        assert basis[0].degree() == self.domain().highest_weight()
+                        return basis[0]
+                    pbw_elt = pbw.element_class(pbw, {pbw._indices(m._monomial): c
+                                                      for m, c in basis[0]._monomial_coefficients.items()})
+                    elt = pbw_elt * elt
+                    wt = wt.dot_action(refl)
+                    cur_w = next_w
+                    break
+                else:
+                    #assert False, "unable to find root"
+                    # Have a more explicit check at the beginning using the integral
+                    #   orbit action for the correct version of dominance; see, e.g.,
+                    #   Humphreys "Representations of Semisimple Lie Algebras in the BGG Category O".
+                    return None
+            else:
+                # Construct the singular vector by iterated embeddings of Verma
+                #   modules from the sl_2 relations (without constructing
+                #   the modules themselves)
+                elt = F[ind]**ZZ(exp) * elt
+                wt = wt.dot_action([ind])
+                cur_w = cur_w.apply_simple_reflection_right(ind)
+        ret = C.highest_weight_vector()._acted_upon_(elt, False)
+        assert ret.degree() == self.domain().highest_weight()
+        return ret
 
     @cached_method
     def natural_map(self):
