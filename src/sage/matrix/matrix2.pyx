@@ -158,13 +158,13 @@ cdef class Matrix(Matrix1):
             [  -1    1]
             [13/5 -3/5]
             [-4/5  9/5]
-            sage: A*C == B
+            sage: A*C == B # known bug (sporadic timeouts)
             True
-            sage: A._backslash_(B) == A \ B
+            sage: A._backslash_(B) == A \ B # known bug (sporadic timeouts)
             doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
             See https://github.com/sagemath/sage/issues/36394 for details.
             True
-            sage: A._backslash_(B) == A.solve_right(B)
+            sage: A._backslash_(B) == A.solve_right(B) # known bug (sporadic timeouts)
             True
         """
         deprecation(36394, 'the backslash operator has been deprecated; use A.solve_right(B) instead')
