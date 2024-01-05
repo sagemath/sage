@@ -131,6 +131,7 @@ jobs:
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
+<<<<<<< HEAD
           ./sage -t --new -p2 --format github
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
@@ -175,6 +176,10 @@ jobs:
         # so that multi-stage builds can work correctly.
         run: |
           .ci/merge-fixes.sh
+=======
+          ./sage -t --new -p2
+        working-directory: ./worktree-image
+>>>>>>> doctester-github-annotations--prod
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -222,6 +227,7 @@ jobs:
 
       - name: Test modularized distributions
         run: |
+<<<<<<< HEAD
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           make V=0 tox-ensure && make ${{ matrix.targets }}
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
@@ -262,6 +268,11 @@ jobs:
         # so that multi-stage builds can work correctly.
         run: |
           .ci/merge-fixes.sh
+=======
+          ./sage -python -m pip install coverage pytest-xdist
+          ./sage -python -m coverage run --rcfile=src/tox.ini -m pytest -c src/tox.ini --doctest-modules || true
+        working-directory: ./worktree-image
+>>>>>>> doctester-github-annotations--prod
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -310,14 +321,17 @@ jobs:
 
       - name: Test all files (sage -t --all --long)
         run: |
-          ./sage -tox -e coverage.py-xml -- --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
+          ./sage -python -m pip install coverage
+          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy coverage results
         if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
-          mkdir -p ${{ github.workspace }}/coverage-report
-          cp src/.tox/sagedirect/coverage.xml ${{ github.workspace }}/coverage-report/
+          ./sage -python -m coverage combine --rcfile=src/tox.ini
+          ./sage -python -m coverage xml --rcfile=src/tox.ini
+          mkdir -p coverage-report
+          mv coverage.xml coverage-report/
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload coverage to codecov
