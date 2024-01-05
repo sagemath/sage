@@ -175,9 +175,9 @@ jobs:
       - name: Pytest
         if: contains(github.ref, 'pytest')
         run: |
-          ../sage -python -m pip install coverage pytest-xdist
-          ../sage -python -m coverage run -m pytest -c tox.ini --doctest-modules || true
-        working-directory: ./worktree-image/src
+          ./sage -python -m pip install coverage pytest-xdist
+          ./sage -python -m coverage run --rcfile=src/tox.ini -m pytest -c src/tox.ini --doctest-modules || true
+        working-directory: ./worktree-image
         env:
           # Increase the length of the lines in the "short summary"
           COLUMNS: 120
@@ -186,14 +186,14 @@ jobs:
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
           ./sage -python -m pip install coverage
-          ./sage -python -m coverage run ./src/bin/sage-runtests --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
+          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
         working-directory: ./worktree-image
 
       - name: Prepare coverage results
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
-          ./venv/bin/python3 -m coverage combine
-          ./venv/bin/python3 -m coverage xml
+          ./sage -python -m coverage combine --rcfile=src/tox.ini
+          ./sage -python -m coverage xml --rcfile=src/tox.ini
           mkdir -p coverage-report
           mv coverage.xml coverage-report/
         working-directory: ./worktree-image
