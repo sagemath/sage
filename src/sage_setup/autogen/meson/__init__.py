@@ -292,7 +292,7 @@ def run(folder: Path, output_dir: Path, folder_rel_to_src=None, dry_run=False, f
                 meson_build.write('    )\n')
                 meson_build.write('endforeach\n')
 
-            if files.install_subdirs:
+            if not monolithic and files.install_subdirs:
                 for subdir in files.install_subdirs:
                     meson_build.write(f"install_subdir('{subdir.name}', install_dir: sage_install_dir / '{folder_rel_to_src.relative_to('sage')}')\n")
                 meson_build.write('\n')
@@ -303,8 +303,11 @@ def run(folder: Path, output_dir: Path, folder_rel_to_src=None, dry_run=False, f
             meson_build.write('\n')
 
         if monolithic:
-            for subdir, _ in recurse_subdirs.items():
-                meson_build.write(f"subdir('{subdir.name}')\n")
+            for subdir in sorted(set(recurse_subdirs).union(files.install_subdirs)):
+                if subdir in recurse_subdirs:
+                    meson_build.write(f"subdir('{subdir.name}')\n")
+                else:
+                    meson_build.write(f"install_subdir('{subdir.name}', install_dir: sage_install_dir / '{folder_rel_to_src.relative_to('sage')}')\n")
         else:
             for subdir, subdir_distributions in recurse_subdirs.items():
                 condition = " or ".join(distribution_condition(distribution)
