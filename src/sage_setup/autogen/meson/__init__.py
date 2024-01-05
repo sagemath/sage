@@ -10,6 +10,11 @@ from types import SimpleNamespace
 from sage.misc.package_dir import read_distribution
 
 
+def distribution_condition(distribution: str) -> str:
+    distribution_variable = 'distribution_' + distribution.replace('-', '_')
+    return f"get_variable('{distribution_variable}', false)"
+
+
 def run(folder: Path, dry_run=False, force=False):
 
     if not folder.is_dir():
@@ -17,12 +22,30 @@ def run(folder: Path, dry_run=False, force=False):
         return
     folder_rel_to_src = folder.relative_to('src')
 
+    recurse_subdirs = {}
+    by_distribution = defaultdict(lambda: SimpleNamespace(python_files=[],
+                                                          cython_c_files=[],
+                                                          cython_cpp_files=[],
+                                                          install_subdirs=[]))
+    distributions = set()
+    subdirs = sorted(list(folder.glob('*/')))
+    has_cython = False
+
+    for subdir in subdirs:
+        if subdir.name.startswith('_') or subdir.name.startswith('.'):
+            continue
+        subdir_distributions, subdir_has_cython = run(subdir, dry_run=dry_run, force=force)
+        has_cython = has_cython or subdir_has_cython
+        if not subdir_distributions:
+            pass
+        elif len(subdir_distributions) > 1 or has_cython:
+            recurse_subdirs[subdir] = subdir_distributions
+        else:
+            by_distribution[list(subdir_distributions)[0]].install_subdirs.append(subdir)
+        distributions.update(subdir_distributions)
+
     python_files = sorted(list(folder.glob('*.py')) + list(folder.glob('*.pxd')) + list(folder.glob('*.h')))
     cython_files = sorted(list(folder.glob('*.pyx')))
-
-    if not python_files and not cython_files:
-        print(f'Error: {folder} does not contain any python or cython files')
-        return
 
     def get_metadata(path: Path):
         with open(path, 'r') as file:
@@ -129,30 +152,34 @@ def run(folder: Path, dry_run=False, force=False):
     cython_cpp_files = [file for file in cython_files if file.is_cpp]
     all_libraries = sorted(set(library for file in cython_files for library in file.libraries) | {'gmp'})
     all_inc_dirs = sorted(set(inc_dir for file in cython_files for inc_dir in file.inc_dirs))
-    subdirs = sorted(list(folder.glob('*/')))
 
     meson_build_path = folder / 'meson.build'
     if not dry_run and not force and meson_build_path.exists():
         print(f'Error: {meson_build_path} already exists, use --force to overwrite')
         return
 
+    for python_file in python_files:
+        by_distribution[python_file.distribution].python_files.append(python_file)
+    for cython_c_file in cython_c_files:
+        by_distribution[cython_c_file.distribution].cython_c_files.append(cython_c_file)
+    for cython_cpp_file in cython_cpp_files:
+        by_distribution[cython_cpp_file.distribution].cython_cpp_files.append(cython_cpp_file)
+
+    distributions.update(by_distribution)
+    if cython_files:
+        has_cython = True
+
+    if not has_cython and len(distributions) <= 1:
+        # No need for a meson.build file
+        return distributions, has_cython
+
     print(f'Writing {meson_build_path}', file=sys.stderr)
     with open(meson_build_path, 'w') if not dry_run else sys.stdout as meson_build:
 
-        by_distribution = defaultdict(lambda: SimpleNamespace(python_files=[],
-                                                              cython_c_files=[],
-                                                              cython_cpp_files=[]))
-        for python_file in python_files:
-            by_distribution[python_file.distribution].python_files.append(python_file)
-        for cython_c_file in cython_c_files:
-            by_distribution[cython_c_file.distribution].cython_c_files.append(cython_c_file)
-        for cython_cpp_file in cython_cpp_files:
-            by_distribution[cython_cpp_file.distribution].cython_cpp_files.append(cython_cpp_file)
-
         for distribution, files in by_distribution.items():
 
-            distribution_variable = 'distribution_' + distribution.replace('-', '_')
-            meson_build.write(f"if get_variable('{distribution_variable}', false)\n")
+            if len(distributions) > 1:
+                meson_build.write(f"if {distribution_condition(distribution)}\n")
 
             if files.python_files:
                 meson_build.write('py.install_sources(\n')
@@ -202,24 +229,22 @@ def run(folder: Path, dry_run=False, force=False):
                 meson_build.write('    )\n')
                 meson_build.write('endforeach\n')
 
-            meson_build.write('endif\n')
+            if files.install_subdirs:
+                for subdir in files.install_subdirs:
+                    meson_build.write(f"install_subdir('{subdir.name}', install_dir: sage_install_dir / '{folder_rel_to_src.relative_to('sage')}')\n")
+                meson_build.write('\n')
+
+            if len(distributions) > 1:
+                meson_build.write('endif ########################################################################\n')
+
             meson_build.write('\n')
 
-        recurse_subdirs = []
-        for subdir in subdirs:
-            if subdir.name.startswith('_') or subdir.name.startswith('.'):
-                continue
-            if not list(subdir.glob('*.py*')):
-                continue
+        for subdir, subdir_distributions in recurse_subdirs.items():
+            condition = " or ".join(distribution_condition(distribution)
+                                    for distribution in sorted(subdir_distributions))
+            meson_build.write(f"if {condition}\n    subdir('{subdir.name}')\nendif\n")
 
-            if not list(subdir.glob('*.pyx')):
-                meson_build.write(f"install_subdir('{subdir.name}', install_dir: sage_install_dir / '{folder_rel_to_src.relative_to('sage')}')\n")
-            else:
-                meson_build.write(f"subdir('{subdir.name}')\n")
-                recurse_subdirs.append(subdir)
-
-        for subdir in recurse_subdirs:
-            run(subdir, dry_run=dry_run, force=force)
+        return distributions, has_cython
 
 
 def generate_meson():
