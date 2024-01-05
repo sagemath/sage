@@ -366,6 +366,20 @@ class VermaModule(CombinatorialFreeModule):
         """
         return self._weight
 
+    def dual(self):
+        r"""
+        Return the dual module `M(\lambda)^{\vee}` in Category `\mathcal{O}`.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sl(QQ, 2)
+            sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
+            sage: M = L.verma_module(2*La[1])
+            sage: Mc = M.dual()
+        """
+        from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule
+        return BGGDualModule(self)
+
     def degree_on_basis(self, m):
         r"""
         Return the degree (or weight) of the basis element indexed by ``m``.
@@ -546,6 +560,50 @@ class VermaModule(CombinatorialFreeModule):
         """
         return not self._dominant_data[0].is_dominant()
 
+    def is_simple(self):
+        r"""
+        Return if ``self`` is a simple module.
+
+        A Verma module `M_{\lambda}` is simple if and only if `\lambda`
+        is *antidominant* in the sense
+
+        .. MATH::
+
+            \langle \lambda + \rho, \alpha^{\vee} \rangle \notin \ZZ_{>0}
+
+        for all positive roots `\alpha`.
+        """
+        pos_roots = self._g._cartan_type.root_system().root_lattice().positive_roots()
+        wt = self._weight + self._weight.parent().rho()
+        for rt in pos_roots:
+            val = wt.scalar(rt.associated_coroot())
+            if val in ZZ and val > 0:
+                return False
+        return True
+
+    def is_projective(self):
+        r"""
+        Return if ``self`` is a projective module in Category `\mathcal{O}`.
+
+        A Verma module `M_{\lambda}` is projective (in Category `\mathcal{O}`
+        if and only if `\lambda` is *dominant* in the sense
+
+        .. MATH::
+
+            \langle \lambda + \rho, \alpha^{\vee} \rangle \notin \ZZ_{<0}
+
+        for all positive roots `\alpha`.
+        """
+        Q = self._g._cartan_type.root_system().root_lattice()
+        pos_roots = Q.positive_roots()
+        wt = self._weight + self._weight.parent().rho()
+        is_dominant = True
+        for rt in pos_roots:
+            val = wt.scalar(rt.associated_coroot())
+            if val in ZZ and val < 0:
+                return False
+        return True
+
     def homogeneous_component_basis(self, d):
         r"""
         Return a basis for the ``d``-th homogeneous component of ``self``.
@@ -646,16 +704,21 @@ class VermaModule(CombinatorialFreeModule):
             sage: type(H)
             <...VermaModuleHomset_with_category_with_equality_by_id'>
         """
-        if not (isinstance(Y, VermaModule) and self._g is Y._g):
-            raise TypeError("{} must be a Verma module of {}".format(Y, self._g))
+        from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule
+        if not ((isinstance(Y, VermaModule)
+                 or (isinstance(Y, BGGDualModule) and Y._module is self))
+                and self._g is Y.lie_algebra()):
+            raise TypeError("{} must be an object in Category O of {}".format(Y, self._g))
         if category is not None and not category.is_subcategory(self.category()):
             raise TypeError("{} is not a subcategory of {}".format(category, self.category()))
         return VermaModuleHomset(self, Y)
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
-            """
+            r"""
             Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES:
 
             Check that other PBW algebras have an action::
 
@@ -735,13 +798,14 @@ class VermaModule(CombinatorialFreeModule):
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
 
+
 #####################################################################
 ## Morphisms and Homset
 
 
 class VermaModuleMorphism(Morphism):
-    """
-    A morphism of Verma modules.
+    r"""
+    A morphism of a Verma module to another module in Category `\mathcal{O}`.
     """
     def __init__(self, parent, scalar):
         """
@@ -806,7 +870,7 @@ class VermaModuleMorphism(Morphism):
         v = self.domain().highest_weight_vector()
         if not self._scalar:
             return "{} |--> {}".format(v, self.codomain().zero())
-        return "{} |--> {}".format(v, self._scalar * self.parent().singular_vector())
+        return "{} |--> {}".format(v, self._scalar * self.parent().highest_weight_image())
 
     def _richcmp_(self, other, op):
         r"""
@@ -857,14 +921,14 @@ class VermaModuleMorphism(Morphism):
             sage: psi(v)
             0
         """
-        if not self._scalar or self.parent().singular_vector() is None:
+        if not self._scalar or not self.parent().highest_weight_image():
             return self.codomain().zero()
         mc = x.monomial_coefficients(copy=False)
         return self.codomain().linear_combination((self._on_basis(m), self._scalar * c)
                                                   for m,c in mc.items())
 
     def _on_basis(self, m):
-        """
+        r"""
         Return the image of the basis element indexed by ``m``.
 
         EXAMPLES::
@@ -880,8 +944,11 @@ class VermaModuleMorphism(Morphism):
             sage: phi._on_basis((f1 * v).leading_support()) == f1 * phi(v)
             True
         """
+        vec = self.parent().highest_weight_image()
+        if not vec:
+            return vec
         pbw = self.codomain()._pbw
-        return pbw.monomial(pbw._indices(m.dict())) * self.parent().singular_vector()
+        return pbw.monomial(pbw._indices(m.dict())) * vec
 
     def _add_(self, other):
         """
@@ -977,8 +1044,10 @@ class VermaModuleMorphism(Morphism):
         r"""
         Return if ``self`` is injective or not.
 
-        A Verma module morphism `\phi : M \to M'` is injective if
-        and only if `\dim \hom(M, M') = 1` and `\phi \neq 0`.
+        A morphism `\phi : M \to M'` from a Verma module `M` to another
+        Verma module `M'` is injective if and only if `\dim \hom(M, M') = 1`
+        and `\phi \neq 0`. If `M'` is a dual Verma or simple module, then
+        the result is not injective.
 
         EXAMPLES::
 
@@ -996,15 +1065,20 @@ class VermaModuleMorphism(Morphism):
             sage: psi.is_injective()
             False
         """
-        return self.parent().singular_vector() is not None and bool(self._scalar)
+        if not isinstance(self.codomain(), VermaModule):
+            return False
+        return bool(self._scalar)
 
     def is_surjective(self):
-        """
+        r"""
         Return if ``self`` is surjective or not.
 
-        A Verma module morphism is surjective if and only if the
-        domain is equal to the codomain and it is not the zero
-        morphism.
+        A morphism `\phi : M \to M'` from a Verma module `M` to another
+        Verma module `M'` is surjective if and only if the domain is
+        equal to the codomain and it is not the zero morphism.
+
+        If `M'` is a simple module, then this surjective if and only if
+        `\dim \hom(M, M') = 1` and `\phi \neq 0`.
 
         EXAMPLES::
 
@@ -1021,13 +1095,27 @@ class VermaModuleMorphism(Morphism):
             sage: psi.is_surjective()
             False
         """
-        return self.domain() == self.codomain() and bool(self._scalar)
+        if not bool(self._scalar):
+            return False
+
+        if isinstance(self.codomain(), VermaModule):
+            return self.domain() == self.codomain()
+
+        from sage.algebras.lie_algebras.bgg_dual_module import SimpleModule
+        if isinstance(self.codomain(), SimpleModule):
+            return self.domain().highest_weight() == self.codomain().highest_weight()
+
+        return False
+
 
 
 class VermaModuleHomset(Homset):
     r"""
-    The set of morphisms from one Verma module to another
-    considered as `U(\mathfrak{g})`-representations.
+    The set of morphisms from a Verma module to another module in
+    Category `\mathcal{O}` considered as `U(\mathfrak{g})`-representations.
+
+    This currently assumes the codomain is a Verma module, its dual,
+    or a simple module.
 
     Let `M_{w \cdot \lambda}` and `M_{w' \cdot \lambda'}` be
     Verma modules, `\cdot` is the dot action, and `\lambda + \rho`,
@@ -1039,9 +1127,13 @@ class VermaModuleHomset(Homset):
 
     if and only if `\lambda = \lambda'` and `w' \leq w` in Bruhat
     order. Otherwise the homset is 0 dimensional.
+
+    If the codomain is a dual Verma module `M_{\mu}^{\vee}`, then the
+    homset is `\delta_{\lambda\mu}` dimensional. When `\mu = \lambda`,
+    the image is the simple module `L_{\lambda}`.
     """
     def __call__(self, x, **options):
-        """
+        r"""
         Construct a morphism in this homset from ``x`` if possible.
 
         EXAMPLES::
@@ -1097,7 +1189,7 @@ class VermaModuleHomset(Homset):
         return super().__call__(x, **options)
 
     def _an_element_(self):
-        """
+        r"""
         Return an element of ``self``.
 
         EXAMPLES::
@@ -1117,6 +1209,23 @@ class VermaModuleHomset(Homset):
                      f[-alpha[2]]^2*v[Lambda[1] + Lambda[2]]
         """
         return self.natural_map()
+
+    def highest_weight_image(self):
+        r"""
+        Return the image of the highest weight vector of the domain
+        in the codomain.
+        """
+        C = self.codomain()
+        if isinstance(C, VermaModule):
+            # singular_vector() is cached, so we can safely call it twice
+            if self.singular_vector() is None:
+                return C.zero()
+            return self.singular_vector()
+        # Otherwise, it is a dual Verma or a simple, so the image
+        #   must be the highest weight vector.
+        if self.domain().highest_weight() == C.highest_weight():
+            return C.highest_weight_vector()
+        return C.zero()
 
     @cached_method
     def singular_vector(self):
@@ -1347,7 +1456,7 @@ class VermaModuleHomset(Homset):
                      of Lie algebra of ['A', 2] in the Chevalley basis
               Defn: v[Lambda[1] + 2*Lambda[2]] |--> 0
         """
-        if self.singular_vector() is None:
+        if not self.highest_weight_image():
             return self.zero()
         return self.element_class(self, self.base_ring().one())
 
@@ -1374,7 +1483,7 @@ class VermaModuleHomset(Homset):
         return self.element_class(self, self.base_ring().zero())
 
     def dimension(self):
-        """
+        r"""
         Return the dimension of ``self`` (as a vector space over
         the base ring).
 
@@ -1393,12 +1502,12 @@ class VermaModuleHomset(Homset):
             sage: H.dimension()
             0
         """
-        if self.singular_vector() is None:
+        if not self.highest_weight_image():
             return ZZ.zero()
         return ZZ.one()
 
     def basis(self):
-        """
+        r"""
         Return a basis of ``self``.
 
         EXAMPLES::
@@ -1416,7 +1525,7 @@ class VermaModuleHomset(Homset):
             sage: H.basis()
             Family ()
         """
-        if self.singular_vector() is None:
+        if not self.highest_weight_image():
             return Family([])
         return Family([self.natural_map()])
 
