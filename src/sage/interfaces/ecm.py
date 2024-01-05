@@ -55,7 +55,7 @@ from subprocess import Popen, PIPE, call
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 
-from sage.env import SAGE_ECMBIN
+from sage.env import ECM
 
 class ECM(SageObject):
 
@@ -183,7 +183,7 @@ class ECM(SageObject):
         self._cmd = self._make_cmd(B1, B2, kwds)
 
     def _make_cmd(self, B1, B2, kwds):
-        ecm = [SAGE_ECMBIN]
+        ecm = [ECM]
         options = []
         for x, v in kwds.items():
             if v is False:
