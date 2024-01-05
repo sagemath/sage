@@ -59,6 +59,7 @@ AUTHORS:
 from sage.rings.integer_ring import ZZ
 from sage.categories.morphism import Morphism
 from sage.schemes.generic.homset import SchemeHomset_generic
+from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 
 
 class EllipticCurveHomset(SchemeHomset_generic):
@@ -83,9 +84,10 @@ class EllipticCurveHomset(SchemeHomset_generic):
         sage: iso in End(E)
         False
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, E1, E2, category=None):
         r"""
-        Construct the homset for a given pair of curves.
+        Construct the homset for a given pair of elliptic curves
+        defined over the same base ring.
 
         TESTS::
 
@@ -102,7 +104,15 @@ class EllipticCurveHomset(SchemeHomset_generic):
               From: Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 1510*x - 140675 over Rational Field
         """
-        super().__init__(*args, **kwds)
+        if not isinstance(E1, EllipticCurve_generic):
+            raise ValueError('domain must be an elliptic curve')
+        if not isinstance(E2, EllipticCurve_generic):
+            raise ValueError('codomain must be an elliptic curve')
+        base = E1.base_ring()
+        if base != E2.base_ring():
+            raise ValueError('domain and codomain must have the same base ring')
+
+        super().__init__(E1, E2, category=category, base=base)
 
         if self.domain() == self.codomain():
 

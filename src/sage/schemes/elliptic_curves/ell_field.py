@@ -1113,7 +1113,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             L = L, F_to_K.post_compose(K_to_L)
         return L
 
-    def _Hom_(*args, **kwds):
+    def _Hom_(self, other, category=None):
         r"""
         Hook to make :class:`~sage.categories.homset.Hom`
         set the correct parent
@@ -1128,8 +1128,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: type(E._Hom_(E))
             <class 'sage.schemes.elliptic_curves.homset.EllipticCurveHomset_with_category'>
         """
-        from . import homset
-        return homset.EllipticCurveHomset(*args, **kwds)
+        if isinstance(other, ell_generic.EllipticCurve_generic) and self.base_ring() == other.base_ring():
+            from . import homset
+            return homset.EllipticCurveHomset(self, other, category=category)
+        from sage.schemes.generic.homset import SchemeHomset_generic
+        return SchemeHomset_generic(self, other, category=category)
 
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""
