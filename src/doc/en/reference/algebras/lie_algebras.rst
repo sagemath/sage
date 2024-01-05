@@ -19,6 +19,7 @@ Lie Algebras
    sage/algebras/lie_algebras/poincare_birkhoff_witt
    sage/algebras/lie_algebras/quotient
    sage/algebras/lie_algebras/rank_two_heisenberg_virasoro
+   sage/algebras/lie_algebras/representation
    sage/algebras/lie_algebras/structure_coefficients
    sage/algebras/lie_algebras/subalgebra
    sage/algebras/lie_algebras/symplectic_derivation

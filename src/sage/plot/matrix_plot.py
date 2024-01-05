@@ -535,7 +535,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     ::
 
-        sage: matrix_plot([[sin(x), cos(x)], [1, 0]])
+        sage: matrix_plot([[sin(x), cos(x)], [1, 0]])                                   # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: mat must be a Matrix or a two dimensional array

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Word classes
 
@@ -197,11 +196,11 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
         #if a list of a semistandard and a standard tableau or a pair of lists
         from sage.combinat.tableau import Tableau
         if isinstance(RSK_data, (tuple, list)) and len(RSK_data) == 2 and \
-            all((isinstance(x, Tableau) for x in RSK_data)):
+            all(isinstance(x, Tableau) for x in RSK_data):
             from sage.combinat.rsk import RSK_inverse
             return RSK_inverse(*RSK_data, output='word')
         elif isinstance(RSK_data, (tuple, list)) and len(RSK_data) == 2 and \
-            all((isinstance(x, (list, tuple)) for x in RSK_data)):
+            all(isinstance(x, (list, tuple)) for x in RSK_data):
             from sage.combinat.rsk import RSK_inverse
             P,Q = map(Tableau, RSK_data)
             return RSK_inverse(P, Q, 'word')

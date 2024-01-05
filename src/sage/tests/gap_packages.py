@@ -103,8 +103,8 @@ def all_installed_packages(ignore_dot_gap=False, gap=None):
     EXAMPLES::
 
         sage: from sage.tests.gap_packages import all_installed_packages
-        sage: all_installed_packages()
-        (...'gapdoc'...)
+        sage: [p.lower() for p in all_installed_packages()]
+        [...'gapdoc'...]
         sage: all_installed_packages(ignore_dot_gap=True) == all_installed_packages(gap=gap, ignore_dot_gap=True)
         True
     """

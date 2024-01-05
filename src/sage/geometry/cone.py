@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Convex rational polyhedral cones
 
@@ -554,7 +553,7 @@ def _ambient_space_point(body, data):
 
     An integral, rational, real algebraic, or numeric point of the
     ambient space of ``body`` is returned if ``data`` were
-    successfully interpreted in such a way. A ``TypeError`` is raised
+    successfully interpreted in such a way. A :class:`TypeError` is raised
     otherwise.
 
     TESTS::
@@ -1664,7 +1663,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         otherwise, in particular when ``point`` is incompatible with
         the ambient space.
 
-        A ``ValueError`` is raised if ``region`` is not one of the
+        A :class:`ValueError` is raised if ``region`` is not one of the
         three allowed values.
 
         TESTS::
@@ -2340,8 +2339,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         or
         :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.facet_of`. The
         cone returned by this method will have ``self`` as ambient. If ``cone``
-        does not represent a valid cone of ``self``, ``ValueError`` exception
-        is raised.
+        does not represent a valid cone of ``self``, :class:`ValueError`
+        exception is raised.
 
         .. NOTE::
 
@@ -3017,8 +3016,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - :class:`cone <ConvexRationalPolyhedralCone>`.
 
-        Raises ``ValueError`` if the ambient space dimensions are not
-        compatible.
+        This raises :class:`ValueError` if the ambient space dimensions
+        are not compatible.
 
         EXAMPLES::
 
@@ -5349,7 +5348,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Either a lattice element or vector contained in both this cone
         and its ambient vector space. If ``ring`` is ``ZZ``, a lattice
         element is returned; otherwise a vector is returned. If ``ring``
-        is neither ``ZZ`` nor ``QQ``, then a ``NotImplementedError`` is
+        is neither ``ZZ`` nor ``QQ``, then a :class:`NotImplementedError` is
         raised.
 
         EXAMPLES:
@@ -6267,7 +6266,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     A new, randomly generated cone.
 
-    A ``ValueError`` will be thrown under the following conditions:
+    A :class:`ValueError` will be thrown under the following conditions:
 
     * Any of ``min_ambient_dim``, ``max_ambient_dim``, ``min_rays``, or
       ``max_rays`` are negative.
@@ -6425,7 +6424,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         provided.
 
     If the user requests too many rays in zero, one, or two dimensions,
-    a ``ValueError`` is thrown::
+    a :class:`ValueError` is thrown::
 
         sage: random_cone(max_ambient_dim=0, min_rays=1)
         Traceback (most recent call last):
@@ -6513,7 +6512,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         sage: random_cone(lattice=L, strictly_convex=True)
         0-d cone in 0-d lattice L
 
-    A ``ValueError`` is thrown if a non-solid cone is requested in a
+    A :class:`ValueError` is thrown if a non-solid cone is requested in a
     zero-dimensional lattice::
 
         sage: L = ToricLattice(0)
@@ -6527,7 +6526,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         ...
         ValueError: all cones are solid when max_ambient_dim is zero.
 
-    A ``ValueError`` is thrown if a solid cone is requested but the
+    A :class:`ValueError` is thrown if a solid cone is requested but the
     maximum number of rays is too few::
 
         sage: random_cone(min_ambient_dim=4, max_rays=3, solid=True)
@@ -6542,7 +6541,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         ValueError: max_rays must be at least 5 for a solid cone in this
         lattice.
 
-    A ``ValueError`` is thrown if a non-solid cone is requested but
+    A :class:`ValueError` is thrown if a non-solid cone is requested but
     ``min_rays`` guarantees a solid cone::
 
         sage: random_cone(max_ambient_dim=4, min_rays=10, solid=False)

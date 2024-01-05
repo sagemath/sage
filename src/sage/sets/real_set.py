@@ -1860,7 +1860,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
     @staticmethod
     def closed_open(lower, upper, **kwds):
         r"""
-        Construct an half-open interval
+        Construct a half-open interval
 
         INPUT:
 
@@ -1872,7 +1872,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         OUTPUT:
 
         A new :class:`RealSet` that is closed at the lower bound and
-        open an the upper bound.
+        open at the upper bound.
 
         EXAMPLES::
 

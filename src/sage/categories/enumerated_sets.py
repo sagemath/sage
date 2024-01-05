@@ -182,7 +182,8 @@ class EnumeratedSets(CategoryWithAxiom):
             It is also possible to override ``__iter__`` method itself. Then
             the methods of the first column are defined using  ``__iter__``
 
-            If none of these are provided, raise a ``NotImplementedError``.
+            If none of these are provided, this raises
+            a :class:`NotImplementedError`.
 
             EXAMPLES:
 
@@ -928,7 +929,7 @@ class EnumeratedSets(CategoryWithAxiom):
             the probability is uniform.
 
             This is a generic implementation from the category
-            ``EnumeratedSets()``. It raise a ``NotImplementedError``
+            ``EnumeratedSets()``. It raises a :class:`NotImplementedError`
             since one does not know whether the set is finite.
 
             EXAMPLES::
