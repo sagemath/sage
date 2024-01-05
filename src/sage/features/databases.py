@@ -208,7 +208,8 @@ class DatabaseReflexivePolytopes(StaticFile):
 
 
 def all_features():
-    return [DatabaseCremona(),
+    return [PythonModule('conway_polynomials'),
+            DatabaseCremona(),
             DatabaseCremona('cremona_mini'),
             DatabaseGraphs(),
             DatabaseJones(),
