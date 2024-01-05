@@ -156,7 +156,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             sage: crystals.LSPaths(La[2], starting_weight_parent=RootSystem(['B', 3]).weight_space())
             Traceback (most recent call last):
             ...
-            ValueError: passed parent is not equal to parent of the inputted weight
+            ValueError: the passed parent is not equal to parent of the inputted weight
         """
         if cartan_type is not None:
             try:
@@ -177,7 +177,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             # Both the weight and the parent of the weight are passed as arguments of init to be able
             # to distinguish between crystals with the extended and non-extended weight lattice!
             if starting_weight.parent() != starting_weight_parent:
-                raise ValueError("passed parent is not equal to parent of the inputted weight")
+                raise ValueError("the passed parent is not equal to parent of the inputted weight")
 
         return super().__classcall__(cls, starting_weight, starting_weight_parent=starting_weight_parent)
 
@@ -825,7 +825,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
         def weight(x):
             w = x.weight()
-            return P0.element_class({i: R(c) for i, c in w if i in I0})
+            return P0.element_class(P0, {i: R(c) for i, c in w if i in I0})
 
         if group_components:
             G = self.digraph(index_set=self.cartan_type().classical().index_set())
