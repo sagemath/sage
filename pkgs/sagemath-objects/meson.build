@@ -18,6 +18,4 @@ cc = meson.get_compiler('c')
 cpp = meson.get_compiler('cpp')
 cython = meson.get_compiler('cython')
 
-set_variable('distribution_sagemath_objects', true)
-
 subdir('sage')
