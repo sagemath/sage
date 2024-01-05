@@ -295,6 +295,7 @@ def run(folder: Path, dry_run=False, force=False):
             old_lines = list(old)
     except FileNotFoundError:
         log_update('Creating', meson_build_path, distributions, has_cython)
+        meson_build_tmp_path.rename(meson_build_path)
     else:
         with open(meson_build_tmp_path, "r") as new:
             new_lines = list(new)
