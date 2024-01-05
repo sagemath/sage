@@ -17,9 +17,29 @@ def distribution_condition(distribution: str) -> str:
     return f"get_variable('{distribution_variable}', false)"
 
 
+def distributions_shorthand(distributions: set) -> str:
+
+    sagemath_distributions = sorted(distribution.removeprefix('sagemath-')
+                                    for distribution in distributions
+                                    if distribution.startswith('sagemath-'))
+    distributions = sorted(distribution or "''"  # the catch-all distribution
+                           for distribution in distributions
+                           if not distribution.startswith('sagemath-'))
+    if len(sagemath_distributions) > 1:
+        distributions.insert(0, 'sagemath-{' + ','.join(sagemath_distributions) + '}')
+    elif sagemath_distributions:
+        distributions.insert(0, 'sagemath-' + sagemath_distributions[0])
+    if distributions:
+        return ', '.join(distributions)
+    return 'no distribution'
+
+
 def log_update(operation, meson_build_path, distributions, has_cython):
-    main = f'{operation:12}{meson_build_path}'
-    print(f'{main:48}# ' + ' '.join(sorted(distributions)), file=sys.stderr)
+    line = f'{operation:12}{meson_build_path}'
+    line = f'{line:62}  # {distributions_shorthand(distributions)}'
+    if len(distributions) == 1 and has_cython:
+        line += ', has Cython modules'
+    print(line, file=sys.stderr)
 
 
 def run(folder: Path, dry_run=False, force=False):
@@ -180,9 +200,9 @@ def run(folder: Path, dry_run=False, force=False):
         try:
             meson_build_path.unlink()
         except FileNotFoundError:
-            print(f'Not writing {meson_build_path}: distributions={sorted(distributions)}, {has_cython=}', file=sys.stderr)
+            log_update('Not writing', meson_build_path, distributions, has_cython)
         else:
-            print(f'Removing    {meson_build_path}: distributions={sorted(distributions)}, {has_cython=}', file=sys.stderr)
+            log_update('Removing', meson_build_path, distributions, has_cython)
         return distributions, has_cython
 
     with NamedTemporaryFile(mode='w', prefix=meson_build_path.name,
@@ -274,17 +294,17 @@ def run(folder: Path, dry_run=False, force=False):
         with open(meson_build_path, "r") as old:
             old_lines = list(old)
     except FileNotFoundError:
-        print(f'Creating    {meson_build_path}', file=sys.stderr)
+        log_update('Creating', meson_build_path, distributions, has_cython)
     else:
         with open(meson_build_tmp_path, "r") as new:
             new_lines = list(new)
         changes = list(unified_diff(old_lines, new_lines, str(meson_build_path), str(meson_build.name)))
         if changes:
             meson_build_tmp_path.replace(meson_build_path)
-            print(f'Updating    {meson_build_path}', file=sys.stderr)
+            log_update('Updating', meson_build_path, distributions, has_cython)
             sys.stdout.writelines(changes)
         else:
-            print(f'Unchanged   {meson_build_path}', file=sys.stderr)
+            log_update('Unchanged', meson_build_path, distributions, has_cython)
             meson_build_tmp_path.unlink()
 
     return distributions, has_cython
