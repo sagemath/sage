@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Torsion subgroups of elliptic curves over number fields (including `\QQ`)
 

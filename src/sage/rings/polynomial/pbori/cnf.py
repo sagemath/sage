@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 from random import Random
 from sage.rings.polynomial.pbori.pbori import if_then_else as ite
 from .PyPolyBoRi import Polynomial

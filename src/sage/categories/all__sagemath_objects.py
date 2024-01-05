@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Subset of sage.categories.all that is made available by the sage-objects distribution
 
 from sage.misc.lazy_import import lazy_import

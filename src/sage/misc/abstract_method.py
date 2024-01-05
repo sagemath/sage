@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Abstract methods
 """
@@ -193,7 +194,7 @@ class AbstractMethod():
             sage: src[0]
             'def version():\n'
             sage: lines
-            18
+            19
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)

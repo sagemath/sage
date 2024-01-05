@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Base class for polyhedra: Initialization and access to Vrepresentation and Hrepresentation
 """

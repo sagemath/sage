@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-eclib
 "Cremona modular symbols"
 
 from cysignals.signals cimport sig_on, sig_off

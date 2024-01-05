@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 #from symmetrica import *
 
 from .symmetrica import start

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 """
 Construction of finite atomic and coatomic lattices from incidences
 

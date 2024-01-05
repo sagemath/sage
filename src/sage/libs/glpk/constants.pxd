@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-glpk
 #*****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>

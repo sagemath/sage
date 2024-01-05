@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # code exports
 
 from .spec import Spec

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 This module implements `\Q/n\Z` for `n \in \Q`.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map

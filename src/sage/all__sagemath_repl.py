@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 ############ setup warning filters before importing Sage stuff ####
 import sys
 import warnings

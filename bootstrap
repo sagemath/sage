@@ -108,8 +108,8 @@ EOF
             if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt"; then
                 # A Python package
                 SPKG_TREE_VAR=SAGE_VENV
-                echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(ENABLE_SYSTEM_SITE_PACKAGES=yes sage-get-system-packages install-requires ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions.m4
-                echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(ENABLE_SYSTEM_SITE_PACKAGES=yes sage-get-system-packages install-requires-toml ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions_toml.m4
+                echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(sage-get-system-packages install-requires ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions.m4
+                echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(sage-get-system-packages install-requires-toml ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions_toml.m4
             fi
         fi
         spkg_finalizes="$spkg_finalizes
@@ -232,8 +232,7 @@ save () {
 	src/environment-optional-3.[89].yml src/environment-optional-3.1[0-9].yml \
 	src/Pipfile \
 	src/pyproject.toml \
-	src/requirements.txt \
-	src/setup.cfg
+	src/requirements.txt
 
     # Update version
     echo "$NEWCONFVERSION" >$PKG/package-version.txt
