@@ -1,5 +1,7 @@
 # Setup dependencies that are needed by many modules
 
+sage_install_dir = py.get_install_dir() / 'sage'
+
 inc_numpy = run_command(py,
     [
     '-c',
@@ -136,15 +138,15 @@ add_project_arguments('-X fast_getattr=True', language : 'cython')
 add_project_arguments('-X legacy_implicit_noexcept=True', language : 'cython')
 add_project_arguments('-X preliminary_late_includes_cy28=True', language : 'cython')
 
-inc_cpython = include_directories('sage/cpython')
-inc_rings = include_directories('sage/rings')
-inc_rings_finite = include_directories('sage/rings/finite_rings')
-inc_flint = include_directories('sage/libs/flint')
-inc_gsl = include_directories('sage/libs/gsl')
-inc_ntl = include_directories('sage/libs/ntl')
-inc_arb = include_directories('sage/libs/arb')
-inc_data_structures = include_directories('sage/data_structures')
-inc_ext = include_directories('sage/ext')
-inc_interpreters = include_directories('sage/ext/interpreters')
-inc_partn_ref2 = include_directories('sage/groups/perm_gps/partn_ref2')
+inc_cpython = include_directories('cpython')
+inc_rings = include_directories('rings')
+inc_rings_finite = include_directories('rings/finite_rings')
+inc_flint = include_directories('libs/flint')
+inc_gsl = include_directories('libs/gsl')
+inc_ntl = include_directories('libs/ntl')
+inc_arb = include_directories('libs/arb')
+inc_data_structures = include_directories('data_structures')
+inc_ext = include_directories('ext')
+inc_interpreters = include_directories('ext/interpreters')
+inc_partn_ref2 = include_directories('groups/perm_gps/partn_ref2')
 inc_src = include_directories('.')
