@@ -195,5 +195,6 @@ def generate_meson():
 
     args = parser.parse_args()
 
-    folder = Path(args.folder, dry_run=args.dry_run, force=args.force)
-    run(folder)
+    folder = Path(args.folder)
+    run(folder, dry_run=args.dry_run, force=args.force)
+    return 0
