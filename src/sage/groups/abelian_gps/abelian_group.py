@@ -1196,13 +1196,14 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def subgroup(self, gensH, names="f"):
         """
-        Create a subgroup of this group. The "big" group must be defined
-        using "named" generators.
+        Create a subgroup of this group.
+
+        The "big" group must be defined using "named" generators.
 
         INPUT:
 
         - ``gensH`` -- list of elements which are products of the
-        generators of the ambient abelian group `G` = ``self``
+          generators of the ambient abelian group `G` = ``self``
 
         EXAMPLES::
 
