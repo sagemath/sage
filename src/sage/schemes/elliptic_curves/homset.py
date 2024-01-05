@@ -100,9 +100,36 @@ class EllipticCurveHomset(SchemeHomset_generic):
             sage: E1 = EllipticCurve(j=42)
             sage: E2 = EllipticCurve(j=43)
             sage: Hom(E1, E2)
-            Group of elliptic-curve morphisms
+            Additive group of elliptic-curve morphisms
               From: Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 1510*x - 140675 over Rational Field
+            sage: Hom(E1, E2) in CommutativeAdditiveGroups()
+            True
+            sage: Hom(E1, E2) in Rings()
+            False
+            sage: End(E1) in CommutativeRings()
+            True
+
+        ::
+
+            sage: E0 = EllipticCurve(GF(419), [1,0])
+            sage: EE0 = E0.change_ring(GF(419^2))
+            sage: End(E0) in CommutativeRings()
+            True
+            sage: End(EE0) in CommutativeRings()
+            False
+            sage: End(EE0) in Rings()
+            True
+            sage: E1 = EllipticCurve(GF(419), [1,1])
+            sage: EE1 = E1.change_ring(GF(419^2))
+            sage: Hom(E0, E1) in CommutativeAdditiveGroups()
+            True
+            sage: Hom(EE0, EE1) in CommutativeAdditiveGroups()
+            True
+            sage: Hom(E0, E1) in Rings()
+            False
+            sage: Hom(EE0, EE1) in Rings()
+            False
         """
         if not isinstance(E1, EllipticCurve_generic):
             raise ValueError('domain must be an elliptic curve')
@@ -113,6 +140,23 @@ class EllipticCurveHomset(SchemeHomset_generic):
             raise ValueError('domain and codomain must have the same base ring')
 
         super().__init__(E1, E2, category=category, base=base)
+
+        from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+        self._refine_category_(CommutativeAdditiveGroups())
+
+        if self.is_endomorphism_set():
+            from sage.categories.rings import Rings
+            self._refine_category_(Rings())
+
+            assert E1 == E2
+
+            # The endomorphism ring of an elliptic curve over a finite field
+            # is non-commutative if and only if the curve is supersingular and
+            # the Frobenius endomorphism equals a scalar.
+            if (base.characteristic() == 0 or E1.is_ordinary() or
+                    (base.is_finite() and E1.frobenius() not in ZZ)):
+                from sage.categories.commutative_rings import CommutativeRings
+                self._refine_category_(CommutativeRings())
 
     def _coerce_map_from_(self, other):
         r"""
@@ -177,14 +221,14 @@ class EllipticCurveHomset(SchemeHomset_generic):
               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
               To:   Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
             sage: Hom(E1, E2)
-            Group of elliptic-curve morphisms
+            Additive group of elliptic-curve morphisms
               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
               To:   Elliptic Curve defined by y^2 = x^3 + 2*x + 2 over Rational Field
         """
         if self.domain() == self.codomain():
             s = 'Ring of elliptic-curve endomorphisms'
         else:
-            s = 'Group of elliptic-curve morphisms'
+            s = 'Additive group of elliptic-curve morphisms'
         s += f'\n  From: {self.domain()}'
         s += f'\n  To:   {self.codomain()}'
         return s
