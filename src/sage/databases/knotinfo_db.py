@@ -66,7 +66,6 @@ class KnotInfoColumnTypes(Enum):
     KnotsAndLinks = 'B'       # column that is only used in both tables
 
 
-
 class KnotInfoColumns(Enum):
     r"""
     Enum class to select a column from the table of knots and links provided
