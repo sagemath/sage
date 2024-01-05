@@ -38,7 +38,7 @@ def run(folder: Path, dry_run=False, force=False):
         has_cython = has_cython or subdir_has_cython
         if not subdir_distributions:
             pass
-        elif len(subdir_distributions) > 1 or has_cython:
+        elif len(subdir_distributions) > 1 or subdir_has_cython:
             recurse_subdirs[subdir] = subdir_distributions
         else:
             by_distribution[list(subdir_distributions)[0]].install_subdirs.append(subdir)
@@ -132,7 +132,6 @@ def run(folder: Path, dry_run=False, force=False):
                         '/linbox/': 'linbox',
                         '/gsl/': 'gsl',
                         'mpfr.h': 'mpfr',
-                        'sage/symbolic/ginac/': 'ginac',
                         'arb.h': 'arb',
                         'mpfi.h': 'mpfi',
                         'mpc.h': 'mpc',
@@ -171,6 +170,7 @@ def run(folder: Path, dry_run=False, force=False):
 
     if not has_cython and len(distributions) <= 1:
         # No need for a meson.build file
+        print(f'Not writing {meson_build_path}: distributions={sorted(distributions)}, {has_cython=}', file=sys.stderr)
         return distributions, has_cython
 
     print(f'Writing {meson_build_path}', file=sys.stderr)
