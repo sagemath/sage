@@ -65,6 +65,34 @@ class DatabaseCremona(StaticFile):
                             description="Cremona's database of elliptic curves")
 
 
+class DatabaseGraphs(StaticFile):
+    r"""
+    A :class:`~sage.features.Feature` which describes the presence of
+    the graphs database.
+
+    EXAMPLES::
+
+        sage: from sage.features.databases import DatabaseGraphs
+        sage: bool(DatabaseGraphs().is_present())  # optional - database_graphs
+        True
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.databases import DatabaseGraphs
+            sage: isinstance(DatabaseGraphs(), DatabaseGraphs)
+            True
+        """
+        from sage.env import GRAPHS_DATA_DIR
+        StaticFile.__init__(self, "database_graphs",
+                            filename='graphs.db',
+                            search_path=GRAPHS_DATA_DIR,
+                            spkg="graphs",
+                            type="standard",
+                            description="A database of graphs")
+
+
 class DatabaseJones(StaticFile):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of
@@ -182,6 +210,7 @@ class DatabaseReflexivePolytopes(StaticFile):
 def all_features():
     return [DatabaseCremona(),
             DatabaseCremona('cremona_mini'),
+            DatabaseGraphs(),
             DatabaseJones(),
             DatabaseKnotInfo(),
             DatabaseCubicHecke(),

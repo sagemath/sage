@@ -3264,8 +3264,9 @@ cdef load_brouwer_database() noexcept:
     if _brouwer_database is not None:
         return
 
-    from sage.env import GRAPHS_DATA_DIR
-    filename = os.path.join(GRAPHS_DATA_DIR, 'brouwer_srg_database.json')
+    from sage.features.databases import DatabaseGraphs
+    data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
+    filename = os.path.join(data_dir, 'brouwer_srg_database.json')
     with open(filename) as fobj:
         database = json.load(fobj)
 
