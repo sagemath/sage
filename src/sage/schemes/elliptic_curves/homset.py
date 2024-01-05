@@ -114,21 +114,50 @@ class EllipticCurveHomset(SchemeHomset_generic):
 
         super().__init__(E1, E2, category=category, base=base)
 
-        if self.domain() == self.codomain():
+    def _coerce_map_from_(self, other):
+        r"""
+        Check if this homset has a coercion map from another
+        parent ``other``.
 
-            # set up automated coercion of integers to scalar multiplications
-            from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
+        The only currently supported case is when this homset has
+        equal domain and codomain: In this case elements from `\ZZ`
+        are embedded as scalar multiplications.
 
-            class ScalarMultiplicationEmbedding(Morphism):
+        EXAMPLES::
 
-                def __init__(self, End):
-                    assert End.domain() is End.codomain()
-                    super().__init__(ZZ, End)
+            sage: E1 = EllipticCurve(j=42)
+            sage: E2 = EllipticCurve(j=43)
+            sage: Hom(E1, E1)._coerce_map_from_(ZZ)
+            True
+            sage: Hom(E1, E2)._coerce_map_from_(ZZ)
+            False
+        """
+        return self.is_endomorphism_set() and other is ZZ
 
-                def _call_(self, m):
-                    return EllipticCurveHom_scalar(self.codomain().domain(), m)
+    def _element_constructor_(self, data):
+        r"""
+        Construct an element of this homset from the given ``data``.
 
-            self.register_coercion(ScalarMultiplicationEmbedding(self))
+        The only currently supported case is when this homset has
+        equal domain and codomain: In this case elements from `\ZZ`
+        are embedded as scalar multiplications.
+
+        EXAMPLES::
+
+            sage: E1 = EllipticCurve(j=42)
+            sage: E2 = EllipticCurve(j=43)
+            sage: Hom(E1, E1)(5)
+            Scalar-multiplication endomorphism [5] of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
+            sage: Hom(E1, E2)(5)
+            Traceback (most recent call last):
+            ...
+            ValueError: domain and codomain must be equal
+        """
+        if self.codomain() != self.domain():
+            raise ValueError('domain and codomain must be equal')
+        m = ZZ(data)
+        from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
+        return EllipticCurveHom_scalar(self.domain(), m)
 
     def _repr_(self):
         r"""
