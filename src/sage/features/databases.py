@@ -65,6 +65,34 @@ class DatabaseCremona(StaticFile):
                             description="Cremona's database of elliptic curves")
 
 
+class DatabaseEllcurves(StaticFile):
+    r"""
+    A :class:`~sage.features.Feature` which describes the presence of
+    William Stein's database of interesting curves.
+
+    EXAMPLES::
+
+        sage: from sage.features.databases import DatabaseEllcurves
+        sage: bool(DatabaseEllcurves().is_present())  # optional - database_ellcurves
+        True
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.databases import DatabaseEllcurves
+            sage: isinstance(DatabaseEllcurves(), DatabaseEllcurves)
+            True
+        """
+        from sage.env import ELLCURVE_DATA_DIR
+        StaticFile.__init__(self, "database_ellcurves",
+                            filename='rank0',
+                            search_path=ELLCURVE_DATA_DIR,
+                            spkg="elliptic_curves",
+                            type="standard",
+                            description="William Stein's database of interesting curve")
+
+
 class DatabaseGraphs(StaticFile):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of
@@ -211,6 +239,7 @@ def all_features():
     return [PythonModule('conway_polynomials'),
             DatabaseCremona(),
             DatabaseCremona('cremona_mini'),
+            DatabaseEllcurves(),
             DatabaseGraphs(),
             DatabaseJones(),
             DatabaseKnotInfo(),
