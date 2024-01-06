@@ -68,6 +68,7 @@ class DatabaseCremona(StaticFile):
         from sage.env import CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR
         CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
         CREMONA_DATA_DIRS.discard(None)
+        search_path = CREMONA_DATA_DIRS or sage_data_path("cremona")
 
         spkg = "database_cremona_ellcurve"
         spkg_type = "optional"
@@ -77,7 +78,7 @@ class DatabaseCremona(StaticFile):
 
         StaticFile.__init__(self, f"database_{name}_ellcurve",
                             filename=f"{name}.db",
-                            search_path=CREMONA_DATA_DIRS,
+                            search_path=search_path,
                             spkg=spkg,
                             type=spkg_type,
                             url="https://github.com/JohnCremona/ecdata",
@@ -104,9 +105,11 @@ class DatabaseEllcurves(StaticFile):
             True
         """
         from sage.env import ELLCURVE_DATA_DIR
+        search_path = ELLCURVE_DATA_DIR or sage_data_path("ellcurves")
+
         StaticFile.__init__(self, "database_ellcurves",
                             filename='rank0',
-                            search_path=ELLCURVE_DATA_DIR,
+                            search_path=search_path,
                             spkg="elliptic_curves",
                             type="standard",
                             description="William Stein's database of interesting curve")
@@ -132,9 +135,11 @@ class DatabaseGraphs(StaticFile):
             True
         """
         from sage.env import GRAPHS_DATA_DIR
+        search_path = GRAPHS_DATA_DIR or sage_data_path("graphs")
+
         StaticFile.__init__(self, "database_graphs",
                             filename='graphs.db',
-                            search_path=GRAPHS_DATA_DIR,
+                            search_path=search_path,
                             spkg="graphs",
                             type="standard",
                             description="A database of graphs")
@@ -160,7 +165,8 @@ class DatabaseJones(StaticFile):
             True
         """
         StaticFile.__init__(self, "database_jones_numfield",
-                            filename='jones/jones.sobj',
+                            filename='jones.sobj',
+                            search_path=sage_data_path("jones"),
                             spkg="database_jones_numfield",
                             description="John Jones's tables of number fields")
 
@@ -244,6 +250,7 @@ class DatabaseReflexivePolytopes(StaticFile):
             'Hodge4d'
         """
         from sage.env import POLYTOPE_DATA_DIR
+        search_path = POLYTOPE_DATA_DIR or sage_data_path("reflexive_polytopes")
 
         dirname = "Full3d"
         if name == "polytopes_db_4d":
@@ -251,7 +258,7 @@ class DatabaseReflexivePolytopes(StaticFile):
 
         StaticFile.__init__(self, name,
                             filename=dirname,
-                            search_path=POLYTOPE_DATA_DIR)
+                            search_path=search_path)
 
 
 def all_features():

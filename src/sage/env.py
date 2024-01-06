@@ -203,13 +203,14 @@ SAGE_DATA_PATH = var("SAGE_DATA_PATH",
                          SAGE_SHARE,
                          ])))
 
-# installation directories for various packages
-GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
-ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
-POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
+# database directories, the default is to search in SAGE_DATA_PATH
+CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR")
+CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR")
+ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR")
+GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR")
+POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR")
 
-CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR", join(SAGE_SHARE, "cremona"))
-CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR", join(SAGE_SHARE, "cremona"))
+# installation directories for various packages
 JMOL_DIR = var("JMOL_DIR", join(SAGE_SHARE, "jmol"))
 MATHJAX_DIR = var("MATHJAX_DIR", join(SAGE_SHARE, "mathjax"))
 MTXLIB = var("MTXLIB", join(SAGE_SHARE, "meataxe"))
