@@ -56,6 +56,7 @@
 /src/pyproject.toml
 /src/Pipfile
 /src/Pipfile.lock
+/src/pyproject.toml
 /Pipfile
 /Pipfile.lock
 
@@ -234,7 +235,6 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-environment/requirements.txt
 /pkgs/sagemath-repl/requirements.txt
 /pkgs/sagemath-categories/MANIFEST.in
-/pkgs/sagemath-standard/pyproject-monolithic.toml
 
 # same for old locations - before Issue #31577
 /build/pkgs/*/src/build
