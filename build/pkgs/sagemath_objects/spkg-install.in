@@ -1,6 +1,7 @@
 cd src
 
 # For meson
+export CXXFLAGS="$CXXFLAGS $(echo "$CXX" | sed -En "s/.*(-std=[a-z0-9+]*).*/\1/p")"
 export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 export CYTHON=sage-cython
 export CYTHON_FOR_BUILD=sage-cython
