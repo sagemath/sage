@@ -322,23 +322,23 @@ Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
 
         exec python3 spkg-install.py
 
-   In more detail: ``sage-bootstrap-python`` runs a version of Python
-   pre-installed on the machine, which is a build prerequisite of Sage.
-   Note that ``sage-bootstrap-python`` accepts a wide range of Python
-   versions, Python >= 2.6 and >= 3.4, see ``SAGE_ROOT/build/tox.ini``
-   for details.  You should only use ``sage-bootstrap-python`` for
-   installation tasks that must be able to run before Sage has made
-   ``python3`` available.  It must not be used for running ``pip`` or
-   ``setup.py`` for any package.
+    In more detail: ``sage-bootstrap-python`` runs a version of Python
+    pre-installed on the machine, which is a build prerequisite of Sage.
+    Note that ``sage-bootstrap-python`` accepts a wide range of Python
+    versions, Python >= 2.6 and >= 3.4, see ``SAGE_ROOT/build/tox.ini``
+    for details.  You should only use ``sage-bootstrap-python`` for
+    installation tasks that must be able to run before Sage has made
+    ``python3`` available.  It must not be used for running ``pip`` or
+    ``setup.py`` for any package.
 
-   ``python3`` runs the version of Python managed by Sage (either its
-   own installation of Python 3 from an SPKG or a venv over a system
-   python3.  You should use this if you are installing a Python package
-   to make sure that the libraries are installed in the right place.
+    ``python3`` runs the version of Python managed by Sage (either its
+    own installation of Python 3 from an SPKG or a venv over a system
+    python3.  You should use this if you are installing a Python package
+    to make sure that the libraries are installed in the right place.
 
-   By the way, there is also a script ``sage-python``. This should be
-   used at runtime, for example in scripts in ``SAGE_LOCAL/bin`` which
-   expect Sage's Python to already be built.
+    By the way, there is also a script ``sage-python``. This should be
+    used at runtime, for example in scripts in ``SAGE_LOCAL/bin`` which
+    expect Sage's Python to already be built.
 
 Many packages currently do not separate the build and install steps and only
 provide a ``spkg-install.in`` file that does both.  The separation is useful in
@@ -412,19 +412,19 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   may be given as arguments.
 
 - ``sdh_make [...]``: Runs ``$MAKE`` with the default target.
-   Additional arguments to ``$MAKE`` may be given as arguments.
+  Additional arguments to ``$MAKE`` may be given as arguments.
 
 - ``sdh_make_install [...]``: Runs ``$MAKE install`` with DESTDIR
-   correctly set to a temporary install directory, for staged
-   installations. Additional arguments to ``$MAKE`` may be given as
-   arguments. If ``$SAGE_DESTDIR`` is not set then the command is run
-   with ``$SAGE_SUDO``, if set.
+  correctly set to a temporary install directory, for staged
+  installations. Additional arguments to ``$MAKE`` may be given as
+  arguments. If ``$SAGE_DESTDIR`` is not set then the command is run
+  with ``$SAGE_SUDO``, if set.
 
 - ``sdh_setup_bdist_wheel [...]``: Runs ``setup.py bdist_wheel`` with
-   the given arguments, as well as additional default arguments used for
-   installing packages into Sage.
+  the given arguments, as well as additional default arguments used for
+  installing packages into Sage.
 
-- ``sdh_pip_install [...]``: The equivalent of running ``pip install``
+-  ``sdh_pip_install [...]``: The equivalent of running ``pip install``
    with the given arguments, as well as additional default arguments used for
    installing packages into Sage with pip. The last argument must be
    ``.`` to indicate installation from the current directory.
@@ -433,17 +433,17 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
    creating a wheel file in ``dist/``, followed by
    ``sdh_store_and_pip_install_wheel`` (see below).
 
-- ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install -e``
+-  ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install -e``
    with the given arguments, as well as additional default arguments used for
    installing packages into Sage with pip. The last argument must be
    ``.`` to indicate installation from the current directory.
    See `pip documentation <https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs>`_
    for more details concerning editable installs.
 
-- ``sdh_pip_uninstall [...]``: Runs ``pip uninstall`` with the given arguments.
+-  ``sdh_pip_uninstall [...]``: Runs ``pip uninstall`` with the given arguments.
    If unsuccessful, it displays a warning.
 
-- ``sdh_store_and_pip_install_wheel .``: The current directory,
+-  ``sdh_store_and_pip_install_wheel .``: The current directory,
    indicated by the required argument ``.``, must have a subdirectory
    ``dist`` containing a unique wheel file (``*.whl``).
 
@@ -455,7 +455,7 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
    use the staging directory ``$SAGE_DESTDIR`` if set; otherwise, they
    use ``$SAGE_SUDO`` (if set).
 
-- ``sdh_install [-T] SRC [SRC...] DEST``: Copies one or more files or
+-  ``sdh_install [-T] SRC [SRC...] DEST``: Copies one or more files or
    directories given as ``SRC`` (recursively in the case of
    directories) into the destination directory ``DEST``, while
    ensuring that ``DEST`` and all its parent directories exist.
@@ -470,20 +470,20 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
 The following is automatically added to each install script, so you
 should not need to add it yourself.
 
-- ``sdh_guard``: Wrapper for ``sdh_check_vars`` that checks some
+-  ``sdh_guard``: Wrapper for ``sdh_check_vars`` that checks some
    common variables without which many/most packages won't build
    correctly (``SAGE_ROOT``, ``SAGE_LOCAL``, ``SAGE_SHARE``). This is
    important to prevent installation to unintended locations.
 
 The following are also available, but rarely used.
 
-- ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with
+-  ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with
    the given arguments, as well as additional arguments passed to
    cmake (assuming packages are using the GNUInstallDirs module) so
    that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
    correctly.
 
-- ``sdh_preload_lib EXECUTABLE SONAME``: (Linux only -- no-op on other
+-  ``sdh_preload_lib EXECUTABLE SONAME``: (Linux only -- no-op on other
    platforms.)  Check shared libraries loaded by ``EXECUTABLE`` (may be a
    program or another library) for a library starting with ``SONAME``, and
    if found appends ``SONAME`` to the ``LD_PRELOAD`` environment variable.
@@ -555,7 +555,7 @@ script template to run self-tests of the package.  The format for the
 ``spkg-check`` is the same as ``spkg-build`` and ``spkg-install``.  It
 is run after building and installing if the ``SAGE_CHECK`` environment
 variable is set, see the Sage installation guide. Ideally, upstream
-has some sort of tests suite that can be run with the standard ``make
+has some sort of test suite that can be run with the standard ``make
 check`` target. In that case, the ``spkg-check.in`` script template
 would simply contain:
 
@@ -629,7 +629,8 @@ The comments may include links to GitHub Issues/PRs, as in the following example
 
     $ cat build/pkgs/packaging/install-requires.txt
     packaging >=18.0
-    # Issue #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
+    # Issue #30975: packaging 20.5 is known to work
+    # but we have to silence "DeprecationWarning: Creating a LegacyVersion"
 
 The currently encoded version constraints are merely a starting point.
 Developers and downstream packagers are invited to refine the version
@@ -650,6 +651,7 @@ The ``SPKG.rst`` file should follow this pattern:
 .. CODE-BLOCK:: text
 
      PACKAGE_NAME: One line description
+     ==================================
 
      Description
      -----------
