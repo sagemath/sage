@@ -1561,7 +1561,7 @@ def relation(x, b):
 
 def fundamental_group_from_braid_mon(bm, degree=None,
                                      simplified=True, projective=False,
-                                     puiseux=False, vertical=[]):
+                                     puiseux=True, vertical=[]):
     r"""
     Return a presentation of the fundamental group computed from
     a braid monodromy.
@@ -1581,8 +1581,7 @@ def fundamental_group_from_braid_mon(bm, degree=None,
       of the curve will be computed, otherwise, the fundamental group of
       the complement in the affine plane will be computed
 
-    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
-      ``simplified`` is set to ``False``, and
+    - ``puiseux`` -- boolean (default: ``True``); if set to ``True``
       a presentation of the fundamental group with the homotopy type
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
@@ -1590,7 +1589,7 @@ def fundamental_group_from_braid_mon(bm, degree=None,
     - ``vertical`` -- list of integers (default: ``[]``); the indices in
       ``[0 .. r - 1]`` of the braids that surround a vertical line
 
-    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is
+    If ``projective``` is ``False`` and ``puiseux`` is
     ``True``, a Zariski-VanKampen presentation is returned.
 
     OUTPUT:
@@ -1606,8 +1605,8 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         ....:       s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1,
         ....:       (s0*s1)^2]
         sage: g = fundamental_group_from_braid_mon(bm, projective=True); g      # needs sirocco
-        Finitely presented group < x0, x1 | x1*x0^2*x1,
-                                            x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
+        Finitely presented group
+        < x1, x3 | x3^2*x1^2, x1^-1*x3^-1*x1*x3^-1*x1^-1*x3^-1 >
         sage: print (g.order(), g.abelian_invariants())                         # needs sirocco
         12 (4,)
         sage: B2 = BraidGroup(2)
@@ -1643,9 +1642,7 @@ def fundamental_group_from_braid_mon(bm, degree=None,
     if not puiseux:
         relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
         rel_h = [r[1] for r in relations_h]
-        simplified0 = simplified
     else:
-        simplified0 = False
         conjugate_desc = conjugate_positive_form_p(bmh)
         trenzas_desc = [b1[-1] for b1 in conjugate_desc]
         trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
@@ -1664,12 +1661,12 @@ def fundamental_group_from_braid_mon(bm, degree=None,
     if projective:
         rel.append(prod(Fv.gens()).Tietze())
     G = Fv / rel
-    if simplified0:
+    if simplified:
         return G.simplified()
     return G
 
 
-def fundamental_group(f, simplified=True, projective=False, puiseux=False):
+def fundamental_group(f, simplified=True, projective=False, puiseux=True):
     r"""
     Return a presentation of the fundamental group of the complement of
     the algebraic set defined by the polynomial ``f``.
@@ -1688,12 +1685,14 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
       of the curve will be computed, otherwise, the fundamental group of
       the complement in the affine plane will be computed
 
-    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
+    - ``puiseux`` -- boolean (default: ``True``); if set to ``True``,
       a presentation of the fundamental group with the homotopy type
-      of the complement of the affine curve is computed, ``simplified`` is
-      ignored. One relation is added if ``projective`` is set to ``True``.
+      of the complement of the affine curve is computed. If the Euler
+      characteristic does not match, the homotopy type is obtained
+      with a wedge of 2-spheres. One relation is added if ``projective``
+      is set to ``True``.
 
-    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is
+    If ``projective``` is ``False`` and ``puiseux`` is
     ``True``, a Zariski-VanKampen presentation is returned.
 
     OUTPUT:
@@ -1708,8 +1707,8 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
         sage: fundamental_group(f)
-        Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
-        sage: fundamental_group(f, simplified=False).sorted_presentation()
+        Finitely presented group < x0, x1 | x0*x1^-1*x0^-1*x1^-1*x0*x1 >
+        sage: fundamental_group(f, simplified=False, puiseux=False).sorted_presentation()
         Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x0*x1,
                                                 x2^-1*x0*x1*x0^-1,
                                                 x1^-1*x0^-1*x1^-1*x0*x1*x0 >
@@ -1724,9 +1723,9 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: R.<x, y> = QQ[]
         sage: f = y^3 + x^3
-        sage: fundamental_group(f)
-        Finitely presented group < x0, x1, x2 | x0*x1*x2*x0^-1*x2^-1*x1^-1,
-                                                x2*x0*x1*x2^-1*x1^-1*x0^-1 >
+        sage: fundamental_group(f).sorted_presentation()
+        Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x0^-1*x2*x0*x1,
+                                                x2^-1*x1^-1*x2*x0*x1*x0^-1 >
 
     It is also possible to have coefficients in a number field with a
     fixed embedding in `\QQbar`::
@@ -1750,14 +1749,9 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: R.<x, y> = QQ[]
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
-        sage: g = fundamental_group(f, puiseux=True); g.sorted_presentation()
-        Finitely presented group
-         < x0, x1, x2, x3 | x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2,
-                            x3^-1*x2^-1*x1*x2, x2^-1*x1^-1*x0^-1*x1*x2*x1,
-                            x2^-1*x0 >
-        sage: g.simplified().sorted_presentation()
+        sage: g = fundamental_group(f); g.sorted_presentation()
         Finitely presented group < x0, x1 | x1^-2*x0^2, (x1^-1*x0)^3 >
-        sage: g = fundamental_group(f, puiseux=True, projective=True)
+        sage: g = fundamental_group(f, projective=True)
         sage: g.order(), g.abelian_invariants()
         (12, (4,))
         sage: fundamental_group(y * (y - 1))
@@ -1785,7 +1779,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
 
 
 def fundamental_group_arrangement(flist, simplified=True, projective=False,
-                                  puiseux=False, vertical=False,
+                                  puiseux=True, vertical=False,
                                   braid_data=None):
     r"""
     Compute the fundamental group of the complement of a curve
@@ -1806,8 +1800,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
       of the curve will be computed, otherwise, the fundamental group of
       the complement in the affine plane will be computed
 
-    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
-      ``simplified`` is set to ``False``, and
+    - ``puiseux`` -- boolean (default: ``True``); if set to ``True``
       a presentation of the fundamental group with the homotopy type
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
@@ -1846,7 +1839,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
                         x1^-1*x0^-1*x1*x0 >
         sage: dic
         {0: [x0, x2], 1: [x1], 2: [x0^-1*x2^-1*x1^-1*x0^-1]}
-        sage: g, dic = fundamental_group_arrangement(flist, simplified=False)
+        sage: g, dic = fundamental_group_arrangement(flist, simplified=False, puiseux=False)
         sage: g.sorted_presentation(), dic
         (Finitely presented group
          < x0, x1, x2, x3 | 1, 1, 1, 1, 1, 1, 1,
@@ -1875,8 +1868,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         sage: G.sorted_presentation()
         Finitely presented group
         < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x0^-1*x1*x3*x0,
-                           x3^-1*x1^-1*x0^-1*x3*x0*x1,
-                           x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1 >
+                           x3^-1*x1^-1*x3*x0*x1*x0^-1, x2^-1*x0^-1*x2*x0 >
         sage: dic
         {0: [x1], 1: [x3], 2: [x2], 3: [x0], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
         sage: fundamental_group_arrangement(L, vertical=True)
