@@ -21,6 +21,9 @@ autogen = [
     SPKG_INSTALL_REQUIRES_jinja2
 ]
 
+[project.scripts]
+sage-generate-meson = "sage_setup.autogen.meson:generate_meson"
+
 [tool.setuptools]
 packages = [
     "sage_setup",

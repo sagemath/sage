@@ -35,9 +35,6 @@ dynamic = ["version"]
 [project.scripts]
 sage-config = "sage_conf:_main"
 
-[project.scripts]
-sage-generate-meson = "sage_setup.autogen.meson:generate_meson"
-
 [tool.setuptools]
 packages = ["_sage_conf"]
 py-modules = ["sage_conf"]
