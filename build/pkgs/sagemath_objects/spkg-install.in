@@ -1,5 +1,11 @@
 cd src
 
+# For meson
+export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
+export CYTHON=sage-cython
+export CYTHON_FOR_BUILD=sage-cython
+
+
 export PIP_NO_INDEX=true
 
 if [ -r vendor.txt ]; then
@@ -11,11 +17,8 @@ export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
 if [ "$SAGE_WHEELS" = yes ]; then
     rm -Rf build
-    # First build the sdist, then build the wheel from the sdist.
-    # https://pypa-build.readthedocs.io/en/latest/#python--m-build
-    # This makes sure that the sdist is complete.
     DIST_DIR="$(mktemp -d)"
-    python3 -m build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
+    python3 -m build --no-isolation --wheel --skip-dependency-check -Csetup-args="--native-file=$(pwd)/sage-cython-native-file.ini" --outdir "$DIST_DIR"/dist . || sdh_die "Failure building wheel"
     ls -l "$DIST_DIR"/dist/*.tar.gz
     if [ "$SAGE_EDITABLE" = yes ]; then
         # Do not install the wheel
