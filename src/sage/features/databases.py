@@ -18,10 +18,6 @@ Features for testing the presence of various databases
 
 
 from . import StaticFile, PythonModule
-from sage.env import CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR
-
-
-CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
 
 
 class DatabaseCremona(StaticFile):
@@ -42,7 +38,7 @@ class DatabaseCremona(StaticFile):
         sage: DatabaseCremona().is_present()                                    # optional - database_cremona_ellcurve
         FeatureTestResult('database_cremona_ellcurve', True)
     """
-    def __init__(self, name="cremona", spkg="database_cremona_ellcurve"):
+    def __init__(self, name="cremona"):
         r"""
         TESTS::
 
@@ -50,10 +46,21 @@ class DatabaseCremona(StaticFile):
             sage: isinstance(DatabaseCremona(), DatabaseCremona)
             True
         """
+        from sage.env import CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR
+        CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
+        CREMONA_DATA_DIRS.discard(None)
+
+        spkg = "database_cremona_ellcurve"
+        spkg_type = "optional"
+        if name == 'cremona_mini':
+            spkg = "elliptic_curves"
+            spkg_type = "standard"
+
         StaticFile.__init__(self, f"database_{name}_ellcurve",
-                            filename='{}.db'.format(name.replace(' ', '_')),
+                            filename=f"{name}.db",
                             search_path=CREMONA_DATA_DIRS,
                             spkg=spkg,
+                            type=spkg_type,
                             url="https://github.com/JohnCremona/ecdata",
                             description="Cremona's database of elliptic curves")
 
@@ -173,7 +180,8 @@ class DatabaseReflexivePolytopes(StaticFile):
 
 
 def all_features():
-    return [DatabaseCremona(), DatabaseCremona('cremona_mini'),
+    return [DatabaseCremona(),
+            DatabaseCremona('cremona_mini'),
             DatabaseJones(),
             DatabaseKnotInfo(),
             DatabaseCubicHecke(),
