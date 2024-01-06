@@ -2057,6 +2057,58 @@ class QuaternionOrder(Parent):
             sage: {iso(g * h) == iso(g) * iso(h) for g in els for h in els}
             {True}
 
+        Test error cases::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O = Quat.maximal_order()
+            sage: O.isomorphism_to('potato')
+            Traceback (most recent call last):
+            ...
+            TypeError: not a quaternion order
+
+        ::
+
+            sage: Quat1.<i1,j1,k1> = QuaternionAlgebra(-1,-11)
+            sage: Quat2.<i2,j2,k2> = QuaternionAlgebra(-3,-11)
+            sage: Quat1.discriminant() == Quat2.discriminant()  # isomorphic
+            True
+            sage: O1 = Quat1.maximal_order()
+            sage: O2 = Quat2.maximal_order()
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            TypeError: not an order in the same quaternion algebra
+
+        ::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(7,11)
+            sage: O1 = Quat.maximal_order()
+            sage: O2 = (O1 * (i+j)).right_order()
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for definite quaternion orders
+
+        ::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O1 = Quat.quaternion_order([1, i, j, k])
+            sage: O2 = Quat.quaternion_order([1,-i, j,-k])
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for maximal orders
+
+        ::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O1 = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
+            sage: O2 = Quat.quaternion_order([1, (2+i+k)/4, (-11*i+2*j+k)/4, (-5*i+k)/3])
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            ValueError: quaternion orders not isomorphic
+
         ALGORITHM:
 
         Find a generator of the principal lattice `N\cdot O\cdot O'`
