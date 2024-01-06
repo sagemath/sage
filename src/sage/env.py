@@ -195,6 +195,14 @@ SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
+# colon-separated search path for databases.
+SAGE_DATA_PATH = var("SAGE_DATA_PATH",
+                     os.pathsep.join(filter(None, [
+                         join(DOT_SAGE, "db"),
+                         join(SAGE_SHARE, "sagemath"),
+                         SAGE_SHARE,
+                         ])))
+
 # installation directories for various packages
 GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
 ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))

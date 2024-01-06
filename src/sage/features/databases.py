@@ -16,8 +16,27 @@ Features for testing the presence of various databases
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import os
 
 from . import StaticFile, PythonModule
+from sage.env import SAGE_DATA_PATH
+
+
+def sage_data_path(data_name):
+    r"""
+    Search path for database `data_name`.
+
+    EXAMPLES::
+
+        sage: from sage.features.databases import sage_data_path
+        sage: sage_data_path("cremona")
+        ['.../cremona']
+    """
+    if not SAGE_DATA_PATH:
+        return []
+
+    return [os.path.join(p, data_name)
+            for p in SAGE_DATA_PATH.split(os.pathsep)]
 
 
 class DatabaseCremona(StaticFile):
