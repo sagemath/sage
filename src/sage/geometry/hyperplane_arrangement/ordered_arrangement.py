@@ -317,7 +317,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         n = self.dimension()
         r = len(self)
         if n == 0:
-            raise TypeError('Only empty arrangements for dimension ', n)
+            return FreeGroup(0) / []
         if n == 1:
             G = FreeGroup(r) / []
             dic = {j: G.gen(j) for j in range(r)}
@@ -444,8 +444,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         n = self.dimension()
         r = len(self)
         if n == 1:
-            print("Only empty arrangements for dimension ", n - 1)
-            return None
+            return FreeGroup(0) / []
         if n == 2:
             G = FreeGroup(r - 1) / []
             dic = {j: G.gen(j) for j in range(r - 1)}
@@ -588,7 +587,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
             Traceback (most recent call last):
             ...
             ValueError: linear expression must be non-constant to define a hyperplane
-       """
+        """
         if len(args) == 1:
             arg = args[0]
             if isinstance(arg, HyperplaneArrangementElement) and args[0].parent() is self:

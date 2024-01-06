@@ -1222,9 +1222,10 @@ class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
         """
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
+        # super().__init__(base_ring, names=names)
+        # self._base_ring = base_ring
+        # self._names = names
         super().__init__(base_ring, names=names)
-        self._base_ring = base_ring
-        self._names = names
 
     @cached_method
     def ambient_space(self):

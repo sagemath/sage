@@ -642,6 +642,11 @@ def fieldI(field):
         Number Field in prim with defining polynomial
         x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10
         with prim = 0.4863890359345430? + 1.000000000000000?*I
+        sage: F0 = CyclotomicField(5)
+        sage: fieldI(F0)
+        Number Field in prim with defining polynomial
+        x^8 - 2*x^7 + 7*x^6 - 10*x^5 + 16*x^4 - 10*x^3 - 2*x^2 + 4*x + 1
+        with prim = -0.3090169943749474? + 0.04894348370484643?*I
 
     If ``I`` is already in the field, the result is the field itself::
 
@@ -652,11 +657,6 @@ def fieldI(field):
         sage: F1 = fieldI(F0)
         sage: F0 == F1
         True
-        sage: F0 = CyclotomicField(5)
-        sage: fieldI(F0)
-        Number Field in prim with defining polynomial
-        x^8 - 2*x^7 + 7*x^6 - 10*x^5 + 16*x^4 - 10*x^3 - 2*x^2 + 4*x + 1
-        with prim = -0.3090169943749474? + 0.04894348370484643?*I
     """
     I0 = QQbar.gen()
     if I0 in field:
