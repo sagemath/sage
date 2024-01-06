@@ -373,7 +373,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
             print(prec)
 
 
-def voronoi_cells(V, vertical_lines=()):
+def voronoi_cells(V, vertical_lines=frozenset()):
     r"""
     Compute the graph, the boundary graph, a base point, a positive orientation
     of the boundary graph, and the dual graph of a corrected Voronoi diagram.
@@ -382,7 +382,7 @@ def voronoi_cells(V, vertical_lines=()):
 
     - ``V`` -- a corrected Voronoi diagram
 
-    - ``vertical_lines`` -- tuple (default: ``()``); indices of the
+    - ``vertical_lines`` -- frozenset (default: ``frozenset()``); indices of the
       vertical lines
 
     OUTPUT:
@@ -402,7 +402,7 @@ def voronoi_cells(V, vertical_lines=()):
         sage: from sage.schemes.curves.zariski_vankampen import corrected_voronoi_diagram, voronoi_cells
         sage: points = (2, I, 0.000001, 0, 0.000001*I)
         sage: V = corrected_voronoi_diagram(points)
-        sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=(1,))
+        sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=frozenset((1,)))
         sage: Gv = G.vertices(sort=True)
         sage: Ge = G.edges(sort=True)
         sage: len(Gv), len(Ge)
@@ -978,7 +978,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}):
         sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, corrected_voronoi_diagram, voronoi_cells
         sage: points = (0, -1, I, 1, -I)
         sage: V = corrected_voronoi_diagram(points)
-        sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=[0, 1, 2, 3, 4])
+        sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=frozenset((0 .. 4)))
         sage: gb, vd = geometric_basis(G, E, EC, p, DG, vertical_regions=VR)
         sage: gb
         [[A vertex at (5/2, -5/2), A vertex at (5/2, 5/2), A vertex at (-5/2, 5/2),
@@ -1329,6 +1329,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
         else:
             transversal[f0] = arrangement1.index(f0)
     vl.sort()
+    vl = frozenset(vl)
     if not disc:
         vertical_braids = {i: transversal[f0]
                            for i, f0 in enumerate(transversal)}
