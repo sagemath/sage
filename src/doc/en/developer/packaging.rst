@@ -1035,13 +1035,10 @@ upstream is ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, create a new file
     tarball=FoO-VERSION.tar.gz
 
 Sage internally replaces the ``VERSION`` substring with the content of
-``package-version.txt``. To recompute the checksums, run::
+``package-version.txt``.
 
-    [alice@localhost sage]$ sage --package fix-checksum foo
 
-which will modify the ``checksums.ini`` file with the correct
-checksums.
-
+.. _section-spkg-upstream-urls:
 
 Upstream URLs
 -------------
@@ -1068,39 +1065,33 @@ For Python packages available from PyPI, you should use an
 
     upstream_url=https://pypi.io/packages/source/m/matplotlib/matplotlib-VERSION.tar.gz
 
-A package that has the ``upstream_url`` information can be updated by
-simply typing::
-
-    [alice@localhost sage]$ sage --package update numpy 3.14.59
-
-which will automatically download the archive and update the
-information in ``build/pkgs/``.
-
-For Python packages available from PyPI, there is another shortcut::
-
-    [alice@localhost sage]$ sage --package update-latest matplotlib
-    Updating matplotlib: 3.3.0 -> 3.3.1
-    Downloading tarball to ...matplotlib-3.3.1.tar.bz2
-    [...............................................................]
-
-The ``upstream_url`` information serves yet another purpose.
 Developers who wish to test a package update from a PR branch before
-the archive is available on a Sage mirror can do so by configuring
-their Sage tree using ``./configure
---enable-download-from-upstream-url``.  Then Sage will fall back to
+the archive is available on a Sage mirror. Sage falls back to
 downloading package tarballs from the ``upstream_url`` after trying all
-Sage mirrors.  (To speed up this process,  trim ``upstream/mirror_list``
-to fewer mirrors.)
-It is then no longer necessary to manually download upstream tarballs.
+Sage mirrors. (This can be disabled by using ``./configure
+--disable-download-from-upstream-url``.)  To speed up this process,
+you can trim ``upstream/mirror_list`` to fewer mirrors.
 
 
-Utility script to create packages
-=================================
+.. _section-sage-package-command:
+
+Utility script to create and maintain packages
+==============================================
+
+The command ``sage --package`` offers a range of functionality for
+creating and maintaining packages of the Sage distribution.
+
+
+Creating packages
+-----------------
 
 Assuming that you have downloaded
 ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use::
 
-    [alice@localhost sage]$ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
+    [alice@localhost sage]$ sage --package create foo                     \
+                                             --version 1.3                \
+                                             --tarball FoO-VERSION.tar.gz \
+                                             --type experimental
 
 to create ``$SAGE_ROOT/build/pkgs/foo/package-version.txt``,
 ``checksums.ini``, and ``type`` in one step.
@@ -1111,22 +1102,132 @@ set the ``upstream_url`` field in ``checksums.ini`` described above.
 
 For Python packages available from PyPI, you can use::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
+                                             --type optional
 
 This automatically downloads the most recent version from PyPI and also
 obtains most of the necessary information by querying PyPI.
+
 The ``dependencies`` file may need editing (watch out for warnings regarding
 ``--no-deps`` that Sage issues during installation of the package!).
 Also you may want to set lower and upper bounds for acceptable package versions
 in the file ``install-requires.txt``.
 
-To create a pip package rather than a normal package, you can use::
+By default, when the package is available as a platform-independent
+wheel, the ``sage --package`` creates a wheel package. To create a normal package
+instead (for example, when the package requires patching), you can use::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --source pip --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
+                                             --source normal              \
+                                             --type optional
 
-To create a wheel package rather than a normal package, you can use::
+To create a pip package rather than a normal or wheel package, you can use::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --source wheel --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
+                                             --source pip                 \
+                                             --type optional
+
+When the package already exists, ``sage --package create`` overwrites it.
+
+
+Updating packages to a new version
+----------------------------------
+
+A package that has the ``upstream_url`` information can be updated by
+simply typing::
+
+    [alice@localhost sage]$ sage --package update numpy 3.14.59
+
+which will automatically download the archive and update the
+information in ``build/pkgs/numpy/``.
+
+For Python packages available from PyPI, there is another shortcut::
+
+    [alice@localhost sage]$ sage --package update-latest matplotlib
+    Updating matplotlib: 3.3.0 -> 3.3.1
+    Downloading tarball to ...matplotlib-3.3.1.tar.bz2
+    [...............................................................]
+
+If you pass the switch ``--commit``, the script will run ``git commit``
+for you.
+
+If you prefer to make update a package ``foo`` by making manual
+changes to the files in ``build/pkgs/foo``, you will need to run::
+
+    [alice@localhost sage]$ sage --package fix-checksum foo
+
+which will modify the ``checksums.ini`` file with the correct
+checksums.
+
+
+Obtaining package metrics
+-------------------------
+
+The command ``sage --package metrics`` computes machine-readable
+aggregated metrics for all packages in the Sage distribution or a
+given list of packages::
+
+    [alice@localhost sage]$ sage --package metrics
+    has_file_distros_arch_txt=181
+    has_file_distros_conda_txt=289
+    has_file_distros_debian_txt=172
+    has_file_distros_fedora_txt=183
+    has_file_distros_gentoo_txt=211
+    has_file_distros_homebrew_txt=95
+    has_file_distros_macports_txt=173
+    has_file_distros_nix_txt=72
+    has_file_distros_opensuse_txt=206
+    has_file_distros_slackware_txt=32
+    has_file_distros_void_txt=221
+    has_file_patches=63
+    has_file_spkg_check=106
+    has_file_spkg_configure_m4=262
+    has_file_spkg_install=322
+    has_tarball_upstream_url=291
+    line_count_file_patches=31904
+    line_count_file_spkg_check=585
+    line_count_file_spkg_configure_m4=3337
+    line_count_file_spkg_install=4342
+    packages=442
+    type_base=1
+    type_experimental=18
+    type_optional=151
+    type_standard=272
+
+Developers can use these metrics to monitor the complexity and quality
+of the Sage distribution. Here are some examples:
+
+- ``has_file_patches`` indicates how many packages have non-empty
+  ``patches/`` directories, and ``line_count_file_patches`` gives
+  the total number of lines in the patch files.
+
+  Ideally, we would not have to carry patches for a
+  package. For example, updating patches when a new upstream version
+  is released can be a maintenance burden.
+
+  Developers can help by working with the upstream maintainers of the
+  package to prepare a new version that requires fewer or smaller
+  patches, or none at all.
+
+- ``line_count_spkg_install`` gives the total number of lines in
+  ``spkg-install`` or ``spkg-install.in`` files; see
+  :ref:`section-spkg-install`.
+
+  When we carry complex ``spkg-install.in`` scripts for normal packages,
+  it may indicate that the upstream package's build and installation
+  scripts should be improved.
+
+  Developers can help by working with the upstream maintainers of the
+  package to prepare an improved version.
+
+- ``has_file_spkg_check`` indicates how many packages have an
+  ``spkg-check`` or ``spkg-check.in`` file; see :ref:`section-spkg-check`.
+
+- ``has_file_spkg_configure_m4`` indicates how many packages
+  are prepared to check for an equivalent system package, and
+  ``has_file_distros_arch_txt``, ``has_file_distros_conda_txt``
+  etc. count how many packages provide the corresponding system package
+  information.
 
 
 .. _section-manual-build:
@@ -1136,9 +1237,7 @@ Building the package
 
 At this stage you have a new tarball that is not yet distributed with
 Sage (``FoO-1.3.tar.gz`` in the example of section
-:ref:`section-directory-structure`). Now you need to manually place it
-in the ``SAGE_ROOT/upstream/`` directory and run
-``sage --fix-pkg-checksums`` if you have not done that yet.
+:ref:`section-directory-structure`).
 
 Now you can install the package using::
 
@@ -1157,8 +1256,7 @@ or::
 
     [alice@localhost sage]$ sage -f -c package_name
 
-If all went fine, open a PR, put a link to the original tarball in
-the PR and upload a branch with the code under
+If all went fine, open a PR with the code under
 ``SAGE_ROOT/build/pkgs``.
 
 
