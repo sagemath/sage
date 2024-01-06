@@ -9196,7 +9196,7 @@ _Partitions = Partitions()
 # number_of_partitions functions which is currently using FLINT.
 # AM trac #13072
 try:
-    from sage.libs.flint.arith import number_of_partitions as flint_number_of_partitions
+    from sage.libs.flint.arith_sage import number_of_partitions as flint_number_of_partitions
     cached_number_of_partitions = cached_function(flint_number_of_partitions)
 except ImportError:
     pass

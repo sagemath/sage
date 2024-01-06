@@ -38,6 +38,7 @@ from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpq cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.fmpq_poly cimport *
+from sage.libs.flint.fmpq_poly_sage cimport *
 
 from cypari2.gen import Gen as pari_gen
 

@@ -58,7 +58,8 @@ from sage.matrix.matrix cimport Matrix
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_get_mpz
-from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, fmpz_poly_set_coeff_mpz, _fmpz_poly_set_length
+from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, _fmpz_poly_set_length
+from sage.libs.flint.fmpz_poly_sage cimport fmpz_poly_set_coeff_mpz
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
 from sage.matrix.matrix_modn_sparse cimport Matrix_modn_sparse

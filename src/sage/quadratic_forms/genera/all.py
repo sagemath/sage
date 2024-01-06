@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-pari
-# *****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)

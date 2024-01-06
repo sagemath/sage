@@ -28,7 +28,7 @@ lazy_import('sage.symbolic.constants', 'e', as_='const_e')
 lazy_import('sage.symbolic.constants', 'pi', as_='const_pi')
 lazy_import('sage.rings.complex_double', 'CDF')
 
-lazy_import('sage.libs.flint.arith', 'harmonic_number', as_='_flint_harmonic_number')
+lazy_import('sage.libs.flint.arith_sage', 'harmonic_number', as_='_flint_harmonic_number')
 
 lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
 lazy_import('sage.libs.mpmath.all', 'harmonic', as_='_mpmath_harmonic')
