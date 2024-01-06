@@ -204,9 +204,12 @@ class EllipticCurveHomset(SchemeHomset_generic):
             ...
             ValueError: domain and codomain must be equal
         """
-        if not self.is_endomorphism_set():
-            raise ValueError('domain and codomain must be equal')
         m = ZZ(data)
+        if not self.is_endomorphism_set():
+            if m:
+                raise ValueError('domain and codomain must be equal')
+            from sage.schemes.elliptic_curves.hom_sum import EllipticCurveHom_sum
+            return EllipticCurveHom_sum([], domain=self.domain(), codomain=self.codomain())
         from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
         return EllipticCurveHom_scalar(self.domain(), m)
 
