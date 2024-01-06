@@ -5,12 +5,13 @@ export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 export CYTHON=sage-cython
 export CYTHON_FOR_BUILD=sage-cython
 
+
 export PIP_NO_INDEX=true
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
 # Do not install the wheel.
 DIST_DIR="$(mktemp -d)"
-python3 -m build --no-isolation --wheel --skip-dependency-check --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
+python3 -m build --no-isolation --wheel --skip-dependency-check -Csetup-args="--native-file=$(pwd)/sage-cython-native-file.ini" --outdir "$DIST_DIR"/dist . || sdh_die "Failure building sdist and wheel"
 
 wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
 ls -l "$wheel"
