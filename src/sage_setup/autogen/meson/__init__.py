@@ -79,7 +79,7 @@ def run(folder: Path, output_dir: Path, folder_rel_to_src=None, dry_run=False, f
         has_cython = has_cython or subdir_has_cython
         if not subdir_distributions:
             pass
-        elif len(subdir_distributions) > 1 or subdir_has_cython:
+        elif not monolithic or len(subdir_distributions) > 1 or subdir_has_cython:
             recurse_subdirs[subdir] = subdir_distributions
         else:
             by_distribution[list(subdir_distributions)[0]].install_subdirs.append(subdir)
@@ -210,7 +210,7 @@ def run(folder: Path, output_dir: Path, folder_rel_to_src=None, dry_run=False, f
     if cython_files:
         has_cython = True
 
-    if not has_cython and len(distributions) <= 1:
+    if monolithic and not has_cython and len(distributions) <= 1:
         # No need for a meson.build file
         try:
             meson_build_path.unlink()
