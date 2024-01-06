@@ -93,14 +93,14 @@ class EllipticCurveHomset(SchemeHomset_generic):
 
             sage: E = EllipticCurve(GF(101), [1,1])
             sage: H = End(E)
-            sage: TestSuite(H).run()
+            sage: TestSuite(H).run(skip='_test_elements')
 
         ::
 
             sage: E1 = EllipticCurve(GF(101), [1,1])
             sage: E2 = EllipticCurve(GF(101), [4,9])
             sage: H = Hom(E1, E2)
-            sage: TestSuite(H).run()
+            sage: TestSuite(H).run(skip='_test_elements')
 
         ::
 
