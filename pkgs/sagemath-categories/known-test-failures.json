@@ -26,7 +26,7 @@
         "ntests": 28
     },
     "sage.categories.affine_weyl_groups": {
-        "ntests": 14
+        "ntests": 15
     },
     "sage.categories.algebra_ideals": {
         "failed": true,
@@ -148,7 +148,7 @@
     },
     "sage.categories.coxeter_groups": {
         "failed": true,
-        "ntests": 362
+        "ntests": 363
     },
     "sage.categories.cw_complexes": {
         "failed": true,
@@ -301,7 +301,7 @@
     },
     "sage.categories.finite_complex_reflection_groups": {
         "failed": true,
-        "ntests": 178
+        "ntests": 199
     },
     "sage.categories.finite_coxeter_groups": {
         "ntests": 6
@@ -492,10 +492,6 @@
     "sage.categories.infinite_enumerated_sets": {
         "failed": true,
         "ntests": 13
-    },
-    "sage.categories.inner_product_spaces": {
-        "failed": true,
-        "ntests": 9
     },
     "sage.categories.integral_domains": {
         "failed": true,
@@ -783,7 +779,7 @@
     },
     "sage.cpython.debug": {
         "failed": true,
-        "ntests": 14
+        "ntests": 13
     },
     "sage.cpython.dict_del_by_value": {
         "failed": true,
@@ -826,7 +822,6 @@
         "ntests": 321
     },
     "sage.doctest.reporting": {
-        "failed": true,
         "ntests": 124
     },
     "sage.doctest.sources": {
@@ -1091,7 +1086,7 @@
     },
     "sage.misc.sageinspect": {
         "failed": true,
-        "ntests": 329
+        "ntests": 332
     },
     "sage.misc.superseded": {
         "failed": true,
@@ -1124,6 +1119,7 @@
         "ntests": 128
     },
     "sage.repl.configuration": {
+        "failed": true,
         "ntests": 22
     },
     "sage.repl.display.fancy_repr": {
@@ -1149,6 +1145,7 @@
         "ntests": 42
     },
     "sage.repl.inputhook": {
+        "failed": true,
         "ntests": 7
     },
     "sage.repl.interface_magic": {
@@ -1157,7 +1154,7 @@
     },
     "sage.repl.interpreter": {
         "failed": true,
-        "ntests": 118
+        "ntests": 114
     },
     "sage.repl.ipython_extension": {
         "failed": true,
@@ -1188,7 +1185,7 @@
     },
     "sage.repl.load": {
         "failed": true,
-        "ntests": 42
+        "ntests": 38
     },
     "sage.repl.preparse": {
         "failed": true,
@@ -1314,9 +1311,6 @@
     },
     "sage.structure.global_options": {
         "ntests": 145
-    },
-    "sage.structure.graphics_file": {
-        "ntests": 8
     },
     "sage.structure.indexed_generators": {
         "failed": true,

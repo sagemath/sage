@@ -1,2 +1,3 @@
 # sage_setup: distribution = sagemath-schemes
-from .constructor import CyclicCover
+
+from sage.schemes.cyclic_covers.constructor import CyclicCover

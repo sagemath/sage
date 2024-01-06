@@ -19,4 +19,4 @@ Plane conics
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .constructor import Conic
+from sage.schemes.plane_conics.constructor import Conic

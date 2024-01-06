@@ -1,9 +1,7 @@
 # sage_setup: distribution = sagemath-flint
-# distutils: libraries = gmp flint
-# distutils: depends = bernoulli.h
 
-from sage.libs.flint.types cimport fmpq_t, ulong
+# Deprecated header file; use sage/libs/flint/bernoulli.pxd instead
+# See https://github.com/sagemath/sage/pull/36449
 
-# bernoulli.h
-cdef extern from "arb_wrap.h":
-    void bernoulli_fmpq_ui(fmpq_t b, ulong n)
+from sage.libs.flint.bernoulli cimport (
+    bernoulli_fmpq_ui)
