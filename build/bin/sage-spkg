@@ -789,8 +789,6 @@ run_test_suite() { ###############################################
 # SAGE_INST_LOCAL.  It might make more sense to run the tests before, but the
 # spkg-check scripts were written before use of DESTDIR installs, and so
 # fail in many cases.  This might be good to change later.
-
-if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
     if [ -f spkg-check ]; then
         echo "Running the test suite for $PKG_NAME..."
         time ./spkg-check
@@ -808,11 +806,13 @@ if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
             TEST_SUITE_RESULT="passed"
             echo "Passed the test suite for $PKG_NAME."
         fi
+    elif [ -f spkg-check.in ]; then
+        echo "The test suite for $PKG_NAME requires the temporary build directory."
+        exit 1
     else
         echo "Package $PKG_NAME has no test suite."
         TEST_SUITE_RESULT="not available"
     fi
-fi
 } ################################################# run_test_suite
 
 write_installation_record() { ####################################
@@ -890,17 +890,21 @@ if [ $INSTALL = 1 ]; then
     extract_the_package
     prepare_for_installation
     actually_build_and_install
-else
-    cd "$SAGE_BUILD_DIR/$PKG_NAME" || exit $?
 fi
 
 if [ $POST_INSTALL = 1 ]; then
+    cd "$SAGE_BUILD_DIR/$PKG_NAME" || exit $?
     unload_destdir
     install_scripts
     post_install
 fi
 
-run_test_suite
+if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
+    if ! cd "$SAGE_BUILD_DIR/$PKG_NAME" 2>/dev/null; then
+        cd "$PKG_SCRIPTS" || exit $?
+    fi
+    run_test_suite
+fi
 
 if [ $POST_INSTALL = 1 ]; then
     write_installation_record
