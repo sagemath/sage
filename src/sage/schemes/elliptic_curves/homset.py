@@ -197,7 +197,7 @@ class EllipticCurveHomset(SchemeHomset_generic):
             ...
             ValueError: domain and codomain must be equal
         """
-        if self.codomain() != self.domain():
+        if not self.is_endomorphism_set():
             raise ValueError('domain and codomain must be equal')
         m = ZZ(data)
         from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
@@ -225,7 +225,7 @@ class EllipticCurveHomset(SchemeHomset_generic):
               From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
               To:   Elliptic Curve defined by y^2 = x^3 + 2*x + 2 over Rational Field
         """
-        if self.domain() == self.codomain():
+        if self.is_endomorphism_set():
             s = 'Ring of elliptic-curve endomorphisms'
         else:
             s = 'Additive group of elliptic-curve morphisms'
