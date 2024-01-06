@@ -242,3 +242,21 @@ class EllipticCurveHomset(SchemeHomset_generic):
         s += f'\n  From: {self.domain()}'
         s += f'\n  To:   {self.codomain()}'
         return s
+
+    def identity(self):
+        r"""
+        Return the identity morphism in this elliptic-curve homset
+        as an :class:`EllipticCurveHom` object.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(j=42)
+            sage: End(E).identity()
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
+              Via:  (u,r,s,t) = (1, 0, 0, 0)
+            sage: End(E).identity() == E.scalar_multiplication(1)
+            True
+        """
+        if not self.is_endomorphism_set():
+            raise ValueError('domain and codomain must be equal')
+        return self.domain().identity_morphism()

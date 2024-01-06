@@ -2533,6 +2533,23 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
         return EllipticCurveHom_frobenius(self, n)
 
+    def identity_morphism(self):
+        r"""
+        Return the identity endomorphism of this elliptic curve
+        as an :class:`EllipticCurveHom` object.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(j=42)
+            sage: E.identity_morphism()
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
+              Via:  (u,r,s,t) = (1, 0, 0, 0)
+            sage: E.identity_morphism() == E.scalar_multiplication(1)
+            True
+        """
+        from sage.schemes.elliptic_curves.weierstrass_morphism import identity_morphism
+        return identity_morphism(self)
+
     def isomorphism_to(self, other):
         """
         Given another weierstrass model ``other`` of ``self``, return an
