@@ -91,9 +91,16 @@ class EllipticCurveHomset(SchemeHomset_generic):
 
         TESTS::
 
-            sage: E = EllipticCurve('37a1')                                             # needs sage.schemes
-            sage: Hom(E, E).__class__                                                   # needs sage.schemes
-            <class 'sage.schemes.elliptic_curves.homset.EllipticCurveHomset_with_category'>
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: H = End(E)
+            sage: TestSuite(H).run()
+
+        ::
+
+            sage: E1 = EllipticCurve(GF(101), [1,1])
+            sage: E2 = EllipticCurve(GF(101), [4,9])
+            sage: H = Hom(E1, E2)
+            sage: TestSuite(H).run()
 
         ::
 
