@@ -13,7 +13,7 @@ Feature for testing the presence of ``ecm`` or ``gmp-ecm``
 # ****************************************************************************
 
 from . import Executable
-from sage.env import ECM
+from sage.env import SAGE_ECMBIN
 
 
 class Ecm(Executable):
@@ -34,7 +34,7 @@ class Ecm(Executable):
             sage: isinstance(Ecm(), Ecm)
             True
         """
-        Executable.__init__(self, name="ecm", executable=ECM,
+        Executable.__init__(self, name="ecm", executable=SAGE_ECMBIN,
                             spkg="ecm", type="standard")
 
 

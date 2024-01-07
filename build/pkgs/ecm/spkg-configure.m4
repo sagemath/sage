@@ -36,5 +36,5 @@ SAGE_SPKG_CONFIGURE([ecm], [
         ], [sage_spkg_install_ecm=yes])
     ])
     m4_popdef([SAGE_ECM_MINVER])
-    AC_SUBST(ECM, $SAGE_ECM_BIN)
+    AC_SUBST(SAGE_ECMBIN, $SAGE_ECM_BIN)
 ])
