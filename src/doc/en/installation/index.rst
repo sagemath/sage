@@ -193,6 +193,44 @@ Linux
     - Alternatively, build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
 
+In a container
+==============
+
+`Docker <https://www.docker.com>`_ is a popular virtualization
+software, running Linux operating system images ("Docker images") in
+containers on a shared Linux kernel.  These containers can be run
+using a Docker client on your Linux, Mac, or Windows box, as well as
+on various cloud services.
+
+To get started, you need to install a `Docker client
+<https://docs.docker.com/install/>`_.  The clients are available for
+Linux, Mac, and Windows.  The clients for the latter are known as
+"Docker Desktop".
+
+Make sure that your Docker client is configured to provide enough RAM
+to the containers (8 GB are a good choice). In Docker Desktop this
+setting is in Preferences -> Resources -> Advanced.
+
+Any method using Linux can also be used in a Docker container running Linux.
+All major Linux distributions provide ready-to-use Docker images,
+which are published via `Docker Hub <https://hub.docker.com>`_ or
+other container registries.
+
+Several Docker images are available that provide SageMath out of the box.
+
+- `Docker image sagemath/sagemath <https://hub.docker.com/r/sagemath/sagemath>`_
+
+- `Docker image computop/sage <https://hub.docker.com/r/computop/sage/>`_ from the
+  3-manifolds project additionally provides SnapPy, Regina, PHCPack, etc.
+
+- `Docker image sagemathinc/sagemath-core <https://hub.docker.com/r/sagemathinc/sagemath-core>`_
+  provides the build of SageMath that `CoCalc <https://cocalc.com/>`_ uses.
+
+- `Docker image sagemathinc/cocalc
+  <https://hub.docker.com/r/sagemathinc/cocalc>`_ is a larger image that
+  can be used to run `CoCalc <https://cocalc.com/>`_ locally.
+
+
 In the cloud
 ============
 
@@ -204,9 +242,6 @@ In the cloud
 
 - `CoCalc <https://cocalc.com/>`_ is an online commercial service that provides Sage and
   many other tools.
-
-- `Docker image sagemathinc/cocalc
-  <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
 
 More information:
