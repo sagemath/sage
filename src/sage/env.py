@@ -211,7 +211,7 @@ GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR")
 POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR")
 
 # installation directories for various packages
-JMOL_DIR = var("JMOL_DIR", join(SAGE_SHARE, "jmol"))
+JMOL_DIR = var("JMOL_DIR")
 MATHJAX_DIR = var("MATHJAX_DIR", join(SAGE_SHARE, "mathjax"))
 MTXLIB = var("MTXLIB", join(SAGE_SHARE, "meataxe"))
 THREEJS_DIR = var("THREEJS_DIR", join(SAGE_SHARE, "threejs-sage"))
