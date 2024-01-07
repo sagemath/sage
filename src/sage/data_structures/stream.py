@@ -1514,6 +1514,7 @@ class Stream_uninitialized(Stream):
         """
         # determine the next linear equations
         coeffs = []
+        non_linear_coeffs = []
         for i, eq in enumerate(self._eqs):
             while True:
                 self._last_eqs_n[i] += 1
@@ -1525,42 +1526,56 @@ class Stream_uninitialized(Stream):
                 V = coeff.variables()
                 if not V:
                     if coeff:
-                        raise ValueError(f"no solution in degree {self._last_eqs_n} as {coeff} != 0")
+                        if len(self._last_eqs_n) == 1:
+                            raise ValueError(f"no solution in degree {self._last_eqs_n[0]} as {coeff} != 0")
+                        raise ValueError(f"no solution in degrees {self._last_eqs_n} as {coeff} != 0")
                     else:
                         continue
                 if coeff.degree() <= 1:
                     coeffs.append(coeff)
                 else:
+                    # nonlinear equations must not be discarded, we
+                    # keep them to improve any error messages
+                    non_linear_coeffs.append(coeff)
                     self._last_eqs_n[i] -= 1
                 break
         if not coeffs:
-            raise ValueError("No linear equations")
+            if len(self._last_eqs_n) == 1:
+                raise ValueError(f"no linear equations in degree {self._last_eqs_n[0]}: {non_linear_coeffs}")
+            raise ValueError(f"no linear equations in degrees {self._last_eqs_n}: {non_linear_coeffs}")
 
         # solve
-        from sage.structure.sequence import Sequence
-        coeffs = Sequence([coeff.polynomial() for coeff in coeffs])
-        m1, v1 = coeffs.coefficient_matrix()
-        m = m1.matrix_from_columns([i for i, (c,) in enumerate(v1)
-                                    if c.degree() == 1])
-        b = -m1.matrix_from_columns([i for i, (c,) in enumerate(v1)
-                                     if c.degree() == 0])
-
-        if not b:
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        eqs = PolynomialSequence([coeff.polynomial() for coeff in coeffs])
+        m1, v1 = eqs.coefficient_matrix()
+        # there should be at most one entry in v1 of degree 0
+        # v1 is a matrix, not a vector
+        for j, (c,) in enumerate(v1):
+            if c.degree() == 0:
+                b = -m1.column(j)
+                m = m1.matrix_from_columns([i for i in range(v1.nrows()) if i != j])
+                v = [c for i, (c,) in enumerate(v1) if i != j]
+                break
+        else:
             from sage.modules.free_module_element import zero_vector
-            b = zero_vector(m.nrows())
+            b = zero_vector(m1.nrows())
+            m = m1
+            v = v1.list()
         x = m.solve_right(b)
         k = m.right_kernel_matrix()
-
         # substitute
+        from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_dense
         bad = True
-        for i, ((c,), (y,)) in enumerate(zip(v1, x)):
+        for i, (c, y) in enumerate(zip(v, x)):
             if k.column(i).is_zero():
-                var = self._P(c)
+                var = InfinitePolynomial_dense(self._P, c)
                 val = self._base(y)
                 self._subs_in_caches(var, val)
                 bad = False
         if bad:
-            raise ValueError("Could not determine any coefficients")
+            if len(self._last_eqs_n) == 1:
+                raise ValueError(f"could not determine any coefficients in degree {self._last_eqs_n[0]} - equations are {coeffs + non_linear_coeffs}")
+            raise ValueError(f"could not determine any coefficients in degrees {self._last_eqs_n} - equations are {coeffs + non_linear_coeffs}")
 
     def iterate_coefficients(self):
         """
