@@ -1241,6 +1241,7 @@ def get_variable(P):
     Return the first variable with index not in
     ``STREAM_UNINITIALIZED_VARIABLES``.
 
+    We need a different dictionary for each base ring.
     """
     vars = STREAM_UNINITIALIZED_VARIABLES[P]
     for i in range(P._max+2):
@@ -1287,7 +1288,7 @@ class Stream_uninitialized(Stream):
             sage: TestSuite(C).run(skip="_test_pickling")
         """
         self._target = None
-        self._F = None
+        self._eqs = None
         if approximate_order is None:
             raise ValueError("the valuation must be specified for undefined series")
         super().__init__(true_order)
@@ -1315,8 +1316,8 @@ class Stream_uninitialized(Stream):
         """
         if self._target is not None:
             return [self._target]
-        if self._F is not None:
-            return [self._F]
+        if self._eqs is not None:
+            return self._eqs
         return []
 
     def define(self, target):
@@ -1336,22 +1337,19 @@ class Stream_uninitialized(Stream):
         self._cache = list()
         self._iter = self.iterate_coefficients()
 
-    def define_implicitly(self, F, initial_values, R):
+    def define_implicitly(self, series, initial_values, equations, last_equation_used, R):
         r"""
-        Define ``self`` via ``F == 0``.
+        Define ``self`` via ``equations == 0``.
 
         INPUT:
 
-            - ``F`` -- a stream
+            - ``series`` -- a list of series
+            - ``equations`` -- a list of equations defining the series
             - ``initial_values`` -- a list specifying ``self[0], self[1], ...``
             - ``R`` -- the coefficient ring
 
-        EXAMPLES::
         """
         assert self._target is None
-
-        if initial_values is None:
-            initial_values = []
 
         for i, val in enumerate(initial_values):
             if val:
@@ -1363,18 +1361,15 @@ class Stream_uninitialized(Stream):
             self._approximate_order += len(initial_values)
             self._cache = []
 
-        self._F = F
         self._base = R
         # we use a silly variable name, because InfinitePolynomialRing is cached
         self._P = InfinitePolynomialRing(self._base, names=("FESDUMMY",),
                                          implementation='dense')
         self._PFF = self._P.fraction_field()
-        self._variables = set()  # variables used for this stream
-
         self._uncomputed = True
-        self._last_eq_n = self._F._approximate_order - 1 # the index of the last equation we used
-        self._n = self._approximate_order + len(self._cache) - 1 # the index of the last coefficient we know
-
+        self._eqs = equations
+        self._last_eqs_n = last_equation_used # the indices of the last equations we used
+        self._series = series
 
     @lazy_attribute
     def _input_streams(self):
@@ -1382,9 +1377,11 @@ class Stream_uninitialized(Stream):
         Return the list of streams which have a cache and ``self``
         depends on.
 
-        All caches must have been created before this is called.
+        ``self`` is the first stream in this list.
 
-        EXAMPLES::
+        All caches must have been created before this is called.
+        Does this mean that this should only be called after the
+        first invocation of `_compute`?
         """
         known = [self]
         todo = [self]
@@ -1399,7 +1396,11 @@ class Stream_uninitialized(Stream):
     @lazy_attribute
     def _good_cache(self):
         r"""
-        The number of coefficients that have been substituted already.
+        The number of coefficients in each input stream - in the same
+        order - that are free of undetermined coefficients.
+
+        This is used in :meth:`_subs_in_caches` to only substitute
+        items that may contain undetermined coefficients.
         """
         return [0 for c in self._input_streams]
 
@@ -1439,64 +1440,40 @@ class Stream_uninitialized(Stream):
 
             return ZZ.zero()
 
-# if target is dense, we do not need to duplicate its cache
-#            for i in range(self._n+1, n):
-#                self._target[i]
-#            self._n = n
-#            return self._target[n]
-
         # define_implicitly
-        if self._n >= n:
+        if self._good_cache[0] >= n - self._approximate_order + 1:
             return self._cache[n - self._approximate_order]
 
         if self._uncomputed:
-            self._uncomputed = False
-            while not self._true_order and n >= self._approximate_order:
-                for k in range(self._n+1, n+1):
-                    v, val = self._compute()
-                    if val:
-                        self._true_order = True
-                        self._cache[-1] = val
-                    else:
-                        self._approximate_order += 1
-                        del self._cache[-1]
-                    self._subs_in_caches(v, val)
-                    self._n += 1
+            for f in self._series:
+                f._uncomputed = False
+            while self._good_cache[0] < n - self._approximate_order + 1:
+                self._compute()
+            for f in self._series:
+                f._uncomputed = True
 
-            if self._true_order:
-                for k in range(self._n+1, n+1):
-                    v, val = self._compute()
-                    self._cache[-1] = val
-                    self._subs_in_caches(v, val)
-                    self._n += 1
-            self._uncomputed = True
-
-        if len(self._cache) == n - self._approximate_order + 1:
-            if n >= self._approximate_order:
-                return self._cache[n - self._approximate_order]
-            return ZZ.zero()
+        if len(self._cache) >= n - self._approximate_order + 1:
+            return self._cache[n - self._approximate_order]
 
         x = get_variable(self._P)
-        self._variables.add(x)
         self._cache.append(x)
         return x
 
     def _subs_in_caches(self, var, val):
         r"""
         Substitute ``val`` for ``var`` in the caches of the input
-        streams.
+        streams and update ``self._good_cache``.
 
         INPUT:
 
             - ``var``, a variable
             - ``val``, the value that should replace the variable
-
-        EXAMPLES::
-
         """
         var_p = var.polynomial()
         def subs(cache, k):
             c = cache[k]
+            # TODO: we may want to insist that all coefficients of a
+            # stream have a parent
             if hasattr(c, "parent"):
                 if c.parent() is self._PFF:
                     num = c.numerator()
@@ -1509,59 +1486,81 @@ class Stream_uninitialized(Stream):
                 elif c.parent() is self._P and var_p in c.variables():
                     new = c.subs({var: val})
                 else:
-                    return
+                    return c in self._base
                 if new in self._base:
                     cache[k] = self._base(new)
+                    return True
                 else:
                     cache[k] = new
+                    return False
 
         for j, s in enumerate(self._input_streams):
             m = len(s._cache) - self._good_cache[j]
+            good = m  # last index of cache element still containing variables
             if s._is_sparse:
-                for _, i in zip(range(m), reversed(s._cache)):
-                    subs(s._cache, i)
+                for idx, i in zip(range(m), reversed(s._cache)):
+                    if not subs(s._cache, i):
+                        good = m - idx - 1
             else:
                 for i in range(-m, 0):
-                    subs(s._cache, i)
-            self._good_cache[j] += m
+                    if not subs(s._cache, i):
+                        good = -i - 1
+            self._good_cache[j] += good
         STREAM_UNINITIALIZED_VARIABLES[self._P].remove(var)
 
     def _compute(self):
         """
         Solve the next equations, until the next variable is determined.
         """
-        while True:
-            self._last_eq_n += 1
-            coeff = self._F[self._last_eq_n]
-            if coeff.parent() is self._PFF:
-                coeff = coeff.numerator()
-            else:
-                coeff = self._P(coeff)
-            V = self._variables.intersection(InfinitePolynomial_dense(self._P, v)
-                                             for v in coeff.variables())
+        # determine the next linear equations
+        coeffs = []
+        for i, eq in enumerate(self._eqs):
+            while True:
+                self._last_eqs_n[i] += 1
+                coeff = eq[self._last_eqs_n[i]]
+                if coeff.parent() is self._PFF:
+                    coeff = coeff.numerator()
+                else:
+                    coeff = self._P(coeff)
+                V = coeff.variables()
+                if not V:
+                    if coeff:
+                        raise ValueError(f"no solution in degree {self._last_eqs_n} as {coeff} != 0")
+                    else:
+                        continue
+                if coeff.degree() <= 1:
+                    coeffs.append(coeff)
+                else:
+                    self._last_eqs_n[i] -= 1
+                break
+        if not coeffs:
+            raise ValueError("No linear equations")
 
-            if len(V) > 1:
-                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the variables are {V}, the equation is {coeff} == 0")
+        # solve
+        from sage.structure.sequence import Sequence
+        coeffs = Sequence([coeff.polynomial() for coeff in coeffs])
+        m1, v1 = coeffs.coefficient_matrix()
+        m = m1.matrix_from_columns([i for i, (c,) in enumerate(v1)
+                                    if c.degree() == 1])
+        b = -m1.matrix_from_columns([i for i, (c,) in enumerate(v1)
+                                     if c.degree() == 0])
 
-            if not V:
-                if coeff:
-                    if coeff in self._base:
-                        raise ValueError(f"no solution in degree {self._last_eq_n} as {coeff} != 0")
-                    # should do some substitution coeff = 0, but unclear which variable to extract
-                continue
+        if not b:
+            from sage.modules.free_module_element import zero_vector
+            b = zero_vector(m.nrows())
+        x = m.solve_right(b)
+        k = m.right_kernel_matrix()
 
-            var = V.pop()
-            c = coeff.polynomial()
-            v = c.parent()(var.polynomial())
-            d = c.degree(v)
-            if d == 1:
-                val = self._PFF(- c.coefficient({v: 0}) / c.coefficient({v: 1}))
-            elif c.is_monomial() and c.coefficient({v: d}) in self._base:
-                val = self._base.zero()
-            else:
-                raise ValueError(f"unable to determine a unique solution in degree {self._last_eq_n}, the variable is {var}, the equation is {coeff} == 0")
-
-            return var, val
+        # substitute
+        bad = True
+        for i, ((c,), (y,)) in enumerate(zip(v1, x)):
+            if k.column(i).is_zero():
+                var = self._P(c)
+                val = self._base(y)
+                self._subs_in_caches(var, val)
+                bad = False
+        if bad:
+            raise ValueError("Could not determine any coefficients")
 
     def iterate_coefficients(self):
         """
@@ -1604,14 +1603,14 @@ class Stream_uninitialized(Stream):
             sage: T._coeff_stream.is_uninitialized()
             True
         """
-        if self._target is None and self._F is None:
+        if self._target is None and self._eqs is None:
             return True
         if self._initializing:
             return False
         # We implement semaphore-like behavior for coupled (undefined) series
         self._initializing = True
         if self._target is None:
-            result = self._F.is_uninitialized()
+            result = False
         else:
             result = self._target.is_uninitialized()
         self._initializing = False
@@ -3849,6 +3848,8 @@ class Stream_truncated(Stream_unary):
 class Stream_derivative(Stream_unary):
     """
     Operator for taking derivatives of a non-exact stream.
+
+    Instances of this class share the cache with its input stream.
 
     INPUT:
 

@@ -659,6 +659,228 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
     unknown = undefined
 
+    def define_implicitly(self, series, equations):
+        r"""
+        Define series by solving functional equations.
+
+        INPUT:
+
+        - ``series`` -- list of undefined series or pairs each
+          consisting of a series and its initial values
+
+        - ``equations`` -- list of equations defining the series
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L.undefined(0)
+            sage: F = diff(f, 2)
+            sage: L.define_implicitly([(f, [1, 0])], [F + f])
+            sage: f
+            1 - 1/2*z^2 + 1/24*z^4 - 1/720*z^6 + O(z^7)
+            sage: cos(z)
+            1 - 1/2*z^2 + 1/24*z^4 - 1/720*z^6 + O(z^7)
+            sage: F
+            -1 + 1/2*z^2 - 1/24*z^4 + 1/720*z^6 + O(z^7)
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L.undefined(0)
+            sage: L.define_implicitly([f], [2*z*f(z^3) + z*f^3 - 3*f + 3])
+            sage: f
+            1 + z + z^2 + 2*z^3 + 5*z^4 + 11*z^5 + 28*z^6 + O(z^7)
+
+        From Exercise 6.63b in [EnumComb2]_::
+
+            sage: g = L.undefined()
+            sage: z1 = z*diff(g, z)
+            sage: z2 = z1 + z^2 * diff(g, z, 2)
+            sage: z3 = z1 + 3 * z^2 * diff(g, z, 2) + z^3 * diff(g, z, 3)
+            sage: e1 = g^2 * z3 - 15*g*z1*z2 + 30*z1^3
+            sage: e2 = g * z2 - 3 * z1^2
+            sage: e3 = g * z2 - 3 * z1^2
+            sage: e = e1^2 + 32 * e2^3 - g^10 * e3^2
+            sage: L.define_implicitly([(g, [1, 2])], [e])
+
+            sage: sol = L(lambda n: 1 if not n else (2 if is_square(n) else 0)); sol
+            1 + 2*z + 2*z^4 + O(z^7)
+            sage: all(g[i] == sol[i] for i in range(50))
+            True
+
+        Some more examples over different rings::
+
+            sage: L.<z> = LazyPowerSeriesRing(SR)
+            sage: G = L.undefined(0)
+            sage: L.define_implicitly([(G, [ln(2)])], [diff(G) - exp(-G(-z))])
+            sage: G
+            log(2) + z + 1/2*z^2 + (-1/12*z^4) + 1/45*z^6 + O(z^7)
+
+            sage: L.<z> = LazyPowerSeriesRing(RR)
+            sage: G = L.undefined(0)
+            sage: L.define_implicitly([(G, [log(2)])], [diff(G) - exp(-G(-z))])
+            sage: G
+            0.693147180559945 + 1.00000000000000*z + 0.500000000000000*z^2
+             - 0.0833333333333333*z^4 + 0.0222222222222222*z^6 + O(1.00000000000000*z^7)
+
+        We solve the recurrence relation in (3.12) of Prellberg and Brak
+        :doi:`10.1007/BF02183685`::
+
+            sage: q, y = QQ['q,y'].fraction_field().gens()
+            sage: L.<x> = LazyPowerSeriesRing(q.parent())
+            sage: R = L.undefined()
+            sage: L.define_implicitly([(R, [0])], [(1-q*x)*R - (y*q*x+y)*R(q*x) - q*x*R*R(q*x) - x*y*q])
+            sage: R[0]
+            0
+            sage: R[1]
+            (-q*y)/(q*y - 1)
+            sage: R[2]
+            (q^3*y^2 + q^2*y)/(q^3*y^2 - q^2*y - q*y + 1)
+            sage: R[3].factor()
+            (-1) * y * q^3 * (q*y - 1)^-2 * (q^2*y - 1)^-1 * (q^3*y - 1)^-1
+             * (q^4*y^3 + q^3*y^2 + q^2*y^2 - q^2*y - q*y - 1)
+
+            sage: Rp = L.undefined(1)
+            sage: L.define_implicitly([Rp], [(y*q*x+y)*Rp(q*x) + q*x*Rp*Rp(q*x) + x*y*q - (1-q*x)*Rp])
+            sage: all(R[n] == Rp[n] for n in range(7))
+            True
+
+        Another example::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ["x,y,f1,f2"].fraction_field())
+            sage: L.base_ring().inject_variables()
+            Defining x, y, f1, f2
+            sage: F = L.undefined()
+            sage: L.define_implicitly([(F, [0, f1, f2])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
+            sage: F
+            f1*z + f2*z^2 + ((-1/6*x*y*f1+1/3*x*f2+1/3*y*f2)*z^3)
+             + ((-1/24*x^2*y*f1-1/24*x*y^2*f1+1/12*x^2*f2+1/12*x*y*f2+1/12*y^2*f2)*z^4)
+             + ... + O(z^8)
+            sage: sol = 1/(x-y)*((2*f2-y*f1)*(exp(x*z)-1)/x - (2*f2-x*f1)*(exp(y*z)-1)/y)
+            sage: F - sol
+            O(z^7)
+
+        We need to specify the initial values for the degree 1 and 2
+        components to get a unique solution in the previous example::
+
+            sage: F = L.undefined()
+            sage: L.define_implicitly([F], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
+            sage: F
+            <repr(...) failed: ValueError: unable to determine a unique solution in degree 2, the equation is -FESDUMMY_4 + (-x - y)*FESDUMMY_2 + FESDUMMY_1 + (x + y)*FESDUMMY_0 == 0>
+
+            sage: F = L.undefined()
+            sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
+            sage: F
+            <repr(...) failed: ValueError: unable to determine a unique solution in degree 3, the equation is FESDUMMY_9 + (-x - y)*FESDUMMY_7 + 5*FESDUMMY_6 + (-x - y)*FESDUMMY_5 + (x*y*f1) == 0>
+
+        Laurent series examples::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: f = L.undefined(-1)
+            sage: L.define_implicitly([(f, [5])], [2+z*f(z^2) - f])
+            sage: f
+            5*z^-1 + 2 + 2*z + 2*z^3 + O(z^6)
+            sage: 2 + z*f(z^2) - f
+            O(z^6)
+
+            sage: g = L.undefined(-2)
+            sage: L.define_implicitly([(g, [5])], [2+z*g(z^2) - g])
+            sage: g
+            <repr(...) failed: ValueError: no solution in degree -3 as 5 != 0>
+
+        TESTS::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = L.undefined(1)
+            sage: L.define_implicitly([f], [log(1+f) - ~(1 + f) + 1])
+            sage: f
+            O(z^8)
+
+            sage: f = L.undefined(0)
+            sage: fp = f.derivative()
+            sage: g = L(lambda n: 0 if n < 10 else 1, 0)
+            sage: L.define_implicitly([f], [f.derivative() * g + f])
+            sage: f[0]
+            0
+            sage: fp[0]
+            0
+            sage: fp[1]
+            0
+            sage: fp[2]
+            0
+            sage: f[1]
+            0
+
+        Some systems of two coupled functional equations::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: L.define_implicitly([A, B], [A - B, A + B + 2])
+            sage: A
+            -1 + O(z^7)
+            sage: B
+            -1 + O(z^7)
+
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: FA = A^2 + B - 2 - z*B
+            sage: FB = B^2 - A
+            sage: L.define_implicitly([(A, [1]), (B, [1])], [FA, FB])
+            sage: A^2 + B - 2 - z*B
+            O(z^7)
+            sage: B^2 - A
+            O(z^7)
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: FA = A^2 + B^2 - 2 - z*B
+            sage: FB = B^3 + 2*A^3 - 3 - z*(A + B)
+            sage: L.define_implicitly([(A, [1]), (B, [1])], [FA, FB])
+            sage: A^2 + B^2 - 2 - z*B
+            O(z^7)
+            sage: B^3 + 2*A^3 - 3 - z*(A + B)
+            O(z^7)
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: C = L.undefined()
+            sage: FA = (A^2 + B^2)*z^2
+            sage: FB = A*B*z
+            sage: FC = (A + B + C)*z^2
+            sage: L.define_implicitly([(A, [0,0,0]), (B, [0,0]), (C, [0,0])], [FA, FB, FC])
+            sage: B[2]
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: C = L.undefined()
+            sage: D = L.undefined()
+            sage: L.define_implicitly([(A, [0,0,0]), (B, [0,0]), (C, [0,0]), (D, [0,0])], [C^2 + D^2, A + B + C + D, A*D])
+            sage: B[2]
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: C = L.undefined()
+            sage: L.define_implicitly([A, B, C], [B - C - 1, B*z + 2*C + 1, A + 2*C + 1])
+            sage: A + 2*C + 1
+            O(z^7)
+        """
+        s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
+             else a._coeff_stream
+             for a in series]
+        ics = [a[1] if isinstance(a, (tuple, list))
+               else []
+               for a in series]
+        # common state for all series
+        eqs = [eq._coeff_stream for eq in equations]
+        last_eq_used = [eq._approximate_order - 1 for eq in eqs]
+        for f, ic in zip(s, ics):
+            f.define_implicitly(s, ic, eqs, last_eq_used, self.base_ring())
+
     class options(GlobalOptions):
         r"""
         Set and display the options for lazy series.
