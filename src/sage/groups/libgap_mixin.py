@@ -963,3 +963,10 @@ class GroupMixinLibGAP():
             (False, False, False)
         """
         return self.gap().IsomorphismGroups(H.gap()) != libgap.fail
+    
+    def d(slef):
+        # name change karte h
+        pass
+
+    def MinimumGeneratingSet(self):
+        def iterator_function(g, N, t):

@@ -321,6 +321,3 @@ cdef class FiniteGroup(Group):
             True
         """
         return True
-
-    def minimum_generating_set(self):
-        pass
