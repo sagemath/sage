@@ -126,7 +126,7 @@ from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
 
 from sage.rings.polynomial.polydict import ETuple
-from sage.rings.ring import check_default_category, Ring
+from sage.rings.ring import check_default_category, CommutativeRing
 from sage.structure.element cimport CommutativeRingElement, Element, RingElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.richcmp cimport rich_to_bool
@@ -2878,8 +2878,8 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring) noexcept:
     self._term_order = TermOrder(rw.ordering_string(), force=True)
 
     names = tuple(rw.var_names())
-    Ring.__init__(self, base_ring, names, category=Algebras(base_ring),
-                  normalize=False)
+    CommutativeRing.__init__(self, base_ring, names, category=Algebras(base_ring),
+                             normalize=False)
 
     self._has_singular = True
 
