@@ -2946,7 +2946,7 @@ cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring) noexcept:
     self._ngens = rw.ngens()
     self._term_order = TermOrder(rw.ordering_string(), force=True)
 
-    Ring.__init__(self, base_ring, rw.var_names(), category=Algebras(base_ring))
+    Parent.__init__(self, base=base_ring, names=rw.var_names(), category=Algebras(base_ring))
 
     self._has_singular = True
     self._relations = self.relations()
