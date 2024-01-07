@@ -401,10 +401,12 @@ AC_DEFUN([SAGE_SYSTEM_PACKAGE_NOTICE], [
         SYSTEM=$(build/bin/sage-guess-package-system 2>& AS_MESSAGE_FD)
         AC_MSG_RESULT([$SYSTEM])
         AS_IF([test $SYSTEM != unknown], [
+            print_sys () {
+                build/bin/sage-print-system-package-command $SYSTEM --verbose="    " --prompt="      $ " --sudo "$[@]"
+            }
             SYSTEM_PACKAGES=$(build/bin/sage-get-system-packages $SYSTEM $SAGE_NEED_SYSTEM_PACKAGES)
             AS_IF([test -n "$SYSTEM_PACKAGES"], [
-                PRINT_SYS="build/bin/sage-print-system-package-command $SYSTEM --verbose=\"    \" --prompt=\"      \$ \" --sudo"
-                COMMAND=$(eval "$PRINT_SYS" update && eval "$PRINT_SYS" install $SYSTEM_PACKAGES && SAGE_ROOT="$SAGE_ROOT" eval "$PRINT_SYS" setup-build-env )
+                COMMAND=$(print_sys update && print_sys install $SYSTEM_PACKAGES && SAGE_ROOT="$SAGE_ROOT" print_sys setup-build-env)
                 AC_MSG_NOTICE([
 
     hint: installing the following system packages, if not
@@ -417,8 +419,7 @@ $COMMAND
             ])
             SYSTEM_PACKAGES=$(build/bin/sage-get-system-packages $SYSTEM $SAGE_NEED_SYSTEM_PACKAGES_OPTIONAL)
             AS_IF([test -n "$SYSTEM_PACKAGES"], [
-                PRINT_SYS="build/bin/sage-print-system-package-command $SYSTEM --verbose=\"    \" --prompt=\"      \$ \" --sudo"
-                COMMAND=$(eval "$PRINT_SYS" update && eval "$PRINT_SYS" install $SYSTEM_PACKAGES && SAGE_ROOT="$SAGE_ROOT" eval "$PRINT_SYS" setup-build-env )
+                COMMAND=$(print_sys update && print_sys install $SYSTEM_PACKAGES && SAGE_ROOT="$SAGE_ROOT" print_sys setup-build-env)
                 AC_MSG_NOTICE([
 
     hint: installing the following system packages, if not
