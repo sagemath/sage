@@ -10,8 +10,8 @@ export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
 unset tox_args
 
-if [ "$SAGE_WHEELS" = yes ]; then
-    wheel="$(sed -n '1s,.*@ file://,,p' $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-requirements.txt)"
+wheel="$(sed -n '1s,.*@ file://,,p' $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-requirements.txt)"
+if [ -n "$wheel" ]; then
     tox_envs=$(tox -l)
     tox_args="-r -p auto -v --installpkg $wheel"
 elif [ "$SAGE_EDITABLE" = yes ]; then
@@ -25,8 +25,8 @@ fi
 
 export TOX_PARALLEL_NO_SPINNER=1
 
-echo Running "tox -r -p auto -v --installpkg $wheel"
-tox -r -p auto -v --installpkg "$wheel"
+echo Running "tox $tox_args"
+tox $tox_args
 status=$?
 case $status:$SAGE_CHECK:$([ -r known-test-failures.json ]; echo $?) in
     0:no:*)   echo "Not testing the package because SAGE_CHECK=no";;
