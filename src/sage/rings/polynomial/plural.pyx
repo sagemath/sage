@@ -334,7 +334,7 @@ cdef class NCPolynomialRing_plural(Ring):
         self._ngens = n
         self._term_order = order
 
-        Ring.__init__(self, base_ring, names, category=category)
+        Parent.__init__(self, base=base_ring, names=names, category=category)
         self._populate_coercion_lists_()
 
         assert n == len(self._names)
