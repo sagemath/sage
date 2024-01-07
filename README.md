@@ -485,6 +485,9 @@ docker pull sagemath/sagemath
 
 Currently, only stable versions are kept up to date.
 
+The [Sage Installation Guide](https://doc.sagemath.org/html/en/installation/)
+provides a list of other options.
+
 Troubleshooting
 ---------------
 
