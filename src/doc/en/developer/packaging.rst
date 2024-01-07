@@ -424,70 +424,70 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   the given arguments, as well as additional default arguments used for
   installing packages into Sage.
 
--  ``sdh_pip_install [...]``: The equivalent of running ``pip install``
-   with the given arguments, as well as additional default arguments used for
-   installing packages into Sage with pip. The last argument must be
-   ``.`` to indicate installation from the current directory.
+- ``sdh_pip_install [...]``: The equivalent of running ``pip install``
+  with the given arguments, as well as additional default arguments used for
+  installing packages into Sage with pip. The last argument must be
+  ``.`` to indicate installation from the current directory.
 
-   ``sdh_pip_install`` actually does the installation via ``pip wheel``,
-   creating a wheel file in ``dist/``, followed by
-   ``sdh_store_and_pip_install_wheel`` (see below).
+  ``sdh_pip_install`` actually does the installation via ``pip wheel``,
+  creating a wheel file in ``dist/``, followed by
+  ``sdh_store_and_pip_install_wheel`` (see below).
 
--  ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install -e``
-   with the given arguments, as well as additional default arguments used for
-   installing packages into Sage with pip. The last argument must be
-   ``.`` to indicate installation from the current directory.
-   See `pip documentation <https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs>`_
-   for more details concerning editable installs.
+- ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install -e``
+  with the given arguments, as well as additional default arguments used for
+  installing packages into Sage with pip. The last argument must be
+  ``.`` to indicate installation from the current directory.
+  See `pip documentation <https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs>`_
+  for more details concerning editable installs.
 
--  ``sdh_pip_uninstall [...]``: Runs ``pip uninstall`` with the given arguments.
-   If unsuccessful, it displays a warning.
+- ``sdh_pip_uninstall [...]``: Runs ``pip uninstall`` with the given arguments.
+  If unsuccessful, it displays a warning.
 
--  ``sdh_store_and_pip_install_wheel .``: The current directory,
-   indicated by the required argument ``.``, must have a subdirectory
-   ``dist`` containing a unique wheel file (``*.whl``).
+- ``sdh_store_and_pip_install_wheel .``: The current directory,
+  indicated by the required argument ``.``, must have a subdirectory
+  ``dist`` containing a unique wheel file (``*.whl``).
 
-   This command (1) moves this wheel file to the
-   directory ``$SAGE_SPKG_WHEELS`` (``$SAGE_LOCAL/var/lib/sage/wheels``)
-   and then (2) installs the wheel in ``$SAGE_LOCAL``.
+  This command (1) moves this wheel file to the
+  directory ``$SAGE_SPKG_WHEELS`` (``$SAGE_LOCAL/var/lib/sage/wheels``)
+  and then (2) installs the wheel in ``$SAGE_LOCAL``.
 
-   Both of these steps, instead of writing directly into ``$SAGE_LOCAL``,
-   use the staging directory ``$SAGE_DESTDIR`` if set; otherwise, they
-   use ``$SAGE_SUDO`` (if set).
+  Both of these steps, instead of writing directly into ``$SAGE_LOCAL``,
+  use the staging directory ``$SAGE_DESTDIR`` if set; otherwise, they
+  use ``$SAGE_SUDO`` (if set).
 
--  ``sdh_install [-T] SRC [SRC...] DEST``: Copies one or more files or
-   directories given as ``SRC`` (recursively in the case of
-   directories) into the destination directory ``DEST``, while
-   ensuring that ``DEST`` and all its parent directories exist.
-   ``DEST`` should be a path under ``$SAGE_LOCAL``, generally. For
-   ``DESTDIR`` installs, the ``$SAGE_DESTDIR`` path is automatically
-   prepended to the destination.
+- ``sdh_install [-T] SRC [SRC...] DEST``: Copies one or more files or
+  directories given as ``SRC`` (recursively in the case of
+  directories) into the destination directory ``DEST``, while
+  ensuring that ``DEST`` and all its parent directories exist.
+  ``DEST`` should be a path under ``$SAGE_LOCAL``, generally. For
+  ``DESTDIR`` installs, the ``$SAGE_DESTDIR`` path is automatically
+  prepended to the destination.
 
-   The ``-T`` option treats ``DEST`` as a normal file instead
-   (e.g. for copying a file to a different filename). All directory
-   components are still created in this case.
+  The ``-T`` option treats ``DEST`` as a normal file instead
+  (e.g. for copying a file to a different filename). All directory
+  components are still created in this case.
 
 The following is automatically added to each install script, so you
 should not need to add it yourself.
 
--  ``sdh_guard``: Wrapper for ``sdh_check_vars`` that checks some
-   common variables without which many/most packages won't build
-   correctly (``SAGE_ROOT``, ``SAGE_LOCAL``, ``SAGE_SHARE``). This is
-   important to prevent installation to unintended locations.
+- ``sdh_guard``: Wrapper for ``sdh_check_vars`` that checks some
+  common variables without which many/most packages won't build
+  correctly (``SAGE_ROOT``, ``SAGE_LOCAL``, ``SAGE_SHARE``). This is
+  important to prevent installation to unintended locations.
 
 The following are also available, but rarely used.
 
--  ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with
-   the given arguments, as well as additional arguments passed to
-   cmake (assuming packages are using the GNUInstallDirs module) so
-   that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
-   correctly.
+- ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with
+  the given arguments, as well as additional arguments passed to
+  cmake (assuming packages are using the GNUInstallDirs module) so
+  that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
+  correctly.
 
--  ``sdh_preload_lib EXECUTABLE SONAME``: (Linux only -- no-op on other
-   platforms.)  Check shared libraries loaded by ``EXECUTABLE`` (may be a
-   program or another library) for a library starting with ``SONAME``, and
-   if found appends ``SONAME`` to the ``LD_PRELOAD`` environment variable.
-   See :trac:`24885`.
+- ``sdh_preload_lib EXECUTABLE SONAME``: (Linux only -- no-op on other
+  platforms.)  Check shared libraries loaded by ``EXECUTABLE`` (may be a
+  program or another library) for a library starting with ``SONAME``, and
+  if found appends ``SONAME`` to the ``LD_PRELOAD`` environment variable.
+  See :trac:`24885`.
 
 
 .. _spkg-configure.m4:
