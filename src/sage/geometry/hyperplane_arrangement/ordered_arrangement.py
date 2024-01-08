@@ -131,15 +131,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: TestSuite(elt).run()
         """
         super().__init__(parent, hyperplanes, check=check, backend=backend)
-        # self._hyperplanes = hyperplanes
-        # self._backend = backend
-        # if check:
-        #     if not isinstance(hyperplanes, tuple):
-        #         raise ValueError("the hyperplanes must be given as a tuple")
-        #     if not all(isinstance(h, Hyperplane) for h in hyperplanes):
-        #         raise ValueError("not all elements are hyperplanes")
-        #     if not all(h.parent() is self.parent().ambient_space() for h in hyperplanes):
-        #         raise ValueError("not all hyperplanes are in the ambient space")
         self._affine_fundamental_group = None
         self._affine_meridians = None
         self._projective_fundamental_group = None

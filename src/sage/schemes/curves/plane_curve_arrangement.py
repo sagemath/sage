@@ -108,19 +108,7 @@ class AffinePlaneCurveArrangementsElement(Element):
                                    for bool_s in (True, False) for bool_p in (True, False)}
         self._meridians = {('simpl', bool_s, 'vertical', bool_p): None
                            for bool_s in (True, False) for bool_p in (True, False)}
-        # self._braid_monodromy = None
-        # self._braid_monodromy_with_vertical = None
-        # self._strands = dict()
-        # self._strands_with_vertical = dict()
         self._vertical_lines_in_braid_mon = None
-        # self._fundamental_group_vertical_simplified = None
-        # self._meridians_vertical_simplified = dict()
-        # self._fundamental_group_vertical = None
-        # self._meridians_vertical = dict()
-        # self._fundamental_group_simplified = None
-        # self._meridians_simplified = dict()
-        # self._fundamental_group = None
-        # self._meridians = dict()
 
     def __getitem__(self, i):
         """
@@ -525,15 +513,6 @@ class AffinePlaneCurveArrangementsElement(Element):
         computed = self._fundamental_group['simpl', simplified, 'vertical', vertical]
         if computed:
             return computed
-        # if self._fundamental_group and not vertical and not simplified:
-        #     return self._fundamental_group
-        # if self._fundamental_group_simplified and simplified and not vertical:
-        #     return self._fundamental_group_simplified
-        # if self._fundamental_group_vertical and not simplified and vertical:
-        #     return self._fundamental_group_vertical
-        # if self._fundamental_group_vertical_simplified and simplified \
-        #    and vertical:
-        #     return self._fundamental_group_vertical_simplified
         K = self.base_ring()
         R = self.coordinate_ring()
         if not K.is_subring(QQbar):
@@ -549,13 +528,6 @@ class AffinePlaneCurveArrangementsElement(Element):
             else:
                 d1 = prod(L).degree(R.gen(1))
                 bd = (bm, st, self._vertical_lines_in_braid_mon, d1)
-        # if not vertical and self._braid_monodromy is not None:
-        #     d1 = prod(L).degree()
-        #     bd = (self._braid_monodromy, self._strands, dict(), d1)
-        # elif vertical and self._braid_monodromy_with_vertical is not None:
-        #     d1 = prod(L).degree(R.gen(1))
-        #     bd = (self._braid_monodromy_with_vertical, self._strands_with_vertical,
-        #           self._vertical_lines_in_braid_mon, d1)
         else:
             bd = None
         G, dic = fundamental_group_arrangement(L, simplified=simplified,
@@ -565,18 +537,6 @@ class AffinePlaneCurveArrangementsElement(Element):
                                                braid_data=bd)
         self._fundamental_group['simpl', simplified, 'vertical', vertical] = G
         self._meridians['simpl', simplified, 'vertical', vertical] = dic
-        # if not vertical and not simplified:
-        #     self._fundamental_group = G
-        #     self._meridians = dic
-        # elif not vertical:
-        #     self._fundamental_group_simplified = G
-        #     self._meridians_simplified = dic
-        # elif not simplified:
-        #     self._fundamental_group_vertical = G
-        #     self._meridians_vertical = dic
-        # else:
-        #     self._fundamental_group_vertical_simplified = G
-        #     self._meridians_vertical_simplified = dic
         return G
 
     def meridians(self, simplified=True, vertical=True):
@@ -611,24 +571,6 @@ class AffinePlaneCurveArrangementsElement(Element):
             return computed
         _ = self.fundamental_group(simplified=simplified, vertical=vertical)
         return self._meridians['simpl', simplified, 'vertical', vertical]
-        # if not vertical and not simplified:
-        #     computed = bool(self._meridians)
-        # elif not vertical:
-        #     computed = bool(self._meridians_simplified)
-        # elif not simplified:
-        #     computed = bool(self._meridians_vertical)
-        # else:
-        #     computed = bool(self._meridians_vertical_simplified)
-        # if not computed:
-        #     self.fundamental_group(simplified=simplified, vertical=vertical)
-        # if not vertical and not simplified:
-        #     return self._meridians
-        # if simplified and not vertical:
-        #     return self._meridians_simplified
-        # if not simplified and vertical:
-        #     return self._meridians_vertical
-        # if simplified and vertical:
-        #     return self._meridians_vertical_simplified
 
     def braid_monodromy(self, vertical=True):
         r"""
@@ -668,10 +610,6 @@ class AffinePlaneCurveArrangementsElement(Element):
         computed = self._braid_monodromy['vertical', vertical]
         if computed is not None:
             return computed
-        # if not vertical and self._braid_monodromy is not None:
-        #     return self._braid_monodromy
-        # if vertical and self._braid_monodromy_with_vertical is not None:
-        #     return self._braid_monodromy_with_vertical
         K = self.base_ring()
         if not K.is_subring(QQbar):
             raise TypeError('the base field is not in QQbar')
@@ -681,12 +619,7 @@ class AffinePlaneCurveArrangementsElement(Element):
         self._braid_monodromy['vertical', vertical] = bm
         self._strands['vertical', vertical] = dic
         if vertical:
-            # self._braid_monodromy_with_vertical = bm
-            # self._strands_with_vertical = dic
             self._vertical_lines_in_braid_mon = dv
-        # else:
-        #     self._braid_monodromy = bm
-        #     self._strands = dic
         return bm
 
     def strands(self):
@@ -807,10 +740,6 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
                 raise ValueError("not all curves are in the same ambient space")
         self._fundamental_group = {('simpl', bool_s): None for bool_s in (True, False)}
         self._meridians = {('simpl', bool_s): None for bool_s in (True, False)}
-        # self._fundamental_group_simplified = None
-        # self._meridians_simplified = dict()
-        # self._fundamental_group = None
-        # self._meridians = dict()
 
     def fundamental_group(self, simplified=True):
         r"""
@@ -865,10 +794,6 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
         computed = self._fundamental_group['simpl', simplified]
         if computed:
             return computed
-        # if self._fundamental_group and not simplified:
-        #     return self._fundamental_group
-        # if self._fundamental_group_simplified and simplified:
-        #     return self._fundamental_group_simplified
         H = self.parent()
         K = self.base_ring()
         R = self.coordinate_ring()
@@ -885,11 +810,6 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
                 self._fundamental_group['simpl', bool_s] = G
                 self._meridians['simpl', bool_s] = {0: [G.one()]}
             return G
-            # self._fundamental_group = G
-            # self._meridians = {0: 0}
-            # self._fundamental_group_simplified = G
-            # self._meridians_simplified = {0: [G.one()]}
-            # return G
         if infinity_in_C:
             j = C.curves().index(infinity)
             C = H(C.curves()[:j] + C.curves()[j + 1:])
@@ -927,12 +847,6 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             dic1 = dic
         self._fundamental_group['simpl', simplified] = G
         self._meridians['simpl', simplified] = dic1
-        # if not simplified:
-        #     self._fundamental_group = G
-        #     self._meridians = dic1
-        # else:
-        #     self._fundamental_group_simplified = G
-        #     self._meridians_simplified = dic1
         return G
 
     def meridians(self, simplified=True):
@@ -977,15 +891,6 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             return computed
         _ = self._fundamental_group(simplified=simplified)
         return self._meridians_simplified
-        # if not simplified:
-        #     computed = bool(self._meridians)
-        # else:
-        #     computed = bool(self._meridians_simplified)
-        # if not computed:
-        #     _ = self._fundamental_group(simplified=simplified)
-        # if not simplified:
-        #     return self._meridians
-        # return self._meridians_simplified
 
 
 class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
