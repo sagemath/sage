@@ -1368,7 +1368,7 @@ class Stream_uninitialized(Stream):
         self._PFF = self._P.fraction_field()
         self._uncomputed = True
         self._eqs = equations
-        self._last_eqs_n = last_equation_used # the indices of the last equations we used
+        self._last_eqs_n = last_equation_used  # the indices of the last equations we used
         self._series = series
 
     @lazy_attribute
@@ -1401,8 +1401,23 @@ class Stream_uninitialized(Stream):
 
         This is used in :meth:`_subs_in_caches` to only substitute
         items that may contain undetermined coefficients.
+
+        It might be better to share this across all uninitialized
+        series in one system.
         """
-        return [0 for c in self._input_streams]
+        g = []
+        for c in self._input_streams:
+            if c._is_sparse:
+                vals = c._cache.values()
+            else:
+                vals = c._cache
+            i = 0
+            for v in vals:
+                if v not in self._base:
+                    break
+                i += 1
+            g.append(i)
+        return g
 
     def __getitem__(self, n):
         """
@@ -1496,15 +1511,20 @@ class Stream_uninitialized(Stream):
 
         for j, s in enumerate(self._input_streams):
             m = len(s._cache) - self._good_cache[j]
-            good = m  # last index of cache element still containing variables
+            good = m  # last index of cache element still containing
+            # variables
+
+            # TODO: document why we first substitute in the last
+            # element of the cache in the sparse case, but not in the
+            # dense case
             if s._is_sparse:
                 for idx, i in zip(range(m), reversed(s._cache)):
                     if not subs(s._cache, i):
                         good = m - idx - 1
             else:
-                for i in range(-m, 0):
+                for i in range(-1, -m-1, -1):
                     if not subs(s._cache, i):
-                        good = -i - 1
+                        good = m + i
             self._good_cache[j] += good
         STREAM_UNINITIALIZED_VARIABLES[self._P].remove(var)
 
@@ -1512,6 +1532,10 @@ class Stream_uninitialized(Stream):
         """
         Solve the next equations, until the next variable is determined.
         """
+        # this is needed to work around a bug prohibiting conversion
+        # of variables into the InfinitePolynomialRing over the
+        # SymbolicRing
+        from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_dense
         # determine the next linear equations
         coeffs = []
         non_linear_coeffs = []
@@ -1533,6 +1557,14 @@ class Stream_uninitialized(Stream):
                         continue
                 if coeff.degree() <= 1:
                     coeffs.append(coeff)
+                elif coeff.is_monomial() and sum(1 for d in coeff.degrees() if d):
+                    # if we have a single variable, we can remove the
+                    # exponent - maybe we could also remove the
+                    # coefficient - are we computing in an integral
+                    # domain?
+                    c = coeff.coefficients()[0]
+                    v = InfinitePolynomial_dense(self._P, coeff.variables()[0])
+                    coeffs.append(c * v)
                 else:
                     # nonlinear equations must not be discarded, we
                     # keep them to improve any error messages
@@ -1543,7 +1575,6 @@ class Stream_uninitialized(Stream):
             if len(self._last_eqs_n) == 1:
                 raise ValueError(f"no linear equations in degree {self._last_eqs_n[0]}: {non_linear_coeffs}")
             raise ValueError(f"no linear equations in degrees {self._last_eqs_n}: {non_linear_coeffs}")
-
         # solve
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         eqs = PolynomialSequence([coeff.polynomial() for coeff in coeffs])
@@ -1564,7 +1595,6 @@ class Stream_uninitialized(Stream):
         x = m.solve_right(b)
         k = m.right_kernel_matrix()
         # substitute
-        from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_dense
         bad = True
         for i, (c, y) in enumerate(zip(v, x)):
             if k.column(i).is_zero():

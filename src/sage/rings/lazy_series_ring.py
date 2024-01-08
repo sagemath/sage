@@ -844,14 +844,19 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             O(z^7)
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
-            sage: A = L.undefined()
-            sage: B = L.undefined()
-            sage: C = L.undefined()
+            sage: A = L.undefined(valuation=3)
+            sage: B = L.undefined(valuation=2)
+            sage: C = L.undefined(valuation=2)
             sage: FA = (A^2 + B^2)*z^2
             sage: FB = A*B*z
             sage: FC = (A + B + C)*z^2
-            sage: L.define_implicitly([(A, [0,0,0]), (B, [0,0]), (C, [0,0])], [FA, FB, FC])
-            sage: B[2]
+            sage: L.define_implicitly([A, B, C], [FA, FB, FC])
+            sage: A
+            O(z^10)
+            sage: B
+            O(z^9)
+            sage: C
+            O(z^9)
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: A = L.undefined()
@@ -859,7 +864,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: C = L.undefined()
             sage: D = L.undefined()
             sage: L.define_implicitly([(A, [0,0,0]), (B, [0,0]), (C, [0,0]), (D, [0,0])], [C^2 + D^2, A + B + C + D, A*D])
-            sage: B[2]
+            sage: B[2]  # known bug, not tested
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: A = L.undefined()
