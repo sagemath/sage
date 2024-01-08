@@ -764,12 +764,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: F = L.undefined()
             sage: L.define_implicitly([F], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: unable to determine a unique solution in degree 2, the equation is -FESDUMMY_4 + (-x - y)*FESDUMMY_2 + FESDUMMY_1 + (x + y)*FESDUMMY_0 == 0>
+            <repr(...) failed: ValueError: could not determine any coefficients in degree 3 - equations are [6*FESDUMMY_2 + (-2*x - 2*y)*FESDUMMY_1 + (x*y)*FESDUMMY_0]>
 
             sage: F = L.undefined()
             sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: unable to determine a unique solution in degree 3, the equation is FESDUMMY_9 + (-x - y)*FESDUMMY_7 + 5*FESDUMMY_6 + (-x - y)*FESDUMMY_5 + (x*y*f1) == 0>
+            <repr(...) failed: ValueError: could not determine any coefficients in degree 3 - equations are [6*FESDUMMY_4 + (-2*x - 2*y)*FESDUMMY_3 + (x*y*f1)]>
 
         Laurent series examples::
 
