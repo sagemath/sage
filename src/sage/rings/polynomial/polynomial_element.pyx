@@ -2159,6 +2159,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: r = f.any_root()
             sage: r^2 + r
             a^2 + a
+
+        Check for :issue:`37034` ::
+
+            sage: R.<x> = Zmod(55)[]
+            sage: (x^2 + 1).any_root()
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
         """
         if self.base_ring().is_finite() and self.base_ring().is_field():
             if self.degree() < 0:
