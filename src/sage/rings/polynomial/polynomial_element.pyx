@@ -2312,7 +2312,9 @@ cdef class Polynomial(CommutativePolynomial):
                         else:
                             return (self//h).any_root(ring, -degree, True)
         else:
-            return self.roots(ring=ring, multiplicities=False)[0]
+            if (rs := self.roots(ring=ring, multiplicities=False)):
+                return rs[0]
+            raise ValueError("no roots G %s" % self)
 
     def __truediv__(left, right):
         r"""
