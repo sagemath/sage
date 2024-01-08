@@ -10160,9 +10160,9 @@ class NumberField_absolute(NumberField_generic):
 
         More local examples::
 
-            sage: K.hilbert_symbol(a, 0, K.ideal(5))
+            sage: K.hilbert_symbol(a, 0, K.fractional_ideal(5))
             0
-            sage: K.hilbert_symbol(a, a + 5, K.ideal(5))
+            sage: K.hilbert_symbol(a, a + 5, K.fractional_ideal(5))
             1
             sage: K.hilbert_symbol(a + 1, 13, (a+6)*K)
             -1

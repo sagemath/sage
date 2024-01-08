@@ -32,11 +32,11 @@ EXAMPLES::
     sage: I * I.ideal()   # ideal classes coerce to their representative ideal
     Fractional ideal (4, 1/2*a + 3/2)
 
-    sage: K*(2, 1/2*a + 1/2)
+    sage: K.fractional_ideal([2, 1/2*a + 1/2])
     Fractional ideal (2, 1/2*a + 1/2)
-    sage: (K*(2, 1/2*a + 1/2)).is_principal()
+    sage: K.fractional_ideal([2, 1/2*a + 1/2]).is_principal()
     False
-    sage: (K*(2, 1/2*a + 1/2))^3
+    sage: K.fractional_ideal([2, 1/2*a + 1/2])^3
     Fractional ideal (1/2*a - 3/2)
 """
 
