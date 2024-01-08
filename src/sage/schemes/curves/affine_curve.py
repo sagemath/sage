@@ -1810,7 +1810,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         - ``puiseux`` -- (default: ``True``) boolean to decide if the
           presentation is constructed in the classical way or using Puiseux
-          shortcut. If ``True``, ``simplified`` is set to ``False``.
+          shortcut.
 
         OUTPUT:
 
@@ -1832,15 +1832,16 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         EXAMPLES::
 
+            sage: # needs sirocco
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve(y^2 - x^3 - x^2)
-            sage: C.fundamental_group(puiseux=False)                        # needs sirocco
+            sage: C.fundamental_group(puiseux=False)
             Finitely presented group < x0 |  >
-            sage: bm = C.braid_monodromy()                                  # needs sirocco
-            sage: g = C.fundamental_group(simplified=False)                 # needs sirocco
-            sage: g.sorted_presentation()                                   # needs sirocco
+            sage: bm = C.braid_monodromy()
+            sage: g = C.fundamental_group(simplified=False)
+            sage: g.sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x1^-1*x0 >
-            sage: g.simplified()                                            # needs sirocco
+            sage: g.simplified()
             Finitely presented group < x0 |  >
 
         In the case of number fields, they need to have an embedding

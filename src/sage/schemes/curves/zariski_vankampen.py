@@ -647,6 +647,12 @@ def fieldI(field):
         Number Field in prim with defining polynomial
         x^8 - 2*x^7 + 7*x^6 - 10*x^5 + 16*x^4 - 10*x^3 - 2*x^2 + 4*x + 1
         with prim = -0.3090169943749474? + 0.04894348370484643?*I
+        sage: fieldI(QuadraticField(3))
+        Number Field in prim with defining polynomial x^4 - 4*x^2 + 16
+        with prim = -1.732050807568878? + 1.000000000000000?*I
+        sage: fieldI(QuadraticField(-3))
+        Number Field in prim with defining polynomial x^4 + 8*x^2 + 4
+        with prim = 0.?e-18 - 0.732050807568878?*I
 
     If ``I`` is already in the field, the result is the field itself::
 
@@ -656,6 +662,8 @@ def fieldI(field):
         sage: F0.<a> = NumberField(p, embedding=a0)
         sage: F1 = fieldI(F0)
         sage: F0 == F1
+        True
+        sage: QuadraticField(-1) == fieldI(QuadraticField(-1))
         True
     """
     I0 = QQbar.gen()
