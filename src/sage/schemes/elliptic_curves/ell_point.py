@@ -130,6 +130,7 @@ from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.real_mpfr import RealField
 from sage.rings.real_mpfr import RR
 import sage.groups.generic as generic
@@ -1935,6 +1936,13 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             ...
             ValueError: The point P must be n-torsion
 
+        We must have that ``n`` divides ``q^k - 1``, this is only checked when q is supplied::
+
+            sage: P.tate_pairing(Q, 7282, 2, q=123)
+            Traceback (most recent call last):
+            ...
+            ValueError: n does not divide (q^k - 1) for the supplied value of q
+
         The Tate pairing is only defined for points on curves defined over finite fields::
 
             sage: E = EllipticCurve([0,1])
@@ -1973,6 +1981,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 q = K.base_ring().order()
             else:
                 raise ValueError("Unexpected field degree: set keyword argument q equal to the size of the base field (big field is GF(q^%s))." % k)
+        # The user has supplied q, so we check here that it's a sensible value
+        elif Mod(q, n)**k != 1:
+            raise ValueError("n does not divide (q^k - 1) for the supplied value of q")
 
         if pari.ellmul(E, P, n) != [0]:
             raise ValueError("The point P must be n-torsion")
@@ -1981,8 +1992,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         # must perform the exponentation ourselves using the supplied
         # k value
         ePQ = pari.elltatepairing(E, P, Q, n)
-        # TODO: if n or k is chosen badly, this could error, should we
-        # handle this explicitly by ensuring n divides q^k - 1?
         exp = Integer((q**k - 1)/n)
         return K(ePQ**exp) # Cast the PARI type back to the base ring
 
