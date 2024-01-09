@@ -4115,8 +4115,14 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = SymmetricGroup(4)
             sage: G.minimal_normal_subgroups()
             [ Group([ (1,4)(2,3), (1,3)(2,4) ]) ]
+
+        TESTS::
+
+            sage: G = SymmetricGroup(8)
+            sage: G.minimal_normal_subgroups()
+            [ Alt( [ 1 .. 8 ] ) ]
         """
-        return self._libgap_().MinimalNormalSubgroups().sage()
+        return self._libgap_().MinimalNormalSubgroups()
 
     ######################  Boolean tests #####################
 
