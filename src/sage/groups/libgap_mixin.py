@@ -964,17 +964,3 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsomorphismGroups(H.gap()) != libgap.fail
     
-    def minimum_generating_set(self):
-        if not self.is_finite():
-            raise NotImplementedError("Only implemented for finite groups")
-
-        if self.is_simple():
-            if self.is_abelian():
-                return self.random_element()
-            
-            group_elements = self.list()
-            n = len(group_elements)
-
-            for i in range(n):
-                for j in range(i+1,n):
-                    print(self.gap().IsGeneratorsOfGroup().sage())
