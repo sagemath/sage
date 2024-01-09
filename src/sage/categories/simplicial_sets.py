@@ -590,6 +590,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Torus()
                     sage: d = X._canonical_twisting_operator()
                     sage: d
@@ -658,6 +659,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: W = simplicial_sets.Sphere(1).wedge(simplicial_sets.Sphere(2))
                     sage: W.nondegenerate_simplices()
                     [*, sigma_1, sigma_2]
@@ -672,6 +674,7 @@ class SimplicialSets(Category_singleton):
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Torus()
                     sage: C = X.twisted_chain_complex()
                     sage: C.differential(1)
@@ -685,6 +688,7 @@ class SimplicialSets(Category_singleton):
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: Y = simplicial_sets.RealProjectiveSpace(2)
                     sage: C = Y.twisted_chain_complex()
                     sage: C.differential(1)
@@ -829,6 +833,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Sphere(1).wedge(simplicial_sets.Sphere(2))
                     sage: X.twisted_homology(1)
                     Quotient module by Submodule of Ambient free module of rank 0 over the integral domain Multivariate Polynomial Ring in f1, f1inv over Integer Ring
@@ -841,6 +846,7 @@ class SimplicialSets(Category_singleton):
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: Y = simplicial_sets.Torus()
                     sage: Y.twisted_homology(1)
                     Quotient module by Submodule of Ambient free module of rank 5 over the integral domain Multivariate Polynomial Ring in f2, f2inv, f3, f3inv over Integer Ring
@@ -875,6 +881,7 @@ class SimplicialSets(Category_singleton):
 
                 TESTS::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.PresentationComplex(groups.presentation.FGAbelian((3,2)))
                     sage: TW2 = X.twisted_homology(2, reduced=True)
                     sage: M = TW2.relations_matrix()
