@@ -884,7 +884,7 @@ class Graph(GenericGraph):
         sage: Graph(igraph.Graph(directed=True))  # optional - python_igraph
         Traceback (most recent call last):
         ...
-        ValueError: An *undirected* igraph graph was expected. To build an directed graph, call the DiGraph constructor.
+        ValueError: An *undirected* igraph graph was expected. To build a directed graph, call the DiGraph constructor.
 
         sage: # needs sage.modules
         sage: m = matrix([[0, -1], [-1, 0]])
@@ -1205,7 +1205,7 @@ class Graph(GenericGraph):
         elif format == 'igraph':
             if data.is_directed():
                 raise ValueError("An *undirected* igraph graph was expected. "
-                                 "To build an directed graph, call the DiGraph "
+                                 "To build a directed graph, call the DiGraph "
                                  "constructor.")
 
             self.add_vertices(range(data.vcount()))
@@ -7984,7 +7984,7 @@ class Graph(GenericGraph):
           vertex of `C` has a neighbor outside of it.
 
         * An anticomponent `C` (or the union of some --but not all-- of them) of
-          an non-anticonnected graph `G`, for the same reason (it is just the
+          a non-anticonnected graph `G`, for the same reason (it is just the
           complement of the previous graph !).
 
         These modules being of special interest, the disjoint union of graphs is

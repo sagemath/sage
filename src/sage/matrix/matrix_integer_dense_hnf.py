@@ -236,8 +236,8 @@ def double_det(A, b, c, proof):
     INPUT:
 
     - A -- an (n-1) x n matrix
-    - b -- an 1 x n matrix
-    - c -- an 1 x n matrix
+    - b -- a 1 x n matrix
+    - c -- a 1 x n matrix
     - proof -- whether or not to compute the det modulo enough times to
       provably compute the determinant.
 

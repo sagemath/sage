@@ -1423,7 +1423,6 @@ def RandomTwoSphere(n):
 
     EXAMPLES::
 
-        sage:
         sage: G = simplicial_complexes.RandomTwoSphere(6); G
         Simplicial complex with vertex set (0, 1, 2, 3, 4, 5) and 8 facets
         sage: G.homology()                                                              # needs sage.modules

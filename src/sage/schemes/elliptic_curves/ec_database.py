@@ -136,7 +136,7 @@ class EllipticCurves:
         data = os.path.join(ELLCURVE_DATA_DIR, 'rank%s' % rank)
         try:
             f = open(data)
-        except IOError:
+        except OSError:
             return []
         v = []
         tors = int(tors)
