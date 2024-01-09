@@ -4106,6 +4106,24 @@ class PermutationGroup_generic(FiniteGroup):
         else:
             raise TypeError("group must be simple")
 
+    def minimal_normal_subgroups(self):
+        """
+        Return all minimal normal subgroups of the group.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(4)
+            sage: G.minimal_normal_subgroups()
+            [ Group([ (1,4)(2,3), (1,3)(2,4) ]) ]
+
+        TESTS::
+
+            sage: G = SymmetricGroup(8)
+            sage: G.minimal_normal_subgroups()
+            [ Alt( [ 1 .. 8 ] ) ]
+        """
+        return self._libgap_().MinimalNormalSubgroups()
+
     ######################  Boolean tests #####################
 
     def is_abelian(self):
