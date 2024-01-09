@@ -621,11 +621,11 @@ for script in $WRAPPED_SCRIPTS; do
     # directory, and may be run later.
     # For the installed *rm scripts, set their root directory to $SAGE_ROOT.
     # For the installed check scripts, some need the temporary build directory,
-    # others don't. So try to run out of the temporary build directory
-    # but fall back to $SAGE_ROOT.
+    # others are OK with $PKG_SCRIPTS. So try to run out of the temporary
+    # build directory but fall back to the latter.
     case $script in
         check) script_dir="$(pwd)"
-               fallback_script_dir="\$SAGE_ROOT"
+               fallback_script_dir="$PKG_SCRIPTS"
                ;;
         *rm)   script_dir="\$SAGE_ROOT"
                fallback_script_dir=
