@@ -1933,7 +1933,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P.tate_pairing(Q, 163, 2)
             Traceback (most recent call last):
             ...
-            ValueError: The point P must be in the n-torsion
+            ValueError: The point P must be n-torsion
 
         The Tate pairing is only defined for points on curves defined over finite fields::
 
@@ -1975,7 +1975,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 raise ValueError("Unexpected field degree: set keyword argument q equal to the size of the base field (big field is GF(q^%s))." % k)
 
         if pari.ellmul(E, P, n) != [0]:
-            raise ValueError("The point P must be in the n-torsion")
+            raise ValueError("The point P must be n-torsion")
 
         # NOTE: Pari returns the non-reduced Tate pairing, so we
         # must perform the exponentation ourselves using the supplied
