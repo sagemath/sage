@@ -2160,13 +2160,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: r^2 + r
             a^2 + a
 
-        Check for :issue:`37034` ::
+        Check for :issue:`37034`::
 
             sage: R.<x> = Zmod(55)[]
             sage: (x^2 + 1).any_root()
             Traceback (most recent call last):
             ...
-            ValueError: ...
+            ValueError: no roots (non-field) x^2 + 1
         """
         if self.base_ring().is_finite() and self.base_ring().is_field():
             if self.degree() < 0:
@@ -2320,9 +2320,10 @@ cdef class Polynomial(CommutativePolynomial):
                         else:
                             return (self//h).any_root(ring, -degree, True)
         else:
-            if (rs := self.roots(ring=ring, multiplicities=False)):
+            rs = self.roots(ring=ring, multiplicities=False)
+            if rs:
                 return rs[0]
-            raise ValueError("no roots G %s" % self)
+            raise ValueError("no roots (non-field) %s" % self)
 
     def __truediv__(left, right):
         r"""
