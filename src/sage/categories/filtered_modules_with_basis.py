@@ -277,7 +277,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             EXAMPLES::
 
                 sage: A = GradedModulesWithBasis(ZZ).example()
-                sage: H = A.hilbert_series()
+                sage: A.hilbert_series()
                 1 + t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 11*t^6 + O(t^7)
                 sage: A.hilbert_series(10)
                 1 + t + 2*t^2 + 3*t^3 + 5*t^4 + 7*t^5 + 11*t^6 + 15*t^7 + 22*t^8 + 30*t^9 + O(t^10)
