@@ -2040,7 +2040,7 @@ cdef class Expression(Expression_abc):
             0
         """
         from sage.symbolic.expression_conversions import algebraic
-        return algebraic(self.simplify_full(), field)
+        return algebraic(self, field)
 
     def __hash__(self):
         r"""
