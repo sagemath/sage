@@ -3912,6 +3912,51 @@ class RootLatticeRealizations(Category_over_base_ring):
             return all(self.inner_product(alphacheck[i]) in NN
                        for i in self.parent().index_set())
 
+        def is_verma_dominant(self, positive=True):
+            r"""
+            Return if ``self`` is Verma dominant.
+
+            A weight `\lambda` is *Verma dominant* if
+
+            .. MATH::
+
+                \langle \lambda + \rho, \alpha^{\vee} \rangle \notin \ZZ_{<0}
+
+            for all positive roots `\alpha`. Note that this does *not*
+            imply that `\langle \lambda + \rho, \alpha^{\vee} \rangle \geq 0`
+            for any positive root `\alpha`. This is used to determine if
+            a Verma module is simple or projective.
+
+            INPUT:
+
+            - ``positive`` -- boolean (default: ``True``); if ``False``, then
+              this checks if the weight is Verma anti-dominant, where
+              `\ZZ_{<0}` is replaced with `\ZZ_{>0}` in the definition.
+
+            EXAMPLES::
+
+                sage: P = RootSystem(['A', 3]).weight_space()
+                sage: La = P.fundamental_weights()
+                sage: (La[1] + 2*La[2]).is_verma_dominant()
+                True
+                sage: (La[1] - 3/2*La[3]).is_verma_dominant()
+                True
+                sage: (La[1] - 3/2*La[3]).is_verma_dominant(positive=False)
+                True
+                sage: (1/2*La[1] - 3/2*La[3]).is_verma_dominant()
+                False
+                sage: alphacheck = P.coroot_lattice().positive_roots()
+                sage: [(1/2*La[1] - 3/2*La[3]).scalar(coroot) for coroot in alphacheck]
+                [1/2, 0, -3/2, 1/2, -3/2, -1]
+                sage: (1/2*La[1] - 3/2*La[3]).is_verma_dominant(positive=False)
+                True
+            """
+            alphacheck = self.parent().coroot_lattice().positive_roots()
+            wt = self + self.parent().rho()
+            if positive:
+                return not any((c := wt.scalar(ac)) in ZZ and c < 0 for ac in alphacheck)
+            return not any((c := wt.scalar(ac)) in ZZ and c > 0 for ac in alphacheck)
+
         ##########################################################################
         # weak order
         ##########################################################################

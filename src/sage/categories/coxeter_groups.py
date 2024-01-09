@@ -2717,7 +2717,7 @@ class CoxeterGroups(Category_singleton):
 
         @cached_in_parent_method
         def weak_le(self, other, side='right'):
-            """
+            r"""
             Perform the comparison between ``self`` and ``other`` in
             weak (Bruhat) order.
 

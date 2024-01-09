@@ -35,7 +35,80 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-class VermaModule(CombinatorialFreeModule):
+class ModulePrinting(object):
+    """
+    Helper mixin class for printing the module vectors.
+    """
+    def __init__(self, vector_name='v'):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.lie_algebras.verma_module import ModulePrinting
+            sage: MP = ModulePrinting()
+            sage: TestSuite(MP).run()
+        """
+        self.__vector_name = vector_name
+
+    def _repr_generator(self, m):
+        r"""
+        Return a string representation of the generator indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sp(QQ, 4)
+            sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
+            sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
+            sage: f1, f2 = L.f()
+            sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
+            sage: v = x * M.highest_weight_vector()
+            sage: M._repr_generator(v.leading_support())
+            'f[-2*alpha[1] - alpha[2]]*v[(-1/14, 3/7)]'
+
+            sage: M.highest_weight_vector()
+            v[(-1/14, 3/7)]
+            sage: 2 * M.highest_weight_vector()
+            2*v[(-1/14, 3/7)]
+        """
+        ret = super()._repr_generator(m)
+        if ret == '1':
+            ret = ''
+        else:
+            ret += '*'
+        return ret + self.__vector_name + "[{}]".format(self._weight)
+
+    def _latex_generator(self, m):
+        r"""
+        Return a latex representation of the generator indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sp(QQ, 4)
+            sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
+            sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
+            sage: f1, f2 = L.f()
+            sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
+            sage: v = x * M.highest_weight_vector()
+            sage: M._latex_generator(v.leading_support())
+            f_{-2 \alpha_{1} - \alpha_{2}} v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
+
+            sage: latex(2 * M.highest_weight_vector())
+            2  v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
+            sage: latex(M.highest_weight_vector())
+             v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
+        """
+        ret = super()._latex_generator(m)
+        if ret == '1':
+            ret = ''
+        from sage.misc.latex import latex
+        return ret + " {}_{{{}}}".format(self.__vector_name, latex(self._weight))
+
+    _repr_term = _repr_generator
+    _latex_term = _latex_generator
+
+
+class VermaModule(ModulePrinting, CombinatorialFreeModule):
     r"""
     A Verma module.
 
@@ -118,6 +191,7 @@ class VermaModule(CombinatorialFreeModule):
                                          prefix='', bracket=False, latex_bracket=False,
                                          sorting_key=self._monomial_key,
                                          category=Modules(R).WithBasis().Graded())
+        ModulePrinting.__init__(self)
 
     def _triangular_key(self, x):
         r"""
@@ -233,64 +307,8 @@ class VermaModule(CombinatorialFreeModule):
         from sage.misc.latex import latex
         return "M_{{{}}}".format(latex(self._weight))
 
-    def _repr_generator(self, m):
-        r"""
-        Return a string representation of the generator indexed by ``m``.
-
-        EXAMPLES::
-
-            sage: L = lie_algebras.sp(QQ, 4)
-            sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
-            sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
-            sage: f1, f2 = L.f()
-            sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
-            sage: v = x * M.highest_weight_vector()
-            sage: M._repr_generator(v.leading_support())
-            'f[-2*alpha[1] - alpha[2]]*v[(-1/14, 3/7)]'
-
-            sage: M.highest_weight_vector()
-            v[(-1/14, 3/7)]
-            sage: 2 * M.highest_weight_vector()
-            2*v[(-1/14, 3/7)]
-        """
-        ret = super()._repr_generator(m)
-        if ret == '1':
-            ret = ''
-        else:
-            ret += '*'
-        return ret + "v[{}]".format(self._weight)
-
-    def _latex_generator(self, m):
-        r"""
-        Return a latex representation of the generator indexed by ``m``.
-
-        EXAMPLES::
-
-            sage: L = lie_algebras.sp(QQ, 4)
-            sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
-            sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
-            sage: f1, f2 = L.f()
-            sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
-            sage: v = x * M.highest_weight_vector()
-            sage: M._latex_generator(v.leading_support())
-            f_{-2 \alpha_{1} - \alpha_{2}} v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
-
-            sage: latex(2 * M.highest_weight_vector())
-            2  v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
-            sage: latex(M.highest_weight_vector())
-             v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
-        """
-        ret = super()._latex_generator(m)
-        if ret == '1':
-            ret = ''
-        from sage.misc.latex import latex
-        return ret + " v_{{{}}}".format(latex(self._weight))
-
-    _repr_term = _repr_generator
-    _latex_term = _latex_generator
-
     def lie_algebra(self):
-        """
+        r"""
         Return the underlying Lie algebra of ``self``.
 
         EXAMPLES::
@@ -304,7 +322,7 @@ class VermaModule(CombinatorialFreeModule):
         return self._g
 
     def pbw_basis(self):
-        """
+        r"""
         Return the PBW basis of the underlying Lie algebra
         used to define ``self``.
 
@@ -376,7 +394,13 @@ class VermaModule(CombinatorialFreeModule):
             sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
             sage: M = L.verma_module(2*La[1])
             sage: Mc = M.dual()
+
+            sage: Mp = L.verma_module(-2*La[1])
+            sage: Mp.dual() is Mp
+            True
         """
+        if self.is_simple():
+            return self
         from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule
         return BGGDualModule(self)
 
@@ -565,44 +589,60 @@ class VermaModule(CombinatorialFreeModule):
         Return if ``self`` is a simple module.
 
         A Verma module `M_{\lambda}` is simple if and only if `\lambda`
-        is *antidominant* in the sense
+        is *Verma antidominant* in the sense
 
         .. MATH::
 
             \langle \lambda + \rho, \alpha^{\vee} \rangle \notin \ZZ_{>0}
 
         for all positive roots `\alpha`.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sl(QQ, 3)
+            sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
+            sage: L.verma_module(La[1] + La[2]).is_simple()
+            False
+            sage: L.verma_module(-La[1] - La[2]).is_simple()
+            True
+            sage: L.verma_module(3/2*La[1] + 1/2*La[2]).is_simple()
+            False
+            sage: L.verma_module(3/2*La[1] + 1/3*La[2]).is_simple()
+            True
+            sage: L.verma_module(-3*La[1] + 2/3*La[2]).is_simple()
+            True
         """
-        pos_roots = self._g._cartan_type.root_system().root_lattice().positive_roots()
-        wt = self._weight + self._weight.parent().rho()
-        for rt in pos_roots:
-            val = wt.scalar(rt.associated_coroot())
-            if val in ZZ and val > 0:
-                return False
-        return True
+        return self._weight.is_verma_dominant(positive=False)
 
     def is_projective(self):
         r"""
         Return if ``self`` is a projective module in Category `\mathcal{O}`.
 
         A Verma module `M_{\lambda}` is projective (in Category `\mathcal{O}`
-        if and only if `\lambda` is *dominant* in the sense
+        if and only if `\lambda` is *Verma dominant* in the sense
 
         .. MATH::
 
             \langle \lambda + \rho, \alpha^{\vee} \rangle \notin \ZZ_{<0}
 
         for all positive roots `\alpha`.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sl(QQ, 3)
+            sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
+            sage: L.verma_module(La[1] + La[2]).is_projective()
+            True
+            sage: L.verma_module(-La[1] - La[2]).is_projective()
+            True
+            sage: L.verma_module(3/2*La[1] + 1/2*La[2]).is_projective()
+            True
+            sage: L.verma_module(3/2*La[1] + 1/3*La[2]).is_projective()
+            True
+            sage: L.verma_module(-3*La[1] + 2/3*La[2]).is_projective()
+            False
         """
-        Q = self._g._cartan_type.root_system().root_lattice()
-        pos_roots = Q.positive_roots()
-        wt = self._weight + self._weight.parent().rho()
-        is_dominant = True
-        for rt in pos_roots:
-            val = wt.scalar(rt.associated_coroot())
-            if val in ZZ and val < 0:
-                return False
-        return True
+        return self._weight.is_verma_dominant()
 
     def homogeneous_component_basis(self, d):
         r"""
@@ -627,10 +667,12 @@ class VermaModule(CombinatorialFreeModule):
             sage: M.homogeneous_component_basis(mu - La[1])
             Family ()
         """
-        diff = _convert_wt_to_root(d - self._weight)
+        diff = (d - self._weight)._to_root_vector()
         if diff is None or not all(coeff <= 0 and coeff in ZZ for coeff in diff):
             return Family([])
         return sorted(self._homogeneous_component_f(diff))
+
+    weight_space_basis = homogeneous_component_basis
 
     @cached_method
     def _homogeneous_component_f(self, d):
@@ -704,8 +746,8 @@ class VermaModule(CombinatorialFreeModule):
             sage: type(H)
             <...VermaModuleHomset_with_category_with_equality_by_id'>
         """
-        from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule
-        if not ((isinstance(Y, VermaModule)
+        from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule, SimpleModule
+        if not ((isinstance(Y, (VermaModule, SimpleModule))
                  or (isinstance(Y, BGGDualModule) and Y._module is self))
                 and self._g is Y.lie_algebra()):
             raise TypeError("{} must be an object in Category O of {}".format(Y, self._g))
@@ -743,6 +785,7 @@ class VermaModule(CombinatorialFreeModule):
             """
             P = self.parent()
             # Check for scalars first
+            # TODO: Pass by these checks if a PBW basis element of the Lie algebra
             if scalar in P.base_ring():
                 # Don't have this be a super call
                 return CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
@@ -1107,6 +1150,46 @@ class VermaModuleMorphism(Morphism):
 
         return False
 
+    def image(self):
+        r"""
+        Return the image of ``self``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['B', 2])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: M = g.verma_module(La[1]+2*La[2])
+            sage: Mp = g.verma_module(La[1]+3*La[2])
+            sage: phi = Hom(M, Mp).natural_map()
+            sage: phi.image()
+            Free module generated by {} over Rational Field
+            sage: Mc = M.dual()
+            sage: phi = Hom(M, Mc).natural_map()
+            sage: L = phi.image(); L
+            Simple module with highest weight Lambda[1] + 2*Lambda[2] of
+             Lie algebra of ['B', 2] in the Chevalley basis
+            sage: psi = Hom(M, L).natural_map()
+            sage: psi.image()
+            Simple module with highest weight Lambda[1] + 2*Lambda[2] of
+             Lie algebra of ['B', 2] in the Chevalley basis
+        """
+        C = self.codomain()
+        if not bool(self._scalar):
+            return C.submodule([])
+
+        if isinstance(C, VermaModule):
+            if self.domain() == C:
+                return C
+            raise NotImplementedError("submodules of Verma modules not yet implemented")
+
+        from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule, SimpleModule
+        if isinstance(C, BGGDualModule) and isinstance(C._module, VermaModule):
+            return SimpleModule(C.lie_algebra(), C.highest_weight(), prefix=C._indices.prefix(),
+                                basis_key=C._module._basis_key)
+
+        if isinstance(self.codomain(), SimpleModule):
+            return self.codomain()
+
 
 
 class VermaModuleHomset(Homset):
@@ -1214,6 +1297,20 @@ class VermaModuleHomset(Homset):
         r"""
         Return the image of the highest weight vector of the domain
         in the codomain.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['C', 3])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: M = g.verma_module(La[1]+2*La[3])
+            sage: Mc = M.dual()
+            sage: H = Hom(M, Mc)
+            sage: H.highest_weight_image()
+            v[Lambda[1] + 2*Lambda[3]]^*
+            sage: L = H.natural_map().image()
+            sage: Hp = Hom(M, L)
+            sage: Hp.highest_weight_image()
+            u[Lambda[1] + 2*Lambda[3]]
         """
         C = self.codomain()
         if isinstance(C, VermaModule):
@@ -1530,45 +1627,3 @@ class VermaModuleHomset(Homset):
         return Family([self.natural_map()])
 
     Element = VermaModuleMorphism
-
-
-def _convert_wt_to_root(wt):
-    r"""
-    Helper function to express ``wt`` as a linear combination
-    of simple roots.
-
-    INPUT:
-
-    - ``wt`` -- an element of a weight lattice realization
-
-    OUTPUT:
-
-    A vector over `\QQ` representing ``wt`` as a linear combination
-    of simple roots.
-
-    EXAMPLES::
-
-        sage: from sage.algebras.lie_algebras.verma_module import _convert_wt_to_root
-        sage: P = RootSystem(['A',3]).weight_lattice()
-        sage: La = P.fundamental_weights()
-        sage: [_convert_wt_to_root(al) for al in P.simple_roots()]
-        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
-        sage: _convert_wt_to_root(La[1] + La[2])
-        (5/4, 3/2, 3/4)
-
-        sage: L = RootSystem(['A',3]).ambient_space()
-        sage: e = L.basis()
-        sage: _convert_wt_to_root(e[0] + 3*e[3])
-        sage: _convert_wt_to_root(e[0] - e[1])
-        (1, 0, 0)
-        sage: _convert_wt_to_root(e[0] + 2*e[1] - 3*e[2])
-        (1, 3, 0)
-    """
-    v = wt.to_vector().change_ring(QQ)
-    al = [a.to_vector() for a in wt.parent().simple_roots()]
-    b = v.parent().linear_dependence([v] + al)
-    if len(b) != 1 or b[0] == 0:
-        return None
-    b = b[0]  # Get the actual vector that gives the linear dependency
-    # Get v as a linear combination of the simple roots
-    return vector(QQ, [-x / b[0] for x in b[1:]])

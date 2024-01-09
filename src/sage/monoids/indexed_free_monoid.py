@@ -963,6 +963,11 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
         sage: F = FreeAbelianMonoid(index_set=Partitions(), prefix='A', bracket=False, scalar_mult='%')
         sage: F.gen([3,1,1]) * F.gen([2,2])
         A[2, 2]%A[3, 1, 1]
+
+    .. TODO::
+
+        Implement a subclass when the index sets is finite that utilizes
+        vectors or the polydict monomials with the index order is fixed.
     """
     def _repr_(self):
         """
