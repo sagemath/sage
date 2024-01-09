@@ -356,7 +356,7 @@ class LieAlgebras(Category_over_base_ring):
                 sage: L.center_universal_enveloping_algebra()
                 Center of Universal enveloping algebra of Abelian Lie algebra on 3 generators (x0, x1, x2)
                  over Rational Field in the Poincare-Birkhoff-Witt basis
-                sage: PBW = L.PBW_basis()
+                sage: PBW = L.pbw_basis()
                 sage: L.center_universal_enveloping_algebra(PBW)
                 Center of Universal enveloping algebra of Abelian Lie algebra on 3 generators (x0, x1, x2)
                  over Rational Field in the Poincare-Birkhoff-Witt basis

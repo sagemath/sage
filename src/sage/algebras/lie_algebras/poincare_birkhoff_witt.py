@@ -577,7 +577,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
 
             sage: g = lie_algebras.Heisenberg(GF(3), 4)
             sage: U = g.pbw_basis()
-            sage: Z = U.center()
+            sage: U.center()
             Center of Universal enveloping algebra of Heisenberg algebra of rank 4
              over Finite Field of size 3 in the Poincare-Birkhoff-Witt basis
         """

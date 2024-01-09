@@ -4779,9 +4779,9 @@ REFERENCES:
               of polynomial maps. Proc. London Math. Soc., 68 (1994), 225-263.
 
 .. [Motsak2006] Olekasandr Motsak. *Computation of the central elements and
-				centralizers of sets of elements in non-commutative polynomial
-				algebras*. PhD Thesis, 2006.
-				https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/2308/file/Thesis.pdf
+                centralizers of sets of elements in non-commutative polynomial
+                algebras*. PhD Thesis, 2006.
+                https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/2308/file/Thesis.pdf
 
 .. [MP2019] \M. Montes, D. Penazzi
             "Yarara and Coral v1"

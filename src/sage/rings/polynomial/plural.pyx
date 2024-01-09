@@ -856,7 +856,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         return new_NCP(self,_p)
 
-    def algerbra_generators(self):
+    def algebra_generators(self):
         r"""
         Return the algebra generators of ``self``.
 
@@ -865,9 +865,10 @@ cdef class NCPolynomialRing_plural(Ring):
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
             sage: P.algebra_generators()
-            (x, y, z)
+            Family (x, y, z)
         """
-        return self.gens()
+        from sage.sets.family import Family
+        return Family(self.gens())
 
     def ideal(self, *gens, **kwds):
         """
