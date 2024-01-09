@@ -5391,20 +5391,23 @@ class Permutation(CombinatorialElement):
 
     def nth_roots(self, n):
         r"""
-        Return all n-th roots of ``self`` (as a generator).
+        Return all `n`-th roots of ``self`` (as a generator).
 
-        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+        An `n`-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depends on the cycle type of ``self``.
+        Note that the number of `n`-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: sigma = Permutations(5).identity()
             sage: list(sigma.nth_roots(3))
-            [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1],
-             [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5],
-             [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
-
+            [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4],
+             [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1], [5, 2, 1, 4, 3],
+             [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5],
+             [2, 4, 3, 1, 5], [4, 1, 3, 2, 5], [3, 2, 4, 1, 5], [4, 2, 1, 3, 5],
+             [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3],
+             [1, 2, 3, 4, 5]]
             sage: sigma = Permutation('(1, 3)')
             sage: list(sigma.nth_roots(2))
             []
@@ -5421,19 +5424,16 @@ class Permutation(CombinatorialElement):
 
         We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`)::
 
+            sage: # needs sage.combinat
             sage: [len(list(Permutations(n).identity().nth_roots(2))) for n in range(2,8)]
             [2, 4, 10, 26, 76, 232]
-
             sage: list(Permutation('(1)').nth_roots(2))
             [[1]]
-
             sage: list(Permutation('').nth_roots(2))
             [[]]
-
             sage: sigma = Permutations(6).random_element()
             sage: list(sigma.nth_roots(1)) == [sigma]
             True
-
             sage: list(Permutations(4).identity().nth_roots(-1))
             Traceback (most recent call last):
             ...
@@ -5509,18 +5509,18 @@ class Permutation(CombinatorialElement):
 
     def has_nth_root(self, n) -> bool:
         r"""
-        Decide if ``self`` has n-th roots.
+        Decide if ``self`` has `n`-th roots.
 
-        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+        An `n`-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depends on the cycle type of ``self``.
+        Note that the number of `n`-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: sigma = Permutations(5).identity()
             sage: sigma.has_nth_root(3)
             True
-
             sage: sigma = Permutation('(1, 3)')
             sage: sigma.has_nth_root(2)
             False
@@ -5534,19 +5534,16 @@ class Permutation(CombinatorialElement):
 
         We compute the number of permutations that have square roots (i.e. squares in `S_n`, :oeis:`A003483`)::
 
+            sage: # needs sage.combinat
             sage: [len([p for p in Permutations(n) if p.has_nth_root(2)]) for n in range(2, 7)]
             [1, 3, 12, 60, 270]
-
             sage: Permutation('(1)').has_nth_root(2)
             True
-
             sage: Permutation('').has_nth_root(2)
             True
-
             sage: sigma = Permutations(6).random_element()
             sage: sigma.has_nth_root(1)
             True
-
             sage: Permutations(4).identity().has_nth_root(-1)
             Traceback (most recent call last):
             ...
@@ -5570,18 +5567,18 @@ class Permutation(CombinatorialElement):
 
     def number_of_nth_roots(self, n):
         r"""
-        Return the number of n-th roots of ``self``.
+        Return the number of `n`-th roots of ``self``.
 
-        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+        An `n`-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depends on the cycle type of ``self``.
+        Note that the number of `n`-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: Sigma = Permutations(5).identity()
             sage: Sigma.number_of_nth_roots(3)
             21
-
             sage: Sigma = Permutation('(1, 3)')
             sage: Sigma.number_of_nth_roots(2)
             0
@@ -5595,22 +5592,18 @@ class Permutation(CombinatorialElement):
 
         We compute the number of square roots of the identity (i.e. involutions in `S_n`, :oeis:`A000085`), then the number of cubic roots::
 
+            sage: # needs sage.combinat
             sage: [Permutations(n).identity().number_of_nth_roots(2) for n in range(2, 10)]
             [2, 4, 10, 26, 76, 232, 764, 2620]
-
             sage: [Permutations(n).identity().number_of_nth_roots(3) for n in range(2, 10)]
             [1, 3, 9, 21, 81, 351, 1233, 5769]
-
             sage: Permutation('(1)').number_of_nth_roots(2)
             1
-
             sage: Permutation('').number_of_nth_roots(2)
             1
-
             sage: Sigma = Permutations(6).random_element()
             sage: Sigma.number_of_nth_roots(1)
             1
-
             sage: Permutations(4).identity().number_of_nth_roots(-1)
             Traceback (most recent call last):
             ...
