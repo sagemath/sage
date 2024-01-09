@@ -452,69 +452,38 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         """
         return self
 
-    def is_separable(self):
-        """
-        Determine whether this scalar-multiplication map is a
-        separable isogeny. (This is the case if and only if the
-        scalar `m` is coprime to the characteristic.)
+    def inseparable_degree(self):
+        r"""
+        Return the inseparable degree of this scalar-multiplication map.
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(11), [4,4])
-            sage: E.scalar_multiplication(11).is_separable()
+            sage: E = EllipticCurve(GF(7), [0,1])
+            sage: E.is_supersingular()
             False
-            sage: E.scalar_multiplication(-11).is_separable()
-            False
-            sage: E.scalar_multiplication(777).is_separable()
-            True
-            sage: E.scalar_multiplication(-1).is_separable()
-            True
-            sage: E.scalar_multiplication(77).is_separable()
-            False
-            sage: E.scalar_multiplication(121).is_separable()
-            False
+            sage: E.scalar_multiplication(4).inseparable_degree()
+            1
+            sage: E.scalar_multiplication(-7).inseparable_degree()
+            7
 
-        TESTS::
+        ::
 
-            sage: E.scalar_multiplication(0).is_separable()
-            Traceback (most recent call last):
-            ...
-            ValueError: [0] is not an isogeny
+            sage: E = EllipticCurve(GF(7), [1,0])
+            sage: E.is_supersingular()
+            True
+            sage: E.scalar_multiplication(4).inseparable_degree()
+            1
+            sage: E.scalar_multiplication(-7).inseparable_degree()
+            49
         """
-        if self._m.is_zero():
-            raise ValueError('[0] is not an isogeny')
-        return bool(self.scaling_factor())
-
-    def is_injective(self):
-        """
-        Determine whether this scalar multiplication defines an
-        injective map (over the algebraic closure).
-
-        Equivalently, return ``True`` if and only if this scalar
-        multiplication is a purely inseparable isogeny.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(23), [1,0])
-            sage: E.scalar_multiplication(4).is_injective()
-            False
-            sage: E.scalar_multiplication(5).is_injective()
-            False
-            sage: E.scalar_multiplication(1).is_injective()
-            True
-            sage: E.scalar_multiplication(-1).is_injective()
-            True
-            sage: E.scalar_multiplication(23).is_injective()
-            True
-            sage: E.scalar_multiplication(-23).is_injective()
-            True
-            sage: E.scalar_multiplication(0).is_injective()
-            False
-        """
-        if self._m.is_zero():
-            return False
-        p = self._domain.base_ring().characteristic()
-        return self._m.abs().is_power_of(p) and self._domain.is_supersingular()
+        p = self.base_ring().characteristic()
+        if not p:
+            return ZZ.one()
+        v = self._m.valuation(p)
+        if not v:
+            return ZZ.one()
+        rk = 1 + self._domain.is_supersingular()
+        return p**(rk*v)
 
     def __neg__(self):
         """

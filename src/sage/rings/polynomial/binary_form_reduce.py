@@ -418,7 +418,7 @@ def get_bound_poly(F, prec=53, norm_type='norm', emb=None):
     else:
         compF = F
     n = F.degree()
-    assert(n > 2), "degree 2 polynomial"
+    assert (n > 2), "degree 2 polynomial"
 
     z0F, thetaF = covariant_z0(compF, prec=prec, emb=emb)
     if norm_type == 'norm':

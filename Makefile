@@ -158,11 +158,7 @@ bootstrap-clean:
 	rm -rf config/install-sh config/compile config/config.guess config/config.sub config/missing configure build/make/Makefile-auto.in
 	rm -f src/doc/en/installation/*.txt
 	rm -rf src/doc/en/reference/spkg/*.rst
-	rm -f environment.yml
-	rm -f src/environment.yml
-	rm -f src/environment-dev.yml
-	rm -f environment-optional.yml
-	rm -f src/environment-optional.yml
+	for a in environment environment-optional src/environment src/environment-dev src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
 	rm -f src/Pipfile
 	rm -f src/pyproject.toml
 	rm -f src/requirements.txt

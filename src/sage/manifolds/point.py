@@ -803,6 +803,7 @@ class ManifoldPoint(Element):
 
         Drawing a point on a 2-dimensional manifold::
 
+            sage: # needs sage.plot
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
             sage: p = M.point((1,3), name='p')
@@ -826,12 +827,14 @@ class ManifoldPoint(Element):
         ``p`` has been defined, it can be skipped in the arguments of
         ``plot``::
 
+            sage: # needs sage.plot
             sage: g = p.plot()
             sage: g + gX
             Graphics object consisting of 20 graphics primitives
 
         Call with some options::
 
+            sage: # needs sage.plot
             sage: g = p.plot(chart=X, size=40, color='green', label='$P$',
             ....:            label_color='blue', fontsize=20, label_offset=0.3)
             sage: g + gX
@@ -851,9 +854,9 @@ class ManifoldPoint(Element):
         symbolic variable::
 
             sage: a = var('a')
-            sage: q = M.point((a,2*a), name='q')
-            sage: gq = q.plot(parameters={a:-2}, label_offset=0.2)
-            sage: g + gX + gq
+            sage: q = M.point((a,2*a), name='q')                                        # needs sage.plot
+            sage: gq = q.plot(parameters={a:-2}, label_offset=0.2)                      # needs sage.plot
+            sage: g + gX + gq                                                           # needs sage.plot
             Graphics object consisting of 22 graphics primitives
 
         .. PLOT::
@@ -871,11 +874,12 @@ class ManifoldPoint(Element):
 
         The numerical value is used only for the plot::
 
-            sage: q.coord()
+            sage: q.coord()                                                             # needs sage.plot
             (a, 2*a)
 
         Drawing a point on a 3-dimensional manifold::
 
+            sage: # needs sage.plot
             sage: M = Manifold(3, 'M', structure='topological')
             sage: X.<x,y,z> = M.chart()
             sage: p = M.point((2,1,3), name='p')
@@ -888,16 +892,17 @@ class ManifoldPoint(Element):
 
         Call with some options::
 
-            sage: g = p.plot(chart=X, size=40, color='green', label='P_1',
+            sage: g = p.plot(chart=X, size=40, color='green', label='P_1',              # needs sage.plot
             ....:            label_color='blue', fontsize=20, label_offset=0.3)
-            sage: g + gX
+            sage: g + gX                                                                # needs sage.plot
             Graphics3d Object
 
         An example of plot via a mapping: plot of a point on a 2-sphere viewed
         in the 3-dimensional space ``M``::
 
+            sage: # needs sage.plot
             sage: S2 = Manifold(2, 'S^2', structure='topological')
-            sage: U = S2.open_subset('U') # the open set covered by spherical coord.
+            sage: U = S2.open_subset('U')  # the open set covered by spherical coord.
             sage: XS.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
             sage: p = U.point((pi/4, pi/8), name='p')
             sage: F = S2.continuous_map(M, {(XS, X): [sin(th)*cos(ph),
@@ -913,6 +918,7 @@ class ManifoldPoint(Element):
         Use of the option ``ambient_coords`` for plots on a 4-dimensional
         manifold::
 
+            sage: # needs sage.plot
             sage: M = Manifold(4, 'M', structure='topological')
             sage: X.<t,x,y,z> = M.chart()
             sage: p = M.point((1,2,3,4), name='p')

@@ -14,23 +14,23 @@ cdef class InnerGroup:
     cdef SemimonomialTransformation transporter
     cdef bint compute_transporter
 
-    cdef inline int get_rep(self, int pos)
-    cdef inline int join_rows(self, int rep1, int rep2)
+    cdef inline int get_rep(self, int pos) noexcept
+    cdef inline int join_rows(self, int rep1, int rep2) noexcept
 
-    cdef InnerGroup _new_c(self)
-    cdef void copy_from(self, InnerGroup other)
-    cdef bint has_semilinear_action(self)
-    cdef minimize_by_row_mult(self, FreeModuleElement v)
+    cdef InnerGroup _new_c(self) noexcept
+    cdef void copy_from(self, InnerGroup other) noexcept
+    cdef bint has_semilinear_action(self) noexcept
+    cdef minimize_by_row_mult(self, FreeModuleElement v) noexcept
     cdef minimize_matrix_col(self, object m, int pos, list fixed_minimized_cols,
-                             bint *group_changed)
-    cdef void gaussian_elimination(self, object m, int pos, int pivot, list nz_pos)
-    cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow)
+                             bint *group_changed) noexcept
+    cdef void gaussian_elimination(self, object m, int pos, int pivot, list nz_pos) noexcept
+    cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow) noexcept
 
-    cdef SemimonomialTransformation get_transporter(self)
+    cdef SemimonomialTransformation get_transporter(self) noexcept
 
-    cdef bint has_semilinear_action(self)
-    cpdef int get_frob_pow(self)
-    cpdef column_blocks(self, mat)
+    cdef bint has_semilinear_action(self) noexcept
+    cpdef int get_frob_pow(self) noexcept
+    cpdef column_blocks(self, mat) noexcept
 
 cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
     cdef int _k, _q
@@ -53,10 +53,10 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
     cdef list _autom_group_generators
 
     # specialized refine methods, called in refine
-    cdef bint _inner_min_refine(self, bint *inner_stab_changed, bint *changed_partition)
-    cdef bint _point_refine(self, bint *inner_stab_changed, bint *changed_partition)
-    cdef bint _hyp_refine(self, bint *changed_partition)
+    cdef bint _inner_min_refine(self, bint *inner_stab_changed, bint *changed_partition) noexcept
+    cdef bint _point_refine(self, bint *inner_stab_changed, bint *changed_partition) noexcept
+    cdef bint _hyp_refine(self, bint *changed_partition) noexcept
 
     # some additional methods
-    cdef _compute_group_element(self, SemimonomialTransformation trans, str algorithm_type)
-    cdef _init_point_hyperplane_incidence(self)
+    cdef _compute_group_element(self, SemimonomialTransformation trans, str algorithm_type) noexcept
+    cdef _init_point_hyperplane_incidence(self) noexcept

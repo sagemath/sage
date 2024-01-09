@@ -1,9 +1,6 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Helper classes for structural embeddings and isomorphisms of number fields
-
-AUTHORS:
-
-- Julian Rueth (2014-04-03): initial version
 
 Consider the following fields `L` and `M`::
 
@@ -42,6 +39,10 @@ structure morphisms::
     sage: N.<a> = L.absolute_field()
     sage: M is N
     True
+
+AUTHORS:
+
+- Julian Rueth (2014-04-03): initial version
 
 """
 #*****************************************************************************
@@ -84,8 +85,8 @@ class NumberFieldStructure(UniqueRepresentation):
         sage: NumberFieldStructure(K) is NumberFieldStructure(L)
         False
         sage: from sage.rings.number_field.structure import NameChange
-        sage: KK.<j> = NumberField(x^2+1, structure=NameChange(K))
-        sage: LL.<j> = NumberField(x^2+1, structure=NameChange(L))
+        sage: KK.<j> = NumberField(x^2 + 1, structure=NameChange(K))
+        sage: LL.<j> = NumberField(x^2 + 1, structure=NameChange(L))
         sage: KK is LL
         False
 

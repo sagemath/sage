@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Elements of posets, lattices, semilattices, etc.
 """
@@ -78,13 +79,13 @@ class PosetElement(Element):
 
         EXAMPLES::
 
-            sage: m = matrix(2, [1,2,3,4])                                              # optional - sage.modules
-            sage: m.set_immutable()                                                     # optional - sage.modules
-            sage: P = Poset(([m],[]), facade=False)                                     # optional - sage.modules
-            sage: [e] = P                                                               # optional - sage.modules
-            sage: type(e)                                                               # optional - sage.modules
+            sage: m = matrix(2, [1,2,3,4])
+            sage: m.set_immutable()
+            sage: P = Poset(([m],[]), facade=False)
+            sage: [e] = P
+            sage: type(e)
             <class 'sage.combinat.posets.posets.FinitePoset_with_category.element_class'>
-            sage: latex(e)                 #indirect doctest                            # optional - sage.modules
+            sage: latex(e)                 #indirect doctest
             \left(\begin{array}{rr}
             1 & 2 \\
             3 & 4
@@ -244,13 +245,13 @@ class MeetSemilatticeElement(PosetElement):
         EXAMPLES::
 
             sage: D = posets.DiamondPoset(5, facade=False)
-            sage: D(1) * D(2)                                                           # optional - sage.modules
+            sage: D(1) * D(2)
             0
-            sage: D(1) * D(1)                                                           # optional - sage.modules
+            sage: D(1) * D(1)
             1
-            sage: D(1) * D(0)                                                           # optional - sage.modules
+            sage: D(1) * D(0)
             0
-            sage: D(1) * D(4)                                                           # optional - sage.modules
+            sage: D(1) * D(4)
             1
         """
         return self.parent().meet(self, other)
@@ -264,13 +265,13 @@ class JoinSemilatticeElement(PosetElement):
         EXAMPLES::
 
             sage: D = posets.DiamondPoset(5,facade=False)
-            sage: D(1) + D(2)                                                           # optional - sage.modules
+            sage: D(1) + D(2)
             4
-            sage: D(1) + D(1)                                                           # optional - sage.modules
+            sage: D(1) + D(1)
             1
-            sage: D(1) + D(4)                                                           # optional - sage.modules
+            sage: D(1) + D(4)
             4
-            sage: D(1) + D(0)                                                           # optional - sage.modules
+            sage: D(1) + D(0)
             1
         """
         return self.parent().join(self, other)

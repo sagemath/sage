@@ -291,12 +291,12 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
         sage: designs.orthogonal_arrays.is_available(5+2, 5) # 5 MOLS of order 5
         False
-        sage: designs.orthogonal_arrays.is_available(4+2,6) # 4 MOLS of order 6         # needs sage.schemes
+        sage: designs.orthogonal_arrays.is_available(4+2,6)  # 4 MOLS of order 6        # needs sage.schemes
         False
 
     Sage, however, is not able to prove that the second MOLS do not exist::
 
-        sage: designs.orthogonal_arrays.exists(4+2,6) # 4 MOLS of order 6               # needs sage.schemes
+        sage: designs.orthogonal_arrays.exists(4+2,6)  # 4 MOLS of order 6              # needs sage.schemes
         Unknown
 
     If you ask for such a MOLS then you will respectively get an informative
@@ -513,10 +513,10 @@ def MOLS_table(start,stop=None,compare=False,width=None):
     if stop is None:
         start,stop = 0,start
     # make start and stop be congruent to 0 mod 20
-    start = start - (start%20)
+    start = start - (start % 20)
     stop = stop-1
-    stop = stop + (20-(stop%20))
-    assert start%20 == 0 and stop%20 == 0
+    stop = stop + (20-(stop % 20))
+    assert start % 20 == 0 and stop % 20 == 0
     if stop <= start:
         return
 

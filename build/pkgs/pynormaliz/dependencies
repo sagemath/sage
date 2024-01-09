@@ -1,4 +1,4 @@
-$(PYTHON) normaliz | $(PYTHON_TOOLCHAIN)
+ normaliz | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

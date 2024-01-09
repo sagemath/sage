@@ -440,7 +440,7 @@ class LinearExpression(ModuleElement):
             9
             sage: ex([1,1])    # syntactic sugar
             9
-            sage: ex([pi, e])                                           # optional - sage.symbolic
+            sage: ex([pi, e])                                                           # needs sage.symbolic
             2*pi + 3*e + 4
         """
         try:

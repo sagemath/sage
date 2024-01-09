@@ -5,9 +5,9 @@ AUTHORS:
 
 - Carl Witty (2009-03)
 
-The explain_pickle function takes a pickle and produces Sage code that
+The :func:`explain_pickle` function takes a pickle and produces Sage code that
 will evaluate to the contents of the pickle.  Ideally, the combination
-of explain_pickle to produce Sage code and sage_eval to evaluate the code
+of :func:`explain_pickle` to produce Sage code and :func:`sage_eval` to evaluate the code
 would be a 100% compatible implementation of cPickle's unpickler; this
 is almost the case now.
 
@@ -27,9 +27,9 @@ EXAMPLES::
     True
 
 By default (as above) the code produced contains calls to several
-utility functions (unpickle_global, etc.); this is done so that the
+utility functions (:func:`unpickle_global`, etc.); this is done so that the
 code is truly equivalent to the pickle.  If the pickle can be loaded
-into a future version of Sage, then the code that explain_pickle
+into a future version of Sage, then the code that :func:`explain_pickle`
 produces today should work in that future Sage as well.
 
 It is also possible to produce simpler code, that is tied to the current
@@ -44,11 +44,11 @@ version of Sage; here are the above two examples again::
     from sage.rings.rational import make_rational
     Polynomial_rational_flint(unpickle_PolynomialRing(RationalField(), ('x',), None, False), [make_rational('0'), make_rational('1')], False, True)
 
-The explain_pickle function has several use cases.
+The :func:`explain_pickle` function has several use cases.
 
   - Write pickling support for your classes
 
-    You can use explain_pickle to see what will happen when a pickle
+    You can use :func:`explain_pickle` to see what will happen when a pickle
     is unpickled.  Consider: is this sequence of commands something
     that can be easily supported in all future Sage versions, or does
     it expose internal design decisions that are subject to change?
@@ -56,55 +56,55 @@ The explain_pickle function has several use cases.
   - Debug old pickles
 
     If you have a pickle from an old version of Sage that no longer
-    unpickles, you can use explain_pickle to see what it is trying to
+    unpickles, you can use :func:`explain_pickle` to see what it is trying to
     do, to figure out how to fix it.
 
-  - Use explain_pickle in doctests to help maintenance
+  - Use :func:`explain_pickle` in doctests to help maintenance
 
     If you have a ``loads(dumps(S))`` doctest, you could also add an
     ``explain_pickle(dumps(S))`` doctest.  Then if something changes
     in a way that would invalidate old pickles, the output of
-    ``explain_pickle`` will also change.  At that point, you can add
+    :func:`explain_pickle` will also change.  At that point, you can add
     the previous output of :obj:`explain_pickle` as a new set of
     doctests (and then update the :obj:`explain_pickle` doctest to use
     the new output), to ensure that old pickles will continue to work.
 
-As mentioned above, there are several output modes for :obj:`explain_pickle`,
+As mentioned above, there are several output modes for :func:`explain_pickle`,
 that control fidelity versus simplicity of the output.  For example,
 the GLOBAL instruction takes a module name and a class name and
 produces the corresponding class.  So GLOBAL of ``sage.rings.integer``,
 ``Integer`` is approximately equivalent to ``sage.rings.integer.Integer``.
 
 However, this class lookup process can be customized (using
-sage.misc.persist.register_unpickle_override).  For instance,
+:func:`sage.misc.persist.register_unpickle_override`).  For instance,
 if some future version of Sage renamed ``sage/rings/integer.pyx`` to
 ``sage/rings/knuth_was_here.pyx``, old pickles would no longer work unless
 register_unpickle_override was used; in that case, GLOBAL of
-'sage.rings.integer', 'integer' would mean
+``sage.rings.integer``, ``integer`` would mean
 ``sage.rings.knuth_was_here.integer``.
 
-By default, ``explain_pickle`` will map this GLOBAL instruction to
+By default, :func:`explain_pickle` will map this GLOBAL instruction to
 ``unpickle_global('sage.rings.integer', 'integer')``.  Then when this code
-is evaluated, unpickle_global will look up the current mapping in the
-register_unpickle_override table, so the generated code will continue
-to work even in hypothetical future versions of Sage where integer.pyx
+is evaluated, :func:`unpickle_global` will look up the current mapping in the
+:func:`register_unpickle_override` table, so the generated code will continue
+to work even in hypothetical future versions of Sage where ``integer.pyx``
 has been renamed.
 
 If you pass the flag ``in_current_sage=True``, then
-:obj:`explain_pickle` will generate code that may only work in the
+:func:`explain_pickle` will generate code that may only work in the
 current version of Sage, not in future versions.  In this case, it
 would generate::
 
   from sage.rings.integer import integer
 
-and if you ran explain_pickle in hypothetical future sage, it would generate:
+and if you ran :func:`explain_pickle` in hypothetical future sage, it would generate:
 
   from sage.rings.knuth_was_here import integer
 
 but the current code wouldn't work in the future sage.
 
 If you pass the flag ``default_assumptions=True``, then
-:obj:`explain_pickle` will generate code that would work in the
+:func:`explain_pickle` will generate code that would work in the
 absence of any special unpickling information.  That is, in either
 current Sage or hypothetical future Sage, it would generate::
 
@@ -114,32 +114,32 @@ The intention is that ``default_assumptions`` output is prettier (more
 human-readable), but may not actually work; so it is only intended for
 human reading.
 
-There are several functions used in the output of :obj:`explain_pickle`.
+There are several functions used in the output of :func:`explain_pickle`.
 Here I give a brief description of what they usually do, as well as
 how to modify their operation (for instance, if you're trying to get
 old pickles to work).
 
   - ``unpickle_global(module, classname)``:
-    unpickle_global('sage.foo.bar', 'baz') is usually equivalent to
-    sage.foo.bar.baz, but this can be customized with
-    register_unpickle_override.
+    ``unpickle_global('sage.foo.bar', 'baz')`` is usually equivalent to
+    ``sage.foo.bar.baz``, but this can be customized with
+    :func:`register_unpickle_override`.
 
   - ``unpickle_newobj(klass, args)``:
     Usually equivalent to ``klass.__new__(klass, *args)``.  If
     ``klass`` is a Python class, then you can define :meth:`__new__`
     to control the result (this result actually need not be an
-    instance of klass).  (This doesn't work for Cython classes.)
+    instance of ``klass``).  (This doesn't work for Cython classes.)
 
   - ``unpickle_build(obj, state)``:
     If ``obj`` has a :meth:`__setstate__` method, then this is equivalent to
-    ``obj.__setstate__(state)``.  Otherwise uses state to set the attributes
+    ``obj.__setstate__(state)``.  Otherwise uses ``state`` to set the attributes
     of ``obj``.  Customize by defining :meth:`__setstate__`.
 
   - ``unpickle_instantiate(klass, args)``:
     Usually equivalent to ``klass(*args)``.  Cannot be customized.
 
-  - unpickle_appends(lst, vals):
-    Appends the values in vals to lst.  If not ``isinstance(lst, list)``,
+  - ``unpickle_appends(lst, vals)``:
+    Appends the values in ``vals`` to ``lst``.  If not ``isinstance(lst, list)``,
     can be customized by defining a :meth:`append` method.
 
 """
@@ -165,7 +165,6 @@ import bz2 as comp_other
 
 from pickletools import genops
 
-import sage.all
 from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 from sage.misc.sage_eval import sage_eval
 from sage.misc.persist import (unpickle_override, unpickle_global, dumps,
@@ -181,30 +180,30 @@ def explain_pickle(pickle=None, file=None, compress=True, **kwargs):
     r"""
     Explain a pickle. That is, produce source code such that evaluating
     the code is equivalent to loading the pickle.  Feeding the result
-    of ``explain_pickle`` to ``sage_eval`` should be totally equivalent to loading
+    of :func:`explain_pickle` to :func:`sage_eval` should be totally equivalent to loading
     the ``pickle`` with ``cPickle``.
 
     INPUT:
 
-     - ``pickle``   -- the pickle to explain, as a string (default: None)
-     - ``file``     -- a filename of a pickle (default: None)
-     - ``compress`` -- if False, don't attempt to decompress the pickle
-                    (default: True)
-     - ``in_current_sage`` -- if True, produce potentially simpler code that is
-                           tied to the current version of Sage. (default: False)
-     - ``default_assumptions`` -- if True, produce potentially simpler code that
-                               assumes that generic unpickling code will be
-                               used.  This code may not actually work.
-                               (default: False)
-     - ``eval`` -- if True, then evaluate the resulting code and return the
-                evaluated result. (default: False)
-     - ``preparse`` -- if True, then produce code to be evaluated with
-                    Sage's preparser; if False, then produce standard
-                    Python code; if None, then produce code that will work
-                    either with or without the preparser.  (default: True)
-     - ``pedantic`` -- if True, then carefully ensures that the result has
-                    at least as much sharing as the result of cPickle
-                    (it may have more, for immutable objects).  (default: False)
+     - ``pickle``   -- the pickle to explain, as a string (default: ``None``)
+     - ``file``     -- a filename of a pickle (default: ``None``)
+     - ``compress`` -- if ``False``, don't attempt to decompress the pickle
+       (default: ``True``)
+     - ``in_current_sage`` -- if ``True``, produce potentially simpler code that is
+       tied to the current version of Sage. (default: ``False``)
+     - ``default_assumptions`` -- if ``True``, produce potentially simpler code that
+       assumes that generic unpickling code will be
+       used.  This code may not actually work.
+       (default: ``False``)
+     - ``eval`` -- if ``True``, then evaluate the resulting code and return the
+       evaluated result. (default: ``False``)
+     - ``preparse`` -- if ``True``, then produce code to be evaluated with
+       Sage's preparser; if ``False``, then produce standard
+       Python code; if ``None``, then produce code that will work
+       either with or without the preparser.  (default: ``True``)
+     - ``pedantic`` -- if ``True``, then carefully ensures that the result has
+       at least as much sharing as the result of cPickle
+       (it may have more, for immutable objects).  (default: ``False``)
 
     Exactly one of ``pickle`` (a string containing a pickle) or
     ``file`` (the filename of a pickle) must be provided.
@@ -213,7 +212,7 @@ def explain_pickle(pickle=None, file=None, compress=True, **kwargs):
 
         sage: explain_pickle(dumps({('a', 'b'): [1r, 2r]}))
         {('a', 'b'):[1r, 2r]}
-        sage: explain_pickle(dumps(RR(pi)), in_current_sage=True)
+        sage: explain_pickle(dumps(RR(pi)), in_current_sage=True)                       # needs sage.symbolic
         from sage.rings.real_mpfr import __create__RealNumber_version0
         from sage.rings.real_mpfr import __create__RealField_version0
         __create__RealNumber_version0(__create__RealField_version0(53r, False, 'RNDN'), '3.4gvml245kc0@0', 32r)
@@ -263,16 +262,16 @@ def explain_pickle_string(pickle, in_current_sage=False,
                           default_assumptions=False, eval=False, preparse=True,
                           pedantic=False):
     r"""
-    This is a helper function for explain_pickle.  It takes a decompressed
+    This is a helper function for :func:`explain_pickle`.  It takes a decompressed
     pickle string as input; other than that, its options are all the same
-    as explain_pickle.
+    as :func:`explain_pickle`.
 
     EXAMPLES::
 
         sage: sage.misc.explain_pickle.explain_pickle_string(dumps("Hello, world", compress=False))
         'Hello, world'
 
-    (See the documentation for ``explain_pickle`` for many more examples.)
+    (See the documentation for :func:`explain_pickle` for many more examples.)
     """
     sib = SageInputBuilder(preparse=preparse)
 
@@ -294,6 +293,7 @@ def explain_pickle_string(pickle, in_current_sage=False,
     else:
         return ans
 
+
 valid_name_re = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*$')
 def name_is_valid(name):
     r"""
@@ -313,23 +313,26 @@ def name_is_valid(name):
     # Technically, we also need to reject keywords...
     return bool(valid_name_re.match(name))
 
+
 # The pickle interpreter can push and pop "marks" on the stack.
 # This string is used as the representation of a mark.
 the_mark = 'mark'
 
 class PickleObject():
     r"""
-    Pickles have a stack-based virtual machine.  The explain_pickle
-    pickle interpreter mostly uses SageInputExpressions, from sage_input,
+    Pickles have a stack-based virtual machine.  The :func:`explain_pickle`
+    pickle interpreter mostly uses :class:`sage.misc.sage_input.SageInputExpression` objects
     as the stack values.  However, sometimes we want some more information
     about the value on the stack, so that we can generate better
     (prettier, less confusing) code.  In such cases, we push
-    a PickleObject instead of a SageInputExpression.  A PickleObject
+    a :class:`PickleObject` instead of a :class:`~sage.misc.sage_input.SageInputExpression`.
+    A :class:`PickleObject`
     contains a value (which may be a standard Python value, or a
-    PickleDict or PickleInstance), an expression (a SageInputExpression),
+    :class:`PickleDict` or :class:`PickleInstance`), an expression
+    (a :class:`~sage.misc.sage_input.SageInputExpression`),
     and an "immutable" flag (which checks whether this object
-    has been converted to a SageInputExpression; if it has, then we
-    must not mutate the object, since the SageInputExpression would not
+    has been converted to a :class:`SageInputExpression`; if it has, then we
+    must not mutate the object, since the :class:`SageInputExpression` would not
     reflect the changes).
     """
 
@@ -373,9 +376,9 @@ class PickleObject():
 
 class PickleDict():
     r"""
-    An object which can be used as the value of a PickleObject.  The items
+    An object which can be used as the value of a :class:`PickleObject`.  The items
     is a list of key-value pairs, where the keys and values are
-    SageInputExpressions.  We use this to help construct dictionary literals,
+    :class:`SageInputExpression` objects.  We use this to help construct dictionary literals,
     instead of always starting with an empty dictionary and assigning to
     it.
     """
@@ -393,8 +396,8 @@ class PickleDict():
 
 class PickleInstance():
     r"""
-    An object which can be used as the value of a PickleObject.  Unlike
-    other possible values of a PickleObject, a PickleInstance doesn't represent
+    An object which can be used as the value of a :class:`PickleObject`.  Unlike
+    other possible values of a :class:`PickleObject`, a :class:`PickleInstance` doesn't represent
     an exact value; instead, it gives the class (type) of the object.
     """
     def __init__(self, klass):
@@ -412,7 +415,7 @@ class PickleInstance():
 class PickleExplainer():
     r"""
     An interpreter for the pickle virtual machine, that executes
-    symbolically and constructs SageInputExpressions instead of
+    symbolically and constructs :class:`SageInputExpression` objects instead of
     directly constructing values.
     """
     def __init__(self, sib, in_current_sage=False, default_assumptions=False,
@@ -446,7 +449,7 @@ class PickleExplainer():
         r"""
         Given an (uncompressed) pickle as a string, run the pickle
         in this virtual machine.  Once a STOP has been executed, return
-        the result (a SageInputExpression representing code which, when
+        the result (a :class:`SageInputExpression` representing code which, when
         evaluated, will give the value of the pickle).
 
         EXAMPLES::
@@ -458,8 +461,8 @@ class PickleExplainer():
             sage: sib(pe.run_pickle('T\5\0\0\0hello.'))  # py2
             {atomic:'hello'}
         """
-        for (op, arg, pos) in genops(p):
-            assert(not(self.stopped))
+        for op, arg, pos in genops(p):
+            assert not self.stopped
             try:
                 handler = getattr(self, op.name)
             except AttributeError:
@@ -469,14 +472,14 @@ class PickleExplainer():
             else:
                 handler(arg)
 
-        assert(self.stopped)
-        assert(len(self.stack) == 1)
+        assert self.stopped
+        assert len(self.stack) == 1
         return self.stack[0]
 
     def check_value(self, v):
         r"""
-        Check that the given value is either a SageInputExpression or a
-        PickleObject. Used for internal sanity checking.
+        Check that the given value is either a :class:`SageInputExpression` or a
+        :class:`PickleObject`. Used for internal sanity checking.
 
         EXAMPLES::
 
@@ -490,7 +493,7 @@ class PickleExplainer():
             AssertionError
             sage: pe.check_value(sib(7))
         """
-        assert(isinstance(v, (SageInputExpression, PickleObject)))
+        assert isinstance(v, (SageInputExpression, PickleObject))
 
     def push(self, v):
         r"""
@@ -512,7 +515,7 @@ class PickleExplainer():
     def push_and_share(self, v):
         r"""
         Push a value onto the virtual machine's stack; also mark it as shared
-        for sage_input if we are in pedantic mode.
+        for :func:`sage_input` if we are in pedantic mode.
 
         EXAMPLES::
 
@@ -593,14 +596,15 @@ class PickleExplainer():
 
     def share(self, v):
         r"""
-        Mark a sage_input value as shared, if we are in pedantic mode.
+        Mark a :func:`sage_input` value as shared, if we are in pedantic mode.
 
         EXAMPLES::
 
             sage: from sage.misc.explain_pickle import *
             sage: from sage.misc.sage_input import SageInputBuilder
             sage: sib = SageInputBuilder()
-            sage: pe = PickleExplainer(sib, in_current_sage=True, default_assumptions=False, pedantic=True)
+            sage: pe = PickleExplainer(sib, in_current_sage=True,
+            ....:                      default_assumptions=False, pedantic=True)
             sage: v = sib(7)
             sage: v._sie_share
             False
@@ -615,15 +619,16 @@ class PickleExplainer():
 
     def is_mutable_pickle_object(self, v):
         r"""
-        Test whether a PickleObject is mutable (has never been converted
-        to a SageInputExpression).
+        Test whether a :class:`PickleObject` is mutable (has never been converted
+        to a :class:`SageInputExpression`).
 
         EXAMPLES::
 
             sage: from sage.misc.explain_pickle import *
             sage: from sage.misc.sage_input import SageInputBuilder
             sage: sib = SageInputBuilder()
-            sage: pe = PickleExplainer(sib, in_current_sage=True, default_assumptions=False, pedantic=True)
+            sage: pe = PickleExplainer(sib, in_current_sage=True,
+            ....:                      default_assumptions=False, pedantic=True)
             sage: v = PickleObject(1, sib(1))
             sage: pe.is_mutable_pickle_object(v)
             True
@@ -851,7 +856,7 @@ class PickleExplainer():
         TESTS::
 
             sage: from sage.misc.explain_pickle import *
-            sage: test_pickle(float(pi))
+            sage: test_pickle(float(pi))                                                # needs sage.symbolic
                 0: \x80 PROTO      2
                 2: G    BINFLOAT   3.141592653589793
                11: .    STOP
@@ -1392,7 +1397,12 @@ class PickleExplainer():
                 # OK, we know what module and function name will actually
                 # be used, as well as the actual function.
                 # Is this already available at the command line?
-                cmdline_f = getattr(sage.all, func, None)
+                try:
+                    import sage.all
+                except ImportError:
+                    cmdline_f = None
+                else:
+                    cmdline_f = getattr(sage.all, func, None)
                 if cmdline_f is f:
                     self.push(PickleObject(f, self.sib.name(func)))
                     return
@@ -2366,7 +2376,7 @@ class PickleExplainer():
 def unpickle_newobj(klass, args):
     r"""
     Create a new object; this corresponds to the C code
-    klass->tp_new(klass, args, NULL).  Used by ``explain_pickle``.
+    ``klass->tp_new(klass, args, NULL)``.  Used by :func:`explain_pickle`.
 
     EXAMPLES::
 
@@ -2411,7 +2421,7 @@ def unpickle_newobj(klass, args):
 
 def unpickle_build(obj, state):
     r"""
-    Set the state of an object.  Used by ``explain_pickle``.
+    Set the state of an object.  Used by :func:`explain_pickle`.
 
     EXAMPLES::
 
@@ -2432,21 +2442,21 @@ def unpickle_build(obj, state):
         slots = None
 
     if state is not None:
-        assert(isinstance(state, dict))
+        assert isinstance(state, dict)
         d = obj.__dict__
         for k, v in state.items():
             d[k] = v
 
     if slots is not None:
-        assert(isinstance(slots, dict))
+        assert isinstance(slots, dict)
         for k, v in slots.items():
             setattr(obj, k, v)
 
 
 def unpickle_instantiate(fn, args):
     r"""
-    Instantiate a new object of class fn with arguments args.  Almost always
-    equivalent to ``fn(*args)``.  Used by ``explain_pickle``.
+    Instantiate a new object of class ``fn`` with arguments ``args``.  Almost always
+    equivalent to ``fn(*args)``.  Used by :func:`explain_pickle`.
 
     EXAMPLES::
 
@@ -2467,7 +2477,7 @@ def unpickle_persistent(s):
     r"""
     Takes an integer index and returns the persistent object with that
     index; works by calling whatever callable is stored in
-    unpickle_persistent_loader.  Used by ``explain_pickle``.
+    ``unpickle_persistent_loader``.  Used by :func:`explain_pickle`.
 
     EXAMPLES::
 
@@ -2482,7 +2492,7 @@ def unpickle_persistent(s):
 def unpickle_extension(code):
     r"""
     Takes an integer index and returns the extension object with that
-    index.  Used by ``explain_pickle``.
+    index.  Used by :func:`explain_pickle`.
 
     EXAMPLES::
 
@@ -2510,7 +2520,7 @@ def unpickle_appends(lst, vals):
     r"""
     Given a list (or list-like object) and a sequence of values, appends the
     values to the end of the list.  This is careful to do so using the
-    exact same technique that cPickle would use.  Used by ``explain_pickle``.
+    exact same technique that cPickle would use.  Used by :func:`explain_pickle`.
 
     EXAMPLES::
 
@@ -2530,7 +2540,9 @@ def unpickle_appends(lst, vals):
 
 def test_pickle(p, verbose_eval=False, pedantic=False, args=()):
     r"""
-    Tests explain_pickle on a given pickle p.  p can be:
+    Test :func:`explain_pickle` on a given pickle ``p``.
+
+    ``p`` can be:
 
     - a string containing an uncompressed pickle (which will always end
       with a '.')
@@ -2540,14 +2552,14 @@ def test_pickle(p, verbose_eval=False, pedantic=False, args=()):
       the stack (using persistent IDs), run the pickle fragment, and then
       STOP (if the string 'mark' occurs in args, then a mark will be pushed)
 
-    - an arbitrary object; test_pickle will pickle the object
+    - an arbitrary object; :func:`test_pickle` will pickle the object
 
-    Once it has a pickle, test_pickle will print the pickle's
-    disassembly, run explain_pickle with in_current_sage=True and
-    False, print the results, evaluate the results, unpickle the
+    Once it has a pickle, :func:`test_pickle` will print the pickle's
+    disassembly, run :func:`explain_pickle` with ``in_current_sage=True`` and
+    ``False``, print the results, evaluate the results, unpickle the
     object with cPickle, and compare all three results.
 
-    If verbose_eval is True, then test_pickle will print messages
+    If ``verbose_eval`` is ``True``, then :func:`test_pickle` will print messages
     before evaluating the pickles; this is to allow for tests where
     the unpickling prints messages (to verify that the same operations
     occur in all cases).
@@ -2623,18 +2635,18 @@ def test_pickle(p, verbose_eval=False, pedantic=False, args=()):
     if cpickle_ok:
         cpickle_repr = repr(cpickle_res)
 
-        assert(current_repr == generic_repr == cpickle_repr)
+        assert current_repr == generic_repr == cpickle_repr
 
         print("result: " + current_repr)
     else:
-        assert(current_repr == generic_repr)
+        assert current_repr == generic_repr
         print("result: " + current_repr + " (cPickle raised an exception!)")
 
 
 class EmptyOldstyleClass:
     r"""
     A featureless old-style class (does not inherit from object); used for
-    testing explain_pickle.
+    testing :func:`explain_pickle`.
     """
     def __repr__(self):
         r"""
@@ -2672,7 +2684,7 @@ class EmptyOldstyleClass:
 class EmptyNewstyleClass():
     r"""
     A featureless new-style class (inherits from object); used for
-    testing explain_pickle.
+    testing :func:`explain_pickle`.
     """
     def __repr__(self):
         r"""
@@ -2694,8 +2706,8 @@ class EmptyNewstyleClass():
 
 class TestReduceGetinitargs:
     r"""
-    An old-style class with a __getinitargs__ method.  Used for testing
-    explain_pickle.
+    An old-style class with a :func:`__getinitargs__` method.  Used for testing
+    :func:`explain_pickle`.
     """
     def __init__(self):
         r"""
@@ -2746,8 +2758,8 @@ class TestReduceGetinitargs:
 
 class TestReduceNoGetinitargs:
     r"""
-    An old-style class with no __getinitargs__ method.  Used for testing
-    explain_pickle.
+    An old-style class with no :meth:`__getinitargs__` method.  Used for testing
+    :func:`explain_pickle`.
     """
     def __init__(self):
         r"""
@@ -2784,8 +2796,8 @@ class TestReduceNoGetinitargs:
 
 class TestAppendList(list):
     r"""
-    A subclass of list, with deliberately-broken append and extend methods.
-    Used for testing explain_pickle.
+    A subclass of :class:`list`, with deliberately-broken append and extend methods.
+    Used for testing :func:`explain_pickle`.
     """
     def append(self):
         r"""
@@ -2833,7 +2845,7 @@ class TestAppendList(list):
 class TestAppendNonlist():
     r"""
     A list-like class, carefully designed to test exact unpickling
-    behavior.  Used for testing explain_pickle.
+    behavior.  Used for testing :func:`explain_pickle`.
     """
     def __init__(self):
         r"""
@@ -2916,8 +2928,8 @@ class TestAppendNonlist():
 
 class TestBuild():
     r"""
-    A simple class with a __getstate__ but no __setstate__.  Used for testing
-    explain_pickle.
+    A simple class with a :meth:`__getstate__` but no :meth:`__setstate__`.  Used for testing
+    :func:`explain_pickle`.
     """
     def __getstate__(self):
         r"""
@@ -2953,8 +2965,8 @@ class TestBuild():
 
 class TestBuildSetstate(TestBuild):
     r"""
-    A simple class with a __getstate__ and a __setstate__.  Used for testing
-    explain_pickle.
+    A simple class with a :meth:`__getstate__` and a :meth:`__setstate__`.  Used for testing
+    :func:`explain_pickle`.
     """
     def __setstate__(self, state):
         r"""
@@ -2976,8 +2988,8 @@ class TestBuildSetstate(TestBuild):
 class TestGlobalOldName():
     r"""
     A featureless new-style class.  When you try to unpickle an instance
-    of this class, it is redirected to create a TestGlobalNewName instead.
-    Used for testing explain_pickle.
+    of this class, it is redirected to create a :class:`TestGlobalNewName` instead.
+    Used for testing :func:`explain_pickle`.
 
     EXAMPLES::
 
@@ -2991,8 +3003,8 @@ class TestGlobalOldName():
 class TestGlobalNewName():
     r"""
     A featureless new-style class.  When you try to unpickle an instance
-    of TestGlobalOldName, it is redirected to create an instance of this
-    class instead.  Used for testing explain_pickle.
+    of :class:`TestGlobalOldName`, it is redirected to create an instance of this
+    class instead.  Used for testing :func:`explain_pickle`.
 
     EXAMPLES::
 
@@ -3050,6 +3062,7 @@ class TestGlobalFunnyName():
             'TestGlobalFunnyName'
         """
         return "TestGlobalFunnyName"
+
 
 TestGlobalFunnyName.__name__ = "funny$name"
 #This crashed Sphinx. Instead, we manually execute this just before the test.

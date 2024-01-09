@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Morphisms of modules with a basis
 
@@ -666,9 +665,9 @@ class TriangularModuleMorphism(ModuleMorphism):
             [True, True, True]
         """
         if key is not None:
-            self._key_kwds = dict(key=key)
+            self._key_kwds = {"key": key}
         else:
-            self._key_kwds = dict()
+            self._key_kwds = {}
 
         if triangular == "upper":
             self._dominant_item = attrcall("leading_item", **self._key_kwds)
@@ -691,9 +690,9 @@ class TriangularModuleMorphism(ModuleMorphism):
         self._inverse_on_support = inverse_on_support
 
         if invertible is None and (domain.basis().keys() == codomain.basis().keys()) and \
-           (self._inverse_on_support==identity or domain in Modules.FiniteDimensional):
+           (self._inverse_on_support == identity or domain in Modules.FiniteDimensional):
             invertible = True
-        self._invertible=invertible
+        self._invertible = invertible
 
     def _richcmp_(self, other, op):
         r"""
@@ -772,10 +771,10 @@ class TriangularModuleMorphism(ModuleMorphism):
             bs, co = self._dominant_item(on_basis(x))
             if self._unitriangular:
                 tester.assertEqual(co, self.domain().base_ring().one(),
-                    LazyFormat("morphism is not unitriangular on %s")%(x))
+                    LazyFormat("morphism is not unitriangular on %s") % (x))
             xback = self._inverse_on_support(bs)
             tester.assertEqual(x, xback,
-                LazyFormat("morphism is not triangular on %s")%(x))
+                LazyFormat("morphism is not triangular on %s") % (x))
 
     def __invert__(self):
         """
@@ -817,9 +816,9 @@ class TriangularModuleMorphism(ModuleMorphism):
         """
         Return the section (partial inverse) of ``self``.
 
-        Return a partial triangular morphism which is a section of
-        ``self``. The section morphism raise a ``ValueError`` if asked to
-        apply on an element which is not in the image of ``self``.
+        This returns a partial triangular morphism which is a section of
+        ``self``. The section morphism raises a :class:`ValueError` if
+        asked to apply on an element which is not in the image of ``self``.
 
         EXAMPLES::
 
@@ -1055,7 +1054,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         on_basis = self.on_basis()
         assert y in G
 
-        result    = G.zero()
+        result = G.zero()
         remainder = y
 
         while not remainder.is_zero():
@@ -1447,17 +1446,17 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         if codomain is None:
             raise ValueError("The codomain should be specified")
         if not (domain.basis().keys() == codomain.basis().keys() and
-                domain.base_ring()    == codomain.base_ring()):
+                domain.base_ring() == codomain.base_ring()):
             raise ValueError("The domain and codomain should have the same base ring "
                              "and the same basis indexing")
         from collections.abc import Callable
         if not isinstance(diagonal, Callable):
-            raise ValueError("diagonal (=%s) should be a function"%diagonal)
+            raise ValueError("diagonal (=%s) should be a function" % diagonal)
         if category is None:
             category = ModulesWithBasis(domain.base_ring())
         ModuleMorphismByLinearity.__init__(
             self, domain=domain, codomain=codomain, category=category)
-        self._diagonal=diagonal
+        self._diagonal = diagonal
 
     def _richcmp_(self, other, op):
         r"""

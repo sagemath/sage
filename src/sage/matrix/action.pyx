@@ -62,7 +62,7 @@ AUTHOR:
 
 import operator
 
-from .matrix_space import MatrixSpace, is_MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace, is_MatrixSpace
 from sage.modules.free_module import FreeModule, is_FreeModule
 from sage.structure.coerce cimport coercion_model
 from sage.categories.homset import Hom, End
@@ -203,29 +203,29 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         return MatrixSpace(base, self.G.nrows(), self.underlying_set().ncols(),
                            sparse = self.G.is_sparse() and self.underlying_set().is_sparse())
 
-    cpdef _act_(self, g, s):
+    cpdef _act_(self, g, s) noexcept:
         """
         EXAMPLES:
 
         Respects compatible subdivisions::
 
-            sage: M = matrix(5, 5, prime_range(100))
-            sage: M.subdivide(2,3); M
+            sage: M = matrix(5, 5, prime_range(100))                                    # needs sage.libs.pari
+            sage: M.subdivide(2, 3); M                                                  # needs sage.libs.pari
             [ 2  3  5| 7 11]
             [13 17 19|23 29]
             [--------+-----]
             [31 37 41|43 47]
             [53 59 61|67 71]
             [73 79 83|89 97]
-            sage: N = matrix(5,2,[n^2 for n in range(10)])
-            sage: N.subdivide(3,1); N
+            sage: N = matrix(5, 2, [n^2 for n in range(10)])
+            sage: N.subdivide(3, 1); N
             [ 0| 1]
             [ 4| 9]
             [16|25]
             [--+--]
             [36|49]
             [64|81]
-            sage: M*N
+            sage: M*N                                                                   # needs sage.libs.pari
             [ 1048| 1388]
             [ 3056| 4117]
             [-----+-----]
@@ -235,7 +235,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
 
         Note that this is just like block matrix multiplication::
 
-            sage: M.subdivision(0,0) * N.subdivision(0,0) + M.subdivision(0,1) * N.subdivision(1,0)
+            sage: M.subdivision(0,0) * N.subdivision(0,0) + M.subdivision(0,1) * N.subdivision(1,0)                     # needs sage.libs.pari
             [1048]
             [3056]
 
@@ -249,7 +249,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             [16|25]
             [36|49]
             [64|81]
-            sage: M*N
+            sage: M*N                                                                   # needs sage.libs.pari
             [ 1048  1388]
             [ 3056  4117]
             [ 5360  7303]
@@ -268,7 +268,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
                 B = B.dense_matrix()
             else:
                 A = A.dense_matrix()
-        assert type(A) == type(B), (type(A), type(B))
+        assert type(A) is type(B), (type(A), type(B))
         prod = A._matrix_times_matrix_(B)
         if A._subdivisions is not None or B._subdivisions is not None:
             Asubs = A.subdivisions()
@@ -313,7 +313,7 @@ cdef class MatrixVectorAction(MatrixMulAction):
                                                                  self.underlying_set().degree()))
         return FreeModule(base, self.G.nrows(), sparse = self.G.is_sparse())
 
-    cpdef _act_(self, g, s):
+    cpdef _act_(self, g, s) noexcept:
         cdef Matrix A = <Matrix>g
         cdef Vector v = <Vector>s
         if A._parent._base is not self._codomain._base:
@@ -364,7 +364,7 @@ cdef class VectorMatrixAction(MatrixMulAction):
                                                                  self.underlying_set().degree()))
         return FreeModule(base, self.G.ncols(), sparse = self.G.is_sparse())
 
-    cpdef _act_(self, g, s):
+    cpdef _act_(self, g, s) noexcept:
         cdef Matrix A = <Matrix>g
         cdef Vector v = <Vector>s
         if A._parent._base is not self._codomain._base:
@@ -423,7 +423,7 @@ cdef class MatrixPolymapAction(MatrixMulAction):
             return End(self.underlying_set().domain().change_ring(base))
         return Hom(self.underlying_set().domain().change_ring(base), self.underlying_set().codomain().change_ring(base))
 
-    cpdef _act_(self, mat, f):
+    cpdef _act_(self, mat, f) noexcept:
         """
         Call the action
 
@@ -496,7 +496,7 @@ cdef class PolymapMatrixAction(MatrixMulAction):
             return End(self.underlying_set().domain().change_ring(base))
         return Hom(self.underlying_set().domain().change_ring(base), self.underlying_set().codomain().change_ring(base))
 
-    cpdef _act_(self, mat, f):
+    cpdef _act_(self, mat, f) noexcept:
         """
         Call the action.
 
@@ -564,7 +564,7 @@ cdef class MatrixSchemePointAction(MatrixMulAction):
         amb = self.underlying_set().codomain()
         return amb.change_ring(base)(base)
 
-    cpdef _act_(self, mat, P):
+    cpdef _act_(self, mat, P) noexcept:
         """
         Action of matrices on scheme points.
 

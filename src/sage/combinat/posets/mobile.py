@@ -112,13 +112,13 @@ class MobilePoset(FinitePoset):
         num_anchors = 0
 
         for r in ribbon:
-            anchor_neighbors = set(G.neighbors_out(r)).difference(set(R.neighbors_out(r)))
+            anchor_neighbors = set(G.neighbor_out_iterator(r)).difference(set(R.neighbor_out_iterator(r)))
             if len(anchor_neighbors) == 1:
                 num_anchors += 1
             elif len(anchor_neighbors) > 1:
                 return False
 
-            for lc in G.neighbors_in(r):
+            for lc in G.neighbor_in_iterator(r):
                 if lc in ribbon:
                     continue
 
@@ -151,7 +151,7 @@ class MobilePoset(FinitePoset):
 
         # Find the anchor vertex, if it exists, and return the edge
         for r in ribbon:
-            anchor_neighbors = set(H.neighbors_out(r)).difference(set(R.neighbors_out(r)))
+            anchor_neighbors = set(H.neighbor_out_iterator(r)).difference(set(R.neighbor_out_iterator(r)))
             if len(anchor_neighbors) == 1:
                 anchor = (r, anchor_neighbors.pop())
                 break

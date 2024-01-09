@@ -503,7 +503,7 @@ from collections import namedtuple
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
-class SageDocTestRunner(doctest.DocTestRunner, object):
+class SageDocTestRunner(doctest.DocTestRunner):
     def __init__(self, *args, **kwds):
         """
         A customized version of DocTestRunner that tracks dependencies
@@ -687,10 +687,10 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 # findlinestarts() returns pairs (index, lineno) where
                 # "index" is the index in the bytecode where the line
                 # number changes to "lineno".
-                linenumbers1 = set(lineno for (index, lineno)
-                                   in findlinestarts(code))
-                linenumbers2 = set(lineno for (index, lineno)
-                                   in findlinestarts(execcode))
+                linenumbers1 = {lineno for (index, lineno)
+                                in findlinestarts(code)}
+                linenumbers2 = {lineno for (index, lineno)
+                                in findlinestarts(execcode)}
                 if linenumbers1 != linenumbers2:
                     raise SyntaxError("doctest is not a single statement")
 
@@ -1726,7 +1726,7 @@ class DocTestDispatcher(SageObject):
 
             with tempfile.TemporaryFile() as outtmpfile:
                 result = DocTestTask(source)(self.controller.options,
-                        outtmpfile, self.controller.logger)
+                                             outtmpfile, self.controller.logger)
                 outtmpfile.seek(0)
                 output = bytes_to_str(outtmpfile.read())
 
@@ -1802,6 +1802,17 @@ class DocTestDispatcher(SageObject):
 
         """
         opt = self.controller.options
+
+        job_client = None
+        try:
+            from gnumake_tokenpool import JobClient, NoJobServer
+        except ImportError:
+            pass
+        else:
+            try:
+                job_client = JobClient(use_cysignals=True)
+            except NoJobServer:
+                pass
 
         source_iter = iter(self.controller.sources)
 
@@ -1925,6 +1936,9 @@ class DocTestDispatcher(SageObject):
                             w.copied_pid = w.pid
                             w.close()
                             finished.append(w)
+                            if job_client:
+                                job_client.release()
+
                     workers = new_workers
 
                     # Similarly, process finished workers.
@@ -1959,11 +1973,14 @@ class DocTestDispatcher(SageObject):
                         break
 
                     # Start new workers if possible
-                    while source_iter is not None and len(workers) < opt.nthreads:
+                    while (source_iter is not None and len(workers) < opt.nthreads
+                           and (not job_client or job_client.acquire())):
                         try:
                             source = next(source_iter)
                         except StopIteration:
                             source_iter = None
+                            if job_client:
+                                job_client.release()
                         else:
                             # Start a new worker.
                             import copy
@@ -2040,6 +2057,8 @@ class DocTestDispatcher(SageObject):
                         sleep(die_timeout)
                         for w in workers:
                             w.kill()
+                            if job_client:
+                                job_client.release()
                     finally:
                         os._exit(0)
 
@@ -2334,7 +2353,7 @@ class DocTestWorker(multiprocessing.Process):
         try:
             self.result = self.result_queue.get(block=False)
         except Empty:
-            self.result = (0, DictAsObject(dict(err='noresult')))
+            self.result = (0, DictAsObject({'err': 'noresult'}))
         del self.result_queue
 
         self.outtmpfile.seek(0)
@@ -2536,17 +2555,17 @@ class DocTestTask():
         result = None
         try:
             runner = SageDocTestRunner(
-                    SageOutputChecker(),
-                    verbose=options.verbose,
-                    outtmpfile=outtmpfile,
-                    msgfile=msgfile,
-                    sage_options=options,
-                    optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+                SageOutputChecker(),
+                verbose=options.verbose,
+                outtmpfile=outtmpfile,
+                msgfile=msgfile,
+                sage_options=options,
+                optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
             runner.basename = self.source.basename
             runner.filename = self.source.path
             N = options.file_iterations
-            results = DictAsObject(dict(walltime=[], cputime=[],
-                                        err=None, walltime_skips=0))
+            results = DictAsObject({'walltime': [], 'cputime': [],
+                                    'err': None, 'walltime_skips': 0})
 
             # multiprocessing.Process instances don't run exit
             # functions, so we run the functions added by doctests
@@ -2571,7 +2590,7 @@ class DocTestTask():
         except BaseException:
             exc_info = sys.exc_info()
             tb = "".join(traceback.format_exception(*exc_info))
-            result = (0, DictAsObject(dict(err=exc_info[0], tb=tb)))
+            result = (0, DictAsObject({'err': exc_info[0], 'tb': tb}))
 
         if result_queue is not None:
             result_queue.put(result, False)

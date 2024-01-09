@@ -429,7 +429,7 @@ from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
 from sage.structure.element import Expression
 from sage.symbolic.ring import var, SR
-from sage.symbolic.expression import symbol_table
+from sage.symbolic.symbols import symbol_table
 from sage.symbolic.function import Function
 from sage.symbolic.function_factory import function_factory
 from sage.symbolic.integration.integral import (indefinite_integral,
@@ -568,8 +568,8 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
     An example of this summation with Giac::
 
-        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='giac')
-        (pi*e^(2*pi) - pi*e^(-2*pi))/(e^(2*pi) + e^(-2*pi) - 2)
+        sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='giac').factor()
+        pi*(e^(2*pi) + 1)/((e^pi + 1)*(e^pi - 1))
 
     The same summation is solved by SymPy::
 
@@ -663,7 +663,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
         return result.sage()
 
     elif algorithm == 'sympy':
-        expression,v,a,b = [expr._sympy_() for expr in (expression, v, a, b)]
+        expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import summation
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -920,7 +920,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
         return result.sage()
 
     elif algorithm == 'sympy':
-        expression,v,a,b = [expr._sympy_() for expr in (expression, v, a, b)]
+        expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import product as sproduct
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -1744,7 +1744,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         return ex.parent()(ex._maxima_().laplace(var(t), var(s)))
 
     elif algorithm == 'sympy':
-        ex_sy, t, s = [expr._sympy_() for expr in (ex, t, s)]
+        ex_sy, t, s = (expr._sympy_() for expr in (ex, t, s))
         from sympy import laplace_transform
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -1923,7 +1923,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
         return ex.parent()(ex._maxima_().ilt(var(s), var(t)))
 
     elif algorithm == 'sympy':
-        ex_sy, s, t = [expr._sympy_() for expr in (ex, s, t)]
+        ex_sy, s, t = (expr._sympy_() for expr in (ex, s, t))
         from sympy import inverse_laplace_transform
         from sage.interfaces.sympy import sympy_init
         sympy_init()

@@ -310,5 +310,6 @@ def consistent(*formulas):
     # if conjunction is a contradiction, the formulas are inconsistent
     return not conjunction.is_contradiction()
 
+
 # define function ``valid_consequence`` for backward compatibility
 valid_consequence = deprecated_function_alias(28052, boolformula.is_consequence)

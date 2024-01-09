@@ -154,8 +154,8 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
         infinite groups can be dealt with::
 
             sage: import itertools
-            sage: W = WeylGroup(["A",3,1])
-            sage: list(itertools.islice(W, int(4)))
+            sage: W = WeylGroup(["A",3,1])                                              # needs sage.rings.number_field
+            sage: list(itertools.islice(W, int(4)))                                     # needs sage.rings.number_field
             [
             [1 0 0 0]  [-1  1  0  1]  [ 1  0  0  0]  [ 1  0  0  0]
             [0 1 0 0]  [ 0  1  0  0]  [ 1 -1  1  0]  [ 0  1  0  0]
@@ -238,6 +238,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: UCF = UniversalCyclotomicField()
             sage: G  = GL(3, UCF)
             sage: e3 = UCF.gen(3); e5 = UCF.gen(5)
@@ -249,6 +250,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
             [   4    3    2]
             ) of General Linear Group of degree 3 over Universal Cyclotomic Field
 
+            sage: # needs sage.rings.number_field
             sage: CF3 = CyclotomicField(3)
             sage: G  = GL(3, CF3)
             sage: e3 = CF3.gen()
@@ -262,15 +264,17 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
 
         TESTS::
 
-            sage: TestSuite(G).run()
-            sage: TestSuite(S).run()
+            sage: TestSuite(G).run()                                                    # needs sage.rings.number_field
+            sage: TestSuite(S).run()                                                    # needs sage.rings.number_field
 
+            sage: # needs sage.rings.number_field
             sage: W = CoxeterGroup(['I',7])
             sage: s = W.simple_reflections()
             sage: G = W.subgroup([s[1]])
             sage: G.category()
             Category of finite groups
 
+            sage: # needs sage.rings.number_field
             sage: W = WeylGroup(['A',2])
             sage: s = W.simple_reflections()
             sage: G = W.subgroup([s[1]])

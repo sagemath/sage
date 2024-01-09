@@ -172,7 +172,7 @@ class CartesianProductPoset(CartesianProduct):
             sage: T = [Q((0, 0)), Q((1, 1)), Q((0, 1)), Q((1, 0))]
             sage: for a in T:
             ....:     for b in T:
-            ....:         assert(Q.le(a, b) == (a <= b))
+            ....:         assert Q.le(a, b) == (a <= b)
             ....:         print('%s <= %s = %s' % (a, b, a <= b))
             (0, 0) <= (0, 0) = True
             (0, 0) <= (1, 1) = True
@@ -239,7 +239,7 @@ class CartesianProductPoset(CartesianProduct):
             sage: T = [Q((0, 0)), Q((1, 1)), Q((0, 1)), Q((1, 0))]
             sage: for a in T:
             ....:     for b in T:
-            ....:         assert(Q.le(a, b) == (a <= b))
+            ....:         assert Q.le(a, b) == (a <= b)
             ....:         print('%s <= %s = %s' % (a, b, a <= b))
             (0, 0) <= (0, 0) = True
             (0, 0) <= (1, 1) = True
@@ -285,7 +285,7 @@ class CartesianProductPoset(CartesianProduct):
             sage: T = [Q((0, 0)), Q((1, 1)), Q((0, 1)), Q((1, 0))]
             sage: for a in T:
             ....:     for b in T:
-            ....:         assert(Q.le(a, b) == (a <= b))
+            ....:         assert Q.le(a, b) == (a <= b)
             ....:         print('%s <= %s = %s' % (a, b, a <= b))
             (0, 0) <= (0, 0) = True
             (0, 0) <= (1, 1) = True

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Output functions
 
@@ -505,7 +504,7 @@ def ascii_art_table(data, use_unicode=False, convention="English"):
         def get_len(e):
             if e is None:
                 return 0
-            return len(e) - list(str(e)).count(u"\u0304")
+            return len(e) - list(str(e)).count("\u0304")
     else:
         def get_len(e):
             if e is None:
@@ -692,7 +691,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
         def get_len(e):
             if e is None:
                 return 0
-            return len(e) - list(str(e)).count(u"\u0304")
+            return len(e) - list(str(e)).count("\u0304")
     else:
         def get_len(e):
             if e is None:

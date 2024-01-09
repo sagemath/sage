@@ -176,7 +176,7 @@ class FourTi2():
             sage: four_ti_2.write_array([[1,2,3],[3,4,5]], 2, 3, "test_file")
         """
         f = open(os.path.join(self.directory(), filename), 'w')
-        f.write("%s %s\n"%(nrows, ncols))
+        f.write("%s %s\n" % (nrows, ncols))
         for row in array:
             f.write(" ".join(map(str, row)))
             f.write("\n")
@@ -444,7 +444,7 @@ class FourTi2():
 
         """
         self.call('ppi', f'{n} 2> /dev/null')
-        return self.read_matrix('ppi%s.gra'%n)
+        return self.read_matrix('ppi%s.gra' % n)
 
     def circuits(self, mat=None, project=None):
         r"""

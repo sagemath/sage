@@ -568,7 +568,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             C^0 \left(M\right)
 
          """
-        return r"C^0 \left("  + self._domain._latex_() + r"\right)"
+        return r"C^0 \left(" + self._domain._latex_() + r"\right)"
 
     @cached_method
     def zero(self):

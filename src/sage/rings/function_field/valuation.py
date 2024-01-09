@@ -358,7 +358,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 + y + x^3)                                    # needs sage.rings.function_field
             sage: v = K.valuation(1/x)                                                  # needs sage.rings.function_field
-            sage: w = v.extension(L) # indirect doctest                                 # needs sage.rings.function_field
+            sage: w = v.extension(L)  # indirect doctest                                # needs sage.rings.function_field
 
         """
         from sage.categories.function_fields import FunctionFields
@@ -453,6 +453,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             return parent.__make_element_class__(FunctionFieldFromLimitValuation)(parent, valuation, domain.polynomial(), extra_args['approximants'])
 
         raise NotImplementedError("valuation on %r from %r on %r" % (domain, valuation, valuation.domain()))
+
 
 FunctionFieldValuation = FunctionFieldValuationFactory("sage.rings.function_field.valuation.FunctionFieldValuation")
 
@@ -570,7 +571,7 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
                         H_extensions = self.extensions(M)
 
                         from sage.rings.morphism import RingHomomorphism_im_gens
-                        if type(y_to_u) == RingHomomorphism_im_gens and type(u_to_y) == RingHomomorphism_im_gens:
+                        if isinstance(y_to_u, RingHomomorphism_im_gens) and isinstance(u_to_y, RingHomomorphism_im_gens):
                             return [L.valuation((w, L.hom([M(y_to_u(y_to_u.domain().gen()))]), M.hom([L(u_to_y(u_to_y.domain().gen()))]))) for w in H_extensions]
                         raise NotImplementedError
                     return [L.valuation(w) for w in self.mac_lane_approximants(L.polynomial(), require_incomparability=True)]
@@ -653,7 +654,7 @@ class ClassicalFunctionFieldValuation_base(DiscreteFunctionFieldValuation_base):
 
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
-            sage: v._test_classical_residue_field()
+            sage: v._test_classical_residue_field()                                     # needs sage.rings.number_field
 
         """
         tester = self._tester(**options)
@@ -773,7 +774,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
-            sage: v.reduce(x)
+            sage: v.reduce(x)                                                           # needs sage.rings.number_field
             u1
 
         """
@@ -804,7 +805,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: K.valuation(x^2 + 1) # indirect doctest
+            sage: K.valuation(x^2 + 1)  # indirect doctest
             (x^2 + 1)-adic valuation
 
         """
@@ -826,6 +827,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
             sage: L.<x> = FunctionField(GaussianIntegers().fraction_field())
@@ -1117,7 +1119,7 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
         sage: K.<x> = FunctionField(QQ)
         sage: R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - (x^2 + x + 1))                                  # needs sage.rings.function_field
-        sage: v = K.valuation(x - 1) # indirect doctest                                 # needs sage.rings.function_field
+        sage: v = K.valuation(x - 1)  # indirect doctest                                # needs sage.rings.function_field
         sage: w = v.extension(L); w                                                     # needs sage.rings.function_field
         (x - 1)-adic valuation
 
@@ -1473,7 +1475,7 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
              [ Valuation at the infinite place, v(y - 1) = 2 ]-adic valuation]
 
         """
-        assert(self.domain().base() is not self.domain())
+        assert (self.domain().base() is not self.domain())
         if repr(self._base_valuation) == repr(self.restriction(self.domain().base())):
             return repr(self._base_valuation)
         return super()._repr_()

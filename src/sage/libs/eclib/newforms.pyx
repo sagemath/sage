@@ -13,7 +13,7 @@ Modular symbols using eclib newforms
 
 from cysignals.signals cimport sig_on, sig_off
 
-from ..eclib cimport *
+from sage.libs.eclib cimport *
 from sage.libs.gmp.mpq cimport mpq_numref
 from sage.libs.ntl.convert cimport mpz_to_ZZ
 from sage.rings.rational_field import QQ

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Algebras
 
@@ -53,12 +54,12 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
 
         sage: from sage.algebras.weyl_algebra import repr_from_monomials
         sage: R.<x,y,z> = QQ[]
-        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]
-        sage: repr_from_monomials(d, lambda m: repr(m))
+        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]                                     # needs sage.symbolic
+        sage: repr_from_monomials(d, lambda m: repr(m))                                 # needs sage.symbolic
         '4/7*z + sqrt(2)*y - 5*x'
-        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a
+        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a                   # needs sage.symbolic
         \frac{4}{7} z + \sqrt{2} y - 5 x
-        sage: type(a)
+        sage: type(a)                                                                   # needs sage.symbolic
         <class 'sage.misc.latex.LatexExpr'>
 
     The zero element::
@@ -90,6 +91,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
 
     Leading minus signs are dealt with appropriately::
 
+        sage: # needs sage.symbolic
         sage: d = [(z, -4/7), (y, -sqrt(2)), (x, -5)]
         sage: repr_from_monomials(d, lambda m: repr(m))
         '-4/7*z - sqrt(2)*y - 5*x'
@@ -211,7 +213,7 @@ def repr_factored(w, latex_output=False):
                 return ''
             denom = ' '.join('\\partial {}{}'.format(latex(g), exp(e))
                              for e, g in zip(k, gens) if e != 0)
-            return ''.join(' \\frac{{\\partial{}}}{{{}}}'.format(exp(total), denom) )
+            return ''.join(' \\frac{{\\partial{}}}{{{}}}'.format(exp(total), denom))
         repr_x = latex
     else:
         def exp(e):
@@ -311,7 +313,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
                     return '1'
                 ret = ' '.join('{}{}'.format(latex(R.gen(i)), exp(power)) if polynomial
                                else '\\partial {}{}'.format(latex(R.gen(i)), exp(power))
-                               for i,power in enumerate(mon) if power > 0)
+                               for i, power in enumerate(mon) if power > 0)
                 if not polynomial:
                     return '\\frac{{\\partial{}}}{{{}}}'.format(exp(total), ret)
                 return ret
@@ -808,9 +810,9 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         """
         NAME = 'DifferentialWeylAlgebra'
         module = 'sage.algebras.weyl_algebra'
-        factor_representation = dict(default=False,
-                 description='Controls whether to factor the differentials out or not in the output representations',
-                 checker=lambda x: x in [True, False])
+        factor_representation = {'default': False,
+                                 'description': 'Controls whether to factor the differentials out or not in the output representations',
+                                 'checker': lambda x: x in [True, False]}
 
     def _element_constructor_(self, x):
         """

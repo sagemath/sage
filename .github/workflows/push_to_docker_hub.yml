@@ -1,0 +1,38 @@
+name: Build Docker images and push to DockerHub
+
+on:
+  workflow_dispatch:
+    # Allow to run manually
+    branches:
+      - 'develop'
+  push:
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
+
+  schedule:
+    # Recover failed runs each Tuesday and Thursday at one o'clock
+    - cron: '0 1 * * 2,4'
+
+jobs:
+  sagemath-dev:
+    uses: ./.github/workflows/docker_hub.yml
+    with:
+      # Build from scratch
+      dockerhub_repository: sagemath-dev
+      dockerfile_target: make-build
+    secrets: inherit
+
+  sagemath:
+    needs: sagemath-dev
+    uses: ./.github/workflows/docker_hub.yml
+    with:
+      # Build from sagemath-dev
+      dockerhub_repository: sagemath
+      dockerfile_target: sagemath
+    secrets: inherit

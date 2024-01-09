@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Hyperelliptic curves over a finite field
 
@@ -644,7 +644,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             # (0:1:0) is a point on the curve
             points = [self.point([K(0), K(1), K(0)], check=True)]
         else:
-            points=[]
+            points = []
         if P.degree() > 2:
             # P(1, y, 0) = r*y + s
             s = P(K(1), K(0), K(0))
@@ -1109,7 +1109,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
                 raise ValueError("Unknown algorithm")
 
         if p <= (2*g+1)*(2*N-1):
-            raise ValueError("p=%d should be greater than (2*g+1)(2*N-1)=%d"%(p,(2*g+1)*(2*N-1)))
+            raise ValueError("p=%d should be greater than (2*g+1)(2*N-1)=%d" % (p,(2*g+1)*(2*N-1)))
 
         if algorithm == 'traces':
             M = self.frobenius_matrix(N=N, algorithm='hypellfrob')
@@ -1535,16 +1535,16 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         #retrieve the function f(x) ,where y^2=f(x)
         f,h = self.hyperelliptic_polynomials()
         #This implementation only deals with h=0
-        if h!=0:
+        if h != 0:
             raise ValueError("E must be of the form y^2 = f(x)")
 
         d = f.degree()
         #this implementation is for odd degree only, even degree will be handled later.
-        if d%2 == 0:
+        if d % 2 == 0:
             raise ValueError("In this implementation the degree of f must be odd")
         #Compute resultant to make sure no repeated roots
-        df=f.derivative()
-        R=df.resultant(f)
+        df = f.derivative()
+        R = df.resultant(f)
         if R == 0:
             raise ValueError("curve is not smooth")
 
@@ -1566,9 +1566,9 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         # compute each row of matrix as list and then M=list of lists(rows)
 
-        M=[]
+        M = []
         for j in range(1,g+1):
-            H=[Coeff[i] for i in range((p*j-1), (p*j-g-1),-1)]
+            H = [Coeff[i] for i in range((p*j-1), (p*j-g-1),-1)]
             M.append(H)
         return matrix(Fq,M), Coeff, g, Fq,p, self
 
@@ -1657,10 +1657,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         # Github Issue #11115: Why shall we waste time by studying
         # the cache manually? We only need to check whether the cached
         # data belong to self.
-        M, Coeffs,g, Fq, p, E= self._Cartier_matrix_cached()
-        if E!=self:
+        M, Coeffs,g, Fq, p, E = self._Cartier_matrix_cached()
+        if E != self:
             self._Cartier_matrix_cached.clear_cache()
-            M, Coeffs,g, Fq, p, E= self._Cartier_matrix_cached()
+            M, Coeffs,g, Fq, p, E = self._Cartier_matrix_cached()
         return M
 
     @cached_method
@@ -1824,10 +1824,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         # from the cache - but apparently it could be
         # that the cached value does not belong to self.
         # So, the easiest is:
-        N, E= self._Hasse_Witt_cached()
-        if E!=self:
+        N, E = self._Hasse_Witt_cached()
+        if E != self:
             self._Hasse_Witt_cached.clear_cache()
-            N, E= self._Hasse_Witt_cached()
+            N, E = self._Hasse_Witt_cached()
         return N
 
     def a_number(self):
@@ -1866,10 +1866,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         # Since Github Issue #11115, there is a special cache for methods
         # that don't accept arguments. The easiest is: Call the cached
         # method, and test whether the last entry is self.
-        M,Coeffs,g, Fq, p,E= self._Cartier_matrix_cached()
+        M,Coeffs,g, Fq, p,E = self._Cartier_matrix_cached()
         if E != self:
             self._Cartier_matrix_cached.clear_cache()
-            M,Coeffs,g, Fq, p,E= self._Cartier_matrix_cached()
+            M,Coeffs,g, Fq, p,E = self._Cartier_matrix_cached()
         return g - rank(M)
 
     def p_rank(self):

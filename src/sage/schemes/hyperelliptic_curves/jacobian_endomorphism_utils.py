@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Some functions regarding geometric endomorphism rings of Jacobians of
 hyperelliptic curves.
@@ -122,7 +121,7 @@ def satisfies_coefficient_condition(g, p):
         return False
     if g[3]*p != g[1]:
         return False
-    if g[2]%p == 0:
+    if g[2] % p == 0:
         return False
     return True
 
