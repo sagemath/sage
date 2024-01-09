@@ -986,7 +986,10 @@ class Polynomial_generic_sparse(Polynomial):
                 implementation = "FLINT"
             else:
                 implementation = "NTL"
-            D = PolynomialRing(S.base_ring(),'x',implementation=implementation)
+            try:
+                D = PolynomialRing(S.base_ring(),'x',implementation=implementation)
+            except ImportError:
+                D = PolynomialRing(S.base_ring(),'x')
             g = D(self).gcd(D(other))
             return S(g)
         elif algorithm == "generic":
