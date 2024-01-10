@@ -3099,7 +3099,7 @@ class FiniteWord_class(Word_class):
         `D_G(w)=|w|+1-g_G(w)-|PAL_G(w)|`, where `PAL_G(w)` denotes the set of
         `G`-palindromic classes of equivalence of factors of `w` (including
         the empty word) and `g_G(w)` is the number of classes of equivalence
-        `\[a\]` such that `a` is a letter, `a` is not equal to `f(a)` for
+        `[a]` such that `a` is a letter, `a` is not equal to `f(a)` for
         every antimorphism `f \in G`, and `a` occurs in `w`.
 
         INPUT:
