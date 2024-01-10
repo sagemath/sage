@@ -978,7 +978,6 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: Z2xZ3 is Z6
             False
 
-
         TESTS::
 
             sage: G, (g0, g1) = AbelianGroup(2, [48, 0]).objgens()
@@ -988,8 +987,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: F = AbelianGroup(3, [2], names='abc')
             sage: list(map(type, F.gens_orders()))
             [<class 'sage.rings.integer.Integer'>,
-            <class 'sage.rings.integer.Integer'>,
-            <class 'sage.rings.integer.Integer'>]
+             <class 'sage.rings.integer.Integer'>,
+             <class 'sage.rings.integer.Integer'>]
         """
         return self._gens_orders
 
@@ -1716,7 +1715,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
 
         invs = H.TorsionSubgroup().AbelianInvariants().sage()
         gens_orders = tuple([ZZ(order_sage) for g in H.GeneratorsOfGroup()
-                    if (order_sage := g.Order().sage()) is not infinity])
+                            if (order_sage := g.Order().sage()) is not infinity])
 
         rank = len([1 for g in H.GeneratorsOfGroup()
                     if g.Order().sage() is infinity])
