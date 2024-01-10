@@ -2375,670 +2375,494 @@
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-bullseye-i386-maximal%2Fdevcontainer.json
 
 .. list-table::
-   :widths: 25 15 60
+   :widths: 30 50 50
    :header-rows: 1
    :stub-columns: 0
 
    * - Platform
-     - System packages
+     - Images
      - 
-   * - **ubuntu**-trusty-toolchain-gcc_9
-     - minimal
-     - |codespace-ubuntu-trusty-toolchain-gcc_9-minimal|
-   * - 
-     - 
+   * - **ubuntu**-trusty-toolchain-gcc_9 
+       
+        ‑*minimal*
      - |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-system-packages| |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets-pre| |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets| |image-ubuntu-trusty-toolchain-gcc_9-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-ubuntu-trusty-toolchain-gcc_9-standard|
-   * - 
-     - 
+     - |codespace-ubuntu-trusty-toolchain-gcc_9-minimal|
+   * -  ‑*standard*
      - |image-ubuntu-trusty-toolchain-gcc_9-standard-with-system-packages| |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets-pre| |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets| |image-ubuntu-trusty-toolchain-gcc_9-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-ubuntu-trusty-toolchain-gcc_9-standard|
+   * -  ‑*maximal*
      - |image-ubuntu-trusty-toolchain-gcc_9-maximal-with-system-packages| |image-ubuntu-trusty-toolchain-gcc_9-maximal-with-targets-pre|
-   * - **ubuntu**-xenial-toolchain-gcc_9
-     - minimal
-     - |codespace-ubuntu-xenial-toolchain-gcc_9-minimal|
-   * - 
-     - 
+     -
+   * - **ubuntu**-xenial-toolchain-gcc_9 
+       
+        ‑*minimal*
      - |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-system-packages| |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets-pre| |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets| |image-ubuntu-xenial-toolchain-gcc_9-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-ubuntu-xenial-toolchain-gcc_9-standard|
-   * - 
-     - 
+     - |codespace-ubuntu-xenial-toolchain-gcc_9-minimal|
+   * -  ‑*standard*
      - |image-ubuntu-xenial-toolchain-gcc_9-standard-with-system-packages| |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets-pre| |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets| |image-ubuntu-xenial-toolchain-gcc_9-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-ubuntu-xenial-toolchain-gcc_9-standard|
+   * -  ‑*maximal*
      - |image-ubuntu-xenial-toolchain-gcc_9-maximal-with-system-packages| |image-ubuntu-xenial-toolchain-gcc_9-maximal-with-targets-pre|
-   * - **ubuntu**-bionic-gcc_8
-     - minimal
-     - |codespace-ubuntu-bionic-gcc_8-minimal|
-   * - 
-     - 
+     -
+   * - **ubuntu**-bionic-gcc_8 
+       
+        ‑*minimal*
      - |image-ubuntu-bionic-gcc_8-minimal-with-system-packages| |image-ubuntu-bionic-gcc_8-minimal-with-targets-pre| |image-ubuntu-bionic-gcc_8-minimal-with-targets| |image-ubuntu-bionic-gcc_8-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-ubuntu-bionic-gcc_8-standard|
-   * - 
-     - 
+     - |codespace-ubuntu-bionic-gcc_8-minimal|
+   * -  ‑*standard*
      - |image-ubuntu-bionic-gcc_8-standard-with-system-packages| |image-ubuntu-bionic-gcc_8-standard-with-targets-pre| |image-ubuntu-bionic-gcc_8-standard-with-targets| |image-ubuntu-bionic-gcc_8-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-ubuntu-bionic-gcc_8-standard|
+   * -  ‑*maximal*
      - |image-ubuntu-bionic-gcc_8-maximal-with-system-packages| |image-ubuntu-bionic-gcc_8-maximal-with-targets-pre|
-   * - **ubuntu**-focal
-     - minimal
-     - |codespace-ubuntu-focal-minimal|
-   * - 
-     - 
+     -
+   * - **ubuntu**-focal 
+       
+        ‑*minimal*
      - |image-ubuntu-focal-minimal-with-system-packages| |image-ubuntu-focal-minimal-with-targets-pre| |image-ubuntu-focal-minimal-with-targets| |image-ubuntu-focal-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-ubuntu-focal-standard|
-   * - 
-     - 
+     - |codespace-ubuntu-focal-minimal|
+   * -  ‑*standard*
      - |image-ubuntu-focal-standard-with-system-packages| |image-ubuntu-focal-standard-with-targets-pre| |image-ubuntu-focal-standard-with-targets| |image-ubuntu-focal-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-ubuntu-focal-standard|
+   * -  ‑*maximal*
      - |image-ubuntu-focal-maximal-with-system-packages| |image-ubuntu-focal-maximal-with-targets-pre|
-   * - **ubuntu**-jammy
-     - minimal
-     - |codespace-ubuntu-jammy-minimal|
-   * - 
-     - 
+     -
+   * - **ubuntu**-jammy 
+       
+        ‑*minimal*
      - |image-ubuntu-jammy-minimal-with-system-packages| |image-ubuntu-jammy-minimal-with-targets-pre| |image-ubuntu-jammy-minimal-with-targets| |image-ubuntu-jammy-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-ubuntu-jammy-standard|
-   * - 
-     - 
+     - |codespace-ubuntu-jammy-minimal|
+   * -  ‑*standard*
      - |image-ubuntu-jammy-standard-with-system-packages| |image-ubuntu-jammy-standard-with-targets-pre| |image-ubuntu-jammy-standard-with-targets| |image-ubuntu-jammy-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-ubuntu-jammy-standard|
+   * -  ‑*maximal*
      - |image-ubuntu-jammy-maximal-with-system-packages| |image-ubuntu-jammy-maximal-with-targets-pre|
-   * - **ubuntu**-lunar
-     - minimal
-     - |codespace-ubuntu-lunar-minimal|
-   * - 
-     - 
+     -
+   * - **ubuntu**-lunar 
+       
+        ‑*minimal*
      - |image-ubuntu-lunar-minimal-with-system-packages| |image-ubuntu-lunar-minimal-with-targets-pre| |image-ubuntu-lunar-minimal-with-targets| |image-ubuntu-lunar-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-ubuntu-lunar-standard|
-   * - 
-     - 
+     - |codespace-ubuntu-lunar-minimal|
+   * -  ‑*standard*
      - |image-ubuntu-lunar-standard-with-system-packages| |image-ubuntu-lunar-standard-with-targets-pre| |image-ubuntu-lunar-standard-with-targets| |image-ubuntu-lunar-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-ubuntu-lunar-standard|
+   * -  ‑*maximal*
      - |image-ubuntu-lunar-maximal-with-system-packages| |image-ubuntu-lunar-maximal-with-targets-pre|
-   * - **ubuntu**-mantic
-     - minimal
-     - |codespace-ubuntu-mantic-minimal|
-   * - 
-     - 
+     -
+   * - **ubuntu**-mantic 
+       
+        ‑*minimal*
      - |image-ubuntu-mantic-minimal-with-system-packages| |image-ubuntu-mantic-minimal-with-targets-pre| |image-ubuntu-mantic-minimal-with-targets| |image-ubuntu-mantic-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-ubuntu-mantic-standard|
-   * - 
-     - 
+     - |codespace-ubuntu-mantic-minimal|
+   * -  ‑*standard*
      - |image-ubuntu-mantic-standard-with-system-packages| |image-ubuntu-mantic-standard-with-targets-pre| |image-ubuntu-mantic-standard-with-targets| |image-ubuntu-mantic-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-ubuntu-mantic-standard|
+   * -  ‑*maximal*
      - |image-ubuntu-mantic-maximal-with-system-packages| |image-ubuntu-mantic-maximal-with-targets-pre|
-   * - **debian**-buster-gcc_spkg
-     - minimal
-     - |codespace-debian-buster-gcc_spkg-minimal|
-   * - 
-     - 
+     -
+   * - **debian**-buster-gcc_spkg 
+       
+        ‑*minimal*
      - |image-debian-buster-gcc_spkg-minimal-with-system-packages| |image-debian-buster-gcc_spkg-minimal-with-targets-pre| |image-debian-buster-gcc_spkg-minimal-with-targets| |image-debian-buster-gcc_spkg-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-debian-buster-gcc_spkg-standard|
-   * - 
-     - 
+     - |codespace-debian-buster-gcc_spkg-minimal|
+   * -  ‑*standard*
      - |image-debian-buster-gcc_spkg-standard-with-system-packages| |image-debian-buster-gcc_spkg-standard-with-targets-pre| |image-debian-buster-gcc_spkg-standard-with-targets| |image-debian-buster-gcc_spkg-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-debian-buster-gcc_spkg-standard|
+   * -  ‑*maximal*
      - |image-debian-buster-gcc_spkg-maximal-with-system-packages| |image-debian-buster-gcc_spkg-maximal-with-targets-pre|
-   * - **debian**-bullseye
-     - minimal
-     - |codespace-debian-bullseye-minimal|
-   * - 
-     - 
+     -
+   * - **debian**-bullseye 
+       
+        ‑*minimal*
      - |image-debian-bullseye-minimal-with-system-packages| |image-debian-bullseye-minimal-with-targets-pre| |image-debian-bullseye-minimal-with-targets| |image-debian-bullseye-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-debian-bullseye-standard|
-   * - 
-     - 
+     - |codespace-debian-bullseye-minimal|
+   * -  ‑*standard*
      - |image-debian-bullseye-standard-with-system-packages| |image-debian-bullseye-standard-with-targets-pre| |image-debian-bullseye-standard-with-targets| |image-debian-bullseye-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-debian-bullseye-standard|
+   * -  ‑*maximal*
      - |image-debian-bullseye-maximal-with-system-packages| |image-debian-bullseye-maximal-with-targets-pre|
-   * - **debian**-bookworm
-     - minimal
-     - |codespace-debian-bookworm-minimal|
-   * - 
-     - 
+     -
+   * - **debian**-bookworm 
+       
+        ‑*minimal*
      - |image-debian-bookworm-minimal-with-system-packages| |image-debian-bookworm-minimal-with-targets-pre| |image-debian-bookworm-minimal-with-targets| |image-debian-bookworm-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-debian-bookworm-standard|
-   * - 
-     - 
+     - |codespace-debian-bookworm-minimal|
+   * -  ‑*standard*
      - |image-debian-bookworm-standard-with-system-packages| |image-debian-bookworm-standard-with-targets-pre| |image-debian-bookworm-standard-with-targets| |image-debian-bookworm-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-debian-bookworm-standard|
+   * -  ‑*maximal*
      - |image-debian-bookworm-maximal-with-system-packages| |image-debian-bookworm-maximal-with-targets-pre|
-   * - **debian**-trixie
-     - minimal
-     - |codespace-debian-trixie-minimal|
-   * - 
-     - 
+     -
+   * - **debian**-trixie 
+       
+        ‑*minimal*
      - |image-debian-trixie-minimal-with-system-packages| |image-debian-trixie-minimal-with-targets-pre| |image-debian-trixie-minimal-with-targets| |image-debian-trixie-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-debian-trixie-standard|
-   * - 
-     - 
+     - |codespace-debian-trixie-minimal|
+   * -  ‑*standard*
      - |image-debian-trixie-standard-with-system-packages| |image-debian-trixie-standard-with-targets-pre| |image-debian-trixie-standard-with-targets| |image-debian-trixie-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-debian-trixie-standard|
+   * -  ‑*maximal*
      - |image-debian-trixie-maximal-with-system-packages| |image-debian-trixie-maximal-with-targets-pre|
-   * - **debian**-sid
-     - minimal
-     - |codespace-debian-sid-minimal|
-   * - 
-     - 
+     -
+   * - **debian**-sid 
+       
+        ‑*minimal*
      - |image-debian-sid-minimal-with-system-packages| |image-debian-sid-minimal-with-targets-pre| |image-debian-sid-minimal-with-targets| |image-debian-sid-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-debian-sid-standard|
-   * - 
-     - 
+     - |codespace-debian-sid-minimal|
+   * -  ‑*standard*
      - |image-debian-sid-standard-with-system-packages| |image-debian-sid-standard-with-targets-pre| |image-debian-sid-standard-with-targets| |image-debian-sid-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-debian-sid-standard|
+   * -  ‑*maximal*
      - |image-debian-sid-maximal-with-system-packages| |image-debian-sid-maximal-with-targets-pre|
-   * - **linuxmint**-20.1
-     - minimal
-     - |codespace-linuxmint-20.1-minimal|
-   * - 
-     - 
+     -
+   * - **linuxmint**-20.1 
+       
+        ‑*minimal*
      - |image-linuxmint-20.1-minimal-with-system-packages| |image-linuxmint-20.1-minimal-with-targets-pre| |image-linuxmint-20.1-minimal-with-targets| |image-linuxmint-20.1-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-linuxmint-20.1-standard|
-   * - 
-     - 
+     - |codespace-linuxmint-20.1-minimal|
+   * -  ‑*standard*
      - |image-linuxmint-20.1-standard-with-system-packages| |image-linuxmint-20.1-standard-with-targets-pre| |image-linuxmint-20.1-standard-with-targets| |image-linuxmint-20.1-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-linuxmint-20.1-standard|
+   * -  ‑*maximal*
      - |image-linuxmint-20.1-maximal-with-system-packages| |image-linuxmint-20.1-maximal-with-targets-pre|
-   * - **linuxmint**-20.2
-     - minimal
-     - |codespace-linuxmint-20.2-minimal|
-   * - 
-     - 
+     -
+   * - **linuxmint**-20.2 
+       
+        ‑*minimal*
      - |image-linuxmint-20.2-minimal-with-system-packages| |image-linuxmint-20.2-minimal-with-targets-pre| |image-linuxmint-20.2-minimal-with-targets| |image-linuxmint-20.2-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-linuxmint-20.2-standard|
-   * - 
-     - 
+     - |codespace-linuxmint-20.2-minimal|
+   * -  ‑*standard*
      - |image-linuxmint-20.2-standard-with-system-packages| |image-linuxmint-20.2-standard-with-targets-pre| |image-linuxmint-20.2-standard-with-targets| |image-linuxmint-20.2-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-linuxmint-20.2-standard|
+   * -  ‑*maximal*
      - |image-linuxmint-20.2-maximal-with-system-packages| |image-linuxmint-20.2-maximal-with-targets-pre|
-   * - **linuxmint**-20.3
-     - minimal
-     - |codespace-linuxmint-20.3-minimal|
-   * - 
-     - 
+     -
+   * - **linuxmint**-20.3 
+       
+        ‑*minimal*
      - |image-linuxmint-20.3-minimal-with-system-packages| |image-linuxmint-20.3-minimal-with-targets-pre| |image-linuxmint-20.3-minimal-with-targets| |image-linuxmint-20.3-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-linuxmint-20.3-standard|
-   * - 
-     - 
+     - |codespace-linuxmint-20.3-minimal|
+   * -  ‑*standard*
      - |image-linuxmint-20.3-standard-with-system-packages| |image-linuxmint-20.3-standard-with-targets-pre| |image-linuxmint-20.3-standard-with-targets| |image-linuxmint-20.3-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-linuxmint-20.3-standard|
+   * -  ‑*maximal*
      - |image-linuxmint-20.3-maximal-with-system-packages| |image-linuxmint-20.3-maximal-with-targets-pre|
-   * - **linuxmint**-21
-     - minimal
-     - |codespace-linuxmint-21-minimal|
-   * - 
-     - 
+     -
+   * - **linuxmint**-21 
+       
+        ‑*minimal*
      - |image-linuxmint-21-minimal-with-system-packages| |image-linuxmint-21-minimal-with-targets-pre| |image-linuxmint-21-minimal-with-targets| |image-linuxmint-21-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-linuxmint-21-standard|
-   * - 
-     - 
+     - |codespace-linuxmint-21-minimal|
+   * -  ‑*standard*
      - |image-linuxmint-21-standard-with-system-packages| |image-linuxmint-21-standard-with-targets-pre| |image-linuxmint-21-standard-with-targets| |image-linuxmint-21-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-linuxmint-21-standard|
+   * -  ‑*maximal*
      - |image-linuxmint-21-maximal-with-system-packages| |image-linuxmint-21-maximal-with-targets-pre|
-   * - **linuxmint**-21.1
-     - minimal
-     - |codespace-linuxmint-21.1-minimal|
-   * - 
-     - 
+     -
+   * - **linuxmint**-21.1 
+       
+        ‑*minimal*
      - |image-linuxmint-21.1-minimal-with-system-packages| |image-linuxmint-21.1-minimal-with-targets-pre| |image-linuxmint-21.1-minimal-with-targets| |image-linuxmint-21.1-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-linuxmint-21.1-standard|
-   * - 
-     - 
+     - |codespace-linuxmint-21.1-minimal|
+   * -  ‑*standard*
      - |image-linuxmint-21.1-standard-with-system-packages| |image-linuxmint-21.1-standard-with-targets-pre| |image-linuxmint-21.1-standard-with-targets| |image-linuxmint-21.1-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-linuxmint-21.1-standard|
+   * -  ‑*maximal*
      - |image-linuxmint-21.1-maximal-with-system-packages| |image-linuxmint-21.1-maximal-with-targets-pre|
-   * - **linuxmint**-21.2
-     - minimal
-     - |codespace-linuxmint-21.2-minimal|
-   * - 
-     - 
+     -
+   * - **linuxmint**-21.2 
+       
+        ‑*minimal*
      - |image-linuxmint-21.2-minimal-with-system-packages| |image-linuxmint-21.2-minimal-with-targets-pre| |image-linuxmint-21.2-minimal-with-targets| |image-linuxmint-21.2-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-linuxmint-21.2-standard|
-   * - 
-     - 
+     - |codespace-linuxmint-21.2-minimal|
+   * -  ‑*standard*
      - |image-linuxmint-21.2-standard-with-system-packages| |image-linuxmint-21.2-standard-with-targets-pre| |image-linuxmint-21.2-standard-with-targets| |image-linuxmint-21.2-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-linuxmint-21.2-standard|
+   * -  ‑*maximal*
      - |image-linuxmint-21.2-maximal-with-system-packages| |image-linuxmint-21.2-maximal-with-targets-pre|
-   * - **fedora**-30
-     - minimal
-     - |codespace-fedora-30-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-30 
+       
+        ‑*minimal*
      - |image-fedora-30-minimal-with-system-packages| |image-fedora-30-minimal-with-targets-pre| |image-fedora-30-minimal-with-targets| |image-fedora-30-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-30-standard|
-   * - 
-     - 
+     - |codespace-fedora-30-minimal|
+   * -  ‑*standard*
      - |image-fedora-30-standard-with-system-packages| |image-fedora-30-standard-with-targets-pre| |image-fedora-30-standard-with-targets| |image-fedora-30-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-30-standard|
+   * -  ‑*maximal*
      - |image-fedora-30-maximal-with-system-packages| |image-fedora-30-maximal-with-targets-pre|
-   * - **fedora**-31
-     - minimal
-     - |codespace-fedora-31-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-31 
+       
+        ‑*minimal*
      - |image-fedora-31-minimal-with-system-packages| |image-fedora-31-minimal-with-targets-pre| |image-fedora-31-minimal-with-targets| |image-fedora-31-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-31-standard|
-   * - 
-     - 
+     - |codespace-fedora-31-minimal|
+   * -  ‑*standard*
      - |image-fedora-31-standard-with-system-packages| |image-fedora-31-standard-with-targets-pre| |image-fedora-31-standard-with-targets| |image-fedora-31-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-31-standard|
+   * -  ‑*maximal*
      - |image-fedora-31-maximal-with-system-packages| |image-fedora-31-maximal-with-targets-pre|
-   * - **fedora**-32
-     - minimal
-     - |codespace-fedora-32-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-32 
+       
+        ‑*minimal*
      - |image-fedora-32-minimal-with-system-packages| |image-fedora-32-minimal-with-targets-pre| |image-fedora-32-minimal-with-targets| |image-fedora-32-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-32-standard|
-   * - 
-     - 
+     - |codespace-fedora-32-minimal|
+   * -  ‑*standard*
      - |image-fedora-32-standard-with-system-packages| |image-fedora-32-standard-with-targets-pre| |image-fedora-32-standard-with-targets| |image-fedora-32-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-32-standard|
+   * -  ‑*maximal*
      - |image-fedora-32-maximal-with-system-packages| |image-fedora-32-maximal-with-targets-pre|
-   * - **fedora**-33
-     - minimal
-     - |codespace-fedora-33-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-33 
+       
+        ‑*minimal*
      - |image-fedora-33-minimal-with-system-packages| |image-fedora-33-minimal-with-targets-pre| |image-fedora-33-minimal-with-targets| |image-fedora-33-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-33-standard|
-   * - 
-     - 
+     - |codespace-fedora-33-minimal|
+   * -  ‑*standard*
      - |image-fedora-33-standard-with-system-packages| |image-fedora-33-standard-with-targets-pre| |image-fedora-33-standard-with-targets| |image-fedora-33-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-33-standard|
+   * -  ‑*maximal*
      - |image-fedora-33-maximal-with-system-packages| |image-fedora-33-maximal-with-targets-pre|
-   * - **fedora**-34
-     - minimal
-     - |codespace-fedora-34-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-34 
+       
+        ‑*minimal*
      - |image-fedora-34-minimal-with-system-packages| |image-fedora-34-minimal-with-targets-pre| |image-fedora-34-minimal-with-targets| |image-fedora-34-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-34-standard|
-   * - 
-     - 
+     - |codespace-fedora-34-minimal|
+   * -  ‑*standard*
      - |image-fedora-34-standard-with-system-packages| |image-fedora-34-standard-with-targets-pre| |image-fedora-34-standard-with-targets| |image-fedora-34-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-34-standard|
+   * -  ‑*maximal*
      - |image-fedora-34-maximal-with-system-packages| |image-fedora-34-maximal-with-targets-pre|
-   * - **fedora**-35
-     - minimal
-     - |codespace-fedora-35-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-35 
+       
+        ‑*minimal*
      - |image-fedora-35-minimal-with-system-packages| |image-fedora-35-minimal-with-targets-pre| |image-fedora-35-minimal-with-targets| |image-fedora-35-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-35-standard|
-   * - 
-     - 
+     - |codespace-fedora-35-minimal|
+   * -  ‑*standard*
      - |image-fedora-35-standard-with-system-packages| |image-fedora-35-standard-with-targets-pre| |image-fedora-35-standard-with-targets| |image-fedora-35-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-35-standard|
+   * -  ‑*maximal*
      - |image-fedora-35-maximal-with-system-packages| |image-fedora-35-maximal-with-targets-pre|
-   * - **fedora**-36
-     - minimal
-     - |codespace-fedora-36-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-36 
+       
+        ‑*minimal*
      - |image-fedora-36-minimal-with-system-packages| |image-fedora-36-minimal-with-targets-pre| |image-fedora-36-minimal-with-targets| |image-fedora-36-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-36-standard|
-   * - 
-     - 
+     - |codespace-fedora-36-minimal|
+   * -  ‑*standard*
      - |image-fedora-36-standard-with-system-packages| |image-fedora-36-standard-with-targets-pre| |image-fedora-36-standard-with-targets| |image-fedora-36-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-36-standard|
+   * -  ‑*maximal*
      - |image-fedora-36-maximal-with-system-packages| |image-fedora-36-maximal-with-targets-pre|
-   * - **fedora**-37
-     - minimal
-     - |codespace-fedora-37-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-37 
+       
+        ‑*minimal*
      - |image-fedora-37-minimal-with-system-packages| |image-fedora-37-minimal-with-targets-pre| |image-fedora-37-minimal-with-targets| |image-fedora-37-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-37-standard|
-   * - 
-     - 
+     - |codespace-fedora-37-minimal|
+   * -  ‑*standard*
      - |image-fedora-37-standard-with-system-packages| |image-fedora-37-standard-with-targets-pre| |image-fedora-37-standard-with-targets| |image-fedora-37-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-37-standard|
+   * -  ‑*maximal*
      - |image-fedora-37-maximal-with-system-packages| |image-fedora-37-maximal-with-targets-pre|
-   * - **fedora**-38
-     - minimal
-     - |codespace-fedora-38-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-38 
+       
+        ‑*minimal*
      - |image-fedora-38-minimal-with-system-packages| |image-fedora-38-minimal-with-targets-pre| |image-fedora-38-minimal-with-targets| |image-fedora-38-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-38-standard|
-   * - 
-     - 
+     - |codespace-fedora-38-minimal|
+   * -  ‑*standard*
      - |image-fedora-38-standard-with-system-packages| |image-fedora-38-standard-with-targets-pre| |image-fedora-38-standard-with-targets| |image-fedora-38-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-38-standard|
+   * -  ‑*maximal*
      - |image-fedora-38-maximal-with-system-packages| |image-fedora-38-maximal-with-targets-pre|
-   * - **fedora**-39
-     - minimal
-     - |codespace-fedora-39-minimal|
-   * - 
-     - 
+     -
+   * - **fedora**-39 
+       
+        ‑*minimal*
      - |image-fedora-39-minimal-with-system-packages| |image-fedora-39-minimal-with-targets-pre| |image-fedora-39-minimal-with-targets| |image-fedora-39-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-fedora-39-standard|
-   * - 
-     - 
+     - |codespace-fedora-39-minimal|
+   * -  ‑*standard*
      - |image-fedora-39-standard-with-system-packages| |image-fedora-39-standard-with-targets-pre| |image-fedora-39-standard-with-targets| |image-fedora-39-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-fedora-39-standard|
+   * -  ‑*maximal*
      - |image-fedora-39-maximal-with-system-packages| |image-fedora-39-maximal-with-targets-pre|
-   * - **centos**-7-devtoolset-gcc_11
-     - minimal
-     - |codespace-centos-7-devtoolset-gcc_11-minimal|
-   * - 
-     - 
+     -
+   * - **centos**-7-devtoolset-gcc_11 
+       
+        ‑*minimal*
      - |image-centos-7-devtoolset-gcc_11-minimal-with-system-packages| |image-centos-7-devtoolset-gcc_11-minimal-with-targets-pre| |image-centos-7-devtoolset-gcc_11-minimal-with-targets| |image-centos-7-devtoolset-gcc_11-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-centos-7-devtoolset-gcc_11-standard|
-   * - 
-     - 
+     - |codespace-centos-7-devtoolset-gcc_11-minimal|
+   * -  ‑*standard*
      - |image-centos-7-devtoolset-gcc_11-standard-with-system-packages| |image-centos-7-devtoolset-gcc_11-standard-with-targets-pre| |image-centos-7-devtoolset-gcc_11-standard-with-targets| |image-centos-7-devtoolset-gcc_11-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-centos-7-devtoolset-gcc_11-standard|
+   * -  ‑*maximal*
      - |image-centos-7-devtoolset-gcc_11-maximal-with-system-packages| |image-centos-7-devtoolset-gcc_11-maximal-with-targets-pre|
-   * - **centos**-stream-8-python3.9
-     - minimal
-     - |codespace-centos-stream-8-python3.9-minimal|
-   * - 
-     - 
+     -
+   * - **centos**-stream-8-python3.9 
+       
+        ‑*minimal*
      - |image-centos-stream-8-python3.9-minimal-with-system-packages| |image-centos-stream-8-python3.9-minimal-with-targets-pre| |image-centos-stream-8-python3.9-minimal-with-targets| |image-centos-stream-8-python3.9-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-centos-stream-8-python3.9-standard|
-   * - 
-     - 
+     - |codespace-centos-stream-8-python3.9-minimal|
+   * -  ‑*standard*
      - |image-centos-stream-8-python3.9-standard-with-system-packages| |image-centos-stream-8-python3.9-standard-with-targets-pre| |image-centos-stream-8-python3.9-standard-with-targets| |image-centos-stream-8-python3.9-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-centos-stream-8-python3.9-standard|
+   * -  ‑*maximal*
      - |image-centos-stream-8-python3.9-maximal-with-system-packages| |image-centos-stream-8-python3.9-maximal-with-targets-pre|
-   * - **centos**-stream-9-python3.9
-     - minimal
-     - |codespace-centos-stream-9-python3.9-minimal|
-   * - 
-     - 
+     -
+   * - **centos**-stream-9-python3.9 
+       
+        ‑*minimal*
      - |image-centos-stream-9-python3.9-minimal-with-system-packages| |image-centos-stream-9-python3.9-minimal-with-targets-pre| |image-centos-stream-9-python3.9-minimal-with-targets| |image-centos-stream-9-python3.9-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-centos-stream-9-python3.9-standard|
-   * - 
-     - 
+     - |codespace-centos-stream-9-python3.9-minimal|
+   * -  ‑*standard*
      - |image-centos-stream-9-python3.9-standard-with-system-packages| |image-centos-stream-9-python3.9-standard-with-targets-pre| |image-centos-stream-9-python3.9-standard-with-targets| |image-centos-stream-9-python3.9-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-centos-stream-9-python3.9-standard|
+   * -  ‑*maximal*
      - |image-centos-stream-9-python3.9-maximal-with-system-packages| |image-centos-stream-9-python3.9-maximal-with-targets-pre|
-   * - **almalinux**-8-python3.9
-     - minimal
-     - |codespace-almalinux-8-python3.9-minimal|
-   * - 
-     - 
+     -
+   * - **almalinux**-8-python3.9 
+       
+        ‑*minimal*
      - |image-almalinux-8-python3.9-minimal-with-system-packages| |image-almalinux-8-python3.9-minimal-with-targets-pre| |image-almalinux-8-python3.9-minimal-with-targets| |image-almalinux-8-python3.9-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-almalinux-8-python3.9-standard|
-   * - 
-     - 
+     - |codespace-almalinux-8-python3.9-minimal|
+   * -  ‑*standard*
      - |image-almalinux-8-python3.9-standard-with-system-packages| |image-almalinux-8-python3.9-standard-with-targets-pre| |image-almalinux-8-python3.9-standard-with-targets| |image-almalinux-8-python3.9-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-almalinux-8-python3.9-standard|
+   * -  ‑*maximal*
      - |image-almalinux-8-python3.9-maximal-with-system-packages| |image-almalinux-8-python3.9-maximal-with-targets-pre|
-   * - **almalinux**-9-python3.11
-     - minimal
-     - |codespace-almalinux-9-python3.11-minimal|
-   * - 
-     - 
+     -
+   * - **almalinux**-9-python3.11 
+       
+        ‑*minimal*
      - |image-almalinux-9-python3.11-minimal-with-system-packages| |image-almalinux-9-python3.11-minimal-with-targets-pre| |image-almalinux-9-python3.11-minimal-with-targets| |image-almalinux-9-python3.11-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-almalinux-9-python3.11-standard|
-   * - 
-     - 
+     - |codespace-almalinux-9-python3.11-minimal|
+   * -  ‑*standard*
      - |image-almalinux-9-python3.11-standard-with-system-packages| |image-almalinux-9-python3.11-standard-with-targets-pre| |image-almalinux-9-python3.11-standard-with-targets| |image-almalinux-9-python3.11-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-almalinux-9-python3.11-standard|
+   * -  ‑*maximal*
      - |image-almalinux-9-python3.11-maximal-with-system-packages| |image-almalinux-9-python3.11-maximal-with-targets-pre|
-   * - **gentoo**-python3.10
-     - minimal
-     - |codespace-gentoo-python3.10-minimal|
-   * - 
-     - 
+     -
+   * - **gentoo**-python3.10 
+       
+        ‑*minimal*
      - |image-gentoo-python3.10-minimal-with-system-packages| |image-gentoo-python3.10-minimal-with-targets-pre| |image-gentoo-python3.10-minimal-with-targets| |image-gentoo-python3.10-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-gentoo-python3.10-standard|
-   * - 
-     - 
+     - |codespace-gentoo-python3.10-minimal|
+   * -  ‑*standard*
      - |image-gentoo-python3.10-standard-with-system-packages| |image-gentoo-python3.10-standard-with-targets-pre| |image-gentoo-python3.10-standard-with-targets| |image-gentoo-python3.10-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-gentoo-python3.10-standard|
+   * -  ‑*maximal*
      - |image-gentoo-python3.10-maximal-with-system-packages| |image-gentoo-python3.10-maximal-with-targets-pre|
-   * - **gentoo**-python3.11
-     - minimal
-     - |codespace-gentoo-python3.11-minimal|
-   * - 
-     - 
+     -
+   * - **gentoo**-python3.11 
+       
+        ‑*minimal*
      - |image-gentoo-python3.11-minimal-with-system-packages| |image-gentoo-python3.11-minimal-with-targets-pre| |image-gentoo-python3.11-minimal-with-targets| |image-gentoo-python3.11-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-gentoo-python3.11-standard|
-   * - 
-     - 
+     - |codespace-gentoo-python3.11-minimal|
+   * -  ‑*standard*
      - |image-gentoo-python3.11-standard-with-system-packages| |image-gentoo-python3.11-standard-with-targets-pre| |image-gentoo-python3.11-standard-with-targets| |image-gentoo-python3.11-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-gentoo-python3.11-standard|
+   * -  ‑*maximal*
      - |image-gentoo-python3.11-maximal-with-system-packages| |image-gentoo-python3.11-maximal-with-targets-pre|
-   * - **archlinux**-latest
-     - minimal
-     - |codespace-archlinux-latest-minimal|
-   * - 
-     - 
+     -
+   * - **archlinux**-latest 
+       
+        ‑*minimal*
      - |image-archlinux-latest-minimal-with-system-packages| |image-archlinux-latest-minimal-with-targets-pre| |image-archlinux-latest-minimal-with-targets| |image-archlinux-latest-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-archlinux-latest-standard|
-   * - 
-     - 
+     - |codespace-archlinux-latest-minimal|
+   * -  ‑*standard*
      - |image-archlinux-latest-standard-with-system-packages| |image-archlinux-latest-standard-with-targets-pre| |image-archlinux-latest-standard-with-targets| |image-archlinux-latest-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-archlinux-latest-standard|
+   * -  ‑*maximal*
      - |image-archlinux-latest-maximal-with-system-packages| |image-archlinux-latest-maximal-with-targets-pre|
-   * - **opensuse**-15.3-gcc_11-python3.9
-     - minimal
-     - |codespace-opensuse-15.3-gcc_11-python3.9-minimal|
-   * - 
-     - 
+     -
+   * - **opensuse**-15.3-gcc_11-python3.9 
+       
+        ‑*minimal*
      - |image-opensuse-15.3-gcc_11-python3.9-minimal-with-system-packages| |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets-pre| |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets| |image-opensuse-15.3-gcc_11-python3.9-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-opensuse-15.3-gcc_11-python3.9-standard|
-   * - 
-     - 
+     - |codespace-opensuse-15.3-gcc_11-python3.9-minimal|
+   * -  ‑*standard*
      - |image-opensuse-15.3-gcc_11-python3.9-standard-with-system-packages| |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets-pre| |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets| |image-opensuse-15.3-gcc_11-python3.9-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-opensuse-15.3-gcc_11-python3.9-standard|
+   * -  ‑*maximal*
      - |image-opensuse-15.3-gcc_11-python3.9-maximal-with-system-packages| |image-opensuse-15.3-gcc_11-python3.9-maximal-with-targets-pre|
-   * - **opensuse**-15.4-gcc_11-python3.10
-     - minimal
-     - |codespace-opensuse-15.4-gcc_11-python3.10-minimal|
-   * - 
-     - 
+     -
+   * - **opensuse**-15.4-gcc_11-python3.10 
+       
+        ‑*minimal*
      - |image-opensuse-15.4-gcc_11-python3.10-minimal-with-system-packages| |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets-pre| |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets| |image-opensuse-15.4-gcc_11-python3.10-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-opensuse-15.4-gcc_11-python3.10-standard|
-   * - 
-     - 
+     - |codespace-opensuse-15.4-gcc_11-python3.10-minimal|
+   * -  ‑*standard*
      - |image-opensuse-15.4-gcc_11-python3.10-standard-with-system-packages| |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets-pre| |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets| |image-opensuse-15.4-gcc_11-python3.10-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-opensuse-15.4-gcc_11-python3.10-standard|
+   * -  ‑*maximal*
      - |image-opensuse-15.4-gcc_11-python3.10-maximal-with-system-packages| |image-opensuse-15.4-gcc_11-python3.10-maximal-with-targets-pre|
-   * - **opensuse**-15.5-gcc_11-python3.11
-     - minimal
-     - |codespace-opensuse-15.5-gcc_11-python3.11-minimal|
-   * - 
-     - 
+     -
+   * - **opensuse**-15.5-gcc_11-python3.11 
+       
+        ‑*minimal*
      - |image-opensuse-15.5-gcc_11-python3.11-minimal-with-system-packages| |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets-pre| |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets| |image-opensuse-15.5-gcc_11-python3.11-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-opensuse-15.5-gcc_11-python3.11-standard|
-   * - 
-     - 
+     - |codespace-opensuse-15.5-gcc_11-python3.11-minimal|
+   * -  ‑*standard*
      - |image-opensuse-15.5-gcc_11-python3.11-standard-with-system-packages| |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets-pre| |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets| |image-opensuse-15.5-gcc_11-python3.11-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-opensuse-15.5-gcc_11-python3.11-standard|
+   * -  ‑*maximal*
      - |image-opensuse-15.5-gcc_11-python3.11-maximal-with-system-packages| |image-opensuse-15.5-gcc_11-python3.11-maximal-with-targets-pre|
-   * - **opensuse**-tumbleweed-python3.10
-     - minimal
-     - |codespace-opensuse-tumbleweed-python3.10-minimal|
-   * - 
-     - 
+     -
+   * - **opensuse**-tumbleweed-python3.10 
+       
+        ‑*minimal*
      - |image-opensuse-tumbleweed-python3.10-minimal-with-system-packages| |image-opensuse-tumbleweed-python3.10-minimal-with-targets-pre| |image-opensuse-tumbleweed-python3.10-minimal-with-targets| |image-opensuse-tumbleweed-python3.10-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-opensuse-tumbleweed-python3.10-standard|
-   * - 
-     - 
+     - |codespace-opensuse-tumbleweed-python3.10-minimal|
+   * -  ‑*standard*
      - |image-opensuse-tumbleweed-python3.10-standard-with-system-packages| |image-opensuse-tumbleweed-python3.10-standard-with-targets-pre| |image-opensuse-tumbleweed-python3.10-standard-with-targets| |image-opensuse-tumbleweed-python3.10-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-opensuse-tumbleweed-python3.10-standard|
+   * -  ‑*maximal*
      - |image-opensuse-tumbleweed-python3.10-maximal-with-system-packages| |image-opensuse-tumbleweed-python3.10-maximal-with-targets-pre|
-   * - **opensuse**-tumbleweed
-     - minimal
-     - |codespace-opensuse-tumbleweed-minimal|
-   * - 
-     - 
+     -
+   * - **opensuse**-tumbleweed 
+       
+        ‑*minimal*
      - |image-opensuse-tumbleweed-minimal-with-system-packages| |image-opensuse-tumbleweed-minimal-with-targets-pre| |image-opensuse-tumbleweed-minimal-with-targets| |image-opensuse-tumbleweed-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-opensuse-tumbleweed-standard|
-   * - 
-     - 
+     - |codespace-opensuse-tumbleweed-minimal|
+   * -  ‑*standard*
      - |image-opensuse-tumbleweed-standard-with-system-packages| |image-opensuse-tumbleweed-standard-with-targets-pre| |image-opensuse-tumbleweed-standard-with-targets| |image-opensuse-tumbleweed-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-opensuse-tumbleweed-standard|
+   * -  ‑*maximal*
      - |image-opensuse-tumbleweed-maximal-with-system-packages| |image-opensuse-tumbleweed-maximal-with-targets-pre|
-   * - **conda**-forge-python3.11
-     - minimal
-     - |codespace-conda-forge-python3.11-minimal|
-   * - 
-     - 
+     -
+   * - **conda**-forge-python3.11 
+       
+        ‑*minimal*
      - |image-conda-forge-python3.11-minimal-with-system-packages| |image-conda-forge-python3.11-minimal-with-targets-pre| |image-conda-forge-python3.11-minimal-with-targets| |image-conda-forge-python3.11-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-conda-forge-python3.11-standard|
-   * - 
-     - 
+     - |codespace-conda-forge-python3.11-minimal|
+   * -  ‑*standard*
      - |image-conda-forge-python3.11-standard-with-system-packages| |image-conda-forge-python3.11-standard-with-targets-pre| |image-conda-forge-python3.11-standard-with-targets| |image-conda-forge-python3.11-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-conda-forge-python3.11-standard|
+   * -  ‑*maximal*
      - |image-conda-forge-python3.11-maximal-with-system-packages| |image-conda-forge-python3.11-maximal-with-targets-pre|
-   * - **ubuntu**-bionic-gcc_8-i386
-     - minimal
-     - |codespace-ubuntu-bionic-gcc_8-i386-minimal|
-   * - 
-     - 
+     -
+   * - **ubuntu**-bionic-gcc_8-i386 
+       
+        ‑*minimal*
      - |image-ubuntu-bionic-gcc_8-i386-minimal-with-system-packages| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-pre| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets| |image-ubuntu-bionic-gcc_8-i386-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-ubuntu-bionic-gcc_8-i386-standard|
-   * - 
-     - 
+     - |codespace-ubuntu-bionic-gcc_8-i386-minimal|
+   * -  ‑*standard*
      - |image-ubuntu-bionic-gcc_8-i386-standard-with-system-packages| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-pre| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets| |image-ubuntu-bionic-gcc_8-i386-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-ubuntu-bionic-gcc_8-i386-standard|
+   * -  ‑*maximal*
      - |image-ubuntu-bionic-gcc_8-i386-maximal-with-system-packages| |image-ubuntu-bionic-gcc_8-i386-maximal-with-targets-pre|
-   * - **debian**-bullseye-i386
-     - minimal
-     - |codespace-debian-bullseye-i386-minimal|
-   * - 
-     - 
+     -
+   * - **debian**-bullseye-i386 
+       
+        ‑*minimal*
      - |image-debian-bullseye-i386-minimal-with-system-packages| |image-debian-bullseye-i386-minimal-with-targets-pre| |image-debian-bullseye-i386-minimal-with-targets| |image-debian-bullseye-i386-minimal-with-targets-optional|
-   * - 
-     - standard
-     - |codespace-debian-bullseye-i386-standard|
-   * - 
-     - 
+     - |codespace-debian-bullseye-i386-minimal|
+   * -  ‑*standard*
      - |image-debian-bullseye-i386-standard-with-system-packages| |image-debian-bullseye-i386-standard-with-targets-pre| |image-debian-bullseye-i386-standard-with-targets| |image-debian-bullseye-i386-standard-with-targets-optional|
-   * - 
-     - maximal
+     - |codespace-debian-bullseye-i386-standard|
+   * -  ‑*maximal*
      - |image-debian-bullseye-i386-maximal-with-system-packages| |image-debian-bullseye-i386-maximal-with-targets-pre|
+     -
