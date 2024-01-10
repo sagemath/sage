@@ -41,7 +41,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
     @lazy_attribute
     def _gens(self):
         """
-        Return the generators of this Galois group as permutations of the roots.
+        The generators of this Galois group as permutations of the roots.
 
         It is important that this be computed lazily, since it is
         often possible to compute other attributes (such as the order
@@ -84,7 +84,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
     @lazy_attribute
     def _deg(self):
         r"""
-        Return the number of moved points in the permutation representation.
+        The number of moved points in the permutation representation.
 
         This will be the degree of the original number field if `_gc_numbering``
         is ``False``, or the degree of the Galois closure otherwise.
@@ -112,7 +112,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
     @lazy_attribute
     def _domain(self):
         r"""
-        Return the integers labeling the roots on which this Galois group acts.
+        The integers labeling the roots on which this Galois group acts.
 
         EXAMPLES::
 
@@ -131,7 +131,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
     @lazy_attribute
     def _domain_to_gap(self) -> dict:
         r"""
-        Return the dictionary implementing the identity (used by PermutationGroup_generic).
+        The dictionary implementing the identity (used by PermutationGroup_generic).
 
         EXAMPLES::
 
@@ -146,7 +146,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
     @lazy_attribute
     def _domain_from_gap(self) -> dict:
         r"""
-        Return the dictionary implementing the identity (used by PermutationGroup_generic).
+        The dictionary implementing the identity (used by PermutationGroup_generic).
 
         EXAMPLES::
 
