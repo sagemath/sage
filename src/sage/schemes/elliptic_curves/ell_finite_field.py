@@ -72,7 +72,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
         sage: E.category()
-        Category of schemes over Ring of integers modulo 101
+        Category of abelian varieties over Ring of integers modulo 101
 
     Elliptic curves over `\ZZ/N\ZZ` with `N` composite are of type
     "generic elliptic curve"::

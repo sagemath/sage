@@ -28,6 +28,28 @@ from . import ell_generic
 
 class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
 
+    def __init__(self, R, data, category=None):
+        r"""
+        Constructor for elliptic curves over fields.
+
+        Identical to the constructor for elliptic curves over
+        general rings, except for setting the default category
+        to :class:`AbelianVarieties`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(QQ, [1,1])
+            sage: E.category()
+            Category of abelian varieties over Rational Field
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: E.category()
+            Category of abelian varieties over Finite Field of size 101
+        """
+        from sage.categories.schemes import AbelianVarieties
+        if category is None:
+            category = AbelianVarieties(R)
+        super().__init__(R, data, category=category)
+
     base_field = ell_generic.EllipticCurve_generic.base_ring
 
     _point = EllipticCurvePoint_field

@@ -121,7 +121,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
     """
-    def __init__(self, K, ainvs):
+    def __init__(self, K, ainvs, category=None):
         r"""
         Construct an elliptic curve from Weierstrass `a`-coefficients.
 
@@ -167,7 +167,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         a1, a2, a3, a4, a6 = ainvs
         f = y**2*z + (a1*x + a3*z)*y*z \
             - (x**3 + a2*x**2*z + a4*x*z**2 + a6*z**3)
-        plane_curve.ProjectivePlaneCurve.__init__(self, PP, f)
+        plane_curve.ProjectivePlaneCurve.__init__(self, PP, f, category=category)
 
         self.__divpolys = ({}, {}, {})
 
