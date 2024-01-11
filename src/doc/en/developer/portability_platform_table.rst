@@ -2835,10 +2835,7 @@
      -
    * - **conda**-forge-python3.11 
        
-          ‑*minimal*
-     - |image-conda-forge-python3.11-minimal-with-system-packages| |image-conda-forge-python3.11-minimal-with-targets-pre| |image-conda-forge-python3.11-minimal-with-targets| |image-conda-forge-python3.11-minimal-with-targets-optional|
-     - |codespace-conda-forge-python3.11-minimal|
-   * -    ‑*standard*
+          ‑*standard*
      - |image-conda-forge-python3.11-standard-with-system-packages| |image-conda-forge-python3.11-standard-with-targets-pre| |image-conda-forge-python3.11-standard-with-targets| |image-conda-forge-python3.11-standard-with-targets-optional|
      - |codespace-conda-forge-python3.11-standard|
    * -    ‑*maximal*
