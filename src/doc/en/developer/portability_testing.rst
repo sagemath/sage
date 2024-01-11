@@ -60,29 +60,24 @@ Make sure that your Docker client is configured to provide enough RAM
 to the containers (8 GB are a good choice). In Docker Desktop this
 setting is in Preferences -> Resources -> Advanced.
 
-As an alternative, you can also run Docker in GitHub Codespaces
-(or another cloud service) using a container with the Docker-in-Docker
-feature. Sage provides a suitable dev container configuration
-`.devcontainer/tox-docker-in-docker
-<https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_.
+.. NOTE::
 
-.. only:: html
+   All examples in this section were obtained using Docker Desktop for
+   Mac; but the `command-line user interface
+   <https://docs.docker.com/engine/reference/commandline/cli/>`_ for the
+   other platforms is identical.
 
-   .. |codespace-tox-docker-in-docker| image:: https://github.com/codespaces/badge.svg
-      :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Ftox-docker-in-docker%2Fdevcontainer.json
+   As an alternative, you can also run Docker in GitHub Codespaces
+   (or another cloud service) using a container with the Docker-in-Docker
+   feature. Sage provides a suitable dev container configuration
+   `.devcontainer/tox-docker-in-docker
+   <https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_:
 
-   .. list-table::
-      :widths: 25 60
-      :header-rows: 0
+   .. ONLY:: html
 
-      * - `tox-docker-in-docker
-          <https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_
-        - |codespace-tox-docker-in-docker|
-
-All examples in this section were obtained using Docker Desktop for
-Mac; but the `command-line user interface
-<https://docs.docker.com/engine/reference/commandline/cli/>`_ for the
-other platforms is identical.
+      .. image:: https://github.com/codespaces/badge.svg
+         :align: center
+         :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Ftox-docker-in-docker%2Fdevcontainer.json
 
 All major Linux distributions provide ready-to-use Docker images,
 which are published via `Docker Hub <https://hub.docker.com>`_
