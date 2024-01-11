@@ -1563,36 +1563,37 @@ class Stream_uninitialized(Stream):
             while True:
                 ao = eq._approximate_order
                 coeff = eq[ao]
-                if not coeff:
-                    # it may or may not be the case that the
-                    # _approximate_order is advanced by __getitem__
-                    if eq._approximate_order == ao:
-                        eq._approximate_order += 1
-                    continue
-                if coeff.parent() is self._PFF:
-                    coeff = coeff.numerator()
-                else:
-                    coeff = self._P(coeff)
-                V = coeff.variables()
-                if not V:
-                    if len(self._eqs) == 1:
-                        raise ValueError(f"no solution as {coeff} != 0 in the equation at degree {eq._approximate_order}")
-                    raise ValueError(f"no solution as {coeff} != 0 in equation {i} at degree {eq._approximate_order}")
-                if coeff.degree() <= 1:
-                    coeffs.append(coeff)
-                elif coeff.is_monomial() and sum(1 for d in coeff.degrees() if d):
-                    # if we have a single variable, we can remove the
-                    # exponent - maybe we could also remove the
-                    # coefficient - are we computing in an integral
-                    # domain?
-                    c = coeff.coefficients()[0]
-                    v = InfinitePolynomial_dense(self._P, coeff.variables()[0])
-                    coeffs.append(c * v)
-                else:
-                    # nonlinear equations must not be discarded, we
-                    # keep them to improve any error messages
-                    non_linear_coeffs.append(coeff)
-                break
+                if coeff:
+                    break
+                # it may or may not be the case that the
+                # _approximate_order is advanced by __getitem__
+                if eq._approximate_order == ao:
+                    eq._approximate_order += 1
+
+            if coeff.parent() is self._PFF:
+                coeff = coeff.numerator()
+            else:
+                coeff = self._P(coeff)
+            V = coeff.variables()
+            if not V:
+                if len(self._eqs) == 1:
+                    raise ValueError(f"no solution as {coeff} != 0 in the equation at degree {eq._approximate_order}")
+                raise ValueError(f"no solution as {coeff} != 0 in equation {i} at degree {eq._approximate_order}")
+            if coeff.degree() <= 1:
+                coeffs.append(coeff)
+            elif coeff.is_monomial() and sum(1 for d in coeff.degrees() if d):
+                # if we have a single variable, we can remove the
+                # exponent - maybe we could also remove the
+                # coefficient - are we computing in an integral
+                # domain?
+                c = coeff.coefficients()[0]
+                v = InfinitePolynomial_dense(self._P, coeff.variables()[0])
+                coeffs.append(c * v)
+            else:
+                # nonlinear equations must not be discarded, we
+                # collect them to improve any error messages
+                non_linear_coeffs.append(coeff)
+
         if not coeffs:
             if len(self._eqs) == 1:
                 raise ValueError(f"there are no linear equations in degree {self._approximate_order}: {non_linear_coeffs}")
