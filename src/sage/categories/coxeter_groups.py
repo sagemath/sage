@@ -1962,6 +1962,7 @@ class CoxeterGroups(Category_singleton):
             .. SEEALSO::
 
                 :meth:`absolute_le`
+                :meth:`absolute_chain`
 
             EXAMPLES::
 
@@ -1979,21 +1980,95 @@ class CoxeterGroups(Category_singleton):
                 sage: (r, s, t) = W.simple_reflections()
                 sage: (r * s * r * t).absolute_length()
                 2
+                sage: W.one().absolute_length()
+                0
+                sage: r.absolute_length()
+                1
+                sage: (r * s).absolute_length()
+                2
+                sage: (r * s * r).absolute_length()
+                1
             """
             P = self.parent()
             if P.is_finite():
                 M = self.canonical_matrix()
                 return (M - 1).image().dimension()
 
-            import itertools
-            w = self.reduced_word()
-            s = P.simple_reflections()
-            one = P.one()
             n = self.length()
-            for ell in range(n - 1, -1, -1):
-                for wd in itertools.combinations(w, ell):
-                    if P.prod(s[i] for i in wd) == one:
-                        return n - ell
+            if n <= 2:  # trivial cases
+                return n
+            return len(self.absolute_chain()) - 1
+
+        def absolute_chain(self):
+            r"""
+            Return a (saturated) chain in absolute order from ``self``
+            to ``1``.
+
+            This method is based on Theorem 1.1 in [Dy2001]_, combined with
+            the strong exchange condition.
+
+            .. SEEALSO::
+
+                :meth:`absolute_length`
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(["A",2,1])
+                sage: W.one().absolute_chain()
+                [
+                [1 0 0]
+                [0 1 0]
+                [0 0 1]
+                ]
+                sage: (r, s, t) = W.simple_reflections()
+                sage: r.absolute_chain()
+                [
+                [1 0 0]  [-1  1  1]
+                [0 1 0]  [ 0  1  0]
+                [0 0 1], [ 0  0  1]
+                ]
+                sage: (r * s).absolute_chain()
+                [
+                [1 0 0]  [-1  1  1]  [ 0 -1  2]
+                [0 1 0]  [ 0  1  0]  [-1  0  2]
+                [0 0 1], [ 0  0  1], [ 0  0  1]
+                ]
+                sage: (r * s * r * t).absolute_chain()
+                [
+                [1 0 0]  [ 0 -1  2]  [-1 -2  4]
+                [0 1 0]  [-1  0  2]  [-2 -1  4]
+                [0 0 1], [ 0  0  1], [-1 -1  3]
+                ]
+
+            """
+            P = self.parent()
+            if self.is_one():
+                return [self]
+            w = self.reduced_word()
+            n = self.length()
+
+            if n == 1:  # trivial case
+                return [P.one(), self]
+            if n == 2:  # trivial case
+                leftRefl = P.simple_reflection(w[0])
+                return [P.one(), leftRefl, self * leftRefl]
+
+            import itertools
+            s = P.simple_reflections()
+            rev = P.one()
+            cur = P.one()
+            reflections = []
+            for val in w:
+                cur = cur * s[val]
+                reflections.append(cur * rev)
+                rev = s[val] * rev
+            for ell in range(n):
+                for chain in itertools.combinations(reflections, ell):
+                    if P.prod(reversed(chain)) == self:
+                        return [P.one()] + list(chain)
+            # If we get here it's cause ell == n and so we need all of the
+            # refelctions
+            return [P.one()] + reflections
 
         def absolute_le(self, other):
             r"""
