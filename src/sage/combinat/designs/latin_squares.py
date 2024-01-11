@@ -75,7 +75,7 @@ Comparison with the results from the Handbook of Combinatorial Designs (2ed)
       0|                                                           +               +
      20|
      40|
-     60|   +
+     60|
      80|
     100|
     120|
@@ -499,13 +499,13 @@ def MOLS_table(start,stop=None,compare=False,width=None):
           0|                                                           +               +
          20|
          40|
-         60|   +
+         60|
          80|
         sage: MOLS_table(50, 100, compare=True)
                0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
             ________________________________________________________________________________
          40|
-         60|   +
+         60|
          80|
     """
     from .orthogonal_arrays import largest_available_k
@@ -519,9 +519,6 @@ def MOLS_table(start,stop=None,compare=False,width=None):
     if stop <= start:
         return
 
-    if compare:
-        from .MOLS_table import handbook_data as hb
-
     # choose an appropriate width (needs to be >= 3 because "+oo" should fit)
     if width is None:
         width = max(3, Integer(stop-1).ndigits(10))
@@ -534,9 +531,11 @@ def MOLS_table(start,stop=None,compare=False,width=None):
             print("\n{:>{width}}|".format(i, width=width), end="")
         k = largest_available_k(i)-2
         if compare:
-            if i < 2 or hb[i] == k:
+            from . import MOLS_handbook_data
+            lower_bound = MOLS_handbook_data.lower_bound(i)
+            if i < 2 or lower_bound == k:
                 c = ""
-            elif hb[i] < k:
+            elif lower_bound < k:
                 c = "+"
             else:
                 c = "-"
