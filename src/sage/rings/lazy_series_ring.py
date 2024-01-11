@@ -764,12 +764,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: F = L.undefined()
             sage: L.define_implicitly([F], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: could not determine any coefficients in degree 3 - equations are [6*FESDUMMY_2 + (-2*x - 2*y)*FESDUMMY_1 + (x*y)*FESDUMMY_0]>
+            <repr(...) failed: ValueError: could not determine any coefficients using the equation in degree 3: 6*FESDUMMY_2 + (-2*x - 2*y)*FESDUMMY_1 + (x*y)*FESDUMMY_0>
 
             sage: F = L.undefined()
             sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: could not determine any coefficients in degree 3 - equations are [6*FESDUMMY_4 + (-2*x - 2*y)*FESDUMMY_3 + (x*y*f1)]>
+            <repr(...) failed: ValueError: could not determine any coefficients using the equation in degree 3: 6*FESDUMMY_4 + (-2*x - 2*y)*FESDUMMY_3 + (x*y*f1)>
 
         Laurent series examples::
 
@@ -784,7 +784,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: g = L.undefined(-2)
             sage: L.define_implicitly([(g, [5])], [2+z*g(z^2) - g])
             sage: g
-            <repr(...) failed: ValueError: no solution in degree -3 as 5 != 0>
+            <repr(...) failed: ValueError: no solution as 5 != 0 in the equation at degree -3>
 
         TESTS::
 
@@ -854,9 +854,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A
             O(z^10)
             sage: B
-            O(z^9)
+            O(z^16)
             sage: C
-            O(z^9)
+            O(z^23)
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: A = L.undefined()
@@ -882,9 +882,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                for a in series]
         # common state for all series
         eqs = [eq._coeff_stream for eq in equations]
-        last_eq_used = [eq._approximate_order - 1 for eq in eqs]
         for f, ic in zip(s, ics):
-            f.define_implicitly(s, ic, eqs, last_eq_used, self.base_ring())
+            f.define_implicitly(s, ic, eqs, self._internal_poly_ring.base_ring())
 
     class options(GlobalOptions):
         r"""

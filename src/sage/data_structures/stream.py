@@ -1337,7 +1337,7 @@ class Stream_uninitialized(Stream):
         self._cache = list()
         self._iter = self.iterate_coefficients()
 
-    def define_implicitly(self, series, initial_values, equations, last_equation_used, R):
+    def define_implicitly(self, series, initial_values, equations, R):
         r"""
         Define ``self`` via ``equations == 0``.
 
@@ -1346,7 +1346,7 @@ class Stream_uninitialized(Stream):
             - ``series`` -- a list of series
             - ``equations`` -- a list of equations defining the series
             - ``initial_values`` -- a list specifying ``self[0], self[1], ...``
-            - ``R`` -- the coefficient ring
+            - ``R`` -- the ring containing the coefficients (after substitution)
 
         """
         assert self._target is None
@@ -1368,7 +1368,6 @@ class Stream_uninitialized(Stream):
         self._PFF = self._P.fraction_field()
         self._uncomputed = True
         self._eqs = equations
-        self._last_eqs_n = last_equation_used  # the indices of the last equations we used
         self._series = series
 
     @lazy_attribute
@@ -1456,7 +1455,7 @@ class Stream_uninitialized(Stream):
             return ZZ.zero()
 
         # define_implicitly
-        if self._good_cache[0] >= n - self._approximate_order + 1:
+        if self._good_cache[0] > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
         if self._uncomputed:
@@ -1467,7 +1466,9 @@ class Stream_uninitialized(Stream):
             for f in self._series:
                 f._uncomputed = True
 
-        if len(self._cache) >= n - self._approximate_order + 1:
+        if n < self._approximate_order:
+            return ZZ.zero()
+        if len(self._cache) > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
         x = get_variable(self._P)
@@ -1497,35 +1498,54 @@ class Stream_uninitialized(Stream):
                     den = c.denominator()
                     if var_p in den.variables():
                         num = den.subs({var: val})
-                    new = num/den
+                    new = num / den
                 elif c.parent() is self._P and var_p in c.variables():
                     new = c.subs({var: val})
                 else:
-                    return c in self._base
+                    return
                 if new in self._base:
                     cache[k] = self._base(new)
-                    return True
                 else:
                     cache[k] = new
-                    return False
 
         for j, s in enumerate(self._input_streams):
             m = len(s._cache) - self._good_cache[j]
-            good = m  # last index of cache element still containing
-            # variables
-
-            # TODO: document why we first substitute in the last
-            # element of the cache in the sparse case, but not in the
-            # dense case
             if s._is_sparse:
-                for idx, i in zip(range(m), reversed(s._cache)):
-                    if not subs(s._cache, i):
-                        good = m - idx - 1
+                # we traverse the cache beginning with the last
+                # element added, because only the last m elements
+                # added can contain variables
+                indices = reversed(s._cache)
             else:
-                for i in range(-1, -m-1, -1):
-                    if not subs(s._cache, i):
-                        good = m + i
+                indices = range(-1, -m-1, -1)
+            # determine last good element
+            good = m
+            for i0, i in enumerate(indices):
+                subs(s._cache, i)
+                if s._cache[i] not in self._base:
+                    good = m - i0 - 1
             self._good_cache[j] += good
+            # fix approximate_order and true_order
+            ao = s._approximate_order
+            if s._is_sparse:
+                while ao in s._cache:
+                    if s._cache[ao]:
+                        if s._cache[ao] in self._base:
+                            s._true_order = True
+                        break
+                    del s._cache[ao]
+                    self._good_cache[j] -= 1
+                    ao += 1
+            else:
+                while s._cache:
+                    if s._cache[0]:
+                        if s._cache[0] in self._base:
+                            s._true_order = True
+                        break
+                    del s._cache[0]
+                    self._good_cache[j] -= 1
+                    ao += 1
+            s._approximate_order = ao
+
         STREAM_UNINITIALIZED_VARIABLES[self._P].remove(var)
 
     def _compute(self):
@@ -1541,20 +1561,23 @@ class Stream_uninitialized(Stream):
         non_linear_coeffs = []
         for i, eq in enumerate(self._eqs):
             while True:
-                self._last_eqs_n[i] += 1
-                coeff = eq[self._last_eqs_n[i]]
+                ao = eq._approximate_order
+                coeff = eq[ao]
+                if not coeff:
+                    # it may or may not be the case that the
+                    # _approximate_order is advanced by __getitem__
+                    if eq._approximate_order == ao:
+                        eq._approximate_order += 1
+                    continue
                 if coeff.parent() is self._PFF:
                     coeff = coeff.numerator()
                 else:
                     coeff = self._P(coeff)
                 V = coeff.variables()
                 if not V:
-                    if coeff:
-                        if len(self._last_eqs_n) == 1:
-                            raise ValueError(f"no solution in degree {self._last_eqs_n[0]} as {coeff} != 0")
-                        raise ValueError(f"no solution in degrees {self._last_eqs_n} as {coeff} != 0")
-                    else:
-                        continue
+                    if len(self._eqs) == 1:
+                        raise ValueError(f"no solution as {coeff} != 0 in the equation at degree {eq._approximate_order}")
+                    raise ValueError(f"no solution as {coeff} != 0 in equation {i} at degree {eq._approximate_order}")
                 if coeff.degree() <= 1:
                     coeffs.append(coeff)
                 elif coeff.is_monomial() and sum(1 for d in coeff.degrees() if d):
@@ -1569,12 +1592,12 @@ class Stream_uninitialized(Stream):
                     # nonlinear equations must not be discarded, we
                     # keep them to improve any error messages
                     non_linear_coeffs.append(coeff)
-                    self._last_eqs_n[i] -= 1
                 break
         if not coeffs:
-            if len(self._last_eqs_n) == 1:
-                raise ValueError(f"no linear equations in degree {self._last_eqs_n[0]}: {non_linear_coeffs}")
-            raise ValueError(f"no linear equations in degrees {self._last_eqs_n}: {non_linear_coeffs}")
+            if len(self._eqs) == 1:
+                raise ValueError(f"there are no linear equations in degree {self._approximate_order}: {non_linear_coeffs}")
+            degrees = [eq._approximate_order for eq in self._eqs]
+            raise ValueError(f"there are no linear equations in degrees {degrees}: {non_linear_coeffs}")
         # solve
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         eqs = PolynomialSequence([coeff.polynomial() for coeff in coeffs])
@@ -1603,9 +1626,11 @@ class Stream_uninitialized(Stream):
                 self._subs_in_caches(var, val)
                 bad = False
         if bad:
-            if len(self._last_eqs_n) == 1:
-                raise ValueError(f"could not determine any coefficients in degree {self._last_eqs_n[0]} - equations are {coeffs + non_linear_coeffs}")
-            raise ValueError(f"could not determine any coefficients in degrees {self._last_eqs_n} - equations are {coeffs + non_linear_coeffs}")
+            if len(self._eqs) == 1:
+                assert len(coeffs) + len(non_linear_coeffs) == 1
+                raise ValueError(f"could not determine any coefficients using the equation in degree {self._eqs[0]._approximate_order}: {(coeffs + non_linear_coeffs)[0]}")
+            degrees = [eq._approximate_order for eq in self._eqs]
+            raise ValueError(f"could not determine any coefficients using the equations in degrees {degrees}: {coeffs + non_linear_coeffs}")
 
     def iterate_coefficients(self):
         """
