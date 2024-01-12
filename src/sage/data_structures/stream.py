@@ -1485,6 +1485,7 @@ class Stream_uninitialized(Stream):
             - ``var``, a variable
             - ``val``, the value that should replace the variable
         """
+        from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_dense
         var_p = var.polynomial()
         def subs(cache, k):
             c = cache[k]
@@ -1492,15 +1493,23 @@ class Stream_uninitialized(Stream):
             # stream have a parent
             if hasattr(c, "parent"):
                 if c.parent() is self._PFF:
+                    R = self._P.polynomial_ring()
                     num = c.numerator()
                     if var_p in num.variables():
-                        num = num.subs({var: val})
+                        d = {R(v): InfinitePolynomial_dense(self._P, v) for v in num.variables()}
+                        d[R(var_p)] = val
+                        num = R(num.polynomial()).subs(d)
                     den = c.denominator()
                     if var_p in den.variables():
-                        den = den.subs({var: val})
+                        d = {R(v): InfinitePolynomial_dense(self._P, v) for v in den.variables()}
+                        d[R(var_p)] = val
+                        den = R(den.polynomial()).subs(d)
                     new = num / den
                 elif c.parent() is self._P and var_p in c.variables():
-                    new = c.subs({var: val})
+                    R = self._P.polynomial_ring()
+                    d = {R(v): InfinitePolynomial_dense(self._P, v) for v in c.variables()}
+                    d[R(var_p)] = val
+                    new = R(c.polynomial()).subs(d)
                 else:
                     return
                 if new in self._base:
