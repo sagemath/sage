@@ -1184,7 +1184,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             \frac{{{\log \left( {{e+1}} \right)} \  {\sin \left( {{y+x}} \right)}}}{{{e} ^{z}}}
 
             sage: latex(fricas("matrix([[1,2],[3,4]])"))
-            \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4\end{array} \right]
+            \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4...\end{array}...\right]
 
             sage: latex(fricas("integrate(sin(x+1/x),x)"))
             \int ^{\displaystyle x} {{\sin \left( {{\frac{{{{ \%...} ^{2}}+1}}{ \%...}}} \right)} \  {d \%...}}
@@ -1836,7 +1836,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas(x+3).sage()
             x + 3
             sage: fricas(x+3).domainOf()
-            Polynomial(Integer())
+            Polynomial(Integer...)
 
             sage: fricas(matrix([[2,3],[4,x+5]])).diagonal().sage()
             (2, x + 5)
