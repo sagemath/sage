@@ -400,14 +400,14 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     cdef bint unknown = 1
 
     # set up the identity permutation
-    for i from 0 <= i < n:
+    for i in range(n):
         id_perm[i] = i
     if ordering2 is NULL:
         ordering2 = id_perm
 
     # Copy reordering of left_ps coming from ordering2 to current_ps.
-    memcpy(current_ps.entries, ordering2,      n*sizeof(int))
-    memcpy(current_ps.levels,  left_ps.levels, n*sizeof(int))
+    memcpy(current_ps.entries, ordering2, n * sizeof(int))
+    memcpy(current_ps.levels, left_ps.levels, n * sizeof(int))
     current_ps.depth = left_ps.depth
 
     # default values of "infinity"
