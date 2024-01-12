@@ -1233,7 +1233,7 @@ def CubeGraph(n, embedding=1):
     """
     if embedding == 1:
         # construct recursively the adjacency dict and the embedding
-        theta = float(pi/4) if n==3 else float(pi/n)
+        theta = float(pi/4) if n == 3 else float(pi/n)
         d = {'': []}
         dn = {}
         p = {'': (float(0), float(0))}
@@ -3275,7 +3275,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
 
     - ``stretch`` -- integer (default: ``None``); stretching factor used to
       determine the positions of the vertices of the output graph. By default
-      (``None``), this value is set to twice the maximum Euclidian distance
+      (``None``), this value is set to twice the maximum Euclidean distance
       between the vertices of `G`. This parameter is used only when the vertices
       of `G` have positions.
 
