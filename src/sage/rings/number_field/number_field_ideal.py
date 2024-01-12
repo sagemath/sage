@@ -343,7 +343,7 @@ class NumberFieldIdeal(Ideal_generic):
             Traceback (most recent call last):
             ...
             TypeError: vector is not in free module
-       """
+        """
         K = self.number_field()
         V, from_V, to_V = K.absolute_vector_space()
         try:

@@ -787,7 +787,7 @@ class AdditiveMagmas(Category_singleton):
                     False
                     sage: bool(S.an_element())
                     True
-                 """
+                """
 
             def _test_nonzero_equal(self, **options):
                 r"""

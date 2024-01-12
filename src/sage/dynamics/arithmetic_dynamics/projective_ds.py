@@ -1715,7 +1715,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = DynamicalSystem_projective([s*x^3 - 13*y^3, y^3 - 15*y^3])
             sage: f.resultant()
             871.6925062959149?
-            """
+        """
         if normalize:
             F = copy(self)
             F.normalize_coordinates()
