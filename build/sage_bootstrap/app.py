@@ -82,7 +82,7 @@ class Application(object):
         """
         Show the properties of given packages
 
-        $ sage --package properties maxima
+        $ sage --package properties --format shell maxima
         path_maxima='........./build/pkgs/maxima'
         version_with_patchlevel_maxima='5.46.0'
         type_maxima='standard'

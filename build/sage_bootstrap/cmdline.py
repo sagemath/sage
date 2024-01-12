@@ -90,8 +90,12 @@ Print properties of given package.
 EXAMPLE:
 
     $ sage --package properties maxima
-    version_maxima='5.46.0'
-    type_maxima='standard'
+    maxima:
+            path:                        /.../build/pkgs/maxima
+            version_with_patchlevel:     5.46.0
+            type:                        standard
+            source:                      normal
+            trees:                       SAGE_LOCAL
 """
 
 
