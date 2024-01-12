@@ -189,6 +189,27 @@ EXAMPLE:
     42 files were removed from the .../upstream directory
 """
 
+epilog_metrics = \
+"""
+Print metrics of given package.
+
+EXAMPLE:
+
+    $ sage --package metrics :standard:
+    has_file_distros_arch_txt=131
+    ...
+    has_file_distros_void_txt=184
+    has_file_patches=35
+    has_file_spkg_check=59
+    has_file_spkg_configure_m4=222
+    has_file_spkg_install=198
+    has_tarball_upstream_url=231
+    line_count_file_patches=22561
+    ...
+    packages=272
+    type_standard=272
+"""
+
 
 def make_parser():
     """
@@ -346,6 +367,16 @@ def make_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Remove outdated source tarballs from the upstream/ directory')
 
+    parser_metrics = subparsers.add_parser(
+        'metrics', epilog=epilog_metrics,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Print metrics of given packages')
+    parser_metrics.add_argument(
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, nargs='*', default=[':all:'],
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:; default: :all:)'))
+
     return parser
 
 
@@ -403,6 +434,8 @@ def run():
         app.fix_checksum_cls(*args.package_class)
     elif args.subcommand == 'clean':
         app.clean()
+    elif args.subcommand == 'metrics':
+        app.metrics_cls(*args.package_class)
     else:
         raise RuntimeError('unknown subcommand: {0}'.format(args))
 

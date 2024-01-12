@@ -63,6 +63,21 @@ jobs:
           echo "uninstall_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))" >> $GITHUB_OUTPUT
           echo "build_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.pkgs_all_changed_files }}; do SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;'); if [ -f "build/pkgs/$SPKG/checksums.ini" -o -f "build/pkgs/$SPKG/requirements.txt" -o -f "build/pkgs/$SPKG/spkg-install" ]; then echo "$SPKG-ensure"; fi; done | sort -u))" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: worktree-base
+        if: github.base_ref
+      - name: Compute metrics
+        run: |
+          export PATH=build/bin:$PATH
+          if [ -d worktree-base ]; then
+            (echo "# $GITHUB_BASE_REF"; SAGE_ROOT=worktree-base sage-package metrics :all:) > base-metrics.txt
+            (echo "# $GITHUB_REF"; sage-package metrics :all:) > metrics.txt
+            diff --color=always --width=100 --side-by-side --left-column base-metrics.txt metrics.txt || true
+          else
+            sage-package metrics :all:
+          fi
 
   test:
     needs: [changed_files]
