@@ -61,7 +61,7 @@ def _format_function_call(fn_name, *v, **k):
         sage: _format_function_call('foo', 17, hellooooo='goodbyeeee')
         "foo(17, hellooooo='goodbyeeee')"
     """
-    args = [ repr(a) for a in v ] + [ "%s=%r" % (arg, val) for arg, val in sorted(k.items()) ]
+    args = [repr(a) for a in v] + ["%s=%r" % (arg, val) for arg, val in sorted(k.items())]
     return "{}({})".format(fn_name, ", ".join(args))
 
 
@@ -204,7 +204,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
     """
     def __init__(self, parent, Vrep, Hrep, normaliz_cone=None, normaliz_data=None, internal_base_ring=None, **kwds):
         """
-        Initializes the polyhedron.
+        Initialize the polyhedron.
 
         See :class:`Polyhedron_normaliz` for a description of the input
         data.
@@ -340,19 +340,20 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         """
         def _QQ_pair(x):
             x = QQ(x)
-            return [ int(x.numerator()), int(x.denominator())]
+            return [int(x.numerator()), int(x.denominator())]
         from sage.rings.rational import Rational
         from types import GeneratorType
         if isinstance(x, (list, tuple, GeneratorType)):
-            return [ Polyhedron_normaliz._convert_to_pynormaliz(y) for y in x ]
+            return [Polyhedron_normaliz._convert_to_pynormaliz(y) for y in x]
         try:
             return int(ZZ(x))
         except TypeError:
-            if isinstance(x, Rational):
-                return [ _QQ_pair(x) ]    # need extra brackets to distinguish from quadratic numberfield element
-            else:
-                # number field
-                return [ _QQ_pair(c) for c in x.list() ]
+            pass
+
+        if isinstance(x, Rational):
+            return [_QQ_pair(x)]  # need extra brackets to distinguish from quadratic numberfield element
+        # number field
+        return [_QQ_pair(c) for c in x.list()]
 
     def _init_from_normaliz_data(self, data, internal_base_ring=None, verbose=False):
         """
@@ -419,17 +420,17 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         assert cone, "{} did not return a cone".format(_format_function_call('PyNormaliz.NmzCone', **data))
         return cone
 
-    def _is_zero(self, x):
+    def _is_zero(self, x) -> bool:
         """
         Test whether ``x`` is zero.
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
         OUTPUT:
 
-        Boolean.
+        Boolean
 
         EXAMPLES::
 
@@ -441,17 +442,17 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         """
         return x == 0
 
-    def _is_nonneg(self, x):
+    def _is_nonneg(self, x) -> bool:
         """
         Test whether ``x`` is nonnegative.
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
         OUTPUT:
 
-        Boolean.
+        Boolean
 
         EXAMPLES::
 
@@ -463,17 +464,17 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         """
         return x >= 0
 
-    def _is_positive(self, x):
+    def _is_positive(self, x) -> bool:
         """
         Test whether ``x`` is positive.
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
         OUTPUT:
 
-        Boolean.
+        Boolean
 
         EXAMPLES::
 
@@ -517,17 +518,17 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             nmz_vertices = []
             for v in vertices:
                 d = LCM_list([denominator(v_i) for v_i in v])
-                dv = [ d * v_i for v_i in v ]
+                dv = [d * v_i for v_i in v]
                 nmz_vertices.append(dv + [d])
             nmz_rays = []
             for r in rays:
                 d = LCM_list([denominator(r_i) for r_i in r])
-                dr = [ d * r_i for r_i in r ]
+                dr = [d * r_i for r_i in r]
                 nmz_rays.append(dr)
             nmz_lines = []
             for l in lines:
                 d = LCM_list([denominator(l_i) for l_i in l])
-                dl = [ d * l_i for l_i in l ]
+                dl = [d * l_i for l_i in l]
                 nmz_lines.append(dl)
             return nmz_vertices, nmz_rays, nmz_lines
 
@@ -610,30 +611,22 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         """
 
         def nmz_ieqs_eqns_NF(ieqs, eqns):
-            nmz_ieqs = []
-            for ieq in ieqs:
-                b = ieq[0]
-                A = ieq[1:]
-                nmz_ieqs.append(list(A) + [b])
-            nmz_eqns = []
-            for eqn in eqns:
-                b = eqn[0]
-                A = eqn[1:]
-                nmz_eqns.append(list(A) + [b])
+            nmz_ieqs = [list(ieq[1:]) + [ieq[0]] for ieq in ieqs]
+            nmz_eqns = [list(eqn[1:]) + [eqn[0]] for eqn in eqns]
             return nmz_ieqs, nmz_eqns
 
         def nmz_ieqs_eqns_QQ(ieqs, eqns):
             nmz_ieqs = []
             for ieq in ieqs:
                 d = LCM_list([denominator(ieq_i) for ieq_i in ieq])
-                dieq = [ ZZ(d * ieq_i) for ieq_i in ieq ]
+                dieq = [ZZ(d * ieq_i) for ieq_i in ieq]
                 b = dieq[0]
                 A = dieq[1:]
                 nmz_ieqs.append(A + [b])
             nmz_eqns = []
             for eqn in eqns:
                 d = LCM_list([denominator(eqn_i) for eqn_i in eqn])
-                deqn = [ ZZ(d * eqn_i) for eqn_i in eqn ]
+                deqn = [ZZ(d * eqn_i) for eqn_i in eqn]
                 b = deqn[0]
                 A = deqn[1:]
                 nmz_eqns.append(A + [b])
@@ -798,23 +791,23 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             nmz_vertices = []
             for v in vertices:
                 d = LCM_list([denominator(v_i) for v_i in v])
-                dv = [ d * v_i for v_i in v ]
+                dv = [d * v_i for v_i in v]
                 nmz_vertices.append(dv + [d])
             nmz_rays = []
             for r in rays:
                 d = LCM_list([denominator(r_i) for r_i in r])
-                dr = [ d * r_i for r_i in r ]
+                dr = [d * r_i for r_i in r]
                 nmz_rays.append(dr + [0])
             nmz_lines = []
             for l in lines:
                 d = LCM_list([denominator(l_i) for l_i in l])
-                dl = [ d * l_i for l_i in l ]
+                dl = [d * l_i for l_i in l]
                 nmz_lines.append(dl + [0])
 
             nmz_ieqs = []
             for ieq in ieqs:
                 d = LCM_list([denominator(ieq_i) for ieq_i in ieq])
-                dieq = [ ZZ(d * ieq_i) for ieq_i in ieq ]
+                dieq = [ZZ(d * ieq_i) for ieq_i in ieq]
                 b = dieq[0]
                 A = dieq[1:]
                 nmz_ieqs.append(A + [b])
@@ -835,9 +828,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             return nmz_vertices + nmz_rays, nmz_lines, nmz_lattice, nmz_ieqs
 
         def rays_subspace_lattice_ieqs_NF(vertices, rays, lines, ieqs):
-            nmz_vertices = [ list(v) + [1] for v in vertices ]
-            nmz_rays = [ list(r) + [0] for r in rays ]
-            nmz_lines = [ list(l) + [1] for l in lines ]
+            nmz_vertices = [list(v) + [1] for v in vertices]
+            nmz_rays = [list(r) + [0] for r in rays]
+            nmz_lines = [list(l) + [1] for l in lines]
 
             nmz_ieqs = []
             for ieq in ieqs:
@@ -847,7 +840,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
             from sage.matrix.constructor import Matrix
             lattice = Matrix(nmz_vertices + nmz_rays + nmz_lines).row_space().basis()
-            nmz_lattice = [[x for x in y] for y in lattice]
+            nmz_lattice = [list(y) for y in lattice]
 
             if Matrix(nmz_vertices + nmz_rays).rank() == Matrix(nmz_rays).rank() + 1:
                 # The recession cone is full-dimensional.
@@ -981,7 +974,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
     def _init_empty_polyhedron(self):
         r"""
-        Initializes an empty polyhedron.
+        Initialize an empty polyhedron.
 
         TESTS::
 
@@ -1004,7 +997,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
     @classmethod
     def _from_normaliz_cone(cls, parent, normaliz_cone, internal_base_ring=None):
         r"""
-        Initializes a polyhedron from a PyNormaliz wrapper of a normaliz cone.
+        Initialize a polyhedron from a PyNormaliz wrapper of a normaliz cone.
 
         TESTS::
 
@@ -1015,7 +1008,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         return cls(parent, None, None, normaliz_cone=normaliz_cone, internal_base_ring=internal_base_ring)
 
     @staticmethod
-    def _number_field_triple(internal_base_ring):
+    def _number_field_triple(internal_base_ring) -> list:
         r"""
         Construct the PyNormaliz triple that describes ``internal_base_ring``.
 
@@ -1064,7 +1057,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         assert cone, "NmzCone(**{}) did not return a cone".format(data)
         return cone
 
-    def _get_nmzcone_data(self):
+    def _get_nmzcone_data(self) -> dict:
         r"""
         Get the data necessary to reproduce the normaliz cone.
 
@@ -1100,13 +1093,11 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         ineqs = self._nmz_result(self._normaliz_cone, "SupportHyperplanes")
         eqs = self._nmz_result(self._normaliz_cone, "Equations")
 
-        data = {'vertices': vertices,
+        return {'vertices': vertices,
                 'cone': rays,
                 'subspace': lines,
                 'inhom_equations': eqs,
                 'inhom_inequalities': ineqs}
-
-        return data
 
     def _normaliz_format(self, data, file_output=None):
         r"""
@@ -1149,8 +1140,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
                         s += ' ' + format_number(x)
                     s += '\n'
                 return s
-            else:
-                return '{} {}\n'.format(key, value)
+            return '{} {}\n'.format(key, value)
 
         def format_number_field_data(nf_triple):
             min_poly, gen, emb = nf_triple
@@ -1165,9 +1155,8 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         for key, value in sorted(data.items()):
             s += format_field(key, value)
         if file_output is not None:
-            in_file = open(file_output, 'w')
-            in_file.write(s)
-            in_file.close()
+            with open(file_output, 'w') as in_file:
+                in_file.write(s)
         else:
             return s
 
@@ -1358,7 +1347,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         return self.parent().element_class._from_normaliz_cone(parent=self.parent(),
                                                                normaliz_cone=cone)
 
-    def _h_star_vector_normaliz(self):
+    def _h_star_vector_normaliz(self) -> list:
         r"""
         Return the `h^*`-vector of the lattice polytope.
 
@@ -1398,7 +1387,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
     def _volume_normaliz(self, measure='euclidean'):
         r"""
-        Computes the volume of a polytope using normaliz.
+        Compute the volume of a polytope using normaliz.
 
         INPUT:
 
@@ -1485,12 +1474,13 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         assert cone
         if measure == 'euclidean':
             return self._nmz_result(cone, 'EuclideanVolume')
-        elif measure == 'induced_lattice':
+
+        if measure == 'induced_lattice':
             if self._internal_base_ring in (ZZ, QQ):
                 return self._nmz_result(cone, 'Volume')
-            else:
-                return self._nmz_result(cone, 'RenfVolume')
-        elif measure == 'ambient':
+            return self._nmz_result(cone, 'RenfVolume')
+
+        if measure == 'ambient':
             if self.dim() < self.ambient_dim():
                 return self.base_ring().zero()
             if not self.is_compact():
@@ -1500,8 +1490,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             from sage.arith.misc import factorial
             return self._volume_normaliz('induced_lattice') / factorial(self.dim())
 
-        else:
-            raise TypeError("the measure should be `ambient`, `euclidean`, or `induced_lattice`")
+        raise TypeError("the measure should be `ambient`, `euclidean`, or `induced_lattice`")
 
     def _triangulate_normaliz(self):
         r"""
@@ -1726,17 +1715,14 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         # 3) a shifting of the generating function.
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.rings.fraction_field import FractionField
-        poly_ring = FractionField(PolynomialRing(ZZ, variable))
+        poly_ring = PolynomialRing(ZZ, variable).fraction_field()
         t = poly_ring.gens()[0]
         es = sum([e[0][i] * t**i for i in range(len(e[0]))])
         for expo in range(len(e[1])):
             es = es / (1 - t**e[1][expo])
 
         # The shift:
-        es = es * t**e[2]
-
-        return es
+        return es * t**e[2]
 
     def _ehrhart_quasipolynomial_normaliz(self, variable='t'):
         r"""
@@ -1802,12 +1788,12 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             # It is a polynomial
             es = sum([e[0][i] * t**i for i in range(len(e[0]))])
             return es / ZZ(e[1])
-        else:
-            # It is a quasipolynomial
-            polynomials = []
-            for p in e[:-1]:
-                es = sum([p[i] * t**i for i in range(len(p))]) / ZZ(e[-1])
-                polynomials += [es]
+
+        # It is a quasipolynomial
+        polynomials = []
+        for p in e[:-1]:
+            es = sum([p[i] * t**i for i in range(len(p))]) / ZZ(e[-1])
+            polynomials += [es]
 
         return tuple(polynomials)
 
@@ -1895,19 +1881,16 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         h = self._nmz_result(new_cone, "HilbertSeries")
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.rings.fraction_field import FractionField
-        poly_ring = FractionField(PolynomialRing(ZZ, variable))
+        poly_ring = PolynomialRing(ZZ, variable).fraction_field()
         t = poly_ring.gens()[0]
         hs = sum([h[0][i] * t**i for i in range(len(h[0]))])
         for expo in range(len(h[1])):
             hs = hs / (1 - t**h[1][expo])
 
         # The shift:
-        hs = hs * t**h[2]
+        return hs * t**h[2]
 
-        return hs
-
-    def integral_points(self, threshold=10000):
+    def integral_points(self, threshold=10000) -> tuple:
         r"""
         Return the integral points in the polyhedron.
 
@@ -1922,7 +1905,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
+        polyhedron is not compact, a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -2342,39 +2325,39 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         list_es = [fix_polys[g].ehrhart_series() for g in conj_reps]
 
         # get the list of the denominators det([Id - rho (t)])
-        Ring = PolynomialRing(QQbar, 't')
+        ring = PolynomialRing(QQbar, 't')
         det_vector = list()
         dim = group_dict[G_perm.gens()[0]].dimensions()[0]
-        t = Ring.gens()[0]
-        ts_matrix = t * identity_matrix(Ring, dim)
-        identity = identity_matrix(Ring, dim)
+        t = ring.gens()[0]
+        ts_matrix = t * identity_matrix(ring, dim)
+        identity = identity_matrix(ring, dim)
 
         # ix the determinant if polytope isn't full dimensional
         codim = self.ambient_dim() - self.dim()
         for perm in conj_reps:
             mat = group_dict[perm]
-            mat = mat.change_ring(Ring)
-            new_matrix = identity - mat*ts_matrix
-            det = (1-t)**-codim*(new_matrix.determinant())
+            mat = mat.change_ring(ring)
+            new_matrix = identity - mat * ts_matrix
+            det = (1 - t)**-codim * (new_matrix.determinant())
             det_vector.append(det)
 
-        FF = Ring.fraction_field()
-        initial_result = vector(FF, [a*b for a, b in zip(det_vector, list_es)])
+        FF = ring.fraction_field()
+        initial_result = vector(FF, [a * b for a, b in zip(det_vector, list_es)])
         Char = char_initial.change_ring(FF)
         new_result = Char.solve_left(initial_result)
 
         new_new_result = self._Hstar_as_rat_fct(new_result)
         if output is None:
             return new_new_result
-        elif output == 'e_series_list':
+        if output == 'e_series_list':
             return list_es
-        elif output == 'determinant_vec':
+        if output == 'determinant_vec':
             return det_vector
-        elif output == 'Hstar_as_lin_comb':
+        if output == 'Hstar_as_lin_comb':
             return new_result
-        elif output == 'prod_det_es':
+        if output == 'prod_det_es':
             return initial_result
-        elif output == 'complete':
+        if output == 'complete':
             results_dictionary = {}
             results_dictionary['Hstar'] = new_new_result
             results_dictionary['Hstar_as_lin_comb'] = new_result
@@ -2442,12 +2425,11 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.qqbar import QQbar
-        chi_vars = ','.join('chi_{}'.format(i) for i in range(len(initial_Hstar)))
+        chi_vars = ','.join(f'chi_{i}' for i in range(len(initial_Hstar)))
         Chi_ring = PolynomialRing(QQbar, chi_vars)
         virtual_ring = PolynomialRing(Chi_ring, initial_Hstar.base_ring().gens())
         fraction_virtual_ring = virtual_ring.fraction_field()
-        new_result = initial_Hstar.change_ring(fraction_virtual_ring)*vector(fraction_virtual_ring, Chi_ring.gens())
-        return new_result
+        return initial_Hstar.change_ring(fraction_virtual_ring) * vector(fraction_virtual_ring, Chi_ring.gens())
 
     def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb):
         r"""
