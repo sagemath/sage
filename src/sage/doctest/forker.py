@@ -1555,6 +1555,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: sage0.eval("l")
             '...if self.discriminant() == 0:...raise ArithmeticError...'
             sage: sage0.eval("u")
+            '...-> super().__init__(R, data, category=category)'
+            sage: sage0.eval("u")
             '...EllipticCurve_field.__init__(self, K, ainvs)'
             sage: sage0.eval("p ainvs")
             '(0, 0, 0, 0, 0)'
