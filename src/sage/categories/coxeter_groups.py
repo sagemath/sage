@@ -1997,12 +1997,40 @@ class CoxeterGroups(Category_singleton):
             n = self.length()
             if n <= 2:  # trivial cases
                 return n
-            return len(self.absolute_chain()) - 1
+            return len(self.absolute_chain_reflections())
 
         def absolute_chain(self):
             r"""
             Return a (saturated) chain in absolute order from ``self``
             to ``1``.
+
+            .. SEEALSO::
+
+                :meth:`absolute_chain_reflections`
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A', 2, 1])
+                sage: (r, s, t) = W.simple_reflections()
+                sage: (r * s * r * t).absolute_chain()
+                [
+                [ 2  1 -2]  [ 0 -1  2]  [1 0 0]
+                [ 1  2 -2]  [-1  0  2]  [0 1 0]
+                [ 1  1 -1], [ 0  0  1], [0 0 1]
+                ]
+            """
+
+            reflections = self.absolute_chain_reflections()
+            P = self.parent()
+            return [P.prod(reversed(reflections[:i]))
+                    for i in range(len(reflections), -1, -1)]
+
+
+        def absolute_chain_reflections(self):
+            r"""
+            Return a list of reflection which, when multiplied in order, give
+            ``self``.
+
 
             This method is based on Theorem 1.1 in [Dy2001]_, combined with
             the strong exchange condition.
@@ -2010,48 +2038,45 @@ class CoxeterGroups(Category_singleton):
             .. SEEALSO::
 
                 :meth:`absolute_length`
+                :meth:`absolute_chain`
 
             EXAMPLES::
 
                 sage: W = CoxeterGroup(["A",2,1])
-                sage: W.one().absolute_chain()
-                [
-                [1 0 0]
-                [0 1 0]
-                [0 0 1]
-                ]
+                sage: W.one().absolute_chain_reflections()
+                []
                 sage: (r, s, t) = W.simple_reflections()
-                sage: r.absolute_chain()
+                sage: r.absolute_chain_reflections()
                 [
-                [1 0 0]  [-1  1  1]
-                [0 1 0]  [ 0  1  0]
-                [0 0 1], [ 0  0  1]
+                [-1  1  1]
+                [ 0  1  0]
+                [ 0  0  1]
                 ]
-                sage: (r * s).absolute_chain()
+                sage: (r * s).absolute_chain_reflections()
                 [
-                [1 0 0]  [-1  1  1]  [ 0 -1  2]
-                [0 1 0]  [ 0  1  0]  [-1  0  2]
-                [0 0 1], [ 0  0  1], [ 0  0  1]
+                [-1  1  1]  [ 0 -1  2]
+                [ 0  1  0]  [-1  0  2]
+                [ 0  0  1], [ 0  0  1]
                 ]
-                sage: (r * s * r * t).absolute_chain()
+                sage: (r * s * r * t).absolute_chain_reflections()
                 [
-                [1 0 0]  [ 0 -1  2]  [-1 -2  4]
-                [0 1 0]  [-1  0  2]  [-2 -1  4]
-                [0 0 1], [ 0  0  1], [-1 -1  3]
+                [ 0 -1  2]  [-1 -2  4]
+                [-1  0  2]  [-2 -1  4]
+                [ 0  0  1], [-1 -1  3]
                 ]
 
             """
             P = self.parent()
             if self.is_one():
-                return [self]
+                return []
             w = self.reduced_word()
             n = self.length()
 
             if n == 1:  # trivial case
-                return [P.one(), self]
+                return [self]
             if n == 2:  # trivial case
                 leftRefl = P.simple_reflection(w[0])
-                return [P.one(), leftRefl, self * leftRefl]
+                return [leftRefl, self * leftRefl]
 
             import itertools
             s = P.simple_reflections()
@@ -2065,10 +2090,10 @@ class CoxeterGroups(Category_singleton):
             for ell in range(n):
                 for chain in itertools.combinations(reflections, ell):
                     if P.prod(reversed(chain)) == self:
-                        return [P.one()] + list(chain)
+                        return list(chain)
             # If we get here it's cause ell == n and so we need all of the
             # refelctions
-            return [P.one()] + reflections
+            return reflections
 
         def absolute_le(self, other):
             r"""
