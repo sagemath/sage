@@ -6,7 +6,7 @@ TESTS:
 
 Import this module::
 
-    sage: import sage.libs.flint.flint
+    sage: import sage.libs.flint.flint_sage
 
 We verify that :trac:`6919` is correctly fixed::
 
@@ -19,21 +19,7 @@ We verify that :trac:`6919` is correctly fixed::
 """
 
 # cimport all .pxd files to make sure they compile
-cimport sage.libs.flint.arith
-cimport sage.libs.flint.fmpq_poly
-cimport sage.libs.flint.fmpq
-cimport sage.libs.flint.fmpz_mat
-cimport sage.libs.flint.fmpz_mod_poly
-cimport sage.libs.flint.fmpz_poly
-cimport sage.libs.flint.fmpz
-cimport sage.libs.flint.fmpz_vec
-cimport sage.libs.flint.fq_nmod
-cimport sage.libs.flint.fq
-cimport sage.libs.flint.nmod_poly
-cimport sage.libs.flint.nmod_vec
-cimport sage.libs.flint.padic
-cimport sage.libs.flint.types
-cimport sage.libs.flint.ulong_extras
+{CYTHON_IMPORTS}
 
 # Try to clean up after ourselves before sage terminates. This
 # probably doesn't do anything if your copy of flint is re-entrant
