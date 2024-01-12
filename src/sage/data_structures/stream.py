@@ -1328,8 +1328,6 @@ class Stream_uninitialized(Stream):
 
             - ``target`` -- a stream
 
-        EXAMPLES::
-
         """
         self._target = target
         self._n = self._approximate_order - 1 # the largest index of a coefficient we know
@@ -1337,7 +1335,8 @@ class Stream_uninitialized(Stream):
         self._cache = list()
         self._iter = self.iterate_coefficients()
 
-    def define_implicitly(self, series, initial_values, equations, R):
+    def define_implicitly(self, series, initial_values, equations,
+                          base_ring, coefficient_ring, terms_of_degree):
         r"""
         Define ``self`` via ``equations == 0``.
 
@@ -1347,6 +1346,7 @@ class Stream_uninitialized(Stream):
             - ``equations`` -- a list of equations defining the series
             - ``initial_values`` -- a list specifying ``self[0], self[1], ...``
             - ``R`` -- the ring containing the coefficients (after substitution)
+            - ``terms_of_degree`` -- a function returning the list of terms of a given degree
 
         """
         assert self._target is None
@@ -1361,14 +1361,16 @@ class Stream_uninitialized(Stream):
             self._approximate_order += len(initial_values)
             self._cache = []
 
-        self._base = R
+        self._coefficient_ring = coefficient_ring
+        self._base_ring = base_ring
         # we use a silly variable name, because InfinitePolynomialRing is cached
-        self._P = InfinitePolynomialRing(self._base, names=("FESDUMMY",),
+        self._P = InfinitePolynomialRing(self._base_ring, names=("FESDUMMY",),
                                          implementation='dense')
         self._PFF = self._P.fraction_field()
         self._uncomputed = True
         self._eqs = equations
         self._series = series
+        self._terms_of_degree = terms_of_degree
 
     @lazy_attribute
     def _input_streams(self):
@@ -1412,7 +1414,7 @@ class Stream_uninitialized(Stream):
                 vals = c._cache
             i = 0
             for v in vals:
-                if v not in self._base:
+                if v not in self._coefficient_ring:
                     break
                 i += 1
             g.append(i)
@@ -1471,7 +1473,8 @@ class Stream_uninitialized(Stream):
         if len(self._cache) > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
-        x = get_variable(self._P)
+        x = sum(get_variable(self._P) * m
+                for m in self._terms_of_degree(n, self._P))
         self._cache.append(x)
         return x
 
@@ -1485,37 +1488,30 @@ class Stream_uninitialized(Stream):
             - ``var``, a variable
             - ``val``, the value that should replace the variable
         """
-        from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_dense
         var_p = var.polynomial()
-        def subs(cache, k):
-            c = cache[k]
+        def subs(poly):
+            R = self._P.polynomial_ring()
+            if var_p in poly.variables():
+                d = {R(v): InfinitePolynomial_dense(self._P, v)
+                     for v in poly.variables()}
+                d[R(var_p)] = val
+                return R(poly.polynomial()).subs(d)
+            return poly
+
+        def subs_frac(c):
             # TODO: we may want to insist that all coefficients of a
             # stream have a parent
             if hasattr(c, "parent"):
                 if c.parent() is self._PFF:
-                    R = self._P.polynomial_ring()
-                    num = c.numerator()
-                    if var_p in num.variables():
-                        d = {R(v): InfinitePolynomial_dense(self._P, v) for v in num.variables()}
-                        d[R(var_p)] = val
-                        num = R(num.polynomial()).subs(d)
-                    den = c.denominator()
-                    if var_p in den.variables():
-                        d = {R(v): InfinitePolynomial_dense(self._P, v) for v in den.variables()}
-                        d[R(var_p)] = val
-                        den = R(den.polynomial()).subs(d)
-                    new = num / den
+                    new = subs(c.numerator()) / subs(c.denominator())
                 elif c.parent() is self._P and var_p in c.variables():
-                    R = self._P.polynomial_ring()
-                    d = {R(v): InfinitePolynomial_dense(self._P, v) for v in c.variables()}
-                    d[R(var_p)] = val
-                    new = R(c.polynomial()).subs(d)
+                    new = subs(c)
                 else:
-                    return
-                if new in self._base:
-                    cache[k] = self._base(new)
+                    return c
+                if new in self._coefficient_ring:
+                    return self._coefficient_ring(new)
                 else:
-                    cache[k] = new
+                    return new
 
         for j, s in enumerate(self._input_streams):
             m = len(s._cache) - self._good_cache[j]
@@ -1529,8 +1525,12 @@ class Stream_uninitialized(Stream):
             # determine last good element
             good = m
             for i0, i in enumerate(indices):
-                subs(s._cache, i)
-                if s._cache[i] not in self._base:
+                if self._base_ring == self._coefficient_ring:
+                    s._cache[i] = subs_frac(s._cache[i])
+                else:
+                    s._cache[i] = s._cache[i].map_coefficients(subs_frac)
+
+                if s._cache[i] not in self._coefficient_ring:
                     good = m - i0 - 1
             self._good_cache[j] += good
             # fix approximate_order and true_order
@@ -1538,7 +1538,7 @@ class Stream_uninitialized(Stream):
             if s._is_sparse:
                 while ao in s._cache:
                     if s._cache[ao]:
-                        if s._cache[ao] in self._base:
+                        if s._cache[ao] in self._coefficient_ring:
                             s._true_order = True
                         break
                     del s._cache[ao]
@@ -1547,7 +1547,7 @@ class Stream_uninitialized(Stream):
             else:
                 while s._cache:
                     if s._cache[0]:
-                        if s._cache[0] in self._base:
+                        if s._cache[0] in self._coefficient_ring:
                             s._true_order = True
                         break
                     del s._cache[0]
@@ -1561,10 +1561,6 @@ class Stream_uninitialized(Stream):
         """
         Solve the next equations, until the next variable is determined.
         """
-        # this is needed to work around a bug prohibiting conversion
-        # of variables into the InfinitePolynomialRing over the
-        # SymbolicRing
-        from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_dense
         # determine the next linear equations
         coeffs = []
         non_linear_coeffs = []
@@ -1579,29 +1575,37 @@ class Stream_uninitialized(Stream):
                 if eq._approximate_order == ao:
                     eq._approximate_order += 1
 
-            if coeff.parent() is self._PFF:
-                coeff = coeff.numerator()
+            if self._base_ring == self._coefficient_ring:
+                lcoeff = [coeff]
             else:
-                coeff = self._P(coeff)
-            V = coeff.variables()
-            if not V:
-                if len(self._eqs) == 1:
-                    raise ValueError(f"no solution as {coeff} != 0 in the equation at degree {eq._approximate_order}")
-                raise ValueError(f"no solution as {coeff} != 0 in equation {i} at degree {eq._approximate_order}")
-            if coeff.degree() <= 1:
-                coeffs.append(coeff)
-            elif coeff.is_monomial() and sum(1 for d in coeff.degrees() if d):
-                # if we have a single variable, we can remove the
-                # exponent - maybe we could also remove the
-                # coefficient - are we computing in an integral
-                # domain?
-                c = coeff.coefficients()[0]
-                v = InfinitePolynomial_dense(self._P, coeff.variables()[0])
-                coeffs.append(c * v)
-            else:
-                # nonlinear equations must not be discarded, we
-                # collect them to improve any error messages
-                non_linear_coeffs.append(coeff)
+                # TODO: it is a coincidence that this currently
+                # exists in all examples
+                lcoeff = coeff.coefficients()
+
+            for c in lcoeff:
+                if c.parent() is self._PFF:
+                    c = c.numerator()
+                else:
+                    c = self._P(c)
+                V = c.variables()
+                if not V:
+                    if len(self._eqs) == 1:
+                        raise ValueError(f"no solution as {coeff} != 0 in the equation at degree {eq._approximate_order}")
+                    raise ValueError(f"no solution as {coeff} != 0 in equation {i} at degree {eq._approximate_order}")
+                if c.degree() <= 1:
+                    coeffs.append(c)
+                elif c.is_monomial() and sum(1 for d in c.degrees() if d):
+                    # if we have a single variable, we can remove the
+                    # exponent - maybe we could also remove the
+                    # coefficient - are we computing in an integral
+                    # domain?
+                    c1 = c.coefficients()[0]
+                    v = InfinitePolynomial_dense(self._P, c.variables()[0])
+                    coeffs.append(c1 * v)
+                else:
+                    # nonlinear equations must not be discarded, we
+                    # collect them to improve any error messages
+                    non_linear_coeffs.append(c)
 
         if not coeffs:
             if len(self._eqs) == 1:
@@ -1631,8 +1635,11 @@ class Stream_uninitialized(Stream):
         bad = True
         for i, (c, y) in enumerate(zip(v, x)):
             if k.column(i).is_zero():
+                # work around a bug prohibiting conversion of
+                # variables into the InfinitePolynomialRing over the
+                # SymbolicRing
                 var = InfinitePolynomial_dense(self._P, c)
-                val = self._base(y)
+                val = self._base_ring(y)
                 self._subs_in_caches(var, val)
                 bad = False
         if bad:

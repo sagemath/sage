@@ -5271,9 +5271,13 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         def coefficient(n):
             r = R.zero()
+            P = self._coeff_stream[0].parent().base_ring()
+            g1 = [a.change_ring(P) for a in g]
             for i in range(n // gv + 1):
                 # Make sure the element returned from the composition is in P
+                # NO, we must not do this, because of define_implicitly
                 r += P(self[i](g))[n]
+#                r += (self._coeff_stream[i](g1))[n]
             return r
         coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)
         return P.element_class(P, coeff_stream)

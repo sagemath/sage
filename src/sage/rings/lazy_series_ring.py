@@ -659,6 +659,22 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
     unknown = undefined
 
+    def _terms_of_degree(self, n, R):
+        r"""
+        Return the list of terms occurring in a coefficient of degree
+        ``n`` such that coefficients are in the ring ``R``.
+
+        If ``self`` is a univariate Laurent, power, or Dirichlet
+        series, this is the list containing the one of the base ring.
+
+        If ``self`` is a multivariate power series, this is the list
+        of monomials of total degree ``n``.
+
+        If ``self`` is a lazy symmetric function, this is the list
+        of basis elements of total degree ``n``.
+        """
+        raise NotImplementedError
+
     def define_implicitly(self, series, equations):
         r"""
         Define series by solving functional equations.
@@ -873,6 +889,14 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.define_implicitly([A, B, C], [B - C - 1, B*z + 2*C + 1, A + 2*C + 1])
             sage: A + 2*C + 1
             O(z^7)
+
+        A bivariate example::
+
+            sage: R.<z,q> = LazyPowerSeriesRing(QQ)
+            sage: g = R.undefined()
+            sage: R.define_implicitly([g], [g - (z*q + z*g*~(1-g))])
+            sage: g
+
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
@@ -880,10 +904,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         ics = [a[1] if isinstance(a, (tuple, list))
                else []
                for a in series]
-        # common state for all series
         eqs = [eq._coeff_stream for eq in equations]
         for f, ic in zip(s, ics):
-            f.define_implicitly(s, ic, eqs, self._internal_poly_ring.base_ring())
+            f.define_implicitly(s, ic, eqs,
+                                self.base_ring(),
+                                self._internal_poly_ring.base_ring(),
+                                self._terms_of_degree)
 
     class options(GlobalOptions):
         r"""
@@ -1989,6 +2015,14 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         """
         return self._laurent_poly_ring(c).shift(n)
 
+    def _terms_of_degree(self, n, R):
+        r"""
+        Return the list consisting of a single element ``1`` in the given
+        ring.
+
+        """
+        return [R.one()]
+
     def uniformizer(self):
         """
         Return a uniformizer of ``self``..
@@ -2342,6 +2376,26 @@ class LazyPowerSeriesRing(LazySeriesRing):
         if m == 1:
             return L(c) * L.gen() ** n
         return L(c)
+
+    def _terms_of_degree(self, n, R):
+        r"""
+        Return the list of monomials of degree ``n`` in the polynomial
+        ring with base ring ``R``.
+
+        EXAMPLES::
+
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: L._terms_of_degree(3, QQ)
+            [1]
+            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
+            sage: L._terms_of_degree(3, QQ)
+            [y^3, x*y^2, x^2*y, x^3]
+
+        """
+        if self._arity == 1:
+            return [R.one()]
+        return [m.change_ring(R)
+                for m in self._internal_poly_ring.base_ring().monomials_of_degree(n)]
 
     @cached_method
     def gen(self, n=0):
@@ -2980,6 +3034,20 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         L = self._laurent_poly_ring
         return L(c)
 
+    def _terms_of_degree(self, n, R):
+        r"""
+        Return the list of basis elements of degree ``n``.
+
+        EXAMPLES::
+
+            sage: # needs sage.modules
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: L._terms_of_degree(3, ZZ)
+            [s[3], s[2, 1], s[1, 1, 1]]
+        """
+        return list(self._internal_poly_ring.base_ring().homogeneous_component_basis(n))
+
     def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, check=True):
         r"""
         Construct a lazy element in ``self`` from ``x``.
@@ -3602,6 +3670,13 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             return L(c) * L(n) ** -L(self.variable_name())
         except (ValueError, TypeError):
             return '({})/{}^{}'.format(self.base_ring()(c), n, self.variable_name())
+
+    def _terms_of_degree(self, n, R):
+        r"""
+        Return the list consisting of a single element 1 in the base ring.
+        """
+        return [R.one()]
+
 
 def _skip_leading_zeros(iterator):
     """
