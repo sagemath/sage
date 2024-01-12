@@ -1222,7 +1222,7 @@ def CubeGraph(n, embedding=1):
     """
     if embedding == 1:
         # construct recursively the adjacency dict and the embedding
-        theta = float(pi/n)
+        theta = float(pi/4) if n==3 else float(pi/n)
         d = {'': []}
         dn = {}
         p = {'': (float(0), float(0))}
