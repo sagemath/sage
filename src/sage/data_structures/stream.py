@@ -1497,7 +1497,7 @@ class Stream_uninitialized(Stream):
                         num = num.subs({var: val})
                     den = c.denominator()
                     if var_p in den.variables():
-                        num = den.subs({var: val})
+                        den = den.subs({var: val})
                     new = num / den
                 elif c.parent() is self._P and var_p in c.variables():
                     new = c.subs({var: val})
