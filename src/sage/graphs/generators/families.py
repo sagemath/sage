@@ -1215,6 +1215,17 @@ def CubeGraph(n, embedding=1):
         sage: g = graphs.CubeGraph(9, embedding=2)
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
 
+    Testing issue :trac:`37040`::
+        sage: graphs.CubeGraph(3)._pos
+        {'000': (0.0, 0.0),
+        '001': (6.123...-17, 1.0),
+        '010': (0.707..., 0.707...),
+        '011': (0.707..., 1.707...),
+        '100': (1.0, 0.0),
+        '101': (1.0, 1.0),
+        '110': (1.707..., 0.707...),
+        '111': (1.707..., 1.707...)}
+
     AUTHORS:
 
     - Robert Miller
