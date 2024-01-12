@@ -23,7 +23,7 @@ else
     code ()  { echo "$1"; }
     tab ()   { echo "$1:"; }
 fi
-if ! props=$(sage-package properties $PKG_BASE 2> /dev/null); then
+if ! props=$(sage-package properties --format=shell $PKG_BASE 2> /dev/null); then
     echo >&2 "sage-spkg-info: unknown package $PKG_BASE"
     exit 1
 fi
@@ -49,7 +49,7 @@ echo
 echo "Dependencies"
 echo "------------"
 echo
-eval $(sage-package properties :all:)
+eval $(sage-package properties --format=shell :all:)
 for dep in $(sage-package dependencies $PKG_BASE); do
     case "$dep" in
                 # Suppress dependencies on source files, e.g. of the form $(SAGE_ROOT)/..., $(SAGE_SRC)/...
