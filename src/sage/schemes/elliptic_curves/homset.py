@@ -148,8 +148,9 @@ class EllipticCurveHomset(SchemeHomset_generic):
 
         super().__init__(E1, E2, category=category, base=base)
 
-        #TODO: We should also add CommutativeRings to the category of self
-        # whenever this holds true; see _endomorphism_ring_is_commutative().
+        #TODO: We should also add CommutativeRings to the category
+        # of self whenever this holds true; see the method
+        # EllipticCurve_field.endomorphism_ring_is_commutative().
         # Is there a way to perform this check lazily?
 
     def _coerce_map_from_(self, other):
@@ -253,7 +254,7 @@ class EllipticCurveHomset(SchemeHomset_generic):
         Assuming this homset is an endomorphism ring, check whether
         it is a commutative ring.
 
-        ALGORITHM: :func:`_endomorphism_ring_is_commutative`
+        ALGORITHM: :meth:`EllipticCurve_field.endomorphism_ring_is_commutative`
 
         EXAMPLES::
 
@@ -266,44 +267,4 @@ class EllipticCurveHomset(SchemeHomset_generic):
         """
         if not self.is_endomorphism_set():
             raise ValueError('commutativity does not make sense for homsets between different objects')
-        return _endomorphism_ring_is_commutative(self.domain())
-
-def _endomorphism_ring_is_commutative(E):
-    r"""
-    Check whether the endomorphism ring of an elliptic curve `E`
-    *over its base field* is commutative.
-
-    ALGORITHM: The endomorphism ring is always commutative in
-    characteristic zero. Over finite fields, it is commutative
-    if and only if the Frobenius endomorphism is not in `\ZZ`.
-    All elliptic curves with non-commutative endomorphism ring
-    are supersingular. (The converse holds over the algebraic
-    closure, but here we consider endomorphisms *over the field
-    of definition*.)
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.homset import _endomorphism_ring_is_commutative
-        sage: _endomorphism_ring_is_commutative(EllipticCurve(QQ, [1,1]))
-        True
-        sage: _endomorphism_ring_is_commutative(EllipticCurve(QQ, [1,0]))
-        True
-        sage: _endomorphism_ring_is_commutative(EllipticCurve(GF(19), [1,1]))
-        True
-        sage: _endomorphism_ring_is_commutative(EllipticCurve(GF(19^2), [1,1]))
-        True
-        sage: _endomorphism_ring_is_commutative(EllipticCurve(GF(19), [1,0]))
-        True
-        sage: _endomorphism_ring_is_commutative(EllipticCurve(GF(19^2), [1,0]))
-        False
-        sage: _endomorphism_ring_is_commutative(EllipticCurve(GF(19^3), [1,0]))
-        True
-    """
-    k = E.base()
-    if k.characteristic() == 0 or E.is_ordinary():
-        return True
-
-    if not k.is_finite():
-        raise NotImplementedError
-
-    return E.frobenius() not in ZZ
+        return self.domain().endomorphism_ring_is_commutative()

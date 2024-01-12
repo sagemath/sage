@@ -2069,6 +2069,45 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         GL = G.relabel(labels, inplace=False)
         return GL
 
+    def endomorphism_ring_is_commutative(self):
+        r"""
+        Check whether the endomorphism ring of this elliptic curve
+        *over its base field* is commutative.
+
+        ALGORITHM: The endomorphism ring is always commutative in
+        characteristic zero. Over finite fields, it is commutative
+        if and only if the Frobenius endomorphism is not in `\ZZ`.
+        All elliptic curves with non-commutative endomorphism ring
+        are supersingular. (The converse holds over the algebraic
+        closure, but here we consider endomorphisms *over the field
+        of definition*.)
+
+        EXAMPLES::
+
+            sage: EllipticCurve(QQ, [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(QQ, [1,0]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19), [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19^2), [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19), [1,0]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19^2), [1,0]).endomorphism_ring_is_commutative()
+            False
+            sage: EllipticCurve(GF(19^3), [1,0]).endomorphism_ring_is_commutative()
+            True
+        """
+        k = self.base()
+        if k.characteristic() == 0 or self.is_ordinary():
+            return True
+
+        if not k.is_finite():
+            raise NotImplementedError
+
+        return self.frobenius() not in ZZ
+
 
 def compute_model(E, name):
     r"""
