@@ -1720,6 +1720,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         rank = len([1 for g in H.GeneratorsOfGroup()
                     if g.Order().sage() is infinity])
         invs += [0] * rank
+
         gens_orders += (ZZ.zero(),) * rank
         self._abinvs = invs
         invs = tuple(ZZ(i) for i in invs)
