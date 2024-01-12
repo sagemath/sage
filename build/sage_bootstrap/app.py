@@ -77,7 +77,8 @@ class Application(object):
         for pkg_name in pc.names:
             print(pkg_name)
 
-    def properties(self, *package_classes, props=['path', 'version_with_patchlevel', 'type', 'source', 'trees']):
+    def properties(self, *package_classes, props=['path', 'version_with_patchlevel', 'type', 'source', 'trees'],
+                   format='plain'):
         """
         Show the properties of given packages
 
@@ -92,6 +93,8 @@ class Application(object):
         pc = PackageClass(*package_classes)
         for package_name in pc.names:
             package = Package(package_name)
+            if format == 'plain':
+                print("{0}:".format(package_name))
             for p in props:
                 value = getattr(package, p)
                 if value is None:
@@ -99,7 +102,10 @@ class Application(object):
                         value = 'none'
                     else:
                         value = ''
-                print("{0}_{1}='{2}'".format(p, package_name, value))
+                if format == 'plain':
+                    print("        {0:28} {1}".format(p + ":", value))
+                else:
+                    print("{0}_{1}='{2}'".format(p, package_name, value))
 
     def name(self, tarball_filename):
         """

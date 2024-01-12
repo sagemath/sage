@@ -278,6 +278,9 @@ def make_parser():
         type=str, nargs='+',
         help=('package name or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:)'))
+    parser_properties.add_argument(
+        '--format', type=str, default='plain',
+        help='output format (one of plain and shell; default: plain)')
 
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
@@ -427,7 +430,7 @@ def run():
                      include_dependencies=args.include_dependencies,
                      exclude_dependencies=args.exclude_dependencies)
     elif args.subcommand == 'properties':
-        app.properties(*args.package_class)
+        app.properties(*args.package_class, format=args.format)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':
