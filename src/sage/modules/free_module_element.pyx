@@ -4148,10 +4148,15 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     nintegrate=nintegral
 
-    def concatenate(self, other):
+    def concatenate(self, other, *, ring=None):
         r"""
-        Return the result of concatenating this vector with another
-        vector over the same ring.
+        Return the result of concatenating this vector with a sequence
+        of elements given by another iterable.
+
+        If the optional keyword argument ``ring`` is passed, this method
+        will return a vector over the specified ring (or fail). If no
+        base ring is given, the base ring is determined automatically by
+        the :func:`vector` constructor.
 
         EXAMPLES::
 
@@ -4166,26 +4171,63 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.concatenate(w).parent()
             Ambient free module of rank 5 over the principal ideal domain Integer Ring
 
-        The method fails when the inputs aren't both vectors, or the vectors
-        aren't defined over the same ring::
+        Forcing a base ring is possible using the ``ring`` argument::
+
+            sage: v.concatenate(w, ring=QQ)
+            (1, 2, 3, 4, 5)
+            sage: v.concatenate(w, ring=QQ).parent()
+            Vector space of dimension 5 over Rational Field
+
+        ::
+
+            sage: v.concatenate(w, ring=Zmod(3))
+            (1, 2, 0, 1, 2)
+
+        The method accepts arbitrary iterables of elements which can
+        be coerced to a common base ring::
+
+            sage: v.concatenate(range(4,8))
+            (1, 2, 3, 4, 5, 6, 7)
+            sage: v.concatenate(range(4,8)).parent()
+            Ambient free module of rank 7 over the principal ideal domain Integer Ring
+
+        ::
+
+            sage: w2 = [4, QQbar(-5).sqrt()]
+            sage: v.concatenate(w2)
+            (1, 2, 3, 4, 2.236...*I)
+            sage: v.concatenate(w2).parent()
+            Vector space of dimension 5 over Algebraic Field
+            sage: w2 = vector(w2)
+            sage: v.concatenate(w2)
+            (1, 2, 3, 4, 2.236...*I)
+            sage: v.concatenate(w2).parent()
+            Vector space of dimension 5 over Algebraic Field
+
+        ::
 
             sage: w2 = polygen(QQ)^4 + 5
             sage: v.concatenate(w2)
-            Traceback (most recent call last):
-            ...
-            TypeError: can only concatenate two vectors
-            sage: w2 = vector(QQ, [4, 5])
-            sage: v.concatenate(w2)
-            Traceback (most recent call last):
-            ...
-            ValueError: can only concatenate vectors over the same base ring
+            (1, 2, 3, 5, 0, 0, 0, 1)
+            sage: v.concatenate(w2).parent()
+            Vector space of dimension 8 over Rational Field
+            sage: v.concatenate(w2, ring=ZZ)
+            (1, 2, 3, 5, 0, 0, 0, 1)
+            sage: v.concatenate(w2, ring=ZZ).parent()
+            Ambient free module of rank 8 over the principal ideal domain Integer Ring
+
+        ::
+
+            sage: v.concatenate(GF(9).gens())
+            (1, 2, 0, z2)
+            sage: v.concatenate(GF(9).gens()).parent()
+            Vector space of dimension 4 over Finite Field in z2 of size 3^2
         """
-        if not isinstance(other, FreeModuleElement):
-            raise TypeError('can only concatenate two vectors')
-        R = self.parent().base_ring()
-        if other.parent().base_ring() != R:
-            raise ValueError('can only concatenate vectors over the same base ring')
-        return vector(R, list(self) + list(other))
+        from itertools import chain
+        coeffs = chain(self, other)
+        if ring is not None:
+            return vector(ring, coeffs)
+        return vector(coeffs)
 
 #############################################
 # Generic dense element
