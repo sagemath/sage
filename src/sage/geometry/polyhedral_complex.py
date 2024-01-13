@@ -112,7 +112,6 @@ Classes and functions
 from copy import copy
 from sage.topology.cell_complex import GenericCellComplex
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.polyhedron.base import is_Polyhedron
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
@@ -308,7 +307,7 @@ class PolyhedralComplex(GenericCellComplex):
                 ambient_dim = next(iter(cells_dict[self._dim])).ambient_dim()
         self._ambient_dim = ambient_dim
         self._maximal_cells = cells_dict
-        if not all((is_Polyhedron(cell) and
+        if not all((isinstance(cell, sage.geometry.abc.Polyhedron) and
                    cell.ambient_dim() == self._ambient_dim)
                    for cell in self.maximal_cell_iterator()):
             raise ValueError("the given cells are not polyhedra " +
