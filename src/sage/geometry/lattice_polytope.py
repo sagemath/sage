@@ -463,32 +463,6 @@ def ReflexivePolytopes(dim):
     return _rp[dim]
 
 
-def is_LatticePolytope(x):
-    r"""
-    Check if ``x`` is a lattice polytope.
-
-    INPUT:
-
-    - ``x`` -- anything.
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`lattice polytope <LatticePolytopeClass>`,
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.lattice_polytope import is_LatticePolytope
-        sage: is_LatticePolytope(1)
-        False
-        sage: p = LatticePolytope([(1,0), (0,1), (-1,-1)])
-        sage: p                                                                         # needs palp
-        2-d reflexive polytope #0 in 2-d lattice M
-        sage: is_LatticePolytope(p)
-        True
-    """
-    return isinstance(x, LatticePolytopeClass)
-
 @richcmp_method
 class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.LatticePolytope):
     r"""

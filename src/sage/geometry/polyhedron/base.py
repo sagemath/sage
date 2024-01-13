@@ -56,32 +56,6 @@ from .base7 import Polyhedron_base7
 #########################################################################
 
 
-#########################################################################
-def is_Polyhedron(X):
-    """
-    Test whether ``X`` is a Polyhedron.
-
-    INPUT:
-
-    - ``X`` -- anything.
-
-    OUTPUT:
-
-    Boolean.
-
-    EXAMPLES::
-
-        sage: p = polytopes.hypercube(2)
-        sage: from sage.geometry.polyhedron.base import is_Polyhedron
-        sage: is_Polyhedron(p)
-        True
-        sage: is_Polyhedron(123456)
-        False
-    """
-    return isinstance(X, Polyhedron_base)
-
-
-#########################################################################
 class Polyhedron_base(Polyhedron_base7):
     """
     Base class for Polyhedron objects
