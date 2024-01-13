@@ -370,7 +370,7 @@ class ParentLibGAP(SageObject):
             [Subgroup with 1 generators (
              [6 0]
              [0 6]
-             ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]           
+             ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]
         """
         return [self._subgroup_constructor(gap_subgroup) for gap_subgroup in self.gap().MaximalNormalSubgroups()]
 
