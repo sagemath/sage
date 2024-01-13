@@ -357,7 +357,7 @@ class ParentLibGAP(SageObject):
              [0 6]
              ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]
         """
-        return [self.subgroup(gap_subgroup.GeneratorsOfGroup()) for gap_subgroup in self.gap().MinimalNormalSubgroups()]
+        return [self._subgroup_constructor(gap_subgroup) for gap_subgroup in self.gap().MinimalNormalSubgroups()]
 
     def maximal_normal_subgroups(self):
         """
@@ -366,13 +366,13 @@ class ParentLibGAP(SageObject):
 
         EXAMPLES::
 
-            sage: SL(2,GF(49)).maximal_normal_subgroups()
+            sage: SL(2,GF(49)).minimal_normal_subgroups()
             [Subgroup with 1 generators (
              [6 0]
              [0 6]
-             ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]
+             ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]           
         """
-        return [self.subgroup(gap_subgroup.GeneratorsOfGroup()) for gap_subgroup in self.gap().MaximalNormalSubgroups()]
+        return [self._subgroup_constructor(gap_subgroup) for gap_subgroup in self.gap().MaximalNormalSubgroups()]
 
     @cached_method
     def gens(self):
