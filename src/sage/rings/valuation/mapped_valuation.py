@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-pari
 r"""
 Valuations which are implemented through a map to another valuation
 

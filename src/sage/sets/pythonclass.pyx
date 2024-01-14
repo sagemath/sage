@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Set of all objects of a given Python class
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.number_field
 r"""
 Heegner points on elliptic curves over the rational numbers

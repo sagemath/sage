@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Growth diagrams and dual graded graphs

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 cimport numpy as cnumpy
 
 from sage.matrix.matrix_dense cimport Matrix_dense

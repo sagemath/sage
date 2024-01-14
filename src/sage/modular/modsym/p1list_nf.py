@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.number_field
 r"""
 Lists of Manin symbols over number fields, elements of `\mathbb{P}^1(R/N)`

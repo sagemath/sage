@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 # sage.doctest: optional - sympy
 """
 Wrapper Class for Sage Sets as SymPy Sets

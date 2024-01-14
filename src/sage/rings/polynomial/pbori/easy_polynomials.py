@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 from .interpolate import variety_lex_leading_terms, nf_lex_points
 from .pbori import easy_linear_factors
 

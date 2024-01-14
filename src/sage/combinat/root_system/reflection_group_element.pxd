@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 
 cdef class ComplexReflectionGroupElement(PermutationGroupElement):

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.structure.element cimport Element, ModuleElement, RingElement
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Loading and saving sessions and listing all variables
 

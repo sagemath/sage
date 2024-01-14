@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.singular
 r"""
 Ideals in multivariate polynomial rings
