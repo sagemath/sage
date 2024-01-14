@@ -13558,7 +13558,7 @@ cpdef _latex_Expression(x) noexcept:
     return char_to_str(GEx_to_str_latex(&(<Expression>x)._gobj))
 
 
-def solve_diophantine(f,  *args, **kwds):
+def solve_diophantine(f, *args, **kwds):
     """
     Solve a Diophantine equation.
 

@@ -373,7 +373,7 @@ class GenericDeclaration(UniqueRepresentation):
             True
             sage: GenericDeclaration(x, 'rational').contradicts({z: pi, y: pi})
             False
-       """
+        """
         if isinstance(soln, dict):
             value = soln.get(self._var)
             if value is None:

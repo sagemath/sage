@@ -755,7 +755,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: [I.residue_class_degree() for I in K.ideal(c).prime_factors()]
             [1, 2]
-         """
+        """
         if self.is_prime():
             return self.absolute_ideal().residue_class_degree()
         raise ValueError("the ideal (= %s) is not prime" % self)
@@ -872,7 +872,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             Traceback (most recent call last):
             ...
             ValueError: p (= Fractional ideal (5)) must be a prime
-         """
+        """
         if p == 0:
             raise ValueError("p (= %s) must be nonzero" % p)
         if not isinstance(p, NumberFieldFractionalIdeal):

@@ -1230,7 +1230,7 @@ class KleshchevPartitions(PartitionTuples):
             sage: KP = KleshchevPartitions(5, [3,0,1], 1, convention='LS')
             sage: KP.multicharge()
             (3, 0, 1)
-            """
+        """
         return self._multicharge
 
     def convention(self):

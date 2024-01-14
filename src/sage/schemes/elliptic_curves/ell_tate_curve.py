@@ -156,7 +156,7 @@ class TateCurve(SageObject):
              over Rational Field
             sage: eq.prime()
             5
-       """
+        """
         return self._p
 
     def parameter(self, prec=20):

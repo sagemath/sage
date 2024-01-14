@@ -861,7 +861,7 @@ class ToricVariety_field(AmbientSpace):
               s - t
               Defn: Defined on coordinates by sending [s : t : x : y] to
                     [t : t : x : y]
-         """
+        """
         from sage.schemes.toric.homset import SchemeHomset_toric_variety
         return SchemeHomset_toric_variety(*args, **kwds)
 

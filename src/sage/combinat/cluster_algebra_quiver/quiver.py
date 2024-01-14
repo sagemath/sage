@@ -2176,7 +2176,7 @@ class ClusterQuiver(SageObject):
             ...
             ValueError: only makes sense for quivers of finite type
         """
-        if not(self.is_finite()):
+        if not self.is_finite():
             raise ValueError('only makes sense for quivers of finite type')
 
         from .cluster_seed import ClusterSeed

@@ -3088,7 +3088,7 @@ class Polytopes:
         - ``construction`` -- the construction to use (string, default 'coxeter');
           the other possibility is 'as_permutahedron'.
 
-`       EXAMPLES:
+        EXAMPLES:
 
         The classical construction given by Coxeter in [Cox1969]_ is given by::
 

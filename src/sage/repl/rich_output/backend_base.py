@@ -319,7 +319,7 @@ class BackendBase(SageObject):
             sage: out = backend.plain_text_formatter(list(range(20)), concatenate=True)
             sage: out.text.get_str()
             '0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19'
-       """
+        """
         from sage.repl.display.pretty_print import SagePrettyPrinter
         if kwds.get('concatenate', False):
             plain_text = ' '.join(
