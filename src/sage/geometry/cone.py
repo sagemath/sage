@@ -266,6 +266,8 @@ def is_Cone(x):
         sage: is_Cone(quadrant)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_Cone is deprecated, use isinstance instead")
     return isinstance(x, ConvexRationalPolyhedralCone)
 
 
