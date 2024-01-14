@@ -347,7 +347,7 @@ class ParentLibGAP(SageObject):
 
     def minimal_normal_subgroups(self):
         """
-        Return a list containing those nontrivial normal subgroups of the group that are minimal among the nontrivial normal subgroups.
+        Return the nontrivial minimal normal subgroups ``self``.
 
         EXAMPLES::
 
@@ -357,12 +357,15 @@ class ParentLibGAP(SageObject):
              [0 6]
              ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]
         """
-        return [self._subgroup_constructor(gap_subgroup) for gap_subgroup in self.gap().MinimalNormalSubgroups()]
+        return [self._subgroup_constructor(gap_subgroup)
+                for gap_subgroup in self._libgap.MinimalNormalSubgroups()]
 
     def maximal_normal_subgroups(self):
         """
-        Return a list containing those proper normal subgroups of the group G that are maximal among the proper normal subgroups.
-        Gives error if G/G' is infinite, yielding infinitely many maximal normal subgroups.
+        Return the maximal proper normal subgroups of ``self``.
+
+        This raises an error if `G/[G, G]` is infinite, yielding infinitely
+        many maximal normal subgroups.
 
         EXAMPLES::
 
@@ -372,7 +375,8 @@ class ParentLibGAP(SageObject):
              [0 6]
              ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]
         """
-        return [self._subgroup_constructor(gap_subgroup) for gap_subgroup in self.gap().MaximalNormalSubgroups()]
+        return [self._subgroup_constructor(gap_subgroup)
+                for gap_subgroup in self._libgap.MaximalNormalSubgroups()]
 
     @cached_method
     def gens(self):
