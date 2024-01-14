@@ -90,121 +90,101 @@ approach.
 
 .. _sec-installation-from-sources-linux-recommended-installation:
 
-Debian/Ubuntu package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Linux system package installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-On Debian ("buster" or newer) or Ubuntu ("bionic" or newer), we recommend that you
-install:
+We recommend that you install the following packages, depending on your distribution:
 
-.. literalinclude:: debian.txt
+.. tab:: Debian/Ubuntu
+
+   .. literalinclude:: debian.txt
+
+.. tab:: Fedora/Redhat/CentOS
+
+   .. literalinclude:: fedora.txt
+
+.. tab:: Arch Linux
+
+   .. literalinclude:: arch.txt
+
+.. tab:: OpenSUSE
+
+   .. literalinclude:: opensuse.txt
+
+.. tab:: Void Linux
+
+   .. literalinclude:: void.txt
 
 If you wish to do Sage development, we recommend that you additionally
 install the following:
 
-.. literalinclude:: debian-develop.txt
+.. tab:: Debian/Ubuntu
+
+   .. literalinclude:: debian-develop.txt
+
+.. tab:: Fedora/Redhat/CentOS
+
+   .. literalinclude:: fedora-develop.txt
+
+.. tab:: Arch Linux
+
+   .. literalinclude:: arch-develop.txt
+
+.. tab:: OpenSUSE
+
+   .. literalinclude:: opensuse-develop.txt
+
+.. tab:: Void Linux
+
+   .. literalinclude:: void-develop.txt
 
 For all users, we recommend that you install the following system packages,
 which provide additional functionality and cannot be installed by Sage:
 
-.. literalinclude:: debian-recommended.txt
+.. tab:: Debian/Ubuntu
+
+   .. literalinclude:: debian-recommended.txt
+
+.. tab:: Fedora/Redhat/CentOS
+
+   .. literalinclude:: fedora-recommended.txt
+
+.. tab:: Arch Linux
+
+   .. literalinclude:: arch-recommended.txt
+
+.. tab:: OpenSUSE
+
+   .. literalinclude:: opensuse-recommended.txt
+
+.. tab:: Void Linux
+
+   .. literalinclude:: void-recommended.txt
 
 In addition to these, if you don't want Sage to build optional packages that might
 be available from your OS, cf. the growing list of such packages on :trac:`27330`,
 install:
 
-.. literalinclude:: debian-optional.txt
+.. tab:: Debian/Ubuntu
 
-Fedora/Redhat/CentOS package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. literalinclude:: debian-optional.txt
 
-On Fedora/Redhat/CentOS, we recommend that you install:
+.. tab:: Fedora/Redhat/CentOS
 
-.. literalinclude:: fedora.txt
+   .. literalinclude:: fedora-optional.txt
 
-If you wish to do Sage development, we recommend that you additionally
-install the following:
+.. tab:: Arch Linux
 
-.. literalinclude:: fedora-develop.txt
+   .. literalinclude:: arch-optional.txt
 
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
+.. tab:: OpenSUSE
 
-.. literalinclude:: fedora-recommended.txt
+   .. literalinclude:: opensuse-optional.txt
 
-In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
-install:
+.. tab:: Void Linux
 
-.. literalinclude:: fedora-optional.txt
+   .. literalinclude:: void-optional.txt
 
-Arch Linux package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-On ArchLinux, we recommend that you install:
-
-.. literalinclude:: arch.txt
-
-If you wish to do Sage development, we recommend that you additionally
-install the following:
-
-.. literalinclude:: arch-develop.txt
-
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
-
-.. literalinclude:: arch-recommended.txt
-
-In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
-install:
-
-.. literalinclude:: arch-optional.txt
-
-OpenSUSE package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-On OpenSUSE, we recommend that you install:
-
-.. literalinclude:: opensuse.txt
-
-If you wish to do Sage development, we recommend that you additionally
-install the following:
-
-.. literalinclude:: opensuse-develop.txt
-
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
-
-.. literalinclude:: opensuse-recommended.txt
-
-In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
-install:
-
-.. literalinclude:: opensuse-optional.txt
-
-Void Linux package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-On Void Linux, we recommend that you install:
-
-.. literalinclude:: void.txt
-
-If you wish to do Sage development, we recommend that you additionally
-install the following:
-
-.. literalinclude:: void-develop.txt
-
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
-
-.. literalinclude:: void-recommended.txt
-
-In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
-install:
-
-.. literalinclude:: void-optional.txt
 
 .. _section_macprereqs:
 
