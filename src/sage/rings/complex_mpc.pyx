@@ -72,7 +72,6 @@ from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 from sage.libs.pari.all import pari
-from sage.rings.ring import Ring
 
 from sage.rings.integer cimport Integer
 from sage.rings.complex_mpfr cimport ComplexNumber
@@ -319,7 +318,8 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
         self.__real_field = real_mpfr.RealField(prec, rnd=_mpfr_rounding_modes[rnd_re(n)])
         self.__imag_field = real_mpfr.RealField(prec, rnd=_mpfr_rounding_modes[rnd_im(n)])
 
-        Ring.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite())
+        Parent.__init__(self, self._real_field(), names=('I',), normalize=False,
+                        category=Fields().Infinite())
         self._populate_coercion_lists_(coerce_list=[MPFRtoMPC(self._real_field(), self)])
 
     cdef MPComplexNumber _new(self) noexcept:

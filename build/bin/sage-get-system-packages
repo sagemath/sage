@@ -47,16 +47,28 @@ case "$SYSTEM" in
 esac
 for PKG_BASE in $SPKGS; do
 
-    # Skip this package if it uses the SAGE_PYTHON_PACKAGE_CHECK
-    # macro and if --enable-system-site-packages was NOT passed
-    # to ./configure (or if ./configure has not yet been run).
-    SPKG_CONFIGURE="${SAGE_ROOT}/build/pkgs/${PKG_BASE}/spkg-configure.m4"
-    if [ -z "${ENABLE_SYSTEM_SITE_PACKAGES}" ]; then
-        if grep -q SAGE_PYTHON_PACKAGE_CHECK "${SPKG_CONFIGURE}" 2>/dev/null;
-        then
-            continue;
-        fi
-    fi
+    case "$SYSTEM:$ENABLE_SYSTEM_SITE_PACKAGES" in
+        install-requires*|pip*)
+            # This is output for installation of packages into a Python environment.
+            # So it's OK to use any Python packages.
+            ;;
+        *:)
+            # --enable-system-site-packages was NOT passed to configure
+            # (or script was run outside of the sage-build-env).
+            #
+            # Skip this package if it uses the SAGE_PYTHON_PACKAGE_CHECK macro.
+            #
+            SPKG_CONFIGURE="${SAGE_ROOT}/build/pkgs/${PKG_BASE}/spkg-configure.m4"
+            if grep -q SAGE_PYTHON_PACKAGE_CHECK "${SPKG_CONFIGURE}" 2>/dev/null;
+            then
+                continue
+            fi
+            ;;
+        *)
+            # --enable-system-site-packages was passed to configure.
+            # So any package (Python, non-Python) is fine.
+            ;;
+    esac
 
     for NAME in $SYSTEM_PACKAGES_FILE_NAMES; do
         SYSTEM_PACKAGES_FILE="$SAGE_ROOT"/build/pkgs/$PKG_BASE/$NAME

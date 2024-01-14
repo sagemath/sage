@@ -511,7 +511,11 @@ class DocTestReporter(SageObject):
                         stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}
                     else:
                         stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
-                    if not baseline.get('failed', False):  # e.g. AlarmInterrupt in doctesting framework
+                    # This codepath is triggered by doctests that test some timeout
+                    # ("AlarmInterrupt in doctesting framework") or other signal handling
+                    # behavior. This is why we handle the baseline in this codepath,
+                    # in contrast to other "Error in doctesting framework" codepaths.
+                    if not baseline.get('failed', False):
                         self.error_status |= 64
                 if result_dict.err is None or result_dict.err == 'tab':
                     f = result_dict.failures
