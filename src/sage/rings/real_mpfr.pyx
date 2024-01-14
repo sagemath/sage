@@ -143,17 +143,19 @@ from sage.libs.mpfr cimport *
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.misc.superseded import deprecation_cython as deprecation
+
+from sage.structure.element cimport Element
+from sage.structure.parent cimport Parent
+from sage.structure.element cimport have_same_parent
+from sage.structure.richcmp cimport rich_to_bool_sgn
+cdef bin_op
+from sage.structure.element import bin_op
+
+from sage.libs.mpmath.utils cimport mpfr_to_mpfval
+
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.real_double cimport RealDoubleElement
-from sage.rings.ring import Ring
-from sage.structure.element cimport Element
-from sage.structure.element cimport have_same_parent
-from sage.structure.parent_gens cimport ParentWithGens
-from sage.structure.richcmp cimport rich_to_bool_sgn
-
-cdef bin_op
-from sage.structure.element import bin_op
 
 try:
     from cypari2 import Gen
@@ -530,7 +532,8 @@ cdef class RealField_class(sage.rings.abc.RealField):
         self.rnd_str = char_to_str(rnd_str + 5)  # Strip "MPFR_"
 
         from sage.categories.fields import Fields
-        Ring.__init__(self, self, tuple(), False, category=Fields().Infinite().Metric().Complete())
+        Parent.__init__(self, self, names=tuple(), normalize=False,
+                        category=Fields().Infinite().Metric().Complete())
 
         # Initialize zero and one
         cdef RealNumber rn
