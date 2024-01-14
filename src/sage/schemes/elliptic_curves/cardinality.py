@@ -421,7 +421,7 @@ def cardinality_bsgs(self, verbose=False):
         sage: E = EllipticCurve([2*a^2 + 48*a + 27, 89*a^2 + 76*a + 24])
         sage: E.cardinality_bsgs()
         1031352
-     """
+    """
     E1 = self
     k = self.base_field()
     q = k.order()

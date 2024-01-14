@@ -567,7 +567,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: latex(CM)
             C^0 \left(M\right)
 
-         """
+        """
         return r"C^0 \left(" + self._domain._latex_() + r"\right)"
 
     @cached_method
