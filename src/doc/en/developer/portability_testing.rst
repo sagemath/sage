@@ -230,7 +230,7 @@ following::
   configure: hint: installing the following system packages is recommended and may avoid building some of the above SPKGs from source:
   configure:   $ sudo apt-get install libflint-arb-dev ... libzmq3-dev libz-dev
   configure: After installation, re-run configure using:
-  configure:   $ ./config.status --recheck && ./config.status
+  configure:   $ make reconfigure
 
 This information comes from Sage's database of equivalent distribution
 packages.  For example::
