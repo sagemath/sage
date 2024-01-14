@@ -2,6 +2,7 @@
 set -e
 
 # Create conda environment
+mkdir /tmp/conda-pkgs && mkdir -p /opt/conda && ln -s /tmp/conda-pkgs /opt/conda/pkgs
 conda install mamba -n base -c conda-forge -y
 df -h
 mamba env create --file src/environment-dev-3.11-linux.yml || mamba env update --file src/environment-dev-3.11-linux.yml
