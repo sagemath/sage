@@ -1,15 +1,17 @@
 # Do not keep running on errors
 set -e
+# Show commands run
+set -x
 
 # Create conda environment
 mkdir /tmp/conda-pkgs && mkdir -p /opt/conda && ln -s /tmp/conda-pkgs /opt/conda/pkgs
-conda install mamba -n base -c conda-forge -y
-df -h
-mamba env create --quiet --file src/environment-dev-3.11-linux.yml || mamba env update --quiet --file src/environment-dev-3.11-linux.yml
+conda install --quiet mamba -n base -c conda-forge -y
+df -h / /tmp
+mamba env create --file src/environment-dev-3.11-linux.yml || mamba env update --file src/environment-dev-3.11-linux.yml
 conda init bash
-df -h
-mamba clean --all --quiet
-df -h
+df -h / /tmp
+mamba clean --all --quiet --yes
+df -h / /tmp
 
 # Build sage
 conda run -n sage-dev ./bootstrap
