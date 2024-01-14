@@ -78,6 +78,8 @@ def is_Polyhedron(X):
         sage: is_Polyhedron(123456)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_Polyhedron is deprecated, use isinstance instead")
     return isinstance(X, Polyhedron_base)
 
 
