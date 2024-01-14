@@ -30,6 +30,7 @@ packages = [
     "sage_setup.autogen",
     "sage_setup.autogen.interpreters",
     "sage_setup.autogen.interpreters.specs",
+    "sage_setup.autogen.meson",
     "sage_setup.command",
 ]
 include-package-data = false

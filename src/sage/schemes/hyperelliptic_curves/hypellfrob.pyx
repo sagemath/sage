@@ -2,7 +2,7 @@
 # distutils: language = c++
 # distutils: sources = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.cpp sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.cpp
 # distutils: depends = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.h sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.h
-# distutils: include_dirs = sage/libs/ntl/ sage/schemes/hyperelliptic_curves/hypellfrob/ NTL_INCDIR
+# distutils: include_dirs = NTL_INCDIR
 # distutils: libraries = gmp NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: library_dirs = NTL_LIBDIR
@@ -56,7 +56,7 @@ from sage.libs.ntl.conversion cimport set_ntl_matrix_modn_dense
 include "sage/libs/ntl/decl.pxi"
 
 
-cdef extern from "hypellfrob.h":
+cdef extern from "hypellfrob/hypellfrob.h":
     int hypellfrob_matrix "hypellfrob::matrix" (mat_ZZ_c output, ZZ_c p,
                                                 int N, ZZX_c Q)
     void interval_products_wrapper \

@@ -7,6 +7,8 @@ project(
 
 set_variable('distribution_sagemath_objects', true)
 
+interpreters = ['Element', 'Python']  # RDF uses gsl --> sagemath-modules
+
 # Python module
 # https://mesonbuild.com/Python-module.html
 py_module = import('python')

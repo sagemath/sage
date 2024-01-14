@@ -45,6 +45,8 @@ gmpy2 = declare_dependency(
 )
 gmp = dependency('gmp', required: true)
 
+pari = cc.find_library('pari')
+
 inc_cypari2 = run_command(py,
     [
     '-c',
@@ -56,9 +58,9 @@ print(cypari2.__file__.replace('__init__.py', ''))
     check: true
   ).stdout().strip()
 cypari2 = declare_dependency(
-    include_directories: inc_cypari2,
+  include_directories: inc_cypari2,
+  dependencies: pari
 )
-pari = cc.find_library('pari')
 
 mpfr = cc.find_library('mpfr')
 
@@ -88,7 +90,6 @@ readline = cc.find_library('readline')
 lfunction = cc.find_library('Lfunction', required: false)
 fflas = cc.find_library('fflas')
 givaro = cc.find_library('givaro')
-linbox = cc.find_library('linbox')
 braiding = cc.find_library('braiding')
 gc = cc.find_library('gc')
 homfly = cc.find_library('homfly')
@@ -104,6 +105,10 @@ maxima = find_program('maxima', required: true)
 
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl', required: true)
+
+linbox = declare_dependency(
+  dependencies: [cc.find_library('linbox'), ntl]
+)
 
 # It's strange but cython cannot find its own include files
 # so we find them ourselves, and add them to the include path
@@ -138,9 +143,12 @@ add_project_arguments('-X fast_getattr=True', language : 'cython')
 add_project_arguments('-X legacy_implicit_noexcept=True', language : 'cython')
 add_project_arguments('-X preliminary_late_includes_cy28=True', language : 'cython')
 
+# include search path for cases like 'include "sage/libs/ntl/decl.pxi"'
+add_project_arguments('-I', meson.current_source_dir() / '..', language : 'cython')
+
 inc_cpython = include_directories('cpython')
 inc_rings = include_directories('rings')
-inc_rings_finite = include_directories('rings/finite_rings')
+inc_rings_finite = include_directories('rings/finite_rings', 'libs/linkages/padics/relaxed')  # .. is a hack for flint_helper.c
 inc_flint = include_directories('libs/flint')
 inc_gsl = include_directories('libs/gsl')
 inc_ntl = include_directories('libs/ntl')

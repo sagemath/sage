@@ -19,7 +19,7 @@ export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 if [ "$SAGE_WHEELS" = yes ]; then
     rm -Rf build
     DIST_DIR="$(mktemp -d)"
-    python3 -m build --no-isolation --wheel --skip-dependency-check -Csetup-args="--native-file=$(pwd)/sage-cython-native-file.ini" --outdir "$DIST_DIR"/dist . || sdh_die "Failure building wheel"
+    python3 -m build --no-isolation --wheel --skip-dependency-check -Csetup-args="--native-file=$(pwd)/sage-cython-native-file.ini" -Cbuild-dir=meson-build --outdir "$DIST_DIR"/dist . || sdh_die "Failure building wheel"
     ls -l "$DIST_DIR"/dist/*.tar.gz
     if [ "$SAGE_EDITABLE" = yes ]; then
         # Do not install the wheel
