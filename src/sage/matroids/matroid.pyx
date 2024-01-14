@@ -109,6 +109,8 @@ additional functionality (e.g. linear extensions).
     - :meth:`is_4connected() <sage.matroids.matroid.Matroid.is_4connected>`
     - :meth:`is_kconnected() <sage.matroids.matroid.Matroid.is_kconnected>`
     - :meth:`connectivity() <sage.matroids.matroid.Matroid.connectivity>`
+    - :meth:`is_paving() <sage.matroids.matroid.Matroid.is_paving>`
+    - :meth:`is_sparse_paving() <sage.matroids.matroid.Matroid.is_sparse_paving>`
 
 - Representation
     - :meth:`binary_matroid() <sage.matroids.matroid.Matroid.binary_matroid>`
@@ -133,9 +135,10 @@ additional functionality (e.g. linear extensions).
 
 - Construction
     - :meth:`union() <sage.matroids.matroid.Matroid.union>`
-    - :math:`direct_sum() <sage.matroids.matroid.Matroid.direct_sum>`
+    - :meth:`direct_sum() <sage.matroids.matroid.Matroid.direct_sum>`
 
 - Misc
+    - :meth:`automorphism_group() <sage.matroids.matroid.Matroid.automorphism_group>`
     - :meth:`broken_circuit_complex() <sage.matroids.matroid.Matroid.broken_circuit_complex>`
     - :meth:`chow_ring() <sage.matroids.matroid.Matroid.chow_ring>`
     - :meth:`matroid_polytope() <sage.matroids.matroid.Matroid.matroid_polytope>`
@@ -5953,6 +5956,55 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
+    cpdef is_paving(self) noexcept:
+        """
+        Return if ``self`` is paving.
+
+        A matroid is paving if each of its circuits has size `r` or `r+1`.
+
+        OUTPUT:
+
+        boolean
+
+        EXAMPLES::
+
+            sage: M = matroids.named_matroids.Vamos()
+            sage: M.is_paving()
+            True
+        """
+        for C in self.circuits():
+            if len(C) < self.rank():
+                return False
+        return True
+
+    cpdef is_sparse_paving(self) noexcept:
+        """
+        Return if ``self`` is sparse-paving.
+
+        A matroid is sparse-paving if the symmetric difference of every pair
+        of circuits is greater than 2.
+
+        OUTPUT:
+
+        boolean
+
+        EXAMPLES::
+
+            sage: M = matroids.named_matroids.Vamos()
+            sage: M.is_sparse_paving()
+            False
+            sage: M = matroids.named_matroids.Fano()
+            sage: M.is_sparse_paving()
+            True
+        """
+        if not self.is_paving():
+            return False
+        from itertools import combinations
+        for (C1, C2) in combinations(self.circuits(), 2):
+            if len(C1 ^ C2) <= 2:
+                return False
+        return True
+
     # representability
 
     cpdef _local_binary_matroid(self, basis=None) noexcept:
@@ -7915,6 +7967,41 @@ cdef class Matroid(SageObject):
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self.no_broken_circuits_sets(ordering))
+
+    cpdef automorphism_group(self) noexcept:
+        r"""
+        Return the automorphism group of ``self``.
+
+        For a matroid `M`, an automorphism is a permutation `\sigma` of `E(M)`
+        (the groundset) such that `r(X) = r(\sigma(X))` for all `X \subseteq
+        E(M)`. The set of automorphisms of `M` forms a group under composition.
+        This automorphism group is transitive if, for every two elements `x`
+        and `y` of `M`, there is an automorphism that maps `x` to `y`.
+
+        EXAMPLES::
+
+            sage: M = matroids.named_matroids.Fano()
+            sage: G = M.automorphism_group()
+            sage: G.is_transitive()
+            True
+            sage: G.structure_description()
+            'PSL(3,2)'
+            sage: M = matroids.named_matroids.P8pp()
+            sage: M.automorphism_group().is_transitive()
+            True
+            sage: M = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: G = M.automorphism_group()
+            sage: G.is_transitive()
+            True
+            sage: G.structure_description()
+            'M12'
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 189.
+        """
+        from sage.topology.simplicial_complex import SimplicialComplex
+        return SimplicialComplex(self.bases()).automorphism_group()
 
     cpdef bergman_complex(self) noexcept:
         r"""

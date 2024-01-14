@@ -1097,6 +1097,35 @@ class DocTestController(SageObject):
                 return -self.stats.get(basename, default).get('walltime', 0), basename
             self.sources = sorted(self.sources, key=sort_key)
 
+    def source_baseline(self, source):
+        r"""
+        Return the ``baseline_stats`` value of ``source``.
+
+        INPUT:
+
+        - ``source`` -- a :class:`DocTestSource` instance
+
+        OUTPUT:
+
+        A dictionary.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: from sage.env import SAGE_SRC
+            sage: import os
+            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: DD = DocTestDefaults()
+            sage: DC = DocTestController(DD, [filename])
+            sage: DC.expand_files_into_sources()
+            sage: DC.source_baseline(DC.sources[0])
+            {}
+        """
+        if self.baseline_stats:
+            basename = source.basename
+            return self.baseline_stats.get(basename, {})
+        return {}
+
     def run_doctests(self):
         """
         Actually runs the doctests.
@@ -1142,6 +1171,8 @@ class DocTestController(SageObject):
             iterations = ", ".join(iterations)
             if iterations:
                 iterations = " (%s)" % (iterations)
+            if self.baseline_stats:
+                self.log(f"Using --baseline-stats-path={self.options.baseline_stats_path}")
             self.log("Doctesting %s%s%s." % (filestr, threads, iterations))
             self.reporter = DocTestReporter(self)
             self.dispatcher = DocTestDispatcher(self)
