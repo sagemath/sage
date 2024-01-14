@@ -1790,7 +1790,7 @@ class CoxeterGroups(Category_singleton):
                 sage: w = W.from_reduced_word([1,2,1,0,1])
                 sage: w.has_full_support()
                 True
-                """
+            """
             return self.support() == set(self.parent().index_set())
 
         def reduced_word_graph(self):
@@ -3155,7 +3155,7 @@ class CoxeterGroups(Category_singleton):
                 sage: s1.kazhdan_lusztig_cell()
                 {[1], [2, 1], [3, 2, 1]}
 
-           Next, we compute a right cell and a two-sided cell in `A_3`::
+            Next, we compute a right cell and a two-sided cell in `A_3`::
 
                 sage: # optional - coxeter3, needs sage.combinat sage.groups sage.modules
                 sage: W = CoxeterGroup('A3', implementation='coxeter3')

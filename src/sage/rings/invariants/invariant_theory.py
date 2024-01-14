@@ -964,7 +964,7 @@ class QuadraticForm(AlgebraicForm):
 
         sage: invariant_theory.inhomogeneous_quadratic_form(p.subs(z=1), x,y)
         Ternary quadratic with coefficients (a, b, c, d, e, f)
-   """
+    """
 
     def __init__(self, n, d, polynomial, *args):
         """
@@ -1306,7 +1306,7 @@ class QuadraticForm(AlgebraicForm):
             [ * * 1 ]
             sage: _.polynomial('X,Y,Z')
             X^2 + 2*X*Y + Y^2 + 3*X*Z + Z^2
-       """
+        """
         R = self._ring
         B = 2*self._matrix_()
         import sage.quadratic_forms.quadratic_form
@@ -4644,7 +4644,7 @@ class InvariantTheoryFactory():
             2*a^2 + 2*b^2 + 2*c^2 - 3*r1^2 - 3*r2^2
             sage: inv.J_covariant()
             0
-       """
+        """
         q1 = QuadraticForm(4, 2, quadratic1, *args, **kwds)
         q2 = QuadraticForm(4, 2, quadratic2, *args, **kwds)
         return TwoQuaternaryQuadratics([q1, q2])
