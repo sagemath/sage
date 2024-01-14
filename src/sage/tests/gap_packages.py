@@ -12,10 +12,10 @@ TESTS::
     +--------+---------+------------+
 
     sage: test_packages(['primgrp', 'smallgrp'])
-      Status   Package    GAP Output
-    +--------+----------+------------+
-               primgrp    true
-               smallgrp   true
+        Status   Package    GAP Output
+      ├────────┼──────────┼────────────┤
+                 primgrp    true
+                 smallgrp   true
 """
 
 import os
@@ -44,9 +44,9 @@ def test_packages(packages, only_failures=False):
 
         sage: from sage.tests.gap_packages import all_installed_packages, test_packages
         sage: test_packages(['GAPDoc'])
-          Status   Package   GAP Output
-        +--------+---------+------------+
-                   GAPDoc    true
+            Status   Package   GAP Output
+          ├────────┼─────────┼────────────┤
+                     GAPDoc    true
 
     All packages, including user-installed ones::
 

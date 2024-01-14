@@ -2008,7 +2008,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(SR(1));  B
             [ 1  0]
@@ -2016,7 +2016,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(complex(1));  B
             [   1.0    0.0]
@@ -2024,7 +2024,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(QQbar(1+I));  B
             [ 1  0]

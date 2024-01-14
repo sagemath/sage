@@ -501,7 +501,7 @@ class Function_dilog(GinacFunction):
             sage: float(dilog(1))
             1.6449340668482262
 
-    TESTS:
+        TESTS:
 
         ``conjugate(dilog(x))==dilog(conjugate(x))`` unless on the branch cuts
         which run along the positive real axis beginning at 1.::

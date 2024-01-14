@@ -231,7 +231,7 @@ class Lisp(Expect):
 
             sage: lisp._function_class()
             <class 'sage.interfaces.lisp.LispFunction'>
-         """
+        """
         return LispFunction
 
     def _quit_string(self):
