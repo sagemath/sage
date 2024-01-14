@@ -118,11 +118,21 @@ jobs:
 
       # Testing
 
+      - name: Check that all modules can be imported
+        run: |
+          # Increase the length of the lines in the "short summary"
+          export COLUMNS=120
+          # The following command checks that all modules can be imported.
+          # The output also includes a long list of modules together with the number of tests in each module.
+          # This can be ignored.
+          ./sage -python -m pip install pytest-xdist
+          ./sage -python -m pytest -c tox.ini -qq --doctest --collect-only || true
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+
       - name: Test changed files (sage -t --new)
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-<<<<<<< HEAD
           ./sage -t --new -p2 --format github
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
@@ -167,10 +177,6 @@ jobs:
         # so that multi-stage builds can work correctly.
         run: |
           .ci/merge-fixes.sh
-=======
-          ./sage -t --new -p2
-        working-directory: ./worktree-image
->>>>>>> doctester-github-annotations--prod
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -218,7 +224,6 @@ jobs:
 
       - name: Test modularized distributions
         run: |
-<<<<<<< HEAD
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           make V=0 tox-ensure && make ${{ matrix.targets }}
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
@@ -259,11 +264,6 @@ jobs:
         # so that multi-stage builds can work correctly.
         run: |
           .ci/merge-fixes.sh
-=======
-          ./sage -python -m pip install coverage pytest-xdist
-          ./sage -python -m coverage run --rcfile=src/tox.ini -m pytest -c src/tox.ini --doctest-modules || true
-        working-directory: ./worktree-image
->>>>>>> doctester-github-annotations--prod
         env:
           GH_TOKEN: ${{ github.token }}
 

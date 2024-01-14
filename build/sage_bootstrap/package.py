@@ -370,6 +370,28 @@ class Package(object):
         """
         return os.path.exists(os.path.join(self.path, filename))
 
+    def line_count_file(self, filename):
+        """
+        Return the number of lines of the file
+
+        Directories are traversed recursively.
+
+        OUTPUT:
+
+        integer; 0 if the file cannot be read, 1 if it is a symlink
+        """
+        path = os.path.join(self.path, filename)
+        if os.path.islink(path):
+            return 1
+        if os.path.isdir(path):
+            return sum(self.line_count_file(os.path.join(filename, entry))
+                       for entry in os.listdir(path))
+        try:
+            with open(path, "rb") as f:
+                return len(list(f))
+        except OSError:
+            return 0
+
     def _init_checksum(self):
         """
         Load the checksums from the appropriate ``checksums.ini`` file
