@@ -477,47 +477,6 @@ def expand(x, *args, **kwds):
         return x.expand(*args, **kwds)
     except AttributeError:
         return x
-    
-def taylor_terms(f, *args, terms=None):
-    """
-    Return the terms of the Taylor expansion of the given expression.
-
-    This function computes the terms of the Taylor series expansion of the
-    input expression `f` around the specified point(s) in the variable(s) `args`.
-
-    INPUT:
-    - ``f`` (expression): The expression to compute the Taylor expansion for.
-    - ``args`` (symbolic variable(s)): The variable(s) around which to expand.
-    - ``terms`` (integer, optional): The number of terms to compute in the
-      Taylor expansion. If not specified, the expansion is computed to the
-      default precision.
-
-    OUTPUT:
-    - (expression) The terms of the Taylor expansion.
-
-    EXAMPLES:
-    ::
-
-        sage: x = var('x')
-        sage: f = x^2 + 3*x + 2
-        sage: taylor_terms(f, x, 0, terms=3)
-        x^2 + 3*x + 2
-
-        sage: y = var('y')
-        sage: g = sin(y)
-        sage: taylor_terms(g, y, 0, terms=4)
-        y - 1/6*y^3
-
-        sage: a, b = var('a b')
-        sage: h = exp(a*x + b)
-        sage: taylor_terms(h, x, 0, terms=3)
-        b + a*x + 1/2*a^2*x^2
-
-    """
-    if not isinstance(f, Expression):
-        from sage.symbolic.ring import SR
-        f = SR(f)
-    return f.taylor(*args, terms=terms)
 
 def definite_integral(f, *args, **kwds):
     """
