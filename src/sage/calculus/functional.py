@@ -489,9 +489,9 @@ def definite_integral(f, *args, **kwds):
     - ``f`` (expression): The expression to integrate.
     - ``args`` (symbolic variable(s)): The variable(s) over which to integrate.
     - Additional keyword arguments (optional):
-      - ``a``: The lower limit of integration.
-      - ``b``: The upper limit of integration.
-      - Any additional parameters accepted by the integral method.
+    - ``a``: The lower limit of integration.
+    - ``b``: The upper limit of integration.
+    - Any additional parameters accepted by the integral method.
 
     OUTPUT:
     - (expression) The result of the definite integral.
@@ -534,7 +534,7 @@ def partial_derivative(f, *args, **kwds):
     - ``f`` (expression): The expression for which to compute the partial derivative.
     - ``args`` (symbolic variable(s)): The variable(s) with respect to which to differentiate.
     - Additional keyword arguments (optional):
-      - Any additional parameters accepted by the derivative method.
+    - Any additional parameters accepted by the derivative method.
 
     OUTPUT:
     - (expression) The result of the partial derivative.
@@ -542,24 +542,24 @@ def partial_derivative(f, *args, **kwds):
     EXAMPLES:
     Test 1: Partial derivative of a quadratic function
     ::
-        sage: x = var('x')
-        sage: f = x^2 + 2*x + 1
-        sage: partial_derivative(f, x)
-        2*x + 2
+    sage: x = var('x')
+    sage: f = x^2 + 2*x + 1
+    sage: partial_derivative(f, x)
+    2*x + 2
 
     Test 2: Partial derivative of a multivariable function
     ::
-        sage: y, z = var('y z')
-        sage: g = sin(y*z) + cos(y)
-        sage: partial_derivative(g, y)
-        -z*sin(y*z) - sin(y)
+    sage: y, z = var('y z')
+    sage: g = sin(y*z) + cos(y)
+    sage: partial_derivative(g, y)
+    -z*sin(y*z) - sin(y)
 
     Test 3: Partial derivative with respect to multiple variables
     ::
-        sage: a, b = var('a b')
-        sage: h = exp(a*x + b*y)
-        sage: partial_derivative(h, [x, y])
-        [a*exp(a*x + b*y), b*exp(a*x + b*y)]
+    sage: a, b = var('a b')
+    sage: h = exp(a*x + b*y)
+    sage: partial_derivative(h, [x, y])
+    [a*exp(a*x + b*y), b*exp(a*x + b*y)]
     """
     try:
         return f.derivative(*args, **kwds)
