@@ -1024,7 +1024,7 @@ class RESetMapReduce():
             sage: S = RESetMapReduce(map_function = lambda x: 3*x + 5)
             sage: S.map_function(7)
             26
-         """
+        """
         return 1
 
     def reduce_function(self, a, b):

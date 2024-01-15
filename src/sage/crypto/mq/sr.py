@@ -3274,7 +3274,7 @@ class SR_gf2_2(SR_gf2):
             sage: l == sr.inversion_polynomials_single_sbox(biaffine_only=True, correct_only=False)                     # needs sage.libs.singular
             True
 
-       """
+        """
         e = self.e
         if x is None and w is None:
             # make sure it prints like in the book.

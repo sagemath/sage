@@ -3999,7 +3999,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             [ 2 -3  0]
             sage: m.det()
             -1
-            """
+        """
         if "_sublattice_complement" not in self.__dict__:
             self._split_ambient_lattice()
         if args or kwds:

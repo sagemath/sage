@@ -77,7 +77,7 @@ installed by Sage.
 When the ``./configure`` script runs, it will check for the presence of many
 packages (including the above) and inform you of any that are
 missing or have unsuitable versions. **Please read the messages that
-``./configure`` prints:** It will inform you which additional system packages
+./configure prints:** It will inform you which additional system packages
 you can install to avoid having to build them from source. This can save a lot of
 time.
 
@@ -183,6 +183,29 @@ install:
 
 .. literalinclude:: opensuse-optional.txt
 
+Void Linux package installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+On Void Linux, we recommend that you install:
+
+.. literalinclude:: void.txt
+
+If you wish to do Sage development, we recommend that you additionally
+install the following:
+
+.. literalinclude:: void-develop.txt
+
+For all users, we recommend that you install the following system packages,
+which provide additional functionality and cannot be installed by Sage:
+
+.. literalinclude:: void-recommended.txt
+
+In addition to these, if you don't want Sage to build optional packages that might
+be available from your OS, cf. the growing list of such packages on :trac:`27330`,
+install:
+
+.. literalinclude:: void-optional.txt
+
 .. _section_macprereqs:
 
 macOS prerequisites
@@ -275,8 +298,8 @@ Sage can be installed onto Linux running on Windows Subsystem for Linux (WSL). T
 From this point on, follow the instructions in the :ref:`sec-installation-from-sources-linux-recommended-installation` section.
 It is strongly recommended to put the Sage source files in the Linux file system, for example, in the ``/home/username/sage`` directory, and not in the Windows file system (e.g. ``/mnt/c/...``).
 
-WSL permission denied error when building `packaging` package.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+WSL permission denied error when building ``packaging`` package
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You may encounter permission errors of the kind ``"[Errno 13] Permission denied: 'build/bdist.linux-x86_64/wheel/<package>.dist-info'"`` during ``make``.
 This usually comes from a permission conflict between the Windows and Linux file system.
@@ -305,19 +328,19 @@ Notes on using conda
 
 If you don't want conda to be used by sage, deactivate conda (for the current shell session).
 
-  - Type::
+- Type::
 
-      $ conda deactivate
+    $ conda deactivate
 
-  - Repeat the command until ``conda info`` shows::
+- Repeat the command until ``conda info`` shows::
 
-      $ conda info
+    $ conda info
 
-      active environment : None
-      ...
+    active environment : None
+    ...
 
-  Then SageMath will be built either using the compilers provided by the
-  operating system, or its own compilers.
+Then SageMath will be built either using the compilers provided by the
+operating system, or its own compilers.
 
 
 Tcl/Tk (and system's Python)
