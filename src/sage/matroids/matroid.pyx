@@ -5939,7 +5939,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_paving()
             True
         """
@@ -5961,10 +5961,10 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos()
+            sage: M = matroids.catalog.Vamos()
             sage: M.is_sparse_paving()
             False
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.is_sparse_paving()
             True
         """
@@ -7944,16 +7944,16 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: G = M.automorphism_group()
             sage: G.is_transitive()
             True
             sage: G.structure_description()
             'PSL(3,2)'
-            sage: M = matroids.named_matroids.P8pp()
+            sage: M = matroids.catalog.P8pp()
             sage: M.automorphism_group().is_transitive()
             True
-            sage: M = matroids.named_matroids.ExtendedTernaryGolayCode()
+            sage: M = matroids.catalog.ExtendedTernaryGolayCode()
             sage: G = M.automorphism_group()
             sage: G.is_transitive()
             True
