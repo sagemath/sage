@@ -7916,7 +7916,7 @@ class GenericGraph(GenericGraph_pyx):
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
         - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity; set to 0 by default, which means quiet
+          verbosity; set to ``0`` by default, which means quiet
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
