@@ -376,7 +376,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
             if not F.is_primitive():
                 raise ValueError('given quadratic form is not primitive')
             if not F.is_positive_definite():
-                raise NotImplemented('only positive definite forms are currently supported')
+                raise NotImplementedError('only positive definite forms are currently supported')
         if reduce:
             F = F.reduced_form()
         self._form = F
