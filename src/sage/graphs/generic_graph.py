@@ -7899,7 +7899,7 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``induced`` -- boolean (default: ``False``); whether to return the
-          longest induced cycle or the longest cycle.
+          longest induced cycle or the longest cycle
 
         - ``use_edge_labels`` -- boolean (default: ``False``); whether to
           compute a cycle with maximum weight where the weight of an edge is
@@ -7916,11 +7916,11 @@ class GenericGraph(GenericGraph_pyx):
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
         - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+          verbosity; set to 0 by default, which means quiet
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
+          :meth:`MixedIntegerLinearProgram.get_values`
 
         OUTPUT:
 
