@@ -1318,7 +1318,7 @@ work without change) or to adapt them to your needs.
   configures a container with an installation of conda-forge and its SageMath package.
 
 - `downstream-docker-sagemathinc-sagemath-core/devcontainer.json
-  <https://github.com/sagemath/sage/tree/develop/.devcontainer/downstream-docker-sagemathinc-sagemath-core/devcontainer.json`_
+  <https://github.com/sagemath/sage/tree/develop/.devcontainer/downstream-docker-sagemathinc-sagemath-core/devcontainer.json>`_
   configures a container with the build of SageMath that `CoCalc <https://cocalc.com/>`_ uses.
 
 - `downstream-docker-cocalc/devcontainer.json
