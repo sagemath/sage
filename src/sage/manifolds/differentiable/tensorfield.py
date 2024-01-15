@@ -2739,7 +2739,7 @@ class TensorField(ModuleElementWithMutability):
             sage: s == 2*a
             True
 
-       Test with SymPy as calculus engine::
+        Test with SymPy as calculus engine::
 
             sage: M.set_calculus_method('sympy')
             sage: f.add_expr_by_continuation(c_uv, U.intersection(V))
