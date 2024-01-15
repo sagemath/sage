@@ -121,7 +121,6 @@ from . import structure
 from . import number_field_morphisms
 from itertools import count
 from collections import Counter
-from builtins import zip
 
 from sage.categories.homset import Hom
 from sage.categories.sets_cat import Sets

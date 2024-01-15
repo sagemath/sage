@@ -206,7 +206,6 @@ import sage.interfaces.abc
 
 import re
 import os
-import io
 import pexpect
 import time
 import platform
@@ -221,7 +220,7 @@ if SAGE_GAP_COMMAND is None:
     # Passing -A allows us to use a minimal GAP installation without
     # producing errors at start-up. The files sage.g and sage.gaprc are
     # used to load any additional packages that may be available.
-    gap_cmd  = f'gap -A -l "{GAP_ROOT_PATHS}"'
+    gap_cmd = f'gap -A -l "{GAP_ROOT_PATHS}"'
     if SAGE_GAP_MEMORY is not None:
         gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 else:
@@ -1320,8 +1319,8 @@ class Gap(Gap_generic):
             sline = int(sline) - 1
             if self.is_remote():
                 self._get_tmpfile()
-            with io.open(self._local_tmpfile(), "r",
-                         encoding=gap_encoding) as fobj:
+            with open(self._local_tmpfile(), "r",
+                      encoding=gap_encoding) as fobj:
                 help = fobj.read()
             if pager:
                 from IPython.core.page import page
