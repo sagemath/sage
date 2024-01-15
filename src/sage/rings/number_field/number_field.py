@@ -77,8 +77,7 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import (deprecation,
-                                  deprecated_function_alias)
+from sage.misc.superseded import deprecation
 
 
 import sage.libs.ntl.all as ntl
@@ -109,6 +108,7 @@ from .class_group import ClassGroup
 from .class_group import SClassGroup
 
 from sage.structure.element import is_Element
+from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 from sage.structure.factorization import Factorization
 from sage.structure.category_object import normalize_names
@@ -210,7 +210,6 @@ import sage.rings.polynomial.polynomial_element as polynomial_element
 import sage.groups.abelian_gps.abelian_group
 import sage.rings.complex_interval_field
 
-from sage.structure.parent_gens import ParentWithGens
 from sage.structure.factory import UniqueFactory
 from . import number_field_element
 from . import number_field_element_quadratic
@@ -1380,7 +1379,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         else:
             assert category.is_subcategory(default_category), "%s is not a subcategory of %s" % (category, default_category)
 
-        ParentWithGens.__init__(self, QQ, name, category=category)
+        Parent.__init__(self, base=QQ, names=name, category=category)
         if not isinstance(polynomial, polynomial_element.Polynomial):
             raise TypeError("polynomial (=%s) must be a polynomial" % repr(polynomial))
 
@@ -12762,7 +12761,6 @@ def _splitting_classes_gens_(K, m, d):
     """
     from sage.groups.abelian_gps.abelian_group import AbelianGroup
 
-    R = K.ring_of_integers()
     Zm = IntegerModRing(m)
     unit_gens = Zm.unit_gens()
     Zmstar = AbelianGroup(len(unit_gens), [x.multiplicative_order() for x in unit_gens])
