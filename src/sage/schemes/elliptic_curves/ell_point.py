@@ -539,6 +539,104 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         """
         return bool(self[2])
 
+    def has_order(self, n):
+        r"""
+        Test if this point has order exactly `n`.
+
+        INPUT:
+
+        - ``n`` -- integer, or its :class:`~sage.structure.factorization.Factorization`
+
+        ALGORITHM:
+
+        Compare a cached order if available, otherwise use :func:`sage.groups.generic.has_order`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('26b1')
+            sage: P = E(1, 0)
+            sage: P.has_order(7)
+            True
+            sage: P._order
+            7
+            sage: P.has_order(7)
+            True
+
+        It also works with a :class:`~sage.structure.factorization.Factorization` object::
+
+            sage: E = EllipticCurve(GF(419), [1,0])
+            sage: P = E(-33, 8)
+            sage: P.has_order(factor(21))
+            True
+            sage: P._order
+            21
+            sage: P.has_order(factor(21))
+            True
+
+        This method can be much faster than computing the order and comparing::
+
+            sage: # not tested -- timings are different each time
+            sage: p = 4 * prod(primes(3,377)) * 587 - 1
+            sage: E = EllipticCurve(GF(p), [1,0])
+            sage: %timeit P = E.random_point(); P.set_order(multiple=p+1)
+            72.4 ms ± 773 µs per loop (mean ± std. dev. of 7 runs, 1 loop each)
+            sage: %timeit P = E.random_point(); P.has_order(p+1)
+            32.8 ms ± 3.12 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+            sage: fac = factor(p+1)
+            sage: %timeit P = E.random_point(); P.has_order(fac)
+            30.6 ms ± 3.48 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+
+        The order is cached once it has been confirmed once, and the cache is
+        shared with :meth:`order`::
+
+            sage: # not tested -- timings are different each time
+            sage: P, = E.gens()
+            sage: delattr(P, '_order')
+            sage: %time P.has_order(p+1)
+            CPU times: user 83.6 ms, sys: 30 µs, total: 83.6 ms
+            Wall time: 83.8 ms
+            True
+            sage: %time P.has_order(p+1)
+            CPU times: user 31 µs, sys: 2 µs, total: 33 µs
+            Wall time: 37.9 µs
+            True
+            sage: %time P.order()
+            CPU times: user 11 µs, sys: 0 ns, total: 11 µs
+            Wall time: 16 µs
+            5326738796327623094747867617954605554069371494832722337612446642054009560026576537626892113026381253624626941643949444792662881241621373288942880288065660
+            sage: delattr(P, '_order')
+            sage: %time P.has_order(fac)
+            CPU times: user 68.6 ms, sys: 17 µs, total: 68.7 ms
+            Wall time: 68.7 ms
+            True
+            sage: %time P.has_order(fac)
+            CPU times: user 92 µs, sys: 0 ns, total: 92 µs
+            Wall time: 97.5 µs
+            True
+            sage: %time P.order()
+            CPU times: user 10 µs, sys: 1e+03 ns, total: 11 µs
+            Wall time: 14.5 µs
+            5326738796327623094747867617954605554069371494832722337612446642054009560026576537626892113026381253624626941643949444792662881241621373288942880288065660
+
+        TESTS::
+
+            sage: E = EllipticCurve([1,2,3,4,5])
+            sage: E(0).has_order(1)
+            True
+            sage: E(0).has_order(Factorization([]))
+            True
+        """
+        if hasattr(self, '_order'):                 # already known
+            if not isinstance(n, Integer):
+                n = n.value()
+            return self._order == n
+        ret = generic.has_order(self, n, operation='+')
+        if ret and not hasattr(self, '_order'):     # known now; cache
+            if not isinstance(n, Integer):
+                n = n.value()
+            self._order = n
+        return ret
+
     def has_finite_order(self):
         """
         Return ``True`` if this point has finite additive order as an
