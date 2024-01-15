@@ -8,4 +8,5 @@ fi
 
 sdh_configure --prefix="$SAGE_LOCAL" --includedir="$SAGE_LOCAL/include/nauty" $NAUTY_CONFIGURE
 sdh_make all TLSlibs
-sdh_make install TLSinstall
+sdh_make_install
+sdh_make_install TLSinstall
