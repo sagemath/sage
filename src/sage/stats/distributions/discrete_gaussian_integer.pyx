@@ -496,4 +496,3 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
         return f"Discrete Gaussian sampler over the Integers with sigma = {self.sigma:.6f} and c = {self.c:.6f}"
 
 
-DGI = DiscreteGaussianDistributionIntegerSampler

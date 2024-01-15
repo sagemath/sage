@@ -140,6 +140,3 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
         """
         # beware of unicode character in ascii string !
         return "Discrete Gaussian sampler for polynomials of degree < %d with σ=%f in each component" % (self.n, self.D.sigma)
-
-
-DGP = DiscreteGaussianDistributionPolynomialSampler
