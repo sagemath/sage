@@ -434,7 +434,7 @@ $COMMAND
 
     hint: After installation, re-run configure using:
 
-      \$ ./config.status --recheck && ./config.status
+      \$ make reconfigure
                 ])
             ], [
                 AC_MSG_NOTICE([No equivalent system packages for $SYSTEM are known to Sage])

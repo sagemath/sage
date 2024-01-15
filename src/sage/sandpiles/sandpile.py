@@ -5603,7 +5603,7 @@ class SandpileDivisor(dict):
             sage: K = s.canonical_divisor()
             sage: [K.weierstrass_rank_seq(v) for v in s.vertices(sort=True)]            # needs sage.geometry.polyhedron
             [(1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, 0, -1)]
-      """
+        """
         s = self.sandpile()
         if v == 'sink':
             v = s.sink()

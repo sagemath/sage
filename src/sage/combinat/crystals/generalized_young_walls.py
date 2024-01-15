@@ -633,7 +633,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: x = crystals.infinity.GeneralizedYoungWalls(3)([[],[1,0,3,2],[2,1],[3,2,1,0,3,2],[],[],[2]])
             sage: x.Phi()
             2*Lambda[0] + Lambda[1] - Lambda[2] + Lambda[3]
-            """
+        """
         La = self.cartan_type().root_system().weight_lattice(extended=True).fundamental_weights()
         return sum(self.phi(i)*La[i] for i in self.index_set())
 

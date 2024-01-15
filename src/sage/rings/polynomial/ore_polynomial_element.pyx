@@ -38,7 +38,6 @@ from sage.structure.element import coerce_binop
 from sage.rings.infinity import infinity
 from sage.structure.element cimport Element, RingElement, AlgebraElement
 from sage.structure.parent cimport Parent
-from sage.structure.parent_gens cimport ParentWithGens
 from sage.categories.homset import Hom
 from sage.rings.ring import _Fields
 from sage.rings.integer cimport Integer
@@ -2339,9 +2338,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         cdef long c_hash
         cdef long var_name_hash = 0
         cdef int i
-        for i from 0 <= i < len(self._coeffs):
+        for i in range(len(self._coeffs)):
             if i == 1:
-                var_name_hash = hash((<ParentWithGens>self._parent)._names[0])
+                var_name_hash = hash(self._parent._names[0])
             c_hash = hash(self._coeffs[i])
             if c_hash != 0:
                 if i == 0:
@@ -2577,9 +2576,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         cdef list y = (<OrePolynomial_generic_dense>right)._coeffs
         cdef Py_ssize_t dx = len(x), dy = len(y)
         if dx > dy:
-            r = self._new_c([x[i] + y[i] for i from 0 <= i < dy] + x[dy:], self._parent, 0)
+            r = self._new_c([x[i] + y[i] for i in range(dy)] + x[dy:], self._parent, 0)
         elif dx < dy:
-            r = self._new_c([x[i] + y[i] for i from 0 <= i < dx] + y[dx:], self._parent, 0)
+            r = self._new_c([x[i] + y[i] for i in range(dx)] + y[dx:], self._parent, 0)
         else:
             r = self._new_c([x[i] + y[i] for i in range(dx)], self._parent, 1)
         return r
