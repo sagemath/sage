@@ -46,7 +46,6 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
         sage: b + c
         2*abar
         sage: b*c
-        doctest:warning ...
         664346875*abar + 535606347
         sage: k.base_ring()
         Finite Field of size 923478923
