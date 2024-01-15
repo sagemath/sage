@@ -3622,7 +3622,7 @@ class Stream_integral(Stream_unary):
             sage: TestSuite(f2).run()
         """
         self._shift = len(integration_constants)
-        self._int_consts = tuple(integration_constants)
+        self._integration_constants = tuple(integration_constants)
         super().__init__(series, is_sparse, False)
 
     @lazy_attribute
@@ -3667,7 +3667,7 @@ class Stream_integral(Stream_unary):
             [0, -1, -1, -1/2, 0, 0, 1/5, 1/6]
         """
         if 0 <= n < self._shift:
-            return (self._int_consts[n] / ZZ.prod(range(2, n + 1)))
+            return (self._integration_constants[n] / ZZ.prod(range(2, n + 1)))
         return (self._series[n - self._shift] /
                 ZZ.prod(range(n - self._shift + 1, n + 1)))
 
@@ -3686,7 +3686,7 @@ class Stream_integral(Stream_unary):
             sage: hash(f) == hash(g)
             False
         """
-        return hash((type(self), self._series, self._int_consts))
+        return hash((type(self), self._series, self._integration_constants))
 
     def __eq__(self, other):
         """
@@ -3708,7 +3708,7 @@ class Stream_integral(Stream_unary):
             True
         """
         return (isinstance(other, type(self))
-                and self._int_consts == other._int_consts
+                and self._integration_constants == other._integration_constants
                 and self._series == other._series)
 
     def is_nonzero(self):
@@ -3732,7 +3732,7 @@ class Stream_integral(Stream_unary):
             sage: Stream_integral(f, [0, 2], False).is_nonzero()
             True
         """
-        return self._series.is_nonzero() or any(self._int_consts)
+        return self._series.is_nonzero() or any(self._integration_constants)
 
 
 class Stream_infinite_operator(Stream):

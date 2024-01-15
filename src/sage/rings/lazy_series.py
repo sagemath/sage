@@ -5629,7 +5629,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
           constants for the integrals of ``self`` (the last constant
           corresponds to the first integral)
 
-        For multivariable series, then only ``variable`` should be
+        For multivariable series, only ``variable`` should be
         specified; the integration constant is taken to be `0`.
 
         Now we assume the series is univariate. If the first argument is a
@@ -5782,7 +5782,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             else:
                 shift = 0
 
-            if isinstance(coeff_stream, Stream_exact): # the constant should be 0
+            if isinstance(coeff_stream, Stream_exact): # constant is 0 because arity is at least 2
                 ao = coeff_stream._approximate_order
                 coeffs = [R(c).integral(variable) for c in coeff_stream._initial_coefficients]
                 coeff_stream = Stream_exact(coeffs, order=ao+shift, constant=coeff_stream._constant)
