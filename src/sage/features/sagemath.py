@@ -380,8 +380,8 @@ class sage__libs__flint(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.flint',
-                             [PythonModule('sage.libs.flint.flint'),
-                              PythonModule('sage.libs.arb.arith')],
+                             [PythonModule('sage.libs.flint.arith_sage'),
+                              PythonModule('sage.libs.flint.flint_sage')],
                              spkg='sagemath_flint', type='standard')
 
 

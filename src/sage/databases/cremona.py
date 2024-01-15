@@ -1417,7 +1417,7 @@ class MiniCremonaDatabase(SQLDatabase):
         -  ``int`` - number_of_curves
         -  ``int`` - number_of_isogeny_classes
 
-       EXAMPLES::
+        EXAMPLES::
 
             sage: d = sage.databases.cremona.MiniCremonaDatabase(name='cremona', read_only=False, rebuild=True)   # not tested
             sage: d._init_allcurves('.', 11)    # not tested

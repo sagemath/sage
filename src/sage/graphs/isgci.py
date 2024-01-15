@@ -806,7 +806,7 @@ class GraphClasses(UniqueRepresentation):
             try:
                 z.extract(_XML_FILE, GRAPHS_DATA_DIR)
                 z.extract(_SMALLGRAPHS_FILE, GRAPHS_DATA_DIR)
-            except IOError:
+            except OSError:
                 pass
 
     def _parse_db(self, directory):
@@ -915,7 +915,7 @@ class GraphClasses(UniqueRepresentation):
             else:
                 directory = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
 
-        except IOError:
+        except OSError:
             directory = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
 
         self._parse_db(directory)
