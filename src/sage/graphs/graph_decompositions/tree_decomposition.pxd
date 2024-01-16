@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from sage.graphs.generic_graph_pyx cimport GenericGraph_pyx
 
 cdef class TreelengthConnected:

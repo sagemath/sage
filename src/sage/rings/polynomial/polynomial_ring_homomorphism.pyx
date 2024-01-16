@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Ring homomorphisms from a polynomial ring to another ring
 

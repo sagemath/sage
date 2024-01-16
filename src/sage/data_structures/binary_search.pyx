@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # We can probably get away with only having the mpz_binary_searches in here.
 # I'm too scared to get rid of it at 2am though.
 cdef Py_ssize_t binary_search(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x, Py_ssize_t* ins) noexcept:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Points on affine varieties
 

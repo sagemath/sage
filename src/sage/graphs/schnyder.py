@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 """
 Schnyder's algorithm for straight-line planar embeddings
 

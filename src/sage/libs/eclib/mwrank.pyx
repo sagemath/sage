@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-eclib
 """
 Cython interface to Cremona's ``eclib`` library (also known as ``mwrank``)
 

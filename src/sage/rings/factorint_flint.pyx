@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.libs.flint
 r"""
 Integer factorization using FLINT

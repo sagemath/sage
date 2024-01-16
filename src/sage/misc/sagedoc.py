@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Format Sage documentation for viewing with IPython and the notebook
 

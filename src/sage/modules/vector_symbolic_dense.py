@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Dense vectors over the symbolic ring
 

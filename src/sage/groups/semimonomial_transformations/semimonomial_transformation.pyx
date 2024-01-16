@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Elements of a semimonomial transformation group

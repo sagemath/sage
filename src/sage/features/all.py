@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Enumeration of all defined features
 """

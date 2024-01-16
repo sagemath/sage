@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Pickling for the old RDF vector class
 
