@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 r"""
 The Tachyon Ray Tracer
 

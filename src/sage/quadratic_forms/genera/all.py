@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
@@ -5,4 +6,4 @@
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .genus import Genus, LocalGenusSymbol, is_GlobalGenus
+from sage.quadratic_forms.genera.genus import Genus, LocalGenusSymbol, is_GlobalGenus

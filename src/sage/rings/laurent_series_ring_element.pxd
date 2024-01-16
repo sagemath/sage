@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.structure.element cimport AlgebraElement, ModuleElement
 
 cdef class LaurentSeries(AlgebraElement):

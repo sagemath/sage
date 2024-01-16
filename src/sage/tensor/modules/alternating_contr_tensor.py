@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Alternating contravariant tensors on free modules
 

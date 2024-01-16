@@ -1,5 +1,7 @@
+# sage_setup: distribution = sagemath-modules
 from sage.misc.lazy_import import lazy_import
 
 lazy_import("sage.calculus.transforms.fft", ["FastFourierTransform", "FFT"])
 lazy_import("sage.calculus.transforms.dwt", ["WaveletTransform", "DWT"])
-from .dft import IndexedSequence
+from sage.calculus.transforms.dft import IndexedSequence
+del lazy_import

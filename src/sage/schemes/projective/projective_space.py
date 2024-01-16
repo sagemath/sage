@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Projective `n` space over a ring
 

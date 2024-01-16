@@ -1,4 +1,5 @@
-# -*- coding: utf-8
+# sage_setup: distribution = sagemath-flint
+
 from sage.cpython.string cimport char_to_str
 
 

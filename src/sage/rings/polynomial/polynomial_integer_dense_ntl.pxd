@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.libs.ntl.types cimport ZZX_c
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 

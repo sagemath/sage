@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 import pytest
 
 from sage.structure.sage_object import SageObject
