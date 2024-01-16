@@ -645,9 +645,6 @@ how it is built:
 Environment variables
 ---------------------
 
-Environment variables controlling the build process
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 Sage uses several environment variables to control its build process.
 Most users won't need to set any of these: the build process just works on many
 platforms.
@@ -656,20 +653,9 @@ speed up the process.)
 Building Sage involves building about 100 packages, each of which has its own
 compilation instructions.
 
-The Sage source tarball already includes the sources for all standard
-packages, that is, it allows you to build Sage without internet
-connection. The git repository, however, does not contain the source
-code for third-party packages. Instead, it will be downloaded as
-needed (Note: you can run ``make download`` to force downloading
-packages before building). Package downloads use the Sage mirror
-network, the nearest mirror will be determined automatically for
-you. This is influenced by the following environment variable:
 
-.. envvar:: SAGE_SERVER
-
-  Try the specified mirror first, before falling back to the official
-  Sage mirror list. Note that Sage will search the directory
-  ``SAGE_SERVER/spkg/upstream`` for upstream tarballs.
+Standard environment controlling the build process
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Here are some of the more commonly used variables affecting the build process:
 
@@ -696,6 +682,86 @@ Here are some of the more commonly used variables affecting the build process:
       Some users on single-core macOS machines have reported problems when
       building Sage with ``MAKE='make -jNUM'`` with ``NUM`` greater than one.
 
+.. envvar:: V
+
+  If set to ``0``, silence the build.  Instead of showing a detailed
+  compilation log, only one line of output is shown at the beginning
+  and at the end of the installation of each Sage package.  To see
+  even less output, use::
+
+    $ make -s V=0
+
+  (Note that the above uses the syntax of setting a Makefile variable.)
+
+.. envvar:: CC
+
+  While some programs allow you to use this to specify your C
+  compiler, **not every Sage package recognizes this**.
+  If GCC is installed within Sage, :envvar:`CC` is ignored and Sage's ``gcc``
+  is used instead.
+
+.. envvar:: CPP
+
+  Similarly, this will set the C preprocessor for some Sage
+  packages, and similarly, using it is likely quite risky.
+  If GCC is installed within Sage, :envvar:`CPP` is ignored and Sage's ``cpp``
+  is used instead.
+
+.. envvar:: CXX
+
+  Similarly, this will set the C++ compiler for some Sage
+  packages, and similarly, using it is likely quite risky.
+  If GCC is installed within Sage, :envvar:`CXX` is ignored and Sage's ``g++``
+  is used instead.
+
+.. envvar:: FC
+
+  Similarly, this will set the Fortran compiler.
+  This is supported by all Sage packages which have Fortran code.
+  However, for historical reasons, the value is hardcoded during the initial
+  ``make`` and subsequent changes to ``$FC`` might be ignored (in which case,
+  the original value will be used instead).
+  If GCC is installed within Sage, :envvar:`FC` is ignored and Sage's
+  ``gfortran`` is used instead.
+
+.. envvar:: CFLAGS
+.. envvar:: CXXFLAGS
+.. envvar:: FCFLAGS
+
+  The flags for
+  the C compiler, the C++ compiler and the Fortran compiler, respectively.
+  The same comments apply to these: setting them may cause problems, because
+  they are not universally respected among the Sage packages. Note
+  also that ``export CFLAGS=""`` does not have the same effect as
+  ``unset CFLAGS``. The latter is preferable.
+
+.. envvar:: CPPFLAGS
+.. envvar:: LDFLAGS
+.. envvar:: CXXFLAG64
+.. envvar:: LDFLAG64
+.. envvar:: LD
+
+  Similar comments apply to these compiler and linker flags.
+
+
+Sage-specific environment variables controlling the build process
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. envvar:: SAGE_SERVER
+
+  The Sage source tarball already includes the sources for all standard
+  packages, that is, it allows you to build Sage without internet
+  connection. The git repository, however, does not contain the source
+  code for third-party packages. Instead, it will be downloaded as
+  needed (note: you can run ``make download`` to force downloading
+  packages before building). Package downloads use the Sage mirror
+  network, the nearest mirror will be determined automatically for
+  you. This is influenced by the following environment variable:
+
+  Try the specified mirror first, before falling back to the official
+  Sage mirror list. Note that Sage will search the directory
+  ``SAGE_SERVER/spkg/upstream`` for upstream tarballs.
+
 .. envvar:: SAGE_NUM_THREADS
 
   If set to a number, then when rebuilding with ``sage -b`` or
@@ -713,17 +779,6 @@ Here are some of the more commonly used variables affecting the build process:
 
   When ``sage -t -p`` runs under the control of the GNU ``make``
   jobserver, then Sage will request as most this number of job slots.
-
-.. envvar:: V
-
-  If set to ``0``, silence the build.  Instead of showing a detailed
-  compilation log, only one line of output is shown at the beginning
-  and at the end of the installation of each Sage package.  To see
-  even less output, use::
-
-    $ make -s V=0
-
-  (Note that the above uses the syntax of setting a Makefile variable.)
 
 .. envvar:: SAGE_CHECK
 
@@ -886,8 +941,9 @@ Here are some of the more commonly used variables affecting the build process:
   supports :envvar:`SAGE_SUDO`, into a root-owned installation
   hierarchy (:envvar:`SAGE_LOCAL`).
 
-Environment variables for documentation build
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Environment variables controlling the documentation build
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. envvar:: SAGE_DOCBUILD_OPTS
 
@@ -992,58 +1048,6 @@ Environment variables dealing with specific Sage packages
   The value of this variable is passed as an
   argument to the ``$MAKE`` command when compiling PARI.
 
-Standard environment controlling the build process
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. envvar:: CC
-
-  While some programs allow you to use this to specify your C
-  compiler, **not every Sage package recognizes this**.
-  If GCC is installed within Sage, :envvar:`CC` is ignored and Sage's ``gcc``
-  is used instead.
-
-.. envvar:: CPP
-
-  Similarly, this will set the C preprocessor for some Sage
-  packages, and similarly, using it is likely quite risky.
-  If GCC is installed within Sage, :envvar:`CPP` is ignored and Sage's ``cpp``
-  is used instead.
-
-.. envvar:: CXX
-
-  Similarly, this will set the C++ compiler for some Sage
-  packages, and similarly, using it is likely quite risky.
-  If GCC is installed within Sage, :envvar:`CXX` is ignored and Sage's ``g++``
-  is used instead.
-
-.. envvar:: FC
-
-  Similarly, this will set the Fortran compiler.
-  This is supported by all Sage packages which have Fortran code.
-  However, for historical reasons, the value is hardcoded during the initial
-  ``make`` and subsequent changes to ``$FC`` might be ignored (in which case,
-  the original value will be used instead).
-  If GCC is installed within Sage, :envvar:`FC` is ignored and Sage's
-  ``gfortran`` is used instead.
-
-.. envvar:: CFLAGS
-.. envvar:: CXXFLAGS
-.. envvar:: FCFLAGS
-
-  The flags for
-  the C compiler, the C++ compiler and the Fortran compiler, respectively.
-  The same comments apply to these: setting them may cause problems, because
-  they are not universally respected among the Sage packages. Note
-  also that ``export CFLAGS=""`` does not have the same effect as
-  ``unset CFLAGS``. The latter is preferable.
-
-.. envvar:: CPPFLAGS
-.. envvar:: LDFLAGS
-.. envvar:: CXXFLAG64
-.. envvar:: LDFLAG64
-.. envvar:: LD
-
-  Similar comments apply to these compiler and linker flags.
 
 Environment variables dealing with doctesting
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1070,6 +1074,7 @@ Environment variables dealing with doctesting
   variables are only used if the flags are unset. Run ``sage -t -h``
   for more information on the effects of these flags (and therefore
   these variables).
+
 
 Environment variables set within Sage environments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
