@@ -1235,20 +1235,180 @@ class Stream_taylor(Stream_inexact):
             n += 1
             denom *= n
 
-STREAM_UNINITIALIZED_VARIABLES = defaultdict(set)
-def get_variable(P):
-    r"""
-    Return the first variable with index not in
-    ``STREAM_UNINITIALIZED_VARIABLES``.
 
-    We need a different dictionary for each base ring.
+from sage.structure.parent import Parent
+from sage.structure.element import Element, parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.fields import Fields
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+class UndeterminedCoefficientsRingElement(Element):
+    def __init__(self, parent, v):
+        Element.__init__(self, parent)
+        self._p = v
+
+    def _repr_(self):
+        return repr(self._p)
+
+    def _richcmp_(self, other, op):
+        r"""
+        Compare ``self`` with ``other`` with respect to the comparison
+        operator ``op``.
+        """
+        return self._p._richcmp_(other._p, op)
+
+    def _add_(self, other):
+        """
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
+            sage: R = UndeterminedCoefficientsRing(QQ)
+            sage: R(None) + 1
+            FESDUMMY_... + 1
+        """
+        P = self.parent()
+        return P.element_class(P, self._p + other._p)
+
+    def _sub_(self, other):
+        """
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
+            sage: R = UndeterminedCoefficientsRing(QQ)
+            sage: 1 - R(None)
+            -FESDUMMY_... + 1
+        """
+        P = self.parent()
+        return P.element_class(P, self._p - other._p)
+
+    def _neg_(self):
+        """
+        Return the negative of ``self``.
+        """
+        P = self.parent()
+        return P.element_class(P, -self._p)
+
+    def _mul_(self, other):
+        """
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
+            sage: R = UndeterminedCoefficientsRing(QQ)
+            sage: R(None) * R(None)
+            FESDUMMY_...*FESDUMMY_...
+        """
+        P = self.parent()
+        return P.element_class(P, self._p * other._p)
+
+    def _div_(self, other):
+        P = self.parent()
+        return P.element_class(P, self._p / other._p)
+
+    def numerator(self):
+        return self._p.numerator()
+
+    def variables(self):
+        """
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
+            sage: R = UndeterminedCoefficientsRing(QQ)
+            sage: R(None) / (R(None) + R(None))
+            FESDUMMY_.../(FESDUMMY_... + FESDUMMY_...)
+        """
+        return self._p.numerator().variables() + self._p.denominator().variables()
+
+    def rational_function(self):
+        return self._p
+
+    def subs(self, d):
+        """
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
+            sage: R = UndeterminedCoefficientsRing(QQ)
+            sage: p = R(None) + 1
+            sage: v = p.variables()[0]
+            sage: q = R(None) + 1
+            sage: (p/q).subs({v: 3})
+            4/(FESDUMMY_... + 1)
+        """
+        P = self.parent()
+        V = self.variables()
+        d1 = {v: c for v, c in d.items()
+              if v in V}
+        return P.element_class(P, self._p.subs(d1))
+
+class UndeterminedCoefficientsRing(UniqueRepresentation, Parent):
     """
-    vars = STREAM_UNINITIALIZED_VARIABLES[P]
-    for i in range(P._max+2):
-        v = P.gen()[i]
-        if v not in vars:
-            vars.add(v)
-            return v
+    Rational functions in unknowns over a base ring.
+    """
+    # must not inherit from UniqueRepresentation, because we want a
+    # new set of variables for each system of equations
+
+    _PREFIX = "FESDUMMY_"
+    @staticmethod
+    def __classcall_private__(cls, base_ring, *args, **kwds):
+        return super().__classcall__(cls, base_ring, *args, **kwds)
+
+    def __init__(self, base_ring):
+        self._pool = dict()  # dict from variables actually used to indices of gens
+        # we must start with at least two variables, to make PolynomialSequence work
+        self._P = PolynomialRing(base_ring, names=[self._PREFIX+str(i) for i in range(2)])
+        self._PF = self._P.fraction_field()
+        Parent.__init__(self, base=base_ring, category=Fields())
+
+    def polynomial_ring(self):
+        """
+        .. WARNING::
+
+            This ring changes when new variables are requested.
+        """
+        return self._P
+
+    def _element_constructor_(self, x):
+        if x is None:
+            n = self._P.ngens()
+            for i in range(n):
+                if i not in self._pool.values():
+                    break
+            else:
+                names = self._P.variable_names() + (self._PREFIX+str(n),)
+                self._P = PolynomialRing(self._P.base_ring(), names)
+                self._PF = self._P.fraction_field()
+                i = n
+            v = self._P.gen(i)
+            self._pool[v] = i
+            return self.element_class(self, self._PF(v))
+
+        if x in self._PF:
+            return self.element_class(self, self._PF(x))
+
+        raise ValueError(f"{x} is not in {self}")
+
+    def delete_variable(self, v):
+        del self._pool[v]
+
+    def _coerce_map_from_(self, S):
+        """
+        Return ``True`` if a coercion from ``S`` exists.
+        """
+        if self._P.base_ring().has_coerce_map_from(S):
+            return True
+        return None
+
+    def _coerce_map_from_base_ring(self):
+        """
+        Return a coercion map from the base ring of ``self``.
+        """
+        return self._generic_coerce_map(self._P.base_ring())
+
+    def _repr_(self):
+        return f"Undetermined coefficient ring over {self._P.base_ring()}"
+
+    Element = UndeterminedCoefficientsRingElement
+
 
 class Stream_uninitialized(Stream):
     r"""
@@ -1363,10 +1523,8 @@ class Stream_uninitialized(Stream):
 
         self._coefficient_ring = coefficient_ring
         self._base_ring = base_ring
-        # we use a silly variable name, because InfinitePolynomialRing is cached
-        self._P = InfinitePolynomialRing(self._base_ring, names=("FESDUMMY",),
-                                         implementation='dense')
-        self._PFF = self._P.fraction_field()
+        self._P = UndeterminedCoefficientsRing(self._base_ring)
+        # elements of the stream have self._P as base ring
         self._uncomputed = True
         self._eqs = equations
         self._series = series
@@ -1473,7 +1631,7 @@ class Stream_uninitialized(Stream):
         if len(self._cache) > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
-        x = sum(get_variable(self._P) * m
+        x = sum(self._P(None) * m
                 for m in self._terms_of_degree(n, self._P))
         self._cache.append(x)
         return x
@@ -1488,31 +1646,6 @@ class Stream_uninitialized(Stream):
             - ``var``, a variable
             - ``val``, the value that should replace the variable
         """
-        var_p = var.polynomial()
-        def subs(poly):
-            R = self._P.polynomial_ring()
-            if var_p in poly.variables():
-                d = {R(v): InfinitePolynomial_dense(self._P, v)
-                     for v in poly.variables()}
-                d[R(var_p)] = val
-                return R(poly.polynomial()).subs(d)
-            return poly
-
-        def subs_frac(c):
-            # TODO: we may want to insist that all coefficients of a
-            # stream have a parent
-            if hasattr(c, "parent"):
-                if c.parent() is self._PFF:
-                    new = subs(c.numerator()) / subs(c.denominator())
-                elif c.parent() is self._P and var_p in c.variables():
-                    new = subs(c)
-                else:
-                    return c
-                if new in self._coefficient_ring:
-                    return self._coefficient_ring(new)
-                else:
-                    return new
-
         for j, s in enumerate(self._input_streams):
             m = len(s._cache) - self._good_cache[j]
             if s._is_sparse:
@@ -1522,15 +1655,29 @@ class Stream_uninitialized(Stream):
                 indices = reversed(s._cache)
             else:
                 indices = range(-1, -m-1, -1)
-            # determine last good element
+            # substitute variable and determine last good element
             good = m
             for i0, i in enumerate(indices):
-                if self._base_ring == self._coefficient_ring:
-                    s._cache[i] = subs_frac(s._cache[i])
-                else:
-                    s._cache[i] = s._cache[i].map_coefficients(subs_frac)
-
-                if s._cache[i] not in self._coefficient_ring:
+                # the following looks dangerous - could there be a
+                # ring that contains the UndeterminedCoefficientRing?
+                # it is not enough to look at the parent of
+                # s._cache[i]
+                c = s._cache[i]
+                if c not in self._coefficient_ring:
+                    if self._base_ring == self._coefficient_ring:
+                        c = c.subs({var: val})
+                        f = c.rational_function()
+                        if f in self._coefficient_ring:
+                            c = self._coefficient_ring(f)
+                    else:
+                        c = c.map_coefficients(lambda e: e.subs({var: val}))
+                        try:
+                            c = c.map_coefficients(lambda e: self._base_ring(e.rational_function()),
+                                                   self._base_ring)
+                        except TypeError:
+                            pass
+                    s._cache[i] = c
+                if c not in self._coefficient_ring:
                     good = m - i0 - 1
             self._good_cache[j] += good
             # fix approximate_order and true_order
@@ -1555,7 +1702,7 @@ class Stream_uninitialized(Stream):
                     ao += 1
             s._approximate_order = ao
 
-        STREAM_UNINITIALIZED_VARIABLES[self._P].remove(var)
+        self._P.delete_variable(var)
 
     def _compute(self):
         """
@@ -1583,10 +1730,7 @@ class Stream_uninitialized(Stream):
                 lcoeff = coeff.coefficients()
 
             for c in lcoeff:
-                if c.parent() is self._PFF:
-                    c = c.numerator()
-                else:
-                    c = self._P(c)
+                c = self._P(c).numerator()
                 V = c.variables()
                 if not V:
                     if len(self._eqs) == 1:
@@ -1600,7 +1744,7 @@ class Stream_uninitialized(Stream):
                     # coefficient - are we computing in an integral
                     # domain?
                     c1 = c.coefficients()[0]
-                    v = InfinitePolynomial_dense(self._P, c.variables()[0])
+                    v = self._P(c.variables()[0])
                     coeffs.append(c1 * v)
                 else:
                     # nonlinear equations must not be discarded, we
@@ -1614,7 +1758,7 @@ class Stream_uninitialized(Stream):
             raise ValueError(f"there are no linear equations in degrees {degrees}: {non_linear_coeffs}")
         # solve
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-        eqs = PolynomialSequence([coeff.polynomial() for coeff in coeffs])
+        eqs = PolynomialSequence(self._P.polynomial_ring(), coeffs)
         m1, v1 = eqs.coefficient_matrix()
         # there should be at most one entry in v1 of degree 0
         # v1 is a matrix, not a vector
@@ -1633,12 +1777,8 @@ class Stream_uninitialized(Stream):
         k = m.right_kernel_matrix()
         # substitute
         bad = True
-        for i, (c, y) in enumerate(zip(v, x)):
+        for i, (var, y) in enumerate(zip(v, x)):
             if k.column(i).is_zero():
-                # work around a bug prohibiting conversion of
-                # variables into the InfinitePolynomialRing over the
-                # SymbolicRing
-                var = InfinitePolynomial_dense(self._P, c)
                 val = self._base_ring(y)
                 self._subs_in_caches(var, val)
                 bad = False
