@@ -1,2 +1,2 @@
-# Homebrew's nauty package provides executables and also /usr/local/include/nauty.h and /usr/local/lib/libnauty.a
+# Homebrew's nauty package provides executables and also /usr/local/include/nauty/*.h, /usr/local/lib/libnauty*.a, and pkg-config .pc files nauty*.pc
 nauty
