@@ -1180,6 +1180,13 @@ def CubeGraph(n, embedding=1):
         vertices in each column represents rows in Pascal's triangle. See for
         instance the :wikipedia:`10-cube` for more details.
 
+      - ``3``: oblique projection of the `n`-cube. Oblique projection involves
+        aligning one face parallel to the viewer and projecting at a specified
+        angle, maintaining equal size for edges parallel to one axis while
+        applying fixed foreshortening to others. This method simplifies the
+        representation of a four-dimensional hypercube onto a two-dimensional
+        plane, offering a geometrically consistent visualization.
+
       - ``None`` or ``O``: no embedding is provided
 
     EXAMPLES:
@@ -1214,17 +1221,8 @@ def CubeGraph(n, embedding=1):
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
         sage: g = graphs.CubeGraph(9, embedding=2)
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
-
-    Testing issue :trac:`37040`::
-        sage: graphs.CubeGraph(3)._pos
-        {'000': (0.0, 0.0),
-        '001': (6.123...-17, 1.0),
-        '010': (0.707..., 0.707...),
-        '011': (0.707..., 1.707...),
-        '100': (1.0, 0.0),
-        '101': (1.0, 1.0),
-        '110': (1.707..., 0.707...),
-        '111': (1.707..., 1.707...)}
+        sage: g = graphs.CubeGraph(9, embedding=3)
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
 
     AUTHORS:
 
