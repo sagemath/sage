@@ -152,7 +152,7 @@ class JonesDatabase:
         self.root = {}
         self.root[tuple()] = [x - 1]
         if not os.path.exists(path):
-            raise IOError("Path %s does not exist." % path)
+            raise OSError("Path %s does not exist." % path)
         for X in os.listdir(path):
             if X[-4:] == "solo":
                 Z = path + "/" + X
