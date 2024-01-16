@@ -650,7 +650,7 @@ Most users won't need to set any of these: the build process just works on many
 platforms.
 (Note though that setting :envvar:`MAKE`, as described below, can significantly
 speed up the process.)
-Building Sage involves building about 100 packages, each of which has its own
+Building Sage involves building many packages, each of which has its own
 compilation instructions.
 
 
@@ -676,11 +676,6 @@ Here are some of the more commonly used variables affecting the build process:
   <https://www.gnu.org/software/make/manual/make.html#Options-Summary>`_
   and `Parallel building
   <https://www.gnu.org/software/make/manual/make.html#Parallel>`_.
-
-  .. warning::
-
-      Some users on single-core macOS machines have reported problems when
-      building Sage with ``MAKE='make -jNUM'`` with ``NUM`` greater than one.
 
 .. envvar:: V
 
@@ -754,13 +749,21 @@ Sage-specific environment variables controlling the build process
   connection. The git repository, however, does not contain the source
   code for third-party packages. Instead, it will be downloaded as
   needed (note: you can run ``make download`` to force downloading
-  packages before building). Package downloads use the Sage mirror
-  network, the nearest mirror will be determined automatically for
-  you. This is influenced by the following environment variable:
+  packages before building).
 
-  Try the specified mirror first, before falling back to the official
-  Sage mirror list. Note that Sage will search the directory
+  If :envvar:`SAGE_SERVER` is set, the specified Sage mirror is contacted
+  first. Note that Sage will search the directory
   ``SAGE_SERVER/spkg/upstream`` for upstream tarballs.
+
+  If downloading a file from there fails or :envvar:`SAGE_SERVER` is not set,
+  files will be attempted to download from release assets of the
+  Sage GitHub repository.
+
+  If that fails too, the Sage mirror network is contacted to determine
+  the nearest mirrors.
+
+  This sequence of operations is defined by the files in the directory
+  :file:`$SAGE_ROOT/.upstream.d`.
 
 .. envvar:: SAGE_NUM_THREADS
 
@@ -1025,7 +1028,7 @@ Environment variables dealing with specific Sage packages
 .. envvar:: OPENBLAS_CONFIGURE
 
   Adds additional configuration flags for
-  the OpenBLAS package that gets added to the make command. (see :trac:`23272`)
+  the OpenBLAS package that gets added to the ``make`` command. (see :trac:`23272`)
 
 .. envvar:: PARI_CONFIGURE
 
@@ -1054,13 +1057,13 @@ Environment variables dealing with doctesting
 
 .. envvar:: SAGE_TIMEOUT
 
-  used for Sage's doctesting: the number of seconds
+  Used for Sage's doctesting: the number of seconds
   to allow a doctest before timing it out.
   If this isn't set, the default is 300 seconds (5 minutes).
 
 .. envvar:: SAGE_TIMEOUT_LONG
 
-  used for Sage's doctesting: the number of
+  Used for Sage's doctesting: the number of
   seconds to allow a doctest before timing it out, if tests are run using
   ``sage -t --long``.
   If this isn't set, the default is 1800 seconds (30 minutes).
