@@ -1231,9 +1231,12 @@ def CubeGraph(n, embedding=1):
     - Robert Miller
     - David Coudert
     """
-    if embedding == 1:
+    if embedding == 1 or embedding == 3:
         # construct recursively the adjacency dict and the embedding
-        theta = float(pi/4) if n == 3 else float(pi/n)
+        theta = float(pi/n)
+        if embedding == 3 and n > 2:
+            theta = float(pi/(2*n-2))
+
         d = {'': []}
         dn = {}
         p = {'': (float(0), float(0))}
