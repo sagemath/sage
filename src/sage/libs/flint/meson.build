@@ -33,12 +33,16 @@ py.install_sources(
 
 extension_data = {
     'arith': files('arith.pyx'),
-    'flint': files('flint.pyx'),
-    'fmpq_poly': files('fmpq_poly.pyx'),
-    'fmpz_factor': files('fmpz_factor.pyx'),
+    'arith_sage': files('arith_sage.pyx'),
+    'flint_sage': files('flint_sage.pyx'),
+    'fmpq_poly_sage': files('fmpq_poly_sage.pyx'),
+    'fmpz_factor_sage': files('fmpz_factor_sage.pyx'),
     'fmpz_poly': files('fmpz_poly.pyx'),
+    'fmpz_poly_sage': files('fmpz_poly_sage.pyx'),
     'qsieve': files('qsieve.pyx'),
+    'qsieve_sage': files('qsieve_sage.pyx'),
     'ulong_extras': files('ulong_extras.pyx'),
+    'ulong_extras_sage': files('ulong_extras_sage.pyx'),
 }
 
 foreach name, pyx : extension_data
