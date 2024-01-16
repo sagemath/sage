@@ -5740,7 +5740,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
-            sage: K.is_proper() == pi_cone.is_proper()
+            sage: K.is_proper() == pi_cone.is_proper()  # known bug: macos (sporadic timeouts)
             True
 
         The positive operators on a permuted cone can be obtained by
