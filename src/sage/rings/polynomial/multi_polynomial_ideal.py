@@ -3917,7 +3917,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
            Ideal (x, y + 1) of Multivariate Polynomial Ring in x, y over Rational Field
            sage: I.gens()
            [x, y + 1]
-         """
+        """
         from sage.rings.polynomial.multi_polynomial_sequence import \
             PolynomialSequence
         return PolynomialSequence(self.ring(), Ideal_generic.gens(self), immutable=True)

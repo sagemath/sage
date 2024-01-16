@@ -125,7 +125,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: F.dual_group()
             Dual of Abelian Group isomorphic to Z/3Z x Z/5Z x Z/7Z x Z/8Z x Z/9Z
             over Cyclotomic Field of order 2520 and degree 576
-       """
+        """
         self._base_ring = base_ring
         self._group = G
         names = normalize_names(G.ngens(), names)
