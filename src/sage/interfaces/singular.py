@@ -829,7 +829,7 @@ class Singular(ExtraTabCompletion, Expect):
 
     def cputime(self, t=None):
         r"""
-        Returns the amount of CPU time that the Singular session has used.
+        Return the amount of CPU time that the Singular session has used.
         If ``t`` is not None, then it returns the difference
         between the current CPU time and ``t``.
 
@@ -1181,7 +1181,7 @@ class Singular(ExtraTabCompletion, Expect):
 
     def current_ring_name(self):
         """
-        Returns the Singular name of the currently active ring in
+        Return the Singular name of the currently active ring in
         Singular.
 
         OUTPUT: currently active ring's name
@@ -1202,7 +1202,7 @@ class Singular(ExtraTabCompletion, Expect):
 
     def current_ring(self):
         """
-        Returns the current ring of the running Singular session.
+        Return the current ring of the running Singular session.
 
         EXAMPLES::
 
@@ -1327,7 +1327,7 @@ class Singular(ExtraTabCompletion, Expect):
             # SingularFunction(self,"option")("\"set\"",val)
             self.eval("option(set,%s)" % val.name())
         else:
-            SingularFunction(self, "option")("\"" + str(cmd) + "\"")
+            SingularFunction(self, "option")(f'"{str(cmd)}"')
 
     def _keyboard_interrupt(self):
         print("Interrupting %s..." % self)
@@ -1406,7 +1406,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
     def __copy__(self):
         r"""
-        Returns a copy of ``self``.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -1458,7 +1458,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
     def __len__(self):
         """
-        Returns the size of this Singular element.
+        Return the size of this Singular element.
 
         EXAMPLES::
 
@@ -1514,7 +1514,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
     def __bool__(self):
         """
-        Returns ``True`` if this Singular element is not zero.
+        Return ``True`` if this Singular element is not zero.
 
         EXAMPLES::
 
@@ -1699,7 +1699,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
     def sage_poly(self, R=None, kcache=None):
         """
-        Returns a Sage polynomial in the ring r matching the provided poly
+        Return a Sage polynomial in the ring r matching the provided poly
         which is a singular polynomial.
 
         INPUT:
@@ -1910,7 +1910,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
     def sage_matrix(self, R, sparse=True):
         """
-        Returns Sage matrix for self
+        Return Sage matrix for ``self``.
 
         INPUT:
 
@@ -2155,7 +2155,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
     def _tab_completion(self):
         """
-        Returns the possible tab-completions for self. In this case, we
+        Return the possible tab-completions for self. In this case, we
         just return all the tab completions for the Singular object.
 
         EXAMPLES::
@@ -2170,7 +2170,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
     def type(self):
         """
-        Returns the internal type of this element.
+        Return the internal type of this element.
 
         EXAMPLES::
 
