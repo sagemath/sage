@@ -77,8 +77,7 @@ class Application(object):
         for pkg_name in pc.names:
             print(pkg_name)
 
-    def properties(self, *package_classes, props=['path', 'version_with_patchlevel', 'type', 'source', 'trees'],
-                   format='plain'):
+    def properties(self, *package_classes, **kwds):
         """
         Show the properties of given packages
 
@@ -89,6 +88,8 @@ class Application(object):
         source_maxima='normal'
         trees_maxima='SAGE_LOCAL'
         """
+        props = kwds.pop('props', ['path', 'version_with_patchlevel', 'type', 'source', 'trees'])
+        format = kwds.pop('format', 'plain')
         log.debug('Looking up properties')
         pc = PackageClass(*package_classes)
         for package_name in pc.names:
