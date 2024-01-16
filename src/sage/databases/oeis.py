@@ -177,7 +177,7 @@ def _fetch(url):
 
     TESTS::
 
-        sage: from sage.databases.oeis import _fetch, oeis_url
+        sage: from sage.databases.oeis import _fetch, oeis_url  # optional -- internet
         sage: _fetch(oeis_url + 'hints.html')[-8:-1]            # optional -- internet
         '</html>'
     """
@@ -309,12 +309,12 @@ class OEIS:
         14930352, 24157817, 39088169, 63245986, 102334155)
 
         sage: fibo.cross_references()[0]                # optional -- internet
-        'A039834'
+        'A001622'
 
         sage: fibo == oeis(45)                          # optional -- internet
         True
 
-        sage: sfibo = oeis('A039834')
+        sage: sfibo = oeis('A039834')                   # optional -- internet
         sage: sfibo.first_terms()                       # optional -- internet
         (1, 1, 0, 1, -1, 2, -3, 5, -8, 13, -21, 34, -55, 89, -144, 233,
         -377, 610, -987, 1597, -2584, 4181, -6765, 10946, -17711, 28657,
@@ -707,11 +707,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         TESTS::
 
+            sage: # optional -- internet
             sage: s = oeis._imaginary_sequence(ident='A004238')
             sage: s
             A004238: The characteristic sequence of 42 plus one, starting from 38.
-            sage: s.online_update()                     # optional -- internet
-            sage: s                                     # optional -- internet
+            sage: s.online_update()
+            sage: s
             A004238: a(n) = 100*log(n) rounded to nearest integer.
         """
         options = {'q': self._id, 'n': '1', 'fmt': 'text'}
@@ -832,7 +833,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
 
             sage: print(f.raw_entry())                  # optional -- internet
-            %I A000045 M0692 N0256
+            %I A000045 M0692 N0256...
             %S A000045 0,1,1,2,3,5,8,13,21,34,55,89,144,...
             %T A000045 10946,17711,28657,46368,...
             ...
@@ -898,7 +899,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s.old_IDs()
             ('M9999', 'N9999')
         """
-        return tuple(self._field('I')[0].split(' '))
+        s = self._field('I')[0]
+        # We remove all parts after '#'
+        s = s.split('#')[0].strip()
+        if not s:
+            return ()
+        return tuple(s.split(' '))
 
     def offsets(self):
         r"""
@@ -1042,11 +1048,11 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         ::
 
-            sage: av = oeis('A087778'); av              # optional -- internet
-            A087778: Decimal expansion ... Avogadro...
+            sage: av = oeis('A322578'); av              # optional -- internet
+            A322578: Decimal expansion ... Avogadro...
 
             sage: av.natural_object()                   # optional -- internet
-            6.022141000000000?e23
+            6.022140760000000?e23
 
         ::
 
@@ -1111,7 +1117,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         A warning is triggered if any field of a dead sequence is accessed,
         unless :meth:`is_dead` is called before::
 
-            sage: s = oeis(17)
+            sage: s = oeis(17)                      # optional -- internet
             sage: s                                 # optional -- internet
             doctest:warning
             ...
