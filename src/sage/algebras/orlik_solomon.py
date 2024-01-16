@@ -541,7 +541,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         Return the Aomoto complex of ``self`` defined by ``omega``.
 
         Let `A(M)` be an Orlik-Solomon algebra of a matroid `M`. Let
-        `\omega \in A(M)_1` be an element of (homoegenous) degree 1.
+        `\omega \in A(M)_1` be an element of (homogeneous) degree 1.
         The Aomoto complete is the chain complex defined on `A(M)`
         with the differential defined by `\omega \wedge`.
 
@@ -569,6 +569,15 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             {0: Vector space of dimension 0 over Rational Field,
              1: Vector space of dimension 1 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
+
+        TESTS::
+
+            sage: OS = hyperplane_arrangements.braid(4).orlik_solomon_algebra(QQ)
+            sage: gens = OS.algebra_generators()
+            sage: OS.aomoto_complex(gens[0] * gens[1] * gens[3])
+            Traceback (most recent call last):
+            ...
+            ValueError: omega must be a homogeneous element of degree 1
 
         REFERENCES:
 

@@ -259,10 +259,11 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 H(t) = \sum_{n=0}^{\infty} \ell(M_n / M_{n-1}) t^n,
 
-            where `\ell(M_n)` is the *length* of `M_n`, which is the
+            where `\ell(N)` is the *length* of `N`, which is the
             longest chain of submodules (over `R`), and by convention
-            `M_{-1} = \{0\}`. By the assumptions of the category, `M_n` is a
-            free `R`-module, and so `\ell(M_n)` is equal to the rank of `M_n`.
+            `M_{-1} = \{0\}`. By the assumptions of the category,
+            `M_n / M_{n-1}` is a free `R`-module, and so `\ell(M_n / M_{n-1})`
+            is equal to the rank of `M_n / M_{n-1}`.
 
             INPUT:
 
@@ -1171,12 +1172,13 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
                 .. MATH::
 
-                    H(t) = \sum_{n=0}^{\infty} \ell(M_n) t^n,
+                    H(t) = \sum_{n=0}^{\infty} \ell(M_n / M_{n-1}) t^n,
 
-                where `\ell(M_n)` is the *length* of `M_n`, which is the
-                longest chain of submodules (over `R`). By the assumptions of
-                the category, `M_n` is a free `R`-module, and so `\ell(M_n)`
-                is equal to the rank of `M_n`.
+                where `\ell(N)` is the *length* of `N`, which is the
+                longest chain of submodules (over `R`), and by convention
+                `M_{-1} = \{0\}`. By the assumptions of the category,
+                `M_n / M_{n-1}` is a free `R`-module, and so
+                `\ell(M_n / M_{n-1})` is equal to the rank of `M_n / M_{n-1}`.
 
                 EXAMPLES::
 
