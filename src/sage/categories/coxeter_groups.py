@@ -1961,7 +1961,7 @@ class CoxeterGroups(Category_singleton):
 
             .. SEEALSO::
 
-                :meth:`absolute_le`
+                :meth:`absolute_le`,
                 :meth:`absolute_chain`
 
             EXAMPLES::
@@ -2019,25 +2019,22 @@ class CoxeterGroups(Category_singleton):
                 [ 1  1 -1], [ 0  0  1], [0 0 1]
                 ]
             """
-
             reflections = self.absolute_chain_reflections()
             P = self.parent()
             return [P.prod(reversed(reflections[:i]))
                     for i in range(len(reflections), -1, -1)]
-
 
         def absolute_chain_reflections(self):
             r"""
             Return a list of reflection which, when multiplied in order, give
             ``self``.
 
-
             This method is based on Theorem 1.1 in [Dy2001]_, combined with
             the strong exchange condition.
 
             .. SEEALSO::
 
-                :meth:`absolute_length`
+                :meth:`absolute_length`,
                 :meth:`absolute_chain`
 
             EXAMPLES::
@@ -2064,7 +2061,6 @@ class CoxeterGroups(Category_singleton):
                 [-1  0  2]  [-2 -1  4]
                 [ 0  0  1], [-1 -1  3]
                 ]
-
             """
             P = self.parent()
             if self.is_one():
@@ -2075,8 +2071,8 @@ class CoxeterGroups(Category_singleton):
             if n == 1:  # trivial case
                 return [self]
             if n == 2:  # trivial case
-                leftRefl = P.simple_reflection(w[0])
-                return [leftRefl, self * leftRefl]
+                left_refl = P.simple_reflection(w[0])
+                return [left_refl, self * left_refl]
 
             import itertools
             s = P.simple_reflections()
