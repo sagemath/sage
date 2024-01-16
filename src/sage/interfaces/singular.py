@@ -2149,14 +2149,16 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: RL.sage_structured_str_list()
             ['0', ['x', 'y'], [['dp', '1,\n1'], ['C', '0']], '0']
         """
-        if not (self.type() == 'list'):
+        if self.type() != 'list':
             return str(self)
         return [X.sage_structured_str_list() for X in self]
 
-    def _tab_completion(self):
+    def _tab_completion(self) -> list:
         """
-        Return the possible tab-completions for self. In this case, we
-        just return all the tab completions for the Singular object.
+        Return the possible tab-completions for ``self``.
+
+        In this case, we just return all the :kbd:`Tab` completions
+        for the Singular object.
 
         EXAMPLES::
 
