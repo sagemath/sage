@@ -73,7 +73,7 @@ jobs:
           # We cannot use the setup python action because it doesn't support all containers
           # https://github.com/actions/setup-python/issues/527
           if [ $INSTALL_PYTHON = 'True' ]; then
-            eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM _python3.9))
+            eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install python3-pip)
           fi
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
           
