@@ -77,8 +77,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          eval $(build/bin/sage-print-system-package-command auto update)
-          eval $(build/bin/sage-print-system-package-command auto --yes install $(build/bin/sage-get-system-packages auto $(build/bin/sage-package list :standard:)))
+          SYSTEM=$(build/bin/sage-guess-package-system)
+          eval $(build/bin/sage-print-system-package-command $SYSTEM update)
+          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
 
       - name: Bootstrap
         run: python3 -m sage_setup.autogen.interpreters src/sage/ext/interpreters
