@@ -65,20 +65,16 @@ jobs:
         # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
         uses: actions/checkout@v3
 
-      - name: Check for Python version
-        run: |
-          echo "install_python=$(python3 -c 'import sys; print(sys.version_info < (3, 9))' || echo 'True')" >> $GITHUB_ENV
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        if: ${{ env.install_python }} == 'True'
-        with:
-          python-version: 3.9
-
       - name: Install dependencies
         run: |
           SYSTEM=$(build/bin/sage-guess-package-system)
+          INSTALL_PYTHON=$(python3 -c 'import sys; print(sys.version_info < (3, 9))' || echo 'True')
           eval $(build/bin/sage-print-system-package-command $SYSTEM update)
+          # We cannot use the setup python action because it doesn't support all containers
+          # https://github.com/actions/setup-python/issues/527
+          if [ $INSTALL_PYTHON == 'True' ]; then
+            eval $(build/bin/sage-print-system-package-command $SYSTEM --yes install $(build/bin/sage-get-system-packages $SYSTEM _python3.9))
+          fi
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
 
       - name: Bootstrap
