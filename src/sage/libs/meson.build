@@ -61,11 +61,11 @@ foreach name, pyx : extension_data_cpp
     )
 endforeach
 
+subdir('flint')
 subdir('arb')
 subdir('coxeter3')
 install_subdir('cremona', install_dir: sage_install_dir / 'libs')
 subdir('eclib')
-subdir('flint')
 subdir('gap')
 subdir('giac')
 subdir('glpk')
