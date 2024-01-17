@@ -84,7 +84,7 @@ jobs:
           PYTHONPATH: src
 
       - name: Build
-        run: pip install . -v
+        run: pip3 install . -v
 
       - name: Test
         run: ./sage -t --all -p4 || true
