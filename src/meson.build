@@ -63,7 +63,9 @@ mpfr = cc.find_library('mpfr')
 # Cannot be found by pkg-config
 flint = cc.find_library('flint')
 
-cblas = dependency('cblas')
+# pkg-config uses a lower-case name while CMake uses a capitalized name, so try
+# that too to make the fallback detection with CMake work
+blas = dependency(['cblas', 'openblas', 'OpenBLAS'])
 gsl = dependency('gsl', fallback: ['gsl', 'gsl_dep'], version : '>=2.5', required: true)
 gd = cc.find_library('gd')
 iml = cc.find_library('iml')
