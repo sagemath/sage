@@ -88,7 +88,7 @@ readline = cc.find_library('readline')
 lfunction = cc.find_library('Lfunction', required: false)
 fflas = cc.find_library('fflas', required: false)
 if not fflas.found()
-    fflas = cc.find_library('fflas-ffpack')´
+    fflas = cc.find_library('fflas-ffpack')
 endif
 givaro = cc.find_library('givaro')
 linbox = cc.find_library('linbox')
