@@ -48,6 +48,7 @@ AUTHORS:
 
 from sage.arith.misc import integer_ceil as ceil
 from sage.arith.misc import binomial
+from sage.categories.algebras import Algebras
 from sage.functions.log import log
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
@@ -72,17 +73,17 @@ from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.ring import CommutativeAlgebra
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
 from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
-from sage.structure.element import CommutativeAlgebraElement, ModuleElement
+from sage.structure.element import Element, ModuleElement
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
+class SpecialCubicQuotientRingElement(ModuleElement):
     """
     An element of a :class:`SpecialCubicQuotientRing`.
     """
@@ -108,11 +109,19 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
             sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialCubicQuotientRingElement
             sage: SpecialCubicQuotientRingElement(R, 2, 3, 4)
             (2) + (3)*x + (4)*x^2
+
+        TESTS::
+
+            sage: B.<t> = PolynomialRing(Integers(125))
+            sage: R = monsky_washnitzer.SpecialCubicQuotientRing(t^3 - t + B(1/4))
+            sage: p = R.create_element(t, t^2 - 2, 3)
+            sage: -p
+            (124*T) + (124*T^2 + 2)*x + (122)*x^2
         """
         if not isinstance(parent, SpecialCubicQuotientRing):
             raise TypeError(f"parent (={parent}) must be a SpecialCubicQuotientRing")
 
-        CommutativeAlgebraElement.__init__(self, parent)
+        ModuleElement.__init__(self, parent)
 
         if check:
             poly_ring = parent._poly_ring
@@ -145,7 +154,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
             column.extend([base_ring(0)] * (degree - len(column)))
         return coeffs
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         EXAMPLES::
 
@@ -161,7 +170,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
         """
         return bool(self._triple[0]) or bool(self._triple[1]) or bool(self._triple[2])
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         EXAMPLES::
 
@@ -176,7 +185,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
         """
         return richcmp(self._triple, other._triple, op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -188,7 +197,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
         """
         return "(%s) + (%s)*x + (%s)*x^2" % self._triple
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         EXAMPLES::
 
@@ -387,7 +396,7 @@ class SpecialCubicQuotientRingElement(CommutativeAlgebraElement):
                                     check=False)
 
 
-class SpecialCubicQuotientRing(CommutativeAlgebra):
+class SpecialCubicQuotientRing(Parent):
     r"""
     Specialised class for representing the quotient ring
     `R[x,T]/(T - x^3 - ax - b)`, where `R` is an
@@ -513,12 +522,12 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
             raise ArithmeticError("2 and 3 must be invertible in the "
                                   "coefficient ring (=%s) of Q" % base_ring)
 
-        # CommutativeAlgebra.__init__ tries to establish a coercion
+        # .__init__ tries to establish a coercion
         # from the base ring, by github issue #9138. The corresponding
         # hom set is cached.  In order to use self as cache key, its
         # string representation is used. In otder to get the string
         # representation, we need to know the attributes _a and
-        # _b. Hence, in #9138, we have to move CommutativeAlgebra.__init__
+        # _b. Hence, in #9138, we have to move .__init__
         # further down:
         self._a = Q[1]
         self._b = Q[0]
@@ -527,7 +536,8 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
         else:
             self._poly_ring = PolynomialRing(base_ring, 'T')    # R[T]
         self._poly_generator = self._poly_ring.gen(0)    # the generator T
-        CommutativeAlgebra.__init__(self, base_ring)
+        Parent.__init__(self, base=base_ring,
+                        category=Algebras(base_ring).Commutative())
 
         # Precompute a matrix that is used in the Toom-Cook multiplication.
         # This is where we need 2 and 3 invertible.
@@ -654,7 +664,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
     Element = SpecialCubicQuotientRingElement
 
 
-def transpose_list(input):
+def transpose_list(input) -> list[list]:
     """
     INPUT:
 
@@ -1854,7 +1864,7 @@ def matrix_of_frobenius_hyperelliptic(Q, p=None, prec=None, M=None):
     return M.transpose(), [f for f, a in reduced]
 
 
-class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
+class SpecialHyperellipticQuotientElement(ModuleElement):
     r"""
     Element in the Hyperelliptic quotient ring.
 
@@ -1880,7 +1890,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: elt = MW(x + x**2 + y - 77)
             sage: TestSuite(elt).run()
         """
-        CommutativeAlgebraElement.__init__(self, parent)
+        ModuleElement.__init__(self, parent)
         if not check:
             self._f = parent._poly_ring(val, check=False)
             return
@@ -1896,7 +1906,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         if offset != 0:
             self._f = self._f.parent()([a << offset for a in self._f], check=False)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare the elements.
 
@@ -2358,7 +2368,8 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         coeffs = transpose_list(coeffs)
         return [V(a) for a in coeffs], y_offset
 
-class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra):
+
+class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
     """
     The special hyperelliptic quotient ring.
     """
@@ -2385,12 +2396,12 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         if R is None:
             R = Q.base_ring()
 
-        # Github issue #9138: CommutativeAlgebra.__init__ must not be
+        # Github issue #9138: .__init__ must not be
         # done so early.  It tries to register a coercion, but that
         # requires the hash being available.  But the hash, in its
         # default implementation, relies on the string representation,
         # which is not available at this point.
-        # CommutativeAlgebra.__init__(self, R)  # moved to below.
+        # .__init__(self, R)  # moved to below.
 
         x = PolynomialRing(R, 'xx').gen()
         if is_EllipticCurve(Q):
@@ -2428,10 +2439,10 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         self._series_ring_y = self._series_ring.gen(0)
         self._series_ring_0 = self._series_ring.zero()
 
-        # Github issue #9138: Initialise the commutative algebra here!
+        # Github issue #9138: Initialise the parent here!
         # Below, we do self(self._poly_ring.gen(0)), which requires
         # the initialisation being finished.
-        CommutativeAlgebra.__init__(self, R)
+        Parent.__init__(self, base=R, category=Algebras(R).Commutative())
 
         self._poly_ring = PolynomialRing(self._series_ring, 'x')
 
@@ -2495,7 +2506,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
             over Integer Ring
         """
         return SpecialHyperellipticQuotientRing(self._Q.change_ring(R), R,
-            is_LaurentSeriesRing(self._series_ring))
+                                                is_LaurentSeriesRing(self._series_ring))
 
     def _element_constructor_(self, val, offset=0, check=True):
         r"""
@@ -2787,7 +2798,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         """
         return self._monsky_washnitzer
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``False`` as ``self`` is not a field.
 
@@ -2892,24 +2903,6 @@ class MonskyWashnitzerDifferential(ModuleElement):
         """
         P = self.parent()
         return P.element_class(P, self._coeff - other._coeff)
-
-    def __neg__(self):
-        r"""
-        Return the additive inverse of ``self``.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
-            sage: x,y = C.monsky_washnitzer_gens()
-            sage: w = C.invariant_differential()
-            sage: -w
-            -1 dx/2y
-            sage: -((y-x)*w)
-            (-y*1 + x) dx/2y
-        """
-        P = self.parent()
-        return P.element_class(P, -self._coeff)
 
     def _lmul_(self, a):
         r"""
