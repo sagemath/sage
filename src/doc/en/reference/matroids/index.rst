@@ -17,7 +17,7 @@ Database of matroids
    :maxdepth: 1
 
    sage/matroids/matroids_catalog
-   sage/matroids/database_functions
+   sage/matroids/database_collections
    sage/matroids/database_matroids
 
 Concrete implementations

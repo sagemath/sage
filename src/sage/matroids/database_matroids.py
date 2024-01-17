@@ -1,8 +1,8 @@
 r"""
-Documentation of matroids
+Database of matroids
 
 This module contains the implementation and documentation for all matroids in
-the catalog, accessible through :mod:`matroids. <sage.matroids.>` and
+the database, accessible through :mod:`matroids. <sage.matroids.>` and
 :mod:`matroids.catalog. <sage.matroids.catalog>` (type those lines followed by
 :kbd:`Tab` for a list).
 
