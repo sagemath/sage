@@ -16,47 +16,47 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - ubuntu-trusty-toolchain-gcc_9
-          - ubuntu-xenial-toolchain-gcc_9
-          - ubuntu-bionic-gcc_8
-          - ubuntu-focal
-          - ubuntu-jammy
-          - ubuntu-lunar
-          - ubuntu-mantic
-          - debian-buster-gcc_spkg
-          - debian-bullseye
-          - debian-bookworm
-          - debian-trixie
-          - debian-sid
-          - linuxmint-20.1
-          - linuxmint-20.2
-          - linuxmint-20.3
-          - linuxmint-21
-          - linuxmint-21.1
-          - linuxmint-21.2
-          - fedora-30
-          - fedora-31
-          - fedora-32
-          - fedora-33
-          - fedora-34
-          - fedora-35
-          - fedora-36
-          - fedora-37
-          - fedora-38
-          - fedora-39
-          - centos-7-devtoolset-gcc_11
-          - centos-stream-8-python3.9
-          - centos-stream-9-python3.9
-          - almalinux-8-python3.9
-          - almalinux-9-python3.11
+          - ubuntu:trusty
+          - ubuntu:xenial
+          - ubuntu:bionic
+          - ubuntu:focal
+          - ubuntu:jammy
+          - ubuntu:lunar
+          - ubuntu:mantic
+          - debian:buster
+          - debian:bullseye
+          - debian:bookworm
+          - debian:trixie
+          - debian:sid
+          - linuxmintd/mint20.1
+          - linuxmintd/mint20.2
+          - linuxmintd/mint20.3
+          - linuxmintd/mint21
+          - linuxmintd/mint21.1
+          - linuxmintd/mint21.2
+          - fedora:30
+          - fedora:31
+          - fedora:32
+          - fedora:33
+          - fedora:34
+          - fedora:35
+          - fedora:36
+          - fedora:37
+          - fedora:38
+          - fedora:39
+          - centos:centos7
+          - quay.io/centos/centos:stream8
+          - quay.io/centos/centos:stream9
+          - almalinux:8
+          - almalinux:9
           - sheerluck/sage-on-gentoo-stage4
-          - archlinux-latest
-          - opensuse-15.3-gcc_11-python3.9
-          - opensuse-15.4-gcc_11-python3.10
-          - opensuse-15.5-gcc_11-python3.11
+          - archlinux
+          - opensuse/leap:15.3
+          - opensuse/leap:15.4
+          - opensuse/leap:15.5
           - opensuse/tumbleweed
-          - ubuntu-bionic-gcc_8-i386
-          - debian-bullseye-i386
+          - i386/ubuntu:bionic
+          - i386/debian:bullseye
     container:
       image: ${{ matrix.container }}
 
