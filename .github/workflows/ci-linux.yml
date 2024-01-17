@@ -28,12 +28,12 @@ jobs:
           - debian:bookworm
           - debian:trixie
           - debian:sid
-          - linuxmintd/mint20.1
-          - linuxmintd/mint20.2
-          - linuxmintd/mint20.3
-          - linuxmintd/mint21
-          - linuxmintd/mint21.1
-          - linuxmintd/mint21.2
+          - linuxmintd/mint20.1-amd64
+          - linuxmintd/mint20.2-amd64
+          - linuxmintd/mint20.3-amd64
+          - linuxmintd/mint21-amd64
+          - linuxmintd/mint21.1-amd64
+          - linuxmintd/mint21.2-amd64
           - fedora:30
           - fedora:31
           - fedora:32
