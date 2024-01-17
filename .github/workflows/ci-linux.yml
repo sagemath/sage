@@ -60,6 +60,10 @@ jobs:
     container:
       image: ${{ matrix.container }}
 
+    env:
+      # For debian compatibility
+      PIP_BREAK_SYSTEM_PACKAGES: 1
+
     steps:
       - name: Checkout code
         # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
@@ -76,10 +80,10 @@ jobs:
             eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install python-pip python3-pip)
           fi
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
-          pip3 install --break-system-packages --upgrade pip || pip3 install --upgrade pip
+          pip3 install --upgrade pip
 
           # Needed for bootstrap
-          pip3 install --break-system-packages jinja2
+          pip3 install jinja2
 
           # Needed to download and install cypari2 below
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install git)
@@ -101,11 +105,11 @@ jobs:
       - name: Build
         run: |
           # Cannot yet use build isolation due to https://github.com/sagemath/cypari2/issues/143
-          pip3 install --break-system-packages meson-python 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cysignals>=1.10.2' 'gmpy2>=2.1.0'
+          pip3 install meson-python 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cysignals>=1.10.2' 'gmpy2>=2.1.0'
           # wheel is needed for cypari2
-          pip3 install --break-system-packages wheel
-          pip3 install --break-system-packages --no-build-isolation git+https://github.com/sagemath/cypari2.git
-          pip3 install --break-system-packages --no-build-isolation . -v
+          pip3 install wheel
+          pip3 install --no-build-isolation git+https://github.com/sagemath/cypari2.git
+          pip3 install --no-build-isolation . -v
 
       - name: Test
         run: ./sage -t --all -p4 || true
