@@ -87,6 +87,5 @@ jobs:
         run: pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
       - name: Test
-        allow_failure: true
-        run: ./sage -t --all -p4
+        run: ./sage -t --all -p4 || true
         
