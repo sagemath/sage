@@ -62,7 +62,8 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
+        uses: actions/checkout@v3
 
       - name: Check for Python version
         run: |
