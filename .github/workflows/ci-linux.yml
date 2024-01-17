@@ -2,9 +2,10 @@ name: CI Linux
 
 on:
   push:
-  # TODO: Reenable this before merging
-  #  tags:
-  #    - '*'
+    tags:
+      - '*'
+  # TODO: Remove this before merging
+  pull_request:
   workflow_dispatch:
     # Allow to run manually
 
