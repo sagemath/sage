@@ -76,7 +76,8 @@ jobs:
             eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install python3-pip)
           fi
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
-          
+          pip3 install --upgrade pip
+
           # Needed for bootstrap
           pip3 install jinja2
 
