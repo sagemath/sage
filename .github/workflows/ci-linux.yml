@@ -67,7 +67,7 @@ jobs:
 
       - name: Check for Python version
         run: |
-          echo "install_python=$(python -c 'import sys; print(sys.version_info < (3, 9))')" >> $GITHUB_ENV
+          echo "install_python=$(python3 -c 'import sys; print(sys.version_info < (3, 9))' || echo 'False')" >> $GITHUB_ENV
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -81,7 +81,7 @@ jobs:
           eval $(build/bin/sage-print-system-package-command auto --yes install $(build/bin/sage-get-system-packages auto $(build/bin/sage-package list :standard:)))
 
       - name: Bootstrap
-        run: python -m sage_setup.autogen.interpreters src/sage/ext/interpreters
+        run: python3 -m sage_setup.autogen.interpreters src/sage/ext/interpreters
         env:
           PYTHONPATH: src
 
