@@ -51,6 +51,9 @@ do
         --yes)
             YES=yes
             ;;
+        --ignore-missing)
+            IGNORE_MISSING=yes
+            ;;
         -*)
             echo >&2 "$0: unknown option $1"
             exit 1
@@ -139,10 +142,12 @@ case $system:$command in
     @(debian*|ubuntu*):*)
         [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
         [ "$YES" = yes ] && options="$options --yes" env="DEBIAN_FRONTEND=noninteractive "
+        [ "$IGNORE_MISSING" = yes ] && options="$options --ignore-missing"
         [ -n "$system_packages" ] && print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
         ;;
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
+        [ "$IGNORE_MISSING" = yes ] && options="$options --skip-broken"
         [ -n "$system_packages" ] && print_shell_command ${SUDO}yum install $options $system_packages
         ;;
     gentoo*:install)
