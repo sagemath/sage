@@ -1,6 +1,6 @@
 [build-system]
 build-backend = 'mesonpy'
-requires = ['meson-python', 'cython>=3.0.0']
+requires = ['meson-python', 'cython>=3.0.0', 'numpy >=1.19']
 
 [project]
 name = 'sagemath'
