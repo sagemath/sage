@@ -142,8 +142,11 @@ case $system:$command in
     @(debian*|ubuntu*):*)
         [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
         [ "$YES" = yes ] && options="$options --yes" env="DEBIAN_FRONTEND=noninteractive "
-        [ "$IGNORE_MISSING" = yes ] && options="$options --ignore-missing"
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
+        if [ "$IGNORE_MISSING" = yes ]; then
+            [ -n "$system_packages" ] && echo "for pkg in $system_packages; do ${SUDO}${env}apt-get $command $options \$pkg || true; done"
+        else
+            [ -n "$system_packages" ] && print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
+        fi
         ;;
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
