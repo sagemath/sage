@@ -78,10 +78,18 @@ jobs:
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
           pip3 install jinja2
 
+          # Download and install pari for cypari2
+          # https://github.com/sagemath/cypari2/issues/145
+          wget https://raw.githubusercontent.com/sagemath/cypari2/master/.install-pari.sh
+          chmod +x .install-pari.sh
+          ./.install-pari.sh
+        env:
+          PARI_VERSION: pari-2.15.4
+
       - name: Bootstrap
         run: python3 -m sage_setup.autogen.interpreters src/sage/ext/interpreters
         env:
-          PYTHONPATH: src
+          PYTHONPATH: src   
 
       - name: Build
         run: |
