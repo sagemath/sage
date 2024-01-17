@@ -172,7 +172,7 @@ case $system:$command in
         ;;
     opensuse*:install)
         [ "$YES" = yes ] && options="$options --non-interactive"
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}zypper install $system_packages
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}zypper install $options $system_packages
         ;;
     *conda*:install)
         [ "$YES" = yes ] && options="$options --yes"
