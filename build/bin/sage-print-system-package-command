@@ -157,7 +157,11 @@ case $system:$command in
         [ -n "$system_packages" ] && print_shell_command ${SUDO}emerge $system_packages
         ;;
     arch*:update)
-        print_shell_command "${SUDO}pacman -Sy"
+        if [ "$IGNORE_MISSING" = yes ]; then
+            echo "for pkg in $system_packages; do ${SUDO}pacman -Sy \$pkg || true; done"
+        else
+            print_shell_command "${SUDO}pacman -Sy"
+        fi
         ;;
     arch*:install)
         [ "$YES" = yes ] && options="$options --noconfirm"
