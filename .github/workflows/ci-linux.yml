@@ -76,6 +76,7 @@ jobs:
             eval $(build/bin/sage-print-system-package-command $SYSTEM --yes install $(build/bin/sage-get-system-packages $SYSTEM _python3.9))
           fi
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
+          pip3 install jinja2
 
       - name: Bootstrap
         run: python3 -m sage_setup.autogen.interpreters src/sage/ext/interpreters
