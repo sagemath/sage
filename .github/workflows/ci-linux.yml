@@ -80,6 +80,7 @@ jobs:
 
           # Download and install pari for cypari2
           # https://github.com/sagemath/cypari2/issues/145
+          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install wget)
           wget https://raw.githubusercontent.com/sagemath/cypari2/master/.install-pari.sh
           chmod +x .install-pari.sh
           ./.install-pari.sh
