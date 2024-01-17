@@ -66,7 +66,7 @@ jobs:
 
       - name: Check for Python version
         run: |
-          echo "install_python=$(python -c 'import sys; print(sys.version_info < (3, 9))'" >> $GITHUB_ENV
+          echo "install_python=$(python -c 'import sys; print(sys.version_info < (3, 9))')" >> $GITHUB_ENV
 
       - name: Setup Python
         uses: actions/setup-python@v2
