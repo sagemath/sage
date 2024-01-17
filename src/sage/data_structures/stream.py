@@ -3389,9 +3389,9 @@ class Stream_cauchy_invert(Stream_unary):
         """
         v = self._series.order()
         try:
-            return ~self._series[v]
-        except TypeError:
             return self._series[v].inverse_of_unit()
+        except ArithmeticError:
+            return ~self._series[v]
 
     def iterate_coefficients(self):
         """
@@ -3521,9 +3521,9 @@ class Stream_dirichlet_invert(Stream_unary):
             5
         """
         try:
-            return ~self._series[1]
-        except TypeError:
             return self._series[1].inverse_of_unit()
+        except ArithmeticError:
+            return ~self._series[1]
 
     def get_coefficient(self, n):
         """

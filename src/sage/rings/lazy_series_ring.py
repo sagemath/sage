@@ -897,6 +897,17 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: R.define_implicitly([g], [g - (z*q + z*g*~(1-g))])
             sage: g
             z*q + z^2*q + z^3*q + (z^4*q+z^3*q^2) + (z^5*q+3*z^4*q^2) + O(z,q)^7
+
+        A bivariate example involving composition of series::
+
+            sage: R.<x,y,t> = LazyPowerSeriesRing(QQ)
+            sage: M1 = R.undefined()
+            sage: M2 = R.undefined()
+            sage: eq1 = -t*(x - y)*M1(0, 0, t)*x + t*(x - 1)*(x + 1)*(y^2 + 1)*M1(0, y, t) + (t*x^2*y^2 + t*x*y + t*y^2 + t - x*y)*M1(x, y, t) + t*M2(0, 0, t)*x*y + x*y
+            sage: eq2 = -t*M1(0, 0, t)*x + t*(x - 1)*(y + 1)*M1(0, y, t) + t*(x*y + y + 1)*M1(x, y, t) - t*M2(0, 0, t)*x + t*(x - 1)*(y^2 + y^2 + y + 1)*M2(0, y, t) + (t*x^2*y^2 + t*x*y^2 + t*x*y + t*y^2 + t*y^2 + t*y + t - x*y)*M2(x, y, t)
+            sage: R.define_implicitly([M1, M2], [eq1, eq2])
+            sage: M1
+
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
