@@ -84,7 +84,7 @@ jobs:
           PYTHONPATH: src
 
       - name: Build
-        run: pip install --no-build-isolation --config-settings=builddir=builddir . -v
+        run: pip install --no-build-isolation . -v
 
       - name: Test
         run: ./sage -t --all -p4 || true
