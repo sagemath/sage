@@ -76,7 +76,12 @@ jobs:
             eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM _python3.9))
           fi
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
+          
+          # Needed for bootstrap
           pip3 install jinja2
+
+          # Needed to download and install cypari2 below
+          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install git)
 
           # # Download and install pari for cypari2
           # # https://github.com/sagemath/cypari2/issues/145
