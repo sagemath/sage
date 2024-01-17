@@ -175,8 +175,9 @@ case $system:$command in
         [ -n "$system_packages" ] && print_shell_command ${SUDO}xbps-install $options $system_packages
         ;;
     opensuse*:install)
-        [ "$YES" = yes ] && options="$options --non-interactive"
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}zypper $options install $system_packages
+        [ "$YES" = yes ] && options="$options --y"
+        [ "$IGNORE_MISSING" = yes ] && options_pre="--non-interactive"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}zypper $options_pre install $options $system_packages
         ;;
     *conda*:install)
         [ "$YES" = yes ] && options="$options --yes"
