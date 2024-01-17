@@ -157,15 +157,15 @@ case $system:$command in
         [ -n "$system_packages" ] && print_shell_command ${SUDO}emerge $system_packages
         ;;
     arch*:update)
-        if [ "$IGNORE_MISSING" = yes ]; then
-            echo "for pkg in $system_packages; do ${SUDO}pacman -Sy \$pkg || true; done"
-        else
-            print_shell_command "${SUDO}pacman -Sy"
-        fi
+        print_shell_command "${SUDO}pacman -Sy"
         ;;
     arch*:install)
         [ "$YES" = yes ] && options="$options --noconfirm"
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}pacman -S $options $system_packages
+        if [ "$IGNORE_MISSING" = yes ]; then
+            [ -n "$system_packages" ] && echo "for pkg in $system_packages; do ${SUDO}pacman -S $options \$pkg || true; done"
+        else
+            [ -n "$system_packages" ] && print_shell_command ${SUDO}pacman -S $options $system_packages
+        fi
         ;;
     void*:update)
         print_shell_command "${SUDO}xbps-install -Su"
