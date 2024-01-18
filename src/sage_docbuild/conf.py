@@ -39,6 +39,9 @@ from sage.features.all import all_features
 # General configuration
 # ---------------------
 
+SAGE_LIVE_DOC = os.environ.get('SAGE_LIVE_DOC', 'no')
+SAGE_PREPARSED_DOC = os.environ.get('SAGE_PREPARSED_DOC', 'yes')
+
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
@@ -57,7 +60,7 @@ extensions = [
 
 jupyter_execute_default_kernel = 'sagemath'
 
-if os.environ.get('SAGE_LIVE_DOC', 'no')  == 'yes':
+if SAGE_LIVE_DOC == 'yes':
     SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
     if SAGE_JUPYTER_SERVER.startswith('binder'):
         # format: "binder" or
@@ -789,11 +792,6 @@ def skip_member(app, what, name, obj, skip, options):
     return skip
 
 
-from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
-from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
-from sphinx_inline_tabs._impl import TabContainer
-from sage.repl.preparse import preparse
-
 class SagecodeTransform(SphinxTransform):
     """
     Transform a code block to a live code block enabled by jupyter-sphinx.
@@ -831,6 +829,8 @@ class SagecodeTransform(SphinxTransform):
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
             for node in self.document.traverse(nodes.literal_block):
                 if node.get('language') is None and node.astext().startswith('sage:'):
+                    from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
+                    from sphinx_inline_tabs._impl import TabContainer
                     parent = node.parent
                     index = parent.index(node)
                     parent.remove(node)
@@ -843,37 +843,40 @@ class SagecodeTransform(SphinxTransform):
                     content += node
                     container += content
                     parent.insert(index, container)
-                    # Tab for preparsed version
-                    container = TabContainer("", type="tab", new_set=False)
-                    textnodes = [Text('Python')]
-                    label = Label("", "", *textnodes)
-                    container += label
-                    content = Container("", is_div=True, classes=["tab-content"])
-                    example_lines = []
-                    preparsed_lines = ['>>> from sage.all import *']
-                    for line in node.rawsource.splitlines() + ['']:  # one extra to process last example
-                        newline = line.lstrip()
-                        if newline.startswith('....: '):
-                            example_lines.append(newline[6:])
-                        else:
-                            if example_lines:
-                                preparsed_example = preparse('\n'.join(example_lines))
-                                prompt = '>>> '
-                                for preparsed_line in preparsed_example.splitlines():
-                                    preparsed_lines.append(prompt + preparsed_line)
-                                    prompt = '... '
-                                example_lines = []
-                            if newline.startswith('sage: '):
+                    if SAGE_PREPARSED_DOC == 'yes':
+                        # Tab for preparsed version
+                        from sage.repl.preparse import preparse
+                        container = TabContainer("", type="tab", new_set=False)
+                        textnodes = [Text('Python')]
+                        label = Label("", "", *textnodes)
+                        container += label
+                        content = Container("", is_div=True, classes=["tab-content"])
+                        example_lines = []
+                        preparsed_lines = ['>>> from sage.all import *']
+                        for line in node.rawsource.splitlines() + ['']:  # one extra to process last example
+                            newline = line.lstrip()
+                            if newline.startswith('....: '):
                                 example_lines.append(newline[6:])
                             else:
-                                preparsed_lines.append(line)
-                    preparsed = '\n'.join(preparsed_lines)
-                    preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
-                    content += preparsed_node
-                    container += content
-                    parent.insert(index + 1, container)
-                    if os.environ.get('SAGE_LIVE_DOC', 'no') == 'yes':
+                                if example_lines:
+                                    preparsed_example = preparse('\n'.join(example_lines))
+                                    prompt = '>>> '
+                                    for preparsed_line in preparsed_example.splitlines():
+                                        preparsed_lines.append(prompt + preparsed_line)
+                                        prompt = '... '
+                                    example_lines = []
+                                if newline.startswith('sage: '):
+                                    example_lines.append(newline[6:])
+                                else:
+                                    preparsed_lines.append(line)
+                        preparsed = '\n'.join(preparsed_lines)
+                        preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
+                        content += preparsed_node
+                        container += content
+                        parent.insert(index + 1, container)
+                    if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
+                        from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
                         source = node.rawsource
                         lines = []
                         for line in source.splitlines():
@@ -915,7 +918,8 @@ def setup(app):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
     app.connect('autodoc-skip-member', skip_member)
     app.add_transform(SagemathTransform)
-    app.add_transform(SagecodeTransform)
+    if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
+        app.add_transform(SagecodeTransform)
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
