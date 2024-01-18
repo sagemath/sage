@@ -141,7 +141,8 @@ if __name__ == "__main__":
             in_filenames = True
             new_arguments.append('--')
         new_arguments.append(arg)
-        afterlog = bool(arg == '--logfile')
+        afterlog = arg in ['--logfile', '--stats_path', '--stats-path',
+                           '--baseline_stats_path', '--baseline-stats-path']
 
     args = parser.parse_args(new_arguments)
 

@@ -1105,9 +1105,9 @@ class RegularSequence(RecognizableSeries):
 
         def linear_representation_morphism_recurrence_order_1(C, D):
             r"""
-                Return the morphism of a linear representation
-                for the sequence `z_n` satisfying
-                `z_{kn+r} = C_r z_n + D_r z_{n-1}`.
+            Return the morphism of a linear representation
+            for the sequence `z_n` satisfying
+            `z_{kn+r} = C_r z_n + D_r z_{n-1}`.
             """
             Z = zero_matrix(C[0].dimensions()[0])
 
@@ -1870,8 +1870,8 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         def values(m, lines):
             """
-                Return current (as defined by ``lines``) right vector valued
-                sequence for argument ``m``.
+            Return current (as defined by ``lines``) right vector valued
+            sequence for argument ``m``.
             """
             return tuple(seq(m)) + tuple(f(k**t_R * m + r_R) for t_R, r_R in lines)
 
@@ -1880,12 +1880,12 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         # (we allow appending of new lines)
         def some_inverse_U_matrix(lines):
             r"""
-                Find an invertible `d \times d` submatrix of the matrix
-                ``A`` described in the algorithm section of the docstring.
+            Find an invertible `d \times d` submatrix of the matrix
+            ``A`` described in the algorithm section of the docstring.
 
-                The output is the inverse of the invertible submatrix and
-                the corresponding list of column indices (i.e., arguments to
-                the current right vector valued sequence).
+            The output is the inverse of the invertible submatrix and
+            the corresponding list of column indices (i.e., arguments to
+            the current right vector valued sequence).
             """
             d = len(seq(0)) + len(lines)
 
@@ -1905,11 +1905,11 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         def linear_combination_candidate(t_L, r_L, lines):
             r"""
-                Based on an invertible submatrix of ``A`` as described in the
-                algorithm section of the docstring, find a candidate for a
-                linear combination of the rows of ``A`` yielding the subsequence
-                with parameters ``t_L`` and ``r_L``, i.e.,
-                `m \mapsto f(k**t_L * m + r_L)`.
+            Based on an invertible submatrix of ``A`` as described in the
+            algorithm section of the docstring, find a candidate for a
+            linear combination of the rows of ``A`` yielding the subsequence
+            with parameters ``t_L`` and ``r_L``, i.e.,
+            `m \mapsto f(k**t_L * m + r_L)`.
             """
             iU, m_indices = some_inverse_U_matrix(lines)
             X_L = vector(f(k**t_L * m + r_L) for m in m_indices)
@@ -1917,18 +1917,18 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         def verify_linear_combination(t_L, r_L, linear_combination, lines):
             r"""
-                Determine whether the subsequence with parameters ``t_L`` and
-                ``r_L``, i.e., `m \mapsto f(k**t_L * m + r_L)`, is the linear
-                combination ``linear_combination`` of the current vector valued
-                sequence.
+            Determine whether the subsequence with parameters ``t_L`` and
+            ``r_L``, i.e., `m \mapsto f(k**t_L * m + r_L)`, is the linear
+            combination ``linear_combination`` of the current vector valued
+            sequence.
 
-                Note that we only evaluate the subsequence of ``f`` where arguments
-                of ``f`` are at most ``n_verify``. This might lead to detection of
-                linear dependence which would not be true for higher values, but this
-                coincides with the documentation of ``n_verify``.
-                However, this is not a guarantee that the given function will never
-                be evaluated beyond ``n_verify``, determining an invertible submatrix
-                in ``some_inverse_U_matrix`` might require us to do so.
+            Note that we only evaluate the subsequence of ``f`` where arguments
+            of ``f`` are at most ``n_verify``. This might lead to detection of
+            linear dependence which would not be true for higher values, but this
+            coincides with the documentation of ``n_verify``.
+            However, this is not a guarantee that the given function will never
+            be evaluated beyond ``n_verify``, determining an invertible submatrix
+            in ``some_inverse_U_matrix`` might require us to do so.
             """
             return all(f(k**t_L * m + r_L) ==
                        linear_combination * vector(values(m, lines))
