@@ -105,7 +105,7 @@ jobs:
       - name: Build
         run: |
           # Cannot yet use build isolation due to https://github.com/sagemath/cypari2/issues/143
-          pip3 install meson-python 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cysignals>=1.10.2' 'gmpy2>=2.1.0'
+          pip3 install 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cysignals>=1.10.2' 'gmpy2>=2.1.0' 'memory_allocator'
           # dependencies of cypari2
           pip3 install wheel setuptools 
           pip3 install --no-build-isolation git+https://github.com/sagemath/cypari2.git
