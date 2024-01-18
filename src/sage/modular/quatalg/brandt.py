@@ -372,7 +372,7 @@ def maximal_order(A):
 
         sage: sage.modular.quatalg.brandt.maximal_order(A)
         doctest:...:  DeprecationWarning: The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37089 for details.
+        See https://github.com/sagemath/sage/issues/37090 for details.
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
 
         sage: A = QuaternionAlgebra(17,names='i,j,k')
@@ -380,7 +380,7 @@ def maximal_order(A):
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
     """
     from sage.misc.superseded import deprecation
-    deprecation(37089, "The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras")
+    deprecation(37090, "The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras")
     return A.maximal_order()
 
 
@@ -402,13 +402,13 @@ def basis_for_left_ideal(R, gens):
         sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i+j,i-j,2*k,A(3)])
         doctest:...:  DeprecationWarning: The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37089 for details.
+        See https://github.com/sagemath/sage/issues/37090 for details.
         [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
         [3/2 + 1/2*i + k, i + 2*k, 3/2*j + 3/2*k, 3*k]
     """
     from sage.misc.superseded import deprecation
-    deprecation(37089, "The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras")
+    deprecation(37090, "The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras")
     return R._left_ideal_basis(gens)
 
 
@@ -433,7 +433,7 @@ def right_order(R, basis):
         sage: B = BrandtModule(17); basis = B.maximal_order()._left_ideal_basis([1])
         sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
         doctest:...:  DeprecationWarning: The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37089 for details.
+        See https://github.com/sagemath/sage/issues/37090 for details.
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
         sage: basis
         [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
@@ -444,7 +444,7 @@ def right_order(R, basis):
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
     """
     from sage.misc.superseded import deprecation
-    deprecation(37089, "The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras")
+    deprecation(37090, "The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras")
     return R._right_order_from_ideal_basis(basis)
 
 
@@ -467,7 +467,7 @@ def quaternion_order_with_given_level(A, level):
         sage: level = 2 * 5 * 17
         sage: O = quaternion_order_with_given_level(A, level)
         doctest:...:  DeprecationWarning: The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37089 for details.
+        See https://github.com/sagemath/sage/issues/37090 for details.
         sage: M = A.maximal_order()
         sage: L = O.free_module()
         sage: N = M.free_module()
@@ -475,7 +475,7 @@ def quaternion_order_with_given_level(A, level):
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(37089, "The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras")
+    deprecation(37090, "The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras")
     return A.order_with_level(level)
 
 
