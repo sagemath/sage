@@ -918,6 +918,22 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return self._a, self._b
 
+    def is_definite(self) -> bool:
+        r"""
+        Return ``True`` if the quaternion algebra is definite.
+
+        EXAMPLES::
+            sage: B = QuaternionAlgebra(-1, -11)
+            sage: B.is_definite()
+            True
+
+            sage: B = QuaternionAlgebra(-2, 5)
+            sage: B.is_definite()
+            False
+        """
+        a, b = self.invariants()
+        return a < 0 and b < 0
+
     def __eq__(self, other):
         """
         Compare self and other.
@@ -2462,6 +2478,39 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         C, d = B._clear_denom()
         return C.hermite_form() / d
 
+    def reduced_basis(self):
+        r"""
+        Let `I` = ``self`` be a quaternion ideal in a positive definite quaternion algebra. This function returns an LLL reduced basis of I
+
+        OUTPUT:
+
+        - A tuple of four elements in I forming an LLL reduced basis of I as a lattice
+
+        EXAMPLES:
+            sage: B = BrandtModule(2,37); I = B.right_ideals()[0]
+            sage: I
+            Fractional ideal (2 + 2*i + 2*j + 2*k, 4*i + 108*k, 4*j + 44*k, 148*k)
+            sage: I.reduced_basis()
+            (2 + 2*i + 2*j + 2*k, 4, -2 - 2*i - 14*j + 14*k, -16*i + 12*k)
+            sage: l = I.reduced_basis()
+            sage: assert all(l[i].reduced_norm() <= l[i+1].reduced_norm() for i in range(len(l) - 1))
+
+            sage: B = QuaternionAlgebra(next_prime(2**50))
+            sage: O = B.maximal_order()
+            sage: i,j,k = B.gens()
+            sage: alpha = 1/2 - 1/2*i + 3/2*j - 7/2*k
+            sage: I = O*alpha + O*3089622859
+            sage: I.reduced_basis()[0]
+            1/2*i + j + 5/2*k
+        """
+        if not self.quadratic_form().is_positive_definite():
+            raise TypeError(f'The quaternion algebra must be definite')
+
+        U = self.gram_matrix().LLL_gram().transpose()
+        reduced_basis = tuple(sum(c * g for c, g in zip(row, self.basis())) for row in U)
+
+        return reduced_basis
+
     def theta_series_vector(self, B):
         r"""
         Return theta series coefficients of ``self``, as a vector
@@ -2830,19 +2879,26 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         R = self.quaternion_algebra()
         return R.ideal(basis, check=False)
 
-    def is_equivalent(self, J, B=10) -> bool:
-        """
-        Return ``True`` if ``self`` and ``J`` are equivalent as right ideals.
+    def is_equivalent(self, J, B=10, certificate=False, side=None):
+        r"""
+        Return ``True`` if ``self`` and ``J`` are equivalent as ideals.
+        Tests equivalence as right ideals by default. Requires
+        quaternion algebra to be definite.
 
         INPUT:
 
         - ``J`` -- a fractional quaternion ideal with same order as ``self``
 
         - ``B`` -- a bound to compute and compare theta series before
-          doing the full equivalence test
+        doing the full equivalence test
 
-        OUTPUT: bool
+        - ``certificate`` -- if ``True`` returns an element α such that 
+        αJ=I or Jα=I for right and left ideals respectively
+        
+        - ``side`` -- If ``'left'`` performs left equivalence test. If ``'right' 
+        ``or ``None`` performs right-ideal equivalence test
 
+        OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
         EXAMPLES::
 
             sage: R = BrandtModule(3,5).right_ideals(); len(R)
@@ -2855,17 +2911,80 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: S = OO.right_ideal([3*a for a in R[0].basis()])
             sage: R[0].is_equivalent(S)
             True
+
+            sage: B = QuaternionAlgebra(101)
+            sage: i,j,k = B.gens()
+            sage: I = B.maximal_order().unit_ideal()
+            sage: J = I*(i + 2*k)
+            sage: I == J
+            False
+            sage: I.is_equivalent(J, side='left', certificate=True)
+            (True, 1/810*i + 1/405*k)        
+        """
+        if side == 'left':
+            return self.is_left_equivalent(J, B, certificate)
+        # If None, assume right ideals, for backwards compatibility
+        return self.is_right_equivalent(J, B, certificate)
+
+    def is_left_equivalent(self, J, B=10, certificate=False):
+        r"""
+        Return ``True`` if ``self`` and ``J`` are equivalent as left ideals.
+        Requires quaternion algebra to be definite.
+
+        INPUT:
+
+        - ``J`` -- a fractional quaternion left-ideal with same order as ``self``
+
+        - ``B`` -- a bound to compute and compare theta series before
+        doing the full equivalence test
+
+        - ``certificate`` -- if ``True`` returns an element α such that Jα=I
+
+        OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
+        """        
+        if certificate:
+            is_equiv, cert = self.conjugate().is_right_equivalent(J.conjugate(), B, True)
+            if is_equiv:
+                return True, cert.conjugate()
+            return False, None
+        return self.conjugate().is_right_equivalent(J.conjugate(), B, False)
+
+    def is_right_equivalent(self, J, B=10, certificate=False):
+        r"""
+        Return ``True`` if ``self`` and ``J`` are equivalent as right ideals.
+        Requires quaternion algebra to be definite.
+
+        INPUT:
+
+        - ``J`` -- a fractional quaternion right-ideal with same order as ``self``
+
+        - ``B`` -- a bound to compute and compare theta series before
+        doing the full equivalence test
+
+        - ``certificate`` -- if ``True`` returns an element α such that αJ=I
+
+        OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
         """
         # shorthand: let I be self
         if not isinstance(self, QuaternionFractionalIdeal_rational):
+            if certificate:
+                return False, None
             return False
-
+        
         if self.right_order() != J.right_order():
             raise ValueError("self and J must be right ideals")
+        
+        A = self.quaternion_algebra()
+        if not A.is_definite():
+            raise NotImplementedError('equivalence of ideals are not'
+                                    'implemented for indefinite'
+                                    'quaternion algebras')
 
         # Just test theta series first.  If the theta series are
         # different, the ideals are definitely not equivalent.
         if B > 0 and self.theta_series_vector(B) != J.theta_series_vector(B):
+            if certificate:
+                return False, None
             return False
 
         # The theta series are the same, so perhaps the ideals are
@@ -2878,7 +2997,21 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # 2. Determine if there is alpha in K such
         #    that N(alpha) = N(I)*N(J) as explained by Pizer.
         c = IJbar.theta_series_vector(2)[1]
-        return c != 0
+        if c == 0:
+            if certificate:
+                return False, None
+            return False
+        
+        if not certificate:
+            return True
+        
+        # Use Pair's qfminim with flag = 1
+        # Note the quadratic form is scaled by 4, so we must rescale after solving it
+        Q = IJbar.quadratic_form()
+        _,v = Q.__pari__().qfminim(None, None, 1)
+        alpha = sum(ZZ(c)*g for c,g in zip(v, IJbar.basis()))
+        alpha = alpha * (1/J.norm())
+        return True, alpha
 
     def __contains__(self, x):
         """
