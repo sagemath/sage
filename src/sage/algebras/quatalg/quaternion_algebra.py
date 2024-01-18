@@ -2139,18 +2139,16 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         Return the ambient quaternion algebra that contains this fractional ideal.
 
-        OUTPUT: a quaternion algebra
+        This is an alias for `self.ring()`.
 
         EXAMPLES::
 
-            sage: I = BrandtModule(3,5).right_ideals()[1]; I
+            sage: I = BrandtModule(3, 5).right_ideals()[1]; I
             Fractional ideal (2 + 6*j + 4*k, 2*i + 4*j + 34*k, 8*j + 32*k, 40*k)
             sage: I.quaternion_algebra()
             Quaternion Algebra (-1, -3) with base ring Rational Field
         """
-        # TODO: when the ring() method is removed from this class, the
-        # following line can be changed to self.ring().
-        return Ideal_fractional.ring(self)
+        return self.ring()
 
     def _compute_order(self, side='left'):
         r"""
@@ -2294,67 +2292,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             'Fractional ideal (2 + 6*j + 4*k, 2*i + 4*j + 2*k, 8*j, 8*k)'
         """
         return 'Fractional ideal %s' % (self.gens(),)
-
-    def quaternion_order(self):
-        """
-        Return the order for which this ideal is a left or right
-        fractional ideal.
-
-        If this ideal has both a left and right
-        ideal structure, then the left order is returned.  If it has
-        neither structure, then an error is raised.
-
-        OUTPUT: QuaternionOrder
-
-        EXAMPLES::
-
-            sage: R = QuaternionAlgebra(-11,-1).maximal_order()
-            sage: R.unit_ideal().quaternion_order() is R
-            doctest:...:  DeprecationWarning: quaternion_order() is deprecated,
-            please use left_order() or right_order()
-            See https://github.com/sagemath/sage/issues/31583 for details.
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(31583, 'quaternion_order() is deprecated, please use left_order() or right_order()')
-        try:
-            return self.__quaternion_order
-        except AttributeError:
-            pass
-        if self.__left_order is not None:
-            A = self.__left_order
-        elif self.__right_order is not None:
-            A = self.__right_order
-        else:
-            raise RuntimeError("unable to determine quaternion order of ideal without known order")
-        self.__quaternion_order = A
-        return A
-
-    def ring(self):
-        """
-        Return ring that this is a fractional ideal for.
-
-        The :meth:`ring` method will be removed from this class in the
-        future.  Calling :meth:`ring` will then return the ambient
-        quaternion algebra.  This is consistent with the behaviour for
-        number fields.
-
-        EXAMPLES::
-
-            sage: R = QuaternionAlgebra(-11,-1).maximal_order()
-            sage: R.unit_ideal().ring() is R
-            doctest:...:  DeprecationWarning: ring() will return the quaternion algebra in the future, please use left_order() or right_order()
-            See https://github.com/sagemath/sage/issues/31583 for details.
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(31583, 'ring() will return the quaternion algebra in the future, please use left_order() or right_order()')
-        if self.__left_order is not None:
-            return self.__left_order
-        elif self.__right_order is not None:
-            return self.__right_order
-        else:
-            raise RuntimeError("unable to determine quaternion order of ideal without known order")
 
     def basis(self):
         """
