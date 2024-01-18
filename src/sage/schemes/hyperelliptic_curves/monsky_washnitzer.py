@@ -77,7 +77,7 @@ from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
 from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
-from sage.structure.element import Element, ModuleElement
+from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
@@ -114,6 +114,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
 
             sage: B.<t> = PolynomialRing(Integers(125))
             sage: R = monsky_washnitzer.SpecialCubicQuotientRing(t^3 - t + B(1/4))
+            sage: TestSuite(R).run()
             sage: p = R.create_element(t, t^2 - 2, 3)
             sage: -p
             (124*T) + (124*T^2 + 2)*x + (122)*x^2
@@ -396,7 +397,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
                                     check=False)
 
 
-class SpecialCubicQuotientRing(Parent):
+class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
     r"""
     Specialised class for representing the quotient ring
     `R[x,T]/(T - x^3 - ax - b)`, where `R` is an
@@ -428,6 +429,7 @@ class SpecialCubicQuotientRing(Parent):
         sage: R
         SpecialCubicQuotientRing over Ring of integers modulo 125
         with polynomial T = x^3 + 124*x + 94
+        sage: TestSuite(R).run()
 
     Get generators::
 
@@ -522,13 +524,6 @@ class SpecialCubicQuotientRing(Parent):
             raise ArithmeticError("2 and 3 must be invertible in the "
                                   "coefficient ring (=%s) of Q" % base_ring)
 
-        # .__init__ tries to establish a coercion
-        # from the base ring, by github issue #9138. The corresponding
-        # hom set is cached.  In order to use self as cache key, its
-        # string representation is used. In otder to get the string
-        # representation, we need to know the attributes _a and
-        # _b. Hence, in #9138, we have to move .__init__
-        # further down:
         self._a = Q[1]
         self._b = Q[0]
         if laurent_series:
@@ -547,7 +542,7 @@ class SpecialCubicQuotientRing(Parent):
         m = matrix(QQ, [[1, -12, 2], [-3, 30, -3], [2, -12, 1]]) / 6
         self._speedup_matrix = m.change_ring(base_ring).list()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -2391,17 +2386,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
             sage: HQR is SpecialHyperellipticQuotientRing(E)
             True
-
         """
         if R is None:
             R = Q.base_ring()
-
-        # Github issue #9138: .__init__ must not be
-        # done so early.  It tries to register a coercion, but that
-        # requires the hash being available.  But the hash, in its
-        # default implementation, relies on the string representation,
-        # which is not available at this point.
-        # .__init__(self, R)  # moved to below.
 
         x = PolynomialRing(R, 'xx').gen()
         if is_EllipticCurve(Q):
@@ -2439,9 +2426,6 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         self._series_ring_y = self._series_ring.gen(0)
         self._series_ring_0 = self._series_ring.zero()
 
-        # Github issue #9138: Initialise the parent here!
-        # Below, we do self(self._poly_ring.gen(0)), which requires
-        # the initialisation being finished.
         Parent.__init__(self, base=R, category=Algebras(R).Commutative())
 
         self._poly_ring = PolynomialRing(self._series_ring, 'x')
@@ -2456,7 +2440,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         self._monomial_diffs = {}
         self._monomial_diff_coeffs = {}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation.
 
