@@ -198,7 +198,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             True
             sage: type(D)
             <class 'sage.schemes.hyperelliptic_curves.jacobian_morphism.JacobianMorphism_divisor_class_field'>
-        
+
         ::
 
             sage: # needs sage.rings.finite_rings
@@ -245,7 +245,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         # We randomly sample 2g + 1 points on the hyperelliptic curve
         points = [H.random_point() for _ in range(2*g + 1)]
-        
+
         # We create 2g + 1 divisors of the form (P) - infty
         divisors = [self(P) for P in points if P[2] != 0]
 

@@ -343,7 +343,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         if not h:
             y2 = f(x)
             return y2.is_square()
-        # Generic case for h != 0 
+        # Generic case for h != 0
         a = f(x)
         b = h(x)
         # Special case for char 2
@@ -360,7 +360,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         Return one or all points with given `x`-coordinate.
 
         This method is deterministic: It returns the same data each time when called again with the same.
-        
+
         INPUT:
 
         - ``x`` -- an element of the base ring of the curve

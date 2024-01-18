@@ -158,7 +158,6 @@ def cantor_reduction_simple(a, b, f, genus):
         sage: R.<x> = PolynomialRing(F)
         sage: f = x^6 + x^2 + 1
         sage: H = HyperellipticCurve(f)
-        sage: 
         sage: J = H.jacobian()
         sage: sum(J.random_element() for _ in range(10)) # random
         (x^2 + 115*x + 98, y + 100*x + 110)

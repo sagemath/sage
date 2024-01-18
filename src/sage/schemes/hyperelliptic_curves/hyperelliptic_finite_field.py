@@ -1937,10 +1937,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         .. SEEALSO::
 
-            This function is effectively the same as the function 
+            This function is effectively the same as the function
             :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.random_element`
             defined for elliptic curves over finite fields.
-    
+
         AUTHORS:
 
         - Gareth Ma, Luciano Maino, Elif Özbay, Giacomo Pope (Sage Days 123 2024)
