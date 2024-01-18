@@ -2001,8 +2001,8 @@ class CoxeterGroups(Category_singleton):
 
         def absolute_chain(self):
             r"""
-            Return a (saturated) chain in absolute order from ``self``
-            to ``1``.
+            Return a (saturated) chain in absolute order from ``1``
+            to ``self``.
 
             .. SEEALSO::
 
@@ -2014,15 +2014,17 @@ class CoxeterGroups(Category_singleton):
                 sage: (r, s, t) = W.simple_reflections()
                 sage: (r * s * r * t).absolute_chain()
                 [
-                [ 2  1 -2]  [ 0 -1  2]  [1 0 0]
-                [ 1  2 -2]  [-1  0  2]  [0 1 0]
-                [ 1  1 -1], [ 0  0  1], [0 0 1]
+                [1 0 0]  [ 0 -1  2]  [ 2  1 -2]
+                [0 1 0]  [-1  0  2]  [ 1  2 -2]
+                [0 0 1], [ 0  0  1], [ 1  1 -1]
                 ]
             """
             reflections = self.absolute_chain_reflections()
             P = self.parent()
-            return [P.prod(reversed(reflections[:i]))
+            chain = [P.prod(reversed(reflections[:i]))
                     for i in range(len(reflections), -1, -1)]
+            chain.reverse()
+            return chain
 
         def absolute_chain_reflections(self):
             r"""
