@@ -1659,12 +1659,12 @@ class RationalField(Singleton, number_field_base.NumberField):
             (10) * (x^5 - 1/10)
             sage: QQ._factor_univariate_polynomial(10*x^5 - 10)
             (10) * (x - 1) * (x^4 + x^3 + x^2 + x + 1)
-
         """
-        G = list(f._pari_with_name().factor())
+        G = f._pari_with_name().factor()
 
         # normalize the leading coefficients
-        F = [(f.parent()(g).monic(), int(e)) for (g, e) in zip(*G)]
+        P = f.parent()
+        F = [(P(g).monic(), int(e)) for g, e in zip(*G)]
 
         from sage.structure.factorization import Factorization
         return Factorization(F, f.leading_coefficient())
