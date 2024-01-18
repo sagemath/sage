@@ -144,18 +144,42 @@ def cantor_reduction_simple(a, b, f, genus):
         (x + 1, y)
         sage: 2 * P # indirect doctest
         (1)
+
+    AUTHORS:
+
+    - Giacomo Pope (2024): Fixes #37093 when an ambiguous form of degree genus+1 was returned
+      instead of being reduced.
+
+    TESTS:
+
+    Example to show that :issue:`37093` is fixed::
+
+        sage: F = GF(163)
+        sage: R.<x> = PolynomialRing(F)
+        sage: f = x^6 + x^2 + 1
+        sage: H = HyperellipticCurve(f)
+        sage: 
+        sage: J = H.jacobian()
+        sage: sum(J.random_element() for _ in range(10)) # random
+        (x^2 + 115*x + 98, y + 100*x + 110)
+
     """
-    a2 = (f - b**2) // a
-    a2 = a2.monic()
-    b2 = -b % (a2)
-    if a2.degree() == a.degree():
-        # XXX
-        assert a2.degree() == genus + 1
-        print("Returning ambiguous form of degree genus+1.")
-        return (a2, b2)
-    elif a2.degree() > genus:
-        return cantor_reduction_simple(a2, b2, f, genus)
-    return (a2, b2)
+    assert a.degree() < 2*genus+1
+    assert b.degree() < a.degree()
+    k = f - b**2
+    if 2*a.degree() == k.degree():
+        # must adjust b to include the point at infinity
+        g1 = a.degree()
+        x = a.parent().gen()
+        r = (x**2 - f[2*g1]).roots()[0][0]
+        b = b + r*(x**g1 - (x**g1) % (a))
+        k = f - b**2
+    assert k % (a) == 0
+    a = (k // a).monic()
+    b = -b % (a)
+    if a.degree() > genus:
+        return cantor_reduction_simple(a, b, f, genus)
+    return (a, b)
 
 
 def cantor_reduction(a, b, f, h, genus):
