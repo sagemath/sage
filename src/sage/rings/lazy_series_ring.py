@@ -2343,6 +2343,11 @@ class LazyPowerSeriesRing(LazySeriesRing):
         Parent.__init__(self, base=base_ring, names=names,
                         category=category)
 
+    def construction(self):
+        from sage.categories.pushout import CompletionFunctor
+        return (CompletionFunctor(self._names, infinity),
+                self._laurent_poly_ring)
+
     def _repr_(self):
         """
         String representation of this Taylor series ring.
@@ -2590,8 +2595,8 @@ class LazyPowerSeriesRing(LazySeriesRing):
             if valuation < 0:
                 raise ValueError("the valuation of a Taylor series must be non-negative")
             # TODO: the following is nonsense, think of an iterator
-            if self._arity > 1:
-                raise ValueError("valuation must not be specified for multivariate Taylor series")
+#            if self._arity > 1 and valuation != 0:
+#                raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
         if self._arity > 1:
             valuation = 0
 

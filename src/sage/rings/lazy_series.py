@@ -5272,7 +5272,11 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         def coefficient(n):
             r = R.zero()
             for i in range(n // gv + 1):
-                r += (self._coeff_stream[i](g))[n]
+                c = self._coeff_stream[i]
+                if c in self.base_ring():
+                    c = P(c)
+                    return c[n]
+                r += c(g)[n]
             return r
 
         coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)

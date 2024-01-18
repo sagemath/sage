@@ -1340,6 +1340,8 @@ class UndeterminedCoefficientsRingElement(Element):
               if v in V}
         return P.element_class(P, self._p.subs(d1))
 
+from sage.categories.pushout import UndeterminedCoefficientsFunctor
+
 class UndeterminedCoefficientsRing(UniqueRepresentation, Parent):
     """
     Rational functions in unknowns over a base ring.
@@ -1358,6 +1360,9 @@ class UndeterminedCoefficientsRing(UniqueRepresentation, Parent):
         self._P = PolynomialRing(base_ring, names=[self._PREFIX+str(i) for i in range(2)])
         self._PF = self._P.fraction_field()
         Parent.__init__(self, base=base_ring, category=Fields())
+
+    def construction(self):
+        return (UndeterminedCoefficientsFunctor(), self.base_ring())
 
     def polynomial_ring(self):
         """
