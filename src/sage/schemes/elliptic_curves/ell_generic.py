@@ -66,10 +66,7 @@ import sage.groups.additive_abelian.additive_abelian_group as groups
 import sage.groups.generic as generic
 
 from sage.arith.functions import lcm
-from sage.functions.generalized import sgn
 from sage.rings.integer import Integer
-from sage.rings.big_oh import O
-from sage.rings.infinity import Infinity as oo
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.rational_field import RationalField
