@@ -230,7 +230,7 @@ show_authors = True
 # console lexers. 'ipycon' is the IPython console, which is what we want
 # for most code blocks: anything with "sage:" prompts. For other IPython,
 # like blocks which might appear in a notebook cell, use 'ipython'.
-highlighting.lexers['ipycon'] = IPythonConsoleLexer(in1_regex=r'sage: ', in2_regex=r'[.][.][.][.]: ')
+highlighting.lexers['ipycon'] = IPythonConsoleLexer(in1_regex=r'(sage:|>>>)', in2_regex=r'([.][.][.][.]:|[.][.][.])')
 highlighting.lexers['ipython'] = IPyLexer()
 highlight_language = 'ipycon'
 
@@ -790,6 +790,9 @@ def skip_member(app, what, name, obj, skip, options):
 
 
 from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
+from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
+from sphinx_inline_tabs._impl import TabContainer
+from sage.repl.preparse import preparse
 
 class SagecodeTransform(SphinxTransform):
     """
@@ -828,29 +831,78 @@ class SagecodeTransform(SphinxTransform):
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
             for node in self.document.traverse(nodes.literal_block):
                 if node.get('language') is None and node.astext().startswith('sage:'):
-                    source = node.rawsource
-                    lines = []
-                    for line in source.splitlines():
+                    parent = node.parent
+                    index = parent.index(node)
+                    parent.remove(node)
+                    # Tab for Sage code
+                    container = TabContainer("", type="tab", new_set=False)
+                    textnodes = [Text('Sage')]
+                    label = Label("", "", *textnodes)
+                    container += label
+                    content = Container("", is_div=True, classes=["tab-content"])
+                    content += node
+                    container += content
+                    parent.insert(index, container)
+                    # Tab for preparsed version
+                    container = TabContainer("", type="tab", new_set=False)
+                    textnodes = [Text('Python')]
+                    label = Label("", "", *textnodes)
+                    container += label
+                    content = Container("", is_div=True, classes=["tab-content"])
+                    example_lines = []
+                    preparsed_lines = ['>>> from sage.all import *']
+                    for line in node.rawsource.splitlines() + ['']:  # one extra to process last example
                         newline = line.lstrip()
-                        if newline.startswith('sage: ') or newline.startswith('....: '):
-                            lines.append(newline[6:])
-                    cell_node = JupyterCellNode(
-                                execute=False,
-                                hide_code=True,
-                                hide_output=True,
-                                emphasize_lines=[],
-                                raises=False,
-                                stderr=True,
-                                code_below=False,
-                                classes=["jupyter_cell"])
-                    cell_input = CellInputNode(classes=['cell_input','live-doc'])
-                    cell_input += nodes.literal_block(
-                        text='\n'.join(lines),
-                        linenos=False,
-                        linenostart=1)
-                    cell_node += cell_input
-
-                    node.parent.insert(node.parent.index(node) + 1, cell_node)
+                        if newline.startswith('....: '):
+                            example_lines.append(newline[6:])
+                        else:
+                            if example_lines:
+                                preparsed_example = preparse('\n'.join(example_lines))
+                                prompt = '>>> '
+                                for preparsed_line in preparsed_example.splitlines():
+                                    preparsed_lines.append(prompt + preparsed_line)
+                                    prompt = '... '
+                                example_lines = []
+                            if newline.startswith('sage: '):
+                                example_lines.append(newline[6:])
+                            else:
+                                preparsed_lines.append(line)
+                    preparsed = '\n'.join(preparsed_lines)
+                    preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
+                    content += preparsed_node
+                    container += content
+                    parent.insert(index + 1, container)
+                    if os.environ.get('SAGE_LIVE_DOC', 'no') == 'yes':
+                        # Tab for Jupyter-sphinx cell
+                        source = node.rawsource
+                        lines = []
+                        for line in source.splitlines():
+                            newline = line.lstrip()
+                            if newline.startswith('sage: ') or newline.startswith('....: '):
+                                lines.append(newline[6:])
+                        cell_node = JupyterCellNode(
+                                    execute=False,
+                                    hide_code=False,
+                                    hide_output=True,
+                                    emphasize_lines=[],
+                                    raises=False,
+                                    stderr=True,
+                                    code_below=False,
+                                    classes=["jupyter_cell"])
+                        cell_input = CellInputNode(classes=['cell_input','live-doc'])
+                        cell_input += nodes.literal_block(
+                            text='\n'.join(lines),
+                            linenos=False,
+                            linenostart=1)
+                        cell_node += cell_input
+                        container = TabContainer("", type="tab", new_set=False)
+                        textnodes = [Text('Sage (live)')]
+                        label = Label("", "", *textnodes)
+                        container += label
+                        content = Container("", is_div=True, classes=["tab-content"])
+                        content += cell_node
+                        container += content
+                        parent.insert(index + 1, container)
 
 # This replaces the setup() in sage.misc.sagedoc_conf
 def setup(app):
@@ -863,8 +915,7 @@ def setup(app):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
     app.connect('autodoc-skip-member', skip_member)
     app.add_transform(SagemathTransform)
-    if os.environ.get('SAGE_LIVE_DOC', 'no') == 'yes':
-        app.add_transform(SagecodeTransform)
+    app.add_transform(SagecodeTransform)
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
