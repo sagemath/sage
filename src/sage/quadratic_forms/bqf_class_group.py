@@ -355,11 +355,11 @@ class BQFClassGroup(Parent, UniqueRepresentation):
             Class of 9*x^2 + 4*x*y + 9*y^2
         """
         if not isinstance(other, BQFClassGroup):
-            return None
+            return super()._coerce_map_from_(other)
         try:
             proj = BQFClassGroupQuotientMorphism(other, self)
         except (TypeError, ValueError):
-            return None
+            return super()._coerce_map_from_(other)
         return proj
 
 
@@ -651,6 +651,9 @@ def _project_bqf(bqf, q):
     :class:`BQFClassGroup_element` of discriminant `D`
     in the form class group of discriminant `D/q^2`.
 
+    ALGORITHM: Find a class representative with `q^2 \mid a`
+    (and `q \mid b`) and substitute `x\mapsto x/q`.
+
     EXAMPLES::
 
         sage: from sage.quadratic_forms.bqf_class_group import _project_bqf
@@ -671,9 +674,6 @@ def _project_bqf(bqf, q):
         -1 * 2^2 * 101^2
         sage: f2.discriminant().factor()
         -1 * 2^2
-
-    ALGORITHM: Find a class representative with `q^2 \mid a`
-    (and `q\mid b`) and substitute `x\mapsto x/q`.
     """
     q2 = q**2
     disc = bqf.discriminant()
@@ -770,23 +770,13 @@ class BQFClassGroupQuotientMorphism(Morphism):
             sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism
             sage: G = BQFClassGroup(-4*117117)
             sage: H = BQFClassGroup(-4*77)
-            sage: BQFClassGroupQuotientMorphism(G, H)
-            Generic morphism:
-              From: Form Class Group of Discriminant -468468
-              To:   Form Class Group of Discriminant -308
+            sage: f = BQFClassGroupQuotientMorphism(G, H)
+            sage: TestSuite(f).run(skip='_test_category')
         """
         if not isinstance(G, BQFClassGroup):
-            try:
-                disc = ZZ(G)
-            except Exception:
-                raise TypeError('G needs to be a BQFClassGroup')
-            G = BQFClassGroup(disc)
+            raise TypeError('G needs to be a BQFClassGroup')
         if not isinstance(H, BQFClassGroup):
-            try:
-                disc = ZZ(G)
-            except Exception:
-                raise TypeError('H needs to be a BQFClassGroup')
-            H = BQFClassGroup(disc)
+            raise TypeError('H needs to be a BQFClassGroup')
         try:
             self.f = ZZ((G.discriminant() / H.discriminant()).sqrt(extend=False)).factor()
         except ValueError:
