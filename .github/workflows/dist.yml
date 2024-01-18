@@ -103,6 +103,36 @@ jobs:
           verbose: true
         if: env.CAN_DEPLOY == 'true'
 
+  noarch_wheels_for_pypi:
+
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+      - name: make pypi-noarch-wheels
+        run: |
+          ./bootstrap
+          ./configure
+          make pypi-noarch-wheels V=0
+          (mkdir dist && mv upstream/sage*-none-any.whl dist/)
+          ls -l dist
+      - uses: actions/upload-artifact@v3
+        with:
+          path: "dist/*.whl"
+          name: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          skip-existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'
+
   build_wheels:
     name: Build wheels on ${{ matrix.os }}, arch ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
