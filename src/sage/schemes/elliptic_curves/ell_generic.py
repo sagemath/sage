@@ -53,6 +53,7 @@ AUTHORS:
 # ****************************************************************************
 
 import math
+from sage.arith.misc import valuation
 
 import sage.rings.abc
 from sage.rings.finite_rings.integer_mod import mod
@@ -65,6 +66,7 @@ import sage.groups.additive_abelian.additive_abelian_group as groups
 import sage.groups.generic as generic
 
 from sage.arith.functions import lcm
+from sage.functions.generalized import sgn
 from sage.rings.integer import Integer
 from sage.rings.big_oh import O
 from sage.rings.infinity import Infinity as oo
@@ -2019,6 +2021,30 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     torsion_polynomial = division_polynomial
 
+    @cached_method
+    def multiplication_by_p_isogeny(self):
+        r"""
+        Return the multiplication-by-\(p\) isogeny.
+
+        EXAMPLES::
+
+            sage: p = 23
+            sage: K.<a> = GF(p^3)
+            sage: E = EllipticCurve(K, [K.random_element(), K.random_element()])
+            sage: phi = E.multiplication_by_p_isogeny()
+            sage: assert phi.degree() == p**2
+            sage: P = E.random_element()
+            sage: assert phi(P) == P * p
+        """
+        from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
+
+        K = self.base_ring()
+        if not isinstance(K, FiniteField_generic):
+            raise ValueError(f"Base ring (={K}) is not a finite field.")
+
+        frob = self.frobenius_isogeny()
+        return frob.dual() * frob
+
     def _multiple_x_numerator(self, n, x=None):
         r"""
         Return the numerator of the `x`-coordinate of the `n\th` multiple of a
@@ -2333,6 +2359,20 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: my_eval = lambda f,P: [fi(P[0],P[1]) for fi in f]
             sage: f = E.multiplication_by_m(2)
             sage: assert(E(eval(f,P)) == 2*P)
+
+        The following test shows that :trac:`6413` is indeed fixed::
+            sage: p = 7
+            sage: K.<a> = GF(p^2)
+            sage: E = EllipticCurve(K, [a + 3, 5 - a])
+            sage: k = p^2 * 3
+            sage: f, g = E.multiplication_by_m(k)
+            sage: for _ in range(100):
+            ....:     P = E.random_point()
+            ....:     if P * k == 0:
+            ....:         continue
+            ....:     Qx = f.subs(x=P[0])
+            ....:     Qy = g.subs(x=P[0], y=P[1])
+            ....:     assert (P * k).xy() == (Qx, Qy)
         """
         # Coerce the input m to be an integer
         m = Integer(m)
@@ -2352,7 +2392,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 return x
 
         # Grab curve invariants
-        a1, a2, a3, a4, a6 = self.a_invariants()
+        a1, _, a3, _, _ = self.a_invariants()
 
         if m == -1:
             if not x_only:
@@ -2360,21 +2400,42 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             else:
                 return x
 
-        # the x-coordinate does not depend on the sign of m.  The work
+        # Inseparable cases
+        # Special case of multiplication by p is easy. Kind of.
+        p = Integer(self.base_ring().characteristic())
+
+        v_p = 0 if p == 0 else valuation(m.abs(), p)
+        m //= p**v_p
+
+        # the x-coordinate does not depend on the sign of m. The work
         # here is done by functions defined earlier:
 
         mx = (x.parent()(self._multiple_x_numerator(m.abs(), x))
               / x.parent()(self._multiple_x_denominator(m.abs(), x)))
 
+
         if x_only:
+            # slow.
+            if v_p > 0:
+                p_endo = self.multiplication_by_p_isogeny()
+                isog = p_endo**v_p
+                fx = isog.x_rational_map()
+                # slow.
+                mx = mx.subs(x=fx)
             # Return it if the optional parameter x_only is set.
             return mx
 
-        #  Consideration of the invariant differential
-        #  w=dx/(2*y+a1*x+a3) shows that m*w = d(mx)/(2*my+a1*mx+a3)
-        #  and hence 2*my+a1*mx+a3 = (1/m)*(2*y+a1*x+a3)*d(mx)/dx
-
+        # Consideration of the invariant differential
+        # w=dx/(2*y+a1*x+a3) shows that m*w = d(mx)/(2*my+a1*mx+a3)
+        # and hence 2*my+a1*mx+a3 = (1/m)*(2*y+a1*x+a3)*d(mx)/dx
         my = ((2*y+a1*x+a3)*mx.derivative(x)/m - a1*mx-a3)/2
+
+        if v_p > 0:
+            frob = self.frobenius_isogeny()
+            isog = (frob.dual() * frob)**v_p
+            fx, fy = isog.rational_maps()
+            # slow...
+            my = my.subs(x=fx, y=fy)
 
         return mx, my
 
