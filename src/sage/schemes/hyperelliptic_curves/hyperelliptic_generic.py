@@ -430,10 +430,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
             [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
 
-
         TESTS::
-
-        The `x`-coordinate must be defined over the base field of the curve::
 
             sage: # needs sage.rings.finite_rings
             sage: F = GF(11)
