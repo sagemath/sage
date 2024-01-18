@@ -50,6 +50,7 @@ cdef class LieObject(SageObject):
 
 cdef class LieGenerator(LieObject):
     cdef public str _name
+    cpdef lift(self, dict UEA_gens_dict)
 
 cdef class LieBracket(LieObject):
     cdef public LieObject _left

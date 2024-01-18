@@ -4,10 +4,15 @@ Power Series Methods
 
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
-from .power_series_ring_element cimport PowerSeries
+from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
-from .infinity import infinity
-from sage.libs.pari.all import pari_gen, PariError
+from sage.rings.infinity import infinity
+
+try:
+    from sage.libs.pari.all import pari_gen, PariError
+except ImportError:
+    pari_gen = ()
+    PariError = ()
 
 
 cdef class PowerSeries_poly(PowerSeries):

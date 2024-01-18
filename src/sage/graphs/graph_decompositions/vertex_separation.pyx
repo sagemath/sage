@@ -332,7 +332,6 @@ def lower_bound(G):
         raise ValueError("the (di)graph can have at most 31 vertices")
 
     cdef FastDigraph FD = FastDigraph(G)
-    cdef int * g = FD.graph
     cdef unsigned int n = <unsigned int>FD.n
 
     # minimums[i] is means to store the value of c'_{i+1}

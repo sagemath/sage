@@ -380,7 +380,7 @@ cdef GapElement make_GapElement(parent, Obj obj) noexcept:
         sage: libgap(None)
         Traceback (most recent call last):
         ...
-        AttributeError: 'NoneType' object has no attribute '_libgap_init_'...
+        AttributeError: 'NoneType' object has no attribute '_gap_init_'...
     """
     cdef GapElement r = GapElement.__new__(GapElement)
     r._initialize(parent, obj)
@@ -553,7 +553,7 @@ cdef class GapElement(RingElement):
 
         INPUT:
 
-        - ``mut`` - (boolean) whether to return an mutable copy
+        - ``mut`` - (boolean) whether to return a mutable copy
 
         EXAMPLES::
 
@@ -1778,7 +1778,7 @@ cdef class GapElement_FiniteField(GapElement):
 
         OUTPUT:
 
-        An Sage finite field element. The isomorphism is chosen such
+        A Sage finite field element. The isomorphism is chosen such
         that the Gap ``PrimitiveRoot()`` maps to the Sage
         :meth:`~sage.rings.finite_rings.finite_field_prime_modn.multiplicative_generator`.
 

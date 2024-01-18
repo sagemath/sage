@@ -30,7 +30,6 @@ from sage.categories.homset import Hom
 from sage.algebras.lie_algebras.lie_algebra_element import (LieAlgebraElementWrapper,
                                                             LieAlgebraMatrixWrapper)
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import Ring
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.family import Family, AbstractFamily
 
@@ -322,7 +321,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
         sage: L
         Nilpotent Lie algebra on 3 generators (X, Y, Z) over Rational Field
         sage: L.category()
-        Category of finite dimensional nilpotent lie algebras with basis over Rational Field
+        Category of finite dimensional nilpotent Lie algebras with basis over Rational Field
 
     A second example defining the Engel Lie algebra::
 
@@ -419,7 +418,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
             raise ValueError("invalid arguments")
 
         def check_assoc(A):
-            return (isinstance(A, (Ring, MatrixSpace))
+            return (isinstance(A, MatrixSpace)
                     or A in Rings()
                     or A in Algebras(R).Associative())
         if arg0 in ZZ or check_assoc(arg1):
@@ -530,7 +529,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
 
             sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
             sage: L.category()
-            Category of finite dimensional nilpotent lie algebras with basis over Rational Field
+            Category of finite dimensional nilpotent Lie algebras with basis over Rational Field
         """
         category = LieAlgebras(R).or_subcategory(category)
         Parent.__init__(self, base=R, names=names, category=category)
@@ -805,7 +804,7 @@ class LieAlgebraWithGenerators(LieAlgebra):
 
             sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
             sage: L.category()
-            Category of finite dimensional nilpotent lie algebras with basis over Rational Field
+            Category of finite dimensional nilpotent Lie algebras with basis over Rational Field
         """
         self._indices = index_set
         LieAlgebra.__init__(self, R, names, category)
@@ -890,7 +889,7 @@ class FinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
 
             sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
             sage: L.category()
-            Category of finite dimensional nilpotent lie algebras with basis over Rational Field
+            Category of finite dimensional nilpotent Lie algebras with basis over Rational Field
         """
         LieAlgebraWithGenerators.__init__(self, R, names, index_set, category)
         self.__ngens = len(self._indices)

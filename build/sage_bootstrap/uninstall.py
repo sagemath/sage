@@ -172,6 +172,17 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
         else:
             sys.exit(1)
 
+    # Run the package's piprm script, if it exists.
+    # Since #36452 the spkg-requirements.txt file appears in the installation
+    # manifest, so this step has to happen before removing the files.
+    try:
+        run_spkg_script(spkg_name, spkg_scripts, 'piprm',
+                        'pip-uninstall')
+    except Exception:
+        print("Warning: Error running the pip-uninstall script for "
+              "'{0}'; uninstallation may have left behind some files".format(
+              spkg_name), file=sys.stderr)
+
     def rmdir(dirname):
         if pth.isdir(dirname):
             if not os.listdir(dirname):
@@ -199,15 +210,6 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
 
         # Remove file's directory if it is now empty
         rmdir(dirname)
-
-    # Run the package's piprm script, if it exists.
-    try:
-        run_spkg_script(spkg_name, spkg_scripts, 'piprm',
-                        'pip-uninstall')
-    except Exception:
-        print("Warning: Error running the pip-uninstall script for "
-              "'{0}'; uninstallation may have left behind some files".format(
-              spkg_name), file=sys.stderr)
 
     # Run the package's postrm script, if it exists.
     # If an error occurs here print a warning, but complete the

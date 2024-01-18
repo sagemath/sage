@@ -3223,7 +3223,7 @@ class SandpileConfig(dict):
     # recurrent addition or multiplication on the right by an integer
     def __mul__(self, other):
         r"""
-        If ``other`` is an configuration, the recurrent element equivalent
+        If ``other`` is a configuration, the recurrent element equivalent
         to the sum.  If ``other`` is an integer, the sum of configuration with
         itself ``other`` times.
 
@@ -5603,7 +5603,7 @@ class SandpileDivisor(dict):
             sage: K = s.canonical_divisor()
             sage: [K.weierstrass_rank_seq(v) for v in s.vertices(sort=True)]            # needs sage.geometry.polyhedron
             [(1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, 0, -1)]
-      """
+        """
         s = self.sandpile()
         if v == 'sink':
             v = s.sink()

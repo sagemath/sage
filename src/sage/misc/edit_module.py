@@ -133,7 +133,7 @@ def template_fields(template):
     """
     dict = {}
     dummy = None
-    while not(dummy):
+    while not dummy:
         try:
             dummy = template.substitute(dict)
         except KeyError as inst:
@@ -168,10 +168,10 @@ def set_edit_template(template_string):
     """
     global edit_template
 
-    if not(isinstance(template_string, Template)):
+    if not isinstance(template_string, Template):
         template_string = Template(template_string)
     fields = set(template_fields(template_string))
-    if not(fields <= set(['file', 'line']) and ('file' in fields)):
+    if not (fields <= set(['file', 'line']) and ('file' in fields)):
         raise ValueError("Only ${file} and ${line} are allowed as template variables, and ${file} must occur.")
     edit_template = template_string
 
@@ -253,7 +253,7 @@ def edit(obj, editor=None, bg=None):
 
     if editor:
         set_editor(editor)
-    elif not(edit_template):
+    elif not edit_template:
         try:
             ED = os.environ['EDITOR']
             EDITOR = ED.split()
@@ -263,7 +263,7 @@ def edit(obj, editor=None, bg=None):
         except (ValueError, KeyError, IndexError):
             raise ValueError("Use set_edit_template(<template_string>) to set a default")
 
-    if not(edit_template):
+    if not edit_template:
         raise ValueError("Use set_edit_template(<template_string>) to set a default")
 
     filename, lineno = file_and_line(obj)

@@ -960,6 +960,13 @@ REFERENCES:
 .. [BL2003] \S. Brlek, A. Ladouceur, A note on differentiable palindromes,
             Theoret. Comput. Sci. 302 (2003) 167--178.
 
+.. [BLL1998] \F. Bergeron, G. Labelle, and P. Leroux.
+             "Combinatorial species and tree-like structures".
+             Encyclopedia of Mathematics and its Applications, vol. 67, Cambridge Univ. Press. 1998.
+
+.. [BLL2008] François Bergeron, Gilbert Labelle, and Pierre Leroux.
+             "Introduction to the Theory of Species of Structures", March 14, 2008.
+
 .. [BraLea2008] \C. Bracken and Gregor Leander: *New families of functions
              with differential uniformity of 4*, Proceedings of the Conference
              BFCA, Copenhagen, 2008.
@@ -1036,6 +1043,11 @@ REFERENCES:
 .. [BM2016] Gunnar Brinkmann, Brendan McKay,
             *Guide to using plantri*, version 5.0, 2016.
             http://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt
+
+.. [BM2021] Alin Bostan and Ryuhei Mori,
+            *A simple and fast algorithm for computing the N-th term of a linearly recurrent sequence*,
+            Proceedings of Symposium on Simplicity in Algorithms (SOSA), pp. 118--132, 2021.
+            :doi:`10.1137/1.9781611976496.14`
 
 .. [BMBFLR2008] A. Blondin-Massé, S. Brlek, A. Frosini, S. Labbé,
                 S. Rinaldi, *Reconstructing words from a fixed
@@ -1230,6 +1242,9 @@ REFERENCES:
              Computer Science, 1989, pp. 442-447.
              :doi:`10.1109/SFCS.1989.63516`,
              <http://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf>_
+
+.. [Bro2009] \R. Bröker: *Constructing supersingular elliptic curves*.
+             Journal of Combinatorics and Number Theory 1.3 (2009), pp. 269--273.
 
 .. [Broder2000] Broder, A.Z., Kumar, R., Maghoul, F., Raghavan, P., Rajagopalan,
                 S., Stata, R., Tomkins, A., Wiener, J.L.: Graph structure in
@@ -1473,6 +1488,11 @@ REFERENCES:
 
 .. [CFI1992] Cai, JY., Fürer, M. & Immerman, N. Combinatorica (1992) 12: 389.
              :doi:`10.1007/BF01305232`
+
+.. [CFKLMPPS15] Marek Cygan, Fedor V. Fomin, Łukasz Kowalik, Daniel Lokshtanov,
+                Dániel Marx, Marcin Pilipczuk, Michał Pilipczuk, Saket Saurabh.
+                *Parameterized Algorithms*. Springer International Publishing
+                Switzerland 2015
 
 .. [CFKP1997] James W. Cannon, William J. Floyd, Richard Kenyon and Walter R. Parry.
               *Hyperbolic Geometry*. Flavors of Geometry, MSRI Publications,
@@ -4499,6 +4519,10 @@ REFERENCES:
 
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
+
+.. [Mathas2004] Andrew Mathas.
+                *Matrix units and generic degrees for the Ariki-Koike algebras*.
+                J. Algebra. **281** (2004) pp. 695-730.
 
 .. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
              in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,

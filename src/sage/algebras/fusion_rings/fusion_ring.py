@@ -1175,13 +1175,13 @@ class FusionRing(WeylCharacterRing):
                 return [[]] if fr.Nk_ij(m1, m2, root) else []
             else:
                 m1, m2 = top_row[:2]
-                return [tuple([l, *b]) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
+                return [(l, *b) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
 
-        comp_basis = list()
+        comp_basis = []
         for top in product((a*a).monomials(), repeat=n_strands//2):
             # If the n_strands is odd, we must extend the top row by a fusing anyon
             top_row = list(top)+[a]*(n_strands % 2)
-            comp_basis.extend(tuple([*top, *levels]) for levels in _get_trees(self, top_row, b))
+            comp_basis.extend((*top, *levels) for levels in _get_trees(self, top_row, b))
         return comp_basis
 
     def get_fmatrix(self, *args, **kwargs):
@@ -1248,7 +1248,7 @@ class FusionRing(WeylCharacterRing):
         no_mp = worker_pool is None
         # Map phase
         input_iter = zip_longest([], input_iter, fillvalue=(mapper, id(self)))
-        results = list()
+        results = []
         if no_mp:
             mapped = map(executor, input_iter)
         else:

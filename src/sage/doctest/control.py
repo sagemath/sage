@@ -418,7 +418,7 @@ class DocTestController(SageObject):
             elif options.long:
                 options.timeout = int(os.getenv('SAGE_TIMEOUT_LONG', 30 * 60))
             else:
-                options.timeout = int(os.getenv('SAGE_TIMEOUT', 5 * 60))
+                options.timeout = int(os.getenv('SAGE_TIMEOUT', 10 * 60))
             # For non-default GC options, double the timeout
             if options.gc:
                 options.timeout *= 2
@@ -457,11 +457,15 @@ class DocTestController(SageObject):
                 options.hide.discard('all')
                 from sage.features.all import all_features
                 feature_names = {f.name for f in all_features() if not f.is_standard()}
+                from sage.doctest.external import external_software
+                feature_names.difference_update(external_software)
                 options.hide = options.hide.union(feature_names)
             if 'optional' in options.hide:
                 options.hide.discard('optional')
                 from sage.features.all import all_features
                 feature_names = {f.name for f in all_features() if f.is_optional()}
+                from sage.doctest.external import external_software
+                feature_names.difference_update(external_software)
                 options.hide = options.hide.union(feature_names)
 
         options.disabled_optional = set()
@@ -1093,6 +1097,35 @@ class DocTestController(SageObject):
                 return -self.stats.get(basename, default).get('walltime', 0), basename
             self.sources = sorted(self.sources, key=sort_key)
 
+    def source_baseline(self, source):
+        r"""
+        Return the ``baseline_stats`` value of ``source``.
+
+        INPUT:
+
+        - ``source`` -- a :class:`DocTestSource` instance
+
+        OUTPUT:
+
+        A dictionary.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: from sage.env import SAGE_SRC
+            sage: import os
+            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: DD = DocTestDefaults()
+            sage: DC = DocTestController(DD, [filename])
+            sage: DC.expand_files_into_sources()
+            sage: DC.source_baseline(DC.sources[0])
+            {}
+        """
+        if self.baseline_stats:
+            basename = source.basename
+            return self.baseline_stats.get(basename, {})
+        return {}
+
     def run_doctests(self):
         """
         Actually runs the doctests.
@@ -1138,6 +1171,8 @@ class DocTestController(SageObject):
             iterations = ", ".join(iterations)
             if iterations:
                 iterations = " (%s)" % (iterations)
+            if self.baseline_stats:
+                self.log(f"Using --baseline-stats-path={self.options.baseline_stats_path}")
             self.log("Doctesting %s%s%s." % (filestr, threads, iterations))
             self.reporter = DocTestReporter(self)
             self.dispatcher = DocTestDispatcher(self)
@@ -1603,7 +1638,7 @@ def run_doctests(module, options=None):
     if not save_dtmode:
         if options.debug:
             raise ValueError("You should not try to run doctests with a debugger from within Sage: IPython objects to embedded shells")
-        from IPython import get_ipython
+        from IPython.core.getipython import get_ipython
         IP = get_ipython()
         if IP is not None:
             old_color = IP.colors
