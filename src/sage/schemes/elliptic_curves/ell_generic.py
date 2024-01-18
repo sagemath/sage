@@ -1559,7 +1559,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         r"""
         Given four values `u,r,s,t` in the base ring of this curve, return
         the :class:`WeierstrassIsomorphism` defined by `u,r,s,t` with this
-        curve as its codomain. (The value `u` must be a unit.)
+        curve as its codomain.
+        (The value `u` must be a unit; the values `r,s,t` default to zero.)
 
         Optionally, if the keyword argument ``is_codomain`` is set to ``True``,
         return the isomorphism defined by `u,r,s,t` with this curve as its
