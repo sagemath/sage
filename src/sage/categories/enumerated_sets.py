@@ -941,7 +941,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: unknown cardinality
-                """
+            """
             raise NotImplementedError("unknown cardinality")
 
         def map(self, f, name=None, *, is_injective=True):

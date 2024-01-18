@@ -1184,7 +1184,7 @@ class SubMultiset_sk(SubMultiset_s):
         [3, 3]
         sage: [sub for sub in S]
         [[1, 2], [1, 3], [2, 3], [3, 3]]
-        """
+    """
 
     def __init__(self, s, k):
         """
