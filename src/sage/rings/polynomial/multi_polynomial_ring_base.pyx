@@ -1843,12 +1843,12 @@ class MatrixPolynomialAction(Action):
         EXAMPLES::
 
             sage: G = groups.matrix.Sp(4,GF(2))
-        sage: R.<w,x,y,z>=GF(2)[]
-        sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
-        sage: g=G.1
-        sage: from operator import matmul
-        sage: A = p.parent()._get_action_(g.parent(), matmul, False)
-        sage: TestSuite(A).run()
+            sage: R.<w,x,y,z>=GF(2)[]
+            sage: p = x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
+            sage: g = G.1
+            sage: from operator import matmul
+            sage: A = p.parent()._get_action_(g.parent(), matmul, False)
+            sage: TestSuite(A).run()
         """
         self._poly_vars = PR.gens()
         self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
@@ -1863,12 +1863,12 @@ class MatrixPolynomialAction(Action):
         EXAMPLES::
 
             sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
-        sage: R.<x, y, z> = PolynomialRing(GF(2), 3)
-        sage: M = Matrix(GF(2), [[1, 1, 0], [0, 1, 1], [1, 0, 1]])
-        sage: p = x*y + y*z + z^2
-        sage: A = MatrixPolynomialAction(M.parent(), R)  # using M.parent() to get the matrix space
-        sage: A._act_(M, p)
-        x^2 + y^2
+            sage: R.<x, y, z> = PolynomialRing(GF(2), 3)
+            sage: M = Matrix(GF(2), [[1, 1, 0], [0, 1, 1], [1, 0, 1]])
+            sage: p = x*y + y*z + z^2
+            sage: A = MatrixPolynomialAction(M.parent(), R)  # using M.parent() to get the matrix space
+            sage: A._act_(M, p)
+            x^2 + y^2
         """
         assert mat.base_ring() == polynomial.base_ring()
         vars_to_sub_module_context = mat * self._vars_vector
@@ -1883,12 +1883,12 @@ class MatrixPolynomialAction(Action):
         EXAMPLES::
 
             sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
-        sage: M = MatrixSpace(GF(2), 2)
-        sage: R = PolynomialRing(GF(2), 2, 'x')
-        sage: A1 = MatrixPolynomialAction(M, R)
-        sage: A2 = MatrixPolynomialAction(M, R)
-        sage: A1 == A2
-        True
+            sage: M = MatrixSpace(GF(2), 2)
+            sage: R = PolynomialRing(GF(2), 2, 'x')
+            sage: A1 = MatrixPolynomialAction(M, R)
+            sage: A2 = MatrixPolynomialAction(M, R)
+            sage: A1 == A2
+            True
         """        
         if isinstance(other, MatrixPolynomialAction):
             return self.MS == other.MS and self.PR == other.PR
@@ -1901,12 +1901,12 @@ class MatrixPolynomialAction(Action):
         EXAMPLES::
 
             sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
-        sage: M = MatrixSpace(GF(2), 2)
-        sage: R = PolynomialRing(GF(2), 2, 'x')
-        sage: A1 = MatrixPolynomialAction(M, R)
-        sage: A2 = MatrixPolynomialAction(M, R)
-        sage: hash(A1)==hash(A2)
-        True
+            sage: M = MatrixSpace(GF(2), 2)
+            sage: R = PolynomialRing(GF(2), 2, 'x')
+            sage: A1 = MatrixPolynomialAction(M, R)
+            sage: A2 = MatrixPolynomialAction(M, R)
+            sage: hash(A1)==hash(A2)
+            True
         """        
         return hash((self.MS, self.PR))
         
