@@ -306,7 +306,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
                 from sage.groups.generic import multiples
                 from sage.misc.misc_c import prod
                 x = polygen(Kl.base_ring())
-                poly = prod(x - T.xy()[0] for T in multiples(Kl, l//2, Kl))
+                poly = prod(x - T.x() for T in multiples(Kl, l//2, Kl))
                 poly = poly.change_ring(self.base_ring())
 
                 psi = phi.codomain().isogeny(poly)
