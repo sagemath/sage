@@ -238,7 +238,7 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             sage: s = set()
             sage: order = H.zeta_function().numerator()(1)
             sage: while len(s) < order:
-            ....:     s.add(tuple(J.random_element()))
+            ....:     s.add(tuple(S.random_element()))
 
         """
         H = self.curve().change_ring(self.value_ring())

@@ -198,6 +198,19 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             True
             sage: type(D)
             <class 'sage.schemes.hyperelliptic_curves.jacobian_morphism.JacobianMorphism_divisor_class_field'>
+
+        Ensure that the entire point set is reachable::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(7)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^5 + x^2 + 1
+            sage: H = HyperellipticCurve(f)
+            sage: J = H.jacobian()
+            sage: s = set()
+            sage: order = H.zeta_function().numerator()(1)
+            sage: while len(s) < order:
+            ....:     s.add(tuple(J.random_element()))
         """
         return self(self.base_ring()).random_element()
 

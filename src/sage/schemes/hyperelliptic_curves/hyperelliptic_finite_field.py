@@ -1985,7 +1985,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: P in H
             True
 
-        Ensure that the entire point set is reachable
+        Ensure that the entire point set is reachable::
 
             sage: R.<x> = PolynomialRing(GF(7))
             sage: f = x^5 + x^2 + 1
