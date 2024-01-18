@@ -2888,6 +2888,24 @@ class MonskyWashnitzerDifferential(ModuleElement):
         P = self.parent()
         return P.element_class(P, self._coeff - other._coeff)
 
+    def __neg__(self):
+        r"""
+        Return the additive inverse of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ['x']
+            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: x,y = C.monsky_washnitzer_gens()
+            sage: w = C.invariant_differential()
+            sage: -w
+            -1 dx/2y
+            sage: -((y-x)*w)
+            (-y*1 + x) dx/2y
+        """
+        P = self.parent()
+        return P.element_class(P, -self._coeff)
+
     def _lmul_(self, a):
         r"""
         Return `self * a`.
