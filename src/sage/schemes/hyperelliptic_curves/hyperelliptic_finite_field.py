@@ -1912,3 +1912,100 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             self._Hasse_Witt_cached.clear_cache()
             N, E = self._Hasse_Witt_cached()
         return rank(N)
+
+    def random_point(self):
+        """
+        Return a random point on this hyperelliptic curve, uniformly chosen
+        among all rational points.
+
+        ALGORITHM:
+
+        Choose the point at infinity with probability `1/(2q + 1)`.
+        Otherwise, take a random element from the field as x-coordinate
+        and compute the possible y-coordinates. Return the i'th
+        possible y-coordinate, where i is randomly chosen to be 0 or 1.
+        If the i'th y-coordinate does not exist (either there is no
+        point with the given x-coordinate or we hit a 2-torsion point
+        with i == 1), try again.
+
+        This gives a uniform distribution because you can imagine
+        `2q + 1` buckets, one for the point at infinity and 2 for each
+        element of the field (representing the x-coordinates). This
+        gives a 1-to-1 map of elliptic curve points into buckets. At
+        every iteration, we simply choose a random bucket until we find
+        a bucket containing a point.
+
+        .. SEEALSO::
+
+            This function is effectively the same as the function 
+            :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.random_element`
+            defined for elliptic curves over finite fields.
+    
+        AUTHORS:
+
+        - Gareth Ma, Luciano Maino, Elif Özbay, Giacomo Pope (Sage Days 123 2024)
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^7 + x^3 + 1
+            sage: H = HyperellipticCurve(f)
+            sage: P = H.random_point(); P # random
+            (142 : 107 : 1)
+            sage: P in H
+            True
+            sage: type(P)
+            <class 'sage.schemes.curves.point.ProjectivePlaneCurvePoint_finite_field'>
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<z4> = GF(2^4)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^7 + x^3 + 1
+            sage: h = x + 1
+            sage: H = HyperellipticCurve(f, h)
+            sage: P = H.random_point(); P # random
+            (z4^2 + 1 : 1 : 1)
+            sage: P in H
+            True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163^2)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^7 + x^3 + 1
+            sage: h = x + 1
+            sage: H = HyperellipticCurve(f, h)
+            sage: P = H.random_point(); P # random
+            (38*z2 + 145 : 68*z2 + 74 : 1)
+            sage: P in H
+            True
+
+        Ensure that the entire point set is reachable
+
+            sage: R.<x> = PolynomialRing(GF(7))
+            sage: f = x^5 + x^2 + 1
+            sage: H = HyperellipticCurve(f)
+            sage: S = set()
+            sage: order = H.count_points()[0]
+            sage: while len(S) < order:
+            ....:     S.add(H.random_point())
+
+        """
+        k = self.base_ring()
+        n = 2 * k.order() + 1
+
+        while True:
+            # Choose the point at infinity with probability 1/(2q + 1)
+            i = ZZ.random_element(n)
+            if not i:
+                return self.point([0, 1, 0], check=False)
+            v = self.lift_x(k.random_element(), all=True)
+            try:
+                return v[i % 2]
+            except IndexError:
+                pass
