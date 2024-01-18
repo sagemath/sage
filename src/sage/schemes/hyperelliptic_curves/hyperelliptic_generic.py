@@ -375,7 +375,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         .. SEEALSO::
 
-        :meth:`is_x_coord`
+            :meth:`is_x_coord`
 
         AUTHORS:
 
