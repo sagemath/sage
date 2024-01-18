@@ -172,3 +172,86 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
         if R != ZZ:
             raise NotImplementedError("Jacobian point sets viewed as modules over rings other than ZZ not implemented")
         return self
+
+    def random_element(self):
+        """
+        Returns a random element from the Jacobian. Distribution is not
+        uniformly random, but returns the entire group.
+
+        AUTHORS:
+
+        - Gareth Ma, Luciano Maino, Elif Özbay, Giacomo Pope (Sage Days 123 2024)
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^7 + x^3 + 1
+            sage: H = HyperellipticCurve(f)
+            sage: J = H.jacobian()
+            sage: S = J(F.extension(3))
+            sage: D = S.random_element()
+            sage: u, v = D
+            sage: (v**2 - f) % u == 0
+            True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163^2)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^5 + x^3 + 1
+            sage: h = x + 3
+            sage: H = HyperellipticCurve(f, h)
+            sage: J = H.jacobian()
+            sage: S = J(F)
+            sage: D = S.random_element()
+            sage: u, v = D
+            sage: (v**2 + h*v - f) % u == 0
+            True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(2^4)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^9 + x^3 + 1
+            sage: h = x + 3
+            sage: H = HyperellipticCurve(f, h)
+            sage: J = H.jacobian()
+            sage: S = J(F.extension(5))
+            sage: D = S.random_element()
+            sage: u, v = D
+            sage: (v**2 + h*v - f) % u == 0
+            True
+
+        Ensure that the entire point set is reachable::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(7)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^5 + x^2 + 1
+            sage: H = HyperellipticCurve(f)
+            sage: J = H.jacobian()
+            sage: S = J(F)
+            sage: s = set()
+            sage: order = H.zeta_function().numerator()(1)
+            sage: while len(s) < order:
+            ....:     s.add(tuple(J.random_element()))
+
+        """
+        H = self.curve().change_ring(self.value_ring())
+        g = H.genus()
+
+        # We randomly sample 2g + 1 points on the hyperelliptic curve
+        points = [H.random_point() for _ in range(2*g + 1)]
+
+        # We create 2g + 1 divisors of the form (P) - infty
+        divisors = [self(P) for P in points if P[2] != 0]
+
+        # If we happened to only sample the point at infinity, we return this
+        # Otherwise we compute the sum of all divisors.
+        if not divisors:
+            return self(0)
+        return sum(divisors)

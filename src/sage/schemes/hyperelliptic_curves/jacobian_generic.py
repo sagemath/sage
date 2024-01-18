@@ -198,62 +198,8 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             True
             sage: type(D)
             <class 'sage.schemes.hyperelliptic_curves.jacobian_morphism.JacobianMorphism_divisor_class_field'>
-
-        ::
-
-            sage: # needs sage.rings.finite_rings
-            sage: F = GF(163^2)
-            sage: R.<x> = PolynomialRing(F)
-            sage: f = x^5 + x^3 + 1
-            sage: h = x + 3
-            sage: H = HyperellipticCurve(f, h)
-            sage: J = H.jacobian()
-            sage: D = J.random_element()
-            sage: u, v = D
-            sage: (v**2 + h*v - f) % u == 0
-            True
-
-        ::
-
-            sage: # needs sage.rings.finite_rings
-            sage: F = GF(2^4)
-            sage: R.<x> = PolynomialRing(F)
-            sage: f = x^9 + x^3 + 1
-            sage: h = x + 3
-            sage: H = HyperellipticCurve(f, h)
-            sage: J = H.jacobian()
-            sage: D = J.random_element()
-            sage: u, v = D
-            sage: (v**2 + h*v - f) % u == 0
-            True
-
-        Ensure that the entire point set is reachable::
-
-            sage: # needs sage.rings.finite_rings
-            sage: R.<x> = PolynomialRing(GF(7))
-            sage: f = x^5 + x^2 + 1
-            sage: H = HyperellipticCurve(f)
-            sage: J = H.jacobian()
-            sage: S = set()
-            sage: order = H.zeta_function().numerator()(1)
-            sage: while len(S) < order:
-            ....:     S.add(tuple(J.random_element()))
-
         """
-        H = self.curve()
-        g = H.genus()
-
-        # We randomly sample 2g + 1 points on the hyperelliptic curve
-        points = [H.random_point() for _ in range(2*g + 1)]
-
-        # We create 2g + 1 divisors of the form (P) - infty
-        divisors = [self(P) for P in points if P[2] != 0]
-
-        # If we happened to only sample the point at infinity, we return this
-        # Otherwise we compute the sum of all divisors.
-        if not divisors:
-            return self(0)
-        return sum(divisors)
+        return self(self.base_ring()).random_element()
 
     ####################################################################
     # Some properties of geometric Endomorphism ring and algebra
