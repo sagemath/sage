@@ -265,9 +265,9 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        A bool stating whether or not `x` o
+        A bool stating whether or not `x` is a x-coordinate of a point on the curve
 
-        EXAMPLES::
+        EXAMPLES:
 
         When `x` is the `x`-coordinate of a rational point on the
         curve, we can request these::
@@ -377,7 +377,11 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         :meth:`is_x_coord`
 
-        EXAMPLES::
+        AUTHORS:
+
+        - Giacomo Pope (2024): Allowed for the case of characteristic two
+
+        EXAMPLES:
 
         When `x` is the `x`-coordinate of a rational point on the
         curve, we can request these::
@@ -426,9 +430,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
             [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
 
-        AUTHORS:
-
-        - Giacomo Pope (2024): Allowed for the case of characteristic two
 
         TESTS::
 
@@ -444,6 +445,17 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             Traceback (most recent call last):
             ...
             TypeError: x must be coercible into the base ring of the curve
+
+        Ensure that :issue:`37097` is fixed::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<z4> = GF(2^4)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^7 + x^3 + 1
+            sage: h = x + 1
+            sage: H = HyperellipticCurve(f, h)
+            sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
+            [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
         """
         f, h = self.hyperelliptic_polynomials()
         K = self.base_ring()
