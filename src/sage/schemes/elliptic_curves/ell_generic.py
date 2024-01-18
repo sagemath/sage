@@ -2400,12 +2400,12 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             else:
                 return x
 
-        # Inseparable cases
-        # Special case of multiplication by p is easy. Kind of.
-        p = Integer(self.base_ring().characteristic())
-
-        v_p = 0 if p == 0 else valuation(m.abs(), p)
-        m //= p**v_p
+        # If we only require the x coordinate, it is faster to use the recursive formula
+        # since substituting polynomials is quite slow.
+        if not x_only:
+            p = Integer(self.base_ring().characteristic())
+            v_p = 0 if p == 0 else valuation(m.abs(), p)
+            m //= p**v_p
 
         # the x-coordinate does not depend on the sign of m. The work
         # here is done by functions defined earlier:
