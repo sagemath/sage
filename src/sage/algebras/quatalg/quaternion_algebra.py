@@ -3042,7 +3042,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I.is_integral()
             False
 
-
         """
         if self.__left_order is not None:
             return all([b in self.left_order() for b in self.basis()])
@@ -3089,8 +3088,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
                 ....:                 assert J*g == I
                 ....:                 assert J.is_primitive()
 
-
-
         """
 
         if not self.is_integral():
@@ -3099,11 +3096,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         I_basis = self.basis_matrix()
         O_basis = self.left_order().basis_matrix()
 
-        # Write I in the basis of its left order
+        # Write I in the basis of its left order via rref
         M = block_matrix(1,2,[O_basis.transpose(),I_basis.transpose()]).rref()[:,4:]
         g = Integer(gcd((gcd(M_row) for M_row in M)))
 
-        # If g is 1 then the ideal is already cyclic
+        # If g is 1 then the ideal is primitive
         if g == 1:
             return self, g
 
@@ -3132,13 +3129,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         _,g = self.primitive_decomposition()
         return 1 == g
-
-
-
-
-
-    
-
 
 
 
