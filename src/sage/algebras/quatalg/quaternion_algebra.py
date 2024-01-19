@@ -2899,7 +2899,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - ``certificate`` -- if ``True`` returns an element α such that 
         αJ=I or Jα=I for right and left ideals respectively
-        
+
         - ``side`` -- If ``'left'`` performs left equivalence test. If ``'right' 
         ``or ``None`` performs right-ideal equivalence test
 
@@ -2924,7 +2924,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I == J
             False
             sage: I.is_equivalent(J, side='left', certificate=True)
-            (True, 1/810*i + 1/405*k)        
+            (True, 1/810*i + 1/405*k)
         """
         if side == 'left':
             return self.is_left_equivalent(J, B, certificate)
@@ -2946,7 +2946,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``certificate`` -- if ``True`` returns an element α such that Jα=I
 
         OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
-        """        
+        """
         if certificate:
             is_equiv, cert = self.conjugate().is_right_equivalent(J.conjugate(), B, True)
             if is_equiv:
@@ -2970,7 +2970,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
         """
-        # shorthand: let I be self
         if not isinstance(self, QuaternionFractionalIdeal_rational):
             if certificate:
                 return False, None
@@ -3006,10 +3005,10 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             if certificate:
                 return False, None
             return False
-        
+
         if not certificate:
             return True
-        
+
         # Use Pair's qfminim with flag = 1
         # Note the quadratic form is scaled by 4, so we must rescale after solving it
         Q = IJbar.quadratic_form()
