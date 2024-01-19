@@ -2503,8 +2503,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I.reduced_basis()[0]
             1/2*i + j + 5/2*k
         """
-        if not self.quadratic_form().is_positive_definite():
-            raise TypeError(f'The quaternion algebra must be definite')
+        if not self.quaternion_algebra().is_definite():
+            if not self.quadratic_form().is_positive_definite():
+                raise TypeError(f'The quaternion algebra must be definite')
 
         U = self.gram_matrix().LLL_gram().transpose()
         reduced_basis = tuple(sum(c * g for c, g in zip(row, self.basis())) for row in U)
