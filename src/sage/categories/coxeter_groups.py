@@ -1950,14 +1950,8 @@ class CoxeterGroups(Category_singleton):
             Return the absolute length of ``self``.
 
             The absolute length is the length of the shortest expression
-            of the element as a product of reflections. For finite Coxeter
-            groups, the absolute length is the codimension of the
-            1-eigenspace of the element (Lemmas 1-3 in [Car1972a]_). For all
-            other Coxeter types, we use Theorem 1.1 in [Dy2001]_.
-
-            For permutations in the symmetric groups, the absolute
-            length is the size minus the number of its disjoint
-            cycles.
+            of the element as a product of reflections. In general,
+            we use Theorem 1.1 in [Dy2001]_.
 
             .. SEEALSO::
 
@@ -2026,10 +2020,10 @@ class CoxeterGroups(Category_singleton):
             give ``self``.
 
             This method is based on Theorem 1.1 in [Dy2001]_, combined with
-            the strong exchange condition. As an example, if $W$ is a type
-            $A_2$ Coxeter group with simple reflections $a$, $b$, then the
-            absolute chain reflections for the element $w = ab$ is the list
-            `[a, aba]` as $w = (aba) a = ab$.
+            the strong exchange condition. As an example, if `W` is a type
+            `A_2` Coxeter group with simple reflections `a`, `b`, then the
+            absolute chain reflections for the element `w = ab` is the list
+            `[a, aba]` as `w = (aba) a = ab`.
 
             .. SEEALSO::
 
