@@ -1982,6 +1982,12 @@ class CoxeterGroups(Category_singleton):
                 2
                 sage: (r * s * r).absolute_length()
                 1
+                sage: W = CoxeterGroup(['A', 3, 1])
+                sage: (r, s, t, u) = W.simple_reflections()
+                sage: (r * s * t * u).absolute_length()
+                4
+                sage: (r * s * t * u * s).absolute_length()
+                3
             """
             if self.length() <= 2:  # trivial cases
                 return self.length()
@@ -2052,6 +2058,22 @@ class CoxeterGroups(Category_singleton):
                 [ 0 -1  2]  [-1 -2  4]
                 [-1  0  2]  [-2 -1  4]
                 [ 0  0  1], [-1 -1  3]
+                ]
+                sage: W = CoxeterGroup(['A', 3, 1])
+                sage: (r, s, t, u) = W.simple_reflections()
+                sage: (r * s * t * u).absolute_chain_reflections()
+                [
+                [-1  1  0  1]  [ 0 -1  1  1]  [ 0  0 -1  2]  [-3  2  0  2]
+                [ 0  1  0  0]  [-1  0  1  1]  [-1  1 -1  2]  [-2  2  0  1]
+                [ 0  0  1  0]  [ 0  0  1  0]  [-1  0  0  2]  [-2  1  1  1]
+                [ 0  0  0  1], [ 0  0  0  1], [ 0  0  0  1], [-2  1  0  2]
+                ]
+                sage: (r * s * t * u * s).absolute_chain_reflections()
+                [
+                [-1  1  0  1]  [ 0  0 -1  2]  [-3  2  0  2]
+                [ 0  1  0  0]  [-1  1 -1  2]  [-2  2  0  1]
+                [ 0  0  1  0]  [-1  0  0  2]  [-2  1  1  1]
+                [ 0  0  0  1], [ 0  0  0  1], [-2  1  0  2]
                 ]
             """
             P = self.parent()
