@@ -106,11 +106,11 @@ on the Jacobian of this reduction and the order of the Jacobian is
     True
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.misc.latex import latex
 
@@ -192,9 +192,48 @@ def cantor_reduction(a, b, f, h, genus):
         (x^2 + 2*x + 1, y - 3*x - 4)
         sage: 3 * J(H.lift_x(-1)) # indirect doctest
         (x^2 - 487*x - 324, y - 10754*x - 7146)
+
+    TESTS:
+
+    Ensure that :issue:`37109` is fixed::
+
+        sage: from sage.schemes.hyperelliptic_curves.jacobian_morphism import cantor_reduction
+        sage: F = GF(11)
+        sage: R.<x> = PolynomialRing(F)
+        sage: f = 6*x^5 + 6*x^4 + 9*x^3 + 9*x + 8
+        sage: h = 5*x^3 + 3*x^2 + 5*x + 4
+        sage: H = HyperellipticCurve(f, h)
+        sage: J = H.jacobian()
+        sage: D = J(H.lift_x(1))
+        sage: cantor_reduction(D[0], D[1], f, h, 2)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Hyperelliptic polynomials f or g have incompatible degrees: f.degree() = 5, h.degree() = 3, genus = 2
+
+    Ensure an error is thrown when the Mumford coordinates are not of the expected form::
+
+        sage: from sage.schemes.hyperelliptic_curves.jacobian_morphism import cantor_reduction
+        sage: F = GF(11)
+        sage: R.<x> = PolynomialRing(F)
+        sage: f = x^5 + 1
+        sage: h = R(1)
+        sage: H = HyperellipticCurve(f, h)
+        sage: J = H.jacobian()
+        sage: D = J(H.lift_x(1))
+        sage: cantor_reduction(x**6*D[0], D[1], f, h, 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: Mumford coordinates have incompatible degrees: a.degree() = 7, b.degree() = 0, genus = 2
     """
-    assert a.degree() < 2*genus+1
-    assert b.degree() < a.degree()
+    # Ensure that the degrees of a and b match expectations
+    if a.degree() >= 2*genus+1 or b.degree() >= a.degree():
+        raise ValueError(f"Mumford coordinates have incompatible degrees: {a.degree() = }, {b.degree() = }, {genus = }")
+
+    # Ensure that the degree of f and h matches expectations
+    # of Cantor's algorithms
+    if (f.degree() - 1) // 2 != genus or h.degree() > genus:
+        raise NotImplementedError(f"Hyperelliptic polynomials f or g have incompatible degrees: {f.degree() = }, {h.degree() = }, {genus = }")
+
     k = f - h*b - b**2
     if 2*a.degree() == k.degree():
         # must adjust b to include the point at infinity
@@ -210,13 +249,14 @@ def cantor_reduction(a, b, f, h, genus):
         return cantor_reduction(a, b, f, h, genus)
     return (a, b)
 
-def cantor_composition_simple(D1,D2,f,genus):
+
+def cantor_composition_simple(D1, D2, f):
     r"""
     Given `D_1` and `D_2` two reduced Mumford
     divisors on the Jacobian of the curve `y^2 = f(x)`,
     computes a representative `D_1 + D_2`.
 
-    .. warning::
+    .. WARNING::
 
        The representative computed is NOT reduced! Use
        :func:`cantor_reduction_simple` to reduce it.
@@ -248,12 +288,13 @@ def cantor_composition_simple(D1,D2,f,genus):
         (x^2 - 2*x + 1, y - 3/2*a*x + 1/2*a)
         sage: 3*P # indirect doctest
         (x^2 - 25/32*x + 49/32, y - 45/256*a*x - 315/256*a)
+
     """
     a1, b1 = D1
     a2, b2 = D2
     if a1 == a2 and b1 == b2:
         # Duplication law:
-        d, h1, h3 = a1.xgcd(2*b1)
+        d, _, h3 = a1.xgcd(2*b1)
         a = (a1 // d)**2
         b = (b1 + h3*((f - b1**2) // d)) % (a)
     else:
@@ -264,12 +305,21 @@ def cantor_composition_simple(D1,D2,f,genus):
         else:
             d, l, h3 = d0.xgcd(b1 + b2)
             a = (a1*a2) // (d**2)
-            b = ((b2 + l*h2*(b1-b2)*(a2 // d)) + h3*((f - b2**2) // d)) % (a)
+            b = ((b2 + l*h2*(b1 - b2)*(a2 // d)) + h3*((f - b2**2) // d)) % (a)
     a = a.monic()
     return (a, b)
 
-def cantor_composition(D1,D2,f,h,genus):
+
+def cantor_composition(D1, D2, f, h, genus):
     r"""
+    Computes a semi-reduced divisor `D = \text{div}(a, b)` defined over the base
+    field of the Jacobian such that `D \sim D_1 + D_2`.
+
+    .. WARNING::
+
+       The representative computed is NOT reduced! Use
+       :func:`cantor_reduction` to reduce it.
+
     EXAMPLES::
 
         sage: # needs sage.rings.finite_rings
@@ -325,7 +375,28 @@ def cantor_composition(D1,D2,f,h,genus):
              + 26230404235226464545886889960*x + 681571430588959705539385624700,
          y + 999722365017286747841221441793*x^2
            + 262703715994522725686603955650*x + 626219823403254233972118260890)
+
+    TESTS:
+
+    Ensure that :issue:`37109` is fixed::
+
+        sage: F = GF(11)
+        sage: R.<x> = PolynomialRing(F)
+        sage: f = 6*x^5 + 6*x^4 + 9*x^3 + 9*x + 8
+        sage: h = 5*x^3 + 3*x^2 + 5*x + 4
+        sage: H = HyperellipticCurve(f, h)
+        sage: J = H.jacobian()
+        sage: D = J(H.lift_x(1))
+        sage: D + D
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Hyperelliptic polynomials f or g have incompatible degrees: f.degree() = 5, h.degree() = 3, genus = 2
     """
+    # Ensure that the degree of f and h matches expectations
+    # of Cantor's algorithms
+    if (f.degree() - 1) // 2 != genus or h.degree() > genus:
+        raise NotImplementedError(f"Hyperelliptic polynomials f or g have incompatible degrees: {f.degree() = }, {h.degree() = }, {genus = }")
+
     a1, b1 = D1
     a2, b2 = D2
     if a1 == a2 and b1 == b2:
@@ -728,7 +799,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         X = self.parent()
         f, h = X.curve().hyperelliptic_polynomials()
         if h.is_zero():
-            D = (polys[0],-polys[1])
+            D = (polys[0], -polys[1])
         else:
             # It is essential that the modulus polys[0] can be converted into
             # the parent of the dividend h. This is not always automatically
@@ -736,10 +807,10 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             # non-constant polynomial over a number field different from
             # QQ). Hence, we force coercion into a common parent before
             # computing the modulus. See trac #14249
-            D = (polys[0],-polys[1]-(h+polys[0]) % (polys[0]))
+            D = (polys[0], -polys[1] - (h + polys[0]) % (polys[0]))
         return JacobianMorphism_divisor_class_field(X, D, check=False)
 
-    def _add_(self,other):
+    def _add_(self, other):
         r"""
         Return a Mumford representative of the divisor self + other.
 
@@ -761,7 +832,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         f, h = C.hyperelliptic_polynomials()
         genus = C.genus()
         if h == 0:
-            D = cantor_composition_simple(self.__polys, other.__polys, f, genus)
+            D = cantor_composition_simple(self.__polys, other.__polys, f)
             if D[0].degree() > genus:
                 D = cantor_reduction_simple(D[0], D[1], f, genus)
         else:
