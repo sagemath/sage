@@ -40,6 +40,8 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.real_mpfr import RR
 from sage.functions.all import log
 from sage.structure.category_object import normalize_names
+from sage.structure.element import get_coercion_model
+cm = get_coercion_model()
 
 import sage.schemes.curves.projective_curve as plane_curve
 
@@ -433,15 +435,15 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         TESTS::
 
             sage: # needs sage.rings.finite_rings
-            sage: F = GF(11)
-            sage: F_ext = GF(11^2)
-            sage: R.<x> = PolynomialRing(F)
+            sage: F1 = GF(11)
+            sage: F2 = GF(13)
+            sage: R.<x> = PolynomialRing(F1)
             sage: f = x^7 + x^3 + 1
             sage: H = HyperellipticCurve(f)
-            sage: H.lift_x(F_ext.gen())
+            sage: H.lift_x(F2.random_element())
             Traceback (most recent call last):
             ...
-            TypeError: x must be coercible into the base ring of the curve
+            ValueError: x must have a common parent with the base ring
 
         Ensure that :issue:`37097` is fixed::
 
@@ -457,19 +459,17 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         f, h = self.hyperelliptic_polynomials()
         K = self.base_ring()
 
-        # TODO:
-        # This function assumes that the x-coordinate is in the base field
-        # However, when lifting a point on an Elliptic curve, there is also
-        # an option to extend the base field. This could be included in the
-        # future.
+        # Compute the common parent between the base ring of the curve and
+        # the parent of the input x-coordinate.
         try:
-            x = K(x)
-        except (ValueError, TypeError):
-            raise TypeError('x must be coercible into the base ring of the curve')
+            L = cm.common_parent(x.parent(), K)
+            x = L(x)
+        except (TypeError, ValueError):
+            raise ValueError('x must have a common parent with the base ring')
 
         # First we compute the y-coordinates the given x-coordinate
         ys = []
-        one = K.one()
+        one = L.one()
 
         # When h is zero we find all y-coordinates with a single sqrt
         if not h:
@@ -482,9 +482,9 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             b = h(x)
             # Special case for char 2
             if K.characteristic() == 2:
-                R = f.parent() # Polynomial ring K[x]
+                R = f.parent()
                 F = R([-a,b,1])
-                ys = F.roots(K, multiplicities=False)
+                ys = F.roots(L, multiplicities=False)
             else:
                 D = b*b + 4*a
                 if D.is_square():
