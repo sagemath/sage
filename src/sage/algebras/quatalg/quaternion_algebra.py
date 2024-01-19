@@ -2895,13 +2895,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``J`` -- a fractional quaternion ideal with same order as ``self``
 
         - ``B`` -- a bound to compute and compare theta series before
-        doing the full equivalence test
+          doing the full equivalence test
 
-        - ``certificate`` -- if ``True`` returns an element α such that 
-        αJ=I or Jα=I for right and left ideals respectively
+        - ``certificate`` -- if ``True`` returns an element α such that
+          αJ=I or Jα=I for right and left ideals respectively
 
-        - ``side`` -- If ``'left'`` performs left equivalence test. If ``'right' 
-        ``or ``None`` performs right-ideal equivalence test
+        - ``side`` -- If ``'left'`` performs left equivalence test. If ``'right'
+          ``or ``None`` performs right-ideal equivalence test
 
         OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
         EXAMPLES::
@@ -2941,7 +2941,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``J`` -- a fractional quaternion left-ideal with same order as ``self``
 
         - ``B`` -- a bound to compute and compare theta series before
-        doing the full equivalence test
+          doing the full equivalence test
 
         - ``certificate`` -- if ``True`` returns an element α such that Jα=I
 
@@ -2964,7 +2964,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``J`` -- a fractional quaternion right-ideal with same order as ``self``
 
         - ``B`` -- a bound to compute and compare theta series before
-        doing the full equivalence test
+          doing the full equivalence test
 
         - ``certificate`` -- if ``True`` returns an element α such that αJ=I
 
@@ -2974,10 +2974,10 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             if certificate:
                 return False, None
             return False
-        
+
         if self.right_order() != J.right_order():
             raise ValueError("self and J must be right ideals")
-        
+
         A = self.quaternion_algebra()
         if not A.is_definite():
             raise NotImplementedError('equivalence of ideals are not'
