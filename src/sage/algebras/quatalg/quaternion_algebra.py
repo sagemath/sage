@@ -1074,6 +1074,28 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         # TODO: more examples
         return [f[0] for f in factor(self.discriminant())]
 
+    def is_isomorphic(self, A) -> bool:
+        r"""
+        Return ``True`` if ``self`` and ``A`` are isomorphic quaternion algebras over Q.
+
+        INPUT:
+
+        - ``A`` -- a quaternion algebra defined over the rationals Q
+
+        EXAMPLES::
+
+            sage: B = QuaternionAlgebra(-46, -87)
+            sage: A = QuaternionAlgebra(-58, -69)
+            sage: B.is_isomorphic(A)
+            True
+            sage: A == B
+            False
+        """
+        if self.base_ring() != QQ or A.base_ring() != QQ:
+            raise NotImplementedError("isomorphism check only implemented for rational quaternion algebras")
+
+        return self.discriminant() == A.discriminant()
+
     def _magma_init_(self, magma):
         """
         Return Magma version of this quaternion algebra.
