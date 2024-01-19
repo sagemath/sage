@@ -2070,7 +2070,7 @@ class QuaternionOrder(Parent):
         system = [[0 for _ in range(4)] for _ in range(4)]
         for i in range(4):
             for j in range(4):
-                system[i][j] = mat_basis[j][i//2][i%2]
+                system[i][j] = mat_basis[j][i//2][i % 2]
         system = matrix(F, system)
 
         def return_map(a, b):
@@ -2144,10 +2144,10 @@ class QuaternionOrder(Parent):
                     mapping = O_i._P1_to_ideals(ell)
 
                     # Random element of P1(GF(ell))
-                    a, b = (x:=ZZ.random_element(ell+1),1-x//ell,x+1)[1:]
+                    a, b = (x := ZZ.random_element(ell+1),1-x//ell,x+1)[1:]
                     I_ab = mapping(a, b)
                     while (primitive and I_ab.conjugate() == I_last):
-                        a, b = (x:=ZZ.random_element(ell+1),1-x//ell,x+1)[1:]
+                        a, b = (x := ZZ.random_element(ell+1),1-x//ell,x+1)[1:]
                         I_ab = mapping(a, b)
 
                 I = I * I_ab
@@ -2204,7 +2204,7 @@ class QuaternionOrder(Parent):
         B = self.quaternion_algebra()
         i, j, k = B.gens()
         q = -ZZ(i**2)
-        if (2*q) % ell== 0:
+        if (2 * q) % ell == 0:
             raise NotImplementedError("Only implemented for odd prime norm, not dividing 2i^2")
 
         mapping = self._P1_to_ideals(ell)
