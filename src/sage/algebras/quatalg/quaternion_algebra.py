@@ -3017,6 +3017,48 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         alpha = alpha * (1/J.norm())
         return True, alpha
 
+    def is_principal(self, certificate=False):
+        r"""
+        Return ``True`` if ``self`` is principal as a full rank quaternion ideal.
+        Requires definite quaternion algebra. Independent of whether ``self`` is
+        left or right ideal.
+
+        INPUT:
+
+        - ``certificate`` -- if ``True`` returns a generator α s.t. I = alpha O
+        where O is the right order.
+
+        OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
+
+        EXAMPLES::
+        sage: B.<i,j,k> = QuaternionAlgebra(419)
+        sage: O = B.quaternion_order([1/2 + 3/2*j, 1/6*i + 2/3*j + 1/2*k, 3*j, k])
+        sage: alpha = B.random_element()
+        sage: I = alpha * O
+        sage: is_principal(I, True)
+        (True, 1/2 + 140*i + j - k)
+        """
+    Q = self.quadratic_form()
+
+    A = self.quaternion_algebra()
+    if not A.is_definite():
+        raise NotImplementedError('is_principal ideal not'
+                                  'implemented for indefinite'
+                                  'quaternion algebras')
+
+    if len(self.basis()) < 4:
+        raise ValueError("basis must have rank 4")
+
+    c = self.theta_series_vector(2)[1]
+    if not certificate:
+        return c != 0
+    if certificate and c == 0:
+        return False, None
+
+    _,v = Q.__pari__().qfminim(None, None, 1)
+    alpha = sum(ZZ(c)*g for c,g in zip(v, self.basis()))
+    return True, alpha
+
     def __contains__(self, x):
         """
         Return whether x is in self.
