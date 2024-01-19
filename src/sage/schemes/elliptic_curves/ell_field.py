@@ -1598,6 +1598,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``n`` -- an integer.
 
         TESTS::
+
             sage: E = EllipticCurve(GF(11), [1, 1])
             sage: E.isogenies_degree(23 * 19)
             [Composite morphism of degree 437 = 1*19*23:
