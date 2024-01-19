@@ -2010,8 +2010,7 @@ class CoxeterGroups(Category_singleton):
             reflections = self.absolute_chain_reflections()
             P = self.parent()
             chain = [P.prod(reversed(reflections[:i]))
-                    for i in range(len(reflections), -1, -1)]
-            chain.reverse()
+                    for i in range(len(reflections)+1)]
             return chain
 
         def absolute_chain_reflections(self):
@@ -2059,7 +2058,7 @@ class CoxeterGroups(Category_singleton):
             if self.is_one():
                 return []
             w = self.reduced_word()
-            n = self.length()
+            n = len(w)
 
             if n == 1:  # trivial case
                 return [self]
