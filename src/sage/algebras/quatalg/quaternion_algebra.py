@@ -1993,7 +1993,6 @@ class QuaternionOrder(Parent):
             sage: Q.theta_series(100)
             1 + 2*q^23 + 2*q^55 + 2*q^56 + 2*q^75 + 4*q^92 + O(q^100)
         """
-
         if self.base_ring() != ZZ:
             raise NotImplementedError("ternary quadratic form of order only implemented for quaternion algebras over QQ")
 
