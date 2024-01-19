@@ -923,6 +923,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         Return ``True`` if the quaternion algebra is definite.
 
         EXAMPLES::
+
             sage: B = QuaternionAlgebra(-1, -11)
             sage: B.is_definite()
             True
@@ -2487,7 +2488,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - A tuple of four elements in I forming an LLL reduced basis of I as a lattice
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: B = BrandtModule(2,37); I = B.right_ideals()[0]
             sage: I
             Fractional ideal (2 + 2*i + 2*j + 2*k, 4*i + 108*k, 4*j + 44*k, 148*k)
@@ -2904,6 +2906,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
           ``or ``None`` performs right-ideal equivalence test
 
         OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
+
         EXAMPLES::
 
             sage: R = BrandtModule(3,5).right_ideals(); len(R)
@@ -3031,12 +3034,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         OUTPUT: bool or (bool, α) if ``certificate`` is ``True``
 
         EXAMPLES::
-        sage: B.<i,j,k> = QuaternionAlgebra(419)
-        sage: O = B.quaternion_order([1/2 + 3/2*j, 1/6*i + 2/3*j + 1/2*k, 3*j, k])
-        sage: alpha = B.random_element()
-        sage: I = alpha * O
-        sage: is_principal(I, True)
-        (True, 1/2 + 140*i + j - k)
+
+            sage: B.<i,j,k> = QuaternionAlgebra(419)
+            sage: O = B.quaternion_order([1/2 + 3/2*j, 1/6*i + 2/3*j + 1/2*k, 3*j, k])
+            sage: alpha = B.random_element()
+            sage: I = alpha * O
+            sage: is_principal(I, True)
+            (True, 1/2 + 140*i + j - k)
         """
         Q = self.quadratic_form()
 
