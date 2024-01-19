@@ -506,8 +506,8 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             sage: K = pAdicField(11,5)
             sage: x = polygen(K)
             sage: C = HyperellipticCurve(x^5 + 33/16*x^4 + 3/4*x^3 + 3/8*x^2 - 1/4*x + 1/16)
-            sage: P = C.lift_x(11^(-2), all=True)[1]
-            sage: Q = C.lift_x(3*11^(-2), all=True)[1]
+            sage: P = C(11^-2, 10*11^-5 + 10*11^-4 + 10*11^-3 + 2*11^-2 + 10*11^-1)
+            sage: Q = C(3*11^-2, 11^-5 + 11^-3 + 10*11^-2 + 7*11^-1)
             sage: C.coleman_integrals_on_basis(P, Q)
             (6*11^3 + 3*11^4 + 8*11^5 + 4*11^6 + 9*11^7 + O(11^8), 11 + 10*11^2 + 8*11^3 + 7*11^4 + 5*11^5 + O(11^6), 6*11^-1 + 2 + 6*11 + 3*11^3 + O(11^4), 9*11^-3 + 9*11^-2 + 9*11^-1 + 2*11 + O(11^2))
 
@@ -792,7 +792,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             sage: HK = H.change_ring(K)
             sage: w = HK.invariant_differential()
             sage: P = HK(0,1)
-            sage: Q = HK.lift_x(5, all=True)[1]
+            sage: QQ = HK(5, 1 + 3*5^3 + 2*5^4 + 2*5^5 + 3*5^7)
             sage: x,y = HK.monsky_washnitzer_gens()
             sage: (2*y*w).coleman_integral(P,Q)
             5 + O(5^9)
