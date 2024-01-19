@@ -77,6 +77,7 @@ from sage.modular.modsym.p1list import P1List
 from sage.misc.cachefunc import cached_method
 
 from sage.categories.algebras import Algebras
+from sage.categories.number_fields import NumberFields
 
 ########################################################
 # Constructor
@@ -1757,6 +1758,44 @@ class QuaternionOrder(Parent):
             L.append(MM)
 
         return (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
+
+    def is_maximal(self):
+        r"""
+        Return ``True`` if the order is maximal in the ambient quaternion algebra, ``False`` otherwise
+        Only works in quaternion algebras over number fields
+
+        OUTPUT: Boolean
+
+        EXAMPLES::
+
+            sage: p = 11
+            sage: B = QuaternionAlgebra(QQ,-1,-p)
+            sage: i,j,k = B.gens()
+            sage: O0_basis = (1,i,(i+j)/2, (1+i*j)/2)
+            sage: O0 = B.quaternion_order(O0_basis)
+            sage: O0.is_maximal()
+            True
+            sage: O1 = B.quaternion_order([1,i,j,i*j])
+            sage: O1.is_maximal()
+            False
+
+        TESTS::
+
+            sage: B = QuaternionAlgebra(GF(13),-1,-11)
+            sage: i,j,k = B.gens()
+            sage: O0_basis = (1,i,j, k)
+            sage: O0 = B.quaternion_order(O0_basis)
+            sage: try:
+            ....:     O0.is_maximal()
+            ....:     print("This should fail")
+            ....: except NotImplementedError:
+            ....:     print("ok")
+            ....:
+            ok
+        """
+        if not(self.quaternion_algebra().base_ring() in NumberFields()):
+            raise NotImplementedError("Check for maximality is only implemented for quaternion algebras over number fields).")
+        return(self.discriminant() == self.quaternion_algebra().discriminant())
 
     def left_ideal(self, gens, check=True, *, is_basis=False):
         r"""
