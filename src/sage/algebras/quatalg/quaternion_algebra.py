@@ -2045,11 +2045,9 @@ class QuaternionOrder(Parent):
 
     def _P1_to_ideals(self, ell):
         r"""
-        Returns a map representing the bijection
-        \[
-        P^1(\mathbb{ZZ}/ell) \leftarrow \{I \subset O \mid \n(I) = ell\}
-        \]
-        from https://math.dartmouth.edu/~jvoight/articles/73446.pdf, lemma 7.2.
+        Returns a map representing the bijection from the projective line over
+        ZZ/ell to the left ideals of norm ell from 
+        https://math.dartmouth.edu/~jvoight/articles/73446.pdf, lemma 7.2.
 
         Useful for enumerating / generating ideals of a given norm.
         """
