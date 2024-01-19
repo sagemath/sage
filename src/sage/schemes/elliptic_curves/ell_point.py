@@ -308,6 +308,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 raise TypeError("Coordinates %s do not define a point on %s" % (list(v), curve))
 
         SchemeMorphism_point_abelian_variety_field.__init__(self, point_homset, v, check=False)
+        self._zxy_coords = (self._coords[2], self._coords[0], self._coords[1])
         # AdditiveGroupElement.__init__(self, point_homset)
 
     def _repr_(self):
@@ -386,13 +387,19 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             False
             sage: P+P == E(0)
             True
+
+        The additive identity is always the minimum element::
+
+            sage: E = EllipticCurve(GF(103), [3, 5])
+            sage: min(E.points()) == 0
+            True
         """
         if not isinstance(other, EllipticCurvePoint_field):
             try:
                 other = self.codomain().ambient_space()(other)
             except TypeError:
                 return NotImplemented
-        return richcmp(self._coords, other._coords, op)
+        return richcmp(self._zxy_coords, other._zxy_coords, op)
 
     def __pari__(self):
         r"""
