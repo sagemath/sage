@@ -148,6 +148,19 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: k2 = GF(p^2,'a')
             sage: E.change_ring(k2).is_isomorphic(Et.change_ring(k2))
             True
+
+        The order of quadratic twists is precomputed if the order of the original curve is
+        precomputed. The final call in the following example is instant::
+
+            sage: p = next_prime(10^10)
+            sage: E = EllipticCurve(GF(p), [-1, 3])
+            sage: E.order()
+            9999895640
+            sage: Et = E.quadratic_twist()
+            sage: Et.order()
+            10000104400
+            sage: E.order() + Et.order() == 2 * p + 2
+            True
         """
         K = self.base_ring()
         char = K.characteristic()
@@ -185,21 +198,31 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 raise ValueError("twisting parameter D must be nonzero when characteristic is not 2")
 
         if char != 2:
-            b2,b4,b6,b8 = self.b_invariants()
+            b2,b4,b6,_ = self.b_invariants()
             # E is isomorphic to  [0,b2,0,8*b4,16*b6]
-            return EllipticCurve(K,[0,b2*D,0,8*b4*D**2,16*b6*D**3])
+            Et = EllipticCurve(K,[0,b2*D,0,8*b4*D**2,16*b6*D**3])
 
-        # now char==2
-        if self.j_invariant() != 0: # iff a1!=0
-            a1,a2,a3,a4,a6 = self.ainvs()
-            E0 = self.change_weierstrass_model(a1,a3/a1,0,(a1**2*a4+a3**2)/a1**3)
-            # which has the form = [1,A2,0,0,A6]
-            assert E0.a1() == K(1)
-            assert E0.a3() == K(0)
-            assert E0.a4() == K(0)
-            return EllipticCurve(K,[1,E0.a2()+D,0,0,E0.a6()])
         else:
-            raise ValueError("Quadratic twist not implemented in char 2 when j=0")
+            # now char==2
+            if self.j_invariant() != 0: # iff a1!=0
+                a1,_,a3,a4,_ = self.ainvs()
+                E0 = self.change_weierstrass_model(a1,a3/a1,0,(a1**2*a4+a3**2)/a1**3)
+                # which has the form = [1,A2,0,0,A6]
+                assert E0.a1() == K(1)
+                assert E0.a3() == K(0)
+                assert E0.a4() == K(0)
+                Et = EllipticCurve(K,[1,E0.a2()+D,0,0,E0.a6()])
+            else:
+                raise ValueError("Quadratic twist not implemented in char 2 when j=0")
+
+        try:
+            # If it was computed, use it!
+            _ = self._order
+            Et.set_order(1 + self.base_field().order() + self.trace_of_frobenius())
+        except AttributeError:
+            pass
+
+        return Et
 
     def two_torsion_rank(self):
         r"""
