@@ -2480,7 +2480,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def reduced_basis(self):
         r"""
-        Let `I` = ``self`` be a quaternion ideal in a positive definite quaternion algebra. This function returns an LLL reduced basis of I
+        Let `I` = ``self`` be a rank 4 quaternion ideal in a positive definite quaternion algebra.
+        This function returns an LLL reduced basis of I
 
         OUTPUT:
 
@@ -2503,6 +2504,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I.reduced_basis()[0]
             1/2*i + j + 5/2*k
         """
+        if len(self.basis()) < 4:
+            raise ValueError("basis must have rank 4")
+
         if not self.quaternion_algebra().is_definite():
             if not self.quadratic_form().is_positive_definite():
                 raise TypeError(f'The quaternion algebra must be definite')
