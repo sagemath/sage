@@ -907,6 +907,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
     class ElementMethods:
 
+        def absolute_length(self):
+            M = self.canonical_matrix()
+            return (M - 1).image().dimension()
+
         @cached_in_parent_method
         def bruhat_upper_covers(self):
             r"""

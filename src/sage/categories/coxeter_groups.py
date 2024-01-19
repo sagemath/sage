@@ -1989,14 +1989,8 @@ class CoxeterGroups(Category_singleton):
                 sage: (r * s * r).absolute_length()
                 1
             """
-            P = self.parent()
-            if P.is_finite():
-                M = self.canonical_matrix()
-                return (M - 1).image().dimension()
-
-            n = self.length()
-            if n <= 2:  # trivial cases
-                return n
+            if self.length() <= 2:  # trivial cases
+                return self.length()
             return len(self.absolute_chain_reflections())
 
         def absolute_chain(self):
