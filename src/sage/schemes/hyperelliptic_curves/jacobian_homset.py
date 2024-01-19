@@ -174,9 +174,18 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
         return self
 
     def random_element(self):
-        """
+        r"""
         Returns a random element from the Jacobian. Distribution is not
-        uniformly random, but returns the entire group.
+        uniformly random, but returns the entire group for Jacobians of
+        hyperelliptic curves with an odd degree model.
+
+        .. WARNING::
+
+            For Jacobians of curves with an even degree model, SageMath currently
+            is unable to represent all elements of the Jacobian, see :issue:`37101`.
+            For a Jacobian of order `N` of a hyperelliptic curve with `M` points,
+            we can only compute `N - M` elements of the Jacobian as there is no
+            way to currently distinguish between `P - (\infty_+)` and `P - (\infty_-)`.
 
         AUTHORS:
 
@@ -226,7 +235,7 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             sage: (v**2 + h*v - f) % u == 0
             True
 
-        Ensure that the entire point set is reachable::
+        Ensure that the entire point set is reachable for odd degree models::
 
             sage: # needs sage.rings.finite_rings
             sage: F = GF(7)
@@ -238,6 +247,24 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             sage: s = set()
             sage: order = H.zeta_function().numerator()(1)
             sage: while len(s) < order:
+            ....:     s.add(tuple(S.random_element()))
+
+        TESTS:
+
+        For the case of the even degree model, some elements cannot be
+        represented::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(7)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^6 + x + 1
+            sage: H = HyperellipticCurve(f)
+            sage: J = H.jacobian()
+            sage: S = J(F)
+            sage: s = set()
+            sage: num_points = H.count_points()[0]
+            sage: order = H.zeta_function().numerator()(1)
+            sage: while len(s) < (order - num_points):
             ....:     s.add(tuple(S.random_element()))
 
         """
