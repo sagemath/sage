@@ -2022,11 +2022,14 @@ class CoxeterGroups(Category_singleton):
 
         def absolute_chain_reflections(self):
             r"""
-            Return a list of reflection which, when multiplied in order, give
-            ``self``.
+            Return a list of reflection which, when (left) multiplied in order,
+            give ``self``.
 
             This method is based on Theorem 1.1 in [Dy2001]_, combined with
-            the strong exchange condition.
+            the strong exchange condition. As an example, if $W$ is a type
+            $A_2$ Coxeter group with simple reflections $a$, $b$, then the
+            absolute chain reflections for the element $w = ab$ is the list
+            `[a, aba]` as $w = (aba) a = ab$.
 
             .. SEEALSO::
 
