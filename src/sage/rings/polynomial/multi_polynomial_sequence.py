@@ -707,6 +707,74 @@ class PolynomialSequence_generic(Sequence_generic):
         RRR = PolynomialRing(K,r,tuple(Ts),order='negdeglex')
         return RRR.ideal(JJ.gens())
 
+    def coefficients_monomials(self, order=None, sparse=True):
+        """
+        Return the matrix of coefficients ``A`` and
+        the matching vector of monomials ``v``, such that ``A*v == vector(self)``.
+
+        Thus value of ``A[i,j]`` corresponds the coefficient of the
+        monomial ``v[j]`` in the ``i``-th polynomial in this system.
+
+        Monomials are ordered w.r.t. the term ordering of ``order``
+        if given; otherwise, they are ordered w.r.t. ``self.ring()``
+        in reverse order, i.e., such that the smallest entry comes last.
+
+        INPUT:
+
+        - ``sparse`` - construct a sparse matrix (default: ``True``)
+        - ``order`` - a list or tuple specifying the order of monomials (default: ``None``)
+
+        EXAMPLES::
+
+            sage: # needs sage.libs.singular
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: I.gens()
+            [a + 2*b + 2*c + 2*d - 1,
+             a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
+             2*a*b + 2*b*c + 2*c*d - b,
+             b^2 + 2*a*c + 2*b*d - c]
+            sage: F = Sequence(I)
+            sage: A,v = F.coefficients_monomials()
+            sage: A
+            [  0   0   0   0   0   0   0   0   0   1   2   2   2 126]
+            [  1   0   2   0   0   2   0   0   2 126   0   0   0   0]
+            [  0   2   0   0   2   0   0   2   0   0 126   0   0   0]
+            [  0   0   1   2   0   0   2   0   0   0   0 126   0   0]
+            sage: v
+            (a^2, a*b, b^2, a*c, b*c, c^2, b*d, c*d, d^2, a, b, c, d, 1)
+            sage: A*v
+            (a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
+             2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c)
+        """
+        from sage.modules.free_module_element import vector
+        from sage.matrix.constructor import Matrix
+
+        R = self.ring()
+        f = tuple(self)
+
+        if order is None:
+            v = sorted(self.monomials(), reverse=True)
+        else:
+            if isinstance(order, (list, tuple)):
+                v = order
+            else:
+                raise ValueError("order argument can only accept list or tuple")
+        nv = len(v)
+
+        # construct dictionary for fast lookups
+        y = dict(zip(v, range(nv)))
+
+        A = Matrix(R.base_ring(), len(f), nv, sparse=sparse)
+
+        for x, poly in enumerate(f):
+            for m in poly.monomials():
+                try:
+                    A[x, y[m]] = poly.monomial_coefficient(m)
+                except KeyError:
+                    raise ValueError("order argument does not contain all monomials")
+        return A, vector(v)
+
     def coefficient_matrix(self, sparse=True):
         """
         Return tuple ``(A,v)`` where ``A`` is the coefficient matrix
