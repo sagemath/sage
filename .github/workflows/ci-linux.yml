@@ -88,12 +88,11 @@ jobs:
           # Needed to download and install cypari2 below
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install git)
 
-          # # Download and install pari for cypari2
-          # # https://github.com/sagemath/cypari2/issues/145
-          # eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install wget sudo)
-          # wget https://raw.githubusercontent.com/sagemath/cypari2/master/.install-pari.sh
-          # chmod +x .install-pari.sh
-          # ./.install-pari.sh
+          # Needed for primecountpy
+          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install primecount)
+
+          # Needed for lrcalc (Python)
+          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install lrcalc)
         env:
           PARI_VERSION: pari-2.15.4
 
