@@ -3038,26 +3038,26 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         sage: is_principal(I, True)
         (True, 1/2 + 140*i + j - k)
         """
-    Q = self.quadratic_form()
+        Q = self.quadratic_form()
 
-    A = self.quaternion_algebra()
-    if not A.is_definite():
-        raise NotImplementedError('is_principal ideal not'
-                                  'implemented for indefinite'
-                                  'quaternion algebras')
+        A = self.quaternion_algebra()
+        if not A.is_definite():
+            raise NotImplementedError('is_principal ideal not'
+                                    'implemented for indefinite'
+                                    'quaternion algebras')
 
-    if len(self.basis()) < 4:
-        raise ValueError("basis must have rank 4")
+        if len(self.basis()) < 4:
+            raise ValueError("basis must have rank 4")
 
-    c = self.theta_series_vector(2)[1]
-    if not certificate:
-        return c != 0
-    if certificate and c == 0:
-        return False, None
+        c = self.theta_series_vector(2)[1]
+        if not certificate:
+            return c != 0
+        if certificate and c == 0:
+            return False, None
 
-    _,v = Q.__pari__().qfminim(None, None, 1)
-    alpha = sum(ZZ(c)*g for c,g in zip(v, self.basis()))
-    return True, alpha
+        _,v = Q.__pari__().qfminim(None, None, 1)
+        alpha = sum(ZZ(c)*g for c,g in zip(v, self.basis()))
+        return True, alpha
 
     def __contains__(self, x):
         """
