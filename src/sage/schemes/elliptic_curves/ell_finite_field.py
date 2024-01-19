@@ -1900,7 +1900,7 @@ def curves_with_j_0(K):
     curves = [EllipticCurve(K, [0, D**i]) for i in range(6)]
     # TODO (grhkm): Precompute orders of sextic twists
     # The idea should be to evaluate the character (D / q) or something
-    # Probably reference [Connell1999]_
+    # Probably reference [RS2010]_ and [Connell1999]_
     # Also a necessary change is `curves_with_j_0` should take in an optional "starting curve"
     # (passed from the original .twists call), because if you start twisting from that curve,
     # then you can also compute the orders!
