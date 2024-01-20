@@ -1555,6 +1555,94 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             u = self.base_ring()(u)     # because otherwise 1/u would round!
         return self.change_weierstrass_model(1/u, 0, 0, 0)
 
+    def isomorphism(self, u, r=0, s=0, t=0, *, is_codomain=False):
+        r"""
+        Given four values `u,r,s,t` in the base ring of this curve, return
+        the :class:`WeierstrassIsomorphism` defined by `u,r,s,t` with this
+        curve as its codomain.
+        (The value `u` must be a unit; the values `r,s,t` default to zero.)
+
+        Optionally, if the keyword argument ``is_codomain`` is set to ``True``,
+        return the isomorphism defined by `u,r,s,t` with this curve as its
+        **co**\domain.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve([1, 2, 3, 4, 5])
+            sage: iso = E.isomorphism(6); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 1/6*x*y + 1/72*y = x^3 + 1/18*x^2 + 1/324*x + 5/46656 over Rational Field
+              Via:  (u,r,s,t) = (6, 0, 0, 0)
+            sage: iso.domain() == E
+            True
+            sage: iso.codomain() == E.scale_curve(1 / 6)
+            True
+
+            sage: iso = E.isomorphism(1, 7, 8, 9); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 17*x*y + 28*y = x^3 - 49*x^2 - 54*x + 303 over Rational Field
+              Via:  (u,r,s,t) = (1, 7, 8, 9)
+            sage: iso.domain() == E
+            True
+            sage: iso.codomain() == E.rst_transform(7, 8, 9)
+            True
+
+            sage: iso = E.isomorphism(6, 7, 8, 9); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 17/6*x*y + 7/54*y = x^3 - 49/36*x^2 - 1/24*x + 101/15552 over Rational Field
+              Via:  (u,r,s,t) = (6, 7, 8, 9)
+            sage: iso.domain() == E
+            True
+            sage: iso.codomain() == E.rst_transform(7, 8, 9).scale_curve(1 / 6)
+            True
+
+        The ``is_codomain`` argument reverses the role of domain and codomain::
+
+            sage: E = EllipticCurve([1, 2, 3, 4, 5])
+            sage: iso = E.isomorphism(6, is_codomain=True); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + 6*x*y + 648*y = x^3 + 72*x^2 + 5184*x + 233280 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              Via:  (u,r,s,t) = (6, 0, 0, 0)
+            sage: iso.domain() == E.scale_curve(6)
+            True
+            sage: iso.codomain() == E
+            True
+
+            sage: iso = E.isomorphism(1, 7, 8, 9, is_codomain=True); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 - 15*x*y + 90*y = x^3 - 75*x^2 + 796*x - 2289 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              Via:  (u,r,s,t) = (1, 7, 8, 9)
+            sage: iso.domain().rst_transform(7, 8, 9) == E
+            True
+            sage: iso.codomain() == E
+            True
+
+            sage: iso = E.isomorphism(6, 7, 8, 9, is_codomain=True); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 - 10*x*y + 700*y = x^3 + 35*x^2 + 9641*x + 169486 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              Via:  (u,r,s,t) = (6, 7, 8, 9)
+            sage: iso.domain().rst_transform(7, 8, 9) == E.scale_curve(6)
+            True
+            sage: iso.codomain() == E
+            True
+
+        .. SEEALSO::
+
+            - :class:`~sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`
+            - :meth:`rst_transform`
+            - :meth:`scale_curve`
+        """
+        from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+        if is_codomain:
+            return WeierstrassIsomorphism(None, (u,r,s,t), self)
+        return WeierstrassIsomorphism(self, (u,r,s,t))
+
 # ###########################################################
 #
 # Explanation of the division (also known as torsion) polynomial
