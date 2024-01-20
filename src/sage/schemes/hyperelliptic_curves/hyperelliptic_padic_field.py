@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.padics
 """
 Hyperelliptic curves over a `p`-adic field
 """
@@ -123,7 +124,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         """
         prec = self.base_ring().precision_cap()
         if not self.is_same_disc(P,Q):
-            raise ValueError("%s and %s are not in the same residue disc"%(P,Q))
+            raise ValueError("%s and %s are not in the same residue disc" % (P,Q))
         disc = self.residue_disc(P)
         t = PowerSeriesRing(self.base_ring(), 't', prec).gen(0)
         if disc == self.change_ring(self.base_ring().residue_field())(0,1,0): # Infinite disc
@@ -254,7 +255,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - Jennifer Balakrishnan
         """
         if not self.is_in_weierstrass_disc(Q):
-            raise ValueError("%s is not in a Weierstrass disc"%Q)
+            raise ValueError("%s is not in a Weierstrass disc" % Q)
         points = self.weierstrass_points()
         for P in points:
             if self.is_same_disc(P,Q):
@@ -298,7 +299,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
                 return HF(0,0,1)
             if xPv == 0:
                 return HF(P[0].expansion(0), 0,1)
-        elif yPv ==0:
+        elif yPv == 0:
             if xPv > 0:
                 return HF(0, P[1].expansion(0),1)
             if xPv == 0:
@@ -604,7 +605,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             offset = (2*g-1)*max(TPv, TQv)
             if offset == +Infinity:
                 offset = (2*g-1)*min(TPv,TQv)
-            if (offset > prec and (xTPv <0 or xTQv <0) and (self.residue_disc(P) == self.change_ring(GF(p))(0,1,0) or self.residue_disc(Q) == self.change_ring(GF(p))(0,1,0))):
+            if (offset > prec and (xTPv < 0 or xTQv < 0) and (self.residue_disc(P) == self.change_ring(GF(p))(0,1,0) or self.residue_disc(Q) == self.change_ring(GF(p))(0,1,0))):
                 newprec = offset + prec
                 K = pAdicField(p,newprec)
                 A = PolynomialRing(RationalField(),'x')
@@ -932,10 +933,10 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
                 y0 = P[1]
                 try:
                     uN = (1 + h(x0)/y0**(2*p)).sqrt()
-                    yres=y0**p * uN
-                    xres=x0**p
+                    yres = y0**p * uN
+                    xres = x0**p
                     if (yres-y0).valuation() == 0:
-                        yres=-yres
+                        yres = -yres
                     return self.point([xres,yres, K(1)])
                 except (TypeError, NotImplementedError):
                     uN2 = 1 + h(x0)/y0**(2*p)
@@ -944,7 +945,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
                     v = uN2.valuation()
                     a = uN2.parent().gen()
                     uN = self.newton_sqrt(uN2,c.sqrt()*a**(v//2),K.precision_cap())
-                    yres = y0**p *uN
+                    yres = y0**p * uN
                     xres = x0**p
                     if (yres - y0).valuation() == 0:
                         yres = -yres
@@ -1112,7 +1113,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         """
         prec = self.base_ring().precision_cap()
         deg = (S[0]).parent().defining_polynomial().degree()
-        prec2= prec*deg
+        prec2 = prec*deg
         x,y = self.local_coord(P,prec2)
         g = self.genus()
         integrals = [((x**k*x.derivative()/(2*y)).integral()) for k in range(2*g)]

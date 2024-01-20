@@ -1,6 +1,6 @@
 .. _sec-installation-from-binaries:
 
-Install from Pre-built Binaries
+Install from Pre-Built Binaries
 ===============================
 
 Linux

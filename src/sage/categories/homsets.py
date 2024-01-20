@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Homset categories
 """
@@ -199,7 +198,7 @@ class HomsetsOf(HomsetsCategory):
         except ValueError:
             assert isinstance(base_category, JoinCategory)
             object_names = ' and '.join(cat._repr_object_names() for cat in base_category.super_categories())
-        return "homsets of %s"%(object_names)
+        return "homsets of %s" % (object_names)
 
     def super_categories(self):
         r"""

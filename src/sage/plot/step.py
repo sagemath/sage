@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Step function plots
 """
@@ -30,10 +31,10 @@ def plot_step_function(v, vertical_lines=True, **kwds):
 
     - ``v`` -- list of pairs (a,b)
 
-    - ``vertical_lines`` -- bool (default: True) if True, draw
+    - ``vertical_lines`` -- bool (default: ``True``) if ``True``, draw
       vertical risers at each step of this step function.
       Technically these vertical lines are not part of the graph
-      of this function, but they look very nice in the plot so we
+      of this function, but they look very nice in the plot, so we
       include them by default
 
     EXAMPLES:
@@ -59,7 +60,8 @@ def plot_step_function(v, vertical_lines=True, **kwds):
     We pass in many options and get something that looks like "Space Invaders"::
 
         sage: v = [(i, sin(i)) for i in range(5, 20)]
-        sage: plot_step_function(v, vertical_lines=False, thickness=30, rgbcolor='purple', axes=False)
+        sage: plot_step_function(v, vertical_lines=False, thickness=30,
+        ....:                    rgbcolor='purple', axes=False)
         Graphics object consisting of 14 graphics primitives
 
     .. PLOT::

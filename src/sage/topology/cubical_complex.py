@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs
 r"""
 Finite cubical complexes
 
@@ -46,11 +46,11 @@ interval `[0,0]` with the unit interval `[2,3]`: this is the line
 segment in the plane from `(0,2)` to `(0,3)`.  We could form a
 topologically equivalent space by inserting some degenerate simplices::
 
-    sage: S1.homology()
+    sage: S1.homology()                                                                 # needs sage.modules
     {0: 0, 1: Z}
     sage: X = CubicalComplex([([0,0], [2,3], [2]), ([0,1], [3,3], [2]),
     ....:                     ([0,1], [2,2], [2]), ([1,1], [2,3], [2])])
-    sage: X.homology()
+    sage: X.homology()                                                                  # needs sage.modules
     {0: 0, 1: Z}
 
 Topologically, the cubical complex ``X`` consists of four edges of a
@@ -75,10 +75,12 @@ from sage.rings.integer import Integer
 from sage.sets.set import Set
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import deprecation
 from functools import total_ordering
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 @total_ordering
@@ -104,7 +106,7 @@ class Cube(SageObject):
     Each cube is stored in a standard form: a tuple of tuples, with a
     nondegenerate interval ``[j,j]`` represented by ``(j,j)``, not
     ``(j,)``.  (This is so that for any interval ``I``, ``I[1]`` will
-    produce a value, not an ``IndexError``.)
+    produce a value, not an :class:`IndexError`.)
 
     EXAMPLES::
 
@@ -226,7 +228,7 @@ class Cube(SageObject):
         """
         t = self.__tuple
         embed = max(len(t), len(vec))
-        t = t + ((0,0),) * (embed-len(t))
+        t = t + ((0, 0),) * (embed-len(t))
         vec = tuple(vec) + (0,) * (embed-len(vec))
         new = []
         for (a, b) in zip(t, vec):
@@ -367,7 +369,7 @@ class Cube(SageObject):
             new = t[idx][1]
         else:
             new = t[idx][0]
-        return Cube(t[0:idx] + ((new,new),) + t[idx+1:])
+        return Cube(t[0:idx] + ((new, new),) + t[idx+1:])
 
     def faces(self):
         """
@@ -380,8 +382,8 @@ class Cube(SageObject):
             sage: C.faces()
             [[2,2] x [3,4], [1,2] x [4,4], [1,1] x [3,4], [1,2] x [3,3]]
         """
-        upper = [self.face(i,True) for i in range(self.dimension())]
-        lower = [self.face(i,False) for i in range(self.dimension())]
+        upper = [self.face(i, True) for i in range(self.dimension())]
+        lower = [self.face(i, False) for i in range(self.dimension())]
         return upper + lower
 
     def faces_as_pairs(self):
@@ -464,7 +466,7 @@ class Cube(SageObject):
         self_tuple = self.tuple()
         other_tuple = other.tuple()
         nondegen = (list(zip(self.nondegenerate_intervals(),
-                        other.nondegenerate_intervals()))
+                             other.nondegenerate_intervals()))
                     + [(len(self_tuple), len(other_tuple))])
         old = (-1, -1)
         self_added = 0
@@ -540,10 +542,10 @@ class Cube(SageObject):
             6
         """
         from .simplicial_complex import Simplex
-        if self.dimension() < 0: # the empty cube
-            return [Simplex(())] # the empty simplex
+        if self.dimension() < 0:  # the empty cube
+            return [Simplex(())]  # the empty simplex
         v = tuple([max(j) for j in self.tuple()])
-        if self.dimension() == 0: # just v
+        if self.dimension() == 0:  # just v
             return [Simplex((v,))]
         simplices = []
         for i in range(self.dimension()):
@@ -594,7 +596,7 @@ class Cube(SageObject):
             nu = 0
             for i in J:
                 for j in Jprime:
-                    if j<i:
+                    if j < i:
                         nu += 1
             t = self.tuple()
             left = []
@@ -717,7 +719,7 @@ class Cube(SageObject):
             sage: C1._repr_()
             '[1,1] x [2,3] x [4,5]'
         """
-        s = ["[%s,%s]"%(str(x), str(y)) for (x,y) in self.__tuple]
+        s = ("[%s,%s]" % (str(x), str(y)) for x, y in self.__tuple)
         return " x ".join(s)
 
     def _latex_(self):
@@ -776,7 +778,7 @@ class CubicalComplex(GenericCellComplex):
         sage: S1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
         ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); S1
         Cubical complex with 4 vertices and 8 cubes
-        sage: S1.homology()
+        sage: S1.homology()                                                             # needs sage.modules
         {0: 0, 1: Z}
 
     A set of five points and its product with ``S1``::
@@ -784,18 +786,18 @@ class CubicalComplex(GenericCellComplex):
         sage: pts = CubicalComplex([([0],), ([3],), ([6],), ([-12],), ([5],)])
         sage: pts
         Cubical complex with 5 vertices and 5 cubes
-        sage: pts.homology()
+        sage: pts.homology()                                                            # needs sage.modules
         {0: Z x Z x Z x Z}
         sage: X = S1.product(pts); X
         Cubical complex with 20 vertices and 40 cubes
-        sage: X.homology()
+        sage: X.homology()                                                              # needs sage.modules
         {0: Z x Z x Z x Z, 1: Z^5}
 
     Converting a simplicial complex to a cubical complex::
 
         sage: S2 = simplicial_complexes.Sphere(2)
         sage: C2 = CubicalComplex(S2)
-        sage: all(C2.homology(n) == S2.homology(n) for n in range(3))
+        sage: all(C2.homology(n) == S2.homology(n) for n in range(3))                   # needs sage.modules
         True
 
     You can get the set of maximal cells or a dictionary of all cells::
@@ -832,14 +834,14 @@ class CubicalComplex(GenericCellComplex):
 
         sage: T = S1.product(S1); T
         Cubical complex with 16 vertices and 64 cubes
-        sage: T.chain_complex()
+        sage: T.chain_complex()                                                         # needs sage.modules
         Chain complex with at most 3 nonzero terms over Integer Ring
-        sage: T.homology(base_ring=QQ)                                                  # optional - sage.modules
+        sage: T.homology(base_ring=QQ)                                                  # needs sage.modules
         {0: Vector space of dimension 0 over Rational Field,
          1: Vector space of dimension 2 over Rational Field,
          2: Vector space of dimension 1 over Rational Field}
         sage: RP2 = cubical_complexes.RealProjectivePlane()
-        sage: RP2.cohomology(dim=[1, 2], base_ring=GF(2))                               # optional - sage.modules sage.rings.finite_rings
+        sage: RP2.cohomology(dim=[1, 2], base_ring=GF(2))                               # needs sage.modules
         {1: Vector space of dimension 1 over Finite Field of size 2,
          2: Vector space of dimension 1 over Finite Field of size 2}
 
@@ -1074,7 +1076,7 @@ class CubicalComplex(GenericCellComplex):
             sub_facets = {}
             dimension = max([cube.dimension() for cube in self._facets])
             # initialize the lists: add each maximal cube to Cells and sub_facets
-            for i in range(-1,dimension+1):
+            for i in range(-1, dimension+1):
                 Cells[i] = set([])
                 sub_facets[i] = set([])
             for f in self._facets:
@@ -1168,6 +1170,7 @@ class CubicalComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S2 = cubical_complexes.Sphere(2)
             sage: S2.chain_complex()
             Chain complex with at most 3 nonzero terms over Integer Ring
@@ -1186,6 +1189,7 @@ class CubicalComplex(GenericCellComplex):
 
         Check that :trac:`32203` has been fixed::
 
+            sage: # needs sage.modules
             sage: Square = CubicalComplex([([0,1],[0,1])])
             sage: EdgesLTR = CubicalComplex([([0,0],[0,1]),([0,1],[1,1]),([1,1],[0,1])])
             sage: EdgesLBR = CubicalComplex([([0,0],[0,1]),([0,1],[0,0]),([1,1],[0,1])])
@@ -1214,7 +1218,7 @@ class CubicalComplex(GenericCellComplex):
             differentials[0] = mat
         current = vertices
         # now loop from 1 to dimension of the complex
-        for dim in range(1,self.dimension()+1):
+        for dim in range(1, self.dimension()+1):
             if verbose:
                 print("  starting dimension %s" % dim)
             if (dim, subcomplex) in self._complex:
@@ -1332,7 +1336,7 @@ class CubicalComplex(GenericCellComplex):
 
         EXAMPLES::
 
-            sage: cubical_complexes.Sphere(2).graph()                                   # optional - sage.graphs
+            sage: cubical_complexes.Sphere(2).graph()
             Graph on 8 vertices
         """
         from sage.graphs.graph import Graph
@@ -1480,7 +1484,7 @@ class CubicalComplex(GenericCellComplex):
 
             sage: S1 = cubical_complexes.Sphere(1)
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: S1.disjoint_union(S2).homology()
+            sage: S1.disjoint_union(S2).homology()                                      # needs sage.modules
             {0: Z, 1: Z, 2: Z}
         """
         embedded_left = len(tuple(self.maximal_cells()[0]))
@@ -1488,9 +1492,9 @@ class CubicalComplex(GenericCellComplex):
         zero = [0] * max(embedded_left, embedded_right)
         facets = []
         for f in self.maximal_cells():
-            facets.append(Cube([[0,0]]).product(f._translate(zero)))
+            facets.append(Cube([[0, 0]]).product(f._translate(zero)))
         for f in other.maximal_cells():
-            facets.append(Cube([[1,1]]).product(f._translate(zero)))
+            facets.append(Cube([[1, 1]]).product(f._translate(zero)))
         return CubicalComplex(facets)
 
     def wedge(self, other):
@@ -1515,14 +1519,14 @@ class CubicalComplex(GenericCellComplex):
 
             sage: S1 = cubical_complexes.Sphere(1)
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: S1.wedge(S2).homology()
+            sage: S1.wedge(S2).homology()                                               # needs sage.modules
             {0: 0, 1: Z, 2: Z}
         """
         embedded_left = len(tuple(self.maximal_cells()[0]))
         embedded_right = len(tuple(other.maximal_cells()[0]))
         translate_left = [-a[0] for a in self.maximal_cells()[0]] + [0] * embedded_right
         translate_right = [-a[0] for a in other.maximal_cells()[0]]
-        point_right = Cube([[0,0]] * embedded_left)
+        point_right = Cube([[0, 0]] * embedded_left)
 
         facets = []
         for f in self.maximal_cells():
@@ -1551,12 +1555,12 @@ class CubicalComplex(GenericCellComplex):
 
             sage: T = cubical_complexes.Torus()
             sage: S2 = cubical_complexes.Sphere(2)
-            sage: T.connected_sum(S2).cohomology() == T.cohomology()                    # optional - sage.modules
+            sage: T.connected_sum(S2).cohomology() == T.cohomology()                    # needs sage.modules
             True
             sage: RP2 = cubical_complexes.RealProjectivePlane()
-            sage: T.connected_sum(RP2).homology(1)                                      # optional - sage.modules
+            sage: T.connected_sum(RP2).homology(1)                                      # needs sage.modules
             Z x Z x C2
-            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)                 # optional - sage.modules
+            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)                 # needs sage.modules
             Z x Z x C2
         """
         # connected_sum: first check whether the complexes are pure
@@ -1584,7 +1588,7 @@ class CubicalComplex(GenericCellComplex):
         # start assembling the facets in the connected sum: first, the
         # cylinder on the removed face.
         new_facets = []
-        cylinder = removed.product(Cube([[0,1]]))
+        cylinder = removed.product(Cube([[0, 1]]))
         # don't want to include the ends of the cylinder, so don't
         # include the last pair of faces.  therefore, choose faces up
         # to removed.dimension(), not cylinder.dimension().
@@ -1596,13 +1600,13 @@ class CubicalComplex(GenericCellComplex):
             CL = list(cube.tuple())
             for (idx, L) in insert_self:
                 CL[idx:idx] = L
-            CL.append((0,0))
+            CL.append((0, 0))
             new_facets.append(Cube(CL))
         for cube in other_facets:
             CL = list(cube.tuple())
             for (idx, L) in insert_other:
                 CL[idx:idx] = L
-            CL.append((1,1))
+            CL.append((1, 1))
             new_facets.append(Cube(CL)._translate(translate))
         return CubicalComplex(new_facets)
 
@@ -1671,15 +1675,16 @@ class CubicalComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: RP2 = cubical_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.rings.finite_rings
-            sage: M.homology()                                                          # optional - sage.modules sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))
+            sage: M.homology()
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = cubical_complexes.Torus()
             sage: phi, M = T.algebraic_topological_model(QQ)
-            sage: M.homology()                                                          # optional - sage.modules
+            sage: M.homology()
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
@@ -1755,7 +1760,7 @@ class CubicalComplex(GenericCellComplex):
 
             sage: Ts = T._simplicial_(); Ts
             Simplicial complex with 16 vertices and 32 facets
-            sage: T.homology() == Ts.homology()
+            sage: T.homology() == Ts.homology()                                         # needs sage.modules
             True
 
         Each `n`-dimensional cube produces `n!` `n`-simplices::
@@ -1813,7 +1818,7 @@ class CubicalComplexExamples():
         Cubical complex with 256 vertices and 6560 cubes
     """
 
-    def Sphere(self,n):
+    def Sphere(self, n):
         r"""
         A cubical complex representation of the `n`-dimensional sphere,
         formed by taking the boundary of an `(n+1)`-dimensional cube.
@@ -1826,7 +1831,7 @@ class CubicalComplexExamples():
             sage: cubical_complexes.Sphere(7)
             Cubical complex with 256 vertices and 6560 cubes
         """
-        return CubicalComplex(Cube([[0,1]]*(n+1)).faces())
+        return CubicalComplex(Cube([[0, 1]]*(n+1)).faces())
 
     def Torus(self):
         r"""

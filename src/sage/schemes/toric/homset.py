@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Set of homomorphisms between two toric varieties
 
@@ -324,7 +325,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
             sage: P2 = toric_varieties.P2()
             sage: P2.point_set().is_finite()
             False
-            sage: P2.change_ring(GF(7)).point_set().is_finite()                         # optional - sage.rings.finite_rings
+            sage: P2.change_ring(GF(7)).point_set().is_finite()
             True
         """
         variety = self.codomain()
@@ -347,11 +348,11 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
 
         EXAMPLES::
 
-            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))                        # optional - sage.rings.finite_rings
-            sage: point_set = P123.point_set()                                          # optional - sage.rings.finite_rings
-            sage: next(iter(point_set._naive_enumerator()))                             # optional - sage.rings.finite_rings
+            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
+            sage: point_set = P123.point_set()
+            sage: next(iter(point_set._naive_enumerator()))
             (0, 0, 1)
-            sage: next(iter(point_set))                                                 # optional - sage.rings.finite_rings
+            sage: next(iter(point_set))
             [0 : 0 : 1]
         """
         from sage.schemes.toric.points import NaiveFinitePointEnumerator
@@ -378,11 +379,11 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
 
         EXAMPLES::
 
-            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))                        # optional - sage.rings.finite_rings
-            sage: point_set = P123.point_set()                                          # optional - sage.rings.finite_rings
-            sage: next(iter(point_set._finite_field_enumerator()))                      # optional - sage.rings.finite_rings
+            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
+            sage: point_set = P123.point_set()
+            sage: next(iter(point_set._finite_field_enumerator()))
             (0, 0, 1)
-            sage: next(iter(point_set))                                                 # optional - sage.rings.finite_rings
+            sage: next(iter(point_set))
             [0 : 0 : 1]
         """
         from sage.schemes.toric.points import FiniteFieldPointEnumerator
@@ -404,9 +405,9 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
 
         EXAMPLES::
 
-            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))                        # optional - sage.rings.finite_rings
-            sage: point_set = P123.point_set()                                          # optional - sage.rings.finite_rings
-            sage: point_set._enumerator()                                               # optional - sage.rings.finite_rings
+            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
+            sage: point_set = P123.point_set()
+            sage: point_set._enumerator()
             <sage.schemes.toric.points.FiniteFieldPointEnumerator object at 0x...>
         """
         ring = self.domain().base_ring()
@@ -448,11 +449,11 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
     unity::
 
         sage: fan = NormalFan(ReflexivePolytope(2, 0))
-        sage: X = ToricVariety(fan, base_field=GF(7))                                   # optional - sage.rings.finite_rings
-        sage: point_set = X.point_set()                                                 # optional - sage.rings.finite_rings
-        sage: point_set.cardinality()                                                   # optional - sage.rings.finite_rings
+        sage: X = ToricVariety(fan, base_field=GF(7))
+        sage: point_set = X.point_set()
+        sage: point_set.cardinality()
         21
-        sage: sorted(X.point_set().list())                                              # optional - sage.rings.finite_rings
+        sage: sorted(X.point_set().list())
         [[0 : 0 : 1], [0 : 1 : 0], [0 : 1 : 1], [0 : 1 : 3],
          [1 : 0 : 0], [1 : 0 : 1], [1 : 0 : 3], [1 : 1 : 0],
          [1 : 1 : 1], [1 : 1 : 2], [1 : 1 : 3], [1 : 1 : 4],
@@ -466,9 +467,9 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
     on the fiber::
 
         sage: fan = Fan([Cone([(1,0), (1,1)]), Cone([(1,1), (0,1)])])
-        sage: blowup_plane = ToricVariety(fan, base_ring=GF(3))                         # optional - sage.rings.finite_rings
-        sage: point_set = blowup_plane.point_set()                                      # optional - sage.rings.finite_rings
-        sage: sorted(point_set.list())                                                  # optional - sage.rings.finite_rings
+        sage: blowup_plane = ToricVariety(fan, base_ring=GF(3))
+        sage: point_set = blowup_plane.point_set()
+        sage: sorted(point_set.list())
         [[0 : 1 : 0], [0 : 1 : 1], [0 : 1 : 2],
          [1 : 0 : 0], [1 : 0 : 1], [1 : 0 : 2],
          [1 : 1 : 0], [1 : 1 : 1], [1 : 1 : 2],
@@ -477,8 +478,8 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
     Toric varieties with torus factors (that is, where the fan is not
     full-dimensional) also work::
 
-        sage: F_times_Fstar = ToricVariety(Fan([Cone([(1,0)])]), base_field=GF(3))      # optional - sage.rings.finite_rings
-        sage: sorted(F_times_Fstar.point_set().list())                                  # optional - sage.rings.finite_rings
+        sage: F_times_Fstar = ToricVariety(Fan([Cone([(1,0)])]), base_field=GF(3))
+        sage: sorted(F_times_Fstar.point_set().list())
         [[0 : 1], [0 : 2], [1 : 1], [1 : 2], [2 : 1], [2 : 2]]
 
     TESTS::
@@ -500,29 +501,29 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: V = ToricVariety(FaceFan(o))
-            sage: V.change_ring(GF(2)).point_set().cardinality()                        # optional - sage.rings.finite_rings
+            sage: V.change_ring(GF(2)).point_set().cardinality()
             27
-            sage: V.change_ring(GF(8, "a")).point_set().cardinality()                   # optional - sage.rings.finite_rings
+            sage: V.change_ring(GF(8, "a")).point_set().cardinality()                   # needs sage.rings.finite_rings
             729
-            sage: V.change_ring(GF(101)).point_set().cardinality()                      # optional - sage.rings.finite_rings
+            sage: V.change_ring(GF(101)).point_set().cardinality()
             1061208
 
         For non-smooth varieties over finite fields, the homogeneous
         rescalings are solved. This is somewhat slower::
 
             sage: fan = NormalFan(ReflexivePolytope(2, 0))
-            sage: X = ToricVariety(fan, base_field=GF(7))                               # optional - sage.rings.finite_rings
-            sage: X.point_set().cardinality()                                           # optional - sage.rings.finite_rings
+            sage: X = ToricVariety(fan, base_field=GF(7))
+            sage: X.point_set().cardinality()
             21
 
         Fulton's formula does not apply since the variety is not
         smooth. And, indeed, naive application gives a different
         result::
 
-            sage: q = X.base_ring().order()                                             # optional - sage.rings.finite_rings
-            sage: n = X.dimension()                                                     # optional - sage.rings.finite_rings
-            sage: d = map(len, fan().cones())                                           # optional - sage.rings.finite_rings
-            sage: sum(dk * (q-1)**(n-k) for k, dk in enumerate(d))                      # optional - sage.rings.finite_rings
+            sage: q = X.base_ring().order()
+            sage: n = X.dimension()
+            sage: d = map(len, fan().cones())
+            sage: sum(dk * (q-1)**(n-k) for k, dk in enumerate(d))
             57
 
         Over infinite fields the number of points is not very tricky::
@@ -571,11 +572,11 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
-            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))                        # optional - sage.rings.finite_rings
-            sage: point_set = P123.point_set()                                          # optional - sage.rings.finite_rings
-            sage: next(iter(point_set.__iter__()))                                      # optional - sage.rings.finite_rings
+            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
+            sage: point_set = P123.point_set()
+            sage: next(iter(point_set.__iter__()))
             [0 : 0 : 1]
-            sage: next(iter(point_set))  # syntactic sugar                              # optional - sage.rings.finite_rings
+            sage: next(iter(point_set))  # syntactic sugar
             [0 : 0 : 1]
         """
         for pt in self._enumerator():
@@ -595,9 +596,9 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
-            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))                        # optional - sage.rings.finite_rings
-            sage: point_set = P123.point_set()                                          # optional - sage.rings.finite_rings
-            sage: point_set._enumerator()                                               # optional - sage.rings.finite_rings
+            sage: P123 = toric_varieties.P2_123(base_ring=GF(3))
+            sage: point_set = P123.point_set()
+            sage: point_set._enumerator()
             <sage.schemes.toric.points.FiniteFieldPointEnumerator object at 0x...>
         """
         ambient = super()._enumerator()
@@ -620,11 +621,12 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
-            sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))                      # optional - sage.rings.finite_rings
-            sage: cubic = P2.subscheme([x^3 + y^3 + z^3])                               # optional - sage.rings.finite_rings
-            sage: list(cubic.point_set())                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.libs.singular
+            sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
+            sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
+            sage: list(cubic.point_set())
             [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 1 : 2], [1 : 2 : 1], [1 : 3 : 3]]
-            sage: cubic.point_set().cardinality()                                       # optional - sage.rings.finite_rings
+            sage: cubic.point_set().cardinality()
             6
         """
         for p in self._enumerator():
@@ -640,11 +642,12 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
-            sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))                      # optional - sage.rings.finite_rings
-            sage: cubic = P2.subscheme([x^3 + y^3 + z^3])                               # optional - sage.rings.finite_rings
-            sage: list(cubic.point_set())                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.libs.singular
+            sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
+            sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
+            sage: list(cubic.point_set())
             [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 1 : 2], [1 : 2 : 1], [1 : 3 : 3]]
-            sage: cubic.point_set().cardinality()                                       # optional - sage.rings.finite_rings
+            sage: cubic.point_set().cardinality()
             6
         """
         try:

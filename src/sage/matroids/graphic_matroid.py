@@ -89,12 +89,10 @@ Methods
 # ****************************************************************************
 from .matroid import Matroid
 
-from sage.graphs.graph import Graph
 from copy import copy, deepcopy
 from .utilities import newlabel, split_vertex, sanitize_contractions_deletions
 from itertools import combinations
 from sage.rings.integer import Integer
-from sage.sets.disjoint_set import DisjointSet
 
 
 class GraphicMatroid(Matroid):
@@ -186,6 +184,7 @@ class GraphicMatroid(Matroid):
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
         """
+        from sage.graphs.graph import Graph
 
         if groundset is None:
             # Try to construct a ground set based on the edge labels.
@@ -284,6 +283,8 @@ class GraphicMatroid(Matroid):
             1
 
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         edges = self.groundset_to_edges(X)
         vertices = set([u for (u, v, l) in edges]).union(
             [v for (u, v, l) in edges])
@@ -480,8 +481,7 @@ class GraphicMatroid(Matroid):
             False
         """
         N = GraphicMatroid(self._G)
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo={}):
@@ -501,8 +501,7 @@ class GraphicMatroid(Matroid):
         """
         # The only real difference between this and __copy__() is the memo
         N = GraphicMatroid(deepcopy(self._G, memo))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -518,7 +517,7 @@ class GraphicMatroid(Matroid):
             Graphic matroid of rank 9 on 15 elements
         """
         from .unpickling import unpickle_graphic_matroid
-        data = (self._G, getattr(self, '__custom_name'))
+        data = (self._G, self.get_custom_name())
         version = 0
         return unpickle_graphic_matroid, (version, data)
 
@@ -713,6 +712,8 @@ class GraphicMatroid(Matroid):
             sage: M._corank([1,2,3])
             3
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         all_vertices = self._G.vertices(sort=False)
         not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
         DS_vertices = DisjointSet(all_vertices)
@@ -826,6 +827,8 @@ class GraphicMatroid(Matroid):
             sage: sorted(N._max_independent(frozenset(['a'])))
             []
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         edges = self.groundset_to_edges(X)
         vertices = set([u for (u, v, l) in edges])
         vertices.update([v for (u, v, l) in edges])
@@ -861,6 +864,8 @@ class GraphicMatroid(Matroid):
             sage: sorted(N.max_coindependent([0,1,2,5]))
             [1, 2, 5]
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         edges = self.groundset_to_edges(X)
         all_vertices = self._G.vertices(sort=False)
         not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
@@ -888,7 +893,7 @@ class GraphicMatroid(Matroid):
         OUTPUT:
 
         ``frozenset`` instance containing a subset of ``X``.
-        A ``ValueError`` is raised if the set contains no circuit.
+        A :class:`ValueError` is raised if the set contains no circuit.
 
         EXAMPLES::
 
@@ -924,6 +929,8 @@ class GraphicMatroid(Matroid):
             [4, 5]
 
         """
+        from sage.sets.disjoint_set import DisjointSet
+
         edges = self.groundset_to_edges(X)
         vertices = set([u for (u, v, l) in edges]).union(
             set([v for (u, v, l) in edges]))

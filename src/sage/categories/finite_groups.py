@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.groups
+# sage.doctest: needs sage.groups
 r"""
 Finite groups
 """
@@ -153,9 +153,9 @@ class FiniteGroups(CategoryWithAxiom):
             Return a list with all the conjugacy classes of the group.
 
             This will eventually be a fall-back method for groups not defined
-            over GAP. Right now just raises a ``NotImplementedError``, until
-            we include a non-GAP way of listing the conjugacy classes
-            representatives.
+            over GAP. Right now, it just raises a
+            :class:`NotImplementedError`, until we include a non-GAP
+            way of listing the conjugacy classes representatives.
 
             EXAMPLES::
 
@@ -166,7 +166,7 @@ class FiniteGroups(CategoryWithAxiom):
                 ...
                 NotImplementedError: Listing the conjugacy classes for group <sage.groups.group.FiniteGroup object at ...> is not implemented
             """
-            raise NotImplementedError("Listing the conjugacy classes for group %s is not implemented"%self)
+            raise NotImplementedError("Listing the conjugacy classes for group %s is not implemented" % self)
 
         def conjugacy_classes_representatives(self):
             r"""
@@ -177,7 +177,7 @@ class FiniteGroups(CategoryWithAxiom):
                 sage: G = SymmetricGroup(3)
                 sage: G.conjugacy_classes_representatives()
                 [(), (1,2), (1,2,3)]
-           """
+            """
             return [C.representative() for C in self.conjugacy_classes()]
 
     class ElementMethods:

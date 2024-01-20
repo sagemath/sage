@@ -10,7 +10,7 @@ Testing on Multiple Platforms
 
 Sage is intended to build and run on a variety of platforms,
 including all major Linux distributions, as well as MacOS, and
-Windows (with Cygwin and WSL).
+Windows (with WSL).
 
 There is considerable variation among these platforms.
 To ensure that Sage continues to build correctly on users'
@@ -230,7 +230,7 @@ following::
   configure: hint: installing the following system packages is recommended and may avoid building some of the above SPKGs from source:
   configure:   $ sudo apt-get install libflint-arb-dev ... libzmq3-dev libz-dev
   configure: After installation, re-run configure using:
-  configure:   $ ./config.status --recheck && ./config.status
+  configure:   $ make reconfigure
 
 This information comes from Sage's database of equivalent distribution
 packages.  For example::
@@ -967,11 +967,6 @@ This is defined in the files
 - `$SAGE_ROOT/.github/workflows/ci-macos.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_, and
 
-- `$SAGE_ROOT/.github/workflows/ci-cygwin-standard.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-cygwin-standard.yml>`_
-  (which calls `$SAGE_ROOT/.github/workflows/cygwin.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/cygwin.yml>`_).
-
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
 `here <https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners#supported-runners-and-hardware-resources>`_,
@@ -1151,6 +1146,58 @@ are available:
    installation of Sage, including the HTML documentation, but ``make
    ptest`` has not been run yet.
 
+
+Testing GitHub Actions locally
+==============================
+
+`act <https://github.com/nektos/act>`_ is a tool, written in Go, and using Docker,
+to run GitHub Actions locally; in particular, it speeds up developing Actions.
+We recommend using ``gh extension`` facility to install ``act``. ::
+
+    [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
+
+Extra steps needed for configuration of Docker to run Actions locally can be found on
+`act's GitHub <https://github.com/nektos/act>`_
+
+Here we give a very short sampling of ``act``'s capabilities. If you installed standalone
+``act``, it should be invoked as ``act``, not as ``gh act``.
+After the set up, one can e.g. list all the available linting actions::
+
+    [alice@localhost sage]$ gh act -l | grep lint
+    0      lint-pycodestyle        Code style check with pycodestyle                          Lint                                               lint.yml                push,pull_request
+    0      lint-relint             Code style check with relint                               Lint                                               lint.yml                push,pull_request
+    0      lint-rst                Validate docstring markup as RST                           Lint                                               lint.yml                push,pull_request
+    [alice@localhost sage]$
+
+run a particular action ``lint-rst`` ::
+
+    [alice@localhost sage]$ gh act -j lint-rst
+    ...
+
+and so on.
+
+By default, ``act`` pulls all the data needed from the next, but it can also cache it,
+speeding up repeated runs quite a lot. The following repeats running of ``lint-rst`` using cached data::
+
+    [alice@localhost sage]$ gh act -p false -r -j lint-rst
+    [Lint/Validate docstring markup as RST]   Start image=catthehacker/ubuntu:act-latest
+    ...
+    | rst: commands[0] /home/alice/work/software/sage/src> flake8 --select=RST
+    |   rst: OK (472.60=setup[0.09]+cmd[472.51] seconds)
+    |   congratulations :) (474.10 seconds)
+    ...
+    [Lint/Validate docstring markup as RST]     Success - Main Lint using tox -e rst
+    [Lint/Validate docstring markup as RST]  Run Post Set up Python
+    [Lint/Validate docstring markup as RST]     docker exec cmd=[node /var/run/act/actions/actions-setup-python@v4/dist/cache-save/index.js] user= workdir=
+    [Lint/Validate docstring markup as RST]     Success - Post Set up Python
+    [Lint/Validate docstring markup as RST]   Job succeeded
+
+Here ``-p false`` means using already pulled Docker images, and ``-r`` means do not remove Docker images
+after a successful run which used them. This, and many more details, can be found by running ``gh act -h``, as well
+as reading ``act``'s documentation.
+
+.. This sectuion is a stub. 
+   More Sage-specfic details for using ``act`` should be added. PRs welcome!
 
 Using our pre-built Docker images for development in VS Code
 ============================================================

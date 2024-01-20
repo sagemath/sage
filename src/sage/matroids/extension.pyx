@@ -30,7 +30,7 @@ Methods
 # ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-from .basis_matroid cimport BasisMatroid
+from sage.matroids.basis_matroid cimport BasisMatroid
 
 
 cdef class CutNode:
@@ -59,7 +59,7 @@ cdef class CutNode:
 
         EXAMPLES::
 
-            sage: len(list(matroids.named_matroids.Fano().linear_subclasses()))  # indirect doctest     # optional - sage.rings.finite_rings
+            sage: len(list(matroids.named_matroids.Fano().linear_subclasses()))  # indirect doctest
             16
         """
         cdef CutNode node
@@ -87,10 +87,10 @@ cdef class CutNode:
         bitset_free(self._l0)
         bitset_free(self._l1)
 
-    cdef CutNode copy(self):
+    cdef CutNode copy(self) noexcept:
         return CutNode(self._MC, self)
 
-    cdef bint insert_plane(self, long p0):
+    cdef bint insert_plane(self, long p0) noexcept:
         """
         Add a hyperplane to the linear subclass.
         """
@@ -128,7 +128,7 @@ cdef class CutNode:
                         return False
         return True
 
-    cdef bint remove_plane(self, long p0):
+    cdef bint remove_plane(self, long p0) noexcept:
         """
         Remove a hyperplane from the linear subclass.
         """
@@ -153,7 +153,7 @@ cdef class CutNode:
                         return False
         return True
 
-    cdef select_plane(self):
+    cdef select_plane(self) noexcept:
         """
         Choose a hyperplane from the linear subclass.
         """
@@ -169,7 +169,7 @@ cdef class CutNode:
 
         return bitset_first(self._p_free)
 
-    cdef list planes(self):
+    cdef list planes(self) noexcept:
         """
         Return all hyperplanes from the linear subclass.
         """
@@ -484,7 +484,7 @@ cdef class MatroidExtensions(LinearSubclasses):
         """
         if M.full_rank() == 0:
             pass
-        if type(M) == BasisMatroid:
+        if isinstance(M, BasisMatroid):
             BM = M
         else:
             BM = BasisMatroid(M)

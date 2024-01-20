@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 Spaces of distributions for Pollack-Stevens modular symbols
 
@@ -40,18 +40,20 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
 from sage.modules.module import Module
 from sage.structure.parent import Parent
-from sage.rings.padics.factory import ZpCA, QpCR
-from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 from sage.categories.modules import Modules
-from sage.modular.pollack_stevens.dist import get_dist_classes # , Dist_long
 from sage.structure.factory import UniqueFactory
 
 import sage.rings.ring as ring
+
+lazy_import('sage.modular.pollack_stevens.dist', 'get_dist_classes')
+lazy_import('sage.rings.padics.factory', ['ZpCA', 'QpCR'])
+lazy_import('sage.rings.padics.padic_generic', 'pAdicGeneric')
 
 from .sigma0 import _default_adjuster
 
@@ -222,6 +224,7 @@ class Symk_factory(UniqueFactory):
         """
         return Symk_class(*key)
 
+
 OverconvergentDistributions = OverconvergentDistributions_factory('OverconvergentDistributions')
 Symk = Symk_factory('Symk')
 
@@ -316,7 +319,7 @@ class OverconvergentDistributions_abstract(Module):
         """
         ordp = kwargs.get('ord',0)
         check = kwargs.get('check',True)
-        normalize= kwargs.get('normalize',True)
+        normalize = kwargs.get('normalize',True)
         return self.Element(val, self, ordp, check, normalize)
 
     def _coerce_map_from_(self, other):

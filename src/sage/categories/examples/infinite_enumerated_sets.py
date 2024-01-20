@@ -185,4 +185,5 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
     Element = Integer
 
+
 Example = NonNegativeIntegers

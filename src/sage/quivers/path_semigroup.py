@@ -295,8 +295,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: Q(P(['c','d']))
             c*d
 
-        A ``TypeError`` or a ``ValueError`` is raised appropriately if the input
-        is wrong::
+        A :class:`TypeError` or a :class:`ValueError` is raised appropriately
+        if the input is wrong::
 
             sage: G = DiGraph([(0,0,'a'), (0,1,'b'), (1,0,'c')], loops=True)
             sage: P = G.path_semigroup()
@@ -1079,7 +1079,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             ...
             ValueError: the end vertex 4 is not a vertex of the quiver
 
-        If the underlying quiver is cyclic, a ``ValueError``
+        If the underlying quiver is cyclic, a :class:`ValueError`
         is raised::
 
             sage: Q = DiGraph({1:{2:['a','b'], 3:['c']}, 3:{1:['d']}})

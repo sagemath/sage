@@ -18,10 +18,6 @@ Debian / Ubuntu
 Fedora
     Run ``sudo yum install git-core``
 
-Windows (Cygwin)
-    Install the Cygwin package Git. Do not attempt to use native
-    Windows installations of Git.
-
 Windows (WSL)
     We strongly recommend to install the package using the Linux
     distribution's package manager.  Native Windows installations of

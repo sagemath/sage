@@ -101,9 +101,13 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 #       groups.presentation - free groups with relations
 #       groups.symmetries - permutation groups of regular solids, or similar
 
-from sage.groups.matrix_gps import catalog as matrix
-from sage.groups.perm_gps import permutation_groups_catalog as permutation
-from sage.groups.misc_gps import misc_groups_catalog as misc
-from sage.groups.affine_gps import catalog as affine
-from sage.groups.lie_gps import catalog as lie
-from sage.groups import finitely_presented_catalog as presentation
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.groups.matrix_gps', 'catalog', as_='matrix')
+lazy_import('sage.groups.perm_gps', 'permutation_groups_catalog', as_='permutation')
+lazy_import('sage.groups.misc_gps', 'misc_groups_catalog', as_='misc')
+lazy_import('sage.groups.affine_gps', 'catalog', as_='affine')
+lazy_import('sage.groups', 'finitely_presented_catalog', as_='presentation')
+lazy_import('sage.groups.lie_gps', 'catalog', as_='lie')
+
+del lazy_import

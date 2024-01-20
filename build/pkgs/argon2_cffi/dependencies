@@ -1,4 +1,4 @@
-$(PYTHON) argon2_cffi_bindings | $(PYTHON_TOOLCHAIN) flit_core
+ argon2_cffi_bindings | $(PYTHON_TOOLCHAIN) flit_core $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

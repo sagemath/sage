@@ -10,13 +10,13 @@ dual of `M`.
 
 EXAMPLES::
 
-    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.rings.finite_rings
-    sage: N = M.dual()                                                                  # optional - sage.rings.finite_rings
-    sage: M.is_basis('abc')                                                             # optional - sage.rings.finite_rings
+    sage: M = matroids.named_matroids.Fano()
+    sage: N = M.dual()
+    sage: M.is_basis('abc')
     True
-    sage: N.is_basis('defg')                                                            # optional - sage.rings.finite_rings
+    sage: N.is_basis('defg')
     True
-    sage: M.dual().dual() == M                                                          # optional - sage.rings.finite_rings
+    sage: M.dual().dual() == M
     True
 
 Implementation
@@ -455,17 +455,17 @@ class DualMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
-            sage: M2 = CircuitClosuresMatroid(M1.dual())                                # optional - sage.rings.finite_rings
-            sage: M3 = CircuitClosuresMatroid(M1).dual()                                # optional - sage.rings.finite_rings
+            sage: M1 = matroids.named_matroids.Fano()
+            sage: M2 = CircuitClosuresMatroid(M1.dual())
+            sage: M3 = CircuitClosuresMatroid(M1).dual()
             sage: M4 = CircuitClosuresMatroid(groundset='abcdefg',
             ....:   circuit_closures={3: ['abcdefg'], 2: ['beg', 'cdb', 'cfg',
             ....:   'ace', 'fed', 'gad', 'fab']}).dual()
-            sage: M1.dual() == M2  # indirect doctest                                   # optional - sage.rings.finite_rings
+            sage: M1.dual() == M2  # indirect doctest
             False
-            sage: M2 == M3                                                              # optional - sage.rings.finite_rings
+            sage: M2 == M3
             False
-            sage: M3 == M4                                                              # optional - sage.rings.finite_rings
+            sage: M3 == M4
             True
         """
         if not isinstance(other, DualMatroid):
@@ -487,17 +487,17 @@ class DualMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M1 = matroids.named_matroids.Fano()                                   # optional - sage.rings.finite_rings
-            sage: M2 = CircuitClosuresMatroid(M1.dual())                                # optional - sage.rings.finite_rings
-            sage: M3 = CircuitClosuresMatroid(M1).dual()                                # optional - sage.rings.finite_rings
+            sage: M1 = matroids.named_matroids.Fano()
+            sage: M2 = CircuitClosuresMatroid(M1.dual())
+            sage: M3 = CircuitClosuresMatroid(M1).dual()
             sage: M4 = CircuitClosuresMatroid(groundset='abcdefg',
             ....:   circuit_closures={3: ['abcdefg'], 2: ['beg', 'cdb', 'cfg',
             ....:                'ace', 'fed', 'gad', 'fab']}).dual()
-            sage: M1.dual() != M2  # indirect doctest                                   # optional - sage.rings.finite_rings
+            sage: M1.dual() != M2  # indirect doctest
             True
-            sage: M2 != M3                                                              # optional - sage.rings.finite_rings
+            sage: M2 != M3
             True
-            sage: M3 != M4                                                              # optional - sage.rings.finite_rings
+            sage: M3 != M4
             False
         """
         return not self == other
@@ -519,9 +519,7 @@ class DualMatroid(Matroid):
 
         """
         N = DualMatroid(self._matroid)
-        if getattr(self, '__custom_name') is not None:
-            # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo={}):
@@ -543,10 +541,7 @@ class DualMatroid(Matroid):
         """
         from copy import deepcopy
         N = DualMatroid(deepcopy(self._matroid, memo))
-        if getattr(self, '__custom_name') is not None:
-            # because of name wrangling, this is not caught by the
-            # default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -575,6 +570,6 @@ class DualMatroid(Matroid):
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}'
         """
         import sage.matroids.unpickling
-        data = (self._matroid, getattr(self, '__custom_name'))
+        data = (self._matroid, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_dual_matroid, (version, data)

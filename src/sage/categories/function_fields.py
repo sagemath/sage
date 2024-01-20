@@ -56,10 +56,10 @@ class FunctionFields(Category):
             sage: C(K)
             Rational function field in x over Rational Field
             sage: Ky.<y> = K[]
-            sage: L = K.extension(y^2 - x)                                              # optional - sage.rings.function_field
-            sage: C(L)                                                                  # optional - sage.rings.function_field
+            sage: L = K.extension(y^2 - x)                                              # needs sage.rings.function_field
+            sage: C(L)                                                                  # needs sage.rings.function_field
             Function field in y defined by y^2 - x
-            sage: C(L.equation_order())                                                 # optional - sage.rings.function_field
+            sage: C(L.equation_order())                                                 # needs sage.rings.function_field
             Function field in y defined by y^2 - x
         """
         try:

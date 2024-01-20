@@ -1,4 +1,4 @@
-"""
+r"""
 Symbolic Series
 
 Symbolic series are special kinds of symbolic expressions that are

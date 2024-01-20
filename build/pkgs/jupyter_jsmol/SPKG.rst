@@ -9,7 +9,7 @@ JSmol viewer widget for Jupyter
 License
 -------
 
-BSD
+MIT
 
 Upstream Contact
 ----------------

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Homset between extensions of rings
 
@@ -29,7 +30,9 @@ class RingExtensionHomset(RingHomset_generic):
         sage: L = GF(5^8).over(K)
         sage: H = Hom(K,L)
         sage: H
-        Set of Homomorphisms from Field in z2 with defining polynomial x^2 + 4*x + 2 over its base to Field in z8 with defining polynomial x^4 + (3 - z2)*x + z2 over its base
+        Set of Homomorphisms
+         from Field in z2 with defining polynomial x^2 + 4*x + 2 over its base
+           to Field in z8 with defining polynomial x^4 + (3 - z2)*x + z2 over its base
 
         sage: type(H)
         <... 'sage.rings.ring_extension_homset.RingExtensionHomset_with_category'>
@@ -44,7 +47,8 @@ class RingExtensionHomset(RingHomset_generic):
             sage: K.<a> = GF(5^2).over()
             sage: L.<b> = GF(5^4).over(K)
             sage: Hom(L,L)([b^5, a^5])
-            Ring endomorphism of Field in b with defining polynomial x^2 + (3 - a)*x + a over its base
+            Ring endomorphism of
+             Field in b with defining polynomial x^2 + (3 - a)*x + a over its base
               Defn: b |--> (2 + a) + 2*b
                     with map on base ring:
                     a |--> 1 - a

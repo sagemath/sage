@@ -42,7 +42,7 @@ def magma_free_eval(code, strip=True, columns=0):
     processPath = "/xml/calculator.xml"
     refererPath = "/calc/"
     refererUrl = "http://%s%s" % ( server, refererPath)
-    code = "SetColumns(%s);\n"%columns + code
+    code = "SetColumns(%s);\n" % columns + code
     params = urlencode({'input':code})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "Accept: text/html, application/xml, application/xhtml+xml", "Referer": refererUrl}

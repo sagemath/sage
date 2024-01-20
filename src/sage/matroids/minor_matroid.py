@@ -13,23 +13,23 @@ from `E` and keeping all remaining independent sets. This is denoted ``M \ D``
 
 EXAMPLES::
 
-    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.rings.finite_rings
-    sage: M \ ['a', 'c' ] == M.delete(['a', 'c'])                                       # optional - sage.rings.finite_rings
+    sage: M = matroids.named_matroids.Fano()
+    sage: M.delete(['a', 'c' ]) == M.delete(['a', 'c'])
     True
-    sage: M / 'a' == M.contract('a')                                                    # optional - sage.rings.finite_rings
+    sage: M / 'a' == M.contract('a')
     True
-    sage: M / 'c' \ 'ab' == M.minor(contractions='c', deletions='ab')                   # optional - sage.rings.finite_rings
+    sage: (M / 'c').delete('ab') == M.minor(contractions='c', deletions='ab')
     True
 
 If a contraction set is not independent (or a deletion set not coindependent),
 this is taken care of::
 
-    sage: M = matroids.named_matroids.Fano()                                            # optional - sage.rings.finite_rings
-    sage: M.rank('abf')                                                                 # optional - sage.rings.finite_rings
+    sage: M = matroids.named_matroids.Fano()
+    sage: M.rank('abf')
     2
-    sage: M / 'abf' == M / 'ab' \ 'f'                                                   # optional - sage.rings.finite_rings
+    sage: M / 'abf' == (M / 'ab').delete('f')
     True
-    sage: M / 'abf' == M / 'af' \ 'b'                                                   # optional - sage.rings.finite_rings
+    sage: M / 'abf' == (M / 'af').delete('b')
     True
 
 .. SEEALSO::
@@ -132,9 +132,9 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),    # indirect doctest, optional - sage.rings.finite_rings
+            sage: M = MinorMatroid(matroids.named_matroids.Fano(),  # indirect doctest
             ....:                  contractions=set(), deletions=set(['g']))
-            sage: M.is_isomorphic(matroids.Wheel(3))                                    # optional - sage.rings.finite_rings
+            sage: M.is_isomorphic(matroids.Wheel(3))
             True
         """
         if not isinstance(matroid, Matroid):
@@ -423,15 +423,15 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M1 = MinorMatroid(M, set('ab'), set('f'))                             # optional - sage.rings.finite_rings
-            sage: M2 = MinorMatroid(M, set('af'), set('b'))                             # optional - sage.rings.finite_rings
-            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())      # optional - sage.rings.finite_rings
-            sage: M1 == M2  # indirect doctest                                          # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M1 = MinorMatroid(M, set('ab'), set('f'))
+            sage: M2 = MinorMatroid(M, set('af'), set('b'))
+            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
+            sage: M1 == M2  # indirect doctest
             False
-            sage: M1.equals(M2)                                                         # optional - sage.rings.finite_rings
+            sage: M1.equals(M2)
             True
-            sage: M1 == M3                                                              # optional - sage.rings.finite_rings
+            sage: M1 == M3
             True
         """
         if not isinstance(other, MinorMatroid):
@@ -455,15 +455,15 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()                                    # optional - sage.rings.finite_rings
-            sage: M1 = MinorMatroid(M, set('ab'), set('f'))                             # optional - sage.rings.finite_rings
-            sage: M2 = MinorMatroid(M, set('af'), set('b'))                             # optional - sage.rings.finite_rings
-            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())      # optional - sage.rings.finite_rings
-            sage: M1 != M2  # indirect doctest                                          # optional - sage.rings.finite_rings
+            sage: M = matroids.named_matroids.Fano()
+            sage: M1 = MinorMatroid(M, set('ab'), set('f'))
+            sage: M2 = MinorMatroid(M, set('af'), set('b'))
+            sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
+            sage: M1 != M2  # indirect doctest
             True
-            sage: M1.equals(M2)                                                         # optional - sage.rings.finite_rings
+            sage: M1.equals(M2)
             True
-            sage: M1 != M3                                                              # optional - sage.rings.finite_rings
+            sage: M1 != M3
             False
         """
         return not self == other
@@ -486,8 +486,7 @@ class MinorMatroid(Matroid):
             True
         """
         N = MinorMatroid(self._matroid, self._contractions, self._deletions)
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo={}):
@@ -512,8 +511,7 @@ class MinorMatroid(Matroid):
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = MinorMatroid(deepcopy(self._matroid, memo), deepcopy(self._contractions, memo), deepcopy(self._deletions, memo))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -534,6 +532,6 @@ class MinorMatroid(Matroid):
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
         import sage.matroids.unpickling
-        data = (self._matroid, self._contractions, self._deletions, getattr(self, '__custom_name'))
+        data = (self._matroid, self._contractions, self._deletions, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_minor_matroid, (version, data)

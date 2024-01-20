@@ -28,6 +28,7 @@ from sage.structure.element_wrapper import ElementWrapperCheckWrappedClass
 from sage.categories.rings import Rings
 _Rings = Rings()
 
+
 class CartesianProduct(UniqueRepresentation, Parent):
     """
     A class implementing a raw data structure for Cartesian products
@@ -79,7 +80,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         self._sets = tuple(sets)
         Parent.__init__(self, category=category)
 
-    def _element_constructor_(self,x):
+    def _element_constructor_(self, x):
         r"""
         Construct an element of a Cartesian product from a list or iterable
 
@@ -141,7 +142,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: cartesian_product([QQ, ZZ, ZZ]) # indirect doctest
             The Cartesian product of (Rational Field, Integer Ring, Integer Ring)
         """
-        return "The Cartesian product of %s"%(self._sets,)
+        return "The Cartesian product of %s" % (self._sets,)
 
     def __contains__(self, x):
         """
@@ -160,8 +161,8 @@ class CartesianProduct(UniqueRepresentation, Parent):
                 return True
         elif not isinstance(x, tuple):
             return False
-        return ( len(x) == len(self._sets)
-                 and all(elt in self._sets[i] for i,elt in enumerate(x)) )
+        return (len(x) == len(self._sets)
+                and all(elt in self._sets[i] for i, elt in enumerate(x)))
 
     def cartesian_factors(self):
         """
@@ -353,9 +354,9 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: C = cartesian_product([ZZ, QQ, CC])
-                sage: e = C.random_element()
-                sage: len(e)
+                sage: C = cartesian_product([ZZ, QQ, CC])                               # needs sage.rings.real_mpfr
+                sage: e = C.random_element()                                            # needs sage.rings.real_mpfr
+                sage: len(e)                                                            # needs sage.rings.real_mpfr
                 3
             """
             return len(self.value)
@@ -367,7 +368,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: A = cartesian_product([ZZ, RR])
-                sage: A((1, 1.23)).cartesian_factors()
+                sage: A((1, 1.23)).cartesian_factors()                                  # needs sage.rings.real_mpfr
                 (1, 1.23000000000000)
                 sage: type(_)
                 <... 'tuple'>

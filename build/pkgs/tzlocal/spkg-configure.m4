@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([tzlocal], [SAGE_PYTHON_PACKAGE_CHECK([tzlocal])])

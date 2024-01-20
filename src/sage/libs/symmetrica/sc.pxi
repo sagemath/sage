@@ -4,6 +4,7 @@ cdef extern from 'symmetrica/def.h':
     INT kranztafel(OP a, OP b, OP res, OP co, OP cl)
     INT c_ijk_sn(OP i, OP j, OP k, OP res)
 
+
 def chartafel_symmetrica(n):
     """
     you enter the degree of the symmetric group, as INTEGER
@@ -22,8 +23,7 @@ def chartafel_symmetrica(n):
         [ 0 -1  2  0  2]
         [ 1  0 -1 -1  3]
         [-1  1  1 -1  1]
-     """
-
+    """
     cdef OP cn, cres
 
     cn   = callocobject()
@@ -39,7 +39,6 @@ def chartafel_symmetrica(n):
     freeall(cres)
 
     return res
-
 
 
 def charvalue_symmetrica(irred, cls, table=None):
@@ -67,9 +66,7 @@ def charvalue_symmetrica(irred, cls, table=None):
         sage: m == symmetrica.chartafel(n)
         True
     """
-
     cdef OP cirred, cclass, ctable, cresult
-
 
     cirred = callocobject()
     cclass = callocobject()
@@ -80,8 +77,6 @@ def charvalue_symmetrica(irred, cls, table=None):
     else:
         ctable = callocobject()
         _op_matrix(table, ctable)
-
-
 
     #FIXME: assume that class is a partition
     _op_partition(cls, cclass)
@@ -101,41 +96,37 @@ def charvalue_symmetrica(irred, cls, table=None):
     return res
 
 
-
 def kranztafel_symmetrica(a, b):
-    """
-    you enter the INTEGER objects, say a and b, and res becomes a
-    MATRIX object, the charactertable of S_b \wr S_a, co becomes a
-    VECTOR object of classorders and cl becomes a VECTOR object of
+    r"""
+    you enter the INTEGER objects, say `a` and `b`, and ``res`` becomes a
+    MATRIX object, the charactertable of `S_b \wr S_a`, ``co`` becomes a
+    VECTOR object of classorders and ``cl`` becomes a VECTOR object of
     the classlabels.
 
     EXAMPLES::
 
-       sage: (a,b,c) = symmetrica.kranztafel(2,2)
-       sage: a
-       [ 1 -1  1 -1  1]
-       [ 1  1  1  1  1]
-       [-1  1  1 -1  1]
-       [ 0  0  2  0 -2]
-       [-1 -1  1  1  1]
-       sage: b
-       [2, 2, 1, 2, 1]
-       sage: for m in c: print(m)
-       [0 0]
-       [0 1]
-       [0 0]
-       [1 0]
-       [0 2]
-       [0 0]
-       [1 1]
-       [0 0]
-       [2 0]
-       [0 0]
-
+        sage: (a,b,c) = symmetrica.kranztafel(2,2)
+        sage: a
+        [ 1 -1  1 -1  1]
+        [ 1  1  1  1  1]
+        [-1  1  1 -1  1]
+        [ 0  0  2  0 -2]
+        [-1 -1  1  1  1]
+        sage: b
+        [2, 2, 1, 2, 1]
+        sage: for m in c: print(m)
+        [0 0]
+        [0 1]
+        [0 0]
+        [1 0]
+        [0 2]
+        [0 0]
+        [1 1]
+        [0 0]
+        [2 0]
+        [0 0]
     """
-
     cdef OP ca, cb, cres, cco, ccl
-
 
     ca = callocobject()
     cb = callocobject()
@@ -194,4 +185,3 @@ def kranztafel_symmetrica(a, b):
 ##     freeall(ck)
 
 ##     return res
-

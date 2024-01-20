@@ -42,16 +42,16 @@ class NumberFields(Category_singleton):
     course also in this category::
 
         sage: x = PolynomialRing(RationalField(), 'x').gen()
-        sage: K = NumberField(x - 1, 'a'); K                                            # optional - sage.rings.number_field
+        sage: K = NumberField(x - 1, 'a'); K                                            # needs sage.rings.number_field
         Number Field in a with defining polynomial x - 1
-        sage: K in C                                                                    # optional - sage.rings.number_field
+        sage: K in C                                                                    # needs sage.rings.number_field
         True
 
     Number fields all lie in this category, regardless of the name
     of the variable::
 
-        sage: K = NumberField(x^2 + 1, 'a')                                             # optional - sage.rings.number_field
-        sage: K in C                                                                    # optional - sage.rings.number_field
+        sage: K = NumberField(x^2 + 1, 'a')                                             # needs sage.rings.number_field
+        sage: K in C                                                                    # needs sage.rings.number_field
         True
 
     TESTS::
@@ -75,11 +75,11 @@ class NumberFields(Category_singleton):
         EXAMPLES::
 
             sage: x = polygen(QQ, 'x')
-            sage: NumberField(x^2 + 1, 'a') in NumberFields()                           # optional - sage.rings.number_field
+            sage: NumberField(x^2 + 1, 'a') in NumberFields()                           # needs sage.rings.number_field
             True
-            sage: QuadraticField(-97, 'theta') in NumberFields()                        # optional - sage.rings.number_field
+            sage: QuadraticField(-97, 'theta') in NumberFields()                        # needs sage.rings.number_field
             True
-            sage: CyclotomicField(97) in NumberFields()                                 # optional - sage.rings.number_field
+            sage: CyclotomicField(97) in NumberFields()                                 # needs sage.rings.number_field
             True
 
         Note that the rational numbers QQ are a number field::
@@ -95,7 +95,7 @@ class NumberFields(Category_singleton):
     def _call_(self, x):
         r"""
         Construct an object in this category from the data in ``x``,
-        or raise a ``TypeError``.
+        or raise a :class:`TypeError`.
 
         EXAMPLES::
 
@@ -105,10 +105,10 @@ class NumberFields(Category_singleton):
             sage: C(QQ)
             Rational Field
 
-            sage: C(NumberField(x^2 + 1, 'a'))                                          # optional - sage.rings.number_field
+            sage: C(NumberField(x^2 + 1, 'a'))                                          # needs sage.rings.number_field
             Number Field in a with defining polynomial x^2 + 1
 
-            sage: C(UnitGroup(NumberField(x^2 + 1, 'a')))  # indirect doctest           # optional - sage.rings.number_field
+            sage: C(UnitGroup(NumberField(x^2 + 1, 'a')))  # indirect doctest           # needs sage.rings.number_field
             Number Field in a with defining polynomial x^2 + 1
 
             sage: C(ZZ)
@@ -151,35 +151,35 @@ class NumberFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: K.<a> = NumberField(ZZ['x'].0^2 + ZZ['x'].0 - 1)                  # optional - sage.rings.number_field
-                sage: Z = K.zeta_function(); Z                                          # optional - sage.rings.number_field sage.symbolic
+                sage: K.<a> = NumberField(ZZ['x'].0^2 + ZZ['x'].0 - 1)                  # needs sage.rings.number_field
+                sage: Z = K.zeta_function(); Z                                          # needs sage.rings.number_field sage.symbolic
                 PARI zeta function associated to Number Field in a
                  with defining polynomial x^2 + x - 1
-                sage: Z(-1)                                                             # optional - sage.rings.number_field sage.symbolic
+                sage: Z(-1)                                                             # needs sage.rings.number_field sage.symbolic
                 0.0333333333333333
 
                 sage: x = polygen(QQ, 'x')
-                sage: L.<a, b, c> = NumberField([x^2 - 5, x^2 + 3, x^2 + 1])            # optional - sage.rings.number_field
-                sage: Z = L.zeta_function()                                             # optional - sage.rings.number_field sage.symbolic
-                sage: Z(5)                                                              # optional - sage.rings.number_field sage.symbolic
+                sage: L.<a, b, c> = NumberField([x^2 - 5, x^2 + 3, x^2 + 1])            # needs sage.rings.number_field
+                sage: Z = L.zeta_function()                                             # needs sage.rings.number_field sage.symbolic
+                sage: Z(5)                                                              # needs sage.rings.number_field sage.symbolic
                 1.00199015670185
 
             Using the algorithm "pari"::
 
-                sage: K.<a> = NumberField(ZZ['x'].0^2 + ZZ['x'].0 - 1)                  # optional - sage.rings.number_field
-                sage: Z = K.zeta_function(algorithm="pari")                             # optional - sage.rings.number_field sage.symbolic
-                sage: Z(-1)                                                             # optional - sage.rings.number_field sage.symbolic
+                sage: K.<a> = NumberField(ZZ['x'].0^2 + ZZ['x'].0 - 1)                  # needs sage.rings.number_field
+                sage: Z = K.zeta_function(algorithm="pari")                             # needs sage.rings.number_field sage.symbolic
+                sage: Z(-1)                                                             # needs sage.rings.number_field sage.symbolic
                 0.0333333333333333
 
                 sage: x = polygen(QQ, 'x')
-                sage: L.<a, b, c> = NumberField([x^2 - 5, x^2 + 3, x^2 + 1])            # optional - sage.rings.number_field
-                sage: Z = L.zeta_function(algorithm="pari")                             # optional - sage.rings.number_field sage.symbolic
-                sage: Z(5)                                                              # optional - sage.rings.number_field sage.symbolic
+                sage: L.<a, b, c> = NumberField([x^2 - 5, x^2 + 3, x^2 + 1])            # needs sage.rings.number_field
+                sage: Z = L.zeta_function(algorithm="pari")                             # needs sage.rings.number_field sage.symbolic
+                sage: Z(5)                                                              # needs sage.rings.number_field sage.symbolic
                 1.00199015670185
 
             TESTS::
 
-                sage: QQ.zeta_function()                                                # optional - sage.symbolic
+                sage: QQ.zeta_function()                                                # needs sage.symbolic
                 PARI zeta function associated to Rational Field
             """
             if algorithm == 'gp':
@@ -224,8 +224,8 @@ class NumberFields(Category_singleton):
             EXAMPLES::
 
                 sage: x = polygen(ZZ, 'x')
-                sage: S = NumberField(x**3 - x - 1, 'a')                                # optional - sage.rings.number_field
-                sage: S._test_absolute_disc()                                           # optional - sage.rings.number_field
+                sage: S = NumberField(x**3 - x - 1, 'a')                                # needs sage.rings.number_field
+                sage: S._test_absolute_disc()                                           # needs sage.rings.number_field
             """
             from sage.rings.integer import Integer
             tester = self._tester(**options)

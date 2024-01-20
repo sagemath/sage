@@ -11,6 +11,7 @@ Big O for various types (power series, p-adics, etc.)
 
 from sage.arith.misc import factor
 from sage.misc.lazy_import import lazy_import
+
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
 lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -25,10 +26,12 @@ try:
 except ImportError:
     PuiseuxSeries = ()
 
-from . import power_series_ring_element
-from . import integer
-from . import rational
-from . import multi_power_series_ring_element
+from sage.rings import (
+    integer,
+    multi_power_series_ring_element,
+    power_series_ring_element,
+    rational,
+)
 
 
 def O(*x, **kwds):
@@ -57,44 +60,45 @@ def O(*x, **kwds):
 
     This is also useful to create `p`-adic numbers::
 
-        sage: O(7^6)                                                                    # optional - sage.rings.padics
+        sage: O(7^6)                                                                    # needs sage.rings.padics
         O(7^6)
-        sage: 1/3 + O(7^6)                                                              # optional - sage.rings.padics
+        sage: 1/3 + O(7^6)                                                              # needs sage.rings.padics
         5 + 4*7 + 4*7^2 + 4*7^3 + 4*7^4 + 4*7^5 + O(7^6)
 
     It behaves well with respect to adding negative powers of `p`::
 
-        sage: a = O(11^-32); a                                                          # optional - sage.rings.padics
+        sage: a = O(11^-32); a                                                          # needs sage.rings.padics
         O(11^-32)
-        sage: a.parent()                                                                # optional - sage.rings.padics
+        sage: a.parent()                                                                # needs sage.rings.padics
         11-adic Field with capped relative precision 20
 
     There are problems if you add a rational with very negative
     valuation to an `O`-Term::
 
-        sage: 11^-12 + O(11^15)                                                         # optional - sage.rings.padics
+        sage: 11^-12 + O(11^15)                                                         # needs sage.rings.padics
         11^-12 + O(11^8)
 
     The reason that this fails is that the constructor doesn't know
     the right precision cap to use. If you cast explicitly or use
     other means of element creation, you can get around this issue::
 
-        sage: K = Qp(11, 30)                                                            # optional - sage.rings.padics
-        sage: K(11^-12) + O(11^15)                                                      # optional - sage.rings.padics
+        sage: # needs sage.rings.padics
+        sage: K = Qp(11, 30)
+        sage: K(11^-12) + O(11^15)
         11^-12 + O(11^15)
-        sage: 11^-12 + K(O(11^15))                                                      # optional - sage.rings.padics
+        sage: 11^-12 + K(O(11^15))
         11^-12 + O(11^15)
-        sage: K(11^-12, absprec=15)                                                     # optional - sage.rings.padics
+        sage: K(11^-12, absprec=15)
         11^-12 + O(11^15)
-        sage: K(11^-12, 15)                                                             # optional - sage.rings.padics
+        sage: K(11^-12, 15)
         11^-12 + O(11^15)
 
     We can also work with `asymptotic expansions`_::
 
-        sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ',            # optional - sage.symbolic
+        sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ',            # needs sage.symbolic
         ....:                        coefficient_ring=QQ); A
         Asymptotic Ring <QQ^n * n^QQ * log(n)^QQ * Signs^n> over Rational Field
-        sage: O(n)                                                                      # optional - sage.symbolic
+        sage: O(n)                                                                      # needs sage.symbolic
         O(n)
 
     Application with Puiseux series::
@@ -108,17 +112,17 @@ def O(*x, **kwds):
 
     TESTS::
 
-        sage: var('x, y')                                                               # optional - sage.symbolic
+        sage: var('x, y')                                                               # needs sage.symbolic
         (x, y)
-        sage: O(x)                                                                      # optional - sage.symbolic
+        sage: O(x)                                                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ArithmeticError: O(x) not defined
-        sage: O(y)                                                                      # optional - sage.symbolic
+        sage: O(y)                                                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ArithmeticError: O(y) not defined
-        sage: O(x, y)                                                                   # optional - sage.symbolic
+        sage: O(x, y)
         Traceback (most recent call last):
         ...
         ArithmeticError: O(x, y) not defined

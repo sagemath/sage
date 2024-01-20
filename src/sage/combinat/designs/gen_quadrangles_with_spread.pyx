@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Database of generalised quadrangles with spread
 
@@ -122,6 +123,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
     raise RuntimeError(
         f"Sage can't build a GQ of order ({s}, {t}) with a spread")
 
+
 def is_GQ_with_spread(GQ, S, s=None, t=None):
     r"""
     Check if GQ is a generalised quadrangle of order `(s,t)` and
@@ -231,6 +233,7 @@ def dual_GQ_ovoid(GQ, O):
 
     D = IncidenceStructure(newBlocks)
     return (D, S)
+
 
 def generalised_quadrangle_hermitian_with_ovoid(const int q):
     r"""

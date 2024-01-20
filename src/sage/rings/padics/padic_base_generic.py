@@ -40,7 +40,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         TESTS::
 
-            sage: R = Zp(5) #indirect doctest
+            sage: R = Zp(5)  # indirect doctest
         """
         if self.is_relaxed():
             from sage.rings.padics.pow_computer_flint import PowComputer_flint
@@ -92,21 +92,21 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: K = Zp(17); K #indirect doctest
+            sage: K = Zp(17); K  # indirect doctest
             17-adic Ring with capped relative precision 20
             sage: latex(K)
             \Bold{Z}_{17}
-            sage: K = ZpCA(17); K #indirect doctest
+            sage: K = ZpCA(17); K  # indirect doctest
             17-adic Ring with capped absolute precision 20
             sage: latex(K)
             \Bold{Z}_{17}
-            sage: K = ZpFP(17); K #indirect doctest
+            sage: K = ZpFP(17); K  # indirect doctest
             17-adic Ring with floating precision 20
             sage: latex(K)
             \Bold{Z}_{17}
             sage: K = ZpFM(7); K
             7-adic Ring of fixed modulus 7^20
-            sage: latex(K) #indirect doctest
+            sage: latex(K)  # indirect doctest
             \Bold{Z}_{7}
             sage: K = ZpLF(2); K   # indirect doctest
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
@@ -114,11 +114,11 @@ class pAdicBaseGeneric(pAdicGeneric):
             2-adic Ring with lattice-float precision
             sage: latex(K)
             \Bold{Z}_{2}
-            sage: K = Qp(17); K #indirect doctest
+            sage: K = Qp(17); K  # indirect doctest
             17-adic Field with capped relative precision 20
             sage: latex(K)
             \Bold{Q}_{17}
-            sage: K = QpFP(17); K #indirect doctest
+            sage: K = QpFP(17); K  # indirect doctest
             17-adic Field with floating precision 20
             sage: latex(K)
             \Bold{Q}_{17}
@@ -133,12 +133,12 @@ class pAdicBaseGeneric(pAdicGeneric):
             else:
                 s = r"\Bold{Z}_{%s}" % self.prime()
             if hasattr(self, '_label') and self._label:
-                s = r"\verb'%s' (\simeq %s)"%(self._label, s)
+                s = r"\verb'%s' (\simeq %s)" % (self._label, s)
         else:
             s = "Field " if self.is_field() else "Ring "
-            s = "%s-adic "%self.prime() + s + precprint(self._prec_type(), self.precision_cap(), self.prime())
+            s = "%s-adic " % self.prime() + s + precprint(self._prec_type(), self.precision_cap(), self.prime())
             if hasattr(self, '_label') and self._label:
-                s+= " (label: %s)"%self._label
+                s += " (label: %s)" % self._label
         return s
 
     def exact_field(self):
@@ -387,7 +387,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             if n == 1:
                 return self(1)
             else:
-                raise ValueError("No, %sth root of unity in self"%n)
+                raise ValueError("No, %sth root of unity in self" % n)
         else:
             from sage.rings.finite_rings.finite_field_constructor import GF
             return self.teichmuller(GF(self.prime()).zeta(n).lift())
@@ -433,11 +433,11 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: Zp(3).plot()
+            sage: Zp(3).plot()                                                          # needs sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: Zp(5).plot(max_points=625)
+            sage: Zp(5).plot(max_points=625)                                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: Zp(23).plot(rgbcolor=(1,0,0))
+            sage: Zp(23).plot(rgbcolor=(1,0,0))                                         # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         if 'pointsize' not in args:

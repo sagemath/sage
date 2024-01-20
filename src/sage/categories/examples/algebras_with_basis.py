@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat
+# sage.doctest: needs sage.combinat
 r"""
 Examples of algebras with basis
 """
@@ -26,9 +26,9 @@ class FreeAlgebra(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: A = AlgebrasWithBasis(QQ).example(); A
+            sage: A = AlgebrasWithBasis(QQ).example(); A                                # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
-            sage: TestSuite(A).run()
+            sage: TestSuite(A).run()                                                    # needs sage.modules
 
         """
         self._alphabet = alphabet
@@ -40,10 +40,10 @@ class FreeAlgebra(CombinatorialFreeModule):
         """
         EXAMPLES::
 
-            sage: AlgebrasWithBasis(QQ).example() # indirect doctest
+            sage: AlgebrasWithBasis(QQ).example()  # indirect doctest                   # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
         """
-        return "An example of an algebra with basis: the free algebra on the generators %s over %s"%(self._alphabet, self.base_ring())
+        return "An example of an algebra with basis: the free algebra on the generators %s over %s" % (self._alphabet, self.base_ring())
 
     @cached_method
     def one_basis(self):
@@ -53,10 +53,10 @@ class FreeAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::r
 
-            sage: A = AlgebrasWithBasis(QQ).example()
-            sage: A.one_basis()
+            sage: A = AlgebrasWithBasis(QQ).example()                                   # needs sage.modules
+            sage: A.one_basis()                                                         # needs sage.modules
             word:
-            sage: A.one()
+            sage: A.one()                                                               # needs sage.modules
             B[word: ]
         """
         return self.basis().keys()([])
@@ -68,6 +68,7 @@ class FreeAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: A = AlgebrasWithBasis(QQ).example()
             sage: Words = A.basis().keys()
             sage: A.product_on_basis(Words("acb"), Words("cba"))
@@ -85,9 +86,9 @@ class FreeAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = AlgebrasWithBasis(QQ).example(); A
+            sage: A = AlgebrasWithBasis(QQ).example(); A                                # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
-            sage: A.algebra_generators()
+            sage: A.algebra_generators()                                                # needs sage.modules
             Family (B[word: a], B[word: b], B[word: c])
         """
         Words = self.basis().keys()
@@ -95,5 +96,6 @@ class FreeAlgebra(CombinatorialFreeModule):
         # FIXME: use this once the keys argument of FiniteFamily will be honoured
         # for the specifying the order of the elements in the family
         #return Family(self._alphabet, lambda a: self.term(self.basis().keys()(a)))
+
 
 Example = FreeAlgebra

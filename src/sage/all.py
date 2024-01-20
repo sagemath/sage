@@ -132,16 +132,12 @@ from sage.quadratic_forms.all import *
 
 from sage.games.all      import *
 
-lazy_import('sage.media.wav', 'Wave', as_='wave', deprecation=12673)
-
 from sage.logic.all      import *
 
 from sage.numerical.all  import *
 
 from sage.stats.all      import *
 import sage.stats.all as stats
-
-lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
 
 from sage.parallel.all   import *
 
@@ -193,10 +189,6 @@ i = I
 from sage.misc.copying import license
 copying = license
 copyright = license
-
-_cpu_time_ = cputime()
-_wall_time_ = walltime()
-
 
 def quit_sage(verbose=True):
     """

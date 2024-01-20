@@ -47,6 +47,7 @@ class Package(object):
         self._init_version()
         self._init_type()
         self._init_install_requires()
+        self._init_dependencies()
 
     def __repr__(self):
         return 'Package {0}'.format(self.name)
@@ -120,6 +121,42 @@ class Package(object):
             self.__tarball = Tarball(self.tarball_filename, package=self)
         return self.__tarball
 
+    def _substitute_variables_once(self, pattern):
+        """
+        Substitute (at most) one occurrence of variables in ``pattern`` by the values.
+
+        These variables are ``VERSION``, ``VERSION_MAJOR``, ``VERSION_MINOR``,
+        ``VERSION_MICRO``, either appearing like this or in the form ``${VERSION_MAJOR}``
+        etc.
+
+        Return a tuple:
+        - the string with the substitution done or the original string
+        - whether a substitution was done
+        """
+        for var in ('VERSION_MAJOR', 'VERSION_MINOR', 'VERSION_MICRO', 'VERSION'):
+            # As VERSION is a substring of the other three, it needs to be tested last.
+            dollar_brace_var = '${' + var + '}'
+            if dollar_brace_var in pattern:
+                value = getattr(self, var.lower())
+                return pattern.replace(dollar_brace_var, value, 1), True
+            elif var in pattern:
+                value = getattr(self, var.lower())
+                return pattern.replace(var, value, 1), True
+        return pattern, False
+
+    def _substitute_variables(self, pattern):
+        """
+        Substitute all occurrences of ``VERSION`` in ``pattern`` by the actual version.
+
+        Likewise for ``VERSION_MAJOR``, ``VERSION_MINOR``, ``VERSION_MICRO``,
+        either appearing like this or in the form ``${VERSION}``, ``${VERSION_MAJOR}``,
+        etc.
+        """
+        not_done = True
+        while not_done:
+            pattern, not_done = self._substitute_variables_once(pattern)
+        return pattern
+
     @property
     def tarball_pattern(self):
         """
@@ -149,7 +186,7 @@ class Package(object):
         """
         pattern = self.tarball_pattern
         if pattern:
-            return pattern.replace('VERSION', self.version)
+            return self._substitute_variables(pattern)
         else:
             return None
 
@@ -176,7 +213,7 @@ class Package(object):
         """
         pattern = self.tarball_upstream_url_pattern
         if pattern:
-            return pattern.replace('VERSION', self.version)
+            return self._substitute_variables(pattern)
         else:
             return None
 
@@ -212,6 +249,39 @@ class Package(object):
         return self.__version
 
     @property
+    def version_major(self):
+        """
+        Return the major version
+
+        OUTPUT:
+
+        String. The package's major version.
+        """
+        return self.version.split('.')[0]
+
+    @property
+    def version_minor(self):
+        """
+        Return the minor version
+
+        OUTPUT:
+
+        String. The package's minor version.
+        """
+        return self.version.split('.')[1]
+
+    @property
+    def version_micro(self):
+        """
+        Return the micro version
+
+        OUTPUT:
+
+        String. The package's micro version.
+        """
+        return self.version.split('.')[2]
+
+    @property
     def patchlevel(self):
         """
         Return the patchlevel
@@ -244,6 +314,28 @@ class Package(object):
             for part in line.split():
                 return part
         return None
+
+    @property
+    def dependencies(self):
+        """
+        Return a list of strings, the package names of the (ordinary) dependencies
+        """
+        # after a '|', we have order-only dependencies
+        return self.__dependencies.partition('|')[0].strip().split()
+
+    @property
+    def dependencies_order_only(self):
+        """
+        Return a list of strings, the package names of the order-only dependencies
+        """
+        return self.__dependencies.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
+
+    @property
+    def dependencies_check(self):
+        """
+        Return a list of strings, the package names of the check dependencies
+        """
+        return self.__dependencies_order_only.strip().split()
 
     def __eq__(self, other):
         return self.tarball == other.tarball
@@ -278,6 +370,28 @@ class Package(object):
         """
         return os.path.exists(os.path.join(self.path, filename))
 
+    def line_count_file(self, filename):
+        """
+        Return the number of lines of the file
+
+        Directories are traversed recursively.
+
+        OUTPUT:
+
+        integer; 0 if the file cannot be read, 1 if it is a symlink
+        """
+        path = os.path.join(self.path, filename)
+        if os.path.islink(path):
+            return 1
+        if os.path.isdir(path):
+            return sum(self.line_count_file(os.path.join(filename, entry))
+                       for entry in os.listdir(path))
+        try:
+            with open(path, "rb") as f:
+                return len(list(f))
+        except OSError:
+            return 0
+
     def _init_checksum(self):
         """
         Load the checksums from the appropriate ``checksums.ini`` file
@@ -303,7 +417,7 @@ class Package(object):
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
 
-    VERSION_PATCHLEVEL = re.compile('(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
+    VERSION_PATCHLEVEL = re.compile(r'(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
 
     def _init_version(self):
         try:
@@ -335,3 +449,20 @@ class Package(object):
                 self.__install_requires = f.read().strip()
         except IOError:
             self.__install_requires = None
+
+    def _init_dependencies(self):
+        try:
+            with open(os.path.join(self.path, 'dependencies')) as f:
+                self.__dependencies = f.readline().strip()
+        except IOError:
+            self.__dependencies = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_check')) as f:
+                self.__dependencies_check = f.readline().strip()
+        except IOError:
+            self.__dependencies_check = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_order_only')) as f:
+                self.__dependencies_order_only = f.readline()
+        except IOError:
+            self.__dependencies_order_only = ''
