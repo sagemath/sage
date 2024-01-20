@@ -229,9 +229,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: EllipticCurve('15a1').two_torsion_rank()
             2
         """
-        f = self.division_polynomial(rings.Integer(2))
+        f = self.division_polynomial(Integer(2))
         n = len(f.roots())+1
-        return rings.Integer(n).ord(rings.Integer(2))
+        return Integer(n).ord(Integer(2))
 
     def quartic_twist(self, D):
         r"""
@@ -996,7 +996,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - Lorenz Panny (2022): extend to finite fields
         """
         from sage.misc.verbose import verbose
-        l = rings.Integer(l)
+        l = Integer(l)
         if not l.is_prime():
             raise ValueError("l must be a prime number")
 
@@ -1627,7 +1627,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: len(E.isogenies_degree(2**5)) # long time (15s)
             99
         """
-        n = rings.Integer(n)
+        n = Integer(n)
         if n.is_prime():
             return self.isogenies_prime_degree(n)
 
