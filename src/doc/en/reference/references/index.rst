@@ -1138,6 +1138,10 @@ REFERENCES:
             Theory and its Applications, 1 (2015),
             83–96. :arxiv:`1406.5337`
 
+.. [BP2023] \N. Brettell and R. Pendavingh, *Computing excluded minors for
+            classes of matroids representable over partial fields*, arXiv
+            preprint :arxiv:`2302.13175` (2023).
+
 .. [BPRS2009] \J. Bastian, \T. Prellberg, \M. Rubey, \C. Stump, *Counting the
             number of elements in the mutation classes of* `\tilde{A}_n`-*quivers*;
             :arxiv:`0906.0487`
@@ -1220,6 +1224,9 @@ REFERENCES:
              simple Linear Time LexBFS Cograph Recognition Algorithm", SIAM
              Journal on Discrete Mathematics, 22 (4): 1277–1296,
              :doi:`10.1137/060664690`.
+
+.. [Bre2023] \N. Brettell, *The excluded minors for GF(5)-representable matroids
+             on ten elements*, arXiv preprint :arxiv:`2307.14614` (2023).
 
 .. [Bro2011] Francis Brown, *Multiple zeta values and periods: From
              moduli spaces to Feynman integrals*, in Contemporary Mathematics
@@ -5049,6 +5056,9 @@ REFERENCES:
              vol. 109, n. 13, p. 745--748, Elsevier.
              :doi:`10.1016/j.ipl.2009.03.018`.
              http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf
+
+.. [Oxl1987] James Oxley, *The binary matroids with no 4-wheel minor*, 1987,
+             Transactions of the American Mathematical Society, 301(1), 63-75.
 
 .. [Oxl1992] James Oxley, *Matroid theory*, Oxford University
              Press, 1992.
