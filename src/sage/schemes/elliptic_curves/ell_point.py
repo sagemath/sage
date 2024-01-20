@@ -130,6 +130,7 @@ from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.real_mpfr import RealField
 from sage.rings.real_mpfr import RR
 import sage.groups.generic as generic
@@ -2013,18 +2014,52 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Px.weil_pairing(Qx, 41)^e == num/den
             True
 
-        .. NOTE::
+        TESTS:
 
-            This function uses Miller's algorithm, followed by a naive
-            exponentiation. It does not do anything fancy. In the case
-            that there is an issue with `Q` being on one of the lines
-            generated in the `r*P` calculation, `Q` is offset by a random
-            point `R` and ``P.tate_pairing(Q+R,n,k)/P.tate_pairing(R,n,k)``
-            is returned.
+        Check that the PARI output matches the original Sage implementation::
+
+            sage: # needs sage.rings.finite_rings
+            sage: GF(65537^2).inject_variables()
+            Defining z2
+            sage: E = EllipticCurve(GF(65537^2), [0,1])
+            sage: P = E(22, 28891)
+            sage: Q = E(-93, 40438*z2 + 31573)
+            sage: P.tate_pairing(Q, 7282, 2)
+            34585*z2 + 4063
+
+        The point ``P (self)`` must have ``n`` torsion::
+
+            sage: P.tate_pairing(Q, 163, 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: The point P must be n-torsion
+
+        We must have that ``n`` divides ``q^k - 1``, this is only checked when q is supplied::
+
+            sage: P.tate_pairing(Q, 7282, 2, q=123)
+            Traceback (most recent call last):
+            ...
+            ValueError: n does not divide (q^k - 1) for the supplied value of q
+
+        The Tate pairing is only defined for points on curves defined over finite fields::
+
+            sage: E = EllipticCurve([0,1])
+            sage: P = E(2,3)
+            sage: P.tate_pairing(P, 6, 1)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Reduced Tate pairing is currently only implemented for finite fields
+
+        ALGORITHM:
+
+        - :pari:`elltatepairing` computes the
+          non-reduced tate pairing and the exponentiation is handled by
+          Sage using user input for `k` (and optionally `q`).
 
         AUTHORS:
 
         - Mariah Lenox (2011-03-07)
+        - Giacomo Pope (2024): Use of PARI for the non-reduced Tate pairing
         """
         P = self
         E = P.curve()
@@ -2033,6 +2068,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             raise ValueError("Points must both be on the same curve")
 
         K = E.base_ring()
+        if not K.is_finite():
+            raise NotImplementedError("Reduced Tate pairing is currently only implemented for finite fields")
+
         d = K.degree()
         if q is None:
             if d == 1:
@@ -2041,22 +2079,19 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 q = K.base_ring().order()
             else:
                 raise ValueError("Unexpected field degree: set keyword argument q equal to the size of the base field (big field is GF(q^%s))." % k)
+        # The user has supplied q, so we check here that it's a sensible value
+        elif Mod(q, n)**k != 1:
+            raise ValueError("n does not divide (q^k - 1) for the supplied value of q")
 
-        if n*P != E(0):
-            raise ValueError('This point is not of order n=%s' % n)
+        if pari.ellmul(E, P, n) != [0]:
+            raise ValueError("The point P must be n-torsion")
 
-        # In small cases, or in the case of pairing an element with
-        # itself, Q could be on one of the lines in the Miller
-        # algorithm. If this happens we try again, with an offset of a
-        # random point.
-        try:
-            ret = self._miller_(Q, n)
-            e = Integer((q**k - 1)/n)
-            ret = ret**e
-        except (ZeroDivisionError, ValueError):
-            R = E.random_point()
-            ret = self.tate_pairing(Q + R, n, k)/self.tate_pairing(R, n, k)
-        return ret
+        # NOTE: Pari returns the non-reduced Tate pairing, so we
+        # must perform the exponentation ourselves using the supplied
+        # k value
+        ePQ = pari.elltatepairing(E, P, Q, n)
+        exp = Integer((q**k - 1)/n)
+        return K(ePQ**exp) # Cast the PARI type back to the base ring
 
     def ate_pairing(self, Q, n, k, t, q=None):
         r"""
