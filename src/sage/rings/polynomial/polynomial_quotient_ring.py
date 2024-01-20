@@ -1362,11 +1362,12 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             if not seen_before:
                 S_abs = []
                 for p in S:
-                    abs_gens = []
-                    for g in D.ideal(p.gens()).gens(): # this line looks a bit silly, due to inconsistency over QQ - see # 7596
-                        abs_gens.append(D_abs.structure()[1](g))
-                    S_abs += [pp for pp,_ in D_abs.ideal(abs_gens).factor()]
-                iso_classes.append((D_abs,S_abs))
+                    # next line looks a bit silly,
+                    # due to inconsistency over QQ - see # 7596
+                    abs_gens = [D_abs.structure()[1](g)
+                                for g in D.ideal(p.gens()).gens()]
+                    S_abs += [pp for pp, _ in D_abs.ideal(abs_gens).factor()]
+                iso_classes.append((D_abs, S_abs))
             isos.append((D_abs.embeddings(D_abs)[0], j))
         return fields, isos, iso_classes
 
