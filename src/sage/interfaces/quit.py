@@ -46,7 +46,7 @@ def register_spawned_process(pid, cmd=''):
     try:
         with open(sage_spawned_process_file(), 'a') as o:
             o.write('%s %s\n' % (pid, cmd))
-    except IOError:
+    except OSError:
         pass
     else:
         # If sage is being used as a python library, we need to launch

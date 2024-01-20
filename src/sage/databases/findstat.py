@@ -881,7 +881,7 @@ def _get_code_from_callable(function):
                 code = inspect.getsource(function.f)
             else:
                 code = inspect.getsource(function)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             verbose("inspect.getsource could not get code from function provided",
                     caller_name='FindStat')
     return code

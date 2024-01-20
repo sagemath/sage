@@ -590,7 +590,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         except pexpect.EOF:
             if not expect_eof:
                 raise RuntimeError("Unexpected EOF from %s executing %s" % (self, line))
-        except IOError:
+        except OSError:
             raise RuntimeError("IO Error from %s executing %s" % (self, line))
         return (b"".join(normal_outputs), b"".join(error_outputs))
 
