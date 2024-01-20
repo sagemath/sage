@@ -121,7 +121,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
     """
-    def __init__(self, K, ainvs):
+    def __init__(self, K, ainvs, category=None):
         r"""
         Construct an elliptic curve from Weierstrass `a`-coefficients.
 
@@ -167,7 +167,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         a1, a2, a3, a4, a6 = ainvs
         f = y**2*z + (a1*x + a3*z)*y*z \
             - (x**3 + a2*x**2*z + a4*x*z**2 + a6*z**3)
-        plane_curve.ProjectivePlaneCurve.__init__(self, PP, f)
+        plane_curve.ProjectivePlaneCurve.__init__(self, PP, f, category=category)
 
         self.__divpolys = ({}, {}, {})
 
@@ -2532,6 +2532,23 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             raise ValueError('Frobenius isogeny only exists in positive characteristic')
         from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
         return EllipticCurveHom_frobenius(self, n)
+
+    def identity_morphism(self):
+        r"""
+        Return the identity endomorphism of this elliptic curve
+        as an :class:`EllipticCurveHom` object.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(j=42)
+            sage: E.identity_morphism()
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
+              Via:  (u,r,s,t) = (1, 0, 0, 0)
+            sage: E.identity_morphism() == E.scalar_multiplication(1)
+            True
+        """
+        from sage.schemes.elliptic_curves.weierstrass_morphism import identity_morphism
+        return identity_morphism(self)
 
     def isomorphism_to(self, other):
         """
