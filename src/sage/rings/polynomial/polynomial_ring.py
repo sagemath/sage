@@ -1370,6 +1370,10 @@ class PolynomialRing_general(ring.Algebra):
            or a tuple of minimum and maximum degrees. By default set to
            ``(-1,2)``.
 
+        -  ``monic`` - optional boolean to indicate whether the sample
+           polynomial should be monic or not. If degree includes -1, it is still
+           possible for the algorithm to return ``0``, which is not monic.
+
         -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
            the base ring
 
@@ -1400,6 +1404,16 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: while R.random_element(degree=(-1,2), x=-1, y=1) != R.zero():
             ....:     pass
+
+        It is possible to sample a monic polynomial::
+
+            sage: R.random_element(5, monic=True).is_monic()
+            True
+
+        Note that if the degree range includes `-1`, then the resulting polynomial might not be monic::
+
+            sage: all(R.random_element(degree=(-1, 1), monic=True).is_monic() for _ in range(10^3))
+            False
 
         TESTS::
 
@@ -1439,8 +1453,9 @@ class PolynomialRing_general(ring.Algebra):
         if degree[0] <= -2:
             raise ValueError("degree should be an integer greater or equal than -1")
 
-        if monic and degree[0] == -1:
-            raise ValueError("degree cannot include -1 when monic is set")
+        # Actually, it's probably more useful to let the user check this.
+        # if monic and degree[0] == -1:
+        #     raise ValueError("degree cannot include -1 when monic is set")
 
         # If the coefficient range only contains 0, then
         # * if the degree range includes -1, return the zero polynomial,
@@ -1496,17 +1511,20 @@ class PolynomialRing_general(ring.Algebra):
 
         -  ``degree`` - optional integer for fixing the degree
            or a tuple of minimum and maximum degrees. By default set to
-           ``(0,2)``. Must not include -1.
+           ``(0,2)``. If the bounds include ``-1``, it is still possible for the
+           algorithm to return ``0``, which is not monic.
 
         -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
            the base ring
 
         EXAMPLES::
 
-            sage: R.<x> = GF(13)[]
+            sage: R.<x> = GF(3)[]
             sage: R.random_element()  # random
             x^2 + 11*x + 5
             sage: all(R.random_monic_element().is_monic() for _ in range(100))
+            True
+            sage: all(R.random_monic_element(degree=(-1,1)).is_monic() for _ in range(100))
             True
         """
         return self.random_element(degree=degree, monic=True, *args, **kwargs)
