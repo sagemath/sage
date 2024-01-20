@@ -1091,6 +1091,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: A == B
             False
         """
+        if not isinstance(A, QuaternionAlgebra_ab):
+            raise TypeError("A must be a quaternion algebra of the form (a,b)_K")
+
         if self.base_ring() != QQ or A.base_ring() != QQ:
             raise NotImplementedError("isomorphism check only implemented for rational quaternion algebras")
 
