@@ -728,7 +728,7 @@ def wrap_FreeGroup(libgap_free_group):
     """
     assert libgap_free_group.IsFreeGroup()
     libgap_free_group._set_compare_by_id()
-    names = tuple( str(g) for g in libgap_free_group.GeneratorsOfGroup() )
+    names = tuple(str(g) for g in libgap_free_group.GeneratorsOfGroup())
     return FreeGroup_class(names, libgap_free_group)
 
 
