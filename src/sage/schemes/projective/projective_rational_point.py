@@ -366,6 +366,7 @@ def sieve(X, bound):
          (2 : -3 : 1),
          (2 : 2 : 1),
          (6 : 14 : 1)]
+
     TESTS:
 
     Algorithm works even if coefficients are fraction::
