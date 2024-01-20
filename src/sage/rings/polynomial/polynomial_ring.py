@@ -1360,7 +1360,7 @@ class PolynomialRing_general(ring.Algebra):
         """
         return 1
 
-    def random_element(self, degree=(-1,2), *args, **kwds):
+    def random_element(self, degree=(-1,2), monic=False, *args, **kwds):
         r"""
         Return a random polynomial of given degree or with given degree bounds.
 
@@ -1386,8 +1386,8 @@ class PolynomialRing_general(ring.Algebra):
             sage: R.random_element(6).degree()
             6
 
-        If a tuple of two integers is given for the ``degree`` argument, a degree
-        is first uniformly chosen, then a polynomial of that degree is given::
+        If a tuple of two integers is given for the ``degree`` argument, a polynomial is chosen
+        uniformly among all polynomials with degree between them::
 
             sage: R.random_element(degree=(0, 8)).degree() in range(0, 9)
             True
@@ -1439,6 +1439,9 @@ class PolynomialRing_general(ring.Algebra):
         if degree[0] <= -2:
             raise ValueError("degree should be an integer greater or equal than -1")
 
+        if monic and degree[0] == -1:
+            raise ValueError("degree cannot include -1 when monic is set")
+
         # If the coefficient range only contains 0, then
         # * if the degree range includes -1, return the zero polynomial,
         # * otherwise raise a value error
@@ -1448,24 +1451,65 @@ class PolynomialRing_general(ring.Algebra):
             else:
                 raise ValueError("No polynomial of degree >= 0 has all coefficients zero")
 
-        # Pick a random degree
-        d = randint(degree[0], degree[1])
+        if degree == (-1, -1):
+            return 0
 
-        # If degree is -1, return the 0 polynomial
-        if d == -1:
-            return self.zero()
+        if degree[0] == -1:
+            allow_zero = True
+            degree = (0, degree[1])
+        else:
+            allow_zero = False
 
-        # If degree is 0, return a random constant term
-        if d == 0:
-            return self(R._random_nonzero_element(*args, **kwds))
+        while True:
+            # Pick random coefficients
+            coefs = []
+            nonzero = False
 
-        # Pick random coefficients
-        p = self([R.random_element(*args, **kwds) for _ in range(d)])
+            leading = degree[1] - degree[0] + 1
+            if monic:
+                leading -= 1
+                coefs.append(1)
 
-        # Add non-zero leading coefficient
-        p += R._random_nonzero_element(*args, **kwds) * self.gen() ** d
+            for _ in range(leading):
+                c = R.random_element(*args, **kwds)
+                coefs.append(c)
+                if c != 0:
+                    nonzero = True
 
-        return p
+            if not (allow_zero or nonzero):
+                continue
+
+            for _ in range(degree[0]):
+                c = R.random_element(*args, **kwds)
+                coefs.append(c)
+
+            coefs.reverse()
+            return self(coefs)
+
+    def random_monic_element(self, degree=(0, 2), *args, **kwargs):
+        r"""
+        Return a random monic polynomial of given degree or with given degree bounds.
+
+        Calls :meth:`random_element` with ``monic=True``.
+
+        INPUT:
+
+        -  ``degree`` - optional integer for fixing the degree
+           or a tuple of minimum and maximum degrees. By default set to
+           ``(0,2)``. Must not include -1.
+
+        -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
+           the base ring
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: R.random_element()  # random
+            x^2 + 11*x + 5
+            sage: all(R.random_monic_element().is_monic() for _ in range(100))
+            True
+        """
+        return self.random_element(degree=degree, monic=True, *args, **kwargs)
 
     def _monics_degree(self, of_degree):
         """
