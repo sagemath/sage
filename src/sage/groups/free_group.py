@@ -778,6 +778,21 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
 
+    def __reduce__(self):
+        """
+        Implement pickling.
+
+        TESTS::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: a.__reduce__()
+            (Free Group on generators {a, b}, ((1,),))
+            sage: (a*b*a^-1).__reduce__()
+            (Free Group on generators {a, b}, ((1, 2, -1),))
+        """
+        from sage.structure.unique_representation import unreduce
+        return (unreduce, ((self._names, ), {}))
+
     def _repr_(self):
         """
         TESTS::
