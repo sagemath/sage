@@ -332,7 +332,7 @@ class QuaternionAlgebra_abstract(Algebra):
             sage: Q.ngens()
             3
             sage: Q.gens()
-            [i, j, k]
+            (i, j, k)
         """
         return 3
 
@@ -681,7 +681,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         else:
             self.Element = QuaternionAlgebraElement_generic
         self._populate_coercion_lists_(coerce_list=[base_ring])
-        self._gens = [self([0, 1, 0, 0]), self([0, 0, 1, 0]), self([0, 0, 0, 1])]
+        self._gens = (self([0, 1, 0, 0]), self([0, 0, 1, 0]), self([0, 0, 0, 1]))
 
     @cached_method
     def maximal_order(self, take_shortcuts=True):
@@ -808,7 +808,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         # The following code should always work (over QQ)
         # Start with <1,i,j,k>
-        R = self.quaternion_order([1] + self.gens())
+        R = self.quaternion_order((1,) + self.gens())
         d_R = R.discriminant()
 
         e_new_gens = []
@@ -978,7 +978,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: Q.gen(2)
             kk
             sage: Q.gens()
-            [ii, jj, kk]
+            (ii, jj, kk)
         """
         return self._gens[i]
 
@@ -1496,7 +1496,7 @@ class QuaternionOrder(Parent):
 
     def gens(self):
         """
-        Return generators for self.
+        Return generators for ``self``.
 
         EXAMPLES::
 
