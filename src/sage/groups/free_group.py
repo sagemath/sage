@@ -781,9 +781,9 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     def __reduce__(self):
         """
         Implement pickling.
-
+    
         TESTS::
-
+    
             sage: F.<a,b> = FreeGroup()
             sage: a.__reduce__()
             (Free Group on generators {a, b}, ((1,),))
@@ -791,7 +791,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             (Free Group on generators {a, b}, ((1, 2, -1),))
         """
         from sage.structure.unique_representation import unreduce
-        return (unreduce, ((self._names, ), {}))
+        return (unreduce, (FreeGroup_class, (self._names,), {}))
 
     def _repr_(self):
         """
