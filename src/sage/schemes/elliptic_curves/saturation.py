@@ -383,9 +383,54 @@ class EllipticCurveSaturator(SageObject):
             sage: saturator = EllipticCurveSaturator(E, True)
             sage: saturator.p_saturation([P, T], 2)
             Using sieve method to saturate...
-            ...
+            E has 2-torsion over Finite Field of size 13, projecting points
+             --> [(0 : 2 : 1), (0 : 1 : 0)]
+             --rank is now 0
+            E has 2-torsion over Finite Field of size 13, projecting points
+             --> [(10 : 6 : 1), (0 : 1 : 0)]
+             --rank is now 1
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 23, projecting points
+             --> [(6 : 14 : 1), (0 : 1 : 0)]
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 23, projecting points
+             --> [(5 : 17 : 1), (0 : 1 : 0)]
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 41, projecting points
+             --> [(17 : 25 : 1), (0 : 1 : 0)]
+             --rank is now 1
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 41, projecting points
+             --> [(33 : 21 : 1), (0 : 1 : 0)]
+             --rank is now 1
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 53, projecting points
+             --> [(31 : 4 : 1), (0 : 1 : 0)]
+             --rank is now 1
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 53, projecting points
+             --> [(52 : 3 : 1), (0 : 1 : 0)]
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 59, projecting points
+             --> [(48 : 39 : 1), (0 : 1 : 0)]
+             --rank is now 1
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 59, projecting points
+             --> [(31 : 33 : 1), (0 : 1 : 0)]
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 73, projecting points
+             --> [(6 : 42 : 1), (0 : 1 : 0)]
+             --rank is now 1
+            E has 2-torsion over Finite Field of size 73, projecting points
+             --> [(15 : 62 : 1), (0 : 1 : 0)]
+             --rank is now 1
+            ! rank same for 15 steps, checking kernel...
+            kernel vectors: [
+            (0, 1)
+            ]
+            points generating kernel: [(0 : 1 : 0)]
             -- points were not 2-saturated, gaining index 2
-            (0, (-1/4*a + 3/4 : 59/8*a - 317/8 : 1))
+            (1, (0 : 1 : 0))
 
         A CM example where large siecing primes are needed (LMFDB
         label 2.0.3.1-50625.1-CMb2)::

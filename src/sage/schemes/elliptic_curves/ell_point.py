@@ -948,7 +948,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: tor = E.torsion_points(); len(tor)
             8
             sage: [T.order() for T in tor]
-            [2, 4, 4, 2, 1, 2, 4, 4]
+            [1, 2, 4, 4, 2, 2, 4, 4]
             sage: all(T.is_divisible_by(3) for T in tor)
             True
             sage: sorted(T for T in tor if T.is_divisible_by(2))
@@ -1131,10 +1131,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
           sage: E = EllipticCurve([1, 0, 1, -19, 26])
           sage: [(Q,Q._order) for Q in E(0).division_points(12)]
-          [((-5 : 2 : 1), 2),
+          [((0 : 1 : 0), 1),
+           ((-5 : 2 : 1), 2),
            ((-2 : -7 : 1), 6),
            ((-2 : 8 : 1), 6),
-           ((0 : 1 : 0), 1),
            ((1 : -4 : 1), 6),
            ((1 : 2 : 1), 6),
            ((7/4 : -11/8 : 1), 2),
