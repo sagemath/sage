@@ -2295,6 +2295,20 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         return 'Fractional ideal %s' % (self.gens(),)
 
+    def random_element(self, *args, **kwds):
+        """
+        Return a random element in the rational fractional ideal ``self``.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(211)
+            sage: I = B.ideal([1, 1/4*j, 20*(i+k), 2/3*i])
+            sage: x = I.random_element()  # random
+            sage: x in I
+            True
+        """
+        return sum(ZZ.random_element(*args, **kwds) * g for g in self.gens())
+
     def quaternion_order(self):
         """
         Return the order for which this ideal is a left or right
