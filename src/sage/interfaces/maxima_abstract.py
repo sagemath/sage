@@ -392,7 +392,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         ::
 
-            sage: maxima.interact()     # this is not tested either
+            sage: maxima.interact()     # not tested
               --> Switching to Maxima <--
             maxima: 2+2
             4
