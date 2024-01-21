@@ -21,6 +21,7 @@ from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.rational_field import QQ
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
 from .constructor import EllipticCurve
 from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
@@ -215,12 +216,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             else:
                 raise ValueError("Quadratic twist not implemented in char 2 when j=0")
 
-        try:
-            # If it was computed, use it!
-            _ = self._order
-            Et.set_order(1 + self.base_field().order() + self.trace_of_frobenius())
-        except AttributeError:
-            pass
+        if isinstance(K, FiniteField_generic):
+            try:
+                # If it was computed, use it!
+                Et.set_order(2 * self.base_field().order() + 2 - self._order)
+            except AttributeError:
+                pass
 
         return Et
 
