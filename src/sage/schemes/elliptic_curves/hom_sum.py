@@ -339,7 +339,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: (phi + psi)._degree_bounds()
             (24, 68)
             sage: (phi + psi).degree()
-            61
+            31
             sage: (phi - phi)._degree_bounds()
             (0, 12)
             sage: (phi - phi).degree()
