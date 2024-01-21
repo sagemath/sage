@@ -50,7 +50,16 @@ SPKG_COLLECT_FILES = build/pkgs/*/type build/pkgs/*/package-version.txt build/pk
 # If configure was run before, rerun it with the old arguments.
 # Otherwise, run configure with argument $PREREQ_OPTIONS.
 build/make/Makefile: configure $(SPKG_COLLECT_FILES) $(CONFIG_FILES:%=%.in)
-	$(MAKE) reconfigure
+	@if [ -x config.status ]; then		\
+	    case '$?' in			\
+		*configure*)			\
+		    $(MAKE) reconfigure;;	\
+		*)				\
+		    ./config.status;;		\
+	    esac;				\
+	else					\
+	    $(MAKE) reconfigure;		\
+	fi
 
 reconfigure:
 	rm -f config.log
