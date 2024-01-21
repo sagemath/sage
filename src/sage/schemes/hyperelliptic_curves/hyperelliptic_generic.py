@@ -348,8 +348,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         b = h(x)
         # Special case for char 2
         if K.characteristic() == 2:
-            R = f.parent() # Polynomial ring K[x]
-            F = R([-a,b,1])
+            R = f.parent()  # Polynomial ring K[x]
+            F = R([-a, b, 1])
             return bool(F.roots())
         # Otherwise x is a point on the curve if the determinant is a square
         D = b*b + 4*a
@@ -454,6 +454,9 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
             [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
         """
+        from sage.structure.element import get_coercion_model
+        cm = get_coercion_model()
+
         f, h = self.hyperelliptic_polynomials()
         K = self.base_ring()
 
@@ -481,7 +484,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             # Special case for char 2
             if K.characteristic() == 2:
                 R = f.parent()
-                F = R([-a,b,1])
+                F = R([-a, b, 1])
                 ys = F.roots(L, multiplicities=False)
             else:
                 D = b*b + 4*a
@@ -489,7 +492,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
                     ys = [(-b+d)/2 for d in D.sqrt(all=True)]
 
         if ys:
-            ys.sort() # Make lifting determinsitic
+            ys.sort()  # Make lifting determinsitic
             if all:
                 return [self.point([x, y, one], check=False) for y in ys]
             else:
