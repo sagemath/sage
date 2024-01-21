@@ -1480,15 +1480,11 @@ class PolynomialRing_general(ring.Algebra):
             coefs = []
             nonzero = False
 
-            leading = degree[1] - degree[0] + 1
-            if monic:
-                leading -= 1
-                coefs.append(1)
-
-            for _ in range(leading):
+            for _ in range(degree[1] - degree[0] + 1):
                 c = R.random_element(*args, **kwds)
                 coefs.append(c)
-                if c != 0:
+                if c != 0 and not nonzero:
+                    coefs[-1] = 1
                     nonzero = True
 
             if not (allow_zero or nonzero):
