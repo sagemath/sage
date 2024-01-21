@@ -578,7 +578,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: (F.1*L.2).parent() is F
             True
 
-       ::
+        ::
 
             sage: # needs sage.libs.singular sage.rings.finite_rings
             sage: K.<z> = GF(25)

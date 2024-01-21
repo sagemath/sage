@@ -2671,7 +2671,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             -3*P{{-4, 4}, {-3, -2, -1, 1, 2, 3}}
              + 2*P{{-4, 4}, {-3, -2, 1, 2, 3}, {-1}}
              + 3*P{{-4, 4}, {-3, -1, 1, 2, 3}, {-2}}
-          """
+        """
         # coerce from Orbit basis.
         if isinstance(R, OrbitBasis):
             if R._k <= self._k and self.base_ring().has_coerce_map_from(R.base_ring()):

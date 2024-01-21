@@ -1362,7 +1362,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         The abelianization map of ``self`` as a homomorphism of finitely presented groups.
 
-       EXAMPLES::
+        EXAMPLES::
 
             sage: G = FreeGroup(4, 'g')
             sage: G.inject_variables(verbose=False)
