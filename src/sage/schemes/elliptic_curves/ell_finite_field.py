@@ -1339,22 +1339,18 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         EXAMPLES:
 
-        This example illustrates basic usage.
+        This example illustrates basic usage::
 
-        ::
-
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
-            sage: E.set_order(6)
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
+            sage: E.set_order(12)
             sage: E.order()
-            6
+            12
             sage: E.order() * E.random_point()
             (0 : 1 : 0)
 
         We now give a more interesting case, the NIST-P521 curve. Its
         order is too big to calculate with Sage, and takes a long time
-        using other packages, so it is very useful here.
-
-        ::
+        using other packages, so it is very useful here::
 
             sage: p = 2^521 - 1
             sage: prev_proof_state = proof.arithmetic()
@@ -1373,7 +1369,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         It is an error to pass a value which is not an integer in the
         Hasse-Weil range::
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
             sage: E.set_order("hi")
             Traceback (most recent call last):
             ...
@@ -1392,40 +1388,49 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         ``num_checks``, the factorization of the actual order, and the
         actual group structure::
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+            sage: E = EllipticCurve(GF(1009), [0, 1]) # This curve has order 948
+            sage: E.set_order(947)
+            Traceback (most recent call last):
+            ...
+            ValueError: Value 947 illegal (multiple of random point not the identity)
+
+        For curves over small finite fields, the order is cheap to compute, so it is computed
+        directly and compared::
+
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
             sage: E.set_order(11)
             Traceback (most recent call last):
             ...
-            ValueError: Value 11 illegal (multiple of random point not the identity)
+            ValueError: Value 11 illegal (correct order is 12)
 
-        However, set_order can be fooled, though it's not likely in
-        "real cases of interest". For instance, the order can be set
-        to a multiple of the actual order::
+        TESTS:
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
-            sage: E.set_order(12)  # 12 just fits in the Hasse range
-            sage: E.order()
-            12
+        The previous version's random tests are not strong enough. In particular, the following used
+        to work::
 
-        Or, the order can be set incorrectly along with ``num_checks`` set
-        too small::
+            sage: E = EllipticCurve(GF(2), [0, 0, 1, 1, 1]) # This curve has order 1
+            sage: E.set_order(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: Value 3 illegal (correct order is 1)
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+        ::
+
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
             sage: E.set_order(4, num_checks=0)
             sage: E.order()
-            4
+            Traceback (most recent call last):
+            ...
+            ValueError: Value 4 illegal (correct order is 12)
 
-        The value of ``num_checks`` must be an integer. Negative values
-        are interpreted as zero, which means don't do any checking::
-
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
-            sage: E.set_order(4, num_checks=-12)
-            sage: E.order()
-            4
+        .. TODO:: Add provable correctness check by computing the abelian group structure and
+            comparing.
 
         AUTHORS:
 
-         - Mariah Lenox (2011-02-16)
+         - Mariah Lenox (2011-02-16): Initial implementation
+
+         - Gareth Ma (2024-01-21): Fix bug for small curves
         """
         value = Integer(value)
 
@@ -1434,12 +1439,19 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             q = self.base_field().order()
             a,b = Hasse_bounds(q,1)
             if not a <= value <= b:
-                raise ValueError('Value %s illegal (not an integer in the Hasse range)' % value)
+                raise ValueError(f"Value {value} illegal (not an integer in the Hasse range)")
+
+            # For really small values, the random tests are too weak to detect wrong orders
+            # So we go with computing directly instead.
+            if q <= 100:
+                if self.order() != value:
+                    raise ValueError(f"Value {value} illegal (correct order is {self.order()})")
+
             # Is value*random == identity?
-            for i in range(num_checks):
+            for _ in range(num_checks):
                 G = self.random_point()
                 if value * G != self(0):
-                    raise ValueError('Value %s illegal (multiple of random point not the identity)' % value)
+                    raise ValueError(f"Value {value} illegal (multiple of random point not the identity)")
 
         # TODO: It might help some of PARI's algorithms if we
         # could copy this over to the .pari_curve() as well.
