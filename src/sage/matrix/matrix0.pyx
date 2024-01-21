@@ -383,10 +383,10 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         This function gets called when you're about to access the i,j entry
-        of this matrix. If i, j are out of range, an IndexError is
+        of this matrix. If i, j are out of range, an :class:`IndexError` is
         raised.
         """
-        if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
+        if i < 0 or i >= self._nrows or j < 0 or j >= self._ncols:
             raise IndexError("matrix index out of range")
 
     cdef check_mutability(self) noexcept:
@@ -419,7 +419,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         else:
             self._cache = None
 
-        if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
+        if i < 0 or i >= self._nrows or j < 0 or j >= self._ncols:
             raise IndexError("matrix index out of range")
 
     def set_immutable(self):
@@ -2350,7 +2350,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         for i from 0 <= i < n:
             tmp = []
             for j from 0 <= j < n:
-                tmp.append(self.get_unsafe(i,j)*vars[j])
+                tmp.append(self.get_unsafe(i, j)*vars[j])
             ans.append( sum(tmp) )
         return f(tuple(ans))
 
@@ -2912,7 +2912,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self.with_permuted_rows(row_permutation).with_permuted_columns(column_permutation)
 
-    def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j,    s,   Py_ssize_t start_col=0):
+    def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col=0):
         """
         Add s times row j to row i.
 
@@ -2943,19 +2943,19 @@ cdef class Matrix(sage.structure.element.Matrix):
             TypeError: Multiplying row by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_row instead.
         """
-        self.check_row_bounds_and_mutability(i,j)
+        self.check_row_bounds_and_mutability(i, j)
         try:
             s = self._coerce_element(s)
             self.add_multiple_of_row_c(i, j, s, start_col)
         except TypeError:
             raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring or with_added_multiple_of_row instead.' % (s.parent(), self.base_ring()))
 
-    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j,    s,   Py_ssize_t start_col) noexcept:
+    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col) noexcept:
         cdef Py_ssize_t c
         for c from start_col <= c < self._ncols:
             self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
 
-    def with_added_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j,    s,   Py_ssize_t start_col=0):
+    def with_added_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col=0):
         """
         Add s times row j to row i, returning new matrix.
 
@@ -2983,7 +2983,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [   3    4    5]
         """
         cdef Matrix temp
-        self.check_row_bounds_and_mutability(i,j)
+        self.check_row_bounds_and_mutability(i, j)
         try:
             s = self._coerce_element(s)
             temp = self.__copy__()
@@ -3028,7 +3028,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             TypeError: Multiplying column by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_column instead.
         """
-        self.check_column_bounds_and_mutability(i,j)
+        self.check_column_bounds_and_mutability(i, j)
         try:
             s = self._coerce_element(s)
             self.add_multiple_of_column_c(i, j, s, start_row)
@@ -3040,7 +3040,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         for r from start_row <= r < self._nrows:
             self.set_unsafe(r, i, self.get_unsafe(r, i) + s*self.get_unsafe(r, j))
 
-    def with_added_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j,    s,   Py_ssize_t start_row=0):
+    def with_added_multiple_of_column(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row=0):
         """
         Add s times column j to column i, returning new matrix.
 
@@ -3068,7 +3068,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [13/3    4    5]
         """
         cdef Matrix temp
-        self.check_column_bounds_and_mutability(i,j)
+        self.check_column_bounds_and_mutability(i, j)
         try:
             s = self._coerce_element(s)
             temp = self.__copy__()
@@ -3335,7 +3335,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             TypeError: Multiplying row by Rational Field element cannot be done over Integer Ring, use change_ring or with_row_set_to_multiple_of_row instead.
         """
-        self.check_row_bounds_and_mutability(i,j)
+        self.check_row_bounds_and_mutability(i, j)
         cdef Py_ssize_t n
         try:
             s = self._coerce_element(s)
@@ -3370,7 +3370,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [  0   1   2]
             [  0 1/2   1]
         """
-        self.check_row_bounds_and_mutability(i,j)
+        self.check_row_bounds_and_mutability(i, j)
         cdef Matrix temp
         cdef Py_ssize_t n
         try:
@@ -3413,7 +3413,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             TypeError: Multiplying column by Rational Field element cannot be done over Integer Ring, use change_ring or with_col_set_to_multiple_of_col instead.
         """
-        self.check_column_bounds_and_mutability(i,j)
+        self.check_column_bounds_and_mutability(i, j)
         cdef Py_ssize_t n
         try:
             s = self._coerce_element(s)
@@ -3453,7 +3453,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [  0   0   2]
             [  3 3/2   5]
         """
-        self.check_column_bounds_and_mutability(i,j)
+        self.check_column_bounds_and_mutability(i, j)
         cdef Py_ssize_t n
         cdef Matrix temp
         try:
@@ -3706,7 +3706,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     if positive and not d[i] > 0:
                         return False
                     for j in d:
-                        if d[i] * self.get_unsafe(i,j) != sign * d[j] * self.get_unsafe(j,i):
+                        if d[i] * self.get_unsafe(i, j) != sign * d[j] * self.get_unsafe(j, i):
                             return False
         return L
 
@@ -3959,11 +3959,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         if self._ncols != self._nrows: return False
         # could be bigger than an int on a 64-bit platform, this
         #  is the type used for indexing.
-        cdef Py_ssize_t i,j
+        cdef Py_ssize_t i, j
 
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < i:
-                if self.get_unsafe(i,j) != self.get_unsafe(j,i):
+                if self.get_unsafe(i, j) != self.get_unsafe(j, i):
                     return False
         return True
 
@@ -4072,7 +4072,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         tolerance = self.base_ring()(tolerance)
         cdef bint tolerance_is_zero = tolerance.is_zero()
-        cdef Py_ssize_t i,j
+        cdef Py_ssize_t i, j
 
         if self.is_sparse_c():
             # The dense algorithm checks all of the on-or-below-diagonal
@@ -4086,12 +4086,12 @@ cdef class Matrix(sage.structure.element.Matrix):
             # copy, so it's important that we don't modify it.
             entries = self._nonzero_positions_by_row(copy=False)
         else:
-            entries = ( (i,j) for i in range(self._nrows)
-                              for j in range(i+1) )
+            entries = ((i, j) for i in range(self._nrows)
+                       for j in range(i + 1))
 
-        for (i,j) in entries:
-            entry_a = self.get_unsafe(i,j)
-            entry_b = s*self.get_unsafe(j,i).conjugate()
+        for (i, j) in entries:
+            entry_a = self.get_unsafe(i, j)
+            entry_b = s*self.get_unsafe(j, i).conjugate()
 
             if tolerance_is_zero:
                 # When the tolerance is exactly zero, as will
@@ -4293,11 +4293,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         if self._ncols != self._nrows: return False
         # could be bigger than an int on a 64-bit platform, this
         #  is the type used for indexing.
-        cdef Py_ssize_t i,j
+        cdef Py_ssize_t i, j
 
         for i from 0 <= i < self._nrows:
             for j from 0 <= j <= i:
-                if self.get_unsafe(i,j) != -self.get_unsafe(j,i):
+                if self.get_unsafe(i, j) != -self.get_unsafe(j, i):
                     return False
         return True
 
@@ -4336,14 +4336,14 @@ cdef class Matrix(sage.structure.element.Matrix):
         if self._ncols != self._nrows: return False
         # could be bigger than an int on a 64-bit platform, this
         #  is the type used for indexing.
-        cdef Py_ssize_t i,j
+        cdef Py_ssize_t i, j
 
         zero = self._base_ring.zero()
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < i:
-                if self.get_unsafe(i,j) != -self.get_unsafe(j,i):
+                if self.get_unsafe(i, j) != -self.get_unsafe(j, i):
                     return False
-            if not self.get_unsafe(i,i) == zero:
+            if not self.get_unsafe(i, i) == zero:
                 return False
         return True
 
@@ -4803,8 +4803,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         nzp = []
         for j from 0 <= j < self._ncols:
             for i from 0 <= i < self._nrows:
-                if not self.get_is_zero_unsafe(i,j):
-                    nzp.append((i,j))
+                if not self.get_is_zero_unsafe(i, j):
+                    nzp.append((i, j))
         self.cache('nonzero_positions_by_column', nzp)
         if copy:
             return list(nzp)
@@ -4843,10 +4843,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t j
         tmp = []
 
-        if i<0 or i >= self._ncols:
+        if i < 0 or i >= self._ncols:
             raise IndexError("matrix column index out of range")
         for j from 0 <= j < self._nrows:
-            if not self.get_is_zero_unsafe(j,i):
+            if not self.get_is_zero_unsafe(j, i):
                 tmp.append(j)
         return tmp
 
@@ -4882,7 +4882,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         tmp = []
 
         for j from 0 <= j < self._ncols:
-            if not self.get_is_zero_unsafe(i,j):
+            if not self.get_is_zero_unsafe(i, j):
                 tmp.append(j)
         return tmp
 
@@ -5227,7 +5227,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         A = self.new_matrix()
         for i in range(self._nrows):
             for j in range(self._ncols):
-                A.set_unsafe(i,j,self.get_unsafe(i,j)._add_(right.get_unsafe(i,j)))
+                A.set_unsafe(i, j, self.get_unsafe(i,j)._add_(right.get_unsafe(i,j)))
         return A
 
     cpdef _sub_(self, _right) noexcept:

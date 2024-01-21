@@ -1427,7 +1427,7 @@ class Cylinder():
             sage: c = Cylinder((0,0,0),(1,1,1),.1,'s')
             sage: c.str()
             '\n        cylinder center  0.0 0.0 0.0  axis  1.0 1.0 1.0  rad 0.1 s\n        '
-            """
+        """
         return r"""
         cylinder center %s axis %s rad %s %s
         """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)

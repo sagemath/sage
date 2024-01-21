@@ -996,10 +996,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: S = SymmetricGroupAlgebra(QQ, 4)
                 sage: S.cardinality()
                 +Infinity
-                sage: S = SymmetricGroupAlgebra(GF(2), 4)       # not tested
-                sage: S.cardinality()                           # not tested
+                sage: S = SymmetricGroupAlgebra(GF(2), 4)
+                sage: S.cardinality()
                 16777216
-                sage: S.cardinality().factor()                  # not tested
+                sage: S.cardinality().factor()
                 2^24
 
                 sage: # needs sage.modules
@@ -1013,10 +1013,19 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: s = SymmetricFunctions(GF(2)).s()                                 # needs sage.combinat sage.modules
                 sage: s.cardinality()                                                   # needs sage.combinat sage.modules
                 +Infinity
+
+                sage: M = CombinatorialFreeModule(QQ, [])
+                sage: M.dimension()
+                0
+                sage: M.cardinality()
+                1
             """
             from sage.rings.infinity import Infinity
             if self.dimension() == Infinity:
                 return Infinity
+            if self.dimension() == 0:
+                from sage.rings.integer_ring import ZZ
+                return ZZ.one()
             return self.base_ring().cardinality() ** self.dimension()
 
         def is_finite(self):
@@ -2247,7 +2256,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: phi(x[1] + x[3])                                              # needs sage.modules
                     0
 
-               We check that the homset category is properly set up::
+                We check that the homset category is properly set up::
 
                     sage: # needs sage.modules
                     sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename("X")

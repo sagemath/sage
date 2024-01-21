@@ -24,6 +24,8 @@ import os
 import logging
 log = logging.getLogger()
 
+from collections import defaultdict
+
 from sage_bootstrap.package import Package
 from sage_bootstrap.tarball import Tarball, FileNotMirroredError
 from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
@@ -366,3 +368,63 @@ class Application(object):
                     os.remove(filepath)
                     count += 1
         print('{} files were removed from the {} directory'.format(count, SAGE_DISTFILES))
+
+    def metrics_cls(self, *package_classes):
+        """
+        Show the metrics of given packages
+
+        $ sage --package metrics :standard:
+        has_file_distros_arch_txt=131
+        has_file_distros_conda_txt=216
+        has_file_distros_debian_txt=125
+        has_file_distros_fedora_txt=138
+        has_file_distros_gentoo_txt=181
+        has_file_distros_homebrew_txt=61
+        has_file_distros_macports_txt=129
+        has_file_distros_nix_txt=51
+        has_file_distros_opensuse_txt=146
+        has_file_distros_slackware_txt=25
+        has_file_distros_void_txt=184
+        has_file_patches=35
+        has_file_spkg_check=59
+        has_file_spkg_configure_m4=222
+        has_file_spkg_install=198
+        has_tarball_upstream_url=231
+        line_count_file_patches=22561
+        line_count_file_spkg_check=402
+        line_count_file_spkg_configure_m4=2792
+        line_count_file_spkg_install=2960
+        packages=272
+        type_standard=272
+        """
+        log.debug('Computing metrics')
+        metrics = defaultdict(int)
+        pc = PackageClass(*package_classes)
+        for package_name in pc.names:
+            package = Package(package_name)
+            metrics['packages'] += 1
+            metrics['type_' + package.type] += 1
+            for filenames in [['spkg-configure.m4'],
+                              ['spkg-install', 'spkg-install.in'],
+                              ['spkg-check', 'spkg-check.in'],
+                              ['distros/arch.txt'],
+                              ['distros/conda.txt'],
+                              ['distros/debian.txt'],
+                              ['distros/fedora.txt'],
+                              ['distros/gentoo.txt'],
+                              ['distros/homebrew.txt'],
+                              ['distros/macports.txt'],
+                              ['distros/nix.txt'],
+                              ['distros/opensuse.txt'],
+                              ['distros/slackware.txt'],
+                              ['distros/void.txt'],
+                              ['patches']]:
+                key = filenames[0].replace('.', '_').replace('-', '_').replace('/', '_')
+                metrics['has_file_' + key] += int(any(package.has_file(filename)
+                                                      for filename in filenames))
+                if not key.startswith('distros_'):
+                    metrics['line_count_file_' + key] += sum(package.line_count_file(filename)
+                                                             for filename in filenames)
+            metrics['has_tarball_upstream_url'] += int(bool(package.tarball_upstream_url))
+        for key, value in sorted(metrics.items()):
+            print('{0}={1}'.format(key, value))
