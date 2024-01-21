@@ -815,9 +815,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
     # def __reduce__(self):
     #     """
     #     Implement pickling.
-    # 
+    #
     #     TESTS::
-    # 
+    #
     #         sage: F.<a,b> = FreeGroup()
     #         sage: a.__reduce__()
     #         (Free Group on generators {a, b}, ((1,),))
@@ -825,7 +825,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
     #         (Free Group on generators {a, b}, ((1, 2, -1),))
     #     """
     #     return (FinitelyPresentedGroup, (self._free_group, self._relations))
-
 
     def _repr_(self):
         """
