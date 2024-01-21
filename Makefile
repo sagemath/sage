@@ -52,21 +52,23 @@ SPKG_COLLECT_FILES = build/pkgs/*/type build/pkgs/*/package-version.txt build/pk
 #    we regenerate config.status by running the "config.status --recheck".
 # Either way we regenerate the generated files by calling "config.status".
 build/make/Makefile: configure $(SPKG_COLLECT_FILES) $(CONFIG_FILES:%=%.in)
-	$(MAKE) reconfigure
+	@if [ -x config.status ]; then		\
+	    case '$?' in			\
+		*configure*)			\
+		    $(MAKE) reconfigure;;	\
+		*)				\
+		    ./config.status;;		\
+	    esac;				\
+	else					\
+	    $(MAKE) reconfigure;		\
+	fi
 
 reconfigure:
 	rm -f config.log
 	mkdir -p logs/pkgs
 	ln -s logs/pkgs/config.log config.log
 	@if [ -x config.status ]; then \
-		case '$?' in					\
-		  *configure*)					\
-			rm -f config.log;			\
-			mkdir -p logs/pkgs;			\
-			ln -s logs/pkgs/config.log config.log;	\
-			./config.status --recheck;;		\
-		esac &&						\
-		./config.status; \
+		./config.status --recheck && ./config.status; \
 	else \
 		echo >&2 '****************************************************************************'; \
 		echo >&2 'error: Sage source tree is unconfigured. Please run "./configure" first.'; \
