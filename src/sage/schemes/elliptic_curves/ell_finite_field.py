@@ -2723,7 +2723,10 @@ def special_supersingular_curve(F, *, endomorphism=False):
     endo.trace.set_cache(ZZ.zero())
     return E, endo
 
-def _EllipticCurve_with_order_helper(m, D, iter):
+def _EllipticCurve_with_order_helper(m, D):
+    r"""
+    NOTE:: D should be negative here.
+    """
     from sage.arith.misc import is_prime, factor
     from sage.quadratic_forms.binary_qf import BinaryQF
     from sage.structure.factorization import Factorization
@@ -2732,10 +2735,8 @@ def _EllipticCurve_with_order_helper(m, D, iter):
     def helper(m, m4_fac, D):
         all_sol = BinaryQF(1, 0, -D).solve_integer(m4_fac, flag=3)
         for t, _ in all_sol:
-            if is_prime(m + 1 - t):
-                yield m + 1 - t
-            if is_prime(m + 1 + t):
-                yield m + 1 + t
+            yield m + 1 - t
+            yield m + 1 + t
 
     if isinstance(m, Factorization):
         m4_fac = m * factor(4)
@@ -2745,14 +2746,18 @@ def _EllipticCurve_with_order_helper(m, D, iter):
         m_val = m
 
     if D is None:
-        Ds = (4 * d if d % 4 != 3 else d for d in range(1, m_val))
+        Ds = (D for D in range(-4 * m_val, 0) if D % 4 in [0, 1])
     else:
+        assert D < 0 and D % 4 in [0, 1]
         Ds = [D]
 
     seen = set()
     for D in Ds:
-        for q in helper(m_val, m4_fac, -D):
-            H = hilbert_class_polynomial(-D)
+        for q in helper(m_val, m4_fac, D):
+            if not is_prime(q):
+                continue
+
+            H = hilbert_class_polynomial(D)
             K = GF(q)
             roots = H.roots(ring=K)
             for j0, _ in roots:
@@ -2770,20 +2775,26 @@ def _EllipticCurve_with_order_helper(m, D, iter):
 
 def EllipticCurve_with_order(m, D=None, iter=False):
     r"""
-    Return an elliptic curve with the given order.
+    Return an elliptic curve over a prime finite field with the given order. The curves are
+    computed using the Complex Multiplication (CM) method.
 
     A `:sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
     the algorithm is more efficient.
 
     If ``D`` is specified, it is used as the discriminant.
 
-    If ``iter`` is set, an iterator of all elliptic curves with the given order is returned.
+    If ``iter`` is set, an iterator of all elliptic curves over prime order finite fields with the
+    given order is returned.
+
+    .. TODO::
+
+        Remove the restriction on *prime* finite fields.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
         sage: E = EllipticCurve_with_order(1234); E
-        Elliptic Curve defined by y^2 = x^3 + 8*x over Finite Field of size 1229
+        Elliptic Curve defined by y^2 = x^3 + 1142*x + 1209 over Finite Field of size 1237
         sage: E.order() == 1234
         True
 
@@ -2794,16 +2805,38 @@ def EllipticCurve_with_order(m, D=None, iter=False):
         sage: it = EllipticCurve_with_order(21, iter=True); it
         <generator object _EllipticCurve_with_order_helper at 0x...>
         sage: next(it)
-        Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 19
+        Elliptic Curve defined by y^2 = x^3 + 6*x + 14 over Finite Field of size 23
         sage: Es = list(it); Es
-        [Elliptic Curve defined by y^2 = x^3 + 19 over Finite Field of size 31,
+        [Elliptic Curve defined by y^2 = x^3 + 12*x + 4 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 5*x + 2 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 7*x + 1 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 17*x + 10 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 5*x + 12 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 9*x + 1 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 7*x + 6 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 18*x + 26 over Finite Field of size 29,
+         Elliptic Curve defined by y^2 = x^3 + 11*x + 19 over Finite Field of size 29,
+         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 19 over Finite Field of size 31,
          Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 13,
          Elliptic Curve defined by y^2 = x^3 + 3 over Finite Field of size 13,
          Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 13]
         sage: all(E.order() == 21 for E in Es)
         True
+
+    Indeed, we can verify that this is correct. Hasse's bounds tell us that $p \leq 50$
+    (approximately), and the rest can be checked via bruteforce::
+
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
+        sage: Es = list(EllipticCurve_with_order(21, iter=True))
+        sage: for p in prime_range(50):
+        ....:     for j in range(p):
+        ....:         E0 = EllipticCurve(GF(p), j=j)
+        ....:         for Et in E0.twists():
+        ....:             if Et.order() == 21:
+        ....:                 assert any(Et.is_isomorphic(E) for E in Es)
     """
-    sol = _EllipticCurve_with_order_helper(m, D, iter)
+    sol = _EllipticCurve_with_order_helper(m, D)
     if iter:
         return sol
     return next(sol)
