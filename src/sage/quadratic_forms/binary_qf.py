@@ -1596,16 +1596,19 @@ class BinaryQF(SageObject):
                 raise ValueError("Unable to find a prime value of %s" % self)
             B += 10
 
-    def solve_integer(self, n, *, algorithm="general"):
+    def solve_integer(self, n, *, algorithm="general", flag=2):
         r"""
         Solve `Q(x, y) = n` in integers `x` and `y` where `Q` is this
         quadratic form.
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- a positive integer or a
+          `:sage:`~sage.structure.factorization.Factorization` object
 
         - ``algorithm`` -- ``"general"`` (default) or ``"cornacchia"``
+
+        - ``flag`` -- ``1``, ``2`` (default) or ``3``
 
         To use the Cornacchia algorithm, the quadratic form must have
         `a=1` and `b=0` and `c>0`, and ``n`` must be a prime or four
@@ -1652,6 +1655,14 @@ class BinaryQF(SageObject):
             [None, None, None]
             sage: [Q.solve_integer(6) for Q in Qs]
             [(1, -1), (1, -1), (-1, -1)]
+
+        ::
+
+            sage: # needs sage.libs.pari
+            sage: n = factor(136)
+            sage: Q = BinaryQF([1, 0, 5])
+            sage: Q.solve_integer(n)
+            (11, -1)
 
         TESTS:
 
@@ -1702,22 +1713,39 @@ class BinaryQF(SageObject):
             sage: Q = Q.matrix_action_right(U)
             sage: Q.discriminant().is_square()
             True
-            sage: xy = Q.solve_integer(n)                                               # needs sage.libs.pari
-            sage: Q(*xy) == n                                                           # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: xy = Q.solve_integer(n)
+            sage: Q(*xy) == n
             True
 
         Also test the `n=0` special case separately::
 
-            sage: xy = Q.solve_integer(0)                                               # needs sage.libs.pari
-            sage: Q(*xy)                                                                # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: xy = Q.solve_integer(0)
+            sage: Q(*xy)
             0
-        """
-        n = ZZ(n)
 
+        Test for different `flag` values::
+
+            sage: # needs sage.libs.pari
+            sage: Q = BinaryQF([1, 0, 5])
+            sage: Q.solve_integer(126, flag=1)
+            [(11, -1), (-1, -5), (-1, 5), (-11, -1)]
+            sage: Q.solve_integer(126, flag=2)
+            (11, -1)
+            sage: Q.solve_integer(126, flag=3)
+            [(11, -1), (-1, -5), (-1, 5), (-11, -1), (-9, -3), (9, -3)]
+        """
         if self.is_negative_definite():  # not supported by PARI
             return (-self).solve_integer(-n)
 
         if self.is_reducible():  # square discriminant; not supported by PARI
+            try:
+                n = ZZ(n)
+            except TypeError:
+                # Factorization
+                n = ZZ(n.value())
+
             if self._a:
                 # https://math.stackexchange.com/a/980075
                 w = self.discriminant().sqrt()
@@ -1760,9 +1788,10 @@ class BinaryQF(SageObject):
         if algorithm != 'general':
             raise ValueError(f'algorithm {algorithm!r} is not a valid algorithm')
 
-        flag = 2  # single solution, possibly imprimitive
         sol = self.__pari__().qfbsolve(n, flag)
-        return tuple(map(ZZ, sol)) if sol else None
+        if flag == 2:
+            return tuple(map(ZZ, sol)) if sol else None
+        return list(map(lambda tup: tuple(map(ZZ, tup)), sol))
 
     def form_class(self):
         r"""

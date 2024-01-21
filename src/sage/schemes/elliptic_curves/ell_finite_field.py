@@ -2722,3 +2722,88 @@ def special_supersingular_curve(F, *, endomorphism=False):
     endo._degree = ZZ(q)
     endo.trace.set_cache(ZZ.zero())
     return E, endo
+
+def _EllipticCurve_with_order_helper(m, D, iter):
+    from sage.arith.misc import is_prime, factor
+    from sage.quadratic_forms.binary_qf import BinaryQF
+    from sage.structure.factorization import Factorization
+    from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
+
+    def helper(m, m4_fac, D):
+        all_sol = BinaryQF(1, 0, -D).solve_integer(m4_fac, flag=3)
+        for t, _ in all_sol:
+            if is_prime(m + 1 - t):
+                yield m + 1 - t
+            if is_prime(m + 1 + t):
+                yield m + 1 + t
+
+    if isinstance(m, Factorization):
+        m4_fac = m * factor(4)
+        m_val = m.value()
+    else:
+        m4_fac = factor(m * 4)
+        m_val = m
+
+    if D is None:
+        Ds = (4 * d if d % 4 != 3 else d for d in range(1, m_val))
+    else:
+        Ds = [D]
+
+    seen = set()
+    for D in Ds:
+        for q in helper(m_val, m4_fac, -D):
+            H = hilbert_class_polynomial(-D)
+            K = GF(q)
+            roots = H.roots(ring=K)
+            for j0, _ in roots:
+                E = EllipticCurve(j=j0)
+                for Et in E.twists():
+                    if any(Et.is_isomorphic(E) for E in seen):
+                        continue
+                    try:
+                        # This tests whether the curve has given order
+                        Et.set_order(m_val)
+                        seen.add(Et)
+                        yield Et
+                    except ValueError:
+                        pass
+
+def EllipticCurve_with_order(m, D=None, iter=False):
+    r"""
+    Return an elliptic curve with the given order.
+
+    A `:sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
+    the algorithm is more efficient.
+
+    If ``D`` is specified, it is used as the discriminant.
+
+    If ``iter`` is set, an iterator of all elliptic curves with the given order is returned.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
+        sage: E = EllipticCurve_with_order(1234); E
+        Elliptic Curve defined by y^2 = x^3 + 8*x over Finite Field of size 1229
+        sage: E.order() == 1234
+        True
+
+    When ``iter`` is set, the function returns an iterator of all elliptic curves with the given
+    order::
+
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
+        sage: it = EllipticCurve_with_order(21, iter=True); it
+        <generator object _EllipticCurve_with_order_helper at 0x...>
+        sage: next(it)
+        Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 19
+        sage: Es = list(it); Es
+        [Elliptic Curve defined by y^2 = x^3 + 19 over Finite Field of size 31,
+         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 13,
+         Elliptic Curve defined by y^2 = x^3 + 3 over Finite Field of size 13,
+         Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 13]
+        sage: all(E.order() == 21 for E in Es)
+        True
+    """
+    sol = _EllipticCurve_with_order_helper(m, D, iter)
+    if iter:
+        return sol
+    return next(sol)
