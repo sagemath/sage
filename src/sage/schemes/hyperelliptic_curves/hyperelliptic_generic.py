@@ -249,28 +249,149 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         return True
 
     def lift_x(self, x, all=False):
-        f, h = self._hyperelliptic_polynomials
-        x += self.base_ring()(0)
-        one = x.parent()(1)
-        if h.is_zero():
+        """
+        Return one or all points with given `x`-coordinate.
+
+        This method is deterministic: It returns the same data each time when called again with the same.
+
+        INPUT:
+
+        - ``x`` -- an element of the base ring of the curve
+
+        - ``all`` (bool, default False) -- if True, return a (possibly
+          empty) list of all points; if False, return just one point,
+          or raise a :class:`ValueError` if there are none.
+
+        OUTPUT:
+
+        A Point or list of up to two points on this curve.
+
+        .. SEEALSO::
+
+            :meth:`is_x_coord`
+
+        AUTHORS:
+
+        - Giacomo Pope (2024): Allowed for the case of characteristic two
+
+        EXAMPLES:
+
+        When `x` is the `x`-coordinate of a rational point on the
+        curve, we can request these::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: f = x^5 + x^3 + 1
+            sage: H = HyperellipticCurve(f)
+            sage: H.lift_x(0)
+            (0 : -1 : 1)
+            sage: H.lift_x(4, all=True)
+            [(4 : -33 : 1), (4 : 33 : 1)]
+
+        There are no rational points with `x`-coordinate 3::
+
+            sage: H.lift_x(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: No point with x-coordinate 3 on Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x^3 + 1
+
+        The function also handles the case when `h(x)` is not zero::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: f = x^5 + x^3 + 1
+            sage: h = x + 1
+            sage: H = HyperellipticCurve(f, h)
+            sage: H.lift_x(1)
+            (1 : -3 : 1)
+
+        We can perform these operations over finite fields too::
+
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x> = PolynomialRing(GF(163))
+            sage: f = x^7 + x + 1
+            sage: H = HyperellipticCurve(f)
+            sage: H.lift_x(13)
+            (13 : 41 : 1)
+
+        Including the case of characteristic two::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<z4> = GF(2^4)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^7 + x^3 + 1
+            sage: h = x + 1
+            sage: H = HyperellipticCurve(f, h)
+            sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
+            [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
+
+        TESTS::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F1 = GF(11)
+            sage: F2 = GF(13)
+            sage: R.<x> = PolynomialRing(F1)
+            sage: f = x^7 + x^3 + 1
+            sage: H = HyperellipticCurve(f)
+            sage: H.lift_x(F2.random_element())
+            Traceback (most recent call last):
+            ...
+            ValueError: x must have a common parent with the base ring
+
+        Ensure that :issue:`37097` is fixed::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<z4> = GF(2^4)
+            sage: R.<x> = PolynomialRing(F)
+            sage: f = x^7 + x^3 + 1
+            sage: h = x + 1
+            sage: H = HyperellipticCurve(f, h)
+            sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
+            [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
+        """
+        f, h = self.hyperelliptic_polynomials()
+        K = self.base_ring()
+
+        # Compute the common parent between the base ring of the curve and
+        # the parent of the input x-coordinate.
+        try:
+            L = cm.common_parent(x.parent(), K)
+            x = L(x)
+        except (TypeError, ValueError):
+            raise ValueError('x must have a common parent with the base ring')
+
+        # First we compute the y-coordinates the given x-coordinate
+        ys = []
+        one = L.one()
+
+        # When h is zero we find all y-coordinates with a single sqrt
+        if not h:
             y2 = f(x)
             if y2.is_square():
-                if all:
-                    return [self.point([x, y, one], check=False) for y in y2.sqrt(all=True)]
-                else:
-                    return self.point([x, y2.sqrt(), one], check=False)
+                ys = y2.sqrt(all=True)
+        # Otherwise we need roots of the determinant
         else:
+            a = f(x)
             b = h(x)
-            D = b*b + 4*f(x)
-            if D.is_square():
-                if all:
-                    return [self.point([x, (-b+d)/2, one], check=False) for d in D.sqrt(all=True)]
-                else:
-                    return self.point([x, (-b+D.sqrt())/2, one], check=False)
+            # Special case for char 2
+            if K.characteristic() == 2:
+                R = f.parent()
+                F = R([-a,b,1])
+                ys = F.roots(L, multiplicities=False)
+            else:
+                D = b*b + 4*a
+                if D.is_square():
+                    ys = [(-b+d)/2 for d in D.sqrt(all=True)]
+
+        if ys:
+            ys.sort() # Make lifting determinsitic
+            if all:
+                return [self.point([x, y, one], check=False) for y in ys]
+            else:
+                return self.point([x, ys[0], one], check=False)
+
         if all:
             return []
         else:
-            raise ValueError("No point with x-coordinate %s on %s" % (x, self))
+            raise ValueError(f"No point with x-coordinate {x} on {self}")
 
     def genus(self):
         return self._genus
