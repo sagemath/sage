@@ -141,7 +141,7 @@ class LinearExtensionOfPoset(ClonableArray,
         """
         P = self.parent().poset()
         if not P.is_linear_extension(self):
-            raise ValueError("%s is not a linear extension of %s" % (self, P))
+            raise ValueError(f"{self} is not a linear extension of {P}")
 
     def poset(self):
         r"""
@@ -625,7 +625,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             while K[j]:
                 K.append([b for a in K[j] for b in Jup[a]])
                 j += 1
-            K = sorted(set(item for sublist in K for item in sublist))
+            K = sorted({item for sublist in K for item in sublist})
             for j in range(len(K)):
                 i = m + j + 1
                 Jup[i] = [m + K.index(a) + 1 for a in Jup[K[j]]]

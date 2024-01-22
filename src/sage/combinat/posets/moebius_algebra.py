@@ -123,7 +123,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             sage: L.moebius_algebra(QQ)
             Moebius algebra of Finite lattice containing 16 elements over Rational Field
         """
-        return "Moebius algebra of {} over {}".format(self._lattice, self.base_ring())
+        return f"Moebius algebra of {self._lattice} over {self.base_ring()}"
 
     def a_realization(self):
         r"""
@@ -705,7 +705,7 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
             Category of bases of Moebius algebra of Finite lattice
              containing 16 elements over Rational Field
         """
-        return "Category of bases of {}".format(self.base())
+        return f"Category of bases of {self.base()}"
 
     def super_categories(self):
         r"""
@@ -738,7 +738,7 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
                 Moebius algebra of Finite lattice containing 16 elements
                  over Rational Field in the idempotent basis
             """
-            return "{} in the {} basis".format(self.realization_of(), self._basis_name)
+            return f"{self.realization_of()} in the {self._basis_name} basis"
 
         def product_on_basis(self, x, y):
             """

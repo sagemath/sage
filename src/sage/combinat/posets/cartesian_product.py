@@ -102,7 +102,7 @@ class CartesianProductPoset(CartesianProduct):
             try:
                 self._le_ = getattr(self, 'le_' + order)
             except AttributeError:
-                raise ValueError("no order '%s' known" % (order,))
+                raise ValueError(f"no order '{order}' known")
         else:
             self._le_ = order
 
