@@ -94,7 +94,9 @@ jobs:
 
           # Arch Linux docker image does not install info files, so remove the entry to Maxima's help files from pacman
           # see https://github.com/sagemath/sage/pull/36391 for details
-          sed -i '/^NoExtract/d' /etc/pacman.conf;
+          if [ $SYSTEM = 'archlinux' ]; then
+            sed -i '/^NoExtract/d' /etc/pacman.conf;
+          fi
         env:
           PARI_VERSION: pari-2.15.4
 
