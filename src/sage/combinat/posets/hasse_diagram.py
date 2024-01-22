@@ -40,7 +40,7 @@ class LatticeError(ValueError):
     a and b" instead of "No meet for 1 and 2".
     """
 
-    def __init__(self, fail, x, y):
+    def __init__(self, fail, x, y) -> None:
         """
         Initialize the exception.
 
@@ -56,7 +56,7 @@ class LatticeError(ValueError):
         self.x = x
         self.y = y
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return string representation of the exception.
 

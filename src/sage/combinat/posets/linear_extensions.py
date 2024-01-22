@@ -513,7 +513,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         """
         return super().__classcall__(cls, poset, facade=facade)
 
-    def __init__(self, poset, facade):
+    def __init__(self, poset, facade) -> None:
         """
         TESTS::
 
@@ -671,7 +671,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         for lin_ext in linear_extension_iterator(self._poset._hasse_diagram):
             yield self._element_constructor_([vertex_to_element(_) for _ in lin_ext])
 
-    def __contains__(self, obj):
+    def __contains__(self, obj) -> bool:
         """
         Membership testing
 

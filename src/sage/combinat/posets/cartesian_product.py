@@ -81,7 +81,7 @@ class CartesianProductPoset(CartesianProduct):
         :class:`CartesianProduct`
     """
 
-    def __init__(self, sets, category, order=None, **kwargs):
+    def __init__(self, sets, category, order=None, **kwargs) -> None:
         r"""
         See :class:`CartesianProductPoset` for details.
 

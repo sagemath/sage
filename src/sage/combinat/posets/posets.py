@@ -1013,7 +1013,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                                      category=category, facade=facade,
                                      key=key)
 
-    def __init__(self, hasse_diagram, elements, category, facade, key):
+    def __init__(self, hasse_diagram, elements, category, facade, key) -> None:
         r"""
         EXAMPLES::
 
@@ -1230,7 +1230,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         else:
             return element.element
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is an element of the poset.
 
@@ -8909,7 +8909,7 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         [[1, 2], [0, 2]]
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         EXAMPLES::
 
@@ -8934,7 +8934,7 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         """
         return "Posets containing %s elements" % self._n
 
-    def __contains__(self, P):
+    def __contains__(self, P) -> bool:
         """
         EXAMPLES::
 
