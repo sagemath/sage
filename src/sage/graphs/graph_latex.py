@@ -589,10 +589,9 @@ class GraphLatex(SageObject):
             sage: opts1 == opts2
             False
         """
-        if not(isinstance(other, GraphLatex)):
+        if not isinstance(other, GraphLatex):
             return False
-        else:
-            return self._options == other._options
+        return self._options == other._options
 
     def _repr_(self):
         r"""
@@ -1128,9 +1127,9 @@ class GraphLatex(SageObject):
                 raise ValueError('%s option must be one of: tkz_graph, dot2tex not %s' % (name, value))
             elif name == 'units' and value not in unit_names:
                 raise ValueError('%s option must be one of: in, mm, cm, pt, em, ex, not %s' % (name, value))
-            elif name == 'graphic_size' and not(isinstance(value, tuple) and (len(value) == 2)):
+            elif name == 'graphic_size' and not (isinstance(value, tuple) and (len(value) == 2)):
                 raise ValueError('%s option must be an ordered pair, not %s' % (name, value))
-            elif name == 'margins' and not((isinstance(value, tuple)) and (len(value) == 4)):
+            elif name == 'margins' and not ((isinstance(value, tuple)) and (len(value) == 4)):
                 raise ValueError('%s option must be 4-tuple, not %s' % (name, value))
             elif name in color_options:
                 try:
@@ -1204,14 +1203,14 @@ class GraphLatex(SageObject):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
-                        if not(type(p) in [float, RealLiteral] and (0 <= p) and (p <= 1)) and not(p in label_places):
+                        if not (type(p) in [float, RealLiteral] and (0 <= p) and (p <= 1)) and (p not in label_places):
                             raise ValueError('%s option for %s needs to be a number between 0.0 and 1.0 or a place (like "above"), not %s' % (name, key, p))
             elif name == 'loop_placements':
                 if not isinstance(value, dict):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
-                        if not((isinstance(p, tuple)) and (len(p) == 2) and (p[0] >= 0) and (p[1] in compass_points)):
+                        if not ((isinstance(p, tuple)) and (len(p) == 2) and (p[0] >= 0) and (p[1] in compass_points)):
                             raise ValueError('%s option for %s needs to be a positive number and a compass point (like "EA"), not %s' % (name, key, p))
             # These have been verified as tuples before going into this next check
             elif name in positive_tuples:

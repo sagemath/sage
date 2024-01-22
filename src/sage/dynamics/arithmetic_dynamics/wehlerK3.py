@@ -1551,7 +1551,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             sage: T = PP([0, 0, 1, 1 ,0, 0])
             sage: X.phi(T)
             (-1 : 0 : 1 , 0 : 1 : 0)
-       """
+        """
         A = self.sigmaX(a, **kwds)
         kwds.update({"check":False})
         return self.sigmaY(A, **kwds)

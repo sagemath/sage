@@ -2065,7 +2065,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK = EllipticCurve([0, 0, 0, i, i + 3])
             sage: EK.torsion_order()
             1
-         """
+        """
         return self.torsion_subgroup().order()
 
     def torsion_points(self):
@@ -2140,7 +2140,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK = EllipticCurve(K, [0,0,0,0,-1])
             sage: EK.torsion_points()
              [(-2 : -3*i : 1), (-2 : 3*i : 1), (0 : -i : 1), (0 : i : 1), (0 : 1 : 0), (1 : 0 : 1)]
-         """
+        """
         T = self.torsion_subgroup()  # cached
         return sorted(T.points())           # these are also cached in T
 

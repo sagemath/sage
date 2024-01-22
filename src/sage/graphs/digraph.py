@@ -3000,7 +3000,7 @@ class DiGraph(GenericGraph):
             try:
                 cycle = next(vi)
                 cycles.append((len(cycle), cycle))
-            except(StopIteration):
+            except StopIteration:
                 pass
         # Since we always extract a shortest path, using a heap
         # can speed up the algorithm
@@ -3015,7 +3015,7 @@ class DiGraph(GenericGraph):
             try:
                 cycle = next(vertex_iterators[shortest_cycle[0]])
                 heappush(cycles, (len(cycle), cycle))
-            except(StopIteration):
+            except StopIteration:
                 pass
 
     def all_simple_cycles(self, starting_vertices=None, rooted=False,

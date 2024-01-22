@@ -85,7 +85,7 @@ def _normalize_padic_lseries(self, p, normalize, implementation, precision):
         sage: v = _normalize_padic_lseries(None, 5, "L_ratio", 'sage', 10)
         sage: u == v
         True
-     """
+    """
     if implementation == 'eclib':
         if normalize is None:
             normalize = "L_ratio"

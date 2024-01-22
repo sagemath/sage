@@ -121,7 +121,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
         raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')
     if not os.path.exists(data_tgz):
-        raise IOError("The data file is not at %s" % data_tgz)
+        raise OSError("The data file is not at %s" % data_tgz)
     t = walltime()
 
     if decompress:
@@ -1417,7 +1417,7 @@ class MiniCremonaDatabase(SQLDatabase):
         -  ``int`` - number_of_curves
         -  ``int`` - number_of_isogeny_classes
 
-       EXAMPLES::
+        EXAMPLES::
 
             sage: d = sage.databases.cremona.MiniCremonaDatabase(name='cremona', read_only=False, rebuild=True)   # not tested
             sage: d._init_allcurves('.', 11)    # not tested

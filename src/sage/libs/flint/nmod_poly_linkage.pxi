@@ -20,7 +20,9 @@ AUTHOR:
 from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport sig_malloc, sig_free
 
+from sage.libs.flint.types cimport *
 from sage.libs.flint.nmod_poly cimport *
+from sage.libs.flint.nmod_poly_factor cimport *
 from sage.libs.flint.ulong_extras cimport *
 from sage.structure.factorization import Factorization
 
