@@ -300,7 +300,7 @@ class FreeAlgebraFactory(UniqueFactory):
             if order is None:
                 order = 'degrevlex' if degrees is None else 'deglex'
             args = [arg for arg in (arg1, arg2) if arg is not None]
-            kwds = dict(sparse=sparse, order=order, implementation="singular")
+            kwds = {'sparse': sparse, 'order': order, 'implementation': "singular"}
             if name is not None:
                 kwds["name"] = name
             if names is not None:
@@ -578,7 +578,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: (F.1*L.2).parent() is F
             True
 
-       ::
+        ::
 
             sage: # needs sage.libs.singular sage.rings.finite_rings
             sage: K.<z> = GF(25)

@@ -218,7 +218,7 @@ def edge_multiplicities(G):
 ########
 
 
-class Ear():
+class Ear:
     r"""
     An ear is a sequence of vertices
 
@@ -372,7 +372,7 @@ class Ear():
 ##################
 
 
-class EdgeSelection():
+class EdgeSelection:
     pass
 
 

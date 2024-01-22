@@ -248,7 +248,7 @@ class Ideal_generic(MonoidElement):
 
     See :func:`Ideal()`.
     """
-    def __init__(self, ring, gens, coerce=True):
+    def __init__(self, ring, gens, coerce=True, **kwds):
         """
         Initialize this ideal.
 
@@ -1461,19 +1461,13 @@ class Ideal_pid(Ideal_principal):
     An ideal of a principal ideal domain.
 
     See :func:`Ideal()`.
+
+    EXAMPLES::
+
+        sage: I = 8*ZZ
+        sage: I
+        Principal ideal (8) of Integer Ring
     """
-    def __init__(self, ring, gen):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: I = 8*ZZ
-            sage: I
-            Principal ideal (8) of Integer Ring
-        """
-        Ideal_principal.__init__(self, ring, gen)
-
     def __add__(self, other):
         """
         Add the two ideals.

@@ -868,7 +868,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             raise TypeError('not a finite reflection group')
         if self.strands() > 5:
             raise TypeError('not a finite reflection group')
-        d_table = {1: tuple(), 2: (3,), 3: (4, 6),
+        d_table = {1: (), 2: (3,), 3: (4, 6),
                    4: (6, 9, 12), 5: (12, 18, 24, 30)}
         return tuple(Integer(deg) for deg in d_table[self.strands()])
 
@@ -887,7 +887,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             raise TypeError('not a finite reflection group')
         if self.strands() > 5:
             raise TypeError('not a finite reflection group')
-        d_table = {1: tuple(), 2: (0,), 3: (0, 2),
+        d_table = {1: (), 2: (0,), 3: (0, 2),
                    4: (0, 3, 6), 5: (0, 6, 12, 18)}
         return tuple(Integer(deg) for deg in d_table[self.strands()])
 
@@ -1768,7 +1768,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
            sage: R3.simple_coroots()
            Finite family {1: (0, 1), 2: (1/3*E(3) - 1/3*E(3)^2, 1/3*E(3) - 1/3*E(3)^2)}
 
-       Conversion maps::
+        Conversion maps::
 
            sage: # optional - gap3
            sage: r = R3.an_element()

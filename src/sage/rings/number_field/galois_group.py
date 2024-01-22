@@ -1,27 +1,18 @@
 # sage.doctest: needs sage.groups sage.rings.number_field
 """
-Galois Groups of Number Fields
+Galois groups of number fields
 
 AUTHORS:
 
 - William Stein (2004, 2005): initial version
-- David Loeffler (2009): rewrite to give explicit homomorphism groups
+- David Loeffler (2009): rewrote to give explicit homomorphism groups
 
-TESTS:
-
-Standard test of pickleability::
-
-    sage: x = polygen(ZZ, 'x')
-    sage: G = NumberField(x^3 + 2, 'alpha').galois_group(names='beta'); G
-    Galois group 3T2 (S3) with order 6 of x^3 + 2
-    sage: G == loads(dumps(G))
-    True
 """
 
 from sage.structure.sage_object import SageObject
-from sage.groups.galois_group import _alg_key, GaloisGroup_perm, GaloisSubgroup_perm
+from sage.groups.galois_group import _alg_key
+from sage.groups.galois_group_perm import GaloisGroup_perm, GaloisSubgroup_perm
 from sage.groups.perm_gps.permgroup import standardize_generator
-
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.superseded import deprecation
 from sage.misc.cachefunc import cached_method
@@ -76,6 +67,14 @@ class GaloisGroup_v1(SageObject):
             See https://github.com/sagemath/sage/issues/28782 for details.
             Galois group PARI group [4, 1, 2, "E(4) = 2[x]2"] of degree 4 of the
              Number Field in a0 with defining polynomial x^2 + 1 over its base field
+
+        TESTS::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: G = NumberField(x^3 + 2, 'alpha').galois_group(names='beta'); G
+            Galois group 3T2 (S3) with order 6 of x^3 + 2
+            sage: G == loads(dumps(G))
+            True
         """
         deprecation(28782, "GaloisGroup_v1 is deprecated; please use GaloisGroup_v2")
         self.__group = group
