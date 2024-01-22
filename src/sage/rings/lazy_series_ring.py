@@ -900,13 +900,46 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         A bivariate example involving composition of series::
 
-            sage: R.<x,y,t> = LazyPowerSeriesRing(QQ)
-            sage: M1 = R.undefined()
-            sage: M2 = R.undefined()
-            sage: eq1 = -t*(x - y)*M1(0, 0, t)*x + t*(x - 1)*(x + 1)*(y^2 + 1)*M1(0, y, t) + (t*x^2*y^2 + t*x*y + t*y^2 + t - x*y)*M1(x, y, t) + t*M2(0, 0, t)*x*y + x*y
-            sage: eq2 = -t*M1(0, 0, t)*x + t*(x - 1)*(y + 1)*M1(0, y, t) + t*(x*y + y + 1)*M1(x, y, t) - t*M2(0, 0, t)*x + t*(x - 1)*(y^2 + y^2 + y + 1)*M2(0, y, t) + (t*x^2*y^2 + t*x*y^2 + t*x*y + t*y^2 + t*y^2 + t*y + t - x*y)*M2(x, y, t)
-            sage: R.define_implicitly([M1, M2], [eq1, eq2])
-            sage: M1
+            sage: R.<z,q> = LazyPowerSeriesRing(QQ)
+            sage: g = R.undefined()
+            sage: R.define_implicitly([g], [g - (z*q + z*g*~(1-g))])
+            sage: g
+            z*q + z^2*q + z^3*q + (z^4*q+z^3*q^2) + (z^5*q+3*z^4*q^2) + O(z,q)^7
+
+        The following does not work currently, because the equations
+        determining the coefficients come in bad order::
+
+            sage: L.<x,y,t> = LazyPowerSeriesRing(QQ)
+            sage: M1 = L.undefined()
+            sage: M2 = L.undefined()
+            sage: eq1 = t*x*y*M2(0, 0, t) + (t - x*y)*M1(x, y, t) + x*y - t*M1(0, y, t)
+            sage: eq2 = (t*x-t)*M2(0, y, t) + (t - x*y)*M2(x, y, t)
+            sage: L.define_implicitly([M1, M2], [eq1, eq2])
+            sage: M1[1]  # known bug, not tested
+
+        Bicolored rooted trees with black and white roots::
+
+            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: L.define_implicitly([A, B], [A - x*exp(B), B - y*exp(A)])
+            sage: A
+            x + x*y + (x^2*y+1/2*x*y^2) + (1/2*x^3*y+2*x^2*y^2+1/6*x*y^3)
+            + (1/6*x^4*y+3*x^3*y^2+2*x^2*y^3+1/24*x*y^4)
+            + (1/24*x^5*y+8/3*x^4*y^2+27/4*x^3*y^3+4/3*x^2*y^4+1/120*x*y^5)
+            + (1/120*x^6*y+5/3*x^5*y^2+12*x^4*y^3+9*x^3*y^4+2/3*x^2*y^5+1/720*x*y^6)
+            + O(x,y)^8
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: S = LazySymmetricFunctions(h)
+            sage: E = S(lambda n: h[n])
+            sage: T = LazySymmetricFunctions(tensor([h, h]))
+            sage: X = tensor([h[1],h[[]]])
+            sage: Y = tensor([h[[]],h[1]])
+            sage: A = T.undefined()
+            sage: B = T.undefined()
+            sage: T.define_implicitly([A, B], [A - X*E(B), B - Y*E(A)])
+            sage: A[1]  # known bug, not tested
 
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
@@ -3091,8 +3124,33 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L = LazySymmetricFunctions(s)
             sage: L._terms_of_degree(3, ZZ)
             [s[3], s[2, 1], s[1, 1, 1]]
+
+            sage: L = LazySymmetricFunctions(tensor([s, s]))
+            sage: L._terms_of_degree(3, ZZ)
+            [s[3] # s[],
+             s[2, 1] # s[],
+             s[1, 1, 1] # s[],
+             s[2] # s[1],
+             s[1, 1] # s[1],
+             s[1] # s[2],
+             s[1] # s[1, 1],
+             s[] # s[3],
+             s[] # s[2, 1],
+             s[] # s[1, 1, 1]]
         """
-        return list(self._internal_poly_ring.base_ring().homogeneous_component_basis(n))
+        from sage.combinat.integer_vector import IntegerVectors
+        from sage.misc.mrange import cartesian_product_iterator
+        from sage.categories.tensor import tensor
+        B = self._internal_poly_ring.base_ring()
+        if self._arity == 1:
+            return list(B.homogeneous_component_basis(n))
+        l = []
+        for c in IntegerVectors(n, self._arity):
+            for m in cartesian_product_iterator([F.homogeneous_component_basis(p)
+                                                 for F, p in zip(B.tensor_factors(), c)]):
+                l.append(tensor(m))
+        return l
+
 
     def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, check=True):
         r"""
