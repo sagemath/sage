@@ -4536,14 +4536,14 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                                                    P.is_sparse())
         return P.element_class(P, coeff_stream)
 
-    def integral(self, variable=None, integration_constants=None):
+    def integral(self, variable=None, *, constants=None):
         r"""
         Return the integral of ``self`` with respect to ``variable``.
 
         INPUT:
 
         - ``variable`` -- (optional) the variable to integrate
-        - ``integration_constants`` -- (optional) list of integration
+        - ``constants`` -- (optional; keyword-only) list of integration
           constants for the integrals of ``self`` (the last constant
           corresponds to the first integral)
 
@@ -4579,7 +4579,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: R.<a, C> = QQ[]
             sage: L.<x> = LazyLaurentSeriesRing(R)
             sage: f = L.undefined(0)
-            sage: f.define((a*f).integral([C]))
+            sage: f.define((a*f).integral(constants=[C]))
             sage: f
             C + a*C*x + 1/2*a^2*C*x^2 + 1/6*a^3*C*x^3 + 1/24*a^4*C*x^4
              + 1/120*a^5*C*x^5 + 1/720*a^6*C*x^6 + O(x^7)
@@ -4597,14 +4597,14 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             x*y^2*t^-4 + 2*x*y*z*t^-2 + (x^2*y + x*z^2) + x^2*z*t^2 + 1/3*x^3*t^4
             sage: f.integral(t)
             -1/3*y^2*t^-3 - 2*y*z*t^-1 + (2*x*y + z^2)*t + 2/3*x*z*t^3 + 1/5*x^2*t^5
-            sage: f.integral(y, [x*y*z])
+            sage: f.integral(y, constants=[x*y*z])
             -1/9*y^3*t^-3 - y^2*z*t^-1 + x*y*z + (x*y^2 + y*z^2)*t + 2/3*x*y*z*t^3 + 1/5*x^2*y*t^5
 
         TESTS::
 
             sage: L.<t> = LazyLaurentSeriesRing(QQ)
             sage: f = t^-2
-            sage: f.integral(t, [0, 0, 0])
+            sage: f.integral(t, constants=[0, 0, 0])
             Traceback (most recent call last):
             ...
             ValueError: cannot integrate 3 times the series t^-2
@@ -4613,11 +4613,11 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             Traceback (most recent call last):
             ...
             ValueError: cannot integrate 3 times the series t^-5 + t^-2
-            sage: f.integral([0, 1], [0, 1])
+            sage: f.integral([0, 1], constants=[0, 1])
             Traceback (most recent call last):
             ...
             ValueError: integration constants given twice
-            sage: f.integral(4, [0, 1])
+            sage: f.integral(4, constants=[0, 1])
             Traceback (most recent call last):
             ...
             ValueError: the number of integrations does not match the number of integration constants
@@ -4625,35 +4625,35 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
         P = self.parent()
         zero = P.base_ring().zero()
         if variable is None:
-            if integration_constants is None:
-                integration_constants = [zero]
+            if constants is None:
+                constants = [zero]
         elif variable != P.gen():
             if isinstance(variable, (list, tuple)):
-                if integration_constants is not None:
+                if constants is not None:
                     raise ValueError("integration constants given twice")
-                integration_constants = tuple(variable)
+                constants = tuple(variable)
                 variable = None
             elif variable in ZZ and ZZ(variable) >= 0:
-                if integration_constants is None:
-                    integration_constants = [zero] * ZZ(variable)
-                elif ZZ(variable) != len(integration_constants):
+                if constants is None:
+                    constants = [zero] * ZZ(variable)
+                elif ZZ(variable) != len(constants):
                     raise ValueError("the number of integrations does not match"
                                      " the number of integration constants")
                 variable = None
-            if integration_constants is None:
-                integration_constants = []
+            if constants is None:
+                constants = []
         else:
-            if integration_constants is None:
-                integration_constants = [zero]
+            if constants is None:
+                constants = [zero]
             variable = None
 
-        nints = len(integration_constants)
+        nints = len(constants)
 
         coeff_stream = self._coeff_stream
         if isinstance(coeff_stream, Stream_zero):
-            if any(integration_constants):
+            if any(constants):
                 coeff_stream = Stream_exact([c / ZZ.prod(k for k in range(1, i+1))
-                                             for i, c in enumerate(integration_constants)],
+                                             for i, c in enumerate(constants)],
                                             order=0,
                                             constant=zero)
                 return P.element_class(P, coeff_stream)
@@ -4661,7 +4661,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         if (isinstance(coeff_stream, Stream_exact) and not coeff_stream._constant):
             coeffs = [c / ZZ.prod(k for k in range(1, i+1))
-                      for i, c in enumerate(integration_constants)]
+                      for i, c in enumerate(constants)]
             if coeff_stream._approximate_order < 0:
                 ic = coeff_stream._initial_coefficients
                 ao = coeff_stream._approximate_order
@@ -4694,7 +4694,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             return P.element_class(P, coeff_stream)
 
         if nints:
-            coeff_stream = Stream_integral(coeff_stream, integration_constants, P.is_sparse())
+            coeff_stream = Stream_integral(coeff_stream, constants, P.is_sparse())
 
         if variable is not None:
             coeff_stream = Stream_map_coefficients(coeff_stream,
@@ -5624,18 +5624,18 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                                                    P.is_sparse())
         return P.element_class(P, coeff_stream)
 
-    def integral(self, variable=None, integration_constants=None):
+    def integral(self, variable=None, *, constants=None):
         r"""
         Return the integral of ``self`` with respect to ``variable``.
 
         INPUT:
 
         - ``variable`` -- (optional) the variable to integrate
-        - ``integration_constants`` -- (optional) list of integration
+        - ``constants`` -- (optional; keyword-only) list of integration
           constants for the integrals of ``self`` (the last constant
           corresponds to the first integral)
 
-        For multivariable series, then only ``variable`` should be
+        For multivariable series, only ``variable`` should be
         specified; the integration constant is taken to be `0`.
 
         Now we assume the series is univariate. If the first argument is a
@@ -5673,7 +5673,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: R.<C, D> = QQ[]
             sage: L.<x> = LazyPowerSeriesRing(R)
             sage: f = L.undefined()
-            sage: f.define((f.derivative() + 2*f).integral([C, D]))
+            sage: f.define((f.derivative() + 2*f).integral(constants=[C, D]))
             sage: f
             C + D*x + ((C+1/2*D)*x^2) + ((1/3*C+1/2*D)*x^3)
              + ((1/4*C+5/24*D)*x^4) + ((1/12*C+11/120*D)*x^5)
@@ -5712,7 +5712,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             x*z^2 + 2*x*y*z*t + ((x*y^2+x^2*z)*t^2) + x^2*y*t^3 + 1/3*x^3*t^4
             sage: f.integral(t)
             z^2*t + y*z*t^2 + ((1/3*y^2+2/3*x*z)*t^3) + 1/2*x*y*t^4 + 1/5*x^2*t^5
-            sage: f.integral(y, [x*y*z])
+            sage: f.integral(y, constants=[x*y*z])
             x*y*z + y*z^2*t + 1/2*y^2*z*t^2 + ((1/9*y^3+2/3*x*y*z)*t^3) + 1/4*x*y^2*t^4 + 1/5*x^2*y*t^5
 
         We can integrate multivariate power series::
@@ -5750,17 +5750,17 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
             sage: L.<t> = LazyPowerSeriesRing(QQ)
             sage: f = t^2
-            sage: f.integral([0, 1], [0, 1])
+            sage: f.integral([0, 1], constants=[0, 1])
             Traceback (most recent call last):
             ...
             ValueError: integration constants given twice
-            sage: f.integral(4, [0, 1])
+            sage: f.integral(4, constants=[0, 1])
             Traceback (most recent call last):
             ...
             ValueError: the number of integrations does not match the number of integration constants
 
             sage: L.<x,y,z> = LazyPowerSeriesRing(QQ)
-            sage: x.integral(y, [2])
+            sage: x.integral(y, constants=[2])
             Traceback (most recent call last):
             ...
             ValueError: integration constants must not be given for multivariate series
@@ -5774,7 +5774,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         R = P._laurent_poly_ring
 
         if P._arity > 1:
-            if integration_constants is not None:
+            if constants is not None:
                 raise ValueError("integration constants must not be given for multivariate series")
             if variable is None:
                 raise ValueError("the integration variable must be specified")
@@ -5788,7 +5788,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             else:
                 shift = 0
 
-            if isinstance(coeff_stream, Stream_exact): # the constant should be 0
+            if isinstance(coeff_stream, Stream_exact): # constant is 0 because arity is at least 2
                 ao = coeff_stream._approximate_order
                 coeffs = [R(c).integral(variable) for c in coeff_stream._initial_coefficients]
                 coeff_stream = Stream_exact(coeffs, order=ao+shift, constant=coeff_stream._constant)
@@ -5806,34 +5806,34 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         zero = P.base_ring().zero()
         # This is copied from the LazyLaurentSeries.integral
         if variable is None:
-            if integration_constants is None:
-                integration_constants = [zero]
+            if constants is None:
+                constants = [zero]
         elif variable != P.gen():
             if isinstance(variable, (list, tuple)):
-                if integration_constants is not None:
+                if constants is not None:
                     raise ValueError("integration constants given twice")
-                integration_constants = tuple(variable)
+                constants = tuple(variable)
                 variable = None
             elif variable in ZZ and ZZ(variable) >= 0:
-                if integration_constants is None:
-                    integration_constants = [zero] * ZZ(variable)
-                elif ZZ(variable) != len(integration_constants):
+                if constants is None:
+                    constants = [zero] * ZZ(variable)
+                elif ZZ(variable) != len(constants):
                     raise ValueError("the number of integrations does not match"
                                      " the number of integration constants")
                 variable = None
-            if integration_constants is None:
-                integration_constants = []
+            if constants is None:
+                constants = []
         else:
-            if integration_constants is None:
-                integration_constants = [zero]
+            if constants is None:
+                constants = [zero]
             variable = None
 
-        nints = len(integration_constants)
+        nints = len(constants)
 
         if isinstance(coeff_stream, Stream_zero):
-            if any(integration_constants):
+            if any(constants):
                 coeff_stream = Stream_exact([c / ZZ.prod(k for k in range(1, i+1))
-                                             for i, c in enumerate(integration_constants)],
+                                             for i, c in enumerate(constants)],
                                             order=0,
                                             constant=zero)
                 return P.element_class(P, coeff_stream)
@@ -5842,7 +5842,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         if (isinstance(coeff_stream, Stream_exact) and not coeff_stream._constant):
             coeffs = [c / ZZ.prod(k for k in range(1, i+1))
-                      for i, c in enumerate(integration_constants)]
+                      for i, c in enumerate(constants)]
             coeffs += [zero] * coeff_stream._approximate_order
             ic = coeff_stream._initial_coefficients
             ao = coeff_stream._approximate_order
@@ -5858,7 +5858,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             return P.element_class(P, coeff_stream)
 
         if nints:
-            coeff_stream = Stream_integral(coeff_stream, integration_constants, P.is_sparse())
+            coeff_stream = Stream_integral(coeff_stream, constants, P.is_sparse())
 
         if variable is not None:
             coeff_stream = Stream_map_coefficients(coeff_stream,

@@ -121,7 +121,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
         raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')
     if not os.path.exists(data_tgz):
-        raise IOError("The data file is not at %s" % data_tgz)
+        raise OSError("The data file is not at %s" % data_tgz)
     t = walltime()
 
     if decompress:

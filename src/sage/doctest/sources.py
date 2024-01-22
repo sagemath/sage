@@ -798,7 +798,7 @@ class FileDocTestSource(DocTestSource):
         """
         if not os.path.exists(self.path):
             import errno
-            raise IOError(errno.ENOENT, "File does not exist", self.path)
+            raise OSError(errno.ENOENT, "File does not exist", self.path)
         base, filename = os.path.split(self.path)
         _, ext = os.path.splitext(filename)
         if not self.in_lib and ext in ('.py', '.pyx', '.sage', '.spyx'):

@@ -2072,20 +2072,20 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
         - ``f`` -- a function such that one of the following works:
 
-          * the substitution `f(z)`, where `z` is generator of ``self``
-          * `f` is a function of a single variable with no poles and has a
-            ``derivative`` method
+          * the substitution `f(z)`, where `z` is a generator of ``self``
+          * `f` is a function of a single variable with no poles at `0`
+            and has a ``derivative`` method
 
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
             sage: x = SR.var('x')
-            sage: f(x) = (1 + x)/(1 - x^2)
+            sage: f(x) = (1 + x) / (1 - x^2)
             sage: L.taylor(f)
             1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
 
-        For inputs as symbolic functions, this uses the generic implementation,
-        and so the function cannot have any poles at `0`::
+        For inputs as symbolic functions/expressions, the function must
+        not have any poles at `0`::
 
             sage: f(x) = (1 + x^2) / sin(x^2)
             sage: L.taylor(f)
@@ -2847,12 +2847,13 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
           * the substitution `f(z_1, \ldots, z_n)`, where `(z_1, \ldots, z_n)`
             are the generators of ``self``
-          * `f` is a function of a single variable with no poles and has a
-            ``derivative`` method
+          * `f` is a function with no poles at `0` and has a ``derivative``
+            method
 
         .. WARNING::
 
-            For inputs as symbolic functions/expressions
+            For inputs as symbolic functions/expressions, this does not check
+            that the function does not have poles at `0`.
 
         EXAMPLES::
 
@@ -2867,25 +2868,54 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L.taylor(f)
             -z + 1/6*z^3 - 1/120*z^5 + O(z^7)
 
+        For inputs as symbolic functions/expressions, the function must
+        not have any poles at `0`::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ, sparse=True)
+            sage: f = 1 / sin(x)
+            sage: L.taylor(f)
+            <repr(...) failed: ValueError: power::eval(): division by zero>
+
+        Different multivariate inputs::
+
             sage: L.<a,b> = LazyPowerSeriesRing(QQ)
             sage: def f(x, y): return (1 + x) / (1 + y)
             sage: L.taylor(f)
             1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
-            sage: y = SR.var('y')
-            sage: g(x, y) = (1 + x) / (1 + y)
+            sage: g(w, z) = (1 + w) / (1 + z)
             sage: L.taylor(g)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: only implemented generically for one variable
+            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+            sage: y = SR.var('y')
+            sage: h = (1 + x) / (1 + y)
+            sage: L.taylor(h)
+            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
         """
         try:
             return f(*self.gens())
         except (ValueError, TypeError):
             pass
+
         if self._arity != 1:
-            raise NotImplementedError("only implemented generically for one variable")
-        stream = Stream_taylor(f, self.is_sparse())
-        return self.element_class(self, stream)
+            R = self._laurent_poly_ring
+            BR = R.base_ring()
+            args = f.arguments()
+            subs = {str(va): ZZ.zero() for va in args}
+            gens = R.gens()
+            ell = len(subs)
+            from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
+            from sage.arith.misc import factorial
+
+            def taylor_expand(deg):
+                if deg == 0:
+                    return BR(f(**subs))
+                return R.sum(BR(f.diff(*sum(([g] * e for g, e in zip(args, al)), []))(**subs)
+                                / ZZ.prod(factorial(a) for a in al))
+                             * R.monomial(*al) for al in integer_vectors_nk_fast_iter(deg, ell))
+
+            coeff_stream = Stream_function(taylor_expand, self._sparse, self._minimal_valuation)
+        else:
+            coeff_stream = Stream_taylor(f, self._sparse)
+        return self.element_class(self, coeff_stream)
 
 
 ######################################################################

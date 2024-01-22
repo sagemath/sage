@@ -45,6 +45,7 @@ Orders, Ideals and Ideal Classes
    sage/rings/number_field/order
    sage/rings/number_field/number_field_ideal
    sage/rings/number_field/number_field_ideal_rel
+   sage/rings/number_field/order_ideal
    sage/rings/number_field/class_group
    sage/rings/number_field/unit_group
    sage/rings/number_field/S_unit_solver
