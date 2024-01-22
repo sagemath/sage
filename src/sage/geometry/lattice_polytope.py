@@ -125,6 +125,7 @@ AUTHORS:
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
 from sage.arith.misc import GCD as gcd
+from sage.features.databases import DatabaseReflexivePolytopes
 from sage.geometry.cone import _ambient_space_point, integral_length
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import (PointCollection,
@@ -451,9 +452,10 @@ def ReflexivePolytopes(dim):
     if dim not in [2, 3]:
         raise NotImplementedError("only 2- and 3-dimensional reflexive polytopes are available!")
     if _rp[dim] is None:
-        from sage.env import POLYTOPE_DATA_DIR
+        db = DatabaseReflexivePolytopes()
         rp = read_all_polytopes(
-            os.path.join(POLYTOPE_DATA_DIR, "reflexive_polytopes_%dd" % dim))
+                os.path.join(os.path.dirname(db.absolute_filename()),
+                             f'reflexive_polytopes_{dim}d'))
         for n, p in enumerate(rp):
             # Data files have normal form of reflexive polytopes
             p.normal_form.set_cache(p._vertices)

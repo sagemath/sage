@@ -24,9 +24,6 @@ cdef class DedekindDomain(IntegralDomain):
 cdef class PrincipalIdealDomain(IntegralDomain):
     pass
 
-cdef class EuclideanDomain(PrincipalIdealDomain):
-    pass
-
 cdef class Field(PrincipalIdealDomain):
     pass
 

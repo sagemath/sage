@@ -207,7 +207,6 @@ cdef class BasisExchangeMatroid(Matroid):
         NOTE:
         For internal use. Matroids are immutable but this method does modify the matroid. The use this method will only
         be safe in very limited circumstances, such as perhaps on a fresh copy of a matroid.
-
         """
         cdef long i
         E = []
@@ -474,7 +473,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
         """
@@ -496,7 +495,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: type(M.groundset())
             <... 'frozenset'>
             sage: type(M.groundset_list())
@@ -517,12 +516,11 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: len(M)
             7
             sage: len(M.groundset())
             7
-
         """
         return self._groundset_size
 
@@ -539,7 +537,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.full_rank()
             3
             sage: M.dual().full_rank()
@@ -565,7 +563,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M.full_corank()
             4
             sage: M.dual().full_corank()
@@ -593,14 +591,13 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: sorted(M.basis())
             ['a', 'b', 'c']
             sage: M.rank('cd')
             2
             sage: sorted(M.basis())
             ['a', 'c', 'd']
-
         """
         return self.__unpack(self._current_basis)
 
@@ -623,13 +620,12 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(M.basis())
             ['a', 'b', 'c', 'e']
             sage: M._move_current_basis('ef', 'a')
             sage: sorted(M.basis())
             ['b', 'c', 'e', 'f']
-
         """
         self._pack(self._input, X)
         self._pack(self._input2, Y)
@@ -651,7 +647,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(M._max_independent(set(['a', 'c', 'd', 'e', 'f'])))
             ['a', 'c', 'd', 'e']
 
@@ -660,7 +656,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if
             the input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.max_independent>`.
-
         """
         self._pack(self._input, F)
         self.__max_independent(self._output, self._input)
@@ -682,7 +677,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: M._rank(set(['a', 'c', 'd', 'e', 'f']))
             4
 
@@ -691,7 +686,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if
             the input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.rank>`.
-
         """
         self._pack(self._input, F)
         self.__max_independent(self._output, self._input)
@@ -714,7 +708,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(sage.matroids.matroid.Matroid._circuit(M,
             ....:                             set(['a', 'c', 'd', 'e', 'f'])))
             ['c', 'd', 'e', 'f']
@@ -751,7 +745,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.P8()
+            sage: M = matroids.catalog.P8()
             sage: sorted(M._fundamental_circuit('abcd', 'e'))
             ['a', 'b', 'c', 'e']
         """
@@ -777,7 +771,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(M._closure(set(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
 
@@ -786,7 +780,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if the
             input is indeed a subset of the ground set, see
             :meth:`<sage.matroids.matroid.Matroid.closure>`.
-
         """
         self._pack(self._input, F)
         self.__closure(self._output, self._input)
@@ -808,7 +801,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(M._max_coindependent(set(['a', 'c', 'd', 'e', 'f'])))
             ['a', 'c', 'd', 'f']
 
@@ -817,7 +810,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if the
             input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.max_coindependent>`.
-
         """
         self._pack(self._input, F)
         self.__max_coindependent(self._output, self._input)
@@ -839,7 +831,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: M._corank(set(['a', 'e', 'g', 'd', 'h']))
             4
 
@@ -870,7 +862,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(sage.matroids.matroid.Matroid._cocircuit(M,
             ....:                             set(['a', 'c', 'd', 'e', 'f'])))
             ['c', 'd', 'e', 'f']
@@ -907,7 +899,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.P8()
+            sage: M = matroids.catalog.P8()
             sage: sorted(M._fundamental_cocircuit('efgh', 'e'))
             ['b', 'c', 'd', 'e']
         """
@@ -933,7 +925,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(M._coclosure(set(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
 
@@ -942,7 +934,6 @@ cdef class BasisExchangeMatroid(Matroid):
             This is an unguarded method. For the version that verifies if the
             input is indeed a subset of the ground set,
             see :meth:`<sage.matroids.matroid.Matroid.coclosure>`.
-
         """
         self._pack(self._input, F)
         self._coclosure_internal(self._output, self._input)
@@ -969,10 +960,9 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: sorted(M._augment(set(['a']), set(['e', 'f', 'g', 'h'])))
             ['e', 'f', 'g']
-
         """
         self._pack(self._input, X)
         self._pack(self._input2, Y)
@@ -995,7 +985,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: M._is_independent(set(['a', 'b', 'c']))
             True
             sage: M._is_independent(set(['a', 'b', 'c', 'd']))
@@ -1128,7 +1118,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.BetsyRoss()
+            sage: M = matroids.catalog.BetsyRoss()
             sage: S = set('ab')
             sage: T = set('cd')
             sage: I, X = M._link(S, T)
@@ -1256,10 +1246,9 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.S8()
+            sage: M = matroids.catalog.S8()
             sage: M.f_vector()
             [1, 8, 22, 14, 1]
-
         """
         cdef bitset_t *flats
         cdef bitset_t *todo
@@ -1322,7 +1311,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.S8()
+            sage: M = matroids.catalog.S8()
             sage: M.f_vector()
             [1, 8, 22, 14, 1]
             sage: len(M.flats(2))
@@ -1397,7 +1386,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.S8().dual()
+            sage: M = matroids.catalog.S8().dual()
             sage: M.f_vector()
             [1, 8, 22, 14, 1]
             sage: len(M.coflats(2))
@@ -1530,7 +1519,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: M.bases_count()
             184
         """
@@ -1557,7 +1546,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: I = M.independent_sets()
             sage: len(I)
             57
@@ -1618,12 +1607,11 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: M.bases_count()
             184
             sage: [len(M.independent_r_sets(r)) for r in range(M.full_rank() + 1)]
             [1, 10, 45, 120, 201, 184]
-
         """
         cdef SetSystem BB
         BB = SetSystem(self._E)
@@ -1650,7 +1638,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: M.bases_count()
             184
             sage: len([B for B in M.bases()])
@@ -1672,12 +1660,11 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: len(M.nonbases())
             68
             sage: [len(M.dependent_r_sets(r)) for r in range(M.full_rank() + 1)]
             [0, 0, 0, 0, 9, 68]
-
         """
         cdef SetSystem NB
         NB = SetSystem(self._E)
@@ -1715,7 +1702,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: binomial(M.size(), M.full_rank())-M.bases_count()                     # needs sage.symbolic
             68
             sage: len([B for B in M.nonbases()])
@@ -1741,7 +1728,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: len(M.nonspanning_circuits())
             23
         """
@@ -1790,7 +1777,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: len(M.noncospanning_cocircuits())
             23
         """
@@ -1836,7 +1823,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.NonFano().bases())
+            sage: M = Matroid(bases=matroids.catalog.NonFano().bases())
             sage: sorted([sorted(C) for C in M.cocircuits()])
             [['a', 'b', 'c', 'd', 'g'], ['a', 'b', 'c', 'e', 'g'],
              ['a', 'b', 'c', 'f', 'g'], ['a', 'b', 'd', 'e'],
@@ -1884,7 +1871,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(matroids.named_matroids.NonFano().bases())
+            sage: M = Matroid(matroids.catalog.NonFano().bases())
             sage: sorted([sorted(C) for C in M.circuits()])
             [['a', 'b', 'c', 'g'], ['a', 'b', 'd', 'e'], ['a', 'b', 'f'],
              ['a', 'c', 'd', 'f'], ['a', 'c', 'e'], ['a', 'd', 'e', 'f'],
@@ -1933,7 +1920,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.N1()
+            sage: M = matroids.catalog.N1()
             sage: M._characteristic_setsystem()
             Iterator over a system of subsets
             sage: len(M._characteristic_setsystem())
@@ -1959,8 +1946,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(bases=matroids.named_matroids.Fano().bases())
-            sage: N = Matroid(matroids.named_matroids.NonFano().bases())
+            sage: M = Matroid(bases=matroids.catalog.Fano().bases())
+            sage: N = Matroid(matroids.catalog.NonFano().bases())
             sage: M._weak_invariant() == N._weak_invariant()
             False
         """
@@ -1982,7 +1969,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(matroids.named_matroids.Vamos().bases())
+            sage: M = Matroid(matroids.catalog.Vamos().bases())
             sage: [sorted(p) for p in M._weak_partition()]
             [['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']]
         """
@@ -2004,8 +1991,8 @@ cdef class BasisExchangeMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(matroids.named_matroids.Fano().bases())
-            sage: N = Matroid(matroids.named_matroids.NonFano().bases())
+            sage: M = Matroid(matroids.catalog.Fano().bases())
+            sage: N = Matroid(matroids.catalog.NonFano().bases())
             sage: M._strong_invariant() == N._strong_invariant()
             False
         """
@@ -2022,7 +2009,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: [sorted(p) for p in M._strong_partition()]
             [['a', 'b', 'e', 'f'], ['c', 'd', 'g', 'h']]
         """
@@ -2037,8 +2024,8 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
-            sage: N = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
+            sage: N = BasisMatroid(matroids.catalog.Vamos())
             sage: M._heuristic_invariant() == N._heuristic_invariant()
             True
         """
@@ -2060,8 +2047,8 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
-            sage: N = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
+            sage: N = BasisMatroid(matroids.catalog.Vamos())
             sage: PM = M._heuristic_partition()
             sage: PN = N._heuristic_partition()
             sage: morphism = {}
@@ -2099,7 +2086,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+            sage: M = BasisMatroid(matroids.catalog.Vamos())
             sage: [sorted(p) for p in M._equitable_partition()]
             [['a', 'b', 'e', 'f'], ['c', 'd', 'g', 'h']]
             sage: [sorted(p) for p in M._equitable_partition(['a', 'bcdefgh'])]
@@ -2128,12 +2115,12 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Pappus()
-            sage: N = BasisMatroid(matroids.named_matroids.NonPappus())
+            sage: M = matroids.catalog.Pappus()
+            sage: N = BasisMatroid(matroids.catalog.NonPappus())
             sage: N._is_isomorphism(M, {e:e for e in M.groundset()})
             False
 
-            sage: M = matroids.named_matroids.Fano().delete(['g'])
+            sage: M = matroids.catalog.Fano().delete(['g'])
             sage: N = matroids.Wheel(3)
             sage: morphism = {'a':0, 'b':1, 'c': 2, 'd':4, 'e':5, 'f':3}
             sage: M._is_isomorphism(N, morphism)
@@ -2200,8 +2187,8 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: morphism = M1._isomorphism(M2)                                        # needs sage.graphs
             sage: M1._is_isomorphism(M2, morphism)                                      # needs sage.graphs
             True
-            sage: M1 = matroids.named_matroids.Fano()
-            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1 = matroids.catalog.Fano()
+            sage: M2 = matroids.catalog.NonFano()
             sage: M1._isomorphism(M2) is None
             True
 
@@ -2295,13 +2282,12 @@ cdef class BasisExchangeMatroid(Matroid):
             True
             sage: M1._is_isomorphic(M2, certificate=True)                               # needs sage.graphs
             (True, {0: 0, 1: 1, 2: 2, 3: 3, 4: 5, 5: 4})
-            sage: M1 = BasisMatroid(matroids.named_matroids.Fano())
-            sage: M2 = matroids.named_matroids.NonFano()
+            sage: M1 = BasisMatroid(matroids.catalog.Fano())
+            sage: M2 = matroids.catalog.NonFano()
             sage: M1._is_isomorphic(M2)
             False
             sage: M1._is_isomorphic(M2, certificate=True)
             (False, None)
-
         """
         if certificate:
             return self._is_isomorphic(other), self._isomorphism(other)
@@ -2371,7 +2357,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.named_matroids.Fano())
+            sage: M = BasisMatroid(matroids.catalog.Fano())
             sage: M.is_valid()
             True
             sage: M = Matroid(groundset='abcd', bases=['ab', 'cd'])

@@ -22,7 +22,7 @@ AUTHORS:
 
 from sage.structure.sage_object import SageObject
 
-from sage.env import JMOL_DIR
+from sage.features.jmol import JmolDataJar
 from sage.misc.temporary_file import tmp_filename
 from sage.cpython.string import bytes_to_str
 
@@ -80,11 +80,11 @@ class JmolData(SageObject):
 
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
-            sage: JData.jmolpath()
+            sage: JData.jmolpath()  # needs jmol
             '.../JmolData.jar'
 
         """
-        jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
+        jmolpath = JmolDataJar().absolute_filename()
 
         return jmolpath
 
@@ -101,7 +101,7 @@ class JmolData(SageObject):
             sage: type(JData.is_jmol_available())
             <... 'bool'>
         """
-        if not os.path.isfile(self.jmolpath()):
+        if not JmolDataJar().is_present():
             return False
 
         if not self.is_jvm_available():

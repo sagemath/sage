@@ -215,7 +215,7 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
-    def __init__(self, A):
+    def __init__(self, A, category=None):
         """
         TESTS::
 
@@ -232,7 +232,7 @@ class AlgebraicScheme(scheme.Scheme):
             raise TypeError("A (=%s) must be an ambient space")
         self.__A = A
         self.__divisor_group = {}
-        scheme.Scheme.__init__(self, A.base_scheme())
+        scheme.Scheme.__init__(self, A.base_scheme(), category=category)
 
     def _latex_(self):
         r"""
@@ -918,7 +918,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
           x^2 - y*z
     """
 
-    def __init__(self, A, polynomials):
+    def __init__(self, A, polynomials, category=None):
         """
         See ``AlgebraicScheme_subscheme`` for documentation.
 
@@ -935,7 +935,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         from sage.rings.polynomial.multi_polynomial_sequence import is_PolynomialSequence
 
-        AlgebraicScheme.__init__(self, A)
+        AlgebraicScheme.__init__(self, A, category=category)
         self._base_ring = A.base_ring()
         R = A.coordinate_ring()
         if is_Ideal(polynomials):

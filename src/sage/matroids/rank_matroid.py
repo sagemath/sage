@@ -98,7 +98,6 @@ class RankMatroid(Matroid):
             ....:                 rank_function=matroids.Uniform(3, 6).rank)
             sage: M
             Matroid of rank 3 on 6 elements
-
         """
         self._groundset = frozenset(groundset)
         self._rank_function = rank_function
@@ -114,7 +113,6 @@ class RankMatroid(Matroid):
             ....:                 rank_function=matroids.Uniform(3, 6).rank)
             sage: sorted(M.groundset())
             [0, 1, 2, 3, 4, 5]
-
         """
         return self._groundset
 
@@ -314,6 +312,5 @@ class RankMatroid(Matroid):
             TypeError: unfortunately, functions cannot be saved reliably, so
             this class doesn't have load/save support. Convert to another
             class, such as BasisMatroid, instead.
-
         """
         raise TypeError("unfortunately, functions cannot be saved reliably, so this class doesn't have load/save support. Convert to another class, such as BasisMatroid, instead.")
