@@ -2589,8 +2589,8 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
         sage: E = EllipticCurve(K,[0,0,0,1,0])                                          # needs sage.rings.number_field
         sage: [phi.codomain().ainvs()                   # long time                     # needs sage.rings.number_field
         ....:  for phi in E.isogenies_prime_degree(37)]
-        [(0, 0, 0, -840*i + 1081, 0),
-         (0, 0, 0, 840*i + 1081, 0)]
+        [(0, 0, 0, 840*i + 1081, 0),
+         (0, 0, 0, -840*i + 1081, 0)]
     """
     if not l.is_prime():
         raise ValueError("%s is not prime." % l)
@@ -2759,7 +2759,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
                over Number Field in a with defining polynomial x^2 + 11
                with a = 3.316624790355400?*I
             to Elliptic Curve defined by
-               y^2 = x^3 + x^2 + (30800*a+123963)*x + (3931312*a-21805005)
+               y^2 = x^3 + x^2 + (-30800*a+123963)*x + (-3931312*a-21805005)
                over Number Field in a with defining polynomial x^2 + 11
                with a = 3.316624790355400?*I,
          Isogeny of degree 37
@@ -2767,7 +2767,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
                over Number Field in a with defining polynomial x^2 + 11
                with a = 3.316624790355400?*I
             to Elliptic Curve defined by
-               y^2 = x^3 + x^2 + (-30800*a+123963)*x + (-3931312*a-21805005)
+               y^2 = x^3 + x^2 + (30800*a+123963)*x + (3931312*a-21805005)
                over Number Field in a with defining polynomial x^2 + 11
                with a = 3.316624790355400?*I]
     """
