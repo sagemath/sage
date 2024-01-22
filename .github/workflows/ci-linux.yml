@@ -28,6 +28,7 @@ jobs:
           - debian:bookworm
           - debian:trixie
           - debian:sid
+          - debian:experimental
           - linuxmintd/mint20.1-amd64
           - linuxmintd/mint20.2-amd64
           - linuxmintd/mint20.3-amd64
