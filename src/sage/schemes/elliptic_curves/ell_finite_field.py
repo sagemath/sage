@@ -2854,6 +2854,10 @@ def EllipticCurve_with_order(m, *, D=None, all=False, iter=False):
         ....:         for Et in E0.twists():
         ....:             if Et.order() == 21:
         ....:                 assert any(Et.is_isomorphic(E) for E in Es)
+
+    AUTHORS:
+
+     - Gareth Ma and Giacomo Pope (Sage Days 123): Fix bug for small curves
     """
     sol = _EllipticCurve_with_order_helper(m, D)
     if all:
