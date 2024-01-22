@@ -5187,8 +5187,9 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         cm = get_coercion_model()
         P = cm.common_parent(self.base_ring(), *[parent(h) for h in g])
 
+        coeff_stream = self._coeff_stream
         # f = 0
-        if isinstance(self._coeff_stream, Stream_zero):
+        if isinstance(coeff_stream, Stream_zero):
             return P.zero()
 
         # g = (0, ..., 0)
@@ -5199,8 +5200,8 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             return P(self[0])
 
         # f has finite length and f != 0
-        if (isinstance(self._coeff_stream, Stream_exact)
-            and not self._coeff_stream._constant):
+        if (isinstance(coeff_stream, Stream_exact)
+            and not coeff_stream._constant):
             # constant polynomial
             poly = self.polynomial()
             if poly.is_constant():
@@ -5250,7 +5251,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                     h._coeff_stream._approximate_order = 2
 
         # We now have that every element of g has a _coeff_stream
-        sorder = self._coeff_stream._approximate_order
+        sorder = coeff_stream._approximate_order
         if len(g) == 1:
             g0 = g[0]
             if isinstance(g0, LazyDirichletSeries):
@@ -5258,29 +5259,28 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                 def coefficient(n):
                     return sum(self[i] * (g0**i)[n] for i in range(n+1))
 
-                coeff_stream = Stream_function(coefficient, P._sparse, 1)
-                return P.element_class(P, coeff_stream)
+                return P.element_class(P, Stream_function(coefficient,
+                                                          P._sparse, 1))
 
-            coeff_stream = Stream_cauchy_compose(self._coeff_stream,
-                                                 g0._coeff_stream,
-                                                 P.is_sparse())
-            return P.element_class(P, coeff_stream)
+            return P.element_class(P, Stream_cauchy_compose(coeff_stream,
+                                                            g0._coeff_stream,
+                                                            P.is_sparse()))
 
         # The arity is at least 2
         gv = min(h._coeff_stream._approximate_order for h in g)
-
         def coefficient(n):
             r = R.zero()
             for i in range(n // gv + 1):
-                c = self._coeff_stream[i]
+                c = coeff_stream[i]
                 if c in self.base_ring():
                     c = P(c)
-                    return c[n]
-                r += c(g)[n]
+                    r += c[n]
+                else:
+                    r += c(g)[n]
             return r
 
-        coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)
-        return P.element_class(P, coeff_stream)
+        return P.element_class(P, Stream_function(coefficient,
+                                                  P._sparse, sorder * gv))
 
     compose = __call__
 

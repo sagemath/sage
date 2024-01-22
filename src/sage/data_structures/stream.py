@@ -983,6 +983,14 @@ class Stream_function(Stream_inexact):
         We assume for equality that ``function`` is a function in the
         mathematical sense.
 
+    .. WARNING::
+
+        To make
+        :meth:`sage.rings.lazy_series_ring.LazySeriesRing.define_implicitly`
+        work any streams used in ``function`` must appear in its
+        ``__closure__`` as instances of :class:`Stream`, as opposed
+        to, for example, as instances of :class:`LazyPowerSeries`.
+
     EXAMPLES::
 
         sage: from sage.data_structures.stream import Stream_function
@@ -1337,10 +1345,17 @@ class UndeterminedCoefficientsRingElement(Element):
             4/(FESDUMMY_... + 1)
         """
         P = self.parent()
-        V = self.variables()
-        d1 = {v: c for v, c in d.items()
-              if v in V}
-        return P.element_class(P, self._p.subs(d1))
+        p_num = P._P(self._p.numerator())
+        V_num = p_num.variables()
+        d_num = {P._P(v): c for v, c in d.items()
+                 if v in V_num}
+        num = p_num.subs(d_num)
+        p_den = P._P(self._p.denominator())
+        V_den = p_den.variables()
+        d_den = {P._P(v): c for v, c in d.items()
+                 if v in V_den}
+        den = p_den.subs(d_den)
+        return P.element_class(P, P._PF(num / den))
 
 from sage.categories.pushout import UndeterminedCoefficientsFunctor
 
@@ -1381,7 +1396,7 @@ class UndeterminedCoefficientsRing(UniqueRepresentation, Parent):
                 if i not in self._pool.values():
                     break
             else:
-                names = self._P.variable_names() + (self._PREFIX+str(n),)
+                names = self._P.variable_names() + (self._PREFIX+str(n),)  # tuple(self._PREFIX+str(i) for i in range(n, 2*n))
                 self._P = PolynomialRing(self._P.base_ring(), names)
                 self._PF = self._P.fraction_field()
                 i = n
@@ -4317,7 +4332,7 @@ class Stream_integral(Stream_unary):
             True
         """
         return (isinstance(other, type(self))
-                and self._integration_constants == other._integration_constants
+                and self._integration_constants == other._integration_constants)
 
     def is_nonzero(self):
         r"""
