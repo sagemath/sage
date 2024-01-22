@@ -2737,9 +2737,17 @@ def special_supersingular_curve(F, *, endomorphism=False):
 
 def _EllipticCurve_with_order_helper(m, D):
     r"""
-    NOTE:: D should be negative here.
+    See documentation of :func:`EllipticCurve_with_order`.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
+        sage: E = EllipticCurve_with_order(1234); E
+        Elliptic Curve defined by y^2 = x^3 + 1142*x + 1209 over Finite Field of size 1237
+        sage: E.order() == 1234
+        True
     """
-    from sage.arith.misc import is_prime, factor
+    from sage.arith.misc import is_prime_power, factor
     from sage.quadratic_forms.binary_qf import BinaryQF
     from sage.structure.factorization import Factorization
     from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
@@ -2766,7 +2774,7 @@ def _EllipticCurve_with_order_helper(m, D):
     seen = set()
     for D in Ds:
         for q in helper(m_val, m4_fac, D):
-            if not is_prime(q):
+            if not is_prime_power(q):
                 continue
 
             H = hilbert_class_polynomial(D)
@@ -2785,22 +2793,21 @@ def _EllipticCurve_with_order_helper(m, D):
                     except ValueError:
                         pass
 
-def EllipticCurve_with_order(m, D=None, iter=False):
+def EllipticCurve_with_order(m, *, D=None, all=False, iter=False):
     r"""
-    Return an elliptic curve over a prime finite field with the given order. The curves are
-    computed using the Complex Multiplication (CM) method.
+    Return an elliptic curve over a finite field with the given order. The curves are computed using
+    the Complex Multiplication (CM) method.
 
     A `:sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
     the algorithm is more efficient.
 
     If ``D`` is specified, it is used as the discriminant.
 
-    If ``iter`` is set, an iterator of all elliptic curves over prime order finite fields with the
-    given order is returned.
+    If ``all`` is set, a list of all elliptic curves over finite fields with the given order is
+    returned.
 
-    .. TODO::
-
-        Remove the restriction on *prime* finite fields.
+    If ``iter`` is set, an iterator of all elliptic curves over finite fields with the given order
+    is returned. This cannot be set with ``all``.
 
     EXAMPLES::
 
@@ -2840,7 +2847,7 @@ def EllipticCurve_with_order(m, D=None, iter=False):
     (approximately), and the rest can be checked via bruteforce::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
-        sage: Es = list(EllipticCurve_with_order(21, iter=True))
+        sage: Es = EllipticCurve_with_order(21, all=True)
         sage: for p in prime_range(50):
         ....:     for j in range(p):
         ....:         E0 = EllipticCurve(GF(p), j=j)
@@ -2849,6 +2856,12 @@ def EllipticCurve_with_order(m, D=None, iter=False):
         ....:                 assert any(Et.is_isomorphic(E) for E in Es)
     """
     sol = _EllipticCurve_with_order_helper(m, D)
+    if all:
+        if iter:
+            raise ValueError(f"all and iter cannot be both set")
+        return list(sol)
+
     if iter:
         return sol
+
     return next(sol)
