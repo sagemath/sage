@@ -3037,10 +3037,10 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: B.<i,j,k> = QuaternionAlgebra(419)
             sage: O = B.quaternion_order([1/2 + 3/2*j, 1/6*i + 2/3*j + 1/2*k, 3*j, k])
-            sage: alpha = B.random_element()
+            sage: alpha = -1 - 59*i + 1/2*j + 154/9*k
             sage: I = alpha * O
-            sage: is_principal(I, True)
-            (True, 1/2 + 140*i + j - k)
+            sage: I.is_principal(True)
+            (True, 1 + 59*i - 1/2*j - 154/9*k)
         """
         Q = self.quadratic_form()
 
