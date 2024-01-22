@@ -418,7 +418,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             return  # already known to be in echelon form
         self.check_mutability()
 
-        cdef Py_ssize_t i, r, c, min, min_row,  start_row
+        cdef Py_ssize_t i, r, c, min, min_row, start_row
         cdef int a_inverse, b, do_verb
         cdef c_vector_modint tmp
         start_row = 0
