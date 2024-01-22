@@ -2003,7 +2003,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                                 return (B, [self._vertex_to_element(e) for e in A])
                             else:
                                 return B
-        assert False, "BUG: breadth() in lattices.py have an error."
+        raise RuntimeError("BUG: breadth() in lattices.py have an error")
 
     def complements(self, element=None):
         r"""

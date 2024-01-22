@@ -1550,7 +1550,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         covers = []
         current_level = ['']
-        for i in range(1, n + 1):
+        for _ in range(1, n + 1):
             new_level = set()
             for low in current_level:
                 ind = low.find('1')
