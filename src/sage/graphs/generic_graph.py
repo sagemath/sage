@@ -306,6 +306,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.feedback_vertex_set` | Compute the minimum feedback vertex set of a (di)graph.
     :meth:`~GenericGraph.multiway_cut` | Return a minimum edge multiway cut
     :meth:`~GenericGraph.max_cut` | Return a maximum edge cut of the graph.
+    :meth:`~GenericGraph.longest_cycle` | Return the longest (induced) cycle of ``self``.
     :meth:`~GenericGraph.longest_path` | Return a longest path of ``self``.
     :meth:`~GenericGraph.traveling_salesman_problem` | Solve the traveling salesman problem (TSP)
     :meth:`~GenericGraph.is_hamiltonian` | Test whether the current graph is Hamiltonian.
@@ -7873,6 +7874,312 @@ class GenericGraph(GenericGraph_pyx):
             val.append([a, b])
 
         return val
+
+    def longest_cycle(self, induced=False, use_edge_labels=False,
+                      solver=None, verbose=0, *, integrality_tolerance=0.001):
+        r"""
+        Return the longest (induced) cycle of ``self``.
+
+        This method uses an integer linear programming formulation based on
+        subtour elimination constraints to find the longest cycle. This cycle is
+        *elementary* (or *simple*), and so without repeated vertices. When
+        searching for an *induced* cycle (i.e., a cycle without chord), it uses
+        in addition cycle elimination constraints as proposed in [MMRS2022]_.
+
+        We assume that the longest cycle in graph has at least 3 vertices and at
+        least 2 in a digraph. The longest induced cycle as at least 4 vertices
+        in both a graph and a digraph.
+
+        .. NOTE::
+
+            Graphs and digraphs with loops or multiple edges are currently not
+            accepted. It is certainly possible to extend the method to accept
+            them.
+
+        INPUT:
+
+        - ``induced`` -- boolean (default: ``False``); whether to return the
+          longest induced cycle or the longest cycle
+
+        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
+          compute a cycle with maximum weight where the weight of an edge is
+          defined by its label (a label set to ``None`` or ``{}`` being
+          considered as a weight of `1`), or to compute a cycle with the largest
+          possible number of edges (i.e., edge weights are set to 1)
+
+        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+        - ``verbose`` -- integer (default: ``0``); sets the level of
+          verbosity; set to ``0`` by default, which means quiet
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`
+
+        OUTPUT:
+
+        A subgraph of ``self`` corresponding to a (directed if ``self`` is
+        directed) longest (induced) cycle. If ``use_edge_labels == True``, a
+        pair ``weight, cycle`` is returned.
+
+        EXAMPLES:
+
+        Longest (induced) cycle of a graph::
+
+            sage: G = graphs.Grid2dGraph(3, 4)
+            sage: G.longest_cycle(induced=False)
+            longest cycle from 2D Grid Graph for [3, 4]: Graph on 12 vertices
+            sage: G.longest_cycle(induced=True)
+            longest induced cycle from 2D Grid Graph for [3, 4]: Graph on 10 vertices
+
+        Longest (induced) cycle in a digraph::
+
+            sage: D = digraphs.Circuit(8)
+            sage: D.add_edge(0, 2)
+            sage: D.longest_cycle(induced=False)
+            longest cycle from Circuit: Digraph on 8 vertices
+            sage: D.longest_cycle(induced=True)
+            longest induced cycle from Circuit: Digraph on 7 vertices
+            sage: D.add_edge(1, 0)
+            sage: D.longest_cycle(induced=False)
+            longest cycle from Circuit: Digraph on 8 vertices
+            sage: D.longest_cycle(induced=True)
+            longest induced cycle from Circuit: Digraph on 7 vertices
+            sage: D.add_edge(2, 0)
+            sage: D.longest_cycle(induced=False)
+            longest cycle from Circuit: Digraph on 8 vertices
+            sage: D.longest_cycle(induced=True)
+            longest induced cycle from Circuit: Digraph on 0 vertices
+
+        Longest (induced) cycle when considering edge weights::
+
+            sage: D = digraphs.Circuit(15)
+            sage: for u, v in D.edges(labels=False):
+            ....:     D.set_edge_label(u, v, 1)
+            sage: D.add_edge(0, 10, 50)
+            sage: D.add_edge(11, 1, 1)
+            sage: D.add_edge(13, 0, 1)
+            sage: D.longest_cycle(induced=False, use_edge_labels=False)
+            longest cycle from Circuit: Digraph on 15 vertices
+            sage: D.longest_cycle(induced=False, use_edge_labels=True)
+            (55, longest cycle from Circuit: Digraph on 6 vertices)
+            sage: D.longest_cycle(induced=True, use_edge_labels=False)
+            longest induced cycle from Circuit: Digraph on 11 vertices
+            sage: D.longest_cycle(induced=True, use_edge_labels=True)
+            (54, longest induced cycle from Circuit: Digraph on 5 vertices)
+
+        TESTS:
+
+        Small cases::
+
+            sage: Graph().longest_cycle()
+            longest cycle: Graph on 0 vertices
+            sage: Graph(1).longest_cycle()
+            longest cycle: Graph on 0 vertices
+            sage: Graph([(0, 1)]).longest_cycle()
+            longest cycle: Graph on 0 vertices
+            sage: Graph([(0, 1), (1, 2)]).longest_cycle()
+            longest cycle: Graph on 0 vertices
+            sage: Graph([(0, 1), (1, 2), (0, 2)]).longest_cycle()
+            longest cycle: Graph on 3 vertices
+            sage: Graph([(0, 1), (1, 2), (0, 2)]).longest_cycle(induced=True)
+            longest induced cycle: Graph on 0 vertices
+            sage: DiGraph().longest_cycle()
+            longest cycle: Digraph on 0 vertices
+            sage: DiGraph(1).longest_cycle()
+            longest cycle: Digraph on 0 vertices
+            sage: DiGraph([(0, 1), (1, 0)]).longest_cycle()
+            longest cycle: Digraph on 2 vertices
+            sage: DiGraph([(0, 1), (1, 0)]).longest_cycle(induced=True)
+            longest induced cycle: Digraph on 0 vertices
+
+        Disconnected digraph::
+
+            sage: D = digraphs.Circuit(5) + digraphs.Circuit(4)
+            sage: D.longest_cycle()
+            longest cycle from Subgraph of (Circuit disjoint_union Circuit): Digraph on 5 vertices
+            sage: D.longest_cycle(induced=True)
+            longest induced cycle from Subgraph of (Circuit disjoint_union Circuit): Digraph on 5 vertices
+        """
+        self._scream_if_not_simple()
+        G = self
+        st = f" from {G.name()}" if G.name() else ""
+        name = f"longest{' induced' if induced else ''} cycle{st}"
+
+        # Helper functions to manipulate weights
+        if use_edge_labels:
+            def weight(e):
+                return 1 if (len(e) < 3 or e[2] is None) else e[2]
+
+            def total_weight(gg):
+                return sum(weight(e) for e in gg.edge_iterator())
+        else:
+            def weight(e):
+                return 1
+
+            def total_weight(gg):
+                return gg.order()
+
+        directed = G.is_directed()
+        immutable = G.is_immutable()
+        if directed:
+            from sage.graphs.digraph import DiGraph as MyGraph
+            blocks = G.strongly_connected_components()
+        else:
+            from sage.graphs.graph import Graph as MyGraph
+            blocks = G.blocks_and_cut_vertices()[0]
+
+        # Deal with graphs with multiple biconnected components
+        if len(blocks) > 1:
+            best = MyGraph(name=name, immutable=immutable)
+            best_w = 0
+            for block in blocks:
+                if induced and len(block) < 4:
+                    continue
+                h = G.subgraph(vertices=block)
+                C = h.longest_cycle(induced=induced,
+                                    use_edge_labels=use_edge_labels,
+                                    solver=solver, verbose=verbose,
+                                    integrality_tolerance=integrality_tolerance)
+                if total_weight(C) > best_w:
+                    best = C
+                    best_w = total_weight(C)
+            return (best_w, best) if use_edge_labels else best
+
+        # We now know that the graph is biconnected or that the digraph is
+        # strongly connected.
+
+        if ((induced and G.order() < 4) or
+            (not induced and ((directed and G.order() < 2) or
+                              (not directed and G.order() < 3)))):
+            if use_edge_labels:
+                return 0, MyGraph(name=name, immutable=immutable)
+            return MyGraph(name=name, immutable=immutable)
+        if (not induced and ((directed and G.order() == 2) or
+                             (not directed and G.order() == 3))):
+            answer = G.copy()
+            answer.name(name)
+            if use_edge_labels:
+                return total_weight(answer), answer
+            return answer
+
+        # Helper functions to index edges
+        if directed:
+            def F(e):
+                return e[:2]
+        else:
+            def F(e):
+                return frozenset(e[:2])
+
+        from sage.numerical.mip import MixedIntegerLinearProgram
+        from sage.numerical.mip import MIPSolverException
+
+        p = MixedIntegerLinearProgram(maximization=True,
+                                      solver=solver,
+                                      constraint_generation=True)
+
+        # We need one binary variable per vertex and per edge
+        vertex = p.new_variable(binary=True)
+        edge = p.new_variable(binary=True)
+
+        # Objective function: maximize the size of the cycle
+        p.set_objective(p.sum(weight(e) * edge[F(e)] for e in G.edge_iterator()))
+
+        # We select as many vertices as edges
+        p.add_constraint(p.sum(edge[F(e)] for e in G.edge_iterator())
+                         == p.sum(vertex[u] for u in G))
+
+        if directed:
+            # If a vertex is selected, one of its incoming (resp. outgoing) edge
+            # must be selected, and none of them otherwise
+            for u in G:
+                p.add_constraint(p.sum(edge[F(e)] for e in G.outgoing_edge_iterator(u))
+                                 <= vertex[u])
+                p.add_constraint(p.sum(edge[F(e)] for e in G.incoming_edge_iterator(u))
+                                 <= vertex[u])
+        else:
+            # If a vertex is selected, two of its incident edges must be
+            # selected, and none of them otherwise
+            for u in G:
+                p.add_constraint(p.sum(edge[F(e)] for e in G.edge_iterator(u))
+                                 <= 2 * vertex[u])
+
+        if induced:
+            # An edge is selected if its end vertices are.
+            # We use the linearization of the quadratic constraint
+            #     vertex[u] * vertex[v] == edge[F((u, v))]
+            for e in G.edge_iterator():
+                f = F(e)
+                u, v = f
+                p.add_constraint(edge[f] <= vertex[u])
+                p.add_constraint(edge[f] <= vertex[v])
+                p.add_constraint(vertex[u] + vertex[v] <= edge[f] + 1)
+
+            # An induced cycle has at least 4 vertices
+            p.add_constraint(p.sum(vertex[u] for u in G), min=4)
+
+        best = MyGraph(name=name, immutable=immutable)
+        best_w = 0
+
+        # We add cut constraints for as long as we find solutions
+        while True:
+            try:
+                p.solve(log=verbose)
+            except MIPSolverException:
+                # No (new) solution found
+                break
+
+            # We build the Graph representing the current solution
+            b_val = p.get_values(edge, convert=bool, tolerance=integrality_tolerance)
+            edges = (e for e in G.edge_iterator() if b_val[F(e)])
+            h = MyGraph(edges, format='list_of_edges', name=name, immutable=immutable)
+            if not h:
+                # No new solution found
+                break
+
+            # If there is only one cycle, we are done !
+            if directed:
+                cc = h.strongly_connected_components()
+            else:
+                cc = h.connected_components(sort=False)
+            if len(cc) == 1:
+                if total_weight(h) > best_w:
+                    best = h
+                    best_w = total_weight(best)
+                break
+
+            # Otherwise, we add subtour elimination constraints
+            for c in cc:
+                if not (induced and len(c) < 4):
+                    hh = h.subgraph(vertices=c)
+                    if total_weight(hh) > best_w:
+                        best = hh
+                        best.name(name)
+                        best_w = total_weight(best)
+
+                # Add subtour elimination constraints
+                if directed:
+                    p.add_constraint(p.sum(edge[F(e)] for e in G.edge_boundary(c)), min=1)
+                    c = set(c)
+                    cbar = (v for v in G if v not in c)
+                    p.add_constraint(p.sum(edge[F(e)] for e in G.edge_boundary(cbar, c)), min=1)
+                else:
+                    p.add_constraint(p.sum(edge[F(e)] for e in G.edge_boundary(c)), min=2)
+
+                if induced:
+                    # We eliminate this cycle
+                    p.add_constraint(p.sum(vertex[u] for u in c) <= len(c) - 1)
+
+        # We finally set the positions of the vertices and return the result
+        if G.get_pos():
+            best.set_pos({u: pp for u, pp in G.get_pos().items() if u in best})
+        return (best_w, best) if use_edge_labels else best
 
     def longest_path(self, s=None, t=None, use_edge_labels=False, algorithm="MILP",
                      solver=None, verbose=0, *, integrality_tolerance=1e-3):
