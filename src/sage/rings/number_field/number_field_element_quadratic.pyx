@@ -2137,19 +2137,57 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             True
             sage: for _ in range(20):
             ....:     assert O.random_element().is_integral()
+
+        Check that :issue:`34800` is fixed::
+
+            sage: K.<t> = QuadraticField(-10007^2)
+            sage: (t/10007).is_integral()
+            True
         """
+        cdef mpz_t m, n, q, r, s, t, u
+        cdef bint result = False
+
+        # Shortcut for "obviously integral" elements
         if mpz_cmp_ui(self.denom, 1) == 0:
             return True
 
-        # Check for an element of the form x + y sqrt(D) where x and y
-        # are half-integers.
-        if mpz_even_p(self.a) or mpz_even_p(self.b):
-            return False
-        if mpz_cmp_ui(self.denom, 2) != 0:
-            return False
-        # Numbers with half-integral components are integral only for
-        # D = 1 mod 4
-        return mpz_fdiv_ui(self.D.value, 4) == 1
+        # a + b*sqrt(D) is integral if and only if
+        # denom | 2*a and denom^2 | a^2 - D*b^2.
+        # Do division with remainder: 2*a = denom*m + n.
+        mpz_init(t)
+        mpz_init(m)
+        mpz_init(n)
+        mpz_mul_ui(t, self.a, 2)
+        mpz_fdiv_qr(m, n, t, self.denom)
+        if mpz_cmp_ui(n, 0) == 0:
+            # Now 2*a = denom*m.
+            # If m is even, then denom | a and gcd(denom, b) = 1, so
+            # a + b*sqrt(D) is integral if and only if denom^2 | D.
+            # If m is odd, then denom is even; put u = denom/2.
+            # Then a + b*sqrt(D) is integral if and only if
+            # b is odd, u^2 | D and D/u^2 is congruent to 1 mod 4.
+            if mpz_even_p(m):
+                mpz_init(s)
+                mpz_mul(s, self.denom, self.denom)
+                result = mpz_divisible_p(self.D.value, s)
+                mpz_clear(s)
+            elif mpz_odd_p(self.b):
+                mpz_init(u)
+                mpz_init(s)
+                mpz_init(q)
+                mpz_init(r)
+                mpz_divexact_ui(u, self.denom, 2)
+                mpz_mul(s, u, u)
+                mpz_fdiv_qr(q, r, self.D.value, s)
+                result = mpz_cmp_ui(r, 0) == 0 and mpz_fdiv_ui(q, 4) == 1
+                mpz_clear(u)
+                mpz_clear(s)
+                mpz_clear(q)
+                mpz_clear(r)
+        mpz_clear(t)
+        mpz_clear(m)
+        mpz_clear(n)
+        return result
 
     def charpoly(self, var='x', algorithm=None):
         r"""

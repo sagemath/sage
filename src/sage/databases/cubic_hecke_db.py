@@ -918,7 +918,7 @@ class CubicHeckeFileCache(SageObject):
         try:
             data_lib[section] = load(fname)
             verbose('... finished!')
-        except IOError:
+        except OSError:
             self.reset_library(section)
             verbose('... not found!')
         except (ImportError, ModuleNotFoundError):
