@@ -93,6 +93,10 @@ jobs:
 
           # Needed for lrcalc (Python)
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install lrcalc)
+
+          # Arch Linux docker image does not install info files, so remove the entry to Maxima's help files from pacman
+          # see https://github.com/sagemath/sage/pull/36391 for details
+          sed -i '/^NoExtract/d' /etc/pacman.conf;
         env:
           PARI_VERSION: pari-2.15.4
 
