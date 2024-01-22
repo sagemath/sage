@@ -12,7 +12,14 @@ Schemes
 
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.sets_cat import Sets
+from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+from sage.categories.rings import Rings
+from sage.categories.fields import Fields
+from sage.categories.homsets import HomsetsCategory
+
+from sage.schemes.generic.scheme import is_Scheme, is_AffineScheme
 
 
 class Schemes(Category):
@@ -68,7 +75,6 @@ class Schemes(Category):
             Category of schemes over Integer Ring
         """
         if X is not None:
-            from sage.schemes.generic.scheme import is_Scheme
             if not is_Scheme(X):
                 X = Schemes()(X)
             return Schemes_over_base(X)
@@ -131,7 +137,6 @@ class Schemes(Category):
                       To:   Rational Field
 
         """
-        from sage.schemes.generic.scheme import is_Scheme
         if is_Scheme(x):
             return x
         from sage.schemes.generic.morphism import is_SchemeMorphism
@@ -140,7 +145,6 @@ class Schemes(Category):
         from sage.categories.commutative_rings import CommutativeRings
         from sage.schemes.generic.spec import Spec
         from sage.categories.map import Map
-        from sage.categories.rings import Rings
         if x in CommutativeRings():
             return Spec(x)
         elif isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
@@ -200,3 +204,92 @@ class Schemes_over_base(Category_over_base):
             return "schemes over %s" % self.base_scheme().coordinate_ring()
         else:
             return "schemes over %s" % self.base_scheme()
+
+class AbelianVarieties(Schemes_over_base):
+    r"""
+    The category of abelian varieties over a given field.
+
+    EXAMPLES::
+
+        sage: AbelianVarieties(QQ)
+        Category of abelian varieties over Rational Field
+        sage: AbelianVarieties(ZZ)
+        Traceback (most recent call last):
+        ...
+        ValueError: category of abelian varieties is only defined over fields
+    """
+    def __init__(self, base):
+        r"""
+        Constructor for the ``AbelianVarieties`` category.
+
+        EXAMPLES::
+
+            sage: AbelianVarieties(QQ)
+            Category of abelian varieties over Rational Field
+            sage: AbelianVarieties(Spec(QQ))
+            Category of abelian varieties over Rational Field
+        """
+        if is_AffineScheme(base):
+            base = base.coordinate_ring()
+        if base not in Fields():
+            raise ValueError('category of abelian varieties is only defined over fields')
+        super().__init__(base)
+
+    def super_categories(self):
+        """
+        EXAMPLES::
+
+            sage: AbelianVarieties(QQ).super_categories()
+            [Category of schemes over Rational Field,
+             Category of commutative additive groups]
+        """
+        return [Schemes(self.base_scheme()), CommutativeAdditiveGroups()]
+
+    def _repr_object_names(self):
+        """
+        EXAMPLES::
+
+            sage: AbelianVarieties(Spec(QQ))  # indirect doctest
+            Category of abelian varieties over Rational Field
+        """
+        return "abelian varieties over %s" % self.base_scheme()
+
+    class Homsets(HomsetsCategory):
+        r"""
+        Overloaded ``Homsets`` class to register the homset
+        as an additive abelian group.
+
+        EXAMPLES::
+
+            sage: AbelianVarieties(QQ).Homsets().is_subcategory(CommutativeAdditiveGroups())
+            True
+        """
+        def extra_super_categories(self):
+            r"""
+            Register the homset as an additive abelian group.
+
+            EXAMPLES::
+
+                sage: Hom(EllipticCurve(j=1), EllipticCurve(j=2)) in CommutativeAdditiveGroups()
+                True
+            """
+            return [CommutativeAdditiveGroups()]
+
+        class Endset(CategoryWithAxiom):
+            r"""
+            Overloaded ``Endset`` class to register the endset
+            as a ring.
+
+            sage: AbelianVarieties(QQ).Endsets().is_subcategory(Rings())
+            True
+            """
+            def extra_super_categories(self):
+                r"""
+                Register the endset as a ring.
+
+                EXAMPLES::
+
+                    sage: End(EllipticCurve(j=1)) in Rings()
+                    True
+                """
+                return [Rings()]

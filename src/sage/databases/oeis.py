@@ -187,8 +187,8 @@ def _fetch(url):
         result = f.read()
         f.close()
         return bytes_to_str(result)
-    except IOError as msg:
-        raise IOError("%s\nerror fetching %s" % (msg, url))
+    except OSError as msg:
+        raise OSError("%s\nerror fetching %s" % (msg, url))
 
 
 def _urls(html_string):

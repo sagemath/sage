@@ -204,7 +204,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
          by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
     """
 
-    def __init__(self, A, X):
+    def __init__(self, A, X, category=None):
         """
         Initialize.
 
@@ -218,7 +218,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         if not is_ProjectiveSpace(A):
             raise TypeError("A (=%s) must be a projective space" % A)
 
-        Curve_generic.__init__(self, A, X)
+        Curve_generic.__init__(self, A, X, category=category)
 
     def _repr_type(self):
         r"""
@@ -610,7 +610,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
          defined by y^2*z - x*z^2 - z^3
     """
 
-    def __init__(self, A, f):
+    def __init__(self, A, f, category=None):
         """
         Initialize.
 
@@ -624,7 +624,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         if not (is_ProjectiveSpace(A) and A.dimension != 2):
             raise TypeError("the ambient space is not a projective plane")
 
-        super().__init__(A, [f])
+        super().__init__(A, [f], category=category)
 
     def _repr_type(self):
         r"""
@@ -1579,7 +1579,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
     """
     _point = ProjectiveCurvePoint_field
 
-    def __init__(self, A, X):
+    def __init__(self, A, X, category=None):
         """
         Initialize.
 
@@ -1590,7 +1590,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             sage: loads(dumps(C)) == C
             True
         """
-        super().__init__(A, X)
+        super().__init__(A, X, category=category)
 
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")

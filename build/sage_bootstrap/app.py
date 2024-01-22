@@ -77,6 +77,37 @@ class Application(object):
         for pkg_name in pc.names:
             print(pkg_name)
 
+    def properties(self, *package_classes, **kwds):
+        """
+        Show the properties of given packages
+
+        $ sage --package properties --format shell maxima
+        path_maxima='........./build/pkgs/maxima'
+        version_with_patchlevel_maxima='5.46.0'
+        type_maxima='standard'
+        source_maxima='normal'
+        trees_maxima='SAGE_LOCAL'
+        """
+        props = kwds.pop('props', ['path', 'version_with_patchlevel', 'type', 'source', 'trees'])
+        format = kwds.pop('format', 'plain')
+        log.debug('Looking up properties')
+        pc = PackageClass(*package_classes)
+        for package_name in pc.names:
+            package = Package(package_name)
+            if format == 'plain':
+                print("{0}:".format(package_name))
+            for p in props:
+                value = getattr(package, p)
+                if value is None:
+                    if p.startswith('version'):
+                        value = 'none'
+                    else:
+                        value = ''
+                if format == 'plain':
+                    print("        {0:28} {1}".format(p + ":", value))
+                else:
+                    print("{0}_{1}='{2}'".format(p, package_name, value))
+
     def name(self, tarball_filename):
         """
         Find the package name given a tarball filename
