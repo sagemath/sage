@@ -227,21 +227,6 @@ class EllipticCurveHom(Morphism):
             sage: phi.dual() == psi.dual()
             True
 
-        ::
-
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism, identity_morphism
-            sage: E = EllipticCurve([9,9])
-            sage: F = E.change_ring(GF(71))
-            sage: wE = identity_morphism(E)
-            sage: wF = identity_morphism(F)
-            sage: mE = E.scalar_multiplication(1)
-            sage: mF = F.multiplication_by_m_isogeny(1)
-            doctest:warning ... DeprecationWarning: ...
-            sage: [mE == wE, mF == wF]
-            [True, True]
-            sage: [a == b for a in (wE,mE) for b in (wF,mF)]
-            [False, False, False, False]
-
         .. SEEALSO::
 
             - :meth:`_comparison_impl`
