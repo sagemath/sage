@@ -820,7 +820,7 @@ class NumberFieldIdeal(Ideal_generic):
     def gens_two(self):
         r"""
         Express this ideal using exactly two generators, the first of
-        which is a generator for the intersection of the ideal with `Q`.
+        which is a generator for the intersection of the ideal with `\QQ`.
 
         ALGORITHM: uses PARI's :pari:`idealtwoelt` function, which runs in
         randomized polynomial time and is very fast in practice.
@@ -1538,7 +1538,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def random_element(self, *args, **kwds):
         r"""
-        Return a random element of this order.
+        Return a random element of this ideal.
 
         INPUT:
 
@@ -2498,8 +2498,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         See :trac:`4536`::
 
             sage: E.<a> = NumberField(x^5 + 7*x^4 + 18*x^2 + x - 3)
-            sage: OE = E.ring_of_integers()
-            sage: i,j,k = [u[0] for u in factor(3*OE)]
+            sage: i,j,k = [u[0] for u in factor(3*E)]
             sage: (i/j).is_coprime(j/k)
             False
             sage: (j/k).is_coprime(j/k)
