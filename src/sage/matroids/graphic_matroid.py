@@ -282,7 +282,6 @@ class GraphicMatroid(Matroid):
             2
             sage: M.rank([0,3])
             1
-
         """
         from sage.sets.disjoint_set import DisjointSet
 
@@ -427,7 +426,6 @@ class GraphicMatroid(Matroid):
             sage: G2 = Graph([(3,4,0),(4,5,1),(5,3,2)])
             sage: Matroid(G1) == Matroid(G2)
             False
-
         """
         # Graph.__eq__() will ignore edge labels unless we turn on weighted()
         # This will be done in __init__()
@@ -459,7 +457,6 @@ class GraphicMatroid(Matroid):
             True
             sage: M != O
             True
-
         """
         return (not self == other)
 
@@ -779,7 +776,6 @@ class GraphicMatroid(Matroid):
             [(0, 0, 0), (0, 1, 1), (0, 2, 2), (0, 3, 3), (1, 2, 4), (1, 2, 5)]
             sage: sorted(M._closure([4]))
             [0, 4, 5]
-
         """
         X = set(X)
         Y = self.groundset().difference(X)
@@ -928,7 +924,6 @@ class GraphicMatroid(Matroid):
             [(0, 1, 0), (1, 2, 1), (2, 3, 2), (3, 4, 3), (4, 5, 4), (4, 5, 5)]
             sage: sorted(M._circuit(M.groundset()))
             [4, 5]
-
         """
         from sage.sets.disjoint_set import DisjointSet
 
@@ -1151,7 +1146,7 @@ class GraphicMatroid(Matroid):
 
             sage: M1 = Matroid(range(4), graphs.CycleGraph(4))
             sage: M2 = Matroid(range(4), graphs.CompleteBipartiteGraph(2,2))
-            sage: M1._isomorphism(matroids.named_matroids.BetsyRoss())
+            sage: M1._isomorphism(matroids.catalog.BetsyRoss())
             sage: M1._isomorphism(M2)
             {0: 0, 1: 1, 2: 2, 3: 3}
             sage: M3 = matroids.Uniform(3,4)
@@ -1394,7 +1389,6 @@ class GraphicMatroid(Matroid):
             Graphic matroid of rank 0 on 1 elements
             sage: M.graphic_extension(0, 1, 'a')
             Graphic matroid of rank 1 on 1 elements
-
         """
         # This will possibly make a coloop if v is a new vertex
         if element is None:

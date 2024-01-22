@@ -356,7 +356,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding Maxima command completion list (this takes")
@@ -392,7 +392,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         ::
 
-            sage: maxima.interact()     # this is not tested either
+            sage: maxima.interact()     # not tested
               --> Switching to Maxima <--
             maxima: 2+2
             4
