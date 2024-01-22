@@ -7,7 +7,7 @@ is a chain complex of free `R`-modules
 
 .. MATH::
 
-    R^{n_1} \xleftarrow{d_1}  R^{n_1} \xleftarrow{d_2}
+    R^{n_0} \xleftarrow{d_1}  R^{n_1} \xleftarrow{d_2}
     \cdots \xleftarrow{d_k} R^{n_k} \xleftarrow{d_{k+1}} 0
 
 terminating with a zero module at the end that is exact (all homology groups
