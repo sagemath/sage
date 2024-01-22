@@ -1067,7 +1067,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         self.gens.set_cache(gens)
         return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
 
-    def torsion_basis(self, n):
+    def torsion_basis(self, n, algorithm="abelian_group"):
         r"""
         Return a basis of the `n`-torsion subgroup of this elliptic curve,
         assuming it is fully rational.
@@ -1122,14 +1122,53 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
         """
         # TODO: In many cases this is not the fastest algorithm.
-        # Alternatives include factoring division polynomials and
+        # Alternatives include factoring division polynomials (now implemented) and
         # random sampling (like PARI's ellgroup, but with a milder
-        # termination condition). We should implement these too
+        # termination condition). We should implement the latter too
         # and figure out when to use which.
-        T = self.abelian_group().torsion_subgroup(n)
-        if T.invariants() != (n, n):
-            raise ValueError(f'curve does not have full rational {n}-torsion')
-        return tuple(P.element() for P in T.gens())
+        if algorithm == "abelian_group":
+            T = self.abelian_group().torsion_subgroup(n)
+            if T.invariants() != (n, n):
+                raise ValueError(f'curve does not have full rational {n}-torsion')
+            return tuple(P.element() for P in T.gens())
+        
+        elif algorithm == "division_polynomial":
+            # reduction: n composite -> n prime power -> n prime
+                
+            Ptot,Qtot = self(0), self(0)
+
+            for l,k in n.factor():
+                # find {P,Q} = basis of l-torsion points
+                ltorsion = self(0).division_points(l)
+                if len(ltorsion) < l**2:
+                    raise ValueError(f'curve does not have full rational {l}-torsion')
+                
+                # the first element of 0.division_points(l) is 0 itself, the others have order l
+                P = ltorsion[1]
+                for Q in ltorsion[2:]:
+                    if P.weil_pairing(Q, l) != 1:
+                        break
+                else:
+                    assert False # shouldn't happen
+
+                # lift P,Q to a basis of (l**k)-torsion points
+                for i in range(k-1):
+                    Ps = P.division_points(l) ## TODO: just get one point. Use any_root with the division polynomial
+                    if not Ps:
+                        raise ValueError(f'curve does not have full rational {l**(i+2)}-torsion')
+                    
+                    Qs = Q.division_points(l)
+                    if not Qs:
+                        raise ValueError(f'curve does not have full rational {l**(i+2)}-torsion')
+                    
+                    P = Ps[0] 
+                    Q = Qs[0]
+
+                # gradually recombine (l**k)-torsion into n-torsion
+                Ptot += P
+                Qtot += Q
+
+            return (Ptot,Qtot)
 
     def is_isogenous(self, other, field=None, proof=True):
         """
