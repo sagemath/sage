@@ -446,6 +446,47 @@ cdef class FractionFieldElement(FieldElement):
         """
         return self._numerator(*x, **kwds) / self._denominator(*x, **kwds)
 
+    def subs(self, *args, **kwds):
+        """
+        Substitute variables in numerator and denominator.
+
+        All the arguments are transmitted unchanged to the method
+        ``subs`` of the numerator and the denominator.
+
+        INPUT:
+
+        - ``args`` - arguments to be passed to the numerator and
+           denominator
+        - ``kwargs`` - keyword arguments to be passed to the
+           numerator and denominator
+
+        OUTPUT:
+
+        - new object if substitution is possible, otherwise self.
+
+        EXAMPLES::
+
+            sage: x, y = PolynomialRing(ZZ, 2, 'xy').gens()
+            sage: f = x^2 + y + x^2*y^2 + 5
+            sage: (1/f).subs(x=5)
+            1/(25*y^2 + y + 30)
+
+        TESTS:
+
+        Check that :issue:`37122` is fixed::
+
+            sage: P = PolynomialRing(QQ, ["x%s" % i for i in range(10000)])
+            sage: PF = P.fraction_field()
+            sage: p = sum(i*P.gen(i) for i in range(5)) / sum(i*P.gen(i) for i in range(8))
+            sage: v = P.gen(4)
+            sage: p.subs({v: 100})
+            (x1 + 2*x2 + 3*x3 + 400)/(x1 + 2*x2 + 3*x3 + 5*x5 + 6*x6 + 7*x7 + 400)
+
+        """
+        num = self._numerator.subs(*args, **kwds)
+        den = self._denominator.subs(*args, **kwds)
+        return num / den
+
     def _is_atomic(self):
         """
         EXAMPLES::
