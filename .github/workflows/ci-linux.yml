@@ -89,10 +89,7 @@ jobs:
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install git)
 
           # Needed for primecountpy
-          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install primecount)
-
-          # Needed for lrcalc (Python)
-          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install lrcalc)
+          eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM primecount))
 
           # Arch Linux docker image does not install info files, so remove the entry to Maxima's help files from pacman
           # see https://github.com/sagemath/sage/pull/36391 for details
