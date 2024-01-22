@@ -1659,7 +1659,7 @@ class BinaryQF(SageObject):
         ::
 
             sage: # needs sage.libs.pari
-            sage: n = factor(136)
+            sage: n = factor(126)
             sage: Q = BinaryQF([1, 0, 5])
             sage: Q.solve_integer(n)
             (11, -1)
