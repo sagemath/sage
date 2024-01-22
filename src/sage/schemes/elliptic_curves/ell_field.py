@@ -1352,9 +1352,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
     def isogenies_prime_degree(self, l=None, max_l=31):
         """
-        Return a list of all separable isogenies of given prime degree(s)
-        with domain equal to ``self``, which are defined over the base
-        field of ``self``.
+        Return a list of all separable isogenies (up to post-composition with
+        isomorphisms) of given prime degree(s) with domain equal to ``self``,
+        which are defined over the base field of ``self``.
 
         INPUT:
 
@@ -1638,8 +1638,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
     def isogenies_degree(self, n):
         r"""
-        Return a list of all separable isogenies of given degree with domain
-        equal to ``self``, which are defined over the base field of ``self``.
+        Return a list of all separable isogenies of given degree (up to
+        post-composition with isomorphisms) with domain equal to ``self``, which
+        are defined over the base field of ``self``.
 
         INPUT:
 
@@ -1649,16 +1650,16 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             sage: E = EllipticCurve(GF(11), [1, 1])
             sage: E.isogenies_degree(23 * 19)
-            [Composite morphism of degree 437 = 1*19*23:
+            [Composite morphism of degree 437 = 19*23:
                From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
                To:   Elliptic Curve defined by y^2 = x^3 + 8*x + 7 over Finite Field of size 11,
-             Composite morphism of degree 437 = 1*19*23:
+             Composite morphism of degree 437 = 19*23:
                From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
                To:   Elliptic Curve defined by y^2 = x^3 + 2*x + 6 over Finite Field of size 11,
-             Composite morphism of degree 437 = 1*19*23:
+             Composite morphism of degree 437 = 19*23:
                From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
                To:   Elliptic Curve defined by y^2 = x^3 + 6*x + 2 over Finite Field of size 11,
-             Composite morphism of degree 437 = 1*19*23:
+             Composite morphism of degree 437 = 19*23:
                From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
                To:   Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 11]
 
@@ -1675,12 +1676,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: len(E.isogenies_degree(2**5)) # long time (15s)
             99
         """
+        from sage.schemes.elliptic_curves.weierstrass_morphism import identity_morphism
         n = Integer(n)
-        if n.is_prime():
-            return self.isogenies_prime_degree(n)
 
-        prime_divisors = sum([[p] * e for p, e in n.factor()], [])
-        isos = [self.isogeny(self(0))]
+        prime_divisors = [p for p, e in n.factor() for _ in range(e)]
+        isos = [identity_morphism(self)]
 
         for p in prime_divisors:
             if not isos:
