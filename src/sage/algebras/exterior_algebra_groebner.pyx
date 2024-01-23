@@ -481,15 +481,15 @@ cdef class GroebnerStrategy:
         Check #37108 is fixed::
 
             sage: E = ExteriorAlgebra(QQ, 6)
-            ....: E.inject_variables(verbose=False)
-            ....: gens = [-e0*e1*e2 + e0*e1*e5 - e0*e2*e3 - e0*e3*e5 + e1*e2*e3 + e1*e3*e5,
+            sage: E.inject_variables(verbose=False)
+            sage: gens = [-e0*e1*e2 + e0*e1*e5 - e0*e2*e3 - e0*e3*e5 + e1*e2*e3 + e1*e3*e5,
             ....:  e1*e2 - e1*e5 + e2*e5,
             ....:  e0*e2 - e0*e4 + e2*e4,
             ....:  e3*e4 - e3*e5 + e4*e5,
             ....:  e0*e1 - e0*e3 + e1*e3]
-            ....: I = E.ideal(gens)
-            ....: S = E.quo(I)
-            ....: I.reduce(e1*e3*e4*e5)
+            sage: I = E.ideal(gens)
+            sage: S = E.quo(I)
+            sage: I.reduce(e1*e3*e4*e5)
             0
         """
         if not f:
