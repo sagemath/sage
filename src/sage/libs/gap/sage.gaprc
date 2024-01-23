@@ -2,6 +2,8 @@
 # contain bug fixes/workarounds and/or any Sage-specific patches necessary for
 # Sage's libgap interface.
 
+# Disable color in the prompt, it interferes with parsing.
+ColorPrompt(false);
 
 # Load the GAP packages that GAP itself tries to autoload in the
 # default configuration (see "PackagesToLoad" in lib/package.gi). The

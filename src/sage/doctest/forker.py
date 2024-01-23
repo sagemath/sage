@@ -283,7 +283,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     try:
         file.writelines(lines)
         file.flush()
-    except IOError:
+    except OSError:
         pass  # the file is invalid
 
 
@@ -1558,6 +1558,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: sage0.eval("l")
             '...if self.discriminant() == 0:...raise ArithmeticError...'
             sage: sage0.eval("u")
+            '...-> super().__init__(R, data, category=category)'
+            sage: sage0.eval("u")
             '...EllipticCurve_field.__init__(self, K, ainvs)'
             sage: sage0.eval("p ainvs")
             '(0, 0, 0, 0, 0)'
@@ -2487,19 +2489,6 @@ class DocTestTask():
         ['cputime', 'err', 'failures', 'optionals', 'tests', 'walltime', 'walltime_skips']
     """
 
-    extra_globals = {}
-    """
-    Extra objects to place in the global namespace in which tests are run.
-    Normally this should be empty but there are special cases where it may
-    be useful.
-
-    For example, in Sage versions 9.1 and earlier, on Python 3 add
-    ``long`` as an alias for ``int`` so that tests that use the
-    ``long`` built-in (of which there are many) still pass.  We did
-    this so that the test suite could run on Python 3 while Python 2
-    was still the default.
-    """
-
     def __init__(self, source):
         """
         Initialization.
@@ -2628,10 +2617,6 @@ class DocTestTask():
         # Remove '__package__' item from the globals since it is not
         # always in the globals in an actual Sage session.
         dict_all.pop('__package__', None)
-
-        # Add any other special globals for testing purposes only
-        dict_all.update(self.extra_globals)
-
         sage_namespace = RecordingDict(dict_all)
         sage_namespace['__name__'] = '__main__'
         doctests, extras = self.source.create_doctests(sage_namespace)

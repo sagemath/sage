@@ -87,7 +87,8 @@ from sage.data_structures.stream import (
     Stream_function,
     Stream_iterator,
     Stream_exact,
-    Stream_uninitialized
+    Stream_uninitialized,
+    Stream_taylor
 )
 
 from types import GeneratorType
@@ -1792,6 +1793,43 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             raise TypeError("the base ring is not a field")
         return R
 
+    def taylor(self, f):
+        r"""
+        Return the Taylor expansion around `0` of the function ``f``.
+
+        INPUT:
+
+        - ``f`` -- a function such that one of the following works:
+
+          * the substitution `f(z)`, where `z` is a generator of ``self``
+          * `f` is a function of a single variable with no poles at `0`
+            and has a ``derivative`` method
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: x = SR.var('x')
+            sage: f(x) = (1 + x) / (1 - x^2)
+            sage: L.taylor(f)
+            1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + O(z^7)
+
+        For inputs as symbolic functions/expressions, the function must
+        not have any poles at `0`::
+
+            sage: f(x) = (1 + x^2) / sin(x^2)
+            sage: L.taylor(f)
+            <repr(...) failed: ValueError: power::eval(): division by zero>
+            sage: def g(a): return (1 + a^2) / sin(a^2)
+            sage: L.taylor(g)
+            z^-2 + 1 + 1/6*z^2 + 1/6*z^4 + O(z^5)
+        """
+        try:
+            return f(self.gen())
+        except (ValueError, TypeError):
+            pass
+        stream = Stream_taylor(f, self.is_sparse())
+        return self.element_class(self, stream)
+
     # === special functions ===
 
     def q_pochhammer(self, q=None):
@@ -2502,6 +2540,87 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sum_gens = PR.sum(PR.gens())
             elts.extend([(z-3)*(2+z)**2, (1 - 2*z**3)/(1 - z + 3*z**2), self(lambda n: sum_gens**n)])
         return elts
+
+    def taylor(self, f):
+        r"""
+        Return the Taylor expansion around `0` of the function ``f``.
+
+        INPUT:
+
+        - ``f`` -- a function such that one of the following works:
+
+          * the substitution `f(z_1, \ldots, z_n)`, where `(z_1, \ldots, z_n)`
+            are the generators of ``self``
+          * `f` is a function with no poles at `0` and has a ``derivative``
+            method
+
+        .. WARNING::
+
+            For inputs as symbolic functions/expressions, this does not check
+            that the function does not have poles at `0`.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: x = SR.var('x')
+            sage: f(x) = (1 + x) / (1 - x^3)
+            sage: L.taylor(f)
+            1 + z + z^3 + z^4 + z^6 + O(z^7)
+            sage: (1 + z) / (1 - z^3)
+            1 + z + z^3 + z^4 + z^6 + O(z^7)
+            sage: f(x) = cos(x + pi/2)
+            sage: L.taylor(f)
+            -z + 1/6*z^3 - 1/120*z^5 + O(z^7)
+
+        For inputs as symbolic functions/expressions, the function must
+        not have any poles at `0`::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ, sparse=True)
+            sage: f = 1 / sin(x)
+            sage: L.taylor(f)
+            <repr(...) failed: ValueError: power::eval(): division by zero>
+
+        Different multivariate inputs::
+
+            sage: L.<a,b> = LazyPowerSeriesRing(QQ)
+            sage: def f(x, y): return (1 + x) / (1 + y)
+            sage: L.taylor(f)
+            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+            sage: g(w, z) = (1 + w) / (1 + z)
+            sage: L.taylor(g)
+            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+            sage: y = SR.var('y')
+            sage: h = (1 + x) / (1 + y)
+            sage: L.taylor(h)
+            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+        """
+        try:
+            return f(*self.gens())
+        except (ValueError, TypeError):
+            pass
+
+        if self._arity != 1:
+            R = self._laurent_poly_ring
+            BR = R.base_ring()
+            args = f.arguments()
+            subs = {str(va): ZZ.zero() for va in args}
+            gens = R.gens()
+            ell = len(subs)
+            from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
+            from sage.arith.misc import factorial
+
+            def taylor_expand(deg):
+                if deg == 0:
+                    return BR(f(**subs))
+                return R.sum(BR(f.diff(*sum(([g] * e for g, e in zip(args, al)), []))(**subs)
+                                / ZZ.prod(factorial(a) for a in al))
+                             * R.monomial(*al) for al in integer_vectors_nk_fast_iter(deg, ell))
+
+            coeff_stream = Stream_function(taylor_expand, self._sparse, self._minimal_valuation)
+        else:
+            coeff_stream = Stream_taylor(f, self._sparse)
+        return self.element_class(self, coeff_stream)
+
 
 ######################################################################
 
