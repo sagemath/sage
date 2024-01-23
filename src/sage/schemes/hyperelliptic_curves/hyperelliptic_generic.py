@@ -316,9 +316,9 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
         - Giacomo Pope (2024): adapted from :meth:`lift_x`
 
-        TESTS::
+        TESTS:
 
-            The `x`-coordinate must be defined over the base field of the curve::
+        The `x`-coordinate must be defined over the base field of the curve::
 
             sage: p = 11
             sage: F = GF(11)
@@ -330,7 +330,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             Traceback (most recent call last):
             ...
             TypeError: x must be coercible into the base ring of the curve
-
         """
         f, h = self.hyperelliptic_polynomials()
         K = self.base_ring()
@@ -351,7 +350,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             R = f.parent()  # Polynomial ring K[x]
             F = R([-a, b, 1])
             return bool(F.roots())
-        # Otherwise x is a point on the curve if the determinant is a square
+        # Otherwise x is a point on the curve if the discriminant is a square
         D = b*b + 4*a
         return D.is_square()
 
@@ -359,19 +358,20 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         """
         Return one or all points with given `x`-coordinate.
 
-        This method is deterministic: It returns the same data each time when called again with the same.
+        This method is deterministic: It returns the same data each
+        time when called again with the same `x`.
 
         INPUT:
 
         - ``x`` -- an element of the base ring of the curve
 
-        - ``all`` (bool, default False) -- if True, return a (possibly
-          empty) list of all points; if False, return just one point,
-          or raise a :class:`ValueError` if there are none.
+        - ``all`` (bool, default ``False``) -- if ``True``, return a
+          (possibly empty) list of all points; if ``False``, return
+          just one point, or raise a :class:`ValueError` if there are none.
 
         OUTPUT:
 
-        A Point or list of up to two points on this curve.
+        A point or list of up to two points on this curve.
 
         .. SEEALSO::
 
@@ -477,7 +477,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             y2 = f(x)
             if y2.is_square():
                 ys = y2.sqrt(all=True)
-        # Otherwise we need roots of the determinant
+        # Otherwise we need roots of the discriminant
         else:
             a = f(x)
             b = h(x)
@@ -492,7 +492,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
                     ys = [(-b+d)/2 for d in D.sqrt(all=True)]
 
         if ys:
-            ys.sort()  # Make lifting determinsitic
+            ys.sort()  # Make lifting deterministic
             if all:
                 return [self.point([x, y, one], check=False) for y in ys]
             else:
