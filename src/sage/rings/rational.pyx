@@ -1953,8 +1953,9 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Ensure that the rationals behave as expected,
-        see :issue:`9466` and :trac:`26509` for context::
+        Ensure that :issue:`37153` is fixed, so that behaviour aligns
+        with other rings and fields.
+        See :issue:`9466` and :trac:`26509` for context::
 
             sage: QQ(3).sqrt(extend=False, all=True)
             []
