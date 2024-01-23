@@ -99,7 +99,6 @@ cdef class MatroidUnion(Matroid):
         ALGORITHM:
 
             Matroid intersection of a matroid sum and partition matroid.
-
         """
         summands = []
         for e in self.matroids:
