@@ -1997,7 +1997,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         sig_off()
 
         if non_square:
-            if extend: 
+            if extend:
                 from sage.misc.functional import _do_sqrt
                 return _do_sqrt(self, prec=prec, all=all)
             if all:
