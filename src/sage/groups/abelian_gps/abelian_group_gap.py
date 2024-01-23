@@ -11,7 +11,7 @@ EXAMPLES::
 
 For infinite abelian groups we use the GAP package ``Polycyclic``::
 
-    sage: AbelianGroupGap([3,0])   # optional - gap_package_polycyclic
+    sage: AbelianGroupGap([3,0])
     Abelian group with gap, generator orders (3, 0)
 
 AUTHORS:
@@ -183,9 +183,9 @@ class AbelianGroupElement_gap(ElementLibGAP):
             sage: g = G.gens()[0]
             sage: g.order()
             4
-            sage: G = AbelianGroupGap([0])          # optional - gap_package_polycyclic
-            sage: g = G.gens()[0]                   # optional - gap_package_polycyclic
-            sage: g.order()                         # optional - gap_package_polycyclic
+            sage: G = AbelianGroupGap([0])
+            sage: g = G.gens()[0]
+            sage: g.order()
             +Infinity
         """
         return self.gap().Order().sage()
@@ -197,8 +197,8 @@ class AbelianGroupElement_polycyclic(AbelianGroupElement_gap):
     TESTS::
 
         sage: from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupGap
-        sage: G = AbelianGroupGap([4,7,0])          # optional - gap_package_polycyclic
-        sage: TestSuite(G.an_element()).run()       # optional - gap_package_polycyclic
+        sage: G = AbelianGroupGap([4,7,0])
+        sage: TestSuite(G.an_element()).run()
     """
     def exponents(self):
         r"""
@@ -210,7 +210,6 @@ class AbelianGroupElement_polycyclic(AbelianGroupElement_gap):
 
         EXAMPLES::
 
-            sage: # optional - gap_package_polycyclic
             sage: from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupGap
             sage: G = AbelianGroupGap([4,7,0])
             sage: gens = G.gens()
@@ -220,7 +219,6 @@ class AbelianGroupElement_polycyclic(AbelianGroupElement_gap):
 
         Efficiently handles very large groups::
 
-            sage: # optional - gap_package_polycyclic
             sage: G = AbelianGroupGap([2^30,5^30,0])
             sage: f1, f2, f3 = G.gens()
             sage: (f1^12345*f2^123456789).exponents()
@@ -616,7 +614,6 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
             sage: g * s
             f2^2*f3*f5
 
-            sage: # optional - gap_package_polycyclic
             sage: G = AbelianGroupGap([3,4,0,2])
             sage: gen = G.gens()[:2]
             sage: S = G.subgroup(gen)
@@ -654,7 +651,7 @@ class AbelianGroupGap(AbelianGroup_gap):
         Abelian group with gap, generator orders (3, 6)
         sage: AbelianGroupGap([3,6,5])
         Abelian group with gap, generator orders (3, 6, 5)
-        sage: AbelianGroupGap([3,6,0])      # optional - gap_package_polycyclic
+        sage: AbelianGroupGap([3,6,0])
         Abelian group with gap, generator orders (3, 6, 0)
 
     .. WARNING::
@@ -781,7 +778,6 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
 
         Check that we are in the correct category::
 
-            sage: # optional - gap_package_polycyclic
             sage: G = AbelianGroupGap([2,3,0])
             sage: g = G.gens()
             sage: H1 = G.subgroup([g[0],g[1]])
