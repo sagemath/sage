@@ -308,7 +308,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 raise TypeError("Coordinates %s do not define a point on %s" % (list(v), curve))
 
         SchemeMorphism_point_abelian_variety_field.__init__(self, point_homset, v, check=False)
-        self._zxy_coords = (self._coords[2], self._coords[0], self._coords[1])
         # AdditiveGroupElement.__init__(self, point_homset)
 
     def _repr_(self):
@@ -399,7 +398,21 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                 other = self.codomain().ambient_space()(other)
             except TypeError:
                 return NotImplemented
-        return richcmp(self._zxy_coords, other._zxy_coords, op)
+        # op_EQ
+        if op == 2:
+            return richcmp(self._coords, other._coords, op)
+
+        try:
+            return richcmp(self._zxy_coords, other._zxy_coords, op)
+        except AttributeError:
+            # Compute _zxy_coords
+            # There is a chance that we recompute this for either ``self`` or
+            # ``other`` However, in the most common use case which is sorting
+            # list of `n` variables This will cause a O(n) cost only. If there
+            # is a better way feel free to implement it!
+            self._zxy_coords = (self._coords[2], self._coords[0], self._coords[1])
+            other._zxy_coords = (other._coords[2], other._coords[0], other._coords[1])
+            return richcmp(self._zxy_coords, other._zxy_coords, op)
 
     def __pari__(self):
         r"""
