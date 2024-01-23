@@ -3842,10 +3842,11 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         return Q
 
-    def discrete_log(self, Q):
+    def log(self, base):
         r"""
-        Return the discrete logarithm of `Q` to base `P` = ``self``,
-        that is, an integer `x` such that `xP = Q`.
+        Return the discrete logarithm of this point to the given ``base``.
+        In other words, return an integer `x` such that `xP = Q` where
+        `P` is ``base`` and `Q` is this point.
 
         A :class:`ValueError` is raised if there is no solution.
 
@@ -3873,7 +3874,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        - ``Q`` (point) -- another point on the same curve as ``self``.
+        - ``base`` (point) -- another point on the same curve as ``self``.
 
         OUTPUT:
 
@@ -3896,7 +3897,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             762
             sage: P = E.gens()[0]
             sage: Q = 400*P
-            sage: P.discrete_log(Q)
+            sage: Q.log(P)
             400
 
         TESTS:
@@ -3910,27 +3911,53 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve(j=GF((p,e),'a').random_element())
             sage: P = E.random_point()
             sage: Q = randrange(2**999) * P
-            sage: x = P.discrete_log(Q)
+            sage: x = Q.log(P)
             sage: x*P == Q
             True
         """
-        if Q not in self.parent():
+        if base not in self.parent():
             raise ValueError('not a point on the same curve')
-        n = self.order()
-        if n*Q:
-            raise ValueError('ECDLog problem has no solution (order of Q does not divide order of P)')
+        n = base.order()
+        if n*self:
+            raise ValueError('ECDLog problem has no solution (order does not divide order of base)')
         E = self.curve()
         F = E.base_ring()
         p = F.cardinality()
         if F.is_prime_field() and n == p:
             # Anomalous case
-            return self.padic_elliptic_logarithm(Q, p)
+            return base.padic_elliptic_logarithm(self, p)
         elif hasattr(E, '_order') and E._order.gcd(n**2) == n:
             pass    # cyclic rational n-torsion -> okay
-        elif self.weil_pairing(Q, n) != 1:
+        elif base.weil_pairing(self, n) != 1:
             raise ValueError('ECDLog problem has no solution (non-trivial Weil pairing)')
 
-        return ZZ(pari.elllog(self.curve(), Q, self, n))
+        return ZZ(pari.elllog(self.curve(), self, base, n))
+
+    def discrete_log(self, Q):
+        r"""
+        Legacy version of :meth:`log` with its arguments swapped.
+
+        Note that this method uses the opposite argument ordering
+        of all other logarithm methods in Sage; see :issue:`37150`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(j=GF(101)(5))
+            sage: P, = E.gens()
+            sage: (2*P).log(P)
+            2
+            sage: (2*P).discrete_log(P)
+            doctest:warning ...
+            DeprecationWarning: The syntax P.discrete_log(Q) ... Please update your code. ...
+            45
+            sage: P.discrete_log(2*P)
+            2
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(37150, 'The syntax P.discrete_log(Q) is being replaced by '
+                           'Q.log(P) to make the argument ordering of logarithm'
+                           ' methods in Sage uniform. Please update your code.')
+        return Q.log(self)
 
     def padic_elliptic_logarithm(self,Q, p):
         r"""
