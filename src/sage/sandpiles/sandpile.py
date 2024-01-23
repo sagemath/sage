@@ -5189,7 +5189,7 @@ class SandpileDivisor(dict):
             os.system(shlex.quote(path_to_zsolve) + ' -q ' + lin_sys + ' > ' + lin_sys_log)
             # process the results
             zhom_file = open(lin_sys_zhom, 'r')
-        except IOError:
+        except OSError:
             print("""
                  **********************************
                  *** This method requires 4ti2. ***
