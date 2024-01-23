@@ -401,6 +401,11 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             ...
             ValueError: No point with x-coordinate 3 on Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x^3 + 1
 
+        An empty list is returned when there are no points and ``all=True``::
+
+            sage: H.lift_x(3, all=True)
+            []
+
         The function also handles the case when `h(x)` is not zero::
 
             sage: R.<x> = PolynomialRing(QQ)
@@ -475,8 +480,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         # When h is zero we find all y-coordinates with a single sqrt
         if not h:
             y2 = f(x)
-            if y2.is_square():
-                ys = y2.sqrt(all=True)
+            # When y2 is not a square, ys will be an empty list
+            ys = y2.sqrt(all=True, extend=False)
         # Otherwise we need roots of the discriminant
         else:
             a = f(x)
@@ -488,8 +493,8 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
                 ys = F.roots(L, multiplicities=False)
             else:
                 D = b*b + 4*a
-                if D.is_square():
-                    ys = [(-b+d)/2 for d in D.sqrt(all=True)]
+                # When D is not a square, ys will be an empty list
+                ys = [(-b+d)/2 for d in D.sqrt(all=True, extend=False)]
 
         if ys:
             ys.sort()  # Make lifting deterministic
