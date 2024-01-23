@@ -262,13 +262,13 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             sage: OT.algebra_generators()
             Finite family {0: OT{0}, 1: OT{1}, 2: OT{2}, 3: OT{3}}
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: OT = M.orlik_terao_algebra()
             sage: OT.algebra_generators()
             Finite family {'a': OT{a}, 'b': OT{b}, 'c': OT{c}, 'd': OT{d},
                            'e': OT{e}, 'f': OT{f}, 'g': OT{g}}
 
-            sage: M = matroids.named_matroids.NonFano()
+            sage: M = matroids.catalog.NonFano()
             sage: OT = M.orlik_terao_algebra(GF(3)['t'])
             sage: OT.algebra_generators()
             Finite family {'a': OT{a}, 'b': OT{b}, 'c': OT{c}, 'd': OT{d},
