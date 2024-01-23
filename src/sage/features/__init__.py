@@ -422,6 +422,7 @@ class Feature(TrivialUniqueRepresentation):
         return int(num_hidings)
 
 
+
 class FeatureNotPresentError(RuntimeError):
     r"""
     A missing feature error.
@@ -797,7 +798,9 @@ class StaticFile(FileFeature):
     EXAMPLES::
 
         sage: from sage.features import StaticFile
-        sage: StaticFile(name="no_such_file", filename="KaT1aihu", search_path=("/",), spkg="some_spkg", url="http://rand.om").require()  # optional - sage_spkg
+        sage: StaticFile(name="no_such_file", filename="KaT1aihu",              # optional - sage_spkg
+        ....:            search_path="/", spkg="some_spkg",
+        ....:            url="http://rand.om").require()
         Traceback (most recent call last):
         ...
         FeatureNotPresentError: no_such_file is not available.
@@ -810,13 +813,22 @@ class StaticFile(FileFeature):
         TESTS::
 
             sage: from sage.features import StaticFile
-            sage: StaticFile(name="null", filename="null", search_path=("/dev",))
+            sage: StaticFile(name="null", filename="null", search_path="/dev")
             Feature('null')
+            sage: sh = StaticFile(name="shell", filename="sh",
+            ....:                 search_path=("/dev", "/bin", "/usr"))
+            sage: sh
+            Feature('shell')
+            sage: sh.absolute_filename()
+            '/bin/sh'
+
         """
         Feature.__init__(self, name, type=type, **kwds)
         self.filename = filename
         if search_path is None:
             self.search_path = [SAGE_SHARE]
+        elif isinstance(search_path, str):
+            self.search_path = [search_path]
         else:
             self.search_path = list(search_path)
 

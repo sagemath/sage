@@ -605,9 +605,8 @@ class MPolynomialIdeal_singular_base_repr:
         from sage.libs.singular.function import lib, singular_function
         lib("grobcov.lib")
         grobcov = singular_function("grobcov")
-        polynomials = []
-        for f in self.gens():
-            polynomials.append(f * lcm([c.denominator() for c in f.coefficients()]))
+        polynomials = [f * lcm([c.denominator() for c in f.coefficients()])
+                       for f in self.gens()]
         return grobcov(self.ring().ideal(polynomials))
 
 
@@ -2853,10 +2852,8 @@ class MPolynomialIdeal_singular_repr(
         from sage.misc.converting_dict import KeyConvertingDict
         V = []
         for t in T:
-            Vbar = _variety([P(f) for f in t], [])
-
-            for v in Vbar:
-                V.append(KeyConvertingDict(P, v))
+            V.extend(KeyConvertingDict(P, v)
+                     for v in _variety([P(f) for f in t], []))
         return V
 
     @require_field
@@ -5586,8 +5583,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         map_ideal = [a]
 
         variables = iter(intermediate_ring.gens()[1:])
-        for _ in range(nvars):
-            map_ideal.append(sum([a**i * next(variables) for i in range(r)]))
+        map_ideal.extend(sum([a**i * next(variables) for i in range(r)])
+                         for _ in range(nvars))
 
         myminpoly = myminpoly(*map_ideal)
         l = [f(*map_ideal).reduce([myminpoly]) for f in l]

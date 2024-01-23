@@ -528,7 +528,7 @@ class DocTestController(SageObject):
                 # string from DocTestDefaults
                 try:
                     self.logfile = open(options.logfile, 'a')
-                except IOError:
+                except OSError:
                     print("Unable to open logfile {!r}\nProceeding without logging.".format(options.logfile))
                     self.logfile = None
         else:
@@ -974,7 +974,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: len(DC.sources)
-            11
+            12
             sage: DC.sources[0].options.optional
             True
 
@@ -1076,6 +1076,7 @@ class DocTestController(SageObject):
             sage.doctest.test
             sage.doctest.sources
             sage.doctest.reporting
+            sage.doctest.parsing_test
             sage.doctest.parsing
             sage.doctest.forker
             sage.doctest.fixtures
