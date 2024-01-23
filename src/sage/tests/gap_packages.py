@@ -8,7 +8,7 @@ TESTS::
     sage: pkgs = all_installed_packages(ignore_dot_gap=True)
     sage: test_packages(pkgs, only_failures=True)    # optional - gap_packages
       Status   Package   GAP Output
-    +--------+---------+------------+
+    ├────────┼─────────┼────────────┤
 
     sage: test_packages(['primgrp', 'smallgrp'])
         Status   Package    GAP Output
@@ -51,13 +51,13 @@ def test_packages(packages, only_failures=False):
 
         sage: pkgs = all_installed_packages()
         sage: test_packages(pkgs)    # random output
-          Status    Package      GAP Output
-        +---------+------------+------------+
-                   Alnuth       true
-                   GAPDoc       true
-                   sonata       true
-                   tomlib       true
-                   toric        true
+            Status   Package   GAP Output
+          ├────────┼─────────┼────────────┤
+                     Alnuth    true
+                     GAPDoc    true
+                     sonata    true
+                     tomlib    true
+                     toric     true
     """
     rows = [['Status', 'Package', 'GAP Output']]
     for pkgdir in packages:
