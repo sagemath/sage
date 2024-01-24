@@ -213,7 +213,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Parent):
 
     def gen(self, i):
         """
-        Return the i-th generator of the algebra.
+        Return the ``i``-th generator of the algebra.
 
         EXAMPLES::
 
