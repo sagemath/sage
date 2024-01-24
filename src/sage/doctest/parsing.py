@@ -1236,7 +1236,6 @@ class SageDocTestParser(doctest.DocTestParser):
                 optional_tags.update(persistent_optional_tags)
                 item.optional_tags = frozenset(optional_tags)
                 item.probed_tags = set()
-                print(f"optional tags: {optional_tags}")
                 if optional_tags:
                     for tag in optional_tags:
                         self.optionals[tag] += 1
