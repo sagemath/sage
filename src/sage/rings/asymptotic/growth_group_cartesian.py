@@ -346,7 +346,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
              x^(2/3)*log(x)^(-4)*(6/7)^y,
              x^(-2/3)*log(x)^5*(7/6)^y)
         """
-        from builtins import zip
         return iter(
             self(c) for c in
             zip(*tuple(F.some_elements() for F in self.cartesian_factors())))
