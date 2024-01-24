@@ -76,6 +76,33 @@ def AllMatroids(n, r=None, type="all"):
         paving_n04_r03_#1: Matroid of rank 3 on 4 elements with 3 bases
         paving_n04_r04_#0: Matroid of rank 4 on 4 elements with 1 bases
 
+    ::
+
+        sage: for M in matroids.AllMatroids(10, 4):
+        ....:     M
+        Traceback (most recent call last):
+        ...
+        FileNotFoundError: (n=10, r=4, type="all") is not available in the
+        database
+        sage: for M in matroids.AllMatroids(12, 3, "unorientable"):
+        ....:     M
+        Traceback (most recent call last):
+        ...
+        FileNotFoundError: (n=12, r=3, type="unorientable") is not available
+        in the database
+        sage: for M in matroids.AllMatroids(8, type="unorientable"):
+        ....:     M
+        Traceback (most recent call last):
+        ...
+        ValueError: The rank needs to be specified for type "unorientable".
+        Available: (n=7-11, r=3), (n=7-9, r=4).
+        sage: for M in matroids.AllMatroids(6, type="nice"):
+        ....:     M
+        Traceback (most recent call last):
+        ...
+        AttributeError: The type "nice" is not available. There needs to be an
+        "is_nice()" attribute for the type to be supported.
+
     REFERENCES:
 
     The underlying database was retrieved from Yoshitake Matsumoto's Database
