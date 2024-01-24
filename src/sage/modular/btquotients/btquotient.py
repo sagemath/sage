@@ -3468,7 +3468,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             OBasis = Omagma.Basis()
             self._A = QuaternionAlgebra((g[0] ** 2).sage(), (g[1] ** 2).sage())
             i, j, k = self._A.gens()
-            v = [1] + self._A.gens()
+            v = [1] + list(self._A.gens())
             self._B = [self._A(sum([OBasis[tt + 1][rr + 1].sage() * v[rr]
                                     for rr in range(4)])) for tt in range(4)]
             self._O = self._A.quaternion_order(self._B)
@@ -3478,7 +3478,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             # Note that we can't work with non-maximal orders in sage
             assert self._Nplus == 1
             self._A = QuaternionAlgebra(self._Nminus)
-            v = [1] + self._A.gens()
+            v = [1] + list(self._A.gens())
             self._O = self._A.maximal_order()
             self._OMax = self._O
             OBasis = self._O.basis()
@@ -3623,8 +3623,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         v0 = Vertex(p, num_verts, self._Mat_22([1, 0, 0, 1]),
                     determinant=1, valuation=0)
         V = deque([v0])
-        S = Graph(0, multiedges=True, weighted=True)
-        Sfun = Graph(0)
+        S = Graph(0, multiedges=True, weighted=True)  # noqa:F821
+        Sfun = Graph(0)  # noqa:F821
         edge_list = []
         vertex_list = [v0]
         num_edges = 0

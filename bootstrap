@@ -108,8 +108,8 @@ EOF
             if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt"; then
                 # A Python package
                 SPKG_TREE_VAR=SAGE_VENV
-                echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(ENABLE_SYSTEM_SITE_PACKAGES=yes sage-get-system-packages install-requires ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions.m4
-                echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(ENABLE_SYSTEM_SITE_PACKAGES=yes sage-get-system-packages install-requires-toml ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions_toml.m4
+                echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(sage-get-system-packages install-requires ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions.m4
+                echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(sage-get-system-packages install-requires-toml ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions_toml.m4
             fi
         fi
         spkg_finalizes="$spkg_finalizes

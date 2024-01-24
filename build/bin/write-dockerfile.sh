@@ -128,9 +128,8 @@ EOF
         ENDRUN=\'
         ;;
     void*)
-	# https://hub.docker.com/r/voidlinux/masterdir-x86_64-musl
         UPDATE="xbps-install -Suy &&"
-        EXISTS="xbps-query"
+        EXISTS="xbps-query -R"
         INSTALL="xbps-install --yes"
         ;;
     opensuse*)
