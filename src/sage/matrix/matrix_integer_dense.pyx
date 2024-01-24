@@ -2743,7 +2743,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
     def BKZ(self, delta=None, algorithm="fpLLL", fp=None, block_size=10, prune=0,
             use_givens=False, precision=0, proof=None, **kwds):
         """
-        Block Korkin-Zolotarev reduction.
+        Run Block Korkin-Zolotarev reduction on ``self`` interpreted
+        as a lattice, and return the result.
 
         INPUT:
 

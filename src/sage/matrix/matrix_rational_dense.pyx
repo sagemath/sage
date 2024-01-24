@@ -2929,7 +2929,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
     def BKZ(self, *args, **kwargs):
         """
-        Block Korkin-Zolotarev reduction.
+        Return the result of running Block Korkin-Zolotarev reduction on
+        ``self`` interpreted as a lattice.
 
         For details on input parameters, see
         :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.BKZ`.
@@ -2970,7 +2971,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
         For a definition of LLL reduction, see
         :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL`.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: A = random_matrix(QQ, 10, 10)
             sage: L = A.LLL()
             sage: A.is_LLL_reduced()
