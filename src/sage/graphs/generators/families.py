@@ -1180,6 +1180,13 @@ def CubeGraph(n, embedding=1):
         vertices in each column represents rows in Pascal's triangle. See for
         instance the :wikipedia:`10-cube` for more details.
 
+      - ``3``: oblique projection of the `n`-cube. Oblique projection involves
+        aligning one face parallel to the viewer and projecting at a specified
+        angle, maintaining equal size for edges parallel to one axis while
+        applying fixed foreshortening to others. This method simplifies the
+        representation of a four-dimensional hypercube onto a two-dimensional
+        plane, offering a geometrically consistent visualization.
+
       - ``None`` or ``O``: no embedding is provided
 
     EXAMPLES:
@@ -1214,15 +1221,20 @@ def CubeGraph(n, embedding=1):
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
         sage: g = graphs.CubeGraph(9, embedding=2)
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
+        sage: g = graphs.CubeGraph(9, embedding=3)
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
 
     AUTHORS:
 
     - Robert Miller
     - David Coudert
     """
-    if embedding == 1:
+    if embedding == 1 or embedding == 3:
         # construct recursively the adjacency dict and the embedding
         theta = float(pi/n)
+        if embedding == 3 and n > 2:
+            theta = float(pi/(2*n-2))
+
         d = {'': []}
         dn = {}
         p = {'': (float(0), float(0))}
@@ -3264,7 +3276,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
 
     - ``stretch`` -- integer (default: ``None``); stretching factor used to
       determine the positions of the vertices of the output graph. By default
-      (``None``), this value is set to twice the maximum Euclidian distance
+      (``None``), this value is set to twice the maximum Euclidean distance
       between the vertices of `G`. This parameter is used only when the vertices
       of `G` have positions.
 
