@@ -478,7 +478,7 @@ cdef class GroebnerStrategy:
             sage: I._groebner_strategy.reduce(E.zero())
             0
 
-        Check #37108 is fixed::
+        Check :issue:`37108` is fixed::
 
             sage: E = ExteriorAlgebra(QQ, 6)
             sage: E.inject_variables(verbose=False)
