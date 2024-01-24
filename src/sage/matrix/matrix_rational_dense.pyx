@@ -2966,7 +2966,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         return A.LLL(*args, **kwargs) / d
 
     def is_LLL_reduced(self, delta=None, eta=None):
-        """
+        r"""
         Return ``True`` if this lattice is `(\delta, \eta)`-LLL reduced.
         For a definition of LLL reduction, see
         :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL`.
