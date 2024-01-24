@@ -2106,30 +2106,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     torsion_polynomial = division_polynomial
 
-    @cached_method
-    def multiplication_by_p_isogeny(self):
-        r"""
-        Return the multiplication-by-\(p\) isogeny.
-
-        EXAMPLES::
-
-            sage: p = 23
-            sage: K.<a> = GF(p^3)
-            sage: E = EllipticCurve(K, [K.random_element(), K.random_element()])
-            sage: phi = E.multiplication_by_p_isogeny()
-            sage: assert phi.degree() == p**2
-            sage: P = E.random_element()
-            sage: assert phi(P) == P * p
-        """
-        from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
-
-        K = self.base_ring()
-        if not isinstance(K, FiniteField_generic):
-            raise ValueError(f"Base ring (={K}) is not a finite field.")
-
-        frob = self.frobenius_isogeny()
-        return frob.dual() * frob
-
     def _multiple_x_numerator(self, n, x=None):
         r"""
         Return the numerator of the `x`-coordinate of the `n\th` multiple of a
@@ -2445,7 +2421,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: f = E.multiplication_by_m(2)
             sage: assert(E(eval(f,P)) == 2*P)
 
-        The following test shows that :trac:`6413` is indeed fixed::
+        The following test shows that :trac:`6413` is fixed for elliptic curves over finite fields::
             sage: p = 7
             sage: K.<a> = GF(p^2)
             sage: E = EllipticCurve(K, [a + 3, 5 - a])
@@ -2458,15 +2434,39 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ....:     Qx = f.subs(x=P[0])
             ....:     Qy = g.subs(x=P[0], y=P[1])
             ....:     assert (P * k).xy() == (Qx, Qy)
+
+        However, it still fails for elliptic curves over positive characteristics fields::
+
+            sage: F.<a> = FunctionField(GF(7))
+            sage: E = EllipticCurve(F, [a, 1 / a])
+            sage: E.multiplication_by_m(7)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: multiplication by integer not coprime to pis only implemented for curves over finite fields
+
+        ::
+
+            sage: p = 7
+            sage: K.<a> = GF(p^2)
+            sage: E = EllipticCurve(K, [K.random_element(), K.random_element()])
+            sage: E.multiplication_by_m(p * 2)[0] == E.multiplication_by_m(p * 2, x_only=True)
+            True
         """
         # Coerce the input m to be an integer
         m = Integer(m)
+        p = self.base_ring().characteristic()
+
         if m == 0:
             raise ValueError("m must be a non-zero integer")
 
         if x_only:
             x = polygen(self.base_ring(), 'x')
         else:
+            from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
+            if m % p == 0 and not isinstance(self.base_ring(), FiniteField_generic):
+                # TODO: Implement the correct formula?
+                raise NotImplementedError("multiplication by integer not coprime to p"
+                                          "is only implemented for curves over finite fields")
             x, y = polygens(self.base_ring(), 'x,y')
 
         # Special case of multiplication by 1 is easy.
@@ -2487,8 +2487,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         # If we only require the x coordinate, it is faster to use the recursive formula
         # since substituting polynomials is quite slow.
-        p = Integer(self.base_ring().characteristic())
-        v_p = 0 if p == 0 else valuation(m.abs(), p)
+        v_p = 0 if p == 0 else valuation(m, p)
         if not x_only:
             m //= p**v_p
 
@@ -2499,14 +2498,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
               / x.parent()(self._multiple_x_denominator(m.abs(), x)))
 
         if x_only:
-            # slow.
-            if v_p > 0:
-                p_endo = self.multiplication_by_p_isogeny()
-                isog = p_endo**v_p
-                fx = isog.x_rational_map()
-                # slow.
-                mx = mx.subs(x=fx)
-            # Return it if the optional parameter x_only is set.
             return mx
 
         # Consideration of the invariant differential
@@ -2515,10 +2506,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         my = ((2*y+a1*x+a3)*mx.derivative(x)/m - a1*mx-a3)/2
 
         if v_p > 0:
-            frob = self.frobenius_isogeny()
-            isog = (frob.dual() * frob)**v_p
+            isog = self.multiplication_by_p_isogeny()**v_p
             fx, fy = isog.rational_maps()
             # slow...
+            mx = mx.subs(x=fx)
             my = my.subs(x=fx, y=fy)
 
         return mx, my

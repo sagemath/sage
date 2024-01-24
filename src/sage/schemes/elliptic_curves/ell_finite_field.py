@@ -610,6 +610,24 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
     order = cardinality  # alias
 
+    @cached_method
+    def multiplication_by_p_isogeny(self):
+        r"""
+        Return the multiplication-by-\(p\) isogeny.
+
+        EXAMPLES::
+
+            sage: p = 23
+            sage: K.<a> = GF(p^3)
+            sage: E = EllipticCurve(K, [K.random_element(), K.random_element()])
+            sage: phi = E.multiplication_by_p_isogeny()
+            sage: assert phi.degree() == p**2
+            sage: P = E.random_element()
+            sage: assert phi(P) == P * p
+        """
+        frob = self.frobenius_isogeny()
+        return frob.dual() * frob
+
     def frobenius_polynomial(self):
         r"""
         Return the characteristic polynomial of Frobenius.
