@@ -1308,7 +1308,7 @@ def R9():
     EXAMPLES::
 
         sage: M = matroids.catalog.R9(); M
-        R9: Matroid of rank 3 on 9 elements with 69 bases
+        R9: Matroid of rank 3 on 9 elements with 15 non-spanning circuits
         sage: M.is_valid()
         True
         sage: len(M.nonspanning_circuits())
@@ -2105,7 +2105,7 @@ def Spike(r, t=True, C3=[]):
     INPUT:
 
     - ``r`` -- an integer (`r \ge 3`); the rank of the spike
-    - ``t`` -- a boolean (default: ``True``); whether the spike is tipped
+    - ``t`` -- boolean (default: ``True``); whether the spike is tipped
     - ``C3`` -- a list (default: ``[]``); a list of extra nonspanning circuits.
       The default (i.e. the empty list) results in a free `r`-spike
 
@@ -2116,7 +2116,8 @@ def Spike(r, t=True, C3=[]):
     EXAMPLES::
 
         sage: M = matroids.Spike(3, False); M
-        Free 3-spike\t: Matroid of rank 3 on 6 elements with 20 bases
+        Free 3-spike\t: M \ {'t'}, where M is Matroid of rank 3 on 7 elements
+        with 3 non-spanning circuits
         sage: M.is_isomorphic(matroids.Uniform(3, 6))
         True
         sage: len(matroids.Spike(8).bases())
