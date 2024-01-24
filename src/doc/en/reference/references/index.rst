@@ -2444,6 +2444,11 @@ REFERENCES:
              J. Graph Algorithms and Applications 15 (2): 269-293, 2011.
              :doi:`10.7155/jgaa.00226`, :arxiv:`0705.1025`.
 
+.. [EPSV2023] Jonathan Komada Eriksen, Lorenz Panny, Jana Sotáková, and Mattia Veroni.
+              Deuring for the People: Supersingular Elliptic Curves with Prescribed
+              Endomorphism Ring in General Characteristic.
+              LuCaNT 2023. https://ia.cr/2023/106
+
 .. [Eri1995] \H. Erikson.  Computational and Combinatorial Aspects
              of Coxeter Groups.  Thesis, 1995.
 
