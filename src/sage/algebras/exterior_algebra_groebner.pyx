@@ -483,10 +483,8 @@ cdef class GroebnerStrategy:
             sage: E = ExteriorAlgebra(QQ, 6)
             sage: E.inject_variables(verbose=False)
             sage: gens = [-e0*e1*e2 + e0*e1*e5 - e0*e2*e3 - e0*e3*e5 + e1*e2*e3 + e1*e3*e5,
-            ....:  e1*e2 - e1*e5 + e2*e5,
-            ....:  e0*e2 - e0*e4 + e2*e4,
-            ....:  e3*e4 - e3*e5 + e4*e5,
-            ....:  e0*e1 - e0*e3 + e1*e3]
+            ....:         e1*e2 - e1*e5 + e2*e5, e0*e2 - e0*e4 + e2*e4,
+            ....:         e3*e4 - e3*e5 + e4*e5, e0*e1 - e0*e3 + e1*e3]
             sage: I = E.ideal(gens)
             sage: S = E.quo(I)
             sage: I.reduce(e1*e3*e4*e5)
