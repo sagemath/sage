@@ -2932,8 +2932,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         Return the result of running Block Korkin-Zolotarev reduction on
         ``self`` interpreted as a lattice.
 
-        For details on input parameters, see
-        :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.BKZ`.
+        The arguments ``*args`` and ``**kwargs`` are passed onto
+        :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.BKZ`,
+        see there for more details.
 
         EXAMPLES::
 
@@ -2942,6 +2943,11 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [ 1/28 -1/40 -1/18]
             [ 1/28 -1/40  1/18]
             [-1/14 -1/40     0]
+
+            sage: A = random_matrix(QQ, 10, 10)
+            sage: d = lcm(a.denom() for a in A.list())
+            sage: A.BKZ() == (A * d).change_ring(ZZ).BKZ() / d
+            True
         """
         A, d = self._clear_denom()
         return A.BKZ(*args, **kwargs) / d
@@ -2951,8 +2957,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         Return an LLL reduced or approximated LLL reduced lattice for
         ``self`` interpreted as a lattice.
 
-        For details on input parameters, see
-        :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL`.
+        The arguments ``*args`` and ``**kwargs`` are passed onto
+        :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL`,
+        see there for more details.
 
         EXAMPLES::
 
@@ -2961,6 +2968,11 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [ 1/28 -1/40 -1/18]
             [ 1/28 -1/40  1/18]
             [    0 -3/40     0]
+
+            sage: A = random_matrix(QQ, 10, 10)
+            sage: d = lcm(a.denom() for a in A.list())
+            sage: A.LLL() == (A * d).change_ring(ZZ).LLL() / d
+            True
         """
         A, d = self._clear_denom()
         return A.LLL(*args, **kwargs) / d
