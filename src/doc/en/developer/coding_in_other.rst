@@ -714,7 +714,7 @@ dumps the user into an Octave interactive shell:
 
             OUTPUT:
 
-            An list x (if it exists) which solves M*x = b
+            A list x (if it exists) which solves M*x = b
 
             EXAMPLES::
 

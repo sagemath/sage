@@ -2932,7 +2932,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 QS[1, 1, 1, 1, 1] - QS[1, 1, 2, 1] + QS[1, 3, 1] - QS[2, 2, 1]
                 sage: QS._from_monomial_on_basis(Composition([2]))
                 -QS[1, 1] + QS[2]
-             """
+            """
             comp = Composition(comp)
             if not comp._list:
                 return self.one()
@@ -3089,7 +3089,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 M[1, 1] + M[2]
                 sage: YQS._to_monomial_on_basis(Composition([1,3,1]))
                 2*M[1, 1, 1, 1, 1] + 2*M[1, 1, 2, 1] + M[1, 2, 1, 1] + M[1, 3, 1] + M[2, 1, 1, 1] + M[2, 2, 1]
-             """
+            """
             return self._M(self._QS.monomial(comp.reversed())).star_involution()
 
         @cached_method

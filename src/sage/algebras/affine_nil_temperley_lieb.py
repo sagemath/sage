@@ -11,7 +11,7 @@ Affine nilTemperley Lieb Algebra of type A
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
-from sage.rings.ring import Ring
+from sage.categories.rings import Rings
 from sage.rings.integer_ring import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
@@ -54,7 +54,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             sage: A = AffineNilTemperleyLiebTypeA(3, QQ); A
             The affine nilTemperley Lieb algebra A3 over the ring Rational Field
         """
-        if not isinstance(R, Ring):
+        if R not in Rings():
             raise TypeError("argument R must be a ring")
         self._cartan_type = CartanType(['A', n - 1, 1])
         self._n = n
@@ -234,15 +234,16 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         if i in w.descents():
             return False
         s = w.parent().simple_reflections()
-        wi = w*s[i]
-        adjacent = [(i-1) % w.parent().n, (i+1) % w.parent().n]
+        wi = w * s[i]
+        adjacent = [(i - 1) % w.parent().n,
+                    (i + 1) % w.parent().n]
         for j in adjacent:
             if j in w.descents():
                 if j in wi.descents():
                     return False
                 else:
                     return True
-        return self.has_no_braid_relation(w*s[w.first_descent()],i)
+        return self.has_no_braid_relation(w * s[w.first_descent()], i)
 
     def _repr_term(self, t, short_display=True):
         """

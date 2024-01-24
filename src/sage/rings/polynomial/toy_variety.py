@@ -289,8 +289,7 @@ def triangular_factorization(B, n=-1):
         # now add the current factor q of p to the factorization
         for each in T:
             each.append(q)
-        for each in T:
-            family.append(each)
+        family.extend(T)
     return family
 
 

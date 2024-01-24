@@ -214,7 +214,7 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
-    def __init__(self, A):
+    def __init__(self, A, category=None):
         """
         TESTS::
 
@@ -231,7 +231,7 @@ class AlgebraicScheme(scheme.Scheme):
             raise TypeError("A (=%s) must be an ambient space")
         self.__A = A
         self.__divisor_group = {}
-        scheme.Scheme.__init__(self, A.base_scheme())
+        scheme.Scheme.__init__(self, A.base_scheme(), category=category)
 
     def _latex_(self):
         r"""
@@ -371,7 +371,7 @@ class AlgebraicScheme(scheme.Scheme):
           or neighborhood of a point then the embedding is the
           embedding into the original scheme.
 
-        * A ``NotImplementedError`` is raised if the construction of
+        * A :class:`NotImplementedError` is raised if the construction of
           the embedding morphism is not implemented yet.
 
         EXAMPLES::
@@ -465,9 +465,8 @@ class AlgebraicScheme(scheme.Scheme):
 
         OUTPUT:
 
-        A point of ``self``. Raises ``AttributeError`` if there is no
-        distinguished point, depending on how ``self`` was
-        constructed.
+        A point of ``self``. This raises :class:`AttributeError` if there
+        is no distinguished point, depending on how ``self`` was constructed.
 
         EXAMPLES::
 
@@ -918,7 +917,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
           x^2 - y*z
     """
 
-    def __init__(self, A, polynomials):
+    def __init__(self, A, polynomials, category=None):
         """
         See ``AlgebraicScheme_subscheme`` for documentation.
 
@@ -935,7 +934,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         from sage.rings.polynomial.multi_polynomial_sequence import is_PolynomialSequence
 
-        AlgebraicScheme.__init__(self, A)
+        AlgebraicScheme.__init__(self, A, category=category)
         self._base_ring = A.base_ring()
         R = A.coordinate_ring()
         if is_Ideal(polynomials):
@@ -1133,7 +1132,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
                 mult = lcm([c.denominator() for c in P.coefficients()])
                 P = mult*P
                 # stores the common factor from all coefficients
-                div = gcd([_ for _ in P.coefficients()])
+                div = gcd(list(P.coefficients()))
                 poly_ring = P.parent() # need to coerce, since division might change base ring
                 P = poly_ring((BR.one()/div)*P)
                 normalized_polys.append(P)

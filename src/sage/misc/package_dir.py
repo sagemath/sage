@@ -615,7 +615,7 @@ if __name__ == '__main__':
         if package in ordinary_packages:
             pass
         elif ((missing_all_files := distributions_per_directives - package_distributions_per_all_files[package])
-                and not(missing_all_files == set(['']) and len(distributions_per_directives) < 2)):
+                and not (missing_all_files == set(['']) and len(distributions_per_directives) < 2)):
             s = '' if len(missing_all_files) == 1 else 's'
             print(f'{package}: missing file{s} ' + ', '.join(_all_filename(distribution)
                                                              for distribution in missing_all_files))

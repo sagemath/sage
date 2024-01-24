@@ -319,7 +319,7 @@ class Gap(Parent):
                 return x._libgap_()
             except AttributeError:
                 pass
-            x = str(x._libgap_init_())
+            x = str(x._gap_init_())
             return make_any_gap_element(self, gap_eval(x))
 
     def _construct_matrix(self, M):
@@ -400,7 +400,7 @@ class Gap(Parent):
         cdef GapElement elem
 
         if not isinstance(gap_command, str):
-            gap_command = str(gap_command._libgap_init_())
+            gap_command = str(gap_command._gap_init_())
 
         initialize()
         elem = make_any_gap_element(self, gap_eval(gap_command))

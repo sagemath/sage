@@ -661,7 +661,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             prod *= p
             Amodp, _ = self._reductions(p)
             Bmodp, _ = right._reductions(p)
-            _,     S = self._reduction_matrix(p)
+            _, S = self._reduction_matrix(p)
             X = Amodp[0]._matrix_from_rows_of_matrices([Amodp[i] * Bmodp[i] for i in range(len(Amodp))])
             v.append(S*X)
             p = previous_prime(p)

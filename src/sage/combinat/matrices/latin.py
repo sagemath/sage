@@ -1531,7 +1531,7 @@ def isotopism(p):
     if isinstance(p, tuple):
         # We have a single cycle:
         if isinstance(p[0], Integer):
-            return Permutation(tuple((x+1 for x in p)))
+            return Permutation(tuple(x+1 for x in p))
 
         # We have a tuple of cycles:
         if isinstance(p[0], tuple):
@@ -2496,7 +2496,7 @@ def check_bitrade_generators(a, b, c):
         sage: a, b, c, G = p3_group_bitrade_generators(3)
         sage: check_bitrade_generators(a, b, c)
         True
-        sage: check_bitrade_generators(a, b, gap('()'))
+        sage: check_bitrade_generators(a, b, libgap(gap('()')))
         False
     """
     A = PermutationGroup([a])

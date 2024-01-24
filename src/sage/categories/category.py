@@ -565,7 +565,7 @@ class Category(UniqueRepresentation, SageObject):
     def __call__(self, x, *args, **opts):
         """
         Construct an object in this category from the data in ``x``,
-        or throw ``TypeError`` or ``NotImplementedError``.
+        or throw :class:`TypeError` or :class:`NotImplementedError`.
 
         If ``x`` is readily in ``self`` it is returned unchanged.
         Categories wishing to extend this minimal behavior should
@@ -583,7 +583,7 @@ class Category(UniqueRepresentation, SageObject):
     def _call_(self, x):
         """
         Construct an object in this category from the data in ``x``,
-        or throw ``NotImplementedError``.
+        or throw :class:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -2598,6 +2598,7 @@ def category_sample():
          Category of Hopf algebras with basis over Rational Field,
          Category of Lie algebras over Rational Field,
          Category of Weyl groups,
+         Category of abelian varieties over Rational Field,
          Category of additive magmas, ...,
          Category of fields, ...,
          Category of graded Hopf algebras with basis over Rational Field, ...,
