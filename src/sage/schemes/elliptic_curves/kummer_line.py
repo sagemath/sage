@@ -4,7 +4,7 @@ Kummer Line for short Weierstrass elliptic curves
 Sage defines Kummer lines derived from an elliptic curve in short Weierstrass or Montgomery form, known as `x`-only arithmetic.
 Also defines a point on a Kummer line as an element of the projective line as well as isogenies between Kummer lines.
 
-EXAMPLES:
+EXAMPLES::
 
 We construct a Kummer line over an already defined elliptic curve in short Weierstrass form::
 
@@ -17,15 +17,18 @@ We can also give the curve coefficients directly with a base ring::
     sage: KummerLine(QQ, [4, 5/6])
     Kummer line of the elliptic curve y^2 = x^3 + 4*x + 5/6 over Rational Field
 
-TODO KummerPoint examples, as well as many more usage (see integer for instance)
-TODO <Lots and lots of examples>
-
 AUTHORS:
 
 - Giacomo Pope (2023): original code
 
 - Elif Özbay Gürler, Nicolas Sarkis (2024-01): ported code to short Weierstrass and documentation
 """
+
+#
+# ::
+#
+# TODO KummerPoint examples, as well as many more usage (see integer for instance)
+# TODO <Lots and lots of examples>
 
 # ****************************************************************************
 #       Copyright (C) 2023 Giacomo Pope <giacomopope@gmail.com>
@@ -51,6 +54,7 @@ class KummerLine:
     Kummer line class for a short Weierstrass elliptic curve.
 
     EXAMPLES::
+
         sage: E = EllipticCurve(GF(101), [2, 3])
         sage: KummerLine(E)
         Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
@@ -211,7 +215,7 @@ class KummerLine:
 
     def curve(self):
         r"""
-        Returnn the associated elliptic curve.
+        Return the associated elliptic curve.
 
         EXAMPLES::
 
@@ -248,7 +252,7 @@ class KummerLine:
         r"""
         Compute the j-invariant of the Kummer line using the formula
 
-        ..MATH::
+        .. MATH::
 
             j(E) = 1728\frac{4a^3}{4a^3 + 27b^2}.
 
@@ -277,7 +281,7 @@ class KummerLine:
         r"""
         Compute the discriminant of the Kummer line using the formula
 
-        ..MATH::
+        .. MATH::
 
             \Delta(E) = -16(4a^3 + 27b^2).
 
@@ -322,6 +326,7 @@ class KummerLine:
     #     A6 = a6 - 7 * w
     #     K2 = KummerLine(self.base_ring(), [A4, A6])
     #     return K2, K2(alpha)
+    # TODO isogeny call instantiate a KummerLineIsogeny object
 
 
 # class KummerPoint:
