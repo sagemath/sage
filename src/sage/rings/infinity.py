@@ -486,8 +486,7 @@ class AnInfinity():
         r"""
         Generate a floating-point infinity.
 
-        The printing of
-        floating-point infinity varies across platforms.
+        The printing of floating-point infinity varies across platforms.
 
         EXAMPLES::
 
