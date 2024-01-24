@@ -110,17 +110,20 @@ easily::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.interfaces.abc
 import sage.misc.latex as latex
 import sage.structure.parent_gens
+
+from sage.structure.parent import Parent
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
 from sage.rings import ideal, quotient_ring_element, ring
 from sage.structure.category_object import normalize_names
 from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.category_object import check_default_category
 
 _Rings = Rings()
 _CommRings = CommutativeRings()
@@ -334,7 +337,7 @@ def QuotientRing(R, I, names=None, **kwds):
         I_lift = S.ideal(G)
         J = R.defining_ideal()
         if S == ZZ:
-            return Integers((I_lift+J).gen(), **kwds)
+            return Integers((I_lift + J).gen(), **kwds)
         return R.__class__(S, I_lift + J, names=names)
     if R in _CommRings:
         return QuotientRing_generic(R, I, names, **kwds)
@@ -372,16 +375,15 @@ def is_QuotientRing(x):
 
 _RingsQuotients = _Rings.Quotients()
 _CommutativeRingsQuotients = _CommRings.Quotients()
-from sage.structure.category_object import check_default_category
 
 
 @richcmp_method
-class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
+class QuotientRing_nc(Parent):
     """
     The quotient ring of `R` by a twosided ideal `I`.
 
-    This class is for rings that do not inherit from
-    :class:`~sage.rings.ring.CommutativeRing`.
+    This class is for rings that are not in the category
+    ``Rings().Commutative()``.
 
     EXAMPLES:
 
@@ -489,8 +491,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             raise TypeError("The second argument must be an ideal of the given ring, but %s is not" % I)
         self.__R = R
         self.__I = I
-        #sage.structure.parent_gens.ParentWithGens.__init__(self, R.base_ring(), names)
-        ##
+        # sage.structure.parent_gens.ParentWithGens.__init__(self, R.base_ring(), names)
+
         # Unfortunately, computing the join of categories, which is done in
         # check_default_category, is very expensive.
         # However, we don't just want to use the given category without mixing in
@@ -504,10 +506,10 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
                 except (AttributeError, NotImplementedError):
                     commutative = False
                 if commutative:
-                    category = check_default_category(_CommutativeRingsQuotients,category)
+                    category = check_default_category(_CommutativeRingsQuotients, category)
                 else:
-                    category = check_default_category(_RingsQuotients,category)
-            ring.Ring.__init__(self, R.base_ring(), names=names, category=category)
+                    category = check_default_category(_RingsQuotients, category)
+            Parent.__init__(self, base=R.base_ring(), names=names, category=category)
         # self._populate_coercion_lists_([R]) # we don't want to do this, since subclasses will often implement improved coercion maps.
 
     def construction(self):
@@ -790,7 +792,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             return self.lifting_map()
         return self.lifting_map()(x)
 
-    def retract(self,x):
+    def retract(self, x):
         """
         The image of an element of the cover ring under the quotient map.
 
@@ -1146,7 +1148,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
                 try:
                     if R.defining_ideal().change_ring(C) <= self.defining_ideal():
                         return True
-                except AttributeError: # Not all ideals have a change_ring
+                except AttributeError:  # Not all ideals have a change_ring
                     pass
         return C.has_coerce_map_from(R)
 
@@ -1246,6 +1248,10 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return self(self.__R.gen(i))
 
+    def gens(self) -> tuple:
+        return tuple(self(self.__R.gen(i))
+                     for i in range(self.cover_ring().ngens()))
+
     def _singular_(self, singular=None):
         """
         Returns the Singular quotient ring of ``self`` if the base ring is
@@ -1310,7 +1316,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if singular is None:
             from sage.interfaces.singular import singular
         self.__R._singular_().set_ring()
-        self.__singular = singular("%s" % self.__I._singular_().name(),"qring")
+        self.__singular = singular("%s" % self.__I._singular_().name(), "qring")
         return self.__singular
 
     def _magma_init_(self, magma):
@@ -1468,6 +1474,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
             return QuotientRingIdeal_principal
         return QuotientRingIdeal_generic
 
+
 class QuotientRingIdeal_generic(ideal.Ideal_generic):
     r"""
     Specialized class for quotient-ring ideals.
@@ -1516,6 +1523,7 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
         Igens += [g.lift() for g in self.gens()]
         J = R.cover_ring().ideal(Igens)
         return other.lift() in J
+
 
 class QuotientRingIdeal_principal(ideal.Ideal_principal, QuotientRingIdeal_generic):
     r"""
