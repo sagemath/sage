@@ -4,7 +4,7 @@ Kummer Line for short Weierstrass elliptic curves
 Sage defines Kummer lines derived from an elliptic curve in short Weierstrass or Montgomery form, known as `x`-only arithmetic.
 Also defines a point on a Kummer line as an element of the projective line as well as isogenies between Kummer lines.
 
-EXAMPLES::
+EXAMPLES:
 
 We construct a Kummer line over an already defined elliptic curve in short Weierstrass form::
 
@@ -25,12 +25,6 @@ AUTHORS:
 
 """
 
-#
-# ::
-#
-# TODO KummerPoint examples, as well as many more usage (see integer for instance)
-# TODO <Lots and lots of examples>
-
 # ****************************************************************************
 #       Copyright (C) 2023 Giacomo Pope <giacomopope@gmail.com>
 #       Copyright (C) 2024 Elif Özbay Gürler <TODO>
@@ -42,6 +36,13 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
+#
+# ::
+#
+# TODO KummerPoint examples, as well as many more usage (see integer for instance)
+# TODO <Lots and lots of examples>
+
 
 from sage.all import cached_method
 
@@ -152,7 +153,7 @@ class KummerLine:
 
             - ``coords`` - either a point `P` on the elliptic curve or a valid tuple `(X, Z)` where `P = (X : * : Z)`; `Z` is optional
 
-        OUTPUT:: A Kummer point on the Kummer line.
+        OUTPUT: A Kummer point on the Kummer line.
 
         EXAMPLES::
 
@@ -190,7 +191,7 @@ class KummerLine:
 
     def extract_constants(self):
         r"""
-        Return the short Weierstrass coefficients a, b as a tuple.
+        Return the short Weierstrass coefficients `(a, b)` as a tuple.
 
         EXAMPLES::
 
@@ -359,25 +360,30 @@ class KummerPoint:
 
         EXAMPLES::
 
+        A KummerPoint can be constructed from `XZ`-coordinates::
             sage: E = EllipticCurve(GF(101), [2, 3])
             sage: P = E(95, 52)
             sage: K = KummerLine(E)
+            sage: xP = KummerPoint(K, [95, 1]); xP
+            (95 : 1)
 
-            A KummerPoint can be constructed from `XZ`-coordinates::
-                sage: xP = KummerPoint(K, [95, 1]); xP
-                (95 : 1)
+        Z-coordinate is optional, assumed to be 1 then::
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: P = E(95, 52)
+            sage: K = KummerLine(E)
+            sage: KummerPoint(K, 95) == KummerPoint(K, [95, 1])
+            True
+            sage: KummerPoint(K, 95) == KummerPoint(K, [95, 2])
+            False
+            sage: KummerPoint(K, 95) == KummerPoint(K, [95])
+            True
 
-            Z-coordinate is optional, assumed to be 1 then::
-                sage: KummerPoint(K, 95) == KummerPoint(K, [95, 1])
-                True
-                sage: KummerPoint(K, 95) == KummerPoint(K, [95, 2])
-                False
-                sage: KummerPoint(K, 95) == KummerPoint(K, [95])
-                True
-
-            Or, it can be constructed from a point on the elliptic curve::
-                sage: xP = KummerPoint(K, P); xP
-                (95 : 1)
+        Or, it can be constructed from a point on the elliptic curve::
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: P = E(95, 52)
+            sage: K = KummerLine(E)
+            sage: xP = KummerPoint(K, P); xP
+            (95 : 1)
         """
         # Ensure the parent is the right type
         if not isinstance(parent, KummerLine):
@@ -436,7 +442,11 @@ class KummerPoint:
         r"""
         Boolean value for a Kummer line point.
 
-        OUTPUT:: `False` if this is the point at infinity, otherwise `True`
+        OUTPUT: ``False`` if this is the point at infinity, otherwise ``True``.
+
+        .. SEEALSO::
+
+            meth:`is_zero`
 
         EXAMPLES::
 
@@ -467,13 +477,13 @@ class KummerPoint:
             sage: xP == xQ  # 95*12 % 101 = 29
             True
 
-        They must represent the same x-coordinate::
+        They must represent the same `x`-coordinate::
             sage: Q = E1(50, 41)
             sage: xP, xQ = K1(P), K1(Q)
             sage: xP == xQ
             False
 
-        Base Kummer line must be the same even if the x-coordinates are equal::
+        Base Kummer line must be the same even if the `x`-coordinates are equal::
             sage: E2 = EllipticCurve(GF(101), [3, 7])
             sage: Q = E2(95, 50)
             sage: K2 = KummerLine(E2)
@@ -500,9 +510,7 @@ class KummerPoint:
         A Kummer Point is zero if it corresponds to the point at infinity
         on the parent curve.
 
-        .. SEEALSO::
-
-            :meth:`bool`
+        OUTPUT: ``False`` if this is the point at infinity, otherwise ``True``.
 
         EXAMPLES::
 
@@ -522,7 +530,7 @@ class KummerPoint:
         Check if the `x`-coordinate of a Kummer point is a valid
         one on the parent curve.
 
-        Raise an error in initialisation if `False`.
+        Raise an error in initialisation if ``False``.
 
         EXAMPLES::
 
@@ -594,9 +602,10 @@ class KummerPoint:
             sage: xP.x()
             95
 
-        The point at infinity has no valid x-coordinate::
-            sage: xO = K(None)
-            sage: xO.x()
+        The point at infinity has no valid `x`-coordinate::
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: xO = K(None); xO.x()
             TODO
         """
         if self.is_zero():
