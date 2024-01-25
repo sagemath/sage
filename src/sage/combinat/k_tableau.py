@@ -3984,7 +3984,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
             Set of strong 3-tableaux of shape [[2, 2], [1]] and of weight (0, 0, 2, 1)
             sage: StrongTableaux(3, [[],[]], weight=[])
             Set of strong 3-tableaux of shape [] and of weight ()
-       """
+        """
         if self._inner_shape == Core([],self.k+1):
             s = "Set of strong %s-tableaux" % self.k
             s += " of shape %s" % self._outer_shape
@@ -4225,7 +4225,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         r"""
         Add markings to a partially marked strong tableau.
 
-        Given an partially marked standard tableau and a list of cells where the marks
+        Given a partially marked standard tableau and a list of cells where the marks
         should be placed along with a ``weight``, return the semi-standard marked strong
         tableau.  The marking should complete the marking so that the result is a
         strong standard marked tableau.

@@ -155,6 +155,8 @@ cdef class CVXPYBackend:
             sage: p.set_objective(b[1] + b[2])
             sage: cp = copy(p.get_backend())
             sage: cp.solve()
+            doctest:warning...:
+            FutureWarning:...
             0
             sage: cp.get_objective_value()  # abs tol 1e-7
             6.0

@@ -311,6 +311,29 @@ class sage__groups(JoinFeature):
                              spkg='sagemath_groups', type='standard')
 
 
+class sage__libs__braiding(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.braiding`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__braiding
+        sage: sage__libs__braiding().is_present()                                            # needs sage.libs.braiding
+        FeatureTestResult('sage.libs.braiding', True)
+    """
+
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__braiding
+            sage: isinstance(sage__libs__braiding(), sage__libs__braiding)
+            True
+        """
+        PythonModule.__init__(self, 'sage.libs.braiding',
+                              spkg='sagemath_libbraiding', type='standard')
+
+
 class sage__libs__ecl(PythonModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.ecl`.
@@ -330,7 +353,8 @@ class sage__libs__ecl(PythonModule):
             sage: isinstance(sage__libs__ecl(), sage__libs__ecl)
             True
         """
-        PythonModule.__init__(self, 'sage.libs.ecl')
+        PythonModule.__init__(self, 'sage.libs.ecl',
+                              spkg='sagemath_symbolics', type='standard')
 
 
 class sage__libs__flint(JoinFeature):
@@ -356,8 +380,8 @@ class sage__libs__flint(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.flint',
-                             [PythonModule('sage.libs.flint.flint'),
-                              PythonModule('sage.libs.arb.arith')],
+                             [PythonModule('sage.libs.flint.arith_sage'),
+                              PythonModule('sage.libs.flint.flint_sage')],
                              spkg='sagemath_flint', type='standard')
 
 
@@ -777,7 +801,7 @@ class sage__rings__number_field(JoinFeature):
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.number_field`.
 
     Number fields are implemented in Sage using a complicated mixture of various libraries,
-    including :ref:`arb <spkg_arb>`, :ref:`FLINT <spkg_flint>`, :ref:`GAP <spkg_gap>`,
+    including :ref:`FLINT <spkg_flint>`, :ref:`GAP <spkg_gap>`,
     :ref:`MPFI <spkg_mpfi>`, :ref:`NTL <spkg_ntl>`, and :ref:`PARI <spkg_pari>`.
 
     EXAMPLES:
@@ -1076,6 +1100,7 @@ def all_features():
             sage__geometry__polyhedron(),
             sage__graphs(),
             sage__groups(),
+            sage__libs__braiding(),
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),

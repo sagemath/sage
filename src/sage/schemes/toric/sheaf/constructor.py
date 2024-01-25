@@ -40,7 +40,7 @@ def TangentBundle(X):
         raise ValueError('not a toric variety')
 
     fan = X.fan()
-    filtrations = dict()
+    filtrations = {}
     from sage.modules.filtered_vector_space import FilteredVectorSpace
     for i, ray in enumerate(fan.rays()):
         F = FilteredVectorSpace(fan.rays(), {0: range(fan.nrays()), 1: [i]})

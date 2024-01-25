@@ -50,7 +50,7 @@ number = 0
 
 
 class PSage(Sage):
-    def __init__(self,  **kwds):
+    def __init__(self, **kwds):
         if 'server' in kwds:
             raise NotImplementedError("PSage doesn't work on remote server yet.")
         Sage.__init__(self, **kwds)
@@ -129,14 +129,16 @@ class PSage(Sage):
 
     def eval(self, x, strip=True, **kwds):
         """
-            x -- code
-            strip --ignored
+        INPUT:
+
+        - ``x`` -- code
+        - ``strip`` --ignored
         """
         if self.is_locked():
             return "<<currently executing code>>"
         if self._locked:
             self._locked = False
-            #self._expect.expect('__unlocked__')
+            # self._expect.expect('__unlocked__')
             self.expect().send('\n')
             self.expect().expect(self._prompt)
             self.expect().expect(self._prompt)
@@ -158,7 +160,7 @@ class PSage(Sage):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s=%s' % (var,value)
+        cmd = '%s=%s' % (var, value)
         self._send_nowait(cmd)
         time.sleep(0.02)
 
@@ -181,6 +183,7 @@ class PSage(Sage):
 
     def _object_class(self):
         return PSageElement
+
 
 class PSageElement(SageElement):
     def is_locked(self):

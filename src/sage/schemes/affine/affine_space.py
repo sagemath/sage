@@ -270,10 +270,10 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         if F is None:
             if not isinstance(self.base_ring(), FiniteField):
                 raise TypeError("base ring (= %s) must be a finite field" % self.base_ring())
-            return [P for P in self]
+            return list(self)
         elif not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
-        return [P for P in self.base_extend(F)]
+        return list(self.base_extend(F))
 
     def __eq__(self, right):
         """
@@ -1226,7 +1226,7 @@ class AffineSpace_field(AffineSpace_generic):
         if q is not None:
             v = [cp - cq for cp, cq in zip(p, q)]
         else:
-            v = [cp for cp in p]
+            v = list(p)
 
         return self._morphism(self.Hom(self), [x - c for x, c in zip(gens, v)])
 

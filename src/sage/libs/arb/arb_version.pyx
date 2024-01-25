@@ -1,6 +1,10 @@
 # -*- coding: utf-8
-from sage.libs.arb.arb cimport arb_version
 from sage.cpython.string cimport char_to_str
+
+
+cdef extern from "arb_wrap.h":
+    char * arb_version
+
 
 def version():
     """

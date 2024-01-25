@@ -732,10 +732,10 @@ cpdef find_brouwer_separable_design(int k,int n) noexcept:
         False
     """
     from sage.combinat.designs.orthogonal_arrays_build_recursive import brouwer_separable_design
-    cdef int q,x,baer_subplane_size, max_t, min_t, t,e1,e2,e3,e4
+    cdef int q, x, baer_subplane_size, max_t, min_t, t, e1, e2, e3, e4
 
-    for q in prime_powers(2,n):
-        baer_subplane_size = q**2+q+1
+    for q in prime_powers(2, n):
+        baer_subplane_size = q**2 + q + 1
         if baer_subplane_size > n:
             break
         #                       x <= q^2+1
@@ -743,58 +743,57 @@ cpdef find_brouwer_separable_design(int k,int n) noexcept:
         # <=>             n-q^2-1 <= t(q^2+q+1)
         # <=> (n-q^2-1)/(q^2+q+1) <= t
 
-        min_t = (n-q**2-1)/baer_subplane_size
-        max_t = min(n/baer_subplane_size,q**2-q+1)
+        min_t = (n - q**2 - 1) / baer_subplane_size
+        max_t = min(n / baer_subplane_size, q**2 - q + 1)
 
-        for t in range(min_t,max_t+1):
-            x = n - t*baer_subplane_size
-            e1 = int(x != q**2-q-t)
+        for t in range(min_t, max_t + 1):
+            x = n - t * baer_subplane_size
+            e1 = int(x != q**2 - q - t)
             e2 = int(x != 1)
             e3 = int(x != q**2)
-            e4 = int(x != t+q+1)
+            e4 = int(x != t + q + 1)
 
             # i)
             if (x == 0 and
-                is_available(k, t)  and
-                is_available(k,t+q)):
-                return brouwer_separable_design, (k,t,q,x)
+                    is_available(k, t) and is_available(k, t + q)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # ii)
-            elif (x == t+q and
-                  is_available(k+e3,  t  ) and
-                  is_available(  k , t+q ) and
-                  is_available(k+1 ,t+q+1)):
-                return brouwer_separable_design, (k,t,q,x)
+            elif (x == t + q and
+                  is_available(k + e3, t) and
+                  is_available(k, t + q) and
+                  is_available(k + 1, t + q + 1)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # iii)
-            elif (x == q**2-q+1-t and
-                  is_available(  k  ,  x  ) and
-                  is_available( k+e2, t+1 ) and
-                  is_available( k+1 , t+q )):
-                return brouwer_separable_design, (k,t,q,x)
+            elif (x == q**2 - q + 1 - t and
+                  is_available(k, x) and
+                  is_available(k + e2, t + 1)
+                  and is_available(k + 1, t + q)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # iv)
-            elif (x == q**2+1 and
-                  is_available(  k  ,  x  ) and
-                  is_available( k+e4, t+1 ) and
-                  is_available( k+1 ,t+q+1)):
-                return brouwer_separable_design, (k,t,q,x)
+            elif (x == q**2 + 1 and
+                  is_available(k, x) and
+                  is_available(k + e4, t + 1) and
+                  is_available(k + 1, t + q + 1)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # v)
-            elif (0<x and x<q**2-q+1-t and (e1 or e2) and
-                  is_available(  k  ,  x  ) and
-                  is_available( k+e1,  t  ) and
-                  is_available( k+e2, t+1 ) and
-                  is_available( k+1 , t+q )):
-                return brouwer_separable_design, (k,t,q,x)
+            elif (0 < x < q**2 - q + 1 - t and (e1 or e2) and
+                  is_available(k, x) and
+                  is_available(k + e1, t) and
+                  is_available(k + e2, t + 1) and
+                  is_available(k + 1, t + q)):
+                return brouwer_separable_design, (k, t, q, x)
 
             # vi)
-            elif (t+q<x and x<q**2+1 and (e3 or e4) and
-                  is_available(  k  ,  x  ) and
-                  is_available( k+e3,  t  ) and
-                  is_available( k+e4, t+1 ) and
-                  is_available( k+1 ,t+q+1)):
-                return brouwer_separable_design, (k,t,q,x)
+            elif (t + q < x < q**2 + 1 and (e3 or e4) and
+                  is_available(k, x) and
+                  is_available(k + e3, t) and
+                  is_available(k + e4, t + 1) and
+                  is_available(k + 1, t + q + 1)):
+                return brouwer_separable_design, (k, t, q, x)
 
     return False
 
@@ -804,11 +803,11 @@ from sage.combinat.designs.database import QDM as __QDM
 cdef dict _QDM = __QDM
 cdef dict ioa_indexed_by_n_minus_x = {}
 for x in _QDM.itervalues():
-    for (n,_,_,u),(k,_) in x.items():
-        if u>1:
+    for (n, _, _, u), (k, _) in x.items():
+        if u > 1:
             if n not in ioa_indexed_by_n_minus_x:
                 ioa_indexed_by_n_minus_x[n] = []
-            ioa_indexed_by_n_minus_x[n].append((k,u))
+            ioa_indexed_by_n_minus_x[n].append((k, u))
 
 
 def int_as_sum(int value, list S, int k_max):

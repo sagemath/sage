@@ -9,7 +9,7 @@ Distribution utilities
 License
 -------
 
-Python license
+PSF-2.0
 
 Upstream Contact
 ----------------

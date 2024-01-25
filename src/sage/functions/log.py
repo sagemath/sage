@@ -27,7 +27,7 @@ lazy_import('sage.symbolic.constants', 'e', as_='const_e')
 lazy_import('sage.symbolic.constants', 'pi', as_='const_pi')
 lazy_import('sage.rings.complex_double', 'CDF')
 
-lazy_import('sage.libs.flint.arith', 'harmonic_number', as_='_flint_harmonic_number')
+lazy_import('sage.libs.flint.arith_sage', 'harmonic_number', as_='_flint_harmonic_number')
 
 lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
 lazy_import('mpmath', 'harmonic', as_='_mpmath_harmonic')
@@ -500,7 +500,7 @@ class Function_dilog(GinacFunction):
             sage: float(dilog(1))
             1.6449340668482262
 
-    TESTS:
+        TESTS:
 
         ``conjugate(dilog(x))==dilog(conjugate(x))`` unless on the branch cuts
         which run along the positive real axis beginning at 1.::

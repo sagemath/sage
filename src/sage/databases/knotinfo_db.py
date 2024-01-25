@@ -1,15 +1,29 @@
 # -*- coding: utf-8 -*-
 r"""
-KnotInfo Database
+KnotInfo database
 
-This module contains the class :class:`KnotInfoDataBase`  and auxiliary classes
-for it which serves as an interface to the lists of named knots and links provided
+This module contains the class :class:`KnotInfoDataBase` and auxiliary classes
+for it, which serves as an interface to the lists of named knots and links provided
 at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
 `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
 
+To use the database, you need to install the optional :ref:`database_knotinfo
+<spkg_database_knotinfo>` package by the Sage command ::
+
+    sage -i database_knotinfo
+
+EXAMPLES::
+
+    sage: # optional - database_knotinfo
+    sage: from sage.databases.knotinfo_db import KnotInfoDataBase
+    sage: ki_db = KnotInfoDataBase()
+    sage: ki_db
+    <sage.databases.knotinfo_db.KnotInfoDataBase object at ...>
+
 AUTHORS:
 
-- Sebastian Oehms August 2020: initial version
+- Sebastian Oehms (2020-08): initial version
+
 """
 ##############################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>
