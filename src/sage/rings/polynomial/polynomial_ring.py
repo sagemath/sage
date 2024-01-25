@@ -1384,7 +1384,7 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: R.<x> = ZZ[]
             sage: f = R.random_element(10, x=5, y=10)
-            sage: f # random
+            sage: f  # random
             5*x^10 + 6*x^9 + 5*x^8 + 8*x^7 + 8*x^6 + 5*x^5 + 7*x^4 + 8*x^3 + 6*x^2 + 9*x + 6
             sage: f.degree()
             10
