@@ -1367,14 +1367,14 @@ class PolynomialRing_general(ring.Algebra):
         INPUT:
 
         -  ``degree`` - (default: ``(-1, 2)``) integer for fixing the degree or
-           a tuple of minimum and maximum degrees.
+           a tuple of minimum and maximum degrees
 
         -  ``monic`` - optional boolean to indicate whether the sampled
            polynomial should be monic, or not. If this is set, `0` is not a
-           possible output of the method.
+           possible output of the method
 
         -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
-           the base ring.
+           the base ring
 
         .. SEEALSO::
 
@@ -1540,13 +1540,13 @@ class PolynomialRing_general(ring.Algebra):
 
         -  ``degree`` - optional integer for fixing the degree
            or a tuple of minimum and maximum degrees. By default set to
-           ``(0, 2)``.
+           ``(0, 2)``
 
         - ``zero`` - boolean, if set the algorithm may return `0`, even though
-          it is not a monic polynomial. By default set to ``False``.
+          it is not a monic polynomial. By default set to ``False``
 
         -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
-           the base ring.
+           the base ring
 
         .. SEEALSO::
 
