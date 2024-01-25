@@ -1031,7 +1031,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
     @cached_method
     def discriminant(self):
         """
-        Return the discriminant of this quaternion algebra, i.e. the product of the ramified primes in it.
+        Return the discriminant of this quaternion algebra, i.e. the product of the finite
+        primes it ramifies at.
 
         EXAMPLES::
 
@@ -1058,18 +1059,15 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         else:
             return prod(self.ramified_primes())
 
-    def ramified_primes(self, sorted=False):
+    @cached_method
+    def ramified_primes(self):
         """
         Return the (finite) primes that ramify in this rational quaternion algebra.
-
-        INPUT:
-
-        - ``sorted`` -- (default: ``False``)
 
         OUTPUT:
 
         The list of prime numbers at which ``self`` ramifies (given as integers), sorted by their
-        magnitude (small to large) if ``sorted`` is set to ``True``.
+        magnitude (small to large).
 
         EXAMPLES::
 
@@ -1077,27 +1075,18 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             [2]
 
             sage: QuaternionAlgebra(QQ, -58, -69).ramified_primes()
-            [3, 29, 23]
-
-            sage: QuaternionAlgebra(QQ, -58, -69).ramified_primes(sorted=True)
             [3, 23, 29]
         """
         if not is_RationalField(self.base_ring()):
             raise ValueError("base field must be the rational numbers")
 
-        if not sorted:
-            return [p for p in set([2]).union(prime_divisors(self._a.numerator()),
-                prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
-                prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1]
-
-        else:
-            return sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
+        return sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
                 prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
                 prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
 
     def is_isomorphic(self, A) -> bool:
         """
-        Return ``True`` if ``self`` and ``A`` are isomorphic quaternion algebras over Q.
+        Return ``True`` if (and only if) ``self`` and ``A`` are isomorphic quaternion algebras over Q.
 
         INPUT:
 
@@ -1118,7 +1107,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if self.base_ring() != QQ or A.base_ring() != QQ:
             raise NotImplementedError("isomorphism check only implemented for rational quaternion algebras")
 
-        return set(self.ramified_primes()) == set(A.ramified_primes())
+        return self.ramified_primes() == A.ramified_primes()
 
     def _magma_init_(self, magma):
         """
