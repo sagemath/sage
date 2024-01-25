@@ -1360,34 +1360,25 @@ class PolynomialRing_general(ring.Algebra):
         """
         return 1
 
-    def random_element(self, degree=(-1, 2), monic=False, _allow_zero=False, *args, **kwds):
+    def random_element(self, degree=(-1, 2), monic=False, *args, **kwds):
         r"""
         Return a random polynomial of given degree (bounds).
 
         INPUT:
 
-        -  ``degree`` - optional integer for fixing the degree
-           or a tuple of minimum and maximum degrees. By default set to
-           ``(-1,2)``.
+        -  ``degree`` - (default: ``(-1, 2)``) integer for fixing the degree or
+           a tuple of minimum and maximum degrees.
 
         -  ``monic`` - optional boolean to indicate whether the sampled
            polynomial should be monic, or not. If this is set, `0` is not a
-           possible output of the method. If monic and `0` are both needed,
-           one should use :meth:`random_monic_or_zero_element`.
-
-        - ``_allow_zero`` - optional boolean to indicate whether zero should be
-          included. If ``monic`` is not set, or the degree bound does not
-          include `-1`, then this argument does nothing. Otherwise, the
-          algorithm returns either monic or `0` polynomials (with uniform
-          probability over the range of output). This is for internal use, users
-          should use :meth:`random_monic_or_zero_element`.
+           possible output of the method.
 
         -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
            the base ring.
 
         .. SEEALSO::
 
-            :meth:`random_monic_element`, :meth:`random_monic_or_zero_element`
+            :meth:`random_monic_element`
 
         EXAMPLES::
 
@@ -1420,7 +1411,7 @@ class PolynomialRing_general(ring.Algebra):
             ....:     pass
 
         It is possible to sample a monic polynomial, but it is preferable to
-        use :meth:`random_monic_element` or :meth:`random_monic_or_zero_element`::
+        use :meth:`random_monic_element`::
 
             sage: R.random_element(degree=(-1, 5), monic=True).is_monic()
             True
@@ -1456,19 +1447,15 @@ class PolynomialRing_general(ring.Algebra):
 
         In :issue:`37118`, ranges including integers below `-1` no longer error::
 
-            sage: R.random_element(degree=(-2, 3)) # random
+            sage: R.random_element(degree=(-2, 3))  # random
             1
 
         ::
 
             sage: 0 in [R.random_element(degree=(-1, 2), monic=True) for _ in range(500)]
             False
-            sage: 0 in [R.random_element(degree=(-1, 2), monic=True, _allow_zero=True) for _ in range(500)]
-            True
             sage: 0 in [R.random_monic_element(degree=(-1, 2)) for _ in range(500)]
             False
-            sage: 0 in [R.random_monic_or_zero_element(degree=(-1, 2)) for _ in range(500)]
-            True
         """
         R = self.base_ring()
 
@@ -1497,10 +1484,10 @@ class PolynomialRing_general(ring.Algebra):
         if degree == (-1, -1):
             return self.zero()
 
-        # If `monic` is set and `_allow_zero` is not, zero should be ignored
+        # If `monic` is set, zero should be ignored
         if degree[0] == -1:
             degree = (0, degree[1])
-            has_zero = not monic or _allow_zero
+            has_zero = not monic
         else:
             has_zero = False
 
@@ -1517,7 +1504,8 @@ class PolynomialRing_general(ring.Algebra):
                         coefs[i] = R.one()
                         nonzero = True
 
-                if not nonzero and not _allow_zero:
+                # Leading terms must be nonzero
+                if not nonzero:
                     continue
             else:
                 # Fast path
@@ -1546,7 +1534,7 @@ class PolynomialRing_general(ring.Algebra):
         r"""
         Return a random monic polynomial of given degree (bounds).
 
-        Calls :meth:`random_element` with ``monic_or_zero=True``.
+        Calls :meth:`random_element` with ``monic=True``.
 
         INPUT:
 
@@ -1562,7 +1550,7 @@ class PolynomialRing_general(ring.Algebra):
 
         .. SEEALSO::
 
-            :meth:`random_element`, :meth:`random_monic_or_zero_element`
+            :meth:`random_element`
 
         EXAMPLES::
 
@@ -1571,7 +1559,7 @@ class PolynomialRing_general(ring.Algebra):
             x^2 + x + 1
             sage: all(R.random_monic_element().is_monic() for _ in range(100))
             True
-            sage: all(R.random_monic_element(degree=(-1,1)).is_monic() for _ in range(100))
+            sage: all(R.random_monic_element(degree=(-1, 1)).is_monic() for _ in range(100))
             True
 
         TESTS:
@@ -1588,53 +1576,6 @@ class PolynomialRing_general(ring.Algebra):
             False
         """
         return self.random_element(degree=degree, monic=True, *args, **kwargs)
-
-    def random_monic_or_zero_element(self, degree=(-1, 2), *args, **kwargs):
-        r"""
-        Return a random polynomial that is either monic or zero of given degree (bounds).
-
-        INPUT:
-
-        -  ``degree`` - optional integer for fixing the degree
-           or a tuple of minimum and maximum degrees. By default set to
-           ``(0, 2)``.
-
-        - ``zero`` - boolean, if set the algorithm may return `0`, even though
-          it is not a monic polynomial. By default set to ``False``.
-
-        -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
-           the base ring.
-
-        .. SEEALSO::
-
-            :meth:`random_element`, :meth:`random_monic_or_zero_element`
-
-        EXAMPLES::
-
-            sage: R.<x> = GF(2)[]
-            sage: R.random_monic_or_zero_element()  # random
-            x^2 + x + 1
-            sage: all(R.random_monic_or_zero_element().is_monic() for _ in range(500))
-            False
-            sage: 0 in [R.random_monic_or_zero_element().is_monic() for _ in range(500)]
-            True
-            sage: all(R.random_monic_element(degree=(-1,1)).is_monic() for _ in range(500))
-            True
-
-        TESTS:
-
-        There are 8 monic or zero polynomials of degree not exceeding 2 over
-        GF(2). We apply the chi-square test::
-
-            sage: from collections import Counter
-            sage: from scipy.stats import chisquare
-            sage: N = 10^5
-            sage: R.<x> = GF(2)[]
-            sage: cnts = Counter(R.random_monic_or_zero_element() for _ in range(N))
-            sage: chisquare(list(cnts.values()), [N / 8] * 8).pvalue < 0.1
-            False
-        """
-        return self.random_element(degree=degree, monic=True, _allow_zero=True, *args, **kwargs)
 
     def _monics_degree(self, of_degree):
         """
