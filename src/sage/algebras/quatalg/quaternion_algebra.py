@@ -36,7 +36,7 @@ Pickling test::
 # ****************************************************************************
 
 from sage.arith.misc import (hilbert_conductor_inverse,
-                             hilbert_conductor,
+                             hilbert_symbol,
                              factor,
                              gcd,
                              kronecker as kronecker_symbol,
@@ -1031,9 +1031,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
     @cached_method
     def discriminant(self):
         """
-        Given a quaternion algebra `A` defined over a number field,
-        return the discriminant of `A`, i.e. the
-        product of the ramified primes of `A`.
+        Return the discriminant of this quaternion algebra, i.e. the product of the ramified primes in it.
 
         EXAMPLES::
 
@@ -1058,24 +1056,47 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             except NotImplementedError:
                 raise ValueError("base field must be rational numbers or number field")
         else:
-            return hilbert_conductor(self._a, self._b)
+            return prod(self.ramified_primes())
 
-    def ramified_primes(self):
+    def ramified_primes(self, sorted=False):
         """
-        Return the primes that ramify in this quaternion algebra.
+        Return the (finite) primes that ramify in this rational quaternion algebra.
 
-        Currently only implemented over the rational numbers.
+        INPUT:
+
+        - ``sorted`` -- (default: ``False``)
+
+        OUTPUT:
+
+        The list of prime numbers at which ``self`` ramifies (given as integers), sorted by their
+        magnitude (small to large) if ``sorted`` is set to ``True``.
 
         EXAMPLES::
 
             sage: QuaternionAlgebra(QQ, -1, -1).ramified_primes()
             [2]
+
+            sage: QuaternionAlgebra(QQ, -58, -69).ramified_primes()
+            [3, 29, 23]
+
+            sage: QuaternionAlgebra(QQ, -58, -69).ramified_primes(sorted=True)
+            [3, 23, 29]
         """
-        # TODO: more examples
-        return [f[0] for f in factor(self.discriminant())]
+        if not is_RationalField(self.base_ring()):
+            raise ValueError("base field must be the rational numbers")
+
+        if not sorted:
+            return [p for p in set([2]).union(prime_divisors(self._a.numerator()),
+                prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
+                prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1]
+
+        else:
+            return sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
+                prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
+                prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
 
     def is_isomorphic(self, A) -> bool:
-        r"""
+        """
         Return ``True`` if ``self`` and ``A`` are isomorphic quaternion algebras over Q.
 
         INPUT:
@@ -1097,7 +1118,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if self.base_ring() != QQ or A.base_ring() != QQ:
             raise NotImplementedError("isomorphism check only implemented for rational quaternion algebras")
 
-        return self.discriminant() == A.discriminant()
+        return set(self.ramified_primes()) == set(A.ramified_primes())
 
     def _magma_init_(self, magma):
         """
