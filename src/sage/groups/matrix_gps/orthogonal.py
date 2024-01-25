@@ -39,6 +39,8 @@ EXAMPLES::
     sage: G = SO(4, GF(7), 1); G
     Special Orthogonal Group of degree 4 and form parameter 1
      over Finite Field of size 7
+
+    sage: # needs sage.libs.gap
     sage: G.random_element()   # random
     [4 3 5 2]
     [6 6 4 0]
@@ -154,7 +156,7 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
 
     Check that :trac:`26028` is fixed::
 
-        sage: GO(3,25).order()  # indirect doctest                                      # needs sage.rings.finite_rings
+        sage: GO(3,25).order()  # indirect doctest                                      # needs sage.libs.gap sage.rings.finite_rings
         31200
 
     Check that :trac:`28054` is fixed::
@@ -195,15 +197,15 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
 
             name = '{0} Orthogonal Group of degree {1} over {2} {3}\n{4}'.format(
                             prefix, degree, ring, inserted_text,invariant_form)
-            ltx  = r'\text{{{0}O}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(
+            ltx = r'\text{{{0}O}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(
                             ltx_prefix, degree, latex(ring), inserted_text,
                             latex(invariant_form))
         else:
             name = '{0} Orthogonal Group of degree {1} over {2}'.format(prefix, degree, ring)
-            ltx  = r'\text{{{0}O}}_{{{1}}}({2})'.format(ltx_prefix, degree, latex(ring))
+            ltx = r'\text{{{0}O}}_{{{1}}}({2})'.format(ltx_prefix, degree, latex(ring))
     else:
         name = '{0} Orthogonal Group of degree {1} and form parameter {2} over {3}'.format(prefix, degree, e, ring)
-        ltx  = r'\text{{{0}O}}_{{{1}}}({2}, {3})'.format(ltx_prefix, degree,
+        ltx = r'\text{{{0}O}}_{{{1}}}({2}, {3})'.format(ltx_prefix, degree,
                                                          latex(ring),
                                                          '+' if e == 1 else '-')
 
@@ -270,6 +272,8 @@ def GO(n, R, e=0, var='a', invariant_form=None):
 
         sage: GO(3, GF(7))
         General Orthogonal Group of degree 3 over Finite Field of size 7
+
+        sage: # needs sage.libs.gap
         sage: GO(3, GF(7)).order()
         672
         sage: GO(3, GF(7)).gens()
@@ -323,6 +327,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
 
     TESTS::
 
+        sage: # needs sage.libs.gap
         sage: TestSuite(GO3).run()
         sage: groups.matrix.GO(2, 3, e=-1)
         General Orthogonal Group of degree 2 and form parameter -1 over Finite Field of size 3
@@ -378,6 +383,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         sage: G = SO(3,GF(5)); G
         Special Orthogonal Group of degree 3 over Finite Field of size 5
 
+        sage: # needs sage.libs.gap
         sage: G = SO(3,GF(5))
         sage: G.gens()
         (
@@ -385,7 +391,6 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         [0 3 0]  [0 2 0]  [4 0 0]
         [0 0 1], [0 3 1], [2 0 4]
         )
-        sage: G = SO(3,GF(5))
         sage: G.as_matrix_group()
         Matrix group over Finite Field of size 5 with 3 generators (
         [2 0 0]  [3 2 3]  [1 4 4]
@@ -483,6 +488,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: GO(2,3,+1).invariant_bilinear_form()
             [0 1]
             [1 0]
@@ -503,7 +509,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
 
         TESTS::
 
-            sage: GO3m.invariant_form()
+            sage: GO3m.invariant_form()                                                 # needs sage.libs.gap
             [1 0 0]
             [0 2 0]
             [0 0 3]
@@ -517,7 +523,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         return m
 
     invariant_quadratic_form = invariant_bilinear_form # this is identical in the generic case
-    invariant_form           = invariant_bilinear_form # alias (analogues to symplectic and unitary cases)
+    invariant_form = invariant_bilinear_form # alias (analogues to symplectic and unitary cases)
 
     def _check_matrix(self, x, *args):
         """a

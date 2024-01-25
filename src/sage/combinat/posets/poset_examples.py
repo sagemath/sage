@@ -1287,8 +1287,8 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         if use_reduced_words:
             element_labels = {s: tuple(s.reduced_word()) for s in W}
-            return Poset({s: s.absolute_covers() for s in W}, element_labels)
-        return Poset({s: s.absolute_covers() for s in W})
+            return Poset({s: list(s.absolute_covers()) for s in W}, element_labels)
+        return Poset({s: list(s.absolute_covers()) for s in W})
 
     @staticmethod
     def NoncrossingPartitions(W):
@@ -1349,7 +1349,7 @@ class Posets(metaclass=ClasscallMetaclass):
             element_labels = {s: "".join(x for x in s.cycle_string() if x != ',')
                               for s in W}
 
-        return Poset({s: s.absolute_covers() for s in W}, element_labels)
+        return Poset({s: list(s.absolute_covers()) for s in W}, element_labels)
 
     @staticmethod
     def UpDownPoset(n, m=1):

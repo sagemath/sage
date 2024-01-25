@@ -144,7 +144,7 @@ def projection_func_identity(x):
     return list(x)
 
 
-class ProjectionFuncStereographic():
+class ProjectionFuncStereographic:
     """
     The stereographic (or perspective) projection onto a codimension-1 linear
     subspace with respect to a sphere centered at the origin.
@@ -238,7 +238,7 @@ class ProjectionFuncStereographic():
         return vector(RDF, [img[i] / denom for i in range(self.dim - 1)])
 
 
-class ProjectionFuncSchlegel():
+class ProjectionFuncSchlegel:
     """
     The Schlegel projection from the given input point.
 
@@ -1143,7 +1143,7 @@ class Projection(SageObject):
             sage: q4 = p4.projection()
             sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()                         # needs sage.plot
             Graphics object consisting of 18 graphics primitives
-         """
+        """
         plt = Graphics()
         if point_opts is None:
             point_opts = {}

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 SageMath version and banner info
 """
@@ -58,14 +57,14 @@ def banner_text(full=True):
     if not full:
         return version()
 
-    bars = u"─" * 68
+    bars = "─" * 68
     s = []
     a = s.append
-    a(u'┌' + bars + u'┐')
-    a(u"\n│ %-66s │\n" % version())
+    a('┌' + bars + '┐')
+    a("\n│ %-66s │\n" % version())
     python_version = sys.version_info[:3]
-    a(u"│ %-66s │\n" % 'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version))
-    a(u'└' + bars + u'┘')
+    a("│ %-66s │\n" % 'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version))
+    a('└' + bars + '┘')
     pre = version_dict()['prerelease']
     try:
         import sage.all
@@ -75,15 +74,15 @@ def banner_text(full=True):
     if pre or not have_sage_all:
         red_in = '\033[31m'
         red_out = '\033[0m'
-        bars2 = bars.replace(u'─', u'━')
+        bars2 = bars.replace('─', '━')
         a('\n')
-        a(red_in + u'┏' + bars2 + u'┓' + '\n')
+        a(red_in + '┏' + bars2 + '┓' + '\n')
         if pre:
-            a(u"┃ %-66s ┃\n" % 'Warning: this is a prerelease version, and it may be unstable.')
+            a("┃ %-66s ┃\n" % 'Warning: this is a prerelease version, and it may be unstable.')
         if not have_sage_all:
-            a(u"┃ %-66s ┃\n" % 'Warning: sage.all is not available; this is a limited REPL.')
-        a(u'┗' + bars2 + u'┛' + red_out)
-    return u''.join(s)
+            a("┃ %-66s ┃\n" % 'Warning: sage.all is not available; this is a limited REPL.')
+        a('┗' + bars2 + '┛' + red_out)
+    return ''.join(s)
 
 
 def banner():

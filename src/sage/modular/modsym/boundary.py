@@ -102,7 +102,7 @@ import sage.modular.hecke.all as hecke
 from sage.modular.modsym.manin_symbol import ManinSymbol
 
 from sage.rings.rational_field import Q as QQ
-from sage.rings.ring import Ring
+from sage.categories.rings import Rings
 
 from . import element
 
@@ -320,7 +320,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         if not arithgroup.is_CongruenceSubgroup(group):
             raise TypeError("group must be a congruence subgroup")
         sign = int(sign)
-        if not isinstance(base_ring, Ring):
+        if base_ring not in Rings().Commutative():
             raise TypeError("base_ring must be a commutative ring")
         if character is None and arithgroup.is_Gamma0(group):
             character = dirichlet.TrivialCharacter(group.level(), base_ring)
@@ -567,7 +567,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             return sum([c * self._coerce_in_manin_symbol(v) for c, v in S])
 
         elif is_FreeModuleElement(x):
-            y = {i: xi for i, xi in enumerate(x)}
+            y = dict(enumerate(x))
             return BoundarySpaceElement(self, y)
 
         raise TypeError("Coercion of %s (of type %s) into %s not (yet) defined." % (x, type(x), self))

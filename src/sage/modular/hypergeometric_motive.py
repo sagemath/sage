@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Hypergeometric motives
 
@@ -261,7 +260,7 @@ def alpha_to_cyclotomic(alpha):
 
     The output represent a product of cyclotomic polynomials with exactly
     the given roots. Note that the multiplicity of `r/s` in the list
-    must be independent of `r`; otherwise, a ``ValueError`` will be raised.
+    must be independent of `r`; otherwise, a :class:`ValueError` will be raised.
 
     This is the inverse of :func:`cyclotomic_to_alpha`.
 
@@ -661,7 +660,7 @@ class HypergeometricData():
             [2, 3, 5]
         """
         gamma = self.gamma_array()
-        return sorted(set([p for n in gamma.keys() for (p, _) in n.factor()]))
+        return sorted({p for n in gamma.keys() for (p, _) in n.factor()})
 
     def zigzag(self, x, flip_beta=False):
         r"""

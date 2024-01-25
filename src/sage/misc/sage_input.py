@@ -3475,11 +3475,11 @@ def verify_same(a, b):
     """
     from sage.structure.element import is_Element
     if is_Element(a):
-        assert(a.parent() == b.parent())
+        assert a.parent() == b.parent()
     else:
-        assert(type(a) is type(b))
+        assert type(a) is type(b)
     if isinstance(a, (RealIntervalFieldElement, ComplexIntervalFieldElement)):
-        assert(a.endpoints() == b.endpoints()), "Expected %s == %s" % (a, b)
+        assert a.endpoints() == b.endpoints(), "Expected %s == %s" % (a, b)
         return
 
     if not (a == b):

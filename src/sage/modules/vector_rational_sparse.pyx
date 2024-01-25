@@ -182,7 +182,6 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
     if n >= v.degree or n < 0:
         raise IndexError("Index must be between 0 and the degree minus 1.")
     cdef Py_ssize_t i, m, ins
-    cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
     cdef mpq_t *e
 
@@ -201,7 +200,7 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
             e = v.entries
             pos = v.positions
             allocate_mpq_vector(v, v.num_nonzero - 1)
-            for i from 0 <= i < m:
+            for i in range(m):
                 # v.entries[i] = e[i]
                 mpq_set(v.entries[i], e[i])
                 v.positions[i] = pos[i]
@@ -230,7 +229,7 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
         e = v.entries
         pos = v.positions
         allocate_mpq_vector(v, v.num_nonzero)
-        for i from 0 <= i < ins:
+        for i in range(ins):
             # v.entries[i] = e[i]
             mpq_set(v.entries[i], e[i])
             mpq_clear(e[i])

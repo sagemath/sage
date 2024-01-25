@@ -1,7 +1,3 @@
-echo "Deleting old gf2x files."
-rm -f "$SAGE_LOCAL"/lib/libgf2x*
-rm -rf "$SAGE_LOCAL"/include/gf2x*
-
 cd src
 
 # Use newer version of config.guess and config.sub (see Trac #19727)

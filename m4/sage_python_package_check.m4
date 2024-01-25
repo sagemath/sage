@@ -58,8 +58,17 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
       AC_MSG_RESULT(yes)
       dnl strip all comments from install-requires.txt; this should leave
       dnl only a single line containing the version specification for this
-      dnl package.
-      SAGE_PKG_VERSPEC=$(sed '/^#/d' "./build/pkgs/$1/install-requires.txt")
+      dnl package. Afterwards, convert all double-quotes to single quotes.
+      dnl Both work, but only single quotes are documented. However, at the
+      dnl time of writing, double quotes are more compatible with our toml
+      dnl generation in ./bootstrap. Converting them from double- to single-
+      dnl quotes on-the-fly here lets us support both (in this macro, at
+      dnl least).
+      SAGE_PKG_VERSPEC=$(sed                   \
+        -e '/^#/d'                             \
+        -e "s/\"/'/g"                          \
+        "./build/pkgs/$1/install-requires.txt"
+      )
       AC_MSG_CHECKING([for python package $1 ("${SAGE_PKG_VERSPEC}")])
 
       dnl To prevent user-site (pip install --user) packages from being
@@ -75,10 +84,13 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
         PYTHONUSERBASE="${HOME}/.sage/local"
       ])
 
+      dnl double-quote SAGE_PKG_VERSPEC because platform-specific
+      dnl dependencies like python_version<'3.11' will have single
+      dnl quotes in them. (We normalized the quotes earlier with sed.)
       AS_IF(
-        [PYTHONUSERBASE="${PYTHONUSERBASE}" config.venv/bin/python3 -c dnl
-           "import pkg_resources;                                      dnl
-            pkg_resources.require('${SAGE_PKG_VERSPEC}'.splitlines())" dnl
+        [PYTHONUSERBASE="${PYTHONUSERBASE}" config.venv/bin/python3 -c   dnl
+           "import pkg_resources;                                        dnl
+            pkg_resources.require(\"${SAGE_PKG_VERSPEC}\".splitlines())" dnl
 	 2>&AS_MESSAGE_LOG_FD],
         [AC_MSG_RESULT(yes)],
         [AC_MSG_RESULT(no); sage_spkg_install_$1=yes]
