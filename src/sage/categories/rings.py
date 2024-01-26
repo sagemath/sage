@@ -795,61 +795,6 @@ class Rings(CategoryWithAxiom):
                 gens = gens[0]
             return C(self, gens, **kwds)
 
-        def _ideal_class_(self, n=0):
-            """
-            Return the class that is used to implement ideals of this ring.
-
-            .. NOTE::
-
-                We copy the code from :class:`~sage.rings.ring.Ring`. This is
-                necessary because not all rings inherit from that class, such
-                as matrix algebras.
-
-            INPUT:
-
-            - ``n`` (optional integer, default 0): The number of generators
-              of the ideal to be created.
-
-            OUTPUT:
-
-            The class that is used to implement ideals of this ring with
-            ``n`` generators.
-
-            .. NOTE::
-
-                Often principal ideals (``n==1``) are implemented via
-                a different class.
-
-            EXAMPLES::
-
-                sage: MS = MatrixSpace(QQ, 2, 2)                                        # needs sage.modules
-                sage: MS._ideal_class_()                                                # needs sage.modules
-                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-
-            We do not know of a commutative ring in Sage that does not inherit
-            from the base class of rings. So, we need to cheat in the next
-            example::
-
-                sage: super(Ring,QQ)._ideal_class_.__module__
-                'sage.categories.commutative_rings'
-                sage: super(Ring,QQ)._ideal_class_()
-                <class 'sage.rings.ideal.Ideal_generic'>
-                sage: super(Ring,QQ)._ideal_class_(1)
-                <class 'sage.rings.ideal.Ideal_principal'>
-                sage: super(Ring,QQ)._ideal_class_(2)
-                <class 'sage.rings.ideal.Ideal_generic'>
-            """
-            from sage.rings.noncommutative_ideals import Ideal_nc
-            try:
-                if not self.is_commutative():
-                    return Ideal_nc
-            except (NotImplementedError, AttributeError):
-                return Ideal_nc
-            from sage.rings.ideal import Ideal_generic, Ideal_principal
-            if n == 1:
-                return Ideal_principal
-            return Ideal_generic
-
         ##
         # Quotient rings
         def quotient(self, I, names=None, **kwds):
