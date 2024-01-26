@@ -1857,9 +1857,8 @@ class HasseDiagram(DiGraph):
             for x in range(n):
                 u = M1[e, x]
                 for y in range(x):
-                    if u == M1[e, y]:
-                        if u != M1[e, M2[x, y]]:
-                            return (u, e, x, y)
+                    if u == M1[e, y] and u != M1[e, M2[x, y]]:
+                        return (u, e, x, y)
 
         return None
 
@@ -2151,9 +2150,8 @@ class HasseDiagram(DiGraph):
                 # Every element might have one possible orthocomplement,
                 # but so that they don't fit together. Must check that.
                 for lc in self.lower_covers_iterator(e):
-                    if start[lc] is not None:
-                        if not self.has_edge(e_, start[lc]):
-                            return
+                    if not (start[lc] is None or self.has_edge(e_, start[lc])):
+                        return
                 if start[e_] is None:
                     start[e] = e_
                     start[e_] = e
@@ -2191,10 +2189,7 @@ class HasseDiagram(DiGraph):
             sage: H_.find_nonsemimodular_pair(upper=False) is None
             True
         """
-        if upper:
-            neighbors = self.neighbors_out
-        else:
-            neighbors = self.neighbors_in
+        neighbors = self.neighbors_out if upper else self.neighbors_in
 
         n = self.order()
         for e in range(n):
