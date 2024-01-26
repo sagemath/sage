@@ -554,7 +554,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         while nmod_poly_length(&t1.x) != 0 and n_deg < nmod_poly_degree(&t1.x):
             q = self._new()
             r1 = self._new()
+
+            sig_on()
             nmod_poly_divrem(&q.x, &r1.x, &s1.x, &t1.x)
+            sig_off()
+
             r0 = s0 - q*t0
             s0 = t0
             s1 = t1
