@@ -1909,6 +1909,24 @@ class TermOrder(SageObject):
         return self._weights
 
     def set_weights(self, weights):
+        """
+        Set new weights for term order.
+
+        EXAMPLES::
+
+            sage: t = TermOrder('wdeglex',(2,3))
+            sage: t.set_weights([3,2])
+            sage: t.weights()
+            (3, 2)
+            sage: t.set_weights([3,0])
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree weights must be positive integers
+            sage: t.set_weights([3])
+            Traceback (most recent call last):
+            ...
+            ValueError: the length of the given term order (2) differs from the number of variables (1)
+        """
         weights = tuple(int(weight) for weight in weights)
         if any(weight <= 0 for weight in weights):
             raise ValueError("the degree weights must be positive integers")
