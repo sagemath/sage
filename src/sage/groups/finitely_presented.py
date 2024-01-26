@@ -1398,7 +1398,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         hom_ab_fp = ab_libgap.IsomorphismFpGroup()
         ab_libgap_fp = hom_ab_fp.Range()
         hom_simply = ab_libgap_fp.IsomorphismSimplifiedFpGroup()
-        ab = wrap_FpGroup(hom_simply.Range())
+        ab = hom_simply.Range().sage()
         images = []
         for f in self.gens():
             f0 = hom_ab_libgap.Image(f)
@@ -1507,7 +1507,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         Uses GAP.
         """
         II = self.gap().IsomorphismSimplifiedFpGroup()
-        codomain = wrap_FpGroup(II.Range())
+        codomain = II.Range().sage()
         phi = lambda x: codomain(II.ImageElm(x.gap()))
         HS = self.Hom(codomain)
         return GroupMorphismWithGensImages(HS, phi)

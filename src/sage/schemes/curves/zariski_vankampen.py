@@ -49,7 +49,7 @@ from sage.functions.generalized import sign
 from sage.geometry.voronoi_diagram import VoronoiDiagram
 from sage.graphs.graph import Graph
 from sage.groups.braid import BraidGroup
-from sage.groups.finitely_presented import wrap_FpGroup
+# from sage.groups.finitely_presented import wrap_FpGroup
 from sage.groups.free_group import FreeGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.braiding import leftnormalform, rightnormalform
@@ -1390,7 +1390,7 @@ def braid2rels(L):
         P.SetTzOptions(dic)
         P.TzGoGo()
         P.TzGoGo()
-        gb = wrap_FpGroup(P.FpGroupPresentation())
+        gb = P.FpGroupPresentation().sage()
         U = [_.Tietze() for _ in gb.relations()]
     return U
 
