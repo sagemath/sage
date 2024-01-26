@@ -40,6 +40,7 @@ from sage.arith.misc import (hilbert_conductor_inverse,
                              factor,
                              gcd,
                              kronecker as kronecker_symbol,
+                             prime_divisors,
                              valuation)
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
@@ -1057,7 +1058,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             except NotImplementedError:
                 raise ValueError("base field must be rational numbers or number field")
         else:
-            return prod(self.ramified_primes())
+            return ZZ.prod(self.ramified_primes())
 
     @cached_method
     def ramified_primes(self):
