@@ -46,12 +46,14 @@ AUTHORS:
 
 from sage.all import cached_method
 
+from sage.rings.integer import Integer
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.structure.element import RingElement
+from sage.structure.sage_object import SageObject
 
 
-class KummerLine:
+class KummerLine(SageObject):
     r"""
     Kummer line class for a short Weierstrass elliptic curve.
 
@@ -94,15 +96,6 @@ class KummerLine:
         # Initialize variables
         self._a = self._base_ring(a)
         self._b = self._base_ring(b)
-
-        # TODO
-        # Not necessary since this check is already done while initializing the curve
-        # # Make sure the curve is not singular
-        # if self.discriminant() == 0:
-        #     raise ValueError(
-        #         f"Constants {curve_constants} do not define an elliptic curve in short \
-        #         Weierstrass form."
-        #     )
 
     def __eq__(self, other):
         r"""
@@ -153,7 +146,7 @@ class KummerLine:
 
             - ``coords`` - either a point `P` on the elliptic curve or a valid tuple `(X, Z)` where `P = (X : * : Z)`; `Z` is optional
 
-        OUTPUT: A Kummer point on the Kummer line.
+        OUTPUT: A Kummer point on the Kummer line
 
         EXAMPLES::
 
@@ -162,14 +155,17 @@ class KummerLine:
             sage: K = KummerLine(E)
 
         Point as a parameter::
+
             sage: xP = K(P); xP
             (95 : 1)
 
         The output is the same if we just give the `XZ`-coordinates::
+
             sage: K([95, 1]) == K(P)
             True
 
         `Z` is optional::
+
             sage: K(95) == K(P)
             True
             sage: K([95]) == K(P)
@@ -325,7 +321,7 @@ class KummerLine:
     # TODO isogeny call instantiate a KummerLineIsogeny object
 
 
-class KummerPoint:
+class KummerPoint(SageObject):
     r"""
     Kummer point on a Kummer line.
 
@@ -336,14 +332,17 @@ class KummerPoint:
         sage: P = E(95, 52)
 
     A KummerPoint can be constructed from `XZ`-coordinates::
+
         sage: xP = KummerPoint(K, [95, 1]); xP
         (95 : 1)
 
     Or, it can be constructed from a point on the elliptic curve::
+
         sage: xP = KummerPoint(K, P); xP
         (95 : 1)
 
     The point can also be created by calling the Kummer line::
+
         sage: xP = K(P); xP
         (95 : 1)
     """
@@ -356,21 +355,21 @@ class KummerPoint:
 
             - ``parent`` - A Kummer line
 
-            - ``coords`` - either a point P on EllipticCurve or a list or tuple (X, Z) where `P = (X : * : Z)`; Z is optional
+            - ``coords`` - either a point P on EllipticCurve or a tuple (X, Z) where `P = (X : * : Z)`; Z is optional
 
         EXAMPLES::
 
-        A KummerPoint can be constructed from `XZ`-coordinates::
             sage: E = EllipticCurve(GF(101), [2, 3])
             sage: P = E(95, 52)
             sage: K = KummerLine(E)
+
+        A KummerPoint can be constructed from `XZ`-coordinates::
+
             sage: xP = KummerPoint(K, [95, 1]); xP
             (95 : 1)
 
         Z-coordinate is optional, assumed to be 1 then::
-            sage: E = EllipticCurve(GF(101), [2, 3])
-            sage: P = E(95, 52)
-            sage: K = KummerLine(E)
+
             sage: KummerPoint(K, 95) == KummerPoint(K, [95, 1])
             True
             sage: KummerPoint(K, 95) == KummerPoint(K, [95, 2])
@@ -379,9 +378,7 @@ class KummerPoint:
             True
 
         Or, it can be constructed from a point on the elliptic curve::
-            sage: E = EllipticCurve(GF(101), [2, 3])
-            sage: P = E(95, 52)
-            sage: K = KummerLine(E)
+
             sage: xP = KummerPoint(K, P); xP
             (95 : 1)
         """
@@ -398,9 +395,12 @@ class KummerPoint:
         # Construct point from P on an elliptic curve in Montgomery form
         elif isinstance(coords, EllipticCurvePoint_field):
             # Make sure point's parent curve matches with Kummer Line
-            a, b = parent.extract_constants()
-            assert coords.curve().a_invariants() == (0, 0, 0, a, b)
-            coords = coords[0], coords[2]
+            if coords.is_zero():
+                coords = (R(1), R(0))
+            else:
+                a, b = parent.extract_constants()
+                assert coords.curve().a_invariants() == (0, 0, 0, a, b)
+                coords = coords[0], coords[2]
 
         # Construct from X coordinate only
         elif isinstance(coords, RingElement):
@@ -421,8 +421,7 @@ class KummerPoint:
         self._parent = parent
         self._X, self._Z = coords
 
-        # TODO does not consider a potential twist of the curve, plus it's broken
-        if not self._parent.curve().is_x_coord():
+        if not self.is_x_coord():
             raise ValueError("not a valid x-coordinate")
 
     def __repr__(self):
@@ -442,7 +441,7 @@ class KummerPoint:
         r"""
         Boolean value for a Kummer line point.
 
-        OUTPUT: ``False`` if this is the point at infinity, otherwise ``True``.
+        OUTPUT: ``False`` if this is the point at infinity, otherwise ``True``
 
         .. SEEALSO::
 
@@ -510,7 +509,7 @@ class KummerPoint:
         A Kummer Point is zero if it corresponds to the point at infinity
         on the parent curve.
 
-        OUTPUT: ``False`` if this is the point at infinity, otherwise ``True``.
+        OUTPUT: ``False`` if this is the point at infinity, otherwise ``True``
 
         EXAMPLES::
 
@@ -523,7 +522,7 @@ class KummerPoint:
             False
         """
 
-        return bool(self)
+        return not bool(self)
 
     def is_x_coord(self):
         r"""
@@ -531,6 +530,10 @@ class KummerPoint:
         one on the parent curve.
 
         Raise an error in initialisation if ``False``.
+
+        .. TODO::
+
+            Dealing with a twist of the curve eventually
 
         EXAMPLES::
 
@@ -568,7 +571,7 @@ class KummerPoint:
             sage: P = E(95, 49)
             sage: K = KummerLine(E)
             sage: xP = K(P); xP.parent()
-            TODO
+            Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
         return self._parent
 
@@ -598,22 +601,22 @@ class KummerPoint:
             sage: E = EllipticCurve(GF(101), [2, 3])
             sage: P = E(95, 49)
             sage: K = KummerLine(E)
-            sage: xP = K(P)
-            sage: xP.x()
+            sage: xP = K(P); xP.x()
             95
 
         The point at infinity has no valid `x`-coordinate::
-            sage: E = EllipticCurve(GF(101), [2, 3])
-            sage: K = KummerLine(E)
+
             sage: xO = K(None); xO.x()
-            TODO
+            ValueError: the point at infinity has no valid x-coordinate
         """
         if self.is_zero():
             raise ValueError("the point at infinity has no valid x-coordinate")
 
-        if self._Z == 1:
-            return self._base_ring(self._X)
-        return self._base_ring(self._X / self._Z)
+        X, Z = self.XZ()
+
+        if Z == 1:
+            return self._base_ring(X)
+        return self._base_ring(X / Z)
 
     @cached_method
     def curve_point(self):
@@ -629,338 +632,417 @@ class KummerPoint:
             sage: P = E(95, 49)
             sage: K = KummerLine(E)
             sage: xP = K(P); xP.curve_point()
-            (95 : 49 : 1) TODO check this is the correct root
+            (95 : 49 : 1)
         """
         K = self.parent()
         E = K.curve()
-        a, b = K.extract_constants()
+
+        if self.is_zero():
+            return E(0)
 
         x = self.x()
         return E.lift_x(x)
 
-    # TODO STOPPED HERE
-    # @staticmethod
-    # def xDBL(X, Z, a, b2, b4):
-    #     r"""
-    #     Doubling formula for x-only coordinate on short Weierstrass curve.
-    #
-    #     Cost: 2M + 5S + 3m0 + 8a
-    #
-    #     INPUT::
-    #
-    #         - ``X``, ``Z`` -- the coordinates of the Kummer point `P = (X : Z)`
-    #
-    #         - ``a``, ``b2``, ``b4`` -- curve constants where `b2 = 2*b` and `b4 = 4*b`
-    #
-    #     OUTPUT:: The coordinates of `[2]P = (X2 : Z2)`
-    #
-    #     EXAMPLES::
-    #
-    #         TODO
-    #     """
-    #
-    #     XX = X * X
-    #     ZZ = Z * Z
-    #     t0 = X + Z
-    #     t1 = t0 * t0 - XX - ZZ
-    #     t1 = t1 + t1
-    #     t0 = a * ZZ
-    #     X2 = XX - t0
-    #     X2 = X2 * X2 - b2 * t1 * ZZ
-    #     Z2 = XX + t0
-    #     ZZ = ZZ * ZZ
-    #     Z2 = t1 * Z2 + b4 * ZZ
-    #
-    #     return X2, Z2
-    #
-    # @staticmethod
-    # def xADD(XP, ZP, XQ, ZQ, xPQ, zPQ, a, b):
-    #     r"""
-    #     Differential addition formula formula for x-only coordinate on short Weierstrass curve.
-    #
-    #     Cost: 7M + 2S + 2m0 + 6a
-    #
-    #     INPUT::
-    #
-    #         - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P) = (XP : ZP)`
-    #
-    #         - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q) = (XQ : ZQ)`
-    #
-    #         - ``xPQ``, ``zPQ`` -- the coordinates of the Kummer point `x(P-Q) = (xPQ : zPQ)`
-    #
-    #         - ``a``, ``b`` -- curve constants
-    #
-    #     OUTPUT:: The coordinates of `x(P+Q) = (XQP : ZQP)`
-    #
-    #     EXAMPLES::
-    #
-    #         TODO
-    #     """
-    #     T1 = XP * XQ
-    #     T2 = ZP * ZQ
-    #     T3 = XP * ZQ
-    #     T4 = ZP * XQ
-    #     T5 = a * T2
-    #     T6 = T1 - T5
-    #     T7 = T6 * T6
-    #     T8 = b * T2
-    #     T9 = T8 + T8
-    #     T9 = T9 + T9
-    #     T10 = T3 + T4
-    #     T11 = T9 * T10
-    #     T12 = T7 - T11
-    #     XQP = zPQ * T12
-    #     T13 = T3 - T4
-    #     T13 = T13 * T13
-    #     ZQP = xPQ * T13
-    #
-    #     return XQP, ZQP
-    #
-    # @staticmethod
-    # def xDBLADD(XP, ZP, XQ, ZQ, xPQ, zPQ, a, b4):
-    #     r"""
-    #     Used in Montgomery ladder to do simultaneously doubling and differential addition.
-    #
-    #     Cost: TODO
-    #
-    #     INPUT::
-    #
-    #         - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P) = (XP : ZP)`
-    #
-    #         - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q) = (XQ : ZQ)`
-    #
-    #         - ``xPQ``, ``zPQ`` -- the coordinates of the Kummer point `x(P-Q) = (xPQ : zPQ)`
-    #
-    #         - ``a``, ``b4`` -- curve constants where `b4 = 4*b`
-    #
-    #     OUTPUT:: The coordinates of `x(2P) = (X2P : Z2P)` and `x(P+Q) = (XQP : ZQP)`
-    #
-    #     EXAMPLES::
-    #
-    #         TODO
-    #     """
-    #
-    #     # TODO there is a weird edge case with these formulas if P = (0 : 1) and Q = (1 : 0)
-    #     # XX = XP**2
-    #     # ZZ = ZP**2
-    #     # aZZ = a * ZZ
-    #     # t0 = XP + ZP
-    #     # t1 = t0**2
-    #     # t2 = t1 - XX
-    #     # E = t2 - ZZ
-    #     # t3 = XX - aZZ
-    #     # t4 = t3**2
-    #     # t5 = E * ZZ
-    #     # t6 = b4 * t5
-    #     # X2P = t4 - t6
-    #     # t7 = XX + aZZ
-    #     # t8 = ZZ**2
-    #     # t9 = b4 * t8
-    #     # t10 = E * t7
-    #     # t11 = t10 + t10
-    #     # Z2P = t11 + t9
-    #     # A = XP * XQ
-    #     # B = ZP * ZQ
-    #     # C = XP * ZQ
-    #     # D = XQ * ZP
-    #     # t12 = a * B
-    #     # t13 = A - t12
-    #     # t14 = C + D
-    #     # t15 = t13**2
-    #     # t16 = B * t14
-    #     # t17 = b4 * t16
-    #     # t18 = t15 - t17
-    #     # XQP = zPQ * t18
-    #     # t19 = C - D
-    #     # t20 = t19**2
-    #     # ZQP = xPQ * t20
-    #     # print(XQP, ZQP)
-    #
-    #     X1, Z1 = xPQ, zPQ
-    #     X2, Z2 = XP, ZP
-    #     X3, Z3 = XQ, ZQ
-    #
-    #     XX = X2**2
-    #     ZZ = Z2**2
-    #     aZZ = a * ZZ
-    #     t0 = X2 + Z2
-    #     t1 = t0**2
-    #     t2 = t1 - XX
-    #     E = t2 - ZZ
-    #     t3 = XX - aZZ
-    #     t4 = t3**2
-    #     t5 = E * ZZ
-    #     t6 = b4 * t5
-    #     X4 = t4 - t6
-    #     t7 = XX + aZZ
-    #     t8 = ZZ**2
-    #     t9 = b4 * t8
-    #     t10 = E * t7
-    #     t11 = 2 * t10
-    #     Z4 = t11 + t9
-    #     A = X2 * X3
-    #     B = Z2 * Z3
-    #     C = X2 * Z3
-    #     D = X3 * Z2
-    #     t12 = a * B
-    #     t13 = C + D
-    #     t14 = A + t12
-    #     t15 = B**2
-    #     t16 = b4 * t15
-    #     t17 = t13 * t14
-    #     t18 = 2 * t17
-    #     R = t18 + t16
-    #     t19 = C - D
-    #     S = t19**2
-    #     t20 = S * X1
-    #     t21 = R * Z1
-    #     X5 = t21 - t20
-    #     Z5 = S * Z1
-    #
-    #     X2P, Z2P = X4, Z4
-    #     XQP, ZQP = X5, Z5
-    #
-    #     return X2P, Z2P, XQP, ZQP
-    #
-    # def _double(self):
-    #     r""" """
-    #     X, Z = self.XZ()
-    #     a, b = self._parent.extract_constants()
-    #     b2 = b + b
-    #     b4 = b2 + b2
-    #     X2, Z2 = self.xDBL(X, Z, a, b2, b4)
-    #     return self._parent((X2, Z2))
-    #
-    # def _double_iter(self, n):
-    #     r""" """
-    #     X, Z = self.XZ()
-    #     a, b = self._parent.extract_constants()
-    #     b2 = b + b
-    #     b4 = b2 + b2
-    #     for _ in range(n):
-    #         X, Z = self.xDBL(X, Z, a, b2, b4)
-    #     return self._parent((X, Z))
-    #
-    # def double(self):
-    #     """
-    #     Wrapper function which deals with the doubling of
-    #     the identity
-    #
-    #     Returns [2] * self
-    #     """
-    #     # Deal with identity
-    #     if not self._Z:
-    #         return self
-    #     return self._double()
-    #
-    # def double_iter(self, n):
-    #     """
-    #     Wrapper function which deals with the repeated
-    #     doubling
-    #
-    #     Returns [2^n] * self
-    #
-    #     This avoids the ADD part of xDBLADD, and so is
-    #     faster when we know our scalar is a power of two
-    #     """
-    #     # Deal with identity
-    #     if not self._Z:
-    #         return self
-    #     return self._double_iter(n)
-    #
-    # def _add(self, Q, PQ):
-    #     """
-    #     Performs differential addition assuming
-    #     P, Q and PQ are all not the point at
-    #     infinity
-    #     """
-    #     XP, ZP = self.XZ()
-    #     XQ, ZQ = Q.XZ()
-    #     XPQ, ZPQ = PQ.XZ()
-    #
-    #     a, b = self._parent.extract_constants()
-    #
-    #     X_new, Z_new = self.xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b)
-    #     return self._parent((X_new, Z_new))
-    #
-    # def add(self, Q, PQ):
-    #     """
-    #     Function to perform differential addition and
-    #     handle the cases when P, Q or PQ are the points
-    #     at infinity
-    #     """
-    #     # Adding O + Q = Q
-    #     if not self._Z:
-    #         return Q
-    #
-    #     # Adding P + O = P
-    #     if not Q._Z:
-    #         return self
-    #
-    #     # Difference is the identity
-    #     # so P = Q and P+Q = [2]P
-    #     if not PQ._Z:
-    #         return self._double()
-    #
-    #     return self._add(Q, PQ)
-    #
-    # def __mul__(self, m):
-    #     """
-    #     Montgomery-ladder to compute [m]P
-    #
-    #     Input: coordinates of P=(XP:ZP)
-    #            scalar factor m, curve constants (A:C)
-    #     Output: KummerPoint [m]P=(X0:Z0)
-    #     """
-    #     if not isinstance(m, (int, Integer)):
-    #         try:
-    #             m = Integer(m)
-    #         except TypeError:
-    #             raise TypeError(f"Cannot coerce input scalar {m = } to an integer")
-    #
-    #     # If m is zero, return identity
-    #     if not m:
-    #         return self.parent().zero()
-    #
-    #     # [m]P = [-m]P for x-only
-    #     m = abs(m)
-    #
-    #     # Extract base field and coefficients
-    #     R = self.base_ring()
-    #     XP, ZP = self.XZ()
-    #
-    #     # Initialise for loop
-    #     X0, Z0 = R(1), R(0)
-    #     X1, Z1 = XP, ZP
-    #
-    #     # Converting parameters for projective DBLADD -> (A24:C24)=(A+2C:4C)
-    #     a, b = self.parent().extract_constants()
-    #     b2 = b + b
-    #     b4 = b2 + b2
-    #     # A24 = C + C
-    #     # C24 = pari(A24 + A24)
-    #     # A24 = pari(A24 + A)
-    #
-    #     # Montgomery-ladder
-    #     for bit in bin(m)[2:]:
-    #         if bit == "0":
-    #             # X0, Z0, X1, Z1 = self.xDBLADD(X0, Z0, X1, Z1, XP, ZP, a, b4)
-    #             X1, Z1 = self.xADD(X0, Z0, X1, Z1, XP, ZP, a, b)
-    #             X0, Z0 = self.xDBL(X0, Z0, a, b2, b4)
-    #         else:
-    #             # X1, Z1, X0, Z0 = self.xDBLADD(X1, Z1, X0, Z0, XP, ZP, a, b4)
-    #             X0, Z0 = self.xADD(X0, Z0, X1, Z1, XP, ZP, a, b)
-    #             X1, Z1 = self.xDBL(X1, Z1, a, b2, b4)
-    #
-    #     return self._parent((X0, Z0))
-    #
-    # def __rmul__(self, m):
-    #     return self * m
-    #
-    # def __imul__(self, m):
-    #     self = self * m
-    #     return self
-    #
+    @staticmethod
+    def xDBL(X, Z, a, b2, b4):
+        r"""
+        Doubling formula for `x`-only coordinate on short Weierstrass curve.
+
+        Cost: ``2M + 5S + 3m0 + 8a``
+
+        INPUT:
+
+            - ``X``, ``Z`` -- the coordinates of the Kummer point `x(P)`
+
+            - ``a``, ``b2``, ``b4`` -- curve constants where ``b2 = 2*b`` and ``b4 = 4*b``
+
+        OUTPUT: ``(X2, Z2)``, the coordinates of `x(2P)`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: a, b = K.extract_constants()
+            sage: b2, b4 = 2*b, 4*b
+            sage: X, Z = xP.XZ()
+            sage: X2, Z2 = xP.xDBL(X, Z, a, b2, b4)
+            sage: if Z2:
+            sage:     (2*P)[0] == X2/Z2
+            sage: else:
+            sage:     P == -P
+            True
+        """
+        XX = X * X
+        ZZ = Z * Z
+        t1 = X + Z
+        t1 = t1 * t1
+        t1 = t1 - XX
+        t1 = t1 - ZZ
+        A = t1 + t1
+        aZZ = a * ZZ
+        t1 = XX - aZZ
+        t1 = t1 * t1
+        t2 = A * ZZ
+        t2 = b2 * t2
+        X2 = t1 - t2
+        t1 = XX + aZZ
+        t2 = ZZ * ZZ
+        t1 = A * t1
+        t2 = b4 * t2
+        Z2 = t1 + t2
+
+        return X2, Z2
+
+    @staticmethod
+    def xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b):
+        r"""
+        Differential addition formula formula for `x`-only coordinate on short Weierstrass curve.
+
+        Cost: ``7M + 2S + 2m0 + 6a``
+
+        INPUT:
+
+        - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
+
+        - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q)`
+
+        - ``XPQ``, ``ZPQ`` -- the coordinates of the Kummer point `x(P-Q)`
+
+        - ``a``, ``b`` -- curve constants
+
+        OUTPUT: ``(XQP, ZQP)``, the coordinates of `x(P+Q)`
+
+        .. NOTE::
+
+            The formula does not behave well when `x(P-Q) = (1 : 0)` (should use `xDBL` instead)
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(95, 49), E(30, 46)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: a, b = K.extract_constants()
+            sage: (XP, ZP), (XQ, ZQ), (XPQ, ZPQ) = xP.XZ(), xQ.XZ(), xPQ.XZ()
+            sage: XQP, ZQP = xP.xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b)
+            sage: if ZQP:
+            sage:     (P+Q)[0] == XQP/ZQP
+            sage: else:
+            sage:     P == -Q
+            True
+        """
+
+        t1 = XP * XQ
+        t2 = ZP * ZQ
+        t3 = XP * ZQ
+        t4 = ZP * XQ
+        t5 = a * t2
+        t1 = t1 - t5
+        t1 = t1 * t1
+        t2 = b * t2
+        t2 = t2 + t2
+        t2 = t2 + t2
+        t5 = t3 + t4
+        t5 = t2 * t5
+        t1 = t1 - t5
+        XQP = ZPQ * t1
+        t1 = t3 - t4
+        t1 = t1 * t1
+        ZQP = XPQ * t1
+
+        return XQP, ZQP
+
+    @staticmethod
+    def xDBLADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b4):
+        r"""
+        Differential addition and doubling for `x`-only coordinate on short Weierstrass curve.
+
+        Cost: ``9M + 7S + 5m0 + 12a``
+
+        INPUT:
+
+        - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
+
+        - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q)`
+
+        - ``XPQ``, ``ZPQ`` -- the coordinates of the Kummer point `x(P-Q)`
+
+        - ``a``, ``b4`` -- curve constants where ``b4 = 4*b``
+
+        OUTPUT: ``(X2P, Z2P)`` and ``(XQP, ZQP)``, the coordinates of `x(2P)` and `x(P+Q)` respectively
+
+        .. NOTE::
+
+            The formula does not behave well when `x(P-Q) = (1 : 0)` (should use `xDBL` instead)
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(95, 49), E(30, 46)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: a, b = K.extract_constants()
+            sage: b4 = 4*b
+            sage: (XP, ZP), (XQ, ZQ), (XPQ, ZPQ) = xP.XZ(), xQ.XZ(), xPQ.XZ()
+            sage: X2P, Z2P, XQP, ZQP = xP.xDBLADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b4)
+            sage: if ZQP:
+            sage:     (P+Q)[0] == XQP/ZQP
+            sage: else:
+            sage:     P == -Q
+            True
+            sage: if Z2P:
+            sage:     (2*P)[0] == X2P/Z2P
+            sage: else:
+            sage:     P == -P
+            True
+        """
+        XX = XP * XP
+        ZZ = ZP * ZP
+        aZZ = a * ZZ
+        t1 = XP + ZP
+        t1 = t1 * t1
+        t1 = t1 - XX
+        E = t1 - ZZ
+        t1 = XX - aZZ
+        t1 = t1 * t1
+        t2 = E * ZZ
+        t2 = b4 * t2
+        X2P = t1 - t2
+        t1 = XX + aZZ
+        t1 = E * t1
+        t1 = t1 + t1
+        t2 = ZZ * ZZ
+        t2 = b4 * t2
+        Z2P = t1 + t2
+        A = XP * XQ
+        B = ZP * ZQ
+        C = XP * ZQ
+        D = XQ * ZP
+        t1 = a * B
+        t1 = A - t1
+        t1 = t1 * t1
+        t2 = C + D
+        t2 = B * t2
+        t2 = b4 * t2
+        t1 = t1 - t2
+        XQP = ZPQ * t1
+        t1 = C - D
+        t1 = t1 * t1
+        ZQP = XPQ * t1
+
+        return X2P, Z2P, XQP, ZQP
+
+    def _double(self):
+        r"""
+        Return the doubling of the point.
+
+        .. SEEALSO::
+
+            meth:``double``
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: xP._double()
+            (88 : 9)
+        """
+        X, Z = self.XZ()
+        a, b = self._parent.extract_constants()
+        b2 = b + b
+        b4 = b2 + b2
+        X, Z = self.xDBL(X, Z, a, b2, b4)
+        return self._parent((X, Z))
+
+    def _double_iter(self, n):
+        r"""
+        Return the repeated doubling of the point `n` times.
+
+        .. SEEALSO::
+
+            meth:``double_iter``
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: xP._double_iter(42)
+            (2 : 52)
+        """
+        X, Z = self.XZ()
+        a, b = self._parent.extract_constants()
+        b2 = b + b
+        b4 = b2 + b2
+        for _ in range(n):
+            X, Z = self.xDBL(X, Z, a, b2, b4)
+        return self._parent((X, Z))
+
+    def double(self):
+        r"""
+        Return the doubling of the point.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: xP.double()
+            (88 : 9)
+        """
+
+        # Deal with identity
+        if self.is_zero():
+            return self
+        return self._double()
+
+    def double_iter(self, n):
+        r"""
+        Return the repeated doubling of the point `n` times.
+
+        This avoids the `ADD` part of `xDBLADD`, hence is faster
+        when the scalar is known to be a power od `2`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: xP.double_iter(42)
+            (2 : 52)
+        """
+        if self.is_zero():
+            return self
+        return self._double_iter(n)
+
+    def _add(self, Q, PQ):
+        r"""
+        Return the differential addition of `x(P)`, `x(Q)` and `x(P-Q)` assuming none is the point at infinity.
+
+        INPUT:
+
+        - ``self`` -- the Kummer point `x(P)`
+
+        - ``Q`` -- the Kummer point `x(Q)`
+
+        - ``PQ`` -- the Kummer point `x(P-Q)`
+
+        .. SEEALSO::
+
+            meth:``add``
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(95, 49), E(30, 46)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: xP._add(xQ, xPQ)
+            (11 : 40)
+        """
+        XP, ZP = self.XZ()
+        XQ, ZQ = Q.XZ()
+        XPQ, ZPQ = PQ.XZ()
+
+        a, b = self._parent.extract_constants()
+
+        XQP, ZQP = self.xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b)
+        return self._parent((XQP, ZQP))
+
+    def add(self, Q, PQ):
+        r"""
+        Return the differential addition of `x(P)`, `x(Q)` and `x(P-Q)`.
+
+        INPUT:
+
+        - ``self`` -- the Kummer point `x(P)`
+
+        - ``Q`` -- the Kummer point `x(Q)`
+
+        - ``PQ`` -- the Kummer point `x(P-Q)`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(95, 49), E(30, 46)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: xP.add(xQ, xPQ)
+            (11 : 40)
+        """
+        # Adding O + Q = Q
+        if self.is_zero():
+            return Q
+
+        # Adding P + O = P
+        if Q.is_zero():
+            return self
+
+        # P-Q = O so P+Q = 2P
+        if PQ.is_zero():
+            return self._double()
+
+        return self._add(Q, PQ)
+
+    def __mul__(self, m):
+        """
+        Montgomery-ladder to compute `x(mP)`.
+
+        Input: coordinates of P=(XP:ZP)
+               scalar factor m, curve constants (A:C)
+        Output: KummerPoint [m]P=(X0:Z0)
+        """
+        if not isinstance(m, (int, Integer)):
+            try:
+                m = Integer(m)
+            except TypeError:
+                raise TypeError(f"Cannot coerce input scalar {m = } to an integer")
+
+        # If m is zero, return identity
+        if not m:
+            return self.parent().zero()
+
+        # [m]P = [-m]P for x-only
+        m = abs(m)
+
+        # Extract base field and coefficients
+        R = self.base_ring()
+        XP, ZP = self.XZ()
+
+        # Initialise for loop
+        X0, Z0 = R(1), R(0)
+        X1, Z1 = XP, ZP
+
+        # Converting parameters for projective DBLADD -> (A24:C24)=(A+2C:4C)
+        a, b = self.parent().extract_constants()
+        b2 = b + b
+        b4 = b2 + b2
+        # A24 = C + C
+        # C24 = pari(A24 + A24)
+        # A24 = pari(A24 + A)
+
+        # Montgomery-ladder
+        for bit in bin(m)[2:]:
+            if bit == "0":
+                # X0, Z0, X1, Z1 = self.xDBLADD(X0, Z0, X1, Z1, XP, ZP, a, b4)
+                X1, Z1 = self.xADD(X0, Z0, X1, Z1, XP, ZP, a, b)
+                X0, Z0 = self.xDBL(X0, Z0, a, b2, b4)
+            else:
+                # X1, Z1, X0, Z0 = self.xDBLADD(X1, Z1, X0, Z0, XP, ZP, a, b4)
+                X0, Z0 = self.xADD(X0, Z0, X1, Z1, XP, ZP, a, b)
+                X1, Z1 = self.xDBL(X1, Z1, a, b2, b4)
+
+        return self._parent((X0, Z0))
+
+    def __rmul__(self, m):
+        return self * m
+
+    def __imul__(self, m):
+        self = self * m
+        return self
+
     # def ladder_3_pt(self, xP, xPQ, m):
     #     """
     #     Function to compute x(P + [m]Q) using x-only
