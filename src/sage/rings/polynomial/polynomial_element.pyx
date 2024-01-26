@@ -2285,27 +2285,39 @@ cdef class Polynomial(CommutativePolynomial):
             # now self has only roots of degree ``degree``.
             # for now, we only implement the Cantor-Zassenhaus split
             k = self.degree() // degree
-            if k == 1:
-                try:
-                    return self.roots(ring, multiplicities=False)[0] # is there something better to do here?
-                except IndexError:
-                    raise ValueError("no roots F %s" % self)
-            if q % 2 == 0:
-                while True:
-                    T = R.random_element(2*degree-1)
-                    if T == 0:
-                        continue
-                    T = T.monic()
-                    C = T
-                    for i in range(degree-1):
-                        C = T + pow(C,q,self)
-                    h = self.gcd(C)
-                    hd = h.degree()
-                    if hd != 0 and hd != self.degree():
-                        if 2*hd <= self.degree():
-                            return h.any_root(ring, -degree, True)
-                        else:
-                            return (self//h).any_root(ring, -degree, True)
+            if k == 1 or q % 2 == 0:
+                # Is there something better to do here for k = 1?
+                roots = self.roots(ring, multiplicities=False)
+                if roots:
+                    from sage.misc.prandom import choice
+                    return choice(roots)
+                else:
+                    raise ValueError(f"no roots F {self}" % self)
+            # Giacomo Pope (26-1-2024):
+            # This is buggy and very slow, I would like to fix it, but as far
+            # as I can tell, calling roots for GF(2^k) and picking one is simply
+            # faster and more robust.
+            # if q % 2 == 0:
+            #     while True:
+            #         T = R.random_element(2*degree-1)
+            #         if T == 0:
+            #             continue
+            #         T = T.monic()
+            #         # Compute the trace of T with field of order 2^k
+            #         # sum T^(2^i) for i in range (degree * k)
+            #         # We use repeated squaring to avoid redundent multiplications
+            #         C = T
+            #         TT = T
+            #         for _ in range(degree * self.base_ring().degree() - 1):
+            #             TT = pow(TT, 2, self)
+            #             C += TT
+            #         h = self.gcd(C)
+            #         hd = h.degree()
+            #         if hd != 0 and hd != self.degree():
+            #             if 2*hd <= self.degree():
+            #                 return h.any_root(ring, -degree, True)
+            #             else:
+            #                 return (self//h).any_root(ring, -degree, True)
             else:
                 while True:
                     T = R.random_element(2*degree-1)
