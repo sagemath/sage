@@ -773,30 +773,30 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
 
-    def __reduce__(self):
-        """
-        Implement pickling.
-
-        TESTS::
-
-            sage: F.<a,b> = FreeGroup()
-            sage: F.__reduce__()[1]
-            (<class 'sage.groups.free_group.FreeGroup_class'>,
-             (('a', 'b'),), {})
-            sage: from sage.groups.free_group import wrap_FreeGroup
-            sage: F1 = wrap_FreeGroup(libgap(F))
-            sage: F1.__reduce__()[1]
-            (<class 'sage.groups.free_group.FreeGroup_class'>,
-            (('a', 'b'),), {})
-            sage: save(F1,'F')
-            sage: F2 = load('F.sobj')
-            sage: F == F2
-            True
-            sage: F1 == F2
-            True
-        """
-        from sage.structure.unique_representation import unreduce
-        return (unreduce, (FreeGroup_class, (self._names,), {}))
+    # def __reduce__(self):
+    #     """
+    #     Implement pickling.
+    #
+    #     TESTS::
+    #
+    #         sage: F.<a,b> = FreeGroup()
+    #         sage: F.__reduce__()[1]
+    #         (<class 'sage.groups.free_group.FreeGroup_class'>,
+    #          (('a', 'b'),), {})
+    #         sage: from sage.groups.free_group import wrap_FreeGroup
+    #         sage: F1 = wrap_FreeGroup(libgap(F))
+    #         sage: F1.__reduce__()[1]
+    #         (<class 'sage.groups.free_group.FreeGroup_class'>,
+    #         (('a', 'b'),), {})
+    #         sage: save(F1,'F')
+    #         sage: F2 = load('F.sobj')
+    #         sage: F == F2
+    #         True
+    #         sage: F1 == F2
+    #         True
+    #     """
+    #     from sage.structure.unique_representation import unreduce
+    #     return (unreduce, (FreeGroup_class, (self._names,), {}))
 
     def _repr_(self):
         """

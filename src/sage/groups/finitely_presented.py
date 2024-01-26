@@ -412,10 +412,9 @@ def wrap_FpGroup(libgap_fpgroup):
     # from sage.groups.free_group import wrap_FreeGroup
     # free_group = wrap_FreeGroup(libgap_fpgroup.FreeGroupOfFpGroup())
     names = tuple(str(g) for g in libgap_fpgroup.FreeGroupOfFpGroup().GeneratorsOfGroup())
-    relations = tuple(rel.UnderlyingElement().LetterRepAssocWord()
+    relations = tuple(rel.UnderlyingElement().LetterRepAssocWord().sage()
                       for rel in libgap_fpgroup.RelatorsOfFpGroup())
-    relations_Tietze = [[int(i) for i in rel] for rel in relations]
-    return FreeGroup(names) / relations_Tietze
+    return FreeGroup(names) / relations
     # return FinitelyPresentedGroup(free_group, relations)
 
 
