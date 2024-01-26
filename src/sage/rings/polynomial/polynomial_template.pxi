@@ -570,7 +570,6 @@ cdef class Polynomial_template(Polynomial):
         EXAMPLES::
 
             sage: P.<x> = GF(2)[]
-            sage: P.<x> = GF(2)[]
             sage: x^1000
             x^1000
             sage: (x+1)^2
@@ -583,6 +582,28 @@ cdef class Polynomial_template(Polynomial):
             x^9 + x^8 + x^7 + x^5 + x^3
             sage: pow(f, 2, h)
             x^9 + x^8 + x^7 + x^5 + x^3
+
+        TESTS:
+
+        Ensure modulo `0` and modulo `1` does not crash (:issue:`37169`)::
+
+            sage: R.<x> = GF(2)[]
+            sage: pow(x + 1, 2, R.zero())
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: modulus must be nonzero
+            sage: pow(x + 1, 2, R.one())
+            0
+
+        ::
+
+            sage: R.<x> = GF(2^8)[]
+            sage: pow(x + 1, 2, R.zero())
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: modulus must be nonzero
+            sage: pow(x + 1, 2, R.one())
+            0
         """
         if not isinstance(self, Polynomial_template):
             raise NotImplementedError("%s^%s not defined."%(ee,self))
@@ -615,6 +636,11 @@ cdef class Polynomial_template(Polynomial):
         else:
             if parent is not (<Polynomial_template>modulus)._parent and parent != (<Polynomial_template>modulus)._parent:
                 modulus = parent.coerce(modulus)
+            # I tried using `celement_is_zero` but it errors because `modulus` is a Python object
+            if modulus.is_zero():
+                raise ZeroDivisionError("modulus must be nonzero")
+            if modulus.is_one():
+                return parent.zero()
             celement_pow(&r.x, &(<Polynomial_template>self).x, e, &(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent)
 
         #assert(r._parent(pari(self)**ee) == r)
