@@ -729,7 +729,7 @@ def wrap_FreeGroup(libgap_free_group):
     assert libgap_free_group.IsFreeGroup()
     libgap_free_group._set_compare_by_id()
     names = tuple(str(g) for g in libgap_free_group.GeneratorsOfGroup())
-    return FreeGroup_class(names, libgap_free_group)
+    return FreeGroup_class(names)
 
 
 class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
@@ -747,7 +747,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
     Element = FreeGroupElement
 
-    def __init__(self, generator_names, libgap_free_group=None):
+    def __init__(self, generator_names):
         """
         Python constructor.
 
@@ -755,10 +755,6 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         - ``generator_names`` -- a tuple of strings. The names of the
           generators.
-
-        - ``libgap_free_group`` -- a LibGAP free group or ``None``
-          (default). The LibGAP free group to wrap. If ``None``, a
-          suitable group will be constructed.
 
         TESTS::
 
@@ -769,8 +765,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             ('a', 'b')
         """
         self._assign_names(generator_names)
-        if libgap_free_group is None:
-            libgap_free_group = libgap.FreeGroup(generator_names)
+        libgap_free_group = libgap.FreeGroup(generator_names)
         ParentLibGAP.__init__(self, libgap_free_group)
         if not generator_names:
             cat = Groups().Finite()
@@ -798,7 +793,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: F == F2
             True
             sage: F1 == F2
-            False
+            True
         """
         from sage.structure.unique_representation import unreduce
         return (unreduce, (FreeGroup_class, (self._names,), {}))
