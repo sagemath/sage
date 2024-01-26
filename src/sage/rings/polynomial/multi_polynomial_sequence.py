@@ -114,7 +114,7 @@ We separate the system in independent subsystems::
 
 and compute the coefficient matrix::
 
-    sage: A,v = Sequence(r2).coefficient_matrix()                                       # needs sage.rings.polynomial.pbori
+    sage: A,v = Sequence(r2).coefficients_monomials()                                   # needs sage.rings.polynomial.pbori
     sage: A.rank()                                                                      # needs sage.rings.polynomial.pbori
     32
 
@@ -134,7 +134,7 @@ easily::
     sage: len(monomials)
     190
     sage: F2 = Sequence(map(mul, cartesian_product_iterator((monomials, F))))
-    sage: A, v = F2.coefficient_matrix(sparse=False)
+    sage: A, v = F2.coefficients_monomials(sparse=False)
     sage: A.echelonize()
     sage: A
     6840 x 4474 dense matrix over Finite Field of size 2...
@@ -829,26 +829,13 @@ class PolynomialSequence_generic(Sequence_generic):
             [      2*a*b + 2*b*c + 2*c*d - b]
             [        b^2 + 2*a*c + 2*b*d - c]
         """
-        R = self.ring()
-
-        m = sorted(self.monomials(),reverse=True)
-        nm = len(m)
-        f = tuple(self)
-        nf = len(f)
-
-        #construct dictionary for fast lookups
-        v = dict( zip( m , range(len(m)) ) )
-
         from sage.matrix.constructor import Matrix
+        from sage.misc.superseded import deprecation
+        deprecation(37035, "the function coefficient_matrix is deprecated; use coefficients_monomials instead")
 
-        A = Matrix( R.base_ring(), nf, nm, sparse=sparse )
-
-        for x in range( nf ):
-            poly = f[x]
-            for y in poly.monomials():
-                A[ x , v[y] ] = poly.monomial_coefficient(y)
-
-        return A, Matrix(R,nm,1,m)
+        R = self.ring()
+        A, v = self.coefficients_monomials(sparse=sparse)
+        return A, Matrix(R,len(v),1,v)
 
     def subs(self, *args, **kwargs):
         """
