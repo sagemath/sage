@@ -1908,6 +1908,16 @@ class TermOrder(SageObject):
         """
         return self._weights
 
+    def set_weights(self, weights):
+        weights = tuple(int(weight) for weight in weights)
+        if any(weight <= 0 for weight in weights):
+            raise ValueError("the degree weights must be positive integers")
+
+        if self._length != len(weights):
+            raise ValueError("the length of the given term order ({}) differs from the number of variables ({})"
+                            .format(self._length, len(weights)))
+        self._weights = weights
+
     def __eq__(self, other):
         """
         Return ``True`` if ``self`` and ``other`` are equal.
