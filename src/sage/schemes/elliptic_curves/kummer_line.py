@@ -1171,3 +1171,74 @@ class KummerPoint(SageObject):
             Q, R = R, S
 
         return
+
+
+class KummerLineIsogeny(SageObject):
+    def __init__(self, kernel, degree=None):
+        # Ensure the kernel is the right type
+        if not isinstance(kernel, KummerPoint):
+            raise TypeError("kernel is not a Kummer point")
+
+        self._kernel = kernel
+        self._domain = kernel.parent()
+        # Corresponds to the set "S" used in Vélu's formulas
+        self._kernel_subset, self._degree = self._compute_kernel_subset()
+
+        # This just behave as an extra check
+        if degree is not None and not isinstance(degree, (int, Integer)):
+            try:
+                self._degree = Integer(degree)
+            except TypeError:
+                raise TypeError(f"cannot coerce input {degree = } to an integer")
+            assert self._degree == degree
+
+        self._velu_constants = self._compute_velu_constants()
+        self._codomain = self._compute_codomain()
+
+    def degree(self):
+        return self._degree
+
+    def domain(self):
+        return self._domain
+
+    def codomain(self):
+        return self._codomain
+
+    def kernel(self):
+        return self._kernel
+
+    def __call__(self, P):
+        pass
+
+    @cached_method
+    def _compute_kernel_subset(self):
+        L = list(self._kernel.multiples())
+        deg = len(L) + 1
+
+        return L[: deg // 2], deg
+
+    @cached_method
+    def _compute_velu_constants(self):
+        R = self._domain.base_ring()
+        a, b = self._domain.extract_constants()
+        v, w = R(0), R(0)
+        cst_v, cst_u = [], []
+        S = self._kernel_subset
+
+        for xQ in S[:-1]:
+            XQ, ZQ = xQ.XZ()
+            gQx = 3 * XQ**2 + a * ZQ**3
+            gQy = 4 * (XQ**3 + a * XQ * ZQ**2 + b * ZQ**3)
+            cst_v.append(gQx)
+            cst_u.append(gQy)
+
+        # TODO hmmmmmmmmm
+        xQ = S[-1]
+        XQ, ZQ = xQ.XZ()
+        gQx = 3 * XQ**2 + a * ZQ**3
+        gQy = 4 * (XQ**3 + a * XQ * ZQ**2 + b * ZQ**3)
+        if xQ.double().is_zero():
+            cst_v.append(2 * gQx)
+        else:
+            cst_v.append(gQx)
+        cst_u.append(gQy)
