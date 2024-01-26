@@ -1341,6 +1341,11 @@ cdef class GapElement(RingElement):
             sage: p.sage().parent()
             Fraction Field of Univariate Polynomial Ring in x over Integer Ring
 
+            sage: from sage.groups.free_group import FreeGroup
+            sage: G = libgap(FreeGroup(2) / [(1, 2, 2, 1)])
+            sage: G == G.sage()
+            True
+
         TESTS:
 
         Check :trac:`30496`::
@@ -1388,6 +1393,10 @@ cdef class GapElement(RingElement):
                 R = PolynomialRing(base_ring, var)
                 x = R.gen()
                 return x**val * R(num) / R(den)
+
+        elif self.IsFpGroup():
+            from sage.groups.finitely_presented import wrap_FpGroup
+            return wrap_FpGroup(self)
 
         elif self.IsList():
             # May be a list-like collection of some other type of GapElements
