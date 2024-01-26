@@ -18,7 +18,6 @@ Timing functions
 # ****************************************************************************
 
 
-import resource
 import time
 
 
@@ -77,6 +76,7 @@ def cputime(t=0, subprocesses=False):
         subprocesses = True
 
     if not subprocesses:
+        import resource
         try:
             t = float(t)
         except TypeError:
