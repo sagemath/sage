@@ -902,8 +902,8 @@ class KummerPoint(SageObject):
         r"""
         Return the repeated doubling of the point `n` times.
 
-        This avoids the `ADD` part of `xDBLADD`, hence is faster
-        when the scalar is known to be a power od `2`.
+        This avoids the ``ADD`` part of ``xDBLADD``, hence is faster
+        when the scalar is known to be a power of `2`.
 
         EXAMPLES::
 
@@ -987,18 +987,25 @@ class KummerPoint(SageObject):
         return self._add(Q, PQ)
 
     def __mul__(self, m):
-        """
+        r"""
         Montgomery-ladder to compute `x(mP)`.
 
-        Input: coordinates of P=(XP:ZP)
-               scalar factor m, curve constants (A:C)
-        Output: KummerPoint [m]P=(X0:Z0)
+        INPUT: `m` -- scalar to multiply `P` by.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: m = 3820495
+            sage: (m*P)[0] == (m*xP).x()
+            True
         """
         if not isinstance(m, (int, Integer)):
             try:
                 m = Integer(m)
             except TypeError:
-                raise TypeError(f"Cannot coerce input scalar {m = } to an integer")
+                raise TypeError(f"cannot coerce input scalar {m = } to an integer")
 
         # If m is zero, return identity
         if not m:
@@ -1007,99 +1014,160 @@ class KummerPoint(SageObject):
         # [m]P = [-m]P for x-only
         m = abs(m)
 
-        # Extract base field and coefficients
-        R = self.base_ring()
-        XP, ZP = self.XZ()
-
-        # Initialise for loop
-        X0, Z0 = R(1), R(0)
-        X1, Z1 = XP, ZP
-
-        # Converting parameters for projective DBLADD -> (A24:C24)=(A+2C:4C)
-        a, b = self.parent().extract_constants()
+        # Compute necessary constants
+        a, b = self._parent.extract_constants()
+        # TODO rename b2
         b2 = b + b
         b4 = b2 + b2
-        # A24 = C + C
-        # C24 = pari(A24 + A24)
-        # A24 = pari(A24 + A)
 
-        # Montgomery-ladder
+        # TODO may have to be reorganized after testing the isogeny
+        # Initialise for loop
+        XP, ZP = self.XZ()
+        R = self._parent.base_ring()
+        X0, Z0 = R(1), R(0)
+        X1, Z1 = XP, ZP
+        # X0, Z0 = XP, ZP
+        # X1, Z1 = self.xDBL(XP, ZP, a, b2, b4)
+
+        # Montgomery ladder
+        # for bit in bin(m)[3:]:
         for bit in bin(m)[2:]:
             if bit == "0":
-                # X0, Z0, X1, Z1 = self.xDBLADD(X0, Z0, X1, Z1, XP, ZP, a, b4)
-                X1, Z1 = self.xADD(X0, Z0, X1, Z1, XP, ZP, a, b)
-                X0, Z0 = self.xDBL(X0, Z0, a, b2, b4)
+                X0, Z0, X1, Z1 = self.xDBLADD(X0, Z0, X1, Z1, XP, ZP, a, b4)
             else:
-                # X1, Z1, X0, Z0 = self.xDBLADD(X1, Z1, X0, Z0, XP, ZP, a, b4)
-                X0, Z0 = self.xADD(X0, Z0, X1, Z1, XP, ZP, a, b)
-                X1, Z1 = self.xDBL(X1, Z1, a, b2, b4)
+                X1, Z1, X0, Z0 = self.xDBLADD(X1, Z1, X0, Z0, XP, ZP, a, b4)
 
         return self._parent((X0, Z0))
 
     def __rmul__(self, m):
+        r"""
+        Multiplication by a scalar on the right side.
+
+        .. SEEALSO::
+
+            meth:``__mul__``
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: m = 3820495
+            sage: xP*m == m*xP
+            True
+        """
         return self * m
 
     def __imul__(self, m):
+        r"""
+        Inplace multiplication by a scalar.
+
+        .. SEEALSO::
+
+            meth:``__mul__``
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: m = 3820495
+            sage: xP *= m; xP
+            (69 : 33)
+        """
         self = self * m
         return self
 
-    # def ladder_3_pt(self, xP, xPQ, m):
-    #     """
-    #     Function to compute x(P + [m]Q) using x-only
-    #     arithmetic. Very similar to the Montgomery ladder above
-    #
-    #     Note: self = xQ
-    #     """
-    #     if not isinstance(m, (int, Integer)):
-    #         try:
-    #             m = Integer(m)
-    #         except TypeError:
-    #             raise TypeError(f"Cannot coerce input scalar {m = } to an integer")
-    #
-    #     # If m is zero, return xP
-    #     if not m:
-    #         return xP
-    #
-    #     # [m]P = [-m]P for x-only
-    #     m = abs(m)
-    #
-    #     # Converting parameters for projective DBLADD -> (A24:C24)=(A+2C:4C)
-    #     a, b = self.parent().extract_constants()
-    #     b4 = b + b
-    #     b4 = b4 + b4
-    #
-    #     # Extract out coordinates
-    #     XQ, ZQ = self.XZ()
-    #     XP, ZP = xP.XZ()
-    #     XPQ, ZPQ = xPQ.XZ()
-    #
-    #     # Montgomery-ladder
-    #     for bit in bin(m)[:1:-1]:
-    #         if bit == "1":
-    #             XQ, ZQ, XP, ZP = self.xDBLADD(XQ, ZQ, XP, ZP, XPQ, ZPQ, a, b4)
-    #         else:
-    #             XQ, ZQ, XPQ, ZPQ = self.xDBLADD(XQ, ZQ, XPQ, ZPQ, XP, ZP, a, b4)
-    #     return self._parent((XP, ZP))
-    #
-    # def multiples(self):
-    #     """
-    #     A generator of points [l]P for self = P
-    #     Stops when it has generated the full subgroup generated by P
-    #     (without the identity point).
-    #
-    #     NOTE: this is implemented to make Vélu-like computations easy
-    #     """
-    #     yield self
-    #     R = self.double()
-    #     # Order 2 case
-    #     if not R:
-    #         return
-    #
-    #     # Odd order case
-    #     Q = self
-    #     while R:
-    #         yield R
-    #         S = R.add(self, Q)
-    #         Q, R = R, S
-    #
-    #     return
+    def ladder_3_pt(self, xQ, xPQ, m):
+        """
+        Compute `x(P + mQ)` using `x`-only arithmetic.
+
+        Very similar to the Montgomery ladder.
+
+        INPUT:
+
+        - ``self`` -- the Kummer point `x(P)`
+
+        - ``Q`` -- the Kummer point `x(Q)`
+
+        - ``PQ`` -- the Kummer point `x(P-Q)`
+
+        - ``m`` -- integer
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(95, 49), E(30, 46)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: m = 29432
+            sage: xR = xP.ladder_3_pt(xQ, xPQ, m)
+            sage: xR.x() == (P + m*Q)[0]
+            True
+        """
+        if not isinstance(m, (int, Integer)):
+            try:
+                m = Integer(m)
+            except TypeError:
+                raise TypeError(f"cannot coerce input scalar {m = } to an integer")
+
+        # If m is zero, return xP
+        if not m:
+            return self
+
+        # [m]P = [-m]P for x-only
+        m = abs(m)
+
+        # Compute necessary constants
+        a, b = self._parent.extract_constants()
+        b4 = b + b
+        b4 = b4 + b4
+
+        # Extract out coordinates
+        XP, ZP = self.XZ()
+        XQ, ZQ = xQ.XZ()
+        XPQ, ZPQ = xPQ.XZ()
+
+        # Montgomery ladder
+        for bit in bin(m)[:1:-1]:
+            if bit == "1":
+                XQ, ZQ, XP, ZP = self.xDBLADD(XQ, ZQ, XP, ZP, XPQ, ZPQ, a, b4)
+            else:
+                XQ, ZQ, XPQ, ZPQ = self.xDBLADD(XQ, ZQ, XPQ, ZPQ, XP, ZP, a, b4)
+        return self._parent((XP, ZP))
+
+    # TODO ditch it or improve it, there could be less points in this
+    def multiples(self):
+        r"""
+        Generator for points `x(mP)` where ``P = self``.
+
+        Stops when the full subgroup is generated, minus the point at infinity
+
+        .. NOTE::
+
+            Usage is intended for Vélu-like computations
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 49); xP = K(P)
+            sage: L = list(xP.multiples()); len(L)
+            47 # P has order 48 on E
+            sage: L[36] == 37*xP
+            True
+        """
+        yield self
+        R = self.double()
+        # Order 2 case
+        if R.is_zero():
+            return
+
+        # Odd order case
+        Q = self
+        while R:
+            yield R
+            S = R.add(self, Q)
+            Q, R = R, S
+
+        return
