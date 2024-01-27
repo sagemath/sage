@@ -401,7 +401,7 @@ class QuaternionAlgebra_abstract(Algebra):
 
     def is_division_algebra(self) -> bool:
         """
-        Checks whether the quaternion algebra ``self`` is a division algebra, i.e. whether 
+        Checks whether the quaternion algebra ``self`` is a division algebra, i.e. whether
         every nonzero element in ``self`` is invertible.
 
         EXAMPLES::
@@ -1044,7 +1044,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         Checks whether the quaternion algebra ``self`` is definite, i.e. whether it ramifies at the
         unique Archimedean place of its base field QQ. This is the case if and only if both
-        invariants of ``self`` are negative, see [Voi2021, Exercise 2.4(c)].
+        invariants of ``self`` are negative, see Exercise 2.4(c) in [Voi2021]_.
 
         EXAMPLES::
 
@@ -1107,8 +1107,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         Return the places of the base number field at which the quaternion algebra ``self`` ramifies.
 
         Note: The initial choice of primes (in the case F = QQ) respectively of prime ideals (in the
-        number field case) to check ramification for is motivated by [Voi2021, 12.4.12(a)]. The
-        restriction to real Archimedean embeddings is due to [Voi2021, 14.5.8].
+        number field case) to check ramification for is motivated by 12.4.12(a) in [Voi2021]_. The
+        restriction to real Archimedean embeddings is due to 14.5.8 in [Voi2021]_.
 
         INPUT:
 
@@ -1116,9 +1116,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         OUTPUT:
 
-        The non-Archimedean (AKA finite) places at which ``self`` ramifies (given as elements of ZZ if 
-        ``self`` is defined over the rational field QQ, respectively as fractional ideals of the number 
-        field's ring of integers, otherwise) and, if ``inf`` is set to ``True``, also the Archimedean 
+        The non-Archimedean (AKA finite) places at which ``self`` ramifies (given as elements of ZZ if
+        ``self`` is defined over the rational field QQ, respectively as fractional ideals of the number
+        field's ring of integers, otherwise) and, if ``inf`` is set to ``True``, also the Archimedean
         (AKA infinite) places at which ``self`` ramifies (given by real embeddings of the base field).
 
         EXAMPLES::
@@ -1175,7 +1175,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ram_fin = sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
                     prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
                     prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
- 
+
             if not inf:
                 return ram_fin
 
@@ -1198,7 +1198,6 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             return ram_fin, [e for e in F.real_embeddings() if F.hilbert_symbol(self._a, self._b, e) == -1]
         except (AttributeError, NotImplementedError):
             raise ValueError("base field must be rational numbers or a number field")
-
 
     @cached_method
     def ramified_primes(self):
@@ -1241,14 +1240,14 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
     def discriminant(self):
         """
         Return the discriminant of the quaternion algebra ``self``, i.e. the product of the
-        finite places it ramifies at. 
+        finite places it ramifies at.
 
         OUTPUT:
 
         The discriminant of this quaternion algebra (which has to be defined over a number field),
         as an element of ZZ if ``self`` is defined over QQ, and as a fractional ideal in the
         ring of integers of the base number field otherwise.
-    
+
         EXAMPLES::
 
             sage: QuaternionAlgebra(210, -22).discriminant()
@@ -1261,7 +1260,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: K = QuadraticField(3)
             sage: L = QuadraticField(-15)
             sage: QuaternionAlgebra(K, -1, -1).discriminant()
-            Fractional ideal (1) 
+            Fractional ideal (1)
             sage: QuaternionAlgebra(L, -1, -1).discriminant()
             Fractional ideal (2)
 
@@ -1291,8 +1290,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         Checks whether ``self`` and ``A`` are isomorphic quaternion algebras.
 
-        Currently only implemented over a number field; motivated by 
-        [Voi2021, Main Theorem 14.6.1], noting that QQ has a unique infinite place.
+        Currently only implemented over a number field; motivated by Main Theorem 14.6.1
+        in [Voi2021]_, noting that QQ has a unique infinite place.
 
         INPUT:
 
