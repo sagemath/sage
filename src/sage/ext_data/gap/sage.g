@@ -2,6 +2,9 @@
 # Sage support utilities to read into the GAP session.
 #
 
+# Disable color in the prompt, it interferes with parsing.
+ColorPrompt(false);
+
 # Prevent loading the xgap package; we use the -p flag to GAP in order to
 # communicate with it via the pexpect interface; this is normally used by
 # for an xgap window to communicate with GAP, so unfortunately setting this
