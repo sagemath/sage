@@ -3197,6 +3197,18 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi._EllipticCurveIsogeny__clear_cached_values()  # forget the dual
             sage: -phi.dual() == (-phi).dual()
             True
+
+        Check that :trac:`37168` is fixed::
+
+            sage: R.<x> = GF(23)[]
+            sage: F.<a> = FiniteField(23^2, modulus=x^2-x+1)
+            sage: E0 = EllipticCurve(F, (0, 1))
+            sage: E1 = EllipticCurve(F, (8, 1))
+            sage: phi = E0.isogeny(kernel=E0((a, 0)), codomain=E1)
+            sage: phi.dual()
+            Isogeny of degree 2
+             from Elliptic Curve defined by y^2 = x^3 + 8*x + 1 over Finite Field in a of size 23^2
+             to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 23^2
         """
         if self.__base_field.characteristic() in (2, 3):
             raise NotImplementedError("computation of dual isogenies not yet implemented in characteristics 2 and 3")
@@ -3260,17 +3272,18 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
             phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-
-            pre_iso = self._codomain.isomorphism_to(E1)
-            post_iso = E2.isomorphism_to(self._domain)
-
 #            assert phi_hat.scaling_factor() == 1
-            sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor() / F(d)
-            if not sc.is_one():
-                auts = self._codomain.automorphisms()
-                aut = [a for a in auts if a.u == sc]
-                assert len(aut) == 1, "bug in dual()"
-                pre_iso *= aut[0]
+
+            for pre_iso in self._codomain.isomorphisms(E1):
+                for post_iso in E2.isomorphisms(self._domain):
+                    sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor()
+                    if sc == d:
+                        break
+                else:
+                    continue
+                break
+            else:
+                assert "bug in dual()"
 
             phi_hat._set_pre_isomorphism(pre_iso)
             phi_hat._set_post_isomorphism(post_iso)
