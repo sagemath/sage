@@ -403,7 +403,7 @@ def CompleteGraph(n):
 
 def CorrelationGraph(seqs, alpha, include_anticorrelation):
     """
-    Constructs and returns a correlation graph with a node corresponding to each sequence in `seqs`.
+    Construct and returns a correlation graph with a node corresponding to each sequence in `seqs`.
 
     Edges are added between nodes where the corresponding sequences have a correlation coeffecient greater than alpha.
 
@@ -423,7 +423,6 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
         [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
         sage: CG3.edges(sort=False)
         [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
-
     """
     from numpy import corrcoef
     from sage.matrix.constructor import Matrix
@@ -440,7 +439,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
 
     # call graph constructor
-    return Graph(adjacency_matrix, format="adjacency_matrix", name="Correlation Graph")
+    return Graph(adjacency_matrix, format='adjacency_matrix', name="Correlation Graph")
 
 def CompleteBipartiteGraph(p, q, set_position=True):
     r"""
@@ -454,7 +453,7 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
     - ``p``, ``q`` -- number of vertices in each side
 
-    - ``set_position`` -- boolean (default ``True``); if set to ``True``, we
+    - ``set_position`` -- boolean (default: ``True``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `p` is
       on the line `y=1` and the set of cardinality `q` is on the line `y=0`.
 
@@ -578,7 +577,7 @@ def CompleteMultipartiteGraph(L):
 
     INPUT:
 
-    - ``L`` -- a list of integers; the respective sizes of the components
+    - ``L`` -- list of integers; the respective sizes of the components
 
     PLOTTING: Produce a layout of the vertices so that vertices in the same
     vertex set are adjacent and clearly separated from vertices in other vertex
@@ -881,7 +880,7 @@ def Grid2dGraph(p, q, set_positions=True):
 
     INPUT:
 
-    - ``p`` and ``q`` -- two positive integers
+    - ``p``, ``q`` -- two positive integers
 
     - ``set_positions`` -- boolean (default: ``True``); whether to set the
       position of the nodes
@@ -942,7 +941,7 @@ def GridGraph(dim_list):
 
     INPUT:
 
-    - ``dim_list`` -- a list of integers representing the number of nodes to
+    - ``dim_list`` -- list of integers representing the number of nodes to
        extend in each dimension
 
     PLOTTING: When plotting, this graph will use the default spring-layout
@@ -1325,7 +1324,7 @@ def StarGraph(n):
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
     """
-    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format="dict_of_lists")
+    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format='dict_of_lists')
     G.set_pos({0: (0, 0)})
     G._circle_embedding(list(range(1, n + 1)), angle=pi/2)
     return G

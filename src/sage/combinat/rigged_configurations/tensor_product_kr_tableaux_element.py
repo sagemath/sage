@@ -120,7 +120,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
 
         - ``parent`` -- parent for this element
 
-        - ``list``   -- the list of KR tableaux elements
+        - ``list`` -- the list of KR tableaux elements
 
         EXAMPLES::
 

@@ -456,7 +456,7 @@ def latin_square_product(M, N, *others):
 
 def MOLS_table(start,stop=None,compare=False,width=None):
     r"""
-    Prints the MOLS table that Sage can produce.
+    Print the MOLS table that Sage can produce.
 
     INPUT:
 

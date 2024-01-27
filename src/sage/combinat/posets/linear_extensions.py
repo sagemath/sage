@@ -661,7 +661,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
     def __iter__(self):
         r"""
-        Iterates through the linear extensions of the underlying poset.
+        Iterate through the linear extensions of the underlying poset.
 
         EXAMPLES::
 

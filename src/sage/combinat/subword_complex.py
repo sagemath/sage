@@ -1227,7 +1227,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
     def __contains__(self, F):
         r"""
-        Tests if ``self`` contains a given iterable ``F``.
+        Test if ``self`` contains a given iterable ``F``.
 
         EXAMPLES::
 

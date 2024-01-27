@@ -129,7 +129,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
     def __iter__(self):
         """
-        Iterates over the pairs "tuple of exponents, coefficient".
+        Iterate over the pairs "tuple of exponents, coefficient".
 
         EXAMPLES::
 

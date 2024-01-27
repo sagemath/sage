@@ -354,7 +354,7 @@ class QAryReedMullerCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between Reed-Muller Code objects.
+        Test equality between Reed-Muller Code objects.
 
         EXAMPLES::
 
@@ -508,7 +508,7 @@ class BinaryReedMullerCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between Reed-Muller Code objects.
+        Test equality between Reed-Muller Code objects.
 
         EXAMPLES::
 
@@ -623,7 +623,7 @@ class ReedMullerVectorEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between ReedMullerVectorEncoder objects.
+        Test equality between ReedMullerVectorEncoder objects.
 
         EXAMPLES::
 
@@ -822,7 +822,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between ReedMullerVectorEncoder objects.
+        Test equality between ReedMullerVectorEncoder objects.
 
         EXAMPLES::
 

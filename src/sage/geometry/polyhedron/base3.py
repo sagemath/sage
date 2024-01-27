@@ -1204,7 +1204,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
     def is_simplicial(self):
         """
-        Tests if the polytope is simplicial.
+        Test if the polytope is simplicial.
 
         A polytope is simplicial if every facet is a simplex.
 

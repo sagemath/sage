@@ -246,7 +246,7 @@ class Minimog:
 
     def _latex_(self):
         r"""
-        Prints latex code.
+        Print latex code.
 
         EXAMPLES::
 

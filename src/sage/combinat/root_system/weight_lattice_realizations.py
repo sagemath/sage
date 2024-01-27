@@ -662,7 +662,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
         def _test_reduced_word_of_translation(self, elements=None, **options):
             r"""
-            Tests the method :meth:`reduced_word_of_translation`.
+            Test the method :meth:`reduced_word_of_translation`.
 
             INPUT:
 

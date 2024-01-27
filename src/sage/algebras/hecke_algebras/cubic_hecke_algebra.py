@@ -320,8 +320,8 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
           this can be obtained by the attribute :attr:`CubicHeckeAlgebra.repr_type`
           of ``self``; the following values are possible:
 
-          - ``RegularLeft``     --  (regular left repr. from the above URL)
-          - ``RegularRight``    --  (regular right repr. from the above URL)
+          - ``RegularLeft`` --  (regular left repr. from the above URL)
+          - ``RegularRight`` --  (regular right repr. from the above URL)
           - ``SplitIrredChevie`` -- (split irred. repr. via CHEVIE)
           - ``SplitIrredMarin`` --  (split irred. repr. from the above URL)
           - default:  ``SplitIrredChevie`` taken if GAP3 and CHEVIE are installed

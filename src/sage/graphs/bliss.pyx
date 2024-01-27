@@ -487,19 +487,19 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     Check that :issue:`32395` is fixed::
 
         sage: g = Graph([[0, 2]])  # 1 is not a vertex!
-        sage: g.canonical_label(partition=[[0], [1], [2]], algorithm="bliss")  # optional - bliss
+        sage: g.canonical_label(partition=[[0], [1], [2]], algorithm='bliss')  # optional - bliss
         Traceback (most recent call last):
         ...
         ValueError: vertex 1 of the partition is not a vertex of the graph
-        sage: g.canonical_label(partition=[[0], [0, 2]], algorithm="bliss")  # optional - bliss
+        sage: g.canonical_label(partition=[[0], [0, 2]], algorithm='bliss')  # optional - bliss
         Traceback (most recent call last):
         ...
         ValueError: vertex 0 can appear only once in the partition
-        sage: g.canonical_label(partition=[[0, 0], [2]], algorithm="bliss")  # optional - bliss
+        sage: g.canonical_label(partition=[[0, 0], [2]], algorithm='bliss')  # optional - bliss
         Traceback (most recent call last):
         ...
         ValueError: vertex 0 can appear only once in the partition
-        sage: g.canonical_label(partition=[[0]], algorithm="bliss")  # optional - bliss
+        sage: g.canonical_label(partition=[[0]], algorithm='bliss')  # optional - bliss
         Traceback (most recent call last):
         ...
         ValueError: some vertices of the graph are not in the partition

@@ -216,10 +216,10 @@ class KleberTreeNode(Element):
 
     INPUT:
 
-    - ``parent_obj``    -- the parent object of this element
-    - ``node_weight``   -- the weight of this node
+    - ``parent_obj`` -- the parent object of this element
+    - ``node_weight`` -- the weight of this node
     - ``dominant_root`` -- the dominating root
-    - ``parent_node``   -- (default: ``None``) the parent node of this node
+    - ``parent_node`` -- (default: ``None``) the parent node of this node
     """
 
     def __init__(self, parent_obj, node_weight, dominant_root, parent_node=None):

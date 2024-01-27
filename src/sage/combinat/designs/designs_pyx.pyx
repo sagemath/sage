@@ -1008,7 +1008,7 @@ cpdef _OA_cache_get(int k,int n):
 
 cpdef _OA_cache_construction_available(int k,int n):
     r"""
-    Tests if a construction is implemented using the cache's information
+    Test if a construction is implemented using the cache's information
 
     INPUT:
 

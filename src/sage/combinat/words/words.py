@@ -963,7 +963,7 @@ class FiniteWords(AbstractLanguage):
 
     def __contains__(self, x):
         """
-        Tests whether ``self`` contains ``x``.
+        Test whether ``self`` contains ``x``.
 
         OUTPUT:
 

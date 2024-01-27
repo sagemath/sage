@@ -269,7 +269,7 @@ class InformationSetAlgorithm(SageObject):
 
     def __eq__(self, other):
         r"""
-        Tests equality between ISD algorithm objects.
+        Test equality between ISD algorithm objects.
 
         EXAMPLES::
 

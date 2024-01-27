@@ -71,7 +71,7 @@ class ExtendedCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between two extended codes.
+        Test equality between two extended codes.
 
         EXAMPLES::
 
@@ -234,7 +234,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between GRSEvaluationVectorEncoder objects.
+        Test equality between GRSEvaluationVectorEncoder objects.
 
         EXAMPLES::
 

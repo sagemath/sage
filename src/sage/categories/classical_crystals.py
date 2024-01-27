@@ -384,7 +384,7 @@ class ClassicalCrystals(Category_singleton):
 
         def _test_fast_iter(self, **options):
             r"""
-            Tests whether the elements returned by :meth:`.__iter__`
+            Test whether the elements returned by :meth:`.__iter__`
             and ``Crystal.list(self)`` are the same (the two
             algorithms are different).
 

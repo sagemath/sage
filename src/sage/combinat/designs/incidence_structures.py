@@ -336,7 +336,7 @@ class IncidenceStructure:
 
     def __contains__(self, block):
         r"""
-        Tests if a block belongs to the incidence structure.
+        Test if a block belongs to the incidence structure.
 
         INPUT:
 
@@ -495,7 +495,7 @@ class IncidenceStructure:
 
     def isomorphic_substructures_iterator(self, H2,induced=False):
         r"""
-        Iterates over all copies of ``H2`` contained in ``self``.
+        Iterate over all copies of ``H2`` contained in ``self``.
 
         A hypergraph `H_1` contains an isomorphic copy of a hypergraph `H_2` if
         there exists an injection `f:V(H_2)\mapsto V(H_1)` such that for any set

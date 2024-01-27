@@ -486,7 +486,7 @@ class CyclicCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between CyclicCode objects.
+        Test equality between CyclicCode objects.
 
         INPUT:
 
@@ -855,7 +855,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between CyclicCodePolynomialEncoder objects.
+        Test equality between CyclicCodePolynomialEncoder objects.
 
         EXAMPLES::
 
@@ -1025,7 +1025,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between CyclicCodeVectorEncoder objects.
+        Test equality between CyclicCodeVectorEncoder objects.
 
         EXAMPLES::
 
@@ -1215,7 +1215,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between CyclicCodeSurroundingBCHDecoder objects.
+        Test equality between CyclicCodeSurroundingBCHDecoder objects.
 
         EXAMPLES::
 

@@ -353,7 +353,7 @@ def create_normal_node(vertex):
 
 def print_md_tree(root):
     """
-    Print the modular decomposition tree
+    Print the modular decomposition tree.
 
     INPUT:
 
@@ -380,7 +380,7 @@ def print_md_tree(root):
 
     def recursive_print_md_tree(root, level):
         """
-        Print the modular decomposition tree at root
+        Print the modular decomposition tree at root.
 
         INPUT:
 
@@ -454,7 +454,7 @@ def gamma_classes(graph):
 
 def habib_maurer_algorithm(graph, g_classes=None):
     """
-    Compute the modular decomposition by the algorithm of Habib and Maurer
+    Compute the modular decomposition by the algorithm of Habib and Maurer.
 
     Compute the modular decomposition of the given graph by the algorithm of
     Habib and Maurer [HM1979]_ . If the graph is disconnected or its complement
@@ -895,7 +895,7 @@ def form_module(index, other_index, tree_root, graph):
 # Function implemented for testing
 def test_module(module, graph):
     """
-    Test whether input module is actually a module
+    Test whether input module is actually a module.
 
     INPUT:
 
@@ -1131,7 +1131,7 @@ def equivalent_trees(root1, root2):
 
 def relabel_tree(root, perm):
     r"""
-    Relabel the leaves of a tree according to a dictionary
+    Relabel the leaves of a tree according to a dictionary.
 
     INPUT:
 
@@ -1210,10 +1210,10 @@ def test_gamma_modules(trials, vertices, prob, verbose=False):
 
     - ``vertices`` -- the size of the graph to use
 
-    - ``prob`` -- the probability that any given edge is in the graph.
-      See :meth:`~sage.graphs.generators.random.RandomGNP` for more details.
+    - ``prob`` -- the probability that any given edge is in the graph
+      See :meth:`~sage.graphs.generators.random.RandomGNP` for more details
 
-    - ``verbose`` -- print information on each trial.
+    - ``verbose`` -- print information on each trial
 
     EXAMPLES::
 
@@ -1274,7 +1274,7 @@ def random_md_tree(max_depth, max_fan_out, leaf_probability):
 
     INPUT:
 
-    - ``max_depth`` -- the maximum depth of the tree.
+    - ``max_depth`` -- the maximum depth of the tree
 
     - ``max_fan_out`` -- the maximum number of children a node can have
       (must be >=4 as a prime node must have at least 4 vertices).

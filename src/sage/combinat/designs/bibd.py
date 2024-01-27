@@ -893,7 +893,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
 
 def _relabel_bibd(B,n,p=None):
     r"""
-    Relabels the BIBD on `n` points and blocks of size k such that
+    Relabel the BIBD on `n` points and blocks of size k such that
     `\{0,...,k-2,n-1\},\{k-1,...,2k-3,n-1\},...,\{n-k,...,n-2,n-1\}` are blocks
     of the BIBD.
 

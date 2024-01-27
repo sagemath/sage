@@ -251,7 +251,7 @@ Among other things, this supports the flexible ``edge_options`` option
 here we color in red all edges touching the vertex ``0``::
 
     sage: g = graphs.PetersenGraph()
-    sage: g.set_latex_options(format="dot2tex", edge_options=lambda u_v_label: {"color": "red"} if u_v_label[0] == 0 else {})
+    sage: g.set_latex_options(format='dot2tex', edge_options=lambda u_v_label: {"color": "red"} if u_v_label[0] == 0 else {})
     sage: latex(g)  # optional - dot2tex graphviz
     \begin{tikzpicture}[>=latex,line join=bevel,]
     ...
@@ -623,18 +623,18 @@ class GraphLatex(SageObject):
         INPUT:
 
         - ``option_name`` -- a string for a latex option contained in the list
-          ``sage.graphs.graph_latex.GraphLatex.__graphlatex_options``.
-          A :class:`ValueError` is raised if the option is not allowed.
+          ``sage.graphs.graph_latex.GraphLatex.__graphlatex_options``;
+          a :class:`ValueError` is raised if the option is not allowed
 
-        - ``option_value`` -- a value for the option.  If omitted, or set to
-          ``None``, the option will use the default value.
+        - ``option_value`` -- a value for the option; if omitted, or set to
+          ``None``, the option will use the default value
 
         The output can be either handled internally by ``Sage``, or delegated to
         the external software ``dot2tex`` and ``graphviz``. This is controlled
         by the option ``format``:
 
         - ``format`` -- string (default: ``'tkz_graph'``); either ``'dot2tex'``
-          or ``'tkz_graph'``.
+          or ``'tkz_graph'``
 
         If format is ``'dot2tex'``, then all the LaTeX generation will be
         delegated to ``dot2tex`` (which must be installed).
@@ -652,7 +652,7 @@ class GraphLatex(SageObject):
           effort. For a custom appearance set this to ``'Custom'`` and use the
           options described below to override the default values.
 
-        - ``units`` -- string (default: ``'cm'``) -- a natural unit of
+        - ``units`` -- string (default: ``'cm'``); a natural unit of
           measurement used for all dimensions.  Possible values are: ``'in'``,
           ``'mm'``, ``'cm'``, ``'pt'``, ``'em'``, ``'ex'``.
 
@@ -724,7 +724,7 @@ class GraphLatex(SageObject):
           parameter), while still containing labels. However, if labels are not
           of a uniform size, then the vertices will not be either.
 
-        - ``vertex_sizes`` -- a dictionary of sizes for some of the vertices.
+        - ``vertex_sizes`` -- a dictionary of sizes for some of the vertices
 
         - ``vertex_labels`` -- boolean (default: ``True``); determine whether or
           not to display the vertex labels.  If ``False`` subsequent options
@@ -776,7 +776,7 @@ class GraphLatex(SageObject):
 
         - ``edge_fill_color`` -- (default: ``'black'``); a single color to use
           as the default for the fill color of an edge. The boolean switch
-          ``edge_fills`` must be set to True for this to have an effect. See
+          ``edge_fills`` must be set to ``True`` for this to have an effect. See
           the explanation above for the ``vertex_color`` option to see possible
           values.
 
@@ -857,10 +857,10 @@ class GraphLatex(SageObject):
           ``'dot'``, ``'neato'``, ``'twopi'``, ``'circo'`` or ``'fdp'``.
 
         - ``edge_labels`` -- boolean (default: ``False)``; whether to display
-          the labels on edges.
+          the labels on edges
 
         - ``edge_colors`` -- a color; can be used to set a global color to the
-          edge of the graph.
+          edge of the graph
 
         - ``color_by_label`` -- boolean (default: ``False``); colors the edges
           according to their labels
@@ -1348,7 +1348,6 @@ class GraphLatex(SageObject):
             \end{scope}
             ...
             \end{tikzpicture}
-
         """
         format = self.get_option('format')
         if format == "tkz_graph":
@@ -1432,7 +1431,7 @@ class GraphLatex(SageObject):
                     new_edge_colors[col] = [edge]
             options['edge_colors'] = new_edge_colors
 
-        dotdata = self._graph.graphviz_string(labels="latex", **options)
+        dotdata = self._graph.graphviz_string(labels='latex', **options)
         import dot2tex
         return dot2tex.dot2tex(dotdata,
                                format='tikz',

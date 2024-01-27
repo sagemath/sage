@@ -246,7 +246,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def __eq__(self, other):
         r"""
-        Tests equality between two linear codes.
+        Test equality between two linear codes.
 
         EXAMPLES::
 
@@ -282,7 +282,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def __ne__(self, other):
         r"""
-        Tests inequality of ``self`` and ``other``.
+        Test inequality of ``self`` and ``other``.
 
         This is a generic implementation, which returns the inverse of ``__eq__`` for self.
 
@@ -1141,7 +1141,7 @@ class LinearCodeSystematicEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between LinearCodeSystematicEncoder objects.
+        Test equality between LinearCodeSystematicEncoder objects.
 
         EXAMPLES::
 

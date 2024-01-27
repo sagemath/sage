@@ -757,7 +757,7 @@ class Subsets_sk(Subsets_s):
 
     def __iter__(self):
         """
-        Iterates through the subsets of s of size k.
+        Iterate through the subsets of s of size k.
 
         EXAMPLES::
 

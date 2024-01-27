@@ -1472,7 +1472,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
     def __iter__(self):
         """
-        Iterates through the elements of a linear extension of the poset.
+        Iterate through the elements of a linear extension of the poset.
 
         EXAMPLES::
 

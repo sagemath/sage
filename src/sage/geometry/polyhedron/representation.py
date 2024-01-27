@@ -912,7 +912,7 @@ class Inequality(Hrepresentation):
 
     def contains(self, Vobj):
         """
-        Tests whether the halfspace (including its boundary) defined
+        Test whether the halfspace (including its boundary) defined
         by the inequality contains the given vertex/ray/line.
 
         EXAMPLES::
@@ -938,7 +938,7 @@ class Inequality(Hrepresentation):
 
     def interior_contains(self, Vobj):
         """
-        Tests whether the interior of the halfspace (excluding its
+        Test whether the interior of the halfspace (excluding its
         boundary) defined by the inequality contains the given
         vertex/ray/line.
 
@@ -1026,7 +1026,7 @@ class Equation(Hrepresentation):
 
     def is_equation(self):
         """
-        Tests if this object is an equation.  By construction, it must be.
+        Test if this object is an equation.  By construction, it must be.
 
         TESTS::
 
@@ -1066,7 +1066,7 @@ class Equation(Hrepresentation):
 
     def contains(self, Vobj):
         """
-        Tests whether the hyperplane defined by the equation contains
+        Test whether the hyperplane defined by the equation contains
         the given vertex/ray/line.
 
         EXAMPLES::
@@ -1085,7 +1085,7 @@ class Equation(Hrepresentation):
 
     def interior_contains(self, Vobj):
         """
-        Tests whether the interior of the halfspace (excluding its
+        Test whether the interior of the halfspace (excluding its
         boundary) defined by the inequality contains the given
         vertex/ray/line.
 
@@ -1363,7 +1363,7 @@ class Vertex(Vrepresentation):
 
     def is_vertex(self):
         """
-        Tests if this object is a vertex.  By construction it always is.
+        Test if this object is a vertex.  By construction it always is.
 
         EXAMPLES::
 
@@ -1480,7 +1480,7 @@ class Ray(Vrepresentation):
 
     def is_ray(self):
         """
-        Tests if this object is a ray.  Always ``True`` by construction.
+        Test if this object is a ray.  Always ``True`` by construction.
 
         EXAMPLES::
 
@@ -1578,7 +1578,7 @@ class Line(Vrepresentation):
 
     def is_line(self):
         """
-        Tests if the object is a line.  By construction it must be.
+        Test if the object is a line.  By construction it must be.
 
         TESTS::
 

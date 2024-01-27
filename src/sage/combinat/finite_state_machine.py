@@ -1156,7 +1156,7 @@ def FSMWordSymbol(word):
 
 def is_FSMState(S):
     """
-    Tests whether or not ``S`` inherits from :class:`FSMState`.
+    Test whether or not ``S`` inherits from :class:`FSMState`.
 
     TESTS::
 
@@ -1902,7 +1902,7 @@ class FSMState(SageObject):
 
     def __ne__(self, other):
         """
-        Tests for inequality, complement of __eq__.
+        Test for inequality, complement of __eq__.
 
         INPUT:
 
@@ -2134,7 +2134,7 @@ class FSMState(SageObject):
 
 def is_FSMTransition(T):
     """
-    Tests whether or not ``T`` inherits from :class:`FSMTransition`.
+    Test whether or not ``T`` inherits from :class:`FSMTransition`.
 
     TESTS::
 
@@ -2432,7 +2432,7 @@ class FSMTransition(SageObject):
 
 def is_FiniteStateMachine(FSM):
     """
-    Tests whether or not ``FSM`` inherits from :class:`FiniteStateMachine`.
+    Test whether or not ``FSM`` inherits from :class:`FiniteStateMachine`.
 
     TESTS::
 
@@ -3918,7 +3918,7 @@ class FiniteStateMachine(SageObject):
 
     def __ne__(self, other):
         """
-        Tests for inequality, complement of :meth:`.__eq__`.
+        Test for inequality, complement of :meth:`.__eq__`.
 
         INPUT:
 
@@ -10700,7 +10700,7 @@ class FiniteStateMachine(SageObject):
 
 def is_Automaton(FSM):
     """
-    Tests whether or not ``FSM`` inherits from :class:`Automaton`.
+    Test whether or not ``FSM`` inherits from :class:`Automaton`.
 
     TESTS::
 
@@ -11893,7 +11893,7 @@ class Automaton(FiniteStateMachine):
 
 def is_Transducer(FSM):
     """
-    Tests whether or not ``FSM`` inherits from :class:`Transducer`.
+    Test whether or not ``FSM`` inherits from :class:`Transducer`.
 
     TESTS::
 
@@ -13291,7 +13291,7 @@ class _FSMTapeCache_(SageObject):
 
     def transition_possible(self, transition):
         """
-        Tests whether the input word of ``transition`` can be read
+        Test whether the input word of ``transition`` can be read
         from the tape.
 
         INPUT:
@@ -13603,7 +13603,7 @@ def wordoftuples_to_tupleofwords(wordoftuples):
 
 def is_FSMProcessIterator(PI):
     """
-    Tests whether or not ``PI`` inherits from :class:`FSMProcessIterator`.
+    Test whether or not ``PI`` inherits from :class:`FSMProcessIterator`.
 
     TESTS::
 

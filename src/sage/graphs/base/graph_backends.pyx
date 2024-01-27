@@ -69,7 +69,6 @@ cdef class GenericGraphBackend(SageObject):
     TESTS::
 
         sage: import sage.graphs.base.graph_backends
-
     """
     _loops = False
     _multiple_edges = False
@@ -188,7 +187,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def in_degree(self, v):
         r"""
-        Return the in-degree of `v`
+        Return the in-degree of `v`.
 
         INPUT:
 
@@ -206,7 +205,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def out_degree(self, v):
         r"""
-        Return the out-degree of `v`
+        Return the out-degree of `v`.
 
         INPUT:
 
@@ -353,7 +352,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
         - ``labels`` -- boolean
 
         OUTPUT:
@@ -380,7 +379,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
         - ``labels`` -- boolean
 
         OUTPUT:
@@ -406,7 +405,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
         - ``labels`` -- boolean
 
         OUTPUT:
@@ -588,7 +587,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def num_edges(self, directed):
         """
-        Return the number of edges in ``self``
+        Return the number of edges in ``self``.
 
         INPUT:
 
@@ -610,7 +609,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def num_verts(self):
         """
-        Return the number of vertices in ``self``
+        Return the number of vertices in ``self``.
 
         TESTS::
 
@@ -743,7 +742,7 @@ cdef class GenericGraphBackend(SageObject):
 
 def unpickle_graph_backend(directed, vertices, edges, kwds):
     r"""
-    Return a backend from its pickled data
+    Return a backend from its pickled data.
 
     This methods is defined because Python's pickling mechanism can only build
     objects from a pair ``(f,args)`` by running ``f(*args)``. In particular,

@@ -674,7 +674,7 @@ class ClassicalWeylSubgroup(WeylGroup_gens):
 
     def _test_is_finite(self, **options):
         """
-        Tests some internal invariants.
+        Test some internal invariants.
 
         EXAMPLES::
 

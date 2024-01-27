@@ -448,7 +448,7 @@ def twelve_n_minus_ten(B):
 
 def relabel_system(B):
     r"""
-    Relabels the set so that `\{n-4, n-3, n-2, n-1\}` is in `B`.
+    Relabel the set so that `\{n-4, n-3, n-2, n-1\}` is in `B`.
 
     INPUT:
 

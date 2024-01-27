@@ -104,9 +104,9 @@ def breadth_first_level_search(G, start):
 
     INPUT:
 
-    - ``G`` -- a graph to perform the search on.
+    - ``G`` -- a graph to perform the search on
 
-    - ``start`` -- vertex or list of vertices from which to start the traversal.
+    - ``start`` -- vertex or list of vertices from which to start the traversal
 
     EXAMPLES::
 
@@ -120,7 +120,6 @@ def breadth_first_level_search(G, start):
           '20': set(),
           '21': set(),
           '22': set()}]
-
     """
     neighbors = G.neighbor_out_iterator
     visited = set()
@@ -150,9 +149,9 @@ def depth_first_traversal(G, start):
 
     INPUT:
 
-    - ``G`` -- a graph to perform the search on.
+    - ``G`` -- a graph to perform the search on
 
-    - ``start`` -- vertex or list of vertices from which to start the traversal.
+    - ``start`` -- vertex or list of vertices from which to start the traversal
 
     OUTPUT:
 

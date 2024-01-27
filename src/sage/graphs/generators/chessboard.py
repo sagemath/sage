@@ -272,7 +272,7 @@ def QueenGraph(dim_list, radius=None, relabel=False):
         sage: G.is_isomorphic(H)
         True
 
-    Also True in higher dimensions::
+    Also ``True`` in higher dimensions::
 
         sage: G = graphs.QueenGraph([3, 4, 5], radius=1)
         sage: H = graphs.KingGraph([5, 3, 4])
@@ -289,7 +289,6 @@ def QueenGraph(dim_list, radius=None, relabel=False):
         ....:         H.add_edges(B.edges(sort=False))
         ....:         if not G.is_isomorphic(H):
         ....:             print("that's not good!")
-
     """
     G, dimstr = ChessboardGraphGenerator(dim_list,
                                          rook=True, rook_radius=radius,
@@ -346,7 +345,7 @@ def KingGraph(dim_list, radius=None, relabel=False):
         sage: G.is_isomorphic( H )
         True
 
-    Also True in higher dimensions::
+    Also ``True`` in higher dimensions::
 
         sage: G = graphs.KingGraph( [2, 5, 4], radius=5 )
         sage: H = graphs.QueenGraph( [4, 5, 2] )
@@ -526,7 +525,6 @@ def BishopGraph(dim_list, radius=None, relabel=False):
         ....:         H.add_edges( graphs.KnightGraph([d,d],one=r,two=r).edges(sort=False) )
         ....:         if not B.is_isomorphic(H):
         ....:            print("that's not good!")
-
     """
     G, dimstr = ChessboardGraphGenerator(dim_list,
                                          rook=False, knight=False,

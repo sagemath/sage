@@ -426,7 +426,7 @@ cdef class SubHypergraphSearch:
 
     def relabel_heuristic(self):
         r"""
-        Relabels `H_2` in order to make the algorithm faster.
+        Relabel `H_2` in order to make the algorithm faster.
 
         Objective: we try to pick an ordering `p_1,...,p_k` of the points of
         `H_2` that maximizes the number of sets involving the first points in
@@ -474,7 +474,7 @@ cdef class SubHypergraphSearch:
 
     def __iter__(self):
         r"""
-        Iterates over all copies of h2 in h1.
+        Iterate over all copies of h2 in h1.
 
         EXAMPLES:
 

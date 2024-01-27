@@ -310,7 +310,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
     def __iter__(self):
         """
-        Iterates over the elements of ``self``.
+        Iterate over the elements of ``self``.
 
         EXAMPLES::
 

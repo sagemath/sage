@@ -2388,7 +2388,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
     def _test_dual_classical(self, **options):
         r"""
-        Tests whether the special node of the dual is still the same and whether
+        Test whether the special node of the dual is still the same and whether
         the methods dual and classical commute.
 
         TESTS::

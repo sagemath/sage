@@ -661,7 +661,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between GRSGuruswamiSudanDecoder objects.
+        Test equality between GRSGuruswamiSudanDecoder objects.
 
         EXAMPLES::
 

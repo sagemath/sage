@@ -2314,7 +2314,7 @@ def test_bitset_remove(py_a, long n):
 
 def test_bitset_pop(py_a):
     """
-    Tests for the bitset_pop function.
+    Test for the bitset_pop function.
 
     TESTS::
 

@@ -1024,7 +1024,7 @@ class Player():
 
     def __lt__(self, other):
         """
-        Tests less than inequality of two players. Allows for players to be
+        Test less than inequality of two players. Allows for players to be
         sorted on their names.
 
         TESTS::
@@ -1050,7 +1050,7 @@ class Player():
 
     def __gt__(self, other):
         """
-        Tests greater than inequality of two players. Allows for players to be
+        Test greater than inequality of two players. Allows for players to be
         sorted on their names.
 
         TESTS::
@@ -1076,7 +1076,7 @@ class Player():
 
     def __ge__(self, other):
         """
-        Tests greater than or equal inequality of two players. Allows for
+        Test greater than or equal inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::
@@ -1112,7 +1112,7 @@ class Player():
 
     def __le__(self, other):
         """
-        Tests less than or equal inequality of two players. Allows for
+        Test less than or equal inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::
@@ -1148,7 +1148,7 @@ class Player():
 
     def __ne__(self, other):
         """
-        Tests inequality of two players. Allows for
+        Test inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::

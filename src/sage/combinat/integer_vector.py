@@ -49,7 +49,7 @@ from sage.rings.integer import Integer
 
 def is_gale_ryser(r, s):
     r"""
-    Tests whether the given sequences satisfy the condition
+    Test whether the given sequences satisfy the condition
     of the Gale-Ryser theorem.
 
     Given a binary matrix `B` of dimension `n\times m`, the

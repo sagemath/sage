@@ -235,7 +235,7 @@ cdef bint biseq_init_concat(biseq_t R, biseq_t S1, biseq_t S2) except -1:
 
 cdef inline bint biseq_startswith(biseq_t S1, biseq_t S2) except -1:
     """
-    Tests if bounded integer sequence ``S1`` starts with bounded integer
+    Test if bounded integer sequence ``S1`` starts with bounded integer
     sequence ``S2``.
 
     ASSUMPTION:
@@ -364,7 +364,7 @@ cdef bint biseq_init_slice(biseq_t R, biseq_t S, mp_size_t start, mp_size_t stop
 
 cdef mp_size_t biseq_contains(biseq_t S1, biseq_t S2, mp_size_t start) except -2:
     """
-    Tests if the bounded integer sequence ``S1[start:]`` contains a
+    Test if the bounded integer sequence ``S1[start:]`` contains a
     sub-sequence ``S2``.
 
     INPUT:

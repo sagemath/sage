@@ -235,7 +235,6 @@ cdef class simple_connected_genus_backtracker:
             sage: gb = sage.graphs.genus.simple_connected_genus_backtracker(G._backend.c_graph()[0])
             sage: gb.get_embedding()
             {}
-
         """
         if not self.num_verts:
             return {}
@@ -586,7 +585,6 @@ def simple_connected_graph_genus(G, set_embedding=False, check=True, minimal=Tru
     REFERENCES:
 
     [1] http://www.springerlink.com/content/0776127h0r7548v7/
-
     """
     cdef int style, cutoff
     oG = G  # original graph

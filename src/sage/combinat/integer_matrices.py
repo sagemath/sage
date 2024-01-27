@@ -138,7 +138,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         r"""
-        Tests if ``x`` is an element of ``self``.
+        Test if ``x`` is an element of ``self``.
 
         INPUT:
 

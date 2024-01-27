@@ -2710,7 +2710,7 @@ LIST_OF_VMT_VECTORS = "\n".join("    - `m={}` and `t=` ".format(m) +
                                 for m in _all_m)
 
 r"""
-Tests for the Vmt vectors
+Test for the Vmt vectors
 
 EXAMPLES::
 

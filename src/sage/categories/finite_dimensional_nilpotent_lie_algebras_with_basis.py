@@ -52,7 +52,7 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
 
         def _test_nilpotency(self, **options):
             r"""
-            Tests that ``self`` is nilpotent and has the correct step.
+            Test that ``self`` is nilpotent and has the correct step.
 
             INPUT:
 

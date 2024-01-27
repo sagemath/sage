@@ -3270,7 +3270,7 @@ def cyclic_permutations_of_set_partition(set_part):
 
 def cyclic_permutations_of_set_partition_iterator(set_part):
     """
-    Iterates over all combinations of cyclic permutations of each cell
+    Iterate over all combinations of cyclic permutations of each cell
     of the set partition.
 
     AUTHORS:

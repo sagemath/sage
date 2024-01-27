@@ -710,7 +710,7 @@ cdef class SetMorphism(Morphism):
 
         - ``self`` -- SetMorphism
         - ``right`` -- any object
-        - ``op``    -- integer
+        - ``op`` -- integer
 
         EXAMPLES::
 

@@ -70,7 +70,7 @@ from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digr
 
 def is_asteroidal_triple_free(G, certificate=False):
     """
-    Test if the input graph is asteroidal triple-free
+    Test if the input graph is asteroidal triple-free.
 
     An independent set of three vertices such that each pair is joined by a path
     that avoids the neighborhood of the third one is called an *asteroidal

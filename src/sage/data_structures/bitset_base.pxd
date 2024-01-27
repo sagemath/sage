@@ -416,7 +416,7 @@ cdef inline bint bitset_issuperset(fused_bitset_t a, fused_bitset_t b) noexcept 
 
 cdef inline bint bitset_are_disjoint(fused_bitset_t a, fused_bitset_t b) noexcept:
     """
-    Tests whether ``a`` and ``b`` have an empty intersection.
+    Test whether ``a`` and ``b`` have an empty intersection.
 
     We assume ``a.limbs <= b.limbs``.
     """

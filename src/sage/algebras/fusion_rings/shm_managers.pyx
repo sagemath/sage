@@ -734,7 +734,7 @@ cdef class FvarsHandler:
 
     def items(self):
         r"""
-        Iterates through key-value pairs in the data structure as if it
+        Iterate through key-value pairs in the data structure as if it
         were a Python dict.
 
         As in a Python dict, the key-value pairs are yielded in no particular

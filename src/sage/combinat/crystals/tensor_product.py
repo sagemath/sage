@@ -977,8 +977,8 @@ class CrystalOfTableaux(CrystalOfWords):
         INPUT:
 
         - ``cartan_type`` -- (data coercible into) a Cartan type
-        - ``shapes``      -- list (or iterable) of shapes
-        - ``shape``       -- a shape
+        - ``shapes`` -- list (or iterable) of shapes
+        - ``shape`` -- a shape
 
         Shapes themselves are lists (or iterable) of integers.
 
@@ -1069,7 +1069,7 @@ class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
     INPUT:
 
     - ``cartan_type`` -- a Cartan type
-    - ``shape``       -- a shape
+    - ``shape`` -- a shape
     """
 
     def __init__(self, cartan_type, shape):

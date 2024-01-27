@@ -26,7 +26,7 @@ import subprocess
 
 def JohnsonGraph(n, k):
     r"""
-    Returns the Johnson graph with parameters `n, k`.
+    Return the Johnson graph with parameters `n, k`.
 
     Johnson graphs are a special class of undirected graphs defined from systems
     of sets. The vertices of the Johnson graph `J(n,k)` are the `k`-element
@@ -76,7 +76,7 @@ def JohnsonGraph(n, k):
 
 def KneserGraph(n, k):
     r"""
-    Returns the Kneser Graph with parameters `n, k`.
+    Return the Kneser Graph with parameters `n, k`.
 
     The Kneser Graph with parameters `n,k` is the graph
     whose vertices are the `k`-subsets of `[0,1,\dots,n-1]`, and such
@@ -148,19 +148,18 @@ def FurerGadget(k, prefix=None):
 
     INPUT:
 
-    - ``k``      -- The order of the returned Furer gadget, greater than 0.
+    - ``k`` -- the order of the returned Furer gadget, greater than 0
 
-    - ``prefix`` -- Prefix of to be appended to each vertex label,
-                    so as to individualise the returned Furer gadget.
-                    Must be comparable for equality and hashable.
+    - ``prefix`` -- prefix of to be appended to each vertex label,
+      so as to individualise the returned Furer gadget; must be comparable for
+      equality and hashable
 
     OUTPUT:
 
-    - ``G``        -- The Furer gadget of order ``k``
+    - ``G`` -- the Furer gadget of order ``k``
 
-    - ``coloring`` -- A list of list of vertices, representing the
-                      partition induced by the coloring of ``G``'s
-                      vertices
+    - ``coloring`` -- a list of list of vertices, representing the
+      partition induced by the coloring of ``G``'s vertices
 
     EXAMPLES:
 
@@ -257,18 +256,18 @@ def CaiFurerImmermanGraph(G, twisted=False):
 
     INPUT:
 
-    - ``G``       -- An undirected graph on which to construct the
-                     Cai-Furer-Immerman graph
+    - ``G`` -- an undirected graph on which to construct the
+      Cai-Furer-Immerman graph
 
-    - ``twisted`` -- A boolean indicating if the version to construct
-                     is a twisted one or not
+    - ``twisted`` -- a boolean indicating if the version to construct
+      is a twisted one or not
 
     OUTPUT:
 
-    - ``H``        -- The Cai-Furer-Immerman graph on ``G``
+    - ``H`` -- the Cai-Furer-Immerman graph on ``G``
 
-    - ``coloring`` -- A list of list of vertices, representing the
-                      partition induced by the coloring on ``H``
+    - ``coloring`` -- a list of list of vertices, representing the
+      partition induced by the coloring on ``H``
 
     EXAMPLES:
 
@@ -364,14 +363,14 @@ def EgawaGraph(p, s):
     INPUT:
 
     - ``p`` -- power to which the graph named `Y` in the reference
-               provided above will be raised
+      provided above will be raised
 
     - ``s`` -- power to which the graph named `X` in the reference
-               provided above will be raised
+      provided above will be raised
 
     OUTPUT:
 
-    - ``G`` -- The Egawa graph with parameters (p,s)
+    - ``G`` -- the Egawa graph with parameters (p,s)
 
     EXAMPLES:
 
@@ -414,7 +413,7 @@ def EgawaGraph(p, s):
 
 def HammingGraph(n, q, X=None):
     r"""
-    Returns the Hamming graph with parameters ``n``, ``q`` over ``X``.
+    Return the Hamming graph with parameters ``n``, ``q`` over ``X``.
 
     Hamming graphs are graphs over the cartesian product of n copies
     of ``X``, where `q = |X|`, where the vertices, labelled with the
@@ -428,18 +427,17 @@ def HammingGraph(n, q, X=None):
     INPUT:
 
     - ``n`` -- power to which ``X`` will be raised to provide vertices
-               for the Hamming graph
+      for the Hamming graph
 
     - ``q`` -- cardinality of ``X``
 
-    - ``X`` -- list of labels representing the vertices of the
-                underlying graph the Hamming graph will be based on; if
-                ``None`` (or left unused), the list `[0, ... , q-1]`
-                will be used
+    - ``X`` -- list of labels representing the vertices of the underlying graph
+      the Hamming graph will be based on; if ``None`` (or left unused), the
+      list `[0, ... , q-1]` will be used
 
     OUTPUT:
 
-    - ``G`` -- The Hamming graph with parameters `(n,q,X)`
+    - ``G`` -- the Hamming graph with parameters `(n,q,X)`
 
     EXAMPLES:
 
@@ -506,9 +504,9 @@ def BalancedTree(r, h):
 
     INPUT:
 
-    - ``r`` -- positive integer `\geq 2`. The degree of the root node.
+    - ``r`` -- positive integer `\geq 2`; the degree of the root node
 
-    - ``h`` -- positive integer `\geq 1`. The height of the balanced tree.
+    - ``h`` -- positive integer `\geq 1`; the height of the balanced tree
 
     OUTPUT:
 
@@ -597,7 +595,7 @@ def BalancedTree(r, h):
 
 def BarbellGraph(n1, n2):
     r"""
-    Returns a barbell graph with ``2*n1 + n2`` nodes. The argument ``n1``
+    Return a barbell graph with ``2*n1 + n2`` nodes. The argument ``n1``
     must be greater than or equal to 2.
 
     A barbell graph is a basic structure that consists of a path graph
@@ -605,11 +603,11 @@ def BarbellGraph(n1, n2):
 
     INPUT:
 
-    - ``n1`` -- integer `\geq 2`. The order of each of the two
-      complete graphs.
+    - ``n1`` -- integer `\geq 2`; the order of each of the two
+      complete graphs
 
-    - ``n2`` -- nonnegative integer. The order of the path graph
-      connecting the two complete graphs.
+    - ``n2`` -- nonnegative integer; the order of the path graph
+      connecting the two complete graphs
 
     OUTPUT:
 
@@ -714,14 +712,14 @@ def BarbellGraph(n1, n2):
 
 def LollipopGraph(n1, n2):
     r"""
-    Returns a lollipop graph with n1+n2 nodes.
+    Return a lollipop graph with `n_1+n_2` nodes.
 
-    A lollipop graph is a path graph (order n2) connected to a complete
-    graph (order n1). (A barbell graph minus one of the bells).
+    A lollipop graph is a path graph (order `n_2`) connected to a complete
+    graph (order `n_1`). (A barbell graph minus one of the bells).
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the complete
-    graph will be drawn in the lower-left corner with the (n1)th node
+    graph will be drawn in the lower-left corner with the `n_1`-th node
     at a 45 degree angle above the right horizontal center of the
     complete graph, leading directly into the path graph.
 
@@ -885,9 +883,9 @@ def AztecDiamondGraph(n):
 
 def DipoleGraph(n):
     r"""
-    Returns a dipole graph with n edges.
+    Return a dipole graph with `n` edges.
 
-    A dipole graph is a multigraph consisting of 2 vertices connected with n
+    A dipole graph is a multigraph consisting of 2 vertices connected with `n`
     parallel edges.
 
     EXAMPLES:
@@ -927,7 +925,7 @@ def DipoleGraph(n):
 
 def BubbleSortGraph(n):
     r"""
-    Returns the bubble sort graph `B(n)`.
+    Return the bubble sort graph `B(n)`.
 
     The vertices of the bubble sort graph are the set of permutations
     on `n` symbols. Two vertices are adjacent if one can be obtained
@@ -943,7 +941,7 @@ def BubbleSortGraph(n):
 
     INPUT:
 
-    - ``n`` -- positive integer. The number of symbols to permute.
+    - ``n`` -- positive integer. The number of symbols to permute
 
     OUTPUT:
 
@@ -1055,7 +1053,6 @@ def chang_graphs():
         sage: [T8.seidel_switching(x, inplace=False).is_isomorphic(G)                   # needs sage.modules
         ....:  for x, G in zip(s, chang_graphs)]
         [True, True, True]
-
     """
     g1 = Graph("[}~~EebhkrRb_~SoLOIiAZ?LBBxDb?bQcggjHKEwoZFAaiZ?Yf[?dxb@@tdWGkwn",
                loops=False, multiedges=False)
@@ -1068,18 +1065,16 @@ def chang_graphs():
 
 def CirculantGraph(n, adjacency):
     r"""
-    Returns a circulant graph with n nodes.
+    Return a circulant graph with n nodes.
 
     A circulant graph has the property that the vertex `i` is connected
     with the vertices `i+j` and `i-j` for each j in ``adjacency``.
 
     INPUT:
 
-
     -  ``n`` -- number of vertices in the graph
 
     -  ``adjacency`` -- the list of j values
-
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, each circulant
@@ -1320,7 +1315,7 @@ def CubeGraph(n, embedding=1):
 
 def GoethalsSeidelGraph(k, r):
     r"""
-    Returns the graph `\text{Goethals-Seidel}(k,r)`.
+    Return the graph `\text{Goethals-Seidel}(k,r)`.
 
     The graph `\text{Goethals-Seidel}(k,r)` comes from a construction presented
     in Theorem 2.4 of [GS1970]_. It relies on a :func:`(v,k)-BIBD
@@ -1380,7 +1375,7 @@ def GoethalsSeidelGraph(k, r):
     for i in range(n):
         PP[i, i] = 0
 
-    G = Graph(PP, format="seidel_adjacency_matrix")
+    G = Graph(PP, format='seidel_adjacency_matrix')
     return G
 
 
@@ -1408,7 +1403,7 @@ def DorogovtsevGoltsevMendesGraph(n):
 
 def FoldedCubeGraph(n):
     r"""
-    Returns the folded cube graph of order `2^{n-1}`.
+    Return the folded cube graph of order `2^{n-1}`.
 
     The folded cube graph on `2^{n-1}` vertices can be obtained from a cube
     graph on `2^n` vertices by merging together opposed
@@ -1461,7 +1456,7 @@ def FriendshipGraph(n):
     INPUT:
 
     - ``n`` -- positive integer; the number of copies of `C_3` to use in
-      constructing `F_n`.
+      constructing `F_n`
 
     OUTPUT:
 
@@ -1677,7 +1672,7 @@ def FibonacciTree(n):
 
 def GeneralizedPetersenGraph(n, k):
     r"""
-    Returns a generalized Petersen graph with `2n` nodes. The variables
+    Return a generalized Petersen graph with `2n` nodes. The variables
     `n`, `k` are integers such that `n>2` and `0<k\leq\lfloor(n-1)`/`2\rfloor`
 
     For `k=1` the result is a graph isomorphic to the circular ladder graph
@@ -1687,10 +1682,10 @@ def GeneralizedPetersenGraph(n, k):
 
     INPUT:
 
-    - ``n`` -- the number of nodes is `2*n`.
+    - ``n`` -- the number of nodes is `2*n`
 
-    - ``k`` -- integer `0<k\leq\lfloor(n-1)`/`2\rfloor`. Decides
-      how inner vertices are connected.
+    - ``k`` -- integer (`0<k\leq\lfloor(n-1)`/`2\rfloor`); decides
+      how inner vertices are connected
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the generalized
@@ -1724,7 +1719,7 @@ def GeneralizedPetersenGraph(n, k):
         raise ValueError("n must be larger than 2")
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1<= k <=floor((n-1)/2)")
-    G = Graph(2 * n, name="Generalized Petersen graph (n="+str(n)+",k="+str(k)+")")
+    G = Graph(2 * n, name="Generalized Petersen graph (n='+str(n)+',k="+str(k)+")")
     for i in range(n):
         G.add_edge(i, (i+1) % n)
         G.add_edge(i, i+n)
@@ -2090,7 +2085,7 @@ def TabacjnGraph(n, a, b, r):
 
 def HararyGraph(k, n):
     r"""
-    Returns the Harary graph on `n` vertices and connectivity `k`, where
+    Return the Harary graph on `n` vertices and connectivity `k`, where
     `2 \leq k < n`.
 
     A `k`-connected graph `G` on `n` vertices requires the minimum degree
@@ -2159,9 +2154,9 @@ def HyperStarGraph(n, k):
 
     INPUT:
 
-    - ``n`` -- non-negative integer; length of the binary strings
+    - ``n`` -- nonnegative integer; length of the binary strings
 
-    - ``k`` -- non-negative integer; number of 1s per binary string
+    - ``k`` -- nonnegative integer; number of 1s per binary string
 
     EXAMPLES::
 
@@ -2176,22 +2171,22 @@ def HyperStarGraph(n, k):
         sage: graphs.HyperStarGraph(-1, 1)
         Traceback (most recent call last):
         ...
-        ValueError: parameters n and k must be non-negative integers satisfying n >= k >= 0
+        ValueError: parameters n and k must be nonnegative integers satisfying n >= k >= 0
         sage: graphs.HyperStarGraph(1, -1)
         Traceback (most recent call last):
         ...
-        ValueError: parameters n and k must be non-negative integers satisfying n >= k >= 0
+        ValueError: parameters n and k must be nonnegative integers satisfying n >= k >= 0
         sage: graphs.HyperStarGraph(1, 2)
         Traceback (most recent call last):
         ...
-        ValueError: parameters n and k must be non-negative integers satisfying n >= k >= 0
+        ValueError: parameters n and k must be nonnegative integers satisfying n >= k >= 0
 
     AUTHORS:
 
     - Michael Yurko (2009-09-01)
     """
     if n < 0 or k < 0 or k > n:
-        raise ValueError("parameters n and k must be non-negative integers "
+        raise ValueError("parameters n and k must be nonnegative integers "
                          "satisfying n >= k >= 0")
     if not n:
         adj = {}
@@ -2235,14 +2230,11 @@ def LCFGraph(n, shift_list, repeats):
 
     INPUT:
 
+    -  ``n`` -- the number of nodes
 
-    -  ``n`` -- the number of nodes.
+    -  ``shift_list`` -- list of integer shifts mod `n`
 
-    -  ``shift_list`` -- a list of integer shifts mod `n`.
-
-    -  ``repeats`` -- the number of times to repeat the
-       process.
-
+    -  ``repeats`` -- the number of times to repeat the process
 
     EXAMPLES::
 
@@ -2299,7 +2291,7 @@ def LCFGraph(n, shift_list, repeats):
 
 def MycielskiGraph(k=1, relabel=True):
     r"""
-    Returns the `k`-th Mycielski Graph.
+    Return the `k`-th Mycielski Graph.
 
     The graph `M_k` is triangle-free and has chromatic number
     equal to `k`. These graphs show, constructively, that there
@@ -2321,10 +2313,10 @@ def MycielskiGraph(k=1, relabel=True):
 
     INPUT:
 
-    - ``k`` Number of steps in the construction process.
+    - ``k`` -- number of steps in the construction process
 
-    - ``relabel`` Relabel the vertices so their names are the integers
-      ``range(n)`` where ``n`` is the number of vertices in the graph.
+    - ``relabel`` -- relabel the vertices so their names are the integers
+      ``range(n)`` where ``n`` is the number of vertices in the graph
 
     EXAMPLES:
 
@@ -2348,7 +2340,6 @@ def MycielskiGraph(k=1, relabel=True):
     -  [1] Weisstein, Eric W. "Mycielski Graph."
        From MathWorld--A Wolfram Web Resource.
        http://mathworld.wolfram.com/MycielskiGraph.html
-
     """
     g = Graph()
     g.name("Mycielski Graph " + str(k))
@@ -2418,11 +2409,11 @@ def MycielskiStep(g):
 
 def NKStarGraph(n, k):
     r"""
-    Returns the (n,k)-star graph.
+    Return the `(n,k)`-star graph.
 
-    The vertices of the (n,k)-star graph are the set of all arrangements of
-    n symbols into labels of length k. There are two adjacency rules for
-    the (n,k)-star graph. First, two vertices are adjacent if one can be
+    The vertices of the `(n,k)`-star graph are the set of all arrangements of
+    `n` symbols into labels of length `k`. There are two adjacency rules for
+    the `(n,k)`-star graph. First, two vertices are adjacent if one can be
     obtained from the other by swapping the first symbol with another
     symbol. Second, two vertices are adjacent if one can be obtained from
     the other by swapping the first symbol with an external symbol (a
@@ -2430,9 +2421,9 @@ def NKStarGraph(n, k):
 
     INPUT:
 
-    -  ``n``
+    -  ``n`` -- integer
 
-    -  ``k``
+    -  ``k`` -- integer
 
     EXAMPLES::
 
@@ -2483,15 +2474,15 @@ def NKStarGraph(n, k):
 
 def NStarGraph(n):
     r"""
-    Returns the n-star graph.
+    Return the `n`-star graph.
 
-    The vertices of the n-star graph are the set of permutations on n
+    The vertices of the `n`-star graph are the set of permutations on n
     symbols. There is an edge between two vertices if their labels differ
     only in the first and one other position.
 
     INPUT:
 
-    -  ``n``
+    -  ``n`` -- integer
 
     EXAMPLES::
 
@@ -2533,7 +2524,7 @@ def NStarGraph(n):
 
 def OddGraph(n):
     r"""
-    Returns the Odd Graph with parameter `n`.
+    Return the Odd Graph with parameter `n`.
 
     The Odd Graph with parameter `n` is defined as the
     Kneser Graph with parameters `2n-1,n-1`.
@@ -2571,7 +2562,7 @@ def OddGraph(n):
 
 def PaleyGraph(q):
     r"""
-    Paley graph with `q` vertices
+    Paley graph with `q` vertices.
 
     Parameter `q` must be the power of a prime number and congruent
     to 1 mod 4.
@@ -2751,7 +2742,7 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
 
 def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     r"""
-    Returns the graph whose vertices are the states of the
+    Return the graph whose vertices are the states of the
     Tower of Hanoi puzzle, with edges representing legal moves between states.
 
     INPUT:
@@ -2889,7 +2880,6 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     AUTHOR:
 
     - Rob Beezer, (2009-12-26), with assistance from Su Doree
-
     """
     # sanitize input
     from sage.rings.integer import Integer
@@ -3000,7 +2990,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
 
 def line_graph_forbidden_subgraphs():
     r"""
-    Returns the 9 forbidden subgraphs of a line graph.
+    Return the 9 forbidden subgraphs of a line graph.
 
     See the :wikipedia:`Line_graph` for more information.
 
@@ -3019,7 +3009,6 @@ def line_graph_forbidden_subgraphs():
         Graph on 6 vertices,
         Graph on 6 vertices,
         Graph on 5 vertices]
-
     """
     from sage.graphs.graph import Graph
     from sage.graphs.generators.basic import ClawGraph
@@ -3085,7 +3074,7 @@ def line_graph_forbidden_subgraphs():
 
 def petersen_family(generate=False):
     r"""
-    Returns the Petersen family
+    Return the Petersen family.
 
     The Petersen family is a collection of 7 graphs which are the forbidden
     minors of the linklessly embeddable graphs. For more information see the
@@ -3093,7 +3082,7 @@ def petersen_family(generate=False):
 
     INPUT:
 
-    - ``generate`` (boolean) -- whether to generate the family from the
+    - ``generate`` -- boolean; whether to generate the family from the
       `\Delta-Y` transformations. When set to ``False`` (default) a hardcoded
       version of the graphs (with a prettier layout) is returned.
 
@@ -3195,7 +3184,7 @@ def SierpinskiGasketGraph(n):
 
     INPUT:
 
-    - `n` -- an integer
+    - ``n`` -- integer
 
     OUTPUT:
 
@@ -3427,7 +3416,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
 
 def WheelGraph(n):
     """
-    Returns a Wheel graph with n nodes.
+    Return a Wheel graph with `n` nodes.
 
     A Wheel graph is a basic structure where one node is connected to all other
     nodes and those (outer) nodes are connected cyclically.
@@ -3598,7 +3587,7 @@ def WindmillGraph(k, n):
 
 def trees(vertices):
     r"""
-    Returns a generator of the distinct trees on a fixed number of vertices.
+    Return a generator of the distinct trees on a fixed number of vertices.
 
     INPUT:
 
@@ -3645,7 +3634,7 @@ def trees(vertices):
     return iter(TreeIterator(vertices))
 
 
-def nauty_gentreeg(options="", debug=False):
+def nauty_gentreeg(options='', debug=False):
     r"""
     Return a generator which creates non-isomorphic trees from nauty's gentreeg
     program.
@@ -3785,10 +3774,10 @@ def RingedTree(k, vertex_labels=True):
 
     INPUT:
 
-    - ``k`` -- the number of levels of the ringed tree.
+    - ``k`` -- the number of levels of the ringed tree
 
-    - ``vertex_labels`` (boolean) -- whether to label vertices as binary words
-      (default) or as integers.
+    - ``vertex_labels`` -- boolean; whether to label vertices as binary words
+      (default) or as integers
 
     EXAMPLES::
 
@@ -3859,10 +3848,10 @@ def MathonPseudocyclicMergingGraph(M, t):
 
     INPUT:
 
-    - ``M`` -- the list of matrices in a pseudo-cyclic 3-class association scheme.
-      The identity matrix must be the first entry.
+    - ``M`` -- the list of matrices in a pseudo-cyclic 3-class association scheme;
+      the identity matrix must be the first entry
 
-    - ``t`` (integer) -- the number of the graph, from 0 to 2.
+    - ``t`` -- integer; the number of the graph, from 0 to 2
 
     .. SEEALSO::
 
@@ -3973,12 +3962,12 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)
         sage: G3x3.is_strongly_regular(parameters=True)
         (441, 220, 109, 110)
-        sage: G3x3.automorphism_group(algorithm="bliss").order()  # optional - bliss
+        sage: G3x3.automorphism_group(algorithm='bliss').order()  # optional - bliss
         27
         sage: G9 = graphs.MathonPseudocyclicStronglyRegularGraph(2)
         sage: G9.is_strongly_regular(parameters=True)
         (441, 220, 109, 110)
-        sage: G9.automorphism_group(algorithm="bliss").order()  # optional - bliss
+        sage: G9.automorphism_group(algorithm='bliss').order()  # optional - bliss
         9
 
     TESTS::
@@ -4059,7 +4048,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
 
 def TuranGraph(n, r):
     r"""
-    Returns the Turan graph with parameters `n, r`.
+    Return the Turan graph with parameters `n, r`.
 
     Turan graphs are complete multipartite graphs with `n` vertices and `r`
     subsets, denoted `T(n,r)`, with the property that the sizes of the subsets
@@ -4144,9 +4133,9 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     INPUT:
 
-    - ``n`` (integer) -- a prime power
+    - ``n`` -- integer; a prime power
 
-    - ``d`` (integer) -- must be odd if `n` is odd
+    - ``d`` -- integer; must be odd if `n` is odd
 
     - ``Phi`` is an optional parameter of the construction; it must be either
 
@@ -4162,9 +4151,10 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
       - ``'fixed'`` -- this will generate a fixed default `\Sigma`, or
 
-      - ``'random'`` -- `\Sigma` is generated at random.
+      - ``'random'`` -- `\Sigma` is generated at random
 
-    - ``verbose`` (Boolean) -- default is ``False``. If ``True``, print progress information
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, print progress
+      information
 
     .. SEEALSO::
 
@@ -4394,9 +4384,9 @@ def CubeConnectedCycle(d):
 
     INPUT:
 
-    - ``d`` -- The dimension of the desired hypercube as well as the length
-      of the cycle to be placed at each vertex of the `d`-dimensional
-      hypercube. `d` must be a positive integer.
+    - ``d`` -- positive integer; the dimension of the desired hypercube as well
+      as the length of the cycle to be placed at each vertex of the
+      `d`-dimensional hypercube
 
     EXAMPLES:
 

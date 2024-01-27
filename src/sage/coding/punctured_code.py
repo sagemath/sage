@@ -152,7 +152,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between two Punctured codes.
+        Test equality between two Punctured codes.
 
         EXAMPLES::
 

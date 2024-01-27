@@ -95,7 +95,7 @@ class Encoder(SageObject):
 
     def __ne__(self, other):
         r"""
-        Tests inequality of ``self`` and ``other``.
+        Test inequality of ``self`` and ``other``.
 
         This is a generic implementation, which returns the inverse of ``__eq__`` for self.
 

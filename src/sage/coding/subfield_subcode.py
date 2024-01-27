@@ -97,7 +97,7 @@ class SubfieldSubcode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between Subfield Subcode objects.
+        Test equality between Subfield Subcode objects.
 
         EXAMPLES::
 

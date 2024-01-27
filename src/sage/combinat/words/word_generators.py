@@ -591,7 +591,7 @@ class WordGenerator:
 
     def _FibonacciWord_RecursiveConstructionIterator(self,alphabet=(0,1)):
         r"""
-        Iterates over the symbols of the Fibonacci word, as defined by
+        Iterate over the symbols of the Fibonacci word, as defined by
         the following recursive construction: the Fibonacci word is the
         limit of the sequence `S_0 = 0`, `S_1 = 01`, `S_n = S_{n-1}
         S_{n-2}` for `n \geq 2`.

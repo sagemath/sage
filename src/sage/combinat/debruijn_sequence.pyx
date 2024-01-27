@@ -320,7 +320,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
     def __contains__(self, seq):
         r"""
-        Tests whether the given sequence is a De Bruijn sequence with
+        Test whether the given sequence is a De Bruijn sequence with
         the current object's parameters.
 
         INPUT:

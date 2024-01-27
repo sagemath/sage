@@ -2289,7 +2289,7 @@ class PartitionTuples_size(PartitionTuples):
 
     def __iter__(self):
         r"""
-        Iterates through the infinite class of partition tuples of a fixed size.
+        Iterate through the infinite class of partition tuples of a fixed size.
 
         EXAMPLES::
 
@@ -2394,7 +2394,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
     def __iter__(self):
         r"""
-        Iterates through the finite class of partition tuples of a fixed level
+        Iterate through the finite class of partition tuples of a fixed level
         and a fixed size.
 
         EXAMPLES::

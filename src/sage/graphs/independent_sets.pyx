@@ -129,7 +129,7 @@ cdef class IndependentSets:
     """
     def __init__(self, G, maximal=False, complement=False):
         r"""
-        Constructor for this class
+        Constructor for this class.
 
         TESTS::
 
@@ -334,7 +334,7 @@ cdef class IndependentSets:
 
         INPUT:
 
-        - ``S`` -- a set of vertices to be tested.
+        - ``S`` -- a set of vertices to be tested
 
         TESTS:
 

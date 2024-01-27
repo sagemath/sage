@@ -140,7 +140,7 @@ class BCHCode(CyclicCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between BCH Code objects.
+        Test equality between BCH Code objects.
 
         EXAMPLES::
 

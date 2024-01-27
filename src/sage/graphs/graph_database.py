@@ -728,7 +728,7 @@ class GraphDatabase(SQLDatabase):
 
     def __init__(self):
         """
-        Graph Database
+        Graph Database.
 
         This class interfaces with the ``sqlite`` database ``graphs.db``. It is
         an immutable database that inherits from

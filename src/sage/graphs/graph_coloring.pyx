@@ -234,7 +234,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         ....:     print(C)
         Traceback (most recent call last):
         ...
-        ValueError: n must be non-negative
+        ValueError: n must be nonnegative
         sage: G = Graph({0: [1], 1: [2]})
         sage: for c in all_graph_colorings(G, 2, vertex_color_dict=True):
         ....:     print(c)
@@ -267,7 +267,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
     if not n or n > G.order():
         return
     if n < 0:
-        raise ValueError("n must be non-negative")
+        raise ValueError("n must be nonnegative")
 
     cdef list V = list(G)
 
@@ -368,7 +368,7 @@ cpdef first_coloring(G, n=0, hex_colors=False):
 
 cpdef number_of_n_colorings(G, n):
     r"""
-    Compute the number of `n`-colorings of a graph
+    Compute the number of `n`-colorings of a graph.
 
     INPUT:
 
@@ -467,7 +467,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
 
     INPUT:
 
-    - ``g`` -- a graph.
+    - ``g`` -- a graph
 
     - ``k`` -- integer (default: ``None``); tests whether the graph is
       `k`-colorable.  The function returns a partition of the vertex set in `k`
@@ -750,7 +750,7 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
 
     - ``G`` -- a graph
 
-    - ``solver`` -- (default: ``"PPL"``); specify a Linear Program (LP) solver
+    - ``solver`` -- (default: ``'PPL'``); specify a Linear Program (LP) solver
       to be used. If set to ``None``, the default one is used. For more
       information on LP solvers and which default solver is used, see the method
       :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
@@ -759,7 +759,7 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
 
       .. NOTE::
 
-          The default solver used here is ``"PPL"`` which provides exact
+          The default solver used here is ``'PPL'`` which provides exact
           results, i.e. a rational number, although this may be slower that
           using other solvers.
 
@@ -828,7 +828,7 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
     return obj
 
 
-def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbose=0):
+def fractional_chromatic_index(G, solver='PPL', verbose_constraints=False, verbose=0):
     r"""
     Return the fractional chromatic index of the graph.
 
@@ -861,7 +861,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
 
     - ``G`` -- a graph
 
-    - ``solver`` -- (default: ``"PPL"``); specify a Linear Program (LP) solver
+    - ``solver`` -- (default: ``'PPL'``); specify a Linear Program (LP) solver
       to be used. If set to ``None``, the default one is used. For more
       information on LP solvers and which default solver is used, see the method
       :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
@@ -870,7 +870,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
 
       .. NOTE::
 
-          The default solver used here is ``"PPL"`` which provides exact
+          The default solver used here is ``'PPL'`` which provides exact
           results, i.e. a rational number, although this may be slower that
           using other solvers. Be aware that this method may loop endlessly when
           using some non exact solvers as reported in :issue:`23658` and
@@ -1302,7 +1302,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
     INPUT:
 
-    - ``g`` -- a graph.
+    - ``g`` -- a graph
 
     - ``value_only`` -- boolean (default: ``False``):
 
@@ -1794,7 +1794,7 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
         to each color a list of edges (meant as an argument to the
         ``edge_colors`` keyword of the ``plot`` method).
 
-      - If ``hex_colors = False`` (default value), returns a list of graphs
+      - If ``hex_colors = False`` (default: value), returns a list of graphs
         corresponding to each color class.
 
     - ``value_only`` -- boolean (default: ``False``):
@@ -1992,7 +1992,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
         to each color a list of edges (meant as an argument to the
         ``edge_colors`` keyword of the ``plot`` method).
 
-      - If ``hex_colors = False`` (default value), returns a list of graphs
+      - If ``hex_colors = False`` (default: value), returns a list of graphs
         corresponding to each color class.
 
     - ``value_only`` -- boolean (default: ``False``):
@@ -2003,7 +2003,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
       - If ``value_only = False``, returns the color classes according to the
         value of ``hex_colors``
 
-    - ``k`` -- integer; the number of colors to use.
+    - ``k`` -- integer; the number of colors to use
 
       - If ``k > 0``, computes an acyclic edge coloring using `k` colors.
 

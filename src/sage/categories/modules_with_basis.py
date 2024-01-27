@@ -248,7 +248,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``on_basis`` -- a function `f` from `I` to `Y`
             - ``diagonal`` -- a function `d` from `I` to `R`
             - ``function`` -- a function `f` from `X` to `Y`
-            - ``matrix``   -- a matrix of size `\dim Y \times \dim X`
+            - ``matrix`` -- a matrix of size `\dim Y \times \dim X`
               (if the keyword ``side`` is set to ``'left'``) or
               `\dim Y \times \dim X` (if this keyword is ``'right'``)
 

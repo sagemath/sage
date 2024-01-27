@@ -2446,7 +2446,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between LinearCodeGeneratorMatrixEncoder objects.
+        Test equality between LinearCodeGeneratorMatrixEncoder objects.
 
         EXAMPLES::
 
@@ -2681,7 +2681,7 @@ class LinearCodeSyndromeDecoder(Decoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between LinearCodeSyndromeDecoder objects.
+        Test equality between LinearCodeSyndromeDecoder objects.
 
         EXAMPLES::
 
@@ -2977,7 +2977,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between LinearCodeNearestNeighborDecoder objects.
+        Test equality between LinearCodeNearestNeighborDecoder objects.
 
         EXAMPLES::
 

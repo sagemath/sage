@@ -280,7 +280,7 @@ class AffinePermutation(ClonableArray):
 
     def is_one(self) -> bool:
         r"""
-        Tests whether the affine permutation is the identity.
+        Test whether the affine permutation is the identity.
 
         EXAMPLES::
 

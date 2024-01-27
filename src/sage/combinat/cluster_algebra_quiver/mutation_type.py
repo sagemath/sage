@@ -1336,7 +1336,7 @@ def _mutation_type_from_data(n, dig6, compute_if_necessary=True):
 
 def _mutation_type_test(n):
     """
-    Tests all quivers (of the given types) of rank n to check that
+    Test all quivers (of the given types) of rank n to check that
     mutation_type() works.
 
     Affine type D does not return ``True`` since this test is not implemented.
