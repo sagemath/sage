@@ -803,9 +803,9 @@ class PolynomialSequence_generic(Sequence_generic):
              b^2 + 2*a*c + 2*b*d - c]
             sage: F = Sequence(I)
             sage: A,v = F.coefficient_matrix()
+            doctest:warning...
             DeprecationWarning: the function coefficient_matrix is deprecated; use coefficients_monomials instead
             See https://github.com/sagemath/sage/issues/37035 for details.
-              A,v = F.coefficient_matrix()
             sage: A
             [  0   0   0   0   0   0   0   0   0   1   2   2   2 126]
             [  1   0   2   0   0   2   0   0   2 126   0   0   0   0]
