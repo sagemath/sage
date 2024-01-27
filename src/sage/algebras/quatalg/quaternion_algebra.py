@@ -1086,7 +1086,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(F, 2*a, F(-1)).is_totally_definite()
             False
 
-            sage: QuaternionAlgebra(RR(2.),1).is_definite()
+            sage: QuaternionAlgebra(RR(2.),1).is_totally_definite()
             Traceback (most recent call last):
             ...
             ValueError: base field must be rational numbers or a number field
@@ -1116,10 +1116,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         OUTPUT:
 
-        The non-Archimedean (AKA finite) places at which ``self`` ramifies (given as elements of ZZ if
-        ``self`` is defined over the rational field QQ, respectively as fractional ideals of the number
-        field's ring of integers, otherwise) and, if ``inf`` is set to ``True``, also the Archimedean
-        (AKA infinite) places at which ``self`` ramifies (given by real embeddings of the base field).
+        The non-Archimedean (AKA finite) places at which ``self`` ramifies (given as elements of ZZ,
+        sorted small to large, if ``self`` is defined over the rational field QQ, respectively as
+        fractional ideals of the number field's ring of integers, otherwise) and, if ``inf`` is set
+        to ``True``, also the Archimedean (AKA infinite) places at which ``self`` ramifies (given
+        by real embeddings of the base field).
 
         EXAMPLES::
 
@@ -1161,11 +1162,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).ramified_places()                  # needs sage.symbolic
             ([], [])
             sage: QuaternionAlgebra(RR(2.),1).ramified_places()
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: base field must be rational numbers or a number field
         """
-        if not isinstace(inf, bool):
+        if not isinstance(inf, bool):
             raise ValueError("inf must be a truth value")
 
         F = self.base_ring()
@@ -1207,7 +1208,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         OUTPUT:
 
         The list of finite primes at which ``self`` ramifies; given as integers, sorted
-        small-to-large, if ``self`` is defined over QQ, and as fractional ideals in the
+        small to large, if ``self`` is defined over QQ, and as fractional ideals in the
         ring of integers of the base number field otherwise.
 
         EXAMPLES::
@@ -1230,7 +1231,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             [Fractional ideal (2)]
 
             sage: QuaternionAlgebra(RR(2.),1).ramified_primes()
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: base field must be rational numbers or a number field
         """
@@ -1273,7 +1274,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             Fractional ideal (1)
 
             sage: QuaternionAlgebra(RR(2.),1).discriminant()
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             ValueError: base field must be rational numbers or a number field
         """
