@@ -401,9 +401,8 @@ class QuaternionAlgebra_abstract(Algebra):
 
     def is_division_algebra(self) -> bool:
         """
-        Return ``True`` if the quaternion algebra is a division algebra (i.e.
-        every nonzero element in ``self`` is invertible), and ``False`` if the
-        quaternion algebra is isomorphic to the 2x2 matrix algebra.
+        Checks whether the quaternion algebra ``self`` is a division algebra, i.e. whether 
+        every nonzero element in ``self`` is invertible.
 
         EXAMPLES::
 
@@ -411,40 +410,52 @@ class QuaternionAlgebra_abstract(Algebra):
             True
             sage: QuaternionAlgebra(1).is_division_algebra()
             False
-            sage: QuaternionAlgebra(2,9).is_division_algebra()
-            False
+
+            sage: K = QuadraticField(3)
+            sage: L = QuadraticField(-15)
+            sage: QuaternionAlgebra(K, -1, -1).is_division_algebra()
+            True
+            sage: QuaternionAlgebra(L, -1, -1).is_division_algebra()
+            True
+
             sage: QuaternionAlgebra(RR(2.),1).is_division_algebra()
             Traceback (most recent call last):
             ...
-            NotImplementedError: base field must be rational numbers
+            NotImplementedError: base field must be rational numbers or a number field
         """
-        if not is_RationalField(self.base_ring()):
-            raise NotImplementedError("base field must be rational numbers")
-        return self.discriminant() != 1
+        try:
+            return self.ramified_places(inf=True) != ([], [])
+        except ValueError:
+            raise NotImplementedError("base field must be rational numbers or a number field")
 
     def is_matrix_ring(self) -> bool:
         """
-        Return ``True`` if the quaternion algebra is isomorphic to the 2x2
-        matrix ring, and ``False`` if ``self`` is a division algebra (i.e.
-        every nonzero element in ``self`` is invertible).
+        Checks whether the quaternion algebra ``self`` is isomorphic to the 2x2 matrix
+        ring over the base field.
 
         EXAMPLES::
 
             sage: QuaternionAlgebra(QQ,-5,-2).is_matrix_ring()
             False
-            sage: QuaternionAlgebra(1).is_matrix_ring()
-            True
             sage: QuaternionAlgebra(2,9).is_matrix_ring()
             True
+
+            sage: K = QuadraticField(3)
+            sage: L = QuadraticField(-15)
+            sage: QuaternionAlgebra(K, -1, -1).is_matrix_ring()
+            False
+            sage: QuaternionAlgebra(L, -1, -1).is_matrix_ring()
+            False
+
             sage: QuaternionAlgebra(RR(2.),1).is_matrix_ring()
             Traceback (most recent call last):
             ...
-            NotImplementedError: base field must be rational numbers
-
+            NotImplementedError: base field must be rational numbers or a number field
         """
-        if not is_RationalField(self.base_ring()):
-            raise NotImplementedError("base field must be rational numbers")
-        return self.discriminant() == 1
+        try:
+            return self.ramified_places(inf=True) == ([], [])
+        except ValueError:
+            raise NotImplementedError("base field must be rational numbers or a number field")
 
     def is_exact(self) -> bool:
         """
@@ -1029,86 +1040,297 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         a, b = self._a, self._b
         return diagonal_matrix(self.base_ring(), [2, -2*a, -2*b, 2*a*b])
 
-    @cached_method
-    def discriminant(self):
+    def is_definite(self):
         """
-        Return the discriminant of this quaternion algebra, i.e. the product of the finite
-        primes it ramifies at.
+        Checks whether the quaternion algebra ``self`` is definite, i.e. whether it ramifies at the
+        unique Archimedean place of its base field QQ. This is the case if and only if both
+        invariants of ``self`` are negative, see [Voi2021, Exercise 2.4(c)].
 
         EXAMPLES::
 
-            sage: QuaternionAlgebra(210,-22).discriminant()
-            210
-            sage: QuaternionAlgebra(19).discriminant()
-            19
+            sage: QuaternionAlgebra(QQ,-5,-2).is_definite()
+            True
+            sage: QuaternionAlgebra(1).is_definite()
+            False
+
+            sage: QuaternionAlgebra(RR(2.),1).is_definite()
+            Traceback (most recent call last):
+            ...
+            ValueError: base field must be rational numbers
+        """
+        if not is_RationalField(self.base_ring()):
+            raise ValueError("base field must be rational numbers")
+        a, b = self.invariants()
+        return a < 0 and b < 0
+
+    def is_totally_definite(self):
+        """
+        Checks whether the quaternion algebra ``self`` is totally definite, i.e. whether it ramifies
+        at all real Archimedean places of its base number field.
+
+        EXAMPLES::
+
+            sage: QuaternionAlgebra(QQ, -5, -2).is_totally_definite()
+            True
+
+            sage: K = QuadraticField(3)
+            sage: QuaternionAlgebra(K, -1, -1).is_totally_definite()
+            True
+
+            sage: L = QuadraticField(-15)
+            sage: QuaternionAlgebra(L, -1, -1).is_totally_definite()
+            True
 
             sage: x = polygen(ZZ, 'x')
             sage: F.<a> = NumberField(x^2 - x - 1)
-            sage: B.<i,j,k> = QuaternionAlgebra(F, 2*a, F(-1))
-            sage: B.discriminant()
-            Fractional ideal (2)
+            sage: QuaternionAlgebra(F, 2*a, F(-1)).is_totally_definite()
+            False
 
-            sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).discriminant()                  # needs sage.symbolic
-            Fractional ideal (1)
+            sage: QuaternionAlgebra(RR(2.),1).is_definite()
+            Traceback (most recent call last):
+            ...
+            ValueError: base field must be rational numbers or a number field
         """
-        if not is_RationalField(self.base_ring()):
-            try:
-                F = self.base_ring()
-                return F.hilbert_conductor(self._a, self._b)
-            except NotImplementedError:
-                raise ValueError("base field must be rational numbers or number field")
-        else:
-            return ZZ.prod(self.ramified_primes())
+        F = self.base_ring()
+        if is_RationalField(F):
+            return self.is_definite()
+
+        try:
+            E = F.real_embeddings()
+            return [e for e in E if F.hilbert_symbol(self._a, self._b, e) == -1] == E
+        except (AttributeError, NotImplementedError):
+            raise ValueError("base field must be rational numbers or a number field")
+
+    @cached_method
+    def ramified_places(self, inf=True):
+        """
+        Return the places of the base number field at which the quaternion algebra ``self`` ramifies.
+
+        Note: The initial choice of primes (in the case F = QQ) respectively of prime ideals (in the
+        number field case) to check ramification for is motivated by [Voi2021, 12.4.12(a)]. The
+        restriction to real Archimedean embeddings is due to [Voi2021, 14.5.8].
+
+        INPUT:
+
+        - ``inf`` -- (default: ``True``)
+
+        OUTPUT:
+
+        The non-Archimedean (AKA finite) places at which ``self`` ramifies (given as elements of ZZ if 
+        ``self`` is defined over the rational field QQ, respectively as fractional ideals of the number 
+        field's ring of integers, otherwise) and, if ``inf`` is set to ``True``, also the Archimedean 
+        (AKA infinite) places at which ``self`` ramifies (given by real embeddings of the base field).
+
+        EXAMPLES::
+
+            sage: QuaternionAlgebra(210,-22).ramified_places()
+            ([2, 3, 5, 7], [])
+
+            sage: QuaternionAlgebra(-1, -1).ramified_places()
+            ([2],
+             [Ring morphism:
+                From: Rational Field
+                To:   Real Field with 53 bits of precision
+                Defn: 1 |--> 1.00000000000000])
+
+            sage: K = QuadraticField(3)
+            sage: QuaternionAlgebra(K, -1, -1).ramified_places()
+            ([],
+             [Ring morphism:
+                From: Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
+                To:   Real Field with 53 bits of precision
+                Defn: a |--> -1.73205080756888,
+              Ring morphism:
+                From: Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
+                To:   Real Field with 53 bits of precision
+                Defn: a |--> 1.73205080756888])
+
+            sage: L = QuadraticField(-15)
+            sage: QuaternionAlgebra(L, -1, -1).ramified_places()
+            ([Fractional ideal (2, 1/2*a + 1/2), Fractional ideal (2, 1/2*a - 1/2)], [])
+
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<a> = NumberField(x^2 - x - 1)
+            sage: QuaternionAlgebra(F, 2*a, F(-1)).ramified_places()
+            ([Fractional ideal (2)],
+             [Ring morphism:
+                From: Number Field in a with defining polynomial x^2 - x - 1
+                To: Real Field with 53 bits of precision
+                Defn: a |--> -0.618033988749895])
+
+            sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).ramified_places()                  # needs sage.symbolic
+            ([], [])
+            sage: QuaternionAlgebra(RR(2.),1).ramified_places()
+            Traceback (most recent call last)
+            ...
+            ValueError: base field must be rational numbers or a number field
+        """
+        if not isinstace(inf, bool):
+            raise ValueError("inf must be a truth value")
+
+        F = self.base_ring()
+
+        # For efficiency (and to not convert QQ into a number field manually), we handle F = QQ first
+        if is_RationalField(F):
+            ram_fin = sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
+                    prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
+                    prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
+ 
+            if not inf:
+                return ram_fin
+
+            # The given quaternion algebra ramifies at the unique infinite place of QQ, by definition,
+            # if and only if it is definite
+            if self.is_definite():
+                return ram_fin, QQ.places()
+
+            return ram_fin, []
+
+        try:
+            # Over the number field F, first compute the finite ramified places
+            ram_fin = [p for p in set(F.primes_above(2)).union(F.primes_above(self._a),
+                        F.primes_above(self._b)) if F.hilbert_symbol(self._a, self._b, p) == -1]
+
+            if not inf:
+                return ram_fin
+
+            # At this point the infinite ramified places also need to be computed
+            return ram_fin, [e for e in F.real_embeddings() if F.hilbert_symbol(self._a, self._b, e) == -1]
+        except (AttributeError, NotImplementedError):
+            raise ValueError("base field must be rational numbers or a number field")
+
 
     @cached_method
     def ramified_primes(self):
         """
-        Return the (finite) primes that ramify in this rational quaternion algebra.
+        Return the (finite) primes of the base number field at which the quaternion algebra ``self`` ramifies.
 
         OUTPUT:
 
-        The list of prime numbers at which ``self`` ramifies (given as integers), sorted by their
-        magnitude (small to large).
+        The list of finite primes at which ``self`` ramifies; given as integers, sorted
+        small-to-large, if ``self`` is defined over QQ, and as fractional ideals in the
+        ring of integers of the base number field otherwise.
 
         EXAMPLES::
 
-            sage: QuaternionAlgebra(QQ, -1, -1).ramified_primes()
-            [2]
-
-            sage: QuaternionAlgebra(QQ, -58, -69).ramified_primes()
+            sage: QuaternionAlgebra(-58, -69).ramified_primes()
             [3, 23, 29]
-        """
-        if not is_RationalField(self.base_ring()):
-            raise ValueError("base field must be the rational numbers")
 
-        return sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
-                prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
-                prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
+            sage: K = QuadraticField(3)
+            sage: L = QuadraticField(-15)
+            sage: QuaternionAlgebra(-1, -1).ramified_primes()
+            [2]
+            sage: QuaternionAlgebra(K, -1, -1).ramified_primes()
+            []
+            sage: QuaternionAlgebra(L, -1, -1).ramified_primes()
+            [Fractional ideal (2, 1/2*a + 1/2), Fractional ideal (2, 1/2*a - 1/2)]
+
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<a> = NumberField(x^2 - x - 1)
+            sage: QuaternionAlgebra(F, 2*a, F(-1)).ramified_primes()
+            [Fractional ideal (2)]
+
+            sage: QuaternionAlgebra(RR(2.),1).ramified_primes()
+            Traceback (most recent call last)
+            ...
+            ValueError: base field must be rational numbers or a number field
+        """
+        return self.ramified_places(inf=False)
+
+    @cached_method
+    def discriminant(self):
+        """
+        Return the discriminant of the quaternion algebra ``self``, i.e. the product of the
+        finite places it ramifies at. 
+
+        OUTPUT:
+
+        The discriminant of this quaternion algebra (which has to be defined over a number field),
+        as an element of ZZ if ``self`` is defined over QQ, and as a fractional ideal in the
+        ring of integers of the base number field otherwise.
+    
+        EXAMPLES::
+
+            sage: QuaternionAlgebra(210, -22).discriminant()
+            210
+            sage: QuaternionAlgebra(19).discriminant()
+            19
+            sage: QuaternionAlgebra(-1, -1).discriminant()
+            2
+
+            sage: K = QuadraticField(3)
+            sage: L = QuadraticField(-15)
+            sage: QuaternionAlgebra(K, -1, -1).discriminant()
+            Fractional ideal (1) 
+            sage: QuaternionAlgebra(L, -1, -1).discriminant()
+            Fractional ideal (2)
+
+            sage: x = polygen(ZZ, 'x')
+            sage: F.<a> = NumberField(x^2 - x - 1)
+            sage: QuaternionAlgebra(F, 2*a, F(-1)).discriminant()
+            Fractional ideal (2)
+
+            sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).discriminant()                  # needs sage.symbolic
+            Fractional ideal (1)
+
+            sage: QuaternionAlgebra(RR(2.),1).discriminant()
+            Traceback (most recent call last)
+            ...
+            ValueError: base field must be rational numbers or a number field
+        """
+        F = self.base_ring()
+        if is_RationalField(F):
+            return ZZ.prod(self.ramified_places(inf=False))
+
+        try:
+            return F.ideal(F.prod(self.ramified_places(inf=False)))
+        except NotImplementedError:
+            raise ValueError("base field must be rational numbers or a number field")
 
     def is_isomorphic(self, A) -> bool:
         """
-        Return ``True`` if (and only if) ``self`` and ``A`` are isomorphic quaternion algebras over Q.
+        Checks whether ``self`` and ``A`` are isomorphic quaternion algebras.
+
+        Currently only implemented over a number field; motivated by 
+        [Voi2021, Main Theorem 14.6.1], noting that QQ has a unique infinite place.
 
         INPUT:
 
-        - ``A`` -- a quaternion algebra defined over the rationals Q
+        - ``A`` -- a quaternion algebra defined over a number field
 
         EXAMPLES::
 
             sage: B = QuaternionAlgebra(-46, -87)
             sage: A = QuaternionAlgebra(-58, -69)
+            sage: A == B
+            False
             sage: B.is_isomorphic(A)
             True
-            sage: A == B
+
+            sage: K = QuadraticField(3)
+            sage: A = QuaternionAlgebra(K, -1, -1)
+            sage: B = QuaternionAlgebra(K, 1, -1)
+            sage: A.discriminant() == B.discriminant()
+            True
+            sage: B.is_isomorphic(A)
             False
         """
         if not isinstance(A, QuaternionAlgebra_ab):
             raise TypeError("A must be a quaternion algebra of the form (a,b)_K")
 
-        if self.base_ring() != QQ or A.base_ring() != QQ:
-            raise NotImplementedError("isomorphism check only implemented for rational quaternion algebras")
+        F = self.base_ring()
+        if F != A.base_ring():
+            raise ValueError("both quaternion algebras must be defined over the same base ring")
 
-        return self.ramified_primes() == A.ramified_primes()
+        try:
+            if is_RationalField(F):
+                return self.ramified_places(inf=False) == A.ramified_places(inf=False)
+
+            ram_self = self.ramified_places(inf=True)
+            ram_A = A.ramified_places(inf=True)
+            return set(ram_self[0]) == set(ram_A[0]) and ram_self[1] == ram_A[1]
+        except ValueError:
+            raise NotImplementedError("base field must be rational numbers or a number field")
 
     def _magma_init_(self, magma):
         """
