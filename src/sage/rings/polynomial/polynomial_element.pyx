@@ -2168,174 +2168,150 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ValueError: no roots (non-field) x^2 + 1
         """
-        if self.base_ring().is_finite() and self.base_ring().is_field():
-            if self.degree() < 0:
-                return ring(0)
-            if self.degree() == 0:
-                raise ValueError("no roots A %s" % self)
-            if not assume_squarefree:
-                SFD = self.squarefree_decomposition()
-                SFD.sort()
-                for f, e in SFD:
-                    try:
-                        return f.any_root(ring, degree, True)
-                    except ValueError:
-                        pass
-            if self.degree() == 1 and (degree is None or degree == 1):
-                if ring is None:
-                    return -self.get_unsafe(0) / self.get_unsafe(1)
-                else:
-                    return ring(-self.get_unsafe(0) / self.get_unsafe(1))
-            q = self.base_ring().order()
-            if ring is None:
-                allowed_deg_mult = Integer(1)
-            else:
-                if not (self.base_ring().is_field() and self.base_ring().is_finite()):
-                    raise NotImplementedError
-                if ring.characteristic() != self.base_ring().characteristic():
-                    raise ValueError("ring must be an extension of the base ring")
-                if not (ring.is_field() and ring.is_finite()):
-                    raise NotImplementedError
-                allowed_deg_mult = Integer(ring.factored_order()[0][1]) # generally it will be the quotient of this by the degree of the base ring.
-            if degree is None:
-                x = self._parent.gen()
-                if allowed_deg_mult == 1:
-                    xq = pow(x,q,self)
-                    self = self.gcd(xq-x)
-                    degree = -1
-                    if self.degree() == 0:
-                        raise ValueError("no roots B %s" % self)
-                else:
-                    xq = x
-                    d = Integer(0)
-                    while True:
-                        # one pass for roots that actually lie within ring.
-                        e = self.degree()
-                        if 2*d+2 > e:
-                            # this polynomial has no factors dividing allowed_deg_mult
-                            if allowed_deg_mult % e == 0:
-                                degree = -e
-                            break
-                        while d < allowed_deg_mult:
-                            d = d+1
-                            xq = pow(xq,q,self)
-                            if d.divides(allowed_deg_mult):
-                                break
-                        A = self.gcd(xq-x)
-                        if A != 1:
-                            self = A
-                            degree = -d
-                            break
-                        if d == allowed_deg_mult:
-                            break
-                    if degree is None:
-                        if allowed_deg_mult == 1:
-                            raise ValueError("no roots C %s" % self)
-                        xq = x
-                        d = Integer(0)
-                        while True:
-                            # now another for roots that will lie in an extension.
-                            e = self.degree()
-                            if 2*d+2 > e:
-                                # this polynomial is irreducible.
-                                degree = -e
-                                break
-                            while True:
-                                # we waste a little effort here in computing the xq again.
-                                d = d+1
-                                xq = pow(xq,q,self)
-                                if allowed_deg_mult.divides(d):
-                                    break
-                            A = self.gcd(xq-x)
-                            if A != 1:
-                                self = A
-                                degree = -d
-                                break
-            if degree == 0:
-                raise ValueError("degree should be nonzero")
-            R = self._parent
-            x = R.gen()
-            if degree > 0:
-                xq = x
-                d = 0
-                while True:
-                    e = self.degree()
-                    if 2*d > e:
-                        if degree != e:
-                            raise ValueError("no roots D %s" % self)
-                        break
-                    d = d+1
-                    xq = pow(xq,q,self)
-                    if d == degree:
-                        break
-                    A = self.gcd(xq-x)
-                    if A != 1:
-                        self = self // A
-                if d == degree:
-                    self = self.gcd(xq-x)
-                    if self.degree() == 0:
-                        raise ValueError("no roots E %s" % self)
-            else:
-                degree = -degree
-            if ring is None:
-                if degree == 1:
-                    ring = self.base_ring()
-                else:
-                    ring = self.base_ring().extension(degree) # this won't work yet.
-            # now self has only roots of degree ``degree``.
-            # for now, we only implement the Cantor-Zassenhaus split
-            k = self.degree() // degree
-            if k == 1 or q % 2 == 0:
-                # Is there something better to do here for k = 1?
-                roots = self.roots(ring, multiplicities=False)
-                if roots:
-                    from sage.misc.prandom import choice
-                    return choice(roots)
-                else:
-                    raise ValueError(f"no roots F {self}" % self)
-            # Giacomo Pope (26-1-2024):
-            # This is buggy and very slow, I would like to fix it, but as far
-            # as I can tell, calling roots for GF(2^k) and picking one is simply
-            # faster and more robust.
-            # if q % 2 == 0:
-            #     while True:
-            #         T = R.random_element(2*degree-1)
-            #         if T == 0:
-            #             continue
-            #         T = T.monic()
-            #         # Compute the trace of T with field of order 2^k
-            #         # sum T^(2^i) for i in range (degree * k)
-            #         # We use repeated squaring to avoid redundent multiplications
-            #         C = T
-            #         TT = T
-            #         for _ in range(degree * self.base_ring().degree() - 1):
-            #             TT = pow(TT, 2, self)
-            #             C += TT
-            #         h = self.gcd(C)
-            #         hd = h.degree()
-            #         if hd != 0 and hd != self.degree():
-            #             if 2*hd <= self.degree():
-            #                 return h.any_root(ring, -degree, True)
-            #             else:
-            #                 return (self//h).any_root(ring, -degree, True)
-            else:
-                while True:
-                    T = R.random_element(2*degree-1)
-                    if T == 0:
-                        continue
-                    T = T.monic()
-                    h = self.gcd(pow(T, Integer((q**degree-1)/2), self)-1)
-                    hd = h.degree()
-                    if hd != 0 and hd != self.degree():
-                        if 2*hd <= self.degree():
-                            return h.any_root(ring, -degree, True)
-                        else:
-                            return (self//h).any_root(ring, -degree, True)
-        else:
+        # Currently I can't see a benefit of the degree method, so I think we should
+        # remove it
+        if degree is not None:
+            print(f"Warning: 'degree' will soon be deprecated as it is no longer needed")
+
+        # When not working over a finite field, do the simple 
+        # thing of factoring for roots and picking the first 
+        # root. If none available, raise an error.
+        from sage.categories.finite_fields import FiniteFields
+        if not self.base_ring() in FiniteFields():
             rs = self.roots(ring=ring, multiplicities=False)
             if rs:
                 return rs[0]
-            raise ValueError("no roots (non-field) %s" % self)
+            raise ValueError("polynomial {self} has no roots" % self)
+
+        # For finite fields, we find roots in the following three steps:
+        #
+        # 1. Compute the squarefree decomposition of the polynomial
+        # 2. For each squarefree polynomial find the distinct degree = 1
+        #    factorison, F, which is the product of degree one polynomials
+        #    dividing the squarefree polynomial
+        # 3. Using Cantor-Zassenhaus splitting with degree one to find a
+        #    single linear factor and return the root.
+        #
+        # These steps are performed by the following helper functions
+        #
+        # ======================== #
+        #  Begin helper functions  #
+        # ======================== #
+        def _linear_root(f, ring=None):
+            if ring is None:
+                return -f[0] / f[1]
+            return ring(-f[0] / f[1])
+
+        def _any_root_squarefree(f, ring=None):
+            # Compute the distinct degree factorisation for degree one, 
+            # the output will be the product of #all degree one 
+            # irreducible polynomials dividing f
+            q = f.base_ring().order() # p^k
+            R, X = f.parent().objgen()
+            w = pow(X, q, f) - X
+            g = f.gcd(w)
+
+            # When the degree is one, we have found our
+            # root. If the degree is zero, there are no roots
+            if g.degree().is_one():
+                return _linear_root(g, ring=ring)
+            elif g.degree().is_zero():
+                raise ValueError(f"no root can be computed for {f}")
+
+            # Otherwise, we can find a root from the CZ splitting of g
+            return _cantor_zassenhaus_split_root(g, 1, ring=ring)
+
+        def _cantor_zassenhaus_split_root(f, degree, ring=None):
+            R = f.parent()
+            q = f.base_ring().order()
+            # Need to handle odd and even charcteristic separately
+            if q % 2 != 0:
+                # We expect to succeed with 1/2 probability, so if we
+                # try 1000 times and fail, there's a bug somewhere.
+                for _ in range(1000):
+                    T = R.random_element(2*degree + 1)
+                    if T.is_zero(): continue # skip T = 0
+                    T = T.monic()
+
+                    # Compute the gcd. 50% chance this is a non-trivial factor of f
+                    h = f.gcd(pow(T, (q-1)//2, f)-1)
+                    hd = h.degree()
+
+                    # If we found a degree-one root, return it
+                    if hd.is_one():
+                        return _linear_root(h, ring=ring) 
+
+                    # Else check if we have a non-trivial factor and keep going
+                    if not hd.is_zero() and hd != f.degree():
+                        if 2*hd <= f.degree():
+                            return _cantor_zassenhaus_split_root(h, degree, ring=ring)
+                        else:
+                            return _cantor_zassenhaus_split_root(f//h, degree, ring=ring)
+                # If you are reaching this error, chances are there's a bug in the code.
+                raise ValueError(f"no splitting of degree {degree} found for {f}")
+
+            # Now handle even charactertistic
+            for _ in range(1000):
+                # Sample a uniformly random element of R
+                T = R.random_element(2*degree + 1)
+                if T.is_zero(): continue
+                T = T.monic()
+
+                # Compute the trace of T with field of order 2^k
+                # sum T^(2^i) for i in range (degree * k)
+                # We use repeated squaring to avoid redundent multiplications
+                C, TT = T, T
+                for _ in range(degree * f.base_ring().degree() - 1):
+                    TT = pow(TT, 2, f)
+                    C += TT
+
+                # Compute the gcd to find a factor
+                h = f.gcd(C)
+                hd = h.degree()
+
+                # If we found a degree-one root, return it
+                if hd.is_one():
+                    return _linear_root(h, ring=ring)
+
+                # else check if we have a factor
+                elif not hd.is_zero() and hd != f.degree():
+                    if 2*hd <= f.degree():
+                        return _cantor_zassenhaus_split_root(h, degree, ring)
+                    else:
+                        return _cantor_zassenhaus_split_root(f // h, degree, ring)
+
+            # If you are reaching this error, chances are there's a bug in the code.
+            raise ValueError(f"no splitting of degree {degree} found for {f}")
+        # ======================== #
+        #   End helper functions   #
+        # ======================== #
+
+        # Initial checks for bad input
+        if self.degree() < 0:
+            if ring is None:
+                return self.base_ring()(0)
+            return ring(0)
+        elif self.degree() == 0:
+            raise ValueError(f"no root can be computed for {self}")
+        
+        # If the input is a linear polynomial, simply compute the root
+        if self.degree() == 1:
+            return _linear_root(self, ring=ring)
+
+        # If we know the polynomial is square-free, we can start here
+        if assume_squarefree:
+            return _any_root_squarefree(self, ring=ring)
+
+        # Otherwise we compute the squarefree decomposition and check each
+        # polynomial for a root. If no poly has a root, we raise an error.
+        SFD = self.squarefree_decomposition()
+        SFD.sort()
+        for poly, _ in SFD:
+            try:
+                return _any_root_squarefree(poly, ring=ring)
+            except ValueError:
+                pass
+        raise ValueError(f"no root can be computed for {self}")
 
     def __truediv__(left, right):
         r"""
