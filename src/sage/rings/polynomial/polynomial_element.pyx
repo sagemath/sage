@@ -2171,7 +2171,8 @@ cdef class Polynomial(CommutativePolynomial):
         # Currently I can't see a benefit of the degree method, so I think we should
         # remove it
         if degree is not None:
-            print(f"Warning: 'degree' will soon be deprecated as it is no longer needed")
+            from sage.misc.superseded import deprecation
+            deprecation(37170, "'degree' will soon be deprecated as it is no longer needed")
 
         # When not working over a finite field, do the simple 
         # thing of factoring for roots and picking the first 
