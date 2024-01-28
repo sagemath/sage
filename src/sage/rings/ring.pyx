@@ -29,7 +29,6 @@ The class inheritance hierarchy is:
 
 Subclasses of :class:`PrincipalIdealDomain` are
 
-- :class:`EuclideanDomain`
 - :class:`Field`
 
   - :class:`~sage.rings.finite_rings.finite_field_base.FiniteField`
@@ -77,7 +76,6 @@ from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.categories.euclidean_domains import EuclideanDomains
 
 _Rings = Rings()
 _CommutativeRings = CommutativeRings()
@@ -1639,7 +1637,7 @@ cdef class IntegralDomain(CommutativeRing):
         This method is used by all the abstract subclasses of
         :class:`IntegralDomain`, like :class:`NoetherianRing`,
         :class:`PrincipalIdealDomain`, :class:`DedekindDomain`,
-        :class:`EuclideanDomain`, :class:`Field`, ... in order to
+        :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
         PrincipalIdealDomain.__init__ -> IntegralDomain.__init__ ->
         ...
@@ -1653,10 +1651,6 @@ cdef class IntegralDomain(CommutativeRing):
             sage: F = PrincipalIdealDomain(QQ)
             sage: F.category()
             Category of principal ideal domains
-
-            sage: F = EuclideanDomain(QQ)
-            sage: F.category()
-            Category of euclidean domains
 
             sage: F = Field(QQ)
             sage: F.category()
@@ -1675,9 +1669,6 @@ cdef class IntegralDomain(CommutativeRing):
 
             sage: PrincipalIdealDomain._default_category
             Category of principal ideal domains
-
-            sage: EuclideanDomain._default_category
-            Category of euclidean domains
 
             sage: Field._default_category
             Category of fields
@@ -2071,27 +2062,6 @@ cdef class PrincipalIdealDomain(IntegralDomain):
         from sage.rings.ideal import Ideal_pid
         return Ideal_pid
 
-cdef class EuclideanDomain(PrincipalIdealDomain):
-    """
-    Generic Euclidean domain class.
-
-    This class is deprecated. Please use the
-    :class:`~sage.categories.euclidean_domains.EuclideanDomains`
-    category instead.
-    """
-    _default_category = EuclideanDomains()
-
-    def parameter(self):
-        """
-        Return an element of degree 1.
-
-        EXAMPLES::
-
-            sage: R.<x>=QQ[]
-            sage: R.parameter()
-            x
-       """
-        raise NotImplementedError
 
 cpdef bint _is_Field(x) except -2:
     """

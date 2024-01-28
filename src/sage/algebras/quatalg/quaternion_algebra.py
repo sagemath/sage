@@ -332,7 +332,7 @@ class QuaternionAlgebra_abstract(Algebra):
             sage: Q.ngens()
             3
             sage: Q.gens()
-            [i, j, k]
+            (i, j, k)
         """
         return 3
 
@@ -681,7 +681,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         else:
             self.Element = QuaternionAlgebraElement_generic
         self._populate_coercion_lists_(coerce_list=[base_ring])
-        self._gens = [self([0, 1, 0, 0]), self([0, 0, 1, 0]), self([0, 0, 0, 1])]
+        self._gens = (self([0, 1, 0, 0]), self([0, 0, 1, 0]), self([0, 0, 0, 1]))
 
     @cached_method
     def maximal_order(self, take_shortcuts=True):
@@ -808,7 +808,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         # The following code should always work (over QQ)
         # Start with <1,i,j,k>
-        R = self.quaternion_order([1] + self.gens())
+        R = self.quaternion_order((1,) + self.gens())
         d_R = R.discriminant()
 
         e_new_gens = []
@@ -978,7 +978,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: Q.gen(2)
             kk
             sage: Q.gens()
-            [ii, jj, kk]
+            (ii, jj, kk)
         """
         return self._gens[i]
 
@@ -1073,6 +1073,31 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         # TODO: more examples
         return [f[0] for f in factor(self.discriminant())]
+
+    def is_isomorphic(self, A) -> bool:
+        r"""
+        Return ``True`` if ``self`` and ``A`` are isomorphic quaternion algebras over Q.
+
+        INPUT:
+
+        - ``A`` -- a quaternion algebra defined over the rationals Q
+
+        EXAMPLES::
+
+            sage: B = QuaternionAlgebra(-46, -87)
+            sage: A = QuaternionAlgebra(-58, -69)
+            sage: B.is_isomorphic(A)
+            True
+            sage: A == B
+            False
+        """
+        if not isinstance(A, QuaternionAlgebra_ab):
+            raise TypeError("A must be a quaternion algebra of the form (a,b)_K")
+
+        if self.base_ring() != QQ or A.base_ring() != QQ:
+            raise NotImplementedError("isomorphism check only implemented for rational quaternion algebras")
+
+        return self.discriminant() == A.discriminant()
 
     def _magma_init_(self, magma):
         """
@@ -1496,7 +1521,7 @@ class QuaternionOrder(Parent):
 
     def gens(self):
         """
-        Return generators for self.
+        Return generators for ``self``.
 
         EXAMPLES::
 
@@ -2294,6 +2319,20 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             'Fractional ideal (2 + 6*j + 4*k, 2*i + 4*j + 2*k, 8*j, 8*k)'
         """
         return 'Fractional ideal %s' % (self.gens(),)
+
+    def random_element(self, *args, **kwds):
+        """
+        Return a random element in the rational fractional ideal ``self``.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(211)
+            sage: I = B.ideal([1, 1/4*j, 20*(i+k), 2/3*i])
+            sage: x = I.random_element()  # random
+            sage: x in I
+            True
+        """
+        return sum(ZZ.random_element(*args, **kwds) * g for g in self.gens())
 
     def quaternion_order(self):
         """
