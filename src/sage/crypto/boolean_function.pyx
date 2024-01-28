@@ -852,7 +852,7 @@ cdef class BooleanFunction(SageObject):
         if self._correlation_immunity is None:
             c = self._nvariables
             W = self.walsh_hadamard_transform()
-            for i in range(len(W)):
+            for i in range(1, len(W)):
                 sig_check()
                 if W[i]:
                     c = min(c, hamming_weight(i))
