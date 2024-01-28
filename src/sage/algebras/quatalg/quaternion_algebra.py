@@ -3083,12 +3083,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         """
         if self.__left_order is not None:
-            return all([b in self.left_order() for b in self.basis()])
+            return self.free_module() <= self.left_order().free_module()
         elif self.__right_order is not None:
-            return all([b in self.right_order() for b in self.basis()])
+            return self.free_module() <= self.right_order().free_module()
         else:
             self_square = self**2
-            return all([b in self for b in self_square.basis()])
+            return self_square.free_module() <= self.free_module()
 
     def primitive_decomposition(self):
         r"""
@@ -3135,11 +3135,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         O_basis = self.left_order().basis_matrix()
 
         # Write I in the basis of its left order via rref
-        M = block_matrix(1,2,[O_basis.transpose(),I_basis.transpose()]).rref()[:,4:]
-        g = Integer(gcd((gcd(M_row) for M_row in M)))
+        M = O_basis.solve_left(I_basis)
+        g = Integer(gcd(M.list()))
 
         # If g is 1 then the ideal is primitive
-        if g == 1:
+        if g.is_one():
             return self, g
 
         J = self.scale(1/g)
@@ -3165,7 +3165,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         """
         _,g = self.primitive_decomposition()
-        return 1 == g
+        return g.is_one()
 
 #######################################################################
 # Some utility functions that are needed here and are too
