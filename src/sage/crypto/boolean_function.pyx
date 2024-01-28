@@ -847,6 +847,16 @@ cdef class BooleanFunction(SageObject):
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
             sage: B.correlation_immunity()
             2
+
+        TESTS:
+
+        Check if :trac:`28001` is fixed::
+
+            sage: from sage.crypto.boolean_function import BooleanFunction
+            sage: f = [False, False, True, False, False, True, False, False]
+            sage: f = BooleanFunction(f)
+            sage: f.correlation_immunity()
+            1
         """
         cdef long c, i
         if self._correlation_immunity is None:
