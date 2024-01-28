@@ -750,7 +750,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         n = Integer(len(names))
         if n < 1:
             raise ValueError("the number of strands must be an integer larger than one")
-
+        self._cbg_type_orig = cbg_type
         if cbg_type is None:
             cbg_type = CubicBraidGroup.type.Coxeter
         if not isinstance(cbg_type, CubicBraidGroup.type):
@@ -791,6 +791,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             cat = Groups().Infinite()
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels), category=cat)
         self._free_group = free_group
+        self._names = names
 
         # ------------------------------------------------------------------------------------------------
         # the following global pointers to classical group realizations will be set in the private method
@@ -803,6 +804,10 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         self._centralizing_matrix = None   # for Assion groups: element in classical base group commuting with self
         self._centralizing_element = None   # image under nat. map of the former one in the proj. classical group
         return
+
+    def __reduce__(self):
+        from sage.structure.unique_representation import unreduce
+        return (unreduce, (self.__class__.__base__, (self._names,), {'cbg_type': self._cbg_type_orig}))
 
     def _repr_(self):
         r"""

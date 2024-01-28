@@ -189,6 +189,7 @@ class RightAngledArtinGroup(ArtinGroup):
             Category of infinite groups
         """
         self._graph = G
+        self._names = names
         F = FreeGroup(names=names)
         CG = Graph(G).complement()  # Make sure it's mutable
         CG.relabel()  # Standardize the labels
@@ -203,6 +204,10 @@ class RightAngledArtinGroup(ArtinGroup):
                      for i, j in CG.edge_iterator(labels=False))  # +/- 1 for indexing
         FinitelyPresentedGroup.__init__(self, F, rels,
                                         category=Groups().Infinite())
+
+    def __reduce__(self):
+        from sage.structure.unique_representation import unreduce
+        return (unreduce, (self.__class__.__base__, (self._graph, self._names), {}))
 
     def _repr_(self) -> str:
         """
