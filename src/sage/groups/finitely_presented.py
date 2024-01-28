@@ -783,7 +783,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
     """
     Element = FinitelyPresentedGroupElement
 
-    def __init__(self, free_group, relations, category=None):
+    def __init__(self, free_group, relations, category=None, libgap_fpgroup=None):
         """
         The Python constructor.
 
@@ -808,23 +808,26 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         self._free_group = free_group
         self._relations = relations
         self._assign_names(free_group.variable_names())
+        if libgap_fpgroup is None:
+            parent_gap = libgap_fpgroup
         parent_gap = free_group.gap() / libgap([rel.gap() for rel in relations])
         ParentLibGAP.__init__(self, parent_gap)
         Group.__init__(self, category=category)
 
-    # def __reduce__(self):
-    #     """
-    #     Implement pickling.
-    #
-    #     TESTS::
-    #
-    #         sage: F.<a,b> = FreeGroup()
-    #         sage: a.__reduce__()
-    #         (Free Group on generators {a, b}, ((1,),))
-    #         sage: (a*b*a^-1).__reduce__()
-    #         (Free Group on generators {a, b}, ((1, 2, -1),))
-    #     """
-    #     return (FinitelyPresentedGroup, (self._free_group, self._relations))
+    def __reduce__(self):
+        """
+        Implement pickling.
+
+        TESTS::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: a.__reduce__()
+            (Free Group on generators {a, b}, ((1,),))
+            sage: (a*b*a^-1).__reduce__()
+            (Free Group on generators {a, b}, ((1, 2, -1),))
+        """
+        from sage.structure.unique_representation import unreduce
+        return (unreduce, (self.__class__.__base__, (self._free_group, self._relations), {}))
 
     def _repr_(self):
         """
@@ -1508,10 +1511,12 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         Uses GAP.
         """
         II = self.gap().IsomorphismSimplifiedFpGroup()
-        codomain = II.Range().sage()
-        phi = lambda x: codomain(II.ImageElm(x.gap()))
-        HS = self.Hom(codomain)
-        return GroupMorphismWithGensImages(HS, phi)
+        cod = II.Range().sage()
+        # phi = [cod(II.ImageElm(x)) for x in self.gap().GeneratorsOfGroup()]
+        phi = lambda x: cod(II.ImageElm(x.gap()))
+        HS = self.Hom(cod)
+        h = GroupMorphismWithGensImages(HS, phi)
+        return h  # self.hom(codomain=cod, im_gens=[h(x) for x in self.gens()])
 
     def simplified(self):
         """

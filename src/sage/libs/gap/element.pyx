@@ -1396,12 +1396,12 @@ cdef class GapElement(RingElement):
 
         elif self.IsFpGroup():
             from sage.groups.free_group import FreeGroup
+            from sage.groups.finitely_presented import FinitelyPresentedGroup
             self._set_compare_by_id()
             names = tuple(str(g) for g in self.FreeGroupOfFpGroup().GeneratorsOfGroup())
             F = FreeGroup(names)
-            relations = tuple(rel.UnderlyingElement().LetterRepAssocWord().sage()
-                              for rel in self.RelatorsOfFpGroup())
-            return F / relations
+            relations = tuple(F(rel.LetterRepAssocWord().sage()) for rel in self.RelatorsOfFpGroup())
+            return FinitelyPresentedGroup(F, relations, libgap_fpgroup=self)
 
         elif self.IsList():
             # May be a list-like collection of some other type of GapElements
