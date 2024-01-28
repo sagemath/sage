@@ -3020,24 +3020,24 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             ans.append(J)
         return ans
 
-    
     def is_integral(self):
         r"""
-            Check if a quaternion fractional ideal is integral. An ideal in a quaternion algebra is said integral if it is contained in its left order. If the left order is already defined it just check the definition, otherwise it uses one of the alternative definition of Lemma 16.2.8 of [Voi2021]_.
+        Check if a quaternion fractional ideal is integral. An ideal in a quaternion algebra is
+        said integral if it is contained in its left order. If the left order is already defined it just
+        check the definition, otherwise it uses one of the alternative definition of Lemma 16.2.8 of
+        [Voi2021]_.
 
-            Returns:
-                bool: True if the quaternion fractional ideal is integral, False otherwise.
+        OUTPUT: a boolean.
 
-
-            EXAMPLES:
+        EXAMPLES::
 
             sage: R.<i,j,k> = QuaternionAlgebra(QQ, -1,-11)
             sage: I = R.ideal([2 + 2*j + 140*k, 2*i + 4*j + 150*k, 8*j + 104*k, 152*k])
             sage: I.is_integral()
-            True 
+            True
             sage: O = I.left_order()
             sage: I.is_integral()
-            True 
+            True
             sage: I = R.ideal([1/2 + 2*j + 140*k, 2*i + 4*j + 150*k, 8*j + 104*k, 152*k])
             sage: I.is_integral()
             False
@@ -3051,42 +3051,41 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             self_square = self**2
             return all([b in self for b in self_square.basis()])
 
-
     def primitive_decomposition(self):
         r"""
-            Let `I` = ``self``. If `I` is an integral left `\mathcal{O}`-ideal return its decomposition as an equivalent primitive ideal and an integer such that their product is the initial ideal. 
-            Returns:
+        Let `I` = ``self``. If `I` is an integral left `\mathcal{O}`-ideal return its decomposition
+        as an equivalent primitive ideal and an integer such that their product is the initial ideal.
 
-                `J`: equivalent primitive ideal to `I`, i.e. equivalent ideal not contained in `n\mathcal{O}` for any `n>0`
-                `g`: smallest integer such that `I \subset g\mathcal{O}`
+        OUTPUTS: and quivalent primitive ideal to `I`, i.e. equivalent ideal not contained in `n\mathcal{O}` for any `n>0`, and the smallest integer such that `I \subset g\mathcal{O}`.
 
-            EXAMPLES: 
-                sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-11)
-                sage: I = A.ideal([1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k])
-                sage: I.primitive_decomposition()
-                (Fractional ideal (1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k), 1)
-                sage: J = A.ideal([7/2 + 7/2*i + 49/2*j + 91/2*k, 7*i + 21*k, 35*j + 35*k, 70*k])
-                sage: Jequiv, g = J.primitive_decomposition()
-                sage: Jequiv*g == J 
-                True 
-                sage: Jequiv, g
-                (Fractional ideal (1/2 + 1/2*i + 7/2*j + 13/2*k, i + 3*k, 5*j + 5*k, 10*k), 7)
+        EXAMPLES::
 
-            TESTS: 
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-11)
+            sage: I = A.ideal([1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k])
+            sage: I.primitive_decomposition()
+            (Fractional ideal (1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k), 1)
+            sage: J = A.ideal([7/2 + 7/2*i + 49/2*j + 91/2*k, 7*i + 21*k, 35*j + 35*k, 70*k])
+            sage: Jequiv, g = J.primitive_decomposition()
+            sage: Jequiv*g == J
+            True
+            sage: Jequiv, g
+            (Fractional ideal (1/2 + 1/2*i + 7/2*j + 13/2*k, i + 3*k, 5*j + 5*k, 10*k), 7)
 
-            Checks on random crafted ideals that they decompose as expected. 
+        TESTS::
 
-                sage: for d in ( m for m in range(400, 750) if is_squarefree(m) ):
-                ....:     A = QuaternionAlgebra(d)
-                ....:     O = A.maximal_order()
-                ....:     for _ in range(10):
-                ....:         a = O.random_element()
-                ....:         if not a.is_constant(): # avoids a = 0
-                ....:             I = a*O + a.reduced_norm()*O
-                ....:             if I.is_integral():
-                ....:                 J,g = I.primitive_decomposition()
-                ....:                 assert J*g == I
-                ....:                 assert J.is_primitive()
+        Checks on random crafted ideals that they decompose as expected.
+
+            sage: for d in ( m for m in range(400, 750) if is_squarefree(m) ):
+            ....:     A = QuaternionAlgebra(d)
+            ....:     O = A.maximal_order()
+            ....:     for _ in range(10):
+            ....:         a = O.random_element()
+            ....:         if not a.is_constant(): # avoids a = 0
+            ....:             I = a*O + a.reduced_norm()*O
+            ....:             if I.is_integral():
+            ....:                 J,g = I.primitive_decomposition()
+            ....:                 assert J*g == I
+            ....:                 assert J.is_primitive()
 
         """
 
@@ -3108,30 +3107,26 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         return J, g
 
-
     def is_primitive(self):
         r"""
-            Check if the quaternion fractional ideal is primitive. An integral left $O$-ideal for some order $O$ is said primitive if for all integers $n > 1$ $I$ is not contained in $nO$.
+        Check if the quaternion fractional ideal is primitive. An integral left
+        $O$-ideal for some order $O$ is said primitive if for all integers $n > 1$
+        $I$ is not contained in $nO$.
 
-            Returns:
-                bool: True if the quaternion fractional ideal is primitive, False otherwise.
+        OUTPUT: a boolean.
 
-            EXAMPLES: 
-                sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-11)
-                sage: I = A.ideal([1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k])
-                sage: I.is_primitive()
-                True
-                sage: (2*I).is_primitive()
-                False
+        EXAMPLES::
 
-
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-11)
+            sage: I = A.ideal([1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k])
+            sage: I.is_primitive()
+            True
+            sage: (2*I).is_primitive()
+            False
 
         """
         _,g = self.primitive_decomposition()
         return 1 == g
-
-
-
 
 #######################################################################
 # Some utility functions that are needed here and are too
