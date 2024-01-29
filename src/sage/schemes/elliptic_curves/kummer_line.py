@@ -12,10 +12,56 @@ We construct a Kummer line over an already defined elliptic curve in short Weier
     sage: KummerLine(E)
     Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
 
-We can also give the curve coefficients directly with a base ring::
+If the curve is Montgomery shaped, there is another class to handle it::
 
-    sage: KummerLine(QQ, [4, 5/6])
-    Kummer line of Elliptic curve defined by y^2 = x^3 + 4*x + 5/6 over Rational Field
+    sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+    sage: KummerLineMontgomery(E)
+    Kummer line of Elliptic curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
+
+It is then possible to define points on this line, derived from points on the curve
+(or by giving it the coordinates)::
+
+    sage: E = EllipticCurve(GF(101), [2, 3])
+    sage: K = KummerLine(E)
+    sage: P = E(95, 49); xP = K(P)
+    sage: xQ = K([73, 1]) 
+
+Several methods helps to recover useful data, such as `XZ`-coordinates or the affine `x`-coordinate::
+
+    sage: xP.XZ()
+    (95, 1)
+    sage: xQ.x()
+    73
+
+Differential addition and scalar multiplication are implemented::
+
+    sage: xPQ = K(P-Q)
+    sage: xQP = xP.add(xQ, xPQ); xQP.x() == (P+Q)[0]
+    True
+    sage: m = 293
+    sage: (m * xP).x() == (m * xP)[0]
+    True
+
+Isogenies between Kummer lines are also available using Vélu formulas::
+
+    sage: xf = K.isogeny(xP); xf
+    Isogeny of degree 48 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 68*x + 29 over Finite Field of size 101
+
+Methods similar to the elliptic curves ones are also implemented::
+
+    sage: xf.degree()
+    48
+    sage: xf.domain()
+    Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+    sage: xf.codomain()
+    Kummer line of Elliptic Curve defined by y^2 = x^3 + 68*x + 29 over Finite Field of size 101
+
+They can also be evaluated::
+
+    sage: xf(xQ)
+    (51 : 1)
+    sage: xf(5*xP)
+    (1 : 0)
 
 AUTHORS:
 
@@ -27,7 +73,7 @@ AUTHORS:
 
 # ****************************************************************************
 #       Copyright (C) 2023 Giacomo Pope <giacomopope@gmail.com>
-#       Copyright (C) 2024 Elif Özbay Gürler <TODO>
+#       Copyright (C) 2024 Elif Özbay Gürler <eozbayelif@gmail.com>
 #       Copyright (C) 2024 Nicolas Sarkis <nicolas.sarkis@math.u-bordeaux.fr>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -36,13 +82,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-#
-# ::
-#
-# TODO KummerLinePoint examples, as well as many more usage (see integer for instance)
-# TODO <Lots and lots of examples>
-
 
 from sage.all import cached_method
 
@@ -292,7 +331,7 @@ class KummerLine(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
-            TODO
+            Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         if xP._parent != self:
@@ -1221,7 +1260,6 @@ class KummerLinePoint(SageObject):
 
         return self._parent((XP, ZP))
 
-    # TODO ditch it or improve it, there could be less points in this
     def multiples(self):
         r"""
         Generator for points `x(mP)` where ``P = self``.
@@ -1231,6 +1269,10 @@ class KummerLinePoint(SageObject):
         .. NOTE::
 
             Usage is intended for Vélu-like computations
+
+        .. TODO::
+
+            There could be less points computed if we know the degree beforehand
 
         EXAMPLES::
 
@@ -1272,12 +1314,12 @@ class KummerLineIsogeny(SageObject):
         sage: P = E(76, 65); xP = K(P)
         sage: Q = E(49, 61); xQ = K(Q)
         sage: KummerLineIsogeny(xP)
-        TODO
+        Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
 
     It can also be constructed with the ``isogeny`` method from a Kummer line::
 
         sage: K.isogeny(xP)
-        TODO
+        Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
     """
 
     def __init__(self, kernel):
@@ -1290,7 +1332,7 @@ class KummerLineIsogeny(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
-            TODO
+            Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         # Ensure the kernel is the right type
@@ -1377,7 +1419,7 @@ class KummerLineIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.__repr__()
-            TODO
+            'Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101'
         """
         return (
             f"Isogeny of degree {self._degree} from {self._domain} to {self._codomain}"
