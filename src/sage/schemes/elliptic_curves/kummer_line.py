@@ -40,7 +40,7 @@ AUTHORS:
 #
 # ::
 #
-# TODO KummerPoint examples, as well as many more usage (see integer for instance)
+# TODO KummerLinePoint examples, as well as many more usage (see integer for instance)
 # TODO <Lots and lots of examples>
 
 
@@ -172,7 +172,7 @@ class KummerLine(SageObject):
             sage: K([95]) == K(P)
             True
         """
-        return KummerPoint(self, coords)
+        return KummerLinePoint(self, coords)
 
     def base_ring(self):
         r"""
@@ -296,16 +296,16 @@ class KummerLine(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
-            sage: KummerIsogeny(xP)
+            sage: KummerLineIsogeny(xP)
             Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         if xP._parent != self:
             raise ValueError("point is not on the Kummer line")
-        return KummerIsogeny(xP)
+        return KummerLineIsogeny(xP)
 
 
-class KummerPoint(SageObject):
+class KummerLinePoint(SageObject):
     r"""
     Kummer point on a Kummer line.
 
@@ -317,12 +317,12 @@ class KummerPoint(SageObject):
 
     A Kummer point can be constructed from `XZ`-coordinates::
 
-        sage: xP = KummerPoint(K, [95, 1]); xP
+        sage: xP = KummerLinePoint(K, [95, 1]); xP
         (95 : 1)
 
     Or, it can be constructed from a point on the elliptic curve::
 
-        sage: xP = KummerPoint(K, P); xP
+        sage: xP = KummerLinePoint(K, P); xP
         (95 : 1)
 
     The point can also be created by calling the Kummer line::
@@ -349,21 +349,21 @@ class KummerPoint(SageObject):
 
         A Kummer point can be constructed from `XZ`-coordinates::
 
-            sage: xP = KummerPoint(K, [95, 1]); xP
+            sage: xP = KummerLinePoint(K, [95, 1]); xP
             (95 : 1)
 
         Z-coordinate is optional, assumed to be 1 then::
 
-            sage: KummerPoint(K, 95) == KummerPoint(K, [95, 1])
+            sage: KummerLinePoint(K, 95) == KummerLinePoint(K, [95, 1])
             True
-            sage: KummerPoint(K, 95) == KummerPoint(K, [95, 2])
+            sage: KummerLinePoint(K, 95) == KummerLinePoint(K, [95, 2])
             False
-            sage: KummerPoint(K, 95) == KummerPoint(K, [95])
+            sage: KummerLinePoint(K, 95) == KummerLinePoint(K, [95])
             True
 
         Or, it can be constructed from a point on the elliptic curve::
 
-            sage: xP = KummerPoint(K, P); xP
+            sage: xP = KummerLinePoint(K, P); xP
             (95 : 1)
         """
         # Ensure the parent is the right type
@@ -478,7 +478,7 @@ class KummerPoint(SageObject):
             sage: xP.parent() == xQ.parent()
             False
         """
-        if not isinstance(other, KummerPoint):
+        if not isinstance(other, KummerLinePoint):
             raise ValueError("can only compare equality between two Kummer points")
 
         if self.parent() != other.parent():
@@ -1157,7 +1157,7 @@ class KummerPoint(SageObject):
         return
 
 
-class KummerIsogeny(SageObject):
+class KummerLineIsogeny(SageObject):
     r"""
     Isogeny between Kummer lines using Vélu formulas.
 
@@ -1170,7 +1170,7 @@ class KummerIsogeny(SageObject):
         sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
         sage: P = E(76, 65); xP = K(P)
         sage: Q = E(49, 61); xQ = K(Q)
-        sage: KummerIsogeny(xP)
+        sage: KummerLineIsogeny(xP)
         Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
 
     It can also be constructed with the ``isogeny`` method from a Kummer line::
@@ -1188,12 +1188,12 @@ class KummerIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
-            sage: KummerIsogeny(xP)
+            sage: KummerLineIsogeny(xP)
             Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         # Ensure the kernel is the right type
-        if not isinstance(kernel, KummerPoint):
+        if not isinstance(kernel, KummerLinePoint):
             raise TypeError("kernel is not a Kummer point")
 
         self._kernel = kernel
