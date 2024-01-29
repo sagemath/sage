@@ -733,7 +733,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     def __reduce__(self):
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._names, ), {}))
-    
+
     def _repr_(self):
         """
         TESTS::
