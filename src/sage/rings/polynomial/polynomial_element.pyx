@@ -2108,8 +2108,8 @@ cdef class Polynomial(CommutativePolynomial):
                 continue
             T = T.monic()
 
-            # Need to handle odd and even charcteristic separately
-            if q % 2 != 0:
+            # Need to handle odd and even characteristic separately
+            if q % 2:
                 h = self.gcd(pow(T, (q-1)//2, self)-1)
             else:
                 # Compute the trace of T with field of order 2^k
@@ -2117,7 +2117,7 @@ cdef class Polynomial(CommutativePolynomial):
                 # We use repeated squaring to avoid redundent multiplications
                 C, TT = T, T
                 for _ in range(degree * self.base_ring().degree() - 1):
-                    TT = pow(TT, 2, self)
+                    TT = TT * TT % f
                     C += TT
                 h = self.gcd(C)
 
@@ -2204,7 +2204,7 @@ cdef class Polynomial(CommutativePolynomial):
         #
         # 1. Compute the squarefree decomposition of the polynomial `self`
         # 2. For each squarefree polynomial find the distinct degree `d`
-        #    factorison, F, which is the product of degree `d` polynomials
+        #    factorisation, F, which is the product of degree `d` polynomials
         #    dividing the squarefree polynomial
         # 3. Using Cantor-Zassenhaus splitting with degree `d` to find a
         #    single linear factor and return the root.
