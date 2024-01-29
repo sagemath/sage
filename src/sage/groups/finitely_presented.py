@@ -818,6 +818,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         Implement pickling.
 
         TESTS::
+
             sage: F.<a,b> = FreeGroup()
             sage: a.__reduce__()
             (Free Group on generators {a, b}, ((1,),))
@@ -1408,7 +1409,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             f2 = hom_simply.Image(f1)
             L = f2.UnderlyingElement().LetterRepAssocWord()
             images.append(ab([int(j) for j in L]))
-        return self.hom(codomain=ab, im_gens=images)
+        return self.hom(codomain=ab, im_gens=images, check=False)
 
     @cached_method
     def abelianization_to_algebra(self, ring=QQ):
@@ -1481,12 +1482,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: H = G / [a*b*c, a*b^2, c*b/c^2]
             sage: I = H.simplification_isomorphism()
             sage: I
-            Generic morphism:
+            Group morphism:
               From: Finitely presented group < a, b, c | a*b*c, a*b^2, c*b*c^-2 >
               To:   Finitely presented group < b |  >
-              Defn: a |--> b^-2
-                    b |--> b
-                    c |--> b
             sage: I(a)
             b^-2
             sage: I(b)
@@ -1498,21 +1496,26 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
             sage: F = FreeGroup(1)
             sage: G = F.quotient([F.0])
-            sage: G.simplification_isomorphism()
-            Generic morphism:
+            sage: h = G.simplification_isomorphism(); h
+            Group morphism:
               From: Finitely presented group < x | x >
               To:   Finitely presented group <  |  >
-              Defn: x |--> 1
+            sage: h(G.gen(0))
+            1
 
         ALGORITHM:
 
         Uses GAP.
         """
         II = self.gap().IsomorphismSimplifiedFpGroup()
-        codomain = II.Range().sage()
-        phi = lambda x: codomain(II.ImageElm(x.gap()))
-        HS = self.Hom(codomain)
-        return GroupMorphismWithGensImages(HS, phi)
+        cod = II.Range().sage()
+        phi = [cod(II.ImageElm(x)) for x in self.gap().GeneratorsOfGroup()]
+        return self.hom(codomain=cod, im_gens=phi, check=False)
+        # II = self.gap().IsomorphismSimplifiedFpGroup()
+        # codomain = II.Range().sage()
+        # phi = lambda x: codomain(II.ImageElm(x.gap()))
+        # HS = self.Hom(codomain)
+        # return GroupMorphismWithGensImages(HS, phi)
 
     def simplified(self):
         """
@@ -1588,48 +1591,44 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: F = FreeGroup(3)
             sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
             sage: H = AlternatingGroup(3)
-            sage: G.epimorphisms(H)
-            [Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
-               To:   Alternating group of order 3!/2 as a permutation group
-               Defn: x0 |--> ()
-                     x1 |--> (1,3,2)
-                     x2 |--> (1,2,3),
-             Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
-               To:   Alternating group of order 3!/2 as a permutation group
-               Defn: x0 |--> (1,3,2)
-                     x1 |--> ()
-                     x2 |--> (1,2,3),
-             Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
-               To:   Alternating group of order 3!/2 as a permutation group
-               Defn: x0 |--> (1,3,2)
-                     x1 |--> (1,2,3)
-                     x2 |--> (),
-             Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
-               To:   Alternating group of order 3!/2 as a permutation group
-               Defn: x0 |--> (1,2,3)
-                     x1 |--> (1,2,3)
-                     x2 |--> (1,2,3)]
+            sage: for quo in G.epimorphisms(H):
+            ....:   for a in G.gens():
+            ....:       print(a, "|-->", quo(a))
+            ....:   print("-----")
+            x0 |--> ()
+            x1 |--> (1,3,2)
+            x2 |--> (1,2,3)
+            -----
+            x0 |--> (1,3,2)
+            x1 |--> ()
+            x2 |--> (1,2,3)
+            -----
+            x0 |--> (1,3,2)
+            x1 |--> (1,2,3)
+            x2 |--> ()
+            -----
+            x0 |--> (1,2,3)
+            x1 |--> (1,2,3)
+            x2 |--> (1,2,3)
+            -----
 
         ALGORITHM:
 
         Uses libgap's GQuotients function.
         """
-        from sage.misc.misc_c import prod
-        HomSpace = self.Hom(H)
+        # from sage.misc.misc_c import prod
+        # HomSpace = self.Hom(H)
         Gg = libgap(self)
         Hg = libgap(H)
         gquotients = Gg.GQuotients(Hg)
         res = []
         # the following closure is needed to attach a specific value of quo to
         # each function in the different morphisms
-        fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i) for i in a.Tietze())))
+        # fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i) for i in a.Tietze())))
         for quo in gquotients:
-            tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
-            fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))
+            # tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
+            # fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))
+            fhom = self.hom(codomain=H, im_gens=[H(quo.ImageElm(a.gap())) for a in self.gens()])
             res.append(fhom)
         return res
 

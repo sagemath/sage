@@ -1400,11 +1400,9 @@ cdef class GapElement(RingElement):
             self._set_compare_by_id()
             names = tuple(str(g) for g in self.FreeGroupOfFpGroup().GeneratorsOfGroup())
             F = FreeGroup(names)
-
             relations = tuple(F(rel.LetterRepAssocWord().sage())
                               for rel in self.RelatorsOfFpGroup())
             return FinitelyPresentedGroup(F, relations, libgap_fpgroup=self)
-
 
         elif self.IsList():
             # May be a list-like collection of some other type of GapElements

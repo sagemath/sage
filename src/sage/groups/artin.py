@@ -474,7 +474,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         self._names = names
         self._coxeter_matrix = coxeter_matrix
-        self._coxeter_group = CoxeterGroup(coxeter_matrix)
+        self._coxeter_group = CoxeterGroup(self._coxeter_matrix)
         free_group = FreeGroup(names)
         rels = []
         # Generate the relations based on the Coxeter graph
