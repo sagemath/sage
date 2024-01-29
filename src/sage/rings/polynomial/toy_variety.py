@@ -169,6 +169,13 @@ def is_linearly_dependent(polys) -> bool:
         False
         sage: is_linearly_dependent([])
         False
+        sage: R.<x> = PolynomialRing(QQ)
+        sage: B = [x^147 + x^99,
+        ....:      2*x^123 + x^75,
+        ....:      x^147 + 2*x^123 + 2*x^75,
+        ....:      2*x^147 + x^99 + x^75]
+        sage: is_linearly_dependent(B)
+        True
     """
     if not polys:
         return False
