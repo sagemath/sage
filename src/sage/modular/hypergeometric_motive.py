@@ -982,6 +982,30 @@ class HypergeometricData():
         beta_twist = self.twist()._beta
         return self.degree() % 2 == 0 and self._alpha == beta_twist
 
+    def lfunction(self, t, prec=53):
+        """
+        Return the L-function of ``self``.
+
+        The result is a wrapper around a PARI L-function.
+
+        INPUT:
+
+        - ``prec`` -- precision (default 53)
+
+        EXAMPLES::
+
+            sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
+            sage: H = Hyp(cyclotomic=([3],[4]))
+            sage: L = H.lfunction(1/64); L
+            PARI L-function associated to Hypergeometric data for [1/3, 2/3] and [1/4, 3/4]
+            sage: L(4)
+            0.997734256321692
+        """
+        from sage.lfunctions.pari import lfun_hgm, LFunction
+        Z = LFunction(lfun_hgm(self, t), prec=prec)
+        Z.rename('PARI L-function associated to %s' % self)
+        return Z
+
     def canonical_scheme(self, t=None):
         """
         Return the canonical scheme.
