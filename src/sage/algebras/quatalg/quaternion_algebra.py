@@ -56,7 +56,7 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.constructor import diagonal_matrix, matrix, block_matrix
+from sage.matrix.constructor import diagonal_matrix, matrix
 from sage.structure.sequence import Sequence
 from sage.structure.element import is_RingElement
 from sage.structure.factory import UniqueFactory
