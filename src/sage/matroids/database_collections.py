@@ -29,13 +29,17 @@ def AllMatroids(n, r=None, type="all"):
 
     INPUT:
 
-    - ``n`` -- an integer; the number of elements of the matroids
-    - ``r`` -- an integer (optional, `0 \le r \le n`); the rank of the
-      matroids. If the type is set to ``unorientable``, then the rank must be
-      specified.
-    - ``type`` -- a string (default: ``all``); the type of the matroids.
-      Either ``all``, ``unorientable``, or any other type for which there
-      exists an ``is_type()`` attribute.
+    - ``n`` -- integer; the number of elements of the matroids
+    - ``r`` -- integer (optional); the rank of the matroids; `0 \le r \le n`
+    - ``type`` -- string (default: ``'all'``); the type of the matroids; must
+      be one of the following:
+
+      * ``'all'`` -- all matroids; available: (n=0-9), (n=0-12, r=0-2),
+        (n=0-11, r=3)
+      * ``'unorientable'`` -- all unorientable matroids; the rank ``r`` must be
+        specified; available: (n=7-11, r=3), (n=7-9, r=4)
+      * any other type for which there exists an ``is_type`` method;
+        availability same as for ``'all'``
 
     OUTPUT: an iterator over matroids
 
@@ -80,18 +84,17 @@ def AllMatroids(n, r=None, type="all"):
         ....:     M
         Traceback (most recent call last):
         ...
-        FileNotFoundError: (n=10, r=4, type="all") is not available in the database
+        ValueError: (n=10, r=4, type="all") is not available in the database
         sage: for M in matroids.AllMatroids(12, 3, "unorientable"):
         ....:     M
         Traceback (most recent call last):
         ...
-        FileNotFoundError: (n=12, r=3, type="unorientable") is not available in the database
+        ValueError: (n=12, r=3, type="unorientable") is not available in the database
         sage: for M in matroids.AllMatroids(8, type="unorientable"):
         ....:     M
         Traceback (most recent call last):
         ...
         ValueError: The rank needs to be specified for type "unorientable".
-        Available: (n=7-11, r=3), (n=7-9, r=4).
         sage: for M in matroids.AllMatroids(6, type="nice"):
         ....:     M
         Traceback (most recent call last):
@@ -171,10 +174,7 @@ def AllMatroids(n, r=None, type="all"):
             )
 
     if r is None and type == "unorientable":
-        raise ValueError(
-            "The rank needs to be specified for type \"%s\". " % type +
-            "Available: (n=7-11, r=3), (n=7-9, r=4)."
-        )
+        raise ValueError("The rank needs to be specified for type \"%s\". " % type)
 
     if r is None:
         rng = range(0, n+1)
@@ -202,7 +202,7 @@ def AllMatroids(n, r=None, type="all"):
             try:
                 fin = open(file, "r")
             except FileNotFoundError:
-                raise FileNotFoundError(
+                raise ValueError(
                     "(n=%s, r=%s, type=\"%s\")" % (n, r, type)
                     + " is not available in the database"
                 )
