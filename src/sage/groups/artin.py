@@ -472,6 +472,8 @@ class ArtinGroup(FinitelyPresentedGroup):
             sage: A = ArtinGroup(['B',3], ['x','y','z'])
             sage: TestSuite(A).run()
         """
+        self._names = names
+        self._coxeter_matrix = coxeter_matrix
         self._coxeter_group = CoxeterGroup(coxeter_matrix)
         free_group = FreeGroup(names)
         rels = []
@@ -487,6 +489,10 @@ class ArtinGroup(FinitelyPresentedGroup):
                     elt[ind] = -elt[ind]
                 rels.append(free_group(elt))
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels))
+
+    def __reduce__(self):
+        from sage.structure.unique_representation import unreduce
+        return (unreduce, (self.__class__.__base__, (self._coxeter_matrix, self._names), {}))
 
     def _repr_(self):
         """

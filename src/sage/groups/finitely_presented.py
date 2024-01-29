@@ -783,7 +783,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
     """
     Element = FinitelyPresentedGroupElement
 
-    def __init__(self, free_group, relations, category=None):
+    def __init__(self, free_group, relations, category=None, libgap_fpgroup=None):
         """
         The Python constructor.
 
@@ -808,23 +808,23 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         self._free_group = free_group
         self._relations = relations
         self._assign_names(free_group.variable_names())
-        parent_gap = free_group.gap() / libgap([rel.gap() for rel in relations])
-        ParentLibGAP.__init__(self, parent_gap)
+        if libgap_fpgroup is None:
+            libgap_fpgroup = free_group.gap() / libgap([rel.gap() for rel in relations])
+        ParentLibGAP.__init__(self, libgap_fpgroup)
         Group.__init__(self, category=category)
 
-    # def __reduce__(self):
-    #     """
-    #     Implement pickling.
-    #
-    #     TESTS::
-    #
-    #         sage: F.<a,b> = FreeGroup()
-    #         sage: a.__reduce__()
-    #         (Free Group on generators {a, b}, ((1,),))
-    #         sage: (a*b*a^-1).__reduce__()
-    #         (Free Group on generators {a, b}, ((1, 2, -1),))
-    #     """
-    #     return (FinitelyPresentedGroup, (self._free_group, self._relations))
+    def __reduce__(self):
+        """
+        Implement pickling.
+        TESTS::
+            sage: F.<a,b> = FreeGroup()
+            sage: a.__reduce__()
+            (Free Group on generators {a, b}, ((1,),))
+            sage: (a*b*a^-1).__reduce__()
+            (Free Group on generators {a, b}, ((1, 2, -1),))
+        """
+        from sage.structure.unique_representation import unreduce
+        return (unreduce, (self.__class__.__base__, (self._free_group, self._relations), {}))
 
     def _repr_(self):
         """

@@ -684,54 +684,6 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
     return FreeGroup_class(names)
 
 
-def wrap_FreeGroup(libgap_free_group):
-    """
-    Wrap a LibGAP free group.
-
-    This function changes the comparison method of
-    ``libgap_free_group`` to comparison by Python ``id``. If you want
-    to put the LibGAP free group into a container (set, dict) then you
-    should understand the implications of
-    :meth:`~sage.libs.gap.element.GapElement._set_compare_by_id`. To
-    be safe, it is recommended that you just work with the resulting
-    Sage :class:`FreeGroup_class`.
-
-    INPUT:
-
-    - ``libgap_free_group`` -- a LibGAP free group.
-
-    OUTPUT:
-
-    A Sage :class:`FreeGroup_class`.
-
-    EXAMPLES:
-
-    First construct a LibGAP free group::
-
-        sage: F = libgap.FreeGroup(['a', 'b'])
-        sage: type(F)
-        <class 'sage.libs.gap.element.GapElement'>
-
-    Now wrap it::
-
-        sage: from sage.groups.free_group import wrap_FreeGroup
-        sage: wrap_FreeGroup(F)
-        Free Group on generators {a, b}
-
-    TESTS:
-
-    Check that we can do it twice (see :trac:`12339`) ::
-
-        sage: G = libgap.FreeGroup(['a', 'b'])
-        sage: wrap_FreeGroup(G)
-        Free Group on generators {a, b}
-    """
-    assert libgap_free_group.IsFreeGroup()
-    libgap_free_group._set_compare_by_id()
-    names = tuple(str(g) for g in libgap_free_group.GeneratorsOfGroup())
-    return FreeGroup_class(names)
-
-
 class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's FreeGroup
@@ -747,7 +699,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
     Element = FreeGroupElement
 
-    def __init__(self, generator_names):
+    def __init__(self, generator_names, libgap_free_group=None):
         """
         Python constructor.
 
@@ -755,6 +707,10 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         - ``generator_names`` -- a tuple of strings. The names of the
           generators.
+
+        - ``libgap_free_group`` -- a LibGAP free group or ``None``
+          (default). The LibGAP free group to wrap. If ``None``, a
+          suitable group will be constructed.
 
         TESTS::
 
@@ -765,7 +721,8 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             ('a', 'b')
         """
         self._assign_names(generator_names)
-        libgap_free_group = libgap.FreeGroup(generator_names)
+        if libgap_free_group is None:
+            libgap_free_group = libgap.FreeGroup(generator_names)
         ParentLibGAP.__init__(self, libgap_free_group)
         if not generator_names:
             cat = Groups().Finite()
@@ -773,30 +730,9 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
 
-    # def __reduce__(self):
-    #     """
-    #     Implement pickling.
-    #
-    #     TESTS::
-    #
-    #         sage: F.<a,b> = FreeGroup()
-    #         sage: F.__reduce__()[1]
-    #         (<class 'sage.groups.free_group.FreeGroup_class'>,
-    #          (('a', 'b'),), {})
-    #         sage: from sage.groups.free_group import wrap_FreeGroup
-    #         sage: F1 = wrap_FreeGroup(libgap(F))
-    #         sage: F1.__reduce__()[1]
-    #         (<class 'sage.groups.free_group.FreeGroup_class'>,
-    #         (('a', 'b'),), {})
-    #         sage: save(F1,'F')
-    #         sage: F2 = load('F.sobj')
-    #         sage: F == F2
-    #         True
-    #         sage: F1 == F2
-    #         True
-    #     """
-    #     from sage.structure.unique_representation import unreduce
-    #     return (unreduce, (FreeGroup_class, (self._names,), {}))
+    def __reduce__(self):
+        from sage.structure.unique_representation import unreduce
+        return (unreduce, (self.__class__.__base__, (self._names, ), {}))
 
     def _repr_(self):
         """
