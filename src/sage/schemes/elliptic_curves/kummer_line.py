@@ -297,7 +297,9 @@ class KummerLine(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
-            Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
+            Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         if xP._parent != self:
@@ -1171,12 +1173,16 @@ class KummerLineIsogeny(SageObject):
         sage: P = E(76, 65); xP = K(P)
         sage: Q = E(49, 61); xQ = K(Q)
         sage: KummerLineIsogeny(xP)
-        Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
+        Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
 
     It can also be constructed with the ``isogeny`` method from a Kummer line::
 
         sage: K.isogeny(xP)
-        Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
+        Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
     """
 
     def __init__(self, kernel):
@@ -1189,7 +1195,9 @@ class KummerLineIsogeny(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
-            Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
+            Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         # Ensure the kernel is the right type
@@ -1269,9 +1277,11 @@ class KummerLineIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.__repr__()
-            Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
+            Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
-        return f"Isogeny of degree {self._degree} with kernel {self._kernel} from {self._domain} to {self._codomain}"
+        return f"Isogeny between Kummer lines of degree {self._degree} with kernel {self._kernel}\nDomain: {self._domain}\nCodomain: {self._codomain}"
 
     def __call__(self, xP):
         r"""
