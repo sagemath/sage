@@ -2062,26 +2062,26 @@ cdef class Polynomial(CommutativePolynomial):
         R, x = self.parent().objgen()
 
         # Initialise values
-        d = 0
         v = self
         w = x
+        d = 0
+        e = v.degree()
 
         # Iterate over all possible degrees with degree
-        while e <= 2*(d + 1):
-            e = v.degree()
+        while 2*(d + 1) <= e:
             d = d + 1
             w = pow(w, q, v)
 
             ad = v.gcd(w - x)
+            yield (ad, d)
 
             if not ad.is_one():
                 v = v // ad
                 w = w % v
 
-            yield (ad, d)
+            e = v.degree()
 
         # Last case, v itself might be irreducible
-        e = v.degree()
         if e > 0:
             yield (v, e)
         return
@@ -2115,7 +2115,7 @@ cdef class Polynomial(CommutativePolynomial):
                 # We use repeated squaring to avoid redundent multiplications
                 C, TT = T, T
                 for _ in range(degree * self.base_ring().degree() - 1):
-                    TT = TT * TT % f
+                    TT = TT * TT % self
                     C += TT
                 h = self.gcd(C)
 
