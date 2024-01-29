@@ -2055,7 +2055,7 @@ cdef class Polynomial(CommutativePolynomial):
         Creates an iterator for all valid degrees `d`, and return
         tuples of the form `(a_d, d)` for a polynomial `a_d` the
         product of irreducible polynomials of degree `d`
-        
+
         Assumes that self is squarefree.
         """
         q = self.base_ring().order() # p^k
@@ -2071,7 +2071,7 @@ cdef class Polynomial(CommutativePolynomial):
             e = v.degree()
             d = d + 1
             w = pow(w, q, v)
-            
+
             ad = v.gcd(w - x)
 
             if not ad.is_one():
@@ -2090,8 +2090,8 @@ cdef class Polynomial(CommutativePolynomial):
         """
         Helper function for any_irreducible_factor which computes
         a factor from a polynomial of the form `self = prod g_i(x)`
-        with all `g_i(x)` having the same degree. Uses the Cantor 
-        Zassenhaus splitting method. 
+        with all `g_i(x)` having the same degree. Uses the Cantor
+        Zassenhaus splitting method.
         """
         R = self.parent()
         q = self.base_ring().order()
@@ -2100,7 +2100,7 @@ cdef class Polynomial(CommutativePolynomial):
         if self.degree() == degree:
             return self
 
-        # We expect to succeed with greater than 1/2 probability, 
+        # We expect to succeed with greater than 1/2 probability,
         #so if we try 1000 times and fail, there's a bug somewhere.
         for _ in range(1000):
             T = R.random_element(2*degree + 1)
@@ -2119,7 +2119,7 @@ cdef class Polynomial(CommutativePolynomial):
                 for _ in range(degree * self.base_ring().degree() - 1):
                     TT = pow(TT, 2, self)
                     C += TT
-                h = self.gcd(C)  
+                h = self.gcd(C)
 
             hd = h.degree()
 
@@ -2136,7 +2136,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         # If you are reaching this error, chances are there's a bug in the code.
         raise AssertionError(f"no splitting of degree {degree} found for {self}")
-    
+
     def _any_irreducible_factor_squarefree(self, degree=None):
         """
         TODO
@@ -2180,13 +2180,13 @@ cdef class Polynomial(CommutativePolynomial):
             degree = ZZ(degree)
             if degree < 1:
                 raise ValueError(f"{degree = } must be positive")
-            
+
         if assume_distinct_deg and degree is None:
             raise ValueError("degree must be known if distinct degree factorisation is assumed")
 
         # When not working over a finite field, do the simple thing of factoring.
-        # If degree is none, we return the first factor, otherwise we iterate 
-        # through and look for a polynomial with the desired degree. 
+        # If degree is none, we return the first factor, otherwise we iterate
+        # through and look for a polynomial with the desired degree.
         from sage.categories.finite_fields import FiniteFields
         if self.base_ring() not in FiniteFields():
             try:
@@ -2209,7 +2209,7 @@ cdef class Polynomial(CommutativePolynomial):
         # 3. Using Cantor-Zassenhaus splitting with degree `d` to find a
         #    single linear factor and return the root.
         #
-        # When degree is None, we check all degrees smaller than the degree of the 
+        # When degree is None, we check all degrees smaller than the degree of the
         # squarefree polynomial, otherwise we work with only a single degree set by
         # the user.
 
@@ -2232,7 +2232,7 @@ cdef class Polynomial(CommutativePolynomial):
                 return poly._any_irreducible_factor_squarefree(degree)
             except ValueError:
                 pass
-        
+
         # If degree has been set, there could just be no factor of the desired degree
         if degree:
             raise ValueError(f"polynomial {self} has no irreducible factor of degree {degree}")
@@ -2360,8 +2360,8 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ValueError: no roots (non-field) x^2 + 1
         """
-        # When not working over a finite field, do the simple 
-        # thing of factoring for roots and picking the first 
+        # When not working over a finite field, do the simple
+        # thing of factoring for roots and picking the first
         # root. If none available, raise an error.
         from sage.categories.finite_fields import FiniteFields
         if not self.base_ring() in FiniteFields():
@@ -2369,7 +2369,7 @@ cdef class Polynomial(CommutativePolynomial):
             if rs:
                 return rs[0]
             raise ValueError(f"polynomial {self} has no roots")
-        
+
         # Look for a linear factor, if there is none, raise a ValueError
         if degree is None:
             try:
