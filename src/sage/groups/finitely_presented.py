@@ -816,6 +816,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
     def __reduce__(self):
         """
         Implement pickling.
+
         TESTS::
             sage: F.<a,b> = FreeGroup()
             sage: a.__reduce__()
