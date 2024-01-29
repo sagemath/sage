@@ -808,11 +808,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         self._free_group = free_group
         self._relations = relations
         self._assign_names(free_group.variable_names())
-        if libgap_fpgroup is not None:
-            parent_gap = libgap_fpgroup
-        else:
-            parent_gap = free_group.gap() / libgap([rel.gap() for rel in relations])
-        ParentLibGAP.__init__(self, parent_gap)
+        if libgap_fpgroup is None:
+            libgap_fpgroup = free_group.gap() / libgap([rel.gap() for rel in relations])
+        ParentLibGAP.__init__(self, libgap_fpgroup)
         Group.__init__(self, category=category)
 
     def __reduce__(self):
