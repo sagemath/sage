@@ -10,12 +10,12 @@ We construct a Kummer line over an already defined elliptic curve in short Weier
 
     sage: E = EllipticCurve(GF(101), [2, 3])
     sage: KummerLine(E)
-    Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+    Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
 
 We can also give the curve coefficients directly with a base ring::
 
     sage: KummerLine(QQ, [4, 5/6])
-    Kummer line of the elliptic curve y^2 = x^3 + 4*x + 5/6 over Rational Field
+    Kummer line of Elliptic curve defined by y^2 = x^3 + 4*x + 5/6 over Rational Field
 
 AUTHORS:
 
@@ -62,7 +62,7 @@ class KummerLine(SageObject):
 
         sage: E = EllipticCurve(GF(101), [2, 3])
         sage: K = KummerLine(E); K
-        Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
     """
 
     def __init__(self, curve):
@@ -77,7 +77,7 @@ class KummerLine(SageObject):
 
             sage: E = EllipticCurve(GF(101), [2, 3])
             sage: K = KummerLine(E); K
-            Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
 
         if not isinstance(curve, EllipticCurve_generic):
@@ -97,6 +97,8 @@ class KummerLine(SageObject):
         # Initialize variables
         self._a = self._base_ring(a)
         self._b = self._base_ring(b)
+
+        self._montgomery = False
 
     def __eq__(self, other):
         r"""
@@ -135,9 +137,9 @@ class KummerLine(SageObject):
 
             sage: E = EllipticCurve(GF(101), [2, 3])
             sage: K = KummerLine(E); K.__repr__()
-            'Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101'
+            'Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101'
         """
-        return f"Kummer line of the elliptic curve y^2 = x^3 + {self._a}*x + {self._b} over {self.base_ring()}"
+        return f"Kummer line of {self._curve}"
 
     def __call__(self, coords):
         r"""
@@ -222,27 +224,17 @@ class KummerLine(SageObject):
         """
         return self._curve
 
-    # TODO will be useful for Montgomery but not at the moment
-    # @cached_method
-    # def short_weierstrass_curve(self):
-    #     r"""
-    #     Return the short Weierstrass curve associated with the Kummer line.
-    #
-    #     EXAMPLES::
-    #
-    #         sage: E = EllipticCurve(GF(101), [2, 3])
-    #         sage: K = KummerLine(E)
-    #         sage: K.short_weierstrass_curve() == E
-    #         True
-    #
-    #         sage: K = KummerLine(QQ, [3, 4/5])
-    #         sage: K.short_weierstreass_curve()
-    #         Elliptic Curve defined by y^2 = x^3 + 3*x + 4/5 over Rational Field
-    #     """
-    #
-    #     F = self.base_ring()
-    #     a, b = self.extract_constants()
-    #     return EllipticCurve(F, [a, b])
+    def is_montgomery(self):
+        r"""
+        Return if the associated curve is a Montgomery one or not.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E); K.is_montgomery()
+            False
+        """
+        return self._montgomery
 
     @cached_method
     def j_invariant(self):
@@ -298,8 +290,8 @@ class KummerLine(SageObject):
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
             Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-            Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-            Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         if xP._parent != self:
@@ -385,7 +377,9 @@ class KummerLinePoint(SageObject):
                 coords = (R(1), R(0))
             else:
                 a, b = parent.extract_constants()
-                assert coords.curve().a_invariants() == (0, 0, 0, a, b)
+                # assert coords.curve().a_invariants() == (0, 0, 0, a, b)
+                # Done this way to handle Montgomery curves
+                assert coords.curve().is_isomorphic(EllipticCurve(R, [a, b]))
                 coords = coords[0], coords[2]
 
         # Construct from X coordinate only
@@ -557,7 +551,7 @@ class KummerLinePoint(SageObject):
             sage: P = E(95, 49)
             sage: K = KummerLine(E)
             sage: xP = K(P); xP.parent()
-            Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
         return self._parent
 
@@ -1002,21 +996,16 @@ class KummerLinePoint(SageObject):
 
         # Compute necessary constants
         a, b = self._parent.extract_constants()
-        # TODO rename b2
         b2 = b + b
         b4 = b2 + b2
 
-        # TODO may have to be reorganized after testing the isogeny
         # Initialise for loop
         XP, ZP = self.XZ()
         R = self._parent.base_ring()
         X0, Z0 = R(1), R(0)
         X1, Z1 = XP, ZP
-        # X0, Z0 = XP, ZP
-        # X1, Z1 = self.xDBL(XP, ZP, a, b2, b4)
 
         # Montgomery ladder
-        # for bit in bin(m)[3:]:
         for bit in bin(m)[2:]:
             if bit == "0":
                 X0, Z0, X1, Z1 = self.xDBLADD(X0, Z0, X1, Z1, XP, ZP, a, b4)
@@ -1174,15 +1163,15 @@ class KummerLineIsogeny(SageObject):
         sage: Q = E(49, 61); xQ = K(Q)
         sage: KummerLineIsogeny(xP)
         Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-        Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-        Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
 
     It can also be constructed with the ``isogeny`` method from a Kummer line::
 
         sage: K.isogeny(xP)
         Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-        Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-        Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
     """
 
     def __init__(self, kernel):
@@ -1196,8 +1185,8 @@ class KummerLineIsogeny(SageObject):
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
             Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-            Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-            Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         # Ensure the kernel is the right type
@@ -1238,7 +1227,7 @@ class KummerLineIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.domain()
-            Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
         return self._domain
 
@@ -1251,7 +1240,7 @@ class KummerLineIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.codomain()
-            Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
         return self._codomain
 
@@ -1278,8 +1267,8 @@ class KummerLineIsogeny(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.__repr__()
             Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-            Domain: Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-            Codomain: Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
         return f"Isogeny between Kummer lines of degree {self._degree} with kernel {self._kernel}\nDomain: {self._domain}\nCodomain: {self._codomain}"
 
