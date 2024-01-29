@@ -2171,18 +2171,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         raise ValueError(f"no irreducible factor could be computed from {self}")
 
-    def any_irreducible_factor(self, ring=None, degree=None, assume_squarefree=False, assume_distinct_deg=False):
+    def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_distinct_deg=False):
         """
         TODO: description with doctests and tests.
         """
-        # If the ring is not None, then first change ring and run the algorithm again
-        if ring is not None:
-            try:
-                f = self.change_ring(ring)
-                return f.any_irreducible_factor(None, degree, assume_squarefree, assume_distinct_deg)
-            except (TypeError, ValueError):
-                raise TypeError(f"unable to coerce from {self.base_ring()} to {ring}")
-
         # Make sure the user inputted something reasonable for degree
         if degree is not None:
             degree = ZZ(degree)
@@ -2277,26 +2269,30 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.factor()
             (7) * (x + 9) * (x^6 + 10*x^4 + 6*x^3 + 5*x^2 + 2*x + 2)
             sage: f = x^6 + 10*x^4 + 6*x^3 + 5*x^2 + 2*x + 2
-            sage: f.any_root(GF(11^6, 'a'))
-            a^5 + a^4 + 7*a^3 + 2*a^2 + 10*a
-            sage: sorted(f.roots(GF(11^6, 'a')))
-            [(10*a^5 + 2*a^4 + 8*a^3 + 9*a^2 + a, 1),
-             (a^5 + a^4 + 7*a^3 + 2*a^2 + 10*a, 1),
-             (9*a^5 + 5*a^4 + 10*a^3 + 8*a^2 + 3*a + 1, 1),
-             (2*a^5 + 8*a^4 + 3*a^3 + 6*a + 2, 1),
-             (a^5 + 3*a^4 + 8*a^3 + 2*a^2 + 3*a + 4, 1),
-             (10*a^5 + 3*a^4 + 8*a^3 + a^2 + 10*a + 4, 1)]
-            sage: f.any_root(GF(11^6, 'a'))
-            a^5 + a^4 + 7*a^3 + 2*a^2 + 10*a
+            sage: root = f.any_root(GF(11^6, 'a'))
+            sage: roots = sorted(f.roots(GF(11^6, 'a'), multiplicities=False))
+            sage: roots
+            [10*a^5 + 2*a^4 + 8*a^3 + 9*a^2 + a,
+            a^5 + a^4 + 7*a^3 + 2*a^2 + 10*a,
+            9*a^5 + 5*a^4 + 10*a^3 + 8*a^2 + 3*a + 1,
+            2*a^5 + 8*a^4 + 3*a^3 + 6*a + 2,
+            a^5 + 3*a^4 + 8*a^3 + 2*a^2 + 3*a + 4,
+            10*a^5 + 3*a^4 + 8*a^3 + a^2 + 10*a + 4]
+            sage: root in roots
+            True
 
             sage: # needs sage.rings.finite_rings
-            sage: g = (x-1)*(x^2 + 3*x + 9) * (x^5 + 5*x^4 + 8*x^3 + 5*x^2 + 3*x + 5)
+            sage: g = (x-1) * (x^2 + 3*x + 9) * (x^5 + 5*x^4 + 8*x^3 + 5*x^2 + 3*x + 5)
             sage: g.any_root(ring=GF(11^10, 'b'), degree=1)
             1
-            sage: g.any_root(ring=GF(11^10, 'b'), degree=2)
-            5*b^9 + 4*b^7 + 4*b^6 + 8*b^5 + 10*b^2 + 10*b + 5
-            sage: g.any_root(ring=GF(11^10, 'b'), degree=5)
-            5*b^9 + b^8 + 3*b^7 + 2*b^6 + b^5 + 4*b^4 + 3*b^3 + 7*b^2 + 10*b
+            sage: root = g.any_root(ring=GF(11^10, 'b'), degree=2)
+            sage: roots = (x^2 + 3*x + 9).roots(ring=GF(11^10, 'b'), multiplicities=False)
+            sage: root in roots
+            True
+            sage: root = g.any_root(ring=GF(11^10, 'b'), degree=5)
+            sage: roots = (x^5 + 5*x^4 + 8*x^3 + 5*x^2 + 3*x + 5).roots(ring=GF(11^10, 'b'), multiplicities=False)
+            sage: root in roots
+            True
 
         TESTS::
 
@@ -2366,7 +2362,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (x^2 + 1).any_root()
             Traceback (most recent call last):
             ...
-            ValueError: no roots (non-field) x^2 + 1
+            ValueError: polynomial x^2 + 1 has no roots
         """
         # When not working over a finite field, do the simple
         # thing of factoring for roots and picking the first
@@ -2380,11 +2376,20 @@ cdef class Polynomial(CommutativePolynomial):
 
         # Look for a linear factor, if there is none, raise a ValueError
         if degree is None:
+            # if a ring is given try and coerce the polynomial into this ring
+            if ring is not None:
+                try:
+                    self = self.change_ring(ring)
+                except ValueError:
+                    raise(f"cannot coerce polynomial {self} to the new ring: {ring}")
+            
+            # try and find a linear irreducible polynomial from f to compute a root
             try:
-                f = self.any_irreducible_factor(ring=ring, degree=ZZ(1), assume_squarefree=assume_squarefree)
-                return - f[0] / f[1]
+                f = self.any_irreducible_factor(degree=ZZ(1), assume_squarefree=assume_squarefree)
             except ValueError:
                 raise ValueError(f"no root of polynomial {self} can be computed")
+
+            return - f[0] / f[1]
 
         # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
         # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
@@ -2396,13 +2401,31 @@ cdef class Polynomial(CommutativePolynomial):
 
         # If a certain degree is requested, then we find an irreducible factor of degree `degree`
         # use this to compute a field extension and return the generator as root of this polynomial
+        # if the degree and a ring is given however, instead compute a degree `degree` factor in the
+        # base ring and then find a factor from this in the supplied ring.
         try:
-            f = self.any_irreducible_factor(ring=ring, degree=degree, assume_squarefree=assume_squarefree, assume_distinct_deg=assume_distinct_deg)
+            f = self.any_irreducible_factor(degree=degree, assume_squarefree=assume_squarefree, assume_distinct_deg=assume_distinct_deg)
         except ValueError:
             raise ValueError(f"no irreducible factor of degree {degree} can be computed from {self}")
 
+        # For the case when the degree is one, just return the root
         if degree.is_one():
-            return - f[0] / f[1]
+            root = - f[0] / f[1]
+            if ring is None:
+                return root
+            return ring(root)
+
+        # If the user asks for a specific ring, find the root in this ring from
+        # the polynomial of user supplied degree `degree`
+        if ring is not None:
+            try:
+                f = f.change_ring(ring)
+            except ValueError:
+                raise(f"cannot coerce polynomial {f} to the supplied ring: {ring}")
+            return f.any_root()
+
+        # Otherwise change the ring of this degree `degree` irreducible 
+        # polynomial and attempt to find a root from this
         F_ext = self.base_ring().extension(f, names="a")
         return F_ext.gen()
 
