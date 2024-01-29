@@ -2309,7 +2309,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         If we ask for an irreducible factor which does not exist, the function
         will throw a ``ValueError``::
-        
+
             sage: # needs sage.rings.finite_rings
             sage: F = GF(163)
             sage: R.<x> = F[]
