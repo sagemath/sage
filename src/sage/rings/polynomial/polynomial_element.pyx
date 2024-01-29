@@ -2047,6 +2047,198 @@ cdef class Polynomial(CommutativePolynomial):
         else:
             return (False, None) if root else False
 
+    def _distinct_degree_factorisation_squarefree(self):
+        """
+        Helper function for any_irreducible_factor which computes
+        the distinct degree factorisation of `self`.
+
+        Creates an iterator for all valid degrees `d`, and return
+        tuples of the form `(a_d, d)` for a polynomial `a_d` the
+        product of irreducible polynomials of degree `d`
+        
+        Assumes that self is squarefree.
+        """
+        q = self.base_ring().order() # p^k
+        R, x = self.parent().objgen()
+
+        # Initialise values
+        d = 0
+        v = self
+        w = x
+
+        # Iterate over all possible degrees with degree
+        while e <= 2*(d + 1):
+            e = v.degree()
+            d = d + 1
+            w = pow(w, q, v)
+            
+            ad = v.gcd(w - x)
+
+            if not ad.is_one():
+                v = v // ad
+                w = w % v
+
+            yield (ad, d)
+
+        # Last case, v itself might be irreducible
+        e = v.degree()
+        if e > 0:
+            yield (v, e)
+        return
+
+    def _cantor_zassenhaus_split_to_irreducible(self, degree):
+        """
+        Helper function for any_irreducible_factor which computes
+        a factor from a polynomial of the form `self = prod g_i(x)`
+        with all `g_i(x)` having the same degree. Uses the Cantor 
+        Zassenhaus splitting method. 
+        """
+        R = self.parent()
+        q = self.base_ring().order()
+
+        # Polynomial is already irreducible by the assumptions of the function
+        if self.degree() == degree:
+            return self
+
+        # We expect to succeed with greater than 1/2 probability, 
+        #so if we try 1000 times and fail, there's a bug somewhere.
+        for _ in range(1000):
+            T = R.random_element(2*degree + 1)
+            if T.is_zero():
+                continue
+            T = T.monic()
+
+            # Need to handle odd and even charcteristic separately
+            if q % 2 != 0:
+                h = self.gcd(pow(T, (q-1)//2, self)-1)
+            else:
+                # Compute the trace of T with field of order 2^k
+                # sum T^(2^i) for i in range (degree * k)
+                # We use repeated squaring to avoid redundent multiplications
+                C, TT = T, T
+                for _ in range(degree * self.base_ring().degree() - 1):
+                    TT = pow(TT, 2, self)
+                    C += TT
+                h = self.gcd(C)  
+
+            hd = h.degree()
+
+            # If we found a factor of desired degree, return it
+            if hd == degree:
+                return h
+
+            # Else check if we have a non-trivial factor and keep going
+            if not hd.is_zero() and hd != self.degree():
+                if 2*hd <= self.degree():
+                    return h._cantor_zassenhaus_split_to_irreducible(degree)
+                else:
+                    return (self//h)._cantor_zassenhaus_split_to_irreducible(degree)
+
+        # If you are reaching this error, chances are there's a bug in the code.
+        raise AssertionError(f"no splitting of degree {degree} found for {self}")
+    
+    def _any_irreducible_factor_squarefree(self, degree=None):
+        """
+        TODO
+        """
+        # If the degree is not None we only want to check a single polynomial
+        if degree is not None:
+            for (poly, d) in self._distinct_degree_factorisation_squarefree():
+                if d == degree and not poly.is_one():
+                    return poly._cantor_zassenhaus_split_to_irreducible(degree)
+                # Stop iterating early if the degree is too large
+                elif d > degree:
+                    raise ValueError(f"no irreducible factor of degree {degree} could be computed from {self}")
+            raise ValueError(f"no irreducible factor of degree {degree} could be computed from {self}")
+
+        # Otherwise we check all degrees, starting from the smallest
+        for (poly, d) in self._distinct_degree_factorisation_squarefree():
+            # Skip the split checking if `_distinct_degree_factorisation_squarefree`
+            # has found no elements of degree `d`
+            if poly.is_one():
+                continue
+
+            # Otherwise find a factor from the distinct degree factor
+            return poly._cantor_zassenhaus_split_to_irreducible(d)
+
+        raise ValueError(f"no irreducible factor could be computed from {self}")
+
+    def any_irreducible_factor(self, ring=None, degree=None, assume_squarefree=False, assume_distinct_deg=False):
+        """
+        TODO
+        """
+        # If the ring is not None, then first change ring and run the algorithm again
+        if ring is not None:
+            try:
+                f = self.change_ring(ring)
+                return f.any_irreducible_factor(None, degree, assume_squarefree, assume_distinct_deg)
+            except (TypeError, ValueError):
+                raise TypeError(f"unable to coerce from {self.base_ring()} to {ring}")
+
+        # Make sure the user inputted something reasonable for degree
+        if degree is not None:
+            degree = ZZ(degree)
+            if degree < 1:
+                raise ValueError(f"{degree = } must be positive")
+            
+        if assume_distinct_deg and degree is None:
+            raise ValueError("degree must be known if distinct degree factorisation is assumed")
+
+        # When not working over a finite field, do the simple thing of factoring.
+        # If degree is none, we return the first factor, otherwise we iterate 
+        # through and look for a polynomial with the desired degree. 
+        from sage.categories.finite_fields import FiniteFields
+        if self.base_ring() not in FiniteFields():
+            try:
+                factorisation = self.factor()
+            except (NotImplementedError, ValueError):
+                raise ValueError(f"Cannot factor {self} over the base ring {self.base_ring()}")
+            if degree is None:
+                return factorisation[0][0]
+            for (poly, e) in factorisation:
+                if poly.degree() == degree:
+                    return poly
+            raise ValueError(f"polynomial {self} has no irreducible factor of degree {degree}")
+
+        # For finite fields, we find irreducible factors in the following three steps:
+        #
+        # 1. Compute the squarefree decomposition of the polynomial `self`
+        # 2. For each squarefree polynomial find the distinct degree `d`
+        #    factorison, F, which is the product of degree `d` polynomials
+        #    dividing the squarefree polynomial
+        # 3. Using Cantor-Zassenhaus splitting with degree `d` to find a
+        #    single linear factor and return the root.
+        #
+        # When degree is None, we check all degrees smaller than the degree of the 
+        # squarefree polynomial, otherwise we work with only a single degree set by
+        # the user.
+
+        # Initial checks for bad input
+        if self.degree().is_zero():
+            raise ValueError(f"there are no irreducible factors of {self}")
+
+        # If we know the polynomial is square-free, we can start here
+        if assume_squarefree:
+            if assume_distinct_deg:
+                return self._cantor_zassenhaus_split_to_irreducible(degree)
+            return self._any_irreducible_factor_squarefree(degree)
+
+        # Otherwise we compute the squarefree decomposition and check each
+        # polynomial for a root. If no poly has a root, we raise an error.
+        SFD = self.squarefree_decomposition()
+        SFD.sort()
+        for poly, _ in SFD:
+            try:
+                return poly._any_irreducible_factor_squarefree(degree)
+            except ValueError:
+                pass
+        
+        # If degree has been set, there could just be no factor of the desired degree
+        if degree:
+            raise ValueError(f"polynomial {self} has no irreducible factor of degree {degree}")
+        # But if any degree is allowed then there should certainly be a factor if self has degree > 0
+        raise AssertionError(f"no irreducible factor was computed for {self}. Bug.")
+
     def any_root(self, ring=None, degree=None, assume_squarefree=False):
         """
         Return a root of this polynomial in the given ring.
@@ -2168,12 +2360,6 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ValueError: no roots (non-field) x^2 + 1
         """
-        # Currently I can't see a benefit of the degree method, so I think we should
-        # remove it
-        if degree is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(37170, "'degree' will soon be deprecated as it is no longer needed")
-
         # When not working over a finite field, do the simple 
         # thing of factoring for roots and picking the first 
         # root. If none available, raise an error.
@@ -2182,137 +2368,35 @@ cdef class Polynomial(CommutativePolynomial):
             rs = self.roots(ring=ring, multiplicities=False)
             if rs:
                 return rs[0]
-            raise ValueError("polynomial {self} has no roots" % self)
-
-        # For finite fields, we find roots in the following three steps:
-        #
-        # 1. Compute the squarefree decomposition of the polynomial
-        # 2. For each squarefree polynomial find the distinct degree = 1
-        #    factorison, F, which is the product of degree one polynomials
-        #    dividing the squarefree polynomial
-        # 3. Using Cantor-Zassenhaus splitting with degree one to find a
-        #    single linear factor and return the root.
-        #
-        # These steps are performed by the following helper functions
-        #
-        # ======================== #
-        #  Begin helper functions  #
-        # ======================== #
-        def _linear_root(f, ring=None):
-            if ring is None:
-                return -f[0] / f[1]
-            return ring(-f[0] / f[1])
-
-        def _any_root_squarefree(f, ring=None):
-            # Compute the distinct degree factorisation for degree one, 
-            # the output will be the product of #all degree one 
-            # irreducible polynomials dividing f
-            q = f.base_ring().order() # p^k
-            R, X = f.parent().objgen()
-            w = pow(X, q, f) - X
-            g = f.gcd(w)
-
-            # When the degree is one, we have found our
-            # root. If the degree is zero, there are no roots
-            if g.degree().is_one():
-                return _linear_root(g, ring=ring)
-            elif g.degree().is_zero():
-                raise ValueError(f"no root can be computed for {f}")
-
-            # Otherwise, we can find a root from the CZ splitting of g
-            return _cantor_zassenhaus_split_root(g, 1, ring=ring)
-
-        def _cantor_zassenhaus_split_root(f, degree, ring=None):
-            R = f.parent()
-            q = f.base_ring().order()
-            # Need to handle odd and even charcteristic separately
-            if q % 2 != 0:
-                # We expect to succeed with 1/2 probability, so if we
-                # try 1000 times and fail, there's a bug somewhere.
-                for _ in range(1000):
-                    T = R.random_element(2*degree + 1)
-                    if T.is_zero(): continue # skip T = 0
-                    T = T.monic()
-
-                    # Compute the gcd. 50% chance this is a non-trivial factor of f
-                    h = f.gcd(pow(T, (q-1)//2, f)-1)
-                    hd = h.degree()
-
-                    # If we found a degree-one root, return it
-                    if hd.is_one():
-                        return _linear_root(h, ring=ring) 
-
-                    # Else check if we have a non-trivial factor and keep going
-                    if not hd.is_zero() and hd != f.degree():
-                        if 2*hd <= f.degree():
-                            return _cantor_zassenhaus_split_root(h, degree, ring=ring)
-                        else:
-                            return _cantor_zassenhaus_split_root(f//h, degree, ring=ring)
-                # If you are reaching this error, chances are there's a bug in the code.
-                raise ValueError(f"no splitting of degree {degree} found for {f}")
-
-            # Now handle even charactertistic
-            for _ in range(1000):
-                # Sample a uniformly random element of R
-                T = R.random_element(2*degree + 1)
-                if T.is_zero(): continue
-                T = T.monic()
-
-                # Compute the trace of T with field of order 2^k
-                # sum T^(2^i) for i in range (degree * k)
-                # We use repeated squaring to avoid redundent multiplications
-                C, TT = T, T
-                for _ in range(degree * f.base_ring().degree() - 1):
-                    TT = pow(TT, 2, f)
-                    C += TT
-
-                # Compute the gcd to find a factor
-                h = f.gcd(C)
-                hd = h.degree()
-
-                # If we found a degree-one root, return it
-                if hd.is_one():
-                    return _linear_root(h, ring=ring)
-
-                # else check if we have a factor
-                elif not hd.is_zero() and hd != f.degree():
-                    if 2*hd <= f.degree():
-                        return _cantor_zassenhaus_split_root(h, degree, ring)
-                    else:
-                        return _cantor_zassenhaus_split_root(f // h, degree, ring)
-
-            # If you are reaching this error, chances are there's a bug in the code.
-            raise ValueError(f"no splitting of degree {degree} found for {f}")
-        # ======================== #
-        #   End helper functions   #
-        # ======================== #
-
-        # Initial checks for bad input
-        if self.degree() < 0:
-            if ring is None:
-                return self.base_ring()(0)
-            return ring(0)
-        elif self.degree() == 0:
-            raise ValueError(f"no root can be computed for {self}")
+            raise ValueError(f"polynomial {self} has no roots")
         
-        # If the input is a linear polynomial, simply compute the root
-        if self.degree() == 1:
-            return _linear_root(self, ring=ring)
-
-        # If we know the polynomial is square-free, we can start here
-        if assume_squarefree:
-            return _any_root_squarefree(self, ring=ring)
-
-        # Otherwise we compute the squarefree decomposition and check each
-        # polynomial for a root. If no poly has a root, we raise an error.
-        SFD = self.squarefree_decomposition()
-        SFD.sort()
-        for poly, _ in SFD:
+        # Look for a linear factor, if there is none, raise a ValueError
+        if degree is None:
             try:
-                return _any_root_squarefree(poly, ring=ring)
+                f = self.any_irreducible_factor(ring=ring, degree=ZZ(1), assume_squarefree=assume_squarefree)
+                return - f[0] / f[1]
             except ValueError:
-                pass
-        raise ValueError(f"no root can be computed for {self}")
+                raise ValueError(f"no root of polynomial {self} can be computed")
+
+        # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
+        # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
+        # ensure that the degree is positive.
+        assume_distinct_deg = False
+        if degree < 0:
+            degree = ZZ(abs(degree))
+            assume_distinct_deg = True
+
+        # If a certain degree is requested, then we find an irreducible factor of degree `degree`
+        # use this to compute a field extension and return the generator as root of this polynomial
+        try:
+            f = self.any_irreducible_factor(ring=ring, degree=degree, assume_squarefree=assume_squarefree, assume_distinct_deg=assume_distinct_deg)
+        except ValueError:
+            raise ValueError(f"no irreducible factor of degree {degree} can be computed from {self}")
+
+        if degree.is_one():
+            return - f[0] / f[1]
+        F_ext = self.base_ring().extension(f, names="a")
+        return F_ext.gen()
 
     def __truediv__(left, right):
         r"""
