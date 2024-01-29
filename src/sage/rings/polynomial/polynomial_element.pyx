@@ -2103,10 +2103,8 @@ cdef class Polynomial(CommutativePolynomial):
         # We expect to succeed with greater than 1/2 probability,
         #so if we try 1000 times and fail, there's a bug somewhere.
         for _ in range(1000):
-            T = R.random_element(2*degree + 1)
-            if T.is_zero():
-                continue
-            T = T.monic()
+            # Sample a polynomial uniformly from R
+            T = R.random_element(2*degree + 1).monic()
 
             # Need to handle odd and even characteristic separately
             if q % 2:
