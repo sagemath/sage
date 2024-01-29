@@ -101,11 +101,9 @@ class FiniteGroups(CategoryWithAxiom):
                 sage: G.cardinality()
                 384
             """
-            try:
-                o = self.order
-                return o()
-            except AttributeError:
-                return self._cardinality_from_iterator()
+            if hasattr(self, 'order'):
+                return self.order()
+            return self._cardinality_from_iterator()
 
         def some_elements(self):
             """

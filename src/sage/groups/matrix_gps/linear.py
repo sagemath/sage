@@ -256,39 +256,6 @@ def SL(n, R, var='a'):
 
         sage: groups.matrix.SL(2, 3)
         Special Linear Group of degree 2 over Finite Field of size 3
-
-        Check if :trac:`36876` is fixed: The cardinality or order of a special linear group with degree=1 over any field is 1::
-
-        sage: SL(1, QQ).cardinality()
-        1
-        sage: SL(1, RR).cardinality()
-        1
-        sage: SL(1, QQ).order()
-        1
-        sage: SL(1, CC).order()
-        1
-
-        Check if :trac:`35490` is fixed: The special linear group with degree=1 is finite::
-
-        sage: q = 7
-        sage: FqT.<T> = GF(q)[]
-        sage: N = T^2+1
-        sage: FqTN = QuotientRing(FqT, N*FqT)
-        sage: S = SL(2,FqTN)
-        sage: S.is_finite()
-        True
-
-        Check if is_finite() function is giving correct answer for the special linear group which is not finite::
-
-        sage: SL(2, QQ).is_finite()
-        False
-
-        Check if the cardinality or order of infinite special linear group is +Infinity or not::
-
-        sage: SL(2, QQ).cardinality()
-        +Infinity
-        sage: SL(2, QQ).order()
-        +Infinity
     """
     degree, ring = normalize_args_vectorspace(n, R, var='a')
     try:
@@ -340,3 +307,53 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
         else:
             if x.determinant() == 0:
                 raise TypeError('matrix must non-zero determinant')
+
+    def order(self):
+        """
+        Return the order of ``self``.
+
+        EXAMPLES::
+
+            sage: G = SL(3, GF(5))
+            sage: G.order()
+            372000
+
+        TESTS:
+
+        Check if trac:`36876` is fixed::
+            sage: SL(1, QQ).order()
+            1
+            sage: SL(1, ZZ).cardinality()
+            1
+
+        Check if trac:`35490` is fixed::
+            sage: q = 7
+            ....: FqT.<T> = GF(q)[]
+            ....: N = T^2+1
+            ....: FqTN = QuotientRing(FqT, N*FqT)
+            ....: S = SL(2,FqTN)
+            ....: S.is_finite()
+            True
+            ....: S.order()
+            117600
+        """
+        from functools import reduce
+        import operator
+        from sage.rings.infinity import Infinity
+
+        n = self.degree()
+
+        if self.base_ring().is_finite():
+            q = self.base_ring().order()
+            if self._special:
+                return reduce(operator.mul, (q**n - q**i for i in range(0, n)), 1) / (q-1)
+            return reduce(operator.mul, (q**n - q**i for i in range(0, n)), 1)
+
+        if self._special:
+            if n == 1:
+                return 1
+            return Infinity
+
+        return Infinity
+
+    cardinality = order
