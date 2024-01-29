@@ -487,6 +487,8 @@ cdef class FractionFieldElement(FieldElement):
         den = self._denominator.subs(*args, **kwds)
         return num / den
 
+    substitute = subs
+
     def _is_atomic(self):
         """
         EXAMPLES::
