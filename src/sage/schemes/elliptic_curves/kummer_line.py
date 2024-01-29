@@ -85,11 +85,14 @@ class KummerLine(SageObject):
 
         ainvs = curve.a_invariants()
         a, b = ainvs[3], ainvs[4]  # a = a4, b = a6
+        AM = ainvs[1]
+        if ainvs == (0, AM, 0, 1, 0):
+            raise ValueError("you should use KummerLineMontgomery")
+
         if ainvs != (0, 0, 0, a, b):
             raise ValueError(
                 "input must be an elliptic curve in short Weierstrass form"
             )
-        # TODO could deal with Montgomery model using an isomorphism
 
         self._curve = curve
         self._base_ring = curve.base_ring()
@@ -272,8 +275,8 @@ class KummerLine(SageObject):
 
         EXAMPLES::
 
-            sage: K = KummerLine(GF(101), [2, 3])
-            sage: K.discriminant()
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E); K.discriminant()
             44
         """
         a, b = self.extract_constants()
@@ -289,9 +292,7 @@ class KummerLine(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
-            Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-            Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-            Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            TODO
         """
 
         if xP._parent != self:
@@ -713,6 +714,29 @@ class KummerLinePoint(SageObject):
             True
         """
 
+        # Weird edge case explained in xDBLADD
+        if XPQ == 0:
+            T1 = XP * XQ
+            T2 = ZP * ZQ
+            T3 = XP * ZQ
+            T4 = XQ * ZP
+            T5 = T3 + T4
+            T6 = a * T2
+            T7 = T1 + T6
+            T8 = T5 * T7
+            T9 = T8 + T8
+            T10 = T2 * T2
+            T11 = b * T10
+            T12 = 4 * T11
+            T13 = T9 + T12
+            T14 = T3 - T4
+            T15 = T14 * T14
+            T16 = T13
+            XQP = T16
+            ZQP = T15
+
+            return XQP, ZQP
+
         t1 = XP * XQ
         t2 = ZP * ZQ
         t3 = XP * ZQ
@@ -777,6 +801,53 @@ class KummerLinePoint(SageObject):
             sage:     P == -P
             True
         """
+
+        # Weird edge case that can happen in short Weierstrass
+        # Example where it would fail otherwise:
+        # sage: E = EllipticCurve(GF(101), [99, 1])
+        # sage: P = E(43, 6)
+        # sage: Q = E(27, 6)
+        # sage: K = KummerLine(E)
+        # sage: xP = K(P)
+        # sage: xQ = K(Q)
+        # sage: xPQ = K(P-Q)
+        # sage: xP.add(xQ, xPQ) returns (0 : 0) without that
+        if XPQ == 0:
+            XX = XP * XP
+            ZZ = ZP * ZP
+            aZZ = a * ZZ
+            t0 = XP + ZP
+            t1 = t0 * t0
+            t2 = t1 - XX
+            E = t2 - ZZ
+            t3 = XX - aZZ
+            t4 = t3 * t3
+            t5 = E * ZZ
+            t6 = b4 * t5
+            X2P = t4 - t6
+            t7 = XX + aZZ
+            t8 = ZZ * ZZ
+            t9 = b4 * t8
+            t10 = E * t7
+            t11 = 2 * t10
+            Z2P = t11 + t9
+            A = XP * XQ
+            B = ZP * ZQ
+            C = XP * ZQ
+            D = XQ * ZP
+            t12 = a * B
+            t13 = C + D
+            t14 = A + t12
+            t15 = B * B
+            t16 = b4 * t15
+            t17 = t13 * t14
+            t18 = t17 + t17
+            XQP = t18 + t16
+            t19 = C - D
+            ZQP = t19 * t19
+
+            return X2P, Z2P, XQP, ZQP
+
         XX = XP * XP
         ZZ = ZP * ZP
         aZZ = a * ZZ
@@ -830,10 +901,17 @@ class KummerLinePoint(SageObject):
             (88 : 9)
         """
         X, Z = self.XZ()
+        if self._parent.is_montgomery():
+            X, Z = self._parent.point_to_weierstrass(X, Z)
+
         a, b = self._parent.extract_constants()
         b2 = b + b
         b4 = b2 + b2
         X, Z = self.xDBL(X, Z, a, b2, b4)
+
+        if self._parent.is_montgomery():
+            X, Z = self._parent.point_from_weierstrass(X, Z)
+
         return self._parent((X, Z))
 
     def _double_iter(self, n):
@@ -853,11 +931,18 @@ class KummerLinePoint(SageObject):
             (2 : 52)
         """
         X, Z = self.XZ()
+        if self._parent.is_montgomery():
+            X, Z = self._parent.point_to_weierstrass(X, Z)
+
         a, b = self._parent.extract_constants()
         b2 = b + b
         b4 = b2 + b2
         for _ in range(n):
             X, Z = self.xDBL(X, Z, a, b2, b4)
+
+        if self._parent.is_montgomery():
+            X, Z = self._parent.point_from_weierstrass(X, Z)
+
         return self._parent((X, Z))
 
     def double(self):
@@ -926,9 +1011,18 @@ class KummerLinePoint(SageObject):
         XQ, ZQ = Q.XZ()
         XPQ, ZPQ = PQ.XZ()
 
+        if self._parent.is_montgomery():
+            XP, ZP = self._parent.point_to_weierstrass(XP, ZP)
+            XQ, ZQ = self._parent.point_to_weierstrass(XQ, ZQ)
+            XPQ, ZPQ = self._parent.point_to_weierstrass(XPQ, ZPQ)
+
         a, b = self._parent.extract_constants()
 
         XQP, ZQP = self.xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b)
+
+        if self._parent.is_montgomery():
+            XQP, ZQP = self._parent.point_from_weierstrass(XQP, ZQP)
+
         return self._parent((XQP, ZQP))
 
     def add(self, Q, PQ):
@@ -989,7 +1083,7 @@ class KummerLinePoint(SageObject):
 
         # If m is zero, return identity
         if not m:
-            return self.parent().zero()
+            return self._parent.zero()
 
         # [m]P = [-m]P for x-only
         m = abs(m)
@@ -1001,6 +1095,10 @@ class KummerLinePoint(SageObject):
 
         # Initialise for loop
         XP, ZP = self.XZ()
+
+        if self._parent.is_montgomery():
+            XP, ZP = self._parent.point_to_weierstrass(XP, ZP)
+
         R = self._parent.base_ring()
         X0, Z0 = R(1), R(0)
         X1, Z1 = XP, ZP
@@ -1011,6 +1109,9 @@ class KummerLinePoint(SageObject):
                 X0, Z0, X1, Z1 = self.xDBLADD(X0, Z0, X1, Z1, XP, ZP, a, b4)
             else:
                 X1, Z1, X0, Z0 = self.xDBLADD(X1, Z1, X0, Z0, XP, ZP, a, b4)
+
+        if self._parent.is_montgomery():
+            X0, Z0 = self._parent.point_from_weierstrass(X0, Z0)
 
         return self._parent((X0, Z0))
 
@@ -1103,12 +1204,21 @@ class KummerLinePoint(SageObject):
         XQ, ZQ = xQ.XZ()
         XPQ, ZPQ = xPQ.XZ()
 
+        if self._parent.is_montgomery():
+            XP, ZP = self._parent.point_to_weierstrass(XP, ZP)
+            XQ, ZQ = self._parent.point_to_weierstrass(XQ, ZQ)
+            XPQ, ZPQ = self._parent.point_to_weierstrass(XPQ, ZPQ)
+
         # Montgomery ladder
         for bit in bin(m)[:1:-1]:
             if bit == "1":
                 XQ, ZQ, XP, ZP = self.xDBLADD(XQ, ZQ, XP, ZP, XPQ, ZPQ, a, b4)
             else:
                 XQ, ZQ, XPQ, ZPQ = self.xDBLADD(XQ, ZQ, XPQ, ZPQ, XP, ZP, a, b4)
+
+        if self._parent.is_montgomery():
+            XP, ZP = self._parent.point_from_weierstrass(XP, ZP)
+
         return self._parent((XP, ZP))
 
     # TODO ditch it or improve it, there could be less points in this
@@ -1162,16 +1272,12 @@ class KummerLineIsogeny(SageObject):
         sage: P = E(76, 65); xP = K(P)
         sage: Q = E(49, 61); xQ = K(Q)
         sage: KummerLineIsogeny(xP)
-        Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-        Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-        Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        TODO
 
     It can also be constructed with the ``isogeny`` method from a Kummer line::
 
         sage: K.isogeny(xP)
-        Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-        Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-        Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        TODO
     """
 
     def __init__(self, kernel):
@@ -1184,9 +1290,7 @@ class KummerLineIsogeny(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
-            Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-            Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-            Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            TODO
         """
 
         # Ensure the kernel is the right type
@@ -1198,6 +1302,13 @@ class KummerLineIsogeny(SageObject):
         # Corresponds to the set "S" used in Vélu's formulas
         self._kernel_subset, self._degree = self._compute_kernel_subset_and_degree()
         self._kernel_x = [xQ.x() for xQ in self._kernel_subset]
+
+        if self._domain.is_montgomery():
+            for i in range(len(self._kernel_x)):
+                self._kernel_x[i], z = self._domain.point_to_weierstrass(
+                    self._kernel_x[i], 1
+                )
+                self._kernel_x[i] /= z  # z = 3
 
         (
             self._velu_constants_t,
@@ -1266,11 +1377,11 @@ class KummerLineIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.__repr__()
-            Isogeny between Kummer lines of degree 12 with kernel (76 : 1)
-            Domain: Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
-            Codomain: Kummer line of Elliptic curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            TODO
         """
-        return f"Isogeny between Kummer lines of degree {self._degree} with kernel {self._kernel}\nDomain: {self._domain}\nCodomain: {self._codomain}"
+        return (
+            f"Isogeny of degree {self._degree} from {self._domain} to {self._codomain}"
+        )
 
     def __call__(self, xP):
         r"""
@@ -1306,7 +1417,7 @@ class KummerLineIsogeny(SageObject):
         """
         L = list(self._kernel.multiples())
         deg = len(L) + 1
-        return L[: (len(L) + 1) // 2], deg
+        return L[: deg // 2], deg
 
     @cached_method
     def _compute_velu_constants_and_codomain(self):
@@ -1373,6 +1484,10 @@ class KummerLineIsogeny(SageObject):
 
         Sx = self._kernel_x
         xPx = xP.x()
+        if self._domain.is_montgomery():
+            xPx, z = self._domain.point_to_weierstrass(xPx, 1)
+            xPx /= z  # z = 3
+
         cst_t, cst_u = self._velu_constants_t, self._velu_constants_u
 
         fxP = xPx
@@ -1382,3 +1497,115 @@ class KummerLineIsogeny(SageObject):
             fxP += (tQ * alpha + uQ) / alpha**2
 
         return self._codomain(fxP)
+
+
+class KummerLineMontgomery(KummerLine):
+    r"""
+    Kummer line class for a Montgomery elliptic curve.
+
+    EXAMPLES::
+
+        sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+        sage: K = KummerLineMontgomery(E); K
+        Kummer line of Elliptic curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
+    """
+
+    def __init__(self, curve):
+        r"""
+        Constructor for a Kummer line from a Montgomery elliptic curve.
+
+        INPUT::
+
+            - ``curve`` -- an elliptic curve in Montgomery form `y^2 = x^3 + AM*x^2 + x`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: K = KummerLineMontgomery(E); K
+            Kummer line of Elliptic curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
+        """
+
+        if not isinstance(curve, EllipticCurve_generic):
+            raise TypeError("input must be an elliptic curve in short Weierstrass form")
+
+        ainvs = curve.a_invariants()
+        AM = ainvs[1]
+        if ainvs != (0, AM, 0, 1, 0):
+            raise ValueError("input must be an elliptic curve in Montgomery form")
+
+        self._curve = curve
+        self._base_ring = curve.base_ring()
+
+        # Initialize variables: a and b are short Weierstrass constants
+        self._AM = self._base_ring(AM)
+        self._a = self._base_ring(1 - AM**2 / 3)
+        self._b = self._base_ring(AM / 3 * (2 * AM**2 / 9 - 1))
+
+        self._montgomery = True
+
+    def AM(self):
+        r"""
+        Return the Montgomery constant `A`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: K = KummerLineMontgomery(E); K.AM()
+            3
+        """
+        return self._AM
+
+    @cached_method
+    def discriminant(self):
+        r"""
+        Compute the discriminant of the Kummer line using the formula `\Delta(E) = 16(A^2 - 4)`.
+
+        Cached method.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: K = KummerLineMontgomery(E); K.discriminant()
+            80
+        """
+        AM = self.AM()
+        return 16 * (AM**2 - 4)
+
+    def point_to_weierstrass(self, X, Z):
+        r"""
+        Compute the coordinates of the corresponding point in short Weierstrass coordinates.
+
+        INPUT: ``(X, Z)`` -- coordinates of a Kummer point on a Montgomery Kummer line
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: P = E(66, 85); xP = K(P)
+            sage: XM, ZM = xP.XZ()
+            sage: K = KummerLineMontgomery(E); K.point_to_weierstrass(XM, ZM)
+            (100, 3)
+        """
+
+        AM = self.AM()
+        return 3 * X + AM * Z, 3 * Z
+
+    def point_from_weierstrass(self, X, Z):
+        r"""
+        Transform coordinates of a point from short Weierstrass to Montgomery coordinates.
+
+        INPUT: ``(X, Z)`` -- coordinates of a Kummer point on a short Weierstrass Kummer line
+        which corresponds to ``self``
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: P = E(66, 85); xP = K(P)
+            sage: K = KummerLineMontgomery(E)
+            sage: XM, ZM = xP.XZ()
+            sage: Xw, Zw = K.point_to_weierstrass(XM, ZM)
+            sage: K(K.point_from_weierstrass(Xw, Zw)) == xP
+            True
+        """
+
+        AM = self.AM()
+        return 3 * X - AM * Z, 3 * Z
