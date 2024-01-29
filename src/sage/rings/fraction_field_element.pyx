@@ -448,21 +448,10 @@ cdef class FractionFieldElement(FieldElement):
 
     def subs(self, *args, **kwds):
         """
-        Substitute variables in numerator and denominator.
+        Substitute variables in the numerator and denominator of ``self``.
 
         All the arguments are transmitted unchanged to the method
         ``subs`` of the numerator and the denominator.
-
-        INPUT:
-
-        - ``args`` - arguments to be passed to the numerator and
-           denominator
-        - ``kwargs`` - keyword arguments to be passed to the
-           numerator and denominator
-
-        OUTPUT:
-
-        - new object if substitution is possible, otherwise self.
 
         EXAMPLES::
 
