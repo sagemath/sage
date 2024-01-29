@@ -58,7 +58,7 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.semigroup_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 
@@ -74,7 +74,7 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.monoid_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 
@@ -116,7 +116,7 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.some_elements()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 
