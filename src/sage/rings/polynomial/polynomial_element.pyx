@@ -2138,9 +2138,9 @@ cdef class Polynomial(CommutativePolynomial):
     def _any_irreducible_factor_squarefree(self, degree=None):
         """
         Helper function for any_irreducible_factor which computes
-        an irreducible factor from self, assuming the input is 
+        an irreducible factor from self, assuming the input is
         squarefree.
-        
+
         Does this by first computing the distinct degree factorisations
         of self and thenfinds a factor with Cantor-Zassenhaus
         splitting.
