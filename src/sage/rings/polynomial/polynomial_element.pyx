@@ -2057,6 +2057,29 @@ cdef class Polynomial(CommutativePolynomial):
         product of irreducible polynomials of degree `d`
 
         Assumes that self is squarefree.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = F[]
+            sage: f = (x + 162) * (x^3 + 7*x + 161) * (x^7 + 9*x + 161)
+            sage: list(f._distinct_degree_factorisation_squarefree())
+            [(x + 162, 1), (1, 2), (x^3 + 7*x + 161, 3), (x^7 + 9*x + 161, 7)]
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: K.<z8> = GF(2^8)
+            sage: R.<x> = K[]
+            sage: u1 = x + z8^6 + z8^3 + z8
+            sage: u2 = x^2 + (z8^5 + z8^3 + z8^2 + 1)*x + z8^4 + z8^3 + z8 + 1
+            sage: u3 = x^3 + z8^7 + z8^4 + z8^3 + z8^2 + z8
+            sage: f = u1 * u2 * u3
+            sage: list(f._distinct_degree_factorisation_squarefree())
+            [(x + z8^6 + z8^3 + z8, 1),
+            (x^2 + (z8^5 + z8^3 + z8^2 + 1)*x + z8^4 + z8^3 + z8 + 1, 2),
+            (x^3 + z8^7 + z8^4 + z8^3 + z8^2 + z8, 3)]
         """
         q = self.base_ring().order() # p^k
         R, x = self.parent().objgen()
@@ -2092,6 +2115,42 @@ cdef class Polynomial(CommutativePolynomial):
         a factor from a polynomial of the form `self = prod g_i(x)`
         with all `g_i(x)` having the same degree. Uses the Cantor
         Zassenhaus splitting method.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = F[]
+            sage: f = (x^2 + 36*x + 34) * (x^2 + 36*x + 132) * (x^2 + 112*x + 48)
+            sage: f._cantor_zassenhaus_split_to_irreducible(2)   # random
+            x^2 + 112*x + 48
+            sage: f._cantor_zassenhaus_split_to_irreducible(2)   # random
+            x^2 + 36*x + 34
+            sage: f._cantor_zassenhaus_split_to_irreducible(2)   # random
+            x^2 + 36*x + 132
+            sage: factor = f._cantor_zassenhaus_split_to_irreducible(2)
+            sage: factor.is_irreducible()
+            True
+            sage: f % factor == 0
+            True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<z4> = GF(2^4)
+            sage: R.<x> = F[]
+            sage: f = (x + z4^2 + z4) * (x + z4^2 + z4 + 1)
+            sage: f._cantor_zassenhaus_split_to_irreducible(1)   # random
+            x + z4^2 + z4
+            sage: f._cantor_zassenhaus_split_to_irreducible(1)   # random
+            x + z4^2 + z4
+            sage: f._cantor_zassenhaus_split_to_irreducible(1)   # random
+            x + z4^2 + z4 + 1
+            sage: factor = f._cantor_zassenhaus_split_to_irreducible(1)
+            sage: factor.is_irreducible()
+            True
+            sage: f % factor == 0
+            True
         """
         R = self.parent()
         q = self.base_ring().order()
@@ -2148,6 +2207,42 @@ cdef class Polynomial(CommutativePolynomial):
         If degree is not None, then only irreducible factors of degree
         `degree` are searched for, otherwise the smallest degree factor
         is found.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = F[]
+            sage: f = (x^2 + 36*x + 34) * (x^2 + 36*x + 132) * (x^2 + 112*x + 48)
+            sage: f = (x^2 + 50*x + 28) * (x^5 + 75*x^4 + 87*x^3 + 96*x^2 + 98*x + 40) * (x^7 + 20*x^6 + 16*x^5 + 36*x^4 + 59*x^3 + 3*x^2 + 46*x + 84)
+            sage: f._any_irreducible_factor_squarefree()
+            x^2 + 50*x + 28
+            sage: f._any_irreducible_factor_squarefree(degree=2)
+            x^2 + 50*x + 28
+            sage: f._any_irreducible_factor_squarefree(degree=5)
+            x^5 + 75*x^4 + 87*x^3 + 96*x^2 + 98*x + 40
+            sage: f._any_irreducible_factor_squarefree(degree=7)
+            x^7 + 20*x^6 + 16*x^5 + 36*x^4 + 59*x^3 + 3*x^2 + 46*x + 84
+            sage: g = (x^2 + 50*x + 28)
+            sage: g._any_irreducible_factor_squarefree(degree=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: no irreducible factor of degree 1 could be computed from x^2 + 50*x + 28
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<z4> = GF(2^4)
+            sage: R.<x> = F[]
+            sage: f = (x + z4^3 + z4^2 + z4) * (x^2 + x + z4^3 + 1) * (x^3 + (z4^3 + z4)*x^2 + z4^2 + 1)
+            sage: f._any_irreducible_factor_squarefree()
+            x + z4^3 + z4^2 + z4
+            sage: f._any_irreducible_factor_squarefree(degree=1)
+            x + z4^3 + z4^2 + z4
+            sage: f._any_irreducible_factor_squarefree(degree=2)
+            x^2 + x + z4^3 + 1
+            sage: f._any_irreducible_factor_squarefree(degree=3)
+            x^3 + (z4^3 + z4)*x^2 + z4^2 + 1
         """
         # If the degree is not None we only want to check a single polynomial
         if degree is not None:
@@ -2173,7 +2268,89 @@ cdef class Polynomial(CommutativePolynomial):
 
     def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_distinct_deg=False):
         """
-        TODO: description with doctests and tests.
+        Return an irreducible factor of this polynomial.
+
+        INPUT:
+
+        - ``degree`` (None or positive integer) -- Used for polynomials
+          over finite fields. Attempts to return an irreducible factor of
+          ``self`` of chosen degree ``degree``.
+
+        - ``assume_squarefree`` (bool) -- Used for polynomials over
+          finite fields.  If ``True``, this polynomial is assumed to be
+          squarefree.
+
+        - ``assume_distinct_deg`` (bool) -- Used for polynomials over
+          finite fields.  If ``True``, this polynomial is assumed to be
+          the product of irreducible polynomials of the same degree.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = F[]
+            sage: f = (x + 40)^3 * (x^5 + 76*x^4 + 93*x^3 + 112*x^2 + 22*x + 27)^2 * (x^6 + 50*x^5 + 143*x^4 + 162*x^2 + 109*x + 140)
+            sage: f.any_irreducible_factor()
+            x + 40
+            sage: f.any_irreducible_factor(degree=5)
+            x^5 + 76*x^4 + 93*x^3 + 112*x^2 + 22*x + 27
+
+        When the polynomial is known to be squarefree we can optimise the call
+        by setting ``assume_squarefree`` to be ``True``::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = F[]
+            sage: g = (x - 1) * (x^3 + 7*x + 161)
+            sage: g.any_irreducible_factor(assume_squarefree=True)
+            x + 162
+            sage: g.any_irreducible_factor(degree=3, assume_squarefree=True)
+            x^3 + 7*x + 161
+
+        If we ask for an irreducible factor which does not exist, the function
+        will throw a ``ValueError``::
+        
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = F[]
+            sage: g = (x - 1) * (x^3 + 7*x + 161)
+            sage: g.any_irreducible_factor(degree=2, assume_squarefree=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: no irreducible factor of degree 2 could be computed from x^4 + 162*x^3 + 7*x^2 + 154*x + 2
+            sage: h = (x + 57) * (x + 98) * (x + 117) * (x + 145)
+
+        If we assume that the polynomial is product of irreducible polynomials of the
+        same degree, we must also supply the degree::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(163)
+            sage: R.<x> = F[]
+            sage: h = (x + 57) * (x + 98) * (x + 117) * (x + 145)
+            sage: h.any_irreducible_factor(assume_distinct_deg=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: degree must be known if distinct degree factorisation is assumed
+            sage: h.any_irreducible_factor(degree=1, assume_distinct_deg=True)   # random
+            x + 98
+
+        Also works for extension fields and even characteristic::
+
+            sage: F.<z4> = GF(2^4)
+            sage: R.<x> = F[]
+            sage: f = (x + z4^3 + z4^2)^4 * (x^2 + z4*x + z4) * (x^2 + (z4^3 + z4^2 + z4)*x + z4^2 + z4 + 1)
+            sage: f.any_irreducible_factor()
+            x + z4^3 + z4^2
+            sage: f.any_irreducible_factor(degree=2)  # random
+            x^2 + (z4^3 + z4^2 + z4)*x + z4^2 + z4 + 1
+
+        We can also use this function for polynomials which are not defined over finite
+        fields, but this simply falls back to a slow method of factorisation::
+
+            sage: R.<x> = ZZ[]
+            sage: f = 3*x^4 + 2*x^3
+            sage: f.any_irreducible_factor()
+            3*x + 2
         """
         # Make sure the user inputted something reasonable for degree
         if degree is not None:
