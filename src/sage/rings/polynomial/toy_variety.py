@@ -120,7 +120,10 @@ def coefficient_matrix(polys):
     M = matrix(R, len(polys), len(mons))
     for i in range(len(polys)):
         imons = polys[i].monomials()
-        icoeffs = polys[i].coefficients()
+        if polys[0].parent().ngens() == 1:
+            icoeffs = polys[i].coefficients()[::-1]
+        else:
+            icoeffs = polys[i].coefficients()
         for j in range(len(imons)):
             M[i, mons.index(imons[j])] = icoeffs[j]
     return M
