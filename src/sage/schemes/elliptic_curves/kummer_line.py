@@ -48,6 +48,7 @@ from sage.all import cached_method
 
 from sage.rings.integer import Integer
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.structure.element import RingElement
 from sage.structure.sage_object import SageObject
@@ -286,39 +287,22 @@ class KummerLine(SageObject):
         a, b = self.extract_constants()
         return -16 * (4 * a**3 + 27 * b**2)
 
-    # TODO code cleanup (new class) + fixing 2P // P.double()
-    # TODO isogeny call instantiate a KummerLineIsogeny object
-    # def isogeny(self, S, P):
-    #     # TODO
-    #     XP, _ZP = P.XZ()
-    #     a4, a6 = self.extract_constants()
-    #     if self.zero() in S:
-    #         S.remove(self.zero())
-    #     v, w = 0, 0
-    #     alpha = XP
-    #     for Q in S:
-    #         XQ, _ZQ = Q.XZ()
-    #         gQx = 3 * XQ**2 + a4
-    #         if Q.double() == self.zero():
-    #             # if 2 * Q == self.zero(): # broken
-    #             # # print((2 * Q).x(), (Q.double().x()))
-    #             # print(type(2 * Q), 2 * Q)
-    #             # DEBUG
-    #             # print(Q)
-    #             # print(Q.double(), Q.double().is_zero())
-    #             # print(2 * Q, (2 * Q).is_zero())
-    #             vQ = gQx
-    #         else:
-    #             vQ = 2 * gQx
-    #         uQ = 4 * (XQ**3 + a4 * XQ + a6)
-    #         v += vQ
-    #         w += uQ + XQ * vQ
-    #         alpha += vQ / (XP - XQ) + uQ / (XP - XQ) ** 2
-    #     A4 = a4 - 5 * v
-    #     A6 = a6 - 7 * w
-    #     K2 = KummerLine(self.base_ring(), [A4, A6])
-    #     return K2, K2(alpha)
-    # TODO isogeny call instantiate a KummerLineIsogeny object
+    def isogeny(self, xP):
+        r"""
+        Compute the isogeny with kernel ``xP``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: Q = E(49, 61); xQ = K(Q)
+            sage: KummerIsogeny(xP)
+            Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        """
+
+        if xP._parent != self:
+            raise ValueError("point is not on the Kummer line")
+        return KummerIsogeny(xP)
 
 
 class KummerPoint(SageObject):
@@ -331,7 +315,7 @@ class KummerPoint(SageObject):
         sage: K = KummerLine(E)
         sage: P = E(95, 52)
 
-    A KummerPoint can be constructed from `XZ`-coordinates::
+    A Kummer point can be constructed from `XZ`-coordinates::
 
         sage: xP = KummerPoint(K, [95, 1]); xP
         (95 : 1)
@@ -363,7 +347,7 @@ class KummerPoint(SageObject):
             sage: P = E(95, 52)
             sage: K = KummerLine(E)
 
-        A KummerPoint can be constructed from `XZ`-coordinates::
+        A Kummer point can be constructed from `XZ`-coordinates::
 
             sage: xP = KummerPoint(K, [95, 1]); xP
             (95 : 1)
@@ -1173,8 +1157,41 @@ class KummerPoint(SageObject):
         return
 
 
-class KummerLineIsogeny(SageObject):
-    def __init__(self, kernel, degree=None):
+class KummerIsogeny(SageObject):
+    r"""
+    Isogeny between Kummer lines using Vélu formulas.
+
+    .. TODO::
+
+        Optimize formulas: VéluSqrt, use projective coordinates, ...
+
+    EXAMPLES::
+
+        sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+        sage: P = E(76, 65); xP = K(P)
+        sage: Q = E(49, 61); xQ = K(Q)
+        sage: KummerIsogeny(xP)
+        Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+
+    It can also be constructed with the ``isogeny`` method from a Kummer line::
+
+        sage: K.isogeny(xP)
+        Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+    """
+
+    def __init__(self, kernel):
+        r"""
+        Create an isogeny with a given kernel on a Kummer line.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: Q = E(49, 61); xQ = K(Q)
+            sage: KummerIsogeny(xP)
+            Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        """
+
         # Ensure the kernel is the right type
         if not isinstance(kernel, KummerPoint):
             raise TypeError("kernel is not a Kummer point")
@@ -1182,63 +1199,187 @@ class KummerLineIsogeny(SageObject):
         self._kernel = kernel
         self._domain = kernel.parent()
         # Corresponds to the set "S" used in Vélu's formulas
-        self._kernel_subset, self._degree = self._compute_kernel_subset()
+        self._kernel_subset, self._degree = self._compute_kernel_subset_and_degree()
+        self._kernel_x = [xQ.x() for xQ in self._kernel_subset]
 
-        # This just behave as an extra check
-        if degree is not None and not isinstance(degree, (int, Integer)):
-            try:
-                self._degree = Integer(degree)
-            except TypeError:
-                raise TypeError(f"cannot coerce input {degree = } to an integer")
-            assert self._degree == degree
-
-        self._velu_constants = self._compute_velu_constants()
-        self._codomain = self._compute_codomain()
+        (
+            self._velu_constants_t,
+            self._velu_constants_u,
+            self._codomain,
+        ) = self._compute_velu_constants_and_codomain()
 
     def degree(self):
+        r"""
+        Return the degree of the isogeny.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: xf = K.isogeny(xP); xf.degree()
+            12
+        """
         return self._degree
 
     def domain(self):
+        r"""
+        Return the domain of the isogeny.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: xf = K.isogeny(xP); xf.domain()
+            Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        """
         return self._domain
 
     def codomain(self):
+        r"""
+        Return the codomain of the isogeny.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: xf = K.isogeny(xP); xf.codomain()
+            Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        """
         return self._codomain
 
     def kernel(self):
+        r"""
+        Return the kernel generator of the isogeny.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: xf = K.isogeny(xP); xf.kernel()
+            (76 : 1)
+        """
         return self._kernel
 
-    def __call__(self, P):
-        pass
+    def __repr__(self):
+        r"""
+        String representation of an isogeny between Kummer lines.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: xf = K.isogeny(xP); xf.__repr__()
+            Isogeny of degree 12 with kernel (76 : 1) from Kummer line of the elliptic curve y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of the elliptic curve y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        """
+        return f"Isogeny of degree {self._degree} with kernel {self._kernel} from {self._domain} to {self._codomain}"
+
+    def __call__(self, xP):
+        r"""
+        Evaluate the isogeny at ``xP``.
+
+        .. SEEALSO::
+
+            meth:`evaluate`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: Q = E(49, 61); xQ = K(Q)
+            sage: f = E.isogeny(P)
+            sage: xf = K.isogeny(xP) # Isogeny on K with kernel xP
+            sage: f.codomain() == xf.codomain().curve()
+            True
+            sage: f(Q)[0] == xf(Q).x()
+            True
+        """
+        return self.evaluate(xP)
 
     @cached_method
-    def _compute_kernel_subset(self):
+    def _compute_kernel_subset_and_degree(self):
+        r"""
+        Compute the subset of multiples of the kernel needed as well as the degree.
+
+        This first compute all the multiples of the generator until reaching
+        point at infinity, then returns half of them.
+        Called during initialisation.
+        Cached method.
+        """
         L = list(self._kernel.multiples())
         deg = len(L) + 1
-
-        return L[: deg // 2], deg
+        return L[: (len(L) + 1) // 2], deg
 
     @cached_method
-    def _compute_velu_constants(self):
+    def _compute_velu_constants_and_codomain(self):
+        r"""
+        Compute the needed constants in Vélu formulas as well as the codomain.
+
+        Called during initialisation.
+        Cached method.
+        """
         R = self._domain.base_ring()
         a, b = self._domain.extract_constants()
-        v, w = R(0), R(0)
-        cst_v, cst_u = [], []
+        t, w = R(0), R(0)
+        cst_t, cst_u = [], []
         S = self._kernel_subset
+        Sx = self._kernel_x
 
-        for xQ in S[:-1]:
-            XQ, ZQ = xQ.XZ()
-            gQx = 3 * XQ**2 + a * ZQ**3
-            gQy = 4 * (XQ**3 + a * XQ * ZQ**2 + b * ZQ**3)
-            cst_v.append(gQx)
-            cst_u.append(gQy)
+        for xQx in Sx[:-1]:
+            tQ = 2 * (3 * xQx**2 + a)
+            uQ = 4 * (xQx**3 + a * xQx + b)
+            cst_t.append(tQ)
+            cst_u.append(uQ)
+            t += tQ
+            w += uQ + xQx * tQ
 
-        # TODO hmmmmmmmmm
         xQ = S[-1]
-        XQ, ZQ = xQ.XZ()
-        gQx = 3 * XQ**2 + a * ZQ**3
-        gQy = 4 * (XQ**3 + a * XQ * ZQ**2 + b * ZQ**3)
+        xQx = Sx[-1]
+        gQx = 3 * xQx**2 + a
+        uQ = 4 * (xQx**3 + a * xQx + b)
         if xQ.double().is_zero():
-            cst_v.append(2 * gQx)
+            tQ = gQx
         else:
-            cst_v.append(gQx)
-        cst_u.append(gQy)
+            tQ = 2 * gQx
+        cst_t.append(tQ)
+        cst_u.append(uQ)
+        t += tQ
+        w += uQ + xQx * tQ
+
+        A = a - 5 * t
+        B = b - 7 * w
+
+        E2 = EllipticCurve(R, [A, B])
+        K2 = KummerLine(E2)
+
+        return cst_t, cst_u, K2
+
+    def evaluate(self, xP):
+        r"""
+        Evaluate the isogeny at ``xP``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
+            sage: P = E(76, 65); xP = K(P)
+            sage: Q = E(49, 61); xQ = K(Q)
+            sage: f = E.isogeny(P)
+            sage: xf = K.isogeny(xP) # Isogeny on K with kernel xP
+            sage: f.codomain() == xf.codomain().curve()
+            True
+            sage: f(Q)[0] == xf.evaluate(Q).x()
+            True
+        """
+        if xP in self._kernel_subset:
+            return self._codomain.zero()
+
+        Sx = self._kernel_x
+        xPx = xP.x()
+        cst_t, cst_u = self._velu_constants_t, self._velu_constants_u
+
+        fxP = xPx
+        for i in range(len(Sx)):
+            xQx, tQ, uQ = Sx[i], cst_t[i], cst_u[i]
+            alpha = xPx - xQx
+            fxP += (tQ * alpha + uQ) / alpha**2
+
+        return self._codomain(fxP)

@@ -46,4 +46,4 @@ lazy_import('sage.schemes.elliptic_curves.mod_poly', 'classical_modular_polynomi
 
 from .heegner import heegner_points, heegner_point
 
-lazy_import('sage.schemes.elliptic_curves.kummer_line', 'KummerLine')
+lazy_import('sage.schemes.elliptic_curves.kummer_line', ['KummerLine', 'KummerPoint', 'KummerIsogeny'])
