@@ -5986,8 +5986,8 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: matroids.Uniform(5,5).girth()
-            inf
+            sage: matroids.Uniform(5, 5).girth()
+            +Infinity
             sage: matroids.catalog.K4().girth()
             3
             sage: matroids.catalog.Vamos().girth()
@@ -6002,7 +6002,8 @@ cdef class Matroid(SageObject):
                 X = frozenset(X)
                 if self._is_circuit(X):
                     return k
-        return float('inf')
+        from sage.rings.infinity import infinity
+        return infinity
 
     # representability
 
