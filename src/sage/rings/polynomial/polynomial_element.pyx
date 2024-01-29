@@ -5940,20 +5940,22 @@ cdef class Polynomial(CommutativePolynomial):
             return a*self
 
     def coefficients(self, sparse=True):
-        """
-        Return the coefficients of the monomials appearing in self.
+        r"""
+        Return the coefficients of the monomials appearing in ``self``.
+
         If ``sparse=True`` (the default), it returns only the non-zero coefficients.
         Otherwise, it returns the same value as ``self.list()``.
         (In this case, it may be slightly faster to invoke ``self.list()`` directly.)
+        In either case, the coefficients are ordered by increasing degree.
 
         EXAMPLES::
 
             sage: _.<x> = PolynomialRing(ZZ)
-            sage: f = x^4 + 2*x^2 + 1
+            sage: f = 3*x^4 + 2*x^2 + 1
             sage: f.coefficients()
-            [1, 2, 1]
+            [1, 2, 3]
             sage: f.coefficients(sparse=False)
-            [1, 0, 2, 0, 1]
+            [1, 0, 2, 0, 3]
         """
         zero = self._parent.base_ring().zero()
         if sparse:
