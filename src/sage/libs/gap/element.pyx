@@ -1341,12 +1341,9 @@ cdef class GapElement(RingElement):
             sage: p.sage().parent()
             Fraction Field of Univariate Polynomial Ring in x over Integer Ring
 
-            sage: G = libgap.SymplecticGroup(2,2).IsomorphismFpGroup().Range()
-            sage: G1 = G.sage(); G1
-            Finitely presented group < F1, F2 | F1^2, F2^2, (F1*F2)^3 >
-            sage: G1.gap() == G
-            True
-            sage: G1.is_isomorphic(SymmetricGroup(3))
+            sage: from sage.groups.free_group import FreeGroup
+            sage: G = libgap(FreeGroup(2) / [(1, 2, 2, 1)])
+            sage: G == G.sage()
             True
 
         TESTS:
@@ -2454,7 +2451,7 @@ cdef class GapElement_Function(GapElement):
             [Group(()),
              Sym( [ 1 .. 4 ] ),
              Alt( [ 1 .. 4 ] ),
-             Group([ (1,4)(2,3), (1,3)(2,4) ])]
+             Group([ (1,4)(2,3), (1,2)(3,4) ])]
 
             sage: libgap.eval("a := NormalSubgroups")
             <Gap function "NormalSubgroups">

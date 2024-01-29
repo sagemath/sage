@@ -682,12 +682,7 @@ class GroupHomset_libgap(HomsetWithBase):
             dom = self.domain()
             codom = self.codomain()
             gens = dom.gap().GeneratorsOfGroup()
-            gens0 = [a for a in gens]
-            imgs = []
-            for g in dom.gens():
-                j = gens0.index(g.gap())
-                imgs.append(codom(x[j]).gap())
-            # imgs = [codom(g).gap() for g in x]
+            imgs = [codom(g).gap() for g in x]
             if check:
                 if not len(gens) == len(imgs):
                     raise ValueError("provide an image for each generator")
