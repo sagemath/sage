@@ -187,9 +187,9 @@ jobs:
       - name: Pytest
         if: contains(github.ref, 'pytest')
         run: |
-          ./sage -python -m pip install coverage pytest-xdist
-          ./sage -python -m coverage run --rcfile=src/tox.ini -m pytest -c src/tox.ini --doctest-modules || true
-        working-directory: ./worktree-image
+          ../sage -python -m pip install coverage pytest-xdist
+          ../sage -python -m coverage run -m pytest -c tox.ini --doctest || true
+        working-directory: ./worktree-image/src
         env:
           # Increase the length of the lines in the "short summary"
           COLUMNS: 120
