@@ -533,8 +533,8 @@ class GraphicMatroid(Matroid):
             sage: M._minor(contractions=frozenset([0,1,2]))
             Graphic matroid of rank 1 on 7 elements
             sage: M = Matroid(range(15), graphs.PetersenGraph())
-            sage: N = M._minor(deletions = frozenset([0, 3, 5, 9]),
-            ....:              contractions = frozenset([1, 2, 11]))
+            sage: N = M._minor(deletions=frozenset([0, 3, 5, 9]),
+            ....:              contractions=frozenset([1, 2, 11]))
             sage: N
             Graphic matroid of rank 6 on 8 elements
         """
