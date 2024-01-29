@@ -244,7 +244,7 @@ def init_sage(controller=None):
         pass
 
     try:
-        import sympy
+        import sympy.printing
     except ImportError:
         # Do not require sympy for running doctests (Issue #25106).
         pass
