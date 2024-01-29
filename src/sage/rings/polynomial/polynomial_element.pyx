@@ -2382,7 +2382,7 @@ cdef class Polynomial(CommutativePolynomial):
                     self = self.change_ring(ring)
                 except ValueError:
                     raise(f"cannot coerce polynomial {self} to the new ring: {ring}")
-            
+
             # try and find a linear irreducible polynomial from f to compute a root
             try:
                 f = self.any_irreducible_factor(degree=ZZ(1), assume_squarefree=assume_squarefree)
@@ -2424,7 +2424,7 @@ cdef class Polynomial(CommutativePolynomial):
                 raise(f"cannot coerce polynomial {f} to the supplied ring: {ring}")
             return f.any_root()
 
-        # Otherwise change the ring of this degree `degree` irreducible 
+        # Otherwise change the ring of this degree `degree` irreducible
         # polynomial and attempt to find a root from this
         F_ext = self.base_ring().extension(f, names="a")
         return F_ext.gen()
