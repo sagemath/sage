@@ -2139,7 +2139,17 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _any_irreducible_factor_squarefree(self, degree=None):
         """
-        TODO
+        Helper function for any_irreducible_factor which computes
+        an irreducible factor from self, assuming the input is 
+        squarefree.
+        
+        Does this by first computing the distinct degree factorisations
+        of self and thenfinds a factor with Cantor-Zassenhaus
+        splitting.
+
+        If degree is not None, then only irreducible factors of degree
+        `degree` are searched for, otherwise the smallest degree factor
+        is found.
         """
         # If the degree is not None we only want to check a single polynomial
         if degree is not None:
@@ -2165,7 +2175,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def any_irreducible_factor(self, ring=None, degree=None, assume_squarefree=False, assume_distinct_deg=False):
         """
-        TODO
+        TODO: description with doctests and tests.
         """
         # If the ring is not None, then first change ring and run the algorithm again
         if ring is not None:
