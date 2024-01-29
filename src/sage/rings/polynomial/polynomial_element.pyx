@@ -43,7 +43,7 @@ AUTHORS:
 - David Zureick-Brown (2017-09): added is_weil_polynomial
 
 - Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
-  cases of proper integral domains (see :trac:`26421`)
+  cases of proper integral domains (see :issue:`26421`)
 
 """
 
@@ -613,7 +613,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: F(y=1)
             x*t
 
-        The following shows that :trac:`2360` is indeed fixed. ::
+        The following shows that :issue:`2360` is indeed fixed. ::
 
             sage: R.<x,y> = ZZ[]
             sage: P.<a> = ZZ[]
@@ -628,13 +628,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f(x)
             6*x^4
 
-        The following shows that :trac:`9006` is also fixed. ::
+        The following shows that :issue:`9006` is also fixed. ::
 
             sage: f = ZZ['x'](1000000 * [1])
             sage: f(1)
             1000000
 
-        The following test came up in :trac:`9051`::
+        The following test came up in :issue:`9051`::
 
             sage: # needs sage.rings.complex_interval_field
             sage: Cif = ComplexIntervalField(64)
@@ -644,7 +644,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f(jj).center(), f(jj).diameter()
             (1.00000000000000000, 4.00000000000000000)
 
-        The following failed before the patch to :trac:`3979`
+        The following failed before the patch to :issue:`3979`
 
         ::
 
@@ -700,7 +700,7 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             TypeError: Wrong number of arguments
 
-        Check that :trac:`22317` is fixed::
+        Check that :issue:`22317` is fixed::
 
             sage: R = ZZ['x']['y']['z']
             sage: d = R.gens_dict_recursive()
@@ -708,7 +708,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p(x=QQ(0))
             0
 
-        Check that :trac:`32513` is fixed::
+        Check that :issue:`32513` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: x.substitute([])
@@ -716,7 +716,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: Polynomial.__call__(x, [])
             x
 
-        These were drastically slower prior to :trac:`33165`::
+        These were drastically slower prior to :issue:`33165`::
 
             sage: # needs sage.rings.finite_rings
             sage: R.<x> = GF(31337)[]
@@ -754,7 +754,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: g(U(2))
             -8268
 
-        Sparse tests for :trac:`33165`::
+        Sparse tests for :issue:`33165`::
 
             sage: R.<x> = PolynomialRing(QQ, sparse=True)
             sage: f = x^1000000 + 1
@@ -1030,7 +1030,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x^3 - 3 > 393939393
             True
 
-        Test comparison with zero (:trac:`18633`)::
+        Test comparison with zero (:issue:`18633`)::
 
             sage: 0 < R(1)
             True
@@ -1150,7 +1150,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: pol[:6]
             5*x^5 + 4*x^4 + 3*x^3 + 2*x^2 + x
 
-        Any other kind of slicing is an error, see :trac:`18940`::
+        Any other kind of slicing is an error, see :issue:`18940`::
 
             sage: f[1:3]
             Traceback (most recent call last):
@@ -1261,7 +1261,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Verify that :trac:`16251` has been resolved, i.e., polynomials with
+        Verify that :issue:`16251` has been resolved, i.e., polynomials with
         unhashable coefficients are unhashable::
 
             sage: K.<a> = Qq(9)                                                         # needs sage.rings.padics
@@ -1495,7 +1495,7 @@ cdef class Polynomial(CommutativePolynomial):
             10
 
         The polynomial has to be over a field of characteristic 0 (see
-        :trac:`24072`)::
+        :issue:`24072`)::
 
             sage: R.<w> = GF(7)[]
             sage: f = SR(2*w^3 + 1); f                                                  # needs sage.symbolic
@@ -2012,7 +2012,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Make sure :trac:`9093` is fixed::
+        Make sure :issue:`9093` is fixed::
 
             sage: R(1).is_square()
             True
@@ -2023,7 +2023,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R(0).is_square()
             True
 
-        Make sure :trac:`35860` is fixed::
+        Make sure :issue:`35860` is fixed::
 
             sage: S.<x> = PolynomialRing(ZZ)
             sage: is_square(S(1), True)[1].parent()
@@ -2303,7 +2303,7 @@ cdef class Polynomial(CommutativePolynomial):
             ....:     assert f(f.any_root(K)) == 0
 
         Check that our Cantor-Zassenhaus implementation does not loop
-        over finite fields of even characteristic (see :trac:`16162`)::
+        over finite fields of even characteristic (see :issue:`16162`)::
 
             sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(2**8)
@@ -2346,7 +2346,7 @@ cdef class Polynomial(CommutativePolynomial):
             + a^27 + a^25 + a^23 + a^22 + a^20 + a^18 + a^16 + a^14 + a^11 + a^10
             + a^8 + a^6 + a^5 + a^4 + a + 1
 
-        Check that :trac:`21998` has been resolved::
+        Check that :issue:`21998` has been resolved::
 
             sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(2^4)
@@ -2481,7 +2481,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`12217` is fixed::
+        Check that :issue:`12217` is fixed::
 
             sage: P.<x> = GF(5)[]
             sage: x/0
@@ -2495,7 +2495,7 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ZeroDivisionError: division by zero in finite field
 
-        Check that :trac:`23611` is fixed::
+        Check that :issue:`23611` is fixed::
 
             sage: int(1) / x
             1/x
@@ -2572,7 +2572,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: pow(f, 10**7, h)
             4*x*t^3 + 2*x*t^2 + 4*x*t + 4
 
-        Check that :trac:`18457` is fixed::
+        Check that :issue:`18457` is fixed::
 
             sage: R.<x> = PolynomialRing(GF(5), sparse=True)
             sage: (1+x)^(5^10)
@@ -2610,7 +2610,7 @@ cdef class Polynomial(CommutativePolynomial):
             18009460*y^6*x^6 + 2349060*y^5*x^5 + ... + 51*y*x + 1
 
         Check that fallback method is used when it is not possible to compute
-        the characteristic of the base ring (:trac:`24308`)::
+        the characteristic of the base ring (:issue:`24308`)::
 
             sage: # needs sage.libs.singular
             sage: kk.<a,b> = GF(2)[]
@@ -2805,7 +2805,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        We verify that :trac:`23020` has been resolved. (There are no
+        We verify that :issue:`23020` has been resolved. (There are no
         elements in the Sage library yet that do not implement
         ``__bool__``, so we have to create one artificially.)::
 
@@ -2898,7 +2898,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: latex(x+2)
             x + 2.0
 
-        The following illustrates the fix of :trac:`2586`::
+        The following illustrates the fix of :issue:`2586`::
 
             sage: latex(ZZ['alpha']['b']([0, ZZ['alpha'].0]))
             \alpha b
@@ -3085,7 +3085,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check the problem reported at :trac:`12529` is fixed::
+        Check the problem reported at :issue:`12529` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: gens = 'y a0 a1 a2 b0 b1 b2 c1 c2 d0 d1 d2 d3 d4 d5 d6 d7'.split()
@@ -3554,7 +3554,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`25022` is fixed::
+        Check that :issue:`25022` is fixed::
 
             sage: K.<x> = ZZ[]
             sage: x.change_ring(SR) == SR['x'].gen()                                    # needs sage.symbolic
@@ -3562,7 +3562,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: x.change_ring(ZZ['x']) == ZZ['x']['x'].gen()
             True
 
-        Check that :trac:`28541` is fixed::
+        Check that :issue:`28541` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(7^2)
@@ -3766,7 +3766,7 @@ cdef class Polynomial(CommutativePolynomial):
             1.00000000000000
 
         Check that the denominator is an element over the base whenever the base
-        has no :meth:`denominator` method. This closes :trac:`9063`. ::
+        has no :meth:`denominator` method. This closes :issue:`9063`. ::
 
             sage: R.<a> = GF(5)[]
             sage: x = R(0)
@@ -3781,7 +3781,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`18518` is fixed::
+        Check that :issue:`18518` is fixed::
 
             sage: R.<x> = PolynomialRing(QQ, sparse=True)
             sage: p = x^(2^100) - 1/2
@@ -3974,7 +3974,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R(1).derivative(R(x))
             0
 
-        Check that :trac:`28147` is fixed::
+        Check that :issue:`28147` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: R.<x> = GF(65537)[]
@@ -4011,7 +4011,7 @@ cdef class Polynomial(CommutativePolynomial):
             ValueError: cannot differentiate with respect to y
 
 
-        Check that :trac:`26844` is fixed by :trac:`28147`::
+        Check that :issue:`26844` is fixed by :issue:`28147`::
 
             sage: A = PolynomialRing(GF(3), name='t')
             sage: K = A.fraction_field()
@@ -4019,7 +4019,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: t.derivative(t)
             1
 
-        Check that :trac:`28187` is fixed::
+        Check that :issue:`28187` is fixed::
 
             sage: R.<x> = GF(65537)[]                                                   # needs sage.rings.finite_rings
             sage: x._derivative(2*x)
@@ -4104,7 +4104,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: g.parent()
             Univariate Polynomial Ring in x over Rational Field
 
-        This shows that the issue at :trac:`7711` is resolved::
+        This shows that the issue at :issue:`7711` is resolved::
 
             sage: # needs sage.rings.finite_rings
             sage: P.<x,z> = PolynomialRing(GF(2147483647))
@@ -4155,7 +4155,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: Sx.<x> = ZZ[]
             sage: Sxy.<y> = Sx[]
@@ -4176,7 +4176,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p.integral(x).derivative(x) == p
             True
 
-        Check that it works with non-integral domains (:trac:`18600`)::
+        Check that it works with non-integral domains (:issue:`18600`)::
 
             sage: x = polygen(Zmod(4))
             sage: p = x**4 + 1
@@ -4407,7 +4407,7 @@ cdef class Polynomial(CommutativePolynomial):
             rings with composite characteristic is not implemented
 
         Factoring polynomials over the algebraic numbers (see
-        :trac:`8544`)::
+        :issue:`8544`)::
 
             sage: R.<x> = QQbar[]                                                       # needs sage.rings.number_field
             sage: (x^8 - 1).factor()                                                    # needs sage.rings.number_field
@@ -4417,7 +4417,7 @@ cdef class Polynomial(CommutativePolynomial):
             * (x + 0.7071067811865475? + 0.7071067811865475?*I) * (x + 1)
 
         Factoring polynomials over the algebraic reals (see
-        :trac:`8544`)::
+        :issue:`8544`)::
 
             sage: R.<x> = AA[]                                                          # needs sage.rings.number_field
             sage: (x^8 + 1).factor()                                                    # needs sage.rings.number_field
@@ -4428,7 +4428,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        This came up in :trac:`7088`::
+        This came up in :issue:`7088`::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: f = 12*x^10 + x^9 + 432*x^3 + 9011
@@ -4439,7 +4439,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: F = f^2 * g^3 * 7; F.factor()                                         # needs sage.libs.pari
             7 * (12*x^10 + x^9 + 432*x^3 + 9011)^2 * (13*x^11 + 89*x^3 + 1)^3
 
-        This example came up in :trac:`7097`::
+        This example came up in :issue:`7097`::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
@@ -4531,7 +4531,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: A(x^2 - 1/3).factor()
             (T - a) * (T + a)
 
-        Test that :trac:`10279` is fixed::
+        Test that :issue:`10279` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: R.<t> = PolynomialRing(QQ)
@@ -4550,7 +4550,7 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             sage: pari.default("debug", 0)
 
-        Test that :trac:`10369` is fixed::
+        Test that :issue:`10369` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
@@ -4634,7 +4634,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: factor(f)
             (x - a1) * (x^2 + a1*x + a1^2)
 
-        We check that :trac:`7554` is fixed::
+        We check that :issue:`7554` is fixed::
 
             sage: L.<q> = LaurentPolynomialRing(QQ)
             sage: F = L.fraction_field()
@@ -4652,14 +4652,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: factor(p)                                                             # needs sage.libs.singular
             (a/(a + 2)) * (x - a) * (b*x + c)^2
 
-        Check that :trac:`24973` is fixed::
+        Check that :issue:`24973` is fixed::
 
             sage: x1 = ZZ['x'].gen()
             sage: x2 = ZZ['x']['x'].gen()
             sage: (x1 - x2).factor()                                                    # needs sage.libs.singular
             -x + x
 
-        Check that :trac:`26421' is fixed::
+        Check that :issue:`26421' is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = R[]
@@ -4667,7 +4667,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p.factor()                                                            # needs sage.libs.singular
             (x - 5) * (x - 2*t) * (x^2 - 2)
 
-        Check that :trac:`29266` is fixed:
+        Check that :issue:`29266` is fixed:
 
             sage: f = t*x + t
             sage: f.is_irreducible()                                                    # needs sage.libs.singular
@@ -5219,7 +5219,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`32033` has been fixed::
+        Check that :issue:`32033` has been fixed::
 
             sage: R.<t> = GF(3)[]
             sage: lcm(R(0), R(0))
@@ -5833,7 +5833,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: c = x^2^100 + 1
@@ -5878,7 +5878,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(Zmod(4), sparse=True)
             sage: (2*x^2^100 + 2).is_nilpotent()
@@ -6359,7 +6359,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: (x^2^100 + x^8 - 1).padded_list(10)
@@ -7000,7 +7000,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: h.parent() is R                                                       # needs sage.libs.pari sage.modules
             True
 
-        Check that :trac:`13672` is fixed::
+        Check that :issue:`13672` is fixed::
 
             sage: R.<t> = GF(2)[]
             sage: S.<x> = R[]
@@ -7009,7 +7009,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.resultant(g)                                                        # needs sage.libs.pari
             t^4 + t
 
-        Check that :trac:`15061` is fixed::
+        Check that :issue:`15061` is fixed::
 
             sage: R.<T> = PowerSeriesRing(QQ)
             sage: F = R([1,1],2)
@@ -7018,7 +7018,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: P.resultant(P.derivative())                                           # needs sage.libs.pari
             -4 - 4*T + O(T^2)
 
-        Check that :trac:`16360` is fixed::
+        Check that :issue:`16360` is fixed::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
@@ -7035,7 +7035,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.resultant(g)                                                        # needs sage.libs.pari
             0
 
-        Check that :trac:`17817` is fixed::
+        Check that :issue:`17817` is fixed::
 
             sage: A.<a,b,c> = Frac(PolynomialRing(QQ,'a,b,c'))
             sage: B.<d,e,f> = PolynomialRing(A,'d,e,f')
@@ -7049,7 +7049,7 @@ cdef class Polynomial(CommutativePolynomial):
             + (48*c^4)*e^2*x^2 + ((-12*a*c)/b*d^2*e + (-12*b*c)*e)*x + (16*c^4)*e^3 + (4*a^3*b^3)/c
 
 
-        Test for :trac:`10978`::
+        Test for :issue:`10978`::
 
             sage: # needs sage.libs.pari sage.rings.complex_double sage.symbolic
             sage: R.<x> = PolynomialRing(CDF)
@@ -7658,7 +7658,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.discriminant()                                                      # needs sage.libs.pari
             1
 
-        Check that :trac:`13672` is fixed::
+        Check that :issue:`13672` is fixed::
 
             sage: R.<t> = GF(5)[]
             sage: S.<x> = R[]
@@ -7666,7 +7666,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (f - t).discriminant()                                                # needs sage.rings.finite_rings
             4*t^5
 
-        The following examples show that :trac:`11782` has been fixed::
+        The following examples show that :issue:`11782` has been fixed::
 
             sage: var('x')                                                              # needs sage.symbolic
             x
@@ -7675,13 +7675,13 @@ cdef class Polynomial(CommutativePolynomial):
             sage: ZZ.quo(9)['x'](2*x^3 + x^2 + x).discriminant()                        # needs sage.libs.pari sage.symbolic
             2
 
-        This was fixed by :trac:`15422`::
+        This was fixed by :issue:`15422`::
 
             sage: R.<s> = PolynomialRing(Qp(2))                                         # needs sage.rings.padics
             sage: (s^2).discriminant()                                                  # needs sage.rings.padics
             0
 
-        This was fixed by :trac:`16014`::
+        This was fixed by :issue:`16014`::
 
             sage: # needs sage.modules
             sage: PR.<b,t1,t2,x1,y1,x2,y2> = QQ[]
@@ -7693,7 +7693,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: det(mu*E1 + E2).discriminant().degrees()                              # needs sage.libs.pari
             (24, 12, 12, 8, 8, 8, 8)
 
-        This addresses an issue raised by :trac:`15061`::
+        This addresses an issue raised by :issue:`15061`::
 
             sage: R.<T> = PowerSeriesRing(QQ)
             sage: F = R([1,1],2)
@@ -7976,7 +7976,7 @@ cdef class Polynomial(CommutativePolynomial):
             []
 
         For some other polynomials, no roots can be found at the moment
-        due to the way roots are computed. :trac:`17516` addresses
+        due to the way roots are computed. :issue:`17516` addresses
         these defects. Until that gets implemented, one such example
         is the following::
 
@@ -8291,12 +8291,12 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p.roots(ring=QQbar)                                                   # needs sage.rings.number_field
             [(-5.9223865215328558?e225, 1), (5.9223865215328558?e225, 1)]
 
-        Check that :trac:`30522` is fixed::
+        Check that :issue:`30522` is fixed::
 
             sage: PolynomialRing(SR, names="x")("x^2").roots()                          # needs sage.symbolic
             [(0, 2)]
 
-        Check that :trac:`30523` is fixed::
+        Check that :issue:`30523` is fixed::
 
             sage: PolynomialRing(SR, names="x")("x^2 + q").roots()                      # needs sage.symbolic
             [(-sqrt(-q), 1), (sqrt(-q), 1)]
@@ -8329,7 +8329,7 @@ cdef class Polynomial(CommutativePolynomial):
         :meth:`sage.symbolic.expression.Expression.solve`
         which in turn uses Maxima to find radical solutions.
         Some solutions may be lost in this approach.
-        Once :trac:`17516` gets implemented, all possible radical
+        Once :issue:`17516` gets implemented, all possible radical
         solutions should become available.
 
         If `L` is ``AA`` or ``RIF``, and `K` is ``ZZ``, ``QQ``, or ``AA``, then the root isolation
@@ -8396,7 +8396,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: factor(x^3 - 1)
             (x - 1) * (x^2 + x + 1)
 
-        This shows that the issue from :trac:`6237` is fixed::
+        This shows that the issue from :issue:`6237` is fixed::
 
             sage: R.<u> = QQ[]
             sage: g = -27*u^14 - 32*u^9
@@ -8407,7 +8407,7 @@ cdef class Polynomial(CommutativePolynomial):
             [(-1.0345637159435719, 1), (0.0, 9), (-0.3196977699902601 - 0.9839285635706636*I, 1), (-0.3196977699902601 + 0.9839285635706636*I, 1),
              (0.8369796279620465 - 0.6081012947885318*I, 1), (0.8369796279620465 + 0.6081012947885318*I, 1)]
 
-        This shows that the issue at :trac:`2418` is fixed::
+        This shows that the issue at :issue:`2418` is fixed::
 
             sage: x = polygen(QQ)
             sage: p = (x^50/2^100 + x^10 + x + 1).change_ring(ComplexField(106))        # needs sage.rings.real_mpfr
@@ -8416,7 +8416,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: [abs(p(rt)) < eps for rt in rts] == [True]*50                         # needs sage.rings.number_field
             True
 
-        This shows that the issue at :trac:`10901` is fixed::
+        This shows that the issue at :issue:`10901` is fixed::
 
             sage: # needs sage.symbolic
             sage: a = var('a'); R.<x> = SR[]
@@ -8431,7 +8431,7 @@ cdef class Polynomial(CommutativePolynomial):
             TypeError: cannot evaluate symbolic expression to a numeric value
 
         We can find roots of polynomials defined over `\ZZ` or `\QQ`
-        over the `p`-adics, see :trac:`15422`::
+        over the `p`-adics, see :issue:`15422`::
 
             sage: R.<x> = ZZ[]
             sage: pol = (x - 1)^2
@@ -8450,14 +8450,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: parent(r[0])
             3-adic Ring with capped relative precision 5
 
-        Spurious crash with pari-2.5.5, see :trac:`16165`::
+        Spurious crash with pari-2.5.5, see :issue:`16165`::
 
             sage: f = (1+x+x^2)^3
             sage: f.roots(ring=CC)                                                      # needs sage.libs.pari sage.rings.real_mpfr
             [(-0.500000000000000 - 0.866025403784439*I, 3),
              (-0.500000000000000 + 0.866025403784439*I, 3)]
 
-        Test a crash reported at :trac:`19649`::
+        Test a crash reported at :issue:`19649`::
 
             sage: polRing.<x> = PolynomialRing(ZZ)
             sage: j = (x+1)^2 * (x-1)^7 * (x^2-x+1)^5
@@ -8467,19 +8467,19 @@ cdef class Polynomial(CommutativePolynomial):
              (0.500000000000000 - 0.866025403784439*I, 5),
              (0.500000000000000 + 0.866025403784439*I, 5)]
 
-        Test that some large finite rings can be handled (:trac:`13825`)::
+        Test that some large finite rings can be handled (:issue:`13825`)::
 
             sage: R.<x> = IntegerModRing(20000009)[]                                    # needs sage.libs.pari
             sage: eq = x^6+x-17
             sage: eq.roots(multiplicities=False)                                        # needs sage.libs.pari
             [3109038, 17207405]
 
-        Test that roots in fixed modulus p-adic fields work (:trac:`17598`)::
+        Test that roots in fixed modulus p-adic fields work (:issue:`17598`)::
 
             sage: len(cyclotomic_polynomial(3).roots(ZpFM(739, 566)))                   # needs sage.rings.padics
             2
 
-        Check that :trac:`26421` is fixed::
+        Check that :issue:`26421` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = R[]
@@ -8487,7 +8487,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p.roots()                                                             # needs sage.libs.singular
             [(5, 1), (2*t, 1)]
 
-        Check that :trac:`31040` is fixed::
+        Check that :issue:`31040` is fixed::
 
             sage: R.<x> = QQ[]
             sage: K.<a> = Qq(3).extension(x^2 + 1)                                      # needs sage.rings.padics
@@ -8497,14 +8497,14 @@ cdef class Polynomial(CommutativePolynomial):
                 + 2*a*3^11 + 2*a*3^12 + 2*a*3^13 + 2*a*3^14 + 2*a*3^15 + 2*a*3^16 + 2*a*3^17 + 2*a*3^18 + 2*a*3^19 + O(3^20),
               1)]
 
-        Check that :trac:`31710` is fixed::
+        Check that :issue:`31710` is fixed::
 
             sage: CBF['x'].zero().roots(multiplicities=False)                           # needs sage.libs.flint
             Traceback (most recent call last):
             ...
             ArithmeticError: taking the roots of the zero polynomial
 
-        Check that :trac:`33979` is fixed::
+        Check that :issue:`33979` is fixed::
 
             sage: # needs sage.libs.pari
             sage: n = randint(2, 10^6)
@@ -9175,7 +9175,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`28395` is fixed::
+        Check that :issue:`28395` is fixed::
 
             sage: P.<t> = QQ[]
             sage: u = t^4 + 3*t^2 + 1
@@ -9254,7 +9254,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`28395` is fixed::
+        Check that :issue:`28395` is fixed::
 
             sage: P.<t> = QQ[]
             sage: u = t^10 + 4*t^9 + 8*t^8 + 18*t^7 + 81*t^6 + 272*t^5 + 567*t^4 + 882*t^3 + 2744*t^2 + 9604*t + 16807
@@ -10133,7 +10133,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: radical(12 * x^5)
             6*x
 
-        If self has a factor of multiplicity divisible by the characteristic (see :trac:`8736`)::
+        If self has a factor of multiplicity divisible by the characteristic (see :issue:`8736`)::
 
             sage: P.<x> = GF(2)[]
             sage: (x^3 + x^2).radical()                                                 # needs sage.rings.finite_rings
@@ -10225,7 +10225,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.norm(int(2))
             2.00000000000000
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: (x^2^100 + 1).norm(1)                                                 # needs sage.rings.real_mpfr
@@ -11856,7 +11856,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         """
         TESTS:
 
-        Check that exceptions are propagated correctly (:trac:`18274`)::
+        Check that exceptions are propagated correctly (:issue:`18274`)::
 
             sage: class BrokenRational(Rational):
             ....:     def __bool__(self):
@@ -11953,7 +11953,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         TESTS:
 
-        Check that :trac:`13048` and :trac:`2034` are fixed::
+        Check that :issue:`13048` and :issue:`2034` are fixed::
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQbar[]
@@ -12101,7 +12101,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         TESTS:
 
-        Check that :trac:`12552` is fixed::
+        Check that :issue:`12552` is fixed::
 
             sage: type(f.degree())
             <class 'sage.rings.integer.Integer'>
@@ -12184,7 +12184,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             ZeroDivisionError: division by zero polynomial
 
         Polynomials over noncommutative rings are also allowed
-        (after :trac:`34733`)::
+        (after :issue:`34733`)::
 
             sage: # needs sage.combinat sage.modules
             sage: HH = QuaternionAlgebra(QQ, -1, -1)
@@ -12197,7 +12197,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         TESTS:
 
-        The following shows that :trac:`16649` is indeed fixed. ::
+        The following shows that :issue:`16649` is indeed fixed. ::
 
             sage: P.<x> = QQ[]
             sage: R.<y> = P[]
@@ -12211,7 +12211,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             sage: h == q*f + r and r.degree() < f.degree()
             True
 
-        :trac:`26907`::
+        :issue:`26907`::
 
             sage: P.<x> = ZZ[]
             sage: R.<y> = P[]
@@ -12363,7 +12363,7 @@ cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec) noexcep
 
         sage: from sage.rings.polynomial.polynomial_element import generic_power_trunc
 
-        sage: for S in [ZZ, GF(3)]:             # known bug, not tested (see :trac:`32075`)
+        sage: for S in [ZZ, GF(3)]:             # known bug, not tested (see :issue:`32075`)
         ....:     R = PolynomialRing(S, 'x')
         ....:     for _ in range(100):
         ....:         p = R.random_element()
@@ -12579,7 +12579,7 @@ cdef class ConstantPolynomialSection(Map):
     """
     This class is used for conversion from a polynomial ring to its base ring.
 
-    Since :trac:`9944`, it calls the :meth:`constant_coefficient` method,
+    Since :issue:`9944`, it calls the :meth:`constant_coefficient` method,
     which can be optimized for a particular polynomial type.
 
     EXAMPLES::
@@ -12646,7 +12646,7 @@ cdef class PolynomialBaseringInjection(Morphism):
     We demonstrate that most polynomial ring classes use
     polynomial base injection maps for coercion. They are
     supposed to be the fastest maps for that purpose. See
-    :trac:`9944`. ::
+    :issue:`9944`. ::
 
         sage: # needs sage.rings.padics
         sage: R.<x> = Qp(3)[]
@@ -12673,7 +12673,7 @@ cdef class PolynomialBaseringInjection(Morphism):
           From: Rational Field
           To:   Univariate Polynomial Ring in x over Rational Field
 
-    By :trac:`9944`, there are now only very few exceptions::
+    By :issue:`9944`, there are now only very few exceptions::
 
         sage: PolynomialRing(QQ,names=[]).coerce_map_from(QQ)
         Call morphism:
@@ -12806,7 +12806,7 @@ cdef class PolynomialBaseringInjection(Morphism):
             sage: S.coerce_map_from(R).is_injective()
             True
 
-        Check that :trac:`23203` has been resolved::
+        Check that :issue:`23203` has been resolved::
 
             sage: R.is_subring(S)  # indirect doctest
             True
