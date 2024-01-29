@@ -320,13 +320,13 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
         TESTS:
 
-        Check if trac:`36876` is fixed::
+        Check if :trac:`36876` is fixed::
             sage: SL(1, QQ).order()
             1
             sage: SL(1, ZZ).cardinality()
             1
 
-        Check if trac:`35490` is fixed::
+        Check if :trac:`35490` is fixed::
             sage: q = 7
             ....: FqT.<T> = GF(q)[]
             ....: N = T^2+1
