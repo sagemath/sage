@@ -10,13 +10,13 @@ We construct a Kummer line over an already defined elliptic curve in short Weier
 
     sage: E = EllipticCurve(GF(101), [2, 3])
     sage: KummerLine(E)
-    Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+    Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
 
 Montgomery curves are also handled::
 
     sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
     sage: KummerLine(E)
-    Kummer line of Elliptic Curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
+    Kummer Line of Elliptic Curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
 
 It is then possible to define points on this line, derived from points on the curve
 (or by giving it the coordinates)::
@@ -45,16 +45,16 @@ Differential addition and scalar multiplication are implemented::
 Isogenies between Kummer lines are also available using Vélu formulas::
 
     sage: xf = K.isogeny(xP); xf
-    Isogeny of degree 48 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 68*x + 29 over Finite Field of size 101
+    Isogeny of degree 48 from Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer Line of Elliptic Curve defined by y^2 = x^3 + 68*x + 29 over Finite Field of size 101
 
 Methods similar to the elliptic curves ones are also implemented::
 
     sage: xf.degree()
     48
     sage: xf.domain()
-    Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+    Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
     sage: xf.codomain()
-    Kummer line of Elliptic Curve defined by y^2 = x^3 + 68*x + 29 over Finite Field of size 101
+    Kummer Line of Elliptic Curve defined by y^2 = x^3 + 68*x + 29 over Finite Field of size 101
 
 They can also be evaluated::
 
@@ -144,7 +144,7 @@ class KummerLine_generic(SageObject):
 
         sage: E = EllipticCurve(GF(101), [2, 3])
         sage: K = KummerLine(E); K
-        Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
     """
 
     def __init__(self, curve):
@@ -157,7 +157,7 @@ class KummerLine_generic(SageObject):
 
             sage: E = EllipticCurve(GF(101), [2, 3])
             sage: K = KummerLine(E); K
-            Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
         self._curve = curve
         self._base_ring = curve.base_ring()
@@ -199,9 +199,9 @@ class KummerLine_generic(SageObject):
 
             sage: E = EllipticCurve(GF(101), [2, 3])
             sage: K = KummerLine(E); K.__repr__()
-            'Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101'
+            'Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101'
         """
-        return f"Kummer line of {self._curve}"
+        return f"Kummer Line of {self._curve}"
 
     def __call__(self, coords):
         r"""
@@ -320,7 +320,7 @@ class KummerLine_generic(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
-            Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Isogeny of degree 12 from Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer Line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         if xP._parent != self:
@@ -336,7 +336,7 @@ class KummerLine_weierstrass(KummerLine_generic):
 
         sage: E = EllipticCurve(GF(101), [2, 3])
         sage: K = KummerLine(E); K
-        Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
     """
 
     def __init__(self, curve):
@@ -349,7 +349,7 @@ class KummerLine_weierstrass(KummerLine_generic):
 
             sage: E = EllipticCurve(GF(101), [2, 3])
             sage: K = KummerLine(E); K
-            Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
 
         super().__init__(curve)
@@ -632,7 +632,7 @@ class KummerLine_montgomery(KummerLine_generic):
 
         sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
         sage: K = KummerLine(E); K
-        Kummer line of Elliptic Curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
+        Kummer Line of Elliptic Curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
     """
 
     def __init__(self, curve):
@@ -645,7 +645,7 @@ class KummerLine_montgomery(KummerLine_generic):
 
             sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
             sage: K = KummerLine(E); K
-            Kummer line of Elliptic Curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
+            Kummer Line of Elliptic Curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
         """
 
         super().__init__(curve)
@@ -1130,7 +1130,7 @@ class KummerLinePoint(SageObject):
             sage: P = E(95, 49)
             sage: K = KummerLine(E)
             sage: xP = K(P); xP.parent()
-            Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
         return self._parent
 
@@ -1540,12 +1540,12 @@ class KummerLineIsogeny(SageObject):
         sage: P = E(76, 65); xP = K(P)
         sage: Q = E(49, 61); xQ = K(Q)
         sage: KummerLineIsogeny(xP)
-        Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        Isogeny of degree 12 from Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer Line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
 
     It can also be constructed with the ``isogeny`` method from a Kummer line::
 
         sage: K.isogeny(xP)
-        Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+        Isogeny of degree 12 from Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer Line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
     """
 
     def __init__(self, kernel):
@@ -1558,7 +1558,7 @@ class KummerLineIsogeny(SageObject):
             sage: P = E(76, 65); xP = K(P)
             sage: Q = E(49, 61); xQ = K(Q)
             sage: KummerLineIsogeny(xP)
-            Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Isogeny of degree 12 from Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer Line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
 
         # Ensure the kernel is the right type
@@ -1606,7 +1606,7 @@ class KummerLineIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.domain()
-            Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+            Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
         return self._domain
 
@@ -1619,7 +1619,7 @@ class KummerLineIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.codomain()
-            Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
+            Kummer Line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101
         """
         return self._codomain
 
@@ -1645,7 +1645,7 @@ class KummerLineIsogeny(SageObject):
             sage: E = EllipticCurve(GF(101), [2, 3]); K = KummerLine(E)
             sage: P = E(76, 65); xP = K(P)
             sage: xf = K.isogeny(xP); xf.__repr__()
-            'Isogeny of degree 12 from Kummer line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101'
+            'Isogeny of degree 12 from Kummer Line of Elliptic Curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101 to Kummer Line of Elliptic Curve defined by y^2 = x^3 + 23*x + 73 over Finite Field of size 101'
         """
         return (
             f"Isogeny of degree {self._degree} from {self._domain} to {self._codomain}"
