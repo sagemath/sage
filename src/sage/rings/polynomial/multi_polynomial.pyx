@@ -871,16 +871,23 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS:
 
-        Check that :trac:`25022` is fixed::
+        Check that :issue:`25022` is fixed::
 
             sage: K.<x,y> = ZZ[]
             sage: (x*y).change_ring(SR).monomials()                                     # needs sage.rings.number_field sage.symbolic
             [x*y]
+
+        Check that :issue:`36832` is fixed::
+
+            sage: F = GF(11)
+            sage: phi = Hom(F,F).an_element()
+            sage: R.<x,y> = F[]
+            sage: x.change_ring(phi)
+            x
         """
         if isinstance(R, Map):
-        #if we're given a hom of the base ring extend to a poly hom
             if R.domain() == self.base_ring():
-                R = self.parent().hom(R, self.parent().change_ring(R.codomain()))
+                return self.map_coefficients(R)
             return R(self)
         else:
             return self.parent().change_ring(R)(self.dict())
