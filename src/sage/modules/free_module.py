@@ -3064,6 +3064,18 @@ class FreeModule_generic(Module_free_ambient):
             codomain = R**n
         return super().hom(im_gens, codomain, **kwds)
 
+    def pseudohom(self, morphism, twist=None, **kwds):
+        r"""
+        Created a pseudomorphism defined by a given morphism and twist.
+        Let A be a ring and M a free module over A. Let \theta: A \to A
+
+        """
+        from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
+        from sage.structure.element import is_Matrix
+        if is_Matrix(morphism):
+            return FreeModulePseudoMorphism(self.hom(morphism), twist)
+        return FreeModulePseudoMorphism(morphism, twist)
+
     def inner_product_matrix(self):
         """
         Return the default identity inner product matrix associated to this
