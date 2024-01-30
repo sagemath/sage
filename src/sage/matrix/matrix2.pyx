@@ -13613,7 +13613,7 @@ cdef class Matrix(Matrix1):
                     M.swap_rows(k, max_location)
                     inv = M.get_unsafe(k, k).inverse()
                     for j in range(k+1, m):
-                        scale = -M.get_unsafe(j, k)*inv
+                        scale = -M.get_unsafe(j, k) * inv
                         M.set_unsafe(j, k, -scale)
                         for p in range(k+1, n):
                             M.set_unsafe(j, p, M.get_unsafe(j, p) + scale*M.get_unsafe(k, p))
