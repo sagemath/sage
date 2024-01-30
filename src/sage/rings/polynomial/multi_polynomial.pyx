@@ -869,6 +869,17 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(7^2)
+            sage: R.<x,y> = F[]
+            sage: f = x^2 + a^2*y^2 + a*x + a^3*y
+            sage: g = f.change_ring(F.frobenius_endomorphism()); g
+            x^2 + (-a - 2)*y^2 + (-a + 1)*x + (2*a + 2)*y
+            sage: g.change_ring(F.frobenius_endomorphism()) == f
+            True
+
+        ::
+
             sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: R.<x,y> = K[]
@@ -903,11 +914,8 @@ cdef class MPolynomial(CommutativePolynomial):
             x
         """
         if isinstance(R, Map):
-            if R.domain() == self.base_ring():
-                return self.map_coefficients(R)
-            return R(self)
-        else:
-            return self.parent().change_ring(R)(self.dict())
+            return self.map_coefficients(R)
+        return self.parent().change_ring(R)(self.dict())
 
     def is_symmetric(self, group=None):
         r"""
