@@ -1547,10 +1547,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         F = j.parent()
         x = polygen(F)
         from sage.rings.polynomial.polynomial_ring import polygens
-        from sage.libs.pari.convert_sage import gen_to_sage
-        from sage.libs.pari.all import pari
-        X,Y = polygens(F,['X', 'Y'],2)
-        phi = gen_to_sage(pari.polmodular(ell),{'x': X, 'y': Y})
+        from sage.schemes.elliptic_curves.mod_poly import classical_modular_polynomial
+        X, Y = polygens(F, "X, Y", 2)
+        phi = classical_modular_polynomial(ell)(X, Y)
         j1 = phi([x,j]).roots(multiplicities=False)
         nj1 = len(j1)
         on_floor = self.two_torsion_rank() < 2 if ell == 2 else nj1 <= ell
@@ -1873,13 +1872,8 @@ def curves_with_j_0(K):
          Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 7,
          Elliptic Curve defined by y^2 = x^3 + 5 over Finite Field of size 7,
          Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 7]
-        sage: curves_with_j_0(GF(25))  # random                                         # needs sage.rings.finite_rings
-        [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + z2 over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (z2+3) over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (4*z2+3) over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (2*z2+2) over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (4*z2+1) over Finite Field in z2 of size 5^2]
+        sage: set(E.j_invariant() for E in curves_with_j_0(GF(25)))                     # needs sage.rings.finite_rings
+        {0}
 
     For `K=\GF{q}` where `q\equiv5\mod{6}` there are two curves,
     quadratic twists of each other by `-3`: `y^2=x^3+1` and
@@ -2209,21 +2203,18 @@ def curves_with_j_0_char3(K):
             for a4a6 in [[1, 0], [-1, 0], [-1, b], [-1, -b]]
         ]
 
-        # It is a bit annoying here since we know the last two curves have order base +- delta, but
-        # we don't know the sign. I think you can compute it via some analysis on `b`, but that is
-        # slow, so I opt to use `.set_order` with check=True, so that if it fails it means it is the
-        # wrong order :)
         base = 3**deg + 1
         delta = 3**((deg + 1) // 2)
 
         curves[0].set_order(base)
         curves[1].set_order(base)
-        try:
-            curves[2].set_order(base + delta)
-            curves[3].set_order(base - delta)
-        except ValueError:
-            curves[2].set_order(base - delta)
-            curves[3].set_order(base + delta)
+        # TODO (grhkm): issue 37110
+        # try:
+        #     curves[2].set_order(base + delta)
+        #     curves[3].set_order(base - delta)
+        # except ValueError:
+        #     curves[2].set_order(base - delta)
+        #     curves[3].set_order(base + delta)
 
         return curves
 
@@ -2740,17 +2731,76 @@ def special_supersingular_curve(F, *, endomorphism=False):
     endo.trace.set_cache(ZZ.zero())
     return E, endo
 
-def _EllipticCurve_with_order_helper(m, D):
+def EllipticCurve_with_order(m, *, D=None):
     r"""
-    See documentation of :func:`EllipticCurve_with_order`.
+    Return an iterator for elliptic curves over finite fields with the given order. The curves are
+    computed using the Complex Multiplication (CM) method.
+
+    A `:sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
+    the algorithm is more efficient.
+
+    If ``D`` is specified, it is used as the discriminant.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
-        sage: E = EllipticCurve_with_order(1234); E  # random
+        sage: E = next(EllipticCurve_with_order(1234)); E  # random
         Elliptic Curve defined by y^2 = x^3 + 1142*x + 1209 over Finite Field of size 1237
         sage: E.order() == 1234
         True
+
+    When ``iter`` is set, the function returns an iterator of all elliptic curves with the given
+    order::
+
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
+        sage: it = EllipticCurve_with_order(21); it
+        <generator object EllipticCurve_with_order at 0x...>
+        sage: E = next(it); E  # random
+        Elliptic Curve defined by y^2 = x^3 + 6*x + 14 over Finite Field of size 23
+        sage: E.order() == 21
+        True
+        sage: Es = [E] + list(it); Es  # random
+        [Elliptic Curve defined by y^2 = x^3 + 6*x + 14 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 12*x + 4 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 5*x + 2 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + (z2+3) over Finite Field in z2 of size 5^2,
+         Elliptic Curve defined by y^2 = x^3 + (2*z2+2) over Finite Field in z2 of size 5^2,
+         Elliptic Curve defined by y^2 = x^3 + 7*x + 1 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 17*x + 10 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 5*x + 12 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 9*x + 1 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 7*x + 6 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + z3^2*x^2 + (2*z3^2+z3) over Finite Field in z3 of size 3^3,
+         Elliptic Curve defined by y^2 = x^3 + (z3^2+2*z3+1)*x^2 + (2*z3^2+2*z3) over Finite Field in z3 of size 3^3,
+         Elliptic Curve defined by y^2 = x^3 + (z3^2+z3+1)*x^2 + (2*z3^2+1) over Finite Field in z3 of size 3^3,
+         Elliptic Curve defined by y^2 + (z4^2+z4+1)*y = x^3 over Finite Field in z4 of size 2^4,
+         Elliptic Curve defined by y^2 + (z4^2+z4)*y = x^3 over Finite Field in z4 of size 2^4,
+         Elliptic Curve defined by y^2 = x^3 + 18*x + 26 over Finite Field of size 29,
+         Elliptic Curve defined by y^2 = x^3 + 11*x + 19 over Finite Field of size 29,
+         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 19 over Finite Field of size 31,
+         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 13]
+        sage: all(E.order() == 21 for E in Es)
+        True
+
+    Indeed, we can verify that this is correct. Hasse's bounds tell us that $p \leq 50$
+    (approximately), and the rest can be checked via bruteforce::
+
+        sage: for p in prime_range(50):
+        ....:     for j in range(p):
+        ....:         E0 = EllipticCurve(GF(p), j=j)
+        ....:         for Et in E0.twists():
+        ....:             if Et.order() == 21:
+        ....:                 assert any(Et.is_isomorphic(E) for E in Es)
+
+    .. NOTE::
+
+        The output curves are not deterministic, as :func:`EllipticCurve_finite_field.twists` is not
+        deterministic. However, the order of the j-invariants and base fields is fixed.
+
+    AUTHORS:
+
+     - Gareth Ma and Giacomo Pope (Sage Days 123): initial version
     """
     from sage.arith.misc import is_prime_power, factor
     from sage.quadratic_forms.binary_qf import BinaryQF
@@ -2797,92 +2847,3 @@ def _EllipticCurve_with_order_helper(m, D):
                         yield Et
                     except ValueError:
                         pass
-
-def EllipticCurve_with_order(m, *, D=None, all=False, iter=False):
-    r"""
-    Return an elliptic curve over a finite field with the given order. The curves are computed using
-    the Complex Multiplication (CM) method.
-
-    A `:sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
-    the algorithm is more efficient.
-
-    If ``D`` is specified, it is used as the discriminant.
-
-    If ``all`` is set, a list of all elliptic curves over finite fields with the given order is
-    returned.
-
-    If ``iter`` is set, an iterator of all elliptic curves over finite fields with the given order
-    is returned. This cannot be set with ``all``.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
-        sage: E = EllipticCurve_with_order(1234); E  # random
-        Elliptic Curve defined by y^2 = x^3 + 1142*x + 1209 over Finite Field of size 1237
-        sage: E.order() == 1234
-        True
-
-    When ``iter`` is set, the function returns an iterator of all elliptic curves with the given
-    order::
-
-        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
-        sage: it = EllipticCurve_with_order(21, iter=True); it
-        <generator object _EllipticCurve_with_order_helper at 0x...>
-        sage: E = next(it); E  # random
-        Elliptic Curve defined by y^2 = x^3 + 6*x + 14 over Finite Field of size 23
-        sage: E.order() == 21
-        True
-        sage: Es = list(it); Es  # random
-        [Elliptic Curve defined by y^2 = x^3 + 12*x + 4 over Finite Field of size 23,
-         Elliptic Curve defined by y^2 = x^3 + 5*x + 2 over Finite Field of size 23,
-         Elliptic Curve defined by y^2 = x^3 + (z2+3) over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (2*z2+2) over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + 7*x + 1 over Finite Field of size 19,
-         Elliptic Curve defined by y^2 = x^3 + 17*x + 10 over Finite Field of size 19,
-         Elliptic Curve defined by y^2 = x^3 + 5*x + 12 over Finite Field of size 17,
-         Elliptic Curve defined by y^2 = x^3 + 9*x + 1 over Finite Field of size 17,
-         Elliptic Curve defined by y^2 = x^3 + 7*x + 6 over Finite Field of size 17,
-         Elliptic Curve defined by y^2 = x^3 + z3^2*x^2 + (2*z3^2+z3) over Finite Field in z3 of size 3^3,
-         Elliptic Curve defined by y^2 = x^3 + (z3^2+2*z3+1)*x^2 + (2*z3^2+2*z3) over Finite Field in z3 of size 3^3,
-         Elliptic Curve defined by y^2 = x^3 + (z3^2+z3+1)*x^2 + (2*z3^2+1) over Finite Field in z3 of size 3^3,
-         Elliptic Curve defined by y^2 + (z4^2+z4+1)*y = x^3 over Finite Field in z4 of size 2^4,
-         Elliptic Curve defined by y^2 + (z4^2+z4)*y = x^3 over Finite Field in z4 of size 2^4,
-         Elliptic Curve defined by y^2 = x^3 + 18*x + 26 over Finite Field of size 29,
-         Elliptic Curve defined by y^2 = x^3 + 11*x + 19 over Finite Field of size 29,
-         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 19,
-         Elliptic Curve defined by y^2 = x^3 + 19 over Finite Field of size 31,
-         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 13]
-        sage: all(E.order() == 21 for E in Es)
-        True
-
-    Indeed, we can verify that this is correct. Hasse's bounds tell us that $p \leq 50$
-    (approximately), and the rest can be checked via bruteforce::
-
-        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
-        sage: Es = EllipticCurve_with_order(21, all=True)
-        sage: for p in prime_range(50):
-        ....:     for j in range(p):
-        ....:         E0 = EllipticCurve(GF(p), j=j)
-        ....:         for Et in E0.twists():
-        ....:             if Et.order() == 21:
-        ....:                 assert any(Et.is_isomorphic(E) for E in Es)
-
-    .. NOTE::
-
-        The output curves are not fixed, as :func:`EllipticCurve_finite_field.twists` is not
-        deterministic. However, the order of the j-invariants and base fields is fixed.
-
-    AUTHORS:
-
-     - Gareth Ma and Giacomo Pope (Sage Days 123): Fix bug for small curves
-    """
-    sol = _EllipticCurve_with_order_helper(m, D)
-    if all:
-        if iter:
-            raise ValueError(f"all and iter cannot be both set")
-        return list(sol)
-
-    if iter:
-        return sol
-
-    return next(sol)
