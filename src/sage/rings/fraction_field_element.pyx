@@ -446,12 +446,14 @@ cdef class FractionFieldElement(FieldElement):
         """
         return self._numerator(*x, **kwds) / self._denominator(*x, **kwds)
 
-    def subs(self, *args, **kwds):
-        """
+    def subs(self, in_dict=None, **kwds):
+        r"""
         Substitute variables in the numerator and denominator of ``self``.
 
-        All the arguments are transmitted unchanged to the method
-        ``subs`` of the numerator and the denominator.
+        If a dictionary is passed, the keys are mapped to generators
+        of the parent ring.  Otherwise, the arguments are transmitted
+        unchanged to the method ``subs`` of the numerator and the
+        denominator.
 
         EXAMPLES::
 
@@ -472,8 +474,19 @@ cdef class FractionFieldElement(FieldElement):
             (x1 + 2*x2 + 3*x3 + 400)/(x1 + 2*x2 + 3*x3 + 5*x5 + 6*x6 + 7*x7 + 400)
 
         """
-        num = self._numerator.subs(*args, **kwds)
-        den = self._denominator.subs(*args, **kwds)
+        if in_dict:
+            gens = self.parent().gens()
+
+            def to_R(m):
+                try:
+                    mi = gens.index(m)
+                except ValueError:
+                    return m
+                return mi
+            in_dict = {to_R(m): v for m, v in in_dict.items()}
+
+        num = self._numerator.subs(in_dict, **kwds)
+        den = self._denominator.subs(in_dict, **kwds)
         return num / den
 
     substitute = subs
