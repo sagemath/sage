@@ -95,20 +95,23 @@ from sage.structure.sage_object import SageObject
 
 def KummerLine(curve):
     r"""
-    Wrapper to construct a Kummer line depending on the shape of the curve.
+    Wrapper to construct a Kummer line from an elliptic curve depending on its shape.
+
+    INPUT: ``curve`` -- an elliptic curve in short Weierstrass or Montgomery form
 
     EXAMPLES::
-
-    Can deal with both short Weierstrass and Montgomery curves::
 
         sage: E = EllipticCurve(GF(101), [2, 3])
         sage: K = KummerLine(E); type(K)
         <class 'sage.schemes.elliptic_curves.kummer_line.KummerLine_weierstrass'>
+
+    This can also deal with Montgomery curves::
+
         sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
         sage: K = KummerLine(E); type(K)
         <class 'sage.schemes.elliptic_curves.kummer_line.KummerLine_montgomery'>
 
-    Raise an error otherwise::
+    Raise an error if not short Weierstrass nor Montgomery::
 
         sage: E = EllipticCurve(GF(101), [1, 1, 2, 3, 5])
         sage: K = KummerLine(E)
