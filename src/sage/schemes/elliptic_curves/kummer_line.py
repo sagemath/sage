@@ -1,5 +1,5 @@
 r"""
-Kummer Line for short Weierstrass elliptic curves
+Kummer Line for short Weierstrass and Montgomery elliptic curves
 
 Sage defines Kummer lines derived from an elliptic curve in short Weierstrass or Montgomery form, known as `x`-only arithmetic.
 Also defines a point on a Kummer line as an element of the projective line as well as isogenies between Kummer lines.
@@ -12,10 +12,10 @@ We construct a Kummer line over an already defined elliptic curve in short Weier
     sage: KummerLine(E)
     Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
 
-If the curve is Montgomery shaped, there is another class to handle it::
+Montgomery curves are also handled::
 
     sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
-    sage: KummerLineMontgomery(E)
+    sage: KummerLine(E)
     Kummer line of Elliptic curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
 
 It is then possible to define points on this line, derived from points on the curve
@@ -93,9 +93,49 @@ from sage.structure.element import RingElement
 from sage.structure.sage_object import SageObject
 
 
-class KummerLine(SageObject):
+def KummerLine(curve):
     r"""
-    Kummer line class for a short Weierstrass elliptic curve.
+    Wrapper to construct a Kummer line depending on the shape of the curve.
+
+    EXAMPLES::
+
+    Can deal with both short Weierstrass and Montgomery curves::
+
+        sage: E = EllipticCurve(GF(101), [2, 3])
+        sage: K = KummerLine(E); type(K)
+        <class 'sage.schemes.elliptic_curves.kummer_line.KummerLine_weierstrass'>
+        sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+        sage: K = KummerLine(E); type(K)
+        <class 'sage.schemes.elliptic_curves.kummer_line.KummerLine_montgomery'>
+
+    Raise an error otherwise::
+
+        sage: E = EllipticCurve(GF(101), [1, 1, 2, 3, 5])
+        sage: K = KummerLine(E)
+        ValueError: curve must be in short Weierstrass or Montgomery form
+    """
+    if not isinstance(curve, EllipticCurve_generic):
+        raise TypeError(
+            "input must be an elliptic curve in short Weierstrass or Montgomery form"
+        )
+
+    ainvs = curve.a_invariants()
+    a, b = ainvs[3], ainvs[4]  # Short Weierstrass
+    AM = ainvs[1]  # Montgomery
+
+    if ainvs == (0, 0, 0, a, b):
+        return KummerLine_weierstrass(curve)
+
+    elif ainvs == (0, AM, 0, 1, 0):
+        return KummerLine_montgomery(curve)
+
+    else:
+        raise ValueError("curve must be in short Weierstrass or Montgomery form")
+
+
+class KummerLine_generic(SageObject):
+    r"""
+    Kummer line class for an elliptic curve.
 
     EXAMPLES::
 
@@ -106,11 +146,9 @@ class KummerLine(SageObject):
 
     def __init__(self, curve):
         r"""
-        Constructor for a Kummer line from a short Weierstrass elliptic curve.
+        Constructor for a Kummer line from an elliptic curve.
 
-        INPUT::
-
-            - ``curve`` -- an elliptic curve in short Weierstrass form `y^2 = x^3 + a*x + b`
+        INPUT: ``curve`` -- an elliptic curve
 
         EXAMPLES::
 
@@ -118,29 +156,8 @@ class KummerLine(SageObject):
             sage: K = KummerLine(E); K
             Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
         """
-
-        if not isinstance(curve, EllipticCurve_generic):
-            raise TypeError("input must be an elliptic curve in short Weierstrass form")
-
-        ainvs = curve.a_invariants()
-        a, b = ainvs[3], ainvs[4]  # a = a4, b = a6
-        AM = ainvs[1]
-        if ainvs == (0, AM, 0, 1, 0):
-            raise ValueError("you should use KummerLineMontgomery")
-
-        if ainvs != (0, 0, 0, a, b):
-            raise ValueError(
-                "input must be an elliptic curve in short Weierstrass form"
-            )
-
         self._curve = curve
         self._base_ring = curve.base_ring()
-
-        # Initialize variables
-        self._a = self._base_ring(a)
-        self._b = self._base_ring(b)
-
-        self._montgomery = False
 
     def __eq__(self, other):
         r"""
@@ -187,9 +204,8 @@ class KummerLine(SageObject):
         r"""
         Create a Kummer point from the coordinates.
 
-        INPUT::
-
-            - ``coords`` - either a point `P` on the elliptic curve or a valid tuple `(X, Z)` where `P = (X : * : Z)`; `Z` is optional
+        INPUT: ``coords`` -- either a point `P` on the elliptic curve or
+        a valid tuple `(X, Z)` where `P = (X : * : Z)`; `Z` is optional
 
         OUTPUT: A Kummer point on the Kummer line
 
@@ -230,18 +246,6 @@ class KummerLine(SageObject):
         """
         return self._base_ring
 
-    def extract_constants(self):
-        r"""
-        Return the short Weierstrass coefficients `(a, b)` as a tuple.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [2, 3])
-            sage: K = KummerLine(E); K.extract_constants()
-            (2, 3)
-        """
-        return self._a, self._b
-
     def zero(self):
         r"""
         Return the identity point on the Kummer Line.
@@ -266,22 +270,10 @@ class KummerLine(SageObject):
         """
         return self._curve
 
-    def is_montgomery(self):
-        r"""
-        Return if the associated curve is a Montgomery one or not.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [2, 3])
-            sage: K = KummerLine(E); K.is_montgomery()
-            False
-        """
-        return self._montgomery
-
     @cached_method
     def j_invariant(self):
         r"""
-        Compute the j-invariant of the Kummer line using the formula `j(E) = 1728\frac{4a^3}{4a^3 + 27b^2}`.
+        Compute the j-invariant of the associated elliptic curve.
 
         Cached method.
 
@@ -298,17 +290,12 @@ class KummerLine(SageObject):
             sage: K.j_invariant()
             74
         """
-        a, b = self.extract_constants()
-
-        j_num = 4 * a**3
-        j_den = j_num + 27 * b**2
-        j_num = 1728 * j_num
-        return j_num / j_den
+        return self._curve.j_invariant()
 
     @cached_method
     def discriminant(self):
         r"""
-        Compute the discriminant of the Kummer line using the formula `\Delta(E) = -16(4a^3 + 27b^2)`.
+        Compute the discriminant of the associated elliptic curve.
 
         Cached method.
 
@@ -318,8 +305,7 @@ class KummerLine(SageObject):
             sage: K = KummerLine(E); K.discriminant()
             44
         """
-        a, b = self.extract_constants()
-        return -16 * (4 * a**3 + 27 * b**2)
+        return self._curve.discriminant()
 
     def isogeny(self, xP):
         r"""
@@ -337,6 +323,556 @@ class KummerLine(SageObject):
         if xP._parent != self:
             raise ValueError("point is not on the Kummer line")
         return KummerLineIsogeny(xP)
+
+
+class KummerLine_weierstrass(KummerLine_generic):
+    r"""
+    Kummer line class for a short Weierstrass elliptic curve.
+
+    EXAMPLES::
+
+        sage: E = EllipticCurve(GF(101), [2, 3])
+        sage: K = KummerLine(E); K
+        Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+    """
+
+    def __init__(self, curve):
+        r"""
+        Constructor for a Kummer line from a short Weierstrass elliptic curve.
+
+        INPUT: ``curve`` -- an elliptic curve in short Weierstrass form `y^2 = x^3 + a*x + b`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E); K
+            Kummer line of Elliptic curve defined by y^2 = x^3 + 2*x + 3 over Finite Field of size 101
+        """
+
+        super().__init__(curve)
+
+        ainvs = self._curve.a_invariants()
+        a, b = ainvs[3], ainvs[4]  # a = a4, b = a6
+
+        if ainvs != (0, 0, 0, a, b):
+            raise ValueError(
+                "input must be an elliptic curve in short Weierstrass form"
+            )
+
+        # Initialize variables
+        self._a = self._base_ring(a)
+        self._b = self._base_ring(b)
+
+        self._b2 = self._b + self._b
+        self._b4 = self._b2 + self._b2
+
+    def extract_weierstrass_constants(self):
+        r"""
+        Return the short Weierstrass coefficients `(a, b)` as a tuple.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E); K.extract_weierstrass_constants()
+            (2, 3)
+        """
+        return self._a, self._b
+
+    def xDBL(self, XP, ZP):
+        r"""
+        Doubling formula for `x`-only coordinate on short Weierstrass curve.
+
+        Cost: ``2M + 5S + 3m0 + 8a``
+
+        INPUT: ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
+
+        OUTPUT: ``(X2P, Z2P)``, the coordinates of `x(2P)`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P = E(48, 55)
+            sage: xP = K(P)
+            sage: X2P, Z2P = K.xDBL(*xP.XZ())
+            sage: X2P/Z2P
+            81
+            sage: 2*P
+            (81 : 12 : 1)
+        """
+
+        a, b2, b4 = self._a, self._b2, self._b4
+
+        XX = XP * XP
+        ZZ = ZP * ZP
+        t1 = XP + ZP
+        t1 = t1 * t1
+        t1 = t1 - XX
+        t1 = t1 - ZZ
+        A = t1 + t1
+        aZZ = a * ZZ
+        t1 = XX - aZZ
+        t1 = t1 * t1
+        t2 = A * ZZ
+        t2 = b2 * t2
+        X2P = t1 - t2
+        t1 = XX + aZZ
+        t2 = ZZ * ZZ
+        t1 = A * t1
+        t2 = b4 * t2
+        Z2P = t1 + t2
+
+        return X2P, Z2P
+
+    def xADD(self, XP, ZP, XQ, ZQ, XPQ, ZPQ):
+        r"""
+        Differential addition formula formula for `x`-only coordinate on short Weierstrass curve.
+
+        Cost: ``7M + 2S + 2m0 + 6a`` (``5M + 2S + 2m0 + 6a`` if ``XPQ == 0``)
+
+        INPUT:
+
+        - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
+
+        - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q)`
+
+        - ``XPQ``, ``ZPQ`` -- the coordinates of the Kummer point `x(P-Q)`
+
+        OUTPUT: ``(XQP, ZQP)``, the coordinates of `x(P+Q)`
+
+        .. NOTE::
+
+            The formula does not behave well when `x(P-Q) = (1 : 0)` (should use `xDBL` instead)
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(48, 55), E(66, 65)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: XQP, ZQP = K.xADD(*xP.XZ(), *xQ.XZ(), *xPQ.XZ())
+            sage: XQP/ZQP
+            11
+            sage: P+Q
+            (11 : 89 : 1)
+
+        """
+
+        a, b = self._a, self._b
+
+        # Weird edge case explained in xDBLADD
+        if XPQ == 0:
+            T1 = XP * XQ
+            T2 = ZP * ZQ
+            T3 = XP * ZQ
+            T4 = XQ * ZP
+            T5 = T3 + T4
+            T6 = a * T2
+            T7 = T1 + T6
+            T8 = T5 * T7
+            T9 = T8 + T8
+            T10 = T2 * T2
+            T11 = b * T10
+            T12 = T11 + T11
+            T12 = T12 + T12
+            T13 = T9 + T12
+            T14 = T3 - T4
+            T15 = T14 * T14
+            XQP = T13
+            ZQP = T15
+
+            return XQP, ZQP
+
+        t1 = XP * XQ
+        t2 = ZP * ZQ
+        t3 = XP * ZQ
+        t4 = ZP * XQ
+        t5 = a * t2
+        t1 = t1 - t5
+        t1 = t1 * t1
+        t2 = b * t2
+        t2 = t2 + t2
+        t2 = t2 + t2
+        t5 = t3 + t4
+        t5 = t2 * t5
+        t1 = t1 - t5
+        XQP = ZPQ * t1
+        t1 = t3 - t4
+        t1 = t1 * t1
+        ZQP = XPQ * t1
+
+        return XQP, ZQP
+
+    def xDBLADD(self, XP, ZP, XQ, ZQ, XPQ, ZPQ):
+        r"""
+        Differential addition and doubling for `x`-only coordinate on short Weierstrass curve.
+
+        Cost: ``9M + 7S + 5m0 + 12a`` (``7M + 7S + 5m0 + 12a`` if ``XPQ == 0``)
+
+        INPUT:
+
+        - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
+
+        - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q)`
+
+        - ``XPQ``, ``ZPQ`` -- the coordinates of the Kummer point `x(P-Q)`
+
+        OUTPUT: ``(X2P, Z2P)`` and ``(XQP, ZQP)``, the coordinates of `x(2P)` and `x(P+Q)` respectively
+
+        .. NOTE::
+
+            The formula does not behave well when `x(P-Q) = (1 : 0)` (should use `xDBL` instead)
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(48, 55), E(66, 65)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: X2P, Z2P, XQP, ZQP = K.xDBLADD(*xP.XZ(), *xQ.XZ(), *xPQ.XZ())
+            sage: X2P/Z2P, XQP/ZQP
+            (81, 11)
+            sage: 2*P, P+Q
+            ((81 : 12 : 1), (11 : 89 : 1))
+        """
+
+        a, b4 = self._a, self._b4
+
+        # Weird edge case that can happen in short Weierstrass
+        # Example where it would fail otherwise:
+        # sage: E = EllipticCurve(GF(101), [99, 1])
+        # sage: P = E(43, 6)
+        # sage: Q = E(27, 6)
+        # sage: K = KummerLine(E)
+        # sage: xP = K(P)
+        # sage: xQ = K(Q)
+        # sage: xPQ = K(P-Q)
+        # sage: xP.add(xQ, xPQ) returns (0 : 0) without that
+        if XPQ == 0:
+            XX = XP * XP
+            ZZ = ZP * ZP
+            aZZ = a * ZZ
+            t0 = XP + ZP
+            t1 = t0 * t0
+            t2 = t1 - XX
+            E = t2 - ZZ
+            t3 = XX - aZZ
+            t4 = t3 * t3
+            t5 = E * ZZ
+            t6 = b4 * t5
+            X2P = t4 - t6
+            t7 = XX + aZZ
+            t8 = ZZ * ZZ
+            t9 = b4 * t8
+            t10 = E * t7
+            t11 = t10 + t10
+            Z2P = t11 + t9
+            A = XP * XQ
+            B = ZP * ZQ
+            C = XP * ZQ
+            D = XQ * ZP
+            t12 = a * B
+            t13 = C + D
+            t14 = A + t12
+            t15 = B * B
+            t16 = b4 * t15
+            t17 = t13 * t14
+            t18 = t17 + t17
+            XQP = t18 + t16
+            t19 = C - D
+            ZQP = t19 * t19
+
+            return X2P, Z2P, XQP, ZQP
+
+        XX = XP * XP
+        ZZ = ZP * ZP
+        aZZ = a * ZZ
+        t1 = XP + ZP
+        t1 = t1 * t1
+        t1 = t1 - XX
+        E = t1 - ZZ
+        t1 = XX - aZZ
+        t1 = t1 * t1
+        t2 = E * ZZ
+        t2 = b4 * t2
+        X2P = t1 - t2
+        t1 = XX + aZZ
+        t1 = E * t1
+        t1 = t1 + t1
+        t2 = ZZ * ZZ
+        t2 = b4 * t2
+        Z2P = t1 + t2
+        A = XP * XQ
+        B = ZP * ZQ
+        C = XP * ZQ
+        D = XQ * ZP
+        t1 = a * B
+        t1 = A - t1
+        t1 = t1 * t1
+        t2 = C + D
+        t2 = B * t2
+        t2 = b4 * t2
+        t1 = t1 - t2
+        XQP = ZPQ * t1
+        t1 = C - D
+        t1 = t1 * t1
+        ZQP = XPQ * t1
+
+        return X2P, Z2P, XQP, ZQP
+
+
+class KummerLine_montgomery(KummerLine_generic):
+    r"""
+    Kummer line class for a Montgomery elliptic curve.
+
+    EXAMPLES::
+
+        sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+        sage: K = KummerLine(E); K
+        Kummer line of Elliptic curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
+    """
+
+    def __init__(self, curve):
+        r"""
+        Constructor for a Kummer line from a Montgomery elliptic curve.
+
+        INPUT: ``curve`` -- an elliptic curve in Montgomery form `y^2 = x^3 + AM*x^2 + x`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: K = KummerLine(E); K
+            Kummer line of Elliptic curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
+        """
+
+        super().__init__(curve)
+
+        ainvs = curve.a_invariants()
+        AM = ainvs[1]
+        if ainvs != (0, AM, 0, 1, 0):
+            raise ValueError("input must be an elliptic curve in Montgomery form")
+
+        # Initialize variables: a and b are short Weierstrass constants
+        self._AM = self._base_ring(AM)
+        self._d = self._base_ring((AM + 2) / 4)  # Used in doubling formulas
+
+        self._a = self._base_ring(1 - AM**2 / 3)
+        self._b = self._base_ring(AM / 3 * (2 * AM**2 / 9 - 1))
+
+    def AM(self):
+        r"""
+        Return the Montgomery constant `A`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: K = KummerLine(E); K.AM()
+            3
+        """
+        return self._AM
+
+    def extract_weierstrass_constants(self):
+        r"""
+        Return the short Weierstrass coefficients `(a, b)` as a tuple.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [2, 3])
+            sage: K = KummerLine(E); K.extract_weierstrass_constants()
+            (2, 3)
+        """
+        return self._a, self._b
+
+    def point_to_weierstrass(self, X, Z):
+        r"""
+        Compute the coordinates of the corresponding point in short Weierstrass coordinates.
+
+        INPUT: ``(X, Z)`` -- coordinates of a Kummer point on a Montgomery Kummer line
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: P = E(66, 85); xP = K(P)
+            sage: XM, ZM = xP.XZ()
+            sage: K = KummerLine(E); K.point_to_weierstrass(XM, ZM)
+            (100, 3)
+        """
+
+        AM = self.AM()
+        return 3 * X + AM * Z, 3 * Z
+
+    def point_from_weierstrass(self, X, Z):
+        r"""
+        Transform coordinates of a point from short Weierstrass to Montgomery coordinates.
+
+        INPUT: ``(X, Z)`` -- coordinates of a Kummer point on a short Weierstrass Kummer line
+        which corresponds to ``self``
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: P = E(66, 85); xP = K(P)
+            sage: K = KummerLine(E)
+            sage: XM, ZM = xP.XZ()
+            sage: Xw, Zw = K.point_to_weierstrass(XM, ZM)
+            sage: K(K.point_from_weierstrass(Xw, Zw)) == xP
+            True
+        """
+
+        AM = self.AM()
+        return 3 * X - AM * Z, 3 * Z
+
+    def xDBL(self, XP, ZP):
+        r"""
+        Doubling formula for `x`-only coordinate on Montgomery curve.
+
+        Cost: ``2M + 2S + 1m0 + 4a``
+
+        INPUT: ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
+
+        OUTPUT: ``(X2P, Z2P)``, the coordinates of `x(2P)`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: K = KummerLine(E)
+            sage: P = E(95, 54)
+            sage: xP = K(P)
+            sage: X2P, Z2P = K.xDBL(*xP.XZ())
+            sage: X2P/Z2P
+            25
+            sage: 2*P
+            (25 : 70 : 1)
+        """
+        d = self._d
+
+        A = XP + ZP
+        AA = A * A
+        B = XP - ZP
+        BB = B * B
+        C = AA - BB
+        X2P = AA * BB
+        t0 = d * C
+        t1 = BB + t0
+        Z2P = C * t1
+
+        return X2P, Z2P
+
+    def xADD(self, XP, ZP, XQ, ZQ, XPQ, ZPQ):
+        r"""
+        Differential addition formula formula for `x`-only coordinate on Montgomery curve.
+
+        Cost: ``4M + 2S + 6a``
+
+        INPUT:
+
+        - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
+
+        - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q)`
+
+        - ``XPQ``, ``ZPQ`` -- the coordinates of the Kummer point `x(P-Q)`
+
+        OUTPUT: ``(XQP, ZQP)``, the coordinates of `x(P+Q)`
+
+        .. NOTE::
+
+            The formula does not behave well when `x(P-Q) = (1 : 0)` (should use `xDBL` instead)
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(95, 54), E(15, 5)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: XQP, ZQP = K.xADD(*xP.XZ(), *xQ.XZ(), *xPQ.XZ())
+            sage: XQP/ZQP
+            72
+            sage: P+Q
+            (72 : 27 : 1)
+        """
+        # In that case, P-Q = (0 : 0 : 1) = T on the curve, so P + Q = 2Q + T
+        # If 2Q = (X : Z), then 2Q + T = (Z : X)
+        if XPQ == 0:
+            ZQP, XQP = self.xDBL(XQ, ZQ)
+            return XQP, ZQP
+
+        A = XP + ZP
+        B = XP - ZP
+        C = XQ + ZQ
+        D = XQ - ZQ
+        DA = D * A
+        CB = C * B
+        t0 = DA + CB
+        t1 = t0 * t0
+        XQP = ZPQ * t1
+        t2 = DA - CB
+        t3 = t2 * t2
+        ZQP = XPQ * t3
+
+        return XQP, ZQP
+
+    def xDBLADD(self, XP, ZP, XQ, ZQ, XPQ, ZPQ):
+        r"""
+        Differential addition and doubling for `x`-only coordinate on Montgomery curve.
+
+        Cost: ``6M + 4S + 1m0 + 8a``
+
+        INPUT:
+
+        - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
+
+        - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q)`
+
+        - ``XPQ``, ``ZPQ`` -- the coordinates of the Kummer point `x(P-Q)`
+
+        OUTPUT: ``(X2P, Z2P)`` and ``(XQP, ZQP)``, the coordinates of `x(2P)` and `x(P+Q)` respectively
+
+        .. NOTE::
+
+            The formula does not behave well when `x(P-Q) = (1 : 0)` (should use `xDBL` instead)
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
+            sage: K = KummerLine(E)
+            sage: P, Q = E(95, 54), E(15, 5)
+            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
+            sage: X2P, Z2P, XQP, ZQP = K.xDBLADD(*xP.XZ(), *xQ.XZ(), *xPQ.XZ())
+            sage: X2P/Z2P, XQP/ZQP
+            (25, 72)
+            sage: 2*P, P+Q
+            ((25 : 70 : 1), (72 : 27 : 1))
+        """
+        d = self._d
+
+        # In that case, P-Q = (0 : 0 : 1) = T on the curve, so P + Q = 2Q + T
+        # If 2Q = (X : Z), then 2Q + T = (Z : X)
+        if XPQ == 0:
+            X2P, Z2P = self.xDBL(XP, ZP)
+            ZQP, XQP = self.xDBL(XQ, ZQ)
+            return X2P, Z2P, XQP, ZQP
+
+        A = XP + ZP
+        AA = A * A
+        B = XP - ZP
+        BB = B * B
+        E = AA - BB
+        C = XQ + ZQ
+        D = XQ - ZQ
+        DA = D * A
+        CB = C * B
+        t0 = DA + CB
+        t1 = t0 * t0
+        XQP = ZPQ * t1
+        t2 = DA - CB
+        t3 = t2 * t2
+        ZQP = XPQ * t3
+        X2P = AA * BB
+        t4 = d * E
+        t5 = BB + t4
+        Z2P = E * t5
+
+        return X2P, Z2P, XQP, ZQP
 
 
 class KummerLinePoint(SageObject):
@@ -369,7 +905,7 @@ class KummerLinePoint(SageObject):
         r"""
         Create a point from the coordinates.
 
-        INPUT::
+        INPUT:
 
             - ``parent`` - A Kummer line
 
@@ -401,7 +937,7 @@ class KummerLinePoint(SageObject):
             (95 : 1)
         """
         # Ensure the parent is the right type
-        if not isinstance(parent, KummerLine):
+        if not isinstance(parent, KummerLine_generic):
             raise TypeError("not a Kummer line")
 
         R = parent.base_ring()
@@ -416,7 +952,7 @@ class KummerLinePoint(SageObject):
             if coords.is_zero():
                 coords = (R(1), R(0))
             else:
-                a, b = parent.extract_constants()
+                a, b = parent.extract_weierstrass_constants()
                 # assert coords.curve().a_invariants() == (0, 0, 0, a, b)
                 # Done this way to handle Montgomery curves
                 assert coords.curve().is_isomorphic(EllipticCurve(R, [a, b]))
@@ -663,266 +1199,6 @@ class KummerLinePoint(SageObject):
         x = self.x()
         return E.lift_x(x)
 
-    @staticmethod
-    def xDBL(X, Z, a, b2, b4):
-        r"""
-        Doubling formula for `x`-only coordinate on short Weierstrass curve.
-
-        Cost: ``2M + 5S + 3m0 + 8a``
-
-        INPUT:
-
-            - ``X``, ``Z`` -- the coordinates of the Kummer point `x(P)`
-
-            - ``a``, ``b2``, ``b4`` -- curve constants where ``b2 = 2*b`` and ``b4 = 4*b``
-
-        OUTPUT: ``(X2, Z2)``, the coordinates of `x(2P)`
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [2, 3])
-            sage: K = KummerLine(E)
-            sage: P = E(95, 49); xP = K(P)
-            sage: a, b = K.extract_constants()
-            sage: b2, b4 = 2*b, 4*b
-            sage: X, Z = xP.XZ()
-            sage: X2, Z2 = xP.xDBL(X, Z, a, b2, b4)
-            sage: if Z2:
-            sage:     (2*P)[0] == X2/Z2
-            sage: else:
-            sage:     P == -P
-            True
-        """
-        XX = X * X
-        ZZ = Z * Z
-        t1 = X + Z
-        t1 = t1 * t1
-        t1 = t1 - XX
-        t1 = t1 - ZZ
-        A = t1 + t1
-        aZZ = a * ZZ
-        t1 = XX - aZZ
-        t1 = t1 * t1
-        t2 = A * ZZ
-        t2 = b2 * t2
-        X2 = t1 - t2
-        t1 = XX + aZZ
-        t2 = ZZ * ZZ
-        t1 = A * t1
-        t2 = b4 * t2
-        Z2 = t1 + t2
-
-        return X2, Z2
-
-    @staticmethod
-    def xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b):
-        r"""
-        Differential addition formula formula for `x`-only coordinate on short Weierstrass curve.
-
-        Cost: ``7M + 2S + 2m0 + 6a``
-
-        INPUT:
-
-        - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
-
-        - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q)`
-
-        - ``XPQ``, ``ZPQ`` -- the coordinates of the Kummer point `x(P-Q)`
-
-        - ``a``, ``b`` -- curve constants
-
-        OUTPUT: ``(XQP, ZQP)``, the coordinates of `x(P+Q)`
-
-        .. NOTE::
-
-            The formula does not behave well when `x(P-Q) = (1 : 0)` (should use `xDBL` instead)
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [2, 3])
-            sage: K = KummerLine(E)
-            sage: P, Q = E(95, 49), E(30, 46)
-            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
-            sage: a, b = K.extract_constants()
-            sage: (XP, ZP), (XQ, ZQ), (XPQ, ZPQ) = xP.XZ(), xQ.XZ(), xPQ.XZ()
-            sage: XQP, ZQP = xP.xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b)
-            sage: if ZQP:
-            sage:     (P+Q)[0] == XQP/ZQP
-            sage: else:
-            sage:     P == -Q
-            True
-        """
-
-        # Weird edge case explained in xDBLADD
-        if XPQ == 0:
-            T1 = XP * XQ
-            T2 = ZP * ZQ
-            T3 = XP * ZQ
-            T4 = XQ * ZP
-            T5 = T3 + T4
-            T6 = a * T2
-            T7 = T1 + T6
-            T8 = T5 * T7
-            T9 = T8 + T8
-            T10 = T2 * T2
-            T11 = b * T10
-            T12 = 4 * T11
-            T13 = T9 + T12
-            T14 = T3 - T4
-            T15 = T14 * T14
-            T16 = T13
-            XQP = T16
-            ZQP = T15
-
-            return XQP, ZQP
-
-        t1 = XP * XQ
-        t2 = ZP * ZQ
-        t3 = XP * ZQ
-        t4 = ZP * XQ
-        t5 = a * t2
-        t1 = t1 - t5
-        t1 = t1 * t1
-        t2 = b * t2
-        t2 = t2 + t2
-        t2 = t2 + t2
-        t5 = t3 + t4
-        t5 = t2 * t5
-        t1 = t1 - t5
-        XQP = ZPQ * t1
-        t1 = t3 - t4
-        t1 = t1 * t1
-        ZQP = XPQ * t1
-
-        return XQP, ZQP
-
-    @staticmethod
-    def xDBLADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b4):
-        r"""
-        Differential addition and doubling for `x`-only coordinate on short Weierstrass curve.
-
-        Cost: ``9M + 7S + 5m0 + 12a``
-
-        INPUT:
-
-        - ``XP``, ``ZP`` -- the coordinates of the Kummer point `x(P)`
-
-        - ``XQ``, ``ZQ`` -- the coordinates of the Kummer point `x(Q)`
-
-        - ``XPQ``, ``ZPQ`` -- the coordinates of the Kummer point `x(P-Q)`
-
-        - ``a``, ``b4`` -- curve constants where ``b4 = 4*b``
-
-        OUTPUT: ``(X2P, Z2P)`` and ``(XQP, ZQP)``, the coordinates of `x(2P)` and `x(P+Q)` respectively
-
-        .. NOTE::
-
-            The formula does not behave well when `x(P-Q) = (1 : 0)` (should use `xDBL` instead)
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [2, 3])
-            sage: K = KummerLine(E)
-            sage: P, Q = E(95, 49), E(30, 46)
-            sage: xP, xQ, xPQ = K(P), K(Q), K(P-Q)
-            sage: a, b = K.extract_constants()
-            sage: b4 = 4*b
-            sage: (XP, ZP), (XQ, ZQ), (XPQ, ZPQ) = xP.XZ(), xQ.XZ(), xPQ.XZ()
-            sage: X2P, Z2P, XQP, ZQP = xP.xDBLADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b4)
-            sage: if ZQP:
-            sage:     (P+Q)[0] == XQP/ZQP
-            sage: else:
-            sage:     P == -Q
-            True
-            sage: if Z2P:
-            sage:     (2*P)[0] == X2P/Z2P
-            sage: else:
-            sage:     P == -P
-            True
-        """
-
-        # Weird edge case that can happen in short Weierstrass
-        # Example where it would fail otherwise:
-        # sage: E = EllipticCurve(GF(101), [99, 1])
-        # sage: P = E(43, 6)
-        # sage: Q = E(27, 6)
-        # sage: K = KummerLine(E)
-        # sage: xP = K(P)
-        # sage: xQ = K(Q)
-        # sage: xPQ = K(P-Q)
-        # sage: xP.add(xQ, xPQ) returns (0 : 0) without that
-        if XPQ == 0:
-            XX = XP * XP
-            ZZ = ZP * ZP
-            aZZ = a * ZZ
-            t0 = XP + ZP
-            t1 = t0 * t0
-            t2 = t1 - XX
-            E = t2 - ZZ
-            t3 = XX - aZZ
-            t4 = t3 * t3
-            t5 = E * ZZ
-            t6 = b4 * t5
-            X2P = t4 - t6
-            t7 = XX + aZZ
-            t8 = ZZ * ZZ
-            t9 = b4 * t8
-            t10 = E * t7
-            t11 = 2 * t10
-            Z2P = t11 + t9
-            A = XP * XQ
-            B = ZP * ZQ
-            C = XP * ZQ
-            D = XQ * ZP
-            t12 = a * B
-            t13 = C + D
-            t14 = A + t12
-            t15 = B * B
-            t16 = b4 * t15
-            t17 = t13 * t14
-            t18 = t17 + t17
-            XQP = t18 + t16
-            t19 = C - D
-            ZQP = t19 * t19
-
-            return X2P, Z2P, XQP, ZQP
-
-        XX = XP * XP
-        ZZ = ZP * ZP
-        aZZ = a * ZZ
-        t1 = XP + ZP
-        t1 = t1 * t1
-        t1 = t1 - XX
-        E = t1 - ZZ
-        t1 = XX - aZZ
-        t1 = t1 * t1
-        t2 = E * ZZ
-        t2 = b4 * t2
-        X2P = t1 - t2
-        t1 = XX + aZZ
-        t1 = E * t1
-        t1 = t1 + t1
-        t2 = ZZ * ZZ
-        t2 = b4 * t2
-        Z2P = t1 + t2
-        A = XP * XQ
-        B = ZP * ZQ
-        C = XP * ZQ
-        D = XQ * ZP
-        t1 = a * B
-        t1 = A - t1
-        t1 = t1 * t1
-        t2 = C + D
-        t2 = B * t2
-        t2 = b4 * t2
-        t1 = t1 - t2
-        XQP = ZPQ * t1
-        t1 = C - D
-        t1 = t1 * t1
-        ZQP = XPQ * t1
-
-        return X2P, Z2P, XQP, ZQP
-
     def _double(self):
         r"""
         Return the doubling of the point.
@@ -940,16 +1216,7 @@ class KummerLinePoint(SageObject):
             (88 : 9)
         """
         X, Z = self.XZ()
-        if self._parent.is_montgomery():
-            X, Z = self._parent.point_to_weierstrass(X, Z)
-
-        a, b = self._parent.extract_constants()
-        b2 = b + b
-        b4 = b2 + b2
-        X, Z = self.xDBL(X, Z, a, b2, b4)
-
-        if self._parent.is_montgomery():
-            X, Z = self._parent.point_from_weierstrass(X, Z)
+        X, Z = self._parent.xDBL(X, Z)
 
         return self._parent((X, Z))
 
@@ -970,17 +1237,8 @@ class KummerLinePoint(SageObject):
             (2 : 52)
         """
         X, Z = self.XZ()
-        if self._parent.is_montgomery():
-            X, Z = self._parent.point_to_weierstrass(X, Z)
-
-        a, b = self._parent.extract_constants()
-        b2 = b + b
-        b4 = b2 + b2
         for _ in range(n):
-            X, Z = self.xDBL(X, Z, a, b2, b4)
-
-        if self._parent.is_montgomery():
-            X, Z = self._parent.point_from_weierstrass(X, Z)
+            X, Z = self._parent.xDBL(X, Z)
 
         return self._parent((X, Z))
 
@@ -1050,17 +1308,7 @@ class KummerLinePoint(SageObject):
         XQ, ZQ = Q.XZ()
         XPQ, ZPQ = PQ.XZ()
 
-        if self._parent.is_montgomery():
-            XP, ZP = self._parent.point_to_weierstrass(XP, ZP)
-            XQ, ZQ = self._parent.point_to_weierstrass(XQ, ZQ)
-            XPQ, ZPQ = self._parent.point_to_weierstrass(XPQ, ZPQ)
-
-        a, b = self._parent.extract_constants()
-
-        XQP, ZQP = self.xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ, a, b)
-
-        if self._parent.is_montgomery():
-            XQP, ZQP = self._parent.point_from_weierstrass(XQP, ZQP)
+        XQP, ZQP = self._parent.xADD(XP, ZP, XQ, ZQ, XPQ, ZPQ)
 
         return self._parent((XQP, ZQP))
 
@@ -1127,17 +1375,8 @@ class KummerLinePoint(SageObject):
         # [m]P = [-m]P for x-only
         m = abs(m)
 
-        # Compute necessary constants
-        a, b = self._parent.extract_constants()
-        b2 = b + b
-        b4 = b2 + b2
-
         # Initialise for loop
         XP, ZP = self.XZ()
-
-        if self._parent.is_montgomery():
-            XP, ZP = self._parent.point_to_weierstrass(XP, ZP)
-
         R = self._parent.base_ring()
         X0, Z0 = R(1), R(0)
         X1, Z1 = XP, ZP
@@ -1145,12 +1384,9 @@ class KummerLinePoint(SageObject):
         # Montgomery ladder
         for bit in bin(m)[2:]:
             if bit == "0":
-                X0, Z0, X1, Z1 = self.xDBLADD(X0, Z0, X1, Z1, XP, ZP, a, b4)
+                X0, Z0, X1, Z1 = self._parent.xDBLADD(X0, Z0, X1, Z1, XP, ZP)
             else:
-                X1, Z1, X0, Z0 = self.xDBLADD(X1, Z1, X0, Z0, XP, ZP, a, b4)
-
-        if self._parent.is_montgomery():
-            X0, Z0 = self._parent.point_from_weierstrass(X0, Z0)
+                X1, Z1, X0, Z0 = self._parent.xDBLADD(X1, Z1, X0, Z0, XP, ZP)
 
         return self._parent((X0, Z0))
 
@@ -1233,30 +1469,17 @@ class KummerLinePoint(SageObject):
         # [m]P = [-m]P for x-only
         m = abs(m)
 
-        # Compute necessary constants
-        a, b = self._parent.extract_constants()
-        b4 = b + b
-        b4 = b4 + b4
-
         # Extract out coordinates
         XP, ZP = self.XZ()
         XQ, ZQ = xQ.XZ()
         XPQ, ZPQ = xPQ.XZ()
 
-        if self._parent.is_montgomery():
-            XP, ZP = self._parent.point_to_weierstrass(XP, ZP)
-            XQ, ZQ = self._parent.point_to_weierstrass(XQ, ZQ)
-            XPQ, ZPQ = self._parent.point_to_weierstrass(XPQ, ZPQ)
-
         # Montgomery ladder
         for bit in bin(m)[:1:-1]:
             if bit == "1":
-                XQ, ZQ, XP, ZP = self.xDBLADD(XQ, ZQ, XP, ZP, XPQ, ZPQ, a, b4)
+                XQ, ZQ, XP, ZP = self._parent.xDBLADD(XQ, ZQ, XP, ZP, XPQ, ZPQ)
             else:
-                XQ, ZQ, XPQ, ZPQ = self.xDBLADD(XQ, ZQ, XPQ, ZPQ, XP, ZP, a, b4)
-
-        if self._parent.is_montgomery():
-            XP, ZP = self._parent.point_from_weierstrass(XP, ZP)
+                XQ, ZQ, XPQ, ZPQ = self._parent.xDBLADD(XQ, ZQ, XPQ, ZPQ, XP, ZP)
 
         return self._parent((XP, ZP))
 
@@ -1345,7 +1568,7 @@ class KummerLineIsogeny(SageObject):
         self._kernel_subset, self._degree = self._compute_kernel_subset_and_degree()
         self._kernel_x = [xQ.x() for xQ in self._kernel_subset]
 
-        if self._domain.is_montgomery():
+        if isinstance(self._domain, KummerLine_montgomery):
             for i in range(len(self._kernel_x)):
                 self._kernel_x[i], z = self._domain.point_to_weierstrass(
                     self._kernel_x[i], 1
@@ -1470,7 +1693,7 @@ class KummerLineIsogeny(SageObject):
         Cached method.
         """
         R = self._domain.base_ring()
-        a, b = self._domain.extract_constants()
+        a, b = self._domain.extract_weierstrass_constants()
         t, w = R(0), R(0)
         cst_t, cst_u = [], []
         S = self._kernel_subset
@@ -1526,7 +1749,7 @@ class KummerLineIsogeny(SageObject):
 
         Sx = self._kernel_x
         xPx = xP.x()
-        if self._domain.is_montgomery():
+        if isinstance(self._domain, KummerLine_montgomery):
             xPx, z = self._domain.point_to_weierstrass(xPx, 1)
             xPx /= z  # z = 3
 
@@ -1539,115 +1762,3 @@ class KummerLineIsogeny(SageObject):
             fxP += (tQ * alpha + uQ) / alpha**2
 
         return self._codomain(fxP)
-
-
-class KummerLineMontgomery(KummerLine):
-    r"""
-    Kummer line class for a Montgomery elliptic curve.
-
-    EXAMPLES::
-
-        sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
-        sage: K = KummerLineMontgomery(E); K
-        Kummer line of Elliptic curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
-    """
-
-    def __init__(self, curve):
-        r"""
-        Constructor for a Kummer line from a Montgomery elliptic curve.
-
-        INPUT::
-
-            - ``curve`` -- an elliptic curve in Montgomery form `y^2 = x^3 + AM*x^2 + x`
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
-            sage: K = KummerLineMontgomery(E); K
-            Kummer line of Elliptic curve defined by y^2 = x^3 + 3*x^2 + x over Finite Field of size 101
-        """
-
-        if not isinstance(curve, EllipticCurve_generic):
-            raise TypeError("input must be an elliptic curve in short Weierstrass form")
-
-        ainvs = curve.a_invariants()
-        AM = ainvs[1]
-        if ainvs != (0, AM, 0, 1, 0):
-            raise ValueError("input must be an elliptic curve in Montgomery form")
-
-        self._curve = curve
-        self._base_ring = curve.base_ring()
-
-        # Initialize variables: a and b are short Weierstrass constants
-        self._AM = self._base_ring(AM)
-        self._a = self._base_ring(1 - AM**2 / 3)
-        self._b = self._base_ring(AM / 3 * (2 * AM**2 / 9 - 1))
-
-        self._montgomery = True
-
-    def AM(self):
-        r"""
-        Return the Montgomery constant `A`.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
-            sage: K = KummerLineMontgomery(E); K.AM()
-            3
-        """
-        return self._AM
-
-    @cached_method
-    def discriminant(self):
-        r"""
-        Compute the discriminant of the Kummer line using the formula `\Delta(E) = 16(A^2 - 4)`.
-
-        Cached method.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
-            sage: K = KummerLineMontgomery(E); K.discriminant()
-            80
-        """
-        AM = self.AM()
-        return 16 * (AM**2 - 4)
-
-    def point_to_weierstrass(self, X, Z):
-        r"""
-        Compute the coordinates of the corresponding point in short Weierstrass coordinates.
-
-        INPUT: ``(X, Z)`` -- coordinates of a Kummer point on a Montgomery Kummer line
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
-            sage: P = E(66, 85); xP = K(P)
-            sage: XM, ZM = xP.XZ()
-            sage: K = KummerLineMontgomery(E); K.point_to_weierstrass(XM, ZM)
-            (100, 3)
-        """
-
-        AM = self.AM()
-        return 3 * X + AM * Z, 3 * Z
-
-    def point_from_weierstrass(self, X, Z):
-        r"""
-        Transform coordinates of a point from short Weierstrass to Montgomery coordinates.
-
-        INPUT: ``(X, Z)`` -- coordinates of a Kummer point on a short Weierstrass Kummer line
-        which corresponds to ``self``
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(101), [0, 3, 0, 1, 0])
-            sage: P = E(66, 85); xP = K(P)
-            sage: K = KummerLineMontgomery(E)
-            sage: XM, ZM = xP.XZ()
-            sage: Xw, Zw = K.point_to_weierstrass(XM, ZM)
-            sage: K(K.point_from_weierstrass(Xw, Zw)) == xP
-            True
-        """
-
-        AM = self.AM()
-        return 3 * X - AM * Z, 3 * Z
