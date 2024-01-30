@@ -910,8 +910,8 @@ class HypergeometricData():
 
         REFERENCES:
 
-        - [FRV2019] Fernando Rodriguez Villegas, *Mixed Hodge numbers
-          and factorial ratios*, https://arxiv.org/abs/1907.02722
+        .. [FRV2019] Fernando Rodriguez Villegas, *Mixed Hodge numbers
+           and factorial ratios*, :arxiv:`1907.02722`
 
         EXAMPLES::
 
