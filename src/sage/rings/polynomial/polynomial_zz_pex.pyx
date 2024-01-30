@@ -538,9 +538,12 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         # When a degree has been supplied, ensure it is a valid input
         cdef unsigned long d
         if degree is not None:
-            d = degree
-            if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
+            if degree <= 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+            try:
+                d = degree
+            except ValueError:
+                raise ValueError("degree argument must be a non-negative inte ger, got %s" % (degree))
             ZZ_pEX_reverse_hi(r.x, (<Polynomial_ZZ_pEX> self).x, d)
         else:
             ZZ_pEX_reverse(r.x, (<Polynomial_ZZ_pEX> self).x)
