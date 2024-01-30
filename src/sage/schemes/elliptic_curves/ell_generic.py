@@ -2463,7 +2463,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             x = polygen(self.base_ring(), 'x')
         else:
             from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
-            if m % p == 0 and not isinstance(self.base_ring(), FiniteField_generic):
+            if p != 0 and m % p == 0 and not isinstance(self.base_ring(), FiniteField_generic):
                 # TODO: Implement the correct formula?
                 raise NotImplementedError("multiplication by integer not coprime to p "
                                           "is only implemented for curves over finite fields")
