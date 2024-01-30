@@ -2603,11 +2603,11 @@ cdef class Polynomial(CommutativePolynomial):
 
         # Otherwise compute an extension ring of the correct degree and
         # compute a root
-        # TODO: a faster option would be to create an extension with `f` 
+        # TODO: a faster option would be to create an extension with `f`
         #       as F_ext = self.base_ring().extension(f, names="a")
         #       however this returns a quotient ring rather than a
         #       FiniteField type if the base field is a non-prime field,
-        #       and this slower option is chosen to ensure the root is 
+        #       and this slower option is chosen to ensure the root is
         #       over explicitly a FiniteField type.
         F_ext = self.base_ring().extension(f.degree(), names="a")
         f = f.change_ring(F_ext)
