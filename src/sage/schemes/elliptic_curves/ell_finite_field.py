@@ -613,7 +613,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
     @cached_method
     def multiplication_by_p_isogeny(self):
         r"""
-        Return the multiplication-by-\(p\) isogeny.
+        Return the multiplication-by-`p` isogeny.
 
         EXAMPLES::
 

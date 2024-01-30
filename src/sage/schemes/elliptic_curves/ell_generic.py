@@ -2435,14 +2435,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ....:     Qy = g.subs(x=P[0], y=P[1])
             ....:     assert (P * k).xy() == (Qx, Qy)
 
-        However, it still fails for elliptic curves over positive characteristics fields::
+        However, it still fails for elliptic curves over positive-characteristic fields::
 
             sage: F.<a> = FunctionField(GF(7))
             sage: E = EllipticCurve(F, [a, 1 / a])
             sage: E.multiplication_by_m(7)
             Traceback (most recent call last):
             ...
-            NotImplementedError: multiplication by integer not coprime to pis only implemented for curves over finite fields
+            NotImplementedError: multiplication by integer not coprime to p is only implemented for curves over finite fields
 
         ::
 
@@ -2465,7 +2465,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
             if m % p == 0 and not isinstance(self.base_ring(), FiniteField_generic):
                 # TODO: Implement the correct formula?
-                raise NotImplementedError("multiplication by integer not coprime to p"
+                raise NotImplementedError("multiplication by integer not coprime to p "
                                           "is only implemented for curves over finite fields")
             x, y = polygens(self.base_ring(), 'x,y')
 
