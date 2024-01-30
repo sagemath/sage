@@ -1370,11 +1370,10 @@ class PolynomialRing_general(ring.Algebra):
            a tuple of minimum and maximum degrees
 
         -  ``monic`` - optional boolean to indicate whether the sampled
-           polynomial should be monic, or not. If this is set, `0` is not a
-           possible output of the method
+           polynomial should be monic
 
-        -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
-           the base ring
+        -  ``*args, **kwds`` - additional keyword parameters passed on to the
+           ``random_element`` method for the base ring
 
         .. SEEALSO::
 
@@ -1418,7 +1417,8 @@ class PolynomialRing_general(ring.Algebra):
             sage: R.random_monic_element(degree=(-1, 5)).is_monic()
             True
 
-        Note that if the degree range includes `-1` and ``monic`` is set, it is silently ignored::
+        Note that if the degree range includes `-1` and ``monic`` is set, it is
+        silently ignored, as `0` is not a monic polynomial::
 
             sage: all(R.random_element(degree=(-1, 1), monic=True).is_monic() for _ in range(10^3))
             True
@@ -1441,14 +1441,15 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: R = PolynomialRing(GF(2), 'z')
             sage: for _ in range(100):
-            ....:     d = randint(-1,20)
+            ....:     d = randint(-1, 20)
             ....:     P = R.random_element(degree=d)
-            ....:     assert P.degree() == d, "problem with {} which has not degree {}".format(P,d)
+            ....:     assert P.degree() == d
 
-        In :issue:`37118`, ranges including integers below `-1` no longer error::
+        In :issue:`37118`, ranges including integers below `-1` no longer raise
+        an error::
 
             sage: R.random_element(degree=(-2, 3))  # random
-            1
+            z^3 + z^2 + 1
 
         ::
 
@@ -1456,6 +1457,18 @@ class PolynomialRing_general(ring.Algebra):
             False
             sage: 0 in [R.random_monic_element(degree=(-1, 2)) for _ in range(500)]
             False
+
+        Testing error handling::
+
+            sage: R.random_element(degree=-5)
+            Traceback (most recent call last):
+            ...
+            ValueError: degree (=-5) must be at least -1
+
+            sage: R.random_element(degree=(-3, -2))
+            Traceback (most recent call last):
+            ...
+            ValueError: maximum degree (=-2) must be at least -1
         """
         R = self.base_ring()
 
@@ -1464,8 +1477,12 @@ class PolynomialRing_general(ring.Algebra):
                 raise ValueError("degree argument must be an integer or a tuple of 2 integers (min_degree, max_degree)")
             if degree[0] > degree[1]:
                 raise ValueError("minimum degree must be less or equal than maximum degree")
+            if degree[1] < -1:
+                raise ValueError(f"maximum degree (={degree[1]}) must be at least -1")
         else:
-            degree = (degree,degree)
+            if degree < -1:
+                raise ValueError(f"degree (={degree}) must be at least -1")
+            degree = (degree, degree)
 
         if degree[0] <= -2:
             # This error has been removed in issue #37118.
@@ -1481,53 +1498,47 @@ class PolynomialRing_general(ring.Algebra):
             else:
                 raise ValueError("No polynomial of degree >= 0 has all coefficients zero")
 
+        degree_lb = degree[0]
         if degree == (-1, -1):
             return self.zero()
 
         # If `monic` is set, zero should be ignored
-        if degree[0] == -1:
+        if degree[0] == -1 and monic:
             degree = (0, degree[1])
-            has_zero = not monic
-        else:
-            has_zero = False
 
         while True:
             # Pick random coefficients
+            end = degree[1]
             coefs = [None] * (degree[1] + 1)
             nonzero = False
 
             # Pick leading coefficients, if `monic` is set it's handle here.
             if monic:
                 for i in range(degree[1] - degree[0] + 1):
-                    coefs[i] = R.random_element(*args, **kwds)
-                    if not nonzero and not coefs[i].is_zero():
-                        coefs[i] = R.one()
+                    coefs[end - i] = R.random_element(*args, **kwds)
+                    if not nonzero and not coefs[end - i].is_zero():
+                        coefs[end - i] = R.one()
                         nonzero = True
-
-                # Leading terms must be nonzero
-                if not nonzero:
-                    continue
             else:
                 # Fast path
                 for i in range(degree[1] - degree[0] + 1):
-                    coefs[i] = R.random_element(*args, **kwds)
-                    nonzero |= not coefs[i].is_zero()
+                    coefs[end - i] = R.random_element(*args, **kwds)
+                    nonzero |= not coefs[end - i].is_zero()
 
-                if not nonzero and not has_zero:
-                    continue
+            # Leading terms must be nonzero
+            if not nonzero:
+                continue
 
             # Now we pick the remaining coefficients. Zeros still should be
             # tracked to handle `has_zero`.
             for i in range(degree[1] - degree[0] + 1, degree[1] + 1):
-                coefs[i] = R.random_element(*args, **kwds)
-                nonzero |= not coefs[i].is_zero()
+                coefs[end - i] = R.random_element(*args, **kwds)
 
             # If we don't want zero (not has_zero), but coefs is zero (not
             # nonzero), then reject
-            if not has_zero and not nonzero:
+            if degree_lb == -1 and not nonzero:
                 continue
 
-            coefs.reverse()
             return self(coefs)
 
     def random_monic_element(self, degree=(0, 2), *args, **kwargs):
