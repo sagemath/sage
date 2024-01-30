@@ -815,9 +815,12 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         cdef Polynomial_zmod_flint res = self._new()
         cdef unsigned long d
         if degree is not None:
-            d = degree
-            if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
+            if degree <= 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+            try:
+                d = degree
+            except ValueError:
+                raise ValueError("degree argument must be a non-negative inte ger, got %s" % (degree))
             nmod_poly_reverse(&res.x, &self.x, d+1) # FLINT expects length
         else:
             nmod_poly_reverse(&res.x, &self.x, nmod_poly_length(&self.x))
