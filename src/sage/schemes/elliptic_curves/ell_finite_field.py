@@ -1777,7 +1777,13 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
              (0, 0, z8^6 + z8^3 + z8^2, 0, 0),
              (0, 0, z8^6 + z8^3 + z8^2, 0, z8^3 + z8^2)]
 
-        # TODO (grhkm): Docs for precomputed orders
+        The order of the quadratic twist is precomputed, so the second
+        computation below is fast::
+
+            sage: E = EllipticCurve(GF(2^255 - 19), [3, 5])
+            sage: E.set_order(2^255 - 94400682670973290858718002131957303262)
+            sage: E.quadratic_twist().order()
+            57896044618658097711785492504343953926729393015491255310587510006088522123194
 
         TESTS:
 
@@ -1886,8 +1892,6 @@ def curves_with_j_0(K):
         sage: curves_with_j_0(GF(11))
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 11,
          Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 11]
-
-    # TODO (grhkm): Docs for order precomputation
     """
     if not K.is_finite():
         raise ValueError("field must be finite")
@@ -1909,7 +1913,7 @@ def curves_with_j_0(K):
         D = K.random_element()
 
     curves = [EllipticCurve(K, [0, D**i]) for i in range(6)]
-    # TODO (grhkm): Precompute orders of sextic twists
+    # TODO (grhkm): issue 37110, Precompute orders of sextic twists + docs
     # The idea should be to evaluate the character (D / q) or something
     # Probably reference [RS2010]_ and [Connell1999]_
     # Also a necessary change is `curves_with_j_0` should take in an optional "starting curve"
@@ -1954,8 +1958,6 @@ def curves_with_j_1728(K):
         sage: curves_with_j_1728(GF(11))
         [Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 11,
          Elliptic Curve defined by y^2 = x^3 + 10*x over Finite Field of size 11]
-
-    # TODO (grhkm): Docs for order precomputation
     """
     if not K.is_finite():
         raise ValueError("field must be finite")
@@ -1978,7 +1980,7 @@ def curves_with_j_1728(K):
     while not D or D**q2 == 1:
         D = K.random_element()
     curves = [EllipticCurve(K, [D**i, 0]) for i in range(4)]
-    # TODO (grhkm): Precompute orders of quartic twists
+    # TODO (grhkm): issue 37110, Precompute orders of quartic twists + docs
     # The idea should be to evaluate the character (D / q) or something
     # Probably reference [Connell1999]_
     # Also a necessary change is `curves_with_j_1728` should take in an optional "starting curve"
