@@ -768,9 +768,9 @@ class PolynomialSequence_generic(Sequence_generic):
         A = Matrix(R.base_ring(), len(f), nv, sparse=sparse)
 
         for x, poly in enumerate(f):
-            for m in poly.monomials():
+            for c, m in poly:
                 try:
-                    A[x, y[m]] = poly.monomial_coefficient(m)
+                    A[x, y[m]] = c
                 except KeyError:
                     raise ValueError("order argument does not contain all monomials")
         return A, vector(v)
