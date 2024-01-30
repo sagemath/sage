@@ -2598,6 +2598,7 @@ def category_sample():
          Category of Hopf algebras with basis over Rational Field,
          Category of Lie algebras over Rational Field,
          Category of Weyl groups,
+         Category of abelian varieties over Rational Field,
          Category of additive magmas, ...,
          Category of fields, ...,
          Category of graded Hopf algebras with basis over Rational Field, ...,
