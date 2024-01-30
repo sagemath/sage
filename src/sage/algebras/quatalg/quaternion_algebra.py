@@ -3110,9 +3110,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: Jequiv, g
             (Fractional ideal (1/2 + 1/2*i + 7/2*j + 13/2*k, i + 3*k, 5*j + 5*k, 10*k), 7)
 
-        TESTS::
+        TESTS:
 
-        Checks on random crafted ideals that they decompose as expected.
+        Checks on random crafted ideals that they decompose as expected::
 
             sage: for d in ( m for m in range(400, 750) if is_squarefree(m) ):
             ....:     A = QuaternionAlgebra(d)
@@ -3125,9 +3125,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             ....:                 J,g = I.primitive_decomposition()
             ....:                 assert J*g == I
             ....:                 assert J.is_primitive()
-
         """
-
         if not self.is_integral():
             raise ValueError("primitive ideals are defined only for integral ideals")
 
