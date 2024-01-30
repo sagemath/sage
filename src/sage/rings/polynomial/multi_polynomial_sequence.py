@@ -750,9 +750,7 @@ class PolynomialSequence_generic(Sequence_generic):
         from sage.modules.free_module_element import vector
         from sage.matrix.constructor import Matrix
 
-        R = self.ring()
         f = tuple(self)
-
         if order is None:
             v = sorted(self.monomials(), reverse=True)
         else:
@@ -760,13 +758,9 @@ class PolynomialSequence_generic(Sequence_generic):
                 v = order
             else:
                 raise ValueError("order argument can only accept list or tuple")
-        nv = len(v)
 
-        # construct dictionary for fast lookups
-        y = dict(zip(v, range(nv)))
-
-        A = Matrix(R.base_ring(), len(f), nv, sparse=sparse)
-
+        y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
+        A = Matrix(self.ring().base_ring(), len(f), len(v), sparse=sparse)
         for x, poly in enumerate(f):
             for c, m in poly:
                 try:
