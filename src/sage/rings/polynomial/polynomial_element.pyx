@@ -2601,10 +2601,17 @@ cdef class Polynomial(CommutativePolynomial):
                 raise(f"cannot coerce polynomial {f} to the supplied ring: {ring}")
             return f.any_root()
 
-        # Otherwise change the ring of this degree `degree` irreducible
-        # polynomial and attempt to find a root from this
-        F_ext = self.base_ring().extension(f, names="a")
-        return F_ext.gen()
+        # Otherwise compute an extension ring of the correct degree and
+        # compute a root
+        # TODO: a faster option would be to create an extension with `f` 
+        #       as F_ext = self.base_ring().extension(f, names="a")
+        #       however this returns a quotient ring rather than a
+        #       FiniteField type if the base field is a non-prime field,
+        #       and this slower option is chosen to ensure the root is 
+        #       over explicitly a FiniteField type.
+        F_ext = self.base_ring().extension(f.degree(), names="a")
+        f = f.change_ring(F_ext)
+        return f.any_root()
 
     def __truediv__(left, right):
         r"""
