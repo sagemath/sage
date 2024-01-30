@@ -163,7 +163,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import Algebra
-from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.word import Word
 from sage.structure.category_object import normalize_names
@@ -467,7 +467,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             raise TypeError("argument R must be a ring")
         self.__ngens = n
         indices = FreeMonoid(n, names=names)
-        cat = AlgebrasWithBasis(R)
+        cat = GradedAlgebrasWithBasis(R)
         CombinatorialFreeModule.__init__(self, R, indices, prefix='F',
                                          category=cat)
         self._assign_names(indices.variable_names())
@@ -773,6 +773,23 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             (x, y, z)
         """
         return tuple(self.gen(i) for i in range(self.__ngens))
+
+    def degree_on_basis(self, m):
+        r"""
+        Return the degree of the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: A.<a, b> = FreeAlgebra(QQ)
+            sage: m = A.basis().keys()[10]
+            sage: m
+            a*b^2
+            sage: A.degree_on_basis(m)
+            3
+            sage: (a*b^2).degree()
+            3
+        """
+        return len(m)
 
     def product_on_basis(self, x, y):
         """
@@ -1149,7 +1166,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
         """
         R = alg.base_ring()
         self._alg = alg
-        category = AlgebrasWithBasis(R)
+        category = GradedAlgebrasWithBasis(R)
         CombinatorialFreeModule.__init__(self, R, alg.monoid(), prefix='PBW',
                                          category=category)
         self._assign_names(alg.variable_names())

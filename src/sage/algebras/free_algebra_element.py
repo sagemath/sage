@@ -203,6 +203,50 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
                     del z_elt[key]
         return A._from_dict(z_elt)
 
+    def is_unit(self):
+        r"""
+        Return ``True`` if ``self`` is invertible.
+
+        EXAMPLES::
+
+            sage: A.<x,y,z> = FreeAlgebra(ZZ)
+            sage: A(-1).is_unit()
+            True
+            sage: A(2).is_unit()
+            False
+            sage: A(1 + x).is_unit()
+            False
+        """
+        if self.is_zero() or not self.is_homogeneous() or self.degree():
+            return False
+        c = self.leading_coefficient()
+        return c.is_unit()
+
+    def __invert__(self):
+        """
+        EXAMPLES::
+
+            sage: A.<x,y,z> = FreeAlgebra(QQ)
+            sage: ~A(1)
+            1
+
+        TESTS::
+
+            sage: ~A(0)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: element is not invertible
+
+            sage: ~A(1 + x)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: element is not invertible
+        """
+        if self.is_unit():
+            c = self.leading_coefficient()
+            return self.parent()(~c)
+        raise ZeroDivisionError("element is not invertible")
+
     def _acted_upon_(self, scalar, self_on_left=False):
         """
         Return the action of a scalar on ``self``.
