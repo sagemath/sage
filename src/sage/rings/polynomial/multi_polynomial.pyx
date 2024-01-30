@@ -841,12 +841,14 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def change_ring(self, R):
         r"""
-        Return a copy of this polynomial but with coefficients in ``R``,
-        if at all possible.
+        Return this polynomial with coefficients converted to ``R``.
 
         INPUT:
 
-        - ``R`` -- a ring or morphism.
+        - ``R`` -- a ring or morphism; if a morphism, the coefficients
+          are mapped to the codomain of ``R``
+
+        OUTPUT: a new polynomial with the base ring changed to ``R``.
 
         EXAMPLES::
 
@@ -854,10 +856,14 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x^3 + 3/5*y + 1
             sage: f.change_ring(GF(7))
             x^3 + 2*y + 1
+            sage: g = x^2 + 5*y
+            sage: g.change_ring(GF(5))
+            x^2
 
         ::
 
-            sage: R.<x,y> = GF(9,'a')[]                                                 # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = GF(9,'a')[]
             sage: (x+2*y).change_ring(GF(3))
             x - y
 
@@ -870,12 +876,22 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f.change_ring(K.embeddings(CC)[1])
             x^2 + (-0.500000000000000 - 0.866025403784438*I)*y
 
+        ::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = CyclotomicField(5)
+            sage: R.<x,y> = K[]
+            sage: f = x^2 + w*y
+            sage: f.change_ring(K.embeddings(QQbar)[1])
+            x^2 + (-0.8090169943749474? + 0.5877852522924731?*I)*y
+
         TESTS:
 
         Check that :issue:`25022` is fixed::
 
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: K.<x,y> = ZZ[]
-            sage: (x*y).change_ring(SR).monomials()                                     # needs sage.rings.number_field sage.symbolic
+            sage: (x*y).change_ring(SR).monomials()
             [x*y]
 
         Check that :issue:`36832` is fixed::
