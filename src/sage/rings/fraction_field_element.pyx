@@ -446,7 +446,7 @@ cdef class FractionFieldElement(FieldElement):
         """
         return self._numerator(*x, **kwds) / self._denominator(*x, **kwds)
 
-    def subs(self, in_dict=None, **kwds):
+    def subs(self, in_dict=None, *args, **kwds):
         r"""
         Substitute variables in the numerator and denominator of ``self``.
 
@@ -472,9 +472,8 @@ cdef class FractionFieldElement(FieldElement):
             sage: v = P.gen(4)
             sage: p.subs({v: 100})
             (x1 + 2*x2 + 3*x3 + 400)/(x1 + 2*x2 + 3*x3 + 5*x5 + 6*x6 + 7*x7 + 400)
-
         """
-        if in_dict:
+        if isinstance(in_dict, dict):
             gens = self.parent().gens()
 
             def to_R(m):
@@ -485,8 +484,8 @@ cdef class FractionFieldElement(FieldElement):
                 return mi
             in_dict = {to_R(m): v for m, v in in_dict.items()}
 
-        num = self._numerator.subs(in_dict, **kwds)
-        den = self._denominator.subs(in_dict, **kwds)
+        num = self._numerator.subs(in_dict, *args, **kwds)
+        den = self._denominator.subs(in_dict, *args, **kwds)
         return num / den
 
     substitute = subs

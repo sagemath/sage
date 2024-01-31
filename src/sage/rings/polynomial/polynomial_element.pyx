@@ -410,7 +410,7 @@ cdef class Polynomial(CommutativePolynomial):
             return self._parent.zero()
         return self * self._parent(right)
 
-    def subs(self, in_dict=None, **kwds):
+    def subs(self, in_dict=None, *args, **kwds):
         r"""
         Substitute the variable in ``self``.
 
@@ -432,17 +432,17 @@ cdef class Polynomial(CommutativePolynomial):
             TypeError: keys do not match self's parent
         """
         if not in_dict:
-            return self(**kwds)
+            return self(*args, **kwds)
 
         if isinstance(in_dict, dict):
             if len(in_dict) > 1:
                 raise TypeError("only the generator can be substituted, use __call__ instead")
             k, v = next(iter(in_dict.items()))
             if not k or k == self._parent.gen():
-                return self(v, **kwds)
+                return self(v, *args, **kwds)
             raise TypeError("keys do not match self's parent")
 
-        return self(in_dict, **kwds)
+        return self(in_dict, *args, **kwds)
 
     substitute = subs
 
