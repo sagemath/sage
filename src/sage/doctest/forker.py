@@ -82,13 +82,12 @@ if os.uname().sysname == 'Darwin':
     import multiprocessing
     multiprocessing.set_start_method('fork', force=True)
 
+from multiprocessing import Process
+
 try:
-    import multiprocessing
-    from multiprocessing import Process
+    import _multiprocessing
 except ImportError:
-    multiprocessing = None
-    class Process:
-        pass
+    _multiprocessing = None
 
 
 def _sorted_dict_pprinter_factory(start, end):
@@ -1502,7 +1501,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 except KeyboardInterrupt:
                     # Assume this is a *real* interrupt. We need to
                     # escalate this to the master doctesting process.
-                    if not self.options.serial and multiprocessing:
+                    if not self.options.serial and _multiprocessing:
                         os.kill(os.getppid(), signal.SIGINT)
                     raise
                 finally:
@@ -1640,7 +1639,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 except KeyboardInterrupt:
                     # Assume this is a *real* interrupt. We need to
                     # escalate this to the master doctesting process.
-                    if not self.options.serial and multiprocessing:
+                    if not self.options.serial and _multiprocessing:
                         os.kill(os.getppid(), signal.SIGINT)
                     raise
                 finally:
@@ -2148,7 +2147,7 @@ class DocTestDispatcher(SageObject):
             sage -t .../sage/rings/big_oh.py
                 [... tests, ... s]
         """
-        if self.controller.options.serial or not multiprocessing:
+        if self.controller.options.serial or not _multiprocessing:
             self.serial_dispatch()
         else:
             self.parallel_dispatch()
