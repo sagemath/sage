@@ -63,7 +63,7 @@ AUTHORS:
 from sage.categories.groups import Groups
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.rings.integer import Integer
@@ -684,7 +684,7 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
     return FreeGroup_class(names)
 
 
-class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
+class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's FreeGroup
 
@@ -699,15 +699,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
     Element = FreeGroupElement
 
-    @staticmethod
-    def __classcall_private__(cls, data, libgap_free_group=None):
-        G = super().__classcall__(cls, data)
-        if libgap_free_group is None:
-            libgap_free_group = libgap.FreeGroup(data)
-        G._gap = libgap_free_group
-        return G
-
-    def __init__(self, generator_names):
+    def __init__(self, generator_names, libgap_free_group=None):
         """
         Python constructor.
 
@@ -729,16 +721,18 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             ('a', 'b')
         """
         self._assign_names(generator_names)
-        ParentLibGAP.__init__(self, self._gap)
+        if libgap_free_group is None:
+            libgap_free_group = libgap.FreeGroup(generator_names)
+        ParentLibGAP.__init__(self, libgap_free_group)
         if not generator_names:
             cat = Groups().Finite()
         else:
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
 
-    # def __reduce__(self):
-    #     from sage.structure.unique_representation import unreduce
-    #     return (unreduce, (self.__class__.__base__, (self._names, ), {}))
+    def __reduce__(self):
+        from sage.structure.unique_representation import unreduce
+        return (unreduce, (self.__class__.__base__, (self._names, ), {}))
 
     def _repr_(self):
         """

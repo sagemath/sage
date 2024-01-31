@@ -143,7 +143,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation
 
 
 class GroupMorphismWithGensImages(SetMorphism):
@@ -743,7 +743,7 @@ class RewritingSystem():
             raise ValueError('could not make the system confluent')
 
 
-class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, ParentLibGAP):
+class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's Finitely Presented Groups.
 
