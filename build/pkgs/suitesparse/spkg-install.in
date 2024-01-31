@@ -1,14 +1,10 @@
-# -*- shell-script -*-
 cd src
 
-export CC="${CC-gcc} -std=c99"
+echo "Configuring suitesparse"
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DNSTATIC=ON \
+          -DSUITESPARSE_USE_FORTRAN=ON \
+          -DSUITESPARSE_INCLUDEDIR_POSTFIX="" \
+          -DSUITESPARSE_ENABLE_PROJECTS="suitesparse_config;amd;camd;ccolamd;colamd;cholmod;umfpack"
 
-echo "print configuration"
-$MAKE MY_METIS_LIB=none CHOLMOD_CONFIG=-DNPARTITION \
-      BLAS="$(pkg-config --libs blas)" LAPACK="$(pkg-config --libs lapack)" \
-      INSTALL="$SAGE_LOCAL" DESTDIR="$SAGE_DESTDIR" config
-# build and install
-$MAKE MY_METIS_LIB=none CHOLMOD_CONFIG=-DNPARTITION \
-      BLAS="$(pkg-config --libs blas)" LAPACK="$(pkg-config --libs lapack)" \
-      INSTALL="$SAGE_LOCAL" DESTDIR="$SAGE_DESTDIR" install
-
+sdh_make_install
