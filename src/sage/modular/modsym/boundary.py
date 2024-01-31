@@ -102,7 +102,7 @@ import sage.modular.hecke.all as hecke
 from sage.modular.modsym.manin_symbol import ManinSymbol
 
 from sage.rings.rational_field import Q as QQ
-from sage.rings.ring import Ring
+from sage.categories.rings import Rings
 
 from . import element
 
@@ -320,7 +320,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         if not arithgroup.is_CongruenceSubgroup(group):
             raise TypeError("group must be a congruence subgroup")
         sign = int(sign)
-        if not isinstance(base_ring, Ring):
+        if base_ring not in Rings().Commutative():
             raise TypeError("base_ring must be a commutative ring")
         if character is None and arithgroup.is_Gamma0(group):
             character = dirichlet.TrivialCharacter(group.level(), base_ring)

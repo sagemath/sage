@@ -323,8 +323,8 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                     sage: Aone is Bone
                     False
 
-               Even if called in the wrong order, they should returns their
-               respective one::
+                Even if called in the wrong order, they should returns their
+                respective one::
 
                     sage: Bone().parent() is B                                          # needs sage.combinat sage.modules
                     True

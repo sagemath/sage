@@ -290,8 +290,7 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
                 break
             if retval != 'interval':
                 factor = QQbar.common_polynomial(factor)
-            for irt in irts:
-                all_rts.append((irt, factor, exp))
+            all_rts.extend((irt, factor, exp) for irt in irts)
 
         if ok and intervals_disjoint([rt for (rt, fac, mult) in all_rts]):
             all_rts = sort_complex_numbers_for_display(all_rts)
