@@ -209,15 +209,20 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(ZZ)
+            sage: A.<x, y, z> = FreeAlgebra(ZZ)
             sage: A(-1).is_unit()
             True
             sage: A(2).is_unit()
             False
             sage: A(1 + x).is_unit()
             False
+            sage: A.<x, y> = FreeAlgebra(QQ, degrees=(1,-1))
+            sage: A(x * y).is_unit()
+            False
+            sage: A(2).is_unit()
+            True
         """
-        if self.is_zero() or not self.is_homogeneous() or self.degree():
+        if self.is_zero() or len(self) > 1 or not list(self)[0][0].is_one():
             return False
         c = self.leading_coefficient()
         return c.is_unit()
@@ -226,7 +231,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         """
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ)
+            sage: A.<x, y, z> = FreeAlgebra(QQ)
             sage: ~A(1)
             1
 

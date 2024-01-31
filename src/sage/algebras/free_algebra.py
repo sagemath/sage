@@ -334,6 +334,8 @@ class FreeAlgebraFactory(UniqueFactory):
         names = normalize_names(arg2, arg1)
         if degrees is None:
             return base_ring, names
+        if degrees in ZZ:
+            return base_ring, names, (degrees,) * len(names)
         return base_ring, names, tuple(degrees)
 
     def create_object(self, version, key):
@@ -1194,7 +1196,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
         """
         R = alg.base_ring()
         self._alg = alg
-        category = GradedAlgebrasWithBasis(R)
+        category = AlgebrasWithBasis(R)
         CombinatorialFreeModule.__init__(self, R, alg.monoid(), prefix='PBW',
                                          category=category)
         self._assign_names(alg.variable_names())
