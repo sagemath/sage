@@ -3142,7 +3142,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: A = random_matrix(ZZ, 0, 0)
             sage: R, U = A.LLL(transformation=True)
 
-            Test rank caching:
+        Test rank caching:
 
             sage: M = matrix(4,3,[1,2,3,2,4,6,7,0,1,-1,-2,-3])
             sage: R = M.LLL(algorithm="NTL:LLL")
