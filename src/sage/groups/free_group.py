@@ -731,9 +731,30 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         Group.__init__(self, category=cat)
 
     def __hash__(self):
+        """
+        Make hashable.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: F.__hash__()   # random output
+            -2230941415428039205
+        """
+
         return hash((self.__class__, self._names))
 
     def __reduce__(self):
+        """
+        Implement pickling.
+
+        TESTS::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: F.__reduce__()[1]
+            (<class 'sage.groups.free_group.FreeGroup_class'>,
+             (('a', 'b'),), {})
+        """
+
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._names, ), {}))
 

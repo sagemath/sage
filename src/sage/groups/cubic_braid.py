@@ -806,6 +806,16 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         return
 
     def __reduce__(self):
+        """
+        Implement pickling.
+
+        TESTS::
+
+            sage: CubicBraidGroup(3).__reduce__()[1]
+            (<class 'sage.groups.cubic_braid.CubicBraidGroup'>,
+             (('c0', 'c1'),),
+             {'cbg_type': None})
+        """
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._names,), {'cbg_type': self._cbg_type_orig}))
 

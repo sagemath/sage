@@ -1394,6 +1394,11 @@ cdef class GapElement(RingElement):
                 x = R.gen()
                 return x**val * R(num) / R(den)
 
+        elif self.IsList():
+            # May be a list-like collection of some other type of GapElements
+            # that we can convert
+            return [item.sage() for item in self.AsList()]
+
         elif self.IsFpGroup():
             from sage.groups.free_group import FreeGroup
             from sage.groups.finitely_presented import FinitelyPresentedGroup
@@ -1403,11 +1408,6 @@ cdef class GapElement(RingElement):
             relations = tuple(F(rel.LetterRepAssocWord().sage())
                               for rel in self.RelatorsOfFpGroup())
             return FinitelyPresentedGroup(F, relations, libgap_fpgroup=self)
-
-        elif self.IsList():
-            # May be a list-like collection of some other type of GapElements
-            # that we can convert
-            return [item.sage() for item in self.AsList()]
 
         raise NotImplementedError('cannot construct equivalent Sage object')
 

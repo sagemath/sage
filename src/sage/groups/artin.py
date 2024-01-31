@@ -491,6 +491,20 @@ class ArtinGroup(FinitelyPresentedGroup):
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels))
 
     def __reduce__(self):
+        """
+        Implement pickling.
+
+        TESTS::
+
+            sage: A = ArtinGroup(['B',3], ['x','y','z'])
+            sage: A.__reduce__()[1]
+            (<class 'sage.groups.artin.FiniteTypeArtinGroup'>,
+             (
+            [1 3 2]
+            [3 1 4]
+            [2 4 1], ('x', 'y', 'z')
+            ), {})
+        """
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._coxeter_matrix, self._names), {}))
 
