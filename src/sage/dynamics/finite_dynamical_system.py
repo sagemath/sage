@@ -2,7 +2,7 @@ r"""
 Discrete dynamical systems
 ==========================
 
-A *discrete dynamical system* (henceforth *DDS*) is a pair
+A *discrete dynamical system* (short: *DDS*) is a pair
 `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
 (This is one of several things known as a "discrete dynamical
 system" in mathematics.)
@@ -96,7 +96,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
     r"""
     A discrete dynamical system.
 
-    A *discrete dynamical system* (henceforth *DDS*) is a
+    A *discrete dynamical system* (short: *DDS*) is a
     pair `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
     This set `X` is called the *ground set* of the DDS, while
     the map `\phi` is called the *evolution* of the DDS.
@@ -690,7 +690,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
     r"""
     An invertible discrete dynamical system.
 
-    A *discrete dynamical system* (henceforth *DDS*) is a
+    A *discrete dynamical system* (short: *DDS*) is a
     pair `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
     This set `X` is called the *ground set* of the DDS, while
     the map `\phi` is called the *evolution* of the DDS.
@@ -981,7 +981,7 @@ class FiniteDynamicalSystem(DiscreteDynamicalSystem):
     r"""
     A finite discrete dynamical system.
 
-    A *finite discrete dynamical system* (henceforth *FDDS*) is a
+    A *finite discrete dynamical system* (short: *FDDS*) is a
     pair `(X, \phi)` of a finite set `X` and a map `\phi : X \to X`.
     This set `X` is called the *ground set* of the FDDS, while
     the map `\phi` is called the *evolution* of the FDDS.
@@ -1125,7 +1125,7 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
     r"""
     An invertible finite discrete dynamical system.
 
-    A *finite discrete dynamical system* (henceforth *FDDS*) is a
+    A *finite discrete dynamical system* (short: *FDDS*) is a
     pair `(X, \phi)` of a finite set `X` and a map `\phi : X \to X`.
     This set `X` is called the *ground set* of the FDDS, while
     the map `\phi` is called the *evolution* of the FDDS.
