@@ -23,9 +23,9 @@ from sage.matrix.constructor import matrix
 class GeneralizedMonomialOrder:
     def __init__(self,n,group_order="lex",score_function="min"):
         r"""
-        Create a generalized monomial order
+        Create a generalized monomial order.
 
-        INPUT:
+        INPUTS:
 
         - ``n`` -- the number of variables
         - ``group_order`` (default: ``lex``) -- a group order on `\ZZ^n`. A class with a method 'greater_tuple'
@@ -327,7 +327,7 @@ class GeneralizedMonomialOrder:
             (5, 5, 6)
         """
 
-        cone_matrix = self._cones[i]
+        cone_matrix = self.get_cone(i)
         t = vector(self.translate_to_cone(i,L))
         L = [vector(l) for l in L]
         for c in cone_matrix.columns():
@@ -336,14 +336,22 @@ class GeneralizedMonomialOrder:
             t = t + c
         return tuple(t)
 
-    # def generator_for_pair(self,i,L1,L2):
-    #     cone_matrix = self._cones[i]
-    #     lm1 = vector(self.greatest_tuple_for_cone(i,L1))
-    #     lm2 = vector(self.greatest_tuple_for_cone(i,L2))
-    #     g1 = vector(self.generator(i,L1))
-    #     g2 = vector(self.generator(i,L2))
-    #     m = vector(max(cone_matrix*(lm1+g1), cone_matrix*(lm2 + g2)))
-    #     return tuple(cone_matrix*m)
+    def generator_for_pair(self,i,L1,L2):
+        cone_matrix = self.get_cone(i)
+        lm1 = vector(self.greatest_tuple_for_cone(i,L1))
+        lm2 = vector(self.greatest_tuple_for_cone(i,L2))
+        g1 = vector(self.generator(i,L1))
+        g2 = vector(self.generator(i,L2))
+        v1 = lm1 + g1
+        v2 = lm2 + g2
+        # print(lm1 + g1)
+        # print(lm2 + g2)
+        # print(cone_matrix)
+        m = vector([max(a,b) for a,b in zip(v1,v2)])
+        # m2 = max(lm1 + g1, lm2 + g2)
+        # print(m)
+        # print(m2)
+        return tuple(cone_matrix*m)
 
 def min_score_function(v):
     return -min(0,*v)
