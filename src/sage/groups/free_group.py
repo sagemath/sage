@@ -699,40 +699,52 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
     Element = FreeGroupElement
 
-    def __init__(self, generator_names, libgap_free_group=None):
-        """
-        Python constructor.
-
-        INPUT:
-
-        - ``generator_names`` -- a tuple of strings. The names of the
-          generators.
-
-        - ``libgap_free_group`` -- a LibGAP free group or ``None``
-          (default). The LibGAP free group to wrap. If ``None``, a
-          suitable group will be constructed.
-
-        TESTS::
-
-            sage: G.<a,b> = FreeGroup() # indirect doctest
-            sage: G
-            Free Group on generators {a, b}
-            sage: G.variable_names()
-            ('a', 'b')
-        """
-        self._assign_names(generator_names)
+    @staticmethod
+    def __classcall_private__(cls, generator_names, libgap_free_group=None):
+        G = super().__classcall__(cls, generator_names)
+        G._assign_names(generator_names)
         if libgap_free_group is None:
             libgap_free_group = libgap.FreeGroup(generator_names)
-        ParentLibGAP.__init__(self, libgap_free_group)
+        G._libgap = libgap_free_group
+        ParentLibGAP.__init__(G, libgap_free_group)
         if not generator_names:
             cat = Groups().Finite()
         else:
             cat = Groups().Infinite()
+        Group.__init__(G, category=cat)
+        return G
+
+    # def __init__(self, generator_names):
+    #     """
+    #     Python constructor.
+    #
+    #     INPUT:
+    #
+    #     - ``generator_names`` -- a tuple of strings. The names of the
+    #       generators.
+    #
+    #     - ``libgap_free_group`` -- a LibGAP free group or ``None``
+    #       (default). The LibGAP free group to wrap. If ``None``, a
+    #       suitable group will be constructed.
+    #
+    #     TESTS::
+    #
+    #         sage: G.<a,b> = FreeGroup() # indirect doctest
+    #         sage: G
+    #         Free Group on generators {a, b}
+    #         sage: G.variable_names()
+    #         ('a', 'b')
+    #     """
+    #     self._assign_names(generator_names)
+    #     if not generator_names:
+    #         cat = Groups().Finite()
+    #     else:
+    #         cat = Groups().Infinite()
         Group.__init__(self, category=cat)
 
-    def __reduce__(self):
-        from sage.structure.unique_representation import unreduce
-        return (unreduce, (self.__class__.__base__, (self._names, ), {}))
+    # def __reduce__(self):
+    #     from sage.structure.unique_representation import unreduce
+    #     return (unreduce, (self.__class__.__base__, (self._names, ), {}))
 
     def _repr_(self):
         """
