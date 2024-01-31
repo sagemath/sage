@@ -24,7 +24,7 @@ It is then possible to define points on this line, derived from points on the cu
     sage: E = EllipticCurve(GF(101), [2, 3])
     sage: K = KummerLine(E)
     sage: P = E(95, 49); xP = K(P)
-    sage: xQ = K([73, 1]) 
+    sage: xQ = K([73, 1])
 
 Several methods helps to recover useful data, such as `XZ`-coordinates or the affine `x`-coordinate::
 
@@ -83,7 +83,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.all import cached_method
+from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer import Integer
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
@@ -168,13 +168,11 @@ class KummerLine_generic(SageObject):
 
         EXAMPLES::
 
-        Base ring must be the same::
-
             sage: E1 = EllipticCurve(GF(101), [2, 3])
             sage: E2 = EllipticCurve(QQ, [2, 3])
             sage: K1 = KummerLine(E1)
             sage: K2 = KummerLine(E2)
-            sage: K1 == K2
+            sage: K1 == K2 # Base ring must be the same
             False
 
         Kummer lines are not equals even if the curves are isomorphic, which
