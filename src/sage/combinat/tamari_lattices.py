@@ -263,7 +263,7 @@ def TamariLattice(n, m=1):
 
     REFERENCES:
 
-    - [BMFPR]_
+    - [BMFPR2011]_
     """
     return GeneralizedTamariLattice(m * n + 1, n, m)
 
