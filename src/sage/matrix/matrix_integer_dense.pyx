@@ -3097,28 +3097,20 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: U * A == R
             True
 
-        Example with a nonzero kernel and rank caching::
+        Example with a nonzero kernel::
 
             sage: M = matrix(4,3,[1,2,3,2,4,6,7,0,1,-1,-2,-3])
             sage: M.LLL()[0:2]
             [0 0 0]
             [0 0 0]
-            sage: M.rank()
-            2
 
-            sage: M = matrix(4,3,[1,2,3,2,4,6,7,0,1,-1,-2,-3])
             sage: M.LLL(algorithm="NTL:LLL")[0:2]
             [0 0 0]
             [0 0 0]
-            sage: M.rank()
-            2
 
-            sage: M = matrix(4,3,[1,2,3,2,4,6,7,0,1,-1,-2,-3])
             sage: M.LLL(algorithm="pari")[0:2]
             [0 0 0]
             [0 0 0]
-            sage: M.rank()
-            2
 
         TESTS::
 
@@ -3149,6 +3141,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = random_matrix(ZZ, 0, 0)
             sage: R, U = A.LLL(transformation=True)
+
+            Test rank caching:
+
+            sage: M = matrix(4,3,[1,2,3,2,4,6,7,0,1,-1,-2,-3])
+            sage: R = M.LLL(algorithm="NTL:LLL")
+            sage: M._cache
+            {'rank': 2}
+            sage: M._clear_cache()
+            sage: R = M.LLL(algorithm="pari")
+            sage: M._cache
+            {'rank': 2}
 
         .. NOTE::
 
@@ -3292,10 +3295,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
             from sage.libs.pari import pari
             A = pari(self).mattranspose()
             K, T = A.qflll(4)
-            U = pari.matconcat([K, T]).mattranspose().sage()
-            R = U * self
             r = ZZ(T.length())
             self.cache("rank", r)
+            U = pari.matconcat([K, T]).mattranspose().sage()
+            R = U * self
 
         else:
             raise TypeError("algorithm %s not supported"%algorithm)
