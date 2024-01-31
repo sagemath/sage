@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 r"""
 Feature for testing the presence of ``ffmpeg``
 """
 # ****************************************************************************
-#       Copyright (C) 2018 Sebastien Labbe <slabqc@gmail.com>
+#       Copyright (C) 2018-2022 Sebastien Labbe <slabqc@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +15,7 @@ from . import Executable, FeatureTestResult
 
 class FFmpeg(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``ffmpeg``
+    A :class:`~sage.features.Feature` describing the presence of :ref:`ffmpeg <spkg_ffmpeg>`.
 
     EXAMPLES::
 

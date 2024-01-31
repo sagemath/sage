@@ -48,7 +48,7 @@ def abstract_method(f=None, optional=False):
         sage: A.my_method
         <abstract method my_method at ...>
 
-    The current policy is that a ``NotImplementedError`` is raised
+    The current policy is that a :class:`NotImplementedError` is raised
     when accessing the method through an instance, even before the
     method is called::
 
@@ -127,10 +127,10 @@ def abstract_method(f=None, optional=False):
 
         sage: abstract_method(optional = True)
         <function abstract_method.<locals>.<lambda> at ...>
-        sage: abstract_method(optional = True)(banner)
-        <optional abstract method banner at ...>
-        sage: abstract_method(banner, optional = True)
-        <optional abstract method banner at ...>
+        sage: abstract_method(optional = True)(version)
+        <optional abstract method version at ...>
+        sage: abstract_method(version, optional = True)
+        <optional abstract method version at ...>
     """
     if f is None:
         return lambda f: AbstractMethod(f, optional=optional)
@@ -173,11 +173,11 @@ class AbstractMethod():
         """
         EXAMPLES::
 
-            sage: abstract_method(banner)
-            <abstract method banner at ...>
+            sage: abstract_method(version)
+            <abstract method version at ...>
 
-            sage: abstract_method(banner, optional = True)
-            <optional abstract method banner at ...>
+            sage: abstract_method(version, optional = True)
+            <optional abstract method version at ...>
         """
         return "<" + ("optional " if self._optional else "") + "abstract method %s at %s>" % (self.__name__, hex(id(self._f)))
 
@@ -188,12 +188,12 @@ class AbstractMethod():
         EXAMPLES::
 
             sage: from sage.misc.sageinspect import sage_getsourcelines
-            sage: g = abstract_method(banner)
+            sage: g = abstract_method(version)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
-            'def banner():\n'
+            'def version():\n'
             sage: lines
-            89
+            18
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)

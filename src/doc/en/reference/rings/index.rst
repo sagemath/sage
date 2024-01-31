@@ -8,6 +8,7 @@ Base Classes for Rings, Algebras and Fields
    :maxdepth: 1
 
    sage/rings/ring
+   sage/rings/abc
 
 Ideals
 ------

@@ -679,7 +679,6 @@ class DiffChart(Chart):
         return list(var(list_strings_velocities))
 
 
-
 #*****************************************************************************
 
 class RealDiffChart(DiffChart, RealChart):
@@ -1001,7 +1000,6 @@ class RealDiffChart(DiffChart, RealChart):
         self._frame = CoordFrame(self)
         self._coframe = self._frame._coframe
 
-
     def restrict(self, subset, restrictions=None):
         r"""
         Return the restriction of the chart to some subset.
@@ -1157,7 +1155,7 @@ class DiffCoordChange(CoordChange):
         """
         CoordChange.__init__(self, chart1, chart2, *transformations)
         # Jacobian matrix:
-        self._jacobian  = self._transf.jacobian()
+        self._jacobian = self._transf.jacobian()
         # If the two charts are on the same open subset, the Jacobian matrix is
         # added to the dictionary of changes of frame:
         if chart1.domain() == chart2.domain():

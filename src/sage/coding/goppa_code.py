@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Goppa code
 
@@ -139,7 +140,9 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
         """
         return "[{}, {}] Goppa code over GF({})".format(
-                self.length(), self.dimension(), self.base_field().cardinality())
+            self.length(), self.dimension(),
+            self.base_field().cardinality())
+
     def _latex_(self):
         r"""
         Return a latex representation of ``self``.
@@ -305,7 +308,7 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
             sage: C.distance_bound()
             3
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             5
         """
         return 1 + (self._generating_pol).degree()
@@ -432,5 +435,6 @@ class GoppaCodeEncoder(Encoder):
         pmat = c.parity_check_matrix()
         aux = codes.from_parity_check_matrix(pmat)
         return aux.generator_matrix()
+
 
 GoppaCode._registered_encoders["GoppaEncoder"] = GoppaCodeEncoder

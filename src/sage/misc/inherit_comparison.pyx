@@ -51,8 +51,11 @@ cdef class InheritComparisonMetaclass(type):
 
     EXAMPLES::
 
-        sage: cython(                                                                       # optional - sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: cython(
         ....: '''
+        ....: cimport cython
+        ....:
         ....: from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
         ....:
         ....: cdef class Base():
@@ -65,17 +68,18 @@ cdef class InheritComparisonMetaclass(type):
         ....:         return 1
         ....:
         ....: cdef class DerivedWithRichcmp(Base):
+        ....:     @cython.always_allow_keywords(False)
         ....:     def __getmetaclass__(_):
         ....:         from sage.misc.inherit_comparison import InheritComparisonMetaclass
         ....:         return InheritComparisonMetaclass
         ....:     def __hash__(self):
         ....:         return 1
         ....: ''')
-        sage: a = Derived()                                                                 # optional - sage.misc.cython
-        sage: a == a                                                                        # optional - sage.misc.cython
+        sage: a = Derived()
+        sage: a == a
         True
-        sage: b = DerivedWithRichcmp()                                                      # optional - sage.misc.cython
-        sage: b == b                                                                        # optional - sage.misc.cython
+        sage: b = DerivedWithRichcmp()
+        sage: b == b
         Calling Base.__richcmp__
         True
     """

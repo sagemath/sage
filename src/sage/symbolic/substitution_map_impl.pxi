@@ -24,18 +24,18 @@ cdef class SubstitutionMap(SageObject):
 
     cdef GExMap _gmapobj
 
-    cpdef Expression apply_to(self, Expression expr, unsigned options):
+    cpdef Expression apply_to(self, Expression expr, unsigned options) noexcept:
         """
         Apply the substitution to a symbolic expression
 
         EXAMPLES::
-        
+
             sage: from sage.symbolic.expression import make_map
             sage: subs = make_map({x:x+1})
             sage: subs.apply_to(x^2, 0)
             (x + 1)^2
         """
-        return new_Expression_from_GEx(expr._parent, 
+        return new_Expression_from_GEx(expr._parent,
                                        expr._gobj.subs_map(self._gmapobj, options))
 
     def _repr_(self):
@@ -43,7 +43,7 @@ cdef class SubstitutionMap(SageObject):
         Return the string representation
 
         EXAMPLES::
-        
+
             sage: from sage.symbolic.expression import make_map
             sage: make_map({x:x+1})
             SubsMap
@@ -51,7 +51,7 @@ cdef class SubstitutionMap(SageObject):
         return 'SubsMap'  # GEx_to_str(&x._gobj)
 
 
-cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
+cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap) noexcept:
     """
     Wrap a Pynac object into a Python object
 
@@ -75,7 +75,7 @@ cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
     return result
 
 
-cpdef SubstitutionMap make_map(subs_dict):
+cpdef SubstitutionMap make_map(subs_dict) noexcept:
     """
     Construct a new substitution map
 
@@ -94,4 +94,4 @@ cpdef SubstitutionMap make_map(subs_dict):
         smap.insert(make_pair((<Expression>k)._gobj,
                               (<Expression>v)._gobj))
     return new_SubstitutionMap_from_GExMap(smap)
-            
+

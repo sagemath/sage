@@ -17,12 +17,8 @@ Base class for groups
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import random
-
 from sage.structure.parent cimport Parent
 from sage.rings.infinity import infinity
-from sage.rings.integer_ring import ZZ
-from sage.misc.lazy_attribute import lazy_attribute
 
 
 def is_Group(x):
@@ -39,9 +35,9 @@ def is_Group(x):
 
     EXAMPLES::
 
-        sage: F.<a,b> = FreeGroup()
+        sage: F.<a,b> = FreeGroup()                                                     # needs sage.groups
         sage: from sage.groups.group import is_Group
-        sage: is_Group(F)
+        sage: is_Group(F)                                                               # needs sage.groups
         True
         sage: is_Group("a string")
         False
@@ -91,7 +87,7 @@ cdef class Group(Parent):
             sage: G = Group(category=Groups()) # todo: do the same test with some subcategory of Groups when there will exist one
             sage: G.category()
             Category of groups
-            sage: G = Group(category = CommutativeAdditiveGroups())
+            sage: G = Group(category=CommutativeAdditiveGroups())
             Traceback (most recent call last):
             ...
             ValueError: (Category of commutative additive groups,) is not a subcategory of Category of groups
@@ -100,6 +96,7 @@ cdef class Group(Parent):
 
         Check for :trac:`8119`::
 
+            sage: # needs sage.groups
             sage: G = SymmetricGroup(2)
             sage: h = hash(G)
             sage: G.rename('S2')
@@ -143,7 +140,7 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: SL(2, 7).is_commutative()
+            sage: SL(2, 7).is_commutative()                                             # needs sage.libs.gap sage.modules sage.rings.finite_rings
             False
         """
         return self.is_abelian()
@@ -165,8 +162,8 @@ cdef class Group(Parent):
 
         TESTS::
 
-            sage: H = SL(2, QQ)
-            sage: H.order()
+            sage: H = SL(2, QQ)                                                         # needs sage.modules
+            sage: H.order()                                                             # needs sage.modules
             +Infinity
         """
         try:
@@ -188,6 +185,39 @@ cdef class Group(Parent):
             NotImplementedError
         """
         return self.order() != infinity
+
+    def is_trivial(self):
+        r"""
+        Return ``True`` if this group is the trivial group.
+
+        A group is trivial, if it consists only of the identity
+        element.
+
+        .. WARNING::
+
+            It is in principle undecidable whether a group is
+            trivial, for example, if the group is given by a finite
+            presentation.  Thus, this method may not terminate.
+
+        EXAMPLES::
+
+            sage: groups.presentation.Cyclic(1).is_trivial()
+            True
+
+            sage: G.<a,b> = FreeGroup('a, b')
+            sage: H = G / (a^2, b^3, a*b*~a*~b)
+            sage: H.is_trivial()
+            False
+
+        A non-trivial presentation of the trivial group::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: J = F / ((~a)*b*a*(~b)^2, (~b)*a*b*(~a)^2)
+            sage: J.is_trivial()
+            True
+        """
+        return self.order() == 1
+
 
     def is_multiplicative(self):
         r"""
@@ -215,17 +245,15 @@ cdef class Group(Parent):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup([2,3,4,5])
-            sage: G.an_element()
+            sage: G = AbelianGroup([2,3,4,5])                                           # needs sage.modules
+            sage: G.an_element()                                                        # needs sage.modules
             f0*f1*f2*f3
         """
-        from sage.misc.misc_c import prod
-        return prod(self.gens())
+        return self.prod(self.gens())
 
     def quotient(self, H, **kwds):
         """
-        Return the quotient of this group by the normal subgroup
-        `H`.
+        Return the quotient of this group by the normal subgroup `H`.
 
         EXAMPLES::
 

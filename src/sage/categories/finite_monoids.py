@@ -72,9 +72,9 @@ class FiniteMonoids(CategoryWithAxiom):
             The nerve (classifying space) of the cyclic group of order
             2 is infinite-dimensional real projective space. ::
 
-                sage: Sigma2 = groups.permutation.Cyclic(2)
-                sage: BSigma2 = Sigma2.nerve()
-                sage: BSigma2.cohomology(4, base_ring=GF(2))
+                sage: Sigma2 = groups.permutation.Cyclic(2)                             # needs sage.groups
+                sage: BSigma2 = Sigma2.nerve()                                          # needs sage.groups
+                sage: BSigma2.cohomology(4, base_ring=GF(2))                            # needs sage.groups sage.modules
                 Vector space of dimension 1 over Finite Field of size 2
 
             The `k`-simplices of the nerve are named after the chains
@@ -83,14 +83,15 @@ class FiniteMonoids(CategoryWithAxiom):
             element) and ``(1,2)`` in Sage. So the 1-cells and 2-cells
             in `B\Sigma_2` are::
 
-                sage: BSigma2.n_cells(1)
+                sage: BSigma2.n_cells(1)                                                # needs sage.groups
                 [(1,2)]
-                sage: BSigma2.n_cells(2)
+                sage: BSigma2.n_cells(2)                                                # needs sage.groups
                 [(1,2) * (1,2)]
 
             Another construction of the group, with different names
             for its elements::
 
+                sage: # needs sage.groups
                 sage: C2 = groups.misc.MultiplicativeAbelian([2])
                 sage: BC2 = C2.nerve()
                 sage: BC2.n_cells(0)
@@ -103,21 +104,21 @@ class FiniteMonoids(CategoryWithAxiom):
             With mod `p` coefficients, `B \Sigma_p` should have its
             first nonvanishing homology group in dimension `p`::
 
-                sage: Sigma3 = groups.permutation.Symmetric(3)
-                sage: BSigma3 = Sigma3.nerve()
-                sage: BSigma3.homology(range(4), base_ring=GF(3))
+                sage: Sigma3 = groups.permutation.Symmetric(3)                          # needs sage.groups
+                sage: BSigma3 = Sigma3.nerve()                                          # needs sage.groups
+                sage: BSigma3.homology(range(4), base_ring=GF(3))                       # needs sage.groups
                 {0: Vector space of dimension 0 over Finite Field of size 3,
-                1: Vector space of dimension 0 over Finite Field of size 3,
-                2: Vector space of dimension 0 over Finite Field of size 3,
-                3: Vector space of dimension 1 over Finite Field of size 3}
+                 1: Vector space of dimension 0 over Finite Field of size 3,
+                 2: Vector space of dimension 0 over Finite Field of size 3,
+                 3: Vector space of dimension 1 over Finite Field of size 3}
 
             Note that we can construct the `n`-skeleton for
             `B\Sigma_2` for relatively large values of `n`, while for
             `B\Sigma_3`, the complexes get large pretty quickly::
 
+                sage: # needs sage.groups
                 sage: Sigma2.nerve().n_skeleton(14)
                 Simplicial set with 15 non-degenerate simplices
-
                 sage: BSigma3 = Sigma3.nerve()
                 sage: BSigma3.n_skeleton(3)
                 Simplicial set with 156 non-degenerate simplices
@@ -129,6 +130,7 @@ class FiniteMonoids(CategoryWithAxiom):
             on `p` letters, and its first homology group appears
             earlier::
 
+                sage: # needs sage.groups
                 sage: C3 = groups.misc.MultiplicativeAbelian([3])
                 sage: list(C3)
                 [1, f, f^2]
@@ -143,21 +145,17 @@ class FiniteMonoids(CategoryWithAxiom):
                 8
                 sage: len(BSigma3.n_cells(3))
                 125
-
-                sage: BC3.homology(range(5), base_ring=GF(3))
+                sage: BC3.homology(range(4), base_ring=GF(3))
                 {0: Vector space of dimension 0 over Finite Field of size 3,
                  1: Vector space of dimension 1 over Finite Field of size 3,
                  2: Vector space of dimension 1 over Finite Field of size 3,
-                 3: Vector space of dimension 1 over Finite Field of size 3,
-                 4: Vector space of dimension 1 over Finite Field of size 3}
-
+                 3: Vector space of dimension 1 over Finite Field of size 3}
                 sage: BC5 = groups.permutation.Cyclic(5).nerve()
-                sage: BC5.homology(range(5), base_ring=GF(5))
+                sage: BC5.homology(range(4), base_ring=GF(5))
                 {0: Vector space of dimension 0 over Finite Field of size 5,
-                1: Vector space of dimension 1 over Finite Field of size 5,
-                2: Vector space of dimension 1 over Finite Field of size 5,
-                3: Vector space of dimension 1 over Finite Field of size 5,
-                4: Vector space of dimension 1 over Finite Field of size 5}
+                 1: Vector space of dimension 1 over Finite Field of size 5,
+                 2: Vector space of dimension 1 over Finite Field of size 5,
+                 3: Vector space of dimension 1 over Finite Field of size 5}
             """
             from sage.topology.simplicial_set_examples import Nerve
             return Nerve(self)
@@ -181,8 +179,10 @@ class FiniteMonoids(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: M = Monoids().Finite().example()
-                sage: M.rhodes_radical_congruence()
+                sage: M.rhodes_radical_congruence()                                     # needs sage.modules
                 [(0, 6), (2, 8), (4, 10)]
+
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
                 sage: H3 = HeckeMonoid(SymmetricGroup(3))
                 sage: H3.repr_element_method(style="reduced")
@@ -192,9 +192,9 @@ class FiniteMonoids(CategoryWithAxiom):
             By Maschke's theorem, every group algebra over `\QQ`
             is semisimple hence the Rhodes radical of a group must be trivial::
 
-                sage: SymmetricGroup(3).rhodes_radical_congruence()
+                sage: SymmetricGroup(3).rhodes_radical_congruence()                     # needs sage.groups sage.modules
                 []
-                sage: DihedralGroup(10).rhodes_radical_congruence()
+                sage: DihedralGroup(10).rhodes_radical_congruence()                     # needs sage.groups sage.modules
                 []
 
             REFERENCES:
@@ -209,7 +209,7 @@ class FiniteMonoids(CategoryWithAxiom):
             res = []
             for m in self:
                 for n in self:
-                    if (m == n) or ((n, m) in res):
+                    if m == n or (n, m) in res:
                         continue
                     try:
                         kSrad.retract(kS(m) - kS(n))
@@ -222,7 +222,7 @@ class FiniteMonoids(CategoryWithAxiom):
     class ElementMethods:
         def pseudo_order(self):
             r"""
-            Returns the pair `[k, j]` with `k` minimal and `0\leq j <k` such
+            Return the pair `[k, j]` with `k` minimal and `0\leq j <k` such
             that ``self^k == self^j``.
 
             Note that `j` is uniquely determined.
@@ -256,8 +256,10 @@ class FiniteMonoids(CategoryWithAxiom):
                 sage: x.pseudo_order()
                 [2, 0]
 
-            TODO: more appropriate name? see, for example, Jean-Eric Pin's
-            lecture notes on semigroups.
+            .. TODO::
+
+                more appropriate name? see, for example, Jean-Eric Pin's
+                lecture notes on semigroups.
             """
             self_powers = {self.parent().one(): 0}
             k = 1

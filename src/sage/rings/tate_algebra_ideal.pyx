@@ -20,15 +20,13 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 from sage.rings.ideal import Ideal_generic
-from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_GT, op_LE, op_GE
 
-from sage.structure.element cimport Element
 from sage.rings.polynomial.polydict cimport PolyDict
 
 from sage.rings.tate_algebra_element cimport TateAlgebraTerm
@@ -569,7 +567,7 @@ def groebner_basis_buchberger(I, prec, py_integral):
 
 # F5 algorithms
 
-cdef Jpair(p1, p2):
+cdef Jpair(p1, p2) noexcept:
     r"""
     Return the J-pair of ``p1`` and ``p2``
 
@@ -607,7 +605,7 @@ cdef Jpair(p1, p2):
         return su2, t2*v2
 
 
-cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElement v, stopval):
+cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElement v, stopval) noexcept:
     r"""
     Return the result of the regular reduction of the pair ``(s,v)`` by ``sgb``
 
@@ -625,7 +623,7 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
 
     TESTS::
 
-        sage: cython(                                         # optional - sage.misc.cython
+        sage: cython(                                                                   # needs sage.misc.cython
         ....: '''
         ....: from sage.rings.tate_algebra_ideal cimport regular_reduce
         ....: def python_regular_reduce(gb, s, v, stopval):
@@ -640,11 +638,12 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
         sage: p1 = (tx, x^3 + 9*x*y)
         sage: p2 = (ty, x*y + 3*x^2*y)
 
-        sage: python_regular_reduce([p1,p2], tx*ty, v, 8)   # indirect doctest
+        sage: python_regular_reduce([p1,p2], tx*ty, v, 8)   # indirect doctest          # needs sage.misc.cython
         (2 + O(3^8))*x^2*y + (1 + O(3^8))*x + (1 + O(3^8))*y + O(3^8 * <x, y>)
 
-        sage: python_regular_reduce([p1,p2], tx, v, 8)      # indirect doctest
-        (2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + O(3^8))*x^3 + (2 + O(3^8))*x^2*y + (1 + O(3^8))*x + (1 + O(3^8))*y + O(3^8 * <x, y>)
+        sage: python_regular_reduce([p1,p2], tx, v, 8)      # indirect doctest          # needs sage.misc.cython
+        (2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + O(3^8))*x^3
+        + (2 + O(3^8))*x^2*y + (1 + O(3^8))*x + (1 + O(3^8))*y + O(3^8 * <x, y>)
     """
     # We assume that the elements of the sgb are such that lt(g) = p^v lm(g) to
     # avoid performing divisions
@@ -690,7 +689,7 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
     return f
 
 
-cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval):
+cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval) noexcept:
     r"""
     Return the result of the reduction of ``v`` by ``gb``
 
@@ -715,11 +714,12 @@ cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval):
         sage: v = (x + y + 2*x^2*y - x^3*y^2).add_bigoh(8)
         sage: g1 = x*y + 3*x^2*y
         sage: g2 = x^3 + 9*y
-        sage: python_reduce([g1,g2], v, 8)   # indirect doctest
+        sage: python_reduce([g1,g2], v, 8)   # indirect doctest                         # needs sage.misc.cython
         (1 + O(3^8))*x + (1 + O(3^8))*y + O(3^8 * <x, y>)
 
-        sage: python_reduce([g1,g2], v, 5)   # indirect doctest
-        (1 + O(3^8))*x + (1 + O(3^8))*y + (3^5 + O(3^8))*x^8*y^2 + (3^5 + 2*3^6 + 2*3^7 + O(3^8))*x^7*y + O(3^8 * <x, y>)
+        sage: python_reduce([g1,g2], v, 5)   # indirect doctest                         # needs sage.misc.cython
+        (1 + O(3^8))*x + (1 + O(3^8))*y + (3^5 + O(3^8))*x^8*y^2
+        + (3^5 + 2*3^6 + 2*3^7 + O(3^8))*x^7*y + O(3^8 * <x, y>)
     """
     cdef dict coeffs = { }
     cdef TateAlgebraElement f
@@ -858,7 +858,7 @@ def groebner_basis_pote(I, prec, verbose=0):
         sage: I.groebner_basis(algorithm="PoTe", prec=100)  # indirect doctest
         [...0000000001*x^3 + ...2222222222*y + ...000000000*x^2*y^2 + O(3^99 * <x, y>),
          ...0000000001*x^2*y + ...01210121020 + O(3^100 * <x, y>),
-         ...0000000001*y^2 + ...01210121020*x + ...000000000*x^2*y^3 + ...0000000000*x^3*y + O(3^99 * <x, y>)]
+         ...0000000001*y^2 + ...01210121020*x + ...0000000000*x^3*y + O(3^99 * <x, y>)]
     """
     cdef TateAlgebraElement g, v
     cdef TateAlgebraTerm s, sv, S, ti, tj
@@ -1104,7 +1104,7 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
         sage: I.groebner_basis(algorithm="VaPoTe", prec=100)  # indirect doctest
         [...0000000001*x^3 + ...2222222222*y + ...000000000*x^2*y^2 + O(3^99 * <x, y>),
          ...0000000001*x^2*y + ...01210121020 + O(3^100 * <x, y>),
-         ...0000000001*y^2 + ...01210121020*x + ...000000000*x^2*y^3 + ...0000000000*x^3*y + O(3^99 * <x, y>)]
+         ...0000000001*y^2 + ...01210121020*x + ...0000000000*x^3*y + O(3^99 * <x, y>)]
     """
     cdef TateAlgebraElement g, v
     cdef TateAlgebraTerm s, S, sv, ti, tj

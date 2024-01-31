@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules sage.rings.finite_rings
 r"""
 Mini-AES
 
@@ -1509,7 +1510,6 @@ class MiniAES(SageObject):
         mat = MS([ [block[0][0], block[0][1]],
                    [block[1][1], block[1][0]] ] )
         return mat
-
 
     ### conversion functions to convert between different data formats
 

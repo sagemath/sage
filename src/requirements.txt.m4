@@ -20,6 +20,8 @@ dnl ... but building bdist_wheel of cypari2 fails with recent pip... https://git
 cysignals==esyscmd(`printf $(sed "s/[.]p.*//;" ../cysignals/package-version.txt)')
 Cython==esyscmd(`printf $(sed "s/[.]p.*//;" ../cython/package-version.txt)')
 gmpy2==esyscmd(`printf $(sed "s/[.]p.*//;" ../gmpy2/package-version.txt)')
+importlib_metadata==esyscmd(`printf $(sed "s/[.]p.*//;" ../importlib_metadata/package-version.txt)')
+importlib_resources==esyscmd(`printf $(sed "s/[.]p.*//;" ../importlib_resources/package-version.txt)')
 jinja2==esyscmd(`printf $(sed "s/[.]p.*//;" ../jinja2/package-version.txt)')
 dnl ... for sage_setup.autogen.interpreters
 jupyter_core==esyscmd(`printf $(sed "s/[.]p.*//;" ../jupyter_core/package-version.txt)')
@@ -30,8 +32,8 @@ dnl ... already needed by sage.env
 pkgconfig==esyscmd(`printf $(sed "s/[.]p.*//;" ../pkgconfig/package-version.txt)')
 pplpy==esyscmd(`printf $(sed "s/[.]p.*//;" ../pplpy/package-version.txt)')
 primecountpy==esyscmd(`printf $(sed "s/[.]p.*//;" ../primecountpy/package-version.txt)')
-pycygwin==esyscmd(`printf $(sed "s/[.]p.*//;" ../pycygwin/package-version.txt)'); sys_platform == 'cygwin'
 requests==esyscmd(`printf $(sed "s/[.]p.*//;" ../requests/package-version.txt)')
+typing_extensions==esyscmd(`printf $(sed "s/[.]p.*//;" ../typing_extensions/package-version.txt)')
 
 dnl From Makefile.in: SAGERUNTIME
 ipython==esyscmd(`printf $(sed "s/[.]p.*//;" ../ipython/package-version.txt)')

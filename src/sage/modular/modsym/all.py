@@ -1,9 +1,10 @@
+from sage.misc.lazy_import import lazy_import
 
 from .element import set_modsym_print_mode
 
 from .modsym import ModularSymbols, ModularSymbols_clear_cache
 
-from .heilbronn import HeilbronnCremona, HeilbronnMerel
+lazy_import('sage.modular.modsym.heilbronn', ['HeilbronnCremona', 'HeilbronnMerel'])
 
 from .p1list import P1List, lift_to_sl2z
 

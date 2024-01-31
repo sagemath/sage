@@ -663,6 +663,7 @@ def spin_polynomial(part, weight, length):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.combinat.ribbon_tableau import spin_polynomial
         sage: spin_polynomial([6,6,6],[4,2],3)
         t^6 + t^5 + 2*t^4 + t^3 + t^2
@@ -1083,7 +1084,9 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
         return all(xi.is_semistandard() for xi in x)
 
     def __iter__(self):
-        """
+        r"""
+        Iterate over ``self``.
+
         EXAMPLES::
 
             sage: sp = SkewPartitions(3).list()
@@ -1098,6 +1101,21 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
             34
             sage: RibbonTableaux(a,weight,k).cardinality()
             34
+
+        TESTS:
+
+        Check that :issue:`36196` is fixed::
+
+            sage: shapes = [[[1], [0]], [[1], [0]], [[1], [0]]]
+            sage: weight = [1, 1, 1]
+            sage: SMST = SemistandardMultiSkewTableaux(shapes, weight)
+            sage: list(SMST)
+            [[[[1]], [[2]], [[3]]],
+             [[[2]], [[1]], [[3]]],
+             [[[1]], [[3]], [[2]]],
+             [[[2]], [[3]], [[1]]],
+             [[[3]], [[1]], [[2]]],
+             [[[3]], [[2]], [[1]]]]
         """
         parts = self._shape
         mu = self._weight
@@ -1122,9 +1140,12 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
         S = SkewTableaux()
         for lk in l:
             pos = 0  # Double check this
-            restmp = [S.from_shape_and_word(parts[0], [lk[j] for j in range(s[0])])]
+            lk = list(lk)
+            w = lk[:s[0]]
+            restmp = [S.from_shape_and_word(parts[0], w)]
             for i in range(1, len(parts)):
-                w = [lk[j] for j in range(pos + s[i - 1], pos + s[i - 1] + s[i])]
+                pos += s[i-1]
+                w = lk[pos: pos + s[i]]
                 restmp.append(S.from_shape_and_word(parts[i], w))
             yield self.element_class(self, restmp)
 

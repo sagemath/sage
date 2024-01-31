@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Partition/Diagram Algebras
 """
@@ -15,18 +16,18 @@ Partition/Diagram Algebras
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .combinat import catalan_number
-from sage.combinat.free_module import CombinatorialFreeModule
+from sage.arith.misc import binomial, factorial
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.combinat.combinat import catalan_number
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.permutation import Permutations
 from sage.combinat.set_partition import SetPartition, SetPartitions, SetPartitions_set
-from sage.sets.set import Set, Set_generic
+from sage.combinat.subset import Subsets
+from sage.functions.all import ceil
 from sage.graphs.graph import Graph
-from sage.arith.all import factorial, binomial
-from .permutation import Permutations
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from .subset import Subsets
-from sage.functions.all import ceil
+from sage.sets.set import Set, Set_generic
 
 
 def _int_or_half_int(k):
@@ -1930,7 +1931,7 @@ def to_set_partition(l, k=None):
         if not l:
             return Set([])
         else:
-            k = max((max(map(abs, x)) for x in l))
+            k = max(max(map(abs, x)) for x in l)
 
     to_be_added = Set(list(range(1, k + 1)) + [-x for x in range(1, k + 1)])
 
@@ -1974,13 +1975,13 @@ def set_partition_composition(sp1, sp2):
         True
     """
     g = pair_to_graph(sp1, sp2)
-    connected_components = g.connected_components()
+    connected_components = g.connected_components(sort=False)
 
     res = []
     total_removed = 0
     for cc in connected_components:
         # Remove the vertices that live in the middle two rows
-        new_cc = [x for x in cc if not((x[0] < 0 and x[1] == 1) or
+        new_cc = [x for x in cc if not ((x[0] < 0 and x[1] == 1) or
                                        (x[0] > 0 and x[1] == 2))]
 
         if not new_cc:

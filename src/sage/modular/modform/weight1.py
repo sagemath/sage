@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Weight 1 modular forms
 
@@ -177,7 +178,7 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     # The theory does not guarantee that J is exactly S_1(chi), just that it is
     # intermediate between S_1(chi) and M_1(chi). In every example I know of,
     # it is equal to S_1(chi), but just for honesty, we check this anyway.
-    t=verbose("Checking cuspidality", level=1)
+    t = verbose("Checking cuspidality", level=1)
     JEis = V.span(V(x.padded_list(R)) for x in EisensteinForms(chi, 1).q_echelon_basis(prec=R))
     D = JEis.intersection(J)
     if D.dimension() != 0:

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 r"""
 Modular symbols `\{\alpha`, `\beta\}`
 
@@ -95,7 +96,7 @@ class ModularSymbol(SageObject):
             polypart = ''
         else:
             polypart = str(self.polynomial_part()) + '*'
-        return "%s{%s, %s}"%(polypart, self.__alpha, self.__beta)
+        return "%s{%s, %s}" % (polypart, self.__alpha, self.__beta)
 
     def __getitem__(self, j):
         r"""
@@ -132,8 +133,9 @@ class ModularSymbol(SageObject):
             polypart = ''
         else:
             polypart = latex(self.polynomial_part())
-        return "%s\\left\\{%s, %s\\right\\}"%(polypart,
-                  latex(self.__alpha), latex(self.__beta))
+        return "%s\\left\\{%s, %s\\right\\}" % (polypart,
+                                                latex(self.__alpha),
+                                                latex(self.__beta))
 
     def __richcmp__(self, other, op):
         """

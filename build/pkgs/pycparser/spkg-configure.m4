@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pycparser], [SAGE_PYTHON_PACKAGE_CHECK([pycparser])])

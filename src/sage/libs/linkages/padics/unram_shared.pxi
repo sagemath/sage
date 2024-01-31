@@ -3,7 +3,7 @@ cimport cython
 @cython.binding(True)
 def frobenius_unram(self, arithmetic=True):
     """
-    Returns the image of this element under the Frobenius automorphism
+    Return the image of this element under the Frobenius automorphism
     applied to its parent.
 
     INPUT:
@@ -41,15 +41,16 @@ def frobenius_unram(self, arithmetic=True):
 
     An error will be raised if the parent of self is a ramified extension::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = Qp(5).extension(x^2 - 5)
         sage: a.frobenius()
         Traceback (most recent call last):
         ...
         NotImplementedError: Frobenius automorphism only implemented for unramified extensions
 
-    TESTS::
+    TESTS:
 
-    We check that :trac:`23575` is resolved:
+    We check that :trac:`23575` is resolved::
 
         sage: x = R.random_element()
         sage: x.frobenius(arithmetic=false).frobenius() == x
@@ -83,7 +84,7 @@ def frobenius_unram(self, arithmetic=True):
 
 @cython.binding(True)
 def norm_unram(self, base = None):
-    """
+    r"""
     Return the absolute or relative norm of this element.
 
     .. WARNING::
@@ -94,9 +95,9 @@ def norm_unram(self, base = None):
 
     INPUT:
 
-        ``base`` -- a subfield of the parent `L` of this element.
-                    The norm is the relative norm from ``L`` to ``base``.
-                    Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
+    - ``base`` -- a subfield of the parent `L` of this element.
+                  The norm is the relative norm from ``L`` to ``base``.
+                  Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
 
@@ -170,7 +171,7 @@ def norm_unram(self, base = None):
 
 @cython.binding(True)
 def trace_unram(self, base = None):
-    """
+    r"""
     Return the absolute or relative trace of this element.
 
     If ``base`` is given then ``base`` must be a subfield of the

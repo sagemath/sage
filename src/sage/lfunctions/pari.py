@@ -22,7 +22,10 @@ from operator import index as PyNumber_Index
 from cypari2.gen import Gen
 from sage.libs.pari import pari
 from sage.structure.sage_object import SageObject
-from sage.rings.all import (ZZ, RealField, ComplexField, PowerSeriesRing)
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.power_series_ring import PowerSeriesRing
 
 
 class lfun_generic():
@@ -138,8 +141,8 @@ class lfun_generic():
             sage: L(14)
             0.998583063162746
             sage: a = delta_qexp(1000)
-            sage: sum(a[n]/float(n)^14 for n in range(1,1000))
-            0.9985830631627459
+            sage: sum(a[n]/float(n)^14 for n in reversed(range(1,1000)))
+            0.9985830631627461
 
         Illustrate that one can give a list of complex numbers for v
         (see :trac:`10937`)::

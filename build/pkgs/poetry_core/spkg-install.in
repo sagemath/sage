@@ -1,4 +1,0 @@
-cd src
-# Work around https://github.com/python-poetry/poetry/issues/5547
-patch -p1 --posix --binary < "../patches/5547.diff_bin" || sdh_die
-sdh_pip_install .

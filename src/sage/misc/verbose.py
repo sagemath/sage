@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Verbosity System and Logging in SageMath
 
@@ -145,7 +144,7 @@ def verbose(mesg="", t=0, level=1, caller_name=None):
         VERBOSE1 (william): This is Sage. (time = 0.0)
         sage: set_verbose(0)
     """
-    from sage.misc.misc import cputime
+    from sage.misc.timing import cputime
     if level > LEVEL:
         return cputime()
 

@@ -326,10 +326,9 @@ class SymbolicLogic:
         var_order = statement1[2] + statement2[2]
         return [toks, variables, var_order]
 
-
-    #TODO: implement the simplify function which calls
-    #a c++ implementation of the ESPRESSO algorithm
-    #to simplify the truthtable: probably Minilog
+    # TODO: implement the simplify function which calls
+    # a c++ implementation of the ESPRESSO algorithm
+    # to simplify the truthtable: probably Minilog
     def simplify(self, table):
         """
         Call a C++ implementation of the ESPRESSO algorithm to simplify the

@@ -52,6 +52,16 @@ static CYTHON_INLINE int Sage_PyType_Ready(PyTypeObject* t)
     if (r < 0)
         return r;
 
+#if PY_VERSION_HEX >= 0x03050000
+    // Cython 3 sets Py_TPFLAGS_HEAPTYPE before calling PyType_Ready,
+    // and resets just after the call. We need to reset it earlier,
+    // since otherwise the call to metaclass.__init__ below may have
+    // illegal memory accesses.
+    // See also:
+    // https://github.com/cython/cython/issues/3603
+    t->tp_flags &= ~Py_TPFLAGS_HEAPTYPE;
+#endif
+
     /* Set or get metaclass (the type of t) */
     PyTypeObject* metaclass;
 

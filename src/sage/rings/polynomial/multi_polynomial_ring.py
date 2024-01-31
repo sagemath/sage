@@ -31,9 +31,9 @@ We construct the Frobenius morphism on `\GF{5}[x,y,z]` over
     sage: frob = R.hom([x^5, y^5, z^5])
     sage: frob(x^2 + 2*y - z^4)
     -z^20 + x^10 + 2*y^5
-    sage: frob((x + 2*y)^3)
+    sage: frob((x + 2*y)^3)                                                             # needs sage.rings.finite_rings
     x^15 + x^10*y^5 + 2*x^5*y^10 - 2*y^15
-    sage: (x^5 + 2*y^5)^3
+    sage: (x^5 + 2*y^5)^3                                                               # needs sage.rings.finite_rings
     x^15 + x^10*y^5 + 2*x^5*y^10 - 2*y^15
 
 We make a polynomial ring in one variable over a polynomial ring in
@@ -63,8 +63,6 @@ TESTS::
 from sage.rings.ring import IntegralDomain
 import sage.rings.fraction_field_element as fraction_field_element
 
-import sage.rings.polynomial.multi_polynomial_ideal as multi_polynomial_ideal
-
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base, is_MPolynomialRing
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polydict import PolyDict, ETuple
@@ -72,7 +70,10 @@ from sage.rings.polynomial.term_order import TermOrder
 
 import sage.interfaces.abc
 
-from sage.libs.pari.all import pari_gen
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
 
 from sage.structure.element import Element
 
@@ -248,6 +249,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         Conversion from symbolic variables::
 
+            sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: R = QQ['x,y,z']
             sage: type(x)
@@ -266,6 +268,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         ::
 
+            sage: # needs sage.symbolic
             sage: R = QQ['x,y,z']
             sage: f = (x^3 + y^3 - z^3)^10; f
             (x^3 + y^3 - z^3)^10
@@ -375,16 +378,16 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
             sage: A.<a> = PolynomialRing(QQ)
             sage: B.<d,e> = PolynomialRing(A)
-            sage: f = pari(a*d)
+            sage: f = pari(a*d)                                                         # needs sage.libs.pari
             sage: B(f)
             a*d
-            sage: f = pari(a*d - (a+1)*d*e^3 + a*d^2)
+            sage: f = pari(a*d - (a+1)*d*e^3 + a*d^2)                                   # needs sage.libs.pari
             sage: B(f)
             (-a - 1)*d*e^3 + a*d^2 + a*d
 
             sage: A.<a,b> = PolynomialRing(QQ)
             sage: B.<d,e> = PolynomialRing(A)
-            sage: f = pari(a*d)
+            sage: f = pari(a*d)                                                         # needs sage.libs.pari
             sage: B(f)
             a*d
 
@@ -402,7 +405,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         Check that :trac:`21999` is fixed::
 
-            sage: R = QQbar['s,t']
+            sage: R = QQbar['s,t']                                                      # needs sage.rings.number_field
             sage: type(R({(1,2): 3}).coefficients()[0])
             <class 'sage.rings.qqbar.AlgebraicNumber'>
         """
@@ -420,7 +423,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         except TypeError:
             pass
 
-        from .multi_polynomial_libsingular import MPolynomial_libsingular
+        from .multi_polynomial import MPolynomial_libsingular
 
         if isinstance(x, MPolynomial_polydict):
             P = x.parent()
@@ -639,9 +642,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         res = f.esub(g)
 
-        return MPolynomial_polydict(self, PolyDict({res: coeff},
-                                                   force_int_exponents=False,
-                                                   force_etuples=False))
+        return MPolynomial_polydict(self, PolyDict({res: coeff}))
 
     def monomial_lcm(self, f, g):
         """
@@ -690,8 +691,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         res = {i: max(f[i], g[i])
                for i in f.common_nonzero_positions(g)}
 
-        return self(PolyDict({ETuple(res, length): one},
-                             force_int_exponents=False, force_etuples=False))
+        return self(PolyDict({ETuple(res, length): one}))
 
     def monomial_reduce(self, f, G):
         r"""
@@ -796,7 +796,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
     def monomial_pairwise_prime(self, h, g):
         r"""
-        Return True if ``h`` and ``g`` are pairwise prime.
+        Return ``True`` if ``h`` and ``g`` are pairwise prime.
 
         Both are treated as monomials.
 
@@ -891,10 +891,36 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         while tempvector != maxvector:
             tempvector = addwithcarry(list(tempvector), maxvector, pos)
-            M.append(R(PolyDict({ETuple(tempvector): one},
-                                force_int_exponents=False,
-                                force_etuples=False)))
+            M.append(R(PolyDict({ETuple(tempvector): one})))
         return M
+
+    def sum(self, terms):
+        r"""
+        Return a sum of elements of this multipolynomial ring.
+
+        This is method is much faster than the Python builtin :func:`sum`.
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: S = R['y, z']
+            sage: x = R.gen()
+            sage: y, z = S.gens()
+            sage: S.sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
+            (-x + 1)*y + (2*x^2 + 1)*z + 1
+
+        Comparison with builtin :func:`sum`::
+
+            sage: sum([x*y, 2*x^2*z - 2*x*y, 1 + y + z])
+            (-x + 1)*y + (2*x^2 + 1)*z + 1
+        """
+        elt = PolyDict({}, check=False)
+        for t in terms:
+            elt += self(t).element()
+        # NOTE: here we should be using self.element_class but polynomial rings are not complient
+        # with categories...
+        from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
+        return MPolynomial_polydict(self, elt)
 
 
 class MPolynomialRing_polydict_domain(IntegralDomain,
@@ -927,6 +953,9 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
         if not self._has_singular:
             # pass through
             MPolynomialRing_base.ideal(self, gens, **kwds)
+
+        from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+
         if isinstance(gens, (sage.interfaces.abc.SingularElement, sage.interfaces.abc.Macaulay2Element)):
             gens = list(gens)
             do_coerce = True
@@ -934,4 +963,4 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
             gens = [gens]
         if ('coerce' in kwds and kwds['coerce']) or do_coerce:
             gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
-        return multi_polynomial_ideal.MPolynomialIdeal(self, gens, **kwds)
+        return MPolynomialIdeal(self, gens, **kwds)

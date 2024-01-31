@@ -1,38 +1,28 @@
 # -*- coding: utf-8 -*-
 r"""
-FindStat - the Combinatorial Statistic Finder.
+FindStat - the search engine for combinatorial statistics and maps
 
-The FindStat database can be found at::
+The interface to the FindStat database is ::
 
     sage: findstat()
     The Combinatorial Statistic Finder (https://www.findstat.org/)
 
-Fix the following three notions:
+We use the following three notions
 
 - A *combinatorial collection* is a set `S` with interesting combinatorial properties,
 - a *combinatorial map* is a combinatorially interesting map `f: S \to S'` between combinatorial collections, and
 - a *combinatorial statistic* is a combinatorially interesting map `s: S \to \ZZ`.
 
-You can use the sage interface to FindStat to:
+You can use the FindStat interface to
 
 - identify a combinatorial statistic or map given the values on a few small objects,
 - obtain more terms, formulae, references, etc. for a given statistic or map,
 - edit statistics and maps and submit new statistics.
 
-AUTHORS:
+The main entry points to the database are
 
-- Martin Rubey (2015): initial version.
-- Martin Rubey (2020): rewrite, adapt to new FindStat API
-
-The main entry points
----------------------
-.. csv-table::
-    :class: contentstable
-    :widths: 20, 40
-    :delim: |
-
-    :func:`findstat` | search for matching statistics.
-    :func:`findmap`  | search for matching maps.
+- :func:`findstat` to search for matching statistics,
+- :func:`findmap` to search for matching maps.
 
 A guided tour
 -------------
@@ -195,8 +185,10 @@ replace the value by using :meth:`FindStatFunction.set_description`,
 :meth:`FindStatStatistic.submit` your changes for review by the
 FindStat team.
 
-Classes and methods
--------------------
+AUTHORS:
+
+- Martin Rubey (2015): initial version
+- Martin Rubey (2020): rewrite, adapt to new FindStat API
 
 """
 # ****************************************************************************
@@ -259,23 +251,24 @@ from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.colored_permutations import SignedPermutation, SignedPermutations
 from sage.combinat.plane_partition import PlanePartition
 from sage.combinat.decorated_permutation import DecoratedPermutation, DecoratedPermutations
+from sage.combinat.set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
 
 ######################################################################
 # the FindStat URLs
-FINDSTAT_URL                = 'https://www.findstat.org/'
-FINDSTAT_API                = FINDSTAT_URL + "api/"
-FINDSTAT_API_COLLECTIONS    = FINDSTAT_API + 'CollectionsDatabase/'
-FINDSTAT_API_STATISTICS     = FINDSTAT_API + 'StatisticsDatabase/'
-FINDSTAT_API_MAPS           = FINDSTAT_API + 'MapsDatabase/'
+FINDSTAT_URL = 'https://www.findstat.org/'
+FINDSTAT_API = FINDSTAT_URL + "api/"
+FINDSTAT_API_COLLECTIONS = FINDSTAT_API + 'CollectionsDatabase/'
+FINDSTAT_API_STATISTICS = FINDSTAT_API + 'StatisticsDatabase/'
+FINDSTAT_API_MAPS = FINDSTAT_API + 'MapsDatabase/'
 
-FINDSTAT_URL_LOGIN          = FINDSTAT_URL + "?action=login"
-FINDSTAT_URL_COLLECTIONS    = FINDSTAT_URL + 'CollectionsDatabase/'
-FINDSTAT_URL_STATISTICS     = FINDSTAT_URL + 'StatisticsDatabase/'
+FINDSTAT_URL_LOGIN = FINDSTAT_URL + "?action=login"
+FINDSTAT_URL_COLLECTIONS = FINDSTAT_URL + 'CollectionsDatabase/'
+FINDSTAT_URL_STATISTICS = FINDSTAT_URL + 'StatisticsDatabase/'
 FINDSTAT_URL_EDIT_STATISTIC = FINDSTAT_URL + 'EditStatistic/'
-FINDSTAT_URL_NEW_STATISTIC  = FINDSTAT_URL + 'NewStatistic/'
-FINDSTAT_URL_MAPS           = FINDSTAT_URL + 'MapsDatabase/'
-FINDSTAT_URL_EDIT_MAP       = FINDSTAT_URL + 'EditMap/'
-FINDSTAT_URL_NEW_MAP        = FINDSTAT_URL + 'NewMap/'
+FINDSTAT_URL_NEW_STATISTIC = FINDSTAT_URL + 'NewStatistic/'
+FINDSTAT_URL_MAPS = FINDSTAT_URL + 'MapsDatabase/'
+FINDSTAT_URL_EDIT_MAP = FINDSTAT_URL + 'EditMap/'
+FINDSTAT_URL_NEW_MAP = FINDSTAT_URL + 'NewMap/'
 
 ######################################################################
 # the number of values FindStat allows to search for at most
@@ -296,9 +289,9 @@ FINDSTAT_MAP_SEPARATOR = "o"
 FINDSTAT_STATISTIC_REGEXP = '^St[0-9]{6}$'
 FINDSTAT_MAP_REGEXP = '^Mp[0-9]{5}$'
 FINDSTAT_COLLECTION_REGEXP = '^Cc[0-9]{4}$'
-FINDSTAT_STATISTIC_PADDED_IDENTIFIER  = "St%06d"
-FINDSTAT_MAP_PADDED_IDENTIFIER  = "Mp%05d"
-FINDSTAT_COLLECTION_PADDED_IDENTIFIER  = "Cc%04d"
+FINDSTAT_STATISTIC_PADDED_IDENTIFIER = "St%06d"
+FINDSTAT_MAP_PADDED_IDENTIFIER = "Mp%05d"
+FINDSTAT_COLLECTION_PADDED_IDENTIFIER = "Cc%04d"
 
 ######################################################################
 
@@ -332,7 +325,7 @@ class FindStat(UniqueRepresentation, SageObject):
             The Combinatorial Statistic Finder (https://www.findstat.org/)
         """
         # user credentials if provided
-        self._user_name  = ""
+        self._user_name = ""
         self._user_email = ""
         self._allow_execution = False
 
@@ -383,7 +376,7 @@ class FindStat(UniqueRepresentation, SageObject):
             raise ValueError("the given name (%s) should be a string" % name)
         if not isinstance(email, str):
             raise ValueError("the given email (%s) should be a string" % email)
-        self._user_name  = name
+        self._user_name = name
         self._user_email = email
 
     def user_name(self):
@@ -888,7 +881,7 @@ def _get_code_from_callable(function):
                 code = inspect.getsource(function.f)
             else:
                 code = inspect.getsource(function)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             verbose("inspect.getsource could not get code from function provided",
                     caller_name='FindStat')
     return code
@@ -909,7 +902,7 @@ def findstat(query=None, values=None, distribution=None, domain=None,
       must be ``None``.
 
     - a list of pairs of the form ``(object, value)``, or a
-      dictionary from sage objects to integer values.  The keyword
+      dictionary from Sage objects to integer values.  The keyword
       arguments ``depth`` and ``max_values`` are passed to the
       finder, ``values`` and ``distribution`` must be ``None``.
 
@@ -1162,7 +1155,7 @@ def findmap(*args, **kwargs):
       forms:
 
         - a list of pairs of the form ``(object, value)``, or a
-          dictionary from sage objects to sage objects.
+          dictionary from Sage objects to Sage objects.
 
         - a list of pairs of the form ``(list of objects, list of
           values)``, or a single pair of the form ``(list of objects,
@@ -1499,7 +1492,8 @@ class FindStatFunction(SageObject):
             from sage.repl.preparse import preparse
             try:
                 l = {}
-                code = "from sage.all import *\n" + preparse(self.sage_code())
+                environment = 'sage.all'
+                code = f"from {environment} import *\n" + preparse(self.sage_code())
                 exec(code, l)
             except SyntaxError:
                 raise ValueError("could not execute verified code for %s" % self)
@@ -1555,11 +1549,12 @@ class FindStatFunction(SageObject):
 
         Check that new statistics and maps cannot be reset::
 
-            sage: q = findstat([(d, randint(1, 1000)) for d in DyckWords(4)])   # optional -- internet
-            sage: q.set_description("Random values on Dyck paths.")             # optional -- internet
-            sage: print(q.description())                                        # optional -- internet
+            sage: # optional - internet
+            sage: q = findstat([(d, randint(1, 1000)) for d in DyckWords(4)])
+            sage: q.set_description("Random values on Dyck paths.")
+            sage: print(q.description())
             Random values on Dyck paths.
-            sage: q.reset()                                                     # optional -- internet
+            sage: q.reset()
             Traceback (most recent call last):
             ...
             ValueError: cannot reset values of St000000: a new statistic on Dyck paths
@@ -1760,7 +1755,7 @@ class FindStatFunction(SageObject):
 
     def sage_code(self):
         r"""
-        Return the sage code associated with the statistic or map.
+        Return the Sage code associated with the statistic or map.
 
         OUTPUT:
 
@@ -1839,7 +1834,7 @@ class FindStatCombinatorialStatistic(SageObject):
 
         OUTPUT:
 
-        A dictionary from sage objects representing an element of the
+        A dictionary from Sage objects representing an element of the
         appropriate collection to integers.
 
         This method is overridden in :class:`FindStatStatisticQuery`.
@@ -2094,7 +2089,7 @@ class FindStatCombinatorialStatistic(SageObject):
         if counter >= 4:
             if verbose:
                 print('Searching the OEIS for "%s"' % OEIS_string)
-            return oeis(str(OEIS_string)) # in python 2.7, oeis does not like unicode
+            return oeis(OEIS_string)
 
         if verbose:
             print("Too little information to search the OEIS for this statistic (only %s values given)." % counter)
@@ -2258,7 +2253,7 @@ class FindStatStatistic(Element,
         INPUT:
 
         - a list of pairs of the form ``(object, value)`` where
-          ``object`` is a sage object representing an element of the
+          ``object`` is a Sage object representing an element of the
           appropriate collection and ``value`` is an integer.
 
         This information is used when submitting the statistic with
@@ -2295,7 +2290,7 @@ class FindStatStatistic(Element,
 
         OUTPUT:
 
-        A string.  Contributors are encouraged to submit sage code in the form::
+        A string.  Contributors are encouraged to submit Sage code in the form::
 
             def statistic(x):
                 ...
@@ -2370,16 +2365,16 @@ class FindStatStatistic(Element,
             sage: s.set_description(u"Möbius")                                  # optional -- internet
             sage: s.submit()                                                    # optional -- webbrowser
         """
-        args = dict()
+        args = {}
         args["OriginalStatistic"] = self.id_str()
-        args["Domain"]            = self.domain().id_str()
-        args["Values"]            = self.first_terms_str(max_values=max_values)
-        args["Description"]       = self.description()
-        args["References"]        = self.references_raw()
-        args["Code"]              = self.code()
-        args["SageCode"]          = self.sage_code()
-        args["CurrentAuthor"]     = FindStat().user_name()
-        args["CurrentEmail"]      = FindStat().user_email()
+        args["Domain"] = self.domain().id_str()
+        args["Values"] = self.first_terms_str(max_values=max_values)
+        args["Description"] = self.description()
+        args["References"] = self.references_raw()
+        args["Code"] = self.code()
+        args["SageCode"] = self.sage_code()
+        args["CurrentAuthor"] = FindStat().user_name()
+        args["CurrentEmail"] = FindStat().user_email()
 
         if not self.id():
             url = FINDSTAT_NEWSTATISTIC_FORM_HEADER % FINDSTAT_URL_NEW_STATISTIC
@@ -2918,7 +2913,6 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         """
         webbrowser.open(FINDSTAT_URL_STATISTICS + self.id_str())
 
-
     def info(self):
         """
         Print a detailed description of the compound statistic.
@@ -3210,16 +3204,16 @@ class FindStatMap(Element,
             sage: s.reset()                                                     # optional -- internet
         """
         args = dict()
-        args["OriginalMap"]        = self.id_str()
-        args["Domain"]             = self.domain().id_str()
-        args["Codomain"]           = self.codomain().id_str()
-        args["Name"]               = self.name()
-        args["Description"]        = self.description()
-        args["References"]         = self.references_raw()
-        args["Properties"]         = self.properties_raw()
-        args["SageCode"]           = self.sage_code()
-        args["CurrentAuthor"]      = FindStat().user_name()
-        args["CurrentEmail"]       = FindStat().user_email()
+        args["OriginalMap"] = self.id_str()
+        args["Domain"] = self.domain().id_str()
+        args["Codomain"] = self.codomain().id_str()
+        args["Name"] = self.name()
+        args["Description"] = self.description()
+        args["References"] = self.references_raw()
+        args["Properties"] = self.properties_raw()
+        args["SageCode"] = self.sage_code()
+        args["CurrentAuthor"] = FindStat().user_name()
+        args["CurrentEmail"] = FindStat().user_email()
 
         if not self.id():
             url = FINDSTAT_NEWMAP_FORM_HEADER % FINDSTAT_URL_NEW_MAP
@@ -3280,14 +3274,15 @@ class FindStatMap(Element,
 
         EXAMPLES::
 
-            sage: from sage.databases.findstat import FindStatMap               # optional -- internet
-            sage: FindStatMap(61).set_properties_raw('surjective')             # optional -- internet
-            sage: FindStatMap(61).properties_raw()                              # optional -- internet
+            sage: # optional - internet
+            sage: from sage.databases.findstat import FindStatMap
+            sage: FindStatMap(61).set_properties_raw('surjective')
+            sage: FindStatMap(61).properties_raw()
             'surjective'
-            sage: FindStatMap(61)                                               # optional -- internet
+            sage: FindStatMap(61)
             Mp00061(modified): to increasing tree
-            sage: FindStatMap(61).reset()                                       # optional -- internet
-            sage: FindStatMap(61)                                               # optional -- internet
+            sage: FindStatMap(61).reset()
+            sage: FindStatMap(61)
             Mp00061: to increasing tree
         """
         if value != self.properties_raw():
@@ -3927,7 +3922,7 @@ def _finite_irreducible_cartan_types_by_rank(n):
         sage: _finite_irreducible_cartan_types_by_rank(2)
         [['A', 2], ['B', 2], ['G', 2]]
     """
-    cartan_types      = [CartanType(['A',n])]
+    cartan_types = [CartanType(['A',n])]
     if n >= 2:
         cartan_types += [CartanType(['B',n])]
     if n >= 3:
@@ -4058,9 +4053,9 @@ class FindStatCollection(Element,
 
     - an integer designating the FindStat id of the collection, or
 
-    - a sage object belonging to a collection, or
+    - a Sage object belonging to a collection, or
 
-    - an iterable producing a sage object belonging to a collection.
+    - an iterable producing a Sage object belonging to a collection.
 
     EXAMPLES::
 
@@ -4187,7 +4182,7 @@ class FindStatCollection(Element,
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatCollections
-            sage: set(c for c in FindStatCollections())                         # optional -- internet
+            sage: set(FindStatCollections())           # optional -- internet
             {Cc0001: Permutations,
              Cc0002: Integer partitions,
              ...
@@ -4274,7 +4269,7 @@ class FindStatCollection(Element,
 
         INPUT:
 
-        - ``element`` -- a sage object that belongs to the collection.
+        - ``element`` -- a Sage object that belongs to the collection.
 
         OUTPUT:
 
@@ -4283,13 +4278,14 @@ class FindStatCollection(Element,
 
         EXAMPLES::
 
+            sage: # optional - internet
             sage: from sage.databases.findstat import FindStatCollection
-            sage: c = FindStatCollection("GelfandTsetlinPatterns")              # optional -- internet
-            sage: c.in_range(GelfandTsetlinPattern([[2, 1], [1]]))              # optional -- internet
+            sage: c = FindStatCollection("GelfandTsetlinPatterns")
+            sage: c.in_range(GelfandTsetlinPattern([[2, 1], [1]]))
             True
-            sage: c.in_range(GelfandTsetlinPattern([[3, 1], [1]]))              # optional -- internet
+            sage: c.in_range(GelfandTsetlinPattern([[3, 1], [1]]))
             True
-            sage: c.in_range(GelfandTsetlinPattern([[7, 1], [1]]))              # optional -- internet
+            sage: c.in_range(GelfandTsetlinPattern([[7, 1], [1]]))
             False
 
         TESTS::
@@ -4322,6 +4318,7 @@ class FindStatCollection(Element,
             Cc0027: Signed permutations 4282 True
             Cc0028: Skew partitions 1250 True
             Cc0029: Lattices 1378 True
+            Cc0030: Ordered set partitions 5316 True
         """
         return self._data["Code"].element_level(element) in self._data["LevelsWithSizes"]
 
@@ -4448,7 +4445,7 @@ class FindStatCollection(Element,
 
         OUTPUT:
 
-        The function that produces the sage object given its FindStat
+        The function that produces the Sage object given its FindStat
         representation as a string.
 
         EXAMPLES::
@@ -4511,6 +4508,7 @@ class FindStatCollection(Element,
         if style == "plural":
             return self._data["NamePlural"]
         raise ValueError("argument 'style' (=%s) must be 'singular' or 'plural'" % style)
+
 
 from collections import namedtuple
 _SupportedFindStatCollection = namedtuple("SupportedFindStatCollection",
@@ -4670,7 +4668,13 @@ _SupportedFindStatCollections = {
                                                            for i, v in enumerate(x, 1))) + "]",
                                  DecoratedPermutations,
                                  lambda x: x.size(),
-                                 lambda x: isinstance(x, DecoratedPermutation))}
+                                 lambda x: isinstance(x, DecoratedPermutation)),
+    "OrderedSetPartitions":
+    _SupportedFindStatCollection(lambda x: OrderedSetPartition(literal_eval(x.replace('{','[').replace('}',']'))),
+                                 str,
+                                 OrderedSetPartitions,
+                                 lambda x: x.size(),
+                                 lambda x: isinstance(x, OrderedSetPartition))}
 
 
 class FindStatCollections(UniqueRepresentation, Parent):
@@ -4708,7 +4712,8 @@ class FindStatCollections(UniqueRepresentation, Parent):
          Cc0026: Decorated permutations,
          Cc0027: Signed permutations,
          Cc0028: Skew partitions,
-         Cc0029: Lattices]
+         Cc0029: Lattices,
+         Cc0030: Ordered set partitions]
     """
     def __init__(self):
         """
@@ -4738,6 +4743,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
 #                fields = "SageCodeElementToString,SageCodeElementsOnLevel,SageCodeStringToElement"
 #                url = FINDSTAT_API_COLLECTIONS + id + "?fields=" + fields
 #                print(json.load(urlopen(url))["included"]["Collections"][id])
+
         def position(item):
             try:
                 return tuple(_SupportedFindStatCollections).index(item[1]["NameWiki"])
@@ -4783,7 +4789,8 @@ class FindStatCollections(UniqueRepresentation, Parent):
              Cc0026: Decorated permutations,
              Cc0027: Signed permutations,
              Cc0028: Skew partitions,
-             Cc0029: Lattices]
+             Cc0029: Lattices,
+             Cc0030: Ordered set partitions]
 
             sage: FindStatCollection(Permutation([1,2,3]))                      # optional -- internet
             Cc0001: Permutations

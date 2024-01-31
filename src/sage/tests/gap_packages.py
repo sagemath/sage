@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 """
 Test the optional GAP packages
 
@@ -9,11 +10,11 @@ TESTS::
       Status   Package   GAP Output
     +--------+---------+------------+
 
-    sage: test_packages(['atlasrep', 'tomlib'])
-      Status   Package    GAP Output
-    +--------+----------+------------+
-               atlasrep   true
-               tomlib     true
+    sage: test_packages(['primgrp', 'smallgrp'])
+        Status   Package    GAP Output
+      ├────────┼──────────┼────────────┤
+                 primgrp    true
+                 smallgrp   true
 """
 
 import os
@@ -42,9 +43,9 @@ def test_packages(packages, only_failures=False):
 
         sage: from sage.tests.gap_packages import all_installed_packages, test_packages
         sage: test_packages(['GAPDoc'])
-          Status   Package   GAP Output
-        +--------+---------+------------+
-                   GAPDoc    true
+            Status   Package   GAP Output
+          ├────────┼─────────┼────────────┤
+                     GAPDoc    true
 
     All packages, including user-installed ones::
 
@@ -102,8 +103,8 @@ def all_installed_packages(ignore_dot_gap=False, gap=None):
     EXAMPLES::
 
         sage: from sage.tests.gap_packages import all_installed_packages
-        sage: all_installed_packages()
-        (...'GAPDoc'...)
+        sage: [p.lower() for p in all_installed_packages()]
+        [...'gapdoc'...]
         sage: all_installed_packages(ignore_dot_gap=True) == all_installed_packages(gap=gap, ignore_dot_gap=True)
         True
     """
@@ -114,6 +115,16 @@ def all_installed_packages(ignore_dot_gap=False, gap=None):
         paths = [str(p) for p in gap.eval('GAPInfo.RootPaths')]
     else:
         paths = [str(p) for p in gap('GAPInfo.RootPaths')]
+
+    # When GAP_ROOT_PATHS begins or ends with a semicolon (to append
+    # or prepend to the default list), the list of "gap" root paths
+    # will sometimes contain duplicates while the list for libgap will
+    # not. I don't know why this is: the appending/prepending does
+    # work as intended, even for libgap, so the issue is not that
+    # appending/prepending don't work at all for libgap. For lack of a
+    # better idea, we deduplicate here to avoid listing the same
+    # packages twice for the non-lib "gap" interface.
+    paths = set(paths)
 
     packages = []
     for path in paths:

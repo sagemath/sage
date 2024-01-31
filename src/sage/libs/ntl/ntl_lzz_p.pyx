@@ -43,7 +43,6 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp, IntegerMod_int, IntegerMod_int64
 
@@ -90,19 +89,19 @@ cdef class ntl_zz_p():
         #self.c.restore_c()   ## This was done in __new__
 
         if isinstance(a, IntegerMod_int):
-            if (self.c.p == (<IntegerMod_int>a).__modulus.int32): ## this is slow
+            if (self.c.p == (<IntegerMod_int>a)._modulus.int32): ## this is slow
                 self.x = (<IntegerMod_int>a).ivalue
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_int64):
-            if (self.c.p == (<IntegerMod_int64>a).__modulus.int64): ## this is slow
+            if (self.c.p == (<IntegerMod_int64>a)._modulus.int64): ## this is slow
                 self.x = (<IntegerMod_int64>a).ivalue
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_gmp):
-            if (p_sage == (<IntegerMod_gmp>a).__modulus.sageInteger): ## this is slow
+            if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger): ## this is slow
                 self.x = mpz_get_si((<IntegerMod_gmp>a).value)
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
@@ -151,7 +150,7 @@ cdef class ntl_zz_p():
         ## now that we've determined the modulus, set that modulus.
         self.c.restore_c()
 
-    cdef ntl_zz_p _new(self):
+    cdef ntl_zz_p _new(self) noexcept:
         """
         Quick and dirty zz_p object creation.
 

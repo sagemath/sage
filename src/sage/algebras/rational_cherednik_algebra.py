@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Rational Cherednik Algebras
 """
@@ -237,7 +238,7 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
             sage: list(R.algebra_generators())
             [a1, a2, s1, s2, ac1, ac2]
         """
-        keys  = ['a'+str(i) for i in self._cartan_type.index_set()]
+        keys = ['a'+str(i) for i in self._cartan_type.index_set()]
         keys += ['s'+str(i) for i in self._cartan_type.index_set()]
         keys += ['ac'+str(i) for i in self._cartan_type.index_set()]
 

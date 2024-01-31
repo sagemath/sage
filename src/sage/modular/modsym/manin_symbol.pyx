@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint
 r"""
 Manin symbols
 
@@ -181,9 +181,8 @@ cdef class ManinSymbol(Element):
         """
         if self.weight() > 2:
             polypart = _print_polypart(self.i, self.weight()-2-self.i)
-            return "[%s,(%s,%s)]"%\
-                   (polypart, self.u, self.v)
-        return "(%s,%s)"%(self.u, self.v)
+            return "[%s,(%s,%s)]" % (polypart, self.u, self.v)
+        return "(%s,%s)" % (self.u, self.v)
 
     def _latex_(self):
         """
@@ -200,7 +199,7 @@ cdef class ManinSymbol(Element):
         """
         return self._repr_()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, right, int op) noexcept:
         """
         Comparison function for ManinSymbols.
 

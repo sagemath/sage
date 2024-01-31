@@ -28,19 +28,13 @@ include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
 
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 
 from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
-from sage.libs.ntl.ntl_ZZ import unpickle_class_args
-
-from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
@@ -155,7 +149,7 @@ cdef class ntl_ZZ_pE():
             self.c = <ntl_ZZ_pEContext_class>ntl_ZZ_pEContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_ZZ_pE _new(self):
+    cdef ntl_ZZ_pE _new(self) noexcept:
         cdef ntl_ZZ_pE r
         self.c.restore_c()
         r = ntl_ZZ_pE.__new__(ntl_ZZ_pE)
@@ -274,7 +268,7 @@ cdef class ntl_ZZ_pE():
         return r
 
 
-    cdef ntl_ZZ_pX get_as_ZZ_pX(ntl_ZZ_pE self):
+    cdef ntl_ZZ_pX get_as_ZZ_pX(ntl_ZZ_pE self) noexcept:
         r"""
         Returns value as ntl_ZZ_pX.
         """
@@ -300,7 +294,7 @@ cdef class ntl_ZZ_pE():
         """
         return self.get_as_ZZ_pX()
 
-    cdef void set_from_ZZ_pX(ntl_ZZ_pE self, ntl_ZZ_pX value):
+    cdef void set_from_ZZ_pX(ntl_ZZ_pE self, ntl_ZZ_pX value) noexcept:
         r"""
         Sets the value from a ZZ_pX.
         """

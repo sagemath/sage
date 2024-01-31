@@ -11,13 +11,27 @@ algebraic closure of `\QQ`.
    :maxdepth: 1
 
    sage/rings/function_field/function_field
+   sage/rings/function_field/function_field_rational
+   sage/rings/function_field/function_field_polymod
    sage/rings/function_field/element
+   sage/rings/function_field/element_rational
+   sage/rings/function_field/element_polymod
    sage/rings/function_field/order
+   sage/rings/function_field/order_rational
+   sage/rings/function_field/order_basis
+   sage/rings/function_field/order_polymod
    sage/rings/function_field/ideal
+   sage/rings/function_field/ideal_rational
+   sage/rings/function_field/ideal_polymod
    sage/rings/function_field/place
+   sage/rings/function_field/place_rational
+   sage/rings/function_field/place_polymod
    sage/rings/function_field/divisor
    sage/rings/function_field/differential
    sage/rings/function_field/valuation_ring
+   sage/rings/function_field/derivations
+   sage/rings/function_field/derivations_rational
+   sage/rings/function_field/derivations_polymod
    sage/rings/function_field/maps
    sage/rings/function_field/extensions
    sage/rings/function_field/constructor

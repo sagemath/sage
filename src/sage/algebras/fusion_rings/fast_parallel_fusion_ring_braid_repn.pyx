@@ -15,10 +15,10 @@ from sage.algebras.fusion_rings.fast_parallel_fmats_methods cimport _fmat
 from sage.rings.qqbar import QQbar
 
 ###############
-### Mappers ###
+#   Mappers   #
 ###############
 
-cdef mid_sig_ij(fusion_ring, row, col, a, b):
+cdef mid_sig_ij(fusion_ring, row, col, a, b) noexcept:
     r"""
     Compute the (xi, yi), (xj, yj) entry of generator braiding the middle two
     strands in the tree b -> xi # yi -> (a # a) # (a # a), which results in
@@ -48,7 +48,7 @@ cdef mid_sig_ij(fusion_ring, row, col, a, b):
             entry += f1 * f2 * r * f3 * f4
     return entry
 
-cdef odd_one_out_ij(fusion_ring, xi, xj, a, b):
+cdef odd_one_out_ij(fusion_ring, xi, xj, a, b) noexcept:
     r"""
     Compute the `xi`, `xj` entry of the braid generator on the two right-most
     strands, corresponding to the tree b -> (xi # a) -> (a # a) # a, which
@@ -76,7 +76,7 @@ cdef odd_one_out_ij(fusion_ring, xi, xj, a, b):
 cdef odd_one_out_ij_cache = dict()
 cdef mid_sig_ij_cache = dict()
 
-cdef cached_mid_sig_ij(fusion_ring, row, col, a, b):
+cdef cached_mid_sig_ij(fusion_ring, row, col, a, b) noexcept:
     r"""
     Cached version of :meth:`mid_sig_ij`.
     """
@@ -86,7 +86,7 @@ cdef cached_mid_sig_ij(fusion_ring, row, col, a, b):
     mid_sig_ij_cache[row, col, a, b] = entry
     return entry
 
-cdef cached_odd_one_out_ij(fusion_ring, xi, xj, a, b):
+cdef cached_odd_one_out_ij(fusion_ring, xi, xj, a, b) noexcept:
     r"""
     Cached version of :meth:`odd_one_out_ij`.
     """
@@ -96,9 +96,10 @@ cdef cached_odd_one_out_ij(fusion_ring, xi, xj, a, b):
     odd_one_out_ij_cache[xi, xj, a, b] = entry
     return entry
 
+
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef sig_2k(fusion_ring, tuple args):
+cdef sig_2k(fusion_ring, tuple args) noexcept:
     r"""
     Compute entries of the `2k`-th braid generator
     """
@@ -175,9 +176,10 @@ cdef sig_2k(fusion_ring, tuple args):
                         worker_results.append(((basis_dict[nnz_pos], i), entry))
     return worker_results
 
+
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef odd_one_out(fusion_ring, tuple args):
+cdef odd_one_out(fusion_ring, tuple args) noexcept:
     r"""
     Compute entries of the rightmost braid generator, in case we have an
     odd number of strands.
@@ -252,7 +254,7 @@ cdef odd_one_out(fusion_ring, tuple args):
     return worker_results
 
 ##############################
-### Parallel code executor ###
+#   Parallel code executor   #
 ##############################
 
 # Hard-coded module __dict__-style attribute with visible cdef methods
@@ -261,7 +263,7 @@ cdef dict mappers = {
     "odd_one_out": odd_one_out
 }
 
-cpdef executor(tuple params):
+cpdef executor(tuple params) noexcept:
     r"""
     Execute a function registered in this module's ``mappers``
     in a worker process, and supply the ``FusionRing`` parameter by
@@ -300,10 +302,10 @@ cpdef executor(tuple params):
     return mappers[fn_name](fusion_ring_obj, args)
 
 ######################################
-### Pickling circumvention helpers ###
+#   Pickling circumvention helpers   #
 ######################################
 
-cpdef _unflatten_entries(fusion_ring, list entries):
+cpdef _unflatten_entries(fusion_ring, list entries) noexcept:
     r"""
     Restore cyclotomic coefficient object from its tuple of rational
     coefficients representation.
@@ -323,7 +325,6 @@ cpdef _unflatten_entries(fusion_ring, list entries):
         True
     """
     F = fusion_ring.fvars_field()
-    fm = fusion_ring.get_fmatrix()
     if F != QQbar:
         for i, (coord, entry) in enumerate(entries):
             entries[i] = (coord, F(entry))

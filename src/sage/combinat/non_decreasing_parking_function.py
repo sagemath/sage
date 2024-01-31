@@ -419,8 +419,7 @@ class NonDecreasingParkingFunctions_all(UniqueRepresentation, Parent):
             [[], [1], [1, 1], [1, 2], [1, 1, 1], [1, 1, 2], [1, 1, 3], [1, 2, 2]]
         """
         for n in NN:
-            for pf in NonDecreasingParkingFunctions_n(n):
-                yield pf
+            yield from NonDecreasingParkingFunctions_n(n)
 
     def graded_component(self, n):
         """

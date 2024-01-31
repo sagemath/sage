@@ -3,6 +3,18 @@ r"""
 Feature for testing the presence of ``csdp``
 """
 
+# *****************************************************************************
+#       Copyright (C) 2016 Julian Rüth
+#                     2018 Jeroen Demeyer
+#                     2019 David Coudert
+#                     2021 Matthias Koeppe
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
 import os
 import re
 import subprocess
@@ -13,7 +25,7 @@ from . import Executable, FeatureTestResult
 class CSDP(Executable):
     r"""
     A :class:`~sage.features.Feature` which checks for the ``theta`` binary
-    of CSDP.
+    of :ref:`CSDP <spkg_csdp>`.
 
     EXAMPLES::
 

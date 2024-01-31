@@ -8,14 +8,14 @@ Hopf algebras
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from sage.misc.lazy_import import LazyImport
-from .category import Category
-from .category_types import Category_over_base_ring
 from sage.categories.bialgebras import Bialgebras
-from sage.categories.tensor import TensorProductsCategory  # tensor
+from sage.categories.category import Category
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.realizations import RealizationsCategory
 from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.tensor import TensorProductsCategory  # tensor
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
 
 
 class HopfAlgebras(Category_over_base_ring):
@@ -25,7 +25,7 @@ class HopfAlgebras(Category_over_base_ring):
     EXAMPLES::
 
         sage: HopfAlgebras(QQ)
-        Category of hopf algebras over Rational Field
+        Category of Hopf algebras over Rational Field
         sage: HopfAlgebras(QQ).super_categories()
         [Category of bialgebras over Rational Field]
 
@@ -53,11 +53,11 @@ class HopfAlgebras(Category_over_base_ring):
 
             sage: C = HopfAlgebras(QQ)
             sage: C.dual()
-            Category of hopf algebras over Rational Field
+            Category of Hopf algebras over Rational Field
         """
         return self
 
-    WithBasis = LazyImport('sage.categories.hopf_algebras_with_basis',  'HopfAlgebrasWithBasis')
+    WithBasis = LazyImport('sage.categories.hopf_algebras_with_basis', 'HopfAlgebrasWithBasis')
 
     class ElementMethods:
 
@@ -67,8 +67,10 @@ class HopfAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.groups
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                An example of Hopf algebra with basis: the group algebra of the
+                 Dihedral group of order 6 as a permutation group over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, a.antipode()
                 (B[(1,2,3)], B[(1,3,2)])
@@ -77,7 +79,7 @@ class HopfAlgebras(Category_over_base_ring):
 
             TESTS::
 
-                sage: all(x.antipode() * x == A.one() for x in A.basis())
+                sage: all(x.antipode() * x == A.one() for x in A.basis())               # needs sage.groups
                 True
             """
             return self.parent().antipode(self)
@@ -87,12 +89,12 @@ class HopfAlgebras(Category_over_base_ring):
             # return operator.antipode(self)
 
     class ParentMethods:
-        #def __setup__(self): # Check the conventions for _setup_ or __setup__
+        # def __setup__(self): # Check the conventions for _setup_ or __setup__
         #    if self.implements("antipode"):
         #        coercion.declare(operator.antipode, [self], self.antipode)
         #
-        #@lazy_attribute
-        #def antipode(self):
+        # @lazy_attribute
+        # def antipode(self):
         #    # delegates to the overloading mechanism but
         #    # guarantees that the result is in self
         #    compose(self, operator.antipode, domain=self)
@@ -124,7 +126,7 @@ class HopfAlgebras(Category_over_base_ring):
 
                 sage: C = HopfAlgebras(QQ).Super()
                 sage: C.dual()
-                Category of super hopf algebras over Rational Field
+                Category of super Hopf algebras over Rational Field
             """
             return self
 
@@ -135,9 +137,9 @@ class HopfAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: A = SteenrodAlgebra(3)
-                    sage: a = A.an_element()
-                    sage: a, a.antipode()
+                    sage: A = SteenrodAlgebra(3)                                        # needs sage.combinat sage.modules
+                    sage: a = A.an_element()                                            # needs sage.combinat sage.modules
+                    sage: a, a.antipode()                                               # needs sage.combinat sage.modules
                     (2 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
                 """
                 return self.parent().antipode(self)
@@ -153,9 +155,9 @@ class HopfAlgebras(Category_over_base_ring):
 
                 sage: C = HopfAlgebras(QQ).TensorProducts()
                 sage: C.extra_super_categories()
-                [Category of hopf algebras over Rational Field]
+                [Category of Hopf algebras over Rational Field]
                 sage: sorted(C.super_categories(), key=str)
-                [Category of hopf algebras over Rational Field,
+                [Category of Hopf algebras over Rational Field,
                  Category of tensor products of algebras over Rational Field,
                  Category of tensor products of coalgebras over Rational Field]
             """
@@ -163,8 +165,8 @@ class HopfAlgebras(Category_over_base_ring):
 
         class ParentMethods:
             # TODO: enable when tensor product of morphisms will be implemented
-            #@lazy_attribute
-            #def antipode(self):
+            # @lazy_attribute
+            # def antipode(self):
             #    return tensor([module.antipode for module in self.modules])
             pass
 
@@ -177,8 +179,8 @@ class HopfAlgebras(Category_over_base_ring):
         """
 
         class ParentMethods:
-            #@lazy_attribute
-            #def antipode(self):
+            # @lazy_attribute
+            # def antipode(self):
             #    self.dual().antipode.dual() # Check that this is the correct formula
             pass
 
@@ -204,6 +206,7 @@ class HopfAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: N = NonCommutativeSymmetricFunctions(QQ)
                     sage: R = N.ribbon()
                     sage: R.antipode_by_coercion.__module__

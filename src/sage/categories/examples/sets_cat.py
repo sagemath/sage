@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Examples of sets
 """
@@ -143,13 +144,10 @@ class PrimeNumbers(UniqueRepresentation, Parent):
             AssertionError: 14 is not a prime number
         """
         p = self.element_class(e)
-        assert is_prime(p), "%s is not a prime number"%(p)
+        assert is_prime(p), "%s is not a prime number" % (p)
         return p
 
     element_class = Integer
-
-
-
 
 
 from sage.misc.abstract_method import abstract_method
@@ -160,7 +158,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     datastructure will then be constructed by inheriting from
     :class:`PrimeNumbers_Abstract`.
 
-    This is used by:
+    This is used by::
 
         sage: P = Sets().example("facade")
         sage: P = Sets().example("inherits")
@@ -215,7 +213,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         if i in self:
             return self._from_integer_(i)
         else:
-            raise ValueError("%s is not a prime number"%(i))
+            raise ValueError("%s is not a prime number" % (i))
 
     @abstract_method
     def _from_integer_(self, i):
@@ -541,6 +539,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         return self.element_class(self, Integer(e))
 
     from sage.structure.element_wrapper import ElementWrapper
+
     class Element (ElementWrapper, PrimeNumbers_Abstract.Element):
         def _integer_(self, IntRing):
             """
@@ -554,9 +553,6 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
                 47
             """
             return IntRing(self.value)
-
-
-
 
 
 #*************************************************************************#
@@ -623,7 +619,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         sage: pf.next()
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'next'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'next'...
 
     unlike in the other implementations::
 

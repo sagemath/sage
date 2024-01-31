@@ -777,7 +777,6 @@ class IntegratedCurveSet(DifferentiableCurveSet):
         description += "which actually are integrated curves"
         return description
 
-
     def _element_constructor_(self, equations_rhs, velocities,
                  curve_parameter, initial_tangent_vector, chart=None,
                  name=None, latex_name=None, verbose=False, across_charts=False):
@@ -932,7 +931,7 @@ class IntegratedCurveSet(DifferentiableCurveSet):
         v = codom.tangent_space(p)(v_comps)
 
         # The equations defining the curve:
-        eqns_rhs=[-(x0_B-x0_A)/2*sin(param-t_min)]+[0 for i in range(dim-1)]
+        eqns_rhs = [-(x0_B-x0_A)/2*sin(param-t_min)]+[0 for i in range(dim-1)]
         # combined with the initial components above, all velocities
         # vanish, except the first one, which is a cosine function.
         # This differential system results in a curve constant in all
@@ -1189,8 +1188,8 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
         else:
             self._name = name
         if latex_name is None:
-            self._latex_name=r"\mathrm{{Hom}_{autoparallel}}"
-            self._latex_name+= r"\left({},{}\right)".format(
+            self._latex_name = r"\mathrm{{Hom}_{autoparallel}}"
+            self._latex_name += r"\left({},{}\right)".format(
                                domain._latex_name, codomain._latex_name)
         else:
             self._latex_name = latex_name
@@ -1220,7 +1219,6 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
         description += "which actually are integrated autoparallel "
         description += "curves with respect to a certain affine connection"
         return description
-
 
     def _element_constructor_(self, affine_connection, curve_parameter,
                     initial_tangent_vector, chart=None, name=None,
@@ -1646,7 +1644,7 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
             self._name = name
         if latex_name is None:
             self._latex_name = r"\mathrm{{Hom}_{geodesic}}"
-            self._latex_name+= r"\left({},{}\right)".format(
+            self._latex_name += r"\left({},{}\right)".format(
                                domain._latex_name, codomain._latex_name)
         else:
             self._latex_name = latex_name

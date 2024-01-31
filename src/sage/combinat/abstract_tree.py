@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Abstract Recursive Trees
 
@@ -73,7 +72,7 @@ from sage.misc.misc_c import prod
 # of it later.
 
 
-class AbstractTree():
+class AbstractTree:
     """
     Abstract Tree.
 
@@ -779,8 +778,7 @@ class AbstractTree():
             yield tuple(path)
         else:
             for i in range(len(self)):
-                for p in self[i].paths_at_depth(depth - 1, path + [i]):
-                    yield p
+                yield from self[i].paths_at_depth(depth - 1, path + [i])
 
     def node_number_at_depth(self, depth):
         r"""
@@ -1277,7 +1275,7 @@ class AbstractTree():
             if hasattr(t, "label"):
                 return str(t.label())
             else:
-                return u"o"
+                return "o"
         # other possible choices for nodes would be u"█ ▓ ░ ╋ ╬"
 
         if self.is_empty():
@@ -1292,9 +1290,9 @@ class AbstractTree():
 
         if len(self) == 1:
             repr_child = self[0]._unicode_art_()
-            sep = UnicodeArt([u" " * repr_child._root])
+            sep = UnicodeArt([" " * repr_child._root])
             t_repr = UnicodeArt([node_to_str(self)])
-            repr_root = (sep + t_repr) * (sep + UnicodeArt([u"│"]))
+            repr_root = (sep + t_repr) * (sep + UnicodeArt(["│"]))
             t_repr = repr_root * repr_child
             t_repr._root = repr_child._root
             t_repr._baseline = t_repr._h - 1
@@ -1304,17 +1302,17 @@ class AbstractTree():
         l_repr = [subtree._unicode_art_() for subtree in self]
         acc = l_repr.pop(0)
         whitesep = acc._root
-        lf_sep = u" " * whitesep + u"╭" + u"─" * (acc._l - acc._root)
-        ls_sep = u" " * whitesep + u"│" + u" " * (acc._l - acc._root)
+        lf_sep = " " * whitesep + "╭" + "─" * (acc._l - acc._root)
+        ls_sep = " " * whitesep + "│" + " " * (acc._l - acc._root)
         while l_repr:
             tr = l_repr.pop(0)
-            acc += UnicodeArt([u" "]) + tr
+            acc += UnicodeArt([" "]) + tr
             if not len(l_repr):
-                lf_sep += u"─" * (tr._root) + u"╮"
-                ls_sep += u" " * (tr._root) + u"│"
+                lf_sep += "─" * (tr._root) + "╮"
+                ls_sep += " " * (tr._root) + "│"
             else:
-                lf_sep += u"─" * (tr._root) + u"┬" + u"─" * (tr._l - tr._root)
-                ls_sep += u" " * (tr._root) + u"│" + u" " * (tr._l - tr._root)
+                lf_sep += "─" * (tr._root) + "┬" + "─" * (tr._l - tr._root)
+                ls_sep += " " * (tr._root) + "│" + " " * (tr._l - tr._root)
         mid = whitesep + (len(lf_sep) - whitesep) // 2
         node = node_to_str(self)
         lf_sep = (lf_sep[:mid - len(node) // 2] + node +
@@ -1359,10 +1357,10 @@ class AbstractTree():
 
     def to_hexacode(self):
         r"""
-        Transform a tree into an hexadecimal string.
+        Transform a tree into a hexadecimal string.
 
         The definition of the hexacode is recursive. The first letter is
-        the valence of the root as an hexadecimal (up to 15), followed by
+        the valence of the root as a hexadecimal (up to 15), followed by
         the concatenation of the hexacodes of the subtrees.
 
         This method only works for trees where every vertex has
@@ -1502,7 +1500,7 @@ class AbstractTree():
                   . the matrix
                   . and the edges
                 """
-                name = "".join((chr(ord(x) + 49) for x in str(num[0])))
+                name = "".join(chr(ord(x) + 49) for x in str(num[0]))
                 node = cmd + name
                 nodes.append((name,
                     (str(self.label()) if hasattr(self, "label") else ""))
@@ -1555,7 +1553,7 @@ class AbstractTree():
                     # ==> n & n & ... & n' & n' & ...
                     try:
                         mat[i] += sep + mat2[i]
-                    except Exception:
+                    except IndexError:
                         if i >= lmat:
                             if i != 0:
                                 # mat[i] does not exist but
@@ -1937,8 +1935,8 @@ class AbstractClonableTree(AbstractTree):
         TESTS::
 
             sage: x = OrderedTree([[[], []],[[]]])
-            sage: with x.clone() as x:
-            ....:     x[0,1] = OrderedTree([[[]]]) # indirect doctest
+            sage: with x.clone() as x:              # indirect doctest
+            ....:     x[0,1] = OrderedTree([[[]]])
             sage: x
             [[[], [[[]]]], [[]]]
         """
@@ -2461,11 +2459,11 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
 
 def from_hexacode(ch, parent=None, label='@'):
     r"""
-    Transform an hexadecimal string into a tree.
+    Transform a hexadecimal string into a tree.
 
     INPUT:
 
-    - ``ch`` -- an hexadecimal string
+    - ``ch`` -- a hexadecimal string
 
     - ``parent`` -- kind of trees to be produced. If ``None``, this will
       be ``LabelledOrderedTrees``
@@ -2511,11 +2509,11 @@ def from_hexacode(ch, parent=None, label='@'):
 
 def _from_hexacode_aux(ch, parent, label='@'):
     r"""
-    Transform an hexadecimal string into a tree and a remainder string.
+    Transform a hexadecimal string into a tree and a remainder string.
 
     INPUT:
 
-    - ``ch`` -- an hexadecimal string
+    - ``ch`` -- a hexadecimal string
 
     - ``parent`` -- kind of trees to be produced.
 
