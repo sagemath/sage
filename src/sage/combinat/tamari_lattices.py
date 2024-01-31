@@ -66,7 +66,7 @@ def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
     - `a` and `b` -- coprime integers with `a \geq b`
 
     - `i` and `j` -- nonnegative integers with `1 \geq \frac{j}{b} \geq
-      \frac{bi}{a} \geq 0`
+      \frac{i}{a} \geq 0`
 
     OUTPUT:
 
