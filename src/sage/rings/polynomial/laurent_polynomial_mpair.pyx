@@ -1596,6 +1596,141 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         return Factorization(f, unit=u)
 
+    def leading_monomial(self):
+        r"""
+        Return the leading monomial of self
+
+        """
+        order = self.parent().order
+        if order is None:
+            raise AttributeError("No generalized order defined in parent")
+
+        if self._prod is None:
+            self._compute_polydict()
+        exponents = [tuple(et) for et in self._prod.exponents()]
+        leading_tuple = order.greatest_tuple(exponents)
+        return self.parent().monomial(*leading_tuple)
+
+    def leading_coefficient(self):
+        r"""
+        Return the leading coefficient of self
+        """
+        lm = self.leading_monomial()
+        return self.coefficient(lm)
+
+    def leading_term(self):
+        r"""
+        Return the leading term of self
+        """
+        return self.leading_coefficient()*self.leading_monomial()
+
+    def leading_monomial_for_cone(self,i):
+        r"""
+        Return the leading monomial with respect to the `i`-th cone
+        """
+        
+        order = self.parent().order
+        if order is None:
+            raise AttributeError("No generalized order defined in parent")
+
+        if self._prod is None:
+            self._compute_polydict()
+
+        exponents = [tuple(et) for et in self._prod.exponents()]
+        leading_tuple = order.greatest_tuple_for_cone(i, exponents)
+        return self.parent().monomial(*leading_tuple)
+
+    def leading_coefficient_for_cone(self,i):
+        r"""
+        Return the leading coefficient of self with respect to the `i`-th cone
+        """
+        lm = self.leading_monomial_for_cone(i)
+        return self.coefficient(lm)
+
+    def leading_term_for_cone(self,i):
+        r"""
+        Return the leading term of self with respect to the `i`-th cone
+        """
+        return self.leading_coefficient_for_cone(i)*self.leading_monomial_for_cone(i)
+
+    def leadings_for_cone(self,i):
+        lm = self.leading_monomial_for_cone(i)
+        lc = self.coefficient(lm)
+        return [lc, lm, lc*lm]
+      
+    def is_in_cone(self,i):
+        if not self.is_monomial():
+            raise TypeError("arg must be a monomial")
+        if self.parent().order == None:
+            raise AttributeError("Parent has no generalized order")
+
+        order = self.parent().order
+        exponent = tuple(self.exponents()[0])
+        return order.is_in_cone(i,exponent)
+
+    def generator_for_cone(self,i):
+        order = self.parent().order
+        return self.parent().monomial(*order.generator(i,self.exponents()))
+
+    def generator_for_pair(self,i,g):
+
+        order = self.parent().order
+        u = order.generator_for_pair(i,self.exponents(),g.exponents())
+        u = self.parent().monomial(*u)
+        return u
+        
+    def reduce(self,reducers):
+        r"""
+        Reduce self by ``reducers`` using the multivariate division algorithm of REF.
+
+        EXAMPLES::
+        """
+
+        if self.parent().order is None:
+            raise AttributeError("Parent has no generalized order")
+
+        if not isinstance(reducers,list):
+            raise TypeError("Reducers must be a list of Laurent polynomials")
+        for h in reducers:
+            if not isinstance(h, LaurentPolynomial):
+                raise TypeError("Reducers must be Laurent polynomials")
+
+        num_reducers = len(reducers) 
+        quotients = [0]*num_reducers
+        remainder = 0
+        f = self
+       
+        while f:
+            # Find a cone containing the leading monomial of f
+            for i in range(0,f.parent()._n):
+                lm = f.leading_monomial()
+                if lm.is_in_cone(i):break
+
+            try_reduction = True
+            while try_reduction and f:
+                lm = f.leading_monomial()
+                found_reducer=False
+                for j in range(0,len(reducers)):
+                    reducer = reducers[j]
+                    lm_reducer_cone = reducer.leading_monomial_for_cone(i)
+                    candidate = ((lm/lm_reducer_cone)*reducer).leading_monomial()
+                    if candidate == lm:
+                        found_reducer = True
+                        t = f.leading_term()/reducer.leading_term_for_cone(i)
+                        f -= t*reducer
+                        quotients[j] += t 
+                        break
+
+                if not found_reducer:
+                    try_reduction = False
+           
+            if f:
+                lt = f.leading_term()
+                remainder += lt
+                f -= lt
+
+        return (remainder, quotients)
+
     def is_square(self, root=False):
         r"""
         Test whether this Laurent polynomial is a square.

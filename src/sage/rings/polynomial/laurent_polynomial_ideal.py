@@ -23,6 +23,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.ideal import Ideal_generic
+from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE
 
 class LaurentPolynomialIdeal( Ideal_generic ):
@@ -425,8 +426,16 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         self._saturated = True
         return I
 
+    def _S_pair(self,i,f,g):
+        order = self.ring().order
+        u = order.generator_for_pair(i,f.exponents(),g.exponents())
+        u = self.ring().monomial(*u)
+        [lcif, lmif, _] = f.leadings_for_cone(i)
+        [lcig, lmig, _] = g.leadings_for_cone(i)
+        return lcig*(u/lmif)*f - lcif*(u/lmig)*g 
+
     def groebner_basis(self, saturate=True):
-        """
+        r"""
         Return the reduced Groebner basis for the specified term order.
 
         EXAMPLES::
@@ -437,8 +446,28 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: (I + J).groebner_basis()
             (x - 1, y + 1)
         """
-        l = self.polynomial_ideal(saturate=saturate).groebner_basis()
-        return tuple(self.ring()(x) for x in l)
+
+        order = self.ring().order 
+        if isinstance(order, GeneralizedMonomialOrder):
+            G = list(self.gens())
+            n_gens = len(G)
+            n_cones = len(order.get_cones())
+            B = [ (G[i],G[j]) for i in range(n_gens) for j in range(n_gens) if i < j]
+            while len(B) > 0:
+                pair = B[0]
+                B = B[1:]
+                # breakpoint()
+                #print(len(G)) 
+                for i in range(n_cones):
+                    spair = self._S_pair(i,*pair)
+                    r,_ = spair.reduce(G)
+                    if r:
+                        B += [(r,h) for h in G]
+                        G += [r]
+            return G
+        else:
+            l = self.polynomial_ideal(saturate=saturate).groebner_basis()
+            return tuple(self.ring()(x) for x in l)
 
     def is_one(self):
         """
