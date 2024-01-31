@@ -828,6 +828,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._free_group, self._relations), {}))
 
+    def __hash__(self):
+        return hash((self._free_group, self._relations, self._names))
+
     def _repr_(self):
         """
         Return a string representation.

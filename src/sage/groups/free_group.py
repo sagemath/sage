@@ -730,6 +730,9 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
 
+    def __hash__(self):
+        return hash((self.__class__, self._names))
+
     def __reduce__(self):
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._names, ), {}))
