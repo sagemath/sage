@@ -10,7 +10,7 @@ Notebook from the command line.
 If you did install the Windows version or the macOS application you
 should have icons available on your desktops or launching menus. Otherwise
 you are strongly advised to create shortcuts for Sage as indicated at the end
-of the "Linux" Section in :ref:`sec-installation-from-binaries`. Assuming
+of the "Linux" Section in :ref:`build-from-source-step-by-step`. Assuming
 that you have this shortcut, running
 
 .. CODE-BLOCK:: bash
