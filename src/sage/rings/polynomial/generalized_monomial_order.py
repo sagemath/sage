@@ -1,8 +1,8 @@
 r"""
-Generalized monomial orders on the monoïd `\ZZ^n`. 
+Generalized monomial orders on the monoïd `\ZZ^n`.
 
-Generalized monomial orders on `\ZZ^n` have been introduced by Pauer and Unterkircher.
-These are total orders on `\ZZ^Unterkircher 
+Generalized monomial orders on `\ZZ^n` defined in [PU1999]_.
+
 
 
 EXAMPLES::
@@ -19,24 +19,33 @@ from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.term_order import TermOrder
 from sage.matrix.constructor import matrix
+from sage.structure.sage_object import SageObject
 
-class GeneralizedMonomialOrder:
+class GeneralizedMonomialOrder(SageObject):
     def __init__(self,n,group_order="lex",score_function="min"):
         r"""
         Create a generalized monomial order.
 
         INPUTS:
 
-            - ``n`` -- the number of variables
-            - ``group_order`` (default: ``lex``) -- a group order on `\ZZ^n`. A class with a method 'greater_tuple'
-              taking as inputs two tuples in `\ZZ^n` and returning the greatest with respect to a group order
-            - ``score_function`` (default: ``min``) -- a function `\ZZ^n \to \QQ_{\le 0}` satisfying propeties (1) and (2) 
+            - ``n`` -- The number of variables.
+            - ``group_order`` (default: ``lex``) -- The name of a group order on `\ZZ^n`. Choices are: "lex".
+            - ``score_function`` (default: ``min``) -- The name of a score function. Choices are: "min", "degmin".
 
         EXAMPLES::
 
             sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: G = GeneralizedMonomialOrder(2)
+            sage: GeneralizedMonomialOrder(2)
+            Generalized monomial order in 2 variables using (lex, min)
 
+            sage: GeneralizedMonomialOrder(8, group_order="lex")
+            Generalized monomial order in 8 variables using (lex, min)
+
+            sage: GeneralizedMonomialOrder(3, score_function="min")
+            Generalized monomial order in 3 variables using (lex, min)
+
+            sage: GeneralizedMonomialOrder(3, group_order="lex", score_function="degmin")
+            Generalized monomial order in 3 variables using (lex, degmin)
         """
         self._n = n
         self._n_cones = self._n + 1
@@ -45,6 +54,20 @@ class GeneralizedMonomialOrder:
         self._group_order_name = group_order
         self._score_function = get_score_function(score_function)
         self._score_function_name = score_function
+
+    def _repr_(self):
+        r"""
+
+        TESTS::
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: GeneralizedMonomialOrder(2)._repr_()
+            'Generalized monomial order in 2 variables using (lex, min)'
+        """
+        group = self._group_order_name
+        function = self._score_function_name
+        n = str(self._n)
+        return "Generalized monomial order in %s variables using (%s, %s)" % (n, group, function)
+
 
     def n_cones(self):
         r"""
