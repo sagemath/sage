@@ -209,7 +209,7 @@ class GeneralizedMonomialOrder:
 
     def translate_to_cone(self,i,L):
         r"""
-        Return a tuple `t` such that `t + L` is contained in the ``i``-th cone.
+        Return a tuple ``t`` such that `t + L` is contained in the ``i``-th cone.
 
         INPUTS:
 
@@ -302,7 +302,6 @@ class GeneralizedMonomialOrder:
             (5, 5, 6)
         """
     
-        # Stupid search algorithm.
         cone_matrix = self._cones[i]
         t = vector(self.translate_to_cone(i,L))
         L = [vector(l) for l in L]
@@ -394,7 +393,7 @@ def get_group_order(name):
 
     INPUTS:
 
-        - ``name`` -- Name of a group order within "lex", "invlex"
+        - ``name`` -- Name of a group order within "lex"
 
     TESTS::
 
@@ -403,7 +402,7 @@ def get_group_order(name):
         Lexicographic term order
     """
     
-    if name in ["lex", "invlex"]:
+    if name in ["lex"]:
         return TermOrder(name=name)
     else:
         raise ValueError("Available group order are: 'lex', 'invlex'")
