@@ -1788,7 +1788,10 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: eq = 1728*4*A**3 - j * (4*A**3 + 27*B**2)
             sage: twists2 = []
             sage: for _ in range(10):
-            ....:     V = Ideal([eq, A + B - F.random_element()]).variety()
+            ....:     try:
+            ....:         V = Ideal([eq, A + B - F.random_element()]).variety()
+            ....:     except ValueError:
+            ....:         continue
             ....:     if not V:
             ....:         continue
             ....:     sol = choice(V)
