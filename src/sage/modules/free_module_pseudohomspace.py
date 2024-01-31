@@ -1,6 +1,6 @@
 
 # ****************************************************************************
-#  Copyright (C) 2005 William Stein <wstein@gmail.com>
+#  Copyright (C) 2024 Yossef Musleh <jbobicus@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -24,6 +24,17 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.rings.derivation', 'RingDerivation')
 
 class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
+    r"""
+    This class implements the space of Pseudomorphisms with a fixed twist.
+
+
+
+    EXAMPLES::
+
+        sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism(5)
+        sage: PHS = F.PseudoHom(twist)
+
+    """
     def __init__(self, X, Y, twist=None):
         self._domain = X
         self._codomain = X
@@ -58,4 +69,7 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
                 pass
         if not self.codomain().base_ring().has_coerce_map_from(self.domain().base_ring()) and not A.is_zero():
             raise TypeError("nontrivial morphisms require a coercion map from the base ring of the domain to the base ring of the codomain")
-        return free_module_pseudomorphism.FreeModulePseudoMorphism(self.domain(), A, twist=self.twist, codomain = self.codomain()) 
+        return free_module_pseudomorphism.FreeModulePseudoMorphism(self.domain(), A, twist=self.twist, codomain = self.codomain())
+
+    def __repr__(self):
+        pass

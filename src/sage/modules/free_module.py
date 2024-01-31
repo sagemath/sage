@@ -3078,7 +3078,8 @@ class FreeModule_generic(Module_free_ambient):
         """
         from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
         from sage.structure.element import is_Matrix
-        return FreeModulePseudoMorphism(self, morphism, twist, codomain)
+        side = kwds.get("side", "left")
+        return FreeModulePseudoMorphism(self, morphism, twist, codomain, side)
 
     def inner_product_matrix(self):
         """
