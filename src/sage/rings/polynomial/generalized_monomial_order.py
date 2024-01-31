@@ -1,8 +1,8 @@
 r"""
 Generalized monomial orders on the monoïd `\ZZ^n`. 
 
-Generalized monomial orders on `\ZZ^n` have been introduced by Pauer and in.
-These are total orders on `\ZZ^n` 
+Generalized monomial orders on `\ZZ^n` have been introduced by Pauer and Unterkircher.
+These are total orders on `\ZZ^Unterkircher 
 
 
 EXAMPLES::
