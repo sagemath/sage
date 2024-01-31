@@ -2,14 +2,19 @@ suitesparse: A suite of sparse matrix software
 ==============================================
 
 SuiteSparse is a collection of software to deal with sparse matrix. It is
-hosted at http://faculty.cse.tamu.edu/davis/suitesparse.html
+hosted at https://people.engr.tamu.edu/davis/suitesparse.html with source code
+now on github at https://github.com/DrTimothyAldenDavis/SuiteSparse
 
-This spkg does a minimal install of suitesparse disabling the following
+This spkg does a minimal install of suitesparse only intalling the following
 
--  GraphBLAS (need cmake)
--  Mongoose (need cmake)
+-  AMD
+-  CAMD
+-  COLAMD
+-  CCOLAMD
+-  CHOLMOD
+-  UMFPACK
 
-An external metis package can be used but we just disable its use.
+Those are all the packages needed for cvxopt.
 
 Other configurations are self explanatory.
 
