@@ -35,17 +35,23 @@ from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.structure.sequence import Sequence
 from sage.structure.all import parent
 from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_morphism import FreeModuleMorphism
+from sage.modules.free_module_homspace import FreeModuleHomspace, is_FreeModuleHomspace
+from sage.matrix.constructor import matrix
 
 lazy_import('sage.rings.derivation', 'RingDerivation')
 
-class FreeModulePseudoMorphism():
-    def __init__(self, morphism, twist=None, side="left"):
+class FreeModulePseudoMorphism(Morphism):
+    def __init__(self, domain, base_morphism, twist=None, codomain=None, side="left"):
         """
         INPUT:
+            -  ``domain``   - the domain of the pseudomorphism; a free module 
 
-            -  ``parent`` - a homspace in a (sub) category of free modules
+            -  ``base_morphism`` - either a morphism or a matrix defining a morphism
 
-            -  ``A`` - matrix
+            -  ``twist`` - a twisting morphism, this is either a morphism or a derivation (default: None)
+
+            -  ``codomain`` - the codomain of the pseudomorphism; a free module  (default: None)
 
             - side -- side of the vectors acted on by the matrix  (default: ``"left"``)
 
@@ -56,7 +62,15 @@ class FreeModulePseudoMorphism():
             sage: type(phi)
             <class 'sage.modules.free_module_morphism.FreeModuleMorphism'>
         """
+        from sage.structure.element import is_Matrix
+        if is_Matrix(base_morphism):
+            self.base_morphism = domain.hom(base_morphism, codomain)
+        elif isinstance(base_morphism, Morphism):
+            self.base_morphism = base_morphism
+        else:
+            self.base_morphism = domain.hom(matrix(domain.coordinate_ring(), base_morphism), codomain)
         self.derivation = None
+        self.twist_morphism = None
         if isinstance(twist, Morphism):
             self.twist_morphism = twist
         elif isinstance(twist, RingDerivation):
@@ -66,7 +80,6 @@ class FreeModulePseudoMorphism():
             else:
                 self.derivation = None
         self.side = side
-        self.base_morphism = morphism
 		
     def __call__(self, x):
         if self.twist_morphism is None and self.derivation is None:
@@ -95,6 +108,21 @@ class FreeModulePseudoMorphism():
             if not C.is_ambient():
                 v = C.linear_combination_of_basis(v)
             return C._element_constructor_(v)
+
+    def __repr__(self):
+        r = "Free module pseudomorphism defined {}by the matrix\n{!r}{}{}\nDomain: {}\nCodomain: {}"
+        act = ""
+        if self.side == "right":
+            act = "as left-multiplication "
+        morph = ""
+        if self.twist_morphism is not None:
+            morph = "\nTwisted by the morphism {}"
+            morph = morph.format(self.twist_morphism.__repr__())
+        deriv = ""
+        if self.derivation is not None:
+            deriv = "\nTwisted by the derivation {}"
+            deriv = deriv.format(self.derivation.__repr__())
+        return r.format(act, self.matrix(), morph, deriv, self.domain(), self.codomain())
 
     def domain(self):
         return self.base_morphism.domain()

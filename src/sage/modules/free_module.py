@@ -212,6 +212,8 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
+from sage.categories.morphism import Morphism
+from sage.matrix.constructor import matrix
 
 ###############################################################################
 #
@@ -3064,7 +3066,11 @@ class FreeModule_generic(Module_free_ambient):
             codomain = R**n
         return super().hom(im_gens, codomain, **kwds)
 
-    def pseudohom(self, morphism, twist=None, **kwds):
+    def PseudoHom(self, codomain=None, twist=None):
+        from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
+        return FreeModulePseudoHomspace(self, codomain, twist)
+
+    def pseudohom(self, morphism, twist=None, codomain=None, **kwds):
         r"""
         Created a pseudomorphism defined by a given morphism and twist.
         Let A be a ring and M a free module over A. Let \theta: A \to A
@@ -3072,9 +3078,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
         from sage.structure.element import is_Matrix
-        if is_Matrix(morphism):
-            return FreeModulePseudoMorphism(self.hom(morphism), twist)
-        return FreeModulePseudoMorphism(morphism, twist)
+        return FreeModulePseudoMorphism(self, morphism, twist, codomain)
 
     def inner_product_matrix(self):
         """
