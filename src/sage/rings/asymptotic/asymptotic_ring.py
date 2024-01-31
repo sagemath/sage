@@ -2700,7 +2700,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 TypeError('Cannot apply the substitution rules %s on %s '
                           'in %s.' % (rules, self, self.parent())), e)
 
-
     def _substitute_(self, rules):
         r"""
         Substitute the given ``rules`` in this asymptotic expansion.
