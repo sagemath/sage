@@ -79,6 +79,7 @@ from sage.arith.power cimport generic_power
 from sage.arith.misc import crt
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.mrange import cartesian_product_iterator
+from sage.misc.superseded import deprecated_function_alias
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
@@ -7338,10 +7339,10 @@ cdef class Polynomial(CommutativePolynomial):
             R = R.composed_op(self, operator.mul)
         return R
 
-    def adams_operator(self, n, monic=False):
+    def adams_operator_on_roots(self, n, monic=False):
         r"""
-        Return the polynomial whose roots are the `n`-th power
-        of the roots of this.
+        Return the polynomial whose roots are the `n`-th powers
+        of the roots of ``self``.
 
         INPUT:
 
@@ -7354,20 +7355,20 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: # needs sage.libs.pari sage.libs.singular
             sage: f = cyclotomic_polynomial(30)
-            sage: f.adams_operator(7) == f
+            sage: f.adams_operator_on_roots(7) == f
             True
-            sage: f.adams_operator(6) == cyclotomic_polynomial(5)**2
+            sage: f.adams_operator_on_roots(6) == cyclotomic_polynomial(5)**2
             True
-            sage: f.adams_operator(10) == cyclotomic_polynomial(3)**4
+            sage: f.adams_operator_on_roots(10) == cyclotomic_polynomial(3)**4
             True
-            sage: f.adams_operator(15) == cyclotomic_polynomial(2)**8
+            sage: f.adams_operator_on_roots(15) == cyclotomic_polynomial(2)**8
             True
-            sage: f.adams_operator(30) == cyclotomic_polynomial(1)**8
+            sage: f.adams_operator_on_roots(30) == cyclotomic_polynomial(1)**8
             True
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f.adams_operator(10)                                                  # needs sage.libs.singular
+            sage: f.adams_operator_on_roots(10)                                                  # needs sage.libs.singular
             x^2 + 1024
 
         When ``self`` is monic, the output will have leading coefficient
@@ -7377,9 +7378,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c)
-            sage: f.adams_operator(3).factor()                                          # needs sage.libs.singular
+            sage: f.adams_operator_on_roots(3).factor()                                          # needs sage.libs.singular
             (-1) * (x - c^3) * (x - b^3) * (x - a^3)
-            sage: f.adams_operator(3, monic=True).factor()                              # needs sage.libs.singular
+            sage: f.adams_operator_on_roots(3, monic=True).factor()                              # needs sage.libs.singular
             (x - c^3) * (x - b^3) * (x - a^3)
 
         """
@@ -7391,6 +7392,8 @@ cdef class Polynomial(CommutativePolynomial):
         if monic:
             R = R.monic()
         return R
+
+    adams_operator = deprecated_function_alias(36396, adams_operator_on_roots)
 
     def symmetric_power(self, k, monic=False):
         r"""
@@ -7426,10 +7429,10 @@ cdef class Polynomial(CommutativePolynomial):
         try:
             k = ZZ(k)
         except (ValueError, TypeError):
-            raise ValueError("Cannot compute k'th symmetric power for k={}".format(k))
+            raise ValueError(f"Cannot compute k'th symmetric power for k={k}")
         n = self.degree()
         if k < 0 or k > n:
-            raise ValueError("Cannot compute k'th symmetric power for k={}".format(k))
+            raise ValueError(f"Cannot compute k'th symmetric power for k={k}")
         x = self.variables()[0]
         if k == 0:
             return x - 1
@@ -7452,7 +7455,7 @@ cdef class Polynomial(CommutativePolynomial):
             return g.composed_op(h, operator.mul, monic=True)
 
         def rpow(g, n):
-            return g.adams_operator(n, monic=True)
+            return g.adams_operator_on_roots(n, monic=True)
         if k == 2:
             g = (star(self, self) // rpow(self, 2)).nth_root(2)
             if monic:
