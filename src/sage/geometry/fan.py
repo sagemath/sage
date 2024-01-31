@@ -443,7 +443,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: P2c = Fan(cones, rays, check=False, normalize=False)
         Traceback (most recent call last):
         ...
-        AttributeError: 'tuple' object has no attribute 'parent'
+        AttributeError: 'tuple' object has no attribute 'parent'...
 
     Yet another way is to use functions :func:`FaceFan` and :func:`NormalFan`
     to construct fans from :class:`lattice polytopes
@@ -1238,7 +1238,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: fan = Fan([Cone([(1,0), (1,1)]), Cone([(-1,-1)])])
             sage: sage_input(fan)
             Fan(cones=[[1, 2], [0]], rays=[(-1, -1), (1, 0), (1, 1)])
-       """
+        """
         cones = [[ZZ(_) for _ in c.ambient_ray_indices()] for c in self.generating_cones()]
         rays = [sib(tuple(r)) for r in self.rays()]
         return sib.name('Fan')(cones=cones, rays=rays)
@@ -1382,7 +1382,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             N( 0, 1),
             N(-1, 0)
             in 2-d lattice N
-         """
+        """
         return iter(self.generating_cones())
 
     def _compute_cone_lattice(self):
@@ -1956,7 +1956,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
             We think of the origin as of the smallest cone containing no rays
             at all. If there is no ray in ``self`` that contains all ``rays``,
-            a ``ValueError`` exception will be raised.
+            a :class:`ValueError` exception will be raised.
 
         EXAMPLES::
 
@@ -2352,8 +2352,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         or
         :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.facet_of`. The
         cone returned by this method will have ``self`` as ambient. If ``cone``
-        does not represent a valid cone of ``self``, ``ValueError`` exception
-        is raised.
+        does not represent a valid cone of ``self``, :class:`ValueError`
+        exception is raised.
 
         .. NOTE::
 
@@ -3504,8 +3504,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         OUTPUT:
 
         The complex associated to the fan as a :class:`ChainComplex
-        <sage.homology.chain_complex.ChainComplex>`. Raises a
-        ``ValueError`` if the extended complex is requested for a
+        <sage.homology.chain_complex.ChainComplex>`. This raises a
+        :class:`ValueError` if the extended complex is requested for a
         non-complete fan.
 
         EXAMPLES::

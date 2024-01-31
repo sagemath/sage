@@ -289,7 +289,7 @@ class PythonInterpreter(StackInterpreter):
         for (name, op) in [('neg', 'PyNumber_Negative'),
                            ('invert', 'PyNumber_Invert'),
                            ('abs', 'PyNumber_Absolute')]:
-            instrs.append(instr_unary(name, pg('S', 'S'), '%s(i0)'%op))
+            instrs.append(instr_unary(name, pg('S', 'S'), '%s(i0)' % op))
         self.instr_descs = instrs
         self._set_opcodes()
         # Always use ipow

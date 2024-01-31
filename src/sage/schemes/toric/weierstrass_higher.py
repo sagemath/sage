@@ -258,7 +258,7 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
         (-1/4, 0)
 
         sage: ideal = R.ideal(quadratic1, quadratic2)
-        sage: (-Y^2 + X^3 + a*X*Z^4 + b*Z^6).reduce(ideal)
+        sage: (-Y^2 + X^3 + a*X*Z^4 + b*Z^6).reduce(ideal)                              # needs sage.libs.singular
         0
 
     TESTS::

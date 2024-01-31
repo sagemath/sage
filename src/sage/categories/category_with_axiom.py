@@ -269,7 +269,7 @@ from the name of the category with axiom (see
 covers the following examples::
 
     sage: FiniteCoxeterGroups()
-    Category of finite coxeter groups
+    Category of finite Coxeter groups
     sage: FiniteCoxeterGroups() is CoxeterGroups().Finite()
     True
     sage: FiniteCoxeterGroups._base_category_class_and_axiom_origin
@@ -500,7 +500,7 @@ The downsides of this workaround are:
       (bilinearity). Of course this should be implemented at the level
       of :class:`~.magmatic_algebras.MagmaticAlgebras`, if not higher.
 
-    - :class:`Bialgebras`: defining an bialgebra as an algebra and
+    - :class:`Bialgebras`: defining a bialgebra as an algebra and
       coalgebra where the coproduct is a morphism for the product.
 
     - :class:`Bimodules`: defining a bimodule as a left and right
@@ -554,7 +554,7 @@ However, the following may look suspicious at first::
     sage: Magmas.Unital.Associative
     Traceback (most recent call last):
     ...
-    AttributeError: type object 'Magmas.Unital' has no attribute 'Associative'
+    AttributeError: type object 'Magmas.Unital' has no attribute 'Associative'...
 
 The purpose of this section is to explain the design of the code
 layout and the rationale for this mismatch.
@@ -769,7 +769,7 @@ also want the axiom to be only available if meaningful::
     sage: Semirings().NoZeroDivisors()
     Traceback (most recent call last):
     ...
-    AttributeError: 'Semirings_with_category' object has no attribute 'NoZeroDivisors'
+    AttributeError: 'Semirings_with_category' object has no attribute 'NoZeroDivisors'...
 
 Concretely, this is to be implemented by defining the new axiom in the
 (``SubcategoryMethods`` nested class of the) appropriate category with
@@ -2667,7 +2667,7 @@ class Blahs(Category_singleton):
         This currently fails because ``Blahs`` is the category where
         the axiom ``Blue`` is defined, and the specifications
         currently impose that a category defining an axiom should also
-        implement it (here in an category with axiom
+        implement it (here in a category with axiom
         ``Blahs.Blue``). In practice, due to this violation of the
         specifications, the axiom is lost during the join calculation.
 

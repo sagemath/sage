@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Isogenies
 
@@ -1745,7 +1744,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         # calculate the isomorphism as a rational map.
 
-        u, r, s, t = [self.__base_field(c) for c in isomorphism.tuple()]
+        u, r, s, t = (self.__base_field(c) for c in isomorphism.tuple())
         uinv = 1/u
         uinv2 = uinv**2
         uinv3 = uinv*uinv2
@@ -1787,7 +1786,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         # calculate the isomorphism as a rational map.
 
-        u, r, s, t = [self.__base_field(c) for c in isomorphism.tuple()]
+        u, r, s, t = (self.__base_field(c) for c in isomorphism.tuple())
         uinv = 1/u
         uinv2 = uinv**2
         uinv3 = uinv*uinv2
@@ -1953,7 +1952,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         """
         a1, a2, a3, a4, _ = self._domain.a_invariants()
 
-        self.__kernel_mod_sign = dict()
+        self.__kernel_mod_sign = {}
         v = w = 0
 
         for Q in self.__kernel_list:
@@ -2838,11 +2837,18 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi.dual().scaling_factor()
             43
 
+        TESTS:
+
+        Check for :issue:`36638`::
+
+            sage: phi.scaling_factor().parent()  # needs sage.rings.finite_rings
+            Finite Field in z2 of size 257^2
+
         ALGORITHM: The "inner" isogeny is normalized by construction,
         so we only need to account for the scaling factors of a pre-
         and post-isomorphism.
         """
-        sc = Integer(1)
+        sc = self.__base_field.one()
         if self.__pre_isomorphism is not None:
             sc *= self.__pre_isomorphism.scaling_factor()
         if self.__post_isomorphism is not None:
@@ -2879,28 +2885,19 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__init_kernel_polynomial()
         return self.__kernel_polynomial
 
-    def is_separable(self):
+    def inseparable_degree(self):
         r"""
-        Determine whether or not this isogeny is separable.
+        Return the inseparable degree of this isogeny.
 
-        Since :class:`EllipticCurveIsogeny` only implements
-        separable isogenies, this method always returns ``True``.
+        Since this class only implements separable isogenies,
+        this method always returns one.
 
-        EXAMPLES::
+        TESTS::
 
-            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
-            sage: phi = EllipticCurveIsogeny(E,  E((0,0)))
-            sage: phi.is_separable()
-            True
-
-        ::
-
-            sage: E = EllipticCurve('11a1')
-            sage: phi = EllipticCurveIsogeny(E, E.torsion_points())
-            sage: phi.is_separable()
-            True
+            sage: EllipticCurveIsogeny.inseparable_degree(None)
+            1
         """
-        return True
+        return Integer(1)
 
     def _set_pre_isomorphism(self, preWI):
         """
@@ -3466,6 +3463,15 @@ def compute_isogeny_stark(E1, E2, ell):
         sage: E2 = phi.codomain()
         sage: compute_isogeny_stark(E, E2, 2)
         x
+
+    TESTS:
+
+    Check for :issue:`21883`::
+
+        sage: E1 = EllipticCurve([0,1])
+        sage: E2 = EllipticCurve([0,-27])
+        sage: E1.isogeny(None, E2, degree=3)
+        Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 27 over Rational Field
     """
     K = E1.base_field()
     R, x = PolynomialRing(K, 'x').objgen()
@@ -3479,8 +3485,8 @@ def compute_isogeny_stark(E1, E2, ell):
     for i in range(2*ell + 1):
         pe1 += wp1[2*i] * Z**i
         pe2 += wp2[2*i] * Z**i
-    pe1 = pe1.add_bigoh(2*ell+2)
-    pe2 = pe2.add_bigoh(2*ell+2)
+    pe1 = pe1.add_bigoh(2*ell+3)
+    pe2 = pe2.add_bigoh(2*ell+3)
 
     n = 1
     q = [R.one(), R.zero()]

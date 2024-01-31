@@ -4,10 +4,15 @@ Power Series Methods
 
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
-from .power_series_ring_element cimport PowerSeries
+from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
-from .infinity import infinity
-from sage.libs.pari.all import pari_gen, PariError
+from sage.rings.infinity import infinity
+
+try:
+    from sage.libs.pari.all import pari_gen, PariError
+except ImportError:
+    pari_gen = ()
+    PariError = ()
 
 
 cdef class PowerSeries_poly(PowerSeries):
@@ -485,7 +490,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, -self.__f,
                                          self._prec, check=False)
 
-    cpdef _add_(self, right_m):
+    cpdef _add_(self, right_m) noexcept:
         """
         EXAMPLES::
 
@@ -501,6 +506,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         In the past this could die with EXC_BAD_ACCESS (:trac:`8029`)::
 
+            sage: # needs sage.rings.real_mpfr
             sage: A.<x> = RR['x']
             sage: B.<t> = PowerSeriesRing(A)
             sage: 1. + O(t)
@@ -516,7 +522,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f + right.__f,
                                 self.common_prec_c(right), check=True)
 
-    cpdef _sub_(self, right_m):
+    cpdef _sub_(self, right_m) noexcept:
         """
         Return the difference of two power series.
 
@@ -531,7 +537,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f - right.__f,
                                 self.common_prec_c(right), check=True)
 
-    cpdef _mul_(self, right_r):
+    cpdef _mul_(self, right_r) noexcept:
         """
         Return the product of two power series.
 
@@ -547,7 +553,7 @@ cdef class PowerSeries_poly(PowerSeries):
                                 prec=prec,
                                 check=True)  # check, since truncation may be needed
 
-    cpdef _rmul_(self, Element c):
+    cpdef _rmul_(self, Element c) noexcept:
         """
         Multiply ``self`` on the right by a scalar.
 
@@ -560,7 +566,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return PowerSeries_poly(self._parent, self.__f * c, self._prec, check=False)
 
-    cpdef _lmul_(self, Element c):
+    cpdef _lmul_(self, Element c) noexcept:
         """
         Multiply ``self`` on the left by a scalar.
 
@@ -744,7 +750,7 @@ cdef class PowerSeries_poly(PowerSeries):
         else:
             return self.__f.truncate(prec)
 
-    cdef _inplace_truncate(self, long prec):
+    cdef _inplace_truncate(self, long prec) noexcept:
         """
         Truncate ``self`` to precision ``prec`` in place.
 
@@ -1152,6 +1158,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         With real coefficients::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<z> = RR[[]]
             sage: f = exp(2*z)
             sage: f.pade(3, 3) # abs tol 1e-10
@@ -1159,6 +1166,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         When precision is too low::
 
+            sage: # needs sage.rings.real_mpfr
             sage: f = z + O(z**6)
             sage: f.pade(4, 4)
             Traceback (most recent call last):
@@ -1168,13 +1176,13 @@ cdef class PowerSeries_poly(PowerSeries):
         Check that :trac:`21212` is fixed::
 
             sage: QQx.<x> = QQ[[]]
-            sage: (1+x+O(x^100)).pade(2,2)
+            sage: (1 + x + O(x^100)).pade(2,2)
             x + 1
 
         Check for correct precision::
 
             sage: QQx.<x> = QQ[[]]
-            sage: (1+x+O(x^2)).pade(0,1)
+            sage: (1 + x + O(x^2)).pade(0,1)
             -1/(x - 1)
         """
         if self.precision_absolute() < n + m + 1:
@@ -1243,7 +1251,7 @@ cdef class BaseRingFloorDivAction(Action):
     """
     The floor division action of the base ring on a formal power series.
     """
-    cpdef _act_(self, g, x):
+    cpdef _act_(self, g, x) noexcept:
         r"""
         Let ``g`` act on ``x`` under ``self``.
 

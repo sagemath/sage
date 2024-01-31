@@ -34,7 +34,7 @@ from sage.stats.time_series cimport TimeSeries
 
 
 
-cdef double random_normal(double mean, double std, randstate rstate):
+cdef double random_normal(double mean, double std, randstate rstate) noexcept:
     r"""
     Return a floating point number chosen from the normal distribution
     with given mean and standard deviation, using the given randstate.
@@ -182,8 +182,9 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: hmm.GaussianMixtureDistribution([(1,-1,0)], eps=1e-3)
             1.0*N(-1.0,0.001)
         """
-        B = [[c if c>=0 else 0,  mu,  std if std>0 else eps] for c,mu,std in B]
-        if len(B) == 0:
+        B = [[(c if c >= 0 else 0), mu, (std if std > 0 else eps)]
+             for c, mu, std in B]
+        if not B:
             raise ValueError("must specify at least one component of the mixture model")
         cdef double s
         if normalize:
@@ -196,9 +197,9 @@ cdef class GaussianMixtureDistribution(Distribution):
                 else:
                     for a in B:
                         a[0] /= s
-        self.c0 = TimeSeries([c/(sqrt2pi*std) for c,_,std in B])
-        self.c1 = TimeSeries([-1.0/(2*std*std) for _,_,std in B])
-        self.param = TimeSeries(sum([list(x) for x in B],[]))
+        self.c0 = TimeSeries([c/(sqrt2pi*std) for c, _, std in B])
+        self.c1 = TimeSeries([-1.0/(2*std*std) for _, _, std in B])
+        self.param = TimeSeries(sum([list(x) for x in B], []))
         self.fixed = IntList(self.c0._length)
 
     def __getitem__(self, Py_ssize_t i):
@@ -282,7 +283,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         return self.c0._length
 
-    cpdef is_fixed(self, i=None):
+    cpdef is_fixed(self, i=None) noexcept:
         r"""
         Return whether or not this :class:`GaussianMixtureDistribution` is
         fixed when using Baum-Welch to update the corresponding HMM.
@@ -434,7 +435,7 @@ cdef class GaussianMixtureDistribution(Distribution):
                 T._values[i] = self._sample(rstate)
             return T
 
-    cdef double _sample(self, randstate rstate):
+    cdef double _sample(self, randstate rstate) noexcept:
         r"""
         Used internally to compute a sample from this distribution quickly.
 
@@ -459,7 +460,7 @@ cdef class GaussianMixtureDistribution(Distribution):
                 return random_normal(self.param._values[3*n+1], self.param._values[3*n+2], rstate)
         raise RuntimeError("invalid probability distribution")
 
-    cpdef double prob(self, double x):
+    cpdef double prob(self, double x) noexcept:
         r"""
         Return the probability of `x`.
 
@@ -495,7 +496,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             s += self.c0._values[n]*exp((x-mu)*(x-mu)*self.c1._values[n])
         return s
 
-    cpdef double prob_m(self, double x, int m):
+    cpdef double prob_m(self, double x, int m) noexcept:
         r"""
         Return the probability of `x` using just the `m`-th summand.
 

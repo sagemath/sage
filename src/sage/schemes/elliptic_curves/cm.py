@@ -113,7 +113,7 @@ def hilbert_class_polynomial(D, algorithm=None):
     D = Integer(D)
     if D >= 0:
         raise ValueError("D (=%s) must be negative" % D)
-    if not (D % 4 in [0, 1]):
+    if (D % 4) not in [0, 1]:
         raise ValueError("D (=%s) must be a discriminant" % D)
 
     if algorithm == "arb":
@@ -973,7 +973,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
 
     if j in ZZ:
         j = ZZ(j)
-        table = dict([(jj,(d,f)) for d,f,jj in cm_j_invariants_and_orders(QQ)])
+        table = {jj: (d,f) for d,f,jj in cm_j_invariants_and_orders(QQ)}
         if j in table:
             return True, table[j]
         return False, None

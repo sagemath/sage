@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Undirected graphs
 
@@ -213,9 +212,9 @@ covered here.
 
 - an igraph Graph::
 
-       sage: import igraph                                # optional - python_igraph
-       sage: g = Graph(igraph.Graph([(1,3),(3,2),(0,2)])) # optional - python_igraph
-       sage: g                                            # optional - python_igraph
+       sage: import igraph                                 # optional - python_igraph
+       sage: g = Graph(igraph.Graph([(1,3),(3,2),(0,2)]))  # optional - python_igraph
+       sage: g                                             # optional - python_igraph
        Graph on 4 vertices
 
 Generators
@@ -421,7 +420,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
 from sage.graphs.generic_graph import GenericGraph
-from sage.graphs.digraph import DiGraph
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
@@ -820,9 +818,9 @@ class Graph(GenericGraph):
     #. An igraph Graph (see also
        :meth:`~sage.graphs.generic_graph.GenericGraph.igraph_graph`)::
 
-           sage: import igraph                      # optional - python_igraph
-           sage: g = igraph.Graph([(0, 1), (0, 2)]) # optional - python_igraph
-           sage: Graph(g)                           # optional - python_igraph
+           sage: import igraph                       # optional - python_igraph
+           sage: g = igraph.Graph([(0, 1), (0, 2)])  # optional - python_igraph
+           sage: Graph(g)                            # optional - python_igraph
            Graph on 3 vertices
 
        If ``vertex_labels`` is ``True``, the names of the vertices are given by
@@ -838,8 +836,8 @@ class Graph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)], edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
-           sage: Graph(g).edges(sort=True)                                                               # optional - python_igraph
+           sage: g = igraph.Graph([(0,1),(0,2)], edge_attrs={'name':['a','b'], 'weight':[1,3]})  # optional - python_igraph
+           sage: Graph(g).edges(sort=True)                                                       # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
 
@@ -883,10 +881,10 @@ class Graph(GenericGraph):
         ...
         ValueError: Unknown input format 'HeyHeyHey'
 
-        sage: Graph(igraph.Graph(directed=True)) # optional - python_igraph
+        sage: Graph(igraph.Graph(directed=True))  # optional - python_igraph
         Traceback (most recent call last):
         ...
-        ValueError: An *undirected* igraph graph was expected. To build an directed graph, call the DiGraph constructor.
+        ValueError: An *undirected* igraph graph was expected. To build a directed graph, call the DiGraph constructor.
 
         sage: # needs sage.modules
         sage: m = matrix([[0, -1], [-1, 0]])
@@ -1207,7 +1205,7 @@ class Graph(GenericGraph):
         elif format == 'igraph':
             if data.is_directed():
                 raise ValueError("An *undirected* igraph graph was expected. "
-                                 "To build an directed graph, call the DiGraph "
+                                 "To build a directed graph, call the DiGraph "
                                  "constructor.")
 
             self.add_vertices(range(data.vcount()))
@@ -3286,8 +3284,8 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        A DiGraph representing the orientation if it exists. A ``ValueError``
-        exception is raised otherwise.
+        A DiGraph representing the orientation if it exists.
+        A :class:`ValueError` exception is raised otherwise.
 
         ALGORITHM:
 
@@ -3514,6 +3512,7 @@ class Graph(GenericGraph):
         if name:
             name = 'An orientation of ' + name
 
+        from sage.graphs.digraph import DiGraph
         if not self.size():
             D = DiGraph(data=[self.vertices(sort=False), []],
                         format='vertices_and_edges',
@@ -4891,7 +4890,7 @@ class Graph(GenericGraph):
         return repr
 
     @doc_index("Algorithmically hard stuff")
-    def minor(self, H, solver=None, verbose=0, *, integrality_tolerance=1e-3):
+    def minor(self, H, solver=None, verbose=0, induced=False, *, integrality_tolerance=1e-3):
         r"""
         Return the vertices of a minor isomorphic to `H` in the current graph.
 
@@ -4900,6 +4899,14 @@ class Graph(GenericGraph):
         sets `S_h \subseteq V(G)` such that once the vertices of each `S_h` have
         been merged to create a new graph `G'`, this new graph contains `H` as a
         subgraph.
+
+        When parameter ``induced`` is ``True``, this method returns an induced minor
+        isomorphic to `H`, if it exists.
+
+        We say that a graph `G` has an induced `H`-minor (or that it has a
+        graph isomorphic to `H` as an induced minor), if `H` can be obtained
+        from an induced subgraph of `G` by contracting edges. Otherwise, `G` is
+        said to be `H`-induced minor-free.
 
         For more information, see the :wikipedia:`Minor_(graph_theory)`.
 
@@ -4921,6 +4928,10 @@ class Graph(GenericGraph):
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
+
+        - ``induced`` -- boolean (default: ``False``); if ``True``, returns an
+          induced minor isomorphic to `H` if it exists, and raises a
+          :class:`ValueError` otherwise.
 
         OUTPUT:
 
@@ -4979,6 +4990,43 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: This graph has no minor isomorphic to H !
+
+        Trying to find an induced minor isomorphic to `C_5` in a graph
+        containing an induced `C_6`::
+
+            sage: g = graphs.CycleGraph(6)
+            sage: for i in range(randint(10, 30)):
+            ....:     g.add_edge(randint(0, 5), g.add_vertex())
+            sage: h = graphs.CycleGraph(5)
+            sage: L = g.minor(h, induced=True)
+            sage: gg = g.subgraph(flatten(L.values(), max_level=1))
+            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l) > 1]
+            sage: gg.is_isomorphic(h)
+            True
+
+        TESTS:
+
+        A graph `g` may have a minor isomorphic to a given graph `h` but no
+        induced minor isomorphic to `h`::
+
+            sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
+            sage: h = Graph([(9, 10), (9, 11), (9, 12), (9, 13)])
+            sage: l = g.minor(h, induced=False)
+            sage: l = g.minor(h, induced=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: This graph has no induced minor isomorphic to H !
+
+        Checking that the returned induced minor is isomorphic to the given
+        graph::
+
+            sage: g = Graph([(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (3, 5), (4, 5), (6, 5)])
+            sage: h = Graph([(7, 8), (8, 9), (9, 10), (10, 11)])
+            sage: L = g.minor(h, induced=True)
+            sage: gg = g.subgraph(flatten(L.values(), max_level=1))
+            sage: _ = [gg.merge_vertices(l) for l in L.values() if len(l) > 1]
+            sage: gg.is_isomorphic(h)
+            True
         """
         self._scream_if_not_simple()
         H._scream_if_not_simple()
@@ -5044,12 +5092,25 @@ class Graph(GenericGraph):
             p.add_constraint(p.sum(h_edges[(h1, h2), frozenset(e)] + h_edges[(h2, h1), frozenset(e)]
                                    for e in self.edge_iterator(labels=None)), min=1)
 
+        # if induced is True
+        # condition for induced subgraph ensures that if there
+        # does not exist an edge(h1, h2) in H then there should
+        # not be an edge between representative sets of h1 and h2 in G
+        if induced:
+            for h1, h2 in H.complement().edge_iterator(labels=False):
+                for v1, v2 in self.edge_iterator(labels=False):
+                    p.add_constraint(rs[h1, v1] + rs[h2, v2], max=1)
+                    p.add_constraint(rs[h2, v1] + rs[h1, v2], max=1)
+
         p.set_objective(None)
 
         try:
             p.solve(log=verbose)
         except MIPSolverException:
-            raise ValueError("This graph has no minor isomorphic to H !")
+            if induced:
+                raise ValueError("This graph has no induced minor isomorphic to H !")
+            else:
+                raise ValueError("This graph has no minor isomorphic to H !")
 
         rs = p.get_values(rs, convert=bool, tolerance=integrality_tolerance)
 
@@ -6595,7 +6656,7 @@ class Graph(GenericGraph):
         raise ValueError("Algorithm must be equal to 'native' or to 'NetworkX'.")
 
     @doc_index("Clique-related methods")
-    def clique_maximum(self,  algorithm="Cliquer", solver=None, verbose=0,
+    def clique_maximum(self, algorithm="Cliquer", solver=None, verbose=0,
                        *, integrality_tolerance=1e-3):
         """
         Return the vertex set of a maximal order complete subgraph.
@@ -6839,7 +6900,7 @@ class Graph(GenericGraph):
         for c in cliques:
             count.update(c)
 
-        return {v : count[v] for v in vertices or self}
+        return {v: count[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
     def cliques_get_max_clique_graph(self):
@@ -7113,7 +7174,7 @@ class Graph(GenericGraph):
 
         Testing mcqd::
 
-            sage: graphs.PetersenGraph().vertex_cover(algorithm="mcqd", value_only=True) # optional - mcqd
+            sage: graphs.PetersenGraph().vertex_cover(algorithm="mcqd", value_only=True)  # optional - mcqd
             6
 
         Given a wrong algorithm::
@@ -7591,7 +7652,7 @@ class Graph(GenericGraph):
             for v in c:
                 d[v].append(c)
 
-        return {v : d[v] for v in vertices or self}
+        return {v: d[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
     def clique_complex(self):
@@ -7923,7 +7984,7 @@ class Graph(GenericGraph):
           vertex of `C` has a neighbor outside of it.
 
         * An anticomponent `C` (or the union of some --but not all-- of them) of
-          an non-anticonnected graph `G`, for the same reason (it is just the
+          a non-anticonnected graph `G`, for the same reason (it is just the
           complement of the previous graph !).
 
         These modules being of special interest, the disjoint union of graphs is
@@ -8977,8 +9038,7 @@ class Graph(GenericGraph):
 
         # For each unlabeled matching, we yield all its possible labelings
         for m in rec(G):
-            for pm in itertools.product(*[edges[frozenset(e)] for e in m]):
-                yield pm
+            yield from itertools.product(*[edges[frozenset(e)] for e in m])
 
     @doc_index("Leftovers")
     def has_perfect_matching(self, algorithm="Edmonds", solver=None, verbose=0,

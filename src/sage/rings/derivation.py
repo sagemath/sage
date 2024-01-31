@@ -1,7 +1,7 @@
 r"""
 Derivations
 
-Let `A` be a ring and `B` be an bimodule over `A`.
+Let `A` be a ring and `B` be a bimodule over `A`.
 A derivation `d : A \to B` is an additive map that satisfies
 the Leibniz rule
 
@@ -78,7 +78,7 @@ Sage knows moreover that `M` is a Lie algebra::
 
     sage: M.category()
     Join of
-     Category of lie algebras with basis over Rational Field and
+     Category of Lie algebras with basis over Rational Field and
      Category of modules with basis over
       Multivariate Polynomial Ring in x, y, z over Rational Field
 
@@ -281,7 +281,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
 
         if twist is not None:
             if not (isinstance(twist, Map) and twist.category_for().is_subcategory(Rings())):
-                raise TypeError("the twisting homomorphism must be an homomorphism of rings")
+                raise TypeError("the twisting homomorphism must be a homomorphism of rings")
             if twist.domain() is not domain:
                 map = twist.domain().coerce_map_from(domain)
                 if map is None:
@@ -1249,7 +1249,7 @@ class RingDerivationWithoutTwist(RingDerivation):
             sage: D.precompose(D)
             Traceback (most recent call last):
             ...
-            TypeError: you must give an homomorphism of rings
+            TypeError: you must give a homomorphism of rings
 
         TESTS::
 
@@ -1266,7 +1266,7 @@ class RingDerivationWithoutTwist(RingDerivation):
             else:
                 raise TypeError("the given ring does not coerce to the domain of the derivation")
         elif not (isinstance(morphism, Map) and morphism.category_for().is_subcategory(Rings())):
-            raise TypeError("you must give an homomorphism of rings")
+            raise TypeError("you must give a homomorphism of rings")
         M = RingDerivationModule(morphism.domain(), parent.defining_morphism() * morphism)
         arg = [ ]
         for x in M.dual_basis():
@@ -1316,7 +1316,7 @@ class RingDerivationWithoutTwist(RingDerivation):
             sage: Dx.precompose(Dy)
             Traceback (most recent call last):
             ...
-            TypeError: you must give an homomorphism of rings
+            TypeError: you must give a homomorphism of rings
 
         """
         parent = self.parent()
@@ -1326,7 +1326,7 @@ class RingDerivationWithoutTwist(RingDerivation):
             else:
                 raise TypeError("the codomain of the derivation does not coerce to the given ring")
         elif not (isinstance(morphism, Map) and morphism.category_for().is_subcategory(Rings())):
-            raise TypeError("you must give an homomorphism of rings")
+            raise TypeError("you must give a homomorphism of rings")
         M = RingDerivationModule(parent.domain(), morphism * parent.defining_morphism())
         arg = [ ]
         for x in M.dual_basis():
@@ -1580,7 +1580,7 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: from sage.rings.derivation import RingDerivationWithoutTwist_wrapper
             sage: R.<x,y> = GF(5)[]
             sage: S = R.quo([x^5, y^5])
@@ -1588,8 +1588,7 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
             sage: der = M.random_element()
             sage: isinstance(der, RingDerivationWithoutTwist_wrapper)
             True
-
-            sage: TestSuite(der).run()                                                  # needs sage.rings.finite_rings
+            sage: TestSuite(der).run()
 
         """
         if isinstance(arg, list) and len(arg) == 1 and isinstance(arg[0], RingDerivation):
@@ -1620,7 +1619,7 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1637,7 +1636,7 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1654,7 +1653,7 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1670,7 +1669,7 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1688,7 +1687,7 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1707,21 +1706,19 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: M = S.derivation_module()
             sage: M.basis()
             Family (d/dx, d/dy)
-
-            sage: S.derivation(x).list()                                                # needs sage.rings.finite_rings
+            sage: S.derivation(x).list()
             [1, 0]
-            sage: S.derivation(y).list()                                                # needs sage.rings.finite_rings
+            sage: S.derivation(y).list()
             [0, 1]
-
-            sage: f = x*S.derivation(x) + y*S.derivation(y); f                          # needs sage.rings.finite_rings
+            sage: f = x*S.derivation(x) + y*S.derivation(y); f
             x*d/dx + y*d/dy
-            sage: f.list()                                                              # needs sage.rings.finite_rings
+            sage: f.list()
             [x, y]
 
         """
@@ -2000,7 +1997,7 @@ class RingDerivationWithoutTwist_quotient(RingDerivationWithoutTwist_wrapper):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: f = x^3*S.derivation(); f
@@ -2284,7 +2281,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
             else:
                 raise TypeError("the given ring does not coerce to the domain of the derivation")
         elif not (isinstance(morphism, Map) and morphism.category_for().is_subcategory(Rings())):
-            raise TypeError("you must give an homomorphism of rings")
+            raise TypeError("you must give a homomorphism of rings")
         M = RingDerivationModule(morphism.domain(), parent.defining_morphism() * morphism,
                                  parent.twisting_morphism() * morphism)
         return M(self._scalar)
@@ -2327,7 +2324,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
             else:
                 raise TypeError("the codomain of the derivation does not coerce to the given ring")
         elif not (isinstance(morphism, Map) and morphism.category_for().is_subcategory(Rings())):
-            raise TypeError("you must give an homomorphism of rings")
+            raise TypeError("you must give a homomorphism of rings")
         M = RingDerivationModule(parent.domain(), morphism * parent.defining_morphism(),
                                  morphism * parent.twisting_morphism())
         return M(morphism(self._scalar))

@@ -316,7 +316,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='polymake') # optional - jupymake
             sage: sage_input(P)                                                                    # optional - jupymake
             Polyhedron(backend='polymake', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(1), QQ(0)), (QQ(0), QQ(1))])
-       """
+        """
         kwds = dict()
         kwds['base_ring'] = sib(self.base_ring())
         kwds['backend'] = sib(self.backend())
@@ -753,8 +753,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: next(p.Hrep_generator())
             An inequality (-1, 0, 0) x + 1 >= 0
         """
-        for H in self.Hrepresentation():
-            yield H
+        yield from self.Hrepresentation()
 
     @cached_method
     def n_Hrepresentation(self):
@@ -843,8 +842,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: next(vg)
             A vertex at (1, 1, 1)
         """
-        for V in self.Vrepresentation():
-            yield V
+        yield from self.Vrepresentation()
 
     def inequality_generator(self):
         """

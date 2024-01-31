@@ -530,7 +530,7 @@ def cutwidth_dyn(G, lower_bound=0):
         sig_free(neighborhoods)
 
 
-cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S, int v, int k):
+cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S, int v, int k) noexcept:
     r"""
     Check whether an ordering with the given cost `k` exists, and updates data
     in the neighborhoods array at the same time. See the module's documentation.

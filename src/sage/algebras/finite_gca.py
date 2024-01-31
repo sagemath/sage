@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Finite dimensional graded commutative algebras
 
@@ -89,14 +90,15 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
 
         sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,2,2,3), max_degree=6)
         sage: A
-        Graded commutative algebra with generators ('x', 'y', 'z', 't') in degrees (1, 2, 2, 3) with maximal degree 6
+        Graded commutative algebra with generators ('x', 'y', 'z', 't')
+         in degrees (1, 2, 2, 3) with maximal degree 6
         sage: t*x + x*t
         0
         sage: x^2
         0
         sage: x*t^2
         0
-        sage: x*y^2+z*t
+        sage: x*y^2 + z*t
         x*y^2 + z*t
 
     The generators can be returned with :meth:`algebra_generators`::
@@ -114,7 +116,9 @@ class FiniteGCAlgebra(CombinatorialFreeModule, Algebra):
     Depending on the context, the multiplication can be given a different
     symbol::
 
-        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,2,6,6), max_degree=10, mul_symbol='⌣', mul_latex_symbol=r'\smile')
+        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,2,6,6), max_degree=10,
+        ....:                                        mul_symbol='⌣',
+        ....:                                        mul_latex_symbol=r'\smile')
         sage: x*y^2 + x*t
         x⌣y^2 + x⌣t
         sage: latex(x*y^2 - z*x)

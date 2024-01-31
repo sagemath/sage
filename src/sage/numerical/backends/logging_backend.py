@@ -68,7 +68,7 @@ def _make_wrapper(backend, attr):
                                     "        ...\n"
                                     "        MIPSolverException: {}\n".format(e))
             if self._test_method:
-                self._test_method.write(("        with tester.assertRaises({}) as cm:\n"+
+                self._test_method.write(("        with tester.assertRaises({}) as cm:\n" +
                                          "            {}\n").format(type(e).__name__, funcall))
             raise
         else:

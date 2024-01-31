@@ -908,7 +908,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         """
         if len(self.summands) != len(other.summands):
             return False
-        from builtins import zip
         return all(s == o for s, o in
                    zip(self.summands.elements_topological(),
                        other.summands.elements_topological()))
@@ -1091,7 +1090,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: O(n).monomial_coefficient(n)
             Traceback (most recent call last):
             ...
-            AttributeError: 'OTermMonoid_with_category.element_class' object has no attribute 'coefficient'
+            AttributeError: 'OTermMonoid_with_category.element_class' object has no attribute 'coefficient'...
 
         The ``monomial`` must be exact::
 
@@ -1900,7 +1899,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: bool(SR(a.exact_part()).subs(s=1/x) -
             ....:      SR((1+p).sqrt().polynomial()).subs(p=x) == 0)
             True
-            """
+        """
         from sage.rings.rational_field import QQ
         return self.pow(QQ(1)/QQ(2), precision=precision)
 

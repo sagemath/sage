@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Basic graphs
 
@@ -400,7 +399,7 @@ def CompleteGraph(n):
         G.set_pos({0: (0, 0)})
     else:
         G._circle_embedding(list(range(n)), angle=pi/2)
-    G.add_edges(((i, j) for i in range(n) for j in range(i + 1, n)))
+    G.add_edges((i, j) for i in range(n) for j in range(i + 1, n))
     return G
 
 def CorrelationGraph(seqs, alpha, include_anticorrelation):
@@ -435,9 +434,9 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
 
     # compare against alpha to get adjacency matrix
     if include_anticorrelation:
-        boolean_adjacency_matrix = abs(corrs)>=alpha
+        boolean_adjacency_matrix = abs(corrs) >= alpha
     else:
-        boolean_adjacency_matrix = corrs>=alpha
+        boolean_adjacency_matrix = corrs >= alpha
 
     adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
 

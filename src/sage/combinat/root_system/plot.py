@@ -830,7 +830,7 @@ lazy_import("sage.combinat.root_system.root_lattice_realizations",
             "RootLatticeRealizations")
 
 
-class PlotOptions():
+class PlotOptions:
     r"""
     A class for plotting options for root lattice realizations.
 
@@ -1349,7 +1349,7 @@ class PlotOptions():
         - ``alpha`` -- a number in the interval `[0, 1]` (default: `1`)
           the desired transparency
 
-        - ``label`` -- an object to be used as for this cone.
+        - ``label`` -- an object to be used as the label for this cone.
           The label itself will be constructed by calling
           :func:`~sage.misc.latex.latex` or :func:`repr` on the
           object depending on the graphics backend.

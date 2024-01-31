@@ -113,23 +113,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 
 from sage.categories.number_fields import NumberFields
 
 from sage.rings.ideal import is_Ideal
 from sage.rings.integer_ring import ZZ
-from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import is_RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.number_field.order import is_NumberFieldOrder
 
 from sage.misc.latex import latex
 from sage.misc.misc import is_iterator
 
 from sage.structure.all import Sequence
 from sage.structure.richcmp import richcmp, richcmp_method
-
-from sage.calculus.functions import jacobian
 
 from sage.arith.functions import lcm
 from sage.arith.misc import gcd
@@ -217,7 +214,7 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
-    def __init__(self, A):
+    def __init__(self, A, category=None):
         """
         TESTS::
 
@@ -234,7 +231,7 @@ class AlgebraicScheme(scheme.Scheme):
             raise TypeError("A (=%s) must be an ambient space")
         self.__A = A
         self.__divisor_group = {}
-        scheme.Scheme.__init__(self, A.base_scheme())
+        scheme.Scheme.__init__(self, A.base_scheme(), category=category)
 
     def _latex_(self):
         r"""
@@ -278,9 +275,10 @@ class AlgebraicScheme(scheme.Scheme):
         projective spaces. This is why this method returns ``False``
         for toric varieties::
 
-            sage: PP.<x,y,z,w> = toric_varieties.P(3)                                   # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.graphs
+            sage: PP.<x,y,z,w> = toric_varieties.P(3)
             sage: V = PP.subscheme(x^3 + y^3 + z^3 + w^3)
-            sage: V.is_projective()                                                     # needs sage.geometry.polyhedron
+            sage: V.is_projective()
             False
         """
         return self.ambient_space().is_projective()
@@ -373,7 +371,7 @@ class AlgebraicScheme(scheme.Scheme):
           or neighborhood of a point then the embedding is the
           embedding into the original scheme.
 
-        * A ``NotImplementedError`` is raised if the construction of
+        * A :class:`NotImplementedError` is raised if the construction of
           the embedding morphism is not implemented yet.
 
         EXAMPLES::
@@ -386,9 +384,11 @@ class AlgebraicScheme(scheme.Scheme):
                     defined by: x^2 + y^2 - 1
               To:   Affine Space of dimension 2 over Rational Field
               Defn: Defined on coordinates by sending (x, y) to (x, y)
-            sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()                             # needs sage.geometry.polyhedron
-            sage: P1 = P1xP1.subscheme(x - y)                                           # needs sage.geometry.polyhedron sage.libs.singular
-            sage: P1.embedding_morphism()                                               # needs sage.geometry.polyhedron sage.libs.singular
+
+            sage: # needs sage.graphs sage.geometry.polyhedron sage.libs.singular
+            sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()
+            sage: P1 = P1xP1.subscheme(x - y)
+            sage: P1.embedding_morphism()
             Scheme morphism:
               From: Closed subscheme of 2-d CPR-Fano toric variety covered
                     by 4 affine patches defined by: x - y
@@ -427,18 +427,18 @@ class AlgebraicScheme(scheme.Scheme):
 
         A couple more examples::
 
-            sage: # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.graphs sage.libs.singular
             sage: patch1 = P1xP1.affine_patch(1); patch1
             2-d affine toric variety
-            sage: patch1.embedding_morphism()                                           # needs sage.libs.singular
+            sage: patch1.embedding_morphism()
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d CPR-Fano toric variety covered by 4 affine patches
               Defn: Defined on coordinates by sending [y : u] to [1 : y : u : 1]
-            sage: subpatch = P1.affine_patch(1); subpatch                               # needs sage.libs.singular
+            sage: subpatch = P1.affine_patch(1); subpatch
             Closed subscheme of 2-d affine toric variety defined by:
               -y + 1
-            sage: subpatch.embedding_morphism()                                         # needs sage.libs.singular
+            sage: subpatch.embedding_morphism()
             Scheme morphism:
               From: Closed subscheme of 2-d affine toric variety defined by: -y + 1
               To:   Closed subscheme of 2-d CPR-Fano toric variety covered
@@ -465,9 +465,8 @@ class AlgebraicScheme(scheme.Scheme):
 
         OUTPUT:
 
-        A point of ``self``. Raises ``AttributeError`` if there is no
-        distinguished point, depending on how ``self`` was
-        constructed.
+        A point of ``self``. This raises :class:`AttributeError` if there
+        is no distinguished point, depending on how ``self`` was constructed.
 
         EXAMPLES::
 
@@ -543,7 +542,7 @@ class AlgebraicScheme(scheme.Scheme):
 
         EXAMPLES::
 
-            sage: # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.graphs
             sage: P1.<x,y> = toric_varieties.P1()
             sage: type(P1.Hom(P1))
             <class 'sage.schemes.toric.homset.SchemeHomset_toric_variety_with_category'>
@@ -553,9 +552,10 @@ class AlgebraicScheme(scheme.Scheme):
 
         ::
 
-            sage: P1xP1 = toric_varieties.P1xP1()                                       # needs sage.geometry.polyhedron
-            sage: P1 = toric_varieties.P1()                                             # needs sage.geometry.polyhedron
-            sage: P1xP1._homset(P1xP1, P1)                                              # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.graphs
+            sage: P1xP1 = toric_varieties.P1xP1()
+            sage: P1 = toric_varieties.P1()
+            sage: P1xP1._homset(P1xP1, P1)
             Set of morphisms
               From: 2-d CPR-Fano toric variety covered by 4 affine patches
               To:   1-d CPR-Fano toric variety covered by 2 affine patches
@@ -917,7 +917,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
           x^2 - y*z
     """
 
-    def __init__(self, A, polynomials):
+    def __init__(self, A, polynomials, category=None):
         """
         See ``AlgebraicScheme_subscheme`` for documentation.
 
@@ -934,7 +934,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         from sage.rings.polynomial.multi_polynomial_sequence import is_PolynomialSequence
 
-        AlgebraicScheme.__init__(self, A)
+        AlgebraicScheme.__init__(self, A, category=category)
         self._base_ring = A.base_ring()
         R = A.coordinate_ring()
         if is_Ideal(polynomials):
@@ -1121,7 +1121,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         """
         BR = self.base_ring()
-        if BR == QQbar or BR in NumberFields() or is_NumberFieldOrder(BR):
+        if (BR == ZZ
+                or isinstance(BR, (sage.rings.abc.AlgebraicField, sage.rings.abc.Order))
+                or BR in NumberFields()):
             normalized_polys = []
             initial_polys = list(self.__polys)
 
@@ -1130,7 +1132,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
                 mult = lcm([c.denominator() for c in P.coefficients()])
                 P = mult*P
                 # stores the common factor from all coefficients
-                div = gcd([_ for _ in P.coefficients()])
+                div = gcd(list(P.coefficients()))
                 poly_ring = P.parent() # need to coerce, since division might change base ring
                 P = poly_ring((BR.one()/div)*P)
                 normalized_polys.append(P)
@@ -1279,7 +1281,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: K = QuadraticField(-3)
             sage: P.<x,y,z,w,t,u> = ProjectiveSpace(K, 5)
             sage: X = P.subscheme([x*y - z^2 - K.0*t^2, t*w*x + y*z^2 - u^3])
-            sage: X.is_irreducible()
+            sage: X.is_irreducible()                                                    # needs sage.libs.singular
             True
 
         ::
@@ -1296,7 +1298,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             ....:         x*y*z^2 - x*y*z*w - z*w^2 + w^3,
             ....:         x^3*y*z*w - x*y^3*z - x^2*y*z*w - x^2*w^3 + y^2*w^2 + x*w^3
             ....:     ])
-            sage: X.is_irreducible()                                                    # needs sage.rings.finite_rings
+            sage: X.is_irreducible()                                                    # needs sage.libs.singular
             False
         """
         return self.defining_ideal().is_prime()
@@ -1330,6 +1332,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         l = self.defining_polynomials()
         if len(l) == 0:
             return sage.matrix.constructor.Matrix(R, 0)
+
+        from sage.calculus.functions import jacobian
+
         return jacobian(l, R.gens())
 
     def Jacobian(self):
@@ -1769,7 +1774,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: K.<v> = NumberField(u^2 + 3)
             sage: A.<x,y> = ProjectiveSpace(K, 1)
             sage: X = A.subscheme(x^2 - y^2)
-            sage: X.rational_points(bound=3)
+            sage: X.rational_points(bound=3)                                            # needs sage.libs.singular
             [(-1 : 1), (1 : 1)]
 
         One can enumerate points up to a given bound on a projective scheme

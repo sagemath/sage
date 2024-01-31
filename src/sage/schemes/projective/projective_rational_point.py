@@ -190,7 +190,7 @@ def enum_projective_number_field(X, **kwds):
         sage: K = NumberField(u^3 - 5, 'v')
         sage: P.<x,y,z> = ProjectiveSpace(K, 2)
         sage: X = P.subscheme([x - y])
-        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)
+        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)          # needs sage.symbolic
         [(0 : 0 : 1), (1 : 1 : 0), (-1 : -1 : 1), (1 : 1 : 1)]
 
     ::
@@ -412,7 +412,7 @@ def sieve(X, bound):
         where alpha is product of all primes, and P_max is largest prime in list.
         """
 
-        M = dict() # stores optimal list of primes, corresponding to list size
+        M = {}  # stores optimal list of primes, corresponding to list size
         small_primes = sufficient_primes(B)
         max_length = len(small_primes)
         M[max_length] = small_primes

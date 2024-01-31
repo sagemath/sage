@@ -150,8 +150,7 @@ class Posets(Category):
         from sage.combinat.posets.posets import FinitePosets_n
         n = 0
         while True:
-            for P in FinitePosets_n(n):
-                yield P
+            yield from FinitePosets_n(n)
             n += 1
 
     Finite = LazyImport('sage.categories.finite_posets', 'FinitePosets')

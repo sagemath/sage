@@ -3461,7 +3461,7 @@ def verify_same(a, b):
         sage: verify_same(1, 1r)
         Traceback (most recent call last):
         ...
-        AttributeError: 'int' object has no attribute 'parent'
+        AttributeError: 'int' object has no attribute 'parent'...
         sage: verify_same(1r, 1)
         Traceback (most recent call last):
         ...
@@ -3475,11 +3475,11 @@ def verify_same(a, b):
     """
     from sage.structure.element import is_Element
     if is_Element(a):
-        assert(a.parent() == b.parent())
+        assert a.parent() == b.parent()
     else:
-        assert(type(a) is type(b))
+        assert type(a) is type(b)
     if isinstance(a, (RealIntervalFieldElement, ComplexIntervalFieldElement)):
-        assert(a.endpoints() == b.endpoints()), "Expected %s == %s" % (a, b)
+        assert a.endpoints() == b.endpoints(), "Expected %s == %s" % (a, b)
         return
 
     if not (a == b):
@@ -3525,7 +3525,7 @@ def verify_si_answer(x, answer, preparse):
         sage: verify_si_answer(1, '1', False)
         Traceback (most recent call last):
         ...
-        AttributeError: 'int' object has no attribute 'parent'
+        AttributeError: 'int' object has no attribute 'parent'...
         sage: verify_si_answer(1, 'ZZ(1)', None)
     """
     from sage.misc.sage_eval import sage_eval

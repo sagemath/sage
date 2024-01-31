@@ -398,7 +398,7 @@ class Arrow(GraphicPrimitive):
             class CheckNthSubPath():
                 def __init__(self, patch, n):
                     """
-                    creates an callable object that returns True if the
+                    creates a callable object that returns True if the
                     provided path is the n-th path from the patch.
                     """
                     self._patch = patch
@@ -489,7 +489,8 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
 
 @rename_keyword(color='rgbcolor')
-@options(width=2, rgbcolor=(0,0,1), zorder=2, head=1, linestyle='solid', legend_label=None)
+@options(width=2, rgbcolor=(0,0,1), zorder=2, head=1, linestyle='solid',
+         legend_label=None, legend_color=None)
 def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     """
     If ``tailpoint`` and ``headpoint`` are provided, returns an arrow from
@@ -640,6 +641,12 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     ::
 
         sage: arrow2d((-2,2), (7,1)).show(frame=True)
+
+    TESTS:
+
+    Verify that :issue:`36153` is fixed::
+
+        sage: A = arrow2d((-1,-1), (2,3), legend_label="test")
     """
     from sage.plot.all import Graphics
     g = Graphics()

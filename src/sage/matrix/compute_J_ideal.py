@@ -334,7 +334,7 @@ class ComputeMinimalPolynomials(SageObject):
         """
         from sage.rings.polynomial.polynomial_ring import polygen
 
-        super(ComputeMinimalPolynomials, self).__init__()
+        super().__init__()
         if not B.is_square():
             raise TypeError("square matrix required")
 

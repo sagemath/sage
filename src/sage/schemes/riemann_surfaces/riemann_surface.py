@@ -282,7 +282,7 @@ def numerical_inverse(C):
     with mpall.workprec(prec):
         Cmp = mpall.matrix([mpall.sage_to_mpmath(list(c), prec) for c in C])
         PLU = mpall.lu(Cmp)
-    P, L, U = [R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU]
+    P, L, U = (R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU)
     return U.inverse() * L.inverse() * P
 
 
@@ -712,7 +712,7 @@ class RiemannSurface():
         combined_discriminant = lcm(discriminants)(*self._R.gens())
         self._differentials_branch_locus = []
         for x in combined_discriminant.factor():
-            if not x[0] in existing_factors:
+            if x[0] not in existing_factors:
                 self._differentials_branch_locus += self._CCz(
                     x[0](self._CCz.gen(), 0)
                 ).roots(multiplicities=False)
@@ -1688,10 +1688,10 @@ class RiemannSurface():
                 # that entry, and the corresponding cycle. (also, forms it
                 # into a loop)
                 if P[i][j] != 0:
-                    acycles[i] += [(P[i][j], [x for x in cycles[j]] + [cycles[j][0]])]
+                    acycles[i] += [(P[i][j], list(cycles[j]) + [cycles[j][0]])]
                 if P[self.genus + i][j] != 0:
                     bcycles[i] += [
-                        (P[self.genus + i][j], [x for x in cycles[j]] + [cycles[j][0]])
+                        (P[self.genus + i][j], list(cycles[j]) + [cycles[j][0]])
                     ]
         return acycles + bcycles
 
@@ -2326,7 +2326,7 @@ class RiemannSurface():
             integral_dict = self._integral_dict
         else:
             fcd = [fast_callable(omega, domain=self._CC) for omega in differentials]
-            integral_dict = dict()
+            integral_dict = {}
 
         if integration_method == "heuristic":
             line_int = lambda edge: self.simple_vector_line_integral(edge, fcd)

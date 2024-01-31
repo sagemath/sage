@@ -256,7 +256,7 @@ cdef class InstanceDocDescriptor:
             sage: descr.__delete__(obj)
             Traceback (most recent call last):
             ...
-            AttributeError: 'X' object has no attribute '__doc__'
+            AttributeError: 'X' object has no attribute '__doc__'...
 
             sage: descr.__delete__([])
             Traceback (most recent call last):

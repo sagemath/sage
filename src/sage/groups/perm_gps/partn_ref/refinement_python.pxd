@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 
 
 cdef class PythonPartitionStack:

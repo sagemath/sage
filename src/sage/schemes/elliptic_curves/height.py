@@ -155,7 +155,7 @@ class UnionOfIntervals:
 
     def __add__(left, right):
         r"""
-        If both left an right are unions of intervals, take their union,
+        If both left and right are unions of intervals, take their union,
         otherwise treat the non-union of intervals as a scalar and shift.
 
         EXAMPLES::
@@ -928,7 +928,7 @@ class EllipticCurveCanonicalHeight:
             0.347263296676126
         """
         from sage.rings.polynomial.polynomial_ring import polygen
-        b2, b4, b6, b8 = [v(b) for b in self.E.b_invariants()]
+        b2, b4, b6, b8 = (v(b) for b in self.E.b_invariants())
         x = polygen(v.codomain())
         f = 4*x**3 + b2*x**2 + 2*b4*x + b6
         g = x**4 - b4*x**2 - 2*b6*x - b8

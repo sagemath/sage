@@ -63,8 +63,8 @@ from sage.misc.temporary_file import tmp_filename
 from sage.misc.fast_methods cimport hash_by_id
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
-from .texture import Texture
-from .transform cimport Transformation, point_c, face_c
+from sage.plot.plot3d.texture import Texture
+from sage.plot.plot3d.transform cimport Transformation, point_c, face_c
 include "point_c.pxi"
 
 from sage.interfaces.tachyon import tachyon_rt
@@ -278,19 +278,14 @@ cdef class Graphics3d(SageObject):
         T.export_jmol(scene_zip, **opts)
         from sage.interfaces.jmoldata import JmolData
         jdata = JmolData()
-        if not jdata.is_jvm_available():
+        if not jdata.is_jmol_available():
             # We can only use JMol to generate preview if a jvm is installed
             from sage.repl.rich_output.output_graphics import OutputImagePng
             tachyon = self._rich_repr_tachyon(OutputImagePng, **opts)
             tachyon.png.save_as(preview_png)
         else:
             # Java needs absolute paths
-            # On cygwin, they should be native ones
             scene_native = scene_zip
-
-            if sys.platform == 'cygwin':
-                import cygwin
-                scene_native = cygwin.cygpath(scene_native, 'w')
 
             script = '''set defaultdirectory "{0}"\nscript SCRIPT\n'''.format(scene_native)
             jdata.export_image(targetfile=preview_png, datafile=script,
@@ -502,7 +497,7 @@ cdef class Graphics3d(SageObject):
             js_options['axesLabelsStyle'] = None
 
         if js_options['axesLabelsStyle'] is not None:
-            from .shapes import _validate_threejs_text_style
+            from sage.plot.plot3d.shapes import _validate_threejs_text_style
             style = js_options['axesLabelsStyle']
             if isinstance(style, dict):
                 style = _validate_threejs_text_style(style)
@@ -1552,7 +1547,7 @@ end_scene""".format(
         T = [xyz_min[i] - a_min[i] for i in range(3)]
         X = X.translate(T)
         if frame:
-            from .shapes2 import frame3d, frame_labels
+            from sage.plot.plot3d.shapes2 import frame3d, frame_labels
             F = frame3d(xyz_min, xyz_max, opacity=0.5, color=(0,0,0), thickness=thickness)
             if labels:
                 F += frame_labels(xyz_min, xyz_max, a_min_orig, a_max_orig)
@@ -1561,7 +1556,7 @@ end_scene""".format(
 
         if axes:
             # draw axes
-            from .shapes import arrow3d
+            from sage.plot.plot3d.shapes import arrow3d
             A = (arrow3d((min(0,a_min[0]),0, 0), (max(0,a_max[0]), 0,0),
                              thickness, color="blue"),
                  arrow3d((0,min(0,a_min[1]), 0), (0, max(0,a_max[1]), 0),
@@ -2003,9 +1998,10 @@ end_scene""".format(
 
         This works when faces have more then 3 sides::
 
-            sage: P = polytopes.dodecahedron()                                          # needs sage.geometry.polyhedron
-            sage: Q = P.plot().all[-1]                                                  # needs sage.geometry.polyhedron
-            sage: print(Q.stl_binary()[:40].decode('ascii'))                            # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.groups
+            sage: P = polytopes.dodecahedron()
+            sage: Q = P.plot().all[-1]
+            sage: print(Q.stl_binary()[:40].decode('ascii'))
             STL binary file / made by SageMath / ###
         """
         import struct
@@ -2065,9 +2061,10 @@ end_scene""".format(
 
         Now works when faces have more then 3 sides::
 
-            sage: P = polytopes.dodecahedron()                                          # needs sage.geometry.polyhedron
-            sage: Q = P.plot().all[-1]                                                  # needs sage.geometry.polyhedron
-            sage: print(Q.stl_ascii_string().splitlines()[:7])                          # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.groups
+            sage: P = polytopes.dodecahedron()
+            sage: Q = P.plot().all[-1]
+            sage: print(Q.stl_ascii_string().splitlines()[:7])
             ['solid surface',
              'facet normal 0.0 0.5257311121191338 0.8506508083520399',
              '    outer loop',

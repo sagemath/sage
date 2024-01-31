@@ -619,7 +619,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         sage: pf.next()
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'next'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'next'...
 
     unlike in the other implementations::
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.polynomial.pbori
 """
 An ANF to CNF Converter using a Dense/Sparse Strategy
 
@@ -366,16 +367,16 @@ class CNFEncoder(ANF2CNFConverter):
             sage: e.phi
             [None, a, b, c, a*b]
 
-       If monomial is called on a new monomial, a new variable is created::
+        If monomial is called on a new monomial, a new variable is created::
 
             sage: e.monomial(a*b*c)
             5
             sage: e.phi
             [None, a, b, c, a*b, a*b*c]
 
-       If monomial is called on a monomial that was queried before,
-       the index of the old variable is returned and no new variable
-       is created::
+        If monomial is called on a monomial that was queried before,
+        the index of the old variable is returned and no new variable
+        is created::
 
             sage: e.monomial(a*b)
             4

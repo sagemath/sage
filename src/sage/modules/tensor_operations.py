@@ -282,7 +282,7 @@ class TensorOperation(VectorCollection):
         assert all(V.base_ring() is base_ring for V in vector_collections)
         self._V = tuple(vector_collections)
         self._vectors = []
-        self._index_map = dict()
+        self._index_map = {}
         if operation == 'product':
             self._init_product()
         elif operation == 'symmetric':

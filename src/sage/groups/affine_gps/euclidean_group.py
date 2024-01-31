@@ -146,6 +146,8 @@ class EuclideanGroup(AffineGroup):
         True
         sage: G = EuclideanGroup(2, GF(5)); G
         Euclidean Group of degree 2 over Finite Field of size 5
+
+        sage: # needs sage.libs.gap (for gens)
         sage: TestSuite(G).run()
 
     REFERENCES:
@@ -199,7 +201,7 @@ class EuclideanGroup(AffineGroup):
             sage: latex(G)
             \mathrm{E}_{6}(\Bold{F}_{5})
         """
-        return "\\mathrm{E}_{%s}(%s)"%(self.degree(), self.base_ring()._latex_())
+        return "\\mathrm{E}_{%s}(%s)" % (self.degree(), self.base_ring()._latex_())
 
     def _repr_(self):
         """
@@ -210,7 +212,7 @@ class EuclideanGroup(AffineGroup):
             sage: EuclideanGroup(6, GF(5))
             Euclidean Group of degree 6 over Finite Field of size 5
         """
-        return "Euclidean Group of degree %s over %s"%(self.degree(), self.base_ring())
+        return "Euclidean Group of degree %s over %s" % (self.degree(), self.base_ring())
 
     def random_element(self):
         """

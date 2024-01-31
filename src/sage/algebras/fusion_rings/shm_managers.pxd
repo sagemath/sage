@@ -8,10 +8,10 @@ cdef class KSHandler:
     cdef NumberField field
     cdef public object shm
 
-    cdef bint contains(self, int idx)
-    cdef NumberFieldElement_absolute get(self, int idx)
-    cdef setitem(self, int idx, rhs)
-    cpdef update(self, list eqns)
+    cdef bint contains(self, int idx) noexcept
+    cdef NumberFieldElement_absolute get(self, int idx) noexcept
+    cdef setitem(self, int idx, rhs) noexcept
+    cpdef update(self, list eqns) noexcept
 
 cdef class FvarsHandler:
     cdef dict sext_to_idx, obj_cache

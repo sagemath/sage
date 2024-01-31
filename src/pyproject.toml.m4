@@ -1,12 +1,13 @@
 [build-system]
 # Minimum requirements for the build system to execute.
 requires = [
+    "sage_setup[autogen]",
     # Some version of sage-conf is required.
     # Note that PEP517/518 have no notion of optional sage_spkg dependencies:
     # https://github.com/pypa/pip/issues/6144
      esyscmd(`sage-get-system-packages install-requires-toml \
         sage_conf      \
-        setuptools_wheel \
+        setuptools \
         wheel          \
         sage_setup     \
         cypari         \
@@ -21,3 +22,8 @@ requires = [
         memory_allocator \
                     ')]
 build-backend = "setuptools.build_meta"
+
+[tool.conda-lock]
+platforms = [
+    'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
+]

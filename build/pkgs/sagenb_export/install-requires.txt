@@ -1,1 +1,1 @@
-sagenb_export >=3.3
+git+https://github.com/vbraun/ExportSageNB.git#egg=sagenb_export

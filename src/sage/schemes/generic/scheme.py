@@ -498,7 +498,7 @@ class Scheme(Parent):
         OUTPUT:
 
         The global coordinate ring of this scheme, if
-        defined. Otherwise raise a ``ValueError``.
+        defined. Otherwise this raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -645,10 +645,6 @@ class Scheme(Parent):
             sage: S._Hom_(P).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category'>
 
-            sage: E = EllipticCurve('37a1')                                             # needs sage.schemes
-            sage: Hom(E, E).__class__                                                   # needs sage.schemes
-            <class 'sage.schemes.projective.projective_homset.SchemeHomset_polynomial_projective_space_with_category'>
-
             sage: Hom(Spec(ZZ), Spec(ZZ)).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category_with_equality_by_id'>
         """
@@ -684,7 +680,7 @@ class Scheme(Parent):
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(4, 't'), 2)                            # needs sage.rings.finite_rings
             sage: X = P.subscheme([y^2*z - x^3 - z^3])                                  # needs sage.rings.finite_rings
-            sage: X.count_points(2)                                                     # needs sage.rings.finite_rings
+            sage: X.count_points(2)                                                     # needs sage.libs.singular sage.rings.finite_rings
             [5, 17]
         """
         F = self.base_ring()

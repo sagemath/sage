@@ -44,8 +44,8 @@ from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
-from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
-from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+from sage.rings.finite_rings.element_pari_ffelt import FiniteFieldElement_pari_ffelt
+from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 
 from sage.interfaces.abc import GapElement
 
@@ -96,10 +96,10 @@ cdef int late_import() except -1:
 cdef extern from "arpa/inet.h":
     unsigned int htonl(unsigned int)
 
-cdef little_endian():
+cdef little_endian() noexcept:
     return htonl(1) != 1
 
-cdef unsigned int switch_endianess(unsigned int i):
+cdef unsigned int switch_endianess(unsigned int i) noexcept:
     cdef size_t j
     cdef unsigned int ret = 0
     for j in range(sizeof(int)):
@@ -205,7 +205,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         mod_poly = GF2XModulus_GF2X(modulus)
         print(ccrepr(mod_poly))
 
-    cdef FiniteField_ntl_gf2eElement _new(self):
+    cdef FiniteField_ntl_gf2eElement _new(self) noexcept:
         """
         Return a new element in ``self``. Use this method to construct
         'empty' elements.
@@ -274,7 +274,6 @@ cdef class Cache_ntl_gf2e(Cache_base):
         cdef FiniteField_ntl_gf2eElement x
         cdef FiniteField_ntl_gf2eElement g
         cdef Py_ssize_t i
-        from sage.libs.gap.element import GapElement_FiniteField
 
         if is_IntegerMod(e):
             e = e.lift()
@@ -334,14 +333,18 @@ cdef class Cache_ntl_gf2e(Cache_base):
             # Reduce to pari
             e = e.__pari__()
 
-        elif isinstance(e, GapElement_FiniteField):
-            return e.sage(ring=self._parent)
-
         elif isinstance(e, GapElement):
             from sage.libs.gap.libgap import libgap
             return libgap(e).sage(ring=self._parent)
 
         else:
+            try:
+                from sage.libs.gap.element import GapElement_FiniteField
+            except ImportError:
+                pass
+            else:
+                if isinstance(e, GapElement_FiniteField):
+                    return e.sage(ring=self._parent)
             raise TypeError("unable to coerce %r" % type(e))
 
         cdef GEN t
@@ -374,7 +377,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         raise ValueError("Cannot coerce element %s to this field." % e)
 
-    cpdef FiniteField_ntl_gf2eElement fetch_int(self, number):
+    cpdef FiniteField_ntl_gf2eElement fetch_int(self, number) noexcept:
         r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns
@@ -508,7 +511,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             self._parent = parent
             (<Cache_ntl_gf2e>self._parent._cache).F.restore()
 
-    cdef FiniteField_ntl_gf2eElement _new(FiniteField_ntl_gf2eElement self):
+    cdef FiniteField_ntl_gf2eElement _new(FiniteField_ntl_gf2eElement self) noexcept:
         cdef FiniteField_ntl_gf2eElement y
         (<Cache_ntl_gf2e>self._parent._cache).F.restore()
         y = FiniteField_ntl_gf2eElement.__new__(FiniteField_ntl_gf2eElement)
@@ -654,7 +657,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         else:
             return a
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two elements.
 
@@ -670,7 +673,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_add(r.x, (<FiniteField_ntl_gf2eElement>self).x, (<FiniteField_ntl_gf2eElement>right).x)
         return r
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply two elements.
 
@@ -686,7 +689,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_mul(r.x, (<FiniteField_ntl_gf2eElement>self).x, (<FiniteField_ntl_gf2eElement>right).x)
         return r
 
-    cpdef _div_(self, other):
+    cpdef _div_(self, other) noexcept:
         """
         Divide two elements.
 
@@ -709,7 +712,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_div(r.x, self.x, o.x)
         return r
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two elements.
 
@@ -758,7 +761,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         cdef FiniteField_ntl_gf2eElement o = self._parent._cache._one_element
         return o._div_(self)
 
-    cdef _pow_long(self, long n):
+    cdef _pow_long(self, long n) noexcept:
         """
         EXAMPLES::
 
@@ -797,7 +800,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_power(r.x, self.x, n)
         return r
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Comparison of finite field elements.
 
@@ -1152,9 +1155,9 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: k.<b> = GF(2^16)
             sage: b._gap_init_()
             'Z(65536)^1'
-            sage: k(gap('Z(2^16)^3+Z(2^16)^5'))
+            sage: k(gap('Z(2^16)^3+Z(2^16)^5'))                                         # needs sage.libs.gap
             b^5 + b^3
-            sage: k(libgap.Z(2^16)^3+libgap.Z(2^16)^5)
+            sage: k(libgap.Z(2^16)^3+libgap.Z(2^16)^5)                                  # needs sage.libs.gap
             b^5 + b^3
         """
         F = self._parent

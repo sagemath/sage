@@ -281,7 +281,7 @@ def Newton_polytope_vars_coeffs(polynomial, variables):
     """
     R = polynomial.parent()
     var_indices = [R.gens().index(x) for x in variables]
-    result = dict()
+    result = {}
     for c, m in polynomial:
         e = m.exponents()[0]
         v = tuple([e[i] for i in var_indices])
@@ -596,7 +596,7 @@ def _extract_coefficients(polynomial, monomials, variables):
             return tuple(0 for i in indices)
         e = monomial.exponents()[0]
         return tuple(e[i] for i in indices)
-    coeffs = dict()
+    coeffs = {}
     for c, m in polynomial:
         i = index(m)
         coeffs[i] = c*m + coeffs.pop(i, R.zero())
@@ -992,7 +992,7 @@ def _check_polynomial_P2_112(polynomial, variables):
         _check_homogeneity(polynomial, variables, (1, 0, 1, -2), 0)
         _check_homogeneity(polynomial, variables, (0, 1, 0, 1), 2)
     elif len(variables) == 2:
-        variables = tuple([variables[0], variables[1], None, None])
+        variables = (variables[0], variables[1], None, None)
     else:
         raise ValueError(f'need two or four variables, got {variables}')
     return variables

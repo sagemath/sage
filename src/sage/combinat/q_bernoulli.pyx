@@ -36,7 +36,7 @@ def q_bernoulli(m, p=None):
         -1/(q + 1)
         sage: q_bernoulli(2)
         q/(q^3 + 2*q^2 + 2*q + 1)
-        sage: all(q_bernoulli(i)(q=1) == bernoulli(i) for i in range(12))
+        sage: all(q_bernoulli(i)(q=1) == bernoulli(i) for i in range(12))               # needs sage.libs.flint
         True
 
     One can evaluate the rational function by giving a second argument::
@@ -101,7 +101,8 @@ def q_bernoulli_polynomial(m):
         sage: q_bernoulli_polynomial(1)
         (2/(q + 1))*x - 1/(q + 1)
         sage: x = q_bernoulli_polynomial(1).parent().gen()
-        sage: all(q_bernoulli_polynomial(i)(q=1)==bernoulli_polynomial(x,i) for i in range(12))
+        sage: all(q_bernoulli_polynomial(i)(q=1) == bernoulli_polynomial(x,i)           # needs sage.libs.flint
+        ....:     for i in range(12))
         True
         sage: all(q_bernoulli_polynomial(i)(x=0)==q_bernoulli(i) for i in range(12))
         True

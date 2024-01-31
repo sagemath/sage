@@ -885,7 +885,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM.tensor(XM).tensor(XM.dual().tensor(XM.dual()))
             Traceback (most recent call last):
             ...
-            AttributeError: 'TensorFieldModule_with_category' object has no attribute '_basis_sym'
+            AttributeError: 'TensorFieldModule_with_category' object has no attribute '_basis_sym'...
 
         .. SEEALSO::
 

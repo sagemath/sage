@@ -77,7 +77,7 @@ cdef class _lazy_attribute():
 
     def _sage_src_lines_(self):
         r"""
-        Returns the source code location for the wrapped function.
+        Return the source code location for the wrapped function.
 
         EXAMPLES::
 
@@ -87,15 +87,14 @@ cdef class _lazy_attribute():
             sage: src[0]
             'def banner():\n'
             sage: lines
-            89
+            88
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
 
-
     def __get__(self, a, cls):
         """
-        Implements the attribute access protocol.
+        Implement the attribute access protocol.
 
         EXAMPLES::
 
@@ -142,6 +141,7 @@ cdef class _lazy_attribute():
                 return result
             raise
         return result
+
 
 class lazy_attribute(_lazy_attribute):
     r"""
@@ -441,37 +441,37 @@ class lazy_attribute(_lazy_attribute):
             sage: B().unimplemented_A # todo: not implemented
             Traceback (most recent call last):
             ...
-            AttributeError: 'super' object has no attribute 'unimplemented_A'
+            AttributeError: 'super' object has no attribute 'unimplemented_A'...
 
     We now make some systematic checks::
 
         sage: B().unimplemented_A
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_A'
+        AttributeError: '...' object has no attribute 'unimplemented_A'...
         sage: B().unimplemented_B
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_B'
+        AttributeError: '...' object has no attribute 'unimplemented_B'...
         sage: B().unimplemented_AB
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_AB'
+        AttributeError: '...' object has no attribute 'unimplemented_AB'...
         sage: B().unimplemented_B_implemented_A
         1
 
         sage: C().unimplemented_A()
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_A'
+        AttributeError: '...' object has no attribute 'unimplemented_A'...
         sage: C().unimplemented_B()
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_B'
+        AttributeError: '...' object has no attribute 'unimplemented_B'...
         sage: C().unimplemented_AB()
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_AB'
+        AttributeError: '...' object has no attribute 'unimplemented_AB'...
         sage: C().unimplemented_B_implemented_A # todo: not implemented
         1
     """
@@ -509,7 +509,7 @@ class lazy_attribute(_lazy_attribute):
 
 class lazy_class_attribute(lazy_attribute):
     """
-    A lazy class attribute for an class is like a usual class attribute,
+    A lazy class attribute for a class is like a usual class attribute,
     except that, instead of being computed when the class is constructed, it
     is computed on the fly the first time it is accessed, either through the
     class itself or trough on of its objects.

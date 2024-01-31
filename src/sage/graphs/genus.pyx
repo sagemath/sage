@@ -49,7 +49,7 @@ from sage.graphs.base.dense_graph cimport DenseGraph
 from sage.graphs.graph import Graph
 
 
-cdef inline int edge_map(int i):
+cdef inline int edge_map(int i) noexcept:
     """
     We might as well make the edge map nice, since the vertex map is so
     slippery.  This is the fastest way I could find to establish the
@@ -143,7 +143,7 @@ cdef class simple_connected_genus_backtracker:
         cdef int *w = <int *> self.mem.malloc((self.num_verts + self.num_darts) * sizeof(int))
         cdef int *s = <int *> self.mem.malloc(2 * (self.num_darts - self.num_verts) * sizeof(int))
 
-        cdef int i, j, du, dv, u, v
+        cdef int i, j, dv, u, v
 
         for v in range(self.num_verts):
             if not G.has_vertex(v):
@@ -202,7 +202,7 @@ cdef class simple_connected_genus_backtracker:
 #            print(self.face_map[v], end="")
 #        print(']')
 
-    cdef inline void freeze_face(self):
+    cdef inline void freeze_face(self) noexcept:
         """
         Quickly store the current face_map so we can recover
         the embedding it corresponds to later.
@@ -269,7 +269,7 @@ cdef class simple_connected_genus_backtracker:
 
         return embedding
 
-    cdef int run_cycle(self, int i):
+    cdef int run_cycle(self, int i) noexcept:
         r"""
         Mark off the orbit of `i` under face_map.
 
@@ -297,7 +297,7 @@ cdef class simple_connected_genus_backtracker:
             j = self.face_map[j]
         return 1
 
-    cdef void flip(self, int v, int i):
+    cdef void flip(self, int v, int i) noexcept:
         r"""
         This is where the real work happens. Once cycles have been counted for
         the initial face_map, we make small local changes, and look at their
@@ -341,7 +341,6 @@ cdef class simple_connected_genus_backtracker:
         before the flip, the cycle breaks into three.  Otherwise, the number of
         cycles stays the same.
         """
-        cdef int cycles = 0
         cdef int *w = self.vertex_darts[v]
         cdef int *face_map = self.face_map
 
@@ -389,11 +388,11 @@ cdef class simple_connected_genus_backtracker:
         w[i] = v2
         w[i + 1] = v1
 
-    cdef int count_cycles(self):
+    cdef int count_cycles(self) noexcept:
         """
         Count all cycles.
         """
-        cdef int i, j, c, m
+        cdef int i
         self.num_cycles = 0
 
         for i in range(self.num_darts):
@@ -447,7 +446,7 @@ cdef class simple_connected_genus_backtracker:
             sage: gb.genus()
             0
         """
-        cdef int g, i
+        cdef int g
 
         # in the original genus implementation, this case resulted in infinite
         # recursion.  oops.  Let's skip that.
@@ -461,14 +460,14 @@ cdef class simple_connected_genus_backtracker:
         sig_off()
         return g
 
-    cdef void reset_swap(self, int v):
+    cdef void reset_swap(self, int v) noexcept:
         """
         Reset the swapper associated with vertex ``v``.
         """
         cdef int d = self.degree[v] - 1
         reset_swap(d, self.swappers[v], self.swappers[v] + d)
 
-    cdef int next_swap(self, int v):
+    cdef int next_swap(self, int v) noexcept:
         """
         Compute and return the next swap associated with the vertex ``v``.
         """
@@ -478,7 +477,7 @@ cdef class simple_connected_genus_backtracker:
     cdef int genus_backtrack(self,
                              int cutoff,
                              bint record_embedding,
-                             (int (*)(simple_connected_genus_backtracker, int, bint, int))check_embedding):
+                             (int (*)(simple_connected_genus_backtracker, int, bint, int))check_embedding) noexcept:
         """
         Here's the main backtracking routine.
 
@@ -523,7 +522,7 @@ cdef class simple_connected_genus_backtracker:
 cdef int min_genus_check(simple_connected_genus_backtracker self,
                          int cutoff,
                          bint record_embedding,
-                         int initial):
+                         int initial) noexcept:
     """
     Search for the minimal genus.
 
@@ -543,7 +542,7 @@ cdef int min_genus_check(simple_connected_genus_backtracker self,
 cdef int max_genus_check(simple_connected_genus_backtracker self,
                          int cutoff,
                          bint record_embedding,
-                         int initial):
+                         int initial) noexcept:
     """
     Same as min_genus_check, but search for a maximum.
     """

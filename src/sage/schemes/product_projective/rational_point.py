@@ -57,15 +57,17 @@ AUTHORS:
 
 from sage.schemes.generic.scheme import is_Scheme
 from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
+from sage.misc.lazy_import import lazy_import
 from sage.misc.mrange import xmrange
 from sage.misc.misc_c import prod
 from sage.arith.misc import next_prime, previous_prime, crt
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
-from sage.matrix.constructor import matrix
+
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def enum_product_projective_rational_field(X, B):
@@ -391,7 +393,7 @@ def sieve(X, bound):
         of the ambient space.
         """
 
-        M = dict() # stores optimal list of primes, corresponding to list size
+        M = {}  # stores optimal list of primes, corresponding to list size
         small_primes = sufficient_primes(B)
         max_length = len(small_primes)
         M[max_length] = small_primes

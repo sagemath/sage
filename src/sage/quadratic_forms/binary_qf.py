@@ -144,7 +144,7 @@ class BinaryQF(SageObject):
             elif (isinstance(a, MPolynomial) and a.is_homogeneous() and a.base_ring() == ZZ
                   and a.degree() == 2 and a.parent().ngens() == 2):
                 x, y = a.parent().gens()
-                a, b, c = [a.monomial_coefficient(mon) for mon in [x**2, x*y, y**2]]
+                a, b, c = (a.monomial_coefficient(mon) for mon in [x**2, x*y, y**2])
             elif isinstance(a, pari_gen) and a.type() in ('t_QFI', 't_QFR', 't_QFB'):
                 # a has 3 or 4 components
                 a, b, c = a[0], a[1], a[2]
@@ -178,6 +178,49 @@ class BinaryQF(SageObject):
             <class 'sage.interfaces.gp.GpElement'>
         """
         return 'Qfb(%s,%s,%s)' % (self._a, self._b, self._c)
+
+    @staticmethod
+    def principal(D):
+        r"""
+        Return the principal binary quadratic form of the given discriminant.
+
+        EXAMPLES::
+
+            sage: BinaryQF.principal(8)
+            x^2 - 2*y^2
+            sage: BinaryQF.principal(5)
+            x^2 + x*y - y^2
+            sage: BinaryQF.principal(4)
+            x^2 - y^2
+            sage: BinaryQF.principal(1)
+            x^2 + x*y
+            sage: BinaryQF.principal(-3)
+            x^2 + x*y + y^2
+            sage: BinaryQF.principal(-4)
+            x^2 + y^2
+            sage: BinaryQF.principal(-7)
+            x^2 + x*y + 2*y^2
+            sage: BinaryQF.principal(-8)
+            x^2 + 2*y^2
+
+        TESTS:
+
+        Some randomized testing::
+
+            sage: D = 1
+            sage: while D.is_square():
+            ....:     D = choice((-4,+4)) * randrange(9999) + randrange(2)
+            sage: Q = BinaryQF.principal(D)
+            sage: Q.discriminant() == D     # correct discriminant
+            True
+            sage: (Q*Q).is_equivalent(Q)    # idempotent (hence identity)
+            True
+        """
+        D = ZZ(D)
+        D4 = D % 4
+        if D4 not in (0,1):
+            raise ValueError('discriminant must be congruent to 0 or 1 modulo 4')
+        return BinaryQF([1, D4, (D4-D)//4])
 
     def __mul__(self, right):
         """
@@ -910,7 +953,8 @@ class BinaryQF(SageObject):
         if algorithm == 'sage':
             if self.discriminant() <= 0:
                 raise NotImplementedError('reduction of definite binary '
-                    'quadratic forms is not implemented in Sage')
+                                          'quadratic forms is not implemented '
+                                          'in Sage')
             return self._reduce_indef(transformation)
 
         elif algorithm == 'pari':
@@ -1154,14 +1198,15 @@ class BinaryQF(SageObject):
         if self.discriminant().is_square():
             # Buchmann/Vollmer assume the discriminant to be non-square
             raise NotImplementedError('computation of cycles is only '
-                    'implemented for non-square discriminants')
+                                      'implemented for non-square '
+                                      'discriminants')
         if proper:
             # Prop 6.10.5 in Buchmann Vollmer
             C = list(self.cycle(proper=False))  # make a copy that we can modify
             if len(C) % 2:
                 C += C
-            for i in range(len(C)//2):
-                C[2*i+1] = C[2*i+1]._Tau()
+            for i in range(len(C) // 2):
+                C[2 * i + 1] = C[2 * i + 1]._Tau()
             return C
         if not hasattr(self, '_cycle_list'):
             C = [self]
@@ -1579,9 +1624,10 @@ class BinaryQF(SageObject):
             sage: Q.solve_integer(773187972)                                            # needs sage.libs.pari
             (4919, 1337)
 
-        If `Q` is of the form `[1,0,c]` as above and `n` is a prime or
-        four times a prime, Cornacchia's algorithm can be used, which is
-        typically much faster than the general method::
+        If `Q` is of the form `[1,0,c]` as above and `n` is a prime
+        (or four times a prime whenever `c \equiv 3 \pmod 4`), then
+        Cornacchia's algorithm can be used, which is typically much
+        faster than the general method::
 
             sage: Q = BinaryQF([1, 0, 12345])
             sage: n = 2^99 + 5273
@@ -1620,16 +1666,30 @@ class BinaryQF(SageObject):
         Also when using the ``"cornacchia"`` algorithm::
 
             sage: # needs sage.libs.pari
-            sage: abc = [1, 0, randrange(1,10^3)]
-            sage: Q = BinaryQF(abc)
             sage: n = random_prime(10^9)
-            sage: if randrange(2):
-            ....:     n *= 4
-            sage: xy1 = Q.solve_integer(n, algorithm='cornacchia')
-            sage: xy1 is None or Q(*xy1) == n
+            sage: c = randrange(1, 10^3)
+
+            sage: # needs sage.libs.pari
+            sage: Q1 = BinaryQF(1, 0, c)
+            sage: xy = Q1.solve_integer(n, algorithm='cornacchia')
+            sage: xy is None or Q1(*xy) == n
             True
-            sage: xy2 = Q.solve_integer(n)
-            sage: (xy1 is None) == (xy2 is None)
+            sage: (xy is None) == (Q1.solve_integer(n) is None)
+            True
+
+            sage: # needs sage.libs.pari
+            sage: Q3 = BinaryQF(1, 0, 4*c+3)
+            sage: xy = Q3.solve_integer(n, algorithm='cornacchia')
+            sage: xy is None or Q3(*xy) == n
+            True
+            sage: (xy is None) == (Q3.solve_integer(n) is None)
+            True
+
+            sage: # needs sage.libs.pari
+            sage: xy = Q3.solve_integer(4*n, algorithm='cornacchia')
+            sage: xy is None or Q3(*xy) == 4*n
+            True
+            sage: (xy is None) == (Q3.solve_integer(4*n) is None)
             True
 
         Test for square discriminants specifically (:trac:`33026`)::
@@ -1703,6 +1763,23 @@ class BinaryQF(SageObject):
         flag = 2  # single solution, possibly imprimitive
         sol = self.__pari__().qfbsolve(n, flag)
         return tuple(map(ZZ, sol)) if sol else None
+
+    def form_class(self):
+        r"""
+        Return the class of this form modulo equivalence.
+
+        EXAMPLES::
+
+            sage: F = BinaryQF([3, -16, 161])
+            sage: cl = F.form_class(); cl
+            Class of 3*x^2 + 2*x*y + 140*y^2
+            sage: cl.parent()
+            Form Class Group of Discriminant -1676
+            sage: cl.parent() is BQFClassGroup(-4*419)
+            True
+        """
+        from sage.quadratic_forms.bqf_class_group import BQFClassGroup
+        return BQFClassGroup(self.discriminant())(self)
 
 
 def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
@@ -1851,7 +1928,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
     if D > 0:           # Indefinite
         if D.is_square():
             b = D.sqrt()
-            c = ZZ(0)
+            c = ZZ.zero()
             # -b/2 < a <= b/2
             for a in xsrange((-b/2).floor() + 1, (b/2).floor() + 1):
                 if not primitive_only or (gcd([a, b, c]) == 1):

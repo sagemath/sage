@@ -643,11 +643,7 @@ def verts_for_normal(normal, poly):
     expmat = matrix(exps)
     vals = expmat * vector(QQ, normal)
     maxval = max(vals)
-    outverts = []
-    for i in range(len(exps)):
-        if vals[i] == maxval:
-            outverts.append(exps[i])
-    return outverts
+    return [exps[i] for i in range(len(exps)) if vals[i] == maxval]
 
 
 class TropicalPrevariety(PolyhedralFan):
@@ -1234,7 +1230,7 @@ class GroebnerFan(SageObject):
             return h
 
     def render(self, file=None, larger=False, shift=0, rgbcolor=(0, 0, 0),
-               polyfill=max_degree, scale_colors=True):
+               polyfill=True, scale_colors=True):
         """
         Render a Groebner fan as sage graphics or save as an xfig file.
 
@@ -1295,6 +1291,8 @@ class GroebnerFan(SageObject):
             ...
             NotImplementedError
         """
+        if polyfill is True:
+            polyfill = max_degree
         S = self.__ring
         if S.ngens() < 3:
             print("For 2-D fan rendering the polynomial ring must have 3 variables (or more, which are ignored).")
@@ -1314,16 +1312,13 @@ class GroebnerFan(SageObject):
             xs = x.split(' ')
             y = []
             if x[0:3] != '2 3' and len(xs) > 1:
-                for q in xs:
-                    if q != '':
-                        y.append(q)
+                y.extend(q for q in xs if q)
                 sp2.append(y)
         sp3 = []
         for j in range(len(sp2)):
-            temp = []
-            for i in range(0, len(sp2[j]) - 1, 2):
-                temp.append([float(sp2[j][i]) / 1200.0,
-                             float(sp2[j][i + 1]) / 1200.0])
+            temp = [[float(sp2[j][i]) / 1200.0,
+                     float(sp2[j][i + 1]) / 1200.0]
+                    for i in range(0, len(sp2[j]) - 1, 2)]
             sp3.append(temp)
         r_lines = Graphics()
         for x in sp3:
@@ -1368,10 +1363,7 @@ class GroebnerFan(SageObject):
             sage: gf._cone_to_ieq([[1,2,3,4]])
             [[0, 1, 2, 3, 4]]
         """
-        ieq_list = []
-        for q in facet_list:
-            ieq_list.append([0] + q)
-        return ieq_list
+        return [[0] + q for q in facet_list]
 
     def _embed_tetra(self, fpoint):
         """
@@ -1503,8 +1495,7 @@ class GroebnerFan(SageObject):
             except Exception:
                 print(cone_data._rays)
                 raise RuntimeError
-            for a_line in cone_lines:
-                all_lines.append(a_line)
+            all_lines.extend(a_line for a_line in cone_lines)
         return sum([line3d(a_line) for a_line in all_lines])
 
     def _gfan_stats(self):

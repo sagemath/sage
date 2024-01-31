@@ -130,7 +130,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
         sage: E.category()
-        Category of schemes over Ring of integers modulo 101
+        Category of abelian varieties over Ring of integers modulo 101
 
     In contrast, elliptic curves over `\ZZ/N\ZZ` with `N` composite
     are of type "generic elliptic curve"::
@@ -282,7 +282,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
         sage: E.category()
-        Category of schemes over Symbolic Ring
+        Category of abelian varieties over Symbolic Ring
         sage: SR in Fields()
         True
 
@@ -294,7 +294,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
         sage: E.category()
-        Category of schemes over
+        Category of abelian varieties over
          Fraction Field of Univariate Polynomial Ring in t over Rational Field
 
     See :trac:`12517`::
@@ -1132,7 +1132,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     if flex_point is not None: # first case: base point is a flex
         P = flex_point
         L = tangent_at_smooth_point(C,P)
-        dx, dy, dz = [L.coefficient(v) for v in R.gens()]
+        dx, dy, dz = (L.coefficient(v) for v in R.gens())
 
         # find an invertible matrix M such that (0,1,0)M=P and
         # ML'=(0,0,1)' where L=[dx,dy,dx].  Then the linear transform
