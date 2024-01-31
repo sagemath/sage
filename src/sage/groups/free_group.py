@@ -714,7 +714,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         Group.__init__(G, category=cat)
         return G
 
-    # def __init__(self, generator_names):
+    def __init__(self, generator_names):
     #     """
     #     Python constructor.
     #
