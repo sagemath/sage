@@ -186,7 +186,7 @@ def delta_swap(p, k, delta):
 def AltNuTamariLattice(nu, delta=None):
     r"""
     Return the `(\delta,\nu)`-Tamari lattice (or alt `\nu`-Tamari lattice).
-    
+
     For more information, see [CC2023]_.
 
     The path `\nu` is a path of North steps (represented as `1` s) and East steps (represented as `0` s).
@@ -210,7 +210,7 @@ def AltNuTamariLattice(nu, delta=None):
         Finite lattice containing 7 elements
         sage: AltNuTamariLattice('01001', [1, 0])
         Finite lattice containing 7 elements
-        sage: AltNuTamariLattice('01001') == AltNuTamariLattice('01001', [2, 0]) 
+        sage: AltNuTamariLattice('01001') == AltNuTamariLattice('01001', [2, 0])
         True
         sage: nu = '00100100101'; P = AltNuTamariLattice(nu); Q = NuTamariLattice(nu); P == Q
         True
@@ -242,6 +242,7 @@ def AltNuTamariLattice(nu, delta=None):
         delta = deltamax
     elif len(delta) != len(deltamax) or any([delta[i] > deltamax[i] for i in range(len(delta))]):
         raise ValueError("delta is not a valid increment vector")
+
     def covers(p):
         return [delta_swap(p, k, delta = delta) for k in range(1, p.length())
                 if not p[k - 1] and p[k]]
