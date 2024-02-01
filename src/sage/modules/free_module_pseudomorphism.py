@@ -136,7 +136,7 @@ class FreeModulePseudoMorphism(Morphism):
         sage: ph = M.pseudohom([[1, 2, 3], [0, 1, 1], [2, 1, 1]], frob, side="right")
         sage: e = M((3*Fq.gen()^2 + 5*Fq.gen() + 2, 6*Fq.gen()^2 + 2*Fq.gen() + 2, Fq.gen() + 4))
         sage: ph(e)
-        (3*z3 + 3, 2*z3^2, 5*z3^2 + 4)
+        (2*z3^2 + 3*z3 + 2, z3^2 + 2*z3 + 1, 2*z3^2 + 4*z3)
         """
         if self.twist_morphism is None and self.derivation is None:
             return self.base_morphism(x)
@@ -151,13 +151,14 @@ class FreeModulePseudoMorphism(Morphism):
             else:
                 x = self.domain().coordinate_vector(x)
             C = self.codomain()
-            if self.side == "left":
-                v = x * self.matrix()
+            if self.twist_morphism is None:
+                x_twist = x
             else:
-                v = self.matrix() * x
-            if self.twist_morphism is not None:
-                for i in range(len(v)):
-                    v[i] *= self.twist_morphism(x[i])
+                x_twist = self.domain()(list(map(self.twist_morphism, x)))
+            if self.side == "left":
+                v = x_twist * self.matrix()
+            else:
+                v = self.matrix() * x_twist
             if self.derivation is not None:
                 v += self.domain()(list(map(self.derivation, x)))
             if not C.is_ambient():

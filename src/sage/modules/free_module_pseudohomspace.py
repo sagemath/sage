@@ -37,7 +37,7 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
         sage: h = PHS([[1, 2], [1, 1]])
         sage: e = M((4*F.gen()^2 + F.gen() + 2, 4*F.gen()^2 + 4*F.gen() + 4))
         sage: h(e)
-        (3*z3^2 + z3, 4*z3^2 + 3*z3 + 3)
+        (z3, 2*z3^2 + 3*z3 + 3)
 
     """
     def __init__(self, X, Y, twist=None):
@@ -146,11 +146,12 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
     def identity(self):
         r"""
         Return the pseudomorphism corresponding to the identity transformation
+
         EXAMPLES::
 
             sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
             sage: PHS = M.PseudoHom(twist)
-            sage: PHS.zero().matrix()
+            sage: PHS.identity().matrix()
             [1 0]
             [0 1]
 
