@@ -2052,11 +2052,11 @@ cdef class Polynomial(CommutativePolynomial):
         Helper function for any_irreducible_factor which computes
         the distinct degree factorisation of `self`.
 
-        Creates an iterator for all valid degrees `d`, and return
+        Creates an iterator for all valid degrees `d`, and returns
         tuples of the form `(a_d, d)` for a polynomial `a_d` the
-        product of irreducible polynomials of degree `d`
+        product of irreducible polynomials of degree `d`.
 
-        Assumes that self is squarefree.
+        Assumes that this polynomial is squarefree.
 
         EXAMPLES::
 
@@ -2096,9 +2096,8 @@ cdef class Polynomial(CommutativePolynomial):
             w = pow(w, q, v)
 
             ad = v.gcd(w - x)
-            yield (ad, d)
-
             if not ad.is_one():
+                yield (ad, d)
                 v = v // ad
                 w = w % v
 
@@ -2111,10 +2110,10 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _cantor_zassenhaus_split_to_irreducible(self, degree):
         """
-        Helper function for any_irreducible_factor which computes
+        Helper function for :meth:`any_irreducible_factor` which computes
         a factor from a polynomial of the form `self = prod g_i(x)`
-        with all `g_i(x)` having the same degree. Uses the Cantor
-        Zassenhaus splitting method.
+        with all `g_i(x)` irreducible of the same degree. Uses the
+        Cantor-Zassenhaus splitting method.
 
         EXAMPLES::
 
@@ -2160,14 +2159,14 @@ cdef class Polynomial(CommutativePolynomial):
             return self
 
         # We expect to succeed with greater than 1/2 probability,
-        #so if we try 1000 times and fail, there's a bug somewhere.
+        # so if we try 1000 times and fail, there's a bug somewhere.
         for _ in range(1000):
             # Sample a polynomial uniformly from R
             T = R.random_element(2*degree + 1).monic()
 
             # Need to handle odd and even characteristic separately
             if q % 2:
-                h = self.gcd(pow(T, (q-1)//2, self)-1)
+                h = self.gcd(pow(T, (q-1)//2, self) - 1)
             else:
                 # Compute the trace of T with field of order 2^k
                 # sum T^(2^i) for i in range (degree * k)
@@ -2185,11 +2184,10 @@ cdef class Polynomial(CommutativePolynomial):
                 return h
 
             # Else check if we have a non-trivial factor and keep going
-            if not hd.is_zero() and hd != self.degree():
-                if 2*hd <= self.degree():
-                    return h._cantor_zassenhaus_split_to_irreducible(degree)
-                else:
-                    return (self//h)._cantor_zassenhaus_split_to_irreducible(degree)
+            if 0 < hd < self.degree():
+                if 2*hd > self.degree():
+                    h = self // h
+                return h._cantor_zassenhaus_split_to_irreducible(degree)
 
         # If you are reaching this error, chances are there's a bug in the code.
         raise AssertionError(f"no splitting of degree {degree} found for {self}")
@@ -2201,7 +2199,7 @@ cdef class Polynomial(CommutativePolynomial):
         squarefree.
 
         Does this by first computing the distinct degree factorisations
-        of self and thenfinds a factor with Cantor-Zassenhaus
+        of self and then finds a factor with Cantor-Zassenhaus
         splitting.
 
         If degree is not None, then only irreducible factors of degree
@@ -2369,7 +2367,7 @@ cdef class Polynomial(CommutativePolynomial):
             try:
                 factorisation = self.factor()
             except (NotImplementedError, ValueError):
-                raise ValueError(f"Cannot factor {self} over the base ring {self.base_ring()}")
+                raise ValueError(f"cannot factor {self} over the base ring {self.base_ring()}")
             if degree is None:
                 return factorisation[0][0]
             for (poly, e) in factorisation:
@@ -2391,7 +2389,7 @@ cdef class Polynomial(CommutativePolynomial):
         # the user.
 
         # Initial checks for bad input
-        if self.degree().is_zero():
+        if self.degree() <= 0:
             raise ValueError(f"there are no irreducible factors of {self}")
 
         # If we know the polynomial is square-free, we can start here
@@ -2550,7 +2548,7 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             ValueError: polynomial x^2 + 1 has no roots
         """
-        # When not working over a finite field, do the simplecthing of factoring for
+        # When not working over a finite field, do the simple thing of factoring for
         # roots and picking the first root. If none are available, raise an error.
         from sage.categories.finite_fields import FiniteFields
         if not self.base_ring() in FiniteFields():
@@ -2583,7 +2581,7 @@ cdef class Polynomial(CommutativePolynomial):
         if degree < 0:
             from sage.misc.superseded import deprecation
             deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_distinct_deg`.")
-            degree = ZZ(abs(degree))
+            degree = -degree
             assume_distinct_deg = True
 
         # If a certain degree is requested, then we find an irreducible factor of degree `degree`
