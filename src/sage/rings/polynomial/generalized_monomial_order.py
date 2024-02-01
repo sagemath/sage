@@ -71,7 +71,6 @@ class GeneralizedMonomialOrder(SageObject):
         """
         return hash(self._group_order_name + self._score_function_name + str(self._n))
 
-
     def _repr_(self):
         r"""
 
