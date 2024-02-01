@@ -2451,7 +2451,7 @@ cdef class GapElement_Function(GapElement):
             [Group(()),
              Sym( [ 1 .. 4 ] ),
              Alt( [ 1 .. 4 ] ),
-             Group([ (1,4)(2,3), (1,3)(2,4) ])]
+             Group([ (1,4)(2,3), (1,2)(3,4) ])]
 
             sage: libgap.eval("a := NormalSubgroups")
             <Gap function "NormalSubgroups">
