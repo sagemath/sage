@@ -2162,7 +2162,7 @@ cdef class Polynomial(CommutativePolynomial):
         for _ in range(1000):
             # Sample a polynomial uniformly from R
             # TODO: once #37118 has been merged, we can call
-            #       R.random_monic_element(2*degree + 1)
+            #       R.random_element(degree=(2*degree+1), monic=True)
             T = R.random_element(2*degree + 1).monic()
 
             # Need to handle odd and even characteristic separately
