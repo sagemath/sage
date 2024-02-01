@@ -1082,6 +1082,7 @@ class MacdonaldPolynomials_q(MacdonaldPolynomials_generic):
             sage: TestSuite(Q).run(elements = [Q.t*Q[1,1]+Q.q*Q[2], Q[1]+(Q.q+Q.t)*Q[1,1]])  # long time (depends on previous)
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
+        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("Q",))
 
         self._J = macdonald.J()
         self._P = macdonald.P()
@@ -1118,6 +1119,7 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
         self._self_to_s_cache = _j_to_s_cache
         self._s_to_self_cache = _s_to_j_cache
         MacdonaldPolynomials_generic.__init__(self, macdonald)
+        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("J",))
 
     def _s_cache(self, n):
         r"""
@@ -1218,6 +1220,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
 
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
+        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("H",))
         self._m = self._sym.m()
         self._Lmunu = macdonald.Ht()._Lmunu
         if not self.t:
@@ -1440,6 +1443,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
+        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("Ht",))
         self._self_to_m_cache = _ht_to_m_cache
         self._m = self._sym.m()
         category = ModulesWithBasis(self.base_ring())
@@ -1735,6 +1739,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
 
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
+        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("S",))
         self._s = macdonald._s
         self._self_to_s_cache = _S_to_s_cache
         self._s_to_self_cache = _s_to_S_cache
