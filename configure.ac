@@ -57,13 +57,6 @@ dnl avoid involving libtool by using it to get the shared library extension.
 AC_LIB_RPATH
 AC_SUBST(SHLIBEXT, "${acl_shlibext}")
 
-#---------------------------------------------------------
-#
-# This is essentially the configure part of the old "install" file.
-# Over time, this should be changed to proper autoconf style with
-# configure options.
-#
-
 ########################################################################
 # Set various environment variables (needed at configure time)
 ########################################################################
@@ -567,7 +560,6 @@ AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
 
-dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
