@@ -76,8 +76,5 @@
     },
     "sage.structure.coerce_actions": {
         "failed": "random failure https://github.com/sagemath/sage/issues/35973"
-    },
-    "sage.tests.gap_packages": {
-        "failed": true
     }
 }

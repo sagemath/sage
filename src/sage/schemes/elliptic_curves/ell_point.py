@@ -872,10 +872,56 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             ...
             ZeroDivisionError: rational division by zero
         """
-        if self[2] == 1:
+        if self[2].is_one():
             return self[0], self[1]
         else:
             return self[0]/self[2], self[1]/self[2]
+
+    def x(self):
+        """
+        Return the `x` coordinate of this point, as an element of the base field.
+        If this is the point at infinity, a :class:`ZeroDivisionError` is raised.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: P = E([-1,1])
+            sage: P.x()
+            -1
+            sage: Q = E(0); Q
+            (0 : 1 : 0)
+            sage: Q.x()
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: rational division by zero
+        """
+        if self[2].is_one():
+            return self[0]
+        else:
+            return self[0]/self[2]
+
+    def y(self):
+        """
+        Return the `y` coordinate of this point, as an element of the base field.
+        If this is the point at infinity, a :class:`ZeroDivisionError` is raised.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: P = E([-1,1])
+            sage: P.y()
+            1
+            sage: Q = E(0); Q
+            (0 : 1 : 0)
+            sage: Q.y()
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: rational division by zero
+        """
+        if self[2].is_one():
+            return self[1]
+        else:
+            return self[1]/self[2]
 
     def is_divisible_by(self, m):
         """
@@ -1572,7 +1618,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Fx.<b> = GF((2,(4*5)))
             sage: Ex = EllipticCurve(Fx, [0,0,1,1,1])
             sage: phi = Hom(F,Fx)(F.gen().minpoly().roots(Fx)[0][0])
-            sage: Px = Ex(phi(P.xy()[0]), phi(P.xy()[1]))
+            sage: Px = Ex(phi(P.x()), phi(P.y()))
             sage: Qx = Ex(b^19 + b^18 + b^16 + b^12 + b^10 + b^9 + b^8 + b^5 + b^3 + 1,
             ....:         b^18 + b^13 + b^10 + b^8 + b^5 + b^4 + b^3 + b)
             sage: Px._miller_(Qx,41) == b^17 + b^13 + b^12 + b^9 + b^8 + b^6 + b^4 + 1
@@ -1757,7 +1803,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Fx.<b> = GF((2, 4*5))
             sage: Ex = EllipticCurve(Fx, [0,0,1,1,1])
             sage: phi = Hom(F, Fx)(F.gen().minpoly().roots(Fx)[0][0])
-            sage: Px = Ex(phi(P.xy()[0]), phi(P.xy()[1]))
+            sage: Px = Ex(phi(P.x()), phi(P.y()))
             sage: O = Ex(0)
             sage: Qx = Ex(b^19 + b^18 + b^16 + b^12 + b^10 + b^9 + b^8 + b^5 + b^3 + 1,
             ....:         b^18 + b^13 + b^10 + b^8 + b^5 + b^4 + b^3 + b)
@@ -1997,7 +2043,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Fx.<b> = GF((2,4*5))
             sage: Ex = EllipticCurve(Fx,[0,0,1,1,1])
             sage: phi = Hom(F, Fx)(F.gen().minpoly().roots(Fx)[0][0])
-            sage: Px = Ex(phi(P.xy()[0]), phi(P.xy()[1]))
+            sage: Px = Ex(phi(P.x()), phi(P.y()))
             sage: Qx = Ex(b^19 + b^18 + b^16 + b^12 + b^10 + b^9 + b^8 + b^5 + b^3 + 1,
             ....:         b^18 + b^13 + b^10 + b^8 + b^5 + b^4 + b^3 + b)
             sage: Px.tate_pairing(Qx, n=41, k=4)
@@ -2203,7 +2249,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Fx.<b> = GF(q^k)
             sage: Ex = EllipticCurve(Fx, [0,0,1,1,1])
             sage: phi = Hom(F, Fx)(F.gen().minpoly().roots(Fx)[0][0])
-            sage: Px = Ex(phi(P.xy()[0]), phi(P.xy()[1]))
+            sage: Px = Ex(phi(P.x()), phi(P.y()))
             sage: Qx = Ex(b^19+b^18+b^16+b^12+b^10+b^9+b^8+b^5+b^3+1,
             ....:         b^18+b^13+b^10+b^8+b^5+b^4+b^3+b)
             sage: Qx = Ex(Qx[0]^q, Qx[1]^q) - Qx  # ensure Qx is in ker(pi - q)
@@ -3995,14 +4041,14 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             for k in range(0,p):
                 Eqp = EllipticCurve(Qp(p, 2), [ ZZ(t) + k * p for t in E.a_invariants() ])
 
-                P_Qps = Eqp.lift_x(ZZ(self.xy()[0]), all=True)
+                P_Qps = Eqp.lift_x(ZZ(self.x()), all=True)
                 for P_Qp in P_Qps:
-                    if F(P_Qp.xy()[1]) == self.xy()[1]:
+                    if F(P_Qp.y()) == self.y():
                         break
 
-                Q_Qps = Eqp.lift_x(ZZ(Q.xy()[0]), all=True)
+                Q_Qps = Eqp.lift_x(ZZ(Q.x()), all=True)
                 for Q_Qp in Q_Qps:
-                    if F(Q_Qp.xy()[1]) == Q.xy()[1]:
+                    if F(Q_Qp.y()) == Q.y():
                         break
 
                 pP = p * P_Qp
