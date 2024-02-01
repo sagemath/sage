@@ -2394,7 +2394,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I != I                # indirect doctest
             False
 
-        TESTS:
+        TESTS::
+
             sage: B = QuaternionAlgebra(QQ,-1,-11)
             sage: i,j,k = B.gens()
             sage: I = B.ideal([1,i,j,i*j])
@@ -2419,7 +2420,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             True
             sage: O >= O
             True
-
         """
         return self.free_module().__richcmp__(right.free_module(), op)
 
