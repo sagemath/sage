@@ -2313,7 +2313,6 @@ cdef class Polynomial(CommutativePolynomial):
             Traceback (most recent call last):
             ...
             ValueError: no irreducible factor of degree 2 could be computed from x^4 + 162*x^3 + 7*x^2 + 154*x + 2
-            sage: h = (x + 57) * (x + 98) * (x + 117) * (x + 145)
 
         If we assume that the polynomial is product of irreducible polynomials of the
         same degree, we must also supply the degree::
@@ -2322,12 +2321,12 @@ cdef class Polynomial(CommutativePolynomial):
             sage: F = GF(163)
             sage: R.<x> = F[]
             sage: h = (x + 57) * (x + 98) * (x + 117) * (x + 145)
+            sage: h.any_irreducible_factor(degree=1, assume_distinct_deg=True)   # random
+            x + 98
             sage: h.any_irreducible_factor(assume_distinct_deg=True)
             Traceback (most recent call last):
             ...
             ValueError: degree must be known if distinct degree factorisation is assumed
-            sage: h.any_irreducible_factor(degree=1, assume_distinct_deg=True)   # random
-            x + 98
 
         Also works for extension fields and even characteristic::
 
