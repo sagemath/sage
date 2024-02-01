@@ -2160,9 +2160,14 @@ cdef class Polynomial(CommutativePolynomial):
         # We expect to succeed with greater than 1/2 probability,
         # so if we try 1000 times and fail, there's a bug somewhere.
         for _ in range(1000):
-            # Sample a polynomial uniformly from R
-            # TODO: once #37118 has been merged, we can call
-            #       R.random_element(degree=(2*degree+1), monic=True)
+            # Sample a polynomial "uniformly" from R
+            # TODO: once #37118 has been merged, this can be made cleaner,
+            #       as we will actually have access to uniform sampling.
+            #       At the moment, we make an ugly call for polynomials of
+            #       degree exactly 2*degree + 1, instead of polynomials of degree
+            #       less than `self.degree()` as the original desc. of C-Z.
+            #       Additionally, we can use the `monic` flag:
+            #       R.random_element(degree=(self.degree() - 1), monic=True)
             T = R.random_element(2*degree + 1).monic()
 
             # Need to handle odd and even characteristic separately
