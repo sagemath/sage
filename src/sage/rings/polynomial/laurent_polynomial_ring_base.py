@@ -63,6 +63,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         CommutativeRing.__init__(self, R.base_ring(), names=names,
                                  category=R.category())
 
+    def order(self):
+        return self._order
+
     def ngens(self):
         """
         Return the number of generators of ``self``.
@@ -306,7 +309,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         if type(self) is not type(right):
             return False
-        return self._R == right._R
+        return self._R == right._R 
 
     def __ne__(self, other):
         """

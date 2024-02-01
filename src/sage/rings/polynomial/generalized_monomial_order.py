@@ -65,6 +65,13 @@ class GeneralizedMonomialOrder(SageObject):
         self._score_function = get_score_function(score_function)
         self._score_function_name = score_function
 
+    def __hash__(self):
+        r"""
+        Return the hash of self. It depends on the number of variables, the group_order and the score function
+        """
+        return hash(self._group_order_name + self._score_function_name + str(self._n))
+
+
     def _repr_(self):
         r"""
 

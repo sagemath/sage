@@ -15,6 +15,7 @@ from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
+from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
 from sage.matrix.matrix0 cimport Matrix
 
 
@@ -1601,43 +1602,86 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         Return the leading monomial of ``self``.
         
         EXAMPLES::
+
             sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
             sage: order = GeneralizedMonomialOrder(2)
-            sage: L.<x,y> = LaurentPolynomialRing(QQ)
-            sage: f = 2*x^2*y - 3*x^-2*y^2 + 4*x^-6*y^-7
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = 3*x*y + x^-1*y
             sage: f.leading_monomial()
-            x^-6*y^-7
-
+            x^-1*y
         """
-        order = self.parent()._order
+        ring = self.parent()
+        order = ring.order()
         if order is None:
-            raise AttributeError("No generalized order defined in parent")
+            raise AttributeError(f"No generalized order defined in parent")
 
         if self._prod is None:
             self._compute_polydict()
         exponents = [tuple(et) for et in self._prod.exponents()]
         leading_tuple = order.greatest_tuple(exponents)
-        return self.parent().monomial(*leading_tuple)
+        return ring.monomial(*leading_tuple)
 
     def leading_coefficient(self):
         r"""
-        Return the leading coefficient of self
+        Return the leading coefficient of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = 2*x*y + 3*x^2*y^-2
+            sage: f.leading_coefficient()
+            3
         """
-        lm = self.leading_monomial()
-        return self.coefficient(lm)
+        return self.coefficient(self.leading_monomial())
 
     def leading_term(self):
         r"""
-        Return the leading term of self
+        Return the leading term of ``self``
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2,score_function="degmin")
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = 2*x^2*y^-3 + 3*x*y^-4
+            sage: f.leading_term()
+            3*x*y^-4
         """
         return self.leading_coefficient()*self.leading_monomial()
 
+    def leadings(self):
+        r"""
+        Return in a list the leanding coefficient, monomial and term of ``self``.
+        
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = x^2*y + y^-1*x^-2 + x^2*y^-3
+            sage: f.leadings()
+        """
+
     def leading_monomial_for_cone(self,i):
         r"""
-        Return the leading monomial with respect to the `i`-th cone
+        Return the leading monomial of ``self`` with respect to the ``i``-th cone
+
+        INPUTS:
+            - ``i`` -- A cone index.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = x^2*y + y^-1*x^-2 + x^2*y^-3
+            sage: f.leading_monomial_for_cone(1)
+            x^-2*y^-1
+            
         """
-        
-        order = self.parent().order
+        order = self.parent().order()
         if order is None:
             raise AttributeError("No generalized order defined in parent")
 
@@ -1650,7 +1694,20 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def leading_coefficient_for_cone(self,i):
         r"""
-        Return the leading coefficient of self with respect to the `i`-th cone
+        Return the leading coefficient of ``self`` with respect to the ``i``-th cone.
+        
+        INPUTS:
+            - ``i`` -- A cone index.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = 2*x^2*y + 3*y^-1*x^-2 + 4*x^2*y^-3
+            sage: f.leading_coefficient_for_cone(1)
+            3
+            
         """
         lm = self.leading_monomial_for_cone(i)
         return self.coefficient(lm)
@@ -1658,31 +1715,90 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
     def leading_term_for_cone(self,i):
         r"""
         Return the leading term of self with respect to the `i`-th cone
+
+        INPUTS:
+            - ``i`` -- A cone index.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = 2*x^2*y + 3*y^-1*x^-2 + x^2*y^-3
+            sage: f.leading_term_for_cone(1)
+            3*x^-2*y^-1
         """
         return self.leading_coefficient_for_cone(i)*self.leading_monomial_for_cone(i)
 
     def leadings_for_cone(self,i):
+        r"""
+        Return a list containgin the leading coefficient, monomail and term of ``self`` for the ``i``-th cone.
+    
+        INPUTS:
+            - ``i`` -- A cone index.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = 3*x^2*y + 2*y^-1*x^-2 + x^2*y^-3
+            sage: f.leadings_for_cone(1)
+            [2, x^-2*y^-1, 2*x^-2*y^-1]
+
+
+        """
         lm = self.leading_monomial_for_cone(i)
         lc = self.coefficient(lm)
         return [lc, lm, lc*lm]
       
     def is_in_cone(self,i):
+        """
+        Test whether the monomial ``self`` is in the ``i``-th cone.
+
+        INPUTS:
+            - ``i`` -- A cone index.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = x^2*y
+            sage: f.is_in_cone(0)
+            True
+        """
+        order = self.parent().order()
         if not self.is_monomial():
             raise TypeError("arg must be a monomial")
-        if self.parent().order == None:
+        if not isinstance(order, GeneralizedMonomialOrder):
             raise AttributeError("Parent has no generalized order")
 
-        order = self.parent().order
         exponent = tuple(self.exponents()[0])
         return order.is_in_cone(i,exponent)
 
     def generator_for_cone(self,i):
-        order = self.parent().order
+        """
+        Return the generator of ``self`` for the ``i``-th cone.
+    
+        INPUTS:
+            - ``i`` -- A cone index.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = x^2*y + y^-1*x^-2 + x^2*y^-3
+            sage: f.generator_for_cone(2)
+            x*y^2
+       """ 
+
+        order = self.parent().order()
         return self.parent().monomial(*order.generator(i,self.exponents()))
 
     def generator_for_pair(self,i,g):
-
-        order = self.parent().order
+        order = self.parent().order()
         u = order.generator_for_pair(i,self.exponents(),g.exponents())
         u = self.parent().monomial(*u)
         return u
@@ -1694,7 +1810,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         EXAMPLES::
         """
 
-        if self.parent().order is None:
+        if self.parent().order() is None:
             raise AttributeError("Parent has no generalized order")
 
         if not isinstance(reducers,list):
@@ -1997,3 +2113,70 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if new_ring is not None:
             return new_ring(ans)
         return ans
+
+def reduce(f,reducers):
+    r"""
+    Reduce ``f``  by ``reducers`` using the multivariate division algorithm of [PU1999]_.
+
+    INPUTS:
+        - ``f`` -- A Laurent polynomial.
+        - ``reducers`` -- A list of Laurent polynomials.
+
+    OUTPUT: A tuple (remainder, quotients) where remainder is the rest and quotients 
+            a list of Laurent polynomials.
+    
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+        sage: order = GeneralizedMonomialOrder(2)
+        sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+        sage: f = x^2*y + y^-1*x^-2 + x^2*y^-3
+        sage: reducers = [2*x^2*y + x^-1, 3*y^-3*y^-2 + x^3, x^2*y^2 - 5*x^-3*y^3 + 4x^-6*y^-1]
+        sage: reduce(f, reducers)
+
+    """
+
+    if f.parent().order() is None:
+        raise AttributeError("Parent has no generalized order")
+
+    if not isinstance(reducers,list):
+        raise TypeError("Reducers must be a list of Laurent polynomials")
+    for h in reducers:
+        if not isinstance(h, LaurentPolynomial):
+            raise TypeError("Reducers must be Laurent polynomials")
+
+    num_reducers = len(reducers) 
+    quotients = [0]*num_reducers
+    remainder = 0
+   
+    while f:
+        # Find a cone containing the leading monomial of f
+        for i in range(0,f.parent()._n):
+            lm = f.leading_monomial()
+            if lm.is_in_cone(i):break
+
+        try_reduction = True
+        while try_reduction and f:
+            lm = f.leading_monomial()
+            found_reducer=False
+            for j in range(0,len(reducers)):
+                reducer = reducers[j]
+                lm_reducer_cone = reducer.leading_monomial_for_cone(i)
+                candidate = ((lm/lm_reducer_cone)*reducer).leading_monomial()
+                if candidate == lm:
+                    found_reducer = True
+                    t = f.leading_term()/reducer.leading_term_for_cone(i)
+                    f -= t*reducer
+                    quotients[j] += t 
+                    break
+
+            if not found_reducer:
+                try_reduction = False
+       
+        if f:
+            lt = f.leading_term()
+            remainder += lt
+            f -= lt
+
+    return (remainder, quotients)
+
