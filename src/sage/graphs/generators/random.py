@@ -1490,7 +1490,7 @@ def RandomKTree(n, k, seed=None):
         sage: g.treewidth()
         5
     
-    EXAMPLES:
+    EXAMPLES::
 
     A (random) `k`-tree has treewidth `k`::
 
@@ -1531,12 +1531,12 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     INPUT:
 
-    -  ``n`` -- number of vertices in the `k`-tree
+    - ``n`` -- number of vertices in the `k`-tree
 
-    -  ``k`` -- within a clique each vertex is connected to `k` vertices. `k`
+    - ``k`` -- within a clique each vertex is connected to `k` vertices. `k`
       also corresponds to the treewidth of the `k`-tree
 
-    -  ``x`` -- how many edges are deleted from the `k`-tree
+    - ``x`` -- how many edges are deleted from the `k`-tree
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
@@ -1551,7 +1551,7 @@ def RandomPartialKTree(n, k, x, seed=None):
         sage: g.treewidth()
         5
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: G = graphs.RandomPartialKTree(50,5,5)
         sage: G.treewidth()
