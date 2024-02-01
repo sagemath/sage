@@ -85,6 +85,11 @@ class GeneralizedMonomialOrder(SageObject):
         n = str(self._n)
         return "Generalized monomial order in %s variables using (%s, %s)" % (n, group, function)
 
+    def __hash__(self):
+        r"""
+        Return the hash of self. It depends on the number of variables, the group_order and the score function.
+        """
+        return hash(self._group_order_name + self._score_function_name + str(self._n))
 
     def n_cones(self):
         r"""
