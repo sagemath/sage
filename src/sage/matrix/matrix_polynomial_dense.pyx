@@ -675,7 +675,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.reverse([2,3,-1])
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned long
+            ValueError: degree argument must be a non-negative integer, got -1
 
         .. SEEALSO::
 
