@@ -59,6 +59,7 @@ Advanced options::
 import logging
 import argparse
 import os
+import shlex
 import sys
 import sphinx.ext.intersphinx
 from sage.env import SAGE_DOC_SRC
@@ -293,6 +294,9 @@ def setup_parser():
     standard.add_argument("--no-pdf-links", dest="no_pdf_links",
                           action="store_true",
                           help="do not include PDF links in DOCUMENT 'website'; FORMATs: html, json, pickle, web")
+    standard.add_argument("--live-doc", dest="live_doc",
+                          action="store_true",
+                          help="make Sage code blocks live for html FORMAT")
     standard.add_argument("--warn-links", dest="warn_links",
                           action="store_true",
                           help="issue a warning whenever a link is not properly resolved; equivalent to '--sphinx-opts -n' (sphinx option: nitpicky)")
@@ -441,6 +445,9 @@ def main():
     if not name or not typ:
         parser.print_help()
         sys.exit(1)
+    elif name == 'all':
+        sys.exit(os.system(f'cd {shlex.quote(SAGE_DOC_SRC)} '
+                           f'&& ${{MAKE:-make}} -j${{SAGE_NUM_THREADS_PARALLEL:-1}} doc-{typ}'))
 
     # Set up module-wide logging.
     setup_logger(args.verbose, args.color)
@@ -470,6 +477,8 @@ def main():
         build_options.ALLSPHINXOPTS += "-n "
     if args.no_plot:
         os.environ['SAGE_SKIP_PLOT_DIRECTIVE'] = 'yes'
+    if args.live_doc:
+        os.environ['SAGE_LIVE_DOC'] = 'yes'
     if args.skip_tests:
         os.environ['SAGE_SKIP_TESTS_BLOCKS'] = 'True'
     if args.use_cdns:
@@ -493,6 +502,7 @@ def main():
 
     builder = getattr(get_builder(name), typ)
     builder()
+
 
 if __name__ == '__main__':
     sys.exit(main())

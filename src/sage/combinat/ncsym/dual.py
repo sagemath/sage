@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Dual Symmetric Functions in Non-Commuting Variables
 
@@ -5,12 +6,12 @@ AUTHORS:
 
 - Travis Scrimshaw (08-04-2013): Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -47,10 +48,10 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             sage: NCSymD2 = SymmetricFunctionsNonCommutingVariablesDual(Integers(23))
             sage: TestSuite(SymmetricFunctionsNonCommutingVariables(QQ).dual()).run()
         """
-        # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
-        self._base = R # Won't be needed once CategoryObject won't override base_ring
-        category = GradedHopfAlgebras(R)  # TODO: .Commutative()
+        # change the line below to assert R in Rings() once MRO issues from #15536, #15475 are resolved
+        assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
+        self._base = R  # Won't be needed once CategoryObject won't override base_ring
+        category = GradedHopfAlgebras(R).Commutative()
         Parent.__init__(self, category=category.WithRealizations())
 
         # Bases
@@ -103,7 +104,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
     class w(NCSymBasis_abstract):
         r"""
-        The Hopf algebra of symmetric functions in non-commuting variables
+        The dual Hopf algebra of symmetric functions in non-commuting variables
         in the `\mathbf{w}` basis.
 
         EXAMPLES::
@@ -134,10 +135,14 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             """
             def key_func_set_part(A):
                 return sorted(map(sorted, A))
-            CombinatorialFreeModule.__init__(self, NCSymD.base_ring(), SetPartitions(),
+
+            R = NCSymD.base_ring()
+            category = GradedHopfAlgebras(R).Commutative()
+            category &= NCSymDualBases(NCSymD)
+            CombinatorialFreeModule.__init__(self, R, SetPartitions(),
                                              prefix='w', bracket=False,
                                              sorting_key=key_func_set_part,
-                                             category=NCSymDualBases(NCSymD))
+                                             category=category)
 
         @lazy_attribute
         def to_symmetric_function(self):

@@ -1,4 +1,5 @@
 # Packages needed for ./bootstrap
-autoconf automake libtool
-# Otherwise: Error: could not locate the pkg-config autoconf macros. These are
-pkg-config
+autoconf
+automake
+libtool
+pkgconf

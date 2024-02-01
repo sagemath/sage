@@ -616,7 +616,7 @@ class QuiverRepHom(CallMorphism):
 
     def _assert_valid_hom(self):
         """
-        Raise a ``ValueError`` if the homomorphism is not well defined.
+        Raise a :class:`ValueError` if the homomorphism is not well defined.
 
         Specifically it checks that the domain and codomains of the maps are
         correct and that the edge diagrams commute.
@@ -1108,7 +1108,7 @@ class QuiverRepHom(CallMorphism):
             Representation with dimension vector (5, 2, 1, 1, 4)
 
         The algebraic dual of an indecomposable projective is the indecomposable
-        projective of the same vertex in the opposite quiver.
+        projective of the same vertex in the opposite quiver. ::
 
             sage: Q.reverse().P(QQ, 4)
             Representation with dimension vector (5, 2, 1, 1, 4)

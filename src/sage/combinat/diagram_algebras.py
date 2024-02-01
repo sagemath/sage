@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Diagram and Partition Algebras
 
@@ -31,9 +31,10 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.combinat import bell_number, catalan_number
 from sage.structure.global_options import GlobalOptions
-from sage.combinat.combinat_cython import (set_partition_iterator, perfect_matchings_iterator,
+from sage.combinat.combinat_cython import (perfect_matchings_iterator,
                                            set_partition_composition)
 from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
+from sage.combinat.set_partition_iterator import set_partition_iterator
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra_n
 from sage.combinat.permutation import Permutations
 from sage.graphs.graph import Graph
@@ -231,7 +232,7 @@ def planar_partitions_rec(X):
         if len(X) > 1:
             yield ([X[0]], [X[1]])
         return
-    from sage.misc.misc import powerset
+    from sage.combinat.subset import powerset
     from itertools import product
     for S in powerset(range(len(X)-1)):
         if not S:
@@ -2053,9 +2054,9 @@ class DiagramAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: q = var('q')
-            sage: PA = PartitionAlgebra(2, q)
-            sage: PA.order()
+            sage: q = var('q')                                                          # needs sage.symbolic
+            sage: PA = PartitionAlgebra(2, q)                                           # needs sage.symbolic
+            sage: PA.order()                                                            # needs sage.symbolic
             2
         """
         return self._k
@@ -2157,7 +2158,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
             return self.support()
 
 
-class UnitDiagramMixin():
+class UnitDiagramMixin:
     """
     Mixin class for diagram algebras that have the unit indexed by
     the :func:`identity_set_partition`.
@@ -2412,17 +2413,20 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     ::
 
+        sage: # needs sage.symbolic
         sage: q = var('q')
         sage: PA = PartitionAlgebra(2, q); PA
         Partition Algebra of rank 2 with parameter q over Symbolic Ring
         sage: PA([[1,2],[-2,-1]])^2 == q*PA([[1,2],[-2,-1]])
         True
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]])
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2
+        ....:   == (4*q-4)*PA([[1, 2], [-2, -1]]) + PA([[2, -2], [1, -1]]))
         True
 
     The identity element of the partition algebra is the set
     partition `\{\{1,-1\}, \{2,-2\}, \ldots, \{k,-k\}\}`::
 
+        sage: # needs sage.symbolic
         sage: P = PA.basis().list()
         sage: PA.one()
         P{{-2, 2}, {-1, 1}}
@@ -2445,17 +2449,19 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         sage: PA = PartitionAlgebra(2, 5, base_ring=ZZ, prefix='B')
         sage: PA
         Partition Algebra of rank 2 with parameter 5 over Integer Ring
-        sage: (PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2 == 16*PA([[-2, -1], [1, 2]]) + PA([[2, -2], [1, -1]])
+        sage: ((PA([[2, -2], [1, -1]]) - 2*PA([[-2, -1], [1, 2]]))^2
+        ....:   == 16*PA([[-2, -1], [1, 2]]) + PA([[2, -2], [1, -1]]))
         True
 
     Symmetric group algebra elements and elements from other subalgebras
     of the partition algebra (e.g., ``BrauerAlgebra`` and
     ``TemperleyLiebAlgebra``) can also be coerced into the partition algebra::
 
+        sage: # needs sage.symbolic
         sage: S = SymmetricGroupAlgebra(SR, 2)
         sage: B = BrauerAlgebra(2, x, SR)
         sage: A = PartitionAlgebra(2, x, SR)
-        sage: S([2,1])*A([[1,-1],[2,-2]])
+        sage: S([2,1]) * A([[1,-1],[2,-2]])
         P{{-2, 1}, {-1, 2}}
         sage: B([[-1,-2],[2,1]]) * A([[1],[-1],[2,-2]])
         P{{-2}, {-1}, {1, 2}}
@@ -2470,7 +2476,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         sage: S = SymmetricGroupAlgebra(ZZ, 2)
         sage: B = BrauerAlgebra(2, q, ZZ[q])
         sage: A = PartitionAlgebra(3, q, R)
-        sage: S([2,1])*A([[1,-1],[2,-3],[3,-2]])
+        sage: S([2,1]) * A([[1,-1],[2,-3],[3,-2]])
         P{{-3, 1}, {-2, 3}, {-1, 2}}
         sage: A(B([[-1,-2],[2,1]]))
         P{{-3, 3}, {-2, -1}, {1, 2}}
@@ -2489,20 +2495,18 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     Shorthands for working with basis elements are as follows::
 
+        sage: # needs sage.symbolic
         sage: S = SymmetricGroupAlgebra(ZZ, 3)
         sage: A = PartitionAlgebra(3, x, SR)
-
-        sage: A([[1,3],[-1],[-3]]) # pair up the omitted nodes as `{-i, i}`, if possible
+        sage: A([[1,3],[-1],[-3]])  # pair up the omitted nodes as `{-i, i}`, if possible
         P{{-3}, {-2, 2}, {-1}, {1, 3}}
         sage: A([[1,3],[-1],[-3]]) == A[[1,3],[-1],[-3]]
         True
-
         sage: A([[1,2]])
         P{{-3, 3}, {-2}, {-1}, {1, 2}}
         sage: A([[1,2]]) == A[[1,2]]
         True
-
-        sage: A([2,3,1]) # permutations in one-line notation are imported as well
+        sage: A([2,3,1])  # permutations in one-line notation are imported as well
         P{{-3, 2}, {-2, 1}, {-1, 3}}
         sage: A([2,3,1]) == A(S([2,3,1]))
         True
@@ -2667,7 +2671,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             -3*P{{-4, 4}, {-3, -2, -1, 1, 2, 3}}
              + 2*P{{-4, 4}, {-3, -2, 1, 2, 3}, {-1}}
              + 3*P{{-4, 4}, {-3, -1, 1, 2, 3}, {-2}}
-          """
+        """
         # coerce from Orbit basis.
         if isinstance(R, OrbitBasis):
             if R._k <= self._k and self.base_ring().has_coerce_map_from(R.base_ring()):
@@ -3592,9 +3596,9 @@ class SubPartitionAlgebra(DiagramBasis):
 
         EXAMPLES::
 
-            sage: x = var('x')
-            sage: BA = BrauerAlgebra(2, x)
-            sage: BA.ambient()
+            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: BA = BrauerAlgebra(2, x)                                              # needs sage.symbolic
+            sage: BA.ambient()                                                          # needs sage.symbolic
             Partition Algebra of rank 2 with parameter x over Symbolic Ring
         """
         return self.lift.codomain()
@@ -3833,6 +3837,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: z = var('z')
             sage: B = BrauerAlgebra(3,z)
             sage: B.jucys_murphy(1)
@@ -4553,59 +4558,59 @@ def is_planar(sp):
         sage: da.is_planar( da.to_set_partition([[1,-1],[2,-2]]))
         True
     """
-    #Singletons don't affect planarity
+    # Singletons don't affect planarity
     to_consider = [x for x in map(list, sp) if len(x) > 1]
     n = len(to_consider)
 
     for i in range(n):
-        #Get the positive and negative entries of this part
+        # Get the positive and negative entries of this part
         ap = [x for x in to_consider[i] if x > 0]
         an = [abs(x) for x in to_consider[i] if x < 0]
 
-        #Check if a includes numbers in both the top and bottom rows
+        # Check if a includes numbers in both the top and bottom rows
         if ap and an:
             for j in range(n):
                 if i == j:
                     continue
-                #Get the positive and negative entries of this part
+                # Get the positive and negative entries of this part
                 bp = [x for x in to_consider[j] if x > 0]
                 bn = [abs(x) for x in to_consider[j] if x < 0]
 
-                #Skip the ones that don't involve numbers in both
-                #the bottom and top rows
+                # Skip the ones that don't involve numbers in both
+                # the bottom and top rows
                 if not bn or not bp:
                     continue
 
-                #Make sure that if min(bp) > max(ap)
-                #then min(bn) >  max(an)
+                # Make sure that if min(bp) > max(ap)
+                # then min(bn) >  max(an)
                 if max(bp) > max(ap):
                     if min(bn) < min(an):
                         return False
 
-        #Go through the bottom and top rows
+        # Go through the bottom and top rows
         for row in [ap, an]:
             if len(row) > 1:
                 row.sort()
                 for s in range(len(row)-1):
                     if row[s] + 1 == row[s+1]:
-                        #No gap, continue on
+                        # No gap, continue on
                         continue
 
                     rng = list(range(row[s] + 1, row[s+1]))
 
-                    #Go through and make sure any parts that
-                    #contain numbers in this range are completely
-                    #contained in this range
+                    # Go through and make sure any parts that
+                    # contain numbers in this range are completely
+                    # contained in this range
                     for j in range(n):
                         if i == j:
                             continue
 
-                        #Make sure we make the numbers negative again
-                        #if we are in the bottom row
+                        # Make sure we make the numbers negative again
+                        # if we are in the bottom row
                         if row is ap:
                             sr = set(rng)
                         else:
-                            sr = set((-1*x for x in rng))
+                            sr = set(-x for x in rng)
 
                         sj = set(to_consider[j])
                         intersection = sr.intersection(sj)
@@ -4768,12 +4773,11 @@ def to_set_partition(l, k=None):
         [{-1, 1}, {-2, 3}, {2}, {-4, 4}, {-5, 5}, {-3}]
     """
     if k is None:
-        if l == []:
+        if not l:
             return []
-        else:
-            k = max( (max( map(abs, x) ) for x in l) )
+        k = max(max(map(abs, x)) for x in l)
 
-    to_be_added = set( list(range(1, ceil(k+1))) + [-1*x for x in range(1, ceil(k+1))] )
+    to_be_added = set(list(range(1, ceil(k+1))) + [-x for x in range(1, ceil(k+1))])
 
     sp = []
     for part in l:
@@ -4785,7 +4789,7 @@ def to_set_partition(l, k=None):
         i = to_be_added.pop()
         if -i in to_be_added:
             to_be_added.remove(-i)
-            sp.append(set([i,-i]))
+            sp.append(set([i, -i]))
         else:
             sp.append(set([i]))
 

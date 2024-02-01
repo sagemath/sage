@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Generic dual bases symmetric functions
 """
@@ -214,7 +215,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: h._self_to_dual(h([2,1]) + 3*h[1,1,1])
             21*m[1, 1, 1] + 11*m[2, 1] + 4*m[3]
 
-        This is for internal use only. Please use instead:
+        This is for internal use only. Please use instead::
 
             sage: m(h([2,1]) + 3*h[1,1,1])
             21*m[1, 1, 1] + 11*m[2, 1] + 4*m[3]

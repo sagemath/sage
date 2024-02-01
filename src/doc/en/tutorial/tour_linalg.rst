@@ -42,16 +42,6 @@ Evaluating ``A.solve_right(Y)`` returns a matrix (or vector)
     sage: A * X   # checking our answer...
     (0, -4, -1)
 
-A backslash ``\`` can be used in the place of ``solve_right``; use
-``A \ Y`` instead of ``A.solve_right(Y)``.
-
-.. link
-
-::
-
-    sage: A \ Y
-    (-2, 1, 0)
-
 If there is no solution, Sage returns an error:
 
 .. skip

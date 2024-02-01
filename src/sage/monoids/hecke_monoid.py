@@ -59,5 +59,5 @@ def HeckeMonoid(W):
     ambient_monoid = FiniteSetMaps(W, action="right")
     pi = W.simple_projections(length_increasing=True).map(ambient_monoid)
     H = ambient_monoid.submonoid(pi)
-    H.rename("0-Hecke monoid of the %s"%W)
+    H.rename("0-Hecke monoid of the %s" % W)
     return H

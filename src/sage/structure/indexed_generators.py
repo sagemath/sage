@@ -174,8 +174,8 @@ class IndexedGenerators():
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-            sage: F.indices()
+            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])                      # needs sage.modules
+            sage: F.indices()                                                           # needs sage.modules
             {'a', 'b', 'c'}
         """
         return self._indices
@@ -186,14 +186,14 @@ class IndexedGenerators():
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-            sage: F.prefix()
+            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])                      # needs sage.modules
+            sage: F.prefix()                                                            # needs sage.modules
             'B'
 
         ::
 
-            sage: X = SchubertPolynomialRing(QQ)
-            sage: X.prefix()
+            sage: X = SchubertPolynomialRing(QQ)                                        # needs sage.combinat sage.modules
+            sage: X.prefix()                                                            # needs sage.combinat sage.modules
             'X'
         """
         return self._print_options['prefix']
@@ -229,6 +229,7 @@ class IndexedGenerators():
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix='x')
             sage: F.print_options()
             {...'prefix': 'x'...}
@@ -238,7 +239,7 @@ class IndexedGenerators():
 
         TESTS::
 
-            sage: sorted(F.print_options().items())
+            sage: sorted(F.print_options().items())                                     # needs sage.modules
             [('bracket', '('), ('iterate_key', False),
              ('latex_bracket', False), ('latex_names', None),
              ('latex_prefix', None), ('latex_scalar_mult', None),
@@ -247,7 +248,7 @@ class IndexedGenerators():
              ('sorting_key', <function ...<lambda> at ...>),
              ('sorting_reverse', False), ('string_quotes', True),
              ('tensor_symbol', None)]
-            sage: F.print_options(bracket='[') # reset
+            sage: F.print_options(bracket='[') # reset                                  # needs sage.modules
         """
         # don't just use kwds.get(...) because I want to distinguish
         # between an argument like "option=None" and the option not
@@ -270,17 +271,18 @@ class IndexedGenerators():
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [1,2,3], names='a,b,c',
+            sage: F = CombinatorialFreeModule(ZZ, [1,2,3], names='a,b,c',               # needs sage.modules
             ....:                             latex_names='x,y,z')
-            sage: F._parse_names(1, False)
+            sage: F._parse_names(1, False)                                              # needs sage.modules
             'a'
-            sage: F._parse_names(1, True)
+            sage: F._parse_names(1, True)                                               # needs sage.modules
             'x'
 
-            sage: F.print_options(latex_names=None)
-            sage: F._parse_names(1, True)
+            sage: F.print_options(latex_names=None)                                     # needs sage.modules
+            sage: F._parse_names(1, True)                                               # needs sage.modules
             'a'
 
+            sage: # needs sage.modules
             sage: F.print_options(latex_names={1:'x', 2:'y'}, names=None)
             sage: F._parse_names(1, False) is None
             True
@@ -289,6 +291,7 @@ class IndexedGenerators():
             sage: F._parse_names(3, True) is None
             True
 
+            sage: # needs sage.modules
             sage: F.print_options(names={1:'a', 3:'c'}, latex_names=None)
             sage: F._parse_names(1, False)
             'a'
@@ -349,11 +352,12 @@ class IndexedGenerators():
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-            sage: e = F.basis()
-            sage: e['a'] + 2*e['b']    # indirect doctest
+            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])                      # needs sage.modules
+            sage: e = F.basis()                                                         # needs sage.modules
+            sage: e['a'] + 2*e['b']    # indirect doctest                               # needs sage.modules
             B['a'] + 2*B['b']
 
+            sage: # needs sage.modules
             sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'], prefix="F")
             sage: e = F.basis()
             sage: e['a'] + 2*e['b']    # indirect doctest
@@ -362,6 +366,7 @@ class IndexedGenerators():
             sage: e['a'] + 2*e['b']
             F[a] + 2*F[b]
 
+            sage: # needs sage.modules
             sage: F = CombinatorialFreeModule(QQ, ['aa', 'bb', 'cc'], prefix="F")
             sage: e = F.basis()
             sage: F.print_options(iterate_key=True)
@@ -371,41 +376,43 @@ class IndexedGenerators():
             sage: e['aa'] + 2*e['bb']
             F[a, a] + 2*F[b, b]
 
+            sage: # needs sage.combinat sage.modules
             sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3), prefix="")
             sage: original_print_options = QS3.print_options()
             sage: a = 2*QS3([1,2,3])+4*QS3([3,2,1])
             sage: a                      # indirect doctest
             2*[[1, 2, 3]] + 4*[[3, 2, 1]]
 
-            sage: QS3.print_options(bracket = False)
-            sage: a              # indirect doctest
+            sage: QS3.print_options(bracket = False)                                    # needs sage.combinat sage.modules
+            sage: a              # indirect doctest                                     # needs sage.combinat sage.modules
             2*[1, 2, 3] + 4*[3, 2, 1]
 
-            sage: QS3.print_options(prefix='')
-            sage: a              # indirect doctest
+            sage: QS3.print_options(prefix='')                                          # needs sage.combinat sage.modules
+            sage: a              # indirect doctest                                     # needs sage.combinat sage.modules
             2*[1, 2, 3] + 4*[3, 2, 1]
 
-            sage: QS3.print_options(bracket="|", scalar_mult=" *@* ")
-            sage: a              # indirect doctest
+            sage: QS3.print_options(bracket="|", scalar_mult=" *@* ")                   # needs sage.combinat sage.modules
+            sage: a              # indirect doctest                                     # needs sage.combinat sage.modules
             2 *@* |[1, 2, 3]| + 4 *@* |[3, 2, 1]|
 
-            sage: QS3.print_options(bracket="|", scalar_mult="*", iterate_key=True)
-            sage: a              # indirect doctest
+            sage: QS3.print_options(bracket="|", scalar_mult="*", iterate_key=True)     # needs sage.combinat sage.modules
+            sage: a              # indirect doctest                                     # needs sage.combinat sage.modules
             2*|1, 2, 3| + 4*|3, 2, 1|
 
-            sage: QS3.print_options(**original_print_options) # reset
+            sage: QS3.print_options(**original_print_options) # reset                   # needs sage.combinat sage.modules
 
         TESTS::
 
-            sage: F = CombinatorialFreeModule(QQ, [('a', 'b'), ('c','d')])
-            sage: e = F.basis()
-            sage: e[('a','b')] + 2*e[('c','d')]    # indirect doctest
+            sage: F = CombinatorialFreeModule(QQ, [('a', 'b'), ('c','d')])              # needs sage.modules
+            sage: e = F.basis()                                                         # needs sage.modules
+            sage: e[('a','b')] + 2*e[('c','d')]    # indirect doctest                   # needs sage.modules
             B[('a', 'b')] + 2*B[('c', 'd')]
 
-            sage: F.<a,b,c> = CombinatorialFreeModule(QQ)
-            sage: a + 2*b
+            sage: F.<a,b,c> = CombinatorialFreeModule(QQ)                               # needs sage.modules
+            sage: a + 2*b                                                               # needs sage.modules
             a + 2*b
 
+            sage: # needs sage.modules
             sage: F = CombinatorialFreeModule(QQ, ZZ)
             sage: e = F.basis()
             sage: 3*e[1] + 2*e[-2]
@@ -457,6 +464,7 @@ class IndexedGenerators():
 
         TESTS::
 
+            sage: # needs sage.combinat sage.modules
             sage: R = NonCommutativeSymmetricFunctions(QQ).R()
             sage: ascii_art(R[1,2,2,4])
             R
@@ -473,8 +481,8 @@ class IndexedGenerators():
                ####
             sage: Partitions.options._reset()
 
-            sage: F.<a,b,c> = CombinatorialFreeModule(QQ)
-            sage: ascii_art(a + 2*b)
+            sage: F.<a,b,c> = CombinatorialFreeModule(QQ)                               # needs sage.modules
+            sage: ascii_art(a + 2*b)                                                    # needs sage.modules
             a + 2*b
         """
         from sage.typeset.ascii_art import AsciiArt, ascii_art
@@ -493,8 +501,9 @@ class IndexedGenerators():
 
         TESTS::
 
-            sage: R = NonCommutativeSymmetricFunctions(QQ).R()
-            sage: unicode_art(R[1,2,2,4])
+            sage: # needs sage.combinat
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()                          # needs sage.modules
+            sage: unicode_art(R[1,2,2,4])                                               # needs sage.modules
             R
                ┌┬┬┬┐
               ┌┼┼┴┴┘
@@ -502,7 +511,7 @@ class IndexedGenerators():
              ├┼┘
              └┘
             sage: Partitions.options.convention="french"
-            sage: unicode_art(R[1,2,2,4])
+            sage: unicode_art(R[1,2,2,4])                                               # needs sage.modules
             R
              ┌┐
              ├┼┐
@@ -511,8 +520,8 @@ class IndexedGenerators():
                └┴┴┴┘
             sage: Partitions.options._reset()
 
-            sage: F.<a,b,c> = CombinatorialFreeModule(QQ)
-            sage: unicode_art(a + 2*b)
+            sage: F.<a,b,c> = CombinatorialFreeModule(QQ)                               # needs sage.modules
+            sage: unicode_art(a + 2*b)                                                  # needs sage.modules
             a + 2*b
         """
         from sage.typeset.unicode_art import UnicodeArt, unicode_art
@@ -546,17 +555,19 @@ class IndexedGenerators():
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-            sage: e = F.basis()
-            sage: latex(e['a'] + 2*e['b'])    # indirect doctest
+            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])                      # needs sage.modules
+            sage: e = F.basis()                                                         # needs sage.modules
+            sage: latex(e['a'] + 2*e['b'])    # indirect doctest                        # needs sage.modules
             B_{a} + 2 B_{b}
 
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'], prefix="C")
-            sage: e = F.basis()
-            sage: latex(e['a'] + 2*e['b'])    # indirect doctest
+            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'], prefix="C")          # needs sage.modules
+            sage: e = F.basis()                                                         # needs sage.modules
+            sage: latex(e['a'] + 2*e['b'])    # indirect doctest                        # needs sage.modules
             C_{a} + 2 C_{b}
 
-            sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3), prefix="", scalar_mult="*")
+            sage: # needs sage.combinat sage.modules
+            sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3),
+            ....:                               prefix="", scalar_mult="*")
             sage: original_print_options = QS3.print_options()
             sage: a = 2*QS3([1,2,3])+4*QS3([3,2,1])
             sage: latex(a)                     # indirect doctest
@@ -567,13 +578,15 @@ class IndexedGenerators():
             sage: QS3.print_options(latex_bracket="(")
             sage: latex(a)                     # indirect doctest
             2 \left( [1, 2, 3] \right) + 4 \left( [3, 2, 1] \right)
-            sage: QS3.print_options(latex_bracket=('\\myleftbracket', '\\myrightbracket'))
+            sage: QS3.print_options(latex_bracket=('\\myleftbracket',
+            ....:                                  '\\myrightbracket'))
             sage: latex(a)                     # indirect doctest
             2 \myleftbracket [1, 2, 3] \myrightbracket + 4 \myleftbracket [3, 2, 1] \myrightbracket
             sage: QS3.print_options(**original_print_options) # reset
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: F = CombinatorialFreeModule(QQ, [('a', 'b'), (0,1,2)])
             sage: e = F.basis()
             sage: latex(e[('a','b')])    # indirect doctest
@@ -585,8 +598,8 @@ class IndexedGenerators():
             sage: latex(2*e[(0,1,2)])    # indirect doctest
             2 \left(0, 1, 2\right)
 
-            sage: F.<a,b,c> = CombinatorialFreeModule(QQ, latex_names='x,y,z')
-            sage: latex(a + 2*b)
+            sage: F.<a,b,c> = CombinatorialFreeModule(QQ, latex_names='x,y,z')          # needs sage.modules
+            sage: latex(a + 2*b)                                                        # needs sage.modules
             x + 2 y
         """
         from sage.misc.latex import latex

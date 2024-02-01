@@ -908,7 +908,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         """
         if len(self.summands) != len(other.summands):
             return False
-        from builtins import zip
         return all(s == o for s, o in
                    zip(self.summands.elements_topological(),
                        other.summands.elements_topological()))
@@ -1091,7 +1090,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: O(n).monomial_coefficient(n)
             Traceback (most recent call last):
             ...
-            AttributeError: 'OTermMonoid_with_category.element_class' object has no attribute 'coefficient'
+            AttributeError: 'OTermMonoid_with_category.element_class' object has no attribute 'coefficient'...
 
         The ``monomial`` must be exact::
 
@@ -1209,7 +1208,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         return self.parent()(self.summands.mapped(lambda element: term * element),
                              simplify=simplify, convert=False)
 
-
     def _mul_(self, other):
         r"""
         Multiply this asymptotic expansion by another asymptotic expansion ``other``.
@@ -1308,7 +1306,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             Asymptotic Ring <n^ZZ> over Symbolic Constants Subring
         """
         return self * ~other
-
 
     def __invert__(self, precision=None):
         r"""
@@ -1485,7 +1482,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         return self.parent(exact_terms)
 
-
     def error_part(self):
         r"""
         Return the expansion consisting of all error terms of this
@@ -1510,7 +1506,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                     for term in self.summands.elements_topological()
                     if not term.is_exact()),
                    parent.zero())
-
 
     def __pow__(self, exponent, precision=None):
         r"""
@@ -1717,9 +1712,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             raise combine_exceptions(
                 ValueError('Cannot take %s to the exponent %s.' % (self, exponent)), e)
 
-
     pow = __pow__
-
 
     def __pow_number__(self, exponent, precision=None, check_convergence=False):
         r"""
@@ -1873,7 +1866,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         return result * pmax
 
-
     def sqrt(self, precision=None):
         r"""
         Return the square root of this asymptotic expansion.
@@ -1907,7 +1899,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: bool(SR(a.exact_part()).subs(s=1/x) -
             ....:      SR((1+p).sqrt().polynomial()).subs(p=x) == 0)
             True
-            """
+        """
         from sage.rings.rational_field import QQ
         return self.pow(QQ(1)/QQ(2), precision=precision)
 
@@ -2243,7 +2235,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         if not expr_o:
             return large_result
-
 
         if base == 'e':
             geom = expr_o
@@ -3911,7 +3902,6 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
                             can_merge=can_absorb,
                             merge=absorption)
 
-
     def _create_element_in_extension_(self, term, old_term_parent=None):
         r"""
         Create an element in an extension of this asymptotic ring which
@@ -4084,7 +4074,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
         if isinstance(data, MutablePoset):
             return self.element_class(self, data, simplify=simplify, convert=convert)
 
-        if type(data) == self.element_class and data.parent() == self:
+        if type(data) is self.element_class and data.parent() == self:
             return data
 
         if isinstance(data, AsymptoticExpansion):
@@ -4993,7 +4983,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             sage: F_X == F_Y
             False
         """
-        return (type(self) == type(other)
+        return (type(self) is type(other)
                 and self.growth_group == other.growth_group
                 and self._default_prec_ == other._default_prec_
                 and self._category_ == other._category_

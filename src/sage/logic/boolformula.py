@@ -1167,7 +1167,7 @@ class BooleanFormula():
             lval = ('prop', tree[1])
         else:
             lval = tree[1]
-        if not isinstance(tree[2], tuple) and not(tree[2] is None):
+        if not isinstance(tree[2], tuple) and tree[2] is not None:
             rval = ('prop', tree[2])
         else:
             rval = tree[2]
@@ -1556,6 +1556,7 @@ class BooleanFormula():
     # For backward compatibility, we allow `self.length()` to be called as
     # `len(self)`, but this may be deprecated in the future (see :trac:`32148`):
     __len__ = length
+
 
 # allow is_consequence to be called as a function (not only as a method of BooleanFormula)
 is_consequence = BooleanFormula.is_consequence

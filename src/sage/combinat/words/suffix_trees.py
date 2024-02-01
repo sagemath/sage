@@ -13,11 +13,14 @@ Suffix Tries and Suffix Trees
 from itertools import chain
 
 from sage.structure.sage_object import SageObject
-from sage.graphs.digraph import DiGraph
 from sage.sets.set import Set
 from sage.combinat.words.words import Words
 from sage.combinat.words.word import Word
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+
 
 ################################################################################
 # Suffix Tries
@@ -286,14 +289,13 @@ class SuffixTrie(SageObject):
         if word.is_empty():
             return 0
         if word.length() == 1:
-            return self._transition_function[(node,word)]
-        else:
-            return self.transition_function( \
-                    self._transition_function[(node,word[0:1])], word[1:])
+            return self._transition_function[(node, word)]
+        return self.transition_function(
+            self._transition_function[(node, word[0:1])], word[1:])
 
     def states(self):
         r"""
-        Returns the states of the automaton defined by the suffix trie.
+        Return the states of the automaton defined by the suffix trie.
 
         EXAMPLES::
 
@@ -438,9 +440,9 @@ class SuffixTrie(SageObject):
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
             sage: w = Words("cao")("cac")
             sage: t = SuffixTrie(w)
-            sage: d = t.to_digraph(); d
+            sage: d = t.to_digraph(); d                                                 # needs sage.graphs
             Digraph on 6 vertices
-            sage: d.adjacency_matrix()
+            sage: d.adjacency_matrix()                                                  # needs sage.graphs sage.modules
             [0 1 0 1 0 0]
             [0 0 1 0 0 0]
             [0 0 0 0 1 0]
@@ -462,13 +464,13 @@ class SuffixTrie(SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
-            sage: SuffixTrie(Word("cacao")).plot()
+            sage: SuffixTrie(Word("cacao")).plot()                                      # needs sage.plot
             Graphics object consisting of 38 graphics primitives
 
         TESTS::
 
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
-            sage: type(SuffixTrie(Word("cacao")).plot())
+            sage: type(SuffixTrie(Word("cacao")).plot())                                # needs sage.plot
             <class 'sage.plot.graphics.Graphics'>
         """
         tree = self.to_digraph()
@@ -492,7 +494,7 @@ class SuffixTrie(SageObject):
             sage: from sage.combinat.words.suffix_trees import SuffixTrie
             sage: w = Words("cao")("cac")
             sage: t = SuffixTrie(w)
-            sage: t.show()
+            sage: t.show()                                                              # needs sage.plot
         """
         self.plot(*args, **kwds).show()
         return
@@ -830,7 +832,7 @@ class ImplicitSuffixTree(SageObject):
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
             sage: W = Words([0,1,2])
             sage: t = ImplicitSuffixTree(W([0,1,0,1,2]))
-            sage: t.to_digraph()
+            sage: t.to_digraph()                                                        # needs sage.graphs
             Digraph on 8 vertices
         """
         if not self._letters:
@@ -866,17 +868,17 @@ class ImplicitSuffixTree(SageObject):
         EXAMPLES::
 
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
-            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=True)
+            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=True)              # needs sage.graphs sage.plot
             Graphics object consisting of 23 graphics primitives
-            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=False)
+            sage: ImplicitSuffixTree(Word('cacao')).plot(word_labels=False)             # needs sage.graphs sage.plot
             Graphics object consisting of 23 graphics primitives
 
         TESTS::
 
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
-            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=True))
+            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=True))        # needs sage.graphs sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=False))
+            sage: type(ImplicitSuffixTree(Word('cacao')).plot(word_labels=False))       # needs sage.graphs sage.plot
             <class 'sage.plot.graphics.Graphics'>
         """
         tree = self.to_digraph(word_labels=word_labels)
@@ -905,8 +907,8 @@ class ImplicitSuffixTree(SageObject):
             sage: from sage.combinat.words.suffix_trees import ImplicitSuffixTree
             sage: w = Words("cao")("cacao")
             sage: t = ImplicitSuffixTree(w)
-            sage: t.show(word_labels=True)
-            sage: t.show(word_labels=False)
+            sage: t.show(word_labels=True)                                              # needs sage.plot
+            sage: t.show(word_labels=False)                                             # needs sage.plot
         """
         self.plot(word_labels=word_labels, *args, **kwds).show()
         return
@@ -1367,7 +1369,7 @@ class ImplicitSuffixTree(SageObject):
             ('explicit', 1)
         """
         trans = self._find_transition(node, self._letters[i])
-        while (trans[0][1] is not None and trans[0][1] - trans[0][0] + 1 <= j - i):
+        while trans[0][1] is not None and trans[0][1] - trans[0][0] + 1 <= j - i:
             node = trans[1]
             i += trans[0][1] - trans[0][0] + 1
             if i == j:
@@ -1507,7 +1509,7 @@ class ImplicitSuffixTree(SageObject):
             sage: abbab = Words("ab")("abbab")
             sage: s = SuffixTrie(abbab)
             sage: t = ImplicitSuffixTree(abbab)
-            sage: t.uncompactify().is_isomorphic(s.to_digraph())
+            sage: t.uncompactify().is_isomorphic(s.to_digraph())                        # needs sage.graphs
             True
         """
         tree = self.to_digraph(word_labels=True)

@@ -301,10 +301,10 @@ Here is an example of a plot of a parametric surface in 3-space:
 ::
 
     sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],
-    ....:     [-3.2,3.2],[0,3])      # optional -- pops up a window.
+    ....:     [-3.2,3.2],[0,3])
     sage: opts = '[gnuplot_term, ps], [gnuplot_out_file, "sin-cos-plot.eps"]'
     sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],
-    ....:     [-3.2,3.2],[0,3],opts)     # optional -- pops up a window.
+    ....:     [-3.2,3.2],[0,3],opts)
 
 To illustrate how to pass gnuplot options in , here is an example
 of a plot of a set of points involving the Riemann zeta function

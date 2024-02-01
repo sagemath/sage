@@ -153,7 +153,7 @@ cdef class dfs_manager:
             free(self.dy_data_buf)
             self.dy_data_buf = NULL
 
-    cpdef long node_count(self):
+    cpdef long node_count(self) noexcept:
         """
         Count nodes.
 
@@ -175,7 +175,7 @@ cdef class dfs_manager:
             count += self.dy_data_buf[i].node_count
         return count
 
-    cpdef object advance_exhaust(self):
+    cpdef object advance_exhaust(self) noexcept:
         """
         Advance the tree exhaustion.
 

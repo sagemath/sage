@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 """
 Representations of a semigroup
 
@@ -493,7 +494,6 @@ class Representation(Representation_abstract):
             'right'
         """
         return "left" if self._left_repr else "right"
-
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=False):

@@ -5,7 +5,7 @@
 .. _chapter-tools:
 
 ========================================
-Additional development and testing tools
+Additional Development and Testing Tools
 ========================================
 
 .. _section-tools-tox:
@@ -13,7 +13,7 @@ Additional development and testing tools
 Tox
 ===
 
-`Tox <https://tox.readthedocs.io/en/latest/>`_ is a popular package that is
+`tox <https://tox.readthedocs.io/en/latest/>`_ is a popular package that is
 used by a large number of Python projects as the standard entry point
 for testing and linting.
 
@@ -48,8 +48,8 @@ available::
   ...
   --tox [options] <files|dirs> -- general entry point for testing
                                   and linting of the Sage library
-     -e <envlist>     -- run specific test environments
-                         (default: run all except full pycodestyle)
+     -e <envlist>     -- run specific test environments; default:
+                         doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst
         doctest                -- run the Sage doctester
                                   (same as "sage -t")
         coverage               -- give information about doctest coverage of files
@@ -60,7 +60,12 @@ available::
         relint                 -- check whether some forbidden patterns appear
                                   (includes all patchbot pattern-exclusion plugins)
         codespell              -- check for misspelled words in source code
+        rst                    -- validate Python docstrings markup as reStructuredText
+        coverage.py            -- run the Sage doctester with Coverage.py
+        coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
+        pyright                -- run the static typing checker pyright
         pycodestyle            -- check against the Python style conventions of PEP8
+        cython-lint            -- check Cython files for code style
      -p auto          -- run test environments in parallel
      --help           -- show tox help
 
@@ -68,22 +73,64 @@ available::
 Doctest
 =======
 
-The command ``./sage -tox -e doctest`` requires that Sage has been
-built already.  ``doctest`` is a special tox environment that runs the
-Sage doctester in the normal Sage environment.  This is equivalent to
-using the command ``./sage -t``; see :ref:`chapter-doctesting`.
+The command ``./sage -tox -e doctest`` runs the Sage doctester. This is
+equivalent to using the command ``./sage -t``; see :ref:`chapter-doctesting`.
 
+.. NOTE::
+
+   ``doctest`` is a special tox environment that requires that Sage has
+   been built already. A virtual environment is created by tox, but
+   Sage is invoked in the normal Sage environment.
+
+
+.. _section-tools-coverage-py:
+
+Doctest with Coverage.py
+========================
+
+The command ``./sage -tox -e coverage.py`` runs the Sage doctester
+(:ref:`chapter-doctesting`) in the normal Sage environment, but
+under the control of
+`Coverage.py <https://coverage.readthedocs.io/en/latest/index.html>`_
+for code coverage analysis.
+
+If invoked as ``./sage -tox -e coverage.py-html``, additionally a
+detailed HTML report is generated.
+
+*Configuration:* ``[coverage:run]`` block in ``SAGE_ROOT/src/tox.ini``
+
+*Documentation:* https://coverage.readthedocs.io
+
+.. NOTE::
+
+   ``coverage.py`` is a special tox environment that requires that Sage has
+   been built already. A virtual environment is created by tox, but the
+   **coverage** package is installed into the normal Sage environment, and
+   Sage is invoked from there.
 
 .. _section-tools-coverage:
 
 Coverage
 ========
 
-The command ``./sage -tox -e coverage`` requires that Sage has been
-built already.  ``coverage`` is a special tox environment that is
-equivalent to using the command ``./sage --coverageall`` (if no
-arguments are provided) or ``./sage --coverage`` (if arguments are
-provided).
+The command ``./sage -tox -e coverage`` checks that each function has
+at least one doctest (typically in an **EXAMPLES** or **TESTS** block,
+see :ref:`section-docstring-function`).
+
+Without additional arguments, this command is equivalent to using the
+command ``./sage --coverageall`` and gives a short report with a one-line
+summary for each module of the Sage library.
+
+If invoked with arguments, for example ``./sage -tox -e coverage
+-- src/sage/geometry src/sage/combinat/tableau.py``, it is equivalent to
+using the command ``./sage --coverage``, which includes details on
+the modules in the given files or directories.
+
+.. NOTE::
+
+   ``coverage`` is a special tox environment that requires that Sage has been
+   built already. A virtual environment is created by tox, but
+   Sage is invoked in the normal Sage environment.
 
 
 .. _section-tools-startuptime:
@@ -91,9 +138,23 @@ provided).
 Startuptime
 ===========
 
-The command ``./sage -tox -e startuptime`` requires that Sage has been
-built already.  ``startuptime`` is a special tox environment that is
+The command ``./sage -tox -e startuptime`` measures the time for loading
+each module that is imported during the start up phase of Sage. It is
 equivalent to using the command ``./sage --startuptime``.
+
+Without additional arguments, the command gives a short report that lists
+the modules with the longest contributions to the overall startup time,
+sorted by time.
+
+If invoked with arguments, for example ``sage -tox -e startuptime -- sage.rings
+src/sage/geometry/polyhedron``, it provides details on the given modules, packages,
+source files, or directories.
+
+.. NOTE::
+
+   ``startuptime`` is a special tox environment that requires that Sage has been
+   built already. A virtual environment is created by tox, but
+   Sage is invoked in the normal Sage environment.
 
 
 .. _section-tools-pycodestyle:
@@ -156,18 +217,18 @@ more thorough check::
   ___________ summary ____________
   ERROR:   pycodestyle: commands failed
 
-When preparing a branch for a Sage ticket that adds new code,
+When preparing a branch for a PR that adds new code,
 developers should verify that ``./sage -tox -e pycodestyle`` does not
 issue warnings for the added code.  This will avoid later cleanup
-tickets as the Sage codebase is moving toward full PEP 8 compliance.
+PRs as the Sage codebase is moving toward full PEP 8 compliance.
 
 On the other hand, it is usually not advisable to mix coding-style
-fixes with productive changes on the same ticket because this would
+fixes with productive changes on the same PR because this would
 makes it harder for reviewers to evaluate the changes.
 
 By passing the options ``--count -qq`` we can reduce the output to
 only show the number of style violation warnings.  This can be helpful
-for planning work on coding-style clean-up tickets that focus on one
+for planning work on coding-style clean-up PRs that focus on one
 or a few related issues::
 
   $ ./sage -tox -e pycodestyle -- --count -qq src/sage
@@ -199,14 +260,33 @@ or a few related issues::
 - VS Code: The minimal version of pycodestyle is activated by default in
   ``SAGE_ROOT/.vscode/settings.json`` (the corresponding setting is
   ``"python.linting.pycodestyleEnabled": true``). Note that the
-  ``settings.json`` file is not ignored by git so be aware to keep it in sync
-  with the trac repo. For further details, see the
+  ``settings.json`` file is not ignored by Git so be aware to keep it in sync
+  with the Sage repo on GitHub. For further details, see the
   `official VS Code documentation <https://code.visualstudio.com/docs/python/linting>`__.
 
 *Configuration:* ``[pycodestyle]`` block in ``SAGE_ROOT/src/tox.ini``
 
 *Documentation:* https://pycodestyle.pycqa.org/en/latest/index.html
 
+
+.. _section-tools-cython-lint:
+
+Cython-lint
+===========
+
+`Cython-lint <https://pypi.org/project/cython-lint/>`_ checks Cython source files
+for coding style.
+
+.. _section-tools-ruff:
+
+Ruff
+====
+
+`Ruff <https://pypi.org/project/ruff/>`_ is a powerful and fast linter
+for Python code, written in Rust.
+
+It comes with a large choice of possible checks, and has the capacity
+to fix some of the warnings it emits.
 
 .. _section-tools-relint:
 
@@ -305,7 +385,10 @@ Pyright
 
 - Tox: Run ``./sage -tox -e pyright path/to/the/file.py``
 
-- Manual: Run ``pyright path/to/the/file.py``
+- Manual: Run ``pyright path/to/the/file.py``. If you want to check the whole Sage library, you most likely run out of memory with the default settings.
+  You can use the following command to check the whole library::
+
+    NODE_OPTIONS="--max-old-space-size=8192" pyright
 
 - VS Code: Install the `Pylance <https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance>`__ extension.
 

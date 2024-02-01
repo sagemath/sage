@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.groups
 r"""
 Group algebras and beyond: the Algebra functorial construction
 
@@ -577,7 +577,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
             sage: from sage.categories.algebra_functor import GroupAlgebraFunctor
             sage: GroupAlgebraFunctor(CyclicPermutationGroup(17)).group() == CyclicPermutationGroup(17)
             True
-         """
+        """
         return self.__group
 
     def _apply_functor(self, base_ring):
@@ -631,7 +631,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
             2*() + 2*(2,3) + (1,2,3) + 4*(1,3,2)
         """
         from sage.categories.rings import Rings
-        domain   = self(f.domain())
+        domain = self(f.domain())
         codomain = self(f.codomain())
         # we would want to use something like:
         # domain.module_morphism(on_coefficients=h, codomain=codomain, category=Rings())

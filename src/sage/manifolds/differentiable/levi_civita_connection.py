@@ -387,7 +387,6 @@ class LeviCivitaConnection(AffineConnection):
                               start_index=self._domain._sindex,
                               output_formatter=DiffScalarField.coord_function)
 
-
     def coef(self, frame=None):
         r"""
         Return the connection coefficients relative to the given frame.
@@ -521,7 +520,7 @@ class LeviCivitaConnection(AffineConnection):
                             for i,j,k in local_list_ijk:
                                 rsum = 0
                                 for s in manif.irange():
-                                    if ginv[i,s, chart]!=0:
+                                    if ginv[i,s, chart] != 0:
                                         rsum += ginv[i,s, chart] * (
                                                         gg[s,k, chart].diff(j)
                                                       + gg[j,s, chart].diff(k)

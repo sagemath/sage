@@ -161,12 +161,12 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
             # Add the .0 because Debian/Ubuntu gives version numbers like
             # 4.6 instead of 4.6.4 (Trac #18885)
             AS_CASE(["$GXX_VERSION.0"],
-                [[[0-7]].*], [
-                    # Install our own GCC if the system-provided one is older than gcc 8
+                [[[0-7]].*|8.[[0-3]].*], [
+                    # Install our own GCC if the system-provided one is older than gcc 8.4
                     SAGE_SHOULD_INSTALL_GCC([you have $CXX version $GXX_VERSION, which is quite old])
                 ],
-                [1[[3-9]].*], [
-                    # Install our own GCC if the system-provided one is newer than 12.x.
+                [1[[4-9]].*], [
+                    # Install our own GCC if the system-provided one is newer than 13.x.
                     # See https://github.com/sagemath/sage/issues/29456
                     SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
                 ])
@@ -232,7 +232,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     fi
     AC_SUBST(CFLAGS_MARCH)
 
-    # Determine wether compiler supports OpenMP.
+    # Determine whether compiler supports OpenMP.
     AC_LANG_PUSH([C])
     AX_OPENMP([
         AC_SUBST(OPENMP_CFLAGS)

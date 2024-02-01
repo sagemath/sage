@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Word paths
 
@@ -45,7 +45,7 @@ ask whether p is a closed path, plot it and many other::
     [(0, 0), (1, 2), (-2, 6), (-1, 8), (-1, 5), (-1, 2), (-4, 6), (-3, 8)]
     sage: p.is_closed()
     False
-    sage: p.plot()
+    sage: p.plot()                                                                      # needs sage.plot
     Graphics object consisting of 3 graphics primitives
 
 To obtain a list of all the available word path specific functions,
@@ -104,14 +104,14 @@ Some built-in combinatorial classes of paths::
     Finite Dyck paths
     sage: d = D('()()()(())'); d
     Path: ()()()(())
-    sage: d.plot()
+    sage: d.plot()                                                                      # needs sage.plot
     Graphics object consisting of 3 graphics primitives
 
 ::
 
     sage: P = WordPaths('abcdef', steps='triangle_grid')
     sage: p = P('babaddefadabcadefaadfafabacdefa')
-    sage: p.plot()
+    sage: p.plot()                                                                      # needs sage.plot
     Graphics object consisting of 3 graphics primitives
 
 Vector steps may be in more than 2 dimensions::
@@ -120,7 +120,7 @@ Vector steps may be in more than 2 dimensions::
     sage: P = WordPaths(alphabet='abc', steps=d); P
     Word Paths over 3 steps
     sage: p = P('abcabcabcabcaabacabcababcacbabacacabcaccbcac')
-    sage: p.plot()
+    sage: p.plot()                                                                      # needs sage.plot
     Graphics3d Object
 
 ::
@@ -137,7 +137,7 @@ Vector steps may be in more than 2 dimensions::
 
     sage: CubePaths = WordPaths('abcABC', steps='cube_grid'); CubePaths
     Word Paths on the cube grid
-    sage: CubePaths('abcabaabcabAAAAA').plot()
+    sage: CubePaths('abcabaabcabAAAAA').plot()                                          # needs sage.plot
     Graphics3d Object
 
 The input data may be a str, a list, a tuple,
@@ -188,7 +188,6 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["arrow", "line", "polygon", "point", "Graphics"])
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import QuadraticField
 from sage.rings.real_mpfr import RR
 from .word_datatypes import (WordDatatype_str,
                             WordDatatype_list,
@@ -201,6 +200,8 @@ from .word_infinite_datatypes import (
                             WordDatatype_callable_with_caching,
                             WordDatatype_callable)
 from sage.matrix.constructor import vector_on_axis_rotation_matrix
+
+lazy_import('sage.rings.number_field.number_field', 'QuadraticField')
 
 
 #######################################################################
@@ -332,7 +333,7 @@ def WordPaths(alphabet, steps=None):
         elif alphabet.cardinality() == 6:
             steps = 'hexagonal_grid'
         else:
-            raise TypeError("Unable to make a class WordPaths from %s"%alphabet)
+            raise TypeError("Unable to make a class WordPaths from %s" % alphabet)
 
     #Returns the class of WordPaths according to the given type of paths
     if isinstance(steps, str):
@@ -384,7 +385,7 @@ class WordPaths_all(FiniteWords):
             True
 
         If size of alphabet is twice the number of steps, then opposite
-        vectors are used for the second part of the alphabet.
+        vectors are used for the second part of the alphabet::
 
             sage: WordPaths('abcd',[(2,1),(2,4)])
             Word Paths over 4 steps
@@ -424,7 +425,7 @@ class WordPaths_all(FiniteWords):
 
         #Construction of the steps
         from sage.structure.element import Vector
-        if all((isinstance(x, Vector) for x in steps)):
+        if all(isinstance(x, Vector) for x in steps):
             vsteps = steps
         else:
             try:
@@ -455,10 +456,10 @@ class WordPaths_all(FiniteWords):
             sage: W1 == W3
             False
         """
-        return self is other or (type(self) == type(other) and \
-               self.alphabet() == other.alphabet() and \
-               self.vector_space() == other.vector_space() and \
-               self.letters_to_steps() == other.letters_to_steps())
+        return self is other or (type(self) is type(other) and
+            self.alphabet() == other.alphabet() and
+            self.vector_space() == other.vector_space() and
+            self.letters_to_steps() == other.letters_to_steps())
 
     def __ne__(self, other):
         r"""
@@ -1226,7 +1227,7 @@ class FiniteWordPath_all(SageObject):
             '(0.000, 0.000) -- (1.00, 0.000) -- (1.50, 0.866) -- (1.00, 1.73) -- (0.000, 1.73) -- (-0.500, 0.866)'
 
         """
-        from sage.all import n
+        from sage.misc.functional import N as n
         f = lambda x: n(x,digits=3)
         l = [str(tuple(map(f, pt))) for pt in self.points()]
         return ' -- '.join(l)
@@ -1365,15 +1366,15 @@ class FiniteWordPath_all(SageObject):
 
         To remove the axis, do like this::
 
-            sage: r = w.plot_projection(v)
-            sage: r.axes(False)
-            sage: r               # long time (2s)
+            sage: r = w.plot_projection(v)                                              # needs sage.plot
+            sage: r.axes(False)                                                         # needs sage.plot
+            sage: r                             # long time (2s)                        # needs sage.plot
             Graphics object consisting of 200 graphics primitives
 
         You can assign different colors to each letter::
 
-            sage: color = {'1':'purple', '2':(.2,.3,.4), '3': 'magenta'}
-            sage: w.plot_projection(v, color=color)  # long time (2s)
+            sage: color = {'1': 'purple', '2': (.2,.3,.4), '3': 'magenta'}
+            sage: w.plot_projection(v, color=color)     # long time (2s)                # needs sage.plot
             Graphics object consisting of 200 graphics primitives
 
         The 3d-Rauzy fractal::
@@ -1383,14 +1384,14 @@ class FiniteWordPath_all(SageObject):
             sage: v = s.pisot_eigenvector_right()
             sage: P = WordPaths('1234',[(1,0,0,0), (0,1,0,0), (0,0,1,0), (0,0,0,1)])
             sage: w = P(D[:200])
-            sage: w.plot_projection(v)
+            sage: w.plot_projection(v)                                                  # needs sage.plot
             Graphics3d Object
 
         The dimension of vector space of the parent must be 3 or 4::
 
             sage: P = WordPaths('ab', [(1, 0), (0, 1)])
             sage: p = P('aabbabbab')
-            sage: p.plot_projection()
+            sage: p.plot_projection()                                                   # needs sage.plot
             Traceback (most recent call last):
             ...
             TypeError: The dimension of the vector space (=2) must be 3 or 4
@@ -1444,7 +1445,7 @@ class FiniteWordPath_all(SageObject):
             sage: p = w.projected_path(v)
             sage: p
             Path: 1213121121312121312112131213121121312121...
-            sage: p[:20].plot()
+            sage: p[:20].plot()                                                         # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         The ``ring`` argument allows to change the precision of the
@@ -1530,42 +1531,42 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         A non closed path on the square grid::
 
             sage: P = WordPaths('abAB')
-            sage: P('abababAABAB').plot()
+            sage: P('abababAABAB').plot()                                               # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         A closed path on the square grid::
 
-            sage: P('abababAABABB').plot()
+            sage: P('abababAABABB').plot()                                              # needs sage.plot
             Graphics object consisting of 4 graphics primitives
 
         A Dyck path::
 
             sage: P = WordPaths('()', steps='dyck')
-            sage: P('()()()((()))').plot()
+            sage: P('()()()((()))').plot()                                              # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         A path in the triangle grid::
 
             sage: P = WordPaths('abcdef', steps='triangle_grid')
-            sage: P('abcdedededefab').plot()
+            sage: P('abcdedededefab').plot()                                            # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         A polygon of length 220 that tiles the plane in two ways::
 
             sage: P = WordPaths('abAB')
-            sage: P('aBababAbabaBaBABaBabaBaBABAbABABaBabaBaBABaBababAbabaBaBABaBabaBaBABAbABABaBABAbAbabAbABABaBABAbABABaBabaBaBABAbABABaBABAbAbabAbABAbAbabaBababAbABAbAbabAbABABaBABAbAbabAbABAbAbabaBababAbabaBaBABaBababAbabaBababAbABAbAbab').plot()
+            sage: P('aBababAbabaBaBABaBabaBaBABAbABABaBabaBaBABaBababAbabaBaBABaBabaBaBABAbABABaBABAbAbabAbABABaBABAbABABaBabaBaBABAbABABaBABAbAbabAbABAbAbabaBababAbABAbAbabAbABABaBABAbAbabAbABAbAbabaBababAbabaBaBABaBababAbabaBababAbABAbAbab').plot()  # needs sage.plot
             Graphics object consisting of 4 graphics primitives
 
         With gridlines::
 
-            sage: P('ababababab').plot(gridlines=True)
+            sage: P('ababababab').plot(gridlines=True)                                  # needs sage.plot
 
         TESTS::
 
             sage: P = WordPaths('abAB')
-            sage: P().plot()
+            sage: P().plot()                                                            # needs sage.plot
             Graphics object consisting of 3 graphics primitives
-            sage: sum(map(plot,map(P,['a','A','b','B'])))
+            sage: sum(map(plot,map(P,['a','A','b','B'])))                               # needs sage.plot
             Graphics object consisting of 12 graphics primitives
         """
         G = Graphics()
@@ -1614,38 +1615,45 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
             sage: P = WordPaths('abAB')
             sage: p = P('aaababbb')
-            sage: a = p.animate(); a    # optional -- ImageMagick
+            sage: a = p.animate(); print(a)                                             # needs sage.plot
             Animation with 9 frames
-            sage: show(a)               # optional -- ImageMagick
-            sage: a.gif(delay=35, iterations=3)    # optional -- ImageMagick
+            sage: show(a)                       # long time, optional - imagemagick, needs sage.plot
+            sage: show(a, delay=35, iterations=3)       # long time, optional - imagemagick, needs sage.plot
 
         ::
 
             sage: P = WordPaths('abcdef',steps='triangle')
             sage: p =  P('abcdef')
-            sage: p.animate()           # optional -- ImageMagick
+            sage: a = p.animate(); print(a)                                             # needs sage.plot
             Animation with 8 frames
+            sage: show(a)                       # long time, optional - imagemagick, needs sage.plot
 
         If the path is closed, the plain polygon is added at the end of the
         animation::
 
             sage: P = WordPaths('abAB')
             sage: p = P('ababAbABABaB')
-            sage: a = p.animate(); a    # optional -- ImageMagick
+            sage: a = p.animate(); print(a)                                             # needs sage.plot
             Animation with 14 frames
+            sage: show(a)                       # long time, optional - imagemagick, needs sage.plot
 
         Another example illustrating a Fibonacci tile::
 
             sage: w = words.fibonacci_tile(2)
-            sage: show(w.animate())  # optional -- ImageMagick
+            sage: a = w.animate(); print(a)                                             # needs sage.plot
+            Animation with 54 frames
+            sage: show(a)                       # long time, optional - imagemagick, needs sage.plot
 
         The first 4 Fibonacci tiles in an animation::
 
+            sage: # needs sage.plot
             sage: a = words.fibonacci_tile(0).animate()
             sage: b = words.fibonacci_tile(1).animate()
             sage: c = words.fibonacci_tile(2).animate()
             sage: d = words.fibonacci_tile(3).animate()
-            sage: (a*b*c*d).show()  # optional -- ImageMagick   # long time
+            sage: print(a*b*c*d)
+            Animation with 296 frames
+            sage: show(a*b*c*d)                 # long time, optional - imagemagick
 
         .. note::
 
@@ -1707,17 +1715,17 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             Word Paths on the square grid
             sage: p = P('aaaccaccacacacaccccccbbdd'); p
             Path: aaaccaccacacacaccccccbbdd
-            sage: R = p.plot() + p.plot_directive_vector()
-            sage: R.axes(False)
-            sage: R.set_aspect_ratio(1)
-            sage: R.plot()
+            sage: R = p.plot() + p.plot_directive_vector()                              # needs sage.plot
+            sage: R.axes(False)                                                         # needs sage.plot
+            sage: R.set_aspect_ratio(1)                                                 # needs sage.plot
+            sage: R.plot()                                                              # needs sage.plot
             Graphics object consisting of 4 graphics primitives
 
         TESTS:
 
         A closed path::
 
-            sage: P('acbd').plot_directive_vector()
+            sage: P('acbd').plot_directive_vector()                                     # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         start = self.start_point()
@@ -2014,12 +2022,12 @@ class FiniteWordPath_3d(FiniteWordPath_all):
             Word Paths over 2 steps
             sage: p = P('ababab'); p
             Path: ababab
-            sage: p.plot()
+            sage: p.plot()                                                              # needs sage.plot
             Graphics3d Object
 
             sage: P = WordPaths('abcABC', steps='cube_grid')
             sage: p = P('abcabcAABBC')
-            sage: p.plot()
+            sage: p.plot()                                                              # needs sage.plot
             Graphics3d Object
 
         """

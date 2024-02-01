@@ -1,10 +1,6 @@
 r"""
 Sage Runtime Environment
 
-AUTHORS:
-
-- \R. Andrew Ohana (2012): Initial version.
-
 Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
 environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
 (see also :trac:`29446`)::
@@ -16,6 +12,11 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
     sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
     sage: out == repr((SAGE_ROOT, SAGE_LOCAL))                                        # long time
     True
+
+AUTHORS:
+
+- \R. Andrew Ohana (2012): initial version
+
 """
 
 # ****************************************************************************
@@ -176,7 +177,8 @@ SAGE_VENV_SPKG_INST = var("SAGE_VENV_SPKG_INST", join(SAGE_VENV, "var", "lib", "
 SAGE_LOCAL = var("SAGE_LOCAL", SAGE_VENV)
 SAGE_SHARE = var("SAGE_SHARE", join(SAGE_LOCAL, "share"))
 SAGE_DOC = var("SAGE_DOC", join(SAGE_SHARE, "doc", "sage"))
-SAGE_SPKG_INST = var("SAGE_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
+SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
+SAGE_SPKG_INST = var("SAGE_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))  # deprecated
 
 # source tree of the Sage distribution
 SAGE_ROOT = var("SAGE_ROOT")  # no fallback for SAGE_ROOT
@@ -193,20 +195,26 @@ SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
+# colon-separated search path for databases.
+SAGE_DATA_PATH = var("SAGE_DATA_PATH",
+                     os.pathsep.join(filter(None, [
+                         join(DOT_SAGE, "db"),
+                         join(SAGE_SHARE, "sagemath"),
+                         SAGE_SHARE,
+                         ])))
+
+# database directories, the default is to search in SAGE_DATA_PATH
+CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR")
+CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR")
+ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR")
+GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR")
+POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR")
+
 # installation directories for various packages
-CONWAY_POLYNOMIALS_DATA_DIR = var("CONWAY_POLYNOMIALS_DATA_DIR", join(SAGE_SHARE, "conway_polynomials"))
-GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
-ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
-POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
-GAP_ROOT_DIR = var("GAP_ROOT_DIR", join(SAGE_SHARE, "gap"))
-THEBE_DIR = var("THEBE_DIR", join(SAGE_SHARE, "thebe"))
-COMBINATORIAL_DESIGN_DATA_DIR = var("COMBINATORIAL_DESIGN_DATA_DIR", join(SAGE_SHARE, "combinatorial_designs"))
-CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR", join(SAGE_SHARE, "cremona"))
-CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR", join(SAGE_SHARE, "cremona"))
-JMOL_DIR = var("JMOL_DIR", join(SAGE_SHARE, "jmol"))
+JMOL_DIR = var("JMOL_DIR")
 MATHJAX_DIR = var("MATHJAX_DIR", join(SAGE_SHARE, "mathjax"))
 MTXLIB = var("MTXLIB", join(SAGE_SHARE, "meataxe"))
-THREEJS_DIR = var("THREEJS_DIR", join(SAGE_SHARE, "threejs-sage"))
+THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
@@ -222,19 +230,12 @@ FOURTITWO_RAYS = var("FOURTITWO_RAYS")
 FOURTITWO_PPI = var("FOURTITWO_PPI")
 FOURTITWO_CIRCUITS = var("FOURTITWO_CIRCUITS")
 FOURTITWO_GROEBNER = var("FOURTITWO_GROEBNER")
-ARB_LIBRARY = var("ARB_LIBRARY", "arb")
 CBLAS_PC_MODULES = var("CBLAS_PC_MODULES", "cblas:openblas:blas")
 ECL_CONFIG = var("ECL_CONFIG", "ecl-config")
 NTL_INCDIR = var("NTL_INCDIR")
 NTL_LIBDIR = var("NTL_LIBDIR")
 LIE_INFO_DIR = var("LIE_INFO_DIR", join(SAGE_LOCAL, "lib", "LiE"))
 SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
-
-# The path to libSingular, to be passed to dlopen(). This will
-# typically be set to an absolute path in sage_conf, but the relative
-# fallback path here works on systems where dlopen() searches the
-# system's library locations.
-LIBSINGULAR_PATH = var("LIBSINGULAR_PATH", "libSingular.so")
 
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
@@ -250,102 +251,22 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 # GAP memory and args
 
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
-_gap_cmd = "gap -r"
-if SAGE_GAP_MEMORY is not None:
-    _gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
-SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', _gap_cmd)
+SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', None)
 
-
-def _get_shared_lib_path(*libnames: str) -> Optional[str]:
-    """
-    Return the full path to a shared library file installed in
-    ``$SAGE_LOCAL/lib`` or the directories associated with the
-    Python sysconfig.
-
-    This can also be passed more than one library name (e.g. for cases where
-    some library may have multiple names depending on the platform) in which
-    case the first one found is returned.
-
-    This supports most *NIX variants (in which ``lib<libname>.so`` is found
-    under ``$SAGE_LOCAL/lib``), macOS (same, but with the ``.dylib``
-    extension), and Cygwin (under ``$SAGE_LOCAL/bin/cyg<libname>.dll``,
-    or ``$SAGE_LOCAL/bin/cyg<libname>-*.dll`` for versioned DLLs).
-
-    For distributions like Debian that use a multiarch layout, we also try the
-    multiarch lib paths (i.e. ``/usr/lib/<arch>/``).
-
-    This returns ``None`` if no matching library file could be found.
-
-    EXAMPLES::
-
-        sage: from sage.env import _get_shared_lib_path
-        sage: "gap" in _get_shared_lib_path("gap")
-        True
-        sage: _get_shared_lib_path("an_absurd_lib") is None
-        True
-
-    """
-
-    for libname in libnames:
-        search_directories: List[Path] = []
-        patterns: List[str] = []
-        if sys.platform == 'cygwin':
-            # Later down we take the first matching DLL found, so search
-            # SAGE_LOCAL first so that it takes precedence
-            if SAGE_LOCAL:
-                search_directories.append(Path(SAGE_LOCAL) / 'bin')
-            search_directories.append(Path(sysconfig.get_config_var('BINDIR')))
-            # Note: The following is not very robust, since if there are multible
-            # versions for the same library this just selects one more or less
-            # at arbitrary. However, practically speaking, on Cygwin, there
-            # will only ever be one version
-            patterns = [f'cyg{libname}.dll', f'cyg{libname}-*.dll']
-        else:
-            if sys.platform == 'darwin':
-                ext = 'dylib'
-            else:
-                ext = 'so'
-
-            if SAGE_LOCAL:
-                search_directories.append(Path(SAGE_LOCAL) / 'lib')
-            libdir = sysconfig.get_config_var('LIBDIR')
-            if libdir is not None:
-                libdir = Path(libdir)
-                search_directories.append(libdir)
-
-                multiarchlib = sysconfig.get_config_var('MULTIARCH')
-                if multiarchlib is not None:
-                    search_directories.append(libdir / multiarchlib),
-
-            patterns = [f'lib{libname}.{ext}']
-
-        for directory in search_directories:
-            for pattern in patterns:
-                path = next(directory.glob(pattern), None)
-                if path is not None:
-                    return str(path.resolve())
-
-    # Just return None if no files were found
-    return None
-
-# locate libgap shared object
-GAP_SO = var("GAP_SO", _get_shared_lib_path("gap", ""))
+# The semicolon-separated search path for GAP packages. It is passed
+# directly to GAP via the -l flag.
+GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
+                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
+                               join(SAGE_LOCAL, "share", "gap")]))
 
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:
-    if UNAME[:6] == 'CYGWIN':
-        # on windows/cygwin it is typical for the home directory
-        # to have a space in it.  Fortunately, users also have
-        # write privileges to c:\cygwin\home, so we just put
-        # .sage there.
-        DOT_SAGE = var("DOT_SAGE", "/home/.sage", force=True)
-    else:
-        print("Your home directory has a space in it.  This")
-        print("will probably break some functionality of Sage.  E.g.,")
-        print("the GAP interface will not work. A workaround")
-        print("is to set the environment variable HOME to a")
-        print("directory with no spaces that you have write")
-        print("permissions to before you start sage.")
+    print("Your home directory has a space in it.  This")
+    print("will probably break some functionality of Sage.  E.g.,")
+    print("the GAP interface will not work. A workaround")
+    print("is to set the environment variable HOME to a")
+    print("directory with no spaces that you have write")
+    print("permissions to before you start sage.")
 
 
 def sage_include_directories(use_sources=False):
@@ -384,18 +305,22 @@ def sage_include_directories(use_sources=False):
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
     """
-    import distutils.sysconfig
-
-    TOP = SAGE_SRC if use_sources else SAGE_LIB
-
-    dirs = [TOP,
-            distutils.sysconfig.get_python_inc()]
+    if use_sources:
+        dirs = [SAGE_SRC]
+    else:
+        import sage
+        dirs = [os.path.dirname(directory)
+                for directory in sage.__path__]
     try:
         import numpy
-        dirs.insert(1, numpy.get_include())
+        dirs.append(numpy.get_include())
     except ModuleNotFoundError:
         pass
+
+    dirs.append(sysconfig.get_config_var('INCLUDEPY'))
+
     return dirs
+
 
 def get_cblas_pc_module_name() -> str:
     """
@@ -433,8 +358,7 @@ def cython_aliases(required_modules=None,
         sage: cython_aliases()
         {...}
         sage: sorted(cython_aliases().keys())
-        ['ARB_LIBRARY',
-         'CBLAS_CFLAGS',
+        ['CBLAS_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
         sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
@@ -494,8 +418,8 @@ def cython_aliases(required_modules=None,
         elif lib == 'ecl':
             try:
                 # Determine ecl-specific compiler arguments using the ecl-config script
-                ecl_cflags = subprocess.run([ECL_CONFIG, "--cflags"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True).stdout.split()
-                ecl_libs = subprocess.run([ECL_CONFIG, "--libs"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True).stdout.split()
+                ecl_cflags = subprocess.run([ECL_CONFIG, "--cflags"], check=True, capture_output=True, text=True).stdout.split()
+                ecl_libs = subprocess.run([ECL_CONFIG, "--libs"], check=True, capture_output=True, text=True).stdout.split()
             except subprocess.CalledProcessError:
                 if required:
                     raise
@@ -505,7 +429,7 @@ def cython_aliases(required_modules=None,
             aliases["ECL_INCDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-I'), ecl_cflags)))
             aliases["ECL_LIBDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-L'), ecl_libs)))
             aliases["ECL_LIBRARIES"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-l'), ecl_libs)))
-            aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), ecl_libs))
+            aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), ecl_libs))
             continue
         else:
             try:
@@ -524,7 +448,7 @@ def cython_aliases(required_modules=None,
         # include search order matters.
         aliases[var + "INCDIR"] = pc['include_dirs']
         aliases[var + "LIBDIR"] = pc['library_dirs']
-        aliases[var + "LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), libs.split()))
+        aliases[var + "LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), libs.split()))
         aliases[var + "LIBRARIES"] = pc['libraries']
 
     # uname-specific flags
@@ -538,8 +462,6 @@ def cython_aliases(required_modules=None,
 
     aliases["LINUX_NOEXECSTACK"] = uname_specific("Linux", ["-Wl,-z,noexecstack"],
                                                   [])
-    aliases["CYGWIN_SQLITE3_LIBS"] = uname_specific("CYGWIN", ["sqlite3"],
-                                                    [])
 
     # LinBox needs special care because it actually requires C++11 with
     # GNU extensions: -std=c++11 does not work, you need -std=gnu++11
@@ -551,12 +473,6 @@ def cython_aliases(required_modules=None,
     # fflas-ffpack and fflas-ffpack does add such a C++11 flag.
     if "LINBOX_CFLAGS" in aliases:
         aliases["LINBOX_CFLAGS"].append("-std=gnu++11")
-
-    aliases["ARB_LIBRARY"] = ARB_LIBRARY
-
-    # TODO: Remove Cygwin hack by installing a suitable cblas.pc
-    if os.path.exists('/usr/lib/libblas.dll.a'):
-        aliases["CBLAS_LIBS"] = ['gslcblas']
 
     try:
         aliases["M4RI_CFLAGS"].remove("-pedantic")

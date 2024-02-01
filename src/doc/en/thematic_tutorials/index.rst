@@ -4,8 +4,8 @@
 
 .. _thematic-tutorials:
 
-Welcome to the Sage Thematic Tutorials!
-=======================================
+Sage Thematic Tutorials
+=======================
 
 Here you will find Sage demonstrations, quick reference cards, primers, and
 thematic tutorials,

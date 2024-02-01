@@ -15,4 +15,4 @@ GPL version 3
 Upstream Contact
 ----------------
 
--  https://github.com/videlec/pplpy
+-  https://github.com/sagemath/pplpy

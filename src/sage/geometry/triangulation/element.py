@@ -23,7 +23,7 @@ Here is a simple example of how to triangulate a point configuration::
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate();  triang
     (<0,1,2,5>, <0,1,3,5>, <1,3,4,5>)
-    sage: triang.plot(axes=False)  # optional - sage.plot
+    sage: triang.plot(axes=False)                                                       # needs sage.plot
     Graphics3d Object
 
 See :mod:`sage.geometry.triangulation.point_configuration` for more details.
@@ -68,7 +68,7 @@ def triangulation_render_2d(triangulation, **kwds):
 
         sage: points = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
         sage: triang = points.triangulate()
-        sage: triang.plot(axes=False, aspect_ratio=1)   # indirect doctest  # optional - sage.plot
+        sage: triang.plot(axes=False, aspect_ratio=1)   # indirect doctest              # needs sage.plot
         Graphics object consisting of 12 graphics primitives
     """
     from sage.plot.all import point2d, line2d, polygon2d
@@ -80,9 +80,9 @@ def triangulation_render_2d(triangulation, **kwds):
 
     tmp_lines = []
     for t in triangulation:
-        if len(t)>=2:
+        if len(t) >= 2:
             tmp_lines.append([t[0], t[1]])
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_lines.append([t[0], t[2]])
             tmp_lines.append([t[1], t[2]])
     all_lines = []
@@ -103,14 +103,12 @@ def triangulation_render_2d(triangulation, **kwds):
 
     plot_triangs = sum([ polygon2d([coord[t[0]], coord[t[1]], coord[t[2]]],
                                    zorder=0, rgbcolor=(0.8, 1, 0.8), **kwds)
-                         for t in triangulation if len(t)>=3 ])
+                         for t in triangulation if len(t) >= 3 ])
 
     return \
         plot_points + \
         plot_interior_lines + plot_exterior_lines + \
         plot_triangs
-
-
 
 
 def triangulation_render_3d(triangulation, **kwds):
@@ -132,7 +130,7 @@ def triangulation_render_3d(triangulation, **kwds):
         sage: p = [[0,-1,-1],[0,0,1],[0,1,0], [1,-1,-1],[1,0,1],[1,1,0]]
         sage: points = PointConfiguration(p)
         sage: triang = points.triangulate()
-        sage: triang.plot(axes=False)     # indirect doctest  # optional - sage.plot
+        sage: triang.plot(axes=False)     # indirect doctest                            # needs sage.plot
         Graphics3d Object
     """
     from sage.plot.plot3d.all import point3d, line3d, polygon3d
@@ -144,12 +142,12 @@ def triangulation_render_3d(triangulation, **kwds):
 
     tmp_lines = []
     for t in triangulation:
-        if len(t)>=2:
+        if len(t) >= 2:
             tmp_lines.append([t[0], t[1]])
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_lines.append([t[0], t[2]])
             tmp_lines.append([t[1], t[2]])
-        if len(t)>=4:
+        if len(t) >= 4:
             tmp_lines.append([t[0], t[3]])
             tmp_lines.append([t[1], t[3]])
             tmp_lines.append([t[2], t[3]])
@@ -177,9 +175,9 @@ def triangulation_render_3d(triangulation, **kwds):
 
     tmp_triangs = []
     for t in triangulation:
-        if len(t)>=3:
+        if len(t) >= 3:
             tmp_triangs.append([t[0], t[1], t[2]])
-        if len(t)>=4:
+        if len(t) >= 4:
             tmp_triangs.append([t[0], t[1], t[3]])
             tmp_triangs.append([t[0], t[2], t[3]])
             tmp_triangs.append([t[1], t[2], t[3]])
@@ -267,7 +265,7 @@ class Triangulation(Element):
         except TypeError:
             triangulation = tuple( self.point_configuration().int_to_simplex(i)
                                    for i in triangulation )
-        assert not check or all( len(t)==self.point_configuration().dim()+1
+        assert not check or all( len(t) == self.point_configuration().dim()+1
                                  for t in triangulation)
         self._triangulation = triangulation
 
@@ -338,8 +336,7 @@ class Triangulation(Element):
             ...
             StopIteration
         """
-        for p in self._triangulation:
-            yield p
+        yield from self._triangulation
 
     def __getitem__(self, i):
         """
@@ -363,7 +360,6 @@ class Triangulation(Element):
         """
         return self._triangulation[i]
 
-
     def __len__(self):
         """
         Return the length of the triangulation.
@@ -379,7 +375,6 @@ class Triangulation(Element):
             2
         """
         return len(self._triangulation)
-
 
     def _repr_(self):
         r"""
@@ -401,7 +396,6 @@ class Triangulation(Element):
         s += ')'
         return s
 
-
     def plot(self, **kwds):
         r"""
         Produce a graphical representation of the triangulation.
@@ -412,7 +406,7 @@ class Triangulation(Element):
             sage: triangulation = p.triangulate()
             sage: triangulation
             (<1,3,4>, <2,3,4>)
-            sage: triangulation.plot(axes=False)  # optional - sage.plot
+            sage: triangulation.plot(axes=False)                                        # needs sage.plot
             Graphics object consisting of 12 graphics primitives
         """
         dim = self.point_configuration().dim()
@@ -424,7 +418,6 @@ class Triangulation(Element):
             return triangulation_render_3d(self, **kwds)
 
         raise NotImplementedError('Plotting '+str(dim)+'-dimensional triangulations not implemented!')
-
 
     def gkz_phi(self):
         r"""
@@ -459,7 +452,6 @@ class Triangulation(Element):
             for i in simplex:
                 vec[i] = vec[i] + vol
         return vec
-
 
     def enumerate_simplices(self):
         r"""
@@ -505,7 +497,6 @@ class Triangulation(Element):
         pc = self._point_configuration
         return tuple( pc.simplex_to_int(t) for t in self )
 
-
     def fan(self, origin=None):
         r"""
         Construct the fan of cones over the simplices of the triangulation.
@@ -532,18 +523,17 @@ class Triangulation(Element):
             sage: triangulation = pc.triangulate()
             sage: fan = triangulation.fan(); fan
             Rational polyhedral fan in 2-d lattice N
-            sage: fan.is_equivalent( toric_varieties.P2().fan() )               # optional - palp
+            sage: fan.is_equivalent(toric_varieties.P2().fan())                         # needs palp sage.graphs
             True
 
         Toric diagrams (the `\ZZ_5` hyperconifold)::
 
             sage: vertices=[(0, 1, 0), (0, 3, 1), (0, 2, 3), (0, 0, 2)]
             sage: interior=[(0, 1, 1), (0, 1, 2), (0, 2, 1), (0, 2, 2)]
-            sage: points = vertices+interior
+            sage: points = vertices + interior
             sage: pc = PointConfiguration(points, fine=True)
             sage: triangulation = pc.triangulate()
-            sage: fan = triangulation.fan( (-1,0,0) )
-            sage: fan
+            sage: fan = triangulation.fan((-1,0,0)); fan
             Rational polyhedral fan in 3-d lattice N
             sage: fan.rays()
             N(1, 1, 0),
@@ -564,7 +554,6 @@ class Triangulation(Element):
         points = self.point_configuration().points()
         return Fan(self, (vector(R, p) - origin for p in points))
 
-
     @cached_method
     def simplicial_complex(self):
         r"""
@@ -577,18 +566,16 @@ class Triangulation(Element):
         EXAMPLES::
 
             sage: p = polytopes.cuboctahedron()
-            sage: sc = p.triangulate(engine='internal').simplicial_complex()
-            sage: sc
+            sage: sc = p.triangulate(engine='internal').simplicial_complex(); sc        # needs sage.graphs
             Simplicial complex with 12 vertices and 16 facets
 
         Any convex set is contractable, so its reduced homology groups vanish::
 
-            sage: sc.homology()
+            sage: sc.homology()                                                         # needs sage.graphs
             {0: 0, 1: 0, 2: 0, 3: 0}
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self)
-
 
     @cached_method
     def _boundary_simplex_dictionary(self):
@@ -632,7 +619,6 @@ class Triangulation(Element):
                 facet = simplex[:i] + simplex[i+1:]
                 result[facet] = result.get(facet, tuple()) + (simplex,)
         return result
-
 
     @cached_method
     def boundary(self):
@@ -683,20 +669,19 @@ class Triangulation(Element):
 
             sage: p = polytopes.cuboctahedron()
             sage: triangulation = p.triangulate(engine='internal')
-            sage: bd_sc = triangulation.boundary_simplicial_complex()
-            sage: bd_sc
+            sage: bd_sc = triangulation.boundary_simplicial_complex(); bd_sc            # needs sage.graphs
             Simplicial complex with 12 vertices and 20 facets
 
         The boundary of every convex set is a topological sphere, so it has
         spherical homology::
 
-            sage: bd_sc.homology()
+            sage: bd_sc.homology()                                                      # needs sage.graphs
             {0: 0, 1: 0, 2: Z}
 
         It is a subcomplex of ``self`` as a :meth:`simplicial_complex`::
 
-            sage: sc = triangulation.simplicial_complex()
-            sage: all(f in sc for f in bd_sc.maximal_faces())
+            sage: sc = triangulation.simplicial_complex()                               # needs sage.graphs
+            sage: all(f in sc for f in bd_sc.maximal_faces())                           # needs sage.graphs
             True
         """
         from sage.topology.simplicial_complex import SimplicialComplex
@@ -753,9 +738,9 @@ class Triangulation(Element):
             sage: pc = PointConfiguration(P.vertices())
             sage: T = pc.placing_triangulation(); T
             (<0,1,2,7>, <0,1,5,7>, <0,2,3,7>, <0,3,4,7>, <0,4,5,7>, <1,5,6,7>)
-            sage: C = T.polyhedral_complex(); C
+            sage: C = T.polyhedral_complex(); C                                         # needs sage.graphs
             Polyhedral complex with 6 maximal cells
-            sage: [P.vertices_list() for P in C.maximal_cells_sorted()]
+            sage: [P.vertices_list() for P in C.maximal_cells_sorted()]                 # needs sage.graphs
             [[[-1, -1, -1], [-1, -1, 1], [-1, 1, 1], [1, -1, -1]],
              [[-1, -1, -1], [-1, 1, -1], [-1, 1, 1], [1, 1, -1]],
              [[-1, -1, -1], [-1, 1, 1], [1, -1, -1], [1, 1, -1]],
@@ -789,26 +774,26 @@ class Triangulation(Element):
             sage: pc = PointConfiguration(P.vertices())
             sage: T = pc.placing_triangulation(); T
             (<0,1,2,7>, <0,1,5,7>, <0,2,3,7>, <0,3,4,7>, <0,4,5,7>, <1,5,6,7>)
-            sage: bd_C = T.boundary_polyhedral_complex(); bd_C
+            sage: bd_C = T.boundary_polyhedral_complex(); bd_C                          # needs sage.graphs
             Polyhedral complex with 12 maximal cells
-            sage: [P.vertices_list() for P in bd_C.maximal_cells_sorted()]
+            sage: [P.vertices_list() for P in bd_C.maximal_cells_sorted()]              # needs sage.graphs
             [[[-1, -1, -1], [-1, -1, 1], [-1, 1, 1]],
-            [[-1, -1, -1], [-1, -1, 1], [1, -1, -1]],
-            [[-1, -1, -1], [-1, 1, -1], [-1, 1, 1]],
-            [[-1, -1, -1], [-1, 1, -1], [1, 1, -1]],
-            [[-1, -1, -1], [1, -1, -1], [1, 1, -1]],
-            [[-1, -1, 1], [-1, 1, 1], [1, -1, 1]],
-            [[-1, -1, 1], [1, -1, -1], [1, -1, 1]],
-            [[-1, 1, -1], [-1, 1, 1], [1, 1, -1]],
-            [[-1, 1, 1], [1, -1, 1], [1, 1, 1]],
-            [[-1, 1, 1], [1, 1, -1], [1, 1, 1]],
-            [[1, -1, -1], [1, -1, 1], [1, 1, 1]],
-            [[1, -1, -1], [1, 1, -1], [1, 1, 1]]]
+             [[-1, -1, -1], [-1, -1, 1], [1, -1, -1]],
+             [[-1, -1, -1], [-1, 1, -1], [-1, 1, 1]],
+             [[-1, -1, -1], [-1, 1, -1], [1, 1, -1]],
+             [[-1, -1, -1], [1, -1, -1], [1, 1, -1]],
+             [[-1, -1, 1], [-1, 1, 1], [1, -1, 1]],
+             [[-1, -1, 1], [1, -1, -1], [1, -1, 1]],
+             [[-1, 1, -1], [-1, 1, 1], [1, 1, -1]],
+             [[-1, 1, 1], [1, -1, 1], [1, 1, 1]],
+             [[-1, 1, 1], [1, 1, -1], [1, 1, 1]],
+             [[1, -1, -1], [1, -1, 1], [1, 1, 1]],
+             [[1, -1, -1], [1, 1, -1], [1, 1, 1]]]
 
         It is a subcomplex of ``self`` as a :meth:`polyhedral_complex`::
 
-            sage: C = T.polyhedral_complex()
-            sage: bd_C.is_subcomplex(C)
+            sage: C = T.polyhedral_complex()                                            # needs sage.graphs
+            sage: bd_C.is_subcomplex(C)                                                 # needs sage.graphs
             True
         """
         from sage.geometry.polyhedral_complex import PolyhedralComplex
@@ -932,10 +917,10 @@ class Triangulation(Element):
             sage: p = PointConfiguration([[1,0,0], [0,1,0], [0,0,1], [-1,0,1],
             ....:                         [1,0,-1], [-1,0,0], [0,-1,0], [0,0,-1]])
             sage: t = p.triangulate()
-            sage: t.adjacency_graph()
+            sage: t.adjacency_graph()                                                   # needs sage.graphs
             Graph on 8 vertices
 
         """
         vertices = [Set(_) for _ in list(self)]
         return Graph([vertices,
-                  lambda x,y: len(x-y)==1])
+                  lambda x,y: len(x-y) == 1])

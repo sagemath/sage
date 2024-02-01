@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Monomial symmetric functions
 """
@@ -175,7 +176,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         """
         assert self.base_ring() == f.base_ring()
         if check and not f.is_symmetric():
-            raise ValueError("%s is not a symmetric polynomial"%f)
+            raise ValueError("%s is not a symmetric polynomial" % f)
         out = self._from_dict({_Partitions.element_class(_Partitions, list(e)): c
                                for (e,c) in f.dict().items()
                                if all(e[i+1] <= e[i] for i in range(len(e)-1))},
@@ -365,7 +366,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 q^7 + q^6 + q^5 + q^3 + q^2 + q
 
                 sage: x = 5*m[2] + 3*m[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 -10*(q^3 - 1)*q/(q - 1) + 5*(q^3 - 1)^2/(q - 1)^2 + 3*(q^3 - 1)/(q - 1) + 1
 
             TESTS::
@@ -451,7 +452,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))
+                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 (q - 1)^2*t^3/(q^2 + q + 1)
 
             TESTS::

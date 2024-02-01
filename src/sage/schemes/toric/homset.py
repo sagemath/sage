@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Set of homomorphisms between two toric varieties
 
@@ -48,8 +49,7 @@ the projection matrix alone::
     Scheme morphism:
       From: 2-d CPR-Fano toric variety covered by 4 affine patches
       To:   1-d CPR-Fano toric variety covered by 2 affine patches
-      Defn: Defined on coordinates by sending [s : t : x : y] to
-            [s : t]
+      Defn: Defined on coordinates by sending [s : t : x : y] to [s : t]
 
 In the case of toric algebraic schemes (defined by polynomials in
 toric varieties), this module defines the underlying morphism of the
@@ -57,7 +57,7 @@ ambient toric varieties::
 
     sage: P1xP1.inject_variables()
     Defining s, t, x, y
-    sage: S = P1xP1.subscheme([s*x-t*y])
+    sage: S = P1xP1.subscheme([s*x - t*y])
     sage: type(S.Hom(S))
     <class 'sage.schemes.toric.homset.SchemeHomset_toric_variety_with_category'>
 
@@ -76,8 +76,7 @@ coordinates where the codomain is not implemented as a toric variety::
     Scheme morphism:
       From: 2-d CPR-Fano toric variety covered by 3 affine patches
       To:   Projective Space of dimension 2 over Rational Field
-      Defn: Defined on coordinates by sending [x : y : z] to
-            (x^2 : y^2 : z^2)
+      Defn: Defined on coordinates by sending [x : y : z] to (x^2 : y^2 : z^2)
 
     sage: native_to_toric = P2_native.Hom(P2_toric);  native_to_toric
     Set of morphisms
@@ -89,8 +88,7 @@ coordinates where the codomain is not implemented as a toric variety::
     Scheme morphism:
       From: Projective Space of dimension 2 over Rational Field
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
-      Defn: Defined on coordinates by sending (u : v : w) to
-            [u^2 : v^2 : w^2]
+      Defn: Defined on coordinates by sending (u : v : w) to [u^2 : v^2 : w^2]
 """
 
 # ****************************************************************************
@@ -294,16 +292,13 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
 
 class SchemeHomset_points_toric_base(SchemeHomset_points):
     """
-    Base class for homsets with toric ambient spaces
+    Base class for homsets with toric ambient spaces.
 
     INPUT:
 
     - same as for :class:`SchemeHomset_points`.
 
-    OUTPUT:
-
-    A scheme morphism of type
-    :class:`SchemeHomset_points_toric_base`.
+    OUTPUT: A scheme morphism of type :class:`SchemeHomset_points_toric_base`.
 
     EXAMPLES::
 
@@ -323,9 +318,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
         """
         Return whether there are finitely many points.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
@@ -439,10 +432,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
 
     - same as for :class:`~sage.schemes.generic.homset.SchemeHomset_points`.
 
-    OUTPUT:
-
-    A scheme morphism of type
-    :class:`SchemeHomset_points_toric_field`.
+    OUTPUT: A scheme morphism of type :class:`SchemeHomset_points_toric_field`.
 
     EXAMPLES::
 
@@ -513,7 +503,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
             sage: V = ToricVariety(FaceFan(o))
             sage: V.change_ring(GF(2)).point_set().cardinality()
             27
-            sage: V.change_ring(GF(8, "a")).point_set().cardinality()
+            sage: V.change_ring(GF(8, "a")).point_set().cardinality()                   # needs sage.rings.finite_rings
             729
             sage: V.change_ring(GF(101)).point_set().cardinality()
             1061208
@@ -578,9 +568,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
         """
         Iterate over the points of the variety.
 
-        OUTPUT:
-
-        Iterator over points.
+        OUTPUT: Iterator over points.
 
         EXAMPLES::
 
@@ -633,6 +621,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
             sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
             sage: list(cubic.point_set())
@@ -653,6 +642,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
             sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
             sage: list(cubic.point_set())

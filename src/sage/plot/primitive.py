@@ -56,7 +56,6 @@ class GraphicPrimitive(WithEqualityById, SageObject):
         """
         self._options = options
 
-
     def _allowed_options(self):
         """
         Return the allowed options for a graphics primitive.
@@ -214,7 +213,6 @@ class GraphicPrimitive(WithEqualityById, SageObject):
             'Graphics primitive'
         """
         return "Graphics primitive"
-
 
 
 class GraphicPrimitive_xydata(GraphicPrimitive):

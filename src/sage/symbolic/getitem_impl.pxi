@@ -138,8 +138,7 @@ cdef class OperandsWrapper(SageObject):
             else:
                 step = 1
             return [new_Expression_from_GEx(self._expr._parent,
-                self._expr._gobj.op(ind)) for ind in xrange(bind, eind, step)]
-
+                self._expr._gobj.op(ind)) for ind in range(bind, eind, step)]
 
         ind_err_msg = "index should either be a slice object, an integer or a list of integers"
         if isinstance(arg, (list, tuple)):

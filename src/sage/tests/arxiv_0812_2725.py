@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Sage code for computing k-distant crossing numbers.
 
@@ -73,8 +74,7 @@ def CompleteMatchings(n):
     integer depends on what [1..n] returns, and also on what range(1,
     len([1..n])) is.
     """
-    for m in matchingsset(list(range(1, n + 1))):
-        yield m
+    yield from matchingsset(list(range(1, n + 1)))
 
 
 def matchingsset(L):

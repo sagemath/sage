@@ -27,7 +27,7 @@ include "FM_template.pxi"
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
-cdef extern from "sage/rings/padics/transcendantal.c":
+cdef extern from "transcendantal.c":
     cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
@@ -156,7 +156,7 @@ cdef class pAdicFixedModElement(FMElement):
         """
         return self.lift_c()
 
-    cdef lift_c(self):
+    cdef lift_c(self) noexcept:
         r"""
         Returns an integer congruent to this element modulo the precision.
 
@@ -169,7 +169,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R = ZpFM(7,4); a = R(8); a.lift() # indirect doctest
+            sage: R = ZpFM(7,4); a = R(8); a.lift()  # indirect doctest
             8
         """
         cdef Integer ans = PY_NEW(Integer)
@@ -183,24 +183,24 @@ cdef class pAdicFixedModElement(FMElement):
         EXAMPLES::
 
             sage: R = ZpCA(5)
-            sage: pari(R(1777)) #indirect doctest
+            sage: pari(R(1777))  # indirect doctest                                     # needs sage.libs.pari
             2 + 5^2 + 4*5^3 + 2*5^4 + O(5^20)
         """
         return self._to_gen()
 
-    cdef pari_gen _to_gen(self):
+    cdef pari_gen _to_gen(self) noexcept:
         """
         Convert ``self`` to an equivalent pari element.
 
         EXAMPLES::
 
-            sage: R = ZpFM(5, 10); a = R(17); pari(a) # indirect doctest
+            sage: R = ZpFM(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             O(5^10)
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^10)
-            sage: pari(R(0)).debug()
+            sage: pari(R(0)).debug()                                                    # needs sage.libs.pari
             [&=...] PADIC(lg=5):... (precp=0,valp=10):... ... ... ...
                 p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
@@ -542,6 +542,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest

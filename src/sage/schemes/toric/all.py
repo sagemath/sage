@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.schemes.toric.weierstrass', 'WeierstrassForm')

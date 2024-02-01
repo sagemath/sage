@@ -152,7 +152,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
                     if latex:
                         superscript = r'\{' + superscript + r'\}'
                     else:
-                        superscript = '{' + superscript  + '}'
+                        superscript = '{' + superscript + '}'
                 if latex:
                     if len(superscript) != 1:
                         superscript = '{' + superscript + '}'
@@ -420,7 +420,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
                      with symmetry on the index positions (0, 1, 2, 3),
                      with symmetry on the index positions (4, 5)
               To:   Free module of type-(6,0) tensors on the Rank-3 free module M over the Integer Ring
-         """
+        """
         return self.module_morphism(function=lambda x: x, codomain=self.ambient())
 
     @lazy_attribute

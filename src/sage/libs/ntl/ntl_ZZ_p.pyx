@@ -17,7 +17,7 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
@@ -32,7 +32,6 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.rings.rational cimport Rational
-from sage.rings.integer_ring cimport IntegerRing_class
 
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
@@ -40,7 +39,7 @@ from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 
 
 ZZ_sage = IntegerRing()
@@ -155,7 +154,7 @@ cdef class ntl_ZZ_p():
             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_ZZ_p _new(self):
+    cdef ntl_ZZ_p _new(self) noexcept:
         cdef ntl_ZZ_p r
         self.c.restore_c()
         r = ntl_ZZ_p.__new__(ntl_ZZ_p)
@@ -349,7 +348,7 @@ cdef class ntl_ZZ_p():
         """
         return self.get_as_int()
 
-    cdef int get_as_int(ntl_ZZ_p self):
+    cdef int get_as_int(ntl_ZZ_p self) noexcept:
         r"""
         Returns value as C int.
         Return value is only valid if the result fits into an int.
@@ -376,7 +375,7 @@ cdef class ntl_ZZ_p():
         self.c.restore_c()
         return self.get_as_int()
 
-    cdef void set_from_int(ntl_ZZ_p self, int value):
+    cdef void set_from_int(ntl_ZZ_p self, int value) noexcept:
         r"""
         Sets the value from a C int.
 

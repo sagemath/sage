@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Quasisymmetric functions
 
@@ -185,7 +185,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
         sage: QSym = QuasiSymmetricFunctions(QQ)
         sage: QSym.category()
-        Join of Category of hopf algebras over Rational Field
+        Join of Category of Hopf algebras over Rational Field
             and Category of graded algebras over Rational Field
             and Category of commutative algebras over Rational Field
             and Category of monoids with realizations
@@ -556,18 +556,18 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             sage: QSym2 = QuasiSymmetricFunctions(Integers(23))
             sage: TestSuite(QuasiSymmetricFunctions(QQ)).run()
         """
-        # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
+        # change the line below to assert R in Rings() once MRO issues from #15536, #15475 are resolved
+        assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
         self._base = R # Won't be needed once CategoryObject won't override base_ring
         category = GradedHopfAlgebras(R).Commutative()
         self._category = category
-        Parent.__init__(self, category = category.WithRealizations())
+        Parent.__init__(self, category=category.WithRealizations())
 
         # Bases
-        Monomial    = self.Monomial()
+        Monomial = self.Monomial()
         Fundamental = self.Fundamental()
         dualImmaculate = self.dualImmaculate()
-        QS          = self.Quasisymmetric_Schur()
+        QS = self.Quasisymmetric_Schur()
 
         # Change of bases
         Fundamental.module_morphism(Monomial.sum_of_finer_compositions,
@@ -578,11 +578,11 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                                     ).register_as_coercion()
         #This changes dualImmaculate into Monomial
         dualImmaculate.module_morphism(dualImmaculate._to_Monomial_on_basis,
-                                          codomain = Monomial, category = category
+                                          codomain=Monomial, category=category
                                           ).register_as_coercion()
         #This changes Monomial into dualImmaculate
         Monomial.module_morphism(dualImmaculate._from_Monomial_on_basis,
-                                          codomain = dualImmaculate, category = category
+                                          codomain=dualImmaculate, category=category
                                           ).register_as_coercion()
         #This changes Quasisymmetric Schur into Monomial
         QS         .module_morphism(QS._to_monomial_on_basis,
@@ -1922,7 +1922,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             QQ_result *= (-1) ** n
             # QQ_result is now \lambda^n(M_I) over QQ.
             result = self.sum_of_terms([(J, ZZ(coeff)) for (J, coeff) in QQ_result],
-                                        distinct = True)
+                                        distinct=True)
             return result
 
         class Element(CombinatorialFreeModule.Element):
@@ -2052,7 +2052,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                         return x[i-1]**comp[-1] * on_basis(comp[:-1], i-1) + \
                                                   on_basis(comp,      i-1)
                 return M._apply_module_morphism(self, lambda comp: on_basis(comp,n),
-                                                codomain = P)
+                                                codomain=P)
 
             def is_symmetric( self ):
                 r"""
@@ -2932,7 +2932,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 QS[1, 1, 1, 1, 1] - QS[1, 1, 2, 1] + QS[1, 3, 1] - QS[2, 2, 1]
                 sage: QS._from_monomial_on_basis(Composition([2]))
                 -QS[1, 1] + QS[2]
-             """
+            """
             comp = Composition(comp)
             if not comp._list:
                 return self.one()
@@ -3089,7 +3089,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 M[1, 1] + M[2]
                 sage: YQS._to_monomial_on_basis(Composition([1,3,1]))
                 2*M[1, 1, 1, 1, 1] + 2*M[1, 1, 2, 1] + M[1, 2, 1, 1] + M[1, 3, 1] + M[2, 1, 1, 1] + M[2, 2, 1]
-             """
+            """
             return self._M(self._QS.monomial(comp.reversed())).star_involution()
 
         @cached_method
@@ -3380,11 +3380,11 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             category = self.realization_of()._category
             # This changes Monomial into Hazewinkel Lambda
             M.module_morphism(self._from_Monomial_on_basis,
-                                              codomain = self, category = category
+                                              codomain=self, category=category
                                               ).register_as_coercion()
             # This changes Hazewinkel Lambda into Monomial
             self.module_morphism(self._to_Monomial_on_basis,
-                                              codomain = M, category = category
+                                              codomain=M, category=category
                                               ).register_as_coercion()
 
             # cache for the coordinates of the elements
@@ -3688,7 +3688,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             M = self.realization_of().M()
             if l <= n:
                 from sage.misc.cachefunc import cached_function
-                from sage.arith.all import gcd
+                from sage.arith.misc import gcd
 
                 @cached_function
                 def monolambda(I):

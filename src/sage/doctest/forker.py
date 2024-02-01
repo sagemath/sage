@@ -22,10 +22,22 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2012 David Roe <roed.math@gmail.com>
-#                          Robert Bradshaw <robertwb@gmail.com>
-#                          William Stein <wstein@gmail.com>
-#       Copyright (C) 2013-2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#       Copyright (C) 2012-2013 David Roe <roed.math@gmail.com>
+#                     2012      Robert Bradshaw <robertwb@gmail.com>
+#                     2012      William Stein <wstein@gmail.com>
+#                     2013      R. Andrew Ohana
+#                     2013-2018 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2013-2020 John H. Palmieri
+#                     2013-2017 Volker Braun
+#                     2014      André Apitzsch
+#                     2014      Darij Grinberg
+#                     2016-2021 Frédéric Chapoton
+#                     2017-2019 Erik M. Bray
+#                     2018      Julian Rüth
+#                     2020      Jonathan Kliem
+#                     2020-2023 Matthias Koeppe
+#                     2022      Markus Wageringel
+#                     2022      Michael Orlitzky
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -47,18 +59,19 @@ import errno
 import doctest
 import traceback
 import tempfile
+from collections import defaultdict
 from dis import findlinestarts
 from queue import Empty
 import gc
 import IPython.lib.pretty
 
 import sage.misc.randstate as randstate
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 from .util import Timer, RecordingDict, count_noun
 from .sources import DictAsObject
 from .parsing import OriginalSource, reduce_hex
 from sage.structure.sage_object import SageObject
-from .parsing import SageOutputChecker, pre_hash, get_source
+from .parsing import SageOutputChecker, pre_hash, get_source, unparse_optional_tags
 from sage.repl.user_globals import set_globals
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
@@ -131,10 +144,11 @@ def init_sage(controller=None):
     Check that SymPy equation pretty printer is limited in doctest
     mode to default width (80 chars)::
 
-        sage: from sympy import sympify                                                 # optional - sage.symbolic
-        sage: from sympy.printing.pretty.pretty import PrettyPrinter                    # optional - sage.symbolic
-        sage: s = sympify('+x^'.join(str(i) for i in range(30)))                        # optional - sage.symbolic
-        sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))             # optional - sage.symbolic
+        sage: # needs sympy
+        sage: from sympy import sympify
+        sage: from sympy.printing.pretty.pretty import PrettyPrinter
+        sage: s = sympify('+x^'.join(str(i) for i in range(30)))
+        sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))
          29    28    27    26    25    24    23    22    21    20    19    18    17
         x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   +
         <BLANKLINE>
@@ -269,7 +283,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     try:
         file.writelines(lines)
         file.flush()
-    except IOError:
+    except OSError:
         pass  # the file is invalid
 
 
@@ -489,7 +503,7 @@ from collections import namedtuple
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
-class SageDocTestRunner(doctest.DocTestRunner, object):
+class SageDocTestRunner(doctest.DocTestRunner):
     def __init__(self, *args, **kwds):
         """
         A customized version of DocTestRunner that tracks dependencies
@@ -499,7 +513,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         - ``stdout`` -- an open file to restore for debugging
 
-        - ``checker`` -- None, or an instance of
+        - ``checker`` -- ``None``, or an instance of
           :class:`doctest.OutputChecker`
 
         - ``verbose`` -- boolean, determines whether verbose printing
@@ -507,6 +521,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         - ``optionflags`` -- Controls the comparison with the expected
           output.  See :mod:`testmod` for more information.
+
+        - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
         EXAMPLES::
 
@@ -521,13 +537,14 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         O = kwds.pop('outtmpfile', None)
         self.msgfile = kwds.pop('msgfile', None)
         self.options = kwds.pop('sage_options')
+        self.baseline = kwds.pop('baseline', {})
         doctest.DocTestRunner.__init__(self, *args, **kwds)
         self._fakeout = SageSpoofInOut(O)
         if self.msgfile is None:
             self.msgfile = self._fakeout.real_stdout
         self.history = []
         self.references = []
-        self.setters = {}
+        self.setters = defaultdict(dict)
         self.running_global_digest = hashlib.md5()
         self.total_walltime_skips = 0
         self.total_performed_tests = 0
@@ -673,10 +690,10 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 # findlinestarts() returns pairs (index, lineno) where
                 # "index" is the index in the bytecode where the line
                 # number changes to "lineno".
-                linenumbers1 = set(lineno for (index, lineno)
-                                   in findlinestarts(code))
-                linenumbers2 = set(lineno for (index, lineno)
-                                   in findlinestarts(execcode))
+                linenumbers1 = {lineno for (index, lineno)
+                                in findlinestarts(code)}
+                linenumbers2 = {lineno for (index, lineno)
+                                in findlinestarts(execcode)}
                 if linenumbers1 != linenumbers2:
                     raise SyntaxError("doctest is not a single statement")
 
@@ -715,10 +732,18 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
             outcome = FAILURE   # guilty until proved innocent or insane
 
+            probed_tags = getattr(example, 'probed_tags', False)
+
             # If the example executed without raising any exceptions,
             # verify its output.
             if exception is None:
                 if check(example.want, got, self.optionflags):
+                    if probed_tags and probed_tags is not True:
+                        example.warnings.append(
+                            f"The tag '{unparse_optional_tags(probed_tags)}' "
+                            f"may no longer be needed; these features are not present, "
+                            f"but we ran the doctest anyway as requested by --probe, "
+                            f"and it succeeded.")
                     outcome = SUCCESS
 
             # The example raised an exception: check if it was expected.
@@ -754,6 +779,12 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
                 # We expected an exception: see whether it matches.
                 elif check(example.exc_msg, exc_msg, self.optionflags):
+                    if probed_tags and probed_tags is not True:
+                        example.warnings.append(
+                            f"The tag '{unparse_optional_tags(example.probed_tags)}' "
+                            f"may no longer be needed; these features are not present, "
+                            f"but we ran the doctest anyway as requested by --probe, "
+                            f"and it succeeded (raised the expected exception).")
                     outcome = SUCCESS
 
                 # Another chance if they didn't care about the detail.
@@ -762,19 +793,32 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     m2 = re.match(r'(?:[^:]*\.)?([^:]*:)', exc_msg)
                     if m1 and m2 and check(m1.group(1), m2.group(1),
                                            self.optionflags):
+                        if probed_tags and probed_tags is not True:
+                            example.warnings.append(
+                                f"The tag '{unparse_optional_tags(example.probed_tags)}' "
+                                f"may no longer be needed; these features are not present, "
+                                f"but we ran the doctest anyway as requested by --probe, "
+                                f"and it succeeded (raised an exception as expected).")
                         outcome = SUCCESS
 
             check_duration = walltime(check_starttime)
             self.total_walltime += example.walltime + check_duration
 
             # Report the outcome.
+            if example.warnings:
+                for warning in example.warnings:
+                    out(self._failure_header(test, example, f'Warning: {warning}'))
             if outcome is SUCCESS:
                 if self.options.warn_long > 0 and example.walltime + check_duration > self.options.warn_long:
                     self.report_overtime(out, test, example, got,
                                          check_duration=check_duration)
+                elif example.warnings:
+                    pass
                 elif not quiet:
                     self.report_success(out, test, example, got,
                                         check_duration=check_duration)
+            elif probed_tags:
+                pass
             elif outcome is FAILURE:
                 if not quiet:
                     self.report_failure(out, test, example, got, test.globs)
@@ -831,14 +875,15 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:                         optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: DTR.run(doctests[0], clear_globs=False)
             TestResults(failed=0, attempted=4)
         """
-        self.setters = {}
+        self.setters = defaultdict(dict)
         randstate.set_random_seed(self.options.random_seed)
         warnings.showwarning = showwarning_with_traceback
         self.running_doctest_digest = hashlib.md5()
@@ -1037,17 +1082,20 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os, hashlib
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: DTR.running_doctest_digest = hashlib.md5()
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = os.path.join(SAGE_SRC, 'sage', 'doctest', 'forker.py')
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: globs = RecordingDict(globals())
             sage: 'doctest_var' in globs
             False
             sage: doctests, extras = FDS.create_doctests(globs)
             sage: ex0 = doctests[0].examples[0]
             sage: flags = 32768 if sys.version_info.minor < 8 else 524288
-            sage: compiler = lambda ex: compile(ex.source, '<doctest sage.doctest.forker[0]>', 'single', flags, 1)
+            sage: def compiler(ex):
+            ....:     return compile(ex.source, '<doctest sage.doctest.forker[0]>',
+            ....:                    'single', flags, 1)
             sage: DTR.compile_and_execute(ex0, compiler, globs)
             1764
             sage: globs['doctest_var']
@@ -1060,7 +1108,9 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         Now we can execute some more doctests to see the dependencies. ::
 
             sage: ex1 = doctests[0].examples[1]
-            sage: compiler = lambda ex:compile(ex.source, '<doctest sage.doctest.forker[1]>', 'single', flags, 1)
+            sage: def compiler(ex):
+            ....:     return compile(ex.source, '<doctest sage.doctest.forker[1]>',
+            ....:                    'single', flags, 1)
             sage: DTR.compile_and_execute(ex1, compiler, globs)
             sage: sorted(list(globs.set))
             ['R', 'a']
@@ -1072,7 +1122,9 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         ::
 
             sage: ex2 = doctests[0].examples[2]
-            sage: compiler = lambda ex:compile(ex.source, '<doctest sage.doctest.forker[2]>', 'single', flags, 1)
+            sage: def compiler(ex):
+            ....:     return compile(ex.source, '<doctest sage.doctest.forker[2]>',
+            ....:                    'single', flags, 1)
             sage: DTR.compile_and_execute(ex2, compiler, globs)
             a + 42
             sage: list(globs.set)
@@ -1085,6 +1137,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         if isinstance(globs, RecordingDict):
             globs.start()
         example.sequence_number = len(self.history)
+        if not hasattr(example, 'warnings'):
+            example.warnings = []
         self.history.append(example)
         timer = Timer().start()
         try:
@@ -1096,11 +1150,28 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             if isinstance(globs, RecordingDict):
                 example.predecessors = []
                 for name in globs.got:
-                    ref = self.setters.get(name)
-                    if ref is not None:
-                        example.predecessors.append(ref)
+                    setters_dict = self.setters.get(name)  # setter_optional_tags -> setter
+                    if setters_dict:
+                        was_set = False
+                        for setter_optional_tags, setter in setters_dict.items():
+                            if setter_optional_tags.issubset(example.optional_tags):  # was set in a less constrained doctest
+                                was_set = True
+                                example.predecessors.append(setter)
+                        if not was_set:
+                            if example.probed_tags:
+                                # Probing confusion.
+                                # Do not issue the "was set only in doctest marked" warning;
+                                # and also do not issue the "may no longer be needed" notice
+                                example.probed_tags = True
+                            else:
+                                f_setter_optional_tags = "; ".join("'"
+                                                                   + unparse_optional_tags(setter_optional_tags)
+                                                                   + "'"
+                                                                   for setter_optional_tags in setters_dict)
+                                example.warnings.append(f"Variable '{name}' referenced here "
+                                                        f"was set only in doctest marked {f_setter_optional_tags}")
                 for name in globs.set:
-                    self.setters[name] = example
+                    self.setters[name][example.optional_tags] = example
             else:
                 example.predecessors = None
             self.update_digests(example)
@@ -1143,7 +1214,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
 
-       Without the source swapping::
+        Without the source swapping::
 
             sage: import doctest
             sage: print(doctest.DocTestRunner._failure_header(DTR, doctests[0], ex))
@@ -1253,7 +1324,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.misc.misc import walltime
+            sage: from sage.misc.timing import walltime
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
@@ -1427,7 +1498,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.misc.misc import walltime
+            sage: from sage.misc.timing import walltime
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
@@ -1486,6 +1557,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             '... ArithmeticError(self._equation_string() + " defines a singular curve")'
             sage: sage0.eval("l")
             '...if self.discriminant() == 0:...raise ArithmeticError...'
+            sage: sage0.eval("u")
+            '...-> super().__init__(R, data, category=category)'
             sage: sage0.eval("u")
             '...EllipticCurve_field.__init__(self, K, ainvs)'
             sage: sage0.eval("p ainvs")
@@ -1653,12 +1726,14 @@ class DocTestDispatcher(SageObject):
         """
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
+            baseline = self.controller.source_baseline(source)
             if not self.controller.options.only_errors:
                 self.controller.log(heading)
 
             with tempfile.TemporaryFile() as outtmpfile:
                 result = DocTestTask(source)(self.controller.options,
-                        outtmpfile, self.controller.logger)
+                                             outtmpfile, self.controller.logger,
+                                             baseline=baseline)
                 outtmpfile.seek(0)
                 output = bytes_to_str(outtmpfile.read())
 
@@ -1734,6 +1809,17 @@ class DocTestDispatcher(SageObject):
 
         """
         opt = self.controller.options
+
+        job_client = None
+        try:
+            from gnumake_tokenpool import JobClient, NoJobServer
+        except ImportError:
+            pass
+        else:
+            try:
+                job_client = JobClient(use_cysignals=True)
+            except NoJobServer:
+                pass
 
         source_iter = iter(self.controller.sources)
 
@@ -1857,6 +1943,9 @@ class DocTestDispatcher(SageObject):
                             w.copied_pid = w.pid
                             w.close()
                             finished.append(w)
+                            if job_client:
+                                job_client.release()
+
                     workers = new_workers
 
                     # Similarly, process finished workers.
@@ -1891,18 +1980,22 @@ class DocTestDispatcher(SageObject):
                         break
 
                     # Start new workers if possible
-                    while source_iter is not None and len(workers) < opt.nthreads:
+                    while (source_iter is not None and len(workers) < opt.nthreads
+                           and (not job_client or job_client.acquire())):
                         try:
                             source = next(source_iter)
                         except StopIteration:
                             source_iter = None
+                            if job_client:
+                                job_client.release()
                         else:
                             # Start a new worker.
                             import copy
                             worker_options = copy.copy(opt)
+                            baseline = self.controller.source_baseline(source)
                             if target_endtime is not None:
                                 worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
-                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit])
+                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
                             heading = self.controller.reporter.report_head(w.source)
                             if not self.controller.options.only_errors:
                                 w.messages = heading + "\n"
@@ -1972,6 +2065,8 @@ class DocTestDispatcher(SageObject):
                         sleep(die_timeout)
                         for w in workers:
                             w.kill()
+                            if job_client:
+                                job_client.release()
                     finally:
                         os._exit(0)
 
@@ -2041,6 +2136,8 @@ class DocTestWorker(multiprocessing.Process):
     - ``funclist`` -- a list of callables to be called at the start of
       the child process.
 
+    - ``baseline`` -- dictionary, the ``baseline_stats`` value
+
     EXAMPLES::
 
         sage: from sage.doctest.forker import DocTestWorker, DocTestTask
@@ -2060,7 +2157,7 @@ class DocTestWorker(multiprocessing.Process):
         sage: reporter.report(FDS, False, W.exitcode, result, "")
             [... tests, ... s]
     """
-    def __init__(self, source, options, funclist=[]):
+    def __init__(self, source, options, funclist=[], baseline=None):
         """
         Initialization.
 
@@ -2084,6 +2181,7 @@ class DocTestWorker(multiprocessing.Process):
         self.source = source
         self.options = options
         self.funclist = funclist
+        self.baseline = baseline
 
         # Open pipe for messages. These are raw file descriptors,
         # not Python file objects!
@@ -2112,7 +2210,7 @@ class DocTestWorker(multiprocessing.Process):
 
         TESTS::
 
-            sage: run_doctests(sage.symbolic.units) # indirect doctest  # optional - sage.symbolic
+            sage: run_doctests(sage.symbolic.units)  # indirect doctest                 # needs sage.symbolic
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/symbolic/units.py
@@ -2155,7 +2253,8 @@ class DocTestWorker(multiprocessing.Process):
         os.close(self.rmessages)
         msgpipe = os.fdopen(self.wmessages, "w")
         try:
-            task(self.options, self.outtmpfile, msgpipe, self.result_queue)
+            task(self.options, self.outtmpfile, msgpipe, self.result_queue,
+                 baseline=self.baseline)
         finally:
             msgpipe.close()
             self.outtmpfile.close()
@@ -2266,7 +2365,7 @@ class DocTestWorker(multiprocessing.Process):
         try:
             self.result = self.result_queue.get(block=False)
         except Empty:
-            self.result = (0, DictAsObject(dict(err='noresult')))
+            self.result = (0, DictAsObject({'err': 'noresult'}))
         del self.result_queue
 
         self.outtmpfile.seek(0)
@@ -2390,19 +2489,6 @@ class DocTestTask():
         ['cputime', 'err', 'failures', 'optionals', 'tests', 'walltime', 'walltime_skips']
     """
 
-    extra_globals = {}
-    """
-    Extra objects to place in the global namespace in which tests are run.
-    Normally this should be empty but there are special cases where it may
-    be useful.
-
-    For example, in Sage versions 9.1 and earlier, on Python 3 add
-    ``long`` as an alias for ``int`` so that tests that use the
-    ``long`` built-in (of which there are many) still pass.  We did
-    this so that the test suite could run on Python 3 while Python 2
-    was still the default.
-    """
-
     def __init__(self, source):
         """
         Initialization.
@@ -2421,7 +2507,8 @@ class DocTestTask():
         """
         self.source = source
 
-    def __call__(self, options, outtmpfile=None, msgfile=None, result_queue=None):
+    def __call__(self, options, outtmpfile=None, msgfile=None, result_queue=None, *,
+                 baseline=None):
         """
         Calling the task does the actual work of running the doctests.
 
@@ -2437,6 +2524,8 @@ class DocTestTask():
 
         - ``result_queue`` -- an instance of :class:`multiprocessing.Queue`
           to store the doctest result. For testing, this can also be None.
+
+        - ``baseline`` -- a dictionary, the ``baseline_stats`` value.
 
         OUTPUT:
 
@@ -2468,17 +2557,18 @@ class DocTestTask():
         result = None
         try:
             runner = SageDocTestRunner(
-                    SageOutputChecker(),
-                    verbose=options.verbose,
-                    outtmpfile=outtmpfile,
-                    msgfile=msgfile,
-                    sage_options=options,
-                    optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+                SageOutputChecker(),
+                verbose=options.verbose,
+                outtmpfile=outtmpfile,
+                msgfile=msgfile,
+                sage_options=options,
+                optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS,
+                baseline=baseline)
             runner.basename = self.source.basename
             runner.filename = self.source.path
             N = options.file_iterations
-            results = DictAsObject(dict(walltime=[], cputime=[],
-                                        err=None, walltime_skips=0))
+            results = DictAsObject({'walltime': [], 'cputime': [],
+                                    'err': None, 'walltime_skips': 0})
 
             # multiprocessing.Process instances don't run exit
             # functions, so we run the functions added by doctests
@@ -2503,7 +2593,7 @@ class DocTestTask():
         except BaseException:
             exc_info = sys.exc_info()
             tb = "".join(traceback.format_exception(*exc_info))
-            result = (0, DictAsObject(dict(err=exc_info[0], tb=tb)))
+            result = (0, DictAsObject({'err': exc_info[0], 'tb': tb}))
 
         if result_queue is not None:
             result_queue.put(result, False)
@@ -2527,10 +2617,6 @@ class DocTestTask():
         # Remove '__package__' item from the globals since it is not
         # always in the globals in an actual Sage session.
         dict_all.pop('__package__', None)
-
-        # Add any other special globals for testing purposes only
-        dict_all.update(self.extra_globals)
-
         sage_namespace = RecordingDict(dict_all)
         sage_namespace['__name__'] = '__main__'
         doctests, extras = self.source.create_doctests(sage_namespace)

@@ -464,7 +464,7 @@ class NewtonPolygon_element(Element):
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,6) ])
-            sage: polygon = NP.plot()  # optional - sage.plot
+            sage: polygon = NP.plot()                                                   # needs sage.plot
         """
         vertices = self.vertices()
         if len(vertices) == 0:
@@ -521,8 +521,6 @@ class NewtonPolygon_element(Element):
         parent = self.parent()
         polyhedron = Polyhedron(base_ring=parent.base_ring(), vertices=vertices, rays=[(0,1)])
         return parent(polyhedron)
-
-
 
 
 class ParentNewtonPolygon(Parent, UniqueRepresentation):
@@ -630,13 +628,15 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
         """
         Parent class for all Newton polygons.
 
+        EXAMPLES::
+
             sage: from sage.geometry.newton_polygon import ParentNewtonPolygon
             sage: ParentNewtonPolygon()
             Parent for Newton polygons
 
         TESTS:
 
-        This class is a singleton.
+        This class is a singleton::
 
             sage: ParentNewtonPolygon() is ParentNewtonPolygon()
             True

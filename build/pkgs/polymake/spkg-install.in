@@ -21,6 +21,10 @@ if [ -x $SAGE_LOCAL/bin/lrs1 ]; then
     more_configure_options="$more_configure_options --with-lrs=$SAGE_LOCAL"
 fi
 
+# Put these includes on the front, to avoid shadowing by installed headers
+# from a previous version. (polymake 4.8 puts these includes to the end.)
+export CXXFLAGS="-I$(pwd)/include/core-wrappers -I$(pwd)/include/core $CXXFLAGS"
+
 ./configure --without-java \
             --without-javaview \
             --without-soplex \

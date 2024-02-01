@@ -6,7 +6,7 @@ from .permgroup_named import (SymmetricGroup, AlternatingGroup,
                               MathieuGroup, KleinFourGroup, QuaternionGroup,
                               PrimitiveGroup, PrimitiveGroups,
                               SuzukiGroup, TransitiveGroups,
-                              GeneralDihedralGroup)
+                              GeneralDihedralGroup, SmallPermutationGroup)
 
 from .permgroup import PermutationGroup, PermutationGroup_generic, PermutationGroup_subgroup, direct_product_permgroups
 

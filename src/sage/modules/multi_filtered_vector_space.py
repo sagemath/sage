@@ -77,7 +77,7 @@ def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
         Filtrations
             1: QQ^2 >=  0   >=  0   >= 0
             2: QQ^2 >= QQ^2 >= QQ^2 >= 0
-   """
+    """
     if arg in ZZ:
         dim = ZZ(arg)
         filtration = {}
@@ -490,7 +490,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             sage: V == MultiFilteredVectorSpace({'a':F1, 'b':F2})
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return self._filt == other._filt
 

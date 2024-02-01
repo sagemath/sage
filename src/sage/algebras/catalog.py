@@ -23,6 +23,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.Descent <sage.combinat.descent_algebra.DescentAlgebra>`
 - :class:`algebras.DifferentialWeyl
   <sage.algebras.weyl_algebra.DifferentialWeylAlgebra>`
+- :class:`algebras.DownUp <sage.algebras.down_up_algebra.DownUpAlgebra>`
 - :class:`algebras.Exterior <sage.algebras.clifford_algebra.ExteriorAlgebra>`
 - :class:`algebras.FiniteDimensional
   <sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra>`
@@ -47,6 +48,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.MalvenutoReutenauer <sage.combinat.fqsym.FreeQuasisymmetricFunctions>`
 - :class:`algebras.NilCoxeter
   <sage.algebras.nil_coxeter_algebra.NilCoxeterAlgebra>`
+- :class:`algebras.Octonion <sage.algebras.octonion_algebra.OctonionAlgebra>`
 - :class:`algebras.OrlikTerao
   <sage.algebras.orlik_terao.OrlikTeraoAlgebra>`
 - :class:`algebras.OrlikSolomon
@@ -62,6 +64,8 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.PlanarPartition <sage.combinat.diagram_algebras.PlanarAlgebra>`
 - :class:`algebras.qCommutingPolynomials
   <sage.algebras.q_commuting_polynomials.qCommutingPolynomials>`
+- :class:`algebras.qCommutingLaurentPolynomials
+  <sage.algebras.q_commuting_polynomials.qCommutingLaurentPolynomials>`
 - :class:`algebras.QuantumGroup
   <sage.algebras.quantum_groups.quantum_group_gap.QuantumGroup>`
 - :func:`algebras.Quaternion
@@ -80,17 +84,18 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
   <sage.algebras.yokonuma_hecke_algebra.YokonumaHeckeAlgebra>`
 """
 
-from sage.algebras.free_algebra import FreeAlgebra as Free
-from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra as Quaternion
-from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra as Steenrod
-from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra as FiniteDimensional
-from sage.algebras.group_algebra import GroupAlgebra as Group
-from sage.algebras.clifford_algebra import CliffordAlgebra as Clifford
-from sage.algebras.clifford_algebra import ExteriorAlgebra as Exterior
-from sage.algebras.weyl_algebra import DifferentialWeylAlgebra as DifferentialWeyl
-from sage.algebras.lie_algebras.lie_algebra import LieAlgebra as Lie
-
 from sage.misc.lazy_import import lazy_import
+lazy_import('sage.algebras.free_algebra', 'FreeAlgebra', as_='Free')
+lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra', as_='Quaternion')
+lazy_import('sage.algebras.steenrod.steenrod_algebra', 'SteenrodAlgebra', as_='Steenrod')
+lazy_import('sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra',
+            'FiniteDimensionalAlgebra', as_='FiniteDimensional')
+lazy_import('sage.algebras.group_algebra', 'GroupAlgebra', as_='Group')
+lazy_import('sage.algebras.clifford_algebra', 'CliffordAlgebra', as_='Clifford')
+lazy_import('sage.algebras.clifford_algebra', 'ExteriorAlgebra', as_='Exterior')
+lazy_import('sage.algebras.weyl_algebra', 'DifferentialWeylAlgebra', as_='DifferentialWeyl')
+lazy_import('sage.algebras.lie_algebras.lie_algebra', 'LieAlgebra', as_='Lie')
+
 lazy_import('sage.algebras.iwahori_hecke_algebra', 'IwahoriHeckeAlgebra', 'IwahoriHecke')
 lazy_import('sage.algebras.nil_coxeter_algebra', 'NilCoxeterAlgebra', 'NilCoxeter')
 lazy_import('sage.algebras.free_zinbiel_algebra', 'FreeZinbielAlgebra', 'FreeZinbiel')
@@ -127,10 +132,13 @@ lazy_import('sage.algebras.quantum_matrix_coordinate_algebra',
             'QuantumMatrixCoordinateAlgebra', 'QuantumMatrixCoordinate')
 lazy_import('sage.algebras.quantum_matrix_coordinate_algebra', 'QuantumGL')
 lazy_import('sage.algebras.q_commuting_polynomials', 'qCommutingPolynomials')
+lazy_import('sage.algebras.q_commuting_polynomials', 'qCommutingLaurentPolynomials')
 lazy_import('sage.algebras.tensor_algebra', 'TensorAlgebra', 'Tensor')
 lazy_import('sage.algebras.quantum_groups.quantum_group_gap', 'QuantumGroup')
 lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
            'ACEQuantumOnsagerAlgebra', 'AlternatingCentralExtensionQuantumOnsager')
+lazy_import('sage.algebras.down_up_algebra', 'DownUpAlgebra', 'DownUp')
 lazy_import('sage.algebras.yangian', 'Yangian')
+lazy_import('sage.algebras.octonion_algebra', 'OctonionAlgebra', 'Octonion')
 
 del lazy_import  # We remove the object from here so it doesn't appear under tab completion

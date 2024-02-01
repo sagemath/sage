@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([cycler], [SAGE_PYTHON_PACKAGE_CHECK([cycler])])

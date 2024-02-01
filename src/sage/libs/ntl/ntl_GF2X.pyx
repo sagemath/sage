@@ -21,7 +21,6 @@
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 include 'misc.pxi'
@@ -29,10 +28,9 @@ include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer cimport Integer
-from sage.misc.superseded import deprecation_cython as deprecation
 
-from .ntl_ZZ import unpickle_class_value
-from .ntl_GF2 cimport ntl_GF2
+from sage.libs.ntl.ntl_ZZ import unpickle_class_value
+from sage.libs.ntl.ntl_GF2 cimport ntl_GF2
 
 
 ##############################################################################
@@ -509,7 +507,7 @@ cdef class ntl_GF2X():
 
     def hex(ntl_GF2X self):
         r"""
-        Return an hexadecimal representation of this element.
+        Return a hexadecimal representation of this element.
 
         It is the same as setting \code{ntl.GF2XHexOutput(True)} and
         representing this element afterwards. However it should be faster and

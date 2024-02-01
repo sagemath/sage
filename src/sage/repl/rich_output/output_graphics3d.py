@@ -4,24 +4,20 @@ Three-Dimensional Graphics Output Types
 
 This module defines the rich output types for 3-d scenes.
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import os
 import importlib.resources
 
 from sage.cpython.string import bytes_to_str, FS_ENCODING
 from sage.repl.rich_output.output_basic import OutputBase
 from sage.repl.rich_output.buffer import OutputBuffer
-
 
 
 class OutputSceneJmol(OutputBase):

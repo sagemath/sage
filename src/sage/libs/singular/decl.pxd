@@ -978,10 +978,22 @@ cdef extern from "singular/Singular/libsingular.h":
     void setFlag(leftv *A, int F)
     void resetFlag(leftv *A, int F)
 
+    ctypedef number* (*nMapFunc)(number *c,const n_Procs_s* src,const n_Procs_s* dst)
+
+cdef extern from "singular/coeffs/coeffs.h":
+
+    number *ndCopyMap(number *, const n_Procs_s* src,const n_Procs_s* dst)
+
 cdef extern from "singular/coeffs/rmodulo2m.h":
 
     #init 2^m from a long
     number *nr2mMapZp(number *,const n_Procs_s* src,const n_Procs_s* dst)
+
+cdef extern from "singular/kernel/maps/gen_maps.h":
+
+    # mapping from p in r1 by i2 to r2
+
+    poly *maMapPoly(poly *p, ring *r1, ideal *i2, ring *r2, const nMapFunc nMap)
 
 cdef extern from "singular/kernel/maps/fast_maps.h":
 
@@ -992,8 +1004,6 @@ cdef extern from "singular/kernel/maps/fast_maps.h":
 cdef extern from "singular/polys/ext_fields/algext.h":
 
     naInitChar(n_Procs_s* cf, void * infoStruct)
-
-    ctypedef number* (*nMapFunc)(number *c,const n_Procs_s* src,const n_Procs_s* dst)
 
     nMapFunc naSetMap(const n_Procs_s* src, const n_Procs_s* dst)
 
@@ -1042,7 +1052,7 @@ cdef extern from "singular/polys/sbuckets.h":
     #assumes length <= 0 || pLength(p) == length
     void sBucketClearMerge(sBucket *bucket, poly **p, int *length)
 
-    #add contents of sBucket into polynomial an clear bucket
+    #add contents of sBucket into polynomial and clear bucket
     #(can handle repeated monomials)
     void sBucketClearAdd(sBucket *bucket, poly **p, int *length)
 

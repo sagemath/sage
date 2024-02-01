@@ -1,0 +1,4 @@
+cd src
+# Remove numpy version pin in pyproject.toml
+sed -i.bak -e "s/oldest-supported-numpy/numpy/;" pyproject.toml
+sdh_pip_install .

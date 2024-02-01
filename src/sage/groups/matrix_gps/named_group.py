@@ -8,8 +8,10 @@ EXAMPLES::
 
     sage: SL(2, ZZ)
     Special Linear Group of degree 2 over Integer Ring
-    sage: G = SL(2,GF(3)); G
+    sage: G = SL(2, GF(3)); G
     Special Linear Group of degree 2 over Finite Field of size 3
+
+    sage: # needs sage.libs.gap
     sage: G.is_finite()
     True
     sage: G.conjugacy_classes_representatives()
@@ -17,7 +19,7 @@ EXAMPLES::
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
     )
-    sage: G = SL(6,GF(5))
+    sage: G = SL(6, GF(5))
     sage: G.gens()
     (
     [2 0 0 0 0 0]  [4 0 0 0 0 1]
@@ -31,7 +33,10 @@ EXAMPLES::
 
 ##############################################################################
 #       Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
-#       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
+#                     2013 Volker Braun <vbraun.name@gmail.com>
+#                     2017 Frédéric Chapoton
+#                     2018 Travis Scrimshaw
+#                     2018 Sebastian Oehms
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -40,9 +45,8 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
+from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
 from sage.structure.unique_representation import CachedRepresentation
-from sage.groups.matrix_gps.matrix_group import (
-    MatrixGroup_generic, MatrixGroup_gap )
 
 
 def normalize_args_vectorspace(*args, **kwds):
@@ -81,12 +85,12 @@ def normalize_args_vectorspace(*args, **kwds):
     TESTS::
 
         sage: from sage.groups.matrix_gps.named_group import normalize_args_vectorspace
-        sage: A = AffineSpace(2, GF(4,'a'));  A
+        sage: A = AffineSpace(2, GF(4,'a'));  A                                         # needs sage.rings.finite_rings
         Affine Space of dimension 2 over Finite Field in a of size 2^2
-        sage: normalize_args_vectorspace(A)
+        sage: normalize_args_vectorspace(A)                                             # needs sage.rings.finite_rings
         (2, Finite Field in a of size 2^2)
 
-        sage: normalize_args_vectorspace(2,4)   # shorthand
+        sage: normalize_args_vectorspace(2,4)   # shorthand                             # needs sage.rings.finite_rings
         (2, Finite Field in a of size 2^2)
 
         sage: V = ZZ^3;  V
@@ -148,12 +152,12 @@ def normalize_args_invariant_form(R, d, invariant_form):
     TESTS::
 
         sage: from sage.groups.matrix_gps.named_group import normalize_args_invariant_form
-        sage: CF3 = CyclotomicField(3)
-        sage: m = normalize_args_invariant_form(CF3, 3, (1,2,3,0,2,0,0,2,1)); m
+        sage: CF3 = CyclotomicField(3)                                                  # needs sage.rings.number_field
+        sage: m = normalize_args_invariant_form(CF3, 3, (1,2,3,0,2,0,0,2,1)); m         # needs sage.rings.number_field
         [1 2 3]
         [0 2 0]
         [0 2 1]
-        sage: m.base_ring() == CF3
+        sage: m.base_ring() == CF3                                                      # needs sage.rings.number_field
         True
 
         sage: normalize_args_invariant_form(ZZ, 3, (1,2,3,0,2,0,0,2))
@@ -286,10 +290,12 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: G = GL(2,3)
             sage: G == MatrixGroup(G.gens())
             True
 
+            sage: # needs sage.libs.gap sage.rings.finite_rings
             sage: G = groups.matrix.GL(4,2)
             sage: H = MatrixGroup(G.gens())
             sage: G == H
@@ -298,42 +304,3 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
             False
         """
         return MatrixGroup_generic.__richcmp__(self, other, op)
-
-
-class NamedMatrixGroup_gap(NamedMatrixGroup_generic, MatrixGroup_gap):
-
-    def __init__(self, degree, base_ring, special, sage_name, latex_string,
-                 gap_command_string, category=None):
-        """
-        Base class for "named" matrix groups using LibGAP
-
-        INPUT:
-
-        - ``degree`` -- integer. The degree (number of rows/columns of
-          matrices).
-
-        - ``base_ring`` -- ring. The base ring of the matrices.
-
-        - ``special`` -- boolean. Whether the matrix group is special,
-          that is, elements have determinant one.
-
-        - ``latex_string`` -- string. The latex representation.
-
-        - ``gap_command_string`` -- string. The GAP command to construct
-          the matrix group.
-
-        EXAMPLES::
-
-            sage: G = GL(2, GF(3))
-            sage: from sage.groups.matrix_gps.named_group import NamedMatrixGroup_gap
-            sage: isinstance(G, NamedMatrixGroup_gap)
-            True
-        """
-        from sage.libs.gap.libgap import libgap
-        group = libgap.eval(gap_command_string)
-        MatrixGroup_gap.__init__(self, degree, base_ring, group,
-                                 category=category)
-        self._special = special
-        self._gap_string = gap_command_string
-        self._name_string = sage_name
-        self._latex_string = latex_string

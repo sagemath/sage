@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.schemes
 """
 Divisors on schemes
 
@@ -28,7 +29,7 @@ EXAMPLES::
     -1
     sage: D[1][1]
     Ideal (x, z) of Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
-    sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10,pts[5])])
+    sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10, pts[5])])
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
 """
 #*******************************************************************************
@@ -109,7 +110,7 @@ def is_Divisor(x):
         sage: from sage.schemes.generic.divisor import is_Divisor
         sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
         sage: C = Curve(y^2 - x^9 - x)
-        sage: is_Divisor( C.divisor([]) )
+        sage: is_Divisor(C.divisor([]))
         True
         sage: is_Divisor("Ceci n'est pas un diviseur")
         False
@@ -291,7 +292,7 @@ class Divisor_curve(Divisor_generic):
             sage: P = E(0,0)
             sage: from sage.schemes.generic.divisor import Divisor_curve
             sage: from sage.schemes.generic.divisor_group import DivisorGroup
-            sage: Divisor_curve([(1,P)], parent=DivisorGroup(E))
+            sage: Divisor_curve([(1, P)], parent=DivisorGroup(E))
             (x, y)
         """
         from sage.schemes.generic.divisor_group import DivisorGroup_curve
@@ -373,7 +374,7 @@ class Divisor_curve(Divisor_generic):
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
-            sage: D = C.divisor_group()([(3,pts[0]), (-1, pts[1])]); D
+            sage: D = C.divisor_group()([(3, pts[0]), (-1, pts[1])]); D
             3*(x, y) - (x - 2, y - 2)
             sage: D.support()
             [(0, 0), (2, 2)]
@@ -411,7 +412,6 @@ class Divisor_curve(Divisor_generic):
             self._support = [s[1] for s in pts]
             return self._support
 
-
     def coefficient(self, P):
         """
         Return the coefficient of a given point P in this divisor.
@@ -425,7 +425,7 @@ class Divisor_curve(Divisor_generic):
             sage: D = C.divisor(pts[0])
             sage: D.coefficient(pts[0])
             1
-            sage: D = C.divisor([(3,pts[0]), (-1,pts[1])]); D
+            sage: D = C.divisor([(3, pts[0]), (-1, pts[1])]); D
             3*(x, y) - (x - 2, y - 2)
             sage: D.coefficient(pts[0])
             3

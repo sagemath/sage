@@ -34,10 +34,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.modules.free_module import (basis_seq,
-                                      Module_free_ambient,
-                                      FreeModule_ambient_domain)
-from .quotient_module import QuotientModule_free_ambient
+from sage.modules.free_module import (
+    FreeModule_ambient_domain,
+    Module_free_ambient,
+    basis_seq,
+)
+from sage.modules.quotient_module import QuotientModule_free_ambient
 
 
 class Submodule_free_ambient(Module_free_ambient):
@@ -165,7 +167,7 @@ class Submodule_free_ambient(Module_free_ambient):
         """
         from sage.matrix.matrix_space import MatrixSpace
         MAT = MatrixSpace(self.base_ring(), len(self.gens()), self.degree(),
-                          sparse = self.is_sparse())
+                          sparse=self.is_sparse())
         A = MAT(self.gens())
         A.set_immutable()
         return A

@@ -2,9 +2,9 @@
 Cremona matrices
 """
 
-from ..eclib cimport scalar, addscalar
+from sage.libs.eclib cimport scalar, addscalar
 
-from sage.matrix.all import MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
 
 from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
@@ -240,11 +240,11 @@ cdef class Matrix:
 
 
 cdef class MatrixFactory:
-    cdef new_matrix(self, mat M):
+    cdef new_matrix(self, mat M) noexcept:
         return new_Matrix(M)
 
 
-cdef Matrix new_Matrix(mat M):
+cdef Matrix new_Matrix(mat M) noexcept:
     cdef Matrix A = Matrix()
     A.M = new mat(M)
     return A
