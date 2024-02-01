@@ -60,6 +60,18 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
     def __call__(self, A, **kwds):
         r"""
         Coerce a matrix or free module homomorphism into a pseudomorphism.
+
+        EXAMPLES::
+
+            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist)
+            sage: h = PHS([[1, 2], [1, 1]]); h
+            Free module pseudomorphism defined by the                 matrix
+            [1 2]
+            [1 1]
+            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
+            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
         from . import free_module_pseudomorphism
         side = kwds.get("side", "left")
@@ -110,7 +122,15 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
 
     def zero(self):
         r"""
-        Return the zero pseudomorphism.
+        Return the zero pseudomorphism. This corresponds to the zero matrix.
+
+        EXAMPLES::
+
+            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist)
+            sage: PHS.zero().matrix()
+            [0 0]
+            [0 0]
         """
         return self.base_homspace.zero()
 
@@ -126,5 +146,13 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
     def identity(self):
         r"""
         Return the pseudomorphism corresponding to the identity transformation
+        EXAMPLES::
+
+            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist)
+            sage: PHS.zero().matrix()
+            [1 0]
+            [0 1]
+
         """
         return self.base_homspace.identity()
