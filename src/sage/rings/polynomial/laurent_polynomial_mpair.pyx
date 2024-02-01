@@ -1598,10 +1598,18 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def leading_monomial(self):
         r"""
-        Return the leading monomial of self
+        Return the leading monomial of ``self``.
+        
+        EXAMPLES::
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ)
+            sage: f = 2*x^2*y - 3*x^-2*y^2 + 4*x^-6*y^-7
+            sage: f.leading_monomial()
+            x^-6*y^-7
 
         """
-        order = self.parent().order
+        order = self.parent()._order
         if order is None:
             raise AttributeError("No generalized order defined in parent")
 
