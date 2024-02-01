@@ -5,48 +5,6 @@ AUTHORS:
 
     - Yossef Musleh (2024-02): initial version
 
-Let M be a free module over a ring R, and let $theta, delta: R to R$
-be a morphism and derivation of $R$ respectively such that 
-
-$delta(xy) = theta(x)delta(y) + x$.
-
-Then a pseudomorphism from $f : M to M$ is a map such that
-
-    $f(x + y) = f(x) + f(y)$
-    $f(lambda x) = theta(lambda)f(x) + delta(lambda)x$
-
-If $delta$ is the zero morphism, then we can relax the condition that the
-codomain is M and consider a free module $M'$ over a ring $R'$.
-
-
-TESTS::
-
-    sage: V = ZZ^2
-    sage: f = V.pseudohom([V.1, -2*V.0]); f
-    Free module pseudomorphism defined by the matrix
-    [ 0  1]
-    [-2  0]
-    Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
-    Codomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
-    sage: f(V((1, 2)))
-    (-4, 1)
-
-    sage: P.<x> = ZZ[]; deriv = P.derivation()
-    sage: M = P^2
-    sage: f = M.pseudohom([[1, 2*x], [x, 1]], deriv, side="right"); f
-    Free module pseudomorphism defined as left-multiplication by the matrix
-    [  1 2*x]
-    [  x   1]
-    Twisted by the derivation d/dx
-    Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
-    Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
-    sage: e = M((2*x^2 + 3*x + 1, x^3 + 7*x + 4))
-    sage: f(e)
-    (2*x^4 + 16*x^2 + 15*x + 4, 3*x^3 + 6*x^2 + 8*x + 11)
-    sage: f = M.pseudohom([[1, 2], [1, 1]], deriv)
-    sage: f(e)
-    (x^3 + 2*x^2 + 14*x + 8, x^3 + 7*x^2 + 13*x + 13)
-
 """
 
 ####################################################################################
@@ -78,6 +36,49 @@ from sage.matrix.constructor import matrix
 lazy_import('sage.rings.derivation', 'RingDerivation')
 
 class FreeModulePseudoMorphism(Morphism):
+    r"""
+    Let `M, M'` be free modules over a ring `R`, `\theta: R \to R` a ring
+    homomorphism, and `\theta: R \to R` a derivation i.e. an additive
+    map such that
+
+    `\delta(xy) = x\delta(y) + \delta(x)y`.
+
+    Then a pseudomorphism `f : M to M` is a map such that
+
+    `f(x + y) = f(x) + f(y)`
+    `f(\lambda x) = `\theta(\lambda)f(x) + \delta(\lambda)x`
+
+    The pair `(\theta, \delta)` may be referred to as the *twist* of
+    the morphism.
+
+    TESTS::
+
+        sage: V = ZZ^2
+        sage: f = V.pseudohom([V.1, -2*V.0]); f
+        Free module pseudomorphism defined by the matrix
+        [ 0  1]
+        [-2  0]
+        Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
+        Codomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
+        sage: f(V((1, 2)))
+        (-4, 1)
+
+        sage: P.<x> = ZZ[]; deriv = P.derivation()
+        sage: M = P^2
+        sage: f = M.pseudohom([[1, 2*x], [x, 1]], deriv, side="right"); f
+        Free module pseudomorphism defined as left-multiplication by the matrix
+        [  1 2*x]
+        [  x   1]
+        twisted by the derivation d/dx
+        Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+        Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+        sage: e = M((2*x^2 + 3*x + 1, x^3 + 7*x + 4))
+        sage: f(e)
+        (2*x^4 + 16*x^2 + 15*x + 4, 3*x^3 + 6*x^2 + 8*x + 11)
+        sage: f = M.pseudohom([[1, 2], [1, 1]], deriv)
+        sage: f(e)
+        (x^3 + 2*x^2 + 14*x + 8, x^3 + 7*x^2 + 13*x + 13)
+    """
     def __init__(self, domain, base_morphism, twist=None, codomain=None, side="left"):
         """
         Constructs a pseudomorphism of free modules.
@@ -85,13 +86,17 @@ class FreeModulePseudoMorphism(Morphism):
         INPUT:
             -  ``domain``   - the domain of the pseudomorphism; a free module 
 
-            -  ``base_morphism`` - either a morphism or a matrix defining a morphism
+            -  ``base_morphism`` - either a morphism or a matrix defining a
+                                   morphism
 
-            -  ``twist`` - a twisting morphism, this is either a morphism or a derivation (default: None)
+            -  ``twist`` - a twisting morphism, this is either a morphism or 
+                           a derivation (default: None)
 
-            -  ``codomain`` - the codomain of the pseudomorphism; a free module  (default: None)
+            -  ``codomain`` - the codomain of the pseudomorphism; a free
+                              module  (default: None)
 
-            - side -- side of the vectors acted on by the matrix  (default: ``"left"``)
+            - side -- side of the vectors acted on by the matrix 
+                      (default: ``"left"``)
 
         EXAMPLES::
 
@@ -106,7 +111,8 @@ class FreeModulePseudoMorphism(Morphism):
         elif isinstance(base_morphism, Morphism):
             self.base_morphism = base_morphism
         else:
-            self.base_morphism = domain.hom(matrix(domain.coordinate_ring(), base_morphism), codomain)
+            self.base_morphism = domain.hom(matrix(domain.coordinate_ring(), \
+                                            base_morphism), codomain)
         self.derivation = None
         self.twist_morphism = None
         if isinstance(twist, Morphism):
@@ -126,11 +132,11 @@ class FreeModulePseudoMorphism(Morphism):
 
         TESTS::
 
-        sage: Fq = GF(25); M = Fq^2; frob = Fq.frobenius_endomorphism(5)
-        sage: ph = M.pseudohom([[1, 2], [0, 1]], frob, side="right")
-        sage: e = M((3*Fq.gen() + 2, 2*Fq.gen() + 2))
+        sage: Fq = GF(343); M = Fq^3; frob = Fq.frobenius_endomorphism()
+        sage: ph = M.pseudohom([[1, 2, 3], [0, 1, 1], [2, 1, 1]], frob, side="right")
+        sage: e = M((3*Fq.gen()^2 + 5*Fq.gen() + 2, 6*Fq.gen()^2 + 2*Fq.gen() + 2, Fq.gen() + 4))
         sage: ph(e)
-        (z2 + 2, 1)
+        (3*z3 + 3, 2*z3^2, 5*z3^2 + 4)
         """
         if self.twist_morphism is None and self.derivation is None:
             return self.base_morphism(x)
@@ -164,19 +170,21 @@ class FreeModulePseudoMorphism(Morphism):
 
         TESTS::
         """
-        r = "Free module pseudomorphism defined {}by the matrix\n{!r}{}{}\nDomain: {}\nCodomain: {}"
+        r = "Free module pseudomorphism defined {}by the \
+                matrix\n{!r}{}{}\nDomain: {}\nCodomain: {}"
         act = ""
         if self.side == "right":
             act = "as left-multiplication "
         morph = ""
         if self.twist_morphism is not None:
-            morph = "\nTwisted by the morphism {}"
+            morph = "\ntwisted by the morphism {}"
             morph = morph.format(self.twist_morphism.__repr__())
         deriv = ""
         if self.derivation is not None:
-            deriv = "\nTwisted by the derivation {}"
+            deriv = "\ntwisted by the derivation {}"
             deriv = deriv.format(self.derivation.__repr__())
-        return r.format(act, self.matrix(), morph, deriv, self.domain(), self.codomain())
+        return r.format(act, self.matrix(), morph, deriv, \
+                        self.domain(), self.codomain())
 
     def domain(self):
         r"""
@@ -211,5 +219,6 @@ class FreeModulePseudoMorphism(Morphism):
 
     def derivation(self):
         r"""
+        Return the twisting derivation of the pseudomorphism.
         """
         return self.derivation

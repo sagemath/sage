@@ -3066,15 +3066,19 @@ class FreeModule_generic(Module_free_ambient):
             codomain = R**n
         return super().hom(im_gens, codomain, **kwds)
 
-    def PseudoHom(self, codomain=None, twist=None):
+    def PseudoHom(self, twist=None, codomain=None):
         from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
         return FreeModulePseudoHomspace(self, codomain, twist)
 
     def pseudohom(self, morphism, twist=None, codomain=None, **kwds):
         r"""
-        Created a pseudomorphism defined by a given morphism and twist.
+        Create a pseudomorphism defined by a given morphism and twist.
         Let A be a ring and M a free module over A. Let \theta: A \to A
 
+        EXAMPLE::
+
+        sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism(5)
+        sage: 
         """
         from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
         from sage.structure.element import is_Matrix

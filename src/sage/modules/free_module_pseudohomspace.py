@@ -27,12 +27,17 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
     r"""
     This class implements the space of Pseudomorphisms with a fixed twist.
 
-
+    For free modules, the elements of a pseudomorphism correspond to matrices
+    which define the mapping on elements of a basis.
 
     EXAMPLES::
 
-        sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism(5)
-        sage: PHS = F.PseudoHom(twist)
+        sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+        sage: PHS = M.PseudoHom(twist)
+        sage: h = PHS([[1, 2], [1, 1]])
+        sage: e = M((4*F.gen()^2 + F.gen() + 2, 4*F.gen()^2 + 4*F.gen() + 4))
+        sage: h(e)
+        (3*z3^2 + z3, 4*z3^2 + 3*z3 + 3)
 
     """
     def __init__(self, X, Y, twist=None):
@@ -40,15 +45,22 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
         self._codomain = X
         if Y is not None:
             self._codomain = Y
+        self.base_homspace = self._domain.Hom(self._codomain)
+        if twist is None:
+            return
         if (twist.domain() is not self.domain().coordinate_ring()
           or twist.codomain() is not self.codomain().coordinate_ring()):
-            raise TypeError("twisting morphism domain/codomain do not match coordinate rings of the modules")
+            raise TypeError("twisting morphism domain/codomain do not match\
+                            coordinate rings of the modules")
         elif isinstance(twist, Morphism) or isinstance(twist, RingDerivation):
             self.twist = twist
         else:
             raise TypeError("twist is not a ring morphism or derivation")
 
     def __call__(self, A, **kwds):
+        r"""
+        Coerce a matrix or free module homomorphism into a pseudomorphism.
+        """
         from . import free_module_pseudomorphism
         side = kwds.get("side", "left")
         if not is_Matrix(A):
@@ -62,14 +74,57 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
                 else:
                     v = [C(a) for a in A]
                     if side == "right":
-                        A = matrix([C.coordinates(a) for a in v], ncols=C.rank()).transpose()
+                        A = matrix([C.coordinates(a) for a in v], \
+                                    ncols=C.rank()).transpose()
                     else:
-                        A = matrix([C.coordinates(a) for a in v], ncols=C.rank())
+                        A = matrix([C.coordinates(a) for a in v], \
+                                    ncols=C.rank())
             except TypeError:
                 pass
-        if not self.codomain().base_ring().has_coerce_map_from(self.domain().base_ring()) and not A.is_zero():
-            raise TypeError("nontrivial morphisms require a coercion map from the base ring of the domain to the base ring of the codomain")
-        return free_module_pseudomorphism.FreeModulePseudoMorphism(self.domain(), A, twist=self.twist, codomain = self.codomain())
+        if not self.codomain().base_ring().has_coerce_map_from(\
+                self.domain().base_ring()) and not A.is_zero():
+            raise TypeError("nontrivial morphisms require a coercion map \
+                    from the base ring of the domain to the base ring of the \
+                    codomain")
+        return free_module_pseudomorphism.FreeModulePseudoMorphism(\
+                                self.domain(), A, twist=self.twist, \
+                                codomain = self.codomain())
 
     def __repr__(self):
-        pass
+        r"""
+        Returns the string representation of the pseudomorphism space.
+
+        EXAMPLE::
+
+        """
+        r = "Set of Pseudomorphisms from {} to {} {} {}"
+        morph = ""
+        if self.twist_morphism is not None:
+            morph = "\nTwisted by the morphism {}"
+            morph = morph.format(self.twist_morphism.__repr__())
+        deriv = ""
+        if self.derivation is not None:
+            deriv = "\nTwisted by the derivation {}"
+            deriv = deriv.format(self.derivation.__repr__())
+        return r.format(self.domain(), self.codomain(), morph, deriv)
+
+    def zero(self):
+        r"""
+        Return the zero pseudomorphism.
+        """
+        return self.base_homspace.zero()
+
+    def _matrix_space(self):
+        return self.base_homspace._matrix_space()
+
+    def basis(self, side="left"):
+        r"""
+        Return a basis for the underlying matrix space.
+        """
+        return self.base_homspace.basis(side)
+
+    def identity(self):
+        r"""
+        Return the pseudomorphism corresponding to the identity transformation
+        """
+        return self.base_homspace.identity()
