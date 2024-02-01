@@ -6,7 +6,6 @@ AUTHORS:
     - Yossef Musleh (2024-02): initial version
 
 """
-
 ####################################################################################
 #       Copyright (C) 2024 Yossef Musleh <jbobicus@gmail.com>
 #

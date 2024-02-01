@@ -1,4 +1,11 @@
+"""
+Space of Pseudomorphisms of free modules
 
+AUTHORS:
+
+    - Yossef Musleh (2024-02): initial version
+
+"""
 # ****************************************************************************
 #  Copyright (C) 2024 Yossef Musleh <jbobicus@gmail.com>
 #
@@ -72,7 +79,7 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
             sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
             sage: PHS = M.PseudoHom(twist)
             sage: h = PHS([[1, 2], [1, 1]]); h
-            Free module pseudomorphism defined by the                 matrix
+            Free module pseudomorphism defined by the matrix
             [1 2]
             [1 1]
             twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
@@ -114,6 +121,10 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
 
         EXAMPLE::
 
+            sage: Fq = GF(343); M = Fq^2; frob = Fq.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(frob); PHS
+            Set of Pseudomorphisms from Vector space of dimension 2 over Finite Field in z3 of size 7^3 to Vector space of dimension 2 over Finite Field in z3 of size 7^3
+            Twisted by the morphism Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
         """
         r = "Set of Pseudomorphisms from {} to {} {} {}"
         morph = ""
@@ -141,11 +152,47 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
         return self.base_homspace.zero()
 
     def _matrix_space(self):
+        r"""
+        Return the full matrix space of the underlying morphisms.
+
+        EXAMPLES::
+
+            sage: Fq = GF(343); M = Fq^2; frob = Fq.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(frob)
+            sage: PHS._matrix_space()
+            Full MatrixSpace of 2 by 2 dense matrices over Finite Field in z3 of size 7^3
+        """
         return self.base_homspace._matrix_space()
 
     def basis(self, side="left"):
         r"""
         Return a basis for the underlying matrix space.
+
+        EXAMPLES::
+
+            sage: Fq = GF(343); M = Fq^2; frob = Fq.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(frob)
+            sage: PHS.basis()
+            (Vector space morphism represented by the matrix:
+             [1 0]
+             [0 0]
+            Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
+             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+             Vector space morphism represented by the matrix:
+             [0 1]
+             [0 0]
+             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
+             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+             Vector space morphism represented by the matrix:
+             [0 0]
+             [1 0]
+             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
+             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+             Vector space morphism represented by the matrix:
+             [0 0]
+             [0 1]
+             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
+             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3)
         """
         return self.base_homspace.basis(side)
 
@@ -160,6 +207,5 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
             sage: PHS.identity().matrix()
             [1 0]
             [0 1]
-
         """
         return self.base_homspace.identity()

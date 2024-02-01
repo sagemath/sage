@@ -3071,7 +3071,7 @@ class FreeModule_generic(Module_free_ambient):
         Create the Pseudo Hom space corresponding to given twist data.
 
         EXAMPLES::
-            
+
             sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism()
             sage: PHS = M.PseudoHom(twist); PHS
             Set of Pseudomorphisms from Vector space of dimension 2 over Finite Field in z2 of size 5^2 to Vector space of dimension 2 over Finite Field in z2 of size 5^2
