@@ -1053,8 +1053,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             S = n//nQ * P
             T = n2 * Q
-            S.set_order(nQ//n2, check=False)    # for .discrete_log()
-            x = S.discrete_log(T)
+            S.set_order(nQ//n2, check=False)    # for .log()
+            x = T.log(S)
             Q -= x * n1//nQ * P
 
             assert not n2 * Q                   # by construction
