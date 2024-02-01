@@ -387,13 +387,33 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             False
             sage: P+P == E(0)
             True
+
+        The additive identity is always the minimum element::
+
+            sage: E = EllipticCurve(GF(103), [3, 5])
+            sage: min(E.points()) == 0
+            True
         """
         if not isinstance(other, EllipticCurvePoint_field):
             try:
                 other = self.codomain().ambient_space()(other)
             except TypeError:
                 return NotImplemented
-        return richcmp(self._coords, other._coords, op)
+        # op_EQ
+        if op == 2:
+            return richcmp(self._coords, other._coords, op)
+
+        try:
+            return richcmp(self._zxy_coords, other._zxy_coords, op)
+        except AttributeError:
+            # Compute _zxy_coords
+            # There is a chance that we recompute this for either ``self`` or
+            # ``other`` However, in the most common use case which is sorting
+            # list of `n` variables This will cause a O(n) cost only. If there
+            # is a better way feel free to implement it!
+            self._zxy_coords = (self._coords[2], self._coords[0], self._coords[1])
+            other._zxy_coords = (other._coords[2], other._coords[0], other._coords[1])
+            return richcmp(self._zxy_coords, other._zxy_coords, op)
 
     def __pari__(self):
         r"""
@@ -988,7 +1008,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: tor = E.torsion_points(); len(tor)
             8
             sage: [T.order() for T in tor]
-            [2, 4, 4, 2, 1, 2, 4, 4]
+            [1, 2, 4, 4, 2, 2, 4, 4]
             sage: all(T.is_divisible_by(3) for T in tor)
             True
             sage: sorted(T for T in tor if T.is_divisible_by(2))
@@ -1171,10 +1191,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
           sage: E = EllipticCurve([1, 0, 1, -19, 26])
           sage: [(Q,Q._order) for Q in E(0).division_points(12)]
-          [((-5 : 2 : 1), 2),
+          [((0 : 1 : 0), 1),
+           ((-5 : 2 : 1), 2),
            ((-2 : -7 : 1), 6),
            ((-2 : 8 : 1), 6),
-           ((0 : 1 : 0), 1),
            ((1 : -4 : 1), 6),
            ((1 : 2 : 1), 6),
            ((7/4 : -11/8 : 1), 2),
