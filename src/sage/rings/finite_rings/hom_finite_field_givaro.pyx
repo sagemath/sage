@@ -107,6 +107,14 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
             sage: g = f.section()
             sage: g(f(t+1)) # random
             t + 1
+
+            sage: g(T)
+            Traceback (most recent call last):
+            ...
+            ValueError: T is not in the image of Ring morphism:
+              From: Finite Field in t of size 3^2
+              To:   Finite Field in T of size 3^4
+              Defn: t |--> ...
         """
         if x.parent() != self.domain():
             raise TypeError("%s is not in %s" % (x, self.domain()))

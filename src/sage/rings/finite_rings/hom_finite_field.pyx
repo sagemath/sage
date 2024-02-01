@@ -35,6 +35,13 @@ map which is the inverse of `f` on the image of `f`::
       Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
     sage: g(f(t^3+t^2+1)) # random
     t^3 + t^2 + 1
+    sage: g(T)
+    Traceback (most recent call last):
+    ...
+    ValueError: T is not in the image of Ring morphism:
+      From: Finite Field in t of size 3^7
+      To:   Finite Field in T of size 3^21
+      Defn: ...
 
 There is no embedding of `GF(5^6)` into `GF(5^11)`::
 
@@ -123,8 +130,16 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
             sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section()
-            sage: g(f(t^3+t^2+1))
+            sage: g(f(t^3+t^2+1)) # random
             t^3 + t^2 + 1
+
+            sage: g(T)
+            Traceback (most recent call last):
+            ...
+            ValueError: T is not in the image of Ring morphism:
+              From: Finite Field in t of size 3^7
+              To:   Finite Field in T of size 3^21
+              Defn: t |--> ...
         """
         for root, _ in x.minimal_polynomial().roots(ring=self.codomain()):
             if self._inverse(root) == x:
@@ -360,6 +375,13 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
             sage: g(f(t^3+t^2+1))
             t^3 + t^2 + 1
+            sage: g(T)
+            Traceback (most recent call last):
+            ...
+            ValueError: T is not in the image of Ring morphism:
+              From: Finite Field in t of size 3^7
+              To:   Finite Field in T of size 3^21
+              Defn: ...
         """
         if self.base_map() is not None:
             raise NotImplementedError
