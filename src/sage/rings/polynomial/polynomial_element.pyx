@@ -2265,8 +2265,10 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
         - ``degree`` (None or positive integer) -- (default: ``None``).
-          Used for polynomials over finite fields. Attempts to return an
-          irreducible factor of ``self`` of chosen degree ``degree``.
+          Used for polynomials over finite fields. If ``None``, returns
+          the the first factor found (usually the smallest). Otherwise,
+          attempts to return an irreducible factor of ``self`` of chosen
+          degree ``degree``.
 
         - ``assume_squarefree`` (boolean) -- (default: ``False``).
           Used for polynomials over finite fields.  If ``True``,
