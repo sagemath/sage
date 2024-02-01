@@ -107,12 +107,12 @@ class FreeModulePseudoMorphism(Morphism):
         from sage.structure.element import is_Matrix
         Morphism.__init__(self, domain.PseudoHom(twist, codomain))
         if is_Matrix(base_morphism):
-            self.base_morphism = domain.hom(base_morphism, codomain)
+            self._base_matrix = base_morphism
         elif isinstance(base_morphism, Morphism):
-            self.base_morphism = base_morphism
+            self._base_matrix = base_morphism.matrix()
         else:
-            self.base_morphism = domain.hom(matrix(domain.coordinate_ring(), \
-                                            base_morphism), codomain)
+            self._base_matrix = matrix(domain.coordinate_ring(), \
+                                        base_morphism)
         self.derivation = None
         self.twist_morphism = None
         if isinstance(twist, Morphism):
@@ -138,8 +138,6 @@ class FreeModulePseudoMorphism(Morphism):
             sage: ph(e)
             (z3^2 + 6*z3 + 2, z3^2 + 2*z3 + 1, 2*z3^2 + 4*z3)
         """
-        if self.twist_morphism is None and self.derivation is None:
-            return self.base_morphism(x)
         if self.domain().is_ambient():
             x = x.element()
         else:
@@ -150,9 +148,9 @@ class FreeModulePseudoMorphism(Morphism):
         else:
             x_twist = self.domain()(list(map(self.twist_morphism, x)))
         if self.side == "left":
-            v = x_twist * self.matrix()
+            v = x_twist * self._base_matrix
         else:
-            v = self.matrix() * x_twist
+            v = self._base_matrix * x_twist
         if self.derivation is not None:
             v += self.domain()(list(map(self.derivation, x)))
         if not C.is_ambient():
@@ -216,26 +214,7 @@ class FreeModulePseudoMorphism(Morphism):
             sage: ph(e) == ph.matrix()*vector([frob(c) for c in e])
             True
         """
-        return self.base_morphism.matrix()
-
-    def _base_morphism(self):
-        r"""
-        Return the underlying morphism of a pseudomorphism. This is an element
-        of the Hom space of the free module.
-
-        EXAMPLES::
-
-            sage: Fq = GF(343); M = Fq^3; frob = Fq.frobenius_endomorphism()
-            sage: ph = M.pseudohom([[1, 2, 3], [0, 1, 1], [2, 1, 1]], frob, side="right")
-            sage: ph._base_morphism()
-            Vector space morphism represented by the matrix:
-            [1 2 3]
-            [0 1 1]
-            [2 1 1]
-            Domain: Vector space of dimension 3 over Finite Field in z3 of size 7^3
-            Codomain: Vector space of dimension 3 over Finite Field in z3 of size 7^3
-        """
-        return self.base_morphism
+        return self._base_matrix
 
     def twisting_morphism(self):
         r"""
