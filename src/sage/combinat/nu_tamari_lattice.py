@@ -185,11 +185,13 @@ def delta_swap(p, k, delta):
 
 def AltNuTamariLattice(nu, delta=None):
     r"""
-    Return the `(\delta,\nu)`-Tamari lattice (or alt `\nu`-Tamari lattice, see [CC2023]_).
+    Return the `(\delta,\nu)`-Tamari lattice (or alt `\nu`-Tamari lattice).
+    
+    For more information, see [CC2023]_.
 
-    The path `\nu` is a path of North steps (represented as `1`s) and East steps (represented as `0`s).
+    The path `\nu` is a path of North steps (represented as `1` s) and East steps (represented as `0` s).
 
-    The vector `\delta = (\delta_1, \dots, \delta_n)` is an increment vector with respect to the path `\nu`, that is to say `\delta_i \leq \nu_i`, where `\nu_i` is the number of `0`s following the `i`-th `1` of `\nu`. If not provided, `\delta` is set by default to produce the classical `\nu`-Tamari lattice.
+    The vector `\delta = (\delta_1, \dots, \delta_n)` is an increment vector with respect to the path `\nu`, that is to say `\delta_i \leq \nu_i`, where `\nu_i` is the number of `0` s following the `i`-th `1` of `\nu`. If not provided, `\delta` is set by default to produce the classical `\nu`-Tamari lattice.
 
     INPUT:
 
