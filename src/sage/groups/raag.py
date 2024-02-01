@@ -210,6 +210,7 @@ class RightAngledArtinGroup(ArtinGroup):
         Implement pickling.
 
         TESTS::
+
             sage: RightAngledArtinGroup(graphs.CycleGraph(5)).__reduce__()[1]
             (<class 'sage.groups.raag.RightAngledArtinGroup'>,
              (Cycle graph: Graph on 5 vertices, ('v0', 'v1', 'v2', 'v3', 'v4')),
