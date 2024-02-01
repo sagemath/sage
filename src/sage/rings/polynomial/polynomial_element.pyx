@@ -2099,7 +2099,6 @@ cdef class Polynomial(CommutativePolynomial):
             if not ad.is_one():
                 yield (ad, d)
                 v = v // ad
-                w = w % v
 
             e = v.degree()
 
@@ -2162,6 +2161,8 @@ cdef class Polynomial(CommutativePolynomial):
         # so if we try 1000 times and fail, there's a bug somewhere.
         for _ in range(1000):
             # Sample a polynomial uniformly from R
+            # TODO: once #37118 has been merged, we can call
+            #       R.random_monic_element(2*degree + 1)
             T = R.random_element(2*degree + 1).monic()
 
             # Need to handle odd and even characteristic separately
@@ -2245,23 +2246,16 @@ cdef class Polynomial(CommutativePolynomial):
         # If the degree is not None we only want to check a single polynomial
         if degree is not None:
             for (poly, d) in self._distinct_degree_factorisation_squarefree():
-                if d == degree and not poly.is_one():
+                if d == degree:
                     return poly._cantor_zassenhaus_split_to_irreducible(degree)
                 # Stop iterating early if the degree is too large
                 elif d > degree:
                     raise ValueError(f"no irreducible factor of degree {degree} could be computed from {self}")
             raise ValueError(f"no irreducible factor of degree {degree} could be computed from {self}")
 
-        # Otherwise we check all degrees, starting from the smallest
+        # Otherwise we use the smallest possible d value
         for (poly, d) in self._distinct_degree_factorisation_squarefree():
-            # Skip the split checking if `_distinct_degree_factorisation_squarefree`
-            # has found no elements of degree `d`
-            if poly.is_one():
-                continue
-
-            # Otherwise find a factor from the distinct degree factor
             return poly._cantor_zassenhaus_split_to_irreducible(d)
-
         raise ValueError(f"no irreducible factor could be computed from {self}")
 
     def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_distinct_deg=False):
@@ -2280,7 +2274,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         - ``assume_distinct_deg`` (bool) -- Used for polynomials over
           finite fields.  If ``True``, this polynomial is assumed to be
-          the product of irreducible polynomials of the same degree.
+          the product of irreducible polynomials of the same degree. If
+          this parameter is set to ``True`` then degree must also be set.
 
         EXAMPLES::
 
