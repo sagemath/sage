@@ -83,18 +83,18 @@ class FreeModulePseudoMorphism(Morphism):
         Constructs a pseudomorphism of free modules.
 
         INPUT:
-            -  ``domain``   - the domain of the pseudomorphism; a free module 
+            -  ``domain``   - the domain of the pseudomorphism; a free module
 
             -  ``base_morphism`` - either a morphism or a matrix defining a
                                    morphism
 
-            -  ``twist`` - a twisting morphism, this is either a morphism or 
+            -  ``twist`` - a twisting morphism, this is either a morphism or
                            a derivation (default: None)
 
             -  ``codomain`` - the codomain of the pseudomorphism; a free
                               module  (default: None)
 
-            - side -- side of the vectors acted on by the matrix 
+            - side -- side of the vectors acted on by the matrix
                       (default: ``"left"``)
 
         EXAMPLES::
@@ -111,7 +111,7 @@ class FreeModulePseudoMorphism(Morphism):
         elif isinstance(base_morphism, Morphism):
             self._base_matrix = base_morphism.matrix()
         else:
-            self._base_matrix = matrix(domain.coordinate_ring(), \
+            self._base_matrix = matrix(domain.coordinate_ring(),
                                         base_morphism)
         self.derivation = None
         self.twist_morphism = None
@@ -186,7 +186,7 @@ class FreeModulePseudoMorphism(Morphism):
         if self.derivation is not None:
             deriv = "\ntwisted by the derivation {}"
             deriv = deriv.format(self.derivation.__repr__())
-        return r.format(act, self.matrix(), morph, deriv, \
+        return r.format(act, self.matrix(), morph, deriv,
                         self.domain(), self.codomain())
 
     def matrix(self):

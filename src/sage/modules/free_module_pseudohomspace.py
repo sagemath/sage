@@ -99,27 +99,27 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
                 else:
                     v = [C(a) for a in A]
                     if side == "right":
-                        A = matrix([C.coordinates(a) for a in v], \
+                        A = matrix([C.coordinates(a) for a in v],
                                     ncols=C.rank()).transpose()
                     else:
-                        A = matrix([C.coordinates(a) for a in v], \
+                        A = matrix([C.coordinates(a) for a in v],
                                     ncols=C.rank())
             except TypeError:
                 pass
-        if not self.codomain().base_ring().has_coerce_map_from(\
+        if not self.codomain().base_ring().has_coerce_map_from(
                 self.domain().base_ring()) and not A.is_zero():
-            raise TypeError("nontrivial morphisms require a coercion map \
-                    from the base ring of the domain to the base ring of the \
-                    codomain")
-        return free_module_pseudomorphism.FreeModulePseudoMorphism(\
-                                self.domain(), A, twist=self.twist, \
-                                codomain = self.codomain())
+            raise TypeError("nontrivial morphisms require a coercion map"
+                    "from the base ring of the domain to the base ring of the"
+                    "codomain")
+        return free_module_pseudomorphism.FreeModulePseudoMorphism(
+                                self.domain(), A, twist=self.twist,
+                                codomain=self.codomain())
 
     def __repr__(self):
         r"""
         Returns the string representation of the pseudomorphism space.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Fq = GF(343); M = Fq^2; frob = Fq.frobenius_endomorphism()
             sage: PHS = M.PseudoHom(frob); PHS
