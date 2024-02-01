@@ -1770,21 +1770,21 @@ class QuaternionOrder(Parent):
         EXAMPLES::
 
             sage: p = 11
-            sage: B = QuaternionAlgebra(QQ,-1,-p)
-            sage: i,j,k = B.gens()
+            sage: B = QuaternionAlgebra(QQ, -1, -p)
+            sage: i, j, k = B.gens()
             sage: O0_basis = (1,i,(i+j)/2, (1+i*j)/2)
             sage: O0 = B.quaternion_order(O0_basis)
             sage: O0.is_maximal()
             True
-            sage: O1 = B.quaternion_order([1,i,j,i*j])
+            sage: O1 = B.quaternion_order([1, i, j, i*j])
             sage: O1.is_maximal()
             False
 
         TESTS::
 
-            sage: B = QuaternionAlgebra(GF(13),-1,-11)
-            sage: i,j,k = B.gens()
-            sage: O0_basis = (1,i,j, k)
+            sage: B = QuaternionAlgebra(GF(13), -1, -11)
+            sage: i, j, k = B.gens()
+            sage: O0_basis = (1, i, j, k)
             sage: O0 = B.quaternion_order(O0_basis)
             sage: O0.is_maximal()
             Traceback (most recent call last):
