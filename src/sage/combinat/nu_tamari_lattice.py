@@ -41,7 +41,13 @@ special cases of this construction and are also available with this poset::
     For more detailed information see :meth:`NuTamariLattice` and :meth:`AltNuTamariLattice`. For more
     information on the standard Tamari lattice see
     :meth:`sage.combinat.tamari_lattices.TamariLattice`,
-    :meth:`sage.combinat.tamari_lattices.GeneralizedTamariLattice`
+    :meth:`sage.combinat.tamari_lattices.. GeneralizedTamariLattice`
+
+AUTHORS:
+
+- Aram Dermenjian (2020-09-26): initial version
+
+- Clément Chenevière (2024-02-01): added the alt `\nu`-Tamari lattices
 """
 # ****************************************************************************
 #    Copyright (C) 2020-2020 Aram Dermenjian <aram.dermenjian@gmail.com>
