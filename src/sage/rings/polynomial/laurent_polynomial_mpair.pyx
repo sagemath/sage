@@ -2114,12 +2114,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return new_ring(ans)
         return ans
 
-def reduce(f,reducers):
+def reduce(g,reducers):
     r"""
-    Reduce ``f``  by ``reducers`` using the multivariate division algorithm of [PU1999]_.
+    Reduce ``g``  by ``reducers`` using the multivariate division algorithm of [PU1999]_.
 
     INPUTS:
-        - ``f`` -- A Laurent polynomial.
+        - ``g`` -- A Laurent polynomial.
         - ``reducers`` -- A list of Laurent polynomials.
 
     OUTPUT: A tuple (remainder, quotients) where remainder is the rest and quotients 
@@ -2130,12 +2130,12 @@ def reduce(f,reducers):
         sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
         sage: order = GeneralizedMonomialOrder(2)
         sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
-        sage: f = x^2*y + y^-1*x^-2 + x^2*y^-3
-        sage: reducers = [2*x^2*y + x^-1, 3*y^-3*y^-2 + x^3, x^2*y^2 - 5*x^-3*y^3 + 4x^-6*y^-1]
-        sage: reduce(f, reducers)
+        sage: g = x^2*y + y^-1*x^-2 + x^2*y^-3
+        sage: reducers = [2*x^2*y + x^-1, 3*y^-3*y^-2 + x^3, x^2*y^2 - 5*x^-3*y^3 + 4*x^-6*y^-1]
+        sage: g.reduce(reducers)
 
     """
-
+    f = g
     if f.parent().order() is None:
         raise AttributeError("Parent has no generalized order")
 
@@ -2166,8 +2166,8 @@ def reduce(f,reducers):
                 if candidate == lm:
                     found_reducer = True
                     t = f.leading_term()/reducer.leading_term_for_cone(i)
-                    f -= t*reducer
-                    quotients[j] += t 
+                    f = f - t*reducer
+                    quotients[j] = quotients[j] + t 
                     break
 
             if not found_reducer:
@@ -2175,8 +2175,8 @@ def reduce(f,reducers):
        
         if f:
             lt = f.leading_term()
-            remainder += lt
-            f -= lt
+            remainder = remainder + lt
+            f = f - lt
 
     return (remainder, quotients)
 
