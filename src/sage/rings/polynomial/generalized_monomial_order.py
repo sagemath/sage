@@ -1,20 +1,30 @@
 r"""
-Generalized monomial orders on the monoïd `\ZZ^n`.
-
-Generalized monomial orders on `\ZZ^n` defined in [PU1999]_.
-
-
+Generalized monomial orders on `\ZZ^n` defined in [PU1999]_. 
 
 EXAMPLES::
 
-<Lots and lots of examples>
+    sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+
+    sage: order = GeneralizedMonomialOrder(2); order
+    Generalized monomial order in 2 variables using (lex, min)
+
+    sage: order.n_cones()
+    3
+    sage: order.cone(1)
+    [-1  0]
+    [-1  1]
+    sage: order.greatest_tuple((1,2),(-2,3))
+    (-2, 3)
+    sage: order.greatest_tuple([(1,2),(-3,2),(2,-1)])
+    (-3, 2)
+    sage: order.greatest_tuple_for_cone(2,[(-1,2), (-1,2), (-2,-3)])
+    (-2, -3)
 
 AUTHORS:
 
 - Legrand Lucas (2024-26-01): initial version
 
 """
-
 from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.term_order import TermOrder
