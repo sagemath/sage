@@ -145,11 +145,15 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
 
             sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
             sage: PHS = M.PseudoHom(twist)
-            sage: PHS.zero().matrix()
+            sage: PHS.zero()
+            Free module pseudomorphism defined by the matrix
             [0 0]
             [0 0]
+            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
+            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
-        return self.base_homspace.zero()
+        return self(self.base_homspace.zero())
 
     def _matrix_space(self):
         r"""
@@ -204,8 +208,12 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
 
             sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
             sage: PHS = M.PseudoHom(twist)
-            sage: PHS.identity().matrix()
+            sage: PHS.identity()
+            Free module pseudomorphism defined by the matrix
             [1 0]
             [0 1]
+            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
+            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
-        return self.base_homspace.identity()
+        return self(self.base_homspace.identity())
