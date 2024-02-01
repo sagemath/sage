@@ -45,15 +45,21 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
         self._codomain = X
         if Y is not None:
             self._codomain = Y
+        super().__init__(self._domain, self._codomain, category=None)
         self.base_homspace = self._domain.Hom(self._codomain)
+        self.twist = twist
+        self.twist_morphism = None
+        self.derivation = None
         if twist is None:
             return
         if (twist.domain() is not self.domain().coordinate_ring()
           or twist.codomain() is not self.codomain().coordinate_ring()):
             raise TypeError("twisting morphism domain/codomain do not match\
                             coordinate rings of the modules")
-        elif isinstance(twist, Morphism) or isinstance(twist, RingDerivation):
-            self.twist = twist
+        elif isinstance(twist, Morphism):
+            self.twist_morphism = twist
+        elif isinstance(twist, RingDerivation):
+            self.derivation = twist
         else:
             raise TypeError("twist is not a ring morphism or derivation")
 

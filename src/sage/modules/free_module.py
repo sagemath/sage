@@ -3068,12 +3068,18 @@ class FreeModule_generic(Module_free_ambient):
 
     def PseudoHom(self, twist=None, codomain=None):
         r"""
-        Create the Pseudohomspace corresponding to given twist data.
+        Create the Pseudo Hom space corresponding to given twist data.
 
+        EXAMPLES::
+            
+            sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist); PHS
+            Set of Pseudomorphisms from Vector space of dimension 2 over Finite Field in z2 of size 5^2 to Vector space of dimension 2 over Finite Field in z2 of size 5^2
+            Twisted by the morphism Frobenius endomorphism z2 |--> z2^5 on Finite Field in z2 of size 5^2
 
         """
         from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
-        return FreeModulePseudoHomspace(self, codomain, twist)
+        return FreeModulePseudoHomspace(self, codomain, twist=twist)
 
     def pseudohom(self, morphism, twist=None, codomain=None, **kwds):
         r"""
@@ -3082,8 +3088,14 @@ class FreeModule_generic(Module_free_ambient):
 
         EXAMPLES::
 
-        sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism()
-        sage: 
+            sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism()
+            sage: ph = M.pseudohom([[1, 2], [0, 1]], twist, side="right"); ph
+            Free module pseudomorphism defined as left-multiplication by the matrix
+            [1 2]
+            [0 1]
+            twisted by the morphism Frobenius endomorphism z2 |--> z2^5 on Finite Field in z2 of size 5^2
+            Domain: Vector space of dimension 2 over Finite Field in z2 of size 5^2
+            Codomain: Vector space of dimension 2 over Finite Field in z2 of size 5^2
         """
         from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
         from sage.structure.element import is_Matrix
