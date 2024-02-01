@@ -25,7 +25,7 @@ Then, ::
     Finite lattice containing 40 elements
     sage: AltNuTamariLattice([0,0,0,1,1,0,0,1], [0,1,0])
     Finite lattice containing 40 elements
-    
+
 
 The classical **Tamari lattices** and the **Generalized Tamari lattices** are
 special cases of this construction and are also available with this poset::
@@ -128,7 +128,7 @@ def delta_swap(p, k, delta):
     - ``k`` -- an integer between `0` and `p.length()-1`
 
     - ``delta`` -- a list of nonnegative integers of length p.height()
-    
+
     OUTPUT:
 
     - a `\nu`-Dyck word
@@ -230,7 +230,7 @@ def AltNuTamariLattice(nu, delta=None):
         [PRV2017]_
         [CC2023]_
     """
-    if not( (isinstance(nu, (list, tuple)) and all(x in [0, 1] for x in nu)) or 
+    if not( (isinstance(nu, (list, tuple)) and all(x in [0, 1] for x in nu)) or
             (isinstance(nu, str) and all(x in ['0', '1'] for x in nu)) ):
         raise ValueError("nu must be a list or a string of 0s and 1s")
     nu = [int(a) for a in nu]
@@ -244,7 +244,7 @@ def AltNuTamariLattice(nu, delta=None):
         raise ValueError("delta is not a valid increment vector")
 
     def covers(p):
-        return [delta_swap(p, k, delta = delta) for k in range(1, p.length())
+        return [delta_swap(p, k, delta=delta) for k in range(1, p.length())
                 if not p[k - 1] and p[k]]
     return LatticePoset({p: covers(p) for p in NuDyckWords(nu)},
                         check=False)
