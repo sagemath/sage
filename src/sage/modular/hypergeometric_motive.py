@@ -900,13 +900,17 @@ class HypergeometricData():
             lst.append((lst[-1][0] + hn[i], lst[-1][1] + i * hn[i]))
         return lst
 
-    def E_polynomial(self):
+    def E_polynomial(self, vars=None):
         """
         Return the E-polynomial of ``self``.
 
         This is a bivariate polynomial.
 
         The algorithm is taken from [FRV2019]_.
+
+        INPUT:
+
+        - ``vars`` -- optional pair of variables (default `u,v`)
 
         REFERENCES:
 
@@ -919,6 +923,10 @@ class HypergeometricData():
             sage: H = HypergeometricData(gamma_list=[-30,-1,6,10,15])
             sage: H.E_polynomial()
             8*u*v + 7*u + 7*v + 8
+
+            sage: p, q = polygens(QQ,'p,q')
+            sage: H.E_polynomial((p, q))
+            8*p*q + 7*p + 7*q + 8
 
             sage: H = HypergeometricData(gamma_list=(-11, -2, 1, 3, 4, 5))
             sage: H.E_polynomial()
@@ -942,7 +950,10 @@ class HypergeometricData():
         m_minus = {d: len([1 for g in gamma_minus if not g % d])
                    for d in domain}
 
-        u, v = polygens(ZZ, 'u,v')
+        if vars is None:
+            u, v = polygens(ZZ, 'u,v')
+        else:
+            u, v = vars
         uqv = u / v
         uv = u * v
 
