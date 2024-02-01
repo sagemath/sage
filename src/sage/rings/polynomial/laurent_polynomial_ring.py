@@ -436,7 +436,7 @@ def from_fraction_field(L, x):
 
 
 class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
-    def __init__(self, R):
+    def __init__(self, R, order=None):
         """
         EXAMPLES::
 
@@ -457,6 +457,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         """
         if R.ngens() != 1:
             raise ValueError("must be 1 generator")
+        self._order = order
         LaurentPolynomialRing_generic.__init__(self, R)
 
     Element = LaurentPolynomial_univariate
@@ -588,7 +589,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
 
 class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
-    def __init__(self, R):
+    def __init__(self, R, order=None):
         """
         EXAMPLES::
 
@@ -603,6 +604,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             raise ValueError("n must be positive")
         if not R.base_ring().is_integral_domain():
             raise ValueError("base ring must be an integral domain")
+        self._order = order
         LaurentPolynomialRing_generic.__init__(self, R)
 
     Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
