@@ -1,8 +1,6 @@
 r"""
-Anderson motives over `\mathbb F_q[t,\theta]`
-
-This module provides facilities for manipulating Anderson motives
-over `\mathbb F_q[t,\theta]` and computing the associated L-functions.
+This module provides facilities for manipulation Anderson motives
+and computing the associated L-series.
 
     sage: from sage.rings.function_field.drinfeld_modules.anderson_motive import AndersonMotive
 
@@ -15,8 +13,8 @@ constructor :class:`AndersonMotive`::
 
     sage: q = 5
     sage: Fq = GF(q)
-    sage: A.<t> = Fq[]
-    sage: R.<theta> = A[]
+    sage: K.<theta> = Fq[]
+    sage: R.<t> = K[]
     sage: tau = matrix(2, 2, [t, 1, theta, 1])
     sage: M = AndersonMotive(tau)
     sage: M
@@ -33,19 +31,19 @@ just passing in the base ring::
     [1]
 
 We can create (positive or negative) twists.
-For example, the Carlitz motive can be defined as follows::
+For example, the Carlitz module can be defined as follows::
 
     sage: C = F(1)
     sage: C
     Anderson motive defined by the matrix
-    [4*theta + t]
+    [t + 4*theta]
 
 Another twist::
 
     sage: M(-3)
     Anderson motive defined by the matrix
-    [    t/(4*theta^3 + 3*t*theta^2 + 2*t^2*theta + t^3)     1/(4*theta^3 + 3*t*theta^2 + 2*t^2*theta + t^3)]
-    [theta/(4*theta^3 + 3*t*theta^2 + 2*t^2*theta + t^3)     1/(4*theta^3 + 3*t*theta^2 + 2*t^2*theta + t^3)]
+    [    t/(t^3 + 2*theta*t^2 + 3*theta^2*t + 4*theta^3)     1/(t^3 + 2*theta*t^2 + 3*theta^2*t + 4*theta^3)]
+    [theta/(t^3 + 2*theta*t^2 + 3*theta^2*t + 4*theta^3)     1/(t^3 + 2*theta*t^2 + 3*theta^2*t + 4*theta^3)]
 
 
 .. RUBRIC:: Tensorial constructions
@@ -59,64 +57,64 @@ Direct sums::
     Anderson motive defined by the matrix
     [                            t                             1                             0]
     [                        theta                             1                             0]
-    [                            0                             0 1/(theta^2 + 3*t*theta + t^2)]
+    [                            0                             0 1/(t^2 + 3*theta*t + theta^2)]
 
 Tensor products::
 
     sage: M * M
     Anderson motive defined by the matrix
     [    t^2       t       t       1]
-    [t*theta       t   theta       1]
-    [t*theta   theta       t       1]
+    [theta*t       t   theta       1]
+    [theta*t   theta       t       1]
     [theta^2   theta   theta       1]
 
 Duals::
 
     sage: M.dual()
     Anderson motive defined by the matrix
-    [      1/(4*theta + t)       4/(4*theta + t)]
-    [4*theta/(4*theta + t)       t/(4*theta + t)]
+    [    4/(t + 4*theta)     1/(t + 4*theta)]
+    [theta/(t + 4*theta)   4*t/(t + 4*theta)]
 
 Symmetric powers::
 
     sage: M.symmetric_power(2)
     Anderson motive defined by the matrix
     [      t^2       2*t         1]
-    [  t*theta theta + t         1]
+    [  theta*t t + theta         1]
     [  theta^2   2*theta         1]
 
 Exterior powers::
 
     sage: N.exterior_power(2)
     Anderson motive defined by the matrix
-    [                      4*theta + t                                 0                                 0]
-    [                                0     t/(theta^2 + 3*t*theta + t^2)     1/(theta^2 + 3*t*theta + t^2)]
-    [                                0 theta/(theta^2 + 3*t*theta + t^2)     1/(theta^2 + 3*t*theta + t^2)]
+    [                      t + 4*theta                                 0                                 0]
+    [                                0     t/(t^2 + 3*theta*t + theta^2)     1/(t^2 + 3*theta*t + theta^2)]
+    [                                0 theta/(t^2 + 3*theta*t + theta^2)     1/(t^2 + 3*theta*t + theta^2)]
 
 As a shortcut, the method :meth:`determinant` computes the maximal
 exterior power::
 
     sage: N.determinant()
     Anderson motive defined by the matrix
-    [1/(4*theta + t)]
+    [1/(t + 4*theta)]
 
 
-.. RUBRIC:: L-functions
+.. RUBRIC:: L-series
 
-The L-function assciated to an Anderson motive is computed
-thanks to the method :meth:`Lfunction`.
-This method takes as input a place of `\mathbb F_q[t]` (encoded
+The L-series assciated to an Anderson motive is computed
+thanks to the method :meth:`Lseries`.
+This method takes as input a place of `\FF_q[t]` (encoded
 either by ``infinity`` for the place at infinity, an element
-of `\mathbb F_q` for a rational place ot an irreducible polynomial
+of `\FF_q` for a rational place ot an irreducible polynomial
 for a general finite place) and a precision::
 
-    sage: F(-3).Lfunction(infinity, prec=20)
+    sage: F(-3).Lseries(infinity, prec=20)
     (4*u^15 + 2*u^19 + O(u^20))*x + 1 + O(u^20)
 
-    sage: F(-3).Lfunction(0, prec=20)
+    sage: F(-3).Lseries(0, prec=20)
     (3*u^18 + O(u^20))*x^2 + (3*u + u^5 + u^17 + O(u^20))*x + 1 + O(u^20)
 
-    sage: F(-3).Lfunction(t^2 + t + 1, prec=10)
+    sage: F(-3).Lseries(t^2 + t + 1, prec=10)
     (u^2 + 2*u^3 + 3*u^4 + 4*u^6 + 3*u^8 + 3*u^9 + O(u^10))*x^2 + ((3*a + 4) + (3*a + 4)*u + (3*a + 4)*u^2 + (2*a + 1)*u^3 + (a + 3)*u^6 + (a + 3)*u^7 + (4*a + 2)*u^8 + O(u^10))*x + 1 + O(u^10)
 
 In the output:
@@ -128,43 +126,42 @@ In the output:
 
 - the variable `a` is the image of `t` in the residue field,
 
-- the variable `x` is the variable of the L-function.
+- the variable `x` is the variable of the L-series.
 
-It is possible to evaluate the `L`-function at a given `x` by just
-passing in ``x = value`` (this is often faster than computing the
-complete `L`-function and then evaluating it)::
+It is possible to evaluate the `L`-series at a given `x` by just
+passing in ``x = value``::
 
-    sage: F(-3).Lfunction(infinity, prec=100, x=1)
+    sage: F(-3).Lseries(infinity, prec=100, x=1)
     1 + 4*u^15 + 2*u^19 + 4*u^23 + 4*u^35 + 2*u^39 + 4*u^43 + 4*u^55 + 2*u^59 + 4*u^63 + 4*u^75 + 2*u^79 + 4*u^83 + u^90 + 3*u^94 + 4*u^95 + u^98 + 2*u^99 + O(u^100)
 
-We check that the L-function of a direct sum is the product of the
-L-functions of the summands::
+We check that the L-series of a direct sum is the product of the
+L-series of the summands::
 
     sage: N = M(-1) + F(-3)
-    sage: N.Lfunction(2, prec=20, x=1)
+    sage: N.Lseries(2, prec=20, x=1)
     1 + 3*u + 3*u^3 + 4*u^5 + 3*u^7 + 3*u^8 + 4*u^9 + 3*u^11 + 3*u^12 + 4*u^13 + 3*u^15 + 3*u^16 + 3*u^18 + 3*u^19 + O(u^20)
-    sage: M(-1).Lfunction(2, prec=20, x=1) * F(-3).Lfunction(2, prec=20, x=1)
+    sage: M(-1).Lseries(2, prec=20, x=1) * F(-3).Lseries(2, prec=20, x=1)
     1 + 3*u + 3*u^3 + 4*u^5 + 3*u^7 + 3*u^8 + 4*u^9 + 3*u^11 + 3*u^12 + 4*u^13 + 3*u^15 + 3*u^16 + 3*u^18 + 3*u^19 + O(u^20)
 
 
 TESTS::
 
-    sage: f = M(-7).Lfunction(t^2 + t + 1, prec=100, x=1)
+    sage: f = M(-7).Lseries(t^2 + t + 1, prec=100, x=1)
     sage: for prec in [10, 20, 50, 80]:
-    ....:     assert(f == M(-7).Lfunction(t^2 + t + 1, prec=prec, x=1))
+    ....:     assert(f == M(-7).Lseries(t^2 + t + 1, prec=prec, x=1))
 
 ::
 
-    sage: f = F(-3).Lfunction(1, prec=50)
+    sage: f = F(-3).Lseries(1, prec=50)
     sage: for m in range(1, 10):
     ....:     Fm = AndersonMotive(matrix(R, 1, 1, [(t - theta)^m]))
-    ....:     assert(f == Fm(-3-m).Lfunction(1, prec=50))
+    ....:     assert(f == Fm(-3-m).Lseries(1, prec=50))
 
 ::
 
     sage: for h in range(50):
     ....:     cond1 = h % (q - 1) == 0
-    ....:     cond2 = F(-h).Lfunction(0, prec=100, x=1) == 0
+    ....:     cond2 = F(-h).Lseries(0, prec=100, x=1) == 0
     ....:     assert(cond1 == cond2)
 
 
@@ -186,9 +183,14 @@ AUTHORS:
 
 
 from sage.structure.sage_object import SageObject
+
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+
 from sage.categories.homset import Hom
 
 from sage.functions.other import ceil
+from sage.misc.functional import log
 from sage.misc.mrange import mrange
 from sage.misc.misc_c import prod
 
@@ -207,19 +209,65 @@ from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix, block_diagonal_matrix
 
 
-def normalize_place(A, place):
-    if place is Infinity:
+
+def unimodular_completion(F):
+    # unimodular completion based on Zhou-Labahn ISSAC 2024
+    # (by Vincent Neiger, Jan 2024)
+
+    # input F: m x n matrix over K[x] with unimodular column bases, m <= n
+    # output: (n-m) x n matrix C over K[x] such that [[F],[C]] is unimodular
+
+    pring = F.base_ring()
+
+    if F.nrows() == 0:
+        return identity_matrix(pring, F.ncols())
+
+    # find column degrees and reverse column-wise
+    # (for zero columns put degree 0 instead of -1:
+    # F.reverse requires degrees >=0 and zero columns won't be touched)
+    cdeg = [max(d,0) for d in F.column_degrees()]
+    Frev = F.reverse(row_wise=False, degree=cdeg)
+
+    # compute right kernel basis
+    K = Frev.minimal_kernel_basis(row_wise=False, shifts=cdeg)
+    kernel_cdeg = K.column_degrees(shifts=cdeg)
+
+    # compute left approximant basis
+    approx_shift = [-c for c in cdeg]
+    approx_order = [d+1 for d in kernel_cdeg]
+    P = K.minimal_approximant_basis(order=approx_order, shifts=approx_shift)
+
+    # select right rows from P
+    approx_rdeg = P.row_degrees(shifts=approx_shift)
+    subrows = [i for i in range(len(approx_rdeg)) if approx_rdeg[i] > 0]
+    C = P.matrix_from_rows(subrows)
+    rdeg = [approx_rdeg[i] for i in subrows]
+
+    # reverse, left-multiply by diag(x**rdeg), and return
+    # warning: cannot use reverse here, there are negative degrees...
+    left_diag = matrix.diagonal([pring.monomial(d) for d in rdeg])
+    right_diag = matrix.diagonal([pring.monomial(d) for d in cdeg])
+    ring,var = F.base_ring().objgen()
+    Crev = matrix(ring, left_diag * C(var**(-1)) * right_diag)
+
+    return Crev
+
+
+def normalize_place(A, place, infty=True):
+    if infty and place is Infinity:
         return place
-    R = place.parent()
-    if A.base_ring().has_coerce_map_from(R):
+    if place in A.base_ring():
         return A.gen() - place
-    if A.has_coerce_map_from(R):
+    elif place in A:
         place = A(place)
         if place.degree() == 0:
             return A.gen() - place
         if place.is_irreducible():
             return place.monic()
-    raise ValueError("place must be Infinity or an irreducible polynomial")
+    if infty:
+        raise ValueError("place must be Infinity or an irreducible polynomial")
+    else:
+        raise ValueError("place must an irreducible polynomial")
 
 
 class MorphismToCompletion(RingHomomorphism):
@@ -317,19 +365,23 @@ class AndersonMotive(SageObject):  # should be a Parent
             tau = identity_matrix(tau, 1)
         if tau.nrows() != tau.ncols():
             raise ValueError("tau must be a square matrix")
-        self._base = base = tau.base_ring()  # it's Fq[t][theta]
+        self._base = base = tau.base_ring()  # it's Fq[theta][t]
         if not isinstance(base, PolynomialRing_general):
-            raise NotImplementedError("tau has to be defined over Fq[t][theta]")
-        self._A = A = base.base_ring()       # it's Fq(t)
-        if not isinstance(A, PolynomialRing_general):
-            raise NotImplementedError("tau has to be defined over Fq[t][theta]")
-        self._t = A.gen()
-        self._Fq = Fq = A.base_ring()
+            raise NotImplementedError("tau has to be defined over Fq[theta][t]")
+        self._t = base.gen()
+        self._K = K = base.base_ring()       # it's Fq[theta]
+        # TODO: allow coefficients in Fq(theta)
+        if not isinstance(K, PolynomialRing_general):
+            raise NotImplementedError("tau has to be defined over Fq[theta][t]")
+        self._theta = K.gen()
+        self._Fq = Fq = K.base_ring()
         self._q = Fq.cardinality()
+        self._deg = ZZ(log(self._q, Fq.characteristic()))
         if self._q is Infinity:
             raise ValueError("not defined over a finite field")
-        self._theta = base.gen()
-        self._theta_name = base.variable_name()
+        self._t_name = base.variable_name()
+        self._theta_name = K.variable_name()
+        self._A = PolynomialRing(Fq, self._t_name)
 
         if normalize:
             divisor = self._t - self._theta
@@ -352,22 +404,24 @@ class AndersonMotive(SageObject):  # should be a Parent
                 self._twist += exponent
         self._tau = tau
 
-        self._det = None
         if check:
-            det = self._dettau()
-            if det == 0:
-                raise ValueError("tau does not define an Anderson motive")
-            while det.degree() > 0:
-                det, R = det.quo_rem(divisor)
-                if R:
-                    raise ValueError("tau does not define an Anderson motive")
-            if det[0].degree() > 0:
-                raise NotImplementedError("bad reduction")
+            self._dettau
 
+    @lazy_attribute
     def _dettau(self):
-        if self._det is None:
-            self._det = self._tau.det()
-        return self._det
+        det = self._tau.det()
+        if det == 0:
+            raise ValueError("tau does not define an Anderson motive")
+        h = det.degree()
+        disc, R = det.quo_rem((self._t - self._theta) ** h)
+        if R:
+            raise ValueError("tau does not define an Anderson motive")
+        return disc[0], det.degree()
+
+    @lazy_attribute
+    def _bad_places(self):
+        disc, _ = self._dettau
+        return [F for F, _ in disc.factor()]
 
     def __repr__(self):
         mat = ((self._t - self._theta) ** self._twist) * self._tau
@@ -424,13 +478,109 @@ class AndersonMotive(SageObject):  # should be a Parent
     def __add__(self, other):
         return self.direct_sum(other)
 
+    @cached_method
+    def _local_maximal_model(self, place):
+        q = self._q
+        Fq = self._Fq
+        r = self.rank()
+
+        F = Fq.extension(place, name='w')
+        if place.degree() == 1:
+            a = -place[0]
+        else:
+            a = F.gen()
+        A = PolynomialRing(F, self._t_name)
+        K = PolynomialRing(F, 'v')
+        v = K.gen()
+        S = PolynomialRing(K, self._t_name)
+        psiA = A.hom([A.gen()], base_map = F.frobenius_endomorphism(-self._deg))
+
+        tau = matrix(S, r, r,
+                     [ S([c(v+a) for c in entry.list()]) for entry in self._tau.transpose().list() ])
+        disc, _ = self._dettau
+        val = val0 = disc.valuation(place)
+
+        # 1st sequence: the N_i
+        while val >= q - 1:
+            rows = [ [ R([f[e] for f in c.list()])
+                       for c in taurow.list() for e in range(q) ]
+                     for taurow in tau.rows() ]
+            M = matrix(A, rows)
+            basis = M.minimal_kernel_basis()
+            dim = basis.nrows()
+            if dim == 0:
+                break
+            M = basis.stack(unimodular_completion(basis))
+            N = M.inverse_of_unit()
+            N = N.parent()([psiA(x) for x in N.list()])
+            tau = M * tau * N
+            for i in range(dim):
+                for j in range(dim):
+                    tau[i,j] = S([x >> q-1 for x in tau[i,j].list()])
+                for j in range(dim, r):
+                    tau[i,j] = S([x >> q for x in tau[i,j].list()])
+                    tau[j,i] = S([x << 1 for x in tau[j,i].list()])
+            val -= (q-1) * dim
+
+        # 2nd sequence: the L_i
+        if val >= q - 1:
+            # The following can be improved
+            while True:
+                rows = [ [ R([f[e] for f in c.list()])
+                           for c in taurow.list() for e in range(q-1) ]
+                         for taurow in tau.rows() ]
+                M = matrix(A, rows)
+                if M.is_zero():
+                    break
+                basis = M.minimal_kernel_basis()
+                dim = basis.nrows()
+                M = basis.stack(unimodular_completion(basis))
+                N = M.inverse_of_unit()
+                N = N.parent()([psiA(x) for x in N.list()])
+                tau = M * tau * N
+                for i in range(dim, r):
+                    for j in range(dim, r):
+                        tau[i,j] = S([x << q-1 for x in tau[i,j].list()])
+                    for j in range(dim):
+                        tau[i,j] = S([x << q for x in tau[i,j].list()])
+                        tau[j,i] = S([x >> 1 for x in tau[j,i].list()])
+                val += (q-1) * (r - dim)
+            for i in range(r):
+                for j in range(r):
+                    tau[i,j] = S([x >> q-1 for x in tau[i,j].list()])
+            val -= (q-1) * r
+
+        if val < val0:
+            tau0 = matrix(A, r, r,
+                          [ A([c(a) for c in entry.list()]) for entry in self._tau.transpose().list() ])
+            tau1 = matrix(A, r, r,
+                          [ A([c[0] for c in entry.list()]) for entry in tau.list() ])
+            return val, (tau0, tau1)
+        else:
+            return val, None
+
+    def discriminant(self):
+        disc = self._K.one()
+        for place in self._bad_places:
+            val = self._local_maximal_model(place)[0]
+            disc *= place ** val
+        return disc
+
+    def bad_reduction_places(self):
+        return [place for place in self._bad_places if self._local_maximal_model(place)[0]]
+
+    def has_good_reduction(self):
+        return not bool(self.bad_reduction_places())
+
+    def has_good_reduction_at(self, place):
+        place = normalize_place(self._K, place, infty=False)
+        return not bool(self._local_maximal_model(place)[0])
+
     def dual(self):
-        # TODO: double-check the formula
-        det = self._dettau()
-        deg = det.degree()
-        scalar = ~(det.leading_coefficient()[0])
+        disc, deg = self._dettau
+        scalar = self._K(~disc)
         tau = (-1)**deg * scalar * self._tau.adjugate()
-        twist = -det.degree() - self._twist
+        twist = -deg - self._twist
         return self.__class__(tau, twist, check=False, normalize=True)
 
     def symmetric_power(self, n):
@@ -488,27 +638,90 @@ class AndersonMotive(SageObject):  # should be a Parent
         return self.__class__(tau, twist, check=False, normalize=True)
 
     def determinant(self):
-        tau = matrix(self._base, 1, 1, [self._dettau()])
+        det, deg = self._dettau
+        det *= (self._t - self._theta)**deg
+        tau = matrix(self._base, 1, 1, [det])
         twist = self.rank() * self._twist
         return self.__class__(tau, twist, check=False, normalize=True)
 
-    def Lfunction(self, place, prec, x=None):
+    def Lseries(self, place, prec, x=None):
         n = self.rank()
         h = -self._twist
         q = self._q
-        completion = MorphismToCompletion(self._A, place, prec)
+        completion = MorphismToCompletion(self._A, place, prec + 100)
         place = completion.place()
         C = completion.codomain()
         k = completion.residue_field()
+        t = completion(self._A.gen())   # t in C
         ktheta = PolynomialRing(k, self._theta_name)
         Ctheta = LaurentSeriesRing(ktheta, name='u')
         theta = Ctheta(ktheta.gen())
 
+        if x is None:
+            S = PolynomialRing(C, name='x')
+            x = S.gen()
+            charpoly = True
+        else:
+            S = C
+            x = completion(x)
+            charpoly = False
+
+        # Correction at bad places
+        if place is Infinity and self._bad_places:
+            raise NotImplementedError("bad places")
+        corr_num = S.one()
+        corr_denom = S.one()
+        for pl in self._bad_places:
+            if pl == place(self._theta):
+                continue
+            _, taus = self._local_maximal_model(pl)
+            if taus is None:
+                continue
+            tau0, tau1 = taus
+            d = pl.degree()
+            A = tau0.base_ring()
+            F = A.base_ring()
+            phiA = A.hom([A.gen()], base_map = F.frobenius_endomorphism(self._deg))
+            T0 = tau0; T1 = tau1
+            for _ in range(1, d):
+                tau0 = tau0.parent()([phiA(y) for y in tau0.list()])
+                T0 = tau0 * T0
+                tau1 = tau1.parent()([phiA(y) for y in tau1.list()])
+                T1 = tau1 * T1
+            if pl.degree() > 1:
+                ell = PolynomialRing(k, name='w').quo(pl)
+                Aell = A.change_ring(ell)
+                T0 = T0.change_ring(Aell)
+                T1 = T1.change_ring(Aell)
+                Cell = LaurentSeriesRing(ell, name='u')
+                if charpoly:
+                    Sell = PolynomialRing(Cell, name='x')
+                else:
+                    Sell = Cell
+            else:
+                Cell = C
+            T0 = matrix(n, n, [f(Cell(t)) for f in T0.list()])
+            T1 = matrix(n, n, [f(Cell(t)) for f in T1.list()])
+            scalar = x**d * pl(t) ** (self._twist)
+            chi0 = (1 - scalar*T0).det()
+            chi1 = (1 - scalar*T1).det()
+            if pl.degree() > 1:
+                if charpoly:
+                    chi0 = S([C([y.lift()[0] for y in z.list()], z.valuation(), z.precision_absolute())
+                          for z in chi0.list()])
+                    chi1 = S([C([y.lift()[0] for y in z.list()], z.valuation(), z.precision_absolute())
+                              for z in chi1.list()])
+                else:
+                    chi0 = S([y.lift()[0] for y in chi0.list()], chi0.valuation(), chi0.precision_absolute())
+                    chi1 = S([y.lift()[0] for y in chi1.list()], chi1.valuation(), chi1.precision_absolute())
+            corr_num *= chi0
+            corr_denom *= chi1
+
+        # Figure out which precision is needed
         val = 0
         if place is Infinity:
             for entry in self._tau.list():
-                for c in entry.list():
-                    val = max(val, c.degree())
+                val = max(val, entry.degree())  # t-degree
             prectau = prec + n*val - min(0, h)
         else:
             prectau = prec
@@ -555,7 +768,7 @@ class AndersonMotive(SageObject):  # should be a Parent
         for entry in self._tau.list():
             e = Ctheta(0)
             for i in range(entry.degree() + 1):
-                e += completion(entry[i]) * theta**i
+                e += entry[i](theta) * t**i
             e *= rho
             B.append(e)
             d = max([0] + [P.degree() for P in e.list()])
@@ -574,12 +787,12 @@ class AndersonMotive(SageObject):  # should be a Parent
                 rows.append(row)
         taudual = matrix(rows)
 
-        # Computation of the L-function
-        if x is None:
-            S = PolynomialRing(C, name='x')
-            L = (1 - S.gen()*taudual).det()
+        # Computation of the L-series
+        L = (1 - x*taudual).det() * corr_num
+        if charpoly:
+            L //= corr_denom
             L = S([l.add_bigoh(prec) for l in L])
         else:
-            L = (1 - completion(x)*taudual).det()
+            L /= corr_denom
             L = L.add_bigoh(prec)
         return L
