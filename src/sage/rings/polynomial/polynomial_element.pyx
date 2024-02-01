@@ -2264,18 +2264,18 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``degree`` (None or positive integer) -- Used for polynomials
-          over finite fields. Attempts to return an irreducible factor of
-          ``self`` of chosen degree ``degree``.
+        - ``degree`` (None or positive integer) -- (default: ``None``).
+          Used for polynomials over finite fields. Attempts to return an
+          irreducible factor of ``self`` of chosen degree ``degree``.
 
-        - ``assume_squarefree`` (bool) -- Used for polynomials over
-          finite fields.  If ``True``, this polynomial is assumed to be
-          squarefree.
+        - ``assume_squarefree`` (boolean) -- (default: ``False``).
+          Used for polynomials over finite fields.  If ``True``,
+          this polynomial is assumed to be squarefree.
 
-        - ``assume_distinct_deg`` (bool) -- Used for polynomials over
-          finite fields.  If ``True``, this polynomial is assumed to be
-          the product of irreducible polynomials of the same degree. If
-          this parameter is set to ``True`` then degree must also be set.
+        - ``assume_distinct_deg`` (boolean) -- (default: ``False``).
+          Used for polynomials over finite fields.  If ``True``,
+          this polynomial is assumed to be the product of irreducible
+          polynomials of degree equal to ``degree``.
 
         EXAMPLES::
 
