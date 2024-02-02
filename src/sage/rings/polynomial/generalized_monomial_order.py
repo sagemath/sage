@@ -38,9 +38,9 @@ class GeneralizedMonomialOrder(SageObject):
 
         INPUTS:
 
-            - ``n`` -- The number of variables.
-            - ``group_order`` (default: ``lex``) -- The name of a group order on `\ZZ^n`. Choices are: "lex".
-            - ``score_function`` (default: ``min``) -- The name of a score function. Choices are: "min", "degmin".
+        - ``n`` -- The number of variables.
+        - ``group_order`` (default: ``lex``) -- The name of a group order on `\ZZ^n`. Choices are: "lex".
+        - ``score_function`` (default: ``min``) -- The name of a score function. Choices are: "min", "degmin".
 
         EXAMPLES::
 
