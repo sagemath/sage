@@ -771,8 +771,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 .. SEEALSO::
 
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -825,7 +825,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     sage: QSym = QuasiSymmetricFunctions(ZZ)
                     sage: M = QSym.M()
-                    sage: all( all( M(I).frobenius(3).duality_pairing(S(J))
+                    sage: all( all( M(I).adams_operator(3).duality_pairing(S(J))
                     ....:           == M(I).duality_pairing(S(J).verschiebung(3))
                     ....:           for I in Compositions(2) )
                     ....:      for J in Compositions(3) )
@@ -2767,8 +2767,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`verschiebung method of NCSF
                     <sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.verschiebung>`,
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -3343,8 +3343,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`verschiebung method of NCSF
                     <sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.verschiebung>`,
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -3984,8 +3984,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`verschiebung method of NCSF
                     <sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.verschiebung>`,
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 
@@ -4245,8 +4245,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                     :meth:`verschiebung method of NCSF
                     <sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.verschiebung>`,
-                    :meth:`frobenius method of QSym
-                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius>`,
+                    :meth:`adams_operator method of QSym
+                    <sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator>`,
                     :meth:`verschiebung method of Sym
                     <sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.verschiebung>`
 

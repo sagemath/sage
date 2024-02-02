@@ -884,8 +884,8 @@ def _semistable_reducible_primes(E, verbose=False):
     EmodPy = E.reduction(Py) if d > 1 else E.reduction(y)
     fxpol = EmodPx.frobenius_polynomial()
     fypol = EmodPy.frobenius_polynomial()
-    fx12pol = fxpol.adams_operator(12) # roots are 12th powers of those of fxpol
-    fy12pol = fypol.adams_operator(12)
+    fx12pol = fxpol.adams_operator_on_roots(12) # roots are 12th powers of those of fxpol
+    fy12pol = fypol.adams_operator_on_roots(12)
     px = x.norm() if d > 1 else x
     py = y.norm() if d > 1 else x
     Zx = fxpol.parent()
@@ -898,8 +898,8 @@ def _semistable_reducible_primes(E, verbose=False):
     for w in range(1 + d // 2):
         if verbose:
             print("w = {}".format(w))
-        gx = xpol.symmetric_power(w).adams_operator(12).resultant(fx12pol)
-        gy = ypol.symmetric_power(w).adams_operator(12).resultant(fy12pol)
+        gx = xpol.symmetric_power(w).adams_operator_on_roots(12).resultant(fx12pol)
+        gy = ypol.symmetric_power(w).adams_operator_on_roots(12).resultant(fy12pol)
         if verbose:
             print("computed gx and gy")
 
@@ -965,8 +965,8 @@ def _semistable_reducible_primes(E, verbose=False):
             if verbose:
                 print("...good reduction, frobenius poly = {}".format(fpol))
             x = iso(P.gens_reduced()[0]).relative_norm()
-            xpol = x.charpoly().adams_operator(12)
-            div2 = Integer(xpol.resultant(fpol.adams_operator(12)) // x.norm()**12)
+            xpol = x.charpoly().adams_operator_on_roots(12)
+            div2 = Integer(xpol.resultant(fpol.adams_operator_on_roots(12)) // x.norm()**12)
             if div2:
                 div = div2.isqrt()
                 assert div2 == div**2
@@ -1182,7 +1182,7 @@ def Billerey_P_l(E, l):
     P = polygen(ZZ)-1
     for q in qq:
         e = K(l).valuation(q)
-        P = P.composed_op(E.reduction(q).frobenius_polynomial().adams_operator(12*e), mul, monic=True)
+        P = P.composed_op(E.reduction(q).frobenius_polynomial().adams_operator_on_roots(12*e), mul, monic=True)
     return P
 
 def Billerey_B_l(E,l,B=0):
@@ -1255,8 +1255,8 @@ def Billerey_R_q(E, q, B=0):
     K = E.base_field()
     d = K.absolute_degree()
     h = K.class_number()
-    P = E.reduction(q).frobenius_polynomial().adams_operator(12*h)
-    Q = ((q**h).gens_reduced()[0]).absolute_minpoly().adams_operator(12)
+    P = E.reduction(q).frobenius_polynomial().adams_operator_on_roots(12*h)
+    Q = ((q**h).gens_reduced()[0]).absolute_minpoly().adams_operator_on_roots(12)
 
     # We compute the factors one at a time since if any is 0 we quit:
     R_q = ZZ(1)
@@ -1266,7 +1266,7 @@ def Billerey_R_q(E, q, B=0):
         if factor:
             R_q *= factor.gcd(B)
         else:
-            return ZZ(0)
+            return ZZ.zero()
     return R_q
 
 
