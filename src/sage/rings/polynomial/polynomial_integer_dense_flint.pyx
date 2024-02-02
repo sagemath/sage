@@ -64,6 +64,7 @@ from sage.arith.functions import lcm
 from sage.libs.arb.arb_fmpz_poly cimport arb_fmpz_poly_evaluate_arb, arb_fmpz_poly_evaluate_acb
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
 from sage.libs.flint.types cimport ulong, fmpz_poly_t
 from sage.libs.flint.ntl_interface cimport fmpz_set_ZZ, fmpz_poly_set_ZZX, fmpz_poly_get_ZZX
 from sage.libs.ntl.ZZX cimport *
