@@ -2065,7 +2065,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = F[]
             sage: f = (x + 162) * (x^3 + 7*x + 161) * (x^7 + 9*x + 161)
             sage: list(f._distinct_degree_factorisation_squarefree())
-            [(x + 162, 1), (1, 2), (x^3 + 7*x + 161, 3), (x^7 + 9*x + 161, 7)]
+            [(x + 162, 1), (x^3 + 7*x + 161, 3), (x^7 + 9*x + 161, 7)]
 
         ::
 
