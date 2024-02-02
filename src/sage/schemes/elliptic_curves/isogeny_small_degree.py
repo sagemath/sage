@@ -2446,12 +2446,16 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
     OUTPUT:
 
-    A list of all separable isogenies of degree `l` with domain ``E``.
+    A list of all separable isogenies of degree `l` with domain ``E``
+    (up to post-isomorphism).
 
     ALGORITHM:
 
     This algorithm factors the ``l``-division polynomial, then
-    combines its factors to obtain kernels. See [KT2013]_, Chapter 3.
+    combines its factors to obtain kernels.
+    Originally this was done using [KT2013]_, Chapter 3, but nowadays
+    the recombination step is instead delegated to
+    :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.kernel_polynomial_from_divisor`.
 
     .. NOTE::
 
@@ -2474,12 +2478,12 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
         [Isogeny of degree 17
           from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2
                over Finite Field in a of size 3^12
-            to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2*x
+            to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + x + 2
                over Finite Field in a of size 3^12,
          Isogeny of degree 17
           from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2
                over Finite Field in a of size 3^12
-            to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + x + 2
+            to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2*x
                over Finite Field in a of size 3^12]
         sage: E = EllipticCurve('50a1')
         sage: isogenies_prime_degree_general(E, 3)
@@ -2585,8 +2589,8 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
         sage: E = EllipticCurve(K,[0,0,0,1,0])                                          # needs sage.rings.number_field
         sage: [phi.codomain().ainvs()                   # long time                     # needs sage.rings.number_field
         ....:  for phi in E.isogenies_prime_degree(37)]
-        [(0, 0, 0, -840*i + 1081, 0),
-         (0, 0, 0, 840*i + 1081, 0)]
+        [(0, 0, 0, 840*i + 1081, 0),
+         (0, 0, 0, -840*i + 1081, 0)]
     """
     if not l.is_prime():
         raise ValueError("%s is not prime." % l)
@@ -2597,70 +2601,21 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
     psi_l = E.division_polynomial(l)
 
-    # Every kernel polynomial is a product of irreducible factors of
-    # the division polynomial of the same degree, where this degree is
-    # a divisor of (l-1)/2, so we keep only such factors:
-
-    l2 = (l - 1) // 2
-    factors = [h for h, _ in psi_l.factor()]
-    factors_by_degree = {d: [f for f in factors if f.degree() == d]
-                         for d in l2.divisors()}
+    factors = [h for h,_ in psi_l.factor() if h.degree().divides(l//2)]
 
     ker = [] # will store all kernel polynomials found
 
-    # If for some d dividing (l-1)/2 there are exactly (l-1)/2d
-    # divisors of degree d, then their product is a kernel poly, which
-    # we add to the list and remove the factors used.
+    while factors:
+        h = factors.pop()
+        try:
+            k = E.kernel_polynomial_from_divisor(h, l, check=False)
+        except ValueError:
+            continue
+        assert k.degree() == l//2 and k.divides(psi_l)
+        ker.append(k)
+        factors = [h for h in factors if not h.divides(k)]
 
-    from sage.misc.misc_c import prod
-    for d in list(factors_by_degree):
-        if d * len(factors_by_degree[d]) == l2:
-            ker.append(prod(factors_by_degree.pop(d)))
-
-    # Exit now if all factors have been used already:
-
-    if all(not factors for factors in factors_by_degree.values()):
-        return [E.isogeny(k) for k in ker]
-
-    # In general we look for products of factors of the same degree d
-    # which can be kernel polynomials
-
-    a = _least_semi_primitive(l)
-    m = E.multiplication_by_m(a, x_only=True)
-    m_num = m.numerator()
-    m_den = m.denominator()
-    R = psi_l.parent()
-
-    # This function permutes the factors of a given degree, replacing
-    # the factor with roots alpha with the one whose roots are
-    # m(alpha), where m(x) is the rational function giving the
-    # multiplication-by-a map on the X-coordinates.  Here, a is a
-    # generator for (Z/lZ)^* / <-1> (a so-called semi-primitive root).
-    def mult(g):
-        # Find f such that f(m) = 0 mod g
-        S = R.quotient_ring(g)
-        Sm = S(m_num) / S(m_den)
-        return Sm.charpoly('x')
-
-    # kernel polynomials are the products of factors of degree d in
-    # one orbit under mult, provided that the orbit has length
-    # (l-1)/2d.  Otherwise the orbit will be longer.
-    for d in factors_by_degree:
-        factors = factors_by_degree[d]
-        while factors:
-            # Compute an orbit under mult:
-            f0 = factors.pop(0)
-            orbit = [f0]
-            f = mult(f0)
-            while f != f0:
-                orbit.append(f)
-                factors.remove(f)
-                f = mult(f)
-            # Check orbit length:
-            if d*len(orbit) == l2:
-                ker.append(prod(orbit))
-
-    return [E.isogeny(k) for k in ker]
+    return [E.isogeny(k, check=False) for k in ker]
 
 
 def isogenies_prime_degree(E, l, minimal_models=True):
@@ -2698,12 +2653,12 @@ def isogenies_prime_degree(E, l, minimal_models=True):
         [Isogeny of degree 17
           from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2
                over Finite Field in a of size 3^12
-            to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2*x
+            to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + x + 2
                over Finite Field in a of size 3^12,
          Isogeny of degree 17
           from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2
                over Finite Field in a of size 3^12
-            to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + x + 2
+            to Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2*x
                over Finite Field in a of size 3^12]
         sage: E = EllipticCurve('50a1')
         sage: isogenies_prime_degree(E, 3)
@@ -2804,7 +2759,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
                over Number Field in a with defining polynomial x^2 + 11
                with a = 3.316624790355400?*I
             to Elliptic Curve defined by
-               y^2 = x^3 + x^2 + (30800*a+123963)*x + (3931312*a-21805005)
+               y^2 = x^3 + x^2 + (-30800*a+123963)*x + (-3931312*a-21805005)
                over Number Field in a with defining polynomial x^2 + 11
                with a = 3.316624790355400?*I,
          Isogeny of degree 37
@@ -2812,7 +2767,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
                over Number Field in a with defining polynomial x^2 + 11
                with a = 3.316624790355400?*I
             to Elliptic Curve defined by
-               y^2 = x^3 + x^2 + (-30800*a+123963)*x + (-3931312*a-21805005)
+               y^2 = x^3 + x^2 + (30800*a+123963)*x + (3931312*a-21805005)
                over Number Field in a with defining polynomial x^2 + 11
                with a = 3.316624790355400?*I]
     """

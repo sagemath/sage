@@ -85,7 +85,7 @@ from sage.structure.element cimport Element
 from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
-
+from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 #########################################################
@@ -2474,7 +2474,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         return D, U, V
 
-    def frobenius(self, flag=0, var='x'):
+    def frobenius_form(self, flag=0, var='x'):
         """
         Return the Frobenius form (rational canonical form) of this
         matrix.
@@ -2495,38 +2495,38 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``var`` -- a string (default: 'x')
 
-        ALGORITHM: uses PARI's matfrobenius()
+        ALGORITHM: uses PARI's :pari:`matfrobenius`
 
         EXAMPLES::
 
             sage: A = MatrixSpace(ZZ, 3)(range(9))
-            sage: A.frobenius(0)
+            sage: A.frobenius_form(0)
             [ 0  0  0]
             [ 1  0 18]
             [ 0  1 12]
-            sage: A.frobenius(1)
+            sage: A.frobenius_form(1)
             [x^3 - 12*x^2 - 18*x]
-            sage: A.frobenius(1, var='y')
+            sage: A.frobenius_form(1, var='y')
             [y^3 - 12*y^2 - 18*y]
-            sage: F, B = A.frobenius(2)
+            sage: F, B = A.frobenius_form(2)
             sage: A == B^(-1)*F*B
             True
             sage: a=matrix([])
-            sage: a.frobenius(2)
+            sage: a.frobenius_form(2)
             ([], [])
-            sage: a.frobenius(0)
+            sage: a.frobenius_form(0)
             []
-            sage: a.frobenius(1)
+            sage: a.frobenius_form(1)
             []
             sage: B = random_matrix(ZZ,2,3)
-            sage: B.frobenius()
+            sage: B.frobenius_form()
             Traceback (most recent call last):
             ...
             ArithmeticError: frobenius matrix of non-square matrix not defined.
 
         AUTHORS:
 
-        - Martin Albrect (2006-04-02)
+        - Martin Albrecht (2006-04-02)
 
         TODO: - move this to work for more general matrices than just over
         Z. This will require fixing how PARI polynomials are coerced to
@@ -2536,18 +2536,21 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ArithmeticError("frobenius matrix of non-square matrix not defined.")
 
         v = self.__pari__().matfrobenius(flag)
-        if flag==0:
+        if flag == 0:
             return self.matrix_space()(v.sage())
-        elif flag==1:
+        elif flag == 1:
             r = PolynomialRing(self.base_ring(), names=var)
             retr = []
             for f in v:
-                retr.append(eval(str(f).replace("^","**"), {'x':r.gen()}, r.gens_dict()))
+                retr.append(eval(str(f).replace("^","**"),
+                                 {'x': r.gen()}, r.gens_dict()))
             return retr
-        elif flag==2:
+        elif flag == 2:
             F = matrix_space.MatrixSpace(QQ, self.nrows())(v[0].sage())
             B = matrix_space.MatrixSpace(QQ, self.nrows())(v[1].sage())
             return F, B
+
+    frobenius = deprecated_function_alias(36396, frobenius_form)
 
     def _right_kernel_matrix(self, **kwds):
         r"""
@@ -2743,7 +2746,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
     def BKZ(self, delta=None, algorithm="fpLLL", fp=None, block_size=10, prune=0,
             use_givens=False, precision=0, proof=None, **kwds):
         """
-        Block Korkin-Zolotarev reduction.
+        Return the result of running Block Korkin-Zolotarev reduction on
+        ``self`` interpreted as a lattice.
 
         INPUT:
 
