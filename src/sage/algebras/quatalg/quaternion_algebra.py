@@ -2718,7 +2718,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         Return an element in this quaternion ideal of minimal norm.
 
         If the ideal is a principal lattice, this method can be used
-        to find a generator.
+        to find a generator; see [Piz1980]_, Corollary 1.20.
 
         EXAMPLES::
 
