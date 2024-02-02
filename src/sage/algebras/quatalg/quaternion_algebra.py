@@ -2914,17 +2914,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: R = BrandtModule(3,5).right_ideals(); len(R)
             2
-            sage: R[0].is_equivalent(R[1])
-            doctest:...:  DeprecationWarning: is_equivalent is deprecated,
-            please use is_left_equivalent or is_right_equivalent
-            accordingly instead
-            See https://github.com/sagemath/sage/issues/37100 for details.
-            False
-
             sage: OO = R[0].left_order()
             sage: S = OO.right_ideal([3*a for a in R[0].basis()])
             sage: R[0].is_equivalent(S)
-            doctest:...: DeprecationWarning: ...
+            doctest:...: DeprecationWarning: is_equivalent is deprecated,
+            please use is_left_equivalent or is_right_equivalent
+            accordingly instead
+            See https://github.com/sagemath/sage/issues/37100 for details.
             True
         """
         from sage.misc.superseded import deprecation
