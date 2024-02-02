@@ -215,9 +215,11 @@ def GeneralizedTamariLattice(a, b, m=1):
 
     REFERENCES:
 
-        [BMFPR2011]_
-        [PRV2017]_
-        [CC2023]_
+    - [BMFPR2011]_
+    
+    - [PRV2017]_
+    
+    - [CC2023]_
     """
     if a < b * m:
         raise ValueError("the condition a>=b*m does not hold")
