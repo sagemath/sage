@@ -1,5 +1,9 @@
 cd src
 
+# disable lto to avoid trouble when mixing different version of gcc and gfortran
+CFLAGS="${CFLAGS} -fno-lto"
+export CFLAGS
+
 echo "Configuring suitesparse"
 # * NSTATIC suitesparse defines some negative options like this one "NSTATIC=ON" means no static libraries.
 # Hopefully these sill be normalised in the future.
