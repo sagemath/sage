@@ -378,7 +378,7 @@ Methods
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
 from sage.misc.unknown import Unknown
-from sage.env import GRAPHS_DATA_DIR
+from sage.features.databases import DatabaseGraphs
 from sage.misc.cachefunc import cached_method
 
 import os
@@ -796,6 +796,7 @@ class GraphClasses(UniqueRepresentation):
             sage: graph_classes._download_db()  # optional - internet
         """
         import tempfile
+        data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
         u = urlopen('https://www.graphclasses.org/data.zip',
                     context=default_context())
         with tempfile.NamedTemporaryFile(suffix=".zip") as f:
@@ -804,29 +805,24 @@ class GraphClasses(UniqueRepresentation):
 
             # Save a systemwide updated copy whenever possible
             try:
-                z.extract(_XML_FILE, GRAPHS_DATA_DIR)
-                z.extract(_SMALLGRAPHS_FILE, GRAPHS_DATA_DIR)
+                z.extract(_XML_FILE, data_dir)
+                z.extract(_SMALLGRAPHS_FILE, data_dir)
             except OSError:
                 pass
 
-    def _parse_db(self, directory):
+    def _parse_db(self):
         r"""
         Parse the ISGCI database and stores its content in ``self``.
 
-        INPUT:
-
-        - ``directory`` -- the name of the directory containing the latest
-          version of the database.
-
         EXAMPLES::
 
-            sage: from sage.env import GRAPHS_DATA_DIR
-            sage: graph_classes._parse_db(GRAPHS_DATA_DIR)
+            sage: graph_classes._parse_db()
         """
         import xml.etree.cElementTree as ET
         from sage.graphs.graph import Graph
 
-        xml_file = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
+        data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
+        xml_file = os.path.join(data_dir, _XML_FILE)
         tree = ET.ElementTree(file=xml_file)
         root = tree.getroot()
         DB = _XML_to_dict(root)
@@ -838,7 +834,7 @@ class GraphClasses(UniqueRepresentation):
         inclusions = DB['Inclusions']['incl']
 
         # Parses the list of ISGCI small graphs
-        smallgraph_file = open(os.path.join(GRAPHS_DATA_DIR, _SMALLGRAPHS_FILE), 'r')
+        smallgraph_file = open(os.path.join(data_dir, _SMALLGRAPHS_FILE), 'r')
         smallgraphs = {}
 
         for line in smallgraph_file.readlines():
@@ -901,24 +897,7 @@ class GraphClasses(UniqueRepresentation):
 
             sage: graph_classes._get_ISGCI()  # long time (4s on sage.math, 2012)
         """
-        from sage.misc.misc import SAGE_DB
-
-        try:
-            open(os.path.join(SAGE_DB, _XML_FILE))
-
-            # Which copy is the most recent on the disk ?
-            if (os.path.getmtime(os.path.join(SAGE_DB, _XML_FILE)) >
-                    os.path.getmtime(os.path.join(GRAPHS_DATA_DIR, _XML_FILE))):
-
-                directory = os.path.join(SAGE_DB, _XML_FILE)
-
-            else:
-                directory = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
-
-        except OSError:
-            directory = os.path.join(GRAPHS_DATA_DIR, _XML_FILE)
-
-        self._parse_db(directory)
+        self._parse_db()
 
     def show_all(self):
         r"""

@@ -83,6 +83,22 @@ EXAMPLE:
 """
 
 
+epilog_properties = \
+"""
+Print properties of given package.
+
+EXAMPLE:
+
+    $ sage --package properties maxima
+    maxima:
+            path:                        /.../build/pkgs/maxima
+            version_with_patchlevel:     5.46.0
+            type:                        standard
+            source:                      normal
+            trees:                       SAGE_LOCAL
+"""
+
+
 epilog_name = \
 """
 Find the package name given a tarball filename
@@ -257,6 +273,19 @@ def make_parser():
         '--exclude-dependencies', action='store_true',
         help='exclude (ordinary) dependencies of the packages recursively')
 
+    parser_properties = subparsers.add_parser(
+        'properties', epilog=epilog_properties,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Print properties of given packages')
+    parser_properties.add_argument(
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, nargs='+',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:)'))
+    parser_properties.add_argument(
+        '--format', type=str, default='plain',
+        help='output format (one of plain and shell; default: plain)')
+
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -404,6 +433,8 @@ def run():
                      exclude=args.exclude,
                      include_dependencies=args.include_dependencies,
                      exclude_dependencies=args.exclude_dependencies)
+    elif args.subcommand == 'properties':
+        app.properties(*args.package_class, format=args.format)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':
