@@ -354,10 +354,18 @@ def sieve(X, bound):
         sage: from sage.schemes.projective.projective_rational_point import sieve
         sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
         sage: sorted(sieve(E, 14))              # long time                             # needs sage.libs.singular sage.schemes
-        [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1),
-         (0 : 0 : 1), (0 : 1 : 0), (1/4 : -5/8 : 1),
-         (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
-         (2 : -3 : 1), (2 : 2 : 1), (6 : 14 : 1)]
+        [(0 : 1 : 0),
+         (-1 : -1 : 1),
+         (-1 : 0 : 1),
+         (0 : -1 : 1),
+         (0 : 0 : 1),
+         (1/4 : -5/8 : 1),
+         (1/4 : -3/8 : 1),
+         (1 : -1 : 1),
+         (1 : 0 : 1),
+         (2 : -3 : 1),
+         (2 : 2 : 1),
+         (6 : 14 : 1)]
 
     TESTS:
 
