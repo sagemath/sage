@@ -64,7 +64,7 @@ class MobilePoset(FinitePoset):
     _lin_ext_type = LinearExtensionsOfMobile
     _desc = 'Finite mobile poset'
 
-    def __init__(self, hasse_diagram, elements, category, facade, key, ribbon=None, check=True):
+    def __init__(self, hasse_diagram, elements, category, facade, key, ribbon=None, check=True) -> None:
         r"""
         Initialize ``self``.
 
