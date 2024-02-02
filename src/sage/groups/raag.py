@@ -206,6 +206,16 @@ class RightAngledArtinGroup(ArtinGroup):
                                         category=Groups().Infinite())
 
     def __reduce__(self):
+        """
+        Implement pickling.
+
+        TESTS::
+
+            sage: RightAngledArtinGroup(graphs.CycleGraph(5)).__reduce__()[1]
+            (<class 'sage.groups.raag.RightAngledArtinGroup'>,
+             (Cycle graph: Graph on 5 vertices, ('v0', 'v1', 'v2', 'v3', 'v4')),
+             {})
+        """
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._graph, self._names), {}))
 

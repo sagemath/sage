@@ -130,7 +130,6 @@ AUTHOR:
 
 from sage.arith.misc import GCD as gcd
 from sage.categories.morphism import SetMorphism
-from sage.functions.generalized import sign
 from sage.groups.free_group import FreeGroup
 from sage.groups.free_group import FreeGroupElement
 from sage.groups.group import Group
@@ -143,7 +142,8 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import CachedRepresentation
 
 
 class GroupMorphismWithGensImages(SetMorphism):
@@ -368,55 +368,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
         return super().__call__(values)
-
-
-# def wrap_FpGroup(libgap_fpgroup):
-#     """
-#     Wrap a GAP finitely presented group.
-#
-#     This function changes the comparison method of
-#     ``libgap_free_group`` to comparison by Python ``id``. If you want
-#     to put the LibGAP free group into a container ``(set, dict)`` then you
-#     should understand the implications of
-#     :meth:`~sage.libs.gap.element.GapElement._set_compare_by_id`. To
-#     be safe, it is recommended that you just work with the resulting
-#     Sage :class:`FinitelyPresentedGroup`.
-#
-#     INPUT:
-#
-#     - ``libgap_fpgroup`` -- a LibGAP finitely presented group
-#
-#     OUTPUT:
-#
-#     A Sage :class:`FinitelyPresentedGroup`.
-#
-#     EXAMPLES:
-#
-#     First construct a LibGAP finitely presented group::
-#
-#         sage: F = libgap.FreeGroup(['a', 'b'])
-#         sage: a_cubed = F.GeneratorsOfGroup()[0] ^ 3
-#         sage: P = F / libgap([ a_cubed ]);   P
-#         <fp group of size infinity on the generators [ a, b ]>
-#         sage: type(P)
-#         <class 'sage.libs.gap.element.GapElement'>
-#
-#     Now wrap it::
-#
-#         sage: from sage.groups.finitely_presented import wrap_FpGroup
-#         sage: wrap_FpGroup(P)
-#         Finitely presented group < a, b | a^3 >
-#     """
-#     assert libgap_fpgroup.IsFpGroup()
-#     libgap_fpgroup._set_compare_by_id()
-#     # from sage.groups.free_group import wrap_FreeGroup
-#     # free_group = wrap_FreeGroup(libgap_fpgroup.FreeGroupOfFpGroup())
-#     names = tuple(str(g) for g in libgap_fpgroup.FreeGroupOfFpGroup().GeneratorsOfGroup())
-#     F = FreeGroup(names)
-#     relations = tuple(F(rel.UnderlyingElement().LetterRepAssocWord().sage())
-#                       for rel in libgap_fpgroup.RelatorsOfFpGroup())
-#     G = FinitelyPresentedGroup(F, relations)
-#     return G
 
 
 class RewritingSystem():
@@ -743,7 +694,7 @@ class RewritingSystem():
             raise ValueError('could not make the system confluent')
 
 
-class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, ParentLibGAP):
+class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's Finitely Presented Groups.
 
@@ -819,14 +770,46 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         TESTS::
 
-            sage: F.<a,b> = FreeGroup()
-            sage: a.__reduce__()
-            (Free Group on generators {a, b}, ((1,),))
-            sage: (a*b*a^-1).__reduce__()
-            (Free Group on generators {a, b}, ((1, 2, -1),))
+            sage: G = FreeGroup(2) / [(1, 2, 2, 1)]
+            sage: G.__reduce__()[1]
+            (<class 'sage.groups.finitely_presented.FinitelyPresentedGroup'>,
+             (Free Group on generators {x0, x1}, (x0*x1^2*x0,)), {})
         """
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._free_group, self._relations), {}))
+
+    def __hash__(self):
+        """
+        Make hashable.
+
+        EXAMPLES::
+
+            sage: G = FreeGroup(2) / [(1, 2, 2, 1)]
+            sage: G.__hash__()   # random output
+            -468022353355363043
+        """
+        return hash((self._free_group, self._relations, self._names))
+
+    def _richcmp_(self, other, op):
+        """
+        Compare ``self`` and ``other``.
+
+        TESTS::
+
+            sage: F1 = FreeGroup(2) / [(1, 2, 2, 1)]
+            sage: F2 = FreeGroup(2, 'x') / [(1, 2, 2, 1)]
+            sage: F3 = FreeGroup(2) / [(1, 1, 2, 2)]
+            sage: F4 = FreeGroup(2, 'y') / [(1, 2, 2, 1)]
+            sage: F1 == F2
+            True
+            sage: F2 == F3
+            False
+            sage: F3 == F4
+            False
+        """
+        r1 = [r.Tietze() for r in self._relations]
+        r2 = [r.Tietze() for r in other._relations]
+        return richcmp((self._names, r1), (other._names, r2), op)
 
     def _repr_(self):
         """

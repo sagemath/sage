@@ -63,7 +63,7 @@ AUTHORS:
 from sage.categories.groups import Groups
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.rings.integer import Integer
@@ -72,6 +72,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.structure.sequence import Sequence
 from sage.structure.element import coercion_model, parent
+from sage.structure.richcmp import richcmp
 
 
 def is_FreeGroup(x):
@@ -684,7 +685,7 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
     return FreeGroup_class(names)
 
 
-class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
+class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's FreeGroup
 
@@ -730,7 +731,50 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
 
+    def __hash__(self):
+        """
+        Make hashable.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: F.__hash__()   # random output
+            -2230941415428039205
+        """
+
+        return hash((self.__class__, self._names))
+
+    def _richcmp_(self, other, op):
+        """
+        Compare ``self`` and ``other``.
+
+        TESTS::
+
+            sage: F1 = FreeGroup(2)
+            sage: F2 = FreeGroup(2, 'x')
+            sage: F3 = FreeGroup('x0, x1')
+            sage: F4 = FreeGroup(2, 'y')
+            sage: F1 == F2
+            True
+            sage: F2 == F3
+            True
+            sage: F3 == F4
+            False
+        """
+        return richcmp(self._names, other._names, op)
+
     def __reduce__(self):
+        """
+        Implement pickling.
+
+        TESTS::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: F.__reduce__()[1]
+            (<class 'sage.groups.free_group.FreeGroup_class'>,
+             (('a', 'b'),), {})
+        """
+
         from sage.structure.unique_representation import unreduce
         return (unreduce, (self.__class__.__base__, (self._names, ), {}))
 
