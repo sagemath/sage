@@ -1287,7 +1287,6 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 """
                 # The indices for the exterior algebra
                 ext_ind = {tuple(X): i for i, X in enumerate(combinations(LI, k-1))}
-                # The indices for the tensor product
 
                 # Compute the part independent of the module first ("part 2" of the computation)
                 if sparse:
