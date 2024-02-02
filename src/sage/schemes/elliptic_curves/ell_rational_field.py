@@ -4316,12 +4316,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              Elliptic Curve defined by y^2 = x^3 - 1386747*x + 368636886 over
              Rational Field
             sage: E.torsion_points()
-            [(-1293 : 0 : 1),
+            [(0 : 1 : 0),
+             (-1293 : 0 : 1),
              (-933 : -29160 : 1),
              (-933 : 29160 : 1),
              (-285 : -27216 : 1),
              (-285 : 27216 : 1),
-             (0 : 1 : 0),
              (147 : -12960 : 1),
              (147 : 12960 : 1),
              (282 : 0 : 1),
@@ -4333,10 +4333,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              (8787 : -816480 : 1),
              (8787 : 816480 : 1)]
             sage: EllipticCurve('210b5').torsion_points()
-            [(-41/4 : 37/8 : 1),
+            [(0 : 1 : 0),
+             (-41/4 : 37/8 : 1),
              (-5 : -103 : 1),
              (-5 : 107 : 1),
-             (0 : 1 : 0),
              (10 : -208 : 1),
              (10 : 197 : 1),
              (37 : -397 : 1),
@@ -4346,12 +4346,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              (415 : -8713 : 1),
              (415 : 8297 : 1)]
             sage: EllipticCurve('210e2').torsion_points()
-            [(-36 : 18 : 1),
+            [(0 : 1 : 0),
+             (-36 : 18 : 1),
              (-26 : -122 : 1),
              (-26 : 148 : 1),
              (-8 : -122 : 1),
              (-8 : 130 : 1),
-             (0 : 1 : 0),
              (4 : -62 : 1),
              (4 : 58 : 1),
              (31/4 : -31/8 : 1),

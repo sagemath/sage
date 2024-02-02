@@ -60,13 +60,28 @@ Make sure that your Docker client is configured to provide enough RAM
 to the containers (8 GB are a good choice). In Docker Desktop this
 setting is in Preferences -> Resources -> Advanced.
 
-All examples in this section were obtained using Docker Desktop for
-Mac; but the `command-line user interface
-<https://docs.docker.com/engine/reference/commandline/cli/>`_ for the
-other platforms is identical.
+.. NOTE::
+
+   All examples in this section were obtained using Docker Desktop for
+   Mac; but the `command-line user interface
+   <https://docs.docker.com/engine/reference/commandline/cli/>`_ for the
+   other platforms is identical.
+
+   As an alternative, you can also run Docker in GitHub Codespaces
+   (or another cloud service) using a container with the Docker-in-Docker
+   feature. Sage provides a suitable dev container configuration
+   `.devcontainer/tox-docker-in-docker
+   <https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_:
+
+   .. ONLY:: html
+
+      .. image:: https://github.com/codespaces/badge.svg
+         :align: center
+         :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Ftox-docker-in-docker%2Fdevcontainer.json
 
 All major Linux distributions provide ready-to-use Docker images,
-which are published via `Docker Hub <https://hub.docker.com>`_.  For
+which are published via `Docker Hub <https://hub.docker.com>`_
+or other container registries.  For
 example, to run the current stable (LTS) version of Ubuntu
 interactively, you can use the shell command::
 
@@ -578,14 +593,22 @@ Automatic Docker-based build testing using tox
 `tox <https://tox.readthedocs.io/en/latest/>`_ is a Python package that
 is widely used for automating tests of Python projects.
 
-Install ``tox`` for use with your system Python, for example using::
+If you are using Docker locally, install ``tox`` for use with your system Python,
+for example using::
 
   [mkoeppe@sage sage]$ pip install --user tox
 
+If you run Docker-in-Docker on GitHub Codespaces using our dev container
+configuration `.devcontainer/tox-docker-in-docker
+<https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_,
+``tox`` is already installed.
+
+Sage provides a sophisticated tox configuration in the file
+``$SAGE_ROOT/tox.ini`` for the purpose of portability testing.
+
 A tox "environment" is identified by a symbolic name composed of
 several `Tox "factors"
-<https://tox.readthedocs.io/en/latest/config.html#complex-factor-conditions>`_,
-which are defined in the file ``$SAGE_ROOT/tox.ini``.
+<https://tox.readthedocs.io/en/latest/config.html#complex-factor-conditions>`_.
 
 The **technology** factor describes how the environment is run:
 
@@ -927,21 +950,21 @@ Options for build testing with the local technology
 The environments using the ``local`` technology can be customized
 by setting environment variables.
 
- - If ``SKIP_SYSTEM_PKG_INSTALL`` is set to ``1`` (or ``yes``),
-   then all steps of installing system packages are skipped in this run.
-   When reusing a previously created tox environment, this option can
-   save time and also give developers more control for experiments
-   with system packages.
+- If ``SKIP_SYSTEM_PKG_INSTALL`` is set to ``1`` (or ``yes``),
+  then all steps of installing system packages are skipped in this run.
+  When reusing a previously created tox environment, this option can
+  save time and also give developers more control for experiments
+  with system packages.
 
- - If ``SKIP_BOOTSTRAP`` is set to ``1`` (or ``yes``), then the
-   bootstrapping phase is skipped.  When reusing a previously created
-   tox environment, this option can save time.
+- If ``SKIP_BOOTSTRAP`` is set to ``1`` (or ``yes``), then the
+  bootstrapping phase is skipped.  When reusing a previously created
+  tox environment, this option can save time.
 
- - If ``SKIP_CONFIGURE`` is set to ``1`` (or ``yes``), then the
-   ``configure`` script is not run explicitly.  When reusing a
-   previously created tox environment, this option can save time.
-   (The ``Makefile`` may still rerun configuration using
-   ``config.status --recheck``.)
+- If ``SKIP_CONFIGURE`` is set to ``1`` (or ``yes``), then the
+  ``configure`` script is not run explicitly.  When reusing a
+  previously created tox environment, this option can save time.
+  (The ``Makefile`` may still rerun configuration using
+  ``config.status --recheck``.)
 
 The ``local`` technology also defines a special target ``bash``:
 Instead of building anything with ``make``, it just starts an
@@ -967,10 +990,10 @@ This is defined in the files
 - `$SAGE_ROOT/.github/workflows/ci-linux.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-linux.yml>`_
   (which calls `$SAGE_ROOT/.github/workflows/docker.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_),
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_) and
 
 - `$SAGE_ROOT/.github/workflows/ci-macos.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_, and
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_.
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
@@ -1137,19 +1160,24 @@ Also `smaller images corresponding to earlier build stages
 <https://github.com/orgs/sagemath/packages?tab=packages&q=sage-debian-bullseye-standard>`_
 are available:
 
- * ``-with-system-packages`` provides a system installation with
-   system packages installed, no source tree,
+* ``-with-system-packages`` provides a system installation with
+  system packages installed, no source tree,
 
- * ``-configured`` contains a partial source tree
-   (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
-   the run of the ``configure`` script,
+* ``-configured`` contains a partial source tree
+  (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
+  the run of the ``configure`` script,
 
- * ``-with-targets-pre`` contains the full source tree and a full
-   installation of all non-Python packages (:envvar:`SAGE_LOCAL`),
+* ``-with-targets-pre`` contains a partial source tree
+  (:envvar:`SAGE_ROOT`) and a full installation
+  of all non-Python packages (:envvar:`SAGE_LOCAL`),
 
- * ``-with-targets`` contains the full source tree and a full
-   installation of Sage, including the HTML documentation, but ``make
-   ptest`` has not been run yet.
+* ``-with-targets`` contains the full source tree and a full
+  installation of Sage, including the HTML documentation, but ``make
+  ptest`` has not been run yet.
+
+.. only:: html
+
+   .. include:: portability_platform_table.rst
 
 
 Testing GitHub Actions locally
@@ -1234,7 +1262,7 @@ Open Folder in Container", and hit :kbd:`Enter`, and choose the directory
 ``$SAGE_ROOT`` of your local Sage repository.
 
 VS Code then prompts you to choose a dev container configuration.
-For example, choose "Ubuntu jammy" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
+For example, choose "ubuntu-jammy-standard" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
 <https://github.com/sagemath/sage/tree/develop/.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json>`_,
 which uses the Docker image based on ``ubuntu-jammy-standard``, the most recent
 development version of Sage (``dev`` tag), and a full installation of
@@ -1274,6 +1302,13 @@ in a terminal, `open a new terminal in VS Code
    ``$SAGE_ROOT/sage`` will not work. Hence after working with the dev container,
    you will want to remove ``logs`` if it is a symbolic link, and rerun the
    ``configure`` script.
+
+The Sage source tree contains premade configuration files for all platforms
+for which our portability CI builds Docker images, both in the ``minimal`` and
+``standard`` system package configurations. The configuration files can be
+generated using the command ``tox -e update_docker_platforms`` (see
+`$SAGE_ROOT/tox.ini <https://github.com/sagemath/sage/tree/develop/tox.ini>`_
+for environment variables that take effect).
 
 You can edit a copy of the configuration file to change to a different platform, another
 version, or build stage.  After editing the configuration file, run "Dev Containers: Rebuild Container" from the command
