@@ -216,9 +216,9 @@ def GeneralizedTamariLattice(a, b, m=1):
     REFERENCES:
 
     - [BMFPR2011]_
-    
+
     - [PRV2017]_
-    
+
     - [CC2023]_
     """
     if a < b * m:
