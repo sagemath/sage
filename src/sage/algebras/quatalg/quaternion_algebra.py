@@ -3019,14 +3019,14 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
                 return False, None
             return False
 
-        # The theta series are the same, so perhaps the ideals are equivalent 
+        # The theta series are the same, so perhaps the ideals are equivalent
         # We adapt Prop 1.18 of [Piz1980]_ to right ideals to decide:
         # 1. Compute I * Jbar
         IJbar = self.multiply_by_conjugate(J)
 
         # 2. Determine if there is alpha in I * Jbar with N(alpha) = N(I)*N(J)
         # Equivalently, we can simply call the principality test on IJbar,
-        # but we rescale by 1/N(J) to make sure this test directly gives back 
+        # but we rescale by 1/N(J) to make sure this test directly gives back
         # the correct alpha if a certificate is requested
         return (1/J.norm()*IJbar).is_principal(certificate)
 
