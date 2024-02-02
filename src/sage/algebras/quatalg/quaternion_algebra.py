@@ -1045,7 +1045,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         Checks whether the quaternion algebra ``self`` is definite, i.e. whether it ramifies at the
         unique Archimedean place of its base field QQ. This is the case if and only if both
-        invariants of ``self`` are negative, see Exercise 2.4(c) in [Voi2021]_.
+        invariants of ``self`` are negative; see Exercise 2.4(c) in [Voi2021]_.
 
         EXAMPLES::
 
@@ -1323,10 +1323,10 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if F != A.base_ring():
             raise ValueError("both quaternion algebras must be defined over the same base ring")
 
-        try:
-            if is_RationalField(F):
-                return self.ramified_places(inf=False) == A.ramified_places(inf=False)
+        if is_RationalField(F):
+            return self.ramified_places(inf=False) == A.ramified_places(inf=False)
 
+        try:
             ram_self = self.ramified_places(inf=True)
             ram_A = A.ramified_places(inf=True)
             return set(ram_self[0]) == set(ram_A[0]) and ram_self[1] == ram_A[1]
@@ -2021,7 +2021,8 @@ class QuaternionOrder(Parent):
         r"""
         Check whether the order of ``self`` is maximal in the ambient quaternion algebra.
 
-        Only works in quaternion algebras over number fields
+        Only implemented for quaternion algebras over number fields; for reference,
+        see Theorem 15.5.5 in [Voi2021]_.
 
         OUTPUT: Boolean
 
@@ -3268,12 +3269,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_integral(self):
         r"""
-        Check if a quaternion fractional ideal is integral. An ideal in a quaternion algebra is
-        said integral if it is contained in its left order. If the left order is already defined it just
-        check the definition, otherwise it uses one of the alternative definition of Lemma 16.2.8 of
-        [Voi2021]_.
+        Checks whether a quaternion fractional ideal is integral. An ideal in a quaternion algebra
+        is integral if and only if it is contained in its left order. If the left order is already
+        defined this method just checks this definition, otherwise it uses one of the alternative
+        definitions from Lemma 16.2.8 of [Voi2021]_.
 
-        OUTPUT: a boolean.
+        OUTPUT: A boolean.
 
         EXAMPLES::
 
