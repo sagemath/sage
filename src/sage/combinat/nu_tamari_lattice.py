@@ -227,8 +227,10 @@ def AltNuTamariLattice(nu, delta=None):
         ValueError: nu must be a list or a string of 0s and 1s
 
     REFERENCES:
-        [PRV2017]_
-        [CC2023]_
+
+    - [PRV2017]_
+    
+    - [CC2023]_
     """
     if not( (isinstance(nu, (list, tuple)) and all(x in [0, 1] for x in nu)) or
             (isinstance(nu, str) and all(x in ['0', '1'] for x in nu)) ):
