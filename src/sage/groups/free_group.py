@@ -72,6 +72,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.structure.sequence import Sequence
 from sage.structure.element import coercion_model, parent
+from sage.structure.richcmp import richcmp
 
 
 def is_FreeGroup(x):
@@ -742,6 +743,25 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         """
 
         return hash((self.__class__, self._names))
+
+    def _richcmp_(self, other, op):
+        """
+        Compare ``self`` and ``other``.
+
+        TESTS::
+
+            sage: F1 = FreeGroup(2)
+            sage: F2 = FreeGroup(2, 'x')
+            sage: F3 = FreeGroup('x0, x1')
+            sage: F4 = FreeGroup(2, 'y')
+            sage: F1 == F2
+            True
+            sage: F2 == F3
+            True
+            sage: F3 == F4
+            False
+        """
+        return richcmp(self._names, other._names, op)
 
     def __reduce__(self):
         """
