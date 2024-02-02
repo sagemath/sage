@@ -2516,8 +2516,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             raise ValueError("basis must have rank 4")
 
         if not self.quaternion_algebra().is_definite():
-            if not self.quadratic_form().is_positive_definite():
-                raise TypeError("The quaternion algebra must be definite")
+            raise TypeError("The quaternion algebra must be definite")
 
         U = self.gram_matrix().LLL_gram().transpose()
         return tuple(sum(c * g for c, g in zip(row, self.basis())) for row in U)
@@ -2894,7 +2893,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         r"""
         Checks whether ``self`` and ``J`` are equivalent as ideals.
         Tests equivalence as right ideals by default. Requires the underlying
-        quaternion algebra to be definite.
+        rational quaternion algebra to be definite.
 
         INPUT:
 
@@ -2916,23 +2915,21 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: R = BrandtModule(3,5).right_ideals(); len(R)
             2
             sage: R[0].is_equivalent(R[1])
+            doctest:...:  DeprecationWarning: is_equivalent is deprecated,
+            please use is_left_equivalent or is_right_equivalent
+            accordingly instead
+            See https://github.com/sagemath/sage/issues/37100 for details.
             False
-            sage: R[0].is_equivalent(R[0])
-            True
+
             sage: OO = R[0].left_order()
             sage: S = OO.right_ideal([3*a for a in R[0].basis()])
             sage: R[0].is_equivalent(S)
+            doctest:...: DeprecationWarning: ...
             True
-
-            sage: B = QuaternionAlgebra(101)
-            sage: i,j,k = B.gens()
-            sage: I = B.maximal_order().unit_ideal()
-            sage: J = I*(i + 2*k)
-            sage: I == J
-            False
-            sage: I.is_equivalent(J, side='left', certificate=True)
-            (True, 1/810*i + 1/405*k)
         """
+        from sage.misc.superseded import deprecation
+        deprecation(37100, 'is_equivalent is deprecated, please use is_left_equivalent'
+                            ' or is_right_equivalent accordingly instead')
         if side == 'left':
             return self.is_left_equivalent(J, B, certificate)
         # If None, assume right ideals, for backwards compatibility
@@ -2941,7 +2938,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     def is_left_equivalent(self, J, B=10, certificate=False):
         r"""
         Checks whether ``self`` and ``J`` are equivalent as left ideals.
-        Requires the underlying quaternion algebra to be definite.
+        Requires the underlying rational quaternion algebra to be definite.
 
         INPUT:
 
@@ -2964,7 +2961,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     def is_right_equivalent(self, J, B=10, certificate=False):
         r"""
         Checks whether ``self`` and ``J`` are equivalent as right ideals.
-        Requires the underlying quaternion algebra to be definite.
+        Requires the underlying rational quaternion algebra to be definite.
 
         INPUT:
 
@@ -2976,18 +2973,44 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``certificate`` -- if ``True`` returns an element alpha such that alpha*J=I
 
         OUTPUT: bool, or (bool, alpha) if ``certificate`` is ``True``
+
+        EXAMPLES::
+
+            sage: R = BrandtModule(3,5).right_ideals(); len(R)
+            2
+            sage: R[0].is_right_equivalent(R[1])
+            False
+
+            sage: R[0].is_right_equivalent(R[0])
+            True
+            sage: OO = R[0].left_order()
+            sage: S = OO.right_ideal([3*a for a in R[0].basis()])
+            sage: R[0].is_right_equivalent(S, certificate=True)
+            (True, -1/3)
+            sage: -1/3*S == R[0]
+            True
+
+            sage: B = QuaternionAlgebra(101)
+            sage: i,j,k = B.gens()
+            sage: I = B.maximal_order().unit_ideal()
+            sage: beta = B.random_element()  # random
+            sage: J = beta*I
+            sage: bool, alpha = I.is_right_equivalent(J, certificate=True)
+            sage: bool
+            True
+            sage: alpha*J == I
+            True
         """
         if not isinstance(J, QuaternionFractionalIdeal_rational):
-            if certificate:
-                return False, None
-            return False
+            raise TypeError('J must be a fractional ideal'
+                          ' in a rational quaternion algebra')
 
         if self.right_order() != J.right_order():
-            raise ValueError("self and J must be right ideals over the same order")
+            raise ValueError('self and J must be right ideals over the same order')
 
         if not self.quaternion_algebra().is_definite():
             raise NotImplementedError('equivalence test of ideals not implemented'
-                                    'for indefinite quaternion algebras')
+                                    ' for indefinite quaternion algebras')
 
         # Just test theta series first; if the theta series are
         # different, the ideals are definitely not equivalent
@@ -2996,29 +3019,16 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
                 return False, None
             return False
 
-        # The theta series are the same, so perhaps the ideals are
-        # equivalent.  We use Prop 1.18 of [Piz1980]_ to decide.
+        # The theta series are the same, so perhaps the ideals are equivalent 
+        # We adapt Prop 1.18 of [Piz1980]_ to right ideals to decide:
         # 1. Compute I * Jbar
-        # Note that we use I*Jbar instead of Jbar*I since we work with right ideals
         IJbar = self.multiply_by_conjugate(J)
 
-        # 2. Determine if there is alpha in K such that
-        # N(alpha) = N(I)*N(J) as explained by Pizer
-        c = IJbar.theta_series_vector(2)[1]
-        if c == 0:
-            if certificate:
-                return False, None
-            return False
-
-        if not certificate:
-            return True
-
-        # Use Pari's qfminim with flag = 1 to find alpha as above
-        _,v = IJbar.quadratic_form().__pari__().qfminim(None, None, 1)
-        alpha = sum(ZZ(c)*g for c,g in zip(v, IJbar.basis()))
-
-        # As explained by Pizer, we now only need to rescale alpha by 1/N(J)
-        return True, alpha * (1/J.norm())
+        # 2. Determine if there is alpha in I * Jbar with N(alpha) = N(I)*N(J)
+        # Equivalently, we can simply call the principality test on IJbar,
+        # but we rescale by 1/N(J) to make sure this test directly gives back 
+        # the correct alpha if a certificate is requested
+        return (1/J.norm()*IJbar).is_principal(certificate)
 
     def is_principal(self, certificate=False):
         r"""
@@ -3037,15 +3047,17 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: B.<i,j,k> = QuaternionAlgebra(419)
             sage: O = B.quaternion_order([1/2 + 3/2*j, 1/6*i + 2/3*j + 1/2*k, 3*j, k])
-            sage: alpha = -1 - 59*i + 1/2*j + 154/9*k
-            sage: I = alpha * O
-            sage: I.is_principal(True)
-            (True, 1 + 59*i - 1/2*j - 154/9*k)
+            sage: beta = O.random_element()  # random
+            sage: I = O*beta
+            sage: bool, alpha = I.is_principal(True)
+            sage: bool
+            True
+            sage: I == O*alpha
+            True
         """
         if not self.quaternion_algebra().is_definite():
-            raise NotImplementedError('principality test not'
-                                    'implemented in indefinite'
-                                    'quaternion algebras')
+            raise NotImplementedError('principality test not implemented in'
+                                    ' indefinite quaternion algebras')
 
         if len(self.basis()) < 4:
             raise ValueError("basis must have rank 4")
