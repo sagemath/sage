@@ -153,7 +153,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.algebras import Algebras
 from sage.categories.fields import Fields
-from sage.rings.ring import Algebra
 
 from sage.rings.morphism import RingHomomorphism
 from sage.categories.homset import Hom
@@ -168,7 +167,7 @@ WORKING_CENTER_MAX_TRIES = 1000
 # Generic implementation of Ore function fields
 ###############################################
 
-class OreFunctionField(Algebra, UniqueRepresentation):
+class OreFunctionField(Parent, UniqueRepresentation):
     r"""
     A class for fraction fields of Ore polynomial rings.
     """
@@ -203,7 +202,8 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         self._ring = ring
         base = ring.base_ring()
         category = Algebras(base).or_subcategory(category)
-        Algebra.__init__(self, base, names=ring.variable_name(), normalize=True, category=category)
+        Parent.__init__(self, base=base, names=ring.variable_name(),
+                        normalize=True, category=category)
 
     def _element_constructor_(self, *args, **kwds):
         r"""
@@ -264,7 +264,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         if isinstance(P, Parent):
             return P.has_coerce_map_from(self._ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this Ore function field.
 
@@ -454,9 +454,25 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self(self._ring.gen(n))
 
+    def gens(self) -> tuple:
+        """
+        Return the tuple of generators of ``self``.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(5^4)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x', Frob]
+            sage: K = S.fraction_field()
+            sage: K.gens()
+            (x,)
+        """
+        return (self(self._ring.gen(0)),)
+
     parameter = gen
 
-    def gens_dict(self):
+    def gens_dict(self) -> dict:
         r"""
         Return a {name: variable} dictionary of the generators of
         this Ore function field.
@@ -473,7 +489,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return dict(zip(self.variable_names(), self.gens()))
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``False`` since Ore function field are not finite.
 
@@ -491,7 +507,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return False
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return ``True`` if elements of this Ore function field are exact.
         This happens if and only if elements of the base ring are exact.
@@ -516,7 +532,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self.base_ring().is_exact()
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         r"""
         Return ``True`` if the elements of this Ore function field are sparsely
         represented.
@@ -538,7 +554,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self._ring.is_sparse()
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the number of generators of this Ore function field,
         which is `1`.
@@ -599,7 +615,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         denominator = self._ring.random_element(degdenom, True, *args, **kwds)
         return self(numerator, denominator)
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Return ``True`` if this Ore function field is commutative, i.e. if the
         twisting morphism is the identity and the twisting derivation vanishes.
@@ -620,7 +636,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self._ring.is_commutative()
 
-    def is_field(self, proof=False):
+    def is_field(self, proof=False) -> bool:
         r"""
         Return always ``True`` since Ore function field are (skew) fields.
 

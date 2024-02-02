@@ -20,8 +20,6 @@ from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.categories.homsets import HomsetsCategory
 
-from sage.schemes.generic.scheme import is_Scheme, is_AffineScheme
-
 
 class Schemes(Category):
     """
@@ -76,6 +74,7 @@ class Schemes(Category):
             Category of schemes over Integer Ring
         """
         if X is not None:
+            from sage.schemes.generic.scheme import is_Scheme
             if not is_Scheme(X):
                 X = Schemes()(X)
             return Schemes_over_base(X)
@@ -138,6 +137,7 @@ class Schemes(Category):
                       To:   Rational Field
 
         """
+        from sage.schemes.generic.scheme import is_Scheme
         if is_Scheme(x):
             return x
         from sage.schemes.generic.morphism import is_SchemeMorphism
@@ -230,6 +230,7 @@ class AbelianVarieties(Schemes_over_base):
             sage: AbelianVarieties(Spec(QQ))
             Category of abelian varieties over Rational Field
         """
+        from sage.schemes.generic.scheme import is_AffineScheme
         if is_AffineScheme(base):
             base = base.coordinate_ring()
         if base not in Fields():

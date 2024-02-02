@@ -32,8 +32,8 @@ Sage example in ./sol/linalg.tex, line 100::
 Sage example in ./sol/linalg.tex, line 168::
 
   sage: def Similar(A, B):
-  ....:     F1, U1 = A.frobenius(2)
-  ....:     F2, U2 = B.frobenius(2)
+  ....:     F1, U1 = A.frobenius_form(2)
+  ....:     F2, U2 = B.frobenius_form(2)
   ....:     if F1 == F2:
   ....:         return True, ~U2*U1
   ....:     else:
