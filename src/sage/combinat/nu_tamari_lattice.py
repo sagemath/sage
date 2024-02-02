@@ -229,7 +229,7 @@ def AltNuTamariLattice(nu, delta=None):
     REFERENCES:
 
     - [PRV2017]_
-    
+
     - [CC2023]_
     """
     if not( (isinstance(nu, (list, tuple)) and all(x in [0, 1] for x in nu)) or
