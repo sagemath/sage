@@ -174,8 +174,8 @@ of the following places:
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
 In both cases, the files must be listed (explicitly or via wildcards) in
-the section ``options.package_data`` of the file
-``SAGE_ROOT/pkgs/sagemath-standard/setup.cfg.m4`` (or the corresponding
+the section ``[tool.setuptools.package-data]`` of the file
+``SAGE_ROOT/pkgs/sagemath-standard/pyproject.toml.m4`` (or the corresponding
 file of another distribution).
 
 

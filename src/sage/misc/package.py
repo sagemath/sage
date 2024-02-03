@@ -179,16 +179,16 @@ def pip_installed_packages(normalization=None):
         sage: # optional - sage_spkg
         sage: from sage.misc.package import pip_installed_packages
         sage: d = pip_installed_packages()
-        sage: 'scipy' in d or 'SciPy' in d
+        sage: 'scipy' in d or 'SciPy' in d                                              # needs scipy
         True
-        sage: d['beautifulsoup4']                               # optional - beautifulsoup4
+        sage: d['beautifulsoup4']                                                       # needs beautifulsoup4
         '...'
         sage: d['prompt-toolkit']
         '...'
         sage: d = pip_installed_packages(normalization='spkg')
         sage: d['prompt_toolkit']
         '...'
-        sage: d['scipy']
+        sage: d['scipy']                                                                # needs scipy
         '...'
     """
     with open(os.devnull, 'w') as devnull:
