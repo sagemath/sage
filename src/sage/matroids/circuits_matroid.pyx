@@ -92,9 +92,7 @@ cdef class CircuitsMatroid(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        a set
+        OUTPUT: a set
 
         EXAMPLES::
 
@@ -115,9 +113,7 @@ cdef class CircuitsMatroid(Matroid):
 
         - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        an integer; the rank of ``X`` in the matroid
+        OUTPUT: an integer; the rank of ``X`` in the matroid
 
         EXAMPLES::
 
@@ -136,9 +132,7 @@ cdef class CircuitsMatroid(Matroid):
         The *rank* of the matroid is the size of the largest independent
         subset of the groundset.
 
-        OUTPUT:
-
-        an integer; the rank of the matroid
+        OUTPUT: an integer; the rank of the matroid
 
         EXAMPLES::
 
@@ -157,9 +151,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
         """
         I = set(F)
         s = len(F)
@@ -179,9 +171,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        a frozenset; a maximal independent subset of ``X``
+        OUTPUT: a frozenset; a maximal independent subset of ``X``
         """
         I = set(F)
         for i in self._k_C:
@@ -203,10 +193,8 @@ cdef class CircuitsMatroid(Matroid):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        a frozenset; a circuit contained in ``X``, if it exists. Otherwise an
-        error is raised.
+        OUTPUT: a frozenset; a circuit contained in ``X``, if it exists.
+        Otherwise an error is raised.
         """
         I = set(F)
         for C in self.circuits():
@@ -223,9 +211,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``other`` -- a matroid
         - ``certificate`` -- boolean (optional)
 
-        OUTPUT:
-
-        boolean, and, if certificate = True, a dictionary giving the
+        OUTPUT: boolean, and, if certificate = True, a dictionary giving the
         isomorphism or None
 
         .. NOTE::
@@ -394,9 +380,7 @@ cdef class CircuitsMatroid(Matroid):
         r"""
         Return the bases of the matroid.
 
-        OUTPUT:
-
-        an iterable
+        OUTPUT: a SetSystem
 
         EXAMPLES::
 
@@ -418,11 +402,7 @@ cdef class CircuitsMatroid(Matroid):
 
     def bases_iterator(self):
         r"""
-        Return the bases of the matroid.
-
-        OUTPUT:
-
-        an iterable
+        Return an iterator over the bases of the matroid.
 
         EXAMPLES::
 
@@ -441,11 +421,9 @@ cdef class CircuitsMatroid(Matroid):
 
     cpdef circuits(self, k=None) noexcept:
         """
-        Return the list of circuits of the matroid.
+        Return the circuits of the matroid.
 
-        OUTPUT:
-
-        a SetSystem
+        OUTPUT: a SetSystem
         """
         cdef SetSystem C
         C = SetSystem(list(self.groundset()))
@@ -461,10 +439,6 @@ cdef class CircuitsMatroid(Matroid):
     def circuits_iterator(self, k=None):
         """
         Return an iterator over the circuits of the matroid.
-
-        OUTPUT:
-
-        an iterator
         """
         if k:
             for C in self._k_C[k]:
@@ -478,9 +452,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         Return the list of nonspanning circuits of the matroid.
 
-        OUTPUT:
-
-        a SetSystem
+        OUTPUT: a SetSystem
         """
         cdef SetSystem NSC
         NSC = SetSystem(list(self.groundset()))
@@ -568,9 +540,7 @@ cdef class CircuitsMatroid(Matroid):
 
         A matroid is paving if each of its circuits has size `r` or `r+1`.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -589,9 +559,7 @@ cdef class CircuitsMatroid(Matroid):
 
         For a matroid defined by its circuits, we check the circuit axioms.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
