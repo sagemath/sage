@@ -119,7 +119,7 @@ from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _f
 _join_cache = WeakValueDictionary()
 
 
-HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke']
+HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke', 'Dedekind']
 
 
 class Category(UniqueRepresentation, SageObject):
@@ -2592,6 +2592,7 @@ def category_sample():
         sage: from sage.categories.category import category_sample
         sage: sorted(category_sample(), key=str)                                        # needs sage.groups
         [Category of Coxeter groups,
+         Category of Dedekind domains,
          Category of G-sets for Symmetric group of order 8! as a permutation group,
          Category of Hecke modules over Rational Field,
          Category of Hopf algebras over Rational Field,
