@@ -1782,7 +1782,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         Return the generator of ``self`` for the ``i``-th cone.
     
         INPUTS:
-            - ``i`` -- A cone index.
+            
+        - ``i`` -- A cone index.
 
         EXAMPLES::
 
@@ -1803,11 +1804,21 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         u = self.parent().monomial(*u)
         return u
         
-    def reduce(self,reducers):
+    def reduction(self,reducers):
         r"""
-        Reduce self by ``reducers`` using the multivariate division algorithm of REF.
+        Reduce self by ``reducers`` using the multivariate division algorithm introduced in [PU1999]_.
+
+        INPUT:
+
+        - ``reducers`` -- A list of Laurent polynomaials.
+
+        OUTPUT:
+
+        A tuple containing the remainder and the list of quotients.
 
         EXAMPLES::
+
+            
         """
 
         if self.parent().order() is None:
@@ -2114,7 +2125,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return new_ring(ans)
         return ans
 
-def reduce(g,reducers):
+def reduction(g,reducers):
     r"""
     Reduce ``g``  by ``reducers`` using the multivariate division algorithm of [PU1999]_.
 
