@@ -2331,6 +2331,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
                 raise TypeError("basis must be a list or tuple")
             basis = tuple([Q(v) for v in
                            (QQ**4).span([Q(v).coefficient_tuple() for v in basis], ZZ).basis()])
+            if len(basis) != 4:
+                raise ValueError("fractional ideal must have rank 4")
         self.__left_order = left_order
         self.__right_order = right_order
         Ideal_fractional.__init__(self, Q, basis)
@@ -2657,7 +2659,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def reduced_basis(self):
         r"""
-        Let `I` = ``self`` be a rank 4 quaternion ideal in a definite quaternion algebra.
+        Let `I` = ``self`` be a fractional ideal in a (rational) definite quaternion algebra.
         This function returns an LLL reduced basis of I.
 
         OUTPUT:
@@ -2682,9 +2684,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I.reduced_basis()[0]
             1/2*i + j + 5/2*k
         """
-        if len(self.basis()) < 4:
-            raise ValueError("basis must have rank 4")
-
         if not self.quaternion_algebra().is_definite():
             raise TypeError("The quaternion algebra must be definite")
 
@@ -3251,9 +3250,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         if not self.quaternion_algebra().is_definite():
             raise NotImplementedError('principality test not implemented in'
                                     ' indefinite quaternion algebras')
-
-        if len(self.basis()) < 4:
-            raise ValueError("basis must have rank 4")
 
         c = self.theta_series_vector(2)[1]
         if not certificate:
