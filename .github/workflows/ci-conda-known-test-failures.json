@@ -41,6 +41,9 @@
     "sage.modular.modform.l_series_gross_zagier": {
         "failed": "unreported failure seen in https://github.com/sagemath/sage/actions/runs/6859244281/job/18651257775#step:11:10102"
     },
+    "sage.numerical.linear_tensor_element": {
+        "failed": "random segfaults https://github.com/sagemath/sage/issues/28559"
+    },
     "sage.parallel.map_reduce": {
         "failed": "random failure https://github.com/sagemath/sage/issues/36939"
     },
@@ -62,6 +65,9 @@
     "sage.rings.polynomial.skew_polynomial_finite_field": {
         "failed": true
     },
+    "sage.schemes.elliptic_curves.descent_two_isogeny": {
+        "failed": "random segfault (macOS) https://github.com/sagemath/sage/issues/36949"
+    },
     "sage.schemes.elliptic_curves.ell_field": {
         "failed": "random failure https://github.com/sagemath/sage/issues/36832"
     },
@@ -70,8 +76,5 @@
     },
     "sage.structure.coerce_actions": {
         "failed": "random failure https://github.com/sagemath/sage/issues/35973"
-    },
-    "sage.tests.gap_packages": {
-        "failed": true
     }
 }

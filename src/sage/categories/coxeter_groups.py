@@ -1950,15 +1950,13 @@ class CoxeterGroups(Category_singleton):
             Return the absolute length of ``self``.
 
             The absolute length is the length of the shortest expression
-            of the element as a product of reflections.
-
-            For permutations in the symmetric groups, the absolute
-            length is the size minus the number of its disjoint
-            cycles.
+            of the element as a product of reflections. In general,
+            we use Theorem 1.1 in [Dy2001]_.
 
             .. SEEALSO::
 
-                :meth:`absolute_le`
+                :meth:`absolute_le`,
+                :meth:`absolute_chain`
 
             EXAMPLES::
 
@@ -1971,9 +1969,141 @@ class CoxeterGroups(Category_singleton):
                 sage: s = W.simple_reflections()                                        # needs sage.groups
                 sage: (s[3]*s[2]*s[1]).absolute_length()                                # needs sage.combinat sage.groups
                 3
+
+                sage: W = CoxeterGroup(["A",2,1])
+                sage: (r, s, t) = W.simple_reflections()
+                sage: (r * s * r * t).absolute_length()
+                2
+                sage: W.one().absolute_length()
+                0
+                sage: r.absolute_length()
+                1
+                sage: (r * s).absolute_length()
+                2
+                sage: (r * s * r).absolute_length()
+                1
+                sage: W = CoxeterGroup(['A', 3, 1])
+                sage: (r, s, t, u) = W.simple_reflections()
+                sage: (r * s * t * u).absolute_length()
+                4
+                sage: (r * s * t * u * s).absolute_length()
+                3
             """
-            M = self.canonical_matrix()
-            return (M - 1).image().dimension()
+            if self.length() <= 2:  # trivial cases
+                return self.length()
+            return len(self.absolute_chain_reflections())
+
+        def absolute_chain(self):
+            r"""
+            Return a (saturated) chain in absolute order from ``1``
+            to ``self``.
+
+            .. SEEALSO::
+
+                :meth:`absolute_chain_reflections`
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A', 2, 1])
+                sage: (r, s, t) = W.simple_reflections()
+                sage: (r * s * r * t).absolute_chain()
+                [
+                [1 0 0]  [ 0 -1  2]  [ 2  1 -2]
+                [0 1 0]  [-1  0  2]  [ 1  2 -2]
+                [0 0 1], [ 0  0  1], [ 1  1 -1]
+                ]
+            """
+            reflections = self.absolute_chain_reflections()
+            P = self.parent()
+            chain = [P.prod(reversed(reflections[:i]))
+                    for i in range(len(reflections)+1)]
+            return chain
+
+        def absolute_chain_reflections(self):
+            r"""
+            Return a list of reflection which, when (left) multiplied in order,
+            give ``self``.
+
+            This method is based on Theorem 1.1 in [Dy2001]_, combined with
+            the strong exchange condition. As an example, if `W` is a type
+            `A_2` Coxeter group with simple reflections `a`, `b`, then the
+            absolute chain reflections for the element `w = ab` is the list
+            `[a, aba]` as `w = (aba) a = ab`.
+
+            .. SEEALSO::
+
+                :meth:`absolute_length`,
+                :meth:`absolute_chain`
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(["A",2,1])
+                sage: W.one().absolute_chain_reflections()
+                []
+                sage: (r, s, t) = W.simple_reflections()
+                sage: r.absolute_chain_reflections()
+                [
+                [-1  1  1]
+                [ 0  1  0]
+                [ 0  0  1]
+                ]
+                sage: (r * s).absolute_chain_reflections()
+                [
+                [-1  1  1]  [ 0 -1  2]
+                [ 0  1  0]  [-1  0  2]
+                [ 0  0  1], [ 0  0  1]
+                ]
+                sage: (r * s * r * t).absolute_chain_reflections()
+                [
+                [ 0 -1  2]  [-1 -2  4]
+                [-1  0  2]  [-2 -1  4]
+                [ 0  0  1], [-1 -1  3]
+                ]
+                sage: W = CoxeterGroup(['A', 3, 1])
+                sage: (r, s, t, u) = W.simple_reflections()
+                sage: (r * s * t * u).absolute_chain_reflections()
+                [
+                [-1  1  0  1]  [ 0 -1  1  1]  [ 0  0 -1  2]  [-3  2  0  2]
+                [ 0  1  0  0]  [-1  0  1  1]  [-1  1 -1  2]  [-2  2  0  1]
+                [ 0  0  1  0]  [ 0  0  1  0]  [-1  0  0  2]  [-2  1  1  1]
+                [ 0  0  0  1], [ 0  0  0  1], [ 0  0  0  1], [-2  1  0  2]
+                ]
+                sage: (r * s * t * u * s).absolute_chain_reflections()
+                [
+                [-1  1  0  1]  [ 0  0 -1  2]  [-3  2  0  2]
+                [ 0  1  0  0]  [-1  1 -1  2]  [-2  2  0  1]
+                [ 0  0  1  0]  [-1  0  0  2]  [-2  1  1  1]
+                [ 0  0  0  1], [ 0  0  0  1], [-2  1  0  2]
+                ]
+            """
+            P = self.parent()
+            if self.is_one():
+                return []
+            w = self.reduced_word()
+            n = len(w)
+
+            if n == 1:  # trivial case
+                return [self]
+            if n == 2:  # trivial case
+                left_refl = P.simple_reflection(w[0])
+                return [left_refl, self * left_refl]
+
+            import itertools
+            s = P.simple_reflections()
+            rev = P.one()
+            cur = P.one()
+            reflections = []
+            for val in w:
+                cur = cur * s[val]
+                reflections.append(cur * rev)
+                rev = s[val] * rev
+            for ell in range(n):
+                for chain in itertools.combinations(reflections, ell):
+                    if P.prod(reversed(chain)) == self:
+                        return list(chain)
+            # If we get here it's cause ell == n and so we need all of the
+            # refelctions
+            return reflections
 
         def absolute_le(self, other):
             r"""
@@ -2059,7 +2189,7 @@ class CoxeterGroups(Category_singleton):
                 sage: s = W.simple_reflections()
                 sage: w0 = s[1]
                 sage: w1 = s[1]*s[2]*s[3]
-                sage: w0.absolute_covers()
+                sage: list(w0.absolute_covers())
                 [
                 [0 0 1 0]  [0 1 0 0]  [0 1 0 0]  [0 0 0 1]  [0 1 0 0]
                 [1 0 0 0]  [1 0 0 0]  [0 0 1 0]  [1 0 0 0]  [0 0 0 1]
@@ -2068,8 +2198,9 @@ class CoxeterGroups(Category_singleton):
                 ]
             """
             W = self.parent()
-            return [self * t for t in W.reflections()
-                    if self.absolute_length() < (self * t).absolute_length()]
+            for t in W.reflections():
+                if self.absolute_length() < (self * t).absolute_length():
+                    yield self * t
 
         def canonical_matrix(self):
             r"""

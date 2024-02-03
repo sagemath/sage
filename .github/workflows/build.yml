@@ -133,7 +133,7 @@ jobs:
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./sage -t --new -p2 --format github
+          ./sage -t --new -p2
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
   mod:

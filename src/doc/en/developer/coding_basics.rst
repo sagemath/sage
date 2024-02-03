@@ -1181,7 +1181,7 @@ framework. Here is a comprehensive list:
   Use it for very long doctests that are only meant as documentation. It can
   also be used for todo notes of what will eventually be implemented::
 
-      sage: factor(x*y - x*z)    # todo: not implemented
+      sage: factor(x*y - x*z)    # not implemented
 
   It is also immediately clear to the user that the indicated example
   does not currently work.
