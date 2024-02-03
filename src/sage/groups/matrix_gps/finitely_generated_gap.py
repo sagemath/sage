@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 """
 Finitely Generated Matrix Groups with GAP
 """

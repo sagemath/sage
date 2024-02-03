@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 from sage.libs.arb.arb cimport arb_t
 from sage.libs.mpfi.types cimport mpfi_t
 from sage.rings.real_mpfi cimport RealIntervalField_class, RealIntervalFieldElement

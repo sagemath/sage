@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # This is here in Cython so we can access the interpreter globals
 # cython: old_style_globals=True
 """

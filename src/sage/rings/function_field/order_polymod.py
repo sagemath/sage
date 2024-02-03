@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 # sage.doctest: optional - sage.rings.function_field
 r"""
 Orders of function fields: extension

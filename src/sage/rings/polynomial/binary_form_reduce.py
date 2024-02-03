@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Helper functions for reduction of binary forms.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-mpmath
 from sage.libs.gmp.all cimport mpz_t
 
 ctypedef struct MPopts:

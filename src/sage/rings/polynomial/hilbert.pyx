@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-flint
 r"""
 Compute Hilbert series of monomial ideals
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-eclib
 "Cremona modular symbols"
 
 def CremonaModularSymbols(level, sign=0, cuspidal=False, verbose=0):

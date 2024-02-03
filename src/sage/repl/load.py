@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Load Python, Sage, Cython, Fortran and Magma files in Sage
 """

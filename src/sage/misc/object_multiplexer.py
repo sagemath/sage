@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Multiplex calls to one object to calls to many objects
 

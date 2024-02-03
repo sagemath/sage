@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Lie Conformal Algebras With Basis
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-mpmath
 """
 This module provides the core implementation of multiprecision
 floating-point arithmetic. Operations are done in-place.
