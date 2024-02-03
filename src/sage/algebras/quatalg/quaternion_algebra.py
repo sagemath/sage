@@ -2261,7 +2261,9 @@ class QuaternionOrder(Parent):
         if other.quaternion_algebra() != Q:
             raise TypeError('not an order in the same quaternion algebra')
 
-        if not self.quadratic_form().is_positive_definite():
+        if not is_RationalField(Q.base_ring()):
+            raise NotImplementedError('only implemented for orders in a rational quaternion algebra')
+        if not Q.is_definite():
             raise NotImplementedError('only implemented for definite quaternion orders')
         if not (self.discriminant() == Q.discriminant() == other.discriminant()):
             raise NotImplementedError('only implemented for maximal orders')
@@ -2779,10 +2781,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: el.reduced_norm()
             282
         """
-        qf = self.quadratic_form()
-        if not qf.is_positive_definite():
+        if not self.quaternion_algebra().is_definite():
             raise ValueError('quaternion algebra must be definite')
-        pariqf = qf.__pari__()
+        pariqf = self.quadratic_form().__pari__()
         _,v = pariqf.qfminim(None, None, 1)
         return sum(ZZ(c)*g for c,g in zip(v, self.basis()))
 
@@ -3260,9 +3261,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         if certificate and c == 0:
             return False, None
 
-        # Use Pari's qfminim with flag = 1 to find alpha with N(alpha) = N(I)
-        _,v = self.quadratic_form().__pari__().qfminim(None, None, 1)
-        return True, sum(ZZ(c)*g for c,g in zip(v, self.basis()))
+        # From this point on we know that self is principal, so it suffices to
+        # find an element of minimal norm in self; see [Piz1980]_, Corollary 1.20.
+        return True, self.minimal_element()
 
     def __contains__(self, x):
         """
