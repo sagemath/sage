@@ -577,7 +577,7 @@ class CyclicCode(AbstractLinearCode):
               To:   Finite Field in z3 of size 2^3
               Defn: 1 |--> 1
         """
-        if not(hasattr(self, "_field_embedding")):
+        if not (hasattr(self, "_field_embedding")):
             self.defining_set()
         return self._field_embedding
 

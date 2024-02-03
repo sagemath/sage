@@ -892,7 +892,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         G = self.generator_matrix()
         for r in G.rows():
-            if not(r in other):
+            if not (r in other):
                 return False
         return True
 
