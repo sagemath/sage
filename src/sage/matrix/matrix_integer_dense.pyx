@@ -93,9 +93,11 @@ from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack, new_gen
 from cypari2.paridecl cimport *
+from sage.libs.pari import pari
 from sage.libs.pari.convert_gmp cimport INT_to_mpz
 from sage.libs.pari.convert_flint cimport (_new_GEN_from_fmpz_mat_t,
            _new_GEN_from_fmpz_mat_t_rotate90, integer_matrix)
+from sage.libs.pari.convert_sage_matrix import gen_to_sage_matrix
 #########################################################
 
 from sage.arith.multi_modular cimport MultiModularBasis
@@ -3169,7 +3171,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
             else:
                 return self
 
-        U = None
+        r = None  # rank
+        cdef Matrix_integer_dense R = None  # LLL-reduced matrix
+        cdef Matrix_integer_dense U = None  # transformation matrix
 
         tm = verbose("LLL of %sx%s matrix (algorithm %s)"%(self.nrows(), self.ncols(), algorithm))
         import sage.libs.ntl.all
@@ -3225,7 +3229,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             if algorithm == "NTL:LLL":
                 if transformation:
-                    r, det2, U = A.LLL(a,b, verbose=verb, return_U=True)
+                    r, det2, UNTL = A.LLL(a,b, verbose=verb, return_U=True)
                 else:
                     r, det2 = A.LLL(a,b, verbose=verb)
                 det2 = ZZ(det2)
@@ -3258,23 +3262,23 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise TypeError("algorithm %s not supported"%algorithm)
 
             if isinstance(r, tuple):
-                r, U = r
+                r, UNTL = r
 
             if transformation:
                 U = self.new_matrix(self.nrows(), self.nrows(),
-                                    entries=[ZZ(z) for z in U.list()])
+                                    entries=[ZZ(z) for z in UNTL.list()])
 
             r = ZZ(r)
 
-            R = <Matrix_integer_dense>self.new_matrix(
+            R = <Matrix_integer_dense> self.new_matrix(
                     entries=[ZZ(z) for z in A.list()])
-            self.cache("rank", r)
 
         elif algorithm.startswith('fpLLL:'):
             from fpylll import LLL, IntegerMatrix
             A = IntegerMatrix.from_matrix(self)
+            Ufplll = None
             if transformation:
-                U = IntegerMatrix(A.nrows, A.nrows)
+                Ufplll = IntegerMatrix(A.nrows, A.nrows)
 
             method = algorithm.replace("fpLLL:","")
             if verb:
@@ -3284,26 +3288,28 @@ cdef class Matrix_integer_dense(Matrix_dense):
             if early_red:
                 kwds["flags"] = kwds.get("flags", LLL.DEFAULT) | LLL.EARLY_RED
 
-            LLL.reduction(A, delta=delta, eta=eta, method=method, float_type=fp, precision=prec, U=U)
+            LLL.reduction(A, delta=delta, eta=eta, method=method, float_type=fp, precision=prec, U=Ufplll)
             R = A.to_matrix(self.new_matrix())
             if transformation:
-                U = U.to_matrix(self.new_matrix(U.nrows, U.ncols))
+                U = Ufplll.to_matrix(self.new_matrix(Ufplll.nrows, Ufplll.ncols))
 
         elif algorithm == 'pari':
             # call pari with flag=4: kernel+image
             # pari uses column convention: need to transpose the matrices
-            from sage.libs.pari import pari
-            A = pari(self).mattranspose()
+            A = integer_matrix(self._matrix, 1)
             K, T = A.qflll(4)
             r = ZZ(T.length())
-            self.cache("rank", r)
-            U = pari.matconcat([K, T]).mattranspose().sage()
+            # TODO: there is no optimized matrix converter pari -> sage
+            U = gen_to_sage_matrix(pari.matconcat([K, T]).mattranspose())
             R = U * self
 
         else:
             raise TypeError("algorithm %s not supported"%algorithm)
 
         verbose("LLL finished", tm)
+        if r is not None:
+            self.cache("rank", r)
+            R.cache("rank", r)
         if transformation:
             return R, U
         else:
