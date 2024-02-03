@@ -167,7 +167,7 @@ from sage.misc.lazy_import import lazy_import
 # user-accessible:
 lazy_import(
     "sage.matroids.database_collections",
-    ("BrettellMatroids", "OxleyMatroids", "VariousMatroids"),
+    ("AllMatroids", "BrettellMatroids", "OxleyMatroids", "VariousMatroids"),
 )
 lazy_import(
     "sage.matroids.database_matroids",

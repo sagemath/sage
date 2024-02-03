@@ -1792,7 +1792,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
             sage: Etilde = E.base_extend(GF(3))                                         # needs sage.schemes
             sage: Etilde.rational_points()                                              # needs sage.libs.singular sage.schemes
-            [(0 : 0 : 1), (0 : 1 : 0), (0 : 2 : 1), (1 : 0 : 1),
+            [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1),
              (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
 
         The class of hyperelliptic curves does not (yet) support
