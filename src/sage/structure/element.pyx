@@ -3344,12 +3344,12 @@ cdef class CommutativeRingElement(RingElement):
         #This code is very general, it works for all integral domains that have the
         #is_square(root = True) option
 
-        from sage.rings.ring import IntegralDomain
+        from sage.categories.integral_domains import IntegralDomains
         P = self._parent
         is_sqr, sq_rt = self.is_square(root=True)
         if is_sqr:
             if all:
-                if not isinstance(P, IntegralDomain):
+                if P not in IntegralDomains():
                     raise NotImplementedError('sqrt() with all=True is only implemented for integral domains, not for %s' % P)
                 if P.characteristic()==2 or sq_rt==0:
                     #0 has only one square root, and in characteristic 2 everything also has only 1 root
@@ -3357,7 +3357,7 @@ cdef class CommutativeRingElement(RingElement):
                 return [ sq_rt, -sq_rt ]
             return sq_rt
         #from now on we know that self is not a square
-        if not isinstance(P, IntegralDomain):
+        if P not in IntegralDomains():
             raise NotImplementedError('sqrt() of non squares is only implemented for integral domains, not for %s' % P)
         if not extend:
             #all square roots of a non-square should be an empty list

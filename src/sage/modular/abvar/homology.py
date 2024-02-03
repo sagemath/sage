@@ -56,7 +56,7 @@ from sage.modular.hecke.module import HeckeModule_free_module
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 
 # TODO: we will probably also need homology that is *not* a Hecke module.
@@ -117,7 +117,7 @@ class Homology_abvar(Homology):
             sage: loads(dumps(H)) == H
             True
         """
-        if not isinstance(base, CommutativeRing):
+        if base not in CommutativeRings():
             raise TypeError("base ring must be a commutative ring")
         HeckeModule_free_module.__init__(
             self, base, abvar.level(), weight=2)
