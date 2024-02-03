@@ -107,27 +107,30 @@ sage.repl.rich_output =
 
 sage =
     ext_data/*
-    ext_data/kenzo/*
-    ext_data/singular/*
-    ext_data/singular/function_field/*
-    ext_data/images/*
     ext_data/doctest/*
     ext_data/doctest/invalid/*
     ext_data/gap/*
     ext_data/gap/joyner/*
-    ext_data/mwrank/*
-    ext_data/notebook-ipython/*
-    ext_data/nbconvert/*
     ext_data/graphs/*
+    ext_data/kenzo/*
+    ext_data/magma/*
+    ext_data/magma/latex/*
+    ext_data/magma/sage/*
+    ext_data/matroids/*
+    ext_data/matroids/database/*
+    ext_data/matroids/database/all_matroids/*
+    ext_data/matroids/database/unorientable_matroids/*
+    ext_data/mwrank/*
+    ext_data/nbconvert/*
+    ext_data/notebook-ipython/*
     ext_data/pari/*
     ext_data/pari/dokchitser/*
     ext_data/pari/buzzard/*
     ext_data/pari/simon/*
-    ext_data/magma/*
-    ext_data/magma/latex/*
-    ext_data/magma/sage/*
-    ext_data/valgrind/*
+    ext_data/singular/*
+    ext_data/singular/function_field/*
     ext_data/threejs/*
+    ext_data/valgrind/*
 
 [options.extras_require]
 R = SPKG_INSTALL_REQUIRES_rpy2
