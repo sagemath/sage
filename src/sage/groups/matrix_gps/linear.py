@@ -328,13 +328,13 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
         Check if :trac:`35490` is fixed::
             sage: q = 7
-            ....: FqT.<T> = GF(q)[]
-            ....: N = T^2+1
-            ....: FqTN = QuotientRing(FqT, N*FqT)
-            ....: S = SL(2,FqTN)
-            ....: S.is_finite()
+            sage: FqT.<T> = GF(q)[]
+            sage: N = T^2+1
+            sage: FqTN = QuotientRing(FqT, N*FqT)
+            sage: S = SL(2,FqTN)
+            sage: S.is_finite()
             True
-            ....: S.order()
+            sage: S.order()
             117600
         """
         from functools import reduce
