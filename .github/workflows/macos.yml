@@ -77,7 +77,7 @@ jobs:
 
       - name: Install test prerequisites
         run: |
-          brew install tox
+          pip install tox
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
         with:
