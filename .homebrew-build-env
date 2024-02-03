@@ -45,3 +45,9 @@ for l in ; do
     fi
 done
 export ACLOCAL_PATH
+
+# Add cvxopt library path
+if [ -d "$HOMEBREW/include/suitesparse" ]; then
+    export CVXOPT_SUITESPARSE_INC_DIR="$HOMEBREW/include/suitesparse"
+    export CVXOPT_SUITESPARSE_LIB_DIR="$HOMEBREW/lib"
+fi
