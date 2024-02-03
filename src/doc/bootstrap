@@ -210,4 +210,4 @@ cat <<EOF
 
 EOF
 ) > "$OUTPUT_INDEX"
-sage-package list --has-file SPKG.rst | OUTPUT_DIR=$OUTPUT_DIR OUTPUT_RST=1 xargs -P 0 -n 1 sage-spkg-info
+sage-package list --has-file SPKG.rst | OUTPUT_DIR=$OUTPUT_DIR OUTPUT_RST=1 xargs -P 99 -n 1 sage-spkg-info

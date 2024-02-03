@@ -293,7 +293,7 @@ class SimplicialSetHomset(Homset):
         all_n_simplices = {d: codomain.all_n_simplices(d) for d in set(dims)}
         for target in itertools.product(*[all_n_simplices[d] for d in dims]):
             try:
-                yield self({sigma: tau for (sigma, tau) in zip(facets, target)})
+                yield self(dict(zip(facets, target)))
             except ValueError:
                 # Not a valid morphism.
                 pass
@@ -819,7 +819,7 @@ class SimplicialSetMorphism(Morphism):
         domain = self.domain()
         for n in range(domain.dimension()+1):
             input = domain.n_cells(n)
-            output = set([self(sigma) for sigma in input if self(sigma).is_nondegenerate()])
+            output = {self(sigma) for sigma in input if self(sigma).is_nondegenerate()}
             if len(input) > len(output):
                 return False
         return True
@@ -1449,7 +1449,7 @@ class SimplicialSetMorphism(Morphism):
         return "{} --> {}".format(keys, [d[x] for x in keys])
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation.
 
         EXAMPLES::

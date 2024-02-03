@@ -1827,9 +1827,11 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         cdef Polynomial_integer_dense_flint res = self._new()
         cdef unsigned long d
         if degree is not None:
+            if degree < 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s" % degree)
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             # FLINT expects length
             fmpz_poly_reverse(res._poly, self._poly, d+1)
         else:
