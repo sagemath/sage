@@ -67,7 +67,6 @@ class GeneralizedMonomialOrder(SageObject):
 
     def _repr_(self):
         r"""
-
         TESTS::
             sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
             sage: GeneralizedMonomialOrder(2)._repr_()
@@ -115,10 +114,11 @@ class GeneralizedMonomialOrder(SageObject):
 
     def cone(self,i):
         r"""
-        Return the matrix whose columns are the generators of the `i`-th cone.
+        Return the matrix whose columns are the generators of the ``i``-th cone.
     
         INPUTS:
-            - `i` -- a cone index
+        
+        - `i` -- a cone index
         
         EXAMPLES::
 
@@ -177,7 +177,7 @@ class GeneralizedMonomialOrder(SageObject):
 
         INPUTS:
 
-            - `t` -- a tuple
+        - `t` -- a tuple
 
         EXAMPLES::
 
@@ -299,11 +299,12 @@ class GeneralizedMonomialOrder(SageObject):
               
     def is_in_cone(self,i,v): 
         r"""
-        Test whether the tuple `t` is contained in the `i`-th cone or not.
+        Test whether the tuple ``t`` is contained in the ``i``-th cone or not.
 
         INPUTS:
-            - ``i`` -- a cone index
-            - ``t`` -- a tuple
+
+        - ``i`` -- A cone index.
+        - ``t`` -- A tuple.
 
         EXAMPLES::
             
@@ -321,12 +322,12 @@ class GeneralizedMonomialOrder(SageObject):
         Return the generator of the module over the ``i``-th cone for ``L``.
 
         This is the monoïd of elements `t \in \ZZ^n` such that the greatest 
-        tuple of ``t + L`` is contained in the ``i``-th cone.
+        tuple of `t + L` is contained in the ``i``-th cone.
 
         INPUTS:
             
-            - ``i`` -- a cone index
-            - ``L`` -- a list of tuples
+        - ``i`` -- A cone index.
+        - ``L`` -- A list of tuples.
 
         EXAMPLES::
 
@@ -355,9 +356,9 @@ class GeneralizedMonomialOrder(SageObject):
 
         INPUTS:
 
-            - ``i`` -- A cone index.
-            - ``L1`` -- A list of tuples.
-            - ``L2`` - -A list of tuples.
+        - ``i`` -- A cone index.
+        - ``L1`` -- A list of tuples.
+        - ``L2`` - -A list of tuples.
 
         EXAMPLES::
 
@@ -384,7 +385,7 @@ def build_cones(n):
     
     INPUTS:
 
-        - ``n`` -- The number of variables (which is the number of cones minus one).
+    - ``n`` -- The number of variables (which is the number of cones minus one).
 
     TESTS::
 
@@ -409,7 +410,7 @@ def get_score_function(name):
     
     INPUTS:
         
-        - ``name`` -- Name of a score function within "min", "degmin"
+    - ``name`` -- Name of a score function within "min", "degmin"
     """
     
     def min_score_function(t):
