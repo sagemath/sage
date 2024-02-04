@@ -426,7 +426,7 @@ AC_ARG_ENABLE([notebook],
 AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
-    for pkg in r rpy2 r_jupyter tzlocal pytz_deprecation_shim; do
+    for pkg in r rpy2 r_jupyter tzlocal pytz_deprecation_shim tzdata; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
