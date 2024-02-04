@@ -4187,12 +4187,13 @@ class Link(SageObject):
             sage: import snappy                    # optional - snappy
             Plink failed to import tkinter.
 
+            sage: # optional - database_knotinfo snappy
             sage: from sage.knots.knotinfo import KnotInfoSeries
-            sage: KnotInfoSeries(10, True, True)   # optional - database_knotinfo
+            sage: KnotInfoSeries(10, True, True)
             Series of knots K10
-            sage: _.inject()                       # optional - database_knotinfo
+            sage: _.inject()
             Defining K10
-            sage: for i in range(160, 166):        # optional - database_knotinfo snappy
+            sage: for i in range(160, 166):
             ....:     K = K10(i)
             ....:     k = K.link(K.items.name, snappy=True)
             ....:     print(k, '--->', k.sage_link().get_knotinfo())
@@ -4202,16 +4203,15 @@ class Link(SageObject):
             <Link 10_163: 1 comp; 10 cross> ---> (<KnotInfo.K10_162: '10_162'>, False)
             <Link 10_164: 1 comp; 10 cross> ---> (<KnotInfo.K10_163: '10_163'>, False)
             <Link 10_165: 1 comp; 10 cross> ---> (<KnotInfo.K10_164: '10_164'>, False)
-
-            sage: snappy.Link('10_166')            # optional - snappy
+            sage: snappy.Link('10_166')
             <Link 10_166: 1 comp; 10 cross>
-            sage: _.sage_link().get_knotinfo()     # optional - database_knotinfo snappy
+            sage: _.sage_link().get_knotinfo()
             (<KnotInfo.K10_165: '10_165'>, True)
 
         Another pair of confusion (see the corresponding `Warning
         <http://katlas.math.toronto.edu/wiki/10_86>`__)::
 
-           sage: # optional - snappy
+           sage: # optional - database_knotinfo snappy
            sage: Ks10_86 = snappy.Link('10_86')
            sage: Ks10_83 = snappy.Link('10_83')
            sage: Ks10_86.sage_link().get_knotinfo()
@@ -4385,20 +4385,21 @@ class Link(SageObject):
             sage: l1.is_isotopic(l3)
             False
 
+            sage: # optional - database_knotinfo
             sage: from sage.knots.knotinfo import KnotInfo
-            sage: L = KnotInfo.L7a7_0_0             # optional - database_knotinfo
-            sage: L.series(oriented=True).inject()  # optional - database_knotinfo
+            sage: L = KnotInfo.L7a7_0_0
+            sage: L.series(oriented=True).inject()
             Defining L7a7
-            sage: L == L7a7(0)                      # optional - database_knotinfo
+            sage: L == L7a7(0)
             True
-            sage: l = L.link()                      # optional - database_knotinfo
-            sage: l.is_isotopic(L7a7(1).link())     # optional - database_knotinfo
+            sage: l = L.link()
+            sage: l.is_isotopic(L7a7(1).link())
             Traceback (most recent call last):
             ...
             NotImplementedError: comparison not possible!
-            sage: l.is_isotopic(L7a7(2).link())     # optional - database_knotinfo
+            sage: l.is_isotopic(L7a7(2).link())
             True
-            sage: l.is_isotopic(L7a7(3).link())     # optional - database_knotinfo
+            sage: l.is_isotopic(L7a7(3).link())
             False
         """
         from sage.misc.verbose import verbose
