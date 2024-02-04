@@ -426,17 +426,9 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         self._saturated = True
         return I
 
-    def _S_pair(self,i,f,g):
-        order = self.ring().order
-        u = order.generator_for_pair(i,f.exponents(),g.exponents())
-        u = self.ring().monomial(*u)
-        [lcif, lmif, _] = f.leadings_for_cone(i)
-        [lcig, lmig, _] = g.leadings_for_cone(i)
-        return lcig*(u/lmif)*f - lcif*(u/lmig)*g 
-
     def groebner_basis(self, saturate=True):
         r"""
-        Return the reduced Groebner basis for the specified term order.
+        Return the reduced Groebner basis for the specified order.
 
         EXAMPLES::
 
@@ -445,29 +437,48 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: J = P.ideal([y + 1])
             sage: (I + J).groebner_basis()
             (x - 1, y + 1)
+
+            With a generalized monomial order defined in parent ring::
+
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: R.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: I = R.ideal([2*x^-2*y + x^-1, 3*y^-5 + x^3, x^2*y^2 - 5*x^-3*y^3])
+            sage: I.groebner_basis()
+            (x^-1 + 2*x^-2*y,
+             x^3 + 3*y^-5,
+             x^2*y^2 - 5*x^-3*y^3,
+             8*y^8 - 3,
+             32*y^5 + 5*y,
+             359/32*y^2)
         """
 
-        order = self.ring().order 
+        ring = self.ring()
+        order = ring.order()
         if isinstance(order, GeneralizedMonomialOrder):
+            # Compute GB with respect to a generalized monomial order.
             G = list(self.gens())
-            n_gens = len(G)
-            n_cones = len(order.get_cones())
-            B = [ (G[i],G[j]) for i in range(n_gens) for j in range(n_gens) if i < j]
+            n_cones = order.n_cones()
+            B = [ (G[i],G[j]) for i in range(len(G)) for j in range(len(G)) if i < j]
             while len(B) > 0:
-                pair = B[0]
+                (f,g) = B[0]
                 B = B[1:]
-                # breakpoint()
-                #print(len(G)) 
                 for i in range(n_cones):
-                    spair = self._S_pair(i,*pair)
-                    r,_ = spair.reduce(G)
+                    # Compute S-pair
+                    u = ring.monomial(*order.generator_for_pair(i, f.exponents(), g.exponents()))
+                    [lcif, lmif, _] = f.leadings_for_cone(i)
+                    [lcig, lmig, _] = g.leadings_for_cone(i)
+                    Spair = lcig*(u/lmif)*f - lcif*(u/lmig)*g
+                    # Reduction with respect to generalized order
+                    r,_ = Spair.generalized_reduction(G)
                     if r:
                         B += [(r,h) for h in G]
                         G += [r]
-            return G
+            return tuple(G)
         else:
+            # No generalized order is defined, compute GB for the associated polynomial ideal.
             l = self.polynomial_ideal(saturate=saturate).groebner_basis()
-            return tuple(self.ring()(x) for x in l)
+            return tuple(ring(x) for x in l)
 
     def is_one(self):
         """

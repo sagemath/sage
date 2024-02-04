@@ -1668,8 +1668,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         r"""
         Return the leading monomial of ``self`` with respect to the ``i``-th cone
 
-        INPUTS:
-            - ``i`` -- A cone index.
+        INPUT:
+
+        - ``i`` -- A cone index.
 
         EXAMPLES::
 
@@ -1696,8 +1697,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         r"""
         Return the leading coefficient of ``self`` with respect to the ``i``-th cone.
         
-        INPUTS:
-            - ``i`` -- A cone index.
+        INPUT:
+
+        - ``i`` -- a cone index
 
         EXAMPLES::
 
@@ -1716,8 +1718,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         r"""
         Return the leading term of self with respect to the `i`-th cone
 
-        INPUTS:
-            - ``i`` -- A cone index.
+        INPUT:
+
+        - ``i`` -- A cone index.
 
         EXAMPLES::
 
@@ -1732,10 +1735,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def leadings_for_cone(self,i):
         r"""
-        Return a list containgin the leading coefficient, monomail and term of ``self`` for the ``i``-th cone.
+        Return a list containing the leading coefficient, monomail and term of ``self`` for the ``i``-th cone.
     
-        INPUTS:
-            - ``i`` -- A cone index.
+        INPUT:
+
+        - ``i`` -- a cone index
 
         EXAMPLES::
 
@@ -1746,7 +1750,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.leadings_for_cone(1)
             [2, x^-2*y^-1, 2*x^-2*y^-1]
 
-
         """
         lm = self.leading_monomial_for_cone(i)
         lc = self.coefficient(lm)
@@ -1756,8 +1759,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         Test whether the monomial ``self`` is in the ``i``-th cone.
 
-        INPUTS:
-            - ``i`` -- A cone index.
+        INPUT:
+
+        - ``i`` -- a cone index
 
         EXAMPLES::
 
@@ -1781,9 +1785,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         Return the generator of ``self`` for the ``i``-th cone.
     
-        INPUTS:
+        INPUT:
             
-        - ``i`` -- A cone index.
+        - ``i`` -- a cone index
 
         EXAMPLES::
 
@@ -1804,23 +1808,32 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         u = self.parent().monomial(*u)
         return u
         
-    def reduction(self,reducers):
+    def generalized_reduction(self,reducers):
         r"""
-        Reduce self by ``reducers`` using the multivariate division algorithm introduced in [PU1999]_.
+        Reduce self by ``reducers`` using the multivariate division algorithm of [PU1999]_.
+        A generalized order must be defined in parent to use this method.
 
         INPUT:
 
-        - ``reducers`` -- A list of Laurent polynomaials.
+        - ``reducers`` -- a list of Laurent polynomials
 
-        OUTPUT:
+        OUTPUT: a tuple of
 
-        A tuple containing the remainder and the list of quotients.
+        - remainder
+
+        - list of quotients
 
         EXAMPLES::
 
-            
+            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+            sage: order = GeneralizedMonomialOrder(2)
+            sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
+            sage: f = x^-2*y + x^2*y^-3
+            sage: reducers = [2*x^-2*y + x^-1, 3*y^-5 + x^3, x^2*y^2 - 5*x^-3*y^3]
+            sage: f.generalized_reduction(reducers)
+            (-1/3*x^5*y^2 + 2/3*y^7,
+             [1/6*x^3*y^5 - 1/3*x^2*y^6 + 1/2, 1/3*x^2*y^2 - 1/6*x^-1*y^5, 0])
         """
-
         if self.parent().order() is None:
             raise AttributeError("Parent has no generalized order")
 
@@ -2124,70 +2137,4 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if new_ring is not None:
             return new_ring(ans)
         return ans
-
-def reduction(g,reducers):
-    r"""
-    Reduce ``g``  by ``reducers`` using the multivariate division algorithm of [PU1999]_.
-
-    INPUTS:
-        - ``g`` -- A Laurent polynomial.
-        - ``reducers`` -- A list of Laurent polynomials.
-
-    OUTPUT: A tuple (remainder, quotients) where remainder is the rest and quotients 
-            a list of Laurent polynomials.
-    
-    EXAMPLES::
-
-        sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-        sage: order = GeneralizedMonomialOrder(2)
-        sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
-        sage: g = x^2*y + y^-1*x^-2 + x^2*y^-3
-        sage: reducers = [2*x^2*y + x^-1, 3*y^-3*y^-2 + x^3, x^2*y^2 - 5*x^-3*y^3 + 4*x^-6*y^-1]
-        sage: g.reduce(reducers)
-
-    """
-    f = g
-    if f.parent().order() is None:
-        raise AttributeError("Parent has no generalized order")
-
-    if not isinstance(reducers,list):
-        raise TypeError("Reducers must be a list of Laurent polynomials")
-    for h in reducers:
-        if not isinstance(h, LaurentPolynomial):
-            raise TypeError("Reducers must be Laurent polynomials")
-
-    num_reducers = len(reducers) 
-    quotients = [0]*num_reducers
-    remainder = 0
-   
-    while f:
-        # Find a cone containing the leading monomial of f
-        for i in range(0,f.parent()._n):
-            lm = f.leading_monomial()
-            if lm.is_in_cone(i):break
-
-        try_reduction = True
-        while try_reduction and f:
-            lm = f.leading_monomial()
-            found_reducer=False
-            for j in range(0,len(reducers)):
-                reducer = reducers[j]
-                lm_reducer_cone = reducer.leading_monomial_for_cone(i)
-                candidate = ((lm/lm_reducer_cone)*reducer).leading_monomial()
-                if candidate == lm:
-                    found_reducer = True
-                    t = f.leading_term()/reducer.leading_term_for_cone(i)
-                    f = f - t*reducer
-                    quotients[j] = quotients[j] + t 
-                    break
-
-            if not found_reducer:
-                try_reduction = False
-       
-        if f:
-            lt = f.leading_term()
-            remainder = remainder + lt
-            f = f - lt
-
-    return (remainder, quotients)
 
