@@ -3297,10 +3297,10 @@ class PermutationGroup_generic(FiniteGroup):
         N_next = GbyN.minimal_normal_subgroups()[0]
 
         # find representatives from GbyN_set
-        group = sorted(copy(GbyN.list()))
+        group = sorted(copy(list(GbyN_set)))
         subgroup = sorted([self(s) for s in N_next.list()])
-        for rep in group[1:]:
-            for each in subgroup[1:]:
+        for rep in group:
+            for each in subgroup:
                 if each*rep in group:
                     g.add(rep)
                 elif rep*each in group:
@@ -3350,11 +3350,11 @@ class PermutationGroup_generic(FiniteGroup):
 
         t = 13/5 + log(self.cardinality(), 2)/log(N.cardinality(), 2)
         if t <= l :
-            for candidate_gen in my_function(g,N,t):
+            for candidate_gen in my_function(g,N.list(),t):
                 if self.is_GroupByGenerators(candidate_gen):
                     return set(candidate_gen)
 
-        for candidate_gen0 in my_function(g,N,l):
+        for candidate_gen0 in my_function(g,N.list(),l):
             for nl in N:
                 candidate_gen = set(candidate_gen0).union({nl})
                 if self.is_GroupByGenerators(candidate_gen):
