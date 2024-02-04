@@ -3201,12 +3201,6 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
         sage: normalize_basis_at_p(e, 5)
         [(1, 0), (1/2*j + 1/2*k, 0), (-5/6*j + 1/6*k, 1), (1/2*i, 1)]
 
-        sage: A.<i,j,k> = QuaternionAlgebra(-1,-7)
-        sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
-        sage: normalize_basis_at_p(e, 2)
-        [(1, 0), (1/2 + 1/2*i + 1/2*j + 1/2*k, 0), (-34/105*i - 463/735*j + 71/105*k, 1),
-         (-34/105*i - 463/735*j + 71/105*k, 1)]
-
     TESTS:
 
     Check if :trac:`37217` is fixed::
