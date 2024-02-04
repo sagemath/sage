@@ -134,7 +134,7 @@ jobs:
             *)               export TARGETS_PRE="${{ inputs.targets_pre }}" TARGETS="${{ inputs.targets }} TARGETS_OPTIONAL="${{ inputs.targets_optional }}
                              ;;
           esac
-          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
+          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=6 $TARGETS
       - name: Prepare logs artifact
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
