@@ -140,7 +140,7 @@ jobs:
         # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
         # For doctesting, we use a lower parallelization to avoid timeouts.
         run: |
-          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
+          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=6 $TARGETS
       - name: Prepare logs artifact
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
