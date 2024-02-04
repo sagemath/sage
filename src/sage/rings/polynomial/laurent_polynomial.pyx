@@ -1988,3 +1988,5 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             0
         """
         return self.__u[-self.__n]
+
+

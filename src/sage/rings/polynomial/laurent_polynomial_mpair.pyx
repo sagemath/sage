@@ -1615,10 +1615,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if order is None:
             raise AttributeError(f"No generalized order defined in parent")
 
-        if self._prod is None:
-            self._compute_polydict()
-        exponents = [tuple(et) for et in self._prod.exponents()]
-        leading_tuple = order.greatest_tuple(exponents)
+        # if self._prod is None:
+            # self._compute_polydict()
+        # exponents = [tuple(et) for et in self._prod.exponents()]
+        leading_tuple = order.greatest_tuple(self.exponents())
         return ring.monomial(*leading_tuple)
 
     def leading_coefficient(self):
