@@ -46,6 +46,10 @@ on:
       free_disk_space:
         default: false
         type: boolean
+      timeout:
+        description: 'Elapsed time (seconds) at which to kill the build'
+        default: 20000
+        type: number
       #
       # For use in upstream CIs.
       #
@@ -134,6 +138,7 @@ jobs:
             *)               export TARGETS_PRE="${{ inputs.targets_pre }}" TARGETS="${{ inputs.targets }} TARGETS_OPTIONAL="${{ inputs.targets_optional }}
                              ;;
           esac
+          (sleep ${{ inputs.timeout }}; pkill make) &
           MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=6 $TARGETS
       - name: Prepare logs artifact
         run: |
