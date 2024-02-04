@@ -207,9 +207,6 @@ class GeneralizedMonomialOrder(SageObject):
             sage: order.compare((3,-4,5), (3,-4,5))
             0
         """
-
-        if not isinstance(a, tuple) or not isinstance(b, tuple):
-            raise ValueError("Args must be tuples")
         if a == b: return 0
         diff = self._score_function(a) - self._score_function(b)
         if diff != 0: 
@@ -237,9 +234,7 @@ class GeneralizedMonomialOrder(SageObject):
             (4, -5, -6)
         """
         
-        if (not isinstance(a,tuple) or not isinstance(b, tuple)) and not isinstance(a,list):
-            raise TypeError("Args must be either two tuples, or first argument must be a list of tuples")
-        if isinstance(a,tuple):
+        if not isinstance(a,list):
             return a if self.compare(a,b) == 1 else b
         else:
             if len(a) == 1: return a[0]
