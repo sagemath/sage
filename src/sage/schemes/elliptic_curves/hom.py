@@ -125,15 +125,15 @@ class EllipticCurveHom(Morphism):
             raise TypeError(f'cannot compose {type(self)} with {type(other)}')
 
         ret = self._composition_impl(self, other)
-        if ret is not NotImplemented:
-            return ret
 
-        ret = other._composition_impl(self, other)
-        if ret is not NotImplemented:
-            return ret
+        if ret is NotImplemented:
+            ret = other._composition_impl(self, other)
 
-        from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-        return EllipticCurveHom_composite.from_factors([other, self])
+        if ret is NotImplemented:
+            from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            ret = EllipticCurveHom_composite.from_factors([other, self])
+
+        return ret
 
     def _add_(self, other):
         r"""
@@ -1129,6 +1129,91 @@ class EllipticCurveHom(Morphism):
         from sage.matrix.constructor import matrix
         from sage.rings.finite_rings.integer_mod_ring import Zmod
         return matrix(Zmod(n), [vecP, vecQ])
+
+    def __truediv__(self, other):
+        r"""
+        Internal helper function to provide the `\phi/d` syntax
+        for dividing an isogeny by an integer.
+
+        To divide an isogeny by another isogeny (on the left or
+        right), use :meth:`divide_left` or :meth:`divide_right`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(419), [-1, 0])
+            sage: (E.frobenius_isogeny() + 1) / 2
+            Fractional elliptic-curve morphism of degree 105:
+              Numerator:   Sum morphism:
+                From: Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419
+                To:   Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419
+                Via:  (Frobenius endomorphism of degree 419:
+                         From: Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419
+                         To:   Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419,
+                       Scalar-multiplication endomorphism [1]
+                         of Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419)
+              Denominator: 2
+        """
+        from sage.rings.integer import Integer
+        if not isinstance(other, (int, Integer)):
+            return NotImplemented
+        from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
+        return EllipticCurveHom_fractional(self, other)
+
+    def divide_left(self, psi):
+        r"""
+        Return an isogeny `\chi` such that `\psi\circ\chi = \varphi`,
+        where `\varphi` is this isogeny, if such a `\chi` exists.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('54.b2')
+            sage: K = next(T for T in E.torsion_points() if T.order() == 9)
+            sage: phi, psi = E.isogeny(K).factors()
+            sage: chain = psi * phi; chain
+            Composite morphism of degree 9 = 3^2:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 14*x + 29 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 2324*x - 43091 over Rational Field
+            sage: chain.divide_right(phi)
+            Fractional elliptic-curve morphism of degree 3:
+              Numerator:   Composite morphism of degree 27 = 3^3:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 + 106*x - 323 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 2324*x - 43091 over Rational Field
+              Denominator: 3
+            sage: chain.divide_right(phi) == psi
+            True
+        """
+        from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
+        numer = psi.dual() * self
+        denom = psi.degree()
+        return EllipticCurveHom_fractional(numer, denom)
+
+    def divide_right(self, psi):
+        r"""
+        Return an isogeny `\chi` such that `\chi\circ\psi = \varphi`,
+        where `\varphi` is this isogeny, if such a `\chi` exists.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('54.b2')
+            sage: K = next(T for T in E.torsion_points() if T.order() == 9)
+            sage: phi, psi = E.isogeny(K).factors()
+            sage: chain = psi * phi; chain
+            Composite morphism of degree 9 = 3^2:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 14*x + 29 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 2324*x - 43091 over Rational Field
+            sage: chain.divide_left(psi)
+            Fractional elliptic-curve morphism of degree 3:
+              Numerator:   Composite morphism of degree 27 = 3^3:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 14*x + 29 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 + 106*x - 323 over Rational Field
+              Denominator: 3
+            sage: chain.divide_left(psi) == phi
+            True
+        """
+        from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
+        numer = self * psi.dual()
+        denom = psi.degree()
+        return EllipticCurveHom_fractional(numer, denom)
 
 
 def compare_via_evaluation(left, right):
