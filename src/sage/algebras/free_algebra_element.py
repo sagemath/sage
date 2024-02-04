@@ -222,10 +222,11 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: A(2).is_unit()
             True
         """
-        if self.is_zero() or len(self) > 1 or not list(self)[0][0].is_one():
+        mc = self._monomial_coefficients
+        if not mc or len(mc) > 1:
             return False
-        c = self.leading_coefficient()
-        return c.is_unit()
+        m, c = next(iter(mc.items()))
+        return m.is_one() and c.is_unit()
 
     def __invert__(self):
         """
@@ -240,17 +241,17 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: ~A(0)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: element is not invertible
+            ValueError: element is not invertible
 
             sage: ~A(1 + x)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: element is not invertible
+            ValueError: element is not invertible
         """
         if self.is_unit():
-            c = self.leading_coefficient()
-            return self.parent()(~c)
-        raise ZeroDivisionError("element is not invertible")
+            m, c = next(iter(self._monomial_coefficients.items()))
+            return type(self)(self.parent(), {m: c.inverse_of_unit()})
+        raise ValueError("element is not invertible")
 
     def _acted_upon_(self, scalar, self_on_left=False):
         """

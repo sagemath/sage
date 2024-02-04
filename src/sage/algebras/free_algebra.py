@@ -453,7 +453,6 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
     implementation of free algebras. Two corresponding free
     algebras in different implementations are not equal, but there
     is a coercion.
-
     """
     Element = FreeAlgebraElement
 
@@ -479,14 +478,11 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             raise TypeError("argument R must be a ring")
         self.__ngens = n
         indices = FreeMonoid(n, names=names)
-        if degrees is None:
-            cat = AlgebrasWithBasis(R)
-        else:
-            if (len(degrees) == len(names) and
-                all(d in ZZ for d in degrees)):
-                cat = AlgebrasWithBasis(R).Graded()
-            else:
+        cat = AlgebrasWithBasis(R)
+        if degrees is not None:
+            if len(degrees) != len(names) or not all(d in ZZ for d in degrees):
                 raise ValueError("argument degrees must specify an integer for each generator")
+            cat = cat.Graded()
 
         CombinatorialFreeModule.__init__(self, R, indices, prefix='F',
                                          category=cat)
@@ -494,7 +490,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         if degrees is None:
             self._degrees = None
         else:
-            self._degrees = {g: d for g, d in zip(self.monoid().gens(), degrees)}
+            self._degrees = {g: ZZ(d) for g, d in zip(self.monoid().gens(), degrees)}
 
     def one_basis(self):
         """
@@ -819,7 +815,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: (a*b*a*b^2).degree()
             -1
         """
-        return sum(self._degrees[g] * e for g, e in m)
+        return ZZ.sum(self._degrees[g] * e for g, e in m)
 
     def product_on_basis(self, x, y):
         """
