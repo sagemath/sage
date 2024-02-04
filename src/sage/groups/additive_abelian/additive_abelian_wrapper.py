@@ -365,7 +365,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             sage: G.discrete_log(V([6, 4]))
             Traceback (most recent call last):
             ...
-            TypeError: Not in group
+            ValueError: not in group
 
         ::
 
@@ -617,7 +617,7 @@ def _discrete_log_pgroup(p, vals, aa, b):
             if key in tab:
                 return tab[key] + vector(y)
 
-        raise TypeError('Not in group')
+        raise ValueError('not in group')
 
     def _rec(j, k, c):
 
@@ -744,7 +744,7 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
         beta_q *= p
         try:
             e = _discrete_log_pgroup(p, vals, alphas, -beta_q)
-        except TypeError:
+        except ValueError:
             continue
         # step 6
         _expand_basis_pgroup(p, alphas, vals, beta, h, list(e) + [p**v])
@@ -815,7 +815,7 @@ def basis_from_generators(gens, ords=None):
             beta, ord_beta = pgens.pop()
             try:
                 dlog = _discrete_log_pgroup(p, vals, alphas, beta)
-            except TypeError:
+            except ValueError:
                 pass
             else:
                 continue
@@ -828,7 +828,7 @@ def basis_from_generators(gens, ords=None):
 #                assert beta_q == beta * p**v
                 try:
                     e = _discrete_log_pgroup(p, vals, alphas, -beta_q)
-                except TypeError:
+                except ValueError:
                     continue
                 _expand_basis_pgroup(p, alphas, vals, beta, val_beta, list(e) + [p**v])
 #                assert all(a.order() == p**v for a,v in zip(alphas, vals))
