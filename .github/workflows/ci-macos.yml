@@ -108,7 +108,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        os: [ macos-11, macos-12 ]
+        os: [ macos-11, macos-12, macos-14 ]
         tox_system_factor: [macos-nobootstrap]
         tox_packages_factor: [minimal]
         xcode_version_factor: [default]
@@ -129,7 +129,7 @@ jobs:
         if: contains(matrix.tox_system_factor, 'nobootstrap')
       - name: Move homebrew away
         run: |
-          (cd /usr/local && for a in bin etc include lib opt sbin share; do sudo mv $a $a-moved; done)
+          (cd $(brew --prefix) && for a in bin etc include lib opt sbin share; do sudo mv $a $a-moved; done)
       - name: Select Xcode version
         run: |
           if [ ${{ matrix.xcode_version_factor }} != default ]; then sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode_version_factor }}.app; fi
