@@ -86,7 +86,7 @@ jobs:
 
       - name: Install test prerequisites
         run: |
-          pip install tox
+          pipx install tox
       - name: Download upstream artifact
         uses: actions/download-artifact@v3
         with:
