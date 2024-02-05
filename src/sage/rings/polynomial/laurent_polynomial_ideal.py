@@ -26,6 +26,7 @@ from sage.rings.ideal import Ideal_generic
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing_univariate
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE
 from sage.arith.misc import GCD
+from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
 
 class LaurentPolynomialIdeal( Ideal_generic ):
     def __init__(self, ring, gens, coerce=True, hint=None):
