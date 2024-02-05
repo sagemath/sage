@@ -241,17 +241,17 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: ~A(0)
             Traceback (most recent call last):
             ...
-            ValueError: element is not invertible
+            ArithmeticError: element is not invertible
 
             sage: ~A(1 + x)
             Traceback (most recent call last):
             ...
-            ValueError: element is not invertible
+            ArithmeticError: element is not invertible
         """
         if self.is_unit():
             m, c = next(iter(self._monomial_coefficients.items()))
             return type(self)(self.parent(), {m: c.inverse_of_unit()})
-        raise ValueError("element is not invertible")
+        raise ArithmeticError("element is not invertible")
 
     def _acted_upon_(self, scalar, self_on_left=False):
         """
