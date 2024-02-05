@@ -23,6 +23,7 @@ from sage.structure.element cimport FieldElement, parent
 from sage.structure.richcmp cimport richcmp
 
 from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 
 import sage.misc.latex as latex
 
@@ -474,15 +475,8 @@ cdef class FractionFieldElement(FieldElement):
             (x1 + 2*x2 + 3*x3 + 400)/(x1 + 2*x2 + 3*x3 + 5*x5 + 6*x6 + 7*x7 + 400)
         """
         if isinstance(in_dict, dict):
-            gens = self.parent().gens()
-
-            def to_R(m):
-                try:
-                    mi = gens.index(m)
-                except ValueError:
-                    return m
-                return mi
-            in_dict = {to_R(m): v for m, v in in_dict.items()}
+            R = self.parent().base()
+            in_dict = {ZZ(m) if m in ZZ else R(m): v for m, v in in_dict.items()}
 
         num = self._numerator.subs(in_dict, *args, **kwds)
         den = self._denominator.subs(in_dict, *args, **kwds)
