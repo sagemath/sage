@@ -385,7 +385,7 @@ class EllipticCurveSaturator(SageObject):
             Using sieve method to saturate...
             ...
             -- points were not 2-saturated, gaining index 2
-            (0, (-1/4*a + 3/4 : 59/8*a - 317/8 : 1))
+            (1, (0 : 1 : 0))
 
         A CM example where large siecing primes are needed (LMFDB
         label 2.0.3.1-50625.1-CMb2)::
