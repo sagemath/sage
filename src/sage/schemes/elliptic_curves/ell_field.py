@@ -1310,9 +1310,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: (P.order(), Q.order())
             (7, 3)
             sage: phi = E.isogeny([P,Q]); phi
-            Isogeny of degree 21
-             from Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 19
-               to Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 19
+            Composite morphism of degree 21 = 7*3:
+              From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 19
+              To:   Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 19
             sage: phi(E.random_point())  # all points defined over GF(19) are in the kernel
             (0 : 1 : 0)
 
@@ -1352,8 +1352,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ``kernel`` is a list of points::
 
             sage: E = EllipticCurve(GF(31), [1,0,0,1,2])
-            sage: P = E.gens()[0]*2
-            sage: Q = E.gens()[1]*3
+            sage: P = E([21,2])
+            sage: Q = E([7, 12])
             sage: print(P.order())
             6
             sage: print(Q.order())
@@ -1381,6 +1381,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Elliptic-curve isogeny (using square-root Vélu) of degree 23:
               From: Elliptic Curve defined by y^2 = x^3 + 6*x + 46 over Finite Field of size 97
               To:   Elliptic Curve defined by y^2 = x^3 + 95*x + 68 over Finite Field of size 97
+            sage: _velu_sqrt_bound.set(1000) # Reset bound
 
         If the order of the point is unknown, fall back to ``"traditional"``::
 
@@ -1390,6 +1391,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: _velu_sqrt_bound.set(1)
             sage: E.isogeny(P)
             Isogeny of degree 46 from Elliptic Curve defined by y^2 = x^3 + 6*x + 46 over Finite Field of size 97 to Elliptic Curve defined by y^2 = x^3 + 87*x + 47 over Finite Field of size 97
+            sage: _velu_sqrt_bound.set(1000) # Reset bound
 
         .. SEEALSO::
 
