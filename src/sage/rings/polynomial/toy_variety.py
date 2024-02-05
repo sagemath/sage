@@ -120,7 +120,10 @@ def coefficient_matrix(polys):
     M = matrix(R, len(polys), len(mons))
     for i in range(len(polys)):
         imons = polys[i].monomials()
-        icoeffs = polys[i].coefficients()
+        if polys[0].parent().ngens() == 1:
+            icoeffs = polys[i].coefficients()[::-1]
+        else:
+            icoeffs = polys[i].coefficients()
         for j in range(len(imons)):
             M[i, mons.index(imons[j])] = icoeffs[j]
     return M
@@ -166,6 +169,13 @@ def is_linearly_dependent(polys) -> bool:
         False
         sage: is_linearly_dependent([])
         False
+        sage: R.<x> = PolynomialRing(QQ)
+        sage: B = [x^147 + x^99,
+        ....:      2*x^123 + x^75,
+        ....:      x^147 + 2*x^123 + 2*x^75,
+        ....:      2*x^147 + x^99 + x^75]
+        sage: is_linearly_dependent(B)
+        True
     """
     if not polys:
         return False

@@ -12,12 +12,16 @@ if [ -n "$OUTPUT_RST" ]; then
     echo ".. _spkg_$PKG_BASE:"
     echo
     ref ()   { echo ":ref:\`$1\`"; }
+    spkg ()  { ref spkg_$1; }
     issue () { echo ":issue:\`$1\`"; }
     code ()  { echo "\`\`$*\`\`"; }
+    tab ()   { echo ".. tab:: $1"; }
 else
     ref ()   { echo "$1"; }
+    spkg ()  { echo "$1"; }
     issue () { echo "https://github.com/sagemath/sage/issues/$1"; }
     code ()  { echo "$1"; }
+    tab ()   { echo "$1:"; }
 fi
 PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
 for ext in rst txt; do
@@ -56,7 +60,7 @@ for dep_file in dependencies dependencies_order_only; do
                 # Looks like a package
                 *)          if [ -r "$SAGE_ROOT/build/pkgs/$dep/SPKG.rst" ]; then
                                 # This RST label is set in src/doc/bootstrap
-                                echo "- $(ref spkg_$dep)"
+                                echo "- $(spkg $dep)"
                             else
                                 echo "- $dep"
                             fi;;
@@ -96,31 +100,47 @@ for system_package_file in "$PKG_DISTROS"/*.txt; do
         esac
     fi
 done
-if [ $have_repology = yes ]; then
-    systems="$systems repology"
-fi
 system=
+# Show using inline tabs
+export RST_INDENT="   "
 for system in $systems; do
         system_package_file="$PKG_DISTROS"/$system.txt
         system_packages="$(echo $(sed 's/#.*//;' $system_package_file))"
         case $system in
-            debian)
-                # Generic
-                echo "Debian/Ubuntu:"
-                ;;
-            fedora)
-                # Generic
-                echo "Fedora/Redhat/CentOS:"
-                ;;
-            repology)
-                ;;
-            *)
-                echo "$system:"
-                ;;
+            alpine)     tab "Alpine";;
+            arch)       tab "Arch Linux";;
+            conda)      tab "conda-forge";;
+            cygwin)     tab "Cygwin";;
+            debian)     tab "Debian/Ubuntu";;
+            fedora)     tab "Fedora/Redhat/CentOS";;
+            freebsd)    tab "FreeBSD";;
+            gentoo)     tab "Gentoo Linux";;
+            homebrew)   tab "Homebrew";;
+            macports)   tab "MacPorts";;
+            nix)        tab "Nixpkgs";;
+            openbsd)    tab "OpenBSD";;
+            opensuse)   tab "openSUSE";;
+            slackware)  tab "Slackware";;
+            void)       tab "Void Linux";;
+            repology)   ;;
+            *)          tab "$system";;
         esac
-        sage-print-system-package-command $system --wrap --prompt='    $ ' --continuation='          ' --sudo install $system_packages
+        if [ -n "$system_packages" ]; then
+            sage-print-system-package-command $system --wrap --prompt="$RST_INDENT"'    $ ' --continuation="$RST_INDENT"'          ' --sudo install $system_packages
+        else
+            echo
+            echo "${RST_INDENT}No package needed."
+        fi
         echo
 done
+unset RST_INDENT
+if [ $have_repology = yes ]; then
+    # Show below the inline tabs
+    system=repology
+    system_package_file="$PKG_DISTROS"/$system.txt
+    system_packages="$(echo $(sed 's/#.*//;' $system_package_file))"
+    sage-print-system-package-command $system --wrap --prompt='    $ ' --continuation='          ' --sudo install $system_packages
+fi
 if [ -z "$system" ]; then
     echo "(none known)"
 else
