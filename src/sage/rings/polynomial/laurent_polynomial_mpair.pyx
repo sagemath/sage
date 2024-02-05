@@ -1615,7 +1615,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if order is None:
             raise RuntimeError("No generalized order defined in parent ring")
 
-        leading_tuple = order.greatest_tuple(self.exponents())
+        leading_tuple = order.greatest_tuple(*self.exponents())
         return ring.monomial(*leading_tuple)
 
     def leading_coefficient(self,lm=0):
@@ -1698,7 +1698,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if order is None:
             raise RuntimeError("No generalized order defined in parent")
 
-        leading_tuple = order.greatest_tuple_for_cone(i, self.exponents())
+        leading_tuple = order.greatest_tuple_for_cone(i, *self.exponents())
         return ring.monomial(*leading_tuple)
 
     def leading_coefficient_for_cone(self,i,lmi=0):
