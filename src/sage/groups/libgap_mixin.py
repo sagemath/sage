@@ -975,7 +975,7 @@ def is_GroupByGenerators(group, generators):
     - ``generators`` -- a list or tuple of elements that generate the group.
 
     OUTPUT:
-    
+
     Boolean.
 
     EXAMPLES:
@@ -990,6 +990,7 @@ def is_GroupByGenerators(group, generators):
         group = group._libgap_()
 
     return set(group.AsList()) == set(libgap.GroupByGenerators(generators).AsList())
+
 
 @cached_method
 def minimum_generating_set(group, gap_based=False):
@@ -1058,7 +1059,7 @@ def minimum_generating_set(group, gap_based=False):
     n = N.MinimalGeneratingSet()
 
     phi = group.NaturalHomomorphismByNormalSubgroup(N)
-    GbyN = phi.ImagesSource() 
+    GbyN = phi.ImagesSource()
     GbyN_mingenset = minimum_generating_set(GbyN, gap_based=True)
 
     g = [phi.PreImagesRepresentative(g) for g in list(GbyN_mingenset)]
@@ -1079,7 +1080,7 @@ def minimum_generating_set(group, gap_based=False):
                     return set([ele.sage() for ele in modifeid_g])
         if gap_based:
             return set(g+[N.AsList()[1]])
-        return set([ele.sage() for ele in g]+[N.AsList()[1].sage()])
+        return set([ele.sage() for ele in g] + [N.AsList()[1].sage()])
 
     def gen_combinations(g, N_old, t):
         # This function is used to generate some combinations (which are required for the algorithm)
@@ -1096,7 +1097,7 @@ def minimum_generating_set(group, gap_based=False):
                 for j in range(len(N)):
                     x = g[:i]
                     y = g[i]
-                    y = y*(N[j])
+                    y = y * (N[j])
                     x = x + [y]
                     x = x + g[i+1:]
                     newL.append(x)
@@ -1104,7 +1105,7 @@ def minimum_generating_set(group, gap_based=False):
         return L
 
     t = 13/5 + log(group.Size().sage(), 2)/log(N.Size().sage(), 2)
-    if t <= l :
+    if t <= l:
         for gens in gen_combinations(g, N.AsList(), t):
             if is_GroupByGenerators(group, gens):
                 if gap_based:
