@@ -1331,6 +1331,34 @@ class Rings(CategoryWithAxiom):
                     raise ValueError("base must be a subring of this ring")
                 raise NotImplementedError
 
+        def _random_nonzero_element(self, *args, **kwds):
+            """
+            Return a random non-zero element in this ring.
+
+            The default behaviour of this method is to repeatedly call the
+            ``random_element`` method until a non-zero element is obtained.
+
+            In this implementation, all parameters are simply pushed forward
+            to the ``random_element`` method.
+
+            INPUT:
+
+            - ``*args``, ``**kwds`` - parameters that can be forwarded to
+              the ``random_element`` method
+
+            EXAMPLES::
+
+                sage: ZZ._random_nonzero_element() != 0
+                True
+                sage: A = GF((5, 3))
+                sage: A._random_nonzero_element() != 0
+                True
+            """
+            while True:
+                x = self.random_element(*args, **kwds)
+                if not x.is_zero():
+                    return x
+
     class ElementMethods:
         def is_unit(self) -> bool:
             r"""
