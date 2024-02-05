@@ -469,7 +469,6 @@ class LaurentPolynomialIdeal( Ideal_generic ):
                     [lcif, lmif, _] = f.leadings_for_cone(i)
                     [lcig, lmig, _] = g.leadings_for_cone(i)
                     Spair = lcig*(u/lmif)*f - lcif*(u/lmig)*g
-                    # Reduction with respect to generalized order
                     r,_ = Spair.generalized_reduction(G)
                     if r:
                         B += [(r,h) for h in G]
