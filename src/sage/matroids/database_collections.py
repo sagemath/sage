@@ -160,8 +160,9 @@ def AllMatroids(n, r=None, type="all"):
         ....:                 assert M.is_valid()
     """
     from sage.matroids.constructor import Matroid
-    from sage.env import SAGE_EXTCODE
-    import os
+    from sage.env import SAGE_SRC
+    from io import TextIOWrapper
+    import os, gzip
 
     if type != "all" and type != "unorientable":
         try:
@@ -195,12 +196,12 @@ def AllMatroids(n, r=None, type="all"):
             rp = min(r, n - r) if (type != "unorientable") else r
             type_file = "all" if (type != "unorientable") else "unorientable"
             file = os.path.join(
-                str(SAGE_EXTCODE), "matroids", "database",
+                str(SAGE_SRC), "sage", "ext_data", "matroids", "database",
                 type_file + "_matroids",
-                type_file + "r" + str(rp) + "n" + str(n).zfill(2) + ".txt"
+                type_file + "r" + str(rp) + "n" + str(n).zfill(2) + ".txt.gz"
             )
             try:
-                fin = open(file, "r")
+                fin = TextIOWrapper(gzip.open(file, "r"))
             except FileNotFoundError:
                 raise ValueError(
                     "(n=%s, r=%s, type=\"%s\")" % (n, r, type)
@@ -208,11 +209,7 @@ def AllMatroids(n, r=None, type="all"):
                 )
 
             cnt = 0
-            while True:
-                line = fin.readline()
-                if not line:
-                    break
-
+            for line in fin:
                 M = Matroid(groundset=range(n), rank=rp, revlex=line[:-1])
 
                 if type != "unorientable" and n - r < r:
