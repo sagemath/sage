@@ -1206,9 +1206,12 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 A = self.parent()
 
                 def on_basis(n):
-                    return A._from_dict({A._indices(j): binomial(k, n - j)
-                                         for j in range(n + 1)})
+                    return {A._indices(j): binomial(k, n - j) for j in range(n + 1)}
 
-                return A.module_morphism(on_basis, codomain=A)(self)
+                from sage.data_structures.blas_dict import linear_combination
+                mc = self._monomial_coefficients
+                ret = linear_combination((on_basis((index), coeff)
+                                         for (index, coeff) in mc.items())
+                return A.element_class(A, ret)
 
     B = Binomial
