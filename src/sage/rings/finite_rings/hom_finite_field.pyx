@@ -24,6 +24,8 @@ Construction of an embedding::
 
     sage: f(t) # random
     T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
+    sage: f(t) == f.im_gens()[0]
+    True
 
 The map `f` has a method ``section`` which returns a partially defined
 map which is the inverse of `f` on the image of `f`::
@@ -33,8 +35,9 @@ map which is the inverse of `f` on the image of `f`::
       From: Finite Field in t of size 3^7
       To:   Finite Field in T of size 3^21
       Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
-    sage: g(f(t^3+t^2+1))
-    t^3 + t^2 + 1
+    sage: a = k.random_element()
+    sage: g(f(a)) == a
+    True
     sage: g(T)
     Traceback (most recent call last):
     ...
@@ -130,8 +133,9 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
             sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section()
-            sage: g(f(t^3+t^2+1))
-            t^3 + t^2 + 1
+            sage: a = k.random_element()
+            sage: g(f(a)) == a
+            True
 
             sage: g(T)
             Traceback (most recent call last):
@@ -207,6 +211,10 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
               From: Finite Field in t of size 3^7
               To:   Finite Field in T of size 3^21
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
+            sage: a = k.random_element()
+            sage: b = k.random_element()
+            sage: f(a) + f(b) == f(a + b)
+            True
 
             sage: k.<t> = GF(3^6)
             sage: K.<t> = GF(3^9)
@@ -373,8 +381,10 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
               From: Finite Field in t of size 3^7
               To:   Finite Field in T of size 3^21
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
-            sage: g(f(t^3+t^2+1))
-            t^3 + t^2 + 1
+            sage: a = k.random_element()
+            sage: b = k.random_element()
+            sage: g(f(a) + f(b)) == a + b
+            True
             sage: g(T)
             Traceback (most recent call last):
             ...
@@ -421,7 +431,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: embed = Frob.fixed_field()[1]
-            sage: hash(embed)  # random
+            sage: hash(embed) # random
             -2441354824160407762
         """
         return Morphism.__hash__(self)
@@ -760,6 +770,8 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             sage: tfixed = kfixed.gen()
             sage: embed(tfixed) # random
             4*t^5 + 2*t^4 + 4*t^2 + t
+            sage: embed(tfixed) == embed.im_gens()[0]
+            True
         """
         if self._degree_fixed == 1:
             k = FiniteField(self.domain().characteristic())

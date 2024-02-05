@@ -64,6 +64,10 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
               From: Finite Field in t of size 3^2
               To:   Finite Field in T of size 3^4
               Defn: t |--> 2*T^3 + 2*T^2 + 1
+            sage: a = k.random_element()
+            sage: b = k.random_element()
+            sage: g(f(a) + f(b)) == g(f(a)) + g(f(b)) == a + b
+            True
         """
         if not isinstance(inverse, FiniteFieldHomomorphism_givaro):
             raise TypeError("The given map is not an instance of FiniteFieldHomomorphism_givaro")
@@ -145,6 +149,10 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
               From: Finite Field in t of size 3^2
               To:   Finite Field in T of size 3^4
               Defn: t |--> 2*T^3 + 2*T^2 + 1
+            sage: a = k.random_element()
+            sage: b = k.random_element()
+            sage: f(a) + f(b) == f(a + b)
+            True
 
             sage: k.<t> = GF(3^10)
             sage: K.<T> = GF(3^20)
@@ -184,6 +192,8 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
             sage: f = FiniteFieldHomomorphism_givaro(Hom(k, K))
             sage: f(t) # random
             2*T^3 + 2*T^2 + 1
+            sage: f(t) == f.im_gens()[0]
+            True
         """
         if x.parent() != self.domain():
             raise TypeError("%s is not in %s" % (x, self.domain()))
