@@ -282,7 +282,7 @@ def knotinfo_int(string):
 
     INPUT:
 
-    - ``string``  -- string that gives a value of some database entry
+    - ``string`` -- string that gives a value of some database entry
 
     EXAMPLES::
 
