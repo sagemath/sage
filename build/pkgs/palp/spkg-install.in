@@ -5,11 +5,6 @@ cd src
 mv Global.h Global.h-template
 
 CFLAGS="-O3 -W -Wall $CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
-# On Cygwin the stack size is ridiculously low by default, so that the nef
-# executable which allocates everything on the stack for speed reason blows it
-if [ "$UNAME" = "CYGWIN" ] ; then
-  CFLAGS="$CFLAGS -Wl,--stack,8000000"
-fi
 
 # Undefine NDEBUG. Palp source has assert statements and preprocessing them
 # away changes the syntactical meaning of the program.

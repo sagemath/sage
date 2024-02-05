@@ -892,7 +892,7 @@ cdef class TimeSeries:
             t._values[i] = self._values[i*k]
         return t
 
-    cpdef rescale(self, double s):
+    cpdef rescale(self, double s) noexcept:
         r"""
         Change ``self`` by multiplying every value in the series by ``s``.
 
@@ -1223,7 +1223,7 @@ cdef class TimeSeries:
             t._values[i] = s
         return t
 
-    cpdef double sum(self):
+    cpdef double sum(self) noexcept:
         r"""
         Return the sum of all the entries of ``self``.
 
@@ -2514,7 +2514,7 @@ cdef class TimeSeries:
         return y
 
 
-cdef new_time_series(Py_ssize_t length):
+cdef new_time_series(Py_ssize_t length) noexcept:
     r"""
     Return a new uninitialized time series of the given length.
     The entries of the time series are garbage.

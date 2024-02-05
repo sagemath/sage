@@ -144,7 +144,7 @@ def projection_func_identity(x):
     return list(x)
 
 
-class ProjectionFuncStereographic():
+class ProjectionFuncStereographic:
     """
     The stereographic (or perspective) projection onto a codimension-1 linear
     subspace with respect to a sphere centered at the origin.
@@ -238,7 +238,7 @@ class ProjectionFuncStereographic():
         return vector(RDF, [img[i] / denom for i in range(self.dim - 1)])
 
 
-class ProjectionFuncSchlegel():
+class ProjectionFuncSchlegel:
     """
     The Schlegel projection from the given input point.
 
@@ -843,8 +843,7 @@ class Projection(SageObject):
             if polyhedron.dim() < 3:
                 yield next(polyhedron.equation_generator())
             else:
-                for ineq in polyhedron.inequality_generator():
-                    yield ineq
+                yield from polyhedron.inequality_generator()
 
         faces = []
         face_inequalities = []
@@ -853,7 +852,7 @@ class Projection(SageObject):
             face_inequalities.append(facet_equation)
             vertices = cyclic_sort_vertices_2d(vertices)
             if len(vertices) >= 3:
-                v0, v1, v2 = [vector(v) for v in vertices[:3]]
+                v0, v1, v2 = (vector(v) for v in vertices[:3])
                 normal = (v2 - v0).cross_product(v1 - v0)
                 if normal.dot_product(facet_equation.A()) < 0:
                     vertices.reverse()
@@ -1144,7 +1143,7 @@ class Projection(SageObject):
             sage: q4 = p4.projection()
             sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()                         # needs sage.plot
             Graphics object consisting of 18 graphics primitives
-         """
+        """
         plt = Graphics()
         if point_opts is None:
             point_opts = {}

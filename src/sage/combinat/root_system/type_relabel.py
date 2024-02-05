@@ -10,7 +10,7 @@ Root system data for relabelled Cartan types
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.sets.family import FiniteFamily
+from sage.sets.family import Family, FiniteFamily
 from sage.combinat.root_system import cartan_type
 from sage.combinat.root_system import ambient_space
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
@@ -55,7 +55,7 @@ class CartanType(cartan_type.CartanType_decorator):
             return type
 
         relabelling = FiniteFamily(relabelling) # Hack to emulate a frozendict which would be hashable!!!!
-        return super(CartanType, cls).__classcall__(cls, type, relabelling)
+        return super().__classcall__(cls, type, relabelling)
 
     def __init__(self, type, relabelling):
         """
@@ -173,10 +173,10 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: rI5 = CartanType(['I',5]).relabel({1:0,2:1})
             sage: rI5.root_system().ambient_space()
         """
-        assert isinstance(relabelling, FiniteFamily)
         cartan_type.CartanType_decorator.__init__(self, type)
-        self._relabelling = relabelling._dictionary
-        self._relabelling_inverse = relabelling.inverse_family()._dictionary
+        relabelling = Family(relabelling)
+        self._relabelling = dict(relabelling.items())
+        self._relabelling_inverse = dict(relabelling.inverse_family().items())
         self._index_set = tuple(sorted(relabelling[i] for i in type.index_set()))
         # TODO: design an appropriate infrastructure to handle this
         # automatically? Maybe using categories and axioms?
@@ -271,7 +271,7 @@ class CartanType(cartan_type.CartanType_decorator):
             ret += " \\text{ relabelled by } " + latex(self._relabelling)
         return ret
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -285,9 +285,11 @@ class CartanType(cartan_type.CartanType_decorator):
             \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         return self._type._latex_dynkin_diagram(lambda i: label(self._relabelling[i]), node, node_dist)
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of this Cartan type.
 
@@ -307,6 +309,8 @@ class CartanType(cartan_type.CartanType_decorator):
             O---O---O=>=O---O
             4   3   2   1   0
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         return self._type.ascii_art(lambda i: label(self._relabelling[i]), node)

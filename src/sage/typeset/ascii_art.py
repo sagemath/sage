@@ -4,7 +4,7 @@ ASCII Art
 
 This file contains:
 
-- :class:`AsciiArt` an simple implementation of an ASCII art object,
+- :class:`AsciiArt` a simple implementation of an ASCII art object,
 - :func:`ascii_art` a function to get the ASCII art representation of any
   object in Sage,
 

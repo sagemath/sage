@@ -855,8 +855,8 @@ class RegularCrystals(Category_singleton):
                 if self.epsilon(i) != self.phi(i):
                     raise ValueError("the element is not weight 0")
 
-            visited = set([])
-            todo = set([self])
+            visited = set()
+            todo = {self}
             edges = []
             while todo:
                 x = todo.pop()

@@ -159,7 +159,7 @@ concepts. This includes for example::
     Category of fields
 
     sage: HopfAlgebras(QQ)
-    Category of hopf algebras over Rational Field
+    Category of Hopf algebras over Rational Field
 
 Each of the above is called a *category*. It typically specifies what
 are the operations on the elements, as well as the axioms satisfied by

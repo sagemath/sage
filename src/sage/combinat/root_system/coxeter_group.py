@@ -12,7 +12,7 @@ Coxeter Groups
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('from sage.combinat.root_system.reflection_group_real', 'ReflectionGroup')
+lazy_import('sage.combinat.root_system.reflection_group_real', 'ReflectionGroup')
 lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
@@ -73,7 +73,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
         Permutation Group with generators [(1,4)(2,3)(5,6), (1,3)(2,5)(4,6)]
         sage: W.category()                                                  # optional - gap3
         Join of Category of finite enumerated permutation groups
-            and Category of finite weyl groups
+            and Category of finite Weyl groups
             and Category of well generated finite irreducible complex reflection groups
 
         sage: W = CoxeterGroup(["A",2], implementation="matrix"); W                     # needs sage.libs.gap
@@ -86,7 +86,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
         [3 1 5]
         [2 5 1]
 
-        sage: W = CoxeterGroup(["H",3], implementation="reflection"); W                 # needs sage.rings.number_field
+        sage: W = CoxeterGroup(["H",3], implementation="reflection"); W                 # needs sage.libs.gap sage.rings.number_field
         Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5
          with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
@@ -116,7 +116,7 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
 
     TESTS::
 
-        sage: W = groups.misc.CoxeterGroup(["H",3])                                     # needs sage.groups
+        sage: W = groups.misc.CoxeterGroup(["H",3])                                     # needs sage.graphs sage.groups
     """
     if implementation not in ["permutation", "matrix", "coxeter3", "reflection", "chevie", None]:
         raise ValueError("invalid type implementation")

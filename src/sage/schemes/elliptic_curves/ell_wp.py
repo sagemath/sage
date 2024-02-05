@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Weierstrass `\wp`-function for elliptic curves
 

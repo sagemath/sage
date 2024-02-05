@@ -20,7 +20,7 @@ import errno
 import contextlib
 import io
 
-from IPython import get_ipython
+from IPython.core.getipython import get_ipython
 from IPython.terminal.pt_inputhooks import register
 
 import sage.repl.attach
@@ -37,7 +37,7 @@ def sage_inputhook(context):
             r, _, _ = select.select([f], [], [], TIMEOUT)
             if f in r:
                 return  # IPython signalled us to stop
-        except select.error as e:
+        except OSError as e:
             if e[0] != errno.EINTR:
                 raise
 

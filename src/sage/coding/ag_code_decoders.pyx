@@ -29,17 +29,18 @@ EXAMPLES::
 The ``decoder`` is now ready for correcting vectors received from a noisy
 channel::
 
-    sage: channel = channels.StaticErrorRateChannel(code.ambient_space(), tau)  # long time
-    sage: message_space = decoder.message_space()                   # long time
-    sage: message = message_space.random_element()                  # long time
-    sage: encoder = decoder.connected_encoder()                     # long time
-    sage: sent_codeword = encoder.encode(message)                   # long time
-    sage: received_vector = channel(sent_codeword)                  # long time
-    sage: (received_vector - sent_codeword).hamming_weight()        # long time
+    sage: # long time
+    sage: channel = channels.StaticErrorRateChannel(code.ambient_space(), tau)
+    sage: message_space = decoder.message_space()
+    sage: message = message_space.random_element()
+    sage: encoder = decoder.connected_encoder()
+    sage: sent_codeword = encoder.encode(message)
+    sage: received_vector = channel(sent_codeword)
+    sage: (received_vector - sent_codeword).hamming_weight()
     4
-    sage: decoder.decode_to_code(received_vector) == sent_codeword  # long time
+    sage: decoder.decode_to_code(received_vector) == sent_codeword
     True
-    sage: decoder.decode_to_message(received_vector) == message     # long time
+    sage: decoder.decode_to_message(received_vector) == message
     True
 
 AUTHORS:
@@ -66,8 +67,8 @@ from sage.rings.function_field.constructor import FunctionField
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 
-from .encoder import Encoder
-from .decoder import Decoder, DecodingError
+from sage.coding.encoder import Encoder
+from sage.coding.decoder import Decoder, DecodingError
 
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.matrix.matrix cimport Matrix
@@ -1318,7 +1319,7 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
         return self._encode(self._decode(received_vector, **kwargs))
 
 
-cdef inline int pos_mod(int a, int b):
+cdef inline int pos_mod(int a, int b) noexcept:
     """
     Return ``a % b`` such that the result is positive.
 
@@ -1384,7 +1385,7 @@ cdef class Decoder_K():
         message_index = self.message_index
         return vector(sum([message[i]*code_basis[i] for i in range(len(message_index))]))
 
-    cdef inline int _degree(self, Polynomial f):
+    cdef inline int _degree(self, Polynomial f) noexcept:
         """
         Return the degree of polynomial ``f``
 
@@ -1395,7 +1396,7 @@ cdef class Decoder_K():
         else:
             return f.degree()
 
-    cdef void _exponents(self, int s, int *sk, int *si):
+    cdef void _exponents(self, int s, int *sk, int *si) noexcept:
         """
         Compute the exponents of the monomial with weighted degree ``s``.
 
@@ -1414,7 +1415,7 @@ cdef class Decoder_K():
 
     @cython.wraparound(False)
     @cython.boundscheck(False)
-    cdef void _substitution(self, FreeModuleElement vec, w, int k, Py_ssize_t i):
+    cdef void _substitution(self, FreeModuleElement vec, w, int k, Py_ssize_t i) noexcept:
         r"""
         Substitute ``z`` with ``(z + w*phi_s)``.
 
@@ -1740,7 +1741,7 @@ cdef class Decoder_K():
 
     @cython.wraparound(False)
     @cython.boundscheck(False)
-    cdef inline int _next(self, int s):
+    cdef inline int _next(self, int s) noexcept:
         """
         Return the next value after ``s`` in dRbar(dWbar).
         """
@@ -1757,7 +1758,7 @@ cdef class Decoder_K():
 
     @cython.wraparound(False)
     @cython.boundscheck(False)
-    cdef inline void _get_eta_basis(self, list basis, list vecs, int s0, mon_func):
+    cdef inline void _get_eta_basis(self, list basis, list vecs, int s0, mon_func) noexcept:
         """
         Compute a basis of J and h-functions via FGLM algorithm.
 

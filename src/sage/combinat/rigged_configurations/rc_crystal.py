@@ -153,7 +153,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         if isinstance(cartan_type, CartanTypeFolded):
             return CrystalOfNonSimplyLacedRC(cartan_type, wt, WLR)
 
-        return super(CrystalOfRiggedConfigurations, cls).__classcall__(cls, wt, WLR=WLR)
+        return super().__classcall__(cls, wt, WLR=WLR)
 
     def __init__(self, wt, WLR):
         r"""
@@ -314,7 +314,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             sage: La = RootSystem(['C', 3]).weight_lattice().fundamental_weights()
             sage: RC = crystals.RiggedConfigurations(La[1])
             sage: TestSuite(RC).run()
-         """
+        """
         self._folded_ct = vct
         CrystalOfRiggedConfigurations.__init__(self, wt, WLR)
 

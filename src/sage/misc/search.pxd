@@ -1,1 +1,1 @@
-cpdef search(object v, object x)
+cpdef search(object v, object x) noexcept

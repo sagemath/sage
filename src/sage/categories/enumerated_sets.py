@@ -182,7 +182,8 @@ class EnumeratedSets(CategoryWithAxiom):
             It is also possible to override ``__iter__`` method itself. Then
             the methods of the first column are defined using  ``__iter__``
 
-            If none of these are provided, raise a ``NotImplementedError``.
+            If none of these are provided, this raises
+            a :class:`NotImplementedError`.
 
             EXAMPLES:
 
@@ -313,8 +314,7 @@ class EnumeratedSets(CategoryWithAxiom):
             if stop is None:
                 if start is None:
                     if step is None:
-                        for x in self:
-                            yield x
+                        yield from self
                         return
                     start = 0
                 elif start < 0:
@@ -793,8 +793,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: [next(it), next(it), next(it)]
                 [1, 2, 3]
             """
-            for x in self.tuple():
-                yield x
+            yield from self.tuple()
 
         def _iterator_from_next(self):
             """
@@ -930,7 +929,7 @@ class EnumeratedSets(CategoryWithAxiom):
             the probability is uniform.
 
             This is a generic implementation from the category
-            ``EnumeratedSets()``. It raise a ``NotImplementedError``
+            ``EnumeratedSets()``. It raises a :class:`NotImplementedError`
             since one does not know whether the set is finite.
 
             EXAMPLES::
@@ -942,7 +941,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: unknown cardinality
-                """
+            """
             raise NotImplementedError("unknown cardinality")
 
         def map(self, f, name=None, *, is_injective=True):

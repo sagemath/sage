@@ -308,7 +308,7 @@ class CartanType(SageObject, CartanType_abstract):
                 g.add_edge(relabelling[i,e1], relabelling[i,e2], label=l)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -332,6 +332,8 @@ class CartanType(SageObject, CartanType_abstract):
             \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             }
         """
+        if label is None:
+            label = lambda x: x
         types = self.component_types()
         relabelling = self._index_relabelling
         ret = "{\n"
@@ -341,7 +343,7 @@ class CartanType(SageObject, CartanType_abstract):
         ret += "}"
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of this reducible Cartan type.
 
@@ -367,6 +369,8 @@ class CartanType(SageObject, CartanType_abstract):
             O---O=<=O
             11   12   13
         """
+        if label is None:
+            label = lambda i: i
         types = self.component_types()
         relabelling = self._index_relabelling
         return "\n".join(types[i].ascii_art(lambda x: label(relabelling[i,x]), node)

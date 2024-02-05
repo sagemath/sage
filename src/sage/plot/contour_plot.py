@@ -891,7 +891,7 @@ def contour_plot(f, xrange, yrange, **options):
     F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                        options['plot_points'])
     h = F[0]
-    xrange, yrange = [r[:2] for r in ranges]
+    xrange, yrange = (r[:2] for r in ranges)
 
     xy_data_array = [[h(x, y) for x in xsrange(*ranges[0],
                                                include_endpoint=True)]
@@ -1000,7 +1000,7 @@ def contour_plot(f, xrange, yrange, **options):
                 F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                                    options['plot_points'])
                 h = F[0]
-                xrange, yrange = [r[:2] for r in ranges]
+                xrange, yrange = (r[:2] for r in ranges)
 
                 # ...and a function whose values are shifted towards
                 # z0 by "tol".
@@ -1690,7 +1690,7 @@ def region_plot(f, xrange, yrange, **options):
     f_all, ranges = setup_for_eval_on_grid(feqs + f,
                                            [xrange, yrange],
                                            plot_points)
-    xrange, yrange = [r[:2] for r in ranges]
+    xrange, yrange = (r[:2] for r in ranges)
 
     xy_data_arrays = numpy.asarray([[[func(x, y)
                                       for x in xsrange(*ranges[0],

@@ -675,7 +675,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.reverse([2,3,-1])
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned long
+            ValueError: degree argument must be a non-negative integer, got -1
 
         .. SEEALSO::
 
@@ -998,7 +998,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             (2*x^3 + x^2, 5*x^3 + x^2 + 5*x + 6, 4*x^3 + 6*x^2 + 4*x)
             sage: B == A*X % x**4
             True
-
             sage: B = Matrix(pR, 3, 2,
             ....:            [[5*x^2 + 6*x + 3, 4*x^2 + 6*x + 4],
             ....:             [  x^2 + 4*x + 2,         5*x + 2],
@@ -2010,7 +2009,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Demonstrating the ``ordered`` option::
 
-            sage: P.leading_positions()                                                 # needs sage.combinat
+            sage: P.leading_positions()
             [2, 1]
             sage: PP = M.weak_popov_form(ordered=True); PP
             [              2 4*x^2 + 2*x + 4               5]
@@ -2129,12 +2128,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A = matrix(PF,[[1,  a*x^17 + 1 ],
             ....:                [0,  a*x^11 + a^2*x^7 + 1 ]])
             sage: M = A.__copy__()
-            sage: U = M._weak_popov_form(transformation=True)                           # needs sage.combinat
-            sage: U * A == M                                                            # needs sage.combinat
+            sage: U = M._weak_popov_form(transformation=True)
+            sage: U * A == M
             True
-            sage: M.is_weak_popov()                                                     # needs sage.combinat
+            sage: M.is_weak_popov()
             True
-            sage: U.is_invertible()                                                     # needs sage.combinat
+            sage: U.is_invertible()
             True
 
             sage: PF.<x> = QQ[]
@@ -2826,7 +2825,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [      6*x + 3     5*x^2 + 6             3]
             )
 
-            sage: A.right_quo_rem(B[:2,:]) # matrix 2 x 3, full row rank
+            sage: A.right_quo_rem(B[:2,:])  # matrix 2 x 3, full row rank               # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: division of these matrices does not admit a remainder
@@ -3316,7 +3315,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:     [  17,   86, x^2+77*x+16, 76*x+29,     90*x+78],
             ....:     [  44,   36, 3*x+42,      x^2+50*x+26, 85*x+44],
             ....:     [   2,   22, 54*x+94,     73*x+24,     x^2+2*x+25]])
-            sage: appbas.is_minimal_approximant_basis(
+            sage: appbas.is_minimal_approximant_basis(                                  # needs sage.libs.pari
             ....:     pmat, order, shifts, row_wise=True, normal_form=True)
             True
 
@@ -3326,7 +3325,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         contained in the set of approximants for ``pmat`` at order 8::
 
             sage: M = x^8 * Matrix.identity(pR, 5)
-            sage: M.is_minimal_approximant_basis(pmat, 8)
+            sage: M.is_minimal_approximant_basis(pmat, 8)                               # needs sage.libs.pari
             False
 
         Since ``pmat`` is a single column, with nonzero constant coefficient,
@@ -3981,6 +3980,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: Matrix(pR, 3, 2, [[x,0],[1,0],[x+1,0]]).minimal_kernel_basis()
             [6 x 0]
             [6 6 1]
+
+        TESTS:
+
+        We check that PR #37208 is fixed::
+
+            sage: Matrix(pR, 2, 0).minimal_kernel_basis().is_sparse()
+            False
         """
         from sage.matrix.constructor import matrix
 
@@ -4002,11 +4008,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 return matrix(self.base_ring(), 0, m)
 
             if n == 0: # early exit: kernel is identity
-                return matrix.identity(self.base_ring(), m, m)
+                return matrix.identity(self.base_ring(), m)
 
             d = self.degree() # well defined since m > 0 and n > 0
             if d == -1: # matrix is zero: kernel is identity
-                return matrix.identity(self.base_ring(), m, m)
+                return matrix.identity(self.base_ring(), m)
 
             # degree bounds on the kernel basis
             degree_bound = min(m,n)*d+max(shifts)
@@ -4041,11 +4047,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 return matrix(self.base_ring(), n, 0)
 
             if m == 0: # early exit: kernel is identity
-                return matrix.identity(self.base_ring(), n, n)
+                return matrix.identity(self.base_ring(), n)
 
             d = self.degree() # well defined since m > 0 and n > 0
             if d == -1: # matrix is zero
-                return matrix.identity(self.base_ring(), n, n)
+                return matrix.identity(self.base_ring(), n)
 
             # degree bounds on the kernel basis
             degree_bound = min(m,n)*d+max(shifts)

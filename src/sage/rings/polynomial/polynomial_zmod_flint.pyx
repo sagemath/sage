@@ -122,7 +122,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
                 pass
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef Polynomial_template _new(self):
+    cdef Polynomial_template _new(self) noexcept:
         """
         EXAMPLES::
 
@@ -137,7 +137,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         e._cparent = self._cparent
         return e
 
-    cpdef Polynomial _new_constant_poly(self, x, Parent P):
+    cpdef Polynomial _new_constant_poly(self, x, Parent P) noexcept:
         r"""
         Quickly creates a new constant polynomial with value x in parent P.
 
@@ -244,7 +244,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         sig_off()
         return 0
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -412,7 +412,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         else:
             raise IndexError("Polynomial coefficient index must be nonnegative.")
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
         """
         Return the product of this polynomial and other truncated to the
         given length `n`.
@@ -445,7 +445,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     _mul_short = _mul_trunc_
 
-    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n):
+    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n) noexcept:
         """
         Return the product of this polynomial and other ignoring the least
         significant `n` terms of the result which may be set to anything.
@@ -482,7 +482,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     _mul_short_opposite = _mul_trunc_opposite
 
-    cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
+    cpdef Polynomial _power_trunc(self, unsigned long n, long prec) noexcept:
         r"""
         TESTS::
 
@@ -519,7 +519,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         nmod_poly_pow_trunc(&ans.x, &self.x, n, prec)
         return ans
 
-    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0):
+    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0) noexcept:
         """
         Construct a rational function `n/d` such that `p*d` is equivalent to `n`
         modulo `m` where `p` is this polynomial.
@@ -658,6 +658,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             NotImplementedError: square free factorization of polynomials over rings with composite characteristic is not implemented
 
+        :trac:`20003`::
+
+            sage: P.<x> = GF(7)[]
+            sage: (6*x+3).squarefree_decomposition()
+            (6) * (x + 4)
         """
         if not self.base_ring().is_field():
             raise NotImplementedError("square free factorization of polynomials over rings with composite characteristic is not implemented")
@@ -810,9 +815,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         cdef Polynomial_zmod_flint res = self._new()
         cdef unsigned long d
         if degree is not None:
+            if degree < 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             nmod_poly_reverse(&res.x, &self.x, d+1) # FLINT expects length
         else:
             nmod_poly_reverse(&res.x, &self.x, nmod_poly_length(&self.x))

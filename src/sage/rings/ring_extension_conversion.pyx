@@ -26,7 +26,7 @@ from sage.rings.ring_extension_morphism cimport RingExtensionBackendReverseIsomo
 # For parents
 #############
 
-cpdef backend_parent(R):
+cpdef backend_parent(R) noexcept:
     r"""
     Return the backend parent of ``R``.
 
@@ -49,7 +49,7 @@ cpdef backend_parent(R):
     else:
         return R
 
-cpdef from_backend_parent(R, RingExtension_generic E):
+cpdef from_backend_parent(R, RingExtension_generic E) noexcept:
     r"""
     Try to reconstruct a ring extension (somehow related to ``E``)
     whose backend is ``R``.
@@ -107,7 +107,7 @@ cpdef from_backend_parent(R, RingExtension_generic E):
 # For elements
 ##############
 
-cpdef backend_element(x):
+cpdef backend_element(x) noexcept:
     r"""
     Return the backend element of ``x``.
 
@@ -130,7 +130,7 @@ cpdef backend_element(x):
     else:
         return x
 
-cpdef from_backend_element(x, RingExtension_generic E):
+cpdef from_backend_element(x, RingExtension_generic E) noexcept:
     r"""
     Try to reconstruct an element in a ring extension (somehow
     related to ``E``) whose backend is ``x``.
@@ -181,7 +181,7 @@ cpdef from_backend_element(x, RingExtension_generic E):
 # For morphisms
 ###############
 
-cdef _backend_morphism(f):
+cdef _backend_morphism(f) noexcept:
     r"""
     Return the backend morphism of ``f``.
 
@@ -243,7 +243,7 @@ cdef _backend_morphism(f):
             return ring.coerce_map_from(domain)
     raise NotImplementedError
 
-cpdef backend_morphism(f, forget="all"):
+cpdef backend_morphism(f, forget="all") noexcept:
     r"""
     Return the backend morphism of ``f``.
 
@@ -299,7 +299,7 @@ cpdef backend_morphism(f, forget="all"):
             g = RingExtensionBackendReverseIsomorphism(f.codomain().Hom(ring)) * g
     return g
 
-cpdef from_backend_morphism(f, RingExtension_generic E):
+cpdef from_backend_morphism(f, RingExtension_generic E) noexcept:
     r"""
     Try to reconstruct a morphism between ring extensions
     (somehow related to ``E``) whose backend is ``f``.
@@ -336,7 +336,7 @@ cpdef from_backend_morphism(f, RingExtension_generic E):
 # Generic
 #########
 
-cpdef to_backend(arg):
+cpdef to_backend(arg) noexcept:
     r"""
     Return the backend of ``arg``.
 
@@ -392,7 +392,7 @@ cpdef to_backend(arg):
         return (<RingExtensionElement>arg)._backend
     return arg
 
-cpdef from_backend(arg, E):
+cpdef from_backend(arg, E) noexcept:
     r"""
     Try to reconstruct something (somehow related to ``E``)
     whose backend is ``arg``.

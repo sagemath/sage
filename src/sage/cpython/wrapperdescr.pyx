@@ -30,7 +30,7 @@ Pure Python classes have normal methods, not slot wrappers::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .string import bytes_to_str
+from sage.cpython.string import bytes_to_str
 
 
 def wrapperdescr_call(slotwrapper, self, *args, **kwds):
@@ -87,7 +87,7 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
     return wrapperdescr_fastcall(slotwrapper, self, args, kwds)
 
 
-cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds):
+cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds) noexcept:
     # Cython implementation of wrapperdescr_call
     cdef wrapperbase* slotdef = slotwrapper.d_base
 

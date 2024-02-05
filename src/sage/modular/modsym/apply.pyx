@@ -17,6 +17,7 @@ Monomial expansion of `(aX + bY)^i (cX + dY)^{j-i}`
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
 from sage.rings.integer cimport Integer
 
 cdef class Apply:

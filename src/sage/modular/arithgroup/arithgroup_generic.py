@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`
 """
@@ -683,24 +684,24 @@ class ArithmeticSubgroup(Group):
 
     def cusps(self, algorithm='default'):
         r"""
-        Return a sorted list of inequivalent cusps for self, i.e. a set of
+        Return a sorted list of inequivalent cusps for ``self``, i.e. a set of
         representatives for the orbits of self on `\mathbb{P}^1(\QQ)`.
 
         These should be returned in a reduced form where this makes sense.
 
         INPUT:
 
-        - ``algorithm`` -- which algorithm to use to compute the cusps of self.
+        - ``algorithm`` -- which algorithm to use to compute the cusps of ``self``.
           ``'default'`` finds representatives for a known complete set of
           cusps. ``'modsym'`` computes the boundary map on the space of weight
-          two modular symbols associated to self, which finds the cusps for
-          self in the process.
+          two modular symbols associated to ``self``, which finds the cusps for
+          ``self`` in the process.
 
         EXAMPLES::
 
             sage: Gamma0(36).cusps()
             [0, 1/18, 1/12, 1/9, 1/6, 1/4, 1/3, 5/12, 1/2, 2/3, 5/6, Infinity]
-            sage: Gamma0(36).cusps(algorithm='modsym') == Gamma0(36).cusps()
+            sage: Gamma0(36).cusps(algorithm='modsym') == Gamma0(36).cusps()            # needs sage.libs.flint
             True
             sage: GammaH(36, [19,29]).cusps() == Gamma0(36).cusps()
             True
@@ -898,8 +899,8 @@ class ArithmeticSubgroup(Group):
 
             sage: Gamma0(18).generalised_level()
             18
-            sage: from sage.modular.arithgroup.arithgroup_perm import HsuExample18
-            sage: HsuExample18().generalised_level()
+            sage: from sage.modular.arithgroup.arithgroup_perm import HsuExample18      # needs sage.groups
+            sage: HsuExample18().generalised_level()                                    # needs sage.groups
             24
 
         In the following example, the actual level is twice the generalised
@@ -1256,7 +1257,7 @@ class ArithmeticSubgroup(Group):
 
     def as_permutation_group(self):
         r"""
-        Return self as an arithmetic subgroup defined in terms of the
+        Return ``self`` as an arithmetic subgroup defined in terms of the
         permutation action of `SL(2,\ZZ)` on its right cosets.
 
         This method uses Todd-Coxeter enumeration (via the method
@@ -1265,6 +1266,7 @@ class ArithmeticSubgroup(Group):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: G = Gamma(3)
             sage: P = G.as_permutation_group(); P
             Arithmetic subgroup of index 24

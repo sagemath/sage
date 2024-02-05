@@ -34,9 +34,9 @@ from sage.misc.functional import cyclotomic_polynomial
 from sage.modules.free_module_element import vector
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 
 
 class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
@@ -120,16 +120,14 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             21499084800
             sage: P = G.as_permutation_group()
             sage: Psmaller = G.as_permutation_group(algorithm="smaller", seed=6)
-            sage: P == Psmaller
-            False
             sage: P.cardinality()
             21499084800
             sage: P.degree()
             144
             sage: Psmaller.cardinality()
             21499084800
-            sage: Psmaller.degree()                     # random
-            80
+            sage: Psmaller.degree() <= P.degree()
+            True
 
         .. NOTE::
 
@@ -313,8 +311,9 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         - S. King, "Minimal Generating Sets of non-modular invariant
           rings of finite groups", :arxiv:`math/0703035`.
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.interfaces.singular import singular
+        from sage.rings.polynomial.polynomial_ring_constructor import \
+            PolynomialRing
         gens = self.gens()
         singular.LIB("finvar.lib")
         n = self.degree()  # len((gens[0].matrix()).rows())
@@ -755,6 +754,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         if chi is None:  # then this is the trivial character
             if R.characteristic() == 0:
                 from sage.rings.qqbar import QQbar
+
                 # non-modular case
                 if C == QQbar or R == QQbar:
                     L = QQbar
@@ -788,6 +788,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         K = chi.values()[0].parent()
         if R.characteristic() == 0:
             from sage.rings.qqbar import QQbar
+
             # extend base_ring to compositum
             if C == QQbar or K == QQbar or R == QQbar:
                 L = QQbar
@@ -935,11 +936,11 @@ def _new_invariant_is_linearly_independent(F, invariants):
         sage: gens = [matrix(QQ, [[-1,1],[-1,0]]), matrix(QQ, [[0,1],[1,0]])]
         sage: G = MatrixGroup(gens)
         sage: s = Sequence(G.invariants_of_degree(14))                                  # needs sage.rings.number_field
-        sage: s.coefficient_matrix()[0].rank()                                          # needs sage.rings.number_field
+        sage: s.coefficients_monomials()[0].rank()                                      # needs sage.rings.number_field
         3
         sage: len(s)                                                                    # needs sage.rings.number_field
         3
     """
     if len(invariants) == 0:
         return True
-    return PolynomialSequence(invariants).coefficient_matrix()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficient_matrix()[0].rank()
+    return PolynomialSequence(invariants).coefficients_monomials()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficients_monomials()[0].rank()

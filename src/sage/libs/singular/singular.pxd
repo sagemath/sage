@@ -18,41 +18,41 @@ from sage.rings.number_field.number_field_base cimport NumberField
 # Conversion from Singular to Sage types
 # ======================================
 
-cdef Rational si2sa_QQ(number (*), number **, ring (*))
-cdef Integer  si2sa_ZZ(number (*),ring (*))
+cdef Rational si2sa_QQ(number (*), number **, ring (*)) noexcept
+cdef Integer  si2sa_ZZ(number (*),ring (*)) noexcept
 
-cdef FFgivE   si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache)
-cdef FFgf2eE  si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache)
-cdef object   si2sa_GFq_generic(number *n, ring *_ring, object base)
-cdef object   si2sa_ZZmod(number *n, ring *_ring, object base)
+cdef FFgivE   si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache) noexcept
+cdef FFgf2eE  si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache) noexcept
+cdef object   si2sa_GFq_generic(number *n, ring *_ring, object base) noexcept
+cdef object   si2sa_ZZmod(number *n, ring *_ring, object base) noexcept
 
-cdef object   si2sa_NF(number *n, ring *_ring, object base)
+cdef object   si2sa_NF(number *n, ring *_ring, object base) noexcept
 
-cdef object si2sa_intvec(intvec *v)
+cdef object si2sa_intvec(intvec *v) noexcept
 
 # dispatches to all the above.
-cdef object si2sa(number *n, ring *_ring, object base)
+cdef object si2sa(number *n, ring *_ring, object base) noexcept
 
-cdef list singular_monomial_exponents(poly *p, ring *r)
-cpdef list si2sa_resolution(Resolution res)
-cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees)
+cdef list singular_monomial_exponents(poly *p, ring *r) noexcept
+cpdef list si2sa_resolution(Resolution res) noexcept
+cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees) noexcept
 
 # ======================================
 # Conversion from Sage to Singular types
 # ======================================
 
-cdef number *sa2si_QQ(Rational ,ring (*))
-cdef number *sa2si_ZZ(Integer d, ring *_ring)
+cdef number *sa2si_QQ(Rational ,ring (*)) noexcept
+cdef number *sa2si_ZZ(Integer d, ring *_ring) noexcept
 
-cdef number *sa2si_GFqGivaro(int exp ,ring (*))
-cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring)
-cdef number *sa2si_GFq_generic(object vector, ring *_ring)
-cdef number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring)
+cdef number *sa2si_GFqGivaro(int exp ,ring (*)) noexcept
+cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring) noexcept
+cdef number *sa2si_GFq_generic(object vector, ring *_ring) noexcept
+cdef number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept
 
-cdef number *sa2si_NF(object element, ring *_ring)
+cdef number *sa2si_NF(object element, ring *_ring) noexcept
 
 # dispatches to all the above.
-cdef number *sa2si(Element elem, ring * _ring)
+cdef number *sa2si(Element elem, ring * _ring) noexcept
 
 # ==============
 # Initialisation
@@ -60,4 +60,4 @@ cdef number *sa2si(Element elem, ring * _ring)
 
 cdef int overflow_check(unsigned long e, ring *_ring) except -1
 
-cdef init_libsingular()
+cdef init_libsingular() noexcept

@@ -114,7 +114,7 @@ cdef class ntl_ZZ_pContext_class():
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         self.x.restore()
 
     cpdef void _assert_is_current_modulus(self) except *:
@@ -162,7 +162,7 @@ cdef class ntl_ZZ_pContext_factory():
     def __init__(self):
         self.context_dict = {}
 
-    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v):
+    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v) noexcept:
         """
         Creates a new ZZ_pContext.
 

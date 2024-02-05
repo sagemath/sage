@@ -50,6 +50,7 @@ from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 
 import math
 
+import sage.arith.misc
 import sage.rings.integer
 import sage.rings.rational
 
@@ -277,7 +278,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         from sage.rings.complex_double import CDF
         return CDF
 
-    cpdef _coerce_map_from_(self, S):
+    cpdef _coerce_map_from_(self, S) noexcept:
         """
         Canonical coercion of ``S`` to the real double field.
 
@@ -327,9 +328,9 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         if S is int or S is float:
             return ToRDF(S)
 
-        from .rational_field import QQ
+        from sage.rings.rational_field import QQ
         try:
-            from .real_lazy import RLF
+            from sage.rings.real_lazy import RLF
         except ImportError:
             RLF = None
 
@@ -349,7 +350,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
                 return None
 
         try:
-            from .real_mpfr import RR
+            from sage.rings.real_mpfr import RR
         except ImportError:
             pass
         else:
@@ -431,7 +432,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         if prec == 53:
             return self
         else:
-            from .real_mpfr import RealField
+            from sage.rings.real_mpfr import RealField
             return RealField(prec)
 
 
@@ -472,7 +473,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         return Integer(0)
 
-    cdef _new_c(self, double value):
+    cdef _new_c(self, double value) noexcept:
         cdef RealDoubleElement x
         x = PY_NEW(RealDoubleElement)
         x._value = value
@@ -740,7 +741,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return RealDoubleElement, (self._value, )
 
-    cdef _new_c(self, double value):
+    cdef _new_c(self, double value) noexcept:
         cdef RealDoubleElement x
         x = PY_NEW(RealDoubleElement)
         x._value = value
@@ -979,7 +980,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: mathematica(RDF(1e-25))  # optional - mathematica
             1.*^-25
         """
-        from .real_mpfr import RR
+        from sage.rings.real_mpfr import RR
         return RR(self._value)._mathematica_init_()
 
     def _sage_input_(self, sib, coerced):
@@ -1309,7 +1310,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = 1.0 / self._value
         return x
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         Add two real numbers with the same parent.
 
@@ -1322,7 +1323,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value + (<RealDoubleElement>right)._value
         return x
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         Subtract two real numbers with the same parent.
 
@@ -1335,7 +1336,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value - (<RealDoubleElement>right)._value
         return x
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         Multiply two real numbers with the same parent.
 
@@ -1348,7 +1349,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value * (<RealDoubleElement>right)._value
         return x
 
-    cpdef _div_(self, right):
+    cpdef _div_(self, right) noexcept:
         """
         Divide ``self`` by ``right``.
 
@@ -1409,7 +1410,7 @@ cdef class RealDoubleElement(FieldElement):
         else:
             return self._new_c(-self._value)
 
-    cpdef RealDoubleElement abs(RealDoubleElement self):
+    cpdef RealDoubleElement abs(RealDoubleElement self) noexcept:
         """
         Returns the absolute value of ``self``.
 
@@ -1740,7 +1741,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return bool(libc.math.isinf(self._value))
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Rich comparison of ``left`` and ``right``.
 
@@ -1955,7 +1956,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: r.algebraic_dependency(5)                                             # needs sage.libs.pari
             x^2 - 2
         """
-        return sage.arith.all.algdep(self,n)
+        return sage.arith.misc.algdep(self,n)
 
     algdep = algebraic_dependency
 
@@ -1998,7 +1999,7 @@ cdef class ToRDF(Morphism):
             R = Set_PythonType(R)
         Morphism.__init__(self, Hom(R, RDF))
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         Send ``x`` to the image under this map.
 
@@ -2069,7 +2070,7 @@ def is_RealDoubleElement(x):
 cdef RealDoubleElement global_dummy_element
 
 try:
-    from .real_double_element_gsl import RealDoubleElement_gsl
+    from sage.rings.real_double_element_gsl import RealDoubleElement_gsl
 except ImportError:
     global_dummy_element = RealDoubleElement(0)
 else:
@@ -2079,7 +2080,7 @@ else:
 # It operates on the following principles:
 #
 # - The pool starts out empty.
-# - When an new element is needed, one from the pool is returned
+# - When a new element is needed, one from the pool is returned
 #   if available, otherwise a new RealDoubleElement object is created
 # - When an element is collected, it will add it to the pool
 #   if there is room, otherwise it will be deallocated.
@@ -2093,7 +2094,7 @@ cdef int total_alloc = 0
 cdef int use_pool = 0
 
 
-cdef PyObject* fast_tp_new(type t, args, kwds):
+cdef PyObject* fast_tp_new(type t, args, kwds) noexcept:
     global element_pool, element_pool_count, total_alloc, use_pool
 
     cdef PyObject* new
@@ -2151,7 +2152,7 @@ cdef PyObject* fast_tp_new(type t, args, kwds):
 
     return new
 
-cdef void fast_tp_dealloc(PyObject* o):
+cdef void fast_tp_dealloc(PyObject* o) noexcept:
 
     # If there is room in the pool for a used integer object,
     # then put it in rather than deallocating it.
@@ -2175,7 +2176,7 @@ cdef void fast_tp_dealloc(PyObject* o):
 from sage.misc.allocator cimport hook_tp_functions, hook_tp_functions_type
 hook_tp_functions(global_dummy_element, <newfunc>(&fast_tp_new), <destructor>(&fast_tp_dealloc), False)
 try:
-    from .real_double_element_gsl import RealDoubleElement_gsl
+    from sage.rings.real_double_element_gsl import RealDoubleElement_gsl
 except Exception:
     pass
 else:
@@ -2185,7 +2186,7 @@ else:
     # From here on, calling PY_NEW(RealDoubleElement) actually creates an instance of RealDoubleElement_gsl
 
 
-cdef double_repr(double x):
+cdef double_repr(double x) noexcept:
     """
     Convert a double to a string with maximum precision.
     """

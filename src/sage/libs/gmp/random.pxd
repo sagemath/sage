@@ -1,6 +1,6 @@
 # distutils: libraries = gmp
 
-from .types cimport *
+from sage.libs.gmp.types cimport *
 
 cdef extern from "gmp.h":
 

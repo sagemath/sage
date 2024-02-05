@@ -1,17 +1,7 @@
 r"""
-Relative Number Fields
+Relative number fields
 
-AUTHORS:
-
-- William Stein (2004, 2005): initial version
-- Steven Sivek (2006-05-12): added support for relative extensions
-- William Stein (2007-09-04): major rewrite and documentation
-- Robert Bradshaw (2008-10): specified embeddings into ambient fields
-- Nick Alexander (2009-01): modernize coercion implementation
-- Robert Harron (2012-08): added is_CM_extension
-- Julian Rüth (2014-04): absolute number fields are unique parents
-
-This example follows one in the Magma reference manual::
+This example constructs a quadratic extension of a quartic number field::
 
     sage: x = polygen(ZZ, 'x')
     sage: K.<y> = NumberField(x^4 - 420*x^2 + 40000)
@@ -48,10 +38,12 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-WARNING: Doing arithmetic in towers of relative fields that depends on
-canonical coercions is currently VERY SLOW.  It is much better to
-explicitly coerce all elements into a common field, then do arithmetic
-with them there (which is quite fast).
+.. WARNING:
+
+    Doing arithmetic in towers of relative fields that depends on canonical
+    coercions is currently VERY SLOW.  It is much better to explicitly coerce
+    all elements into a common field, then do arithmetic with them there (which
+    is quite fast).
 
 TESTS::
 
@@ -60,6 +52,17 @@ TESTS::
     27*beta0
     sage: beta^10
     27*beta0
+
+AUTHORS:
+
+- William Stein (2004, 2005): initial version
+- Steven Sivek (2006-05-12): added support for relative extensions
+- William Stein (2007-09-04): major rewrite and documentation
+- Robert Bradshaw (2008-10): specified embeddings into ambient fields
+- Nick Alexander (2009-01): modernized coercion implementation
+- Robert Harron (2012-08): added is_CM_extension
+- Julian Rüth (2014-04): absolute number fields are unique parents
+
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2009 William Stein <wstein@gmail.com>
@@ -579,7 +582,7 @@ class NumberField_relative(NumberField_generic):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^4 + 3, x^2 + 2]); K
             Number Field in a with defining polynomial x^4 + 3 over its base field
-            sage: K.galois_closure('c')
+            sage: K.galois_closure('c')                                                 # needs sage.groups
             Number Field in c with defining polynomial x^16 + 16*x^14 + 28*x^12
              + 784*x^10 + 19846*x^8 - 595280*x^6 + 2744476*x^4 + 3212848*x^2 + 29953729
         """
@@ -1234,7 +1237,7 @@ class NumberField_relative(NumberField_generic):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: y = polygen(K); L.<b> = K.extension(y^2 - a)
-            sage: L.is_galois_absolute()
+            sage: L.is_galois_absolute()                                                # needs sage.groups
             False
 
         """
@@ -1255,6 +1258,8 @@ class NumberField_relative(NumberField_generic):
             sage: R.<z> = PolynomialRing(K)
             sage: m1 = 3*z9^4 - 4*z9^3 - 4*z9^2 + 3*z9 - 8
             sage: L1 = K.extension(z^2 - m1, 'b1')
+
+            sage: # needs sage.groups
             sage: G = K.galois_group(); gamma = G.gen()
             sage: m2 = (gamma^2)(m1)
             sage: L2 = K.extension(z^2 - m2, 'b2')
@@ -1262,6 +1267,7 @@ class NumberField_relative(NumberField_generic):
             False
             sage: L1.is_isomorphic(L2)
             True
+
             sage: L3 = K.extension(z^4 - m1, 'b3')
             sage: L1.is_isomorphic_relative(L3)
             False
@@ -1276,6 +1282,8 @@ class NumberField_relative(NumberField_generic):
             sage: L1cyc = Kcyc.extension(zcyc^2 - m1cyc, 'b1cyc')
             sage: L1.is_isomorphic_relative(L1cyc, base_isom=phi1)
             True
+
+            sage: # needs sage.groups
             sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi1)
             False
             sage: phi2 = K.hom([phi1((gamma^(-2))(z9))])
@@ -1296,7 +1304,7 @@ class NumberField_relative(NumberField_generic):
         The parameter ``base_isom`` can also be used to check if the relative extensions are
         Galois conjugate::
 
-            sage: for g in G:
+            sage: for g in G:                                                           # needs sage.groups
             ....:   if L1.is_isomorphic_relative(L2, g.as_hom()):
             ....:       print(g.as_hom())
             Ring endomorphism of Number Field in z9 with defining polynomial x^6 + x^3 + 1
@@ -2252,7 +2260,7 @@ class NumberField_relative(NumberField_generic):
 
             sage: x = polygen(ZZ, 'x')
             sage: L.<b, c> = NumberFieldTower([x^2 - 5, x^3 + x + 3])
-            sage: L.places()
+            sage: L.places()                                                            # needs sage.libs.linbox
             [Relative number field morphism:
                From: Number Field in b with defining polynomial x^2 - 5 over its base field
                To:   Real Field with 106 bits of precision
@@ -2460,8 +2468,13 @@ class NumberField_relative(NumberField_generic):
 
             sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]                             # needs sage.symbolic
             sage: R = P.order([a,b,c]); R                                               # needs sage.symbolic
-            Relative Order in Number Field in sqrt2
-             with defining polynomial x^2 - 2 over its base field
+            Relative Order generated by
+             [((-36372*sqrt3 + 371270)*a^2 + (-89082*sqrt3 + 384161)*a - 422504*sqrt3 - 46595)*sqrt2 + (303148*sqrt3 - 89080)*a^2 + (313664*sqrt3 - 218211)*a - 38053*sqrt3 - 1034933,
+              ((-65954*sqrt3 + 323491)*a^2 + (-110591*sqrt3 + 350011)*a - 351557*sqrt3 + 77507)*sqrt2 + (264138*sqrt3 - 161552)*a^2 + (285784*sqrt3 - 270906)*a + 63287*sqrt3 - 861151,
+              ((-89292*sqrt3 + 406648)*a^2 + (-137274*sqrt3 + 457033)*a - 449503*sqrt3 + 102712)*sqrt2 + (332036*sqrt3 - 218718)*a^2 + (373172*sqrt3 - 336261)*a + 83862*sqrt3 - 1101079,
+              ((-164204*sqrt3 + 553344)*a^2 + (-225111*sqrt3 + 646064)*a - 594724*sqrt3 + 280879)*sqrt2 + (451819*sqrt3 - 402227)*a^2 + (527524*sqrt3 - 551431)*a + 229346*sqrt3 - 1456815,
+              ((-73815*sqrt3 + 257278)*a^2 + (-102896*sqrt3 + 298046)*a - 277080*sqrt3 + 123726)*sqrt2 + (210072*sqrt3 - 180812)*a^2 + (243357*sqrt3 - 252052)*a + 101026*sqrt3 - 678718]
+             in Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
         The base ring of an order in a relative extension is still `\ZZ`.::
 

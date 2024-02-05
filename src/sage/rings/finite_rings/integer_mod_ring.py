@@ -19,13 +19,13 @@ the other direction.
     sage: s = GF(7)
     sage: r.has_coerce_map_from(s)
     False
-    sage: s.has_coerce_map_from(r)                                                      # needs sage.rings.finite_rings
+    sage: s.has_coerce_map_from(r)
     True
-    sage: s(1) + r(1)                                                                   # needs sage.rings.finite_rings
+    sage: s(1) + r(1)
     2
-    sage: parent(s(1) + r(1))                                                           # needs sage.rings.finite_rings
+    sage: parent(s(1) + r(1))
     Finite Field of size 7
-    sage: parent(r(1) + s(1))                                                           # needs sage.rings.finite_rings
+    sage: parent(r(1) + s(1))
     Finite Field of size 7
 
 We list the elements of `\ZZ/3\ZZ`::
@@ -67,7 +67,7 @@ from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
 import sage.rings.ring as ring
 import sage.rings.abc
-from . import integer_mod
+from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
 import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring
@@ -617,13 +617,13 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         EXAMPLES::
 
             sage: # needs sage.groups
-            sage: Integers(5).multiplicative_subgroups()
+            sage: Integers(5).multiplicative_subgroups()  # optional - gap_package_polycyclic
             ((2,), (4,), ())
-            sage: Integers(15).multiplicative_subgroups()
+            sage: Integers(15).multiplicative_subgroups()  # optional - gap_package_polycyclic
             ((11, 7), (11, 4), (2,), (11,), (14,), (7,), (4,), ())
-            sage: Integers(2).multiplicative_subgroups()
+            sage: Integers(2).multiplicative_subgroups()  # optional - gap_package_polycyclic
             ((),)
-            sage: len(Integers(341).multiplicative_subgroups())
+            sage: len(Integers(341).multiplicative_subgroups())  # optional - gap_package_polycyclic
             80
 
         TESTS::
@@ -632,7 +632,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             ((),)
             sage: IntegerModRing(2).multiplicative_subgroups()                          # needs sage.groups
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()                          # needs sage.groups
+            sage: IntegerModRing(3).multiplicative_subgroups()                          # needs sage.groups  # optional - gap_package_polycyclic
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())

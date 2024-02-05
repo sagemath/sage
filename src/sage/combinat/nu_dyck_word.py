@@ -873,7 +873,7 @@ class NuDyckWord(CombinatorialElement):
         EXAMPLES::
 
             sage: NDW = NuDyckWord('010','010')
-            sage: NDW.plot()                                                            # optional - sage.plot
+            sage: NDW.plot()                                                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.plot import list_plot

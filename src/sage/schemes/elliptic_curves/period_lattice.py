@@ -1427,7 +1427,7 @@ class PeriodLattice_ell(PeriodLattice):
         R = RealField(prec2)
         C = ComplexField(prec2)
         e1,e2,e3 = self._ei
-        a1,a2,a3 = [self.embedding(a) for a in self.E.ainvs()[:3]]
+        a1,a2,a3 = (self.embedding(a) for a in self.E.ainvs()[:3])
 
         wP = 2*yP+a1*xP+a3
 
@@ -1716,7 +1716,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         # Compute the real or complex coordinates of P:
 
-        xP, yP = [self.embedding(coord) for coord in P.xy()]
+        xP, yP = (self.embedding(coord) for coord in P.xy())
 
         # The real work is done over R or C now:
 
@@ -1915,7 +1915,7 @@ class PeriodLattice_ell(PeriodLattice):
         # the same precision as the input.
 
         x, y = pari(self.basis(prec=prec)).ellwp(z, flag=1)
-        x, y = [C(t) for t in (x, y)]
+        x, y = (C(t) for t in (x, y))
 
         if self.real_flag and z_is_real:
             x = x.real()
@@ -1924,7 +1924,7 @@ class PeriodLattice_ell(PeriodLattice):
         if to_curve:
             K = x.parent()
             v = refine_embedding(self.embedding, Infinity)
-            a1, a2, a3, a4, a6 = [K(v(a)) for a in self.E.ainvs()]
+            a1, a2, a3, a4, a6 = (K(v(a)) for a in self.E.ainvs())
             b2 = K(v(self.E.b2()))
             x = x - b2 / 12
             y = (y - (a1 * x + a3)) / 2

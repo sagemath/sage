@@ -374,7 +374,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             ....:        -7*b^5 + 21*b^4 - 28*b^3 + 21*b^2 - 21*b + 14,
             ....:        -b^5 + 2*b^4 - 3*b^3 + 2*b^2 - 2*b,
             ....:        0])
-            sage: X.intersection_multiplicity(Y, Q)
+            sage: X.intersection_multiplicity(Y, Q)                                     # needs sage.libs.singular
             3
 
         ::
@@ -470,10 +470,10 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: A.<x,y,z,w,t> = AffineSpace(K, 5)
             sage: X = A.subscheme([y^7 - x^2*z^5 + z^3*t^8 - x^2*y^4*z - t^8])
             sage: Q1 = A([1,1,0,1,-1])
-            sage: X.multiplicity(Q1)
+            sage: X.multiplicity(Q1)                                                    # needs sage.libs.singular
             1
             sage: Q2 = A([0,0,0,-a,0])
-            sage: X.multiplicity(Q2)
+            sage: X.multiplicity(Q2)                                                    # needs sage.libs.singular
             7
 
         Check that :trac:`27479` is fixed::

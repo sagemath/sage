@@ -1,1 +1,1 @@
-">=dev-libs/mathjax-3"
+>=dev-libs/mathjax-3

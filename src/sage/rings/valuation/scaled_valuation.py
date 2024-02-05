@@ -98,7 +98,7 @@ class ScaledValuation_generic(DiscreteValuation):
 
     TESTS::
 
-        sage: TestSuite(v).run() # long time
+        sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
 
     """
     def __init__(self, parent, base_valuation, s):
@@ -208,7 +208,7 @@ class ScaledValuation_generic(DiscreteValuation):
         EXAMPLES::
 
             sage: v = 3*ZZ.valuation(5)
-            sage: v.extensions(GaussianIntegers().fraction_field())
+            sage: v.extensions(GaussianIntegers().fraction_field())                     # needs sage.rings.number_field
             [3 * [ 5-adic valuation, v(x + 2) = 1 ]-adic valuation,
              3 * [ 5-adic valuation, v(x + 3) = 1 ]-adic valuation]
 

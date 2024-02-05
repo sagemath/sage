@@ -9,10 +9,11 @@ If the optional full CremonaDatabase is not installed, a mini-version
 is included by default with Sage.  It contains Weierstrass equations,
 rank, and torsion for curves up to conductor 10000.
 
-The large database includes all curves in John Cremona's tables. It
-also includes data related to the BSD conjecture and modular degrees
-for all of these curves, and generators for the Mordell-Weil
-groups. To install it, run the following in the shell::
+The large database includes all curves in John Cremona's tables. It also
+includes data related to the BSD conjecture and modular degrees for all of
+these curves, and generators for the Mordell-Weil groups. To install it via the
+optional :ref:`database_cremona_ellcurve <spkg_database_cremona_ellcurve>`
+package, run the following command in the shell ::
 
     sage -i database_cremona_ellcurve
 
@@ -120,7 +121,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
         raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')
     if not os.path.exists(data_tgz):
-        raise IOError("The data file is not at %s" % data_tgz)
+        raise OSError("The data file is not at %s" % data_tgz)
     t = walltime()
 
     if decompress:
@@ -1416,7 +1417,7 @@ class MiniCremonaDatabase(SQLDatabase):
         -  ``int`` - number_of_curves
         -  ``int`` - number_of_isogeny_classes
 
-       EXAMPLES::
+        EXAMPLES::
 
             sage: d = sage.databases.cremona.MiniCremonaDatabase(name='cremona', read_only=False, rebuild=True)   # not tested
             sage: d._init_allcurves('.', 11)    # not tested
@@ -1623,7 +1624,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             curve_data = []
             class_data = []
             for L in open(ftpdata + "/" + F).readlines():
-                N, iso, num, eqn, rank, tor, cp, om, L, reg, sha  = L.split()
+                N, iso, num, eqn, rank, tor, cp, om, L, reg, sha = L.split()
                 if largest_conductor and int(N) > largest_conductor:
                     break
                 cls = N+iso
