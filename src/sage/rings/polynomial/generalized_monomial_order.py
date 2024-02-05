@@ -1,5 +1,24 @@
 r"""
-Generalized monomial orders on `\ZZ^n` defined in [PU1999]_. 
+Generalized monomial orders on `\ZZ^n` are total orders on `\ZZ` introduced in
+[PU1999]_ and defined by a triple:
+
+- Conic decomposition: a finite covering of the additive monoïd `\ZZ^n` by submonoids.
+  In the current implementation, the conic decomposition of Example 2.2 in 
+  [PU1999]_ is imposed.
+
+- Group order: this can be any class with a 'greatest_tuple' method returning
+  the greatest of two tuples based on a group order on `\ZZ^n`. 
+  Available choices include 'lex'.
+
+- Score function: a function from the set of integer tuples to the 
+  positive rationals, satisfying additional conditions (see Lemma 2.1 in [PU1999]_).
+  Choices for this function include 'min' and 'degmin'.
+
+When creating an instance of this class, you must specify at least the number of variables.
+Optionally, you can also provide the names of the group order and the score function. 
+Defaults are 'lex' and 'min' respectively.
+
+These orders are useful for defining Gröbner bases for ideals in Laurent polynomial rings.
 
 EXAMPLES::
 
@@ -7,7 +26,6 @@ EXAMPLES::
 
     sage: order = GeneralizedMonomialOrder(2); order
     Generalized monomial order in 2 variables using (lex, min)
-
     sage: order.n_cones()
     3
     sage: order.cone(1)
@@ -15,10 +33,17 @@ EXAMPLES::
     [-1  1]
     sage: order.greatest_tuple((1,2),(-2,3))
     (-2, 3)
-    sage: order.greatest_tuple([(1,2),(-3,2),(2,-1)])
+    sage: order.greatest_tuple((1,2),(-3,2),(2,-1))
     (-3, 2)
-    sage: order.greatest_tuple_for_cone(2,[(-1,2), (-1,2), (-2,-3)])
+    sage: order.greatest_tuple_for_cone(2, (-1,2), (-1,2), (-2,-3))
     (-2, -3)
+
+Using the ``degmin`` score function::
+
+    sage: order2 = GeneralizedMonomialOrder(3, score_function="degmin"); order2
+    Generalized monomial order in 3 variables using (lex, degmin)
+    sage: order2.greatest_tuple((1, -1, 1), (2, -3, 4), (5, -6, 2), (-1, -2, -3))
+    (5, -6, 2)
 
 AUTHORS:
 
@@ -34,13 +59,13 @@ from sage.structure.sage_object import SageObject
 class GeneralizedMonomialOrder(SageObject):
     def __init__(self,n,group_order="lex",score_function="min"):
         r"""
-        Create a generalized monomial order.
+        Create a generalized monomial order in ``n`` varaibles with optional group order and score function.
 
-        INPUTS:
+        INPUT:
 
-        - ``n`` -- The number of variables.
-        - ``group_order`` (default: ``lex``) -- The name of a group order on `\ZZ^n`. Choices are: "lex".
-        - ``score_function`` (default: ``min``) -- The name of a score function. Choices are: "min", "degmin".
+        - ``n`` -- the number of variables
+        - ``group_order`` (default: ``lex``) -- the name of a group order on `\ZZ^n`, choices are: "lex"
+        - ``score_function`` (default: ``min``) -- the name of a score function, choices are: "min", "degmin"
 
         EXAMPLES::
 
@@ -59,10 +84,26 @@ class GeneralizedMonomialOrder(SageObject):
         """
         self._n = n
         self._n_cones = self._n + 1
-        self._cones = build_cones(self._n) 
-        self._group_order = get_group_order(group_order)
+        # Build cones        
+        self._cones = [matrix.identity(ZZ,n)]
+        for i in range(0,n):
+            mat = matrix.identity(ZZ,n)
+            mat.set_column(i,vector(ZZ,[-1]*n))
+            self._cones.append(mat)
+        # Set group order. Add more here.
+        if group_order in ["lex"]:
+            self._group_order = TermOrder(name=group_order)
+        else:
+            raise ValueError("Available group order are: 'lex'")
+        # Set score function. Add more here.
+        if score_function == "min":
+            self._score_function = min_score_function
+        elif score_function == "degmin":
+            self._score_function = degmin_score_function
+        else:
+            raise ValueError("Available score function are: 'min', 'degmin'")
+        # Store names
         self._group_order_name = group_order
-        self._score_function = get_score_function(score_function)
         self._score_function_name = score_function
 
     def _repr_(self):
@@ -116,9 +157,9 @@ class GeneralizedMonomialOrder(SageObject):
         r"""
         Return the matrix whose columns are the generators of the ``i``-th cone.
     
-        INPUTS:
+        INPUT:
         
-        - `i` -- a cone index
+        - `i` -- an integer, a cone index
         
         EXAMPLES::
 
@@ -129,7 +170,7 @@ class GeneralizedMonomialOrder(SageObject):
             [-1 1]
         """
         if i < 0 or i > self._n:
-            raise ValueError("Cone index out of range")
+            raise IndexError("cone index out of range")
         return self._cones[i]
 
     def group_order(self):
@@ -175,9 +216,9 @@ class GeneralizedMonomialOrder(SageObject):
         r"""
         Compute the score of a tuple ``t``.
 
-        INPUTS:
+        INPUT:
 
-        - `t` -- a tuple
+        - `t` -- a tuple of integers
 
         EXAMPLES::
 
@@ -192,9 +233,9 @@ class GeneralizedMonomialOrder(SageObject):
         r"""
         Return 1, 0 or -1 whether tuple ``a`` is greater than, equal or less than to tuple ``b`` respectively.
 
-        INPUTS:
+        INPUT:
 
-            - `a` and `b` -- two tuples
+        - `a` and `b` -- two tuples of integers
 
         EXAMPLES::
 
@@ -214,14 +255,13 @@ class GeneralizedMonomialOrder(SageObject):
         else: 
             return 1 if self._group_order.greater_tuple(a,b) == a else -1
 
-    def greatest_tuple(self,a,b=None):
+    def greatest_tuple(self,*L):
         r"""
-        Return the greatest of the two tuples ``a`` and ``b`` if ``b`` is not None
-        Return the greatest tuple in the list ``L`` if ``b`` is not a tuple
+        Return the greatest tuple in ``L``.
 
-        INPUTS:
+        INPUT:
 
-            - ``a``,``b`` -- two tuples or ``a`` a list of tuples and ``b`` anything except a tuple
+        - *L -- integer tuples
 
         EXAMPLES::
 
@@ -230,24 +270,28 @@ class GeneralizedMonomialOrder(SageObject):
             sage: order.greatest_tuple((0,0,1),(2,3,-2))
             (2, 3, -2)
             sage: L = [(1,2,-1),(3,-3,0),(4,-5,-6)]
-            sage: order.greatest_tuple(L)
+            sage: order.greatest_tuple(*L)
             (4, -5, -6)
         """
-        
-        if not isinstance(a,list):
-            return a if self.compare(a,b) == 1 else b
+        n = len(L) 
+        if n == 0:
+           raise ValueError("empty list of tuples")
+
+        if n == 1:
+            return L[0]
         else:
-            if len(a) == 1: return a[0]
-            else: return self.greatest_tuple(a[0],self.greatest_tuple(a[1:]))
+            a = L[0]
+            b = self.greatest_tuple(*L[1:])
+            return a if self.compare(a, b) == 1 else b
 
     def translate_to_cone(self,i,L):
         r"""
         Return a tuple ``t`` such that `t + L` is contained in the ``i``-th cone.
 
-        INPUTS:
+        INPUT:
 
-            - ``i`` -- a cone index
-            - ``L`` -- a list of tuples
+        - ``i`` -- an integer, a cone index
+        - ``L`` -- a list of integer tuples
 
         EXAMPLES::
 
@@ -260,46 +304,46 @@ class GeneralizedMonomialOrder(SageObject):
         T = matrix(ZZ, [cone_matrix*vector(v) for v in L])
         return tuple(cone_matrix*vector([-min(0,*c) for c in T.columns()]))
         
-    def greatest_tuple_for_cone(self, i, L):
+    def greatest_tuple_for_cone(self, i, *L):
         r"""
         Return the greatest tuple of the list of tuple `L` with respect to the `i`-th cone.
 
         This is the unique tuple `t` in `L`  such that each time the greatest tuple of `s + L`
         for a tuple `s` is contained in the `i`-th cone, it is equal to `s + t`.
 
-        INPUTS:
+        INPUT:
 
-            - ``i`` -- a cone index
-            - ``L`` -- a list of tuples
+        - ``i`` -- an integer, a cone index
+        - ``L`` -- a list of integer tuples
 
         EXAMPLES::
 
             sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
             sage: order = GeneralizedMonomialOrder(2)
             sage: L = [(1,2), (-2,-2), (-4,5), (5,-6)]
-            sage: t = order.greatest_tuple_for_cone(1, L);t
+            sage: t = order.greatest_tuple_for_cone(1, *L);t
             (-4, 5)
 
         We can check the result::
 
             sage: s = order.translate_to_cone(1, L)
             sage: sL = [tuple(vector(s) + vector(l)) for l in L]
-            sage: tuple(vector(s) + vector(t)) == order.greatest_tuple(sL)
+            sage: tuple(vector(s) + vector(t)) == order.greatest_tuple(*sL)
             True
 
         """
         t = vector(self.translate_to_cone(i,L))
         L = [vector(l) for l in L]
-        return tuple(vector(self.greatest_tuple([tuple(t + l) for l in L])) - t)
+        return tuple(vector(self.greatest_tuple(*[tuple(t + l) for l in L])) - t)
               
-    def is_in_cone(self,i,v): 
+    def is_in_cone(self,i,t): 
         r"""
         Test whether the tuple ``t`` is contained in the ``i``-th cone or not.
 
-        INPUTS:
+        INPUT:
 
-        - ``i`` -- A cone index.
-        - ``t`` -- A tuple.
+        - ``i`` -- an integer, a cone index
+        - ``t`` -- a tuple of integers
 
         EXAMPLES::
             
@@ -310,7 +354,7 @@ class GeneralizedMonomialOrder(SageObject):
             sage: order.is_in_cone(0,(-2,3))
             False
         """
-        return all(c >=0 for c in self._cones[i]*vector(v))
+        return all(c >=0 for c in self.cone(i)*vector(t))
 
     def generator(self,i,L):
         r"""
@@ -319,10 +363,10 @@ class GeneralizedMonomialOrder(SageObject):
         This is the monoïd of elements `t \in \ZZ^n` such that the greatest 
         tuple of `t + L` is contained in the ``i``-th cone.
 
-        INPUTS:
+        INPUT:
             
-        - ``i`` -- A cone index.
-        - ``L`` -- A list of tuples.
+        - ``i`` -- an integer, a cone index
+        - ``L`` -- a list of iinteger tuples
 
         EXAMPLES::
 
@@ -340,7 +384,7 @@ class GeneralizedMonomialOrder(SageObject):
         t = vector(self.translate_to_cone(i,L))
         L = [vector(l) for l in L]
         for c in cone_matrix.columns():
-            while self.is_in_cone(i,self.greatest_tuple([tuple(t + l) for l in L])):
+            while self.is_in_cone(i,self.greatest_tuple(*[tuple(t + l) for l in L])):
                 t = t - c
             t = t + c
         return tuple(t)
@@ -349,11 +393,11 @@ class GeneralizedMonomialOrder(SageObject):
         r"""
         Return the generator of the module over the ``i``-th cone for ``L1`` and ``L2``. 
 
-        INPUTS:
+        INPUT:
 
-        - ``i`` -- A cone index.
-        - ``L1`` -- A list of tuples.
-        - ``L2`` - -A list of tuples.
+        - ``i`` -- an integer, a cone index
+        - ``L1`` -- a list of integer tuples
+        - ``L2`` -- a list of integer tuples
 
         EXAMPLES::
 
@@ -366,79 +410,19 @@ class GeneralizedMonomialOrder(SageObject):
 
         """
         cone_matrix = self._cones[i]
-        lm1 = vector(self.greatest_tuple_for_cone(i,L1))
-        lm2 = vector(self.greatest_tuple_for_cone(i,L2))
+        lm1 = vector(self.greatest_tuple_for_cone(i,*L1))
+        lm2 = vector(self.greatest_tuple_for_cone(i,*L2))
         g1 = vector(self.generator(i,L1))
         g2 = vector(self.generator(i,L2))
         m = vector([max(a,b) for a,b in zip(lm1 + g1, lm2 + g2)])
         return tuple(cone_matrix*m)
-
-def build_cones(n):
-    r"""
-    Return a list of integer matrices such that the colums of the `j`-th matrix in the list
-    are the generators of the `j`-th cone.
-    
-    INPUTS:
-
-    - ``n`` -- The number of variables (which is the number of cones minus one).
-
-    TESTS::
-
-        sage: from sage.rings.polynomial.generalized_monomial_order import build_cones
-        sage: build_cones(3)
-        [
-        [1 0 0]  [-1  0  0]  [ 1 -1  0]  [ 1  0 -1]
-        [0 1 0]  [-1  1  0]  [ 0 -1  0]  [ 0  1 -1]
-        [0 0 1], [-1  0  1], [ 0 -1  1], [ 0  0 -1]
-        ]
-    """
-    L = [matrix.identity(ZZ,n)]
-    for i in range(0,n):
-        mat = matrix.identity(ZZ,n)
-        mat.set_column(i,vector(ZZ,[-1]*n))
-        L.append(mat)
-    return L
-
-def get_score_function(name):
-    r"""
-    Return the score function specified by ``name``.
-    
-    INPUTS:
-        
-    - ``name`` -- Name of a score function within "min", "degmin"
-    """
-    
-    def min_score_function(t):
+   
+# Score functions. Add more here and update the __init__ method.
+def min_score_function(t):
         return -min(0,*t)
 
-    def degmin_score_function(t):
+def degmin_score_function(t):
         return sum(t) -(len(t)+1)*min(0,*t)
 
-    if name == "min":
-        return min_score_function
-    elif name == "degmin":
-        return degmin_score_function
-    else:
-        raise ValueError("Available score functions are: 'min', 'degmin'")
-        
-def get_group_order(name):
-    r"""
-    Return the group order specified by ``name``.
-
-    INPUTS:
-
-        - ``name`` -- Name of a group order within "lex"
-
-    TESTS::
-
-        sage: from sage.rings.polynomial.generalized_monomial_order import get_group_order
-        sage: get_group_order("lex")
-        Lexicographic term order
-    """
-    
-    if name in ["lex"]:
-        return TermOrder(name=name)
-    else:
-        raise ValueError("Available group order are: 'lex', 'invlex'")
 
 
