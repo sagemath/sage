@@ -976,18 +976,21 @@ def q_stirling_number2(n, k, q=None):
             q_int(k, q=q) * q_stirling_number2(n - 1, k, q=q))
 
 
-def number_of_irreducible_polynomials(n, q=None):
+def number_of_irreducible_polynomials(n, q=None, m=1):
     r"""
     Return the number of monic irreducible polynomials of degree ``n``
-    over the finite field with ``q`` elements. If ``q`` is not given,
-    the result is returned as a polynomial in `\QQ[q]`.
+    in ``m`` variables over the finite field with ``q`` elements.
+
+    If ``q`` is not given, the result is returned as an integer-valued
+    polynomial in `\QQ[q]`.
 
     INPUT:
 
     - ``n`` -- positive integer
     - ``q`` -- ``None`` (default) or a prime power
+    - ``m`` -- positive integer (default `1`)
 
-    OUTPUT: integer
+    OUTPUT: integer or integer-valued polynomial over `\QQ`
 
     EXAMPLES::
 
@@ -995,12 +998,18 @@ def number_of_irreducible_polynomials(n, q=None):
         30
         sage: number_of_irreducible_polynomials(9, q=9)
         43046640
+        sage: number_of_irreducible_polynomials(5, q=11, m=3)
+        2079650567184059145647246367401741345157369643207055703168
 
     ::
 
         sage: poly = number_of_irreducible_polynomials(12); poly
         1/12*q^12 - 1/12*q^6 - 1/12*q^4 + 1/12*q^2
         sage: poly(5) == number_of_irreducible_polynomials(12, q=5)
+        True
+        sage: poly = number_of_irreducible_polynomials(5, m=3); poly
+        q^55 + q^54 + q^53 + q^52 + q^51 + q^50 + ... + 1/5*q^5 - 1/5*q^3 - 1/5*q^2 - 1/5*q
+        sage: poly(11) == number_of_irreducible_polynomials(5, q=11, m=3)
         True
 
     This function is *much* faster than enumerating the polynomials::
@@ -1011,17 +1020,31 @@ def number_of_irreducible_polynomials(n, q=None):
 
     ALGORITHM:
 
-    Classical formula `\frac1n \sum_{d\mid n} \mu(n/d) q^d` using the
-    Möbius function `\mu`; see :func:`moebius`.
+    In the univariate case, classical formula
+    `\frac1n \sum_{d\mid n} \mu(n/d) q^d`
+    using the Möbius function `\mu`;
+    see :func:`moebius`.
+
+    In the multivariate case, formula from [Bodin2007]_,
+    independently [Alekseyev2006]_.
     """
     n = ZZ(n)
     if n <= 0:
         raise ValueError('n must be positive')
     if q is None:
-        q = ZZ['q'].gen()
+        from sage.rings.rational_field import QQ
+        q = QQ['q'].gen()  # for m > 1, we produce an integer-valued polynomial in q, but it does not necessarily have integer coefficients
     R = parent(q)
-    from sage.arith.misc import moebius
-    r = sum((moebius(n//d) * q**d for d in ZZ(n).divisors()), R.zero())
-    if R is ZZ:
+    if m == 1:
+        from sage.arith.misc import moebius
+        r = sum((moebius(n//d) * q**d for d in n.divisors()), R.zero())
         return r // n
-    return r / n
+    elif m > 1:
+        from sage.functions.other import binomial
+        from sage.combinat.partition import Partitions
+        r = []
+        for d in range(n):
+            r.append( (q**binomial(d+m,m-1) - 1) // (q-1) * q**binomial(d+m,m) - sum(prod(binomial(r_+t-1,t) for r_,t in zip(r,p.to_exp(d))) for p in Partitions(d+1,max_part=d)) )
+        return r[-1]
+    else:
+        raise ValueError('m must be positive')

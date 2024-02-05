@@ -47,6 +47,11 @@ REFERENCES:
         *Quantum compution with anyons: an F-matrix and braid calculator*
         (2022). https://arxiv.org/abs/2212.00831
 
+.. [Alekseyev2006] \M. Alekseyev:
+                   (Forum post on counting irreducible multivariate polynomials),
+                   2006.
+                   https://dxdy.ru/post7034.html
+
 .. [AB2007] \M. Aschenbrenner, C. Hillar,
             *Finite generation of symmetric ideals*.
             Trans. Amer. Math. Soc. 359 (2007), no. 11, 5171--5192.
@@ -502,6 +507,11 @@ REFERENCES:
 .. [BH1965] \L. D. Baumert, M. Hall Jr.
             *A new construction for Hadamard matrices*.
             Bulletin of the American Mathematical Society 71(1):169-170, 1965.
+
+.. [Bodin2007] \A. Bodin:
+            Number of irreducible polynomials in several variables over finite fields,
+            The American Mathematical Monthly 115(7), pp. 653-660, 2008.
+            https://arxiv.org/abs/0706.0157
 
 .. [BH2012] \A. Brouwer and W. Haemers,
             Spectra of graphs,
