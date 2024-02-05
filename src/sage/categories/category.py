@@ -2837,7 +2837,8 @@ class CategoryWithParameters(Category):
         The parent class of an algebra depends only on the category of the base ring::
 
             sage: Algebras(ZZ)._make_named_class_key("parent_class")
-            Join of Category of euclidean domains
+            Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces
 
@@ -2848,7 +2849,8 @@ class CategoryWithParameters(Category):
             (Join of Category of number fields
                  and Category of quotient fields
                  and Category of metric spaces,
-             Join of Category of euclidean domains
+             Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
@@ -2974,7 +2976,8 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of euclidean domains
+            Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')

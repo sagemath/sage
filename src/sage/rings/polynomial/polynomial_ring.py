@@ -244,7 +244,8 @@ class PolynomialRing_general(ring.Algebra):
             sage: category(ZZ['x'])
             Join of Category of unique factorization domains
              and Category of commutative algebras over
-              (euclidean domains and infinite enumerated sets and metric spaces)
+              (Dedekind domains and euclidean domains
+               and infinite enumerated sets and metric spaces)
              and Category of infinite sets
             sage: category(GF(7)['x'])
             Join of Category of euclidean domains
