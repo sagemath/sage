@@ -987,14 +987,36 @@ def is_GroupByGenerators(group, generators):
     """
     from sage.libs.gap.element import GapElement
     if not isinstance(group, GapElement):
-        group = group._libgap_()  # Convert the group to a libgap object if it is not.
+        group = group._libgap_()
 
-    return set(group.AsList())==set(libgap.GroupByGenerators(generators).AsList())
+    return set(group.AsList()) == set(libgap.GroupByGenerators(generators).AsList())
 
 @cached_method
-def minimum_generating_set(group, gap_based = False):
+def minimum_generating_set(group, gap_based=False):
     """
+    Return a minimum generating set of the ``group``.
 
+    INPUT:
+
+    - ``group`` -- a group object.
+    - ``gap_based`` -- boolean (default: False). If True, the output is GAP based.
+
+    OUTPUT:
+
+    A set of elements that generate the group.
+
+    EXAMPLES::
+
+        sage: G = SymmetricGroup(3)
+        sage: minimum_generating_set(G)
+        {[1, 3, 2], [2, 3, 1]}
+
+        sage: G = GL(2,GF(3))
+        sage: s = minimum_generating_set(G, gap_based=True); s
+        {[ [ Z(3)^0, Z(3)^0 ], [ Z(3), 0*Z(3) ] ],
+         [ [ Z(3), 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ]}
+        sage: type(list(s)[0])
+        <class 'sage.libs.gap.element.GapElement_List'>
     """
     from sage.misc.functional import log
     from sage.libs.gap.element import GapElement
@@ -1003,34 +1025,31 @@ def minimum_generating_set(group, gap_based = False):
         group = group._libgap_()
 
     if not group.IsFinite().sage():
-        raise NotImplementedError("Only implemented for finite groups")
+        raise NotImplementedError("Implemented for finite group only")
 
+    group_elements = group.AsList()
+    # FIX: Ask about this function
     if group.IsCyclic().sage():
-        for ele in group.AsList():
-            if is_GroupByGenerators(group,[ele]):
-                if gap_based:
-                    return set([ele])
-                return set([ele.sage()])
+        if is_GroupByGenerators(group, [group_elements[1]]):
+            if gap_based:
+                return set([group_elements[1]])
+            return set([group_elements[1].sage()])
 
     if group.IsSimple().sage():
-        group_elements = group.AsList()
-
         if group.IsAbelian().sage():
-            for each in group_elements:
-                if is_GroupByGenerators(group,[each]):
+            for ele in group_elements:
+                if is_GroupByGenerators(group, [ele]):
                     if gap_based:
-                        return set([each])
-                    return set([each.sage()])
+                        return set([ele])
+                    return set([ele.sage()])
 
         n = len(group_elements)
-        # Return any two elements that can generate the whole group
-        # It is known that in this particular case there will be two elements which can generate whole group
         for i in range(n):
-            for j in range(i+1,n):
-                if is_GroupByGenerators(group,[group_elements[i],group_elements[j]]):
+            for j in range(i+1, n):
+                if is_GroupByGenerators(group,[group_elements[i], group_elements[j]]):
                     if gap_based:
-                        return set([group_elements[i],group_elements[j]])
-                    return set([group_elements[i].sage(),group_elements[j].sage()])
+                        return set([group_elements[i], group_elements[j]])
+                    return set([group_elements[i].sage(), group_elements[j].sage()])
 
     # The MinimalNormalSubgroups method returns a list of all minimal normal subgroups
     # but for this algorithm we need only one minimal normal subgroup (which is not trivial).
@@ -1040,14 +1059,14 @@ def minimum_generating_set(group, gap_based = False):
 
     phi = group.NaturalHomomorphismByNormalSubgroup(N)
     GbyN = phi.ImagesSource() 
-    GbyN_mingenset = minimum_generating_set(GbyN, gap_based = True)
+    GbyN_mingenset = minimum_generating_set(GbyN, gap_based=True)
 
     g = [phi.PreImagesRepresentative(g) for g in list(GbyN_mingenset)]
     l = len(g)
     m = len(n)
 
     if N.IsAbelian().sage():
-        if is_GroupByGenerators(group,g):
+        if is_GroupByGenerators(group, g):
             if gap_based:
                 return set(g)
             return set([ele.sage() for ele in g])
@@ -1062,15 +1081,13 @@ def minimum_generating_set(group, gap_based = False):
             return set(g+[N.AsList()[1]])
         return set([ele.sage() for ele in g]+[N.AsList()[1].sage()])
 
-    def my_function(g, N_old, t):
-        """
-        Returns all possible combinations.
-        g : list of generators for some arbatrory group G
-        N : A list of elements of subgroup N of G
-        """
+    def gen_combinations(g, N_old, t):
+        # This function is used to generate some combinations (which are required for the algorithm)
+        # of the elements of N_old and g.
         L = [g]
-        N = [ele for ele in N_old]
+        N = [ele for ele in N_old]  # This line is included because N_old does not have slicing method
         N = N[1:]
+        # FIX: Is this line necessary?
         if t > len(g):
             t = len(g)
         for i in range(t):
@@ -1088,16 +1105,16 @@ def minimum_generating_set(group, gap_based = False):
 
     t = 13/5 + log(group.Size().sage(), 2)/log(N.Size().sage(), 2)
     if t <= l :
-        for candidate_gen in my_function(g,N.AsList(),t):
-            if is_GroupByGenerators(group, candidate_gen):
+        for gens in gen_combinations(g, N.AsList(), t):
+            if is_GroupByGenerators(group, gens):
                 if gap_based:
-                    return set(candidate_gen)
-                return set([ele.sage() for ele in candidate_gen])
+                    return set(gens)
+                return set([ele.sage() for ele in gens])
 
-    for candidate_gen0 in my_function(g,N.AsList(),l):
+    for raw_gens in gen_combinations(g, N.AsList(), l):
         for nl in N.AsList():
-            candidate_gen = set(candidate_gen0).union({nl})
-            if is_GroupByGenerators(group, list(candidate_gen)):
+            gens = set(raw_gens).union({nl})
+            if is_GroupByGenerators(group, list(gens)):
                 if gap_based:
-                    return set(candidate_gen)
-                return set([ele.sage() for ele in candidate_gen])
+                    return set(gens)
+                return set([ele.sage() for ele in gens])
