@@ -105,7 +105,7 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
             sage: K.<T> = GF(3^4)
             sage: f = FiniteFieldHomomorphism_givaro(Hom(k, K))
             sage: g = f.section()
-            sage: g(f(t+1)) # random
+            sage: g(f(t+1))
             t + 1
 
             sage: g(T)

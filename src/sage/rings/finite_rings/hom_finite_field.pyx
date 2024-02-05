@@ -33,7 +33,7 @@ map which is the inverse of `f` on the image of `f`::
       From: Finite Field in t of size 3^7
       To:   Finite Field in T of size 3^21
       Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
-    sage: g(f(t^3+t^2+1)) # random
+    sage: g(f(t^3+t^2+1))
     t^3 + t^2 + 1
     sage: g(T)
     Traceback (most recent call last):
@@ -130,7 +130,7 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
             sage: K.<T> = GF(3^21)
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section()
-            sage: g(f(t^3+t^2+1)) # random
+            sage: g(f(t^3+t^2+1))
             t^3 + t^2 + 1
 
             sage: g(T)
