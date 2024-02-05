@@ -33,7 +33,6 @@ on:
            ["14",     "",             "homebrew-macos-opthomebrew-standard"],
            ["latest", "",             "conda-forge-macos-minimal"],
            ["latest", "",             "conda-forge-macos-standard"],
-           ["14",     "",             "conda-forge-macos-minimal"],
            ["14",     "",             "conda-forge-macos-standard"]]
         type: string
       extra_sage_packages:
