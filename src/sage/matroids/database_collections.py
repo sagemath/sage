@@ -162,7 +162,8 @@ def AllMatroids(n, r=None, type="all"):
     from sage.matroids.constructor import Matroid
     from sage.env import SAGE_SRC
     from io import TextIOWrapper
-    import os, gzip
+    import os
+    import gzip
 
     if type != "all" and type != "unorientable":
         try:
