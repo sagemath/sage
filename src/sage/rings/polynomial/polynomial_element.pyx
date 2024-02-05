@@ -79,6 +79,7 @@ from sage.arith.power cimport generic_power
 from sage.arith.misc import crt
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.mrange import cartesian_product_iterator
+from sage.misc.superseded import deprecated_function_alias
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
@@ -118,7 +119,7 @@ from sage.misc.derivative import multi_derivative
 from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
 from sage.arith.functions import lcm
 
-from . import polynomial_fateman
+from sage.rings.polynomial import polynomial_fateman
 
 from sage.rings.ideal import is_Ideal
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
@@ -134,7 +135,7 @@ from sage.misc.superseded import deprecation_cython as deprecation, deprecated_f
 from sage.misc.cachefunc import cached_method
 
 
-cpdef is_Polynomial(f):
+cpdef is_Polynomial(f) noexcept:
     """
     Return ``True`` if ``f`` is of type univariate polynomial.
 
@@ -182,7 +183,7 @@ cpdef is_Polynomial(f):
 
     return isinstance(f, Polynomial)
 
-from .polynomial_compiled cimport CompiledPolynomialFunction
+from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunction
 
 from sage.rings.polynomial.polydict cimport ETuple
 
@@ -244,7 +245,7 @@ cdef class Polynomial(CommutativePolynomial):
         CommutativeAlgebraElement.__init__(self, parent)
         self._is_gen = is_gen
 
-    cdef Polynomial _new_generic(self, list coeffs):
+    cdef Polynomial _new_generic(self, list coeffs) noexcept:
         r"""
         Quickly construct a new polynomial of the same type as ``self``,
         bypassing the parent's element constructor.
@@ -258,7 +259,7 @@ cdef class Polynomial(CommutativePolynomial):
             n -= 1
         return type(self)(self._parent, coeffs, check=False)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         r"""
         Add two polynomials.
 
@@ -287,7 +288,7 @@ cdef class Polynomial(CommutativePolynomial):
         low = [x[i] + y[i] for i in range(min)]
         return self._new_generic(low + high)
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         return self._new_generic([-x for x in self.list(copy=False)])
 
     cpdef bint is_zero(self) except -1:
@@ -370,7 +371,7 @@ cdef class Polynomial(CommutativePolynomial):
                 return point(z, *args, **kwds)
         raise NotImplementedError("plotting of polynomials over %s not implemented"%R)
 
-    cpdef _lmul_(self, Element left):
+    cpdef _lmul_(self, Element left) noexcept:
         """
         Multiply self on the left by a scalar.
 
@@ -390,7 +391,7 @@ cdef class Polynomial(CommutativePolynomial):
             return self._parent.zero()
         return self._parent(left) * self
 
-    cpdef _rmul_(self, Element right):
+    cpdef _rmul_(self, Element right) noexcept:
         """
         Multiply self on the right by a scalar.
 
@@ -1010,7 +1011,7 @@ cdef class Polynomial(CommutativePolynomial):
                 expr *= x
         return expr
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         r"""
         Compare the two polynomials self and other.
 
@@ -1176,7 +1177,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         return self.get_coeff_c(pyobject_to_long(n))
 
-    cdef get_coeff_c(self, Py_ssize_t i):
+    cdef get_coeff_c(self, Py_ssize_t i) noexcept:
         """
         Return the `i`-th coefficient of ``self``.
         """
@@ -1186,7 +1187,7 @@ cdef class Polynomial(CommutativePolynomial):
         else:
             return self._parent._base.zero()
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -1362,17 +1363,17 @@ cdef class Polynomial(CommutativePolynomial):
             0.2
             sage: CDF(a)                                                                # needs sage.rings.complex_double
             0.2
-            sage: RR(a)
+            sage: RR(a)                                                                 # needs sage.rings.real_mpfr
             0.200000000000000
-            sage: CC(a)
+            sage: CC(a)                                                                 # needs sage.rings.real_mpfr
             0.200000000000000
             sage: RBF(a)                                                                # needs sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
             sage: CBF(a)                                                                # needs sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
-            sage: RIF(a)
+            sage: RIF(a)                                                                # needs sage.rings.real_interval_field
             0.2000000000000000?
-            sage: CIF(a)
+            sage: CIF(a)                                                                # needs sage.rings.complex_interval_field
             0.2000000000000000?
             sage: float(a)
             0.2
@@ -1383,11 +1384,11 @@ cdef class Polynomial(CommutativePolynomial):
             sage: b = AA['x'](AA(2/3).sqrt())
             sage: AA(b)
             0.8164965809277260?
-            sage: RR(b)
+            sage: RR(b)                                                                 # needs sage.rings.real_mpfr
             0.816496580927726
             sage: RBF(b)                                                                # needs sage.libs.flint
             [0.816496580927726 +/- 2.44e-16]
-            sage: RIF(b)
+            sage: RIF(b)                                                                # needs sage.rings.real_interval_field
             0.8164965809277260?
             sage: float(b)
             0.816496580927726
@@ -1398,11 +1399,11 @@ cdef class Polynomial(CommutativePolynomial):
             0.6324555320336758?*I
             sage: CDF(c)
             0.6324555320336758*I
-            sage: CC(c)
+            sage: CC(c)                                                                 # needs sage.rings.real_mpfr
             0.632455532033676*I
             sage: CBF(c)  # abs tol 1e-16                                               # needs sage.libs.flint
             [0.6324555320336759 +/- 3.38e-17]*I
-            sage: CIF(c)
+            sage: CIF(c)                                                                # needs sage.rings.complex_interval_field
             0.6324555320336758?*I
             sage: complex(c)
             0.6324555320336758j
@@ -1585,7 +1586,7 @@ cdef class Polynomial(CommutativePolynomial):
         error the product may not always exactly equal the constant
         polynomial 1 and have extra terms with coefficients close to zero. ::
 
-            sage: # needs sage.modules
+            sage: # needs scipy sage.modules
             sage: R.<x> = RDF[]
             sage: epsilon = RDF(1).ulp()*50   # Allow an error of up to 50 ulp
             sage: f = inverse_mod(x^2 + 1, x^5 + x + 1); f  # abs tol 1e-14
@@ -1668,7 +1669,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 raise ValueError("Impossible inverse modulo")
 
-    cpdef Polynomial inverse_series_trunc(self, long prec):
+    cpdef Polynomial inverse_series_trunc(self, long prec) noexcept:
         r"""
         Return a polynomial approximation of precision ``prec`` of the inverse
         series of this polynomial.
@@ -1783,7 +1784,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         raise NotImplementedError("only implemented for certain base rings")
 
-    cpdef _mul_(self, right):
+    cpdef _mul_(self, right) noexcept:
         """
         EXAMPLES::
 
@@ -1839,7 +1840,7 @@ cdef class Polynomial(CommutativePolynomial):
         else:
             return self._mul_generic(right)
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
         r"""
         Return the truncated multiplication of two polynomials up to ``n``.
 
@@ -2131,7 +2132,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check root computation over large finite fields::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.libs.m4ri sage.rings.finite_rings
             sage: K.<a> = GF(2**50)
             sage: x = polygen(K)
             sage: (x**10+x+a).any_root()
@@ -2159,6 +2160,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: r = f.any_root()
             sage: r^2 + r
             a^2 + a
+
+        Check for :issue:`37034`::
+
+            sage: R.<x> = Zmod(55)[]
+            sage: (x^2 + 1).any_root()
+            Traceback (most recent call last):
+            ...
+            ValueError: no roots (non-field) x^2 + 1
         """
         if self.base_ring().is_finite() and self.base_ring().is_field():
             if self.degree() < 0:
@@ -2312,7 +2321,10 @@ cdef class Polynomial(CommutativePolynomial):
                         else:
                             return (self//h).any_root(ring, -degree, True)
         else:
-            return self.roots(ring=ring, multiplicities=False)[0]
+            rs = self.roots(ring=ring, multiplicities=False)
+            if rs:
+                return rs[0]
+            raise ValueError("no roots (non-field) %s" % self)
 
     def __truediv__(left, right):
         r"""
@@ -2630,7 +2642,7 @@ cdef class Polynomial(CommutativePolynomial):
             return self._power_trunc(mpz_get_ui(ZZn.value), prec)
         return generic_power_trunc(self, ZZn, pyobject_to_long(prec))
 
-    cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
+    cpdef Polynomial _power_trunc(self, unsigned long n, long prec) noexcept:
         r"""
         Truncated ``n``-th power of this polynomial up to precision ``prec``
 
@@ -2918,7 +2930,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         raise IndexError("polynomials are immutable")
 
-    cpdef _floordiv_(self, right):
+    cpdef _floordiv_(self, right) noexcept:
         r"""
         Quotient of division of ``self`` by ``other``. This is denoted //.
 
@@ -2980,8 +2992,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: D = d0 + d1*y + d2*y^2 + d3*y^3 + d4*y^4 + d5*y^5 + d6*y^6 + d7*y^7
             sage: F = D.subs({y: B})
             sage: G = A.subs({y: F}) + C
-            sage: g = G.mod(y^8 + y)
-            sage: g.degree(y)
+            sage: g = G.mod(y^8 + y)                                                    # needs sage.libs.singular
+            sage: g.degree(y)                                                           # needs sage.libs.singular
             7
         """
         return self % other
@@ -3002,7 +3014,7 @@ cdef class Polynomial(CommutativePolynomial):
         return (self.degree() == self.valuation() and
                 self.leading_coefficient()._is_atomic())
 
-    cpdef _mul_generic(self, right):
+    cpdef _mul_generic(self, right) noexcept:
         """
         Compute the product of ``self`` and ``right`` using the classical quadratic
         algorithm. This method is the default for inexact rings.
@@ -3066,7 +3078,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef list y = right.list(copy=False)
         return self._new_generic(do_schoolbook_product(x, y, -1))
 
-    cdef _square_generic(self):
+    cdef _square_generic(self) noexcept:
         cdef list x = self.list(copy=False)
         cdef Py_ssize_t i, j
         cdef Py_ssize_t d = len(x)-1
@@ -3117,6 +3129,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: S.<y> = PolynomialRing(RR)
             sage: f = y^10 - 1.393493*y + 0.3
             sage: f._mul_karatsuba(f,0)
@@ -3333,7 +3346,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cdef Polynomial _mul_term(self, Polynomial term, bint term_on_right):
+    cdef Polynomial _mul_term(self, Polynomial term, bint term_on_right) noexcept:
         """
         Return the product ``self * term``, where ``term`` is a polynomial
         with a single term.
@@ -3367,7 +3380,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         return self._parent.base_ring()
 
-    cpdef base_extend(self, R):
+    cpdef base_extend(self, R) noexcept:
         """
         Return a copy of this polynomial but with coefficients in ``R``, if
         there is a natural map from the coefficient ring of ``self`` to ``R``.
@@ -3460,7 +3473,7 @@ cdef class Polynomial(CommutativePolynomial):
         else:
             return self._parent.change_ring(R)(self.list(copy=False))
 
-    cpdef dict _mpoly_dict_recursive(self, tuple variables=None, base_ring=None):
+    cpdef dict _mpoly_dict_recursive(self, tuple variables=None, base_ring=None) noexcept:
         """
         Return a dict of coefficient entries suitable for construction of a
         MPolynomial_polydict with the given variables.
@@ -3642,6 +3655,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<x> = RR[]
             sage: f = x + RR('0.3'); f
             x + 0.300000000000000
@@ -3730,6 +3744,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: R.<x> = RR[]
             sage: f = x + RR('0.3'); f
             x + 0.300000000000000
@@ -4531,14 +4546,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: P.<a,b,c> = PolynomialRing(ZZ)
             sage: R.<x> = PolynomialRing(FractionField(P))
             sage: p = (x - a) * (b*x + c) * (a*b*x + a*c) / (a + 2)
-            sage: factor(p)
+            sage: factor(p)                                                             # needs sage.libs.singular
             (a/(a + 2)) * (x - a) * (b*x + c)^2
 
         Check that :trac:`24973` is fixed::
 
             sage: x1 = ZZ['x'].gen()
             sage: x2 = ZZ['x']['x'].gen()
-            sage: (x1 - x2).factor()
+            sage: (x1 - x2).factor()                                                    # needs sage.libs.singular
             -x + x
 
         Check that :trac:`26421' is fixed::
@@ -4546,16 +4561,16 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = R[]
             sage: p = x^4 + (-5 - 2*t)*x^3 + (-2 + 10*t)*x^2 + (10 + 4*t)*x - 20*t
-            sage: p.factor()
+            sage: p.factor()                                                            # needs sage.libs.singular
             (x - 5) * (x - 2*t) * (x^2 - 2)
 
         Check that :trac:`29266` is fixed:
 
             sage: f = t*x + t
-            sage: f.is_irreducible()
+            sage: f.is_irreducible()                                                    # needs sage.libs.singular
             True
             sage: f = 2*x + 4
-            sage: f.is_irreducible()
+            sage: f.is_irreducible()                                                    # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -5042,8 +5057,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p.gcd(q)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Order in Number Field in a
-            with defining polynomial x^2 - 5 with a = -2.236067977499790?
+            NotImplementedError: Order of conductor 2 generated by a in Number
+            Field in a with defining polynomial x^2 - 5 with a = -2.236067977499790?
             does not provide a gcd implementation for univariate polynomials
             sage: S.<x> = O.number_field()[]
             sage: O._gcd_univariate_polynomial = lambda f, g: R(S(f).gcd(S(g)))
@@ -5455,8 +5470,7 @@ cdef class Polynomial(CommutativePolynomial):
             return NumberField(self, names)
 
         from sage.rings.number_field.number_field_base import NumberField as NumberField_base
-
-        if sage.rings.rational_field.is_RationalField(R) or isinstance(R, NumberField_base):
+        if isinstance(R, NumberField_base):
             from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
@@ -5627,7 +5641,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         return M
 
-    cpdef constant_coefficient(self):
+    cpdef constant_coefficient(self) noexcept:
         """
         Return the constant coefficient of this polynomial.
 
@@ -5645,7 +5659,7 @@ cdef class Polynomial(CommutativePolynomial):
         # self.degree() >= 0
         return self.get_unsafe(0)
 
-    cpdef Polynomial _new_constant_poly(self, a, Parent P):
+    cpdef Polynomial _new_constant_poly(self, a, Parent P) noexcept:
         """
         Create a new constant polynomial from a in P, which MUST be an
         element of the base ring of P (this is not checked).
@@ -5927,20 +5941,22 @@ cdef class Polynomial(CommutativePolynomial):
             return a*self
 
     def coefficients(self, sparse=True):
-        """
-        Return the coefficients of the monomials appearing in self.
+        r"""
+        Return the coefficients of the monomials appearing in ``self``.
+
         If ``sparse=True`` (the default), it returns only the non-zero coefficients.
         Otherwise, it returns the same value as ``self.list()``.
         (In this case, it may be slightly faster to invoke ``self.list()`` directly.)
+        In either case, the coefficients are ordered by increasing degree.
 
         EXAMPLES::
 
             sage: _.<x> = PolynomialRing(ZZ)
-            sage: f = x^4 + 2*x^2 + 1
+            sage: f = 3*x^4 + 2*x^2 + 1
             sage: f.coefficients()
-            [1, 2, 1]
+            [1, 2, 3]
             sage: f.coefficients(sparse=False)
-            [1, 0, 2, 0, 1]
+            [1, 0, 2, 0, 3]
         """
         zero = self._parent.base_ring().zero()
         if sparse:
@@ -6022,14 +6038,14 @@ cdef class Polynomial(CommutativePolynomial):
         K = self.base_ring()
         if K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K):
             from sage.schemes.projective.projective_space import ProjectiveSpace
-            P = ProjectiveSpace(K, self.number_of_terms()-1)
+            P = ProjectiveSpace(K, self.number_of_terms() - 1)
             return P.point(self.coefficients()).global_height(prec=prec)
         elif isinstance(K, sage.rings.abc.AlgebraicField):
             from sage.rings.qqbar import number_field_elements_from_algebraics
             from sage.schemes.projective.projective_space import ProjectiveSpace
 
             K_pre, P, phi = number_field_elements_from_algebraics(self.coefficients())
-            Pr = ProjectiveSpace(K_pre, len(P)-1)
+            Pr = ProjectiveSpace(K_pre, len(P) - 1)
             return Pr.point(P).global_height(prec=prec)
         raise TypeError("Must be over a Numberfield or a Numberfield Order.")
 
@@ -6078,7 +6094,7 @@ cdef class Polynomial(CommutativePolynomial):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K)):
+        if K not in NumberFields():
             raise TypeError("must be over a Numberfield or a Numberfield order")
 
         return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
@@ -6127,7 +6143,7 @@ cdef class Polynomial(CommutativePolynomial):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if not (K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K)):
+        if K not in NumberFields():
             return TypeError("must be over a Numberfield or a Numberfield Order")
 
         if K == QQ:
@@ -6154,7 +6170,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef Py_ssize_t i
         return [i for i, c in enumerate(self.list(copy=False)) if c]
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         """
         Return a new copy of the list of the underlying elements of ``self``.
 
@@ -6878,9 +6894,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x, y> = QQ[]
             sage: S.<a> = R[]
             sage: f = x^2 + a; g = y^3 + a
-            sage: h = f.resultant(g); h                                                 # needs sage.libs.pari
+            sage: h = f.resultant(g); h                                                 # needs sage.libs.pari sage.modules
             y^3 - x^2
-            sage: h.parent() is R                                                       # needs sage.libs.pari
+            sage: h.parent() is R                                                       # needs sage.libs.pari sage.modules
             True
 
         Check that :trac:`13672` is fixed::
@@ -6905,7 +6921,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: y.resultant(y + x)                                                    # needs sage.libs.pari
+            sage: y.resultant(y + x)                                                    # needs sage.libs.pari sage.modules
             x
 
             sage: # needs sage.libs.singular
@@ -6926,7 +6942,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: S.<y> = PolynomialRing(R,'y')
             sage: p = ((1/b^2*d^2+1/a)*x*y^2+a*b/c*y+e+x^2)
             sage: q = -4*c^2*y^3+1
-            sage: p.resultant(q)                                                        # needs sage.libs.pari
+            sage: p.resultant(q)                                                        # needs sage.libs.pari sage.modules
             (16*c^4)*x^6 + (48*c^4)*e*x^4 + (1/(b^6)*d^6 + 3/(a*b^4)*d^4
             + (-12*a^3*b*c + 3)/(a^2*b^2)*d^2 + (-12*a^3*b*c + 1)/(a^3))*x^3
             + (48*c^4)*e^2*x^2 + ((-12*a*c)/b*d^2*e + (-12*b*c)*e)*x + (16*c^4)*e^3 + (4*a^3*b^3)/c
@@ -6938,7 +6954,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = PolynomialRing(CDF)
             sage: f = R(1 - I*x + (0.5)*x^2 + (1.7)*x^3)
             sage: g = f.derivative()
-            sage: f.resultant(g)
+            sage: f.resultant(g)                                                        # needs sage.modules
             133.92599999999996 + 37.56999999999999*I
         """
         variable = self.variable_name()
@@ -7325,10 +7341,10 @@ cdef class Polynomial(CommutativePolynomial):
             R = R.composed_op(self, operator.mul)
         return R
 
-    def adams_operator(self, n, monic=False):
+    def adams_operator_on_roots(self, n, monic=False):
         r"""
-        Return the polynomial whose roots are the `n`-th power
-        of the roots of this.
+        Return the polynomial whose roots are the `n`-th powers
+        of the roots of ``self``.
 
         INPUT:
 
@@ -7339,22 +7355,22 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.libs.pari sage.libs.singular
             sage: f = cyclotomic_polynomial(30)
-            sage: f.adams_operator(7)==f
+            sage: f.adams_operator_on_roots(7) == f
             True
-            sage: f.adams_operator(6) == cyclotomic_polynomial(5)**2
+            sage: f.adams_operator_on_roots(6) == cyclotomic_polynomial(5)**2
             True
-            sage: f.adams_operator(10) == cyclotomic_polynomial(3)**4
+            sage: f.adams_operator_on_roots(10) == cyclotomic_polynomial(3)**4
             True
-            sage: f.adams_operator(15) == cyclotomic_polynomial(2)**8
+            sage: f.adams_operator_on_roots(15) == cyclotomic_polynomial(2)**8
             True
-            sage: f.adams_operator(30) == cyclotomic_polynomial(1)**8
+            sage: f.adams_operator_on_roots(30) == cyclotomic_polynomial(1)**8
             True
 
             sage: x = polygen(QQ)
             sage: f = x^2 - 2*x + 2
-            sage: f.adams_operator(10)                                                  # needs sage.libs.singular
+            sage: f.adams_operator_on_roots(10)                                                  # needs sage.libs.singular
             x^2 + 1024
 
         When ``self`` is monic, the output will have leading coefficient
@@ -7364,9 +7380,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<a,b,c> = ZZ[]
             sage: x = polygen(R)
             sage: f = (x - a) * (x - b) * (x - c)
-            sage: f.adams_operator(3).factor()                                          # needs sage.libs.singular
+            sage: f.adams_operator_on_roots(3).factor()                                          # needs sage.libs.singular
             (-1) * (x - c^3) * (x - b^3) * (x - a^3)
-            sage: f.adams_operator(3, monic=True).factor()                              # needs sage.libs.singular
+            sage: f.adams_operator_on_roots(3, monic=True).factor()                              # needs sage.libs.singular
             (x - c^3) * (x - b^3) * (x - a^3)
 
         """
@@ -7378,6 +7394,8 @@ cdef class Polynomial(CommutativePolynomial):
         if monic:
             R = R.monic()
         return R
+
+    adams_operator = deprecated_function_alias(36396, adams_operator_on_roots)
 
     def symmetric_power(self, k, monic=False):
         r"""
@@ -7413,10 +7431,10 @@ cdef class Polynomial(CommutativePolynomial):
         try:
             k = ZZ(k)
         except (ValueError, TypeError):
-            raise ValueError("Cannot compute k'th symmetric power for k={}".format(k))
+            raise ValueError(f"Cannot compute k'th symmetric power for k={k}")
         n = self.degree()
         if k < 0 or k > n:
-            raise ValueError("Cannot compute k'th symmetric power for k={}".format(k))
+            raise ValueError(f"Cannot compute k'th symmetric power for k={k}")
         x = self.variables()[0]
         if k == 0:
             return x - 1
@@ -7439,7 +7457,7 @@ cdef class Polynomial(CommutativePolynomial):
             return g.composed_op(h, operator.mul, monic=True)
 
         def rpow(g, n):
-            return g.adams_operator(n, monic=True)
+            return g.adams_operator_on_roots(n, monic=True)
         if k == 2:
             g = (star(self, self) // rpow(self, 2)).nth_root(2)
             if monic:
@@ -7502,7 +7520,7 @@ cdef class Polynomial(CommutativePolynomial):
             -31
             sage: d.parent() is QQ                                                      # needs sage.libs.pari
             True
-            sage: EllipticCurve([1, 1]).discriminant()/16                               # needs sage.libs.pari
+            sage: EllipticCurve([1, 1]).discriminant()/16                               # needs sage.libs.pari sage.schemes
             -31
 
         ::
@@ -7654,9 +7672,11 @@ cdef class Polynomial(CommutativePolynomial):
 
         cdef unsigned long d
         if degree is not None:
+            if degree < 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             if len(v) < degree+1:
                 v.reverse()
                 v = [self.base_ring().zero()]*(degree+1-len(v)) + v
@@ -7730,7 +7750,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^3 - 1
             sage: f.roots()
             [(1, 1)]
-            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc
+            sage: f.roots(ring=CC)   # ... - low order bits slightly different on ppc   # needs sage.rings.real_mpfr
             [(1.00000000000000, 1),
              (-0.500000000000000 - 0.86602540378443...*I, 1),
              (-0.500000000000000 + 0.86602540378443...*I, 1)]
@@ -7790,6 +7810,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
+            sage: # needs sage.rings.real_mpfr
             sage: x = CC['x'].0
             sage: f = x^3 - 2
             sage: f.roots()                                                             # needs numpy
@@ -8104,6 +8125,7 @@ cdef class Polynomial(CommutativePolynomial):
             ....:     f2 = x2^3 - fld_out(2)
             ....:     for algo in (None, 'pari', 'numpy'):
             ....:         rts = f.roots(ring=fld_out, multiplicities=False)
+            ....:         rts = sorted(rts, key=lambda x: x.imag())
             ....:         if fld_in == fld_out and algo is None:
             ....:             print("{} {}".format(fld_in, rts))
             ....:         for rt in rts:
@@ -8112,9 +8134,9 @@ cdef class Polynomial(CommutativePolynomial):
             Real Field with 53 bits of precision [1.25992104989487]
             Real Double Field [1.25992104989...]
             Real Field with 100 bits of precision [1.2599210498948731647672106073]
-            Complex Field with 53 bits of precision [1.25992104989487, -0.62996052494743... - 1.09112363597172*I, -0.62996052494743... + 1.09112363597172*I]
-            Complex Double Field [1.25992104989..., -0.629960524947... - 1.0911236359717...*I, -0.629960524947... + 1.0911236359717...*I]
-            Complex Field with 100 bits of precision [1.2599210498948731647672106073, -0.62996052494743658238360530364 - 1.0911236359717214035600726142*I, -0.62996052494743658238360530364 + 1.0911236359717214035600726142*I]
+            Complex Field with 53 bits of precision [-0.62996052494743... - 1.09112363597172*I, 1.25992104989487, -0.62996052494743... + 1.09112363597172*I]
+            Complex Double Field [-0.629960524947... - 1.0911236359717...*I, 1.25992104989487..., -0.629960524947... + 1.0911236359717...*I]
+            Complex Field with 100 bits of precision [-0.62996052494743658238360530364 - 1.0911236359717214035600726142*I, 1.2599210498948731647672106073, -0.62996052494743658238360530364 + 1.0911236359717214035600726142*I]
 
         Note that we can find the roots of a polynomial with algebraic
         coefficients::
@@ -8149,11 +8171,11 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: x = polygen(QQ)
             sage: p = x + bigc
-            sage: p.roots(ring=RR, algorithm='numpy')                                   # needs numpy
+            sage: p.roots(ring=RR, algorithm='numpy')                                   # needs numpy sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             LinAlgError: Array must not contain infs or NaNs
-            sage: p.roots(ring=RR, algorithm='pari')                                    # needs sage.libs.pari
+            sage: p.roots(ring=RR, algorithm='pari')                                    # needs sage.libs.pari sage.rings.real_mpfr
             [(-3.50746621104340e451, 1)]
             sage: p.roots(ring=AA)                                                      # needs sage.rings.number_field
             [(-3.5074662110434039?e451, 1)]
@@ -8271,9 +8293,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: K.<zeta> = CyclotomicField(2)                                         # needs sage.rings.number_field
-            sage: R.<x> = K[]                                                           # needs sage.rings.number_field
-            sage: factor(x^3 - 1)                                                       # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<zeta> = CyclotomicField(2)
+            sage: R.<x> = K[]
+            sage: factor(x^3 - 1)
             (x - 1) * (x^2 + x + 1)
 
         This shows that the issue from :trac:`6237` is fixed::
@@ -8333,7 +8356,7 @@ cdef class Polynomial(CommutativePolynomial):
         Spurious crash with pari-2.5.5, see :trac:`16165`::
 
             sage: f = (1+x+x^2)^3
-            sage: f.roots(ring=CC)
+            sage: f.roots(ring=CC)                                                      # needs sage.libs.pari sage.rings.real_mpfr
             [(-0.500000000000000 - 0.866025403784439*I, 3),
              (-0.500000000000000 + 0.866025403784439*I, 3)]
 
@@ -8341,7 +8364,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: polRing.<x> = PolynomialRing(ZZ)
             sage: j = (x+1)^2 * (x-1)^7 * (x^2-x+1)^5
-            sage: j.roots(CC)
+            sage: j.roots(CC)                                                           # needs sage.libs.pari sage.rings.real_mpfr
             [(-1.00000000000000, 2),
              (1.00000000000000, 7),
              (0.500000000000000 - 0.866025403784439*I, 5),
@@ -8364,7 +8387,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = R[]
             sage: p = x^4 + (-5 - 2*t)*x^3 + (-2 + 10*t)*x^2 + (10 + 4*t)*x - 20*t
-            sage: p.roots()
+            sage: p.roots()                                                             # needs sage.libs.singular
             [(5, 1), (2*t, 1)]
 
         Check that :trac:`31040` is fixed::
@@ -8386,6 +8409,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that :trac:`33979` is fixed::
 
+            sage: # needs sage.libs.pari
             sage: n = randint(2, 10^6)
             sage: K = Integers(n)
             sage: R.<x> = PolynomialRing(K)
@@ -8736,20 +8760,20 @@ cdef class Polynomial(CommutativePolynomial):
         EXAMPLES::
 
             sage: x = polygen(ZZ)
-            sage: (x^2 - x - 1).real_roots()                                            # needs sage.rings.real_mpfr
+            sage: (x^2 - x - 1).real_roots()                                            # needs sage.libs.pari sage.rings.real_mpfr
             [-0.618033988749895, 1.61803398874989]
 
         TESTS::
 
-            sage: x = polygen(RealField(100))                                           # needs sage.rings.real_mpfr
-            sage: (x^2 - x - 1).real_roots()[0].parent()                                # needs sage.rings.real_mpfr
+            sage: x = polygen(RealField(100))                                           # needs sage.libs.pari sage.rings.real_mpfr
+            sage: (x^2 - x - 1).real_roots()[0].parent()                                # needs sage.libs.pari sage.rings.real_mpfr
                 Real Field with 100 bits of precision
             sage: x = polygen(RDF)
             sage: (x^2 - x - 1).real_roots()[0].parent()                                # needs numpy
             Real Double Field
 
-            sage: x = polygen(ZZ,'x'); v = (x^2 - x - 1).real_roots()                   # needs sage.rings.real_mpfr
-            sage: v[0].parent() is RR                                                   # needs sage.rings.real_mpfr
+            sage: x = polygen(ZZ,'x'); v = (x^2 - x - 1).real_roots()                   # needs sage.libs.pari sage.rings.real_mpfr
+            sage: v[0].parent() is RR                                                   # needs sage.libs.pari sage.rings.real_mpfr
             True
         """
         K = self.base_ring()
@@ -8771,16 +8795,18 @@ cdef class Polynomial(CommutativePolynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari sage.rings.real_mpfr
             sage: x = polygen(ZZ)
-            sage: (x^3 - 1).complex_roots()   # note: low order bits slightly different on ppc.     # needs sage.rings.real_mpfr
+            sage: (x^3 - 1).complex_roots()   # note: low order bits slightly different on ppc.
             [1.00000000000000,
              -0.500000000000000 - 0.86602540378443...*I,
              -0.500000000000000 + 0.86602540378443...*I]
 
         TESTS::
 
-            sage: x = polygen(RR)                                                       # needs sage.rings.real_mpfr
-            sage: (x^3 - 1).complex_roots()[0].parent()                                 # needs sage.rings.real_mpfr
+            sage: # needs sage.libs.pari sage.rings.real_mpfr
+            sage: x = polygen(RR)
+            sage: (x^3 - 1).complex_roots()[0].parent()
             Complex Field with 53 bits of precision
 
             sage: x = polygen(RDF)
@@ -9196,6 +9222,7 @@ cdef class Polynomial(CommutativePolynomial):
         is not a subring of the real numbers, as the notion is not defined in
         this case::
 
+            sage: # needs sage.rings.real_mpfr
             sage: Q.<y> = CC[]
             sage: q = y^2
             sage: q.is_lorentzian()
@@ -9435,6 +9462,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Over `\RR[z]`::
 
+            sage: # needs sage.rings.real_mpfr
             sage: z = PowerSeriesRing(RR, 'z').gen()
             sage: P = PolynomialRing(RR, 'x')
             sage: x = P.gen()
@@ -9797,7 +9825,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         return self.shift(-k)
 
-    cpdef Polynomial truncate(self, long n):
+    cpdef Polynomial truncate(self, long n) noexcept:
         r"""
         Return the polynomial of degree `< n` which is equivalent
         to self modulo `x^n`.
@@ -9818,7 +9846,7 @@ cdef class Polynomial(CommutativePolynomial):
         # We must not have check=False, since 0 must not have _coeffs = [0].
         return <Polynomial>self._parent(self[:n])#, check=False)
 
-    cdef _inplace_truncate(self, long prec):
+    cdef _inplace_truncate(self, long prec) noexcept:
         return self.truncate(prec)
 
     @cached_method
@@ -10094,9 +10122,10 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: R.<x> = RR[]                                                          # needs sage.rings.real_mpfr
-            sage: f = x^6 + x^2 + -x^4 -x^3                                             # needs sage.rings.real_mpfr
-            sage: f.norm(int(2))                                                        # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr
+            sage: R.<x> = RR[]
+            sage: f = x^6 + x^2 + -x^4 -x^3
+            sage: f.norm(int(2))
             2.00000000000000
 
         Check that :trac:`18600` is fixed::
@@ -10126,7 +10155,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         return RR(sum([abs(i)**p for i in coeffs]))**(1/p)
 
-    cpdef long number_of_terms(self):
+    cpdef long number_of_terms(self) noexcept:
         """
         Return the number of non-zero coefficients of ``self``.
 
@@ -10826,7 +10855,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Some random tests::
 
-            sage: for R in [QQ['x'], GF(4)['x']]:                                       # needs sage.rings.finite_rings
+            sage: for R in [QQ['x'], GF(4)['x']]:                                       # needs sage.modules sage.rings.finite_rings
             ....:     for _ in range(30):
             ....:         p = R.random_element(degree=randint(10,20))
             ....:         n = ZZ.random_element(2,20)
@@ -11047,10 +11076,10 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<x> = Zmod(6)[]
             sage: p = 4*x + 3
             sage: q = 5*x**2 + x + 2
+            sage: q.divides(p)
+            False
             sage: p.divides(q)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: divisibility test only implemented for polynomials over an integral domain
+            False
 
         TESTS::
 
@@ -11073,16 +11102,24 @@ cdef class Polynomial(CommutativePolynomial):
             sage: q = (y^2-x^2) * z^2 + z + x-y
             sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
             (False, True)
+            sage: R.<x> = Zmod(6)[]
+            sage: p = 4*x + 3
+            sage: q = 2*x**2 + x + 2
+            sage: p.divides(q)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms
         """
-        if not self.base_ring().is_integral_domain():
-            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain")
-
-        if p.is_zero(): return True          # everything divides 0
-        if self.is_zero(): return False      # 0 only divides 0
+        if p.is_zero():
+            return True          # everything divides 0
+        if self.is_zero():
+            return False      # 0 only divides 0
         try:
-            if self.is_unit(): return True   # units divide everything
+            if self.is_unit():
+                return True   # units divide everything
         except NotImplementedError:
-            if self.is_one(): return True    # if is_unit is not implemented
+            if self.is_one():
+                return True    # if is_unit is not implemented
 
         if self.degree() > p.degree():
             return False
@@ -11090,10 +11127,13 @@ cdef class Polynomial(CommutativePolynomial):
         if not self.leading_coefficient().divides(p.leading_coefficient()):
             return False
 
+        if not self.base_ring().is_integral_domain():
+            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms")
+
         try:
             return (p % self).is_zero()      # if quo_rem is defined
         except ArithmeticError:
-            return False                     # if division is not exact
+            return False
 
     def specialization(self, D=None, phi=None):
         r"""
@@ -11300,7 +11340,7 @@ cdef class Polynomial(CommutativePolynomial):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.overflowcheck(False)
-cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
+cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg) noexcept:
     """
     Compute the truncated multiplication of two polynomials represented by
     lists, using the schoolbook algorithm.
@@ -11352,7 +11392,7 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.overflowcheck(False)
-cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_threshold):
+cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_threshold) noexcept:
     """
     Multiply two polynomials of different degrees by splitting the one of
     largest degree in chunks that are multiplied with the other using the
@@ -11434,7 +11474,7 @@ cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_thresh
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.overflowcheck(False)
-cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold,Py_ssize_t start_l, Py_ssize_t start_r,Py_ssize_t num_elts):
+cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold,Py_ssize_t start_l, Py_ssize_t start_r,Py_ssize_t num_elts) noexcept:
     """
     Core routine for Karatsuba multiplication. This function works for two
     polynomials of the same degree.
@@ -11613,14 +11653,14 @@ cdef class Polynomial_generic_dense(Polynomial):
         else:
             self._coeffs = x
 
-    cdef Polynomial_generic_dense _new_c(self, list coeffs, Parent P):
+    cdef Polynomial_generic_dense _new_c(self, list coeffs, Parent P) noexcept:
         cdef type t = type(self)
         cdef Polynomial_generic_dense f = <Polynomial_generic_dense>t.__new__(t)
         f._parent = P
         f._coeffs = coeffs
         return f
 
-    cpdef Polynomial _new_constant_poly(self, a, Parent P):
+    cpdef Polynomial _new_constant_poly(self, a, Parent P) noexcept:
         """
         Create a new constant polynomial in P with value a.
 
@@ -11692,7 +11732,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cdef Polynomial _mul_term(self, Polynomial term, bint term_on_right):
+    cdef Polynomial _mul_term(self, Polynomial term, bint term_on_right) noexcept:
         """
         Return the product ``self * term``, where ``term`` is a polynomial
         with a single term.
@@ -11744,7 +11784,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cdef get_unsafe(self, Py_ssize_t n):
+    cdef get_unsafe(self, Py_ssize_t n) noexcept:
         """
         Return the `n`-th coefficient of ``self``.
 
@@ -11841,7 +11881,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         res._normalize()
         return res
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         r"""
         Add two polynomials.
 
@@ -11872,7 +11912,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         else:
             return self._new_c(low + high, self._parent)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         cdef Polynomial_generic_dense res
         cdef Py_ssize_t check=0, i, min
         x = (<Polynomial_generic_dense>self)._coeffs
@@ -11893,7 +11933,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         else:
             return self._new_c(low + high, self._parent)
 
-    cpdef _rmul_(self, Element c):
+    cpdef _rmul_(self, Element c) noexcept:
         if not self._coeffs:
             return self
         if c._parent is not (<Element>self._coeffs[0])._parent:
@@ -11905,7 +11945,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         res._normalize()
         return res
 
-    cpdef _lmul_(self, Element c):
+    cpdef _lmul_(self, Element c) noexcept:
         if not self._coeffs:
             return self
         if c._parent is not (<Element>self._coeffs[0])._parent:
@@ -11917,7 +11957,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         res._normalize()
         return res
 
-    cpdef constant_coefficient(self):
+    cpdef constant_coefficient(self) noexcept:
         """
         Return the constant coefficient of this polynomial.
 
@@ -11936,7 +11976,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         else:
             return self._coeffs[0]
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         """
         Return a new copy of the list of the underlying elements of ``self``.
 
@@ -12123,7 +12163,7 @@ cdef class Polynomial_generic_dense(Polynomial):
 
         return self._new_c(quo,self._parent), self._new_c(x,self._parent)._inplace_truncate(n-1)
 
-    cpdef Polynomial truncate(self, long n):
+    cpdef Polynomial truncate(self, long n) noexcept:
         r"""
         Return the polynomial of degree `< n` which is equivalent
         to self modulo `x^n`.
@@ -12157,7 +12197,7 @@ cdef class Polynomial_generic_dense(Polynomial):
             n -= 1
         return self._new_c(self._coeffs[:n], self._parent)
 
-    cdef _inplace_truncate(self, long n):
+    cdef _inplace_truncate(self, long n) noexcept:
         if n < len(self._coeffs):
             while n > 0 and not self._coeffs[n-1]:
                 n -= 1
@@ -12208,7 +12248,7 @@ def universal_discriminant(n):
     return (1 - (n&2))*p.resultant(p.derivative())//pr1.gen(n)
 
 
-cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec):
+cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec) noexcept:
     r"""
     Generic truncated power algorithm
 
@@ -12287,7 +12327,7 @@ cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec):
 
     return power
 
-cpdef list _dict_to_list(dict x, zero):
+cpdef list _dict_to_list(dict x, zero) noexcept:
     """
     Convert a dict to a list.
 
@@ -12465,7 +12505,7 @@ cdef class ConstantPolynomialSection(Map):
         ...
         TypeError: not a constant polynomial
     """
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         TESTS::
 
@@ -12577,7 +12617,7 @@ cdef class PolynomialBaseringInjection(Morphism):
         self._repr_type_str = "Polynomial base injection"
         self._new_constant_poly_ = self._an_element._new_constant_poly
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         """
         EXAMPLES::
 
@@ -12595,7 +12635,7 @@ cdef class PolynomialBaseringInjection(Morphism):
                 _new_constant_poly_=self._new_constant_poly_)
         return slots
 
-    cdef _update_slots(self, dict _slots):
+    cdef _update_slots(self, dict _slots) noexcept:
         """
         EXAMPLES::
 
@@ -12611,7 +12651,7 @@ cdef class PolynomialBaseringInjection(Morphism):
         self._an_element = _slots['_an_element']
         self._new_constant_poly_ = _slots['_new_constant_poly_']
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         TESTS::
 
@@ -12627,7 +12667,7 @@ cdef class PolynomialBaseringInjection(Morphism):
         """
         return self._new_constant_poly_(x, self._codomain)
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}):
+    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
         """
         TESTS::
 
@@ -12690,7 +12730,7 @@ cdef class PolynomialBaseringInjection(Morphism):
         """
         return False
 
-cpdef bint polynomial_is_variable(x):
+cpdef bint polynomial_is_variable(x) noexcept:
     r"""
     Test whether the given polynomial is a variable of its parent ring.
 

@@ -97,26 +97,26 @@ Obtaining an instance of :class:`Link`::
     <class 'sage.knots.link.Link'>
 
 If you have `SnapPy <https://snappy.math.uic.edu/index.html>`__ installed inside
-Sage you can obtain an instance of :class:`~spherogram.links.links_base.Link`,
+Sage, you can obtain an instance of :class:`~spherogram.links.links_base.Link`,
 too::
 
+    sage: # optional - snappy
     sage: L6 = KnotInfo.L6a1_0
-    sage: l6s = L6.link(snappy=True); l6s      # optional - snappy
+    sage: l6s = L6.link(snappy=True); l6s
     Plink failed to import tkinter.
     <Link: 2 comp; 6 cross>
-
-    sage: type(l6s)                            # optional - snappy
+    sage: type(l6s)
     <class 'spherogram.links.invariants.Link'>
     sage: l6  = L6.link()
-    sage: l6 == l6s.sage_link()                # optional - snappy
+    sage: l6 == l6s.sage_link()
     True
-    sage: L6.link(L6.items.name, snappy=True)  # optional - snappy
+    sage: L6.link(L6.items.name, snappy=True)
     <Link L6a1: 2 comp; 6 cross>
-    sage: l6sn = _                             # optional - snappy
-    sage: l6s == l6sn                          # optional - snappy
+    sage: l6sn = _
+    sage: l6s == l6sn
     False
-    sage: l6m = l6.mirror_image()              # optional - snappy
-    sage: l6sn.sage_link().is_isotopic(l6m)    # optional - snappy
+    sage: l6m = l6.mirror_image()
+    sage: l6sn.sage_link().is_isotopic(l6m)
     True
 
 But observe that the name conversion to SnapPy does not distinguish orientation
@@ -238,13 +238,15 @@ Thanks to Chuck Livingston and Allison Moore for their support. For further ackn
 
 from enum import Enum
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
-from sage.groups.braid import BraidGroup
 from sage.knots.knot import Knots
 from sage.databases.knotinfo_db import KnotInfoColumns, db
+
+lazy_import('sage.groups.braid', 'BraidGroup')
 
 
 def eval_knotinfo(string, locals={}, to_tuple=True):
@@ -694,8 +696,7 @@ class KnotInfoBase(Enum):
     @cached_method
     def braid(self):
         r"""
-        Return the braid notation of self as an instance of :class:`~sage.groups.braid.Braid`.
-
+        Return the braid notation of ``self`` as an instance of :class:`~sage.groups.braid.Braid`.
 
         EXAMPLES::
 
@@ -988,13 +989,13 @@ class KnotInfoBase(Enum):
 
         h = self.homfly_polynomial()
         v, z = h.parent().gens()
-        hm  = h.subs(v=~v, z=-z)
+        hm = h.subs(v=~v, z=-z)
         if h != hm:
             return False
 
         k = self.kauffman_polynomial()
         a, z = k.parent().gens()
-        km  = k.subs(a=~a)
+        km = k.subs(a=~a)
         if k != km:
             return False
 
@@ -2067,7 +2068,7 @@ class KnotInfoBase(Enum):
         # on such series
         if self.is_knot():
             return True
-        S  = self.series(oriented=True)
+        S = self.series(oriented=True)
         hp = self.homfly_polynomial()
         Sl = S.list(homfly=hp)
         if len(Sl) == 1:
@@ -2343,10 +2344,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             sage: L6a = KnotInfoSeries(6, False, True); L6a
             Series of links L6a
         """
-        self._crossing_number   = crossing_number
-        self._is_knot           = is_knot
-        self._is_alternating    = is_alternating
-        self._name_unoriented   = name_unoriented
+        self._crossing_number = crossing_number
+        self._is_knot = is_knot
+        self._is_alternating = is_alternating
+        self._name_unoriented = name_unoriented
 
     @cached_method
     def list(self, oriented=False, comp=None, det=None, homfly=None):
@@ -2405,10 +2406,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return [L for L in l if L.num_components() == comp]
 
         # default case
-        is_knot  = self._is_knot
+        is_knot = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   = self._is_alternating
-        n_unori  = self._name_unoriented
+        is_alt = self._is_alternating
+        n_unori = self._name_unoriented
 
         res = []
         curr_n_unori = None
@@ -2425,10 +2426,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             else:
                 this_n_unori = K.name_unoriented()
                 if n_unori:
-                    if this_n_unori  != n_unori:
+                    if this_n_unori != n_unori:
                         continue
                     res.append(K)
-                elif this_n_unori  != curr_n_unori:
+                elif this_n_unori != curr_n_unori:
                     if curr_n_unori:
                         res.append(KnotInfoSeries(cross_nr, is_knot, is_alt, curr_n_unori))
                     curr_n_unori = this_n_unori
@@ -2576,10 +2577,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             sage: KnotInfoSeries(6, True, True)._name()
             'K6'
         """
-        is_knot  = self._is_knot
+        is_knot = self._is_knot
         cross_nr = self._crossing_number
-        is_alt   = self._is_alternating
-        n_unori  = self._name_unoriented
+        is_alt = self._is_alternating
+        n_unori = self._name_unoriented
 
         alt = 'a'
         if not is_alt:

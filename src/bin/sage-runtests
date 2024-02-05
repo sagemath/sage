@@ -26,13 +26,16 @@ if __name__ == "__main__":
                                                  ".py, .pyx, .pxd, .pxi, .sage, .spyx, .tex, .rst.")
     parser.add_argument("-p", "--nthreads", dest="nthreads",
                         type=int, nargs='?', const=0, default=1, metavar="N",
-                        help="tests in parallel using N threads with 0 interpreted as max(2, min(8, cpu_count()))")
+                        help="test in parallel using N threads, with 0 interpreted as max(2, min(8, cpu_count())); "
+                        "when run under the control of the GNU make jobserver (make -j), request as most N job slots")
     parser.add_argument("-T", "--timeout", type=int, default=-1, help="timeout (in seconds) for doctesting one file, 0 for no timeout")
     what = parser.add_mutually_exclusive_group()
     what.add_argument("-a", "--all", action="store_true", default=False, help="test all files in the Sage library")
     what.add_argument("--installed", action="store_true", default=False, help="test all installed modules of the Sage library")
     parser.add_argument("--logfile", type=argparse.FileType('a'), metavar="FILE", help="log all output to FILE")
 
+    parser.add_argument("--format", choices=["sage", "github"], default="sage",
+                        help="set format of error messages and warnings")
     parser.add_argument("-l", "--long", action="store_true", default=False, help="include lines with the phrase 'long time'")
     parser.add_argument("-s", "--short", dest="target_walltime", nargs='?',
                         type=int, default=-1, const=300, metavar="SECONDS",
@@ -140,7 +143,8 @@ if __name__ == "__main__":
             in_filenames = True
             new_arguments.append('--')
         new_arguments.append(arg)
-        afterlog = bool(arg == '--logfile')
+        afterlog = arg in ['--logfile', '--stats_path', '--stats-path',
+                           '--baseline_stats_path', '--baseline-stats-path']
 
     args = parser.parse_args(new_arguments)
 

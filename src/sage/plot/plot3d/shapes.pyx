@@ -56,9 +56,9 @@ from libc.math cimport sqrt, sin, cos, acos, M_PI
 from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.misc.decorators import rename_keyword
-from .base import Graphics3dGroup
-from .index_face_set cimport IndexFaceSet, PrimitiveObject
-from .transform cimport point_c
+from sage.plot.plot3d.base import Graphics3dGroup
+from sage.plot.plot3d.index_face_set cimport IndexFaceSet, PrimitiveObject
+from sage.plot.plot3d.transform cimport point_c
 
 
 # Helper function to check that Box input is right
@@ -245,7 +245,7 @@ def ColorCube(size, colors, opacity=1, **kwds):
     all = []
     kwds['opacity'] = opacity
 
-    from .texture import Texture
+    from sage.plot.plot3d.texture import Texture
     for k in range(6):
         all.append(IndexFaceSet([faces[k]], enclosed=True,
              texture=Texture(colors[k], opacity=opacity),
@@ -498,7 +498,7 @@ cdef class Cylinder(ParametricSurface):
             base_cap = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
                        % (base[0], base[1], base[2], normal[0], normal[1], normal[2], rad, self.texture.id)
             top_cap  = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
-                       % ( top[0],  top[1],  top[2], normal[0], normal[1], normal[2], rad, self.texture.id)
+                       % (top[0], top[1], top[2], normal[0], normal[1], normal[2], rad, self.texture.id)
             return [base_cap, cyl, top_cap]
         else:
             return cyl
@@ -974,7 +974,7 @@ cdef class Sphere(ParametricSurface):
         if u == -10:
             res.x, res.y, res.z = 0, 0, -self.radius
         elif u == 10:
-            res.x, res.y, res.z = 0, 0,  self.radius
+            res.x, res.y, res.z = 0, 0, self.radius
         else:
             res.x = self.radius * cos(v) * cos(u)
             res.y = self.radius * sin(v) * cos(u)
@@ -1330,7 +1330,7 @@ def _validate_threejs_text_style(style):
     """
     default_color = '#000000' # black
     color = style.get('color', default_color)
-    from .texture import Texture
+    from sage.plot.plot3d.texture import Texture
     try:
         texture = Texture(color=color)
     except ValueError:

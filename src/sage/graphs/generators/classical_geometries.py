@@ -535,12 +535,12 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
         deg = (q**n - e)*(q**(n - 1) + e)   # k
         S = [libgap.Elements(libgap.Basis(x))[0]
              for x in libgap.Elements(libgap.Subspaces(W, 1))]
-        (V,) = [x for x in libgap.Orbits(g, S, libgap.OnLines)
-                if len(x) == nvert]
+        (V,) = (x for x in libgap.Orbits(g, S, libgap.OnLines)
+                if len(x) == nvert)
         gp = libgap.Action(g, V, libgap.OnLines)  # make a permutation group
         h = libgap.Stabilizer(gp, 1)
-        (Vh,) = [x for x in libgap.Orbits(h, libgap.Orbit(gp, 1))
-                 if len(x) == deg]
+        (Vh,) = (x for x in libgap.Orbits(h, libgap.Orbit(gp, 1))
+                 if len(x) == deg)
         Vh = Vh[0]
         L = libgap.Orbit(gp, [1, Vh], libgap.OnSets)
         G = Graph()

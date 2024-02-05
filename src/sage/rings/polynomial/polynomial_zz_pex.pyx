@@ -44,7 +44,7 @@ include "polynomial_template.pxi"
 
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 
-cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
+cdef inline ZZ_pE_c_to_list(ZZ_pE_c x) noexcept:
     cdef list L = []
     cdef ZZ_pX_c c_pX
     cdef ZZ_p_c c_p
@@ -152,7 +152,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         r"""
         Return the `i`-th coefficient of ``self``.
 
@@ -176,7 +176,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         cdef ZZ_pE_c c_pE = ZZ_pEX_coeff(self.x, i)
         return self._parent._base(ZZ_pE_c_to_list(c_pE))
 
-    cpdef list list(self, bint copy=True):
+    cpdef list list(self, bint copy=True) noexcept:
         r"""
         Return the list of coefficients.
 
@@ -198,7 +198,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return [K(ZZ_pE_c_to_list(ZZ_pEX_coeff(self.x, i)))
                 for i in range(celement_len(&self.x, (<Polynomial_template>self)._cparent))]
 
-    cpdef _lmul_(self, Element left):
+    cpdef _lmul_(self, Element left) noexcept:
         r"""
         EXAMPLES::
 
@@ -410,7 +410,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         ZZ_pEX_MinPolyMod(r.x, (<Polynomial_ZZ_pEX>(self % other)).x, (<Polynomial_ZZ_pEX>other).x)
         return r
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         r"""
         EXAMPLES::
 
@@ -513,13 +513,18 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: f.reverse(degree=200)
             2*x^200 + 3*x^199 + 5*x^198 + 7*x^197 + 11*x^196 + 13*x^195 + 17*x^194 + 19*x^193
             sage: f.reverse(degree=0)
-            Traceback (most recent call last):
-            ...
-            ValueError: degree argument must be a non-negative integer, got 0
+            2
             sage: f.reverse(degree=-5)
             Traceback (most recent call last):
             ...
             ValueError: degree argument must be a non-negative integer, got -5
+
+        Check that this implementation is compatible with the generic one::
+
+            sage: p = R([0,1,0,2])
+            sage: all(p.reverse(d) == Polynomial.reverse(p, d)
+            ....:     for d in [None, 0, 1, 2, 3, 4])
+            True
         """
         self._parent._modulus.restore()
 
@@ -533,11 +538,10 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         # When a degree has been supplied, ensure it is a valid input
         cdef unsigned long d
         if degree is not None:
-            if degree <= 0:
+            if degree < 0:
                 raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
-            try:
-                d = degree
-            except ValueError:
+            d = degree
+            if d != degree:
                 raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             ZZ_pEX_reverse_hi(r.x, (<Polynomial_ZZ_pEX> self).x, d)
         else:

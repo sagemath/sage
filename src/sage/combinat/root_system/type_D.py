@@ -272,7 +272,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             g.add_edge(n-2, n)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -288,6 +288,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             \draw[fill=white] (4 cm, -0.7 cm) circle (.25cm) node[right=3pt]{$3$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n == 2:
@@ -305,7 +307,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         ret += node(rt_most, -0.7, label(self.n-1), 'right=3pt')
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -336,6 +338,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             O---O---O---O---O
             3   4   5   6   7
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         n = self.n

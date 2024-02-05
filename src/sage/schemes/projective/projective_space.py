@@ -180,7 +180,7 @@ def ProjectiveSpace(n, R=None, names=None):
         sage: ProjectiveSpace(5)
         Projective Space of dimension 5 over Integer Ring
 
-    There is also an projective space associated each polynomial ring.
+    There is also a projective space associated each polynomial ring.
 
     ::
 
@@ -1951,7 +1951,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                         base_list = [list(s) for s in source_points]
                 elif len(source_points) == N + 1:
                     Ms = matrix(base_list + [point.change_ring(self.base_ring())])
-                    if not any([m == 0 for m in Ms.minors(N + 1)]):
+                    if not any(m == 0 for m in Ms.minors(N + 1)):
                         source_points.append(self(point))
                         break
             if len(source_points) != N+2:
@@ -2247,7 +2247,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             sage: P3.<x0,x1,x2,x3> = ProjectiveSpace(3, QQ)
             sage: p1 = P3(1, 2, 3, 4)
             sage: p2 = P3(4, 3, 2, 1)
-            sage: P3.line_through(p1, p2)                                               # needs sage.schemes
+            sage: P3.line_through(p1, p2)                                               # needs sage.libs.singular sage.schemes
             Projective Curve over Rational Field defined by
               -5/4*x0 + 5/2*x1 - 5/4*x2,        -5/2*x0 + 15/4*x1 - 5/4*x3,
               -5/4*x0 + 15/4*x2 - 5/2*x3,       -5/4*x1 + 5/2*x2 - 5/4*x3
@@ -2371,10 +2371,10 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
              (b + 1 : 1), (b + 2 : 1), (b : 1)]
         """
         if F is None:
-            return [P for P in self]
+            return list(self)
         elif not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
-        return [P for P in self.base_extend(F)]
+        return list(self.base_extend(F))
 
     def rational_points_dictionary(self):
         r"""

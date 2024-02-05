@@ -1,15 +1,15 @@
 r"""
 Interface to LattE integrale programs
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Vincent Delecroix <vincent.delecroix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.cpython.string import str_to_bytes, bytes_to_str
@@ -134,15 +134,15 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
     if 'redundancy_check' not in kwds:
         args.append('--redundancy-check=none')
 
-    for key,value in kwds.items():
+    for key, value in kwds.items():
         if value is None or value is False:
             continue
 
-        key = key.replace('_','-')
+        key = key.replace('_', '-')
         if value is True:
-            args.append('--{}'.format(key))
+            args.append(f'--{key}')
         else:
-            args.append('--{}={}'.format(key, value))
+            args.append(f'--{key}={value}')
 
     if multivariate_generating_function:
         from sage.misc.temporary_file import tmp_filename
@@ -200,12 +200,12 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         else:
             raise NotImplementedError("there is no Sage object to handle multivariate series from LattE, use raw_output=True")
     else:
-        if ans: # Sometimes (when LattE's preproc does the work), no output appears on stdout.
+        if ans:  # Sometimes (when LattE's preproc does the work), no output appears on stdout.
             ans = ans.splitlines()[-1]
         if not ans:
             # opening a file is slow (30e-6s), so we read the file
             # numOfLatticePoints only in case of a IndexError above
-            with open(tempd.name+'/numOfLatticePoints', 'r') as f:
+            with open(tempd.name + '/numOfLatticePoints', 'r') as f:
                 ans = f.read()
 
         if raw_output:
@@ -363,11 +363,11 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         if value is None or value is False:
             continue
 
-        key = key.replace('_','-')
+        key = key.replace('_', '-')
         if value is True:
-            args.append('--{}'.format(key))
+            args.append(f'--{key}')
         else:
-            args.append('--{}={}'.format(key, value))
+            args.append(f'--{key}={value}')
 
     if got_polynomial:
         if not isinstance(polynomial, str):

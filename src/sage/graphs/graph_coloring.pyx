@@ -327,7 +327,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         raise RuntimeError("too much recursion, Graph coloring failed")
 
 
-cpdef first_coloring(G, n=0, hex_colors=False):
+cpdef first_coloring(G, n=0, hex_colors=False) noexcept:
     r"""
     Return the first vertex coloring found.
 
@@ -365,7 +365,7 @@ cpdef first_coloring(G, n=0, hex_colors=False):
             return C
 
 
-cpdef number_of_n_colorings(G, n):
+cpdef number_of_n_colorings(G, n) noexcept:
     r"""
     Compute the number of `n`-colorings of a graph
 
@@ -397,7 +397,7 @@ cpdef number_of_n_colorings(G, n):
     return m
 
 
-cpdef numbers_of_colorings(G):
+cpdef numbers_of_colorings(G) noexcept:
     r"""
     Compute the number of colorings of a graph.
 
@@ -416,7 +416,7 @@ cpdef numbers_of_colorings(G):
     return answer
 
 
-cpdef chromatic_number(G):
+cpdef chromatic_number(G) noexcept:
     r"""
     Return the chromatic number of the graph.
 
@@ -1437,7 +1437,6 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
     cdef list L = [g] if g.is_connected() else g.connected_components_subgraphs()
     cdef int chi = 0
     cdef list classes = [], vertices
-    cdef list values
 
     if vizing:
         classes = _vizing_edge_coloring(g)
@@ -1684,12 +1683,13 @@ def _vizing_edge_coloring(g):
         rotate_fan(fan_center, fan)
         e_colors[frozenset((fan_center, fan[-1]))] = d
 
-    matchings = dict()
+    matchings = {}
     for edge, c in e_colors.items():
         matchings[c] = matchings.get(c, []) + [tuple(edge)]
     classes = list(matchings.values())
 
     return classes
+
 
 def round_robin(n):
     r"""

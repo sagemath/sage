@@ -136,9 +136,9 @@ class DiscreteValueGroup(UniqueRepresentation, Parent):
 
     TESTS::
 
-        sage: TestSuite(D1).run() # long time
-        sage: TestSuite(D2).run() # long time
-        sage: TestSuite(D3).run() # long time
+        sage: TestSuite(D1).run()  # long time
+        sage: TestSuite(D2).run()  # long time
+        sage: TestSuite(D3).run()  # long time
 
     """
     @staticmethod
@@ -431,9 +431,9 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
 
     TESTS::
 
-        sage: TestSuite(D1).run() # long time
-        sage: TestSuite(D2).run() # long time
-        sage: TestSuite(D3).run() # long time
+        sage: TestSuite(D1).run()               # long time
+        sage: TestSuite(D2).run()               # long time                             # needs sage.geometry.polyhedron
+        sage: TestSuite(D3).run()               # long time                             # needs sage.numerical.mip
 
     """
     @staticmethod
@@ -511,7 +511,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
 
             sage: from sage.rings.valuation.value_group import DiscreteValueSemigroup
             sage: D = DiscreteValueSemigroup([2,3,5])
-            sage: D._solve_linear_program(12)
+            sage: D._solve_linear_program(12)                                           # needs sage.numerical.mip
             {0: 1, 1: 0, 2: 2}
             sage: 1*2 + 0*3 + 2*5
             12
@@ -670,7 +670,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.rings.valuation.value_group import DiscreteValueSemigroup
-            sage: list(DiscreteValueSemigroup([-3/8,1/2]).some_elements())
+            sage: list(DiscreteValueSemigroup([-3/8,1/2]).some_elements())              # needs sage.numerical.mip
             [0, -3/8, 1/2, ...]
         """
         yield self(0)

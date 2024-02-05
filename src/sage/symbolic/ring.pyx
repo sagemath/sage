@@ -122,7 +122,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         return r'\text{SR}'
 
-    cpdef _coerce_map_from_(self, R):
+    cpdef _coerce_map_from_(self, R) noexcept:
         """
         EXAMPLES::
 
@@ -213,7 +213,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             from sage.rings.real_lazy import RLF, CLF
             from sage.rings.finite_rings.finite_field_base import FiniteField
 
-            from .subring import GenericSymbolicSubring
+            from sage.symbolic.subring import GenericSymbolicSubring
 
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
@@ -760,7 +760,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         - ``n`` -- (optional) positive integer; number of symbolic variables, indexed from `0` to `n-1`
 
-        - ``domain`` -- (optional) specify the domain of the variable(s); it is the complex plane
+        - ``domain`` -- (optional) specify the domain of the variable(s); it is None
           by default, and possible options are (non-exhaustive list, see note below):
           ``'real'``, ``'complex'``, ``'positive'``, ``'integer'`` and ``'noninteger'``
 
@@ -780,7 +780,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         EXAMPLES:
 
-        Create a variable `zz` (complex by default)::
+        Create a variable `zz`::
 
             sage: zz = SR.var('zz'); zz
             zz
@@ -1133,7 +1133,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if self is not SR:
             raise NotImplementedError('cannot create subring of %s' % (self,))
-        from .subring import SymbolicSubring
+        from sage.symbolic.subring import SymbolicSubring
         return SymbolicSubring(*args, **kwds)
 
     def _fricas_init_(self):
@@ -1221,7 +1221,7 @@ cdef class NumpyToSRMorphism(Morphism):
         else:
             raise TypeError("{} is not a numpy number type".format(numpy_type))
 
-    cpdef Element _call_(self, a):
+    cpdef Element _call_(self, a) noexcept:
         """
         EXAMPLES:
 
@@ -1268,7 +1268,7 @@ cdef class UnderscoreSageMorphism(Morphism):
         from sage.interfaces.sympy import sympy_init
         sympy_init()
 
-    cpdef Element _call_(self, a):
+    cpdef Element _call_(self, a) noexcept:
         """
         EXAMPLES:
 

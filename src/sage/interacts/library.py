@@ -218,11 +218,11 @@ def taylor_polynomial(title, f, order: int):
           f: EvalText(value='e^(-x)*sin(x)', description='$f(x)=$', layout=Layout(max_width='81em'))
           order: SelectionSlider(description='order', options=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), value=1)
     """
-    x0  = 0
-    p   = plot(f,(x,-1,5), thickness=2)
-    dot = point((x0,f(x=x0)),pointsize=80,rgbcolor=(1,0,0))
-    ft = f.taylor(x,x0,order)
-    pt = plot(ft,(-1, 5), color='green', thickness=2)
+    x0 = 0
+    p = plot(f, (x, -1, 5), thickness=2)
+    dot = point((x0, f(x=x0)), pointsize=80, rgbcolor=(1, 0, 0))
+    ft = f.taylor(x, x0, order)
+    pt = plot(ft, (-1, 5), color='green', thickness=2)
     html(r'$f(x)\;=\;%s$' % latex(f))
     html(r'$\hat{f}(x;%s)\;=\;%s+\mathcal{O}(x^{%s})$' % (x0, latex(ft),
                                                           order + 1))

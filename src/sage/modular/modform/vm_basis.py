@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 r"""
 The Victor Miller basis
 
@@ -29,7 +30,7 @@ TESTS::
 
 import math
 
-from sage.libs.flint.fmpz_poly import Fmpz_poly
+from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
 from sage.misc.verbose import verbose
 from sage.rings.big_oh import O as bigO
 from sage.rings.finite_rings.integer_mod_ring import Integers

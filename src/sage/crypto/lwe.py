@@ -312,10 +312,10 @@ class LWE(SageObject):
             ...
             IndexError: Number of available samples exhausted.
         """
-        self.n  = ZZ(n)
+        self.n = ZZ(n)
         self.m = m
         self.__i = 0
-        self.K  = IntegerModRing(q)
+        self.K = IntegerModRing(q)
         self.FM = FreeModule(self.K, n)
         self.D = D
 
@@ -443,7 +443,7 @@ class LindnerPeikert(LWE):
         s = sqrt(s_t_bound*floor(q/4))
         # Transform s into stddev
         stddev = s/sqrt(2*pi.n())
-        D   = DiscreteGaussianDistributionIntegerSampler(stddev)
+        D = DiscreteGaussianDistributionIntegerSampler(stddev)
         LWE.__init__(self, n=n, q=q, D=D, secret_dist='noise', m=m)
 
 
@@ -484,11 +484,11 @@ class UniformNoiseLWE(LWE):
             raise TypeError("Parameter too small")
 
         n2 = n
-        C  = 4/sqrt(2*pi)
+        C = 4/sqrt(2*pi)
         kk = floor((n2-2*log(n2, 2)**2)/5)
         n1 = (3*n2-5*kk) // 2
         ke = floor((n1-2*log(n1, 2)**2)/5)
-        l  = (3*n1-5*ke) // 2 - n2
+        l = (3*n1-5*ke) // 2 - n2
         sk = ceil((C*(n1+n2))**(ZZ(3)/2))
         se = ceil((C*(n1+n2+l))**(ZZ(3)/2))
         q = next_prime(max(ceil((4*sk)**(ZZ(n1+n2)/n1)),
@@ -499,12 +499,12 @@ class UniformNoiseLWE(LWE):
             raise TypeError("Parameter too small")
 
         if instance == 'key':
-            D  = UniformSampler(0, sk-1)
+            D = UniformSampler(0, sk-1)
             if m is None:
                 m = n1
             LWE.__init__(self, n=n2, q=q, D=D, secret_dist='noise', m=m)
         elif instance == 'encrypt':
-            D   = UniformSampler(0, se-1)
+            D = UniformSampler(0, se-1)
             if m is None:
                 m = n2+l
             LWE.__init__(self, n=n1, q=q, D=D, secret_dist='noise', m=m)
@@ -544,11 +544,11 @@ class RingLWE(SageObject):
             sage: RingLWE(N=20, q=next_prime(800), D=D)                                 # needs sage.libs.pari
             RingLWE(20, 809, Discrete Gaussian sampler for polynomials of degree < 8 with σ=3.000000 in each component, x^8 - x^6 + x^4 - x^2 + 1, 'uniform', None)
         """
-        self.N  = ZZ(N)
+        self.N = ZZ(N)
         self.n = euler_phi(N)
         self.m = m
         self.__i = 0
-        self.K  = IntegerModRing(q)
+        self.K = IntegerModRing(q)
 
         if self.n != D.n:
             raise ValueError("Noise distribution has dimensions %d != %d" % (D.n, self.n))

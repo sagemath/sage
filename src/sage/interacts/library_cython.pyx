@@ -16,7 +16,7 @@ AUTHORS:
 #*****************************************************************************
 
 
-cpdef julia(ff_j, z, int iterations):
+cpdef julia(ff_j, z, int iterations) noexcept:
     """
     Helper function for the Julia Fractal interact example.
 
@@ -44,7 +44,7 @@ cpdef julia(ff_j, z, int iterations):
     return z
 
 
-cpdef mandel(ff_m, z, int iterations):
+cpdef mandel(ff_m, z, int iterations) noexcept:
     """
     Helper function for the Mandelbrot Fractal interact example.
 
@@ -73,7 +73,7 @@ cpdef mandel(ff_m, z, int iterations):
     return z
 
 
-cpdef cellular(rule, int N):
+cpdef cellular(rule, int N) noexcept:
     """
     Cythonized helper function for the cellular_automata fractal.
 

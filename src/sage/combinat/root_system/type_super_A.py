@@ -737,7 +737,7 @@ class CartanType(SuperCartanType_standard):
                                     x+.17, y-.17, x-.17, y+.17)
         return ret
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -775,6 +775,8 @@ class CartanType(SuperCartanType_standard):
             \draw[-,thick] (0.17 cm, 0.17 cm) -- (-0.17 cm, -0.17 cm);
             \draw[-,thick] (0.17 cm, -0.17 cm) -- (-0.17 cm, 0.17 cm);
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n + self.m > 1:
@@ -784,7 +786,7 @@ class CartanType(SuperCartanType_standard):
         return ret + "".join(node((self.m+i)*node_dist, 0, label(i))
                              for i in self.index_set())
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the Dynkin diagram.
 
@@ -812,6 +814,8 @@ class CartanType(SuperCartanType_standard):
             O---O---O---O---O---X
             -5  -4  -3  -2  -1  0
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = lambda i: 'O'
         ret = "---".join(node(label(i)) for i in range(1,self.m+1))

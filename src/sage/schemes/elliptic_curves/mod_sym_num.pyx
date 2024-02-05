@@ -200,7 +200,7 @@ fa = sage.rings.fast_arith.arith_llong()
 cdef llong llgcd(llong a, llong b) except -1:
     return fa.gcd_longlong(a,b)
 
-cdef llong llinvmod(llong a, llong m):
+cdef llong llinvmod(llong a, llong m) noexcept:
     return fa.inverse_mod_longlong(a, m)
 
 DEF TWOPI = 6.28318530717958647
@@ -602,7 +602,7 @@ cdef class _CuspsForModularSymbolNumerical:
         # from sage.modular.cusps import Cusp
         # Cusp.__init__(self, a,m)
 
-    cdef public int is_unitary(self):
+    cdef public int is_unitary(self) noexcept:
         r"""
         Return whether the cusp is unitary,
         i.e. whether there exists an Atkin-
@@ -722,7 +722,7 @@ cdef class ModularSymbolNumerical:
         -4/5
     """
     cdef:
-        llong _N_E,  _cut_val, _t_plus, _t_minus
+        llong _N_E, _cut_val, _t_plus, _t_minus
         llong _t_unitary_minus, _t_unitary_plus
         int _lans
         int * _ans
@@ -736,10 +736,10 @@ cdef class ModularSymbolNumerical:
         int _global_sign
 
         # debug and optimisation
-        #public Integer nc_sums # number of calls to summation
-        #public Integer nc_direct # number of direct integrations vs
-        #public Integer nc_indirect # number of indirect
-        #public Integer nc_terms # number of terms summed in total
+        # public Integer nc_sums # number of calls to summation
+        # public Integer nc_direct # number of direct integrations vs
+        # public Integer nc_indirect # number of indirect
+        # public Integer nc_terms # number of terms summed in total
 
     def __cinit__(self):
         r"""
@@ -1315,7 +1315,7 @@ cdef class ModularSymbolNumerical:
         if self._ans is NULL or self._ans_num is NULL:
             if self._ans is not NULL: sig_free(self._ans)
             if self._ans_num is not NULL: sig_free(self._ans_num)
-            raise MemoryError("Memory error with an coefficients.")
+            raise MemoryError("Memory error with coefficients.")
 
         verbose("   not enough precomputed coefficients, "
                 "adding %s"%(T - self._lans), level=3)
@@ -1437,7 +1437,7 @@ cdef class ModularSymbolNumerical:
 
     # the version using double is 70-80 times faster it seems.
     cdef complex _integration_to_tau_double(self, complex tau,
-                                            int number_of_terms):
+                                            int number_of_terms) noexcept:
         r"""
         Given a point `\tau` in the upper half plane
         this returns a complex number that is a close
@@ -2014,7 +2014,7 @@ cdef class ModularSymbolNumerical:
                                      Integer epsQ, Integer epsQQ,
                                     llong* wQ, llong* wQQ,
                                     int T, int prec, double eps,
-                                    int use_partials=2):
+                                    int use_partials=2) noexcept:
         r"""
         This is just a helper function for _from_r_to_rr_approx. In case
         the integral is evaluated directly this function is called.

@@ -353,7 +353,7 @@ class Chain_class(ModuleElement):
                    and v.base_ring() is parent.base_ring()
                    for v in vectors.values())
         self._vec = vectors
-        super(Chain_class, self).__init__(parent)
+        super().__init__(parent)
 
     def vector(self, degree):
         """
@@ -688,7 +688,7 @@ class ChainComplex_class(Parent):
 
         from sage.categories.chain_complexes import ChainComplexes
         category = ChainComplexes(base_ring)
-        super(ChainComplex_class, self).__init__(base=base_ring, category=category)
+        super().__init__(base=base_ring, category=category)
 
     Element = Chain_class
 
@@ -737,7 +737,7 @@ class ChainComplex_class(Parent):
             sage: D = ChainComplex({0: matrix(ZZ, 2, 2, [1,0,0,2])})
             sage: D.random_element()    # random output
             Chain with 1 nonzero terms over Integer Ring
-       """
+        """
         vec = dict()
         for d in self.nonzero_degrees():
             vec[d] = self.free_module(d).random_element()

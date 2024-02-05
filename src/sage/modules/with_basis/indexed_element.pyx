@@ -27,6 +27,7 @@ from sage.misc.superseded import deprecation
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
+from sage.categories.modules import _Fields
 
 
 cdef class IndexedFreeModuleElement(ModuleElement):
@@ -227,7 +228,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return self
 
-    cpdef dict monomial_coefficients(self, bint copy=True):
+    cpdef dict monomial_coefficients(self, bint copy=True) noexcept:
         """
         Return the internal dictionary which has the combinatorial objects
         indexing the basis as keys and their corresponding coefficients as
@@ -540,7 +541,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                             repr_monomial = self._parent._latex_term,
                             is_latex=True, strip_one=True)
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Rich comparison for equal parents.
 
@@ -650,7 +651,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         w = sorted(elt._monomial_coefficients.items())
         return richcmp(v, w, op)
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         EXAMPLES::
 
@@ -673,7 +674,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                           add(self._monomial_coefficients,
                               (<IndexedFreeModuleElement>other)._monomial_coefficients))
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         EXAMPLES::
 
@@ -691,7 +692,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return type(self)(self._parent, negate(self._monomial_coefficients))
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         """
         EXAMPLES::
 
@@ -830,7 +831,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
     to_vector = _vector_
 
-    cpdef _acted_upon_(self, scalar, bint self_on_left):
+    cpdef _acted_upon_(self, scalar, bint self_on_left) noexcept:
         """
         Return the action of ``scalar`` (an element of the base ring) on
         ``self``.
@@ -904,7 +905,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                           scal(scalar, self._monomial_coefficients,
                                factor_on_left=not self_on_left))
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         For backward compatibility.
 
@@ -916,7 +917,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return self._acted_upon_(right, True)
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         For backward compatibility.
 
@@ -958,6 +959,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand type(s) for /: 'str' and 'CombinatorialFreeModule_with_category.element_class'
+
+            sage: L = LazyPowerSeriesRing(QQ, 't')
+            sage: t = L.gen()
+            sage: F = algebras.Free(L, ['A', 'B'])
+            sage: A, B = F.gens()
+            sage: f = t*A + t**2*B/2
         """
         if not isinstance(left, IndexedFreeModuleElement):
             return NotImplemented
@@ -966,7 +973,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         F = self._parent
         B = self.base_ring()
         D = self._monomial_coefficients
-        if not B.is_field():
+        if B not in _Fields:
             return type(self)(F, {k: c._divide_if_possible(x)
                                   for k, c in D.items()})
 

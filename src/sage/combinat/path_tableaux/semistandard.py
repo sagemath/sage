@@ -393,8 +393,9 @@ class SemistandardPathTableau(PathTableau):
 
         TESTS::
 
-            sage: SST = SemistandardTableaux(shape=[5,5,3],eval=[2,2,3,4,2])
-            sage: all(st == path_tableaux.SemistandardPathTableau(st).to_tableau() for st in SST)
+            sage: SST = SemistandardTableaux(shape=[5,5,3], eval=[2,2,3,4,2])
+            sage: all(st == path_tableaux.SemistandardPathTableau(st).to_tableau()      # needs sage.modules
+            ....:     for st in SST)
             True
         """
         from sage.combinat.tableau import from_chain

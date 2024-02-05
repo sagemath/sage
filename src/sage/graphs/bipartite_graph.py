@@ -1,5 +1,4 @@
 # autopep8: off
-# -*- coding: utf-8 -*-
 r"""
 Bipartite graphs
 
@@ -980,7 +979,7 @@ class BipartiteGraph(Graph):
                 self.right.remove(vertex)
                 self.left.add(vertex)
             else:
-                raise RuntimeError("vertex ({0}) is neither in left nor in right".format(vertex))
+                raise RuntimeError(f"vertex ({vertex}) is neither in left nor in right")
 
     def add_edge(self, u, v=None, label=None):
         r"""
@@ -1750,12 +1749,12 @@ class BipartiteGraph(Graph):
         # open the file
         try:
             fi = open(fname, "r")
-        except IOError:
+        except OSError:
             print("unable to open file <<" + fname + ">>")
             return None
 
         # read header information
-        num_cols, num_rows = [int(_) for _ in fi.readline().split()]
+        num_cols, num_rows = (int(_) for _ in fi.readline().split())
         # next are max_col_degree, max_row_degree, not used
         _ = [int(_) for _ in fi.readline().split()]
         col_degrees = [int(_) for _ in fi.readline().split()]
@@ -1850,7 +1849,7 @@ class BipartiteGraph(Graph):
         # open the file
         try:
             fi = open(fname, "w")
-        except IOError:
+        except OSError:
             print("Unable to open file <<" + fname + ">>.")
             return
 

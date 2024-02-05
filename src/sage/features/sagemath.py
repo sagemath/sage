@@ -311,6 +311,29 @@ class sage__groups(JoinFeature):
                              spkg='sagemath_groups', type='standard')
 
 
+class sage__libs__braiding(PythonModule):
+    r"""
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.braiding`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__braiding
+        sage: sage__libs__braiding().is_present()                                            # needs sage.libs.braiding
+        FeatureTestResult('sage.libs.braiding', True)
+    """
+
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__braiding
+            sage: isinstance(sage__libs__braiding(), sage__libs__braiding)
+            True
+        """
+        PythonModule.__init__(self, 'sage.libs.braiding',
+                              spkg='sagemath_libbraiding', type='standard')
+
+
 class sage__libs__ecl(PythonModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.ecl`.
@@ -330,7 +353,8 @@ class sage__libs__ecl(PythonModule):
             sage: isinstance(sage__libs__ecl(), sage__libs__ecl)
             True
         """
-        PythonModule.__init__(self, 'sage.libs.ecl')
+        PythonModule.__init__(self, 'sage.libs.ecl',
+                              spkg='sagemath_symbolics', type='standard')
 
 
 class sage__libs__flint(JoinFeature):
@@ -356,8 +380,8 @@ class sage__libs__flint(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.flint',
-                             [PythonModule('sage.libs.flint.flint'),
-                              PythonModule('sage.libs.arb.arith')],
+                             [PythonModule('sage.libs.flint.arith_sage'),
+                              PythonModule('sage.libs.flint.flint_sage')],
                              spkg='sagemath_flint', type='standard')
 
 
@@ -389,7 +413,19 @@ class sage__libs__gap(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.gap',
                              [PythonModule('sage.libs.gap.libgap'),
-                              PythonModule('sage.interfaces.gap')])
+                              PythonModule('sage.interfaces.gap'),
+                              PythonModule('sage.groups.matrix_gps.finitely_generated_gap'),
+                              PythonModule('sage.groups.matrix_gps.group_element_gap'),
+                              PythonModule('sage.groups.matrix_gps.heisenberg'),
+                              PythonModule('sage.groups.matrix_gps.isometries'),
+                              PythonModule('sage.groups.matrix_gps.linear_gap'),
+                              PythonModule('sage.groups.matrix_gps.matrix_group_gap'),
+                              PythonModule('sage.groups.matrix_gps.named_group_gap'),
+                              PythonModule('sage.groups.matrix_gps.orthogonal_gap'),
+                              PythonModule('sage.groups.matrix_gps.symplectic_gap'),
+                              PythonModule('sage.groups.matrix_gps.unitary_gap'),
+                              PythonModule('sage.matrix.matrix_gap'),
+                              PythonModule('sage.rings.universal_cyclotomic_field')])
 
 
 class sage__libs__linbox(JoinFeature):
@@ -397,8 +433,8 @@ class sage__libs__linbox(JoinFeature):
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.linbox`
     and other modules depending on Givaro, FFLAS-FFPACK, LinBox.
 
-    In addition to the modularization purposes that this tag serves,
-    it also provides attribution to the upstream project.
+    In addition to the modularization purposes that this tag serves, it also provides attribution
+    to the upstream project.
 
     TESTS::
 
@@ -415,7 +451,9 @@ class sage__libs__linbox(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.linbox',
-                             [PythonModule('sage.rings.finite_rings.element_givaro')],
+                             [PythonModule('sage.rings.finite_rings.element_givaro'),
+                              PythonModule('sage.matrix.matrix_modn_dense_float'),
+                              PythonModule('sage.matrix.matrix_modn_dense_double')],
                              spkg='sagemath_linbox', type='standard')
 
 
@@ -442,7 +480,8 @@ class sage__libs__m4ri(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'sage.libs.m4ri',
-                             [PythonModule('sage.matrix.matrix_gf2e_dense')],
+                             [PythonModule('sage.matrix.matrix_gf2e_dense'),
+                              PythonModule('sage.matrix.matrix_mod2_dense')],
                              spkg='sagemath_m4ri', type='standard')
 
 
@@ -708,7 +747,8 @@ class sage__rings__finite_rings(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.rings.finite_rings',
                              [PythonModule('sage.rings.finite_rings.element_pari_ffelt'),
-                              PythonModule('sage.rings.algebraic_closure_finite_field')],
+                              PythonModule('sage.rings.algebraic_closure_finite_field'),
+                              sage__libs__pari()],
                              type='standard')
 
 
@@ -761,7 +801,7 @@ class sage__rings__number_field(JoinFeature):
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.number_field`.
 
     Number fields are implemented in Sage using a complicated mixture of various libraries,
-    including :ref:`arb <spkg_arb>`, :ref:`FLINT <spkg_flint>`, :ref:`GAP <spkg_gap>`,
+    including :ref:`FLINT <spkg_flint>`, :ref:`GAP <spkg_gap>`,
     :ref:`MPFI <spkg_mpfi>`, :ref:`NTL <spkg_ntl>`, and :ref:`PARI <spkg_pari>`.
 
     EXAMPLES:
@@ -784,8 +824,8 @@ class sage__rings__number_field(JoinFeature):
         sage: CC(zeta)
         0.913545457642601 + 0.406736643075800*I
 
-    Doctests that make use of the algebraic field ``QQbar``, the algebraic real field ``AA``,
-    or the universal cyclotomic field should be marked likewise::
+    Doctests that make use of the algebraic field ``QQbar`` or the algebraic real field ``AA``
+    should be marked likewise::
 
         sage: # needs sage.rings.number_field
         sage: AA(-1)^(1/3)
@@ -793,7 +833,10 @@ class sage__rings__number_field(JoinFeature):
         sage: QQbar(-1)^(1/3)
         0.500000000000000? + 0.866025403784439?*I
 
-        sage: # needs sage.rings.number_field
+    Use of the universal cyclotomic field should be marked
+    ``# needs sage.libs.gap sage.rings.number_field``.
+
+        sage: # needs sage.libs.gap sage.rings.number_field
         sage: UCF = UniversalCyclotomicField(); UCF
         Universal Cyclotomic Field
         sage: E = UCF.gen
@@ -1057,6 +1100,7 @@ def all_features():
             sage__geometry__polyhedron(),
             sage__graphs(),
             sage__groups(),
+            sage__libs__braiding(),
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Root system data for type E
 """
@@ -41,7 +40,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: e = RootSystem(['E',8]).ambient_space()
             sage: [e.weyl_dimension(v) for v in e.fundamental_weights()]
             [3875, 147250, 6696000, 6899079264, 146325270, 2450240, 30380, 248]
-           """
+        """
         v = ZZ(1)/ZZ(2)
         self.rank = root_system.cartan_type().rank()
         ambient_space.AmbientSpace.__init__(self, root_system, baseRing)
@@ -573,7 +572,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             g.add_edge(i, i+1)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -591,6 +590,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             \draw[fill=white] (4 cm, 2 cm) circle (.25cm) node[right=3pt]{$2$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % ((self.n-2)*node_dist)
@@ -601,7 +602,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
         ret += node(2*node_dist, node_dist, label(2), 'right=3pt')
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -626,6 +627,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             O---O---O---O---O---O---O
             2   4   5   6   7   8   9
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         labels = [label(i) for i in [1,3,4,5,6] + list(range(7, self.n+1))] # We exclude 2 because of the special case

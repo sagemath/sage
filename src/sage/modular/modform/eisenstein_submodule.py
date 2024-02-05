@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 """
 The Eisenstein subspace
 """
@@ -29,7 +29,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
 
         EXAMPLES::
 
-            sage: E = ModularForms(23,4).eisenstein_subspace() # indirect doctest
+            sage: E = ModularForms(23,4).eisenstein_subspace()  # indirect doctest
             sage: E
             Eisenstein subspace of dimension 2 of Modular Forms space of dimension 7
              for Congruence Subgroup Gamma0(23) of weight 4 over Rational Field
@@ -326,7 +326,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             [q + 7*zeta4*q^2 - 26*zeta4*q^3 - 57*q^4 + O(q^6),
              q - 9*q^2 - 28*q^3 + 73*q^4 + O(q^6),
              q - 7*zeta4*q^2 + 26*zeta4*q^3 - 57*q^4 + O(q^6)]
-         """
+        """
 
         return [x for x in self.eisenstein_series() if x.new_level() == self.level()]
 

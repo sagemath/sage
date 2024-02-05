@@ -54,7 +54,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 #
 ##########################################################
 
-cdef void reset_swap(int n, int *c, int *o):
+cdef void reset_swap(int n, int *c, int *o) noexcept:
     """
     Reset the plain_swapper to the initial state.
     """
@@ -63,7 +63,7 @@ cdef void reset_swap(int n, int *c, int *o):
         c[i] = -1
         o[i] = 1
 
-cdef int next_swap(int n, int *c, int *o):
+cdef int next_swap(int n, int *c, int *o) noexcept:
     """
     Here's the translation of Algorithm P.  We've modified
     it to
@@ -174,7 +174,7 @@ def permutation_iterator_transposition_list(int n):
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cpdef bint next_perm(array l):
+cpdef bint next_perm(array l) noexcept:
     """
     Obtain the next permutation under lex order of ``l``
     by mutating ``l``.
@@ -255,7 +255,7 @@ cpdef bint next_perm(array l):
 
 
 @cython.boundscheck(False)
-cpdef map_to_list(array l, tuple values, int n):
+cpdef map_to_list(array l, tuple values, int n) noexcept:
     """
     Build a list by mapping the array ``l`` using ``values``.
 
@@ -291,7 +291,7 @@ cpdef map_to_list(array l, tuple values, int n):
 #####################################################################
 ## Multiplication functions for permutations
 
-cpdef list left_action_same_n(list S, list lp):
+cpdef list left_action_same_n(list S, list lp) noexcept:
     r"""
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``lp`` in such an order that ``lp``
@@ -318,7 +318,7 @@ cpdef list left_action_same_n(list S, list lp):
         ret.append(S[i-1])
     return ret
 
-cpdef list right_action_same_n(list S, list rp):
+cpdef list right_action_same_n(list S, list rp) noexcept:
     """
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``rp`` in such an order that ``S`` is
@@ -345,7 +345,7 @@ cpdef list right_action_same_n(list S, list rp):
         ret.append(rp[i-1])
     return ret
 
-cpdef list left_action_product(list S, list lp):
+cpdef list left_action_product(list S, list lp) noexcept:
     r"""
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``lp`` in such an order that ``lp`` is
@@ -379,7 +379,7 @@ cpdef list left_action_product(list S, list lp):
         lp.append(i)
     return left_action_same_n(S, lp)
 
-cpdef list right_action_product(list S, list rp):
+cpdef list right_action_product(list S, list rp) noexcept:
     """
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``rp`` in such an order that ``S`` is

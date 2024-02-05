@@ -224,7 +224,7 @@ do not change as the representation changes.  ::
     sage: A = graphs.PetersenGraph().adjacency_matrix()
     sage: V = QQ^10
     sage: phi = linear_transformation(V, V, A)
-    sage: phi.eigenvalues()
+    sage: phi.eigenvalues()                                                             # needs sage.rings.number_field
     [3, -2, -2, -2, -2, 1, 1, 1, 1, 1]
     sage: B1 = [V.gen(i) + V.gen(i+1) for i in range(9)] + [V.gen(9)]
     sage: C = V.subspace_with_basis(B1)
@@ -265,7 +265,7 @@ do not change as the representation changes.  ::
               [0 0 0 0 0 0 0 1 1 0]
               [0 0 0 0 0 0 0 0 1 1]
               [0 0 0 0 0 0 0 0 0 1]
-    sage: zeta.eigenvalues()
+    sage: zeta.eigenvalues()                                                            # needs sage.rings.number_field
     [3, -2, -2, -2, -2, 1, 1, 1, 1, 1]
 
 Equality
@@ -329,10 +329,11 @@ TESTS::
 ####################################################################################
 
 
-import sage.modules.matrix_morphism as matrix_morphism
 import sage.modules.free_module_morphism as free_module_morphism
-from . import vector_space_homspace
+import sage.modules.matrix_morphism as matrix_morphism
+from sage.modules import vector_space_homspace
 from sage.structure.element import is_Matrix
+
 
 def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     r"""
@@ -692,12 +693,14 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         ArithmeticError: some image of the function is not in the codomain, because
         element [1, 0] is not in free module
     """
-    from sage.matrix.constructor import matrix
-    from sage.modules.module import is_VectorSpace
-    from sage.modules.free_module import VectorSpace
     from sage.categories.homset import Hom
+    from sage.matrix.constructor import matrix
+    from sage.modules.free_module import VectorSpace
+    from sage.modules.module import is_VectorSpace
     try:
-        from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
+        from sage.modules.vector_callable_symbolic_dense import (
+            Vector_callable_symbolic_dense,
+        )
     except ImportError:
         Vector_callable_symbolic_dense = ()
 

@@ -145,7 +145,7 @@ def write_if_changed(fn, value):
     try:
         with open(fn) as file:
             old_value = file.read()
-    except IOError:
+    except OSError:
         pass
 
     if value != old_value:

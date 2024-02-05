@@ -29,7 +29,6 @@ from sage.categories.homset import Hom
 from sage.matrix.constructor import matrix
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
 
@@ -111,7 +110,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         """
         from sage.rings.infinity import infinity
         if v is infinity or\
-          (isinstance(v, (list,tuple)) and len(v) == 1 and v[0] is infinity):
+           (isinstance(v, (list, tuple)) and len(v) == 1 and v[0] is infinity):
             if self.ambient_space().dimension_relative() > 1:
                 raise ValueError("%s not well defined in dimension > 1" % v)
             v = [1, 0]
@@ -209,10 +208,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``i`` -- integer between 0 and dimension of self, inclusive.
+        - ``i`` -- integer between 0 and dimension of ``self``, inclusive.
 
-        - ``AA`` -- (default: None) ambient affine space, this is constructed
-            if it is not given.
+        - ``AA`` -- (default: ``None``) ambient affine space, this
+          is constructed if it is not given.
 
         OUTPUT:
 
@@ -260,11 +259,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         PP = self.ambient_space()
         n = PP.dimension_relative()
         if i < 0 or i > n:
-            raise ValueError("Argument i (= %s) must be between 0 and %s." % (i, n))
+            raise ValueError(f"Argument i (= {i}) must be between 0 and {n}.")
         try:
             A = self.__affine_patches[i]
-            #assume that if you've passed in a new ambient affine space
-            #you want to override the existing patch
+            # assume that if you've passed in a new ambient affine space
+            # you want to override the existing patch
             if AA is None or A.ambient_space() == AA:
                 return self.__affine_patches[i]
         except AttributeError:
@@ -318,14 +317,14 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         """
         point = list(point)
         try:
-            abs_point = [abs(_) for _ in point]
+            abs_point = [abs(c) for c in point]
         except ArithmeticError:
             # our base ring does not know abs
             abs_point = point
         # find best patch
         i_max = 0
         p_max = abs_point[i_max]
-        for i in range(1,len(point)):
+        for i in range(1, len(point)):
             if abs_point[i] > p_max:
                 i_max = i
                 p_max = abs_point[i_max]
@@ -385,16 +384,17 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         R = patch_cover.coordinate_ring()
 
         phi = list(point)
-        for j in range(0,i):
-            phi[j] = phi[j] + R.gen(j)
-        for j in range(i,n):
-            phi[j+1] = phi[j+1] + R.gen(j)
+        for j in range(i):
+            phi[j] += R.gen(j)
+        for j in range(i, n):
+            phi[j + 1] += R.gen(j)
 
         pullback_polys = [f(phi) for f in self.defining_polynomials()]
-        return patch_cover.subscheme(pullback_polys, embedding_center=[0]*n,
-                                     embedding_codomain=self, embedding_images=phi)
+        return patch_cover.subscheme(pullback_polys, embedding_center=[0] * n,
+                                     embedding_codomain=self,
+                                     embedding_images=phi)
 
-    def is_smooth(self, point=None):
+    def is_smooth(self, point=None) -> bool:
         r"""
         Test whether the algebraic subscheme is smooth.
 
@@ -450,7 +450,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         self._smooth = (sing_dim <= 0)
         return self._smooth
 
-    def orbit(self, f, N):
+    def orbit(self, f, N) -> list:
         r"""
         Return the orbit of this scheme by ``f``.
 
@@ -469,10 +469,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
-            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2,                 # needs sage.schemes
+            sage: f = DynamicalSystem_projective([(x-2*y)^2, (x-2*z)^2,
             ....:                                 (x-2*w)^2, x^2])
-            sage: f.orbit(P.subscheme([x]), 5)                                          # needs sage.schemes
+            sage: f.orbit(P.subscheme([x]), 5)
             [Closed subscheme of Projective Space of dimension 3 over Rational Field
               defined by: x,
              Closed subscheme of Projective Space of dimension 3 over Rational Field
@@ -511,8 +512,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
         if not isinstance(f, DynamicalSystem):
             raise TypeError("map must be a dynamical system for iteration")
-        if not isinstance(N,(list,tuple)):
-            N = [0,N]
+        if not isinstance(N, (list, tuple)):
+            N = [0, N]
         N[0] = ZZ(N[0])
         N[1] = ZZ(N[1])
         if N[0] < 0 or N[1] < 0:
@@ -521,11 +522,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             return []
 
         Q = self
-        for i in range(1, N[0]+1):
+        for i in range(1, N[0] + 1):
             Q = f(Q)
         Orb = [Q]
 
-        for i in range(N[0]+1, N[1]+1):
+        for i in range(N[0] + 1, N[1] + 1):
             Q = f(Q)
             Orb.append(Q)
         return Orb
@@ -548,7 +549,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: f = DynamicalSystem_projective([y^2, z^2, x^2, w^2])                  # needs sage.schemes
-            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)                         # needs sage.schemes
+            sage: f.nth_iterate(P.subscheme([x - w, y - z]), 3)                         # needs sage.libs.singular sage.schemes
             Closed subscheme of Projective Space of dimension 3 over Rational Field
              defined by:
               y - z,
@@ -559,7 +560,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: f = DynamicalSystem_projective([x^2, y^2, z^2])                       # needs sage.schemes
             sage: X = PS.subscheme([x - y])
-            sage: X.nth_iterate(f, -2)                                                  # needs sage.schemes
+            sage: X.nth_iterate(f, -2)                                                  # needs sage.libs.singular sage.schemes
             Traceback (most recent call last):
             ...
             TypeError: must be a forward orbit
@@ -589,7 +590,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         n = ZZ(n)
         if n < 0:
             raise TypeError("must be a forward orbit")
-        return self.orbit(f,[n,n+1])[0]
+        return self.orbit(f, [n, n + 1])[0]
 
     def _forward_image(self, f, check=True):
         r"""
@@ -763,15 +764,15 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         CR_codom = codom.coordinate_ring()
         n = CR_dom.ngens()
         m = CR_codom.ngens()
-        #can't call eliminate if the base ring is polynomial so we do it ourselves
-        #with a lex ordering
+        # can't call eliminate if the base ring is polynomial so we do it ourselves
+        # with a lex ordering
         R = PolynomialRing(f.base_ring(), n + m, 'tempvar', order='lex')
-        Rvars = R.gens()[0 : n]
+        Rvars = R.gens()[0:n]
         phi = CR_dom.hom(Rvars, R)
-        zero = n*[0]
+        zero = n * [0]
         psi = R.hom(zero + list(CR_codom.gens()), CR_codom)
-        #set up ideal
-        L = R.ideal([phi(t) for t in self.defining_polynomials()] + [R.gen(n+i) - phi(f[i]) for i in range(m)])
+        # set up ideal
+        L = R.ideal([phi(t) for t in self.defining_polynomials()] + [R.gen(n + i) - phi(f[i]) for i in range(m)])
         G = L.groebner_basis()  # eliminate
         newL = []
         # get only the elimination ideal portion
@@ -896,12 +897,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             if k > 1 and not f.is_endomorphism():
                 raise TypeError("map must be an endomorphism")
         R = codom.coordinate_ring()
-        if k > 1:
-            F = f.as_dynamical_system().nth_iterate_map(k)
-        else:
-            F = f
-        dict = {R.gen(i): F[i] for i in range(codom.dimension_relative()+1)}
-        return dom.subscheme([t.subs(dict) for t in self.defining_polynomials()])
+        F = f.as_dynamical_system().nth_iterate_map(k) if k > 1 else f
+        dic = {R.gen(i): F[i] for i in range(codom.dimension_relative() + 1)}
+        return dom.subscheme([t.subs(dic) for t in self.defining_polynomials()])
 
     def dual(self):
         r"""
@@ -977,13 +975,13 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         from sage.libs.singular.function_factory import ff
 
         K = self.base_ring()
-        if not (is_RationalField(K) or isinstance(K, FiniteField)):
+        if not (is_RationalField(K) or K in Fields().Finite()):
             raise NotImplementedError("base ring must be QQ or a finite field")
         I = self.defining_ideal()
         m = I.ngens()
         n = I.ring().ngens() - 1
         if (m != 1 or (n < 1) or I.is_zero()
-            or I.is_trivial() or not I.is_prime()):
+                or I.is_trivial() or not I.is_prime()):
             raise NotImplementedError("At the present, the method is only"
                                       " implemented for irreducible and"
                                       " reduced hypersurfaces and the given"
@@ -1039,9 +1037,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: X.degree()                                                            # needs sage.libs.singular
             3
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w,u> = ProjectiveSpace(QQ, 4)
-            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])            # needs sage.schemes
-            sage: C.degree()                                                            # needs sage.libs.singular sage.schemes
+            sage: C = P.curve([x^7 - y*z^3*w^2*u, w*x^2 - y*u^2, z^3 + y^3])
+            sage: C.degree()
             63
         """
         P = self.defining_ideal().hilbert_polynomial()
@@ -1106,7 +1105,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         try:
             self.ambient_space()(P)
         except TypeError:
-            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)" % (P,X))
+            raise TypeError("(={}) must be a point in the ambient space of this subscheme and (={})".format(P, X))
         # find an affine chart of the ambient space of this curve that contains P
         n = self.ambient_space().dimension_relative()
         for i in range(n + 1):
@@ -1157,10 +1156,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         ::
 
+            sage: # needs sage.libs.singular sage.schemes
             sage: P.<x,y,z,w> = ProjectiveSpace(GF(29), 3)
-            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)                         # needs sage.schemes
+            sage: C = Curve([y^17 - x^5*w^4*z^8, x*y - z^2], P)
             sage: Q = P([3,0,0,1])
-            sage: C.multiplicity(Q)                                                     # needs sage.libs.singular sage.schemes
+            sage: C.multiplicity(Q)
             8
         """
         if self.base_ring() not in Fields():
@@ -1170,7 +1170,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         try:
             P = self(P)
         except TypeError:
-            raise TypeError("(=%s) is not a point on (=%s)" % (P,self))
+            raise TypeError(f"(={P}) is not a point on (={self})")
 
         # find an affine chart of the ambient space of self that contains P
         i = 0
@@ -1344,24 +1344,24 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         I = self.defining_ideal()
         P = self.ambient_space()
         R = P.coordinate_ring()
-        N = P.dimension()+1
+        N = P.dimension() + 1
         d = self.dimension()
         # create the ring for the generic linear hyperplanes
         # u0x0 + u1x1 + ...
-        SS = PolynomialRing(R.base_ring(), 'u', N*(d+1), order='lex')
+        SS = PolynomialRing(R.base_ring(), 'u', N * (d + 1), order='lex')
         vars = SS.variable_names() + R.variable_names()
         S = PolynomialRing(R.base_ring(), vars, order='lex')
         n = S.ngens()
-        newcoords = [S.gen(n-N+t) for t in range(N)]
+        newcoords = [S.gen(n - N + t) for t in range(N)]
         # map the generators of the subscheme into the ring with the hyperplane variables
-        phi = R.hom(newcoords,S)
+        phi = R.hom(newcoords, S)
         phi(self.defining_polynomials()[0])
         # create the dim(X)+1 linear hyperplanes
         l = []
-        for i in range(d+1):
+        for i in range(d + 1):
             t = 0
             for j in range(N):
-                t += S.gen(N*i + j)*newcoords[j]
+                t += S.gen(N * i + j) * newcoords[j]
             l.append(t)
         # intersect the hyperplanes with X
         J = phi(I) + S.ideal(l)
@@ -1370,15 +1370,15 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         # eliminate the original variables to be left with the hyperplane coefficients 'u'
         E = J2.elimination_ideal(newcoords)
         # create the plucker coordinates
-        D = binomial(N,N-d-1) #number of plucker coordinates
-        tvars = [str('t') + str(i) for i in range(D)] #plucker coordinates
-        T = PolynomialRing(R.base_ring(), tvars+list(S.variable_names()), order='lex')
+        D = binomial(N, N - d - 1)  # number of plucker coordinates
+        tvars = [f't{i}' for i in range(D)]  # plucker coordinates
+        T = PolynomialRing(R.base_ring(), tvars + list(S.variable_names()), order='lex')
         L = []
-        coeffs = [T.gen(i) for i in range(0+len(tvars), N*(d+1)+len(tvars))]
-        M = matrix(T,d+1,N,coeffs)
+        coeffs = [T.gen(i) for i in range(len(tvars), N * (d + 1) + len(tvars))]
+        M = matrix(T, d + 1, N, coeffs)
         i = 0
-        for c in M.minors(d+1):
-            L.append(T.gen(i)-c)
+        for c in M.minors(d + 1):
+            L.append(T.gen(i) - c)
             i += 1
         # create the ideal that we can use for eliminating to get a polynomial
         # in the plucker coordinates (brackets)
@@ -1395,14 +1395,12 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         # get the relations among the plucker coordinates
         rel = br.elimination_ideal(coeffs)
         # reduce CH with respect to the relations
-        reduced = []
-        for f in CH.gens():
-            reduced.append(f.reduce(rel))
+        reduced = [f.reduce(rel) for f in CH.gens()]
         # find the principal generator
 
         # polynomial ring in just the plucker coordinates
         T2 = PolynomialRing(R.base_ring(), tvars)
-        alp = T.hom(tvars + (N*(d+1) + N)*[0], T2)
+        alp = T.hom(tvars + (N * (d + 1) + N) * [0], T2)
         # get the degrees of the reduced generators of CH
         degs = [u.degree() for u in reduced]
         mind = max(degs)
@@ -1411,7 +1409,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
             if d < mind and d > 0:
                 mind = d
         ind = degs.index(mind)
-        CF = reduced[ind] #this should be the Chow form of X
+        CF = reduced[ind]  # this should be the Chow form of X
         # check that it is correct (i.e., it is a principal generator for CH + the relations)
         rel2 = rel + [CF]
         assert all(f in rel2 for f in CH.gens()), "did not find a principal generator"
@@ -1432,18 +1430,19 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([x^2 + y*z, 2*y*z, 3*x*y])
-            sage: X.global_height()
+            sage: X.global_height()                                                     # needs sage.libs.singular
             0.000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.global_height() # long time
+            sage: X.global_height()  # long time                                        # needs sage.libs.singular
             4.61512051684126
         """
         return self.Chow_form().global_height(prec)
@@ -1465,19 +1464,20 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: I = NF.ideal(3)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([3*x*y - 5*x*z, y^2])
-            sage: X.local_height(I)
+            sage: X.local_height(I)                                                     # needs sage.libs.singular
             0.000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.local_height(2)
+            sage: X.local_height(2)                                                     # needs sage.libs.singular
             0.000000000000000
         """
         return self.Chow_form().local_height(v, prec)
@@ -1499,18 +1499,19 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: NF.<a> = NumberField(x^2 - 5)
             sage: P.<x,y,z> = ProjectiveSpace(NF, 2)
             sage: X = P.subscheme([x^2 + y*z, 3*x*y])
-            sage: X.local_height_arch(1)
+            sage: X.local_height_arch(1)                                                # needs sage.libs.singular
             0.0000000000000000000000000000000
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.local_height_arch(1)
+            sage: X.local_height_arch(1)                                                # needs sage.libs.singular
             4.61512051684126
         """
         return self.Chow_form().local_height_arch(i, prec)

@@ -19,6 +19,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.rational_field import QQ
+from sage.misc.misc_c import prod
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
@@ -27,6 +28,28 @@ from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kerne
 from . import ell_generic
 
 class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
+
+    def __init__(self, R, data, category=None):
+        r"""
+        Constructor for elliptic curves over fields.
+
+        Identical to the constructor for elliptic curves over
+        general rings, except for setting the default category
+        to :class:`AbelianVarieties`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(QQ, [1,1])
+            sage: E.category()
+            Category of abelian varieties over Rational Field
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: E.category()
+            Category of abelian varieties over Finite Field of size 101
+        """
+        from sage.categories.schemes import AbelianVarieties
+        if category is None:
+            category = AbelianVarieties(R)
+        super().__init__(R, data, category=category)
 
     base_field = ell_generic.EllipticCurve_generic.base_ring
 
@@ -791,18 +814,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Elist = [E.minimal_model() for E in Elist]
         return Elist
 
-    def division_field(self, l, names='t', map=False, **kwds):
+    def division_field(self, n, names='t', map=False, **kwds):
         r"""
-        Given an elliptic curve over a number field or finite field `F`
-        and a prime number `\ell`, construct the `\ell`-division field
-        `F(E[\ell])`.
+        Given an elliptic curve over a number field or finite field `F` and
+        a positive integer `n`, construct the `n`-division field `F(E[n])`.
 
-        The `\ell`-division field is the smallest extension of `F` over
-        which all `\ell`-torsion points of `E` are defined.
+        The `n`-division field is the smallest extension of `F` over which
+        all `n`-torsion points of `E` are defined.
 
         INPUT:
 
-        - `\ell` -- a prime number (an element of `\ZZ`)
+        - `n` -- a positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
         - ``map`` -- (default: ``False``) also return an embedding of the
           :meth:`base_field` into the resulting field
@@ -819,7 +841,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         .. WARNING::
 
             This can take a very long time when the degree of the division
-            field is large (e.g. when `\ell` is large or when the Galois
+            field is large (e.g. when `n` is large or when the Galois
             representation is surjective).  The ``simplify`` flag also
             has a big influence on the running time over number fields:
             sometimes ``simplify=False`` is faster, sometimes the default
@@ -845,8 +867,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Number Field in b with defining polynomial
              x^6 + 10*x^5 + 24*x^4 - 212*x^3 + 1364*x^2 + 24072*x + 104292
 
-        For odd primes `\ell`, the division field is either the splitting
-        field of the `\ell`-division polynomial, or a quadratic extension
+        For odd primes `n`, the division field is either the splitting
+        field of the `n`-division polynomial, or a quadratic extension
         of it. ::
 
             sage: # needs sage.rings.number_field
@@ -880,8 +902,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              by y^2 = x^3 + 5*a0*x^2 + (-200*a0^2)*x + (-42000*a0^2+42000*a0+126000)
              over Number Field in a0 with defining polynomial x^3 - 3*x^2 + 3*x + 9
             sage: K.<b> = E.division_field(3, simplify_all=True); K
-            Number Field in b with defining polynomial
-             x^12 + 5*x^10 + 40*x^8 + 315*x^6 + 750*x^4 + 675*x^2 + 2025
+            Number Field in b with defining polynomial x^12 - 25*x^10 + 130*x^8 + 645*x^6 + 1050*x^4 + 675*x^2 + 225
 
         Some higher-degree examples::
 
@@ -957,9 +978,35 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: K.<v> = E.division_field(7); K                                        # needs sage.rings.finite_rings
             Finite Field in v of size 433^16
 
+        It also works for composite orders::
+
+            sage: E = EllipticCurve(GF(11), [5,5])
+            sage: E.change_ring(E.division_field(8)).abelian_group().torsion_subgroup(8).invariants()
+            (8, 8)
+            sage: E.change_ring(E.division_field(9)).abelian_group().torsion_subgroup(9).invariants()
+            (9, 9)
+            sage: E.change_ring(E.division_field(10)).abelian_group().torsion_subgroup(10).invariants()
+            (10, 10)
+            sage: E.change_ring(E.division_field(36)).abelian_group().torsion_subgroup(36).invariants()
+            (36, 36)
+            sage: E.change_ring(E.division_field(11)).abelian_group().torsion_subgroup(11).invariants()
+            (11,)
+            sage: E.change_ring(E.division_field(66)).abelian_group().torsion_subgroup(66).invariants()
+            (6, 66)
+
+        ...also over number fields::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: E = EllipticCurve([0,0,0,0,i])
+            sage: L,emb = E.division_field(6, names='b', map=True); L
+            Number Field in b with defining polynomial x^24 + 12*x^23 + ...
+            sage: E.change_ring(emb).torsion_subgroup().invariants()
+            (6, 6)
+
         .. SEEALSO::
 
-            To compute a basis of the `\ell`-torsion once the base field
+            To compute a basis of the `n`-torsion once the base field
             has been extended, you may use
             :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
             or
@@ -967,7 +1014,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         TESTS:
 
-        Some random testing::
+        Some random for prime orders::
 
             sage: # needs sage.rings.finite_rings
             sage: def check(E, l, K):
@@ -1014,71 +1061,101 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           ``splitting_field`` method, moved from ``gal_reps.py``, make
           it work over number fields.
         - Lorenz Panny (2022): extend to finite fields
+        - Lorenz Panny (2023): extend to composite `n`.
         """
         from sage.misc.verbose import verbose
-        l = Integer(l)
-        if not l.is_prime():
-            raise ValueError("l must be a prime number")
 
-        verbose("Adjoining X-coordinates of %s-torsion points" % l)
+        n = Integer(n)
+        if n <= 0:
+            raise ValueError("n must be a positive integer")
+
+        verbose("Adjoining X-coordinates of %s-torsion points" % n)
+
         F = self.base_ring()
-        f = self.division_polynomial(l)
-        if l == 2 or f.is_constant():
-            # For l = 2, the division field is the splitting field of
+        f = self.division_polynomial(n).radical()
+
+        if n == 2 or f.is_constant():
+            # For n = 2, the division field is the splitting field of
             # the division polynomial.
-            # If f is a non-zero constant, the l-torsion is trivial:
-            # This means the curve must be supersingular and l == p.
+            # If f is a non-zero constant, the n-torsion is trivial:
+            # This means the curve must be supersingular and n == p.
             return f.splitting_field(names, map=map, **kwds)
 
+        # We divide out the part defining points of non-maximal order.
+        # Clearly all points of non-maximal order are multiples of points
+        # of maximal order, so they cannot be defined over a larger field.
+        if not n.is_prime():
+            for d in n.prime_divisors():
+                g = self.division_polynomial(n // d)
+                f //= f.gcd(g)
+
         # Compute splitting field of X-coordinates.
-        # The Galois group of the division field is a subgroup of GL(2,l).
-        # The Galois group of the X-coordinates is a subgroup of GL(2,l)/{-1,+1}.
-        # We need the map to change the elliptic curve invariants to K.
+        # The Galois group of the division field is a subgroup of GL(2,n).
+        # The Galois group of the X-coordinates is a subgroup of GL(2,n)/{-1,+1}.
         if F in NumberFields():
-            deg_mult = F.degree() * l * (l+1) * (l-1)**2 // 2
+            from sage.misc.misc_c import prod
+            deg_mult = F.degree() * prod(l * (l+1) * (l-1)**2 * l**(4*(e-1)) for l,e in n.factor()) // 2
             K, F_to_K = f.splitting_field(names, degree_multiple=deg_mult, map=True, **kwds)
         elif F in FiniteFields():
             K, F_to_K = f.splitting_field('u', map=True, **kwds)
         else:
             raise NotImplementedError('only number fields and finite fields are currently supported')
 
-        verbose("Adjoining Y-coordinates of %s-torsion points" % l)
+        verbose("Adjoining Y-coordinates of %s-torsion points" % n)
 
-        # THEOREM (Cremona, https://github.com/sagemath/sage/issues/11905#comment:21).
-        # Let K be a field, E an elliptic curve over K and p an odd
-        # prime number. Assume that K contains all roots of the
-        # p-division polynomial of E. Then either K contains all
-        # p-torsion points on E, or it does not contain any p-torsion
-        # point.
+        # THEOREM
+        # (Cremona, https://github.com/sagemath/sage/issues/11905#comment:21)
+        # (Later generalized to composite n by Lorenz Panny)
+        #
+        # Let K be a field, E an elliptic curve over K and n a positive
+        # integer. Assume that K contains all roots of the n-division
+        # polynomial of E, and that at least one point P of full order n
+        # is defined over K. Then K contains all n-torsion points on E.
         #
         # PROOF. Let G be the absolute Galois group of K (every element
-        # in it fixes all elements of K). For any p-torsion point P
+        # in it fixes all elements of K). For any n-torsion point Q
         # over the algebraic closure and any sigma in G, we must have
-        # either sigma(P) = P or sigma(P) = -P (since K contains the
-        # X-coordinate of P). Now assume that K does not contain all
-        # p-torsion points. Then there exists a point P1 and a sigma in
-        # G such that sigma(P1) = -P1. Now take a different p-torsion
-        # point P2. Since sigma(P2) must be P2 or -P2 and
-        # sigma(P1+P2) = sigma(P1)+sigma(P2) = sigma(P1)-P2 must
-        # be P1+P2 or -(P1+P2), it follows that sigma(P2) = -sigma(P2).
-        # Therefore, K cannot contain any p-torsion point.
+        # either sigma(Q) = Q or sigma(Q) = -Q (since K contains the
+        # X-coordinate of Q). Similarly, sigma(P+Q) must equal either
+        # P+Q or -(P+Q). However, since sigma is a group homomorphism,
+        # we have sigma(P+Q) = sigma(P) + sigma(Q) = P + sigma(Q),
+        # so either P + sigma(Q) = P+Q, which implies sigma(Q) = Q,
+        # or P + sigma(Q) = -(P+Q), which implies sigma(Q) = -2P-Q.
+        # The latter is impossible except for the easier case n = 2.
+        # Hence, sigma(Q) = Q in all cases.
         #
         # This implies that it suffices to adjoin the Y-coordinate
-        # of just one point.
+        # of just one full-order point.
 
-        # First factor f over F and then compute a root X of f over K.
-        g = f.factor()[0][0]
-        X = g.map_coefficients(F_to_K).roots(multiplicities=False)[0]
+        x = f.change_ring(F_to_K).any_root(assume_squarefree=True)
+        h = self.defining_polynomial().change_ring(F_to_K)(x, polygen(K), 1)
+        L = h.splitting_field(names, map=map, **kwds)
 
-        # Polynomial defining the corresponding Y-coordinate
-        curve = self.defining_polynomial().map_coefficients(F_to_K)
-        ypol = curve(X, polygen(K), 1)
-        L = ypol.splitting_field(names, map=map, **kwds)
         if map:
             L, K_to_L = L
-            return L, F_to_K.post_compose(K_to_L)
-        else:
-            return L
+            L = L, F_to_K.post_compose(K_to_L)
+        return L
+
+    def _Hom_(self, other, category=None):
+        r"""
+        Hook to make :class:`~sage.categories.homset.Hom`
+        set the correct parent
+        :class:`~sage.schemes.elliptic_curves.homset.EllipticCurveHomset`
+        for
+        :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+        objects.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(19), [1,0])
+            sage: type(E._Hom_(E))
+            <class 'sage.schemes.elliptic_curves.homset.EllipticCurveHomset_with_category'>
+        """
+        if isinstance(other, ell_generic.EllipticCurve_generic) and self.base_ring() == other.base_ring():
+            from . import homset
+            return homset.EllipticCurveHomset(self, other, category=category)
+        from sage.schemes.generic.homset import SchemeHomset_generic
+        return SchemeHomset_generic(self, other, category=category)
 
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""
@@ -1316,6 +1393,208 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if self.base_field().is_finite():
             E._fetch_cached_order(self)
         return E
+
+    def kernel_polynomial_from_point(self, P, *, algorithm=None):
+        r"""
+        Given a point `P` on this curve which generates a rational subgroup,
+        return the kernel polynomial of that subgroup as a polynomial over
+        the base field of the curve.
+        (The point `P` itself may be defined over an extension.)
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: F = GF(101^3)
+            sage: EE = E.change_ring(F)
+            sage: xK = F([77, 28, 8]); xK
+            8*z3^2 + 28*z3 + 77
+            sage: K = EE.lift_x(xK); K.order()
+            43
+            sage: E.kernel_polynomial_from_point(K)
+            x^21 + 7*x^20 + 22*x^19 + 4*x^18 + 7*x^17 + 81*x^16 + 41*x^15 + 68*x^14 + 18*x^13 + 58*x^12 + 31*x^11 + 26*x^10 + 62*x^9 + 20*x^8 + 73*x^7 + 23*x^6 + 66*x^5 + 79*x^4 + 12*x^3 + 40*x^2 + 50*x + 93
+
+        The ``"minpoly"`` algorithm is often much faster than the
+        ``"basic"`` algorithm::
+
+            sage: from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field, point_of_order
+            sage: p = 2^127 - 1
+            sage: E = EllipticCurve(GF(p), [1,0])
+            sage: P = point_of_order(E, 31)
+            sage: %timeit E.kernel_polynomial_from_point(P, algorithm='basic')    # not tested
+            4.38 ms ± 13.7 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+            sage: %timeit E.kernel_polynomial_from_point(P, algorithm='minpoly')  # not tested
+            854 µs ± 1.56 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+
+        Example of finding all the rational isogenies using this method::
+
+            sage: E = EllipticCurve(GF(71), [1,2,3,4,5])
+            sage: F = E.division_field(11)
+            sage: EE = E.change_ring(F)
+            sage: fs = set()
+            sage: for K in EE(0).division_points(11):
+            ....:     if not K:
+            ....:         continue
+            ....:     Kp = EE.frobenius_isogeny()(K)
+            ....:     if Kp.weil_pairing(K, 11) == 1:
+            ....:         fs.add(E.kernel_polynomial_from_point(K))
+            sage: fs = sorted(fs); fs
+            [x^5 + 10*x^4 + 18*x^3 + 10*x^2 + 43*x + 46,
+             x^5 + 65*x^4 + 39*x^2 + 20*x + 63]
+            sage: from sage.schemes.elliptic_curves.isogeny_small_degree import is_kernel_polynomial
+            sage: {is_kernel_polynomial(E, 11, f) for f in fs}
+            {True}
+            sage: isogs = [E.isogeny(f) for f in fs]
+            sage: isogs[0]
+            Isogeny of degree 11 from Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field of size 71 to Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 34*x + 42 over Finite Field of size 71
+            sage: isogs[1]
+            Isogeny of degree 11 from Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field of size 71 to Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 12*x + 40 over Finite Field of size 71
+            sage: set(isogs) == set(E.isogenies_prime_degree(11))
+            True
+
+        ALGORITHM:
+
+        - The ``"basic"`` algorithm is to multiply together all the linear
+          factors `(X - x([i]P))` of the kernel polynomial using a product
+          tree, then converting the result to the base field of the curve.
+          Its complexity is `\widetilde O(\ell k)` where `k` is the
+          extension degree.
+
+        - The ``"minpoly"`` algorithm is
+          [EPSV2023]_, Algorithm 4 (``KernelPolynomialFromIrrationalX``).
+          Over finite fields, its complexity is `O(\ell k) + \widetilde O(\ell)`
+          where `k` is the extension degree.
+        """
+        R = self.base_ring()
+
+        if not P:
+            return R['x'].one()
+
+        S = P.base_ring()
+        if not S.has_coerce_map_from(R):
+            raise TypeError(f'{R} does not coerce into {S}')
+
+        EE = self.change_ring(S)
+        if P.curve() is not EE:
+            raise TypeError(f'{P} is not a point on {EE}')
+
+        l = P.order()
+
+        if algorithm is None:
+            if R in FiniteFields():
+                # In this case the minpoly approach is likely to be faster.
+                if l & 1 and l.is_prime_power():
+                    algorithm = 'minpoly'
+            if algorithm is None:
+                algorithm = 'basic'
+
+        if algorithm == 'basic':
+            from sage.groups.generic import multiples
+            Qs = multiples(P, l//2, P)
+            x = polygen(S)
+            f = prod(x - Q.xy()[0] for Q in Qs)
+            return f.change_ring(R)
+
+        if algorithm == 'minpoly':
+            if not l & 1 or not l.is_prime_power():
+                raise ValueError('algorithm "minpoly" only supports odd prime-power degrees')
+
+            xx = P.xy()[0]
+            ext = xx.parent().over(self.base_ring())
+            mu = ext(xx).minpoly()
+            assert mu.base_ring() == self.base_ring()
+
+            return self.kernel_polynomial_from_divisor(mu, P.order(), check=False)
+
+        raise ValueError('unknown algorithm')
+
+    def kernel_polynomial_from_divisor(self, f, l, *, check=True):
+        r"""
+        Given an irreducible divisor `f` of the `l`-division polynomial
+        on this curve, return the kernel polynomial defining the subgroup
+        defined by `f`.
+
+        If the given polynomial does not define a rational subgroup, a
+        :class:`ValueError` is raised.
+
+        This method is currently only implemented for prime `l`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101^2), [0,1])
+            sage: f,_ = E.division_polynomial(5).factor()[0]
+            sage: ker = E.kernel_polynomial_from_divisor(f, 5); ker
+            x^2 + (49*z2 + 10)*x + 30*z2 + 80
+            sage: E.isogeny(ker)
+            Isogeny of degree 5
+             from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 101^2
+             to Elliptic Curve defined by y^2 = x^3 + (6*z2+16)*x + 18 over Finite Field in z2 of size 101^2
+
+        The method detects invalid inputs::
+
+            sage: E = EllipticCurve(GF(101), [0,1])
+            sage: f,_ = E.division_polynomial(5).factor()[-1]
+            sage: E.kernel_polynomial_from_divisor(f, 5)
+            Traceback (most recent call last):
+            ...
+            ValueError: given polynomial does not define a rational 5-isogeny
+
+        ::
+
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: f,_ = E.division_polynomial(7).factor()[-1]
+            sage: E.kernel_polynomial_from_divisor(f, 7)
+            Traceback (most recent call last):
+            ...
+            ValueError: given polynomial does not define a rational 7-isogeny
+
+        ::
+
+            sage: x = polygen(QQ)
+            sage: K.<t> = NumberField(x^12 - 2*x^10 + 3*x^8 + 228/13*x^6 + 235/13*x^4 + 22/13*x^2 + 1/13)
+            sage: E = EllipticCurve(K, [1,0])
+            sage: ker = E.kernel_polynomial_from_divisor(x - t, 13); ker
+            x^6 + (-169/64*t^10 + 169/32*t^8 - 247/32*t^6 - 377/8*t^4 - 2977/64*t^2 - 105/32)*x^4 + (-169/32*t^10 + 169/16*t^8 - 247/16*t^6 - 377/4*t^4 - 2977/32*t^2 - 89/16)*x^2 - 13/64*t^10 + 13/32*t^8 - 19/32*t^6 - 29/8*t^4 - 229/64*t^2 - 13/32
+            sage: phi = E.isogeny(ker, check=True); phi
+            Isogeny of degree 13
+             from Elliptic Curve defined by y^2 = x^3 + x
+              over Number Field in t with defining polynomial x^12 - 2*x^10 + 3*x^8 + 228/13*x^6 + 235/13*x^4 + 22/13*x^2 + 1/13
+             to Elliptic Curve defined by y^2 = x^3 + (-2535/16*t^10+2535/8*t^8-3705/8*t^6-5655/2*t^4-44655/16*t^2-2047/8)*x
+              over Number Field in t with defining polynomial x^12 - 2*x^10 + 3*x^8 + 228/13*x^6 + 235/13*x^4 + 22/13*x^2 + 1/13
+
+        ALGORITHM: [EPSV2023]_, Algorithm 3 (``KernelPolynomialFromDivisor``).
+        """
+        l = ZZ(l)
+        if check:
+            if not l.is_prime():
+                raise NotImplementedError('currently, kernel_polynomial_from_divisor() only supports prime orders')
+            if not f.is_irreducible():
+                raise NotImplementedError('currently, kernel_polynomial_from_divisor() only supports irreducible polynomials')
+            if f.parent().base_ring() != self.base_ring():
+                raise TypeError(f'given polynomial is not defined over the base ring of the curve')
+            if self.division_polynomial(l, x=f.parent().quotient_ring(f).gen()):
+                raise ValueError(f'given polynomial does not divide the {l}-division polynomial')
+
+        if l == 2:
+            return f
+
+        if not f.degree().divides(l//2):
+            raise ValueError(f'given polynomial does not define a rational {l}-isogeny')
+
+        from sage.schemes.elliptic_curves.isogeny_small_degree import _least_semi_primitive
+        a = _least_semi_primitive(l)
+        mul_a = lambda x: self._multiple_x_numerator(a, x=x) / self._multiple_x_denominator(a, x=x)
+        x_mod = lambda g: g.parent().quotient(g).gen()
+
+        fs = [f]
+        m = l//2//f.degree()
+
+        for i in range(1, m):
+            fs.append(mul_a(x_mod(fs[-1])).minpoly())
+
+        if fs[0](mul_a(x_mod(fs[-1]))):
+            raise ValueError(f'given polynomial does not define a rational {l}-isogeny')
+
+        return prod(fs)
 
     def isogenies_prime_degree(self, l=None, max_l=31):
         """
@@ -1931,7 +2210,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         """
 
         from warnings import warn
-        from sage.graphs.graph import DiGraph, Graph
         from sage.matrix.constructor import Matrix
 
         # warn users if things are getting big
@@ -1983,11 +2261,55 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 labels.append(E._equation_string())
 
         A = Matrix([r + [0] * (len(A) - len(r)) for r in A])
-        G = (DiGraph if directed else Graph)(A, format="adjacency_matrix",
-                data_structure="static_sparse")
+        if directed:
+            from sage.graphs.digraph import DiGraph as GraphType
+        else:
+            from sage.graphs.graph import Graph as GraphType
+
+        G = GraphType(A, format="adjacency_matrix",
+                      data_structure="static_sparse")
         # inplace relabelling is necessary for static_sparse graphs
         GL = G.relabel(labels, inplace=False)
         return GL
+
+    def endomorphism_ring_is_commutative(self):
+        r"""
+        Check whether the endomorphism ring of this elliptic curve
+        *over its base field* is commutative.
+
+        ALGORITHM: The endomorphism ring is always commutative in
+        characteristic zero. Over finite fields, it is commutative
+        if and only if the Frobenius endomorphism is not in `\ZZ`.
+        All elliptic curves with non-commutative endomorphism ring
+        are supersingular. (The converse holds over the algebraic
+        closure, but here we consider endomorphisms *over the field
+        of definition*.)
+
+        EXAMPLES::
+
+            sage: EllipticCurve(QQ, [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(QQ, [1,0]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19), [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19^2), [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19), [1,0]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19^2), [1,0]).endomorphism_ring_is_commutative()
+            False
+            sage: EllipticCurve(GF(19^3), [1,0]).endomorphism_ring_is_commutative()
+            True
+        """
+        k = self.base()
+        if k.characteristic() == 0 or self.is_ordinary():
+            return True
+
+        if not k.is_finite():
+            raise NotImplementedError
+
+        return self.frobenius() not in ZZ
 
 
 def compute_model(E, name):
@@ -2049,13 +2371,13 @@ def compute_model(E, name):
 
     raise NotImplementedError(f'cannot compute {name} model')
 
-def point_of_order(E, l):
+def point_of_order(E, n):
     r"""
     Given an elliptic curve `E` over a finite field or a number field
-    and an integer `\ell \geq 1`, construct a point of order `\ell` on `E`,
+    and an integer `n \geq 1`, construct a point of order `n` on `E`,
     possibly defined over an extension of the base field of `E`.
 
-    Currently only prime values of `\ell` are supported.
+    Currently only prime powers `n` are supported.
 
     EXAMPLES::
 
@@ -2072,16 +2394,36 @@ def point_of_order(E, l):
 
     ::
 
+        sage: Q = point_of_order(E, 8); Q
+        (69*x^5 + 24*x^4 + 100*x^3 + 65*x^2 + 88*x + 97 : 65*x^5 + 28*x^4 + 5*x^3 + 45*x^2 + 42*x + 18 : 1)
+        sage: 8*Q == 0 and 4*Q != 0
+        True
+
+    ::
+
         sage: from sage.schemes.elliptic_curves.ell_field import point_of_order
         sage: E = EllipticCurve(QQ, [7,7])
         sage: P = point_of_order(E, 3); P  # random
         (x : -Y : 1)
         sage: P.base_ring()
         Number Field in Y with defining polynomial Y^2 - x^3 - 7*x - 7 over its base field
+        sage: P.base_ring().base_field()
+        Number Field in x with defining polynomial x^4 + 14*x^2 + 28*x - 49/3
         sage: P.order()
         3
         sage: P.curve().a_invariants()
         (0, 0, 0, 7, 7)
+
+    ::
+
+        sage: Q = point_of_order(E, 4); Q  # random
+        (x : Y : 1)
+        sage: Q.base_ring()
+        Number Field in Y with defining polynomial Y^2 - x^3 - 7*x - 7 over its base field
+        sage: Q.base_ring().base_field()
+        Number Field in x with defining polynomial x^6 + 35*x^4 + 140*x^3 - 245*x^2 - 196*x - 735
+        sage: Q.order()
+        4
     """
     # Construct the field extension defined by the given polynomial,
     # in such a way that the result is recognized by Sage as a field.
@@ -2094,14 +2436,16 @@ def point_of_order(E, l):
             return poly.splitting_field(rng.variable_name())
         return fld.extension(poly, rng.variable_name())
 
-    l = ZZ(l)
-    if l == 1:
+    n = ZZ(n)
+    if n == 1:
         return E(0)
 
-    if not l.is_prime():
-        raise NotImplementedError('composite orders are currently unsupported')
+    l,m = n.is_prime_power(get_data=True)
+    if not m:
+        raise NotImplementedError('only prime-power orders are currently supported')
 
-    xpoly = E.division_polynomial(l)
+    xpoly = E.division_polynomial(n).radical()
+    xpoly //= E.division_polynomial(n//l).radical()
     if xpoly.degree() < 1:  # supersingular and l == p
         raise ValueError('curve does not have any points of the specified order')
 
@@ -2116,4 +2460,6 @@ def point_of_order(E, l):
         xx = FF(xx)
 
     EE = E.change_ring(FF)
-    return EE.lift_x(xx)
+    pt = EE.lift_x(xx)
+    pt.set_order(n, check=False)
+    return pt

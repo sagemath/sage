@@ -702,7 +702,7 @@ class FGP_Module_class(Module):
         try:
             self(x)
             return True
-        except TypeError:
+        except (TypeError, ValueError):
             return False
 
     def submodule(self, x):
@@ -1806,7 +1806,7 @@ class FGP_Module_class(Module):
             sage: list(V/W)
             [(0), (1)]
         """
-        return [e for e in self]
+        return list(self)
 
     def __iter__(self):
         """

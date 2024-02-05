@@ -31,7 +31,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.dynamics.complex_dynamics.mandel_julia_helper import (fast_mandelbrot_plot,
                                                                 fast_external_ray,
                                                                 convert_to_pixels,
@@ -55,6 +54,8 @@ from sage.misc.prandom import randint
 from sage.calculus.var import var
 from sage.rings.fraction_field import is_FractionField
 from sage.categories.function_fields import FunctionFields
+
+lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
 
 EPS = 0.00001
 

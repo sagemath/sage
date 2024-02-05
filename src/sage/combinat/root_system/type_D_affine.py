@@ -111,7 +111,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
         g.add_edge(0,2)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -130,6 +130,8 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             \draw[fill=white] (4 cm, -0.7 cm) circle (.25cm) node[right=3pt]{$3$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         n = self.n
@@ -152,7 +154,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
         ret += node(rt_most, -0.7, label(n-1), "right=3pt")
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the extended Dynkin diagram.
 
@@ -182,6 +184,8 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             O---O---O
             5   3   4
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         n = self.n

@@ -298,7 +298,7 @@ def process_line(location, line, replacements, row_index, verbose=False):
         sage: from sage.misc.replace_dot_all import *
         sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/plot/arc.py')
         sage: replacements = find_replacements(location, package_regex='sage[.]plot[.]all', verbose=True); replacements
-        [[476, 24, 'from sage.plot.graphics import Graphics']]
+        [[477, 24, 'from sage.plot.graphics import Graphics']]
         sage: with open(location, "r") as file:
         ....:     lines = file.readlines()
         sage: row_index, col_number, *_ = replacements[0]
@@ -364,7 +364,7 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
         ....:             print(line.strip())
         from sage.plot.point import point2d
         from sage.plot.line import line
-        """
+    """
     replacements = find_replacements(location, package_regex, verbose)
     with open(location, "r") as file:
         lines = file.readlines()
