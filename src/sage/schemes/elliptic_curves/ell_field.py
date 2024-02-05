@@ -19,6 +19,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.rational_field import QQ
+from sage.misc.misc_c import prod
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
@@ -1392,6 +1393,208 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if self.base_field().is_finite():
             E._fetch_cached_order(self)
         return E
+
+    def kernel_polynomial_from_point(self, P, *, algorithm=None):
+        r"""
+        Given a point `P` on this curve which generates a rational subgroup,
+        return the kernel polynomial of that subgroup as a polynomial over
+        the base field of the curve.
+        (The point `P` itself may be defined over an extension.)
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: F = GF(101^3)
+            sage: EE = E.change_ring(F)
+            sage: xK = F([77, 28, 8]); xK
+            8*z3^2 + 28*z3 + 77
+            sage: K = EE.lift_x(xK); K.order()
+            43
+            sage: E.kernel_polynomial_from_point(K)
+            x^21 + 7*x^20 + 22*x^19 + 4*x^18 + 7*x^17 + 81*x^16 + 41*x^15 + 68*x^14 + 18*x^13 + 58*x^12 + 31*x^11 + 26*x^10 + 62*x^9 + 20*x^8 + 73*x^7 + 23*x^6 + 66*x^5 + 79*x^4 + 12*x^3 + 40*x^2 + 50*x + 93
+
+        The ``"minpoly"`` algorithm is often much faster than the
+        ``"basic"`` algorithm::
+
+            sage: from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field, point_of_order
+            sage: p = 2^127 - 1
+            sage: E = EllipticCurve(GF(p), [1,0])
+            sage: P = point_of_order(E, 31)
+            sage: %timeit E.kernel_polynomial_from_point(P, algorithm='basic')    # not tested
+            4.38 ms ± 13.7 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+            sage: %timeit E.kernel_polynomial_from_point(P, algorithm='minpoly')  # not tested
+            854 µs ± 1.56 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+
+        Example of finding all the rational isogenies using this method::
+
+            sage: E = EllipticCurve(GF(71), [1,2,3,4,5])
+            sage: F = E.division_field(11)
+            sage: EE = E.change_ring(F)
+            sage: fs = set()
+            sage: for K in EE(0).division_points(11):
+            ....:     if not K:
+            ....:         continue
+            ....:     Kp = EE.frobenius_isogeny()(K)
+            ....:     if Kp.weil_pairing(K, 11) == 1:
+            ....:         fs.add(E.kernel_polynomial_from_point(K))
+            sage: fs = sorted(fs); fs
+            [x^5 + 10*x^4 + 18*x^3 + 10*x^2 + 43*x + 46,
+             x^5 + 65*x^4 + 39*x^2 + 20*x + 63]
+            sage: from sage.schemes.elliptic_curves.isogeny_small_degree import is_kernel_polynomial
+            sage: {is_kernel_polynomial(E, 11, f) for f in fs}
+            {True}
+            sage: isogs = [E.isogeny(f) for f in fs]
+            sage: isogs[0]
+            Isogeny of degree 11 from Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field of size 71 to Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 34*x + 42 over Finite Field of size 71
+            sage: isogs[1]
+            Isogeny of degree 11 from Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Finite Field of size 71 to Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 12*x + 40 over Finite Field of size 71
+            sage: set(isogs) == set(E.isogenies_prime_degree(11))
+            True
+
+        ALGORITHM:
+
+        - The ``"basic"`` algorithm is to multiply together all the linear
+          factors `(X - x([i]P))` of the kernel polynomial using a product
+          tree, then converting the result to the base field of the curve.
+          Its complexity is `\widetilde O(\ell k)` where `k` is the
+          extension degree.
+
+        - The ``"minpoly"`` algorithm is
+          [EPSV2023]_, Algorithm 4 (``KernelPolynomialFromIrrationalX``).
+          Over finite fields, its complexity is `O(\ell k) + \widetilde O(\ell)`
+          where `k` is the extension degree.
+        """
+        R = self.base_ring()
+
+        if not P:
+            return R['x'].one()
+
+        S = P.base_ring()
+        if not S.has_coerce_map_from(R):
+            raise TypeError(f'{R} does not coerce into {S}')
+
+        EE = self.change_ring(S)
+        if P.curve() is not EE:
+            raise TypeError(f'{P} is not a point on {EE}')
+
+        l = P.order()
+
+        if algorithm is None:
+            if R in FiniteFields():
+                # In this case the minpoly approach is likely to be faster.
+                if l & 1 and l.is_prime_power():
+                    algorithm = 'minpoly'
+            if algorithm is None:
+                algorithm = 'basic'
+
+        if algorithm == 'basic':
+            from sage.groups.generic import multiples
+            Qs = multiples(P, l//2, P)
+            x = polygen(S)
+            f = prod(x - Q.xy()[0] for Q in Qs)
+            return f.change_ring(R)
+
+        if algorithm == 'minpoly':
+            if not l & 1 or not l.is_prime_power():
+                raise ValueError('algorithm "minpoly" only supports odd prime-power degrees')
+
+            xx = P.xy()[0]
+            ext = xx.parent().over(self.base_ring())
+            mu = ext(xx).minpoly()
+            assert mu.base_ring() == self.base_ring()
+
+            return self.kernel_polynomial_from_divisor(mu, P.order(), check=False)
+
+        raise ValueError('unknown algorithm')
+
+    def kernel_polynomial_from_divisor(self, f, l, *, check=True):
+        r"""
+        Given an irreducible divisor `f` of the `l`-division polynomial
+        on this curve, return the kernel polynomial defining the subgroup
+        defined by `f`.
+
+        If the given polynomial does not define a rational subgroup, a
+        :class:`ValueError` is raised.
+
+        This method is currently only implemented for prime `l`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101^2), [0,1])
+            sage: f,_ = E.division_polynomial(5).factor()[0]
+            sage: ker = E.kernel_polynomial_from_divisor(f, 5); ker
+            x^2 + (49*z2 + 10)*x + 30*z2 + 80
+            sage: E.isogeny(ker)
+            Isogeny of degree 5
+             from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 101^2
+             to Elliptic Curve defined by y^2 = x^3 + (6*z2+16)*x + 18 over Finite Field in z2 of size 101^2
+
+        The method detects invalid inputs::
+
+            sage: E = EllipticCurve(GF(101), [0,1])
+            sage: f,_ = E.division_polynomial(5).factor()[-1]
+            sage: E.kernel_polynomial_from_divisor(f, 5)
+            Traceback (most recent call last):
+            ...
+            ValueError: given polynomial does not define a rational 5-isogeny
+
+        ::
+
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: f,_ = E.division_polynomial(7).factor()[-1]
+            sage: E.kernel_polynomial_from_divisor(f, 7)
+            Traceback (most recent call last):
+            ...
+            ValueError: given polynomial does not define a rational 7-isogeny
+
+        ::
+
+            sage: x = polygen(QQ)
+            sage: K.<t> = NumberField(x^12 - 2*x^10 + 3*x^8 + 228/13*x^6 + 235/13*x^4 + 22/13*x^2 + 1/13)
+            sage: E = EllipticCurve(K, [1,0])
+            sage: ker = E.kernel_polynomial_from_divisor(x - t, 13); ker
+            x^6 + (-169/64*t^10 + 169/32*t^8 - 247/32*t^6 - 377/8*t^4 - 2977/64*t^2 - 105/32)*x^4 + (-169/32*t^10 + 169/16*t^8 - 247/16*t^6 - 377/4*t^4 - 2977/32*t^2 - 89/16)*x^2 - 13/64*t^10 + 13/32*t^8 - 19/32*t^6 - 29/8*t^4 - 229/64*t^2 - 13/32
+            sage: phi = E.isogeny(ker, check=True); phi
+            Isogeny of degree 13
+             from Elliptic Curve defined by y^2 = x^3 + x
+              over Number Field in t with defining polynomial x^12 - 2*x^10 + 3*x^8 + 228/13*x^6 + 235/13*x^4 + 22/13*x^2 + 1/13
+             to Elliptic Curve defined by y^2 = x^3 + (-2535/16*t^10+2535/8*t^8-3705/8*t^6-5655/2*t^4-44655/16*t^2-2047/8)*x
+              over Number Field in t with defining polynomial x^12 - 2*x^10 + 3*x^8 + 228/13*x^6 + 235/13*x^4 + 22/13*x^2 + 1/13
+
+        ALGORITHM: [EPSV2023]_, Algorithm 3 (``KernelPolynomialFromDivisor``).
+        """
+        l = ZZ(l)
+        if check:
+            if not l.is_prime():
+                raise NotImplementedError('currently, kernel_polynomial_from_divisor() only supports prime orders')
+            if not f.is_irreducible():
+                raise NotImplementedError('currently, kernel_polynomial_from_divisor() only supports irreducible polynomials')
+            if f.parent().base_ring() != self.base_ring():
+                raise TypeError(f'given polynomial is not defined over the base ring of the curve')
+            if self.division_polynomial(l, x=f.parent().quotient_ring(f).gen()):
+                raise ValueError(f'given polynomial does not divide the {l}-division polynomial')
+
+        if l == 2:
+            return f
+
+        if not f.degree().divides(l//2):
+            raise ValueError(f'given polynomial does not define a rational {l}-isogeny')
+
+        from sage.schemes.elliptic_curves.isogeny_small_degree import _least_semi_primitive
+        a = _least_semi_primitive(l)
+        mul_a = lambda x: self._multiple_x_numerator(a, x=x) / self._multiple_x_denominator(a, x=x)
+        x_mod = lambda g: g.parent().quotient(g).gen()
+
+        fs = [f]
+        m = l//2//f.degree()
+
+        for i in range(1, m):
+            fs.append(mul_a(x_mod(fs[-1])).minpoly())
+
+        if fs[0](mul_a(x_mod(fs[-1]))):
+            raise ValueError(f'given polynomial does not define a rational {l}-isogeny')
+
+        return prod(fs)
 
     def isogenies_prime_degree(self, l=None, max_l=31):
         """
