@@ -142,7 +142,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.structure.richcmp import richcmp
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import CachedRepresentation
 
 
@@ -694,6 +694,7 @@ class RewritingSystem():
             raise ValueError('could not make the system confluent')
 
 
+@richcmp_method
 class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's Finitely Presented Groups.
@@ -790,7 +791,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         """
         return hash((self._free_group, self._relations, self._names))
 
-    def _richcmp_(self, other, op):
+    def __richcmp__(self, other, op):
         """
         Compare ``self`` and ``other``.
 

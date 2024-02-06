@@ -1347,6 +1347,11 @@ cdef class GapElement(RingElement):
             sage: G.gap() == P
             True
 
+            sage: F0 = libgap.FreeGroup(2)
+            sage: F = F0.sage()
+            sage: F.gap() is F
+            True
+
         TESTS:
 
         Check :trac:`30496`::
@@ -1398,6 +1403,12 @@ cdef class GapElement(RingElement):
             # May be a list-like collection of some other type of GapElements
             # that we can convert
             return [item.sage() for item in self.AsList()]
+
+        elif self.IsFreeGroup():
+            from sage.groups.free_group import FreeGroup_class
+            self._set_compare_by_id()
+            names = tuple(str(g) for g in self.GeneratorsOfGroup())
+            return FreeGroup_class(names, libgap_free_group=self)
 
         elif self.IsFpGroup():
             from sage.groups.free_group import FreeGroup
