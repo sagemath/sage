@@ -4185,7 +4185,7 @@ class Link(SageObject):
         <https://snappy.math.uic.edu/index.html>`__::
 
             sage: import snappy                    # optional - snappy
-            Plink failed to import tkinter.
+            ...
 
             sage: # optional - database_knotinfo snappy
             sage: from sage.knots.knotinfo import KnotInfoSeries

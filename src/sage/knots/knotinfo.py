@@ -101,7 +101,7 @@ too::
     sage: # optional - snappy
     sage: L6 = KnotInfo.L6a1_0
     sage: l6s = L6.link(snappy=True); l6s
-    Plink failed to import tkinter.
+    ...
     <Link: 2 comp; 6 cross>
     sage: type(l6s)
     <class 'spherogram.links.invariants.Link'>
@@ -264,8 +264,14 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
         '{3, {-2, -2, -1, 2, -1}}'
         sage: eval_knotinfo(_)
         (3, (-2, -2, -1, 2, -1))
+        sage: KnotInfo.K13a_1.kauffman_polynomial()  # optional - database_knotinfo # indirect doctest
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: This value is not provided by the database
     """
     if not string:
+        # An empty string in the database Excel spreadsheet indicates that
+        # the property is not provided for that particular knot or link.
         raise NotImplementedError('This value is not provided by the database')
     if to_tuple:
         new_string = string.replace('{', '(')
@@ -289,12 +295,14 @@ def knotinfo_int(string):
         sage: from sage.knots.knotinfo import knotinfo_int
         sage: knotinfo_int('7')
         7
-        sage: knotinfo_int('')
+        sage: KnotInfo.K13a_1.braid_index() # optional - database_knotinfo # indirect doctest
         Traceback (most recent call last):
         ...
         NotImplementedError: This integer is not provided by the database
     """
     if not string:
+        # an empty string in the Excel sheet of the database indicates that
+        # the property is not provided for this special knot or link.
         raise NotImplementedError('This integer is not provided by the database')
     else:
         return int(string)
@@ -312,8 +320,14 @@ def knotinfo_bool(string):
         sage: from sage.knots.knotinfo import knotinfo_bool
         sage: knotinfo_bool('Y')
         True
+        sage: KnotInfo.K13a_1.is_almost_alternating() # optional - database_knotinfo # indirect doctest
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: This boolean is not provided by the database
     """
     if not string:
+        # an empty string in the Excel sheet of the database indicates that
+        # the property is not provided for this special knot or link.
         raise NotImplementedError('This boolean is not provided by the database')
     if string == 'Y':
         return True
@@ -1684,7 +1698,7 @@ class KnotInfoBase(Enum):
         return R(eval_knotinfo(conway_polynomial, locals=lc))
 
     @cached_method
-    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ, original=False, reduced=False, odd=False):
+    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ, original=False, reduced=False, odd=False, KhoHo=False):
         r"""
         Return the Khovanov polynomial according to the value of column
         ``khovanov_polynomial`` for this knot or link as an instance of
@@ -1702,6 +1716,8 @@ class KnotInfoBase(Enum):
           the reduced version of the homology is used
         - ``odd`` -- boolean (default: ``False``); if set to ``True``
           the odd version of the homology is used
+        - ``KhoHo`` -- boolean (deprecated). The corresponding values have
+          disappeared from the database since January 2024
 
         OUTPUT:
 
@@ -1800,12 +1816,15 @@ class KnotInfoBase(Enum):
         """
         ch = base_ring.characteristic()
         integral = ch == 0 and base_ring.is_field()
-        KhoHo = False
         if not self.is_knot():
             # KnotJob calculated results only available for knots
             khovanov_polynomial = self[self.items.khovanov_polynomial]
             KhoHo = True
         else:
+            if KhoHo:
+                KhoHo = False
+                from sage.misc.superseded import deprecation
+                deprecation(37014, "The KhoHo option is deprecated and ignored.")
             if reduced:
                 if integral:
                     khovanov_polynomial = self[self.items.khovanov_reduced_integral_polynomial]
