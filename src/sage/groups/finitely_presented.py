@@ -793,27 +793,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         """
         return hash((self._free_group, self._relations, self._names))
 
-    # def __richcmp__(self, other, op):
-    #     """
-    #     Compare ``self`` and ``other``.
-    # 
-    #     TESTS::
-    # 
-    #         sage: F1 = FreeGroup(2) / [(1, 2, 2, 1)]
-    #         sage: F2 = FreeGroup(2, 'x') / [(1, 2, 2, 1)]
-    #         sage: F3 = FreeGroup(2) / [(1, 1, 2, 2)]
-    #         sage: F4 = FreeGroup(2, 'y') / [(1, 2, 2, 1)]
-    #         sage: F1 == F2
-    #         True
-    #         sage: F2 == F3
-    #         False
-    #         sage: F3 == F4
-    #         False
-    #     """
-    #     r1 = [r.Tietze() for r in self._relations]
-    #     r2 = [r.Tietze() for r in other._relations]
-    #     return richcmp((self._names, r1), (other._names, r2), op)
-
     def _repr_(self):
         """
         Return a string representation.
