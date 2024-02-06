@@ -97,7 +97,11 @@ class Macdonald(UniqueRepresentation):
         """
         return self._name
 
-    def __init__(self, Sym, q='q', t='t'):
+    @staticmethod
+    def __classcall__(cls, Sym, q='q', t='t'):
+        return super().__classcall__(cls, Sym, Sym.base_ring()(q), Sym.base_ring()(t))
+
+    def __init__(self, Sym, q, t):
         r"""
         Macdonald Symmetric functions including `P`, `Q`, `J`, `H`, `Ht` bases
         also including the S basis which is the plethystic transformation
@@ -119,8 +123,8 @@ class Macdonald(UniqueRepresentation):
         """
         self._sym = Sym
         self._s = Sym.s()
-        self.q = Sym.base_ring()(q)
-        self.t = Sym.base_ring()(t)
+        self.q = q
+        self.t = t
         self._name_suffix = ""
         if str(q) != 'q':
             self._name_suffix += " with q=%s" % q
@@ -1012,6 +1016,7 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
             sage: TestSuite(P).run(elements = [P.t*P[1,1]+P.q*P[2], P[1]+(P.q+P.t)*P[1,1]])  # long time (depends on previous)
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
+        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("P",))
 
         self._J = macdonald.J()
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)

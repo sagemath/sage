@@ -77,7 +77,11 @@ class HallLittlewood(UniqueRepresentation):
         """
         return self._name + " over %s" % self._sym.base_ring()
 
-    def __init__(self, Sym, t='t'):
+    @staticmethod
+    def __classcall__(cls, Sym, t='t'):
+        return super().__classcall__(cls, Sym, Sym.base_ring()(t))
+
+    def __init__(self, Sym, t):
         """
         Initialize ``self``.
 
@@ -708,6 +712,7 @@ class HallLittlewood_p(HallLittlewood_generic):
             sage: TestSuite(P).run(elements = [P.t*P[1,1]+P[2], P[1]+(1+P.t)*P[1,1]])
         """
         HallLittlewood_generic.__init__(self, hall_littlewood)
+        self._descriptor = (("hall_littlewood", {"t": self.t}), ("P",))
         self._self_to_s_cache = p_to_s_cache
         self._s_to_self_cache = s_to_p_cache
 
@@ -846,6 +851,7 @@ class HallLittlewood_q(HallLittlewood_generic):
             (1/(t^2-1))*HLQ[1, 1] - (1/(t-1))*HLQ[2]
         """
         HallLittlewood_generic.__init__(self, hall_littlewood)
+        self._descriptor = (("hall_littlewood", {"t": self.t}), ("Q",))
 
         self._P = self._hall_littlewood.P()
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
@@ -942,6 +948,8 @@ class HallLittlewood_qp(HallLittlewood_generic):
             [      0       0       1]
         """
         HallLittlewood_generic.__init__(self, hall_littlewood)
+        self._descriptor = (("hall_littlewood", {"t": self.t}), ("Qp",))
+
         self._self_to_s_cache = qp_to_s_cache
         self._s_to_self_cache = s_to_qp_cache
 
