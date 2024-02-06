@@ -909,7 +909,7 @@ class DiGraph(GenericGraph):
 
     # Attributes
 
-    def is_trivially_perfect(graph):
+    def is_trivially_perfect(self):
         """
         Check if the given directed graph is trivially perfect.
     
