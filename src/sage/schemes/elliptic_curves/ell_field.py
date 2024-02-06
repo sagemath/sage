@@ -1340,7 +1340,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         Order of the point known and composite::
 
             sage: E = EllipticCurve(GF(31), [1,0,0,1,2])
-            sage: P = E.gens()[0]
+            sage: P = E(26, 4)
             sage: assert P.order() == 12
             sage: print(P._order)
             12
@@ -1352,8 +1352,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         ``kernel`` is a list of points::
 
             sage: E = EllipticCurve(GF(31), [1,0,0,1,2])
-            sage: P = E([21,2])
-            sage: Q = E([7, 12])
+            sage: P = E(21,2)
+            sage: Q = E(7, 12)
             sage: print(P.order())
             6
             sage: print(Q.order())
@@ -1386,7 +1386,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         If the order of the point is unknown, fall back to ``"traditional"``::
 
             sage: E = EllipticCurve_from_j(GF(97)(42))
-            sage: P = E([2, 39])
+            sage: P = E(2, 39)
             sage: from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
             sage: _velu_sqrt_bound.set(1)
             sage: E.isogeny(P)
@@ -1470,19 +1470,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 if kernel_is_list:
                     kernel = kernel[0]
 
-                known_order = False
-                try:
-                    single_point_order = kernel._order
-                    known_order = True
-                except AttributeError:
-                    pass
+                known_order = hasattr(kernel, "_order")
 
-                if known_order and single_point_order.is_pseudoprime():
+                if known_order and kernel._order.is_pseudoprime():
                     if not velu_sqrt_bound:
                         from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
                         velu_sqrt_bound = _velu_sqrt_bound.get()
 
-                    if single_point_order > velu_sqrt_bound:
+                    if kernel._order > velu_sqrt_bound:
                         from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
                         return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
                     # Otherwise fall back to the standard case
