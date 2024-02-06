@@ -704,7 +704,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         You should use
         :meth:`~sage.groups.free_group.FreeGroup_class.quotient` to
         construct finitely presented groups as quotients of free
-        groups.
+        groups. Any class inheriting this one should define
+        ``__reduce__ = CachedRepresentation.__reduce__``
+        after importing ``CachedRepresentation``.
 
     EXAMPLES::
 
