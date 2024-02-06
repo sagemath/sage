@@ -909,6 +909,47 @@ class DiGraph(GenericGraph):
 
     # Attributes
 
+    def is_trivially_perfect(graph):
+        """
+        Check if the given directed graph is trivially perfect.
+    
+        A directed graph is trivially perfect if it does not contain induced subgraphs
+        isomorphic to C4 (cycle of length 4) or P4 (path of length 4).
+    
+        INPUT:
+        - ``graph`` -- a directed graph
+    
+        EXAMPLES:
+        ::
+            sage: G = DiGraph([(1, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (4, 5), (4, 6), (5, 6), (5, 7), (5, 8), (6, 8), (6,7), (7,8)])
+            sage: is_tp = is_trivially_perfect(G)
+            True
+    
+        """
+        induced_subgraphs = list(graph.connected_subgraph_iterator(k=4, exactly_k=True))
+        for subgraph in induced_subgraphs:
+            # Check for C4 (cycle of length 4)
+            c4_present = True
+            for vertex in subgraph:
+                if subgraph.degree(vertex) != 2:
+                    c4_present = False
+                    break
+            if c4_present:
+                return False
+            
+            # Check for P4 (path of length 4)
+            p4_present = True
+            for vertex in subgraph:
+                if subgraph.degree(vertex) > 2:
+                    p4_present = False
+                    break
+            if p4_present:
+                if subgraph.to_undirected().is_tree():
+                    return False
+                else:
+                    p4_present = False
+        return True
+
     def is_directed(self):
         """
         Since digraph is directed, return ``True``.
