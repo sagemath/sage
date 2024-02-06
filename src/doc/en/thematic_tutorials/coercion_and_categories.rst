@@ -159,7 +159,6 @@ This base class provides a lot more methods than a general parent::
      'random_element',
      'unit_ideal',
      'zero',
-     'zero_ideal',
      'zeta',
      'zeta_order']
 
