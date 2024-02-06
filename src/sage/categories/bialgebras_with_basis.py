@@ -11,6 +11,7 @@ Bialgebras with basis
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import tensor
+from sage.misc.superseded import deprecated_function_alias
 
 
 class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
@@ -146,7 +147,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
     class ElementMethods:
 
-        def adams_operator(self, n):
+        def convolution_power_of_id(self, n):
             r"""
             Compute the `n`-th convolution power of the identity morphism
             `\mathrm{Id}` on ``self``.
@@ -176,23 +177,23 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.combinat sage.modules
                 sage: h = SymmetricFunctions(QQ).h()
-                sage: h[5].adams_operator(2)
+                sage: h[5].convolution_power_of_id(2)
                 2*h[3, 2] + 2*h[4, 1] + 2*h[5]
                 sage: h[5].plethysm(2*h[1])
                 2*h[3, 2] + 2*h[4, 1] + 2*h[5]
-                sage: h([]).adams_operator(0)
+                sage: h([]).convolution_power_of_id(0)
                 h[]
-                sage: h([]).adams_operator(1)
+                sage: h([]).convolution_power_of_id(1)
                 h[]
-                sage: h[3,2].adams_operator(0)
+                sage: h[3,2].convolution_power_of_id(0)
                 0
-                sage: h[3,2].adams_operator(1)
+                sage: h[3,2].convolution_power_of_id(1)
                 h[3, 2]
 
             ::
 
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()                      # needs sage.combinat sage.modules
-                sage: S[4].adams_operator(5)                                            # needs sage.combinat sage.modules
+                sage: S[4].convolution_power_of_id(5)                                            # needs sage.combinat sage.modules
                 5*S[1, 1, 1, 1] + 10*S[1, 1, 2] + 10*S[1, 2, 1]
                  + 10*S[1, 3] + 10*S[2, 1, 1] + 10*S[2, 2] + 10*S[3, 1] + 5*S[4]
 
@@ -200,7 +201,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             ::
 
                 sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # needs sage.combinat sage.modules
-                sage: m[[1,3],[2]].adams_operator(-2)                                   # needs sage.combinat sage.modules
+                sage: m[[1,3],[2]].convolution_power_of_id(-2)                                   # needs sage.combinat sage.modules
                 3*m{{1}, {2, 3}} + 3*m{{1, 2}, {3}} + 6*m{{1, 2, 3}} - 2*m{{1, 3}, {2}}
             """
             if n < 0:
@@ -212,6 +213,9 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             else:
                 T = lambda x: x
             return self.convolution_product([T] * n)
+
+        adams_operator = deprecated_function_alias(36396,
+                                                   convolution_power_of_id)
 
         def convolution_product(self, *maps):
             r"""
