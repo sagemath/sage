@@ -3103,7 +3103,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         poly = _to_polynomials([self], self.base_ring())[0]
         factors = poly.factor()
-        unit = factors.unit()
+        unit = self.base_ring()(factors.unit())
         if factors.universe() == self.base_ring():
             return Factorization(factors, unit=unit)
         factors = [(_from_polynomial(factor, M), exponent)
