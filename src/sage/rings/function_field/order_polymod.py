@@ -649,7 +649,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # matrices_reduced give the multiplication matrices used to form the
         # algebra O mod pO.
         matrices_reduced = list(map(lambda M: M.mod(p), matrices))
-        A = FiniteDimensionalAlgebra(k, matrices_reduced)
+        A = FiniteDimensionalAlgebra(k, matrices_reduced,
+                                     assume_associative=True)
 
         # Each prime ideal of the algebra A corresponds to a prime ideal of O,
         # and since the algebra is an Artinian ring, all of its prime ideals
