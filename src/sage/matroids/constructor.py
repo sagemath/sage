@@ -313,8 +313,6 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M1 == M2
             True
 
-
-
             sage: M = Matroid(groundset='abcd', circuits=['abc', 'abd', 'acd',
             ....:                                         'bcd'])
             sage: type(M)
