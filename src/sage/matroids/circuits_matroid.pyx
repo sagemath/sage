@@ -2,15 +2,16 @@ r"""
 Circuits matroids
 
 Matroids are characterized by a list of circuits, which are minimal dependent
-sets. The CircuitsMatroid class implements matroids using this information as
-data.
+sets. The ``CircuitsMatroid`` class implements matroids using this information
+as data.
 
 A ``CircuitsMatroid`` can be created from another matroid or from a list of
 circuits. For a full description of allowed inputs, see
 :class:`below <sage.matroids.circuits_matroid.CircuitsMatroid>`. It is
 recommended to use the :func:`Matroid() <sage.matroids.constructor.Matroid>`
-function for a more flexible construction of a ``CircuitsMatroid``. For direct
-access to the ``CircuitsMatroid`` constructor, run::
+function for a more flexible way of constructing a ``CircuitsMatroid`` and
+other classes of matroids. For direct access to the ``CircuitsMatroid``
+constructor, run::
 
     sage: from sage.matroids.circuits_matroid import CircuitsMatroid
 
@@ -425,6 +426,10 @@ cdef class CircuitsMatroid(Matroid):
         """
         Return the circuits of the matroid.
 
+        INPUT:
+
+        - ``k`` -- an integer (optional); the length of the circuits
+
         OUTPUT: a SetSystem
 
         EXAMPLES::
@@ -448,6 +453,10 @@ cdef class CircuitsMatroid(Matroid):
     def circuits_iterator(self, k=None):
         """
         Return an iterator over the circuits of the matroid.
+
+        INPUT:
+
+        - ``k`` -- an integer (optional); the length of the circuits
 
         EXAMPLES::
 
@@ -485,7 +494,23 @@ cdef class CircuitsMatroid(Matroid):
                     NSC.append(C)
         return NSC
 
-    cpdef no_broken_circuits_sets(self, order=None) noexcept:
+    def nonspanning_circuits_iterator(self):
+        """
+        Return an iterator over the nonspanning circuits of the matroid.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
+            sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
+            sage: list(M.nonspanning_circuits_iterator())
+            []
+        """
+        for i in self._k_C:
+            if i <= self.rank():
+                for C in self._k_C[i]:
+                    yield C
+
+    cpdef no_broken_circuits_sets(self, ordering=None) noexcept:
         r"""
         Return the no broken circuits (NBC) sets of ``self``.
 
@@ -494,7 +519,7 @@ cdef class CircuitsMatroid(Matroid):
 
         INPUT:
 
-        - ``order`` -- a total ordering of the groundset given as a list
+        - ``ordering`` -- a total ordering of the groundset given as a list
 
         OUTPUT: a list of frozensets
 
@@ -525,16 +550,16 @@ cdef class CircuitsMatroid(Matroid):
             sage: C1 == C2
             True
         """
-        if order is None:
-            order = sorted(self.groundset(), key=str)
+        if ordering is None:
+            ordering = sorted(self.groundset(), key=str)
         else:
-            if frozenset(order) != self.groundset():
+            if frozenset(ordering) != self.groundset():
                 raise ValueError("not an ordering of the groundset")
 
         # compute broken circuits
         cdef list BC = []
         for C in self._C:
-            for e in order:
+            for e in ordering:
                 if e in C:
                     BC.append(C - set([e]))
                     break

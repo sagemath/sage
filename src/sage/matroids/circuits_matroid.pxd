@@ -18,6 +18,7 @@ cdef class CircuitsMatroid(Matroid):
     cpdef bases(self) noexcept
     cpdef circuits(self, k=*) noexcept
     cpdef nonspanning_circuits(self) noexcept
+    cpdef no_broken_circuits_sets(self, ordering=*) noexcept
 
     # properties
     cpdef girth(self) noexcept
