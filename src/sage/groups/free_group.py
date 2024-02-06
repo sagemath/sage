@@ -748,9 +748,9 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     # def __richcmp__(self, other, op):
     #     """
     #     Compare ``self`` and ``other``.
-    # 
+    #
     #     TESTS::
-    # 
+    #
     #         sage: F1 = FreeGroup(2)
     #         sage: F2 = FreeGroup(2, 'x')
     #         sage: F3 = FreeGroup('x0, x1')
