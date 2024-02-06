@@ -17,12 +17,6 @@ access to the ``CircuitsMatroid`` constructor, run::
 AUTHORS:
 
 - Giorgos Mousa (2023-12-23): initial version
-
-TESTS::
-
-    sage: from sage.matroids.circuits_matroid import CircuitsMatroid
-    sage: M = CircuitsMatroid(matroids.catalog.Fano())
-    sage: TestSuite(M).run()
 """
 
 # ****************************************************************************
@@ -43,19 +37,16 @@ from cpython.object cimport Py_EQ, Py_NE
 
 cdef class CircuitsMatroid(Matroid):
     r"""
+    A matroid defined by its circuits.
+
     INPUT:
 
     - ``M`` -- a matroid (default: ``None``)
     - ``groundset`` -- a list (default: ``None``); the groundset of the matroid
     - ``circuits`` -- a list (default: ``None``); the collection of circuits of
       the matroid
-
-    OUTPUT:
-
-    - If the input is a matroid ``M``, return a ``CircuitsMatroid`` instance
-      representing ``M``.
-    - Otherwise, return a ``CircuitsMatroid`` instance based on the
-      ``groundset`` and ``circuits``.
+    - ``nsc_defined`` -- boolean (default: ``False``); whether the matroid was
+      defined by its nonspanning circuits
 
     .. NOTE::
 
@@ -68,6 +59,12 @@ cdef class CircuitsMatroid(Matroid):
         """
         Initialization of the matroid. See class docstring for full
         documentation.
+
+        TESTS::
+
+            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
+            sage: M = CircuitsMatroid(matroids.catalog.Fano())
+            sage: TestSuite(M).run()
         """
         if M is not None:
             self._groundset = frozenset(M.groundset())
@@ -153,8 +150,8 @@ cdef class CircuitsMatroid(Matroid):
 
         OUTPUT: boolean
         """
-        I = set(F)
-        s = len(F)
+        cdef set I = set(F)
+        cdef int s = len(F)
         for i in self._k_C:
             if i <= s:
                 for C in self._k_C[i]:
@@ -173,7 +170,7 @@ cdef class CircuitsMatroid(Matroid):
 
         OUTPUT: a frozenset; a maximal independent subset of ``X``
         """
-        I = set(F)
+        cdef set I = set(F)
         for i in self._k_C:
             for C in self._k_C[i]:
                 if i <= len(I) and i > 0:
@@ -196,8 +193,8 @@ cdef class CircuitsMatroid(Matroid):
         OUTPUT: a frozenset; a circuit contained in ``X``, if it exists.
         Otherwise an error is raised.
         """
-        I = set(F)
-        for C in self.circuits():
+        cdef set I = set(F)
+        for C in self._C:
             if C <= I:
                 return C
         raise ValueError("no circuit in independent set")
@@ -386,6 +383,8 @@ cdef class CircuitsMatroid(Matroid):
 
             sage: from sage.matroids.circuits_matroid import CircuitsMatroid
             sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
+            sage: len(M.bases())
+            6
         """
         cdef SetSystem B
         B = SetSystem(list(self.groundset()))
@@ -408,6 +407,9 @@ cdef class CircuitsMatroid(Matroid):
 
             sage: from sage.matroids.circuits_matroid import CircuitsMatroid
             sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
+            sage: it = M.bases_iterator()
+            sage: it.__next__()
+            frozenset({0, 1})
         """
         from itertools import combinations
         for B in combinations(self._groundset, self._matroid_rank):
@@ -424,6 +426,13 @@ cdef class CircuitsMatroid(Matroid):
         Return the circuits of the matroid.
 
         OUTPUT: a SetSystem
+
+        EXAMPLES::
+
+            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
+            sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
+            sage: M.circuits()
+            Iterator over a system of subsets
         """
         cdef SetSystem C
         C = SetSystem(list(self.groundset()))
@@ -439,6 +448,13 @@ cdef class CircuitsMatroid(Matroid):
     def circuits_iterator(self, k=None):
         """
         Return an iterator over the circuits of the matroid.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
+            sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
+            sage: sum(1 for C in M.circuits_iterator())
+            4
         """
         if k:
             for C in self._k_C[k]:
@@ -453,6 +469,13 @@ cdef class CircuitsMatroid(Matroid):
         Return the list of nonspanning circuits of the matroid.
 
         OUTPUT: a SetSystem
+
+        EXAMPLES::
+
+            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
+            sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
+            sage: M.nonspanning_circuits()
+            Iterator over a system of subsets
         """
         cdef SetSystem NSC
         NSC = SetSystem(list(self.groundset()))
@@ -462,7 +485,7 @@ cdef class CircuitsMatroid(Matroid):
                     NSC.append(C)
         return NSC
 
-    def no_broken_circuits_sets(self, order=None):
+    cpdef no_broken_circuits_sets(self, order=None) noexcept:
         r"""
         Return the no broken circuits (NBC) sets of ``self``.
 
@@ -472,6 +495,8 @@ cdef class CircuitsMatroid(Matroid):
         INPUT:
 
         - ``order`` -- a total ordering of the groundset given as a list
+
+        OUTPUT: a list of frozensets
 
         EXAMPLES::
 
@@ -489,6 +514,16 @@ cdef class CircuitsMatroid(Matroid):
             sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (2, 3, 5), (2, 4, 5), (3, 4, 5)}
+
+        TESTS::
+
+            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: C1 = SimplicialComplex(M.no_broken_circuits_sets())
+            sage: from sage.matroids.basis_matroid import BasisMatroid
+            sage: M = BasisMatroid(Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]]))
+            sage: C2 = SimplicialComplex(M.no_broken_circuits_sets())
+            sage: C1 == C2
+            True
         """
         if order is None:
             order = sorted(self.groundset(), key=str)
@@ -497,14 +532,14 @@ cdef class CircuitsMatroid(Matroid):
                 raise ValueError("not an ordering of the groundset")
 
         # compute broken circuits
-        BC = []
-        for C in self.circuits():
+        cdef list BC = []
+        for C in self._C:
             for e in order:
                 if e in C:
                     BC.append(C - set([e]))
                     break
 
-        # the facets suffice
+        cdef list F = []  # broken circuit complex facets
         for B in self.bases():
             flag = True
             for bc in BC:
@@ -512,7 +547,10 @@ cdef class CircuitsMatroid(Matroid):
                     flag = False
                     break
             if flag:
-                yield B
+                F.append(B)
+
+        from sage.topology.simplicial_complex import SimplicialComplex
+        return [frozenset(f) for f in SimplicialComplex(F).face_iterator()]
 
     # properties
 
@@ -532,7 +570,7 @@ cdef class CircuitsMatroid(Matroid):
 
         [Oxl2011]_, p. 327.
         """
-        return min([i for i in self._k_C], default=float('inf'))
+        return min(self._k_C, default=float('inf'))
 
     cpdef is_paving(self) noexcept:
         """
@@ -555,7 +593,7 @@ cdef class CircuitsMatroid(Matroid):
 
     cpdef is_valid(self) noexcept:
         r"""
-        Test if self obeys the matroid axioms.
+        Test if ``self`` obeys the matroid axioms.
 
         For a matroid defined by its circuits, we check the circuit axioms.
 
