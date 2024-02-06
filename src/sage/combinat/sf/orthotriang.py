@@ -84,8 +84,8 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
         TESTS::
 
-            sage: TestSuite(s).run(elements = [s[1,1]+2*s[2], s[1]+3*s[1,1]])
-            sage: TestSuite(s).run(skip = ["_test_associativity", "_test_prod"])  # long time (7s on sage.math, 2011)
+            sage: TestSuite(s).run(skip='_test_construction', elements = [s[1,1]+2*s[2], s[1]+3*s[1,1]])
+            sage: TestSuite(s).run(skip = ["_test_associativity", "_test_prod", '_test_construction'])  # long time (7s on sage.math, 2011)
 
         Note: ``s.an_element()`` is of degree 4; so we skip
         ``_test_associativity`` and ``_test_prod`` which involve
@@ -101,6 +101,9 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         self._base_to_self_cache = {}
         self.register_coercion(SetMorphism(Hom(base, self), self._base_to_self))
         base.register_coercion(SetMorphism(Hom(self, base), self._self_to_base))
+
+    def construction(self):
+        raise NotImplementedError
 
     def _base_to_self(self, x):
         """
