@@ -473,7 +473,7 @@ class ArtinGroup(FinitelyPresentedGroup):
             sage: A = ArtinGroup(['B',3], ['x','y','z'])
             sage: TestSuite(A).run()
         """
-        self._coxeter_group = CoxeterGroup(self._coxeter_matrix)
+        self._coxeter_group = CoxeterGroup(coxeter_matrix)
         free_group = FreeGroup(names)
         rels = []
         # Generate the relations based on the Coxeter graph

@@ -72,7 +72,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.structure.sequence import Sequence
 from sage.structure.element import coercion_model, parent
-from sage.structure.richcmp import richcmp, richcmp_method
+# from sage.structure.richcmp import richcmp, richcmp_method
 
 
 def is_FreeGroup(x):
@@ -685,7 +685,7 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
     return FreeGroup_class(names)
 
 
-@richcmp_method
+# @richcmp_method
 class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's FreeGroup
@@ -745,26 +745,26 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
 
         return hash((self.__class__, self._names))
 
-    def __richcmp__(self, other, op):
-        """
-        Compare ``self`` and ``other``.
-
-        TESTS::
-
-            sage: F1 = FreeGroup(2)
-            sage: F2 = FreeGroup(2, 'x')
-            sage: F3 = FreeGroup('x0, x1')
-            sage: F4 = FreeGroup(2, 'y')
-            sage: F1 == F2
-            True
-            sage: F2 == F3
-            True
-            sage: F3 == F4
-            False
-        """
-        if not isinstance(other, self.__class__):
-            return False
-        return richcmp(self._names, other._names, op)
+    # def __richcmp__(self, other, op):
+    #     """
+    #     Compare ``self`` and ``other``.
+    # 
+    #     TESTS::
+    # 
+    #         sage: F1 = FreeGroup(2)
+    #         sage: F2 = FreeGroup(2, 'x')
+    #         sage: F3 = FreeGroup('x0, x1')
+    #         sage: F4 = FreeGroup(2, 'y')
+    #         sage: F1 == F2
+    #         True
+    #         sage: F2 == F3
+    #         True
+    #         sage: F3 == F4
+    #         False
+    #     """
+    #     if not isinstance(other, self.__class__):
+    #         return False
+    #     return richcmp(self._names, other._names, op)
 
     def __reduce__(self):
         """

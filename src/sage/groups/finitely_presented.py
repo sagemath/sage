@@ -142,7 +142,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.structure.richcmp import richcmp, richcmp_method
+# from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import CachedRepresentation
 
 
@@ -694,7 +694,7 @@ class RewritingSystem():
             raise ValueError('could not make the system confluent')
 
 
-@richcmp_method
+# @richcmp_method
 class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's Finitely Presented Groups.
@@ -791,26 +791,26 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         """
         return hash((self._free_group, self._relations, self._names))
 
-    def __richcmp__(self, other, op):
-        """
-        Compare ``self`` and ``other``.
-
-        TESTS::
-
-            sage: F1 = FreeGroup(2) / [(1, 2, 2, 1)]
-            sage: F2 = FreeGroup(2, 'x') / [(1, 2, 2, 1)]
-            sage: F3 = FreeGroup(2) / [(1, 1, 2, 2)]
-            sage: F4 = FreeGroup(2, 'y') / [(1, 2, 2, 1)]
-            sage: F1 == F2
-            True
-            sage: F2 == F3
-            False
-            sage: F3 == F4
-            False
-        """
-        r1 = [r.Tietze() for r in self._relations]
-        r2 = [r.Tietze() for r in other._relations]
-        return richcmp((self._names, r1), (other._names, r2), op)
+    # def __richcmp__(self, other, op):
+    #     """
+    #     Compare ``self`` and ``other``.
+    # 
+    #     TESTS::
+    # 
+    #         sage: F1 = FreeGroup(2) / [(1, 2, 2, 1)]
+    #         sage: F2 = FreeGroup(2, 'x') / [(1, 2, 2, 1)]
+    #         sage: F3 = FreeGroup(2) / [(1, 1, 2, 2)]
+    #         sage: F4 = FreeGroup(2, 'y') / [(1, 2, 2, 1)]
+    #         sage: F1 == F2
+    #         True
+    #         sage: F2 == F3
+    #         False
+    #         sage: F3 == F4
+    #         False
+    #     """
+    #     r1 = [r.Tietze() for r in self._relations]
+    #     r2 = [r.Tietze() for r in other._relations]
+    #     return richcmp((self._names, r1), (other._names, r2), op)
 
     def _repr_(self):
         """
