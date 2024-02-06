@@ -7,25 +7,25 @@ specific base classes.
 
 .. WARNING::
 
-    Those classes, except maybe for the lowest ones like :class:`Ring`,
-    :class:`CommutativeRing`, :class:`Algebra` and :class:`CommutativeAlgebra`,
+    Those classes, except maybe for the lowest ones like
+    :class:`CommutativeRing` and :class:`CommutativeAlgebra`,
     are being progressively deprecated in favor of the corresponding
     categories. which are more flexible, in particular with respect to multiple
     inheritance.
 
 The class inheritance hierarchy is:
 
-- :class:`Ring`
+- :class:`Ring` (to be deprecated)
 
-  - :class:`Algebra`
+  - :class:`Algebra` (to be deprecated)
   - :class:`CommutativeRing`
 
-    - :class:`NoetherianRing`
-    - :class:`CommutativeAlgebra`
-    - :class:`IntegralDomain`
+    - :class:`NoetherianRing` (deprecated)
+    - :class:`CommutativeAlgebra` (to be deprecated)
+    - :class:`IntegralDomain` (deprecated)
 
-      - :class:`DedekindDomain`
-      - :class:`PrincipalIdealDomain`
+      - :class:`DedekindDomain` (deprecated and essentially removed)
+      - :class:`PrincipalIdealDomain` (deprecated)
 
 Subclasses of :class:`PrincipalIdealDomain` are
 
@@ -43,7 +43,7 @@ are Noetherian PIDs.
 advance* whether or not a ring belongs in one of these classes; e.g. some
 orders in number fields are Dedekind domains, but others are not, and we still
 want to offer a unified interface, so orders are never instances of the
-:class:`DedekindDomain` class.)
+deprecated :class:`DedekindDomain` class.)
 
 AUTHORS:
 
@@ -54,18 +54,32 @@ AUTHORS:
 - Simon King (2011-05-20): Modify multiplication and _ideal_class_ to support
   ideals of non-commutative rings.
 
+TESTS:
+
+This is to test a deprecation::
+
+    sage: from sage.rings.ring import DedekindDomain
+    sage: class No(DedekindDomain):
+    ....:     pass
+    sage: F = No(QQ)
+    ...:
+    DeprecationWarning: use the category DedekindDomains
+    See https://github.com/sagemath/sage/issues/37234 for details.
+    sage: F.category()
+    Category of Dedekind domains
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005, 2007 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
@@ -75,6 +89,7 @@ from sage.misc.prandom import randint
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.dedekind_domains import DedekindDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 
 _Rings = Rings()
@@ -1608,7 +1623,7 @@ cdef class IntegralDomain(CommutativeRing):
 
         This method is used by all the abstract subclasses of
         :class:`IntegralDomain`, like :class:`NoetherianRing`,
-        :class:`PrincipalIdealDomain`, :class:`DedekindDomain`,
+        :class:`PrincipalIdealDomain`,
         :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
         PrincipalIdealDomain.__init__ -> IntegralDomain.__init__ ->
@@ -1752,6 +1767,14 @@ cdef class NoetherianRing(CommutativeRing):
             True
         """
         return True
+
+
+cdef class DedekindDomain(IntegralDomain):
+    _default_category = DedekindDomains()
+
+    def __init__(self, *args, **kwds):
+        deprecation(37234, "use the category DedekindDomains")
+        super().__init__(*args, **kwds)
 
 
 cdef class PrincipalIdealDomain(IntegralDomain):

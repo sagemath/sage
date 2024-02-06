@@ -186,7 +186,7 @@ import sage.rings.infinity
 import sage.rings.integer
 import sage.rings.integer_ring
 import sage.rings.rational_field
-import sage.rings.ring as ring
+from sage.rings.ring import IntegralDomain, is_Ring
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -212,6 +212,7 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
+
 
 ###############################################################################
 #
@@ -294,7 +295,7 @@ class FreeModuleFactory(UniqueFactory):
             and base_ring.is_maximal() and base_ring.class_number() == 1):
             return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
 
-        if isinstance(base_ring, ring.IntegralDomain) or base_ring in IntegralDomains():
+        if isinstance(base_ring, IntegralDomain) or base_ring in IntegralDomains():
             return FreeModule_ambient_domain(base_ring, rank, sparse=sparse)
 
         return FreeModule_ambient(base_ring, rank, sparse=sparse)
@@ -725,7 +726,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         TypeError: generators must be lists of ring elements
         or free module elements!
     """
-    if ring.is_Ring(gens):
+    if is_Ring(gens):
         # we allow the old input format with first input the base_ring.
         # Do we want to deprecate it?..
         base_ring, gens = gens, base_ring
