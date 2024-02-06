@@ -38,6 +38,7 @@ from sage.categories.fields import Fields
 from sage.categories.groups import Groups
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.algebras.clifford_algebra_element import CohomologyRAAGElement
+from sage.structure.unique_representation import CachedRepresentation
 from sage.typeset.ascii_art import ascii_art
 from sage.typeset.unicode_art import unicode_art
 
@@ -189,7 +190,6 @@ class RightAngledArtinGroup(ArtinGroup):
             Category of infinite groups
         """
         self._graph = G
-        self._names = names
         F = FreeGroup(names=names)
         CG = Graph(G).complement()  # Make sure it's mutable
         CG.relabel()  # Standardize the labels
@@ -205,19 +205,7 @@ class RightAngledArtinGroup(ArtinGroup):
         FinitelyPresentedGroup.__init__(self, F, rels,
                                         category=Groups().Infinite())
 
-    def __reduce__(self):
-        """
-        Implement pickling.
-
-        TESTS::
-
-            sage: RightAngledArtinGroup(graphs.CycleGraph(5)).__reduce__()[1]
-            (<class 'sage.groups.raag.RightAngledArtinGroup'>,
-             (Cycle graph: Graph on 5 vertices, ('v0', 'v1', 'v2', 'v3', 'v4')),
-             {})
-        """
-        from sage.structure.unique_representation import unreduce
-        return (unreduce, (self.__class__.__base__, (self._graph, self._names), {}))
+    __reduce__ = CachedRepresentation.__reduce__
 
     def _repr_(self) -> str:
         """
