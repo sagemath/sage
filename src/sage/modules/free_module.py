@@ -187,6 +187,7 @@ import sage.rings.integer
 import sage.rings.integer_ring
 import sage.rings.rational_field
 from sage.rings.ring import IntegralDomain, is_Ring
+from sage.categories.fields import Fields
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -4347,7 +4348,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: FreeModule_generic_field(QQ, 5, 5)
             <repr(<sage.modules.free_module.FreeModule_generic_field_with_category at 0x...>) failed: NotImplementedError>
         """
-        if not isinstance(base_field, ring.Field):
+        if base_field not in Fields():
             raise TypeError("The base_field (=%s) must be a field" % base_field)
         super().__init__(base_field, dimension, degree, sparse=sparse, category=category)
 
