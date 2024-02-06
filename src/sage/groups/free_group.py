@@ -745,27 +745,6 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
 
         return hash((self.__class__, self._names))
 
-    # def __richcmp__(self, other, op):
-    #     """
-    #     Compare ``self`` and ``other``.
-    #
-    #     TESTS::
-    #
-    #         sage: F1 = FreeGroup(2)
-    #         sage: F2 = FreeGroup(2, 'x')
-    #         sage: F3 = FreeGroup('x0, x1')
-    #         sage: F4 = FreeGroup(2, 'y')
-    #         sage: F1 == F2
-    #         True
-    #         sage: F2 == F3
-    #         True
-    #         sage: F3 == F4
-    #         False
-    #     """
-    #     if not isinstance(other, self.__class__):
-    #         return False
-    #     return richcmp(self._names, other._names, op)
-
     def __reduce__(self):
         """
         Implement pickling.
