@@ -1489,7 +1489,7 @@ def RandomKTree(n, k, seed=None):
         50
         sage: g.treewidth()
         5
-    
+
     EXAMPLES::
 
     A (random) `k`-tree has treewidth `k`::
@@ -1497,8 +1497,8 @@ def RandomKTree(n, k, seed=None):
         sage: G = graphs.RandomKTree(50, 5)
         sage: G.treewidth()
         5
-        sage: G.show()  # not tested 
-    """    
+        sage: G.show()  # not tested
+    """
     if n < k + 1:
         raise ValueError("n must be greater than k + 1")
 
@@ -1507,24 +1507,24 @@ def RandomKTree(n, k, seed=None):
 
     g = Graph(name=f"Random {k}-tree of order {n}")
     g.add_clique(list(range(k + 1)))
-    
+
     cliques = [list(range(k+1))]
 
     # Randomly choose a row, and copy 1 of the cliques
-    # One of those vertices is then replaced with a new vertex 
+    # One of those vertices is then replaced with a new vertex
     for newVertex in range(k + 1, n):
         copiedClique = cliques[randint(0, len(cliques)-1)].copy()
-        copiedClique[randint(0, k)] = newVertex 
+        copiedClique[randint(0, k)] = newVertex
         cliques.append(copiedClique)
         for u in copiedClique:
             if u != newVertex:
                 g.add_edge(u, newVertex)
-    return g 
+    return g
 
 
 def RandomPartialKTree(n, k, x, seed=None):
     r"""
-    Return a random partial `k`-tree on `n` nodes. 
+    Return a random partial `k`-tree on `n` nodes.
 
     A partial `k`-tree is defined as a subgraph of a `k`-tree. This can also be
     described as a graph with treewidth at most `k`.
@@ -1565,7 +1565,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # Check that x doesn't delete too many edges
     # This formula calculates how many edges are in `k`-tree with `n` nodes
-    if x > (k^2 + k) / 2 + (n - k - 1) * k:
+    if x > (k ^ 2 + k) / 2 + (n - k - 1) * k:
         raise ValueError("x must be less than the number of edges in the `k`-tree with `n` nodes")
 
     from sage.misc.prandom import shuffle
