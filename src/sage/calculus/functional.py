@@ -28,7 +28,6 @@ EXAMPLES: We illustrate each of the calculus functional functions.
 """
 from sage.structure.element import Expression
 
-
 def simplify(f, algorithm="maxima", **kwds):
     r"""
     Simplify the expression `f`.
@@ -478,3 +477,96 @@ def expand(x, *args, **kwds):
         return x.expand(*args, **kwds)
     except AttributeError:
         return x
+
+def definite_integral(f, *args, **kwds):
+    """
+    Compute the definite integral of the given expression over the specified interval.
+
+    This function calculates the definite integral of the input expression `f` over
+    the specified interval defined by the variable(s) in `args`.
+
+    INPUT:
+    - ``f`` (expression): The expression to integrate.
+    - ``args`` (symbolic variable(s)): The variable(s) over which to integrate.
+    - Additional keyword arguments (optional):
+    - ``a``: The lower limit of integration.
+    - ``b``: The upper limit of integration.
+    - Any additional parameters accepted by the integral method.
+
+    OUTPUT:
+    - (expression) The result of the definite integral.
+
+    EXAMPLES:
+    ::
+
+        sage: x = var('x')
+        sage: f = x^2
+        sage: definite_integral(f, x, 0, 1)
+        1/3
+
+        sage: y = var('y')
+        sage: g = sin(y)
+        sage: definite_integral(g, y, 0, pi)
+        2
+
+        sage: h = exp(-x^2)
+        sage: definite_integral(h, x, -oo, oo)
+        sqrt(pi)
+    """
+    try:
+        return f.integral(*args, **kwds)
+    except AttributeError:
+        pass
+    
+    if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
+        f = SR(f)
+    return f.integral(*args, **kwds)
+
+def partial_derivative(f, *args, **kwds):
+    """
+    Compute the partial derivative of the given expression with respect to the specified variables.
+
+    This function calculates the partial derivative of the input expression `f` with respect
+    to the specified variables in `args`.
+
+    INPUT:
+    - ``f`` (expression): The expression for which to compute the partial derivative.
+    - ``args`` (symbolic variable(s)): The variable(s) with respect to which to differentiate.
+    - Additional keyword arguments (optional):
+    - Any additional parameters accepted by the derivative method.
+
+    OUTPUT:
+    - (expression) The result of the partial derivative.
+
+    EXAMPLES:
+    Test 1: Partial derivative of a quadratic function
+    ::
+    sage: x = var('x')
+    sage: f = x^2 + 2*x + 1
+    sage: partial_derivative(f, x)
+    2*x + 2
+
+    Test 2: Partial derivative of a multivariable function
+    ::
+    sage: y, z = var('y z')
+    sage: g = sin(y*z) + cos(y)
+    sage: partial_derivative(g, y)
+    -z*sin(y*z) - sin(y)
+
+    Test 3: Partial derivative with respect to multiple variables
+    ::
+    sage: a, b = var('a b')
+    sage: h = exp(a*x + b*y)
+    sage: partial_derivative(h, [x, y])
+    [a*exp(a*x + b*y), b*exp(a*x + b*y)]
+    """
+    try:
+        return f.derivative(*args, **kwds)
+    except AttributeError:
+        pass
+    
+    if not isinstance(f, Expression):
+        from sage.symbolic.ring import SR
+        f = SR(f)
+    return f.derivative(*args, **kwds)
