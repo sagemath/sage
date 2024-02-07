@@ -1229,14 +1229,15 @@ class GRSBerlekampWelchDecoder(Decoder):
         col_mults = C.column_multipliers()
 
         r_list = copy(r)
-        r_list = [r[i]/col_mults[i] for i in range(0, C.length())]
+        r_list = [r[i] / col_mults[i] for i in range(C.length())]
 
-        t = (C.minimum_distance()-1) // 2
-        l0 = n-1-t
-        l1 = n-1-t-(k-1)
-        S = matrix(C.base_field(), n, l0+l1+2,
-                   lambda i, j: (C.evaluation_points()[i])**j if j < (l0+1)
-                   else r_list[i]*(C.evaluation_points()[i])**(j-(l0+1)))
+        t = (C.minimum_distance() - 1) // 2
+        l0 = n - 1 - t
+        l1 = n - t - k
+        pts = C.evaluation_points()
+        S = matrix(C.base_field(), n, l0 + l1 + 2,
+                   lambda i, j: (pts[i]**j if j < (l0 + 1)
+                                 else r_list[i] * pts[i]**(j - (l0 + 1))))
         S = S.right_kernel()
         S = S.basis_matrix().row(0)
         R = C.base_field()['x']
@@ -1574,7 +1575,7 @@ class GRSGaoDecoder(Decoder):
 
         r = b
         prev_r = a
-        while (r.degree() >= stop):
+        while r.degree() >= stop:
             q = prev_r.quo_rem(r)[0]
             (prev_r, r) = (r, prev_r - q * r)
             (prev_s, s) = (s, prev_s - q * s)
@@ -2165,7 +2166,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         prev_r = a
         r = b
 
-        while (r.degree() >= t.degree()):
+        while r.degree() >= t.degree():
             q = prev_r.quo_rem(r)[0]
             prev_r, r = r, prev_r - q * r
             prev_t, t = t, prev_t - q * t

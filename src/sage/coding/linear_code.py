@@ -877,7 +877,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             P = RT(C.zeta_polynomial())*T**(d - dperp)
             if is_even(n):
                 Pd = q**(k-n/2)*RT(Cd.zeta_polynomial())
-            if not (is_even(n)):
+            if not is_even(n):
                 Pd = s*q**(k-(n+1)/2)*RT(Cd.zeta_polynomial())
             CP = P+Pd
             f = CP/CP(1,s)
@@ -886,7 +886,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             P = RT(C.zeta_polynomial())
             if is_even(n):
                 Pd = q**(k-n/2)*RT(Cd.zeta_polynomial())
-            if not (is_even(n)):
+            if not is_even(n):
                 Pd = s*q**(k-(n+1)/2)*RT(Cd.zeta_polynomial())
             CP = P+Pd
             f = CP/CP(1,s)
@@ -1666,7 +1666,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                     gens = Gp.GeneratorsOfGroup()
                     stop = 1                    # get ready to stop
                     for x in gens:              # if one of these gens is not an auto then don't stop
-                        if not (self.is_permutation_automorphism(Sn_sage(x))):
+                        if not self.is_permutation_automorphism(Sn_sage(x)):
                             stop = 0
                             break
             G = PermutationGroup(list(map(Sn_sage, gens)))
@@ -1877,7 +1877,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             from sage.coding.binary_code import weight_dist
             return weight_dist(self.generator_matrix())
         elif algorithm == "leon":
-            if not (F.order() in [2,3,5,7]):
+            if F.order() not in [2, 3, 5, 7]:
                 raise NotImplementedError("The algorithm 'leon' is only implemented for q = 2,3,5,7.")
             # The GAP command DirectoriesPackageLibrary tells the location of the latest
             # version of the Guava libraries, so gives us the location of the Guava binaries too.

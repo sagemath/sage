@@ -891,12 +891,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             True
         """
         G = self.generator_matrix()
-        for r in G.rows():
-            if not (r in other):
-                return False
-        return True
+        return all(r in other for r in G.rows())
 
-    def is_permutation_automorphism(self,g):
+    def is_permutation_automorphism(self, g):
         r"""
         Return `1` if `g` is an element of `S_n` (`n` = length of ``self``) and
         if `g` is an automorphism of ``self``.

@@ -258,9 +258,9 @@ class QAryReedMullerCode(AbstractLinearCode):
         # input sanitization
         if base_field not in FiniteFields():
             raise ValueError("the input `base_field` must be a FiniteField")
-        if not (isinstance(order, (Integer, int))):
+        if not isinstance(order, (Integer, int)):
             raise ValueError("The order of the code must be an integer")
-        if not (isinstance(num_of_var, (Integer, int))):
+        if not isinstance(num_of_var, (Integer, int)):
             raise ValueError("The number of variables must be an integer")
         q = base_field.cardinality()
         if order >= q:
@@ -425,9 +425,9 @@ class BinaryReedMullerCode(AbstractLinearCode):
             ValueError: The order of the code must be an integer
         """
         # input sanitization
-        if not (isinstance(order, (Integer, int))):
+        if not isinstance(order, (Integer, int)):
             raise ValueError("The order of the code must be an integer")
-        if not (isinstance(num_of_var, (Integer, int))):
+        if not isinstance(num_of_var, (Integer, int)):
             raise ValueError("The number of variables must be an integer")
         if (num_of_var < order):
             raise ValueError(
