@@ -267,12 +267,12 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
         sage: KnotInfo.K13a_1.kauffman_polynomial()  # optional - database_knotinfo # indirect doctest
         Traceback (most recent call last):
         ...
-        NotImplementedError: This value is not provided by the database
+        NotImplementedError: this value is not provided by the database
     """
     if not string:
         # An empty string in the database Excel spreadsheet indicates that
         # the property is not provided for that particular knot or link.
-        raise NotImplementedError('This value is not provided by the database')
+        raise NotImplementedError('this value is not provided by the database')
     if to_tuple:
         new_string = string.replace('{', '(')
         new_string = new_string.replace('}', ')')
@@ -298,12 +298,12 @@ def knotinfo_int(string):
         sage: KnotInfo.K13a_1.braid_index() # optional - database_knotinfo # indirect doctest
         Traceback (most recent call last):
         ...
-        NotImplementedError: This integer is not provided by the database
+        NotImplementedError: this integer is not provided by the database
     """
     if not string:
         # an empty string in the Excel sheet of the database indicates that
         # the property is not provided for this special knot or link.
-        raise NotImplementedError('This integer is not provided by the database')
+        raise NotImplementedError('this integer is not provided by the database')
     else:
         return int(string)
 
@@ -323,12 +323,12 @@ def knotinfo_bool(string):
         sage: KnotInfo.K13a_1.is_almost_alternating() # optional - database_knotinfo # indirect doctest
         Traceback (most recent call last):
         ...
-        NotImplementedError: This boolean is not provided by the database
+        NotImplementedError: this boolean is not provided by the database
     """
     if not string:
         # an empty string in the Excel sheet of the database indicates that
         # the property is not provided for this special knot or link.
-        raise NotImplementedError('This boolean is not provided by the database')
+        raise NotImplementedError('this boolean is not provided by the database')
     if string == 'Y':
         return True
     elif string == 'N':
@@ -423,14 +423,14 @@ class KnotInfoBase(Enum):
             sage: L[0]
             Traceback (most recent call last):
             ...
-            KeyError: "Item must be an instance of <enum 'KnotInfoColumns'>"
+            KeyError: "item must be an instance of <enum 'KnotInfoColumns'>"
         """
         if not isinstance(item, KnotInfoColumns):
-            raise KeyError('Item must be an instance of %s' % (KnotInfoColumns))
+            raise KeyError('item must be an instance of %s' % (KnotInfoColumns))
         if item.column_type() == item.types.OnlyLinks and self.is_knot():
-            raise KeyError('Item not available for knots' % (KnotInfoColumns))
+            raise KeyError('item not available for knots' % (KnotInfoColumns))
         if item.column_type() == item.types.OnlyKnots and not self.is_knot():
-            raise KeyError('Item not available for links' % (KnotInfoColumns))
+            raise KeyError('item not available for links' % (KnotInfoColumns))
 
         l = db.read(item)
         ind = db.read_row_dict()[self.name][0]
@@ -701,7 +701,7 @@ class KnotInfoBase(Enum):
             sage: K13a_1.braid_index()        # optional - database_knotinfo
             Traceback (most recent call last):
             ...
-            NotImplementedError: This integer is not provided by the database
+            NotImplementedError: this integer is not provided by the database
 
         """
         if self.is_knot():
@@ -929,7 +929,7 @@ class KnotInfoBase(Enum):
              ('K6_3', 'fully amphicheiral')]
         """
         if not self.is_knot():
-            raise NotImplementedError('This is only available for knots')
+            raise NotImplementedError('this is only available for knots')
 
         symmetry_type = self[self.items.symmetry_type].strip() # for example K10_88 is a case with trailing whitespaces
         if not symmetry_type and self.crossing_number() == 0:
@@ -1798,11 +1798,11 @@ class KnotInfoBase(Enum):
             sage: K0_1.khovanov_polynomial(base_ring=GF(3), reduced=True)
             Traceback (most recent call last):
             ...
-            ValueError: Characteristic 3 of base ring is not valid
+            ValueError: characteristic 3 of base ring is not valid
             sage: K0_1.khovanov_polynomial(base_ring=GF(3), odd=True)
             Traceback (most recent call last):
             ...
-            ValueError: Characteristic 3 of base ring is not valid
+            ValueError: characteristic 3 of base ring is not valid
             sage: L.khovanov_polynomial(base_ring=GF(2))
             Traceback (most recent call last):
             ...
@@ -1824,7 +1824,7 @@ class KnotInfoBase(Enum):
             if KhoHo:
                 KhoHo = False
                 from sage.misc.superseded import deprecation
-                deprecation(37014, "The KhoHo option is deprecated and ignored.")
+                deprecation(37014, "the KhoHo option is deprecated and ignored.")
             if reduced:
                 if integral:
                     khovanov_polynomial = self[self.items.khovanov_reduced_integral_polynomial]
@@ -1833,7 +1833,7 @@ class KnotInfoBase(Enum):
                 elif ch == 2:
                     khovanov_polynomial = self[self.items.khovanov_reduced_mod2_polynomial]
                 else:
-                    raise ValueError('Characteristic %s of base ring is not valid' % ch)
+                    raise ValueError('characteristic %s of base ring is not valid' % ch)
             elif odd:
                 if integral:
                     khovanov_polynomial = self[self.items.khovanov_odd_integral_polynomial]
@@ -1842,7 +1842,7 @@ class KnotInfoBase(Enum):
                 elif ch == 2:
                     khovanov_polynomial = self[self.items.khovanov_odd_mod2_polynomial]
                 else:
-                    raise ValueError('Characteristic %s of base ring is not valid' % ch)
+                    raise ValueError('characteristic %s of base ring is not valid' % ch)
             else:
                 khovanov_polynomial = self[self.items.khovanov_unreduced_integral_polynomial]
 
@@ -1952,7 +1952,7 @@ class KnotInfoBase(Enum):
             sage: L.link(use_item=L.items.dt_notation)
             Traceback (most recent call last):
             ...
-            ValueError: Link construction using Columns.dt_notation not possible
+            ValueError: link construction using Columns.dt_notation not possible
 
         using ``snappy``::
 
@@ -2012,7 +2012,7 @@ class KnotInfoBase(Enum):
             try:
                 from snappy import Link
             except ImportError:
-                raise ImportError('This option demands snappy to be installed')
+                raise ImportError('this option demands snappy to be installed')
         elif self.is_knot():
             from sage.knots.knot import Knot as Link
         else:
@@ -2034,7 +2034,7 @@ class KnotInfoBase(Enum):
             elif use_item == self.items.gauss_notation:
                 return Knots().from_gauss_code(self.gauss_notation())
 
-        raise ValueError('Link construction using %s not possible' % use_item)
+        raise ValueError('link construction using %s not possible' % use_item)
 
     @cached_method
     def is_unique(self):
@@ -2506,11 +2506,11 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         from sage.rings.integer import Integer
         if not type(item) in (int, Integer):
-            raise ValueError('Item must be an integer')
+            raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l)
         if item < 0 or item > max_item:
-            raise ValueError('Item must be non negative and smaller than %s' % (max_item))
+            raise ValueError('item must be non negative and smaller than %s' % (max_item))
 
         return l[item]
 
@@ -2549,11 +2549,11 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         from sage.rings.integer import Integer
         if not type(item) in (int, Integer):
-            raise ValueError('Item must be an integer')
+            raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l) + 1
         if item < 1 or item > max_item:
-            raise ValueError('Item must be positive and smaller than %s' % (max_item))
+            raise ValueError('item must be positive and smaller than %s' % (max_item))
 
         return l[item-1]
 
