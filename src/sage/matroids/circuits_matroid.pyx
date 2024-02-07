@@ -653,7 +653,9 @@ cdef class CircuitsMatroid(Matroid):
             sage: matroids.Theta(10).girth()
             3
 
-        REFERENCES: [Oxl2011]_, p. 327.
+        REFERENCES:
+
+        [Oxl2011]_, p. 327.
         """
         return min(self._k_C, default=float('inf'))
 

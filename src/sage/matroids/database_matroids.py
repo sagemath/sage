@@ -93,7 +93,9 @@ def U24():
         sage: M.is_3connected()
         True
 
-    REFERENCES: [Oxl2011]_, p. 639.
+    REFERENCES:
+
+    [Oxl2011]_, p. 639.
     """
     M = Uniform(2, 4)
     return M
@@ -114,7 +116,9 @@ def U25():
         sage: U25.is_isomorphic(U35.dual())
         True
 
-    REFERENCES: [Oxl2011]_, p. 640.
+    REFERENCES:
+
+    [Oxl2011]_, p. 640.
     """
     M = Uniform(2, 5)
     return M
@@ -135,7 +139,9 @@ def U35():
         sage: U35.is_isomorphic(U25.dual())
         True
 
-    REFERENCES: [Oxl2011]_, p. 640.
+    REFERENCES:
+
+    [Oxl2011]_, p. 640.
     """
     M = Uniform(3, 5)
     return M
@@ -167,7 +173,9 @@ def K4():
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 640.
+    REFERENCES:
+
+    [Oxl2011]_, p. 640.
     """
     M = CompleteGraphic(4)
     return M
@@ -200,7 +208,9 @@ def Whirl3():
         sage: W.contract(e).is_3connected()
         False
 
-    REFERENCES: [Oxl2011]_, p. 641.
+    REFERENCES:
+
+    [Oxl2011]_, p. 641.
     """
     M = Whirl(3)
     return M
@@ -228,7 +238,9 @@ def Q6():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 641.
+    REFERENCES:
+
+    [Oxl2011]_, p. 641.
     """
     F = GF(4, 'x')
     x = F.gens()[0]
@@ -261,7 +273,9 @@ def P6():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 641-2.
+    REFERENCES:
+
+    [Oxl2011]_, p. 641-2.
     """
     E = 'abcdef'
     CC = {2: ['abc'], 3: [E]}
@@ -290,7 +304,9 @@ def U36():
         sage: U36.automorphism_group().structure_description()
         'S6'
 
-    REFERENCES: [Oxl2011]_, p. 642.
+    REFERENCES:
+
+    [Oxl2011]_, p. 642.
     """
     M = Uniform(3, 6)
     return M
@@ -317,7 +333,9 @@ def R6():
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 642.
+    REFERENCES:
+
+    [Oxl2011]_, p. 642.
     """
     A = Matrix(
         GF(3), [[1, 0, 0, 1, 1, 1], [0, 1, 0, 1, 2, 1], [0, 0, 1, 1, 0, 2]]
@@ -364,7 +382,9 @@ def Fano():
         sage: M.is_isomorphic(matroids.Z(3))
         True
 
-    REFERENCES: [Oxl2011]_, p. 643.
+    REFERENCES:
+
+    [Oxl2011]_, p. 643.
     """
     A = Matrix(
         GF(2),
@@ -401,7 +421,9 @@ def FanoDual():
         sage: F7D.delete(e).is_isomorphic(K2_3)
         True
 
-    REFERENCES: [Oxl2011]_, p. 643.
+    REFERENCES:
+
+    [Oxl2011]_, p. 643.
     """
     M = Fano().dual()
     M.rename("F7*: " + repr(M))
@@ -429,7 +451,9 @@ def NonFano():
         sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))
         False
 
-    REFERENCES: [Oxl2011]_, p. 643-4.
+    REFERENCES:
+
+    [Oxl2011]_, p. 643-4.
     """
     A = Matrix(
         GF(3),
@@ -465,7 +489,9 @@ def NonFanoDual():
         sage: N.is_isomorphic(K4) or N.is_isomorphic(W3)
         True
 
-    REFERENCES: [Oxl2011]_, p. 643-4.
+    REFERENCES:
+
+    [Oxl2011]_, p. 643-4.
     """
     M = NonFano().dual()
     M.rename("NonFano*: " + repr(M))
@@ -489,7 +515,9 @@ def O7():
         sage: M.tutte_polynomial()
         y^4 + x^3 + x*y^2 + 3*y^3 + 4*x^2 + 5*x*y + 5*y^2 + 4*x + 4*y
 
-    REFERENCES: [Oxl2011]_, p. 644.
+    REFERENCES:
+
+    [Oxl2011]_, p. 644.
     """
     A = Matrix(
         GF(3),
@@ -520,7 +548,9 @@ def P7():
         sage: M.is_valid()
         True
 
-    REFERENCES: [Oxl2011]_, p. 644-5.
+    REFERENCES:
+
+    [Oxl2011]_, p. 644-5.
     """
     A = Matrix(
         GF(3),
@@ -566,7 +596,9 @@ def AG32():
         sage: M.contract(e).is_isomorphic(F7)
         True
 
-    REFERENCES: [Oxl2011]_, p. 645.
+    REFERENCES:
+
+    [Oxl2011]_, p. 645.
     """
     M = AG(3, 2)
     return M
@@ -622,7 +654,9 @@ def AG32prime():
         sage: Me.is_isomorphic(F7) or Me.is_isomorphic(F7m)
         True
 
-    REFERENCES: [Oxl2011]_, p. 646.
+    REFERENCES:
+
+    [Oxl2011]_, p. 646.
     """
     CC = {
         3: [
@@ -670,7 +704,9 @@ def R8():
         sage: M.contract(e).is_isomorphic(F7m)
         True
 
-    REFERENCES: [Oxl2011]_, p. 646.
+    REFERENCES:
+
+    [Oxl2011]_, p. 646.
     """
     A = Matrix(
         GF(3),
@@ -717,7 +753,9 @@ def F8():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 647.
+    REFERENCES:
+
+    [Oxl2011]_, p. 647.
     """
     CC = {
         3: [
@@ -765,7 +803,9 @@ def Q8():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 647.
+    REFERENCES:
+
+    [Oxl2011]_, p. 647.
     """
     CC = {
         3: [
@@ -815,7 +855,9 @@ def L8():
         sage: M.contract(e).is_isomorphic(K4ext)
         True
 
-    REFERENCES: [Oxl2011]_, p. 648.
+    REFERENCES:
+
+    [Oxl2011]_, p. 648.
     """
     CC = {3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'aceg', 'bdfh'],
           4: ['abcdefgh']}
@@ -857,7 +899,9 @@ def S8():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 648.
+    REFERENCES:
+
+    [Oxl2011]_, p. 648.
     """
     A = Matrix(
         GF(2),
@@ -901,7 +945,9 @@ def Vamos():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 649.
+    REFERENCES:
+
+    [Oxl2011]_, p. 649.
     """
     CC = {3: ['abcd', 'abef', 'cdef', 'abgh', 'efgh'], 4: ['abcdefgh']}
     M = CircuitClosuresMatroid(groundset='abcdefgh', circuit_closures=CC)
@@ -932,7 +978,9 @@ def T8():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 649.
+    REFERENCES:
+
+    [Oxl2011]_, p. 649.
     """
     A = Matrix(
         GF(3),
@@ -971,7 +1019,9 @@ def J():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 650.
+    REFERENCES:
+
+    [Oxl2011]_, p. 650.
     """
     A = Matrix(
         GF(3),
@@ -1007,7 +1057,9 @@ def P8():
         sage: M.bicycle_dimension()
         2
 
-    REFERENCES: [Oxl2011]_, p. 650-1.
+    REFERENCES:
+
+    [Oxl2011]_, p. 650-1.
     """
     A = Matrix(
         GF(3),
@@ -1048,7 +1100,9 @@ def P8pp():
         sage: M.is_valid()  # long time
         True
 
-    REFERENCES: [Oxl2011]_, p. 651.
+    REFERENCES:
+
+    [Oxl2011]_, p. 651.
     """
     CC = {3: ['abfh', 'bceg', 'cdfh', 'adeg', 'acef', 'bdfg', 'acgh', 'bdeh'],
           4: ['abcdefgh']}
@@ -1075,7 +1129,9 @@ def Wheel4():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 651-2.
+    REFERENCES:
+
+    [Oxl2011]_, p. 651-2.
     """
     M = Wheel(4)
     return M
@@ -1099,7 +1155,9 @@ def Whirl4():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 652.
+    REFERENCES:
+
+    [Oxl2011]_, p. 652.
     """
     M = Whirl(4)
     return M
@@ -1125,7 +1183,9 @@ def K33dual():
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 652-3.
+    REFERENCES:
+
+    [Oxl2011]_, p. 652-3.
     """
     from sage.graphs.graph_generators import graphs
 
@@ -1153,7 +1213,9 @@ def K33():
         sage: G1.is_isomorphic(G2)
         True
 
-    REFERENCES: [Oxl2011]_, p. 652-3.
+    REFERENCES:
+
+    [Oxl2011]_, p. 652-3.
     """
     from sage.graphs.graph_generators import graphs
 
@@ -1185,7 +1247,9 @@ def AG23():
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 653.
+    REFERENCES:
+
+    [Oxl2011]_, p. 653.
     """
     M = AG(2, 3)
     return M
@@ -1210,7 +1274,9 @@ def TernaryDowling3():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 654.
+    REFERENCES:
+
+    [Oxl2011]_, p. 654.
     """
     A = Matrix(
         GF(3),
@@ -1246,7 +1312,9 @@ def R9():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 654.
+    REFERENCES:
+
+    [Oxl2011]_, p. 654.
     """
     NSC = ['abc', 'abd', 'acd', 'aef', 'agh', 'bcd', 'bfh', 'bgi',
            'ceg', 'cfi', 'deh', 'dei', 'dfg', 'dhi', 'ehi']
@@ -1284,7 +1352,9 @@ def Pappus(groundset=None):
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 655.
+    REFERENCES:
+
+    [Oxl2011]_, p. 655.
     """
     CC = {2: ['abc', 'def', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi'],
           3: ['abcdefghi']}
@@ -1320,7 +1390,9 @@ def NonPappus():
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 655.
+    REFERENCES:
+
+    [Oxl2011]_, p. 655.
     """
     CC = {2: ['abc', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi'],
           3: ['abcdefghi']}
@@ -1345,7 +1417,9 @@ def K5():
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 656.
+    REFERENCES:
+
+    [Oxl2011]_, p. 656.
     """
     M = CompleteGraphic(5)
     return M
@@ -1368,7 +1442,9 @@ def K5dual():
         sage: G1.is_isomorphic(G2)
         True
 
-    REFERENCES: [Oxl2011]_, p. 656.
+    REFERENCES:
+
+    [Oxl2011]_, p. 656.
     """
     M = CompleteGraphic(5).dual()
     M.rename("M*(K5): " + repr(M))
@@ -1416,7 +1492,9 @@ def R10():
         sage: matroids.catalog.R10().linear_extensions(simple=True)
         []
 
-    REFERENCES: [Oxl2011]_, p. 656-7.
+    REFERENCES:
+
+    [Oxl2011]_, p. 656-7.
     """
     A = Matrix(
         ZZ,
@@ -1450,7 +1528,9 @@ def NonDesargues(groundset=None):
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 657.
+    REFERENCES:
+
+    [Oxl2011]_, p. 657.
     """
     NSC = ['acj', 'aef', 'bce', 'bfj', 'bgi', 'chi', 'dfg', 'dij', 'egh']
     M = Matroid(rank=3, nonspanning_circuits=NSC)
@@ -1478,7 +1558,9 @@ def R12(groundset='abcdefghijkl'):
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 657.
+    REFERENCES:
+
+    [Oxl2011]_, p. 657.
     """
     A = Matrix(
         ZZ,
@@ -1547,7 +1629,9 @@ def ExtendedTernaryGolayCode():
 
         :class:`GolayCode <sage.coding.golay_code.GolayCode>`
 
-    REFERENCES: [Oxl2011]_, p. 658.
+    REFERENCES:
+
+    [Oxl2011]_, p. 658.
     """
     A = Matrix(GF(3), [
         [1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 0],
@@ -1583,7 +1667,9 @@ def T12():
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 658-9.
+    REFERENCES:
+
+    [Oxl2011]_, p. 658-9.
     """
     A = Matrix(
         GF(2),
@@ -1617,7 +1703,9 @@ def PG23():
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 659.
+    REFERENCES:
+
+    [Oxl2011]_, p. 659.
     """
     M = PG(2, 3)
     return M
@@ -1665,7 +1753,9 @@ def Wheel(r, field=None, ring=None):
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 659-60.
+    REFERENCES:
+
+    [Oxl2011]_, p. 659-60.
     """
     base_ring = ZZ
     if field is not None and ring is not None:
@@ -1746,7 +1836,9 @@ def Whirl(r):
         ``[ 1 -1  0]``
         ``[ 0  1 -1]``
 
-    REFERENCES: [Oxl2011]_, p. 659-60.
+    REFERENCES:
+
+    [Oxl2011]_, p. 659-60.
     """
     A = Matrix(GF(3), r, 2 * r, sparse=True)
     for i in range(r):
@@ -1798,7 +1890,9 @@ def Uniform(r, n):
         sage: len(M.circuit_closures())
         0
 
-    REFERENCES: [Oxl2011]_, p. 660.
+    REFERENCES:
+
+    [Oxl2011]_, p. 660.
     """
     E = range(n)
     if r < n:
@@ -1838,7 +1932,9 @@ def PG(n, q, x=None):
         PG(4, 7): Linear matroid of rank 5 on 2801 elements represented over the Finite Field
          of size 7
 
-    REFERENCES: [Oxl2011]_, p. 660.
+    REFERENCES:
+
+    [Oxl2011]_, p. 660.
     """
     if x is None:
         x = 'x'
@@ -1880,7 +1976,9 @@ def AG(n, q, x=None):
         sage: M = matroids.AG(4, 2); M
         AG(4, 2): Binary matroid of rank 5 on 16 elements, type (5, 0)
 
-    REFERENCES: [Oxl2011]_, p. 661.
+    REFERENCES:
+
+    [Oxl2011]_, p. 661.
     """
     if x is None:
         x = 'x'
@@ -1948,7 +2046,9 @@ def Z(r, t=True):
         sage: Z.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 661-2.
+    REFERENCES:
+
+    [Oxl2011]_, p. 661-2.
     """
     from sage.matrix.special import identity_matrix, ones_matrix
     Id = Matrix(GF(2), identity_matrix(r))
@@ -2042,7 +2142,9 @@ def Spike(r, t=True, C3=[]):
         sage: M.equals(M.dual())
         True
 
-    REFERENCES: [Oxl2011]_, p. 662.
+    REFERENCES:
+
+    [Oxl2011]_, p. 662.
     """
     if not (r >= 3):
         raise ValueError("The r-spike is defined for r >= 3.")
@@ -2140,7 +2242,9 @@ def Theta(n):
         sage: M.automorphism_group().is_transitive()
         False
 
-    REFERENCES: [Oxl2011]_, p. 663-4.
+    REFERENCES:
+
+    [Oxl2011]_, p. 663-4.
     """
     X = ['x'+str(i) for i in range(n)]
     Y = ['y'+str(i) for i in range(n)]
@@ -2207,7 +2311,9 @@ def Psi(r):
         sage: M.automorphism_group().is_transitive()
         True
 
-    REFERENCES: [Oxl2011]_, p. 664.
+    REFERENCES:
+
+    [Oxl2011]_, p. 664.
     """
     A = ['a'+str(i) for i in range(0, r)]
     B = ['b'+str(i) for i in range(0, r)]
@@ -4530,7 +4636,9 @@ def NonVamos():
         sage: M.is_valid()  # long time
         True
 
-    REFERENCES: [Oxl2011]_, p. 72, 84.
+    REFERENCES:
+
+    [Oxl2011]_, p. 72, 84.
     """
     E = 'abcdefgh'
     CC = {
@@ -4556,7 +4664,9 @@ def NotP8():
         sage: M.is_valid()
         True
 
-    REFERENCES: [Oxl1992]_, p.512 (the first edition).
+    REFERENCES:
+
+    [Oxl1992]_, p.512 (the first edition).
     """
     A = Matrix(GF(3), [
         [1, 0, 0, 0, 0, 1, 1, -1],
@@ -4587,7 +4697,9 @@ def AG23minus():
         sage: M.is_valid()
         True
 
-    REFERENCES: [Oxl2011]_, p. 653.
+    REFERENCES:
+
+    [Oxl2011]_, p. 653.
     """
     E = 'abcdefgh'
     CC = {2: ['abc', 'ceh', 'fgh', 'adf', 'aeg', 'cdg', 'bdh', 'bef'],
@@ -4608,8 +4720,10 @@ def P9():
         sage: M.is_valid()
         True
 
-    REFERENCES: This is the matroid referred to as `P_9` by Oxley in his paper
-    "The binary matroids with no 4-wheel minor", [Oxl1987]_.
+    REFERENCES:
+
+    This is the matroid referred to as `P_9` by Oxley in his paper "The binary
+    matroids with no 4-wheel minor", [Oxl1987]_.
     """
     A = Matrix(GF(2), [
         [1, 0, 0, 0, 1, 0, 0, 1, 1],
@@ -4709,7 +4823,9 @@ def TicTacToe():
         sage: M.is_valid()  # long time
         True
 
-    REFERENCES: [Hoc]_
+    REFERENCES:
+
+    [Hoc]_
     """
     E = 'abcdefghi'
     CC = {
@@ -4737,7 +4853,9 @@ def N1():
         sage: M.is_valid()
         True
 
-    REFERENCES: [Oxl2011]_, p. 554.
+    REFERENCES:
+
+    [Oxl2011]_, p. 554.
     """
     A = Matrix(GF(3), [
         [1, 0, 0, 0, 0, 2, 0, 0, 1, 1],
@@ -4863,7 +4981,9 @@ def N2():
         sage: M.is_valid()
         True
 
-    REFERENCES: [Oxl2011]_, p. 554.
+    REFERENCES:
+
+    [Oxl2011]_, p. 554.
     """
     A = Matrix(GF(3), [
         [1, 0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 1],
@@ -4894,7 +5014,9 @@ def D16(groundset='abcdefghijklmnop'):  # A.K.A. the Carolyn Chun Matroid
         sage: M.is_valid()
         True
 
-    REFERENCES: [CMO2012]_
+    REFERENCES:
+
+    [CMO2012]_
     """
     A = Matrix(GF(2), [
         [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0],
@@ -4925,7 +5047,9 @@ def Terrahawk():  # A.K.A. the Dillon Mayhew Matroid
         sage: M.is_valid()
         True
 
-    REFERENCES: [CMO2011]_
+    REFERENCES:
+
+    [CMO2011]_
     """
     A = Matrix(GF(2), [
         [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

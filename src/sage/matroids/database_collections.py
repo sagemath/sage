@@ -102,8 +102,10 @@ def AllMatroids(n, r=None, type="all"):
         AttributeError: The type "nice" is not available. There needs to be an "is_nice()"
         attribute for the type to be supported.
 
-    REFERENCES: The underlying database was retrieved from Yoshitake
-    Matsumoto's Database of Matroids; see [Mat2012]_.
+    REFERENCES:
+
+    The underlying database was retrieved from Yoshitake Matsumoto's Database
+    of Matroids; see [Mat2012]_.
 
     TESTS::
 
@@ -246,8 +248,10 @@ def OxleyMatroids():
         :mod:`Matroid catalog <sage.matroids.matroids_catalog>`, under
         ``Oxley's matroid collection``.
 
-    REFERENCES: These matroids are the nonparametrized matroids that appear in
-    the Appendix ``Some Interesting Matroids`` in [Oxl2011]_ (p. 639-64).
+    REFERENCES:
+
+    These matroids are the nonparametrized matroids that appear in the Appendix
+    ``Some Interesting Matroids`` in [Oxl2011]_ (p. 639-64).
     """
     from sage.matroids.database_matroids import (
         U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,
