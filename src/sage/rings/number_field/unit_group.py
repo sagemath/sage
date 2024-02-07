@@ -305,7 +305,8 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: tuple(US(K(u)) for u in US.gens()) == US.gens()
             True
 
-        Bug #36386 (pari stack overflow while expanding units)
+        Bug :issue:`36386` (pari stack overflow while expanding units)::
+
             sage: d = 12936642
             sage: K = QuadraticField(d)
             sage: K.unit_group(proof=False)
