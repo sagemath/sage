@@ -230,10 +230,10 @@ cdef class CircuitsMatroid(Matroid):
         INPUT:
 
         - ``other`` -- a matroid
-        - ``certificate`` -- boolean (optional)
+        - ``certificate`` -- boolean (default: ``False``)
 
-        OUTPUT: boolean, and, if certificate = True, a dictionary giving the
-        isomorphism or None
+        OUTPUT: boolean, and, if ``certificate=True``, a dictionary giving the
+        isomorphism or ``None``
 
         EXAMPLES::
 
@@ -711,27 +711,28 @@ cdef class CircuitsMatroid(Matroid):
             sage: M.is_valid()
             False
         """
-        for i in self._k_C:
-            for j in self._k_C:
-                if i <= j:
-                    for C1 in self._k_C[i]:
-                        if not C1:
+        from itertools import combinations_with_replacement
+        for (i, j) in combinations_with_replacement(sorted(self._k_C), 2):
+            # loop through all circuit length pairs (i, j) with i <= j
+            for C1 in self._k_C[i]:
+                if not C1:  # the empty set can't be a circuit
+                    return False
+                for C2 in self._k_C[j]:
+                    if C1 < C2:  # a circuit can't be a subset of another circuit
+                        return False
+                    if C1 == C2:
+                        break
+                    # check circuit elimination axiom
+                    UC12 = set(C1) | set(C2)
+                    for e in C1 & C2:
+                        flag = False
+                        S = UC12 - {e}
+                        for k in self._k_C:
+                            if k <= len(S) and not flag:
+                                for C3 in self._k_C[k]:
+                                    if C3 <= S:
+                                        flag = True
+                                        break
+                        if not flag:
                             return False
-                        for C2 in self._k_C[j]:
-                            if C1 < C2:
-                                return False
-                            if C1 == C2:
-                                break
-                            UC12 = set(C1) | set(C2)
-                            for e in C1 & C2:
-                                flag = False
-                                S = UC12 - {e}
-                                for k in self._k_C:
-                                    if k <= len(S) and not flag:
-                                        for C3 in self._k_C[k]:
-                                            if C3 <= S:
-                                                flag = True
-                                                break
-                                if not flag:
-                                    return False
         return True
