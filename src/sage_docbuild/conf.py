@@ -833,6 +833,10 @@ class SagecodeTransform(SphinxTransform):
                     from sphinx_inline_tabs._impl import TabContainer
                     parent = node.parent
                     index = parent.index(node)
+                    if isinstance(node.previous_sibling(), TabContainer):
+                        # Make sure not to merge inline tabs for adjacent literal blocks
+                        parent.insert(index, Text(''))
+                        index += 1
                     parent.remove(node)
                     # Tab for Sage code
                     container = TabContainer("", type="tab", new_set=False)
