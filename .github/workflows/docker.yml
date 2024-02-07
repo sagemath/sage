@@ -161,6 +161,7 @@ jobs:
           remove-haskell:       true
           remove-codeql:        true
           remove-docker-images: true
+        continue-on-error: true
         if: inputs.free_disk_space
       - name: Check out SageMath
         uses: actions/checkout@v4
