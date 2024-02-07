@@ -1781,20 +1781,19 @@ class Stream_uninitialized(Stream):
         # solve
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         eqs = PolynomialSequence(self._P.polynomial_ring(), coeffs)
-        m1, v1 = eqs.coefficient_matrix()
+        m1, v1 = eqs.coefficients_monomials()
         # there should be at most one entry in v1 of degree 0
-        # v1 is a matrix, not a vector
-        for j, (c,) in enumerate(v1):
+        for j, c in enumerate(v1):
             if c.degree() == 0:
                 b = -m1.column(j)
-                m = m1.matrix_from_columns([i for i in range(v1.nrows()) if i != j])
-                v = [c for i, (c,) in enumerate(v1) if i != j]
+                m = m1.matrix_from_columns([i for i in range(len(v1)) if i != j])
+                v = [c for i, c in enumerate(v1) if i != j]
                 break
         else:
             from sage.modules.free_module_element import zero_vector
             b = zero_vector(m1.nrows())
             m = m1
-            v = v1.list()
+            v = list(v1)
         x = m.solve_right(b)
         k = m.right_kernel_matrix()
         # substitute
