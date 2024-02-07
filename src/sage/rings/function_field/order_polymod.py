@@ -650,7 +650,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # matrices_reduced give the multiplication matrices used to form the
         # algebra O mod pO.
         matrices_reduced = [M.mod(p) for M in matrices]
-        cat = Algebras(k).FiniteDimensional().WithBasis()
+        cat = Algebras(k).Commutative().FiniteDimensional().WithBasis()
         A = FiniteDimensionalAlgebra(k, matrices_reduced, category=cat)
 
         # Each prime ideal of the algebra A corresponds to a prime ideal of O,
