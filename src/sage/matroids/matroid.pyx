@@ -3124,9 +3124,7 @@ cdef class Matroid(SageObject):
             A 6-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 29 vertices
 
-        REFERENCE:
-
-        - [DLHK2007]_
+        REFERENCES: [DLHK2007]_
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         from sage.modules.free_module import FreeModule
@@ -3167,9 +3165,7 @@ cdef class Matroid(SageObject):
             A 7-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 58 vertices
 
-        REFERENCE:
-
-        [DLHK2007]_
+        REFERENCES: [DLHK2007]_
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         from sage.modules.free_module import FreeModule
@@ -5996,9 +5992,7 @@ cdef class Matroid(SageObject):
             sage: matroids.catalog.Vamos().girth()
             4
 
-        REFERENCES:
-
-        [Oxl2011]_, p. 327.
+        REFERENCES: [Oxl2011]_, p. 327.
         """
         for k in range(self.rank() + 2):
             for X in combinations(self.groundset(), k):
@@ -7992,9 +7986,7 @@ cdef class Matroid(SageObject):
             sage: G.structure_description()
             'M12'
 
-        REFERENCES:
-
-        [Oxl2011]_, p. 189.
+        REFERENCES: [Oxl2011]_, p. 189.
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self.bases()).automorphism_group()

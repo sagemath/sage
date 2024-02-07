@@ -150,6 +150,14 @@ cdef class CircuitsMatroid(Matroid):
           a subset of ``self.groundset()``
 
         OUTPUT: boolean
+
+        EXAMPLES::
+
+            sage: M = matroids.Theta(4)
+            sage: M._is_independent(['y0', 'y1', 'y3', 'x2'])
+            False
+            sage: M._is_independent(['y0', 'y2', 'y3', 'x2'])
+            True
         """
         cdef set I = set(F)
         cdef int s = len(F)
@@ -170,14 +178,19 @@ cdef class CircuitsMatroid(Matroid):
           a subset of ``self.groundset()``
 
         OUTPUT: a frozenset; a maximal independent subset of ``X``
+
+        EXAMPLES::
+
+            sage: M = matroids.Theta(6)
+            sage: len(M._max_independent(M.groundset()))
+            6
         """
         cdef set I = set(F)
         for i in self._k_C:
             for C in self._k_C[i]:
                 if i <= len(I) and i > 0:
                     if C <= I:
-                        for e in C:
-                            break
+                        e = next(iter(C))
                         I.remove(e)
 
         return frozenset(I)
@@ -193,6 +206,16 @@ cdef class CircuitsMatroid(Matroid):
 
         OUTPUT: a frozenset; a circuit contained in ``X``, if it exists.
         Otherwise an error is raised.
+
+        EXAMPLES::
+
+            sage: M = matroids.Theta(4)
+            sage: sorted(M._circuit(['y0', 'y1', 'y3', 'x2']))
+            ['x2', 'y0', 'y1', 'y3']
+            sage: M._circuit(['y0', 'y2', 'y3', 'x2'])
+            Traceback (most recent call last):
+            ...
+            ValueError: no circuit in independent set
         """
         cdef set I = set(F)
         for C in self._C:
@@ -212,6 +235,17 @@ cdef class CircuitsMatroid(Matroid):
         OUTPUT: boolean, and, if certificate = True, a dictionary giving the
         isomorphism or None
 
+        EXAMPLES::
+
+            sage: M = matroids.Spike(3)
+            sage: from sage.matroids.basis_matroid import BasisMatroid
+            sage: N = BasisMatroid(M)
+            sage: M.is_isomorphic(N)
+            True
+            sage: N = matroids.catalog.Vamos()
+            sage: M.is_isomorphic(N)
+            False
+
         .. NOTE::
 
             Internal version that does no input checking.
@@ -226,9 +260,16 @@ cdef class CircuitsMatroid(Matroid):
     def _repr_(self):
         """
         Return a string representation of the matroid.
+
+        EXAMPLES::
+
+            sage: matroids.Theta(10)
+            Theta_10: Matroid of rank 10 on 20 elements with 490 circuits
+            sage: matroids.catalog.NonDesargues()
+            NonDesargues: Matroid of rank 3 on 10 elements with 9 nonspanning circuits
         """
         if self._nsc_defined:
-            return Matroid._repr_(self) + " with " + str(len(self.nonspanning_circuits())) + " non-spanning circuits"
+            return Matroid._repr_(self) + " with " + str(len(self.nonspanning_circuits())) + " nonspanning circuits"
         else:
             return Matroid._repr_(self) + " with " + str(len(self._C)) + " circuits"
 
@@ -387,13 +428,16 @@ cdef class CircuitsMatroid(Matroid):
             sage: len(M.bases())
             6
         """
-        cdef SetSystem B
+        cdef SetSystem B, NSC
+        cdef bint flag
         B = SetSystem(list(self.groundset()))
+        NSC = self.nonspanning_circuits()
         from itertools import combinations
         for S in combinations(self._groundset, self._matroid_rank):
             flag = True
-            for C in self.nonspanning_circuits():
-                if C <= set(S):
+            S = frozenset(S)
+            for C in NSC:
+                if C <= S:
                     flag = False
                     break
             if flag:
@@ -411,16 +455,20 @@ cdef class CircuitsMatroid(Matroid):
             sage: it = M.bases_iterator()
             sage: it.__next__()
             frozenset({0, 1})
+            sage: sorted(M.bases_iterator(), key=str)
+            [frozenset({0, 1}),
+             frozenset({0, 2}),
+             frozenset({0, 3}),
+             frozenset({1, 2}),
+             frozenset({1, 3}),
+             frozenset({2, 3})]
         """
         from itertools import combinations
+        cdef SetSystem NSC = self.nonspanning_circuits()
         for B in combinations(self._groundset, self._matroid_rank):
-            flag = True
-            for C in self.nonspanning_circuits():
-                if C <= set(B):
-                    flag = False
-                    break
-            if flag:
-                yield frozenset(B)
+            B = frozenset(B)
+            if not any(C <= B for C in NSC):
+                yield B
 
     cpdef circuits(self, k=None) noexcept:
         """
@@ -438,12 +486,20 @@ cdef class CircuitsMatroid(Matroid):
             sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
             sage: M.circuits()
             Iterator over a system of subsets
+            sage: list(M.circuits(0))
+            []
+            sage: sorted(M.circuits(3), key=str)
+            [frozenset({0, 1, 2}),
+             frozenset({0, 1, 3}),
+             frozenset({0, 2, 3}),
+             frozenset({1, 2, 3})]
         """
         cdef SetSystem C
         C = SetSystem(list(self.groundset()))
-        if k:
-            for c in self._k_C[k]:
-                C.append(c)
+        if k is not None:
+            if k in self._k_C:
+                for c in self._k_C[k]:
+                    C.append(c)
         else:
             for i in self._k_C:
                 for c in self._k_C[i]:
@@ -464,10 +520,18 @@ cdef class CircuitsMatroid(Matroid):
             sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
             sage: sum(1 for C in M.circuits_iterator())
             4
+            sage: list(M.circuits_iterator(0))
+            []
+            sage: sorted(M.circuits_iterator(3), key=str)
+            [frozenset({0, 1, 2}),
+             frozenset({0, 1, 3}),
+             frozenset({0, 2, 3}),
+             frozenset({1, 2, 3})]
         """
-        if k:
-            for C in self._k_C[k]:
-                yield C
+        if k is not None:
+            if k in self._k_C:
+                for C in self._k_C[k]:
+                    yield C
         else:
             for i in self._k_C:
                 for C in self._k_C[i]:
@@ -475,7 +539,7 @@ cdef class CircuitsMatroid(Matroid):
 
     cpdef nonspanning_circuits(self) noexcept:
         """
-        Return the list of nonspanning circuits of the matroid.
+        Return the nonspanning circuits of the matroid.
 
         OUTPUT: a SetSystem
 
@@ -486,13 +550,11 @@ cdef class CircuitsMatroid(Matroid):
             sage: M.nonspanning_circuits()
             Iterator over a system of subsets
         """
-        cdef SetSystem NSC
-        NSC = SetSystem(list(self.groundset()))
+        cdef list NSC = []
         for i in self._k_C:
             if i <= self.rank():
-                for C in self._k_C[i]:
-                    NSC.append(C)
-        return NSC
+                NSC.extend(self._k_C[i])
+        return SetSystem(list(self.groundset()), NSC)
 
     def nonspanning_circuits_iterator(self):
         """
@@ -591,9 +653,7 @@ cdef class CircuitsMatroid(Matroid):
             sage: matroids.Theta(10).girth()
             3
 
-        REFERENCES:
-
-        [Oxl2011]_, p. 327.
+        REFERENCES: [Oxl2011]_, p. 327.
         """
         return min(self._k_C, default=float('inf'))
 
@@ -655,16 +715,17 @@ cdef class CircuitsMatroid(Matroid):
             for j in self._k_C:
                 if i <= j:
                     for C1 in self._k_C[i]:
-                        if len(C1) == 0:
+                        if not C1:
                             return False
                         for C2 in self._k_C[j]:
                             if C1 < C2:
                                 return False
                             if C1 == C2:
                                 break
+                            UC12 = set(C1) | set(C2)
                             for e in C1 & C2:
                                 flag = False
-                                S = (set(C1) | set(C2)) - {e}
+                                S = UC12 - {e}
                                 for k in self._k_C:
                                     if k <= len(S) and not flag:
                                         for C3 in self._k_C[k]:
