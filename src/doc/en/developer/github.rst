@@ -125,7 +125,7 @@ Next if you don't have a local Git repo of Sage, then start afresh `cloning
 your fork
 <https://docs.github.com/en/get-started/quickstart/fork-a-repo#cloning-your-forked-repository>`_:
 
-.. tab:: Using HTTPS
+.. tab:: By HTTPS protocol
 
    ::
 
@@ -164,7 +164,7 @@ your fork
 
 If you already have a local Git repo and only want to link your fork as ``origin`` remote, then do:
 
-.. tab:: Using HTTPS
+.. tab:: By HTTPS protocol
 
    ::
 
@@ -202,7 +202,7 @@ If you already have a local Git repo and only want to link your fork as ``origin
 
 You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``:
 
-.. tab:: Using HTTPS
+.. tab:: By HTTPS protocol
 
    ::
 
