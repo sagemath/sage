@@ -155,9 +155,7 @@ This base class provides a lot more methods than a general parent::
      'one',
      'order',
      'prime_subfield',
-     'principal_ideal',
      'random_element',
-     'unit_ideal',
      'zero',
      'zeta',
      'zeta_order']
