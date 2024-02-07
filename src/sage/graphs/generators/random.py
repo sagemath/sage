@@ -1543,7 +1543,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     TESTS::
 
-        sage: g=graphs.RandomPartialKTree(50,5,5)
+        sage: g=graphs.RandomPartialKTree(50,5,2)
         sage: g.order()
         50
         sage: g.size()
@@ -1553,7 +1553,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     EXAMPLES::
 
-        sage: G = graphs.RandomPartialKTree(50,5,5)
+        sage: G = graphs.RandomPartialKTree(50,5,2)
         sage: G.treewidth()
         5
         sage: G.show()  # not tested
