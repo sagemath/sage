@@ -152,7 +152,7 @@ jobs:
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v8
+        uses: easimon/maximize-build-space@v10
         with:
           # need space in /var for Docker images
           root-reserve-mb:      40000
