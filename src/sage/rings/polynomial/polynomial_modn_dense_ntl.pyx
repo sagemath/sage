@@ -1808,6 +1808,12 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: S.<y> = PolynomialRing(Integers(5), implementation='NTL')
             sage: f(y)
             y^3 + 2
+            sage: f(1).parent() == R.base_ring()
+            True
+            sage: f(int(1)).parent() == R.base_ring()
+            True
+            sage: f(x + 1).parent() == f.parent()
+            True
         """
         if len(args) != 1 or len(kwds) != 0:
             return Polynomial.__call__(self, *args, **kwds)
@@ -1826,7 +1832,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             return Polynomial.__call__(self, *args, **kwds)
         else:
             ZZ_pX_eval(fx.x, self.x, x.x)
-            return self._parent(fx._integer_())
+            return self._parent._base(fx._integer_())
 
 
 cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
