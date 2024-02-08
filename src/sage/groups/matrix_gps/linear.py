@@ -323,36 +323,34 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
         Check if :trac:`36876` is fixed::
             sage: SL(1, QQ).order()
             1
-            sage: SL(1, ZZ).cardinality()
-            1
+            sage: SL(2, ZZ).cardinality()
+            +Infinity
 
         Check if :trac:`35490` is fixed::
             sage: q = 7
             sage: FqT.<T> = GF(q)[]
             sage: N = T^2+1
             sage: FqTN = QuotientRing(FqT, N*FqT)
-            sage: S = SL(2,FqTN)
+            sage: S = SL(2, FqTN)
             sage: S.is_finite()
             True
             sage: S.order()
             117600
         """
-        from functools import reduce
-        import operator
         from sage.rings.infinity import Infinity
+        from sage.all import prod
 
         n = self.degree()
 
         if self.base_ring().is_finite():
             q = self.base_ring().order()
+            ord = prod(q**n - q**i for i in range(n)) / (q-1)
             if self._special:
-                return reduce(operator.mul, (q**n - q**i for i in range(0, n)), 1) / (q-1)
-            return reduce(operator.mul, (q**n - q**i for i in range(0, n)), 1)
+                return ord / (q-1)
+            return ord
 
-        if self._special:
-            if n == 1:
-                return 1
-            return Infinity
+        if self._special and n == 1:
+            return 1
 
         return Infinity
 
