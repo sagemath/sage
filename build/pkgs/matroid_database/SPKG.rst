@@ -1,10 +1,10 @@
-matroid_database: Python interface to database of matroids
-==========================================================
+matroid_database: Python interface to matroid database
+======================================================
 
 Description
 -----------
 
-Python interface to database of matroids
+Python interface to matroid database
 
 License
 -------
