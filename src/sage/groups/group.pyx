@@ -266,6 +266,19 @@ cdef class Group(Parent):
         """
         raise NotImplementedError
 
+    def minimum_generating_set(self):
+        """
+        Return a minimal generating set for this group.
+
+        EXAMPLES::
+
+            sage: sage: G = PermutationGroup([(1,2,3), (2,3), (4,5)])
+            sage: sage: G.minimum_generating_set()
+            {[1, 3, 2], [3, 1, 2, 5, 4]}            
+        """
+        from sage.groups.libgap_mixin import minimum_generating_set
+        return minimum_generating_set(self)
+
 cdef class AbelianGroup(Group):
     """
     Generic abelian group.

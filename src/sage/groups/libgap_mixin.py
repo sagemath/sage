@@ -1022,6 +1022,36 @@ def minimum_generating_set(group, gap_based=False):
     from sage.misc.functional import log
     from sage.libs.gap.element import GapElement
 
+    # def minimal_generating_set(group):
+    #     lis = [ele for ele in group.AsList()]
+    #     # Using dictionary for faster lookup
+    #     dic = {ele:False for ele in lis}
+    #     dic[lis[0]] = True
+    #     g = list()
+    #     for ele in dic:
+    #         if dic[ele]:
+    #             continue
+    #         changes = 0
+    #         while True:
+    #             c = 0
+    #             for ele2 in dic:
+    #                 if not dic[ele2]:
+    #                     continue
+    #                 ele3 = ele * ele2
+    #                 if not dic[ele3]:
+    #                     changes += 1
+    #                     c += 1
+    #                 dic[ele3] = True
+    #                 ele4 = ele2 * ele
+    #                 if not dic[ele4]:
+    #                     changes += 1
+    #                     c += 1
+    #                 dic[ele4] = True
+    #             if c == 0:
+    #                 break
+    #         g.append(ele)
+    #     return g
+
     if not isinstance(group, GapElement):
         group = group._libgap_()
 
@@ -1029,21 +1059,15 @@ def minimum_generating_set(group, gap_based=False):
         raise NotImplementedError("Implemented for finite group only")
 
     group_elements = group.AsList()
-    # FIX: Ask about this function
+
     if group.IsCyclic().sage():
-        if is_GroupByGenerators(group, [group_elements[1]]):
-            if gap_based:
-                return set([group_elements[1]])
-            return set([group_elements[1].sage()])
+        for ele in group_elements:
+            if is_GroupByGenerators(group, [ele]):
+                if gap_based:
+                    return set([ele])
+                return set([ele.sage()])
 
     if group.IsSimple().sage():
-        if group.IsAbelian().sage():
-            for ele in group_elements:
-                if is_GroupByGenerators(group, [ele]):
-                    if gap_based:
-                        return set([ele])
-                    return set([ele.sage()])
-
         n = len(group_elements)
         for i in range(n):
             for j in range(i+1, n):
@@ -1064,7 +1088,6 @@ def minimum_generating_set(group, gap_based=False):
 
     g = [phi.PreImagesRepresentative(g) for g in list(GbyN_mingenset)]
     l = len(g)
-    m = len(n)
 
     if N.IsAbelian().sage():
         if is_GroupByGenerators(group, g):
@@ -1072,15 +1095,15 @@ def minimum_generating_set(group, gap_based=False):
                 return set(g)
             return set([ele.sage() for ele in g])
         for i in range(l):
-            for j in range(m):
+            for j in range(len(n)):
                 modifeid_g = g[:i] + [g[i]*n[j]] + g[i+1:]
                 if is_GroupByGenerators(group, modifeid_g):
                     if gap_based:
                         return set(modifeid_g)
                     return set([ele.sage() for ele in modifeid_g])
         if gap_based:
-            return set(g+[N.AsList()[1]])
-        return set([ele.sage() for ele in g] + [N.AsList()[1].sage()])
+            return set(g+[n[0]])
+        return set([ele.sage() for ele in g] + [n[0].sage()])
 
     def gen_combinations(g, N_old, t):
         # This function is used to generate some combinations (which are required for the algorithm)
@@ -1088,9 +1111,7 @@ def minimum_generating_set(group, gap_based=False):
         L = [g]
         N = [ele for ele in N_old]  # This line is included because N_old does not have slicing method
         N = N[1:]
-        # FIX: Is this line necessary?
-        if t > len(g):
-            t = len(g)
+
         for i in range(t):
             newL = []
             for g in L:
@@ -1104,7 +1125,8 @@ def minimum_generating_set(group, gap_based=False):
             L = L + newL
         return L
 
-    t = 13/5 + log(group.Size().sage(), 2)/log(N.Size().sage(), 2)
+    t = (13/5 + log(group.Size().sage(), 2)/log(N.Size().sage(), 2))
+
     if t <= l:
         for gens in gen_combinations(g, N.AsList(), t):
             if is_GroupByGenerators(group, gens):
