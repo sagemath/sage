@@ -26,7 +26,7 @@ from sage.rings.ideal import Ideal_generic
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing_univariate
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE
 from sage.arith.misc import GCD
-from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+from sage.rings.polynomial.generalized_order import GeneralizedOrder
 
 class LaurentPolynomialIdeal( Ideal_generic ):
     def __init__(self, ring, gens, coerce=True, hint=None):
@@ -481,8 +481,8 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
             With a generalized monomial order defined in parent ring::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: R.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: I = R.ideal([2*x^-2*y + x^-1, 3*y^-5 + x^3, x^2*y^2 - 5*x^-3*y^3])
             sage: I.groebner_basis()
@@ -496,7 +496,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         ring = self.ring()
         order = ring.order()
-        if isinstance(order, GeneralizedMonomialOrder):
+        if isinstance(order, GeneralizedOrder):
             # Compute GB with respect to a generalized monomial order.
             G = list(self.gens())
             n_cones = order.n_cones()

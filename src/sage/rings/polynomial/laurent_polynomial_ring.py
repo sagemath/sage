@@ -237,14 +237,14 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     """
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
     from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-    from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+    from sage.rings.polynomial.generalized_order import GeneralizedOrder
 
     
 
     order = None
     if "order" in kwds:
         order = kwds["order"]
-        if isinstance(order, GeneralizedMonomialOrder):
+        if isinstance(order, GeneralizedOrder):
             del kwds["order"]
 
     R = PolynomialRing(base_ring, *args, **kwds)

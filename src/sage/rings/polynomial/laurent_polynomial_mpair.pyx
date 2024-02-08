@@ -15,7 +15,7 @@ from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
-from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+from sage.rings.polynomial.generalized_order import GeneralizedOrder
 from sage.matrix.matrix0 cimport Matrix
 
 
@@ -1632,8 +1632,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = 3*x*y + x^-1*y
             sage: f.leading_monomial()
@@ -1657,8 +1657,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = 2*x*y + 3*x^2*y^-2
             sage: f.leading_coefficient()
@@ -1673,8 +1673,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2,score_function="degmin")
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2,score_function="degmin")
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = 2*x^2*y^-3 + 3*x*y^-4
             sage: f.leading_term()
@@ -1691,8 +1691,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = x^2*y  + 3*x^2*y^-3
             sage: f.leadings()
@@ -1714,8 +1714,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = x^2*y + y^-1*x^-2 + x^2*y^-3
             sage: f.leading_monomial_for_cone(1)
@@ -1743,8 +1743,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = 2*x^2*y + 3*y^-1*x^-2 + 4*x^2*y^-3
             sage: f.leading_coefficient_for_cone(1)
@@ -1765,8 +1765,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = 2*x^2*y + 3*y^-1*x^-2 + x^2*y^-3
             sage: f.leading_term_for_cone(1)
@@ -1788,8 +1788,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = 3*x^2*y + 2*y^-1*x^-2 + x^2*y^-3
             sage: f.leadings_for_cone(1)
@@ -1810,8 +1810,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = x^2*y
             sage: f.is_in_cone(0)
@@ -1820,7 +1820,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         order = self.parent().order()
         if not self.is_monomial():
             raise TypeError("arg must be a monomial")
-        if not isinstance(order, GeneralizedMonomialOrder):
+        if not isinstance(order, GeneralizedOrder):
             raise AttributeError("No generalized order defined in parent")
 
         return order.is_in_cone(i,self.exponents()[0])
@@ -1835,8 +1835,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = x^2*y + y^-1*x^-2 + x^2*y^-3
             sage: f.generator_for_cone(2)
@@ -1869,8 +1869,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L.<x,y> = LaurentPolynomialRing(QQ, order=order)
             sage: f = x^-2*y + x^2*y^-3
             sage: reducers = [2*x^-2*y + x^-1, 3*y^-5 + x^3, x^2*y^2 - 5*x^-3*y^3]
@@ -1880,8 +1880,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         In 3 variables, using a different score function::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(3, score_function="degmin")
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(3, score_function="degmin")
             sage: L.<x,y,z> = LaurentPolynomialRing(QQ, order=order)
             sage: f = 3*x^5*y^2 + 1/2*x^2*y^-2*z^-3
             sage: reducers = [4*x^2*y^-2 + 3, x^2*y*z^-6 , x*y*z^2 - 6*x^-1*y^-1*z^-6]
@@ -1892,7 +1892,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
              0])
         """
         order = self.parent().order()
-        if not isinstance(order, GeneralizedMonomialOrder):
+        if not isinstance(order, GeneralizedOrder):
             raise RuntimeError("Parent has no generalized order")
 
         if not isinstance(reducers,list):
