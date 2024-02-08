@@ -1,6 +1,5 @@
 # sage.doctest: needs sage.combinat sage.modules
-r"""
-Symmetric Functions
+r"""Symmetric Functions
 
 For a comprehensive tutorial on how to use symmetric functions in Sage
 
@@ -170,21 +169,22 @@ Check that we can handle large integers properly (:trac:`13413`)::
 
 BACKWARD INCOMPATIBLE CHANGES (:trac:`5457`):
 
-The symmetric functions code has been refactored to take
-advantage of the coercion systems. This introduced a couple of glitches:
+The symmetric functions code has been refactored to take advantage of
+the coercion systems. This introduced a couple of glitches, in
+particular, on some bases changes, coefficients in Jack polynomials
+are not normalized
 
-- On some bases changes, coefficients in Jack polynomials are not normalized
+However, conversions and coercions are now also defined between
+symmetric functions over different coefficient rings::
 
-- Except in a few cases, conversions and coercions are only defined
-  between symmetric functions over the same coefficient ring. E.g.
-  the following does not work anymore::
+      sage: S  = SymmetricFunctions(QQ)
+      sage: S2 = SymmetricFunctions(QQ['t'])
+      sage: S3 = SymmetricFunctions(ZZ)
+      sage: S.m()[1] + S2.m()[2]
+      m[1] + m[2]
 
-      sage: s  = SymmetricFunctions(QQ)
-      sage: s2 = SymmetricFunctions(QQ['t'])
-      sage: s([1]) + s2([2]) # todo: not implemented
-
-  This feature will probably come back at some point through
-  improvements to the Sage coercion system.
+      sage: S.m()(S3.sp()[2,1])
+      -m[1] + 2*m[1, 1, 1] + m[2, 1]
 
 Backward compatibility should be essentially retained.
 
@@ -1787,7 +1787,6 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         sage: s(m([2,1]))
         -2*s[1, 1, 1] + s[2, 1]
     """
-
     def __init__(self, Sym, basis_name=None, prefix=None, graded=True):
         r"""
         Initializes the symmetric function algebra.
@@ -3014,6 +3013,36 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         return self.tensor_square().sum(coeff * tensor([self(s[x]), self(s[y])])
                                         for ((x,y), coeff) in s(elt).coproduct())
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: F, R = s.construction()
+            sage: F(QQ)
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        return SymmetricFunctionsFunctor(self._descriptor), self.base_ring()
+
+    def change_ring(self, R):
+        r"""
+        Return the base change of ``self`` to `R`.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: s.change_ring(QQ)
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        if R is self.base_ring():
+            return self
+        functor, _ = self.construction()
+        return functor(R)
+
 
 class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
     r"""
@@ -3034,7 +3063,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         m[1, 1, 1] + m[2, 1] + m[3]
         sage: m.set_print_style('lex')
     """
-
     def factor(self):
         """
         Return the factorization of this symmetric function.
@@ -3090,7 +3118,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         poly = _to_polynomials([self], self.base_ring())[0]
         factors = poly.factor()
-        unit = factors.unit()
+        unit = self.base_ring()(factors.unit())
         if factors.universe() == self.base_ring():
             return Factorization(factors, unit=unit)
         factors = [(_from_polynomial(factor, M), exponent)
@@ -6378,6 +6406,67 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
 SymmetricFunctionAlgebra_generic.Element = SymmetricFunctionAlgebra_generic_Element
 
+from sage.categories.pushout import ConstructionFunctor
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.functor import Functor
+
+class SymmetricFunctionsFunctor(ConstructionFunctor):
+    rank = 9
+
+    def __init__(self, descriptor):
+        self._descriptor = descriptor
+        Functor.__init__(self, CommutativeRings(), CommutativeRings())
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: F, R = s.construction()
+            sage: F(QQ)
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        S = SymmetricFunctions(R)
+        for method, *params in self._descriptor:
+            if params:
+                assert len(params) == 1
+                S = S.__getattribute__(method)(**params[0])
+            else:
+                S = S.__getattribute__(method)()
+        return S
+
+    def _apply_functor_to_morphism(self, f):
+        """
+        Apply the functor ``self`` to the ring morphism `f`.
+
+        """
+        dom = self(f.domain())
+        codom = self(f.codomain())
+
+        def action(x):
+            return codom._from_dict({a: f(b)
+                                     for a, b in x.monomial_coefficients().items()})
+        return dom.module_morphism(function=action, codomain=codom)
+
+    def __eq__(self, other):
+        if not isinstance(other, SymmetricFunctionsFunctor):
+            return False
+        return self.vars == other.vars
+
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: R.<q,t> = ZZ[]
+            sage: H = SymmetricFunctions(R).macdonald().H()
+            sage: F, R = H.construction()
+            sage: F
+            (('macdonald', {'q': q, 't': t}), ('H',))
+        """
+        return repr(self._descriptor)
 
 ###################
 def _lmax(x):
