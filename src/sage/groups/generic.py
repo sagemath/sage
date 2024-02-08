@@ -1194,6 +1194,8 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     Generic function to find order of a group element given a multiple
     of its order.
 
+    See :meth:`bsgs` for full explanation of the inputs.
+
     INPUT:
 
     - ``P`` -- a Sage object which is a group element;
@@ -1203,9 +1205,12 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
       really is a multiple of the order;
     - ``factorization`` -- the factorization of ``m``, or ``None`` in which
       case this function will need to factor ``m``;
-    - ``plist`` -- a list of the prime factors of ``m``, or ``None`` - kept for compatibility only,
+    - ``plist`` -- a list of the prime factors of ``m``, or ``None``. Kept for compatibility only,
       prefer the use of ``factorization``;
-    - ``operation`` -- string: ``'+'`` (default) or ``'*'``.
+    - ``operation`` -- string: ``'+'`` (default), ``'*'`` or ``None``;
+    - ``identity`` -- the identity element of the group;
+    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``;
+    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group.
 
     .. note::
 
