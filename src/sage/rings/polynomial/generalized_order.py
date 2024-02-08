@@ -22,9 +22,9 @@ These orders are useful for defining Gröbner bases for ideals in Laurent polyno
 
 EXAMPLES::
 
-    sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
+    sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
 
-    sage: order = GeneralizedMonomialOrder(2); order
+    sage: order = GeneralizedOrder(2); order
     Generalized monomial order in 2 variables using (lex, min)
     sage: order.n_cones()
     3
@@ -40,7 +40,7 @@ EXAMPLES::
 
 Using the ``degmin`` score function::
 
-    sage: order2 = GeneralizedMonomialOrder(3, score_function="degmin"); order2
+    sage: order2 = GeneralizedOrder(3, score_function="degmin"); order2
     Generalized monomial order in 3 variables using (lex, degmin)
     sage: order2.greatest_tuple((1, -1, 1), (2, -3, 4), (5, -6, 2), (-1, -2, -3))
     (5, -6, 2)
@@ -56,7 +56,7 @@ from sage.rings.polynomial.term_order import TermOrder
 from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
 
-class GeneralizedMonomialOrder(SageObject):
+class GeneralizedOrder(SageObject):
     def __init__(self,n,group_order="lex",score_function="min"):
         r"""
         Create a generalized monomial order in ``n`` varaibles with optional group order and score function.
@@ -69,17 +69,17 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: GeneralizedOrder(2)
             Generalized monomial order in 2 variables using (lex, min)
 
-            sage: GeneralizedMonomialOrder(8, group_order="lex")
+            sage: GeneralizedOrder(8, group_order="lex")
             Generalized monomial order in 8 variables using (lex, min)
 
-            sage: GeneralizedMonomialOrder(3, score_function="min")
+            sage: GeneralizedOrder(3, score_function="min")
             Generalized monomial order in 3 variables using (lex, min)
 
-            sage: GeneralizedMonomialOrder(3, group_order="lex", score_function="degmin")
+            sage: GeneralizedOrder(3, group_order="lex", score_function="degmin")
             Generalized monomial order in 3 variables using (lex, degmin)
         """
         self._n = n
@@ -109,8 +109,8 @@ class GeneralizedMonomialOrder(SageObject):
     def _repr_(self):
         r"""
         TESTS::
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: GeneralizedMonomialOrder(2)._repr_()
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: GeneralizedOrder(2)._repr_()
             'Generalized monomial order in 2 variables using (lex, min)'
         """
         group = self._group_order_name
@@ -130,8 +130,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: order.n_cones()
             3
         """
@@ -143,8 +143,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: order.cones()
             [
             [1 0]  [-1  0]  [ 1 -1]
@@ -163,8 +163,8 @@ class GeneralizedMonomialOrder(SageObject):
         
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: order.cone(1)
             [-1 0]
             [-1 1]
@@ -179,8 +179,8 @@ class GeneralizedMonomialOrder(SageObject):
         
         EXAMPLES::
            
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: G = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: G = GeneralizedOrder(2)
             sage: G.group_order()
             Lexicographic term order
         """
@@ -192,8 +192,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2,group_order="lex")
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2,group_order="lex")
             sage: order.group_order_name()
             'lex'
         """
@@ -205,8 +205,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2,score_function="degmin")
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2,score_function="degmin")
             sage: order.score_function_name()
             'degmin'
         """
@@ -222,8 +222,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: order.score((-2,3))
             2
         """
@@ -239,8 +239,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(3)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(3)
             sage: order.compare((1,2,-2), (3,-4,5))
             -1
             sage: order.compare((3,-4,5), (1,2,-2))
@@ -265,8 +265,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(3)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(3)
             sage: order.greatest_tuple((0,0,1),(2,3,-2))
             (2, 3, -2)
             sage: L = [(1,2,-1),(3,-3,0),(4,-5,-6)]
@@ -295,8 +295,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: order.translate_to_cone(0, [(1,2),(-2,-3),(1,-4)])
             (2, 4)
         """
@@ -318,8 +318,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L = [(1,2), (-2,-2), (-4,5), (5,-6)]
             sage: t = order.greatest_tuple_for_cone(1, *L);t
             (-4, 5)
@@ -347,8 +347,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
             
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: order.is_in_cone(0, (1,2)) 
             True
             sage: order.is_in_cone(0,(-2,3))
@@ -370,8 +370,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(3)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(3)
             sage: L = [(1,2,-2), (3,4,-5), (-6,2,-7), (3,-6,1)]
             sage: order.generator(0,L)
             (6, 6, 7)
@@ -401,8 +401,8 @@ class GeneralizedMonomialOrder(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.generalized_monomial_order import GeneralizedMonomialOrder
-            sage: order = GeneralizedMonomialOrder(2)
+            sage: from sage.rings.polynomial.generalized_order import GeneralizedOrder
+            sage: order = GeneralizedOrder(2)
             sage: L1 = [(2,3),(-4,2),(-1,-2)]
             sage: L2 = [(1,-6),(5,-2),(3,4)]
             sage: order.generator_for_pair(1,L1,L2)
