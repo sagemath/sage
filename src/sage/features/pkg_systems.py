@@ -157,10 +157,19 @@ class SagePackageSystem(PackageSystem):
             To install foobarability using the Sage package manager, you can try to run:
             ### sage -i foo bar
         """
+        spkgs = self._system_packages(spkgs)
         lines = []
         lines.append(f'To install {feature} using the Sage package manager, you can try to run:')
         lines.append(f'{prompt}sage -i {spkgs}')
         return '\n'.join(lines)
+
+    def _system_packages(self, spkgs):
+        if 'pypi:' not in spkgs:
+            return spkgs
+        from subprocess import run, CalledProcessError
+        proc = run(f'sage-package list {spkgs}',
+                    shell=True, capture_output=True, text=True, check=True)
+        return proc.stdout.strip()
 
 
 class PipPackageSystem(PackageSystem):
