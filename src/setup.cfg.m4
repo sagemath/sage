@@ -116,10 +116,6 @@ sage =
     ext_data/magma/*
     ext_data/magma/latex/*
     ext_data/magma/sage/*
-    ext_data/matroids/*
-    ext_data/matroids/database/*
-    ext_data/matroids/database/all_matroids/*
-    ext_data/matroids/database/unorientable_matroids/*
     ext_data/mwrank/*
     ext_data/nbconvert/*
     ext_data/notebook-ipython/*
