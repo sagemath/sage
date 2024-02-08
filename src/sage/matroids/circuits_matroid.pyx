@@ -714,27 +714,37 @@ cdef class CircuitsMatroid(Matroid):
             False
         """
         from itertools import combinations_with_replacement
+        cdef int i, j, k, S_len
+        cdef frozenset C1, C2, C3, I12, U12
+        cdef bint flag
         for (i, j) in combinations_with_replacement(sorted(self._k_C), 2):
             # loop through all circuit length pairs (i, j) with i <= j
             for C1 in self._k_C[i]:
                 if not C1:  # the empty set can't be a circuit
                     return False
                 for C2 in self._k_C[j]:
-                    if C1 < C2:  # a circuit can't be a subset of another circuit
+                    I12 = C1 & C2
+                    if not I12:  # C1 and C2 are disjoint; nothing to test
+                        continue
+                    if len(I12) == len(C1):
+                        if len(C1) == len(C2):  # they are the same circuit
+                            break
+                        # C1 < C2; a circuit can't be a subset of another circuit
                         return False
-                    if C1 == C2:
-                        break
                     # check circuit elimination axiom
-                    UC12 = set(C1) | set(C2)
-                    for e in C1 & C2:
+                    U12 = C1 | C2
+                    S_len = len(U12) - 1  # the size of S below
+                    for e in I12:
                         flag = False
-                        S = UC12 - {e}
+                        S = U12 - {e}
                         for k in self._k_C:
-                            if k <= len(S) and not flag:
+                            if k <= S_len:
                                 for C3 in self._k_C[k]:
                                     if C3 <= S:
                                         flag = True
                                         break
+                            if flag:
+                                break
                         if not flag:
                             return False
         return True
