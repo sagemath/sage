@@ -119,7 +119,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
         """
         return self.__hash
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of this module.
 
@@ -132,7 +132,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
             sage: Q.gens()
             ((1, 0), (0, 1))
         """
-        return tuple([self(list(g)) for g in self._module.gens()])
+        return tuple(self(list(g)) for g in self._module.gens())
 
     def gen(self, i=0):
         """

@@ -373,7 +373,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         return self.dimension() / self.length()
 
     @cached_method
-    def gens(self):
+    def gens(self) -> list:
         r"""
         Return the generators of this code as a list of vectors.
 
