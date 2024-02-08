@@ -162,6 +162,7 @@ class _VeluBoundObj:
     def __str__(self):
         return f"VeluSqrtBound Object with bound = {self.bound}"
 
+
 _velu_sqrt_bound = _VeluBoundObj()
 
 def _choose_IJK(n):
