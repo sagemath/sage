@@ -428,7 +428,7 @@ class Package(object):
                 continue
             try:
                 yield cls(subdir)
-            except BaseException:
+            except Exception:
                 log.error('Failed to open %s', subdir)
                 raise
 
