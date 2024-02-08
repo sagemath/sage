@@ -481,7 +481,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     if ran < 30:    # use simple search for small ranges
         d = c
-#        for i,d in multiples(a,ran,c,indexed=True,operation=operation):
+        #        for i,d in multiples(a,ran,c,indexed=True,operation=operation):
         for i0 in range(ran):
             i = lb + i0
             if identity == d:        # identity == b^(-1)*a^i, so return i
@@ -1189,7 +1189,7 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
 
 
 def order_from_multiple(P, m, plist=None, factorization=None, check=True,
-                        operation='+'):
+                        operation='+', identity=None, inverse=None, op=None):
     r"""
     Generic function to find order of a group element given a multiple
     of its order.
@@ -1259,14 +1259,23 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     elif operation in addition_names:
         identity = P.parent()(0)
     else:
-        raise ValueError("unknown group operation")
+        if identity is None or inverse is None or op is None:
+            raise ValueError("identity, inverse and operation must all be specified")
+
+    def _multiple(A, B):
+        return multiple(A,
+                        B,
+                        operation=operation,
+                        identity=identity,
+                        inverse=inverse,
+                        op=op)
 
     if P == identity:
         return Z.one()
 
     M = Z(m)
     if check:
-        assert multiple(P, M, operation=operation) == identity
+        assert _multiple(P, M) == identity
 
     if factorization:
         F = factorization
@@ -1295,7 +1304,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             p, e = L[0]
             e0 = 0
             while (Q != identity) and (e0 < e - 1):
-                Q = multiple(Q, p, operation=operation)
+                Q = _multiple(Q, p)
                 e0 += 1
             if Q != identity:
                 e0 += 1
@@ -1314,12 +1323,8 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             L2 = L[k:]
             # recursive calls
             o1 = _order_from_multiple_helper(
-                multiple(Q, prod([p**e for p, e in L2]), operation),
-                L1,
-                sum_left)
-            o2 = _order_from_multiple_helper(multiple(Q, o1, operation),
-                                             L2,
-                                             S - sum_left)
+                _multiple(Q, prod([p**e for p, e in L2])), L1, sum_left)
+            o2 = _order_from_multiple_helper(_multiple(Q, o1), L2, S - sum_left)
             return o1 * o2
 
     return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)))
