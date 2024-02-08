@@ -47,6 +47,7 @@ class Package(object):
         self._init_version()
         self._init_type()
         self._init_install_requires()
+        self._init_requirements()
         self._init_dependencies()
         self._init_trees()
 
@@ -323,7 +324,7 @@ class Package(object):
         """
         Return the package source type
         """
-        if self.has_file('requirements.txt'):
+        if self.__requirements is not None:
             return 'pip'
         if self.tarball_filename:
             if self.tarball_filename.endswith('.whl'):
@@ -346,7 +347,7 @@ class Package(object):
             return self.__trees
         if self.__install_requires is not None:
             return 'SAGE_VENV'
-        if self.has_file('requirements.txt'):
+        if self.__requirements is not None:
             return 'SAGE_VENV'
         return 'SAGE_LOCAL'
 
@@ -355,14 +356,20 @@ class Package(object):
         """
         Return the Python distribution name or ``None`` for non-Python packages
         """
-        if self.__install_requires is None:
-            return None
-        for line in self.__install_requires.split('\n'):
-            line = line.strip()
-            if line.startswith('#'):
-                continue
-            for part in line.split():
-                return part
+        if self.__requirements is not None:
+            for line in self.__requirements.split('\n'):
+                line = line.strip()
+                if line.startswith('#'):
+                    continue
+                for part in line.split():
+                    return part
+        if self.__install_requires is not None:
+            for line in self.__install_requires.split('\n'):
+                line = line.strip()
+                if line.startswith('#'):
+                    continue
+                for part in line.split():
+                    return part
         return None
 
     @property
@@ -516,6 +523,13 @@ class Package(object):
                 self.__install_requires = f.read().strip()
         except IOError:
             self.__install_requires = None
+
+    def _init_requirements(self):
+        try:
+            with open(os.path.join(self.path, 'requirements.txt')) as f:
+                self.__requirements = f.read().strip()
+        except IOError:
+            self.__requirements = None
 
     def _init_dependencies(self):
         try:
