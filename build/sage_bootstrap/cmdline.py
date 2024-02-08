@@ -280,9 +280,10 @@ def make_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Print a list of packages known to Sage')
     parser_list.add_argument(
-        'package_class', metavar='[package_name|:package_type:]',
+        'package_class', metavar='[PACKAGE_NAME|pypi:DISTRIBUTION-NAME|:PACKAGE_TYPE:]',
         type=str, default=[':all-or-nothing:'], nargs='*',
-        help=('package name or designator for all packages of a given type '
+        help=('package name, pypi: followed by a distribution name, '
+              'or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:); '
               'default: :all: (or nothing when --include-dependencies or --exclude-dependencies is given'))
     parser_list.add_argument(
@@ -308,9 +309,10 @@ def make_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Print properties of given packages')
     parser_properties.add_argument(
-        'package_class', metavar='[package_name|:package_type:]',
+        'package_class', metavar='[PACKAGE_NAME|pypi:DISTRIBUTION-NAME|:PACKAGE_TYPE:]',
         type=str, nargs='+',
-        help=('package name or designator for all packages of a given type '
+        help=('package name, pypi: followed by a distribution name, '
+              'or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:)'))
     parser_properties.add_argument(
         '--format', type=str, default='plain',
@@ -413,11 +415,11 @@ def make_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Fix the checksum of normal packages.')
     parser_fix_checksum.add_argument(
-        'package_class', metavar='[package_name|:package_type:]',
+        'package_class', metavar='[PACKAGE_NAME|pypi:DISTRIBUTION-NAME|:PACKAGE_TYPE:]',
         type=str, default=[':all:'], nargs='*',
-        help=('package name or designator for all packages of a given type '
-              '(one of :all:, :standard:, :optional:, and :experimental:); '
-              'default: :all:'))
+        help=('package name, pypi: followed by a distribution name, '
+              'or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:; default: :all:)'))
 
     parser_create = subparsers.add_parser(
         'create', epilog=epilog_create,
@@ -456,9 +458,10 @@ def make_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Print metrics of given packages')
     parser_metrics.add_argument(
-        'package_class', metavar='[package_name|:package_type:]',
+        'package_class', metavar='[PACKAGE_NAME|pypi:DISTRIBUTION-NAME|:PACKAGE_TYPE:]',
         type=str, nargs='*', default=[':all:'],
-        help=('package name or designator for all packages of a given type '
+        help=('package name, pypi: followed by a distribution name, '
+              'or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:; default: :all:)'))
 
     return parser
