@@ -122,6 +122,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.minimum_cycle_basis` | Return a minimum weight cycle basis of the graph.
     :meth:`~GenericGraph.cycle_basis` | Return a list of cycles which form a basis of the cycle space of ``self``.
     :meth:`~GenericGraph.all_paths` | Return a list of all paths (also lists) between a pair of vertices in the (di)graph.
+    :meth:`~GenericGraph.all_paths_iterator` | Return an iterator over the paths of ``self``.
+    :meth:`~GenericGraph.all_simple_paths` | Return a list of all the simple paths of ``self`` starting with one of the given vertices.
     :meth:`~GenericGraph.triangles_count` | Return the number of triangles in the (di)graph.
     :meth:`~GenericGraph.shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices.
 
@@ -24863,6 +24865,9 @@ class GenericGraph(GenericGraph_pyx):
     rooted_product = LazyImport('sage.graphs.graph_decompositions.graph_products', 'rooted_product')
     from sage.graphs.path_enumeration import shortest_simple_paths
     from sage.graphs.path_enumeration import all_paths
+    from sage.graphs.path_enumeration import _all_paths_iterator
+    from sage.graphs.path_enumeration import all_paths_iterator
+    from sage.graphs.path_enumeration import all_simple_paths
     from sage.graphs.traversals import lex_BFS
     from sage.graphs.traversals import lex_UP
     from sage.graphs.traversals import lex_DFS
