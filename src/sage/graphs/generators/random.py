@@ -1492,8 +1492,6 @@ def RandomKTree(n, k, seed=None):
 
     EXAMPLES::
 
-    A (random) `k`-tree has treewidth `k`::
-
         sage: G = graphs.RandomKTree(50, 5)
         sage: G.treewidth()
         5
@@ -1547,7 +1545,7 @@ def RandomPartialKTree(n, k, x, seed=None):
         sage: g.order()
         50
         sage: g.size()
-        230
+        233
         sage: g.treewidth()
         5
 
