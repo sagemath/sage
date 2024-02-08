@@ -324,7 +324,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             L = Af([vector(line.coefficients()) * coord for line in self])
             G = L.fundamental_group()
             self._affine_fundamental_group = G
-            self._affine_meridians = L._meridians['simpl', True, 'vertical', True]
+            self._affine_meridians = L._meridians_simpl_vertical
             return G
         H1 = self.hyperplane_section(proj=False)
         G = H1.affine_fundamental_group()
@@ -451,7 +451,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             L = Proj([vector(line.coefficients()[1:]) * coord for line in self])
             G = L.fundamental_group()
             self._projective_fundamental_group = G
-            self._projective_meridians = L._meridians['simpl', True]
+            self._projective_meridians = L._meridians_simpl
             return G
         H1 = self.hyperplane_section()
         G = H1.projective_fundamental_group()
