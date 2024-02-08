@@ -119,7 +119,6 @@ from copy import copy
 
 from sage.arith.misc import integer_ceil, integer_floor, xlcm
 from sage.arith.srange import xsrange
-from sage.misc.functional import log
 from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
@@ -171,9 +170,11 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         sage: E = EllipticCurve('389a1')
         sage: P = E(-1,1)
         sage: multiple(P, 10, '+')
-        (645656132358737542773209599489/22817025904944891235367494656 : 525532176124281192881231818644174845702936831/3446581505217248068297884384990762467229696 : 1)
+        (645656132358737542773209599489/22817025904944891235367494656 :
+         525532176124281192881231818644174845702936831/3446581505217248068297884384990762467229696 : 1)
         sage: multiple(P, -10, '+')
-        (645656132358737542773209599489/22817025904944891235367494656 : -528978757629498440949529703029165608170166527/3446581505217248068297884384990762467229696 : 1)
+        (645656132358737542773209599489/22817025904944891235367494656 :
+         -528978757629498440949529703029165608170166527/3446581505217248068297884384990762467229696 : 1)
     """
     from operator import inv, mul, neg, add
 
@@ -332,11 +333,11 @@ class multiples:
                 P0 = P.parent()(0)
             self.op = add
         else:
-            self.op = op
             if P0 is None:
                 raise ValueError("P0 must be supplied when operation is neither addition nor multiplication")
             if op is None:
                 raise ValueError("op() must both be supplied when operation is neither addition nor multiplication")
+            self.op = op
 
         self.P = copy(P)
         self.Q = copy(P0)
@@ -458,6 +459,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         inverse = inv
         op = mul
     elif operation in addition_names:
+        # Should this be replaced with .zero()? With an extra AttributeError handler?
         identity = a.parent()(0)
         inverse = neg
         op = add
@@ -469,7 +471,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     if lb < 0 or ub < lb:
         raise ValueError("bsgs() requires 0<=lb<=ub")
 
-    if a.is_zero() and not b.is_zero():
+    if a == identity and b != identity:
         raise ValueError("no solution in bsgs()")
 
     ran = 1 + ub - lb   # the length of the interval
@@ -1410,6 +1412,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
 
     return order_from_multiple(P, m, operation=operation, check=False)
 
+
 def has_order(P, n, operation='+'):
     r"""
     Generic function to test if a group element `P` has order
@@ -1497,8 +1500,8 @@ def has_order(P, n, operation='+'):
 
         fl = fn[::2]
         fr = fn[1::2]
-        l = prod(p**k for p,k in fl)
-        r = prod(p**k for p,k in fr)
+        l = prod(p**k for p, k in fl)
+        r = prod(p**k for p, k in fr)
         L, R = mult(Q, r), mult(Q, l)
         return _rec(L, fl) and _rec(R, fr)
 
