@@ -1375,10 +1375,6 @@ class PolynomialRing_general(ring.Algebra):
         -  ``*args, **kwds`` - additional keyword parameters passed on to the
            ``random_element`` method for the base ring
 
-        .. SEEALSO::
-
-            :meth:`random_monic_element`
-
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
@@ -1408,14 +1404,6 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: while R.random_element(degree=(-1,2), x=-1, y=1) != R.zero():
             ....:     pass
-
-        It is possible to sample a monic polynomial, but it is preferable to
-        use :meth:`random_monic_element`::
-
-            sage: R.random_element(degree=(-1, 5), monic=True).is_monic()
-            True
-            sage: R.random_monic_element(degree=(-1, 5)).is_monic()
-            True
 
         Note that if the degree range includes `-1` and ``monic`` is set, it is
         silently ignored, as `0` is not a monic polynomial::
@@ -1454,8 +1442,6 @@ class PolynomialRing_general(ring.Algebra):
         ::
 
             sage: 0 in [R.random_element(degree=(-1, 2), monic=True) for _ in range(500)]
-            False
-            sage: 0 in [R.random_monic_element(degree=(-1, 2)) for _ in range(500)]
             False
 
         Testing error handling::
@@ -1540,53 +1526,6 @@ class PolynomialRing_general(ring.Algebra):
                 continue
 
             return self(coefs)
-
-    def random_monic_element(self, degree=(0, 2), *args, **kwargs):
-        r"""
-        Return a random monic polynomial of given degree (bounds).
-
-        Calls :meth:`random_element` with ``monic=True``.
-
-        INPUT:
-
-        -  ``degree`` - optional integer for fixing the degree
-           or a tuple of minimum and maximum degrees. By default set to
-           ``(0, 2)``
-
-        - ``zero`` - boolean, if set the algorithm may return `0`, even though
-          it is not a monic polynomial. By default set to ``False``
-
-        -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
-           the base ring
-
-        .. SEEALSO::
-
-            :meth:`random_element`
-
-        EXAMPLES::
-
-            sage: R.<x> = GF(3)[]
-            sage: R.random_monic_element()  # random
-            x^2 + x + 1
-            sage: all(R.random_monic_element().is_monic() for _ in range(100))
-            True
-            sage: all(R.random_monic_element(degree=(-1, 1)).is_monic() for _ in range(100))
-            True
-
-        TESTS:
-
-        There are 7 monic polynomials of degree not exceeding 2 over GF(2). We
-        apply the chi-square test::
-
-            sage: from collections import Counter
-            sage: from scipy.stats import chisquare
-            sage: N = 10^5
-            sage: R.<x> = GF(2)[]
-            sage: cnts = Counter(R.random_monic_element() for _ in range(N))
-            sage: chisquare(list(cnts.values()), [N / 7] * 7).pvalue < 0.1
-            False
-        """
-        return self.random_element(degree=degree, monic=True, *args, **kwargs)
 
     def _monics_degree(self, of_degree):
         """
