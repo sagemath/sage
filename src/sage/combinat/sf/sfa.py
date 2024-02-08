@@ -1,6 +1,5 @@
 # sage.doctest: needs sage.combinat sage.modules
-r"""
-Symmetric Functions
+r"""Symmetric Functions
 
 For a comprehensive tutorial on how to use symmetric functions in Sage
 
@@ -170,21 +169,22 @@ Check that we can handle large integers properly (:trac:`13413`)::
 
 BACKWARD INCOMPATIBLE CHANGES (:trac:`5457`):
 
-The symmetric functions code has been refactored to take
-advantage of the coercion systems. This introduced a couple of glitches:
+The symmetric functions code has been refactored to take advantage of
+the coercion systems. This introduced a couple of glitches, in
+particular, on some bases changes, coefficients in Jack polynomials
+are not normalized
 
-- On some bases changes, coefficients in Jack polynomials are not normalized
+However, conversions and coercions are now also defined between
+symmetric functions over different coefficient rings::
 
-- Except in a few cases, conversions and coercions are only defined
-  between symmetric functions over the same coefficient ring. E.g.
-  the following does not work anymore::
+      sage: S  = SymmetricFunctions(QQ)
+      sage: S2 = SymmetricFunctions(QQ['t'])
+      sage: S3 = SymmetricFunctions(ZZ)
+      sage: S.m()[1] + S2.m()[2]
+      m[1] + m[2]
 
-      sage: s  = SymmetricFunctions(QQ)
-      sage: s2 = SymmetricFunctions(QQ['t'])
-      sage: s([1]) + s2([2]) # todo: not implemented
-
-  This feature will probably come back at some point through
-  improvements to the Sage coercion system.
+      sage: S.m()(S3.sp()[2,1])
+      -m[1] + 2*m[1, 1, 1] + m[2, 1]
 
 Backward compatibility should be essentially retained.
 
@@ -3027,6 +3027,21 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             Symmetric Functions over Rational Field in the Schur basis
         """
         return SymmetricFunctionsFunctor(self._descriptor), self.base_ring()
+
+    def change_ring(self, R):
+        r"""
+        Return the base change of ``self`` to `R`.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: s.change_ring(QQ)
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        if R is self.base_ring():
+            return self
+        functor, _ = self.construction()
+        return functor(R)
 
 
 class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
