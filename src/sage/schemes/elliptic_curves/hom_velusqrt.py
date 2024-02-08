@@ -143,12 +143,12 @@ class _VeluBoundObj:
 
     EXAMPLES ::
 
-    sage: from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
-    sage: _velu_sqrt_bound.get()
-    1000
-    sage: _velu_sqrt_bound.set(50)
-    sage: _velu_sqrt_bound.get()
-    50
+        sage: from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
+        sage: _velu_sqrt_bound.get()
+        1000
+        sage: _velu_sqrt_bound.set(50)
+        sage: _velu_sqrt_bound.get()
+        50
     """
     def __init__(self):
         self.bound = Integer(1000)
