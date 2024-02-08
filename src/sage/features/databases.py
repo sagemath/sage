@@ -263,6 +263,7 @@ class DatabaseReflexivePolytopes(StaticFile):
 
 def all_features():
     return [PythonModule('conway_polynomials'),
+            PythonModule('matroid_database'),
             DatabaseCremona(),
             DatabaseCremona('cremona_mini'),
             DatabaseEllcurves(),

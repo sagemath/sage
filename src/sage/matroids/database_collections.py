@@ -45,7 +45,7 @@ def AllMatroids(n, r=None, type="all"):
 
     EXAMPLES::
 
-        sage: for M in matroids.AllMatroids(2):                                         # needs matroid_database
+        sage: for M in matroids.AllMatroids(2):                                         # optional - matroid_database
         ....:     M
         all_n02_r00_#0: Matroid of rank 0 on 2 elements with 1 bases
         all_n02_r01_#0: Matroid of rank 1 on 2 elements with 2 bases
@@ -54,7 +54,7 @@ def AllMatroids(n, r=None, type="all"):
 
     ::
 
-        sage: for M in matroids.AllMatroids(5, 3, "simple"):                            # needs matroid_database
+        sage: for M in matroids.AllMatroids(5, 3, "simple"):                            # optional - matroid_database
         ....:     M
         simple_n05_r03_#0: Matroid of rank 3 on 5 elements with 10 bases
         simple_n05_r03_#1: Matroid of rank 3 on 5 elements with 9 bases
