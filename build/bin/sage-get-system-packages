@@ -45,6 +45,11 @@ case "$SYSTEM" in
         COLLECT=echo
         ;;
 esac
+case "$SPKGS" in
+    *pypi:*)
+        PATH="${SAGE_ROOT}/build/bin:$PATH" SPKGS=$(sage-package list $SPKGS)
+        ;;
+esac
 for PKG_BASE in $SPKGS; do
 
     case "$SYSTEM:$ENABLE_SYSTEM_SITE_PACKAGES" in
