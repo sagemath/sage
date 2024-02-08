@@ -344,14 +344,13 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
         if self.base_ring().is_finite():
             q = self.base_ring().order()
-            ord = prod(q**n - q**i for i in range(n)) / (q-1)
+            ord = prod(q**n - q**i for i in range(n))
             if self._special:
                 return ord / (q-1)
             return ord
 
         if self._special and n == 1:
             return 1
-
         return Infinity
 
     cardinality = order
