@@ -245,3 +245,17 @@ class PipPackageSystem(PackageSystem):
             lines.append(f' $ deactivate')
             return '\n'.join(lines)
         return super()._spkg_installation_hint(spkgs, prompt, feature)
+
+    def _system_packages(self, spkgs):
+        all_packages = spkgs.split()
+        pypi_packages = [package[len('pypi:'):] for package in all_packages
+                         if package.startswith('pypi:')]
+        other_packages = [package for package in all_packages
+                          if not package.startswith('pypi:')]
+        if other_packages:
+            from subprocess import run, CalledProcessError
+            system = self.name
+            proc = run(f'sage-get-system-packages {system} {spkgs}',
+                       shell=True, capture_output=True, text=True, check=True)
+            pypi_packages.extend(proc.stdout.split())
+        return ' '.join(pypi_packages)
