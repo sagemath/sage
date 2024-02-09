@@ -40,3 +40,4 @@ latex_documents = [
    'The Sage Development Team', 'manual'),
 ]
 
+latex_elements['babel'] = ''
