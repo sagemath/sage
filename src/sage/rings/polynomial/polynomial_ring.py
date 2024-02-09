@@ -1366,13 +1366,13 @@ class PolynomialRing_general(ring.Algebra):
 
         INPUT:
 
-        -  ``degree`` - (default: ``(-1, 2)``) integer for fixing the degree or
+        -  ``degree`` -- (default: ``(-1, 2)``) integer for fixing the degree or
            a tuple of minimum and maximum degrees
 
-        -  ``monic`` - boolean (optional); indicate whether the sampled
+        -  ``monic`` -- boolean (optional); indicate whether the sampled
            polynomial should be monic
 
-        -  ``*args, **kwds`` - additional keyword parameters passed on to the
+        -  ``*args, **kwds`` -- additional keyword parameters passed on to the
            ``random_element`` method for the base ring
 
         EXAMPLES::
@@ -1638,11 +1638,11 @@ class PolynomialRing_general(ring.Algebra):
 
         INPUT: Pass exactly one of:
 
-        -  ``max_degree`` - an int; the iterator will generate
+        -  ``max_degree`` -- an int; the iterator will generate
            all polynomials which have degree less than or equal to
            ``max_degree``
 
-        -  ``of_degree`` - an int; the iterator will generate
+        -  ``of_degree`` -- an int; the iterator will generate
            all polynomials which have degree ``of_degree``
 
         OUTPUT: an iterator
@@ -1704,11 +1704,11 @@ class PolynomialRing_general(ring.Algebra):
         INPUT: Pass exactly one of:
 
 
-        -  ``max_degree`` - an int; the iterator will generate
+        -  ``max_degree`` -- an int; the iterator will generate
            all monic polynomials which have degree less than or equal to
            ``max_degree``
 
-        -  ``of_degree`` - an int; the iterator will generate
+        -  ``of_degree`` -- an int; the iterator will generate
            all monic polynomials which have degree ``of_degree``
 
 
@@ -1785,7 +1785,7 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
 
         INPUT:
 
-        - ``f`` - either a polynomial in ``self``, or a principal
+        - ``f`` -- either a polynomial in ``self``, or a principal
           ideal of ``self``.
         - further named arguments that are passed to the quotient constructor.
 
