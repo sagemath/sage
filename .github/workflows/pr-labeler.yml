@@ -1,0 +1,38 @@
+# set labels on Pull-Requests based on size of changes
+# size is compared form first to last commit in the pull request
+name: Size Labeler/Checker
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+jobs:
+  label-changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Check changes and label
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CHANGES=$((${{github.event.pull_request.additions}} + ${{github.event.pull_request.deletions}}))
+          echo "Changed files: $CHANGES"
+
+          THRESHOLD=200
+
+          PR_NUMBER="${{ github.event.number }}"
+          API_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
+          AUTH_HEADER="Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
+
+          if [ "$CHANGES" -le "$THRESHOLD" ]; then
+            LABEL="tiny"
+            DELETE_LABEL="huge"
+          else
+            LABEL="huge"
+            DELETE_LABEL="tiny"
+          fi
+
+          echo "Adding label: $LABEL"
+          curl -X POST -H "$AUTH_HEADER" -d "{\"labels\":[\"$LABEL\"]}" "$API_URL"
+          curl -X DELETE -H "$AUTH_HEADER" "$API_URL/$DELETE_LABEL"
