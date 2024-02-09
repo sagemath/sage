@@ -1318,7 +1318,7 @@ class PolynomialRing_general(ring.Algebra):
             sage: R.monomial(m.degree()) == m
             True
         """
-        return self({exponent:self.base_ring().one()})
+        return self({exponent: self.base_ring().one()})
 
     def krull_dimension(self):
         """
@@ -1369,7 +1369,7 @@ class PolynomialRing_general(ring.Algebra):
         -  ``degree`` - (default: ``(-1, 2)``) integer for fixing the degree or
            a tuple of minimum and maximum degrees
 
-        -  ``monic`` - optional boolean to indicate whether the sampled
+        -  ``monic`` - boolean (optional); indicate whether the sampled
            polynomial should be monic
 
         -  ``*args, **kwds`` - additional keyword parameters passed on to the
@@ -1379,8 +1379,6 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: R.<x> = ZZ[]
             sage: f = R.random_element(10, x=5, y=10)
-            sage: f  # random
-            5*x^10 + 6*x^9 + 5*x^8 + 8*x^7 + 8*x^6 + 5*x^5 + 7*x^4 + 8*x^3 + 6*x^2 + 9*x + 6
             sage: f.degree()
             10
             sage: f.parent() is R
@@ -1391,13 +1389,14 @@ class PolynomialRing_general(ring.Algebra):
             6
 
         If a tuple of two integers is given for the ``degree`` argument, a polynomial is chosen
-        uniformly among all polynomials with degree between them::
+        among all polynomials with degree between them. If the base ring is uniform, so is this
+        method::
 
-            sage: R.random_element(degree=(0, 8)).degree() in range(0, 9)
+            sage: R.random_element(degree=(0, 4)).degree() in range(0, 5)
             True
-            sage: found = [False]*9
+            sage: found = [False]*5
             sage: while not all(found):
-            ....:     found[R.random_element(degree=(0, 8)).degree()] = True
+            ....:     found[R.random_element(degree=(0, 4)).degree()] = True
 
         Note that the zero polynomial has degree `-1`, so if you want to
         consider it set the minimum degree to `-1`::
@@ -1405,8 +1404,8 @@ class PolynomialRing_general(ring.Algebra):
             sage: while R.random_element(degree=(-1,2), x=-1, y=1) != R.zero():
             ....:     pass
 
-        Note that if the degree range includes `-1` and ``monic`` is set, it is
-        silently ignored, as `0` is not a monic polynomial::
+        Monic polynomials are chosen among all monic polynomials with degree between the given
+        ``degree`` argument::
 
             sage: all(R.random_element(degree=(-1, 1), monic=True).is_monic() for _ in range(10^3))
             True
@@ -1471,8 +1470,6 @@ class PolynomialRing_general(ring.Algebra):
             degree = (degree, degree)
 
         if degree[0] <= -2:
-            # This error has been removed in issue #37118.
-            # raise ValueError("degree should be an integer greater or equal than -1")
             degree = (-1, degree[1])
 
         # If the coefficient range only contains 0, then
@@ -1484,20 +1481,26 @@ class PolynomialRing_general(ring.Algebra):
             else:
                 raise ValueError("No polynomial of degree >= 0 has all coefficients zero")
 
-        degree_lb = degree[0]
         if degree == (-1, -1):
             return self.zero()
 
         # If `monic` is set, zero should be ignored
         if degree[0] == -1 and monic:
+            if degree[1] == -1:
+                raise ValueError("the maximum degree of monic polynomials needs to be at least 0")
+            if degree[1] == 0:
+                return self.one()
             degree = (0, degree[1])
 
-        while True:
-            # Pick random coefficients
-            end = degree[1]
-            coefs = [None] * (degree[1] + 1)
-            nonzero = False
+        # Pick random coefficients
+        end = degree[1]
+        if degree[0] == -1:
+            return self([R.random_element(*args, **kwds) for _ in range(end + 1)])
 
+        nonzero = False
+        coefs = [None] * (end + 1)
+
+        while not nonzero:
             # Pick leading coefficients, if `monic` is set it's handle here.
             if monic:
                 for i in range(degree[1] - degree[0] + 1):
@@ -1511,21 +1514,11 @@ class PolynomialRing_general(ring.Algebra):
                     coefs[end - i] = R.random_element(*args, **kwds)
                     nonzero |= not coefs[end - i].is_zero()
 
-            # Leading terms must be nonzero
-            if not nonzero:
-                continue
+        # Now we pick the remaining coefficients.
+        for i in range(degree[1] - degree[0] + 1, degree[1] + 1):
+            coefs[end - i] = R.random_element(*args, **kwds)
 
-            # Now we pick the remaining coefficients. Zeros still should be
-            # tracked to handle `has_zero`.
-            for i in range(degree[1] - degree[0] + 1, degree[1] + 1):
-                coefs[end - i] = R.random_element(*args, **kwds)
-
-            # If we don't want zero (not has_zero), but coefs is zero (not
-            # nonzero), then reject
-            if degree_lb == -1 and not nonzero:
-                continue
-
-            return self(coefs)
+        return self(coefs)
 
     def _monics_degree(self, of_degree):
         """
@@ -2471,8 +2464,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 #                 P += (F[i] * prod)
 #             return P
 
-        # using Neville's method for recursively generating the
-        # Lagrange interpolation polynomial
+# using Neville's method for recursively generating the
+# Lagrange interpolation polynomial
         elif algorithm == "neville":
             if previous_row is None:
                 previous_row = []
