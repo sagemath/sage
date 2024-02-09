@@ -6455,7 +6455,7 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
     def __eq__(self, other):
         if not isinstance(other, SymmetricFunctionsFunctor):
             return False
-        return self.vars == other.vars
+        return self._descriptor == other._descriptor
 
     def _repr_(self):
         """
