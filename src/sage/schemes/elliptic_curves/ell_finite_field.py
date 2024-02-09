@@ -15,6 +15,8 @@ AUTHORS:
 - Lorenz Panny, John Cremona (2023-02): ``.twists()``
 
 - Lorenz Panny (2023): ``special_supersingular_curve()``
+
+- Asimina Hamakiotes (2024-02-08): Fixed ``set_order`` method doctest example
 """
 
 # ****************************************************************************
@@ -1339,14 +1341,12 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         EXAMPLES:
 
-        This example illustrates basic usage.
+        This example illustrates basic usage and shows that the bug reported at :issue:`37131` has been fixed::
 
-        ::
-
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
-            sage: E.set_order(6)
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
+            sage: E.set_order(12)
             sage: E.order()
-            6
+            12
             sage: E.order() * E.random_point()
             (0 : 1 : 0)
 
