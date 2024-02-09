@@ -511,9 +511,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         else:
             E = self.parent()._X._BT.subdivide(E, level)
         value = 0
-        ii = 0
         for e in E:
-            ii += 1
             expansion = ((R1([e[1, 1], e[1, 0]]) ** (self.parent()._k - 2) * e.determinant() ** (-(self.parent()._k - 2) / 2)) * f(R1([e[0, 1], e[0, 0]]) / R1([e[1, 1], e[1, 0]]))).truncate(self.parent()._k - 1)
             dist = self.parent()._Sigma0(e.inverse(), check=False) * self.evaluate(e)
             value += eval_dist_at_powseries(dist, expansion)
