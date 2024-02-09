@@ -2350,7 +2350,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         else:
             return (left._parent).fraction_field()(left,right_ringelement)
 
-    def __pow__(MPolynomial_libsingular self, exp, ignored):
+    def __pow__(MPolynomial_libsingular self, exp, mod):
         """
         Return ``self**(exp)``.
 
@@ -2413,7 +2413,20 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             TypeError: R is neither an integer nor a rational
+
+        Check that using third argument raises an error::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ)
+            sage: pow(x + y + z, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
+
         if type(exp) is not Integer:
             try:
                 exp = Integer(exp)
