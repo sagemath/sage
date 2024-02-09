@@ -163,7 +163,7 @@ else
             *)
                 echo "However, these system packages will not be used for building Sage"
                 echo "because $(code spkg-configure.m4) has not been written for this package;"
-                echo "see $(issue 27330)"
+                echo "see $(issue 27330) for more information."
                 ;;
         esac
     fi
