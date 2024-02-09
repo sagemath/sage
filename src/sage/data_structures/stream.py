@@ -1257,15 +1257,11 @@ class UndeterminedCoefficientsRingElement(Element):
         Element.__init__(self, parent)
         self._p = v
 
+    def __bool__(self):
+        return bool(self._p)
+
     def _repr_(self):
         return repr(self._p)
-
-    def _richcmp_(self, other, op):
-        r"""
-        Compare ``self`` with ``other`` with respect to the comparison
-        operator ``op``.
-        """
-        return self._p._richcmp_(other._p, op)
 
     def _add_(self, other):
         """
@@ -1332,7 +1328,7 @@ class UndeterminedCoefficientsRingElement(Element):
     def rational_function(self):
         return self._p
 
-    def subs(self, d):
+    def subs(self, in_dict=None, *args, **kwds):
         """
         EXAMPLES::
 
@@ -1344,18 +1340,25 @@ class UndeterminedCoefficientsRingElement(Element):
             sage: (p/q).subs({v: 3})
             4/(FESDUMMY_... + 1)
         """
+#        if isinstance(in_dict, dict):
+#            R = self._p.parent()
+#            in_dict = {ZZ(m) if m in ZZ else R(m): v for m, v in in_dict.items()}
+#
+#        P = self.parent()
+#        return P.element_class(P, self._p.subs(in_dict, *args, **kwds))
         P = self.parent()
         p_num = P._P(self._p.numerator())
         V_num = p_num.variables()
-        d_num = {P._P(v): c for v, c in d.items()
+        d_num = {P._P(v): c for v, c in in_dict.items()
                  if v in V_num}
         num = p_num.subs(d_num)
         p_den = P._P(self._p.denominator())
         V_den = p_den.variables()
-        d_den = {P._P(v): c for v, c in d.items()
+        d_den = {P._P(v): c for v, c in in_dict.items()
                  if v in V_den}
         den = p_den.subs(d_den)
         return P.element_class(P, P._PF(num / den))
+
 
 from sage.categories.pushout import UndeterminedCoefficientsFunctor
 
@@ -1527,7 +1530,8 @@ class Stream_uninitialized(Stream):
             - ``series`` -- a list of series
             - ``equations`` -- a list of equations defining the series
             - ``initial_values`` -- a list specifying ``self[0], self[1], ...``
-            - ``R`` -- the ring containing the coefficients (after substitution)
+            - ``base_ring`` -- the base ring
+            - ``coefficient_ring`` -- the ring containing the coefficients (after substitution)
             - ``terms_of_degree`` -- a function returning the list of terms of a given degree
 
         """
@@ -1694,7 +1698,8 @@ class Stream_uninitialized(Stream):
                     else:
                         c = c.map_coefficients(lambda e: e.subs({var: val}))
                         try:
-                            c = c.map_coefficients(lambda e: self._base_ring(e.rational_function()),
+                            c = c.map_coefficients(lambda e: (e if e in self._base_ring
+                                                              else self._base_ring(e.rational_function())),
                                                    self._base_ring)
                         except TypeError:
                             pass

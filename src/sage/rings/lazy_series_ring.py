@@ -2378,6 +2378,9 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
     def construction(self):
         from sage.categories.pushout import CompletionFunctor
+        if self._arity == 1:
+            return (CompletionFunctor(self._names[0], infinity),
+                    self._laurent_poly_ring)
         return (CompletionFunctor(self._names, infinity),
                 self._laurent_poly_ring)
 
