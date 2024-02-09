@@ -114,7 +114,7 @@ We separate the system in independent subsystems::
 
 and compute the coefficient matrix::
 
-    sage: A,v = Sequence(r2).coefficient_matrix()                                       # needs sage.rings.polynomial.pbori
+    sage: A,v = Sequence(r2).coefficients_monomials()                                   # needs sage.rings.polynomial.pbori
     sage: A.rank()                                                                      # needs sage.rings.polynomial.pbori
     32
 
@@ -134,14 +134,14 @@ easily::
     sage: len(monomials)
     190
     sage: F2 = Sequence(map(mul, cartesian_product_iterator((monomials, F))))
-    sage: A, v = F2.coefficient_matrix(sparse=False)
+    sage: A, v = F2.coefficients_monomials(sparse=False)
     sage: A.echelonize()
     sage: A
     6840 x 4474 dense matrix over Finite Field of size 2...
     sage: A.rank()
     4056
     sage: A[4055] * v
-    (k001*k003)
+    k001*k003
 
 TESTS::
 
@@ -707,6 +707,67 @@ class PolynomialSequence_generic(Sequence_generic):
         RRR = PolynomialRing(K,r,tuple(Ts),order='negdeglex')
         return RRR.ideal(JJ.gens())
 
+    def coefficients_monomials(self, order=None, sparse=True):
+        """
+        Return the matrix of coefficients ``A`` and
+        the matching vector of monomials ``v``, such that ``A*v == vector(self)``.
+
+        Thus value of ``A[i,j]`` corresponds the coefficient of the
+        monomial ``v[j]`` in the ``i``-th polynomial in this system.
+
+        Monomials are ordered w.r.t. the term ordering of ``order``
+        if given; otherwise, they are ordered w.r.t. ``self.ring()``
+        in reverse order, i.e., such that the smallest entry comes last.
+
+        INPUT:
+
+        - ``sparse`` - construct a sparse matrix (default: ``True``)
+        - ``order`` - a list or tuple specifying the order of monomials (default: ``None``)
+
+        EXAMPLES::
+
+            sage: # needs sage.libs.singular
+            sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: I.gens()
+            [a + 2*b + 2*c + 2*d - 1,
+             a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
+             2*a*b + 2*b*c + 2*c*d - b,
+             b^2 + 2*a*c + 2*b*d - c]
+            sage: F = Sequence(I)
+            sage: A,v = F.coefficients_monomials()
+            sage: A
+            [  0   0   0   0   0   0   0   0   0   1   2   2   2 126]
+            [  1   0   2   0   0   2   0   0   2 126   0   0   0   0]
+            [  0   2   0   0   2   0   0   2   0   0 126   0   0   0]
+            [  0   0   1   2   0   0   2   0   0   0   0 126   0   0]
+            sage: v
+            (a^2, a*b, b^2, a*c, b*c, c^2, b*d, c*d, d^2, a, b, c, d, 1)
+            sage: A*v
+            (a + 2*b + 2*c + 2*d - 1, a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
+             2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c)
+        """
+        from sage.modules.free_module_element import vector
+        from sage.matrix.constructor import Matrix
+
+        if order is None:
+            v = sorted(self.monomials(), reverse=True)
+        else:
+            if isinstance(order, (list, tuple)):
+                v = order
+            else:
+                raise ValueError("order argument can only accept list or tuple")
+
+        y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
+        A = Matrix(self.ring().base_ring(), len(self), len(v), sparse=sparse)
+        for x, poly in enumerate(self):
+            for c, m in poly:
+                try:
+                    A[x, y[m]] = c
+                except KeyError:
+                    raise ValueError("order argument does not contain all monomials")
+        return A, vector(v)
+
     def coefficient_matrix(self, sparse=True):
         """
         Return tuple ``(A,v)`` where ``A`` is the coefficient matrix
@@ -735,6 +796,9 @@ class PolynomialSequence_generic(Sequence_generic):
              b^2 + 2*a*c + 2*b*d - c]
             sage: F = Sequence(I)
             sage: A,v = F.coefficient_matrix()
+            doctest:warning...
+            DeprecationWarning: the function coefficient_matrix is deprecated; use coefficients_monomials instead
+            See https://github.com/sagemath/sage/issues/37035 for details.
             sage: A
             [  0   0   0   0   0   0   0   0   0   1   2   2   2 126]
             [  1   0   2   0   0   2   0   0   2 126   0   0   0   0]
@@ -761,26 +825,13 @@ class PolynomialSequence_generic(Sequence_generic):
             [      2*a*b + 2*b*c + 2*c*d - b]
             [        b^2 + 2*a*c + 2*b*d - c]
         """
-        R = self.ring()
-
-        m = sorted(self.monomials(),reverse=True)
-        nm = len(m)
-        f = tuple(self)
-        nf = len(f)
-
-        #construct dictionary for fast lookups
-        v = dict( zip( m , range(len(m)) ) )
-
         from sage.matrix.constructor import Matrix
+        from sage.misc.superseded import deprecation
+        deprecation(37035, "the function coefficient_matrix is deprecated; use coefficients_monomials instead")
 
-        A = Matrix( R.base_ring(), nf, nm, sparse=sparse )
-
-        for x in range( nf ):
-            poly = f[x]
-            for y in poly.monomials():
-                A[ x , v[y] ] = poly.monomial_coefficient(y)
-
-        return A, Matrix(R,nm,1,m)
+        R = self.ring()
+        A, v = self.coefficients_monomials(sparse=sparse)
+        return A, Matrix(R,len(v),1,v)
 
     def subs(self, *args, **kwargs):
         """
@@ -1642,6 +1693,60 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             return PolynomialSequence(l, R, immutable=True)
         else:
             return PolynomialSequence_generic.reduced(self)
+
+    def coefficients_monomials(self, order=None, sparse=True):
+        """
+        Return the matrix of coefficients ``A`` and
+        the matching vector of monomials ``v``, such that ``A*v == vector(self)``.
+
+        Thus value of ``A[i,j]`` corresponds the coefficient of the
+        monomial ``v[j]`` in the ``i``-th polynomial in this system.
+
+        Monomials are ordered w.r.t. the term ordering of ``order``
+        if given; otherwise, they are ordered w.r.t. ``self.ring()``
+        in reverse order, i.e., such that the smallest entry comes last.
+
+        INPUT:
+
+        - ``sparse`` - construct a sparse matrix (default: ``True``)
+        - ``order`` - a list or tuple specifying the order of monomials (default: ``None``)
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.polynomial.pbori
+            sage: B.<x,y,z> = BooleanPolynomialRing()
+            sage: F = Sequence([x*y + y + 1, z + 1])
+            sage: A, v = F.coefficients_monomials()
+            sage: A
+            [1 1 0 1]
+            [0 0 1 1]
+            sage: v
+            (x*y, y, z, 1)
+            sage: A*v
+            (x*y + y + 1, z + 1)
+        """
+        from sage.modules.free_module_element import vector
+        from sage.matrix.constructor import Matrix
+
+        if order is None:
+            v = sorted(self.monomials(), reverse=True)
+        else:
+            if isinstance(order, (list, tuple)):
+                v = order
+            else:
+                raise ValueError("order argument can only accept list or tuple")
+
+        R = self.ring().base_ring()
+        one = R.one()
+        y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
+        A = Matrix(R, len(self), len(v), sparse=sparse)
+        for x, poly in enumerate(self):
+            for m in poly:
+                try:
+                    A[x, y[m]] = one
+                except KeyError:
+                    raise ValueError("order argument does not contain all monomials")
+        return A, vector(v)
 
 
 class PolynomialSequence_gf2e(PolynomialSequence_generic):
