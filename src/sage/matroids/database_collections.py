@@ -163,6 +163,8 @@ def AllMatroids(n, r=None, type="all"):
         ....:                 assert M.is_valid()
     """
     from sage.matroids.constructor import Matroid
+    from sage.features.databases import DatabaseMatroids
+    DatabaseMatroids().require()
     import matroid_database
 
     if type != "all" and type != "unorientable":
