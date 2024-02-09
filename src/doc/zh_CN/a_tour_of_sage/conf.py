@@ -45,11 +45,13 @@ latex_elements['inputenc'] = ''
 latex_elements['fontenc'] = ''
 latex_elements['utf8extra'] = ''
 
+# https://tex.stackexchange.com/questions/223893/how-do-i-find-out-what-chinese-fonts-are-installed-with-my-mactex-installation
 latex_elements['preamble'] = r"""
-\usepackage[noindent,UTF8]{ctexcap}
-\setCJKmainfont{AR PL UMing CN}
-\setCJKsansfont{WenQuanYi Zen Hei}
-\setCJKmonofont{WenQuanYi Zen Hei Mono}
+\usepackage[UTF8]{ctex}
+\setCJKmainfont[BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
+\setCJKsansfont[BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+\setCJKmonofont{FandolFang-Regular.otf}
+\newCJKfontfamily\kaiti{FandolKai-Regular.otf}
 \usepackage{amsmath}
 \usepackage{amssymb}
 """
