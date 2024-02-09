@@ -28,6 +28,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
 from sage.categories.modules import Modules
 from sage.categories.poor_man_map import PoorManMap
+from sage.categories.map import Map
 from sage.structure.element import Element, parent
 
 
@@ -2062,17 +2063,25 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return self.parent().term(*self.trailing_item(*args, **kwds))
 
-        def map_coefficients(self, f):
+        def map_coefficients(self, f, new_base_ring=None):
             """
-            Mapping a function on coefficients.
+            Return the element obtained by applying ``f`` to the non-zero
+            coefficients of ``self``.
+
+            If ``f`` is a :class:`sage.categories.map.Map`, then the resulting
+            polynomial will be defined over the codomain of ``f``. Otherwise, the
+            resulting polynomial will be over the same ring as ``self``. Set
+            ``new_base_ring`` to override this behaviour.
+
+            An error is raised if the coefficients are not in the new base ring.
 
             INPUT:
 
-            - ``f`` -- an endofunction on the coefficient ring of the
-              free module
+            - ``f`` -- a callable that will be applied to the
+              coefficients of ``self``.
 
-            Return a new element of ``self.parent()`` obtained by applying the
-            function ``f`` to all of the coefficients of ``self``.
+            - ``new_base_ring`` (optional) -- if given, the resulting element
+              will be defined over this ring.
 
             EXAMPLES::
 
@@ -2096,8 +2105,32 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a = s([2,1]) + 2*s([3,2])                                         # needs sage.combinat sage.modules
                 sage: a.map_coefficients(lambda x: x * 2)                               # needs sage.combinat sage.modules
                 2*s[2, 1] + 4*s[3, 2]
+
+            We can map into a different base ring::
+
+                sage: # needs sage.combinat
+                sage: e = SymmetricFunctions(QQ).elementary()
+                sage: a = 1/2*(e([2,1]) + e([1,1,1])); a
+                1/2*e[1, 1, 1] + 1/2*e[2, 1]
+                sage: b = a.map_coefficients(lambda c: 2*c, ZZ); b
+                e[1, 1, 1] + e[2, 1]
+                sage: b.parent()
+                Symmetric Functions over Integer Ring in the elementary basis
+                sage: b.map_coefficients(lambda c: 1/2*c, ZZ)
+                Traceback (most recent call last):
+                ...
+                TypeError: no conversion of this rational to integer
             """
-            return self.parent().sum_of_terms( (m, f(c)) for m,c in self )
+            R = self.parent()
+            if new_base_ring is not None:
+                B = new_base_ring
+                R = R.change_ring(B)
+            elif isinstance(f, Map):
+                B = f.codomain()
+                R = R.change_ring(B)
+            else:
+                B = self.base_ring()
+            return R.sum_of_terms((m, B(f(c))) for m, c in self)
 
         def map_support(self, f):
             """
