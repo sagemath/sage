@@ -155,9 +155,17 @@ else
             echo "If the system package is installed, $(code ./configure) will check if it can be used."
         fi
     else
-        echo "However, these system packages will not be used for building Sage"
-        echo "because $(code spkg-configure.m4) has not been written for this package;"
-        echo "see $(issue 27330)"
+        case $PKG_BASE in
+            _*)
+                # Suppress the message, as it makes no sense for these special packages
+                # (_bootstrap, _sagemath)
+                ;;
+            *)
+                echo "However, these system packages will not be used for building Sage"
+                echo "because $(code spkg-configure.m4) has not been written for this package;"
+                echo "see $(issue 27330)"
+                ;;
+        esac
     fi
 fi
 echo
