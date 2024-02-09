@@ -26,20 +26,17 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-import sage.matroids.matroid
-import sage.matroids.basis_exchange_matroid
+from sage.libs.gmp.mpq cimport mpq_set
+from sage.rings.rational cimport Rational
+
 from sage.matroids.basis_matroid cimport BasisMatroid
-from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
 from sage.matroids.circuits_matroid cimport CircuitsMatroid
+from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
 from sage.matroids.dual_matroid import DualMatroid
-from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
 from sage.matroids.graphic_matroid import GraphicMatroid
+from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
 from sage.matroids.linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
 from sage.matroids.minor_matroid import MinorMatroid
-
-
-from sage.rings.rational cimport Rational
-from sage.libs.gmp.mpq cimport mpq_set
 
 
 #############################################################################
@@ -403,10 +400,10 @@ def unpickle_rational_matrix(version, data):
         mpq_set(A._entries[i], (<Rational?> data[2][i]).value)
     return A
 
+
 #############################################################################
 # LinearMatroid and subclasses
 #############################################################################
-
 
 def unpickle_linear_matroid(version, data):
     """
@@ -688,10 +685,10 @@ def unpickle_minor_matroid(version, data):
         M.rename(data[3])
     return M
 
+
 #############################################################################
 # Graphic Matroids
 #############################################################################
-
 
 def unpickle_graphic_matroid(version, data):
     """
