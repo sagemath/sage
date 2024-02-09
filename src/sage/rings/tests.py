@@ -474,9 +474,9 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
     R = PolynomialRing(base_ring, 'x')
     if verbose:
         print("test_karatsuba_multiplication: ring={}, threshold={}".format(R, threshold))
-    for i in range(numtests):
-        f = R.random_element(randint(0, maxdeg1), *base_ring_random_elt_args)
-        g = R.random_element(randint(0, maxdeg2), *base_ring_random_elt_args)
+    for _ in range(numtests):
+        f = R.random_element(randint(0, maxdeg1), False, *base_ring_random_elt_args)
+        g = R.random_element(randint(0, maxdeg2), False, *base_ring_random_elt_args)
         if verbose:
             print("  ({})*({})".format(f, g))
         if ref_mul(f, g) - f._mul_karatsuba(g, threshold) != 0:
