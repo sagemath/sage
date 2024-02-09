@@ -1497,8 +1497,19 @@ def RandomKTree(n, k, seed=None):
         5
         sage: G.show()  # not tested
     """
+    if n < 0:
+        raise ValueError("n must not be negative")
+
+    if k < 0:
+        raise ValueError("k must not be negative")
+
+    # A graph with treewidth 0 has no edges
+    if k == 0:
+        g = Graph(n, name=f"Random 0-tree of order {n}")
+        return g
+
     if n < k + 1:
-        raise ValueError("n must be greater than k + 1")
+        raise ValueError("n must be greater than k")
 
     if seed is not None:
         set_random_seed(seed)
@@ -1556,15 +1567,36 @@ def RandomPartialKTree(n, k, x, seed=None):
         5
         sage: G.show()  # not tested
     """
+    if n < 0:
+        raise ValueError("n must not be negative")
+
+    if k < 0:
+        raise ValueError("k must not be negative")
+
+    # A graph with treewidth 0 has no edges
+    if k == 0:
+        g = Graph(n - k, name=f"Random Partial 0-tree of order {n - x}")
+        return g
+
+    if n < k + 1:
+        raise ValueError("n must be greater than k")
+
     if seed is not None:
         set_random_seed(seed)
 
-    g = RandomKTree(n, k, seed)
+    # This formula calculates how many edges are in a `k`-tree with `n` nodes
+    edgesInKTree = (k ^ 2 + k) / 2 + (n - k - 1) * k
 
     # Check that x doesn't delete too many edges
-    # This formula calculates how many edges are in `k`-tree with `n` nodes
-    if x > (k ^ 2 + k) / 2 + (n - k - 1) * k:
+    if x > edgesInKTree:
         raise ValueError("x must be less than the number of edges in the `k`-tree with `n` nodes")
+
+    # The graph will have no edges
+    if x == edgesInKTree:
+        g = Graph(0, name=f"Random Partial {k}-tree of order 0")
+        return g
+
+    g = RandomKTree(n, k, seed)
 
     from sage.misc.prandom import shuffle
 
@@ -1572,6 +1604,8 @@ def RandomPartialKTree(n, k, x, seed=None):
     # Deletes x random edges from the graph
     shuffle(edges)
     g.delete_edges(edges[:x])
+        
+    g.name(f"Random Partial {k}-tree of order {n - x}")
     return g
 
 
