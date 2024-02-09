@@ -277,17 +277,16 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             cls = self._object_class()
 
             def convert(y):
-                if isinstance(y, cls):
-                    return y
-                else:
-                    return self(y)
+                return y if isinstance(y, cls) else self(y)
+
             for k, v in x.items():
                 k = convert(k)
                 v = convert(v)
                 z[k] = v
                 A.append("{}=>{}".format(k.name(), v.name()))
             r = self.new("{" + ",".join(A) + "}")
-            r.__sage_dict = z # do this to avoid having the entries of the list be garbage collected
+            r.__sage_dict = z
+            # this to avoid having the entries of the list be garbage collected
             return r
 
         import sage.rings.abc
@@ -851,7 +850,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
 
 
 ########################################
-## Elements
+#  Elements
 
 class PolymakeElement(ExtraTabCompletion, InterfaceElement):
     """

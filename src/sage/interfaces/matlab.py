@@ -149,7 +149,7 @@ language works). Use square brackets or the set function::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 import os
@@ -174,7 +174,7 @@ class Matlab(Expect):
            505
     """
     def __init__(self, maxread=None, script_subdirectory=None,
-                 logfile=None, server=None,server_tmpdir=None):
+                 logfile=None, server=None, server_tmpdir=None):
         Expect.__init__(self,
                         name='matlab',
                         prompt='>> ',
@@ -317,7 +317,7 @@ for hints on how to do that).
 
         - David Joyner and William Stein
         """
-        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')','')
+        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')', '')
 
     def _object_class(self):
         return MatlabElement
@@ -366,6 +366,7 @@ class MatlabElement(ExpectElement):
 
 # An instance
 matlab = Matlab()
+
 
 def reduce_load_Matlab():
     return matlab

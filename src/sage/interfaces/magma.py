@@ -1303,7 +1303,9 @@ class Magma(ExtraTabCompletion, Expect):
     # It's very painful using the interface without this.
     def _left_list_delim(self):
         """
-        Return the left sequence delimiter in Magma. Despite the name in
+        Return the left sequence delimiter in Magma.
+        
+        Despite the name in
         this function, this is really the least painful choice.
 
         EXAMPLES::
@@ -1311,12 +1313,14 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma._left_list_delim()
             '['
         """
-        #return "[*"
+        # return "[*"
         return "["
 
     def _right_list_delim(self):
         """
-        Return the right sequence delimiter in Magma. Despite the name in
+        Return the right sequence delimiter in Magma.
+
+        Despite the name in
         this function, this is really the least painful choice.
 
         EXAMPLES::
@@ -1324,7 +1328,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma._right_list_delim()
             ']'
         """
-        #return "*]"
+        # return "*]"
         return "]"
 
     def _assign_symbol(self):
@@ -1641,6 +1645,7 @@ class Magma(ExtraTabCompletion, Expect):
         return int(self.eval('GetNthreads()'))
 
     GetNthreads = get_nthreads
+
 
 @instancedoc
 class MagmaFunctionElement(FunctionElement):
