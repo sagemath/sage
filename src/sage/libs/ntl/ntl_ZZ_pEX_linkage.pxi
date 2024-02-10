@@ -372,7 +372,6 @@ cdef inline int celement_pow(ZZ_pEX_c* res, ZZ_pEX_c* x, long e, ZZ_pEX_c *modul
             ZZ_pEX_power(res[0], y, e)
             sig_off()
             return 0
-        # This was causing a crash, but it's fixed "upstream"
         # sig_on()
         ZZ_pEX_Modulus_build(mod, modulus[0])
         # sig_off()

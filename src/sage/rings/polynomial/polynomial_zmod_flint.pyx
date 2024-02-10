@@ -532,6 +532,16 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             (3*x^4 + 2*x^3 + x^2 + 2*x, x^4 + 3*x^3 + x^2 + x)
             sage: (p*d % x^9) == n
             True
+
+        Check that :issue:`37169` is fixed - it does not throw an error::
+
+            sage: R.<x> = Zmod(4)[]
+            sage: _.<z> = R.quotient_ring(x^2 - 1)
+            sage: c = 2 * z + 1
+            sage: c * Zmod(2).zero()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Aborted
         """
         if n_deg < 0 or d_deg < 0:
             raise ValueError("The degree bounds n_deg and d_deg should be positive.")

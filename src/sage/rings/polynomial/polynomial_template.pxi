@@ -636,10 +636,9 @@ cdef class Polynomial_template(Polynomial):
         else:
             if parent is not (<Polynomial_template>modulus)._parent and parent != (<Polynomial_template>modulus)._parent:
                 modulus = parent.coerce(modulus)
-            # I tried using `celement_is_zero` but it errors because `modulus` is a Python object
-            if modulus.is_zero():
+            if celement_is_zero(&(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent):
                 raise ZeroDivisionError("modulus must be nonzero")
-            if modulus.is_one():
+            if celement_is_one(&(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent):
                 return parent.zero()
             celement_pow(&r.x, &(<Polynomial_template>self).x, e, &(<Polynomial_template>modulus).x, (<Polynomial_template>self)._cparent)
 
