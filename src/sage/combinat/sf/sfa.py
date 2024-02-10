@@ -700,10 +700,14 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 Symmetric Functions over Universal Cyclotomic Field in the Jack J with t=1 basis
                 sage: Sym.zonal().corresponding_basis_over(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the zonal basis
-                sage: Sym.llt(3).hspin().corresponding_basis_over(CyclotomicField())
-                sage: Sym.llt(3).hcospin().corresponding_basis_over(CyclotomicField())
+                sage: Sym.llt(3).hspin().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the level 3 LLT spin basis
+                sage: Sym.llt(3).hcospin().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the level 3 LLT cospin basis
                 sage: Sym.llt(3, t=1).hspin().corresponding_basis_over(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the level 3 LLT spin with t=1 basis
                 sage: Sym.llt(3, t=1).hcospin().corresponding_basis_over(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the level 3 LLT cospin with t=1 basis
 
             .. TODO::
 

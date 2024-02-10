@@ -645,6 +645,7 @@ class LLT_spin(LLT_generic):
         self._m_to_self_cache = m_to_hsp_cache[level]
 
         LLT_generic.__init__(self, llt, prefix="HSp%s" % level)
+        self._descriptor = (("llt", {"k": self.level(), "t": self.t}), ("hspin",))
 
     def _to_m(self, part):
         r"""
@@ -713,6 +714,7 @@ class LLT_cospin(LLT_generic):
         self._self_to_m_cache = hcosp_to_m_cache[level]
         self._m_to_self_cache = m_to_hcosp_cache[level]
         LLT_generic.__init__(self, llt, prefix="HCosp%s" % level)
+        self._descriptor = (("llt", {"k": self.level(), "t": self.t}), ("hcospin",))
 
     def _to_m(self, part):
         r"""
