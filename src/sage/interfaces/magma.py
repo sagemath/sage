@@ -1304,7 +1304,7 @@ class Magma(ExtraTabCompletion, Expect):
     def _left_list_delim(self):
         """
         Return the left sequence delimiter in Magma.
-        
+
         Despite the name in
         this function, this is really the least painful choice.
 
@@ -1333,7 +1333,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _assign_symbol(self):
         """
-        Returns the assignment symbol in Magma.
+        Return the assignment symbol in Magma.
 
         EXAMPLES::
 
@@ -1344,7 +1344,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _equality_symbol(self):
         """
-        Returns the equality testing logical symbol in Magma.
+        Return the equality testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1355,7 +1355,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _lessthan_symbol(self):
         """
-        Returns the less than testing logical symbol in Magma.
+        Return the less than testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1366,7 +1366,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _greaterthan_symbol(self):
         """
-        Returns the greater than testing logical symbol in Magma.
+        Return the greater than testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1379,7 +1379,7 @@ class Magma(ExtraTabCompletion, Expect):
     # in your derived class.
     def _true_symbol(self):
         """
-        Returns the string representation of "truth" in Magma.
+        Return the string representation of "truth" in Magma.
 
         EXAMPLES::
 
@@ -1390,7 +1390,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _false_symbol(self):
         """
-        Returns the string representation of "false" in Magma.
+        Return the string representation of "false" in Magma.
 
         EXAMPLES::
 
