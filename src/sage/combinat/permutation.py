@@ -7102,7 +7102,7 @@ class StandardPermutations_n_abstract(Permutations):
             [4, 5, 1, 2, 3]
         """
         if not isinstance(x, Permutation):
-            x = Permutation(x)
+            x = x.domain()
         if len(x) < self.n:
             x = list(x) + list(range(len(x) + 1, self.n + 1))
         return self.element_class(self, x, check=check)
