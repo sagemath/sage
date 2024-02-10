@@ -1,11 +1,9 @@
 [build-system]
 # Minimum requirements for the build system to execute.
 requires = [
-    "sage_setup[autogen]",
      esyscmd(`sage-get-system-packages install-requires-toml \
         setuptools \
         wheel          \
-        sage_setup     \
         cypari         \
         cysignals      \
         cython         \
