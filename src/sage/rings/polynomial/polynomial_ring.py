@@ -1389,8 +1389,8 @@ class PolynomialRing_general(ring.Algebra):
             6
 
         If a tuple of two integers is given for the ``degree`` argument, a polynomial is chosen
-        among all polynomials with degree between them. If the base ring is uniform, so is this
-        method::
+        among all polynomials with degree between them. If the base ring is uniform, then this is
+        also sampled uniformly::
 
             sage: R.random_element(degree=(0, 4)).degree() in range(0, 5)
             True
@@ -1454,6 +1454,16 @@ class PolynomialRing_general(ring.Algebra):
             Traceback (most recent call last):
             ...
             ValueError: maximum degree (=-2) must be at least -1
+
+        Testing uniformity::
+
+            sage: from collections import Counter
+            sage: R = GF(3)["x"]
+            sage: samples = [R.random_element(degree=(-1, 2)) for _ in range(27 * 1000)] # long time
+            sage: assert all(750 <= f <= 1250 for f in Counter(samples).values())
+
+            sage: samples = [R.random_element(degree=(-1, 2), monic=True) for _ in range(13 * 1000)] # long time
+            sage: assert all(750 <= f <= 1250 for f in Counter(samples).values())
         """
         R = self.base_ring()
 
