@@ -1229,6 +1229,13 @@ static ex acos_eval(const ex & x)
 			return UnsignedInfinity;
 		throw (std::runtime_error("arccos_eval(): arccos(infinity) encountered"));
 	}
+
+	if (x.is_equal(mul(pow(_ex2, _ex1_2), _ex1_2)))
+                return mul(Pi, _ex1_4);
+
+        if (x.is_equal(mul(pow(_ex3, _ex1_2), _ex1_2)))
+                return numeric(1,6)*Pi;
+	
 	return acos(x).hold();
 }
 
