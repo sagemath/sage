@@ -7092,7 +7092,17 @@ class StandardPermutations_n_abstract(Permutations):
             [1, 4, 5, 2, 3, 6]
             sage: Permutations(6)(x)            # known bug
             [1, 4, 5, 2, 3, 6]
+
+            check if :trac:`37284` is fixed::
+
+            sage: S5 = SymmetricGroup(5)
+            sage: P5 = Permutations(5)
+            sage: p = S5.list()[3]
+            sage: P5(p)
+            [4, 5, 1, 2, 3]
         """
+        if not isinstance(x, Permutation):
+            x = Permutation(x)
         if len(x) < self.n:
             x = list(x) + list(range(len(x) + 1, self.n + 1))
         return self.element_class(self, x, check=check)
