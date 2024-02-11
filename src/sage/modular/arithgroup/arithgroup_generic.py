@@ -571,7 +571,7 @@ class ArithmeticSubgroup(Group):
 
         w = self.gens()
         for g in w:
-            if not (g in right):
+            if g not in right:
                 return False
         return True
 

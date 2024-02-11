@@ -330,7 +330,7 @@ def ModularForms(group=1,
 
     if use_cache and key in _cache:
         M = _cache[key]()
-        if not (M is None):
+        if M is not None:
             M.set_precision(prec)
             return M
 
