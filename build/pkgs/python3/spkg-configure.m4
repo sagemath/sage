@@ -24,8 +24,8 @@ SAGE_SPKG_CONFIGURE([python3], [
       dnl Check if we can do venv with a system python3
       dnl instead of building our own copy.
       dnl  Trac #31160: We no longer check for readline here.
-      check_modules="sqlite3, ctypes, math, hashlib, socket, zlib, distutils.core, ssl, ensurepip"
-      AC_CACHE_CHECK([for python3 >= ]MIN_VERSION[, < ]LT_VERSION[ with modules $check_modules], [ac_cv_path_PYTHON3], [
+      check_modules="sqlite3, ctypes, math, hashlib, socket, zlib, ssl, ensurepip"
+      AC_CACHE_CHECK([for python3 >= ]MIN_VERSION[, < ]LT_VERSION[ with modules $check_modules and setuptools/distutils], [ac_cv_path_PYTHON3], [
         AS_IF([test x"$ac_path_PYTHON3" != x], [dnl checking explicitly specified $with_python
            AC_MSG_RESULT([])
            AC_PATH_PROG([ac_path_PYTHON3], [$ac_path_PYTHON3])
@@ -40,7 +40,7 @@ SAGE_SPKG_CONFIGURE([python3], [
                     ac_path_PYTHON3_found=:
                     AC_MSG_RESULT([yes])
                     dnl introduction for AC_MSG_RESULT printed by AC_CACHE_CHECK
-                    AC_MSG_CHECKING([for python3 >= ]MIN_VERSION[, < ]LT_VERSION[ with modules $check_modules])
+                    AC_MSG_CHECKING([for python3 >= ]MIN_VERSION[, < ]LT_VERSION[ with modules $check_modules and setuptools/distutils])
            ])
            AS_IF([test -z "$ac_cv_path_PYTHON3"], [
                AC_MSG_ERROR([the python3 selected using --with-python=$with_python is not suitable])
