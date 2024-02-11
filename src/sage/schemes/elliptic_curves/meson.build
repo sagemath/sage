@@ -32,6 +32,7 @@ py.install_sources(
     'hom_scalar.py',
     'hom_sum.py',
     'hom_velusqrt.py',
+    'homset.py',
     'isogeny_class.py',
     'isogeny_small_degree.py',
     'jacobian.py',
