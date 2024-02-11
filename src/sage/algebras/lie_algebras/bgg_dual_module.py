@@ -265,7 +265,7 @@ class BGGDualModule(CombinatorialFreeModule):
         r"""
         Return the dual module of ``self``.
 
-        In Category `\mathcal{O}`, we have `(M^{\vee})^{\vee} \conj M`, so
+        In Category `\mathcal{O}`, we have `(M^{\vee})^{\vee} \cong M`, so
         we return the defining module `M` of `M^{\vee}`.
 
         EXAMPLES::
@@ -788,7 +788,7 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
 class SimpleModule(ModulePrinting, CombinatorialFreeModule):
     r"""
     Return the simple module `L_{\lambda}` as the image of the natural
-    morphism `\phi \colom M_{\lambda} \to M_{\lambda}^{\vee}`.
+    morphism `\phi: M_{\lambda} \to M_{\lambda}^{\vee}`.
     """
     @staticmethod
     def __classcall_private__(cls, g, weight, *args, **kwds):
