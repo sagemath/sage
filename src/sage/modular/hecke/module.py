@@ -22,7 +22,7 @@ from sage.modules.free_module import FreeModule
 from sage.modules.module import Module
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.sequence import Sequence
 
 from . import algebra
@@ -76,7 +76,7 @@ class HeckeModule_generic(Module):
             sage: ModularForms(3, 3).category()
             Category of Hecke modules over Rational Field
         """
-        if not isinstance(base_ring, CommutativeRing):
+        if base_ring not in CommutativeRings():
             raise TypeError("base_ring must be commutative ring")
 
         from sage.categories.hecke_modules import HeckeModules
