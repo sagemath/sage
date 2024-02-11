@@ -79,8 +79,6 @@ from sage.misc.persist import load, save
 
 from sage.features.databases import DatabaseJones
 
-JONESDATA = os.path.join(SAGE_SHARE, 'jones')  # should match the filename set in DatabaseJones
-
 
 def sortkey(K):
     """
@@ -152,7 +150,7 @@ class JonesDatabase:
         self.root = {}
         self.root[tuple()] = [x - 1]
         if not os.path.exists(path):
-            raise IOError("Path %s does not exist." % path)
+            raise OSError("Path %s does not exist." % path)
         for X in os.listdir(path):
             if X[-4:] == "solo":
                 Z = path + "/" + X
@@ -160,8 +158,10 @@ class JonesDatabase:
                 for Y in os.listdir(Z):
                     if Y[-3:] == ".gp":
                         self._load(Z, Y)
-        os.makedirs(JONESDATA, exist_ok=True)
-        save(self.root, JONESDATA + "/jones.sobj")
+
+        data_dir = os.path.dirname(DatabaseJones().absolute_filename())
+        os.makedirs(data_dir, exist_ok=True)
+        save(self.root, os.path.join(data_dir, "jones.sobj"))
 
     def unramified_outside(self, S, d=None, var='a'):
         """

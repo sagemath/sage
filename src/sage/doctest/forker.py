@@ -283,7 +283,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     try:
         file.writelines(lines)
         file.flush()
-    except IOError:
+    except OSError:
         pass  # the file is invalid
 
 
@@ -513,7 +513,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``stdout`` -- an open file to restore for debugging
 
-        - ``checker`` -- None, or an instance of
+        - ``checker`` -- ``None``, or an instance of
           :class:`doctest.OutputChecker`
 
         - ``verbose`` -- boolean, determines whether verbose printing
@@ -521,6 +521,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``optionflags`` -- Controls the comparison with the expected
           output.  See :mod:`testmod` for more information.
+
+        - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
         EXAMPLES::
 
@@ -535,6 +537,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         O = kwds.pop('outtmpfile', None)
         self.msgfile = kwds.pop('msgfile', None)
         self.options = kwds.pop('sage_options')
+        self.baseline = kwds.pop('baseline', {})
         doctest.DocTestRunner.__init__(self, *args, **kwds)
         self._fakeout = SageSpoofInOut(O)
         if self.msgfile is None:
@@ -1211,7 +1214,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
 
-       Without the source swapping::
+        Without the source swapping::
 
             sage: import doctest
             sage: print(doctest.DocTestRunner._failure_header(DTR, doctests[0], ex))
@@ -1232,16 +1235,57 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         out = [self.DIVIDER]
         with OriginalSource(example):
-            if test.filename:
-                if test.lineno is not None and example.lineno is not None:
-                    lineno = test.lineno + example.lineno + 1
+            if self.options.format == 'sage':
+                if test.filename:
+                    if test.lineno is not None and example.lineno is not None:
+                        lineno = test.lineno + example.lineno + 1
+                    else:
+                        lineno = '?'
+                    out.append('File "%s", line %s, in %s' %
+                               (test.filename, lineno, test.name))
                 else:
-                    lineno = '?'
-                out.append('File "%s", line %s, in %s' %
-                           (test.filename, lineno, test.name))
+                    out.append('Line %s, in %s' % (example.lineno + 1, test.name))
+                out.append(message)
+            elif self.options.format == 'github':
+                # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
+                if message.startswith('Warning: '):
+                    command = f'::warning title={message}'
+                    message = message[len('Warning: '):]
+                elif self.baseline.get('failed', False):
+                    command = f'::notice title={message}'
+                    message += ' [failed in baseline]'
+                else:
+                    command = f'::error title={message}'
+                if extra := getattr(example, 'extra', None):
+                    message += f': {extra}'
+                if test.filename:
+                    command += f',file={test.filename}'
+                    if test.lineno is not None and example.lineno is not None:
+                        lineno = test.lineno + example.lineno + 1
+                        command += f',line={lineno}'
+                    lineno = None
+                else:
+                    command += f',line={example.lineno + 1}'
+                #
+                # Urlencoding trick for multi-line annotations
+                # https://github.com/actions/starter-workflows/issues/68#issuecomment-581479448
+                #
+                # This only affects the display in the workflow Summary, after clicking "Show more";
+                # the message needs to be long enough so that "Show more" becomes available.
+                # https://github.com/actions/toolkit/issues/193#issuecomment-1867084340
+                #
+                # Unfortunately, this trick does not make the annotations in the diff view multi-line.
+                #
+                if '\n' in message:
+                    message = message.replace('\n', '%0A')
+                    # The actual threshold for "Show more" to appear depends on the window size.
+                    show_more_threshold = 500
+                    if (pad := show_more_threshold - len(message)) > 0:
+                        message += ' ' * pad
+                command += f'::{message}'
+                out.append(command)
             else:
-                out.append('Line %s, in %s' % (example.lineno + 1, test.name))
-            out.append(message)
+                raise ValueError(f'unknown format option: {self.options.format}')
             source = example.source
             out.append(doctest._indent(source))
             return '\n'.join(out)
@@ -1414,6 +1458,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
+            example.extra = f'Got: {got}'
             returnval = doctest.DocTestRunner.report_failure(self, out, test, example, got)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
@@ -1555,6 +1600,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: sage0.eval("l")
             '...if self.discriminant() == 0:...raise ArithmeticError...'
             sage: sage0.eval("u")
+            '...-> super().__init__(R, data, category=category)'
+            sage: sage0.eval("u")
             '...EllipticCurve_field.__init__(self, K, ainvs)'
             sage: sage0.eval("p ainvs")
             '(0, 0, 0, 0, 0)'
@@ -1564,6 +1611,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
+
+            example.extra = "Exception raised:\n" + "".join(traceback.format_exception(*exc_info))
             returnval = doctest.DocTestRunner.report_unexpected_exception(self, out, test, example, exc_info)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
@@ -1721,12 +1770,14 @@ class DocTestDispatcher(SageObject):
         """
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
+            baseline = self.controller.source_baseline(source)
             if not self.controller.options.only_errors:
                 self.controller.log(heading)
 
             with tempfile.TemporaryFile() as outtmpfile:
                 result = DocTestTask(source)(self.controller.options,
-                                             outtmpfile, self.controller.logger)
+                                             outtmpfile, self.controller.logger,
+                                             baseline=baseline)
                 outtmpfile.seek(0)
                 output = bytes_to_str(outtmpfile.read())
 
@@ -1985,9 +2036,10 @@ class DocTestDispatcher(SageObject):
                             # Start a new worker.
                             import copy
                             worker_options = copy.copy(opt)
+                            baseline = self.controller.source_baseline(source)
                             if target_endtime is not None:
                                 worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
-                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit])
+                            w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
                             heading = self.controller.reporter.report_head(w.source)
                             if not self.controller.options.only_errors:
                                 w.messages = heading + "\n"
@@ -2128,6 +2180,8 @@ class DocTestWorker(multiprocessing.Process):
     - ``funclist`` -- a list of callables to be called at the start of
       the child process.
 
+    - ``baseline`` -- dictionary, the ``baseline_stats`` value
+
     EXAMPLES::
 
         sage: from sage.doctest.forker import DocTestWorker, DocTestTask
@@ -2147,7 +2201,7 @@ class DocTestWorker(multiprocessing.Process):
         sage: reporter.report(FDS, False, W.exitcode, result, "")
             [... tests, ... s]
     """
-    def __init__(self, source, options, funclist=[]):
+    def __init__(self, source, options, funclist=[], baseline=None):
         """
         Initialization.
 
@@ -2171,6 +2225,7 @@ class DocTestWorker(multiprocessing.Process):
         self.source = source
         self.options = options
         self.funclist = funclist
+        self.baseline = baseline
 
         # Open pipe for messages. These are raw file descriptors,
         # not Python file objects!
@@ -2242,7 +2297,8 @@ class DocTestWorker(multiprocessing.Process):
         os.close(self.rmessages)
         msgpipe = os.fdopen(self.wmessages, "w")
         try:
-            task(self.options, self.outtmpfile, msgpipe, self.result_queue)
+            task(self.options, self.outtmpfile, msgpipe, self.result_queue,
+                 baseline=self.baseline)
         finally:
             msgpipe.close()
             self.outtmpfile.close()
@@ -2477,19 +2533,6 @@ class DocTestTask():
         ['cputime', 'err', 'failures', 'optionals', 'tests', 'walltime', 'walltime_skips']
     """
 
-    extra_globals = {}
-    """
-    Extra objects to place in the global namespace in which tests are run.
-    Normally this should be empty but there are special cases where it may
-    be useful.
-
-    For example, in Sage versions 9.1 and earlier, on Python 3 add
-    ``long`` as an alias for ``int`` so that tests that use the
-    ``long`` built-in (of which there are many) still pass.  We did
-    this so that the test suite could run on Python 3 while Python 2
-    was still the default.
-    """
-
     def __init__(self, source):
         """
         Initialization.
@@ -2508,7 +2551,8 @@ class DocTestTask():
         """
         self.source = source
 
-    def __call__(self, options, outtmpfile=None, msgfile=None, result_queue=None):
+    def __call__(self, options, outtmpfile=None, msgfile=None, result_queue=None, *,
+                 baseline=None):
         """
         Calling the task does the actual work of running the doctests.
 
@@ -2524,6 +2568,8 @@ class DocTestTask():
 
         - ``result_queue`` -- an instance of :class:`multiprocessing.Queue`
           to store the doctest result. For testing, this can also be None.
+
+        - ``baseline`` -- a dictionary, the ``baseline_stats`` value.
 
         OUTPUT:
 
@@ -2560,7 +2606,8 @@ class DocTestTask():
                 outtmpfile=outtmpfile,
                 msgfile=msgfile,
                 sage_options=options,
-                optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+                optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS,
+                baseline=baseline)
             runner.basename = self.source.basename
             runner.filename = self.source.path
             N = options.file_iterations
@@ -2614,10 +2661,6 @@ class DocTestTask():
         # Remove '__package__' item from the globals since it is not
         # always in the globals in an actual Sage session.
         dict_all.pop('__package__', None)
-
-        # Add any other special globals for testing purposes only
-        dict_all.update(self.extra_globals)
-
         sage_namespace = RecordingDict(dict_all)
         sage_namespace['__name__'] = '__main__'
         doctests, extras = self.source.create_doctests(sage_namespace)

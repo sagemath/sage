@@ -356,7 +356,7 @@ Sage example in ./linalg.tex, line 2502::
   ....:                  [2,2,0,1,0,0,1,0],[-12,0,5,-8,0,0,0,4],\
   ....:                  [0,4,0,0,0,0,4,0],[0,0,0,0,1,0,0,0],\
   ....:                  [-14,2,0,-6,0,2,2,-1],[-4,0,2,-4,0,0,0,4]])
-  sage: A.frobenius()
+  sage: A.frobenius_form()
   [0 0 0 4 0 0 0 0]
   [1 0 0 4 0 0 0 0]
   [0 1 0 1 0 0 0 0]
@@ -368,12 +368,12 @@ Sage example in ./linalg.tex, line 2502::
 
 Sage example in ./linalg.tex, line 2540::
 
-  sage: A.frobenius(1)
+  sage: A.frobenius_form(1)
   [x^4 - x^2 - 4*x - 4, x^3 - x^2 - 4, x - 2]
 
 Sage example in ./linalg.tex, line 2547::
 
-  sage: F,K = A.frobenius(2)
+  sage: F,K = A.frobenius_form(2)
   sage: K
   [      1  -15/56  17/224   15/56 -17/896       0 -15/112   17/64]
   [      0  29/224 -13/224 -23/448 -17/896 -17/896  29/448  13/128]
@@ -398,7 +398,7 @@ Sage example in ./linalg.tex, line 2621::
 
 Sage example in ./linalg.tex, line 2629::
 
-  sage: A.frobenius(1)
+  sage: A.frobenius_form(1)
   [x^4 - x^2 - 4*x - 4, x^3 - x^2 - 4, x - 2]
 
 Sage example in ./linalg.tex, line 2726::

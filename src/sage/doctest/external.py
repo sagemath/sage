@@ -360,7 +360,7 @@ def external_features():
     yield CPLEX()
     yield Gurobi()
 
-def external_software():
+def external_software() -> list[str]:
     """
     Return the alphabetical list of external software supported by this module.
 

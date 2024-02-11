@@ -38,19 +38,3 @@ exec </dev/null
 
 sdh_make
 sdh_make_install
-
-# Create symbolic link to lib/ecl-version directory.
-# Also create a symbolic link lib/ecl/ecl -> include/ecl.
-# This is important when the Sage install is moved, see Trac #14662.
-cd "$SAGE_DESTDIR$SAGE_LOCAL/lib/" && rm -f ecl && ln -s ecl-* ecl
-if [ $? -ne 0 ]; then
-    echo >&2 "Error - Failed to create symbolic link to ECL library"
-    echo >&2 "directory ... exiting"
-    exit 1
-fi
-cd "$SAGE_DESTDIR$SAGE_LOCAL/lib/ecl" && rm -f ecl && ln -s ../../include/ecl ecl
-if [ $? -ne 0 ]; then
-    echo >&2 "Error - Failed to create symbolic link to ECL include"
-    echo >&2 "directory ... exiting"
-    exit 1
-fi
