@@ -445,8 +445,6 @@ cdef class Polynomial(CommutativePolynomial):
 
         return self(in_dict, *args, **kwds)
 
-    substitute = subs
-
     @cython.boundscheck(False)
     @cython.wraparound(False)
     def __call__(self, *args, **kwds):
