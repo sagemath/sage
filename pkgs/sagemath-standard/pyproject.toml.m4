@@ -10,6 +10,7 @@ requires = [
         setuptools \
         wheel          \
         sage_setup     \
+        sagemath_environment \
         cypari         \
         cysignals      \
         cython         \
