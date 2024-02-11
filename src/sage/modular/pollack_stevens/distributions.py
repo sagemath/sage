@@ -49,7 +49,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.modules import Modules
 from sage.structure.factory import UniqueFactory
 
-import sage.rings.ring as ring
+from sage.rings.ring import Ring
 
 lazy_import('sage.modular.pollack_stevens.dist', 'get_dist_classes')
 lazy_import('sage.rings.padics.factory', ['ZpCA', 'QpCR'])
@@ -281,7 +281,7 @@ class OverconvergentDistributions_abstract(Module):
             ...
             ValueError: p must be prime
         """
-        if not isinstance(base, ring.Ring):
+        if not isinstance(base, Ring):
             raise TypeError("base must be a ring")
         #from sage.rings.padics.pow_computer import PowComputer
         # should eventually be the PowComputer on ZpCA once that uses longs.
