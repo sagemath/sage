@@ -7,7 +7,7 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2023 Travis Scrimshaw <tcscrims at gmail.com>
+#       Copyright (C) 2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ from sage.structure.parent import Parent
 from sage.structure.indexed_generators import IndexedGenerators
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.family import Family
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.matrix.constructor import matrix
@@ -94,6 +93,10 @@ class BGGDualModule(CombinatorialFreeModule):
          -6*f[-alpha[1]]^4*v[2*Lambda[1]]^*,
          -8*f[-alpha[1]]^5*v[2*Lambda[1]]^*,
          -10*f[-alpha[1]]^6*v[2*Lambda[1]]^*]
+
+    REFERENCES:
+
+    - [Humphreys08]_
     """
     def __init__(self, module):
         r"""
@@ -424,7 +427,6 @@ class BGGDualModule(CombinatorialFreeModule):
 
 
 # This is an abuse as the monoid is not free.
-# FIXME:
 # TODO: Rewrite this (or the indexed monoid class) to use explicit vectors
 #    since we only want to consider ordered elements.
 # Note, such a rewrite would force the Lie algebra to be finite dimensional.
@@ -788,6 +790,27 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
     Return the simple module `L_{\lambda}` as the image of the natural
     morphism `\phi \colom M_{\lambda} \to M_{\lambda}^{\vee}`.
     """
+    @staticmethod
+    def __classcall_private__(cls, g, weight, *args, **kwds):
+        r"""
+        Normalize input to ensure a unique representation and return
+        the correct type.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['E', 6])
+            sage: La = g.cartan_type().root_system().weight_space().fundamental_weights()
+            sage: type(g.simple_module(La[1]+La[2]))
+            <class 'sage.algebras.lie_algebras.bgg_dual_module.FiniteDimensionalSimpleModule_with_category'>
+            sage: type(g.simple_module(La[1]-La[2]))
+            <class 'sage.algebras.lie_algebras.bgg_dual_module.SimpleModule_with_category'>
+            sage: type(g.simple_module(La[1]+3/2*La[2]))
+            <class 'sage.algebras.lie_algebras.bgg_dual_module.SimpleModule_with_category'>
+        """
+        if weight.is_dominant_weight():
+            return FiniteDimensionalSimpleModule(g, weight, *args, **kwds)
+        return super().__classcall__(cls, g, weight, *args, **kwds)
+
     def __init__(self, g, weight, prefix='f', basis_key=None, **kwds):
         r"""
         Initialize ``self``.
@@ -806,7 +829,6 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
         """
         self._g = g
         self._weight = weight
-        coroots = g.cartan_type().root_system().root_lattice().simple_coroots()
         self._dom_int = weight.is_dominant_weight()
         self._verma = g.verma_module(weight, basis_key=basis_key)
         self._ambient = self._verma.dual()
@@ -918,7 +940,6 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
         data = x.monomial_coefficients(copy=True)  # this is destructive to data
         R = self.base_ring()
         ret = {}
-        wt_space_bases = self._indices._weight_space_bases
         for ls in supp:
             if ls not in data:
                 continue
@@ -1131,3 +1152,23 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
 
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
+
+class FiniteDimensionalSimpleModule(SimpleModule):
+    """
+    A finite dimensional simple module.
+    """
+    def bgg_resolution(self):
+        """
+        Return the BGG resolution of ``self``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: L = g.simple_module(La[1]+La[2])
+            sage: L.bgg_resolution()
+            BGG resolution of Simple module with highest weight Lambda[1] + Lambda[2]
+             of Lie algebra of ['A', 2] in the Chevalley basis
+        """
+        from sage.algebras.lie_algebras.bgg_resolution import BGGResolution
+        return BGGResolution(self)
