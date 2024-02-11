@@ -728,9 +728,6 @@ class BQFClassGroupQuotientMorphism(Morphism):
     is defined by finding a class representative `[a,b,c]` satisfying
     `f^2 \mid a` and `f \mid b` and substituting `x \mapsto x/f`.
 
-    Alternatively, one may pass the discriminants `f^2 D` and `D` instead
-    of the :class:`BQFClassGroup` objects `G` and `H`.
-
     This map is a well-defined group homomorphism.
 
     EXAMPLES::
