@@ -2387,6 +2387,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         TESTS::
 
+            sage: # known bug: macos (sporadic failure, see #37296)
             sage: K2.<sqrt2> = QuadraticField(2)
             sage: K3.<sqrt3> = QuadraticField(3)
             sage: K5.<sqrt5> = QuadraticField(5)
