@@ -56,3 +56,44 @@ Sometimes even conduct that is intended to be helpful can be offensive to others
   feel that other aspects are more important or more urgent for the project.
   Always remember that different people contribute to the project on the basis
   of a variety of expertise, motivations, and priorities.
+
+
+## The sage-abuse committee ##
+
+
+### Examples of sanctions ###
+
+Types of sanctions that the sage-abuse committee has used in the past include
+the following:
+
+- Deleting comments (on GitHub Issues/PRs and Google Groups) that violate
+  the Code of Conduct.
+
+  - This eliminates the potential of damage that the violations can cause
+    in the future, when participants visit the Issues/PRs or Google Groups
+    on the web.
+
+  - It does not eliminate the damage that the violations have already caused
+    between the time that the violating comment is posted and the time of
+    deletion.
+
+  - It does not eliminate the damage that the violations are causing via
+    email (notifications of subscribers to GitHub Issues/PRs, Google Groups
+    as mailing lists).
+
+  - Before deleting a comment, a screenshot should be taken in case it is
+    needed as evidence for future proceedings.
+
+- Setting Google Groups to hold posts of a participant for moderation
+  by an administrator.
+
+- Privilege changes in the GitHub organization.
+
+  - Removing the Maintainer role of a participant.
+
+  - Removing a participant from the Triage team.
+
+
+### Appointment procedure ###
+
+TBD
