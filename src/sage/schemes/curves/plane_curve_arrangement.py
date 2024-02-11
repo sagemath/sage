@@ -534,7 +534,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             bm = self._braid_monodromy_vertical
         else:
             bm = self._braid_monodromy_non_vertical
-        if bm is not None:
+        if bm is not None:  # bm could be []
             if not vertical:
                 st = self._strands_nonvertical
                 d1 = prod(L).degree()
@@ -601,7 +601,7 @@ class AffinePlaneCurveArrangementsElement(Element):
             computed = self._meridians_nonsimpl_nonvertical
         if computed:
             return computed
-        _ = self.fundamental_group(simplified=simplified, vertical=vertical)
+        self.fundamental_group(simplified=simplified, vertical=vertical)
         if simplified and vertical:
             return self._meridians_simpl_vertical
         elif simplified and not vertical:
