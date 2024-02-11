@@ -123,7 +123,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
 
     where `F_{\lambda}` is the `U(\mathfrak{b})` module such that
     `h \in U(\mathfrak{h})` acts as multiplication by
-    `\langle \lambda, h \rangle` and `U\mathfrak{g}^+) F_{\lambda} = 0`.
+    `\langle \lambda, h \rangle` and `U(\mathfrak{g}^+) F_{\lambda} = 0`.
 
     INPUT:
 
