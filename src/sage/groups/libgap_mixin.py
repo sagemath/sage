@@ -1024,6 +1024,7 @@ def minimum_generating_set(group, gap_based=False):
     from sage.libs.gap.element import GapElement
 
     if not isinstance(group, GapElement):
+        convertor = group._element_constructor_
         group = group._libgap_()
 
     if not group.IsFinite().sage():
@@ -1036,7 +1037,7 @@ def minimum_generating_set(group, gap_based=False):
             if is_GroupByGenerators(group, [ele]):
                 if gap_based:
                     return set([ele])
-                return set([ele.sage()])
+                return set([convertor(ele)])
 
     if group.IsSimple().sage():
         n = len(group_elements)
@@ -1045,7 +1046,7 @@ def minimum_generating_set(group, gap_based=False):
                 if is_GroupByGenerators(group,[group_elements[i], group_elements[j]]):
                     if gap_based:
                         return set([group_elements[i], group_elements[j]])
-                    return set([group_elements[i].sage(), group_elements[j].sage()])
+                    return set([convertor(group_elements[i]), convertor(group_elements[j])])
 
     # The MinimalNormalSubgroups method returns a list of all minimal normal subgroups
     # but for this algorithm we need only one minimal normal subgroup (which is not trivial).
@@ -1064,17 +1065,17 @@ def minimum_generating_set(group, gap_based=False):
         if is_GroupByGenerators(group, g):
             if gap_based:
                 return set(g)
-            return set([ele.sage() for ele in g])
+            return set([convertor(ele) for ele in g])
         for i in range(l):
             for j in range(len(n)):
                 modifeid_g = g[:i] + [g[i]*n[j]] + g[i+1:]
                 if is_GroupByGenerators(group, modifeid_g):
                     if gap_based:
                         return set(modifeid_g)
-                    return set([ele.sage() for ele in modifeid_g])
+                    return set([convertor(ele) for ele in modifeid_g])
         if gap_based:
             return set(g+[n[0]])
-        return set([ele.sage() for ele in g] + [n[0].sage()])
+        return set([convertor(ele) for ele in g] + [convertor(n[0])])
 
     def gen_combinations(g, N, t):
         if t>len(g):
@@ -1098,4 +1099,4 @@ def minimum_generating_set(group, gap_based=False):
             if is_GroupByGenerators(group, list(gens)):
                 if gap_based:
                     return set(gens)
-                return set([ele.sage() for ele in gens])
+                return set([convertor(ele) for ele in gens])

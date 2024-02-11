@@ -266,7 +266,7 @@ cdef class Group(Parent):
         """
         raise NotImplementedError
 
-    def minimum_generating_set(self):
+    def minimum_generating_set(self, gap_based=False):
         """
         Return a minimal generating set for this group.
 
@@ -277,7 +277,7 @@ cdef class Group(Parent):
             {[1, 3, 2], [3, 1, 2, 5, 4]}            
         """
         from sage.groups.libgap_mixin import minimum_generating_set
-        return minimum_generating_set(self)
+        return minimum_generating_set(self, gap_based=gap_based)
 
 cdef class AbelianGroup(Group):
     """
