@@ -188,7 +188,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 Convert a polynomial into the ring of integer-valued polynomials.
 
-                This raises a ``ValueError`` if this is not possible.
+                This raises a :class:`ValueError` if this is not possible.
 
                 INPUT:
 
@@ -1174,6 +1174,45 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             return binomial(x, i)
 
         class Element(CombinatorialFreeModule.Element):
-            pass
+            def variable_shift(self, k=1):
+                r"""
+                Return the image by the shift of variables.
+
+                On polynomials, the action is the shift
+                on variables `x \mapsto x + k`.
+
+                INPUT:
+
+                - `k` -- integer (default: 1)
+
+                EXAMPLES::
+
+                    sage: A = IntegerValuedPolynomialRing(ZZ).B()
+                    sage: B = A.basis()
+                    sage: B[5].variable_shift()
+                    B[4] + B[5]
+                    sage: B[5].variable_shift(-1)
+                    -B[0] + B[1] - B[2] + B[3] - B[4] + B[5]
+
+                TESTS::
+
+                    sage: B[5].variable_shift(0)
+                    B[5]
+                    sage: B[5].variable_shift().variable_shift(-1)
+                    B[5]
+                """
+                if k == 0:
+                    return self
+                A = self.parent()
+
+                def on_basis(n):
+                    return {A._indices(j): binomial(k, n - j)
+                            for j in range(n + 1)}
+
+                from sage.data_structures.blas_dict import linear_combination
+                mc = self._monomial_coefficients
+                ret = linear_combination((on_basis(index), coeff)
+                                         for (index, coeff) in mc.items())
+                return A.element_class(A, ret)
 
     B = Binomial
