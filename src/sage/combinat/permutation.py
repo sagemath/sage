@@ -7101,8 +7101,11 @@ class StandardPermutations_n_abstract(Permutations):
             sage: P5(p)
             [4, 5, 1, 2, 3]
         """
-        if not isinstance(x, Permutation):
-            x = x.domain()
+        try:
+            if not isinstance(x, Permutation):
+                x = x.domain()
+        except AttributeError:
+            pass
         if len(x) < self.n:
             x = list(x) + list(range(len(x) + 1, self.n + 1))
         return self.element_class(self, x, check=check)
