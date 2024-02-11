@@ -70,6 +70,7 @@ graphs. Here is what they can do
     :delim: |
 
     :meth:`~DiGraph.path_semigroup` | Return the (partial) semigroup formed by the paths of the digraph.
+    :meth:`~DiGraph.auslander_reiten_quiver` | Return the Auslander-Reiten quiver of ``self``.
 
 **Connectivity:**
 
@@ -3179,6 +3180,23 @@ class DiGraph(GenericGraph):
         """
         from sage.quivers.path_semigroup import PathSemigroup
         return PathSemigroup(self)
+
+    def auslander_reiten_quiver(self):
+        r"""
+        Return the Auslander-Reiten quiver of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.quivers.ar_quiver.AuslanderReitenQuiver`
+
+        EXAMPLES::
+
+            sage: D = DiGraph([[1,2,'a'], [1,2,'b']], multiedges=True)
+            sage: D.auslander_reiten_quiver()
+            Auslander-Reiten quiver of Multi-digraph on 2 vertices
+        """
+        from sage.quivers.ar_quiver import AuslanderReitenQuiver
+        return AuslanderReitenQuiver(self)
 
     # Directed Acyclic Graphs (DAGs)
 
