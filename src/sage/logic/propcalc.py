@@ -140,8 +140,8 @@ It is an error to create a formula with bad syntax::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-### TODO:
-### converts (cnf) returns w/o change
+# TODO:
+# converts (cnf) returns w/o change
 
 from . import boolformula
 from . import logicparser
@@ -188,6 +188,7 @@ def formula(s):
         msg = "malformed statement"
         raise SyntaxError(msg)
     return f
+
 
 def get_formulas(*statements):
     r"""
@@ -260,6 +261,7 @@ def get_formulas(*statements):
         except TypeError:
             raise TypeError
     return formulas
+
 
 def consistent(*formulas):
     r"""
