@@ -1787,6 +1787,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: A,B = polygens(F, 'A,B')
             sage: eq = 1728*4*A**3 - j * (4*A**3 + 27*B**2)
             sage: twists2 = []
+            sage: # known bug: macos (sporadic ValueError, #37294)
             sage: for _ in range(10):
             ....:     I = Ideal([eq, A + B - F.random_element()])
             ....:     try:
