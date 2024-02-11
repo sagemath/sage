@@ -481,7 +481,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     if ran < 30:    # use simple search for small ranges
         d = c
-        #        for i,d in multiples(a,ran,c,indexed=True,operation=operation):
+        # for i,d in multiples(a,ran,c,indexed=True,operation=operation):
         for i0 in range(ran):
             i = lb + i0
             if identity == d:        # identity == b^(-1)*a^i, so return i
