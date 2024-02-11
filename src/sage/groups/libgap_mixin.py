@@ -1022,35 +1022,35 @@ def minimum_generating_set(group, gap_based=False):
     from sage.misc.functional import log
     from sage.libs.gap.element import GapElement
 
-    # def minimal_generating_set(group):
-    #     lis = [ele for ele in group.AsList()]
-    #     # Using dictionary for faster lookup
-    #     dic = {ele:False for ele in lis}
-    #     dic[lis[0]] = True
-    #     g = list()
-    #     for ele in dic:
-    #         if dic[ele]:
-    #             continue
-    #         changes = 0
-    #         while True:
-    #             c = 0
-    #             for ele2 in dic:
-    #                 if not dic[ele2]:
-    #                     continue
-    #                 ele3 = ele * ele2
-    #                 if not dic[ele3]:
-    #                     changes += 1
-    #                     c += 1
-    #                 dic[ele3] = True
-    #                 ele4 = ele2 * ele
-    #                 if not dic[ele4]:
-    #                     changes += 1
-    #                     c += 1
-    #                 dic[ele4] = True
-    #             if c == 0:
-    #                 break
-    #         g.append(ele)
-    #     return g
+    def minimal_generating_set(group):
+        lis = group.AsList()
+        dic = {each:False for each in lis}
+        ans = set()
+        for each in lis:
+            if each==lis[0]:
+                dic[each] = True
+                continue
+            each2 = each*each
+            check = False
+            if not dic[each]:
+                check = True
+                dic[each] = True
+            while each2!=each:
+                if not dic[each2]:
+                    dic[each2] = True
+                    check = True
+                each2 = each2*each
+            for each2 in lis:
+                if dic[each2]:
+                    if not dic[each*each2]:
+                        dic[each*each2] = True
+                        check = True
+                    if not dic[each2*each]:
+                        dic[each2*each] = True
+                        check = True
+            if check:
+                ans.add(each)
+        return ans
 
     if not isinstance(group, GapElement):
         group = group._libgap_()
@@ -1080,7 +1080,7 @@ def minimum_generating_set(group, gap_based=False):
     # but for this algorithm we need only one minimal normal subgroup (which is not trivial).
     # TODO: Replace the function with the one that gives only one minimal normal subgroup
     N = group.MinimalNormalSubgroups()[0]
-    n = N.MinimalGeneratingSet()
+    n = list(minimal_generating_set(N))
 
     phi = group.NaturalHomomorphismByNormalSubgroup(N)
     GbyN = phi.ImagesSource()
@@ -1111,7 +1111,6 @@ def minimum_generating_set(group, gap_based=False):
         L = [g]
         N = [ele for ele in N_old]  # This line is included because N_old does not have slicing method
         N = N[1:]
-
         for i in range(t):
             newL = []
             for g in L:
@@ -1126,17 +1125,20 @@ def minimum_generating_set(group, gap_based=False):
         return L
 
     t = (13/5 + log(group.Size().sage(), 2)/log(N.Size().sage(), 2))
-
+    N_list = N.AsList()
     if t <= l:
-        for gens in gen_combinations(g, N.AsList(), t):
+        for gens in gen_combinations(g, N_list, t):
             if is_GroupByGenerators(group, gens):
                 if gap_based:
                     return set(gens)
                 return set([ele.sage() for ele in gens])
 
-    for raw_gens in gen_combinations(g, N.AsList(), l):
-        for nl in N.AsList():
-            gens = set(raw_gens).union({nl})
+    for nl in N_list:
+        for raw_gens in gen_combinations(g, N_list, l):
+            if nl==N_list[0]:
+                gens = set(raw_gens)
+            else:
+                gens = set(raw_gens).union({nl})
             if is_GroupByGenerators(group, list(gens)):
                 if gap_based:
                     return set(gens)
