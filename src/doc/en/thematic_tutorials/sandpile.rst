@@ -2865,7 +2865,7 @@ SandpileConfig
 
 **\***
 
-   If ``other`` is an configuration, the recurrent element equivalent
+   If ``other`` is a configuration, the recurrent element equivalent
    to the sum.  If ``other`` is an integer, the sum of configuration with
    itself ``other`` times.
 

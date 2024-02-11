@@ -164,7 +164,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             sage: V.element_class(V, 0)
             (0.0, 0.0)
         """
-        cdef Py_ssize_t i,j
+        cdef Py_ssize_t i
         if isinstance(entries,(tuple, list)):
             if len(entries)!=self._degree:
                     raise TypeError("entries has wrong length")
@@ -229,7 +229,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         status = numpy.PyArray_SETITEM(self._vector_numpy,
                         numpy.PyArray_GETPTR1(self._vector_numpy, i),
                         self._python_dtype(value))
-        #TODO: Throw an error if status == -1
+        # TODO: Throw an error if status == -1
 
     cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """

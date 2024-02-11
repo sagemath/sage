@@ -73,12 +73,6 @@ else
     echo "to, or '--with-pic' was given in ECM_CONFIGURE."
 fi
 
-if [ "$UNAME" == "CYGWIN" ]; then
-    # Force shared library build only on Cygwin; it will not build otherwise
-    ECM_CONFIGURE="$ECM_CONFIGURE --enable-shared --disable-static"
-fi
-
-
 if [ "$SAGE_DEBUG" = yes ]; then
     # Add debug symbols and disable optimization:
     echo >&2 "Warning: Setting SAGE_DEBUG=yes completely disables optimization."
@@ -237,17 +231,6 @@ sdh_configure $SAGE_CONFIGURE_GMP $ECM_CONFIGURE
 ###############################################################################
 
 sdh_make
-
-###############################################################################
-# Remove old executable/header/libraries/manpage:
-###############################################################################
-
-echo
-echo "Build succeeded.  Now removing old binary, header file, manual page and libraries..."
-rm -f "$SAGE_LOCAL"/bin/ecm
-rm -f "$SAGE_LOCAL"/lib/libecm.*
-rm -f "$SAGE_LOCAL"/include/ecm.h
-rm -f "$SAGE_LOCAL"/share/man/man1/ecm.1
 
 ###############################################################################
 # Now install ECM:

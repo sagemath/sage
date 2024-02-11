@@ -74,7 +74,7 @@ from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 
 
-class DiGraphGenerators():
+class DiGraphGenerators:
     r"""
     A class consisting of constructors for several common digraphs,
     including orderly generation of isomorphism class representatives.

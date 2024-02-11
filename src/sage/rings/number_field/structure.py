@@ -2,10 +2,6 @@
 r"""
 Helper classes for structural embeddings and isomorphisms of number fields
 
-AUTHORS:
-
-- Julian Rueth (2014-04-03): initial version
-
 Consider the following fields `L` and `M`::
 
     sage: L.<a> = QuadraticField(2)
@@ -43,6 +39,10 @@ structure morphisms::
     sage: N.<a> = L.absolute_field()
     sage: M is N
     True
+
+AUTHORS:
+
+- Julian Rueth (2014-04-03): initial version
 
 """
 #*****************************************************************************

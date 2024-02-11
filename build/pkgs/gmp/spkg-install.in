@@ -122,15 +122,8 @@ export ABI CFLAGS CXXFLAGS LDFLAGS # Partially redundant, but safe(r).
 GMP_CONFIGURE="--enable-shared $GMP_CONFIGURE"
 
 # Also build the static library to be used by e.g. ECM
-# unless we are on Cygwin where we can only build a shared
-# or a static library but not both:
-if [ "$UNAME" = "CYGWIN" ]; then
-    echo "Building GMP with the C++ interface and (only) shared libraries."
-    GMP_CONFIGURE="--enable-cxx $GMP_CONFIGURE --disable-static"
-else
-    echo "Building GMP with the C++ interface and (also) static libraries."
-    GMP_CONFIGURE="--enable-cxx --enable-static $GMP_CONFIGURE"
-fi
+echo "Building GMP with the C++ interface and (also) static libraries."
+GMP_CONFIGURE="--enable-cxx --enable-static $GMP_CONFIGURE"
 
 # If SAGE_FAT_BINARY is enabled, then add --enable-fat to configure
 # options on Linux x86 systems.  On other systems, fat binaries are not

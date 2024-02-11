@@ -27,7 +27,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         sage: CoxeterGroups.Finite()
         Category of finite Coxeter groups
         sage: FiniteCoxeterGroups().super_categories()
-        [Category of finite generalized coxeter groups,
+        [Category of finite generalized Coxeter groups,
          Category of Coxeter groups]
 
         sage: G = CoxeterGroups().Finite().example()
@@ -54,7 +54,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: CoxeterGroups().Finite().super_categories()
-            [Category of finite generalized coxeter groups,
+            [Category of finite generalized Coxeter groups,
              Category of Coxeter groups]
         """
         from sage.categories.complex_reflection_groups import ComplexReflectionGroups
@@ -596,7 +596,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             covers = []
 
             bottom_elt = frozenset((s, 0) for s in S)
-            new = set([bottom_elt])
+            new = {bottom_elt}
             while new:
                 new_element = new.pop()
                 elements.add(new_element)
@@ -809,7 +809,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             I = self.index_set()
             data = {}
-            next_level = set((g, ()) for g in self)
+            next_level = {(g, ()) for g in self}
             while next_level:
                 cur = next_level
                 next_level = set()
@@ -907,6 +907,38 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
     class ElementMethods:
 
+        def absolute_length(self):
+            """
+            Return the absolute length of ``self``.
+
+            The absolute length is the length of the shortest expression
+            of the element as a product of reflections. For finite Coxeter
+            groups, the absolute length is the codimension of the
+            1-eigenspace of the element (Lemmas 1-3 in [Car1972a]_).
+
+            For permutations in the symmetric groups, the absolute
+            length is the size minus the number of its disjoint
+            cycles.
+
+            .. SEEALSO::
+
+                :meth:`~sage.categories.coxeter_groups.absolute_le`
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(["A", 3])                                           # needs sage.combinat sage.groups
+                sage: s = W.simple_reflections()                                        # needs sage.combinat sage.groups
+                sage: (s[1]*s[2]*s[3]).absolute_length()                                # needs sage.combinat sage.groups
+                3
+
+                sage: W = SymmetricGroup(4)                                             # needs sage.groups
+                sage: s = W.simple_reflections()                                        # needs sage.groups
+                sage: (s[3]*s[2]*s[1]).absolute_length()                                # needs sage.combinat sage.groups
+                3
+            """
+            M = self.canonical_matrix()
+            return (M - 1).image().dimension()
+
         @cached_in_parent_method
         def bruhat_upper_covers(self):
             r"""
@@ -988,7 +1020,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 raise NotImplementedError("this has only been implemented in finite type A so far")
             d = []
             for i in range(2, len(w)):
-                v = [j for j in w]
+                v = list(w)
                 if w[i-2] == w[i]:
                     if w[i] == w[i-1] - 1:
                         v[i-2] = w[i-1]

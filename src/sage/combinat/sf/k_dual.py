@@ -284,7 +284,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             return 0
         ans = self.zero()
         for la in Partitions(m, max_part=self.k):
-            ans += g.homogeneous_basis_noncommutative_variables_zero_Hecke((la)).coefficient(w) * mon(la)
+            ans += g.homogeneous_basis_noncommutative_variables_zero_Hecke(la).coefficient(w) * mon(la)
         return ans
 
     def _AffineGrothendieck(self, w, m):
@@ -429,7 +429,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             sage: Q = SymmetricFunctions(QQ['t'].fraction_field()).kBoundedQuotient(3)
             sage: Q.lift([2,1])
             HLP[2, 1]
-       """
+        """
         km = self.a_realization()
         return km.lift(la)
 
@@ -490,7 +490,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
             sage: KQB = KBoundedQuotientBases(Q)
             sage: KQB.super_categories()
             [Category of realizations of 3-Bounded Quotient of Symmetric Functions over Univariate Polynomial Ring in t over Rational Field with t=1,
-             Join of Category of graded hopf algebras with basis over Univariate Polynomial Ring in t over Rational Field
+             Join of Category of graded Hopf algebras with basis over Univariate Polynomial Ring in t over Rational Field
                  and Category of quotients of algebras over Univariate Polynomial Ring in t over Rational Field
                  and Category of quotients of graded modules with basis over Univariate Polynomial Ring in t over Rational Field]
         """

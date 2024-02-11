@@ -1229,12 +1229,11 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     n = v
     a = (n-4*mu)//2
     e = 2*k - n + 1 + a
-    t = abs(a//2)
 
     if (e**2 == 1 and
             k == (n-1-a+e)/2 and
             l == (n-2*a)/4 - (1-e) and
-            mu== (n-2*a)/4 and
+            mu == (n-2*a)/4 and
             regular_symmetric_hadamard_matrix_with_constant_diagonal(n, sgn(a)*e, existence=True) is True):
         if existence:
             return True
@@ -1510,7 +1509,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         sage: graphs.strongly_regular_graph(279, 150, 85, 75).is_strongly_regular(parameters=True)  # optional - gap_package_design internet
         (279, 150, 85, 75)
     """
-    cdef int b, k, s
+    cdef int b, k
     if k0 != 2*mu or not v % 2:
         return
     b = v+1+4*mu
@@ -1570,9 +1569,8 @@ def is_taylor_twograph_srg(int v, int k, int l, int mu):
 
         sage: is_taylor_twograph_srg(730, 369, 168, 205)                                # needs sage.libs.pari
         (<function TaylorTwographSRG at ...>, 9)
-
     """
-    r, s = eigenvalues(v, k, l, mu)
+    r, _ = eigenvalues(v, k, l, mu)
     if r is None:
         return
     p, t = is_prime_power(v-1, get_data=True)
@@ -2391,8 +2389,8 @@ def strongly_regular_from_two_weight_code(L):
     if is_Matrix(L):
         L = LinearCode(L)
     V = [tuple(l) for l in L]
-    w1, w2 = sorted(set(sum(map(bool, x)) for x in V).difference([0]))
-    G = Graph([V, lambda u, v: sum(uu!=vv for uu, vv in zip(u, v)) == w1])
+    w1, _ = sorted(set(sum(map(bool, x)) for x in V).difference([0]))
+    G = Graph([V, lambda u, v: sum(uu != vv for uu, vv in zip(u, v)) == w1])
     G.relabel()
     G.name('two-weight code: '+str(L))
     return G
@@ -2417,7 +2415,7 @@ def SRG_416_100_36_20():
     """
     from sage.libs.gap.libgap import libgap
     libgap.load_package("AtlasRep")
-    g=libgap.AtlasGroup("G2(4)", libgap.NrMovedPoints, 416)
+    g = libgap.AtlasGroup("G2(4)", libgap.NrMovedPoints, 416)
     h = Graph()
     h.add_edges(g.Orbit([1, 5],libgap.OnSets))
     h.relabel()
@@ -2441,7 +2439,7 @@ def SRG_560_208_72_80():
     """
     from sage.libs.gap.libgap import libgap
     libgap.load_package("AtlasRep")
-    g=libgap.AtlasGroup("Sz8", libgap.NrMovedPoints, 560)
+    g = libgap.AtlasGroup("Sz8", libgap.NrMovedPoints, 560)
 
     h = Graph()
     h.add_edges(g.Orbit([1, 2],libgap.OnSets))
@@ -2505,7 +2503,7 @@ def strongly_regular_from_two_intersection_set(M):
         for v in M:
             # u is adjacent with all vertices on a uv line.
             g.add_edges([[u, tuple([u[i] + qq*v[i] for i in range(k)])]
-                         for qq in K if not qq==K.zero()])
+                         for qq in K if not qq == K.zero()])
     g.relabel()
     e = QQ((1,k))
     qq = g.num_verts()**e
@@ -2831,7 +2829,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
         ...
         ValueError: There exists no (5, 5, 5, 5)-strongly regular graph
 
-    An set of parameters proved in a paper to be infeasible::
+    A set of parameters proved in a paper to be infeasible::
 
         sage: graphs.strongly_regular_graph(324,57,0,12,existence=True)                 # needs sage.combinat sage.modules
         False
@@ -3266,8 +3264,9 @@ cdef load_brouwer_database() noexcept:
     if _brouwer_database is not None:
         return
 
-    from sage.env import GRAPHS_DATA_DIR
-    filename = os.path.join(GRAPHS_DATA_DIR, 'brouwer_srg_database.json')
+    from sage.features.databases import DatabaseGraphs
+    data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
+    filename = os.path.join(data_dir, 'brouwer_srg_database.json')
     with open(filename) as fobj:
         database = json.load(fobj)
 

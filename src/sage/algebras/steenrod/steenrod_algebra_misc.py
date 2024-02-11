@@ -271,7 +271,7 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
         # p odd:
         e = list(profile[0]) + [truncation_type]*len(profile[0])
         k = list(profile[1])
-        if not set(k).issubset(set([1,2])):
+        if not set(k).issubset({1,2}):
             return False
         if truncation_type > 0:
             k = k + [2]

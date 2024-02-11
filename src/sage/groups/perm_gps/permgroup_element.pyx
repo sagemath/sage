@@ -410,7 +410,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: k._gap_()
             (1,2)(3,5,6)
             sage: k._gap_().parent()
-            Gap
+            C library interface to GAP
 
         List notation::
 
@@ -835,13 +835,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: g._gap_()
             (1,2,3)(4,5)
         """
-        if gap is None:
-            from sage.interfaces.gap import gap
-        return gap(self._gap_init_())
+        return self._libgap_()
 
     def _libgap_(self):
         r"""
-        Returns self as a libgap element
+        Return ``self`` as a libgap element.
 
         EXAMPLES::
 
@@ -867,7 +865,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: p_libgap == p_pexpect
             True
             sage: type(p_libgap) == type(p_pexpect)
-            False
+            True
 
         If the permutation element is built from a libgap element, it is cached
         and returned by this function::
@@ -1297,6 +1295,39 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 return prod
 
         return coercion_model.bin_op(left, right, operator.mul)
+
+    cpdef PermutationGroupElement _transpose_left(self, j, k) noexcept:
+        r"""
+        Return the product of the transposition `(j, k)` with ``self``.
+
+        EXAMPLES::
+
+            sage: S = SymmetricGroup(5)
+            sage: s = S([5, 2, 4, 3, 1])
+            sage: s._transpose_left(2, 3)
+            (1,5)(2,4,3)
+            sage: S((2, 3)) * s
+            (1,5)(2,4,3)
+
+            sage: S = SymmetricGroup(["a", "b", "c", "d", "e"])
+            sage: s = S(["e", "b", "d", "c", "a"])
+            sage: s._transpose_left("b", "c")
+            ('a','e')('b','d','c')
+            sage: S(("b", "c")) * s
+            ('a','e')('b','d','c')
+        """
+        if j == k:
+            return self
+        cdef PermutationGroupElement prod = self._new_c()
+        cdef int i
+        for i in range(self.n):
+            prod.perm[i] = self.perm[i]
+        if not self._parent._has_natural_domain():
+            convert_dict = self._parent._domain_to_gap
+            j = convert_dict[j]
+            k = convert_dict[k]
+        prod.perm[j - 1], prod.perm[k - 1] = self.perm[k - 1], self.perm[j - 1]
+        return prod
 
     cpdef _mul_(left, _right) noexcept:
         r"""

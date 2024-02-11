@@ -453,8 +453,8 @@ usage_advanced() {
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
         echo "  --tox [options] <files|dirs> -- general entry point for testing"
         echo "                                  and linting of the Sage library"
-        echo "     -e <envlist>     -- run specific test environments"
-        echo "                         (default: run all except full pycodestyle)"
+        echo "     -e <envlist>     -- run specific test environments; default:"
+        echo "                         $(echo $(tox -c "$SAGE_SRC" --listenvs 2>/dev/null) | sed 's/ /,/g;')"
         tox -c "$SAGE_SRC" --listenvs-all -v 2>/dev/null | sed -n '/->/s/^/        /;s/(/\
                                   (/;s/->/   --/p;'
         echo "     -p auto          -- run test environments in parallel"
@@ -482,10 +482,13 @@ usage_advanced() {
         echo "  --fixdoctests file.py"
         echo "                      -- Run doctests and replace output of failing doctests"
         echo "                         with actual output."
-        echo "  --fiximports <files|dir>"
+        echo "  --fiximports <files|dirs>"
         echo "                      -- Replace imports from sage.PAC.KAGE.all by specific"
         echo "                         imports when sage.PAC.KAGE is an implicit namespace"
         echo "                         package"
+        echo "  --fixdistributions <files|dirs>"
+        echo "                      -- Check or update '# sage_setup: distribution'"
+        echo "                         directives in source files"
     fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"
@@ -625,7 +628,9 @@ fi
 
 if [ "$1" = '-gap' -o "$1" = '--gap' ]; then
     shift
-    exec gap "$@"
+    # Use "-A" to avoid warnings about missing packages. The gap
+    # interface and libgap within sage both already do this.
+    exec gap -A "$@"
 fi
 
 if [ "$1" = '-gap3' -o "$1" = '--gap3' ]; then
@@ -986,6 +991,11 @@ if [ "$1" = '-fiximports' -o "$1" = '--fiximports' ]; then
     exec sage-python -m sage.misc.replace_dot_all "$@"
 fi
 
+if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then
+    shift
+    exec sage-python -m sage.misc.package_dir "$@"
+fi
+
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
     shift
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
@@ -993,6 +1003,7 @@ if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
             exec tox -c "$SAGE_SRC" "$@"
         else
             echo "Run 'sage -i tox' to install"
+            exit 1
         fi
     else
         echo >&2 "error: Sage source directory or tox.ini not available"
@@ -1008,12 +1019,13 @@ if [ "$1" = '-pytest' -o "$1" = '--pytest' ]; then
             for a in $*; do
                 case $a in
                     -*) ;;
-                    *)  exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@"
+                    *)  exec pytest --rootdir="$SAGE_SRC" --doctest "$@"
                 esac
             done
-            exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@" "$SAGE_SRC"
+            exec pytest --rootdir="$SAGE_SRC" --doctest "$@" "$SAGE_SRC"
         else
             echo "Run 'sage -i pytest' to install"
+            exit 1
         fi
     else
         echo >&2 "error: Sage source directory or tox.ini not available"

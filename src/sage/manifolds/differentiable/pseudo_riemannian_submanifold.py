@@ -303,7 +303,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         :mod:`~sage.manifolds.manifold` and
         :mod:`~sage.manifolds.differentiable.differentiable_submanifold`
 
-   """
+    """
     def __init__(self, n, name, ambient=None, metric_name=None,
                  signature=None, base_manifold=None, diff_degree=infinity,
                  latex_name=None, metric_latex_name=None, start_index=0,
@@ -1731,7 +1731,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         EXAMPLES:
 
-       A unit circle embedded in the Euclidean plane::
+        A unit circle embedded in the Euclidean plane::
 
             sage: M.<X,Y> = EuclideanSpace()
             sage: N = Manifold(1, 'N', ambient=M, structure="Riemannian")

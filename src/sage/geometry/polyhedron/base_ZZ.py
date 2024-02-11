@@ -3,7 +3,14 @@ Base class for polyhedra over `\ZZ`
 """
 
 # ****************************************************************************
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2011-2013 Volker Braun <vbraun.name@gmail.com>
+#                     2015      Nathann Cohen
+#                     2015      Vincent Delecroix
+#                     2017-2018 Frédéric Chapoton
+#                     2019      Sophia Elia
+#                     2019-2020 Jonathan Kliem
+#                     2023      Luze Xu
+#                     2023      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -834,3 +841,89 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             decompositions.append((X, Y))
             summands += [X, Y]
         return tuple(decompositions)
+
+    def normal_form(self, algorithm="palp_native", permutation=False):
+        r"""
+        Return the normal form of vertices of the lattice polytope ``self``.
+
+        INPUT:
+
+        - ``algorithm`` -- must be ``"palp_native"``, the default.
+
+        - ``permutation`` -- boolean (default: ``False``); if ``True``, the permutation
+          applied to vertices to obtain the normal form is returned as well.
+
+        For more more detail,
+        see :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`.
+
+        EXAMPLES:
+
+        We compute the normal form of the "diamond"::
+
+            sage: d = Polyhedron([(1,0), (0,1), (-1,0), (0,-1)])
+            sage: d.vertices()
+            (A vertex at (-1, 0),
+             A vertex at (0, -1),
+             A vertex at (0, 1),
+             A vertex at (1, 0))
+            sage: d.normal_form()                                                       # needs sage.groups
+            [(1, 0), (0, 1), (0, -1), (-1, 0)]
+            sage: d.lattice_polytope().normal_form("palp_native")                       # needs sage.groups
+            M( 1,  0),
+            M( 0,  1),
+            M( 0, -1),
+            M(-1,  0)
+            in 2-d lattice M
+
+        Using ``permutation=True``::
+
+            sage: d.normal_form(permutation=True)                                       # needs sage.groups
+            ([(1, 0), (0, 1), (0, -1), (-1, 0)], ())
+
+        It is not possible to compute normal forms for polytopes which do not
+        span the space::
+
+            sage: p = Polyhedron([(1,0,0), (0,1,0), (-1,0,0), (0,-1,0)])
+            sage: p.normal_form()
+            Traceback (most recent call last):
+            ...
+            ValueError: normal form is not defined for lower-dimensional polyhedra, got
+            A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+
+        The normal form is also not defined for unbounded polyhedra::
+
+            sage: p = Polyhedron(vertices=[[1, 1]], rays=[[1, 0], [0, 1]], base_ring=ZZ)
+            sage: p.normal_form()
+            Traceback (most recent call last):
+            ...
+            ValueError: normal form is not defined for unbounded polyhedra, got
+            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 2 rays
+
+        See :issue:`15280` for proposed extensions to these cases.
+
+        TESTS::
+
+            sage: d.normal_form(algorithm="palp_fiction")
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be 'palp_native'
+        """
+        from sage.geometry.palp_normal_form import _palp_PM_max, _palp_canonical_order
+
+        if algorithm != "palp_native":
+            raise ValueError("algorithm must be 'palp_native'")
+
+        if self.dim() < self.ambient_dim():
+            raise ValueError("normal form is not defined for lower-dimensional polyhedra, got %s" % self)
+
+        if not self.is_compact():
+            raise ValueError("normal form is not defined for unbounded polyhedra, got %s" % self)
+
+        PM = self.slack_matrix().transpose()
+        PM_max, permutations = _palp_PM_max(PM, check=True)
+        out = _palp_canonical_order(self.vertices(), PM_max, permutations)
+
+        if permutation:
+            return out
+        else:
+            return out[0]

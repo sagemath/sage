@@ -33,10 +33,12 @@ and C. Pernet. The functions available are:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.libs.gmp.types cimport mpz_t
 from sage.libs.flint.types cimport fmpz_t
 from sage.libs.flint.fmpz cimport fmpz_get_mpz, fmpz_set_mpz
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry, fmpz_mat_nrows, fmpz_mat_ncols
-from sage.libs.flint.fmpz_poly cimport fmpz_poly_set_coeff_mpz, fmpz_poly_fit_length, _fmpz_poly_set_length
+from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, _fmpz_poly_set_length
+from sage.libs.flint.fmpz_poly_sage cimport fmpz_poly_set_coeff_mpz
 
 cimport sage.libs.linbox.givaro as givaro
 cimport sage.libs.linbox.linbox as linbox
@@ -80,11 +82,13 @@ cdef void fmpz_poly_set_linbox(fmpz_poly_t p, PolynomialRing_integer.Element& q)
     (the .pxd file) in order to keep the header C-compatible
     """
     cdef size_t i
+    cdef mpz_t tmp
 
     fmpz_poly_fit_length(p, q.size())
 
     for i in range(q.size()):
-        fmpz_poly_set_coeff_mpz(p, i, q[i].get_mpz_const())
+        tmp = q[i].get_mpz_const()
+        fmpz_poly_set_coeff_mpz(p, i, tmp)
 
     _fmpz_poly_set_length(p, q.size())
 

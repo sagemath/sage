@@ -918,6 +918,13 @@ class TernaryQF(SageObject):
             [     0  -3/11  13/11]
             sage: Q(M) == Q11
             True
+
+        Test that it works with (0, 0, 1)::
+
+            sage: Q.find_p_neighbor_from_vec(3, (0,0,1))                                # needs sage.libs.pari
+            Ternary quadratic form with integer coefficients:
+            [1 3 3]
+            [-2 0 -1]
         """
         if mat:
             q, M = _find_p_neighbor_from_vec(self._a, self._b, self._c, self._r, self._s, self._t, p, v, mat)

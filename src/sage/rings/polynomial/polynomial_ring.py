@@ -703,7 +703,7 @@ class PolynomialRing_general(ring.Algebra):
                       To:   Univariate Polynomial Ring in x over Rational Field
             sage: R.coerce_map_from(GF(7))
         """
-        from .polynomial_element import PolynomialBaseringInjection
+        from sage.rings.polynomial.polynomial_element import PolynomialBaseringInjection
 
         return PolynomialBaseringInjection(self.base_ring(), self)
 

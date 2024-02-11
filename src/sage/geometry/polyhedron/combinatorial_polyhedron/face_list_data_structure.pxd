@@ -188,7 +188,6 @@ cdef inline size_t find_face(face_t face, face_list_t faces) noexcept:
     cdef face_t* faces_pt = faces.faces
     cdef int val
 
-
     while (n_faces > 1):
         # In each iteration step, we will look for ``face`` in
         # ``faces_pt[start:start+n_faces]``.
@@ -367,6 +366,6 @@ cdef inline bint face_list_check_alignment(face_list_t faces) noexcept:
     """
     cdef size_t i
     for i in range(faces.n_faces):
-       if not face_check_alignment(faces.faces[i]):
-           return False
+        if not face_check_alignment(faces.faces[i]):
+            return False
     return True

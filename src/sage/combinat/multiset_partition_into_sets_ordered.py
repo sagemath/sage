@@ -1699,7 +1699,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
         .. NOTE::
 
             This test will cause an infinite recursion with
-            ``self._element_constructor()`` if the ``__contains__``
+            ``self._element_constructor_()`` if the ``__contains__``
             method in ``OrderedMultisetPartitionsIntoSets_X`` is removed.
 
         TESTS::
@@ -3394,7 +3394,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
 
         Verifying Example 4.5 from [BCHOPSY2017]_::
 
-            sage: B = crystals.Minimaj(3, 4, 2) # for `Val_{4,1}^{(3)}`                 # needs sage.modules
+            sage: B = crystals.Minimaj(3, 4, 2)  # for `Val_{4,1}^{(3)}`                # needs sage.modules
             sage: B.val()                                                               # needs sage.modules
             (q^2+q+1)*s[2, 1, 1] + q*s[2, 2]
         """

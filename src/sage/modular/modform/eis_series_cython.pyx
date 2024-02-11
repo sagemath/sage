@@ -12,7 +12,7 @@ from sage.rings.fast_arith cimport prime_range
 from cpython.list cimport PyList_GET_ITEM
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.gmp.mpz cimport *
-from sage.libs.flint.fmpz_poly cimport Fmpz_poly
+from sage.libs.flint.fmpz_poly_sage cimport Fmpz_poly, fmpz_poly_set_coeff_mpz, fmpz_poly_scalar_mul_mpz
 
 cpdef Ek_ZZ(int k, int prec=10) noexcept:
     """

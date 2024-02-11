@@ -50,6 +50,7 @@ from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 
 import math
 
+import sage.arith.misc
 import sage.rings.integer
 import sage.rings.rational
 
@@ -327,9 +328,9 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         if S is int or S is float:
             return ToRDF(S)
 
-        from .rational_field import QQ
+        from sage.rings.rational_field import QQ
         try:
-            from .real_lazy import RLF
+            from sage.rings.real_lazy import RLF
         except ImportError:
             RLF = None
 
@@ -349,7 +350,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
                 return None
 
         try:
-            from .real_mpfr import RR
+            from sage.rings.real_mpfr import RR
         except ImportError:
             pass
         else:
@@ -431,7 +432,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         if prec == 53:
             return self
         else:
-            from .real_mpfr import RealField
+            from sage.rings.real_mpfr import RealField
             return RealField(prec)
 
 
@@ -979,7 +980,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: mathematica(RDF(1e-25))  # optional - mathematica
             1.*^-25
         """
-        from .real_mpfr import RR
+        from sage.rings.real_mpfr import RR
         return RR(self._value)._mathematica_init_()
 
     def _sage_input_(self, sib, coerced):
@@ -1955,7 +1956,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: r.algebraic_dependency(5)                                             # needs sage.libs.pari
             x^2 - 2
         """
-        return sage.arith.all.algdep(self,n)
+        return sage.arith.misc.algdep(self,n)
 
     algdep = algebraic_dependency
 
@@ -2069,7 +2070,7 @@ def is_RealDoubleElement(x):
 cdef RealDoubleElement global_dummy_element
 
 try:
-    from .real_double_element_gsl import RealDoubleElement_gsl
+    from sage.rings.real_double_element_gsl import RealDoubleElement_gsl
 except ImportError:
     global_dummy_element = RealDoubleElement(0)
 else:
@@ -2079,7 +2080,7 @@ else:
 # It operates on the following principles:
 #
 # - The pool starts out empty.
-# - When an new element is needed, one from the pool is returned
+# - When a new element is needed, one from the pool is returned
 #   if available, otherwise a new RealDoubleElement object is created
 # - When an element is collected, it will add it to the pool
 #   if there is room, otherwise it will be deallocated.
@@ -2175,7 +2176,7 @@ cdef void fast_tp_dealloc(PyObject* o) noexcept:
 from sage.misc.allocator cimport hook_tp_functions, hook_tp_functions_type
 hook_tp_functions(global_dummy_element, <newfunc>(&fast_tp_new), <destructor>(&fast_tp_dealloc), False)
 try:
-    from .real_double_element_gsl import RealDoubleElement_gsl
+    from sage.rings.real_double_element_gsl import RealDoubleElement_gsl
 except Exception:
     pass
 else:
