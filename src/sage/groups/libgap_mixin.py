@@ -979,7 +979,7 @@ def is_GroupByGenerators(group, generators):
 
     Boolean.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: G = SymmetricGroup(3)
         sage: generators = [(1,2), (1,2,3)]
@@ -1014,11 +1014,17 @@ def minimum_generating_set(group, gap_based=False):
         {[1, 3, 2], [2, 3, 1]}
 
         sage: G = GL(2,GF(3))
-        sage: s = minimum_generating_set(G, gap_based=True); s
+        sage: s = minimum_generating_set(G, gap_based=True);s
         {[ [ Z(3)^0, Z(3)^0 ], [ Z(3), 0*Z(3) ] ],
          [ [ Z(3), 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ]}
         sage: type(list(s)[0])
         <class 'sage.libs.gap.element.GapElement_List'>
+
+    TESTS::
+
+            sage: p = libgap.eval("DirectProduct(AlternatingGroup(5),AlternatingGroup(5))")
+            sage: minimum_generating_set(p,gap_based=True)
+            {(3,4,5)(6,7,8), (1,2,3,4,5)(8,9,10)}
     """
     from sage.misc.functional import log
     from sage.libs.gap.element import GapElement
@@ -1026,7 +1032,9 @@ def minimum_generating_set(group, gap_based=False):
     if not isinstance(group, GapElement):
         convertor = group._element_constructor_
         group = group._libgap_()
-
+    else:
+        if not gap_based:
+            raise ValueError("The group should be a sage group to get answer in sage format")
     if not group.IsFinite().sage():
         raise NotImplementedError("Implemented for finite group only")
 
@@ -1043,7 +1051,7 @@ def minimum_generating_set(group, gap_based=False):
         n = len(group_elements)
         for i in range(n):
             for j in range(i+1, n):
-                if is_GroupByGenerators(group,[group_elements[i], group_elements[j]]):
+                if is_GroupByGenerators(group, [group_elements[i], group_elements[j]]):
                     if gap_based:
                         return set([group_elements[i], group_elements[j]])
                     return set([convertor(group_elements[i]), convertor(group_elements[j])])
@@ -1074,20 +1082,20 @@ def minimum_generating_set(group, gap_based=False):
                         return set(modifeid_g)
                     return set([convertor(ele) for ele in modifeid_g])
         if gap_based:
-            return set(g+[n[0]])
+            return set(g + [n[0]])
         return set([convertor(ele) for ele in g] + [convertor(n[0])])
 
     def gen_combinations(g, N, t):
-        if t>len(g):
+        if t > len(g):
             t = len(g)
-        if t<=0:
+        if t <= 0:
             yield g
         for go in gen_combinations(g,N,t-1):
             for j in range(len(N)):
                 gm = go[:t-1] + [go[t-1]*N[j]] + go[t:]
                 yield gm
 
-    t = ceil((13/5 + log(group.Size().sage(), 2)/log(N.Size().sage(), 2)))
+    t = ceil((13/5 + log(group.Size().sage(), 2) / log(N.Size().sage(), 2)))
     N_list = N.AsList()
 
     for nl in N_list:
