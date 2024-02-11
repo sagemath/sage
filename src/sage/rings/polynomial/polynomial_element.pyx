@@ -411,11 +411,9 @@ cdef class Polynomial(CommutativePolynomial):
             return self._parent.zero()
         return self * self._parent(right)
 
-    def subs(self, *x, **kwds):
+    def subs(self, in_dict=None, *args, **kwds):
         r"""
-        Identical to ``self(*x)``.
-
-        See the docstring for :meth:`__call__`.
+        Substitute the variable in ``self``.
 
         EXAMPLES::
 
@@ -434,14 +432,19 @@ cdef class Polynomial(CommutativePolynomial):
             ...
             TypeError: keys do not match self's parent
         """
-        if len(x) == 1 and isinstance(x[0], dict):
-            g = self._parent.gen()
-            if g in x[0]:
-                return self(x[0][g])
-            elif len(x[0]) > 0:
-                raise TypeError("keys do not match self's parent")
-            return self
-        return self(*x, **kwds)
+        if not in_dict:
+            return self(*args, **kwds)
+
+        if isinstance(in_dict, dict):
+            if len(in_dict) > 1:
+                raise TypeError("only the generator can be substituted, use __call__ instead")
+            k, v = next(iter(in_dict.items()))
+            if not k or k == self._parent.gen():
+                return self(v, *args, **kwds)
+            raise TypeError("keys do not match self's parent")
+
+        return self(in_dict, *args, **kwds)
+
     substitute = subs
 
     @cython.boundscheck(False)
