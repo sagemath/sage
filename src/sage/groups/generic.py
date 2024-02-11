@@ -341,7 +341,8 @@ class multiples:
 
         self.P = copy(P)
         self.Q = copy(P0)
-        assert self.P is not None and self.Q is not None
+        if self.P is None or self.Q is None:
+            raise ValueError("P and Q must not be None")
         self.i = 0
         self.bound = n
         self.indexed = indexed
@@ -1279,8 +1280,8 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         return Z.one()
 
     M = Z(m)
-    if check:
-        assert _multiple(P, M) == identity
+    if check and _multiple(P, M) != identity:
+        raise ValueError(f"The order of P(={P}) does not divide {M}")
 
     if factorization:
         F = factorization
@@ -1587,8 +1588,8 @@ def merge_points(P1, P2, operation='+',
             raise ValueError("operation and identity must be specified")
 
     if check:
-        assert multiple(g1, n1, operation=operation) == identity
-        assert multiple(g2, n2, operation=operation) == identity
+        if multiple(g1, n1, operation=operation) != identity or multiple(g2, n2, operation=operation) != identity:
+            raise ValueError("the orders provided do not divide the orders of the points provided")
 
     # trivial cases
     if n1.divides(n2):
