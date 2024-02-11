@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 The Chow group of a toric variety
 
@@ -316,7 +316,7 @@ class ChowCycle(FGP_Element):
             sage: aD = a.intersection_with_divisor(D)
             sage: aD.count_points()
             1
-            sage: P2.integrate( aD.cohomology_class() )
+            sage: P2.integrate(aD.cohomology_class())                                   # needs sage.libs.singular
             1
 
         For toric varieties with at most orbifold singularities, the
@@ -332,7 +332,7 @@ class ChowCycle(FGP_Element):
             V(y)
             sage: Dt.Chow_cycle(QQ).intersection_with_divisor(Dy).count_points()
             1/2
-            sage: P1xP1_Z2.integrate( Dt.cohomology_class() * Dy.cohomology_class() )
+            sage: P1xP1_Z2.integrate(Dt.cohomology_class() * Dy.cohomology_class())     # needs sage.libs.singular
             1/2
         """
         return sum(self.project_to_degree(0).lift())
@@ -475,6 +475,7 @@ class ChowCycle(FGP_Element):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: dP6 = toric_varieties.dP6()
             sage: cone = dP6.fan().cone_containing(2,3)
             sage: HH = dP6.cohomology_ring()
@@ -490,6 +491,7 @@ class ChowCycle(FGP_Element):
         singularities, where we can also use the isomorphism with the
         rational cohomology ring::
 
+            sage: # needs sage.libs.singular
             sage: WP4 = toric_varieties.P4_11169()
             sage: A = WP4.Chow_group()
             sage: HH = WP4.cohomology_ring()
@@ -498,13 +500,11 @@ class ChowCycle(FGP_Element):
             ( 0 | -1 | 0 | 0 | 0 )
             sage: HH(cone3d)
             [3*z4^3]
-
             sage: D = -WP4.K()  # the anticanonical divisor
             sage: A(D)
             ( 0 | 0 | 0 | -18 | 0 )
             sage: HH(D)
             [18*z4]
-
             sage: WP4.integrate( A(cone3d).cohomology_class() * D.cohomology_class() )
             1
             sage: WP4.integrate( HH(cone3d) * D.cohomology_class() )
@@ -552,7 +552,7 @@ class ChowGroupFactory(UniqueFactory):
         if base_ring not in [ZZ, QQ]:
             raise ValueError('base ring must be either ZZ or QQ')
 
-        key = tuple([toric_variety, base_ring])
+        key = (toric_variety, base_ring)
         extra = {'check': check}
         return key, extra
 
@@ -862,7 +862,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
             sage: points = [[1,0,0], [0,1,0], [0,0,1], [1,-1,1], [-1,0,-1]]
             sage: l = LatticePolytope(points)
-            sage: l.show3d()
+            sage: l.show3d()                                                            # needs sage.plot
             sage: X = ToricVariety(FaceFan(l))
             sage: A = X.Chow_group()
             sage: A.degree(2)

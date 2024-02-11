@@ -381,7 +381,6 @@ class Variable(CachedRepresentation, SageObject):
             raise ValueError('Variable names %s are not pairwise distinct.' %
                              (var_bases,))
 
-
         self.var_bases = var_bases
         self.var_repr = var_repr
 
@@ -1573,7 +1572,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
             Traceback (most recent call last):
             ...
             AttributeError: 'GenericGrowthGroup_with_category.element_class' object
-            has no attribute 'is_one'
+            has no attribute 'is_one'...
         """
         if self.is_one():
             return tuple()
@@ -1678,7 +1677,6 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
     # enable the category framework for elements
     Element = GenericGrowthElement
-
 
     # set everything up to determine category
     from sage.categories.sets_cat import Sets
@@ -2777,7 +2775,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
             sage: F == G
             False
         """
-        return type(self) == type(other) and self.var == other.var
+        return type(self) is type(other) and self.var == other.var
 
     def __ne__(self, other):
         r"""
@@ -3139,7 +3137,7 @@ class MonomialGrowthElement(GenericGrowthElement):
                 return ((e, coefficient),)
 
         if var.startswith('exp('):
-            assert(var[-1] == ')')
+            assert (var[-1] == ')')
             v = var[4:-1]
         else:
             v = 'log(%s)' % (var,)
@@ -3209,7 +3207,7 @@ class MonomialGrowthElement(GenericGrowthElement):
             x^(log(2))
         """
         var = str(self.parent()._var_)
-        if not(var.startswith('log(') and self.exponent.is_one()):
+        if not (var.startswith('log(') and self.exponent.is_one()):
             raise ValueError('Variable %s is not a log of something.' % (var,))
         new_var = var[4:-1]
         if base == 'e':

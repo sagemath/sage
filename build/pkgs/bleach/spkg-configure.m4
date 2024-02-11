@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([bleach], [SAGE_PYTHON_PACKAGE_CHECK([bleach])])

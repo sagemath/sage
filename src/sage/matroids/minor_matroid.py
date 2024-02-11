@@ -13,23 +13,23 @@ from `E` and keeping all remaining independent sets. This is denoted ``M \ D``
 
 EXAMPLES::
 
-    sage: M = matroids.named_matroids.Fano()
-    sage: M \ ['a', 'c' ] == M.delete(['a', 'c'])
+    sage: M = matroids.catalog.Fano()
+    sage: M.delete(['a', 'c' ]) == M.delete(['a', 'c'])
     True
     sage: M / 'a' == M.contract('a')
     True
-    sage: M / 'c' \ 'ab' == M.minor(contractions='c', deletions='ab')
+    sage: (M / 'c').delete('ab') == M.minor(contractions='c', deletions='ab')
     True
 
 If a contraction set is not independent (or a deletion set not coindependent),
 this is taken care of::
 
-    sage: M = matroids.named_matroids.Fano()
+    sage: M = matroids.catalog.Fano()
     sage: M.rank('abf')
     2
-    sage: M / 'abf' == M / 'ab' \ 'f'
+    sage: M / 'abf' == (M / 'ab').delete('f')
     True
-    sage: M / 'abf' == M / 'af' \ 'b'
+    sage: M / 'abf' == (M / 'af').delete('b')
     True
 
 .. SEEALSO::
@@ -114,7 +114,7 @@ class MinorMatroid(Matroid):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
-        sage: M = matroids.named_matroids.Vamos()
+        sage: M = matroids.catalog.Vamos()
         sage: N = MinorMatroid(matroid=M, contractions=set(['a']),
         ....:                  deletions=set())
         sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
@@ -132,7 +132,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Fano(),            # indirect doctest
+            sage: M = MinorMatroid(matroids.catalog.Fano(),  # indirect doctest
             ....:                  contractions=set(), deletions=set(['g']))
             sage: M.is_isomorphic(matroids.Wheel(3))
             True
@@ -152,7 +152,7 @@ class MinorMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Pappus().contract(['c'])
+            sage: M = matroids.catalog.Pappus().contract(['c'])
             sage: sorted(M.groundset())
             ['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i']
         """
@@ -176,7 +176,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.NonPappus(),
+            sage: M = MinorMatroid(matroids.catalog.NonPappus(),
             ....:                  contractions=set(), deletions={'f', 'g'})
             sage: M._rank(frozenset('abc'))
             2
@@ -199,7 +199,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: M._corank(set(['a', 'e', 'g', 'd', 'h']))
             2
@@ -222,7 +222,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: X = M._max_independent(set(['a', 'd', 'e', 'g']))
             sage: sorted(X) # random
@@ -250,7 +250,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: sorted(M._closure(set(['a', 'e', 'd'])))
             ['a', 'd', 'e', 'g', 'h']
@@ -274,7 +274,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: X = M._max_coindependent(set(['a', 'd', 'e', 'g']))
             sage: sorted(X) # random
@@ -302,7 +302,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
             sage: sorted(M._coclosure(set(['a', 'b', 'c'])))
             ['a', 'd', 'e', 'g', 'h']
@@ -337,7 +337,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(), contractions=set('c'), deletions={'b', 'f'})
+            sage: M = MinorMatroid(matroids.catalog.Vamos(), contractions=set('c'), deletions={'b', 'f'})
             sage: N = M._minor(contractions=set(['a']), deletions=set([]))
             sage: N._minor(contractions=set([]), deletions=set(['d']))
             M / {'a', 'c'} \ {'b', 'd', 'f'}, where M is Vamos:
@@ -357,7 +357,7 @@ class MinorMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos().dual()
+            sage: M = matroids.catalog.Vamos().dual()
             sage: print(M._repr_())
             Dual of 'Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
@@ -393,11 +393,11 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions=set('c'), deletions={'b', 'f'})
-            sage: N = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: N = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 deletions={'b', 'f'}, contractions=set('c'))
-            sage: O = MinorMatroid(matroids.named_matroids.Vamos(),
+            sage: O = MinorMatroid(matroids.catalog.Vamos(),
             ....:                 contractions={'b', 'f'}, deletions=set('c'))
             sage: hash(M) == hash(N)
             True
@@ -423,7 +423,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M1 = MinorMatroid(M, set('ab'), set('f'))
             sage: M2 = MinorMatroid(M, set('af'), set('b'))
             sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
@@ -455,7 +455,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: M1 = MinorMatroid(M, set('ab'), set('f'))
             sage: M2 = MinorMatroid(M, set('af'), set('b'))
             sage: M3 = MinorMatroid(M, set('a'), set('f'))._minor(set('b'), set())
@@ -477,7 +477,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroid=matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroid=matroids.catalog.Vamos(),
             ....:                  contractions={'a', 'b'}, deletions={'f'})
             sage: N = copy(M)  # indirect doctest
             sage: M == N
@@ -486,8 +486,7 @@ class MinorMatroid(Matroid):
             True
         """
         N = MinorMatroid(self._matroid, self._contractions, self._deletions)
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo={}):
@@ -501,7 +500,7 @@ class MinorMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.advanced import *
-            sage: M = MinorMatroid(matroid=matroids.named_matroids.Vamos(),
+            sage: M = MinorMatroid(matroid=matroids.catalog.Vamos(),
             ....:                  contractions={'a', 'b'}, deletions={'f'})
             sage: N = deepcopy(M)  # indirect doctest
             sage: M == N
@@ -512,8 +511,7 @@ class MinorMatroid(Matroid):
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = MinorMatroid(deepcopy(self._matroid, memo), deepcopy(self._contractions, memo), deepcopy(self._deletions, memo))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -522,7 +520,7 @@ class MinorMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = matroids.named_matroids.Vamos().minor('abc', 'g')
+            sage: M = matroids.catalog.Vamos().minor('abc', 'g')
             sage: M == loads(dumps(M))  # indirect doctest
             True
             sage: loads(dumps(M))
@@ -534,6 +532,6 @@ class MinorMatroid(Matroid):
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         """
         import sage.matroids.unpickling
-        data = (self._matroid, self._contractions, self._deletions, getattr(self, '__custom_name'))
+        data = (self._matroid, self._contractions, self._deletions, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_minor_matroid, (version, data)

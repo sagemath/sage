@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Toric rational divisor classes
 
@@ -52,7 +53,7 @@ divisor representing a divisor class::
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.libs.gmp.mpq cimport *
@@ -62,7 +63,7 @@ from sage.modules.free_module_element import vector
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
 from sage.rings.rational_field import QQ
 from sage.rings.rational cimport Rational
-from sage.structure.element cimport Element, Vector
+from sage.structure.element cimport Vector
 from sage.structure.element import is_Vector
 
 
@@ -136,7 +137,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
                 (self._parent, list(self), self._degree,
                  not self._is_immutable))
 
-    cpdef _act_on_(self, other, bint self_on_left):
+    cpdef _act_on_(self, other, bint self_on_left) noexcept:
         """
         Act on ``other``.
 
@@ -201,7 +202,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
         # Now let the standard framework work...
         return Vector_rational_dense._act_on_(self, other, self_on_left)
 
-    cpdef _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right) noexcept:
         r"""
         Raise a ``TypeError`` exception.
 

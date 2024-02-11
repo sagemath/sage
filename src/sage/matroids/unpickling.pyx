@@ -28,16 +28,17 @@ AUTHORS:
 from sage.data_structures.bitset_base cimport *
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
-from .minor_matroid import MinorMatroid
-from .dual_matroid import DualMatroid
-from .circuit_closures_matroid cimport CircuitClosuresMatroid
-from .basis_matroid cimport BasisMatroid
-from .linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from .lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
-from .graphic_matroid import GraphicMatroid
+from sage.matroids.minor_matroid import MinorMatroid
+from sage.matroids.dual_matroid import DualMatroid
+from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
+from sage.matroids.basis_matroid cimport BasisMatroid
+from sage.matroids.linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
+from sage.matroids.graphic_matroid import GraphicMatroid
 
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport mpq_set
+
 
 #############################################################################
 # BasisMatroid
@@ -70,10 +71,9 @@ def unpickle_basis_matroid(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.advanced import *
-        sage: M = BasisMatroid(matroids.named_matroids.Vamos())
+        sage: M = BasisMatroid(matroids.catalog.Vamos())
         sage: M == loads(dumps(M))  # indirect doctest
         True
-
     """
     cdef BasisMatroid M
     if version != 0:
@@ -118,7 +118,7 @@ def unpickle_circuit_closures_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Vamos()
+        sage: M = matroids.catalog.Vamos()
         sage: M == loads(dumps(M))  # indirect doctest
         True
     """
@@ -160,7 +160,7 @@ def unpickle_dual_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Vamos().dual()
+        sage: M = matroids.catalog.Vamos().dual()
         sage: M == loads(dumps(M))  # indirect doctest
         True
     """
@@ -224,7 +224,7 @@ def unpickle_binary_matrix(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     nrows, ncols, versionB, size, limbs, longsize, M = data
     A = BinaryMatrix(nrows, ncols)
-    for i from 0 <= i < nrows:
+    for i in range(nrows):
         bitset_unpickle(A._M[i], (versionB, size, limbs, longsize, M[i]))
     return A
 
@@ -253,7 +253,7 @@ def unpickle_ternary_matrix(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     nrows, ncols, versionB, size, limbs, longsize, M0, M1 = data
     A = TernaryMatrix(nrows, ncols)
-    for i from 0 <= i < nrows:
+    for i in range(nrows):
         bitset_unpickle(A._M0[i], (versionB, size, limbs, longsize, M0[i]))
         bitset_unpickle(A._M1[i], (versionB, size, limbs, longsize, M1[i]))
     return A
@@ -269,6 +269,7 @@ def unpickle_quaternary_matrix(version, data):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.matroids.lean_matrix import *
         sage: A = QuaternaryMatrix(2, 5, ring=GF(4, 'x'))
         sage: A == loads(dumps(A))  # indirect doctest
@@ -283,7 +284,7 @@ def unpickle_quaternary_matrix(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     nrows, ncols, ring, versionB, size, limbs, longsize, M0, M1 = data
     A = QuaternaryMatrix(nrows, ncols, ring=ring)
-    for i from 0 <= i < nrows:
+    for i in range(nrows):
         bitset_unpickle(A._M0[i], (versionB, size, limbs, longsize, M0[i]))
         bitset_unpickle(A._M1[i], (versionB, size, limbs, longsize, M1[i]))
     return A
@@ -324,13 +325,14 @@ def unpickle_plus_minus_one_matrix(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     cdef PlusMinusOneMatrix A = PlusMinusOneMatrix(data[0], data[1])
     cdef long i
-    for i from 0 <= i < A._nrows * A._ncols:
+    for i in range(A._nrows * A._ncols):
         A._entries[i] = data[2][i]
     return A
 
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.matroids.unpickling", "unpickle_integer_matrix", unpickle_plus_minus_one_matrix)
+
 
 def unpickle_rational_matrix(version, data):
     """
@@ -535,9 +537,9 @@ def unpickle_quaternary_matroid(version, data):
         sage: M.rename("U34")
         sage: loads(dumps(M))
         U34
-        sage: M = QuaternaryMatroid(Matrix(GF(4, 'x'), [[1, 0, 1],
+        sage: M = QuaternaryMatroid(Matrix(GF(4, 'x'), [[1, 0, 1],                      # needs sage.rings.finite_rings
         ....:                                           [1, 0, 1]]))
-        sage: loads(dumps(M)).representation()
+        sage: loads(dumps(M)).representation()                                          # needs sage.rings.finite_rings
         [1 0 1]
         [1 0 1]
     """
@@ -580,7 +582,7 @@ def unpickle_regular_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.R10()
+        sage: M = matroids.catalog.R10()
         sage: M == loads(dumps(M))  # indirect doctest
         True
         sage: M.rename("R_{10}")
@@ -630,7 +632,7 @@ def unpickle_minor_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = matroids.named_matroids.Vamos().minor('abc', 'g')
+        sage: M = matroids.catalog.Vamos().minor('abc', 'g')
         sage: M == loads(dumps(M))  # indirect doctest
         True
     """
@@ -670,8 +672,8 @@ def unpickle_graphic_matroid(version, data):
 
     EXAMPLES::
 
-        sage: M = Matroid(graphs.DiamondGraph())
-        sage: M == loads(dumps(M))
+        sage: M = Matroid(graphs.DiamondGraph())                                        # needs sage.graphs
+        sage: M == loads(dumps(M))                                                      # needs sage.graphs
         True
     """
     if version != 0:

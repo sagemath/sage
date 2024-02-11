@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Library of toric varieties
 
@@ -27,7 +28,7 @@ or immediately during assignment like this::
     Multivariate Polynomial Ring in x, y, z over Rational Field
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #
@@ -35,14 +36,16 @@ or immediately during assignment like this::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
-from sage.geometry.all import Fan, LatticePolytope, ToricLattice
+from sage.geometry.fan import Fan
+from sage.geometry.lattice_polytope import LatticePolytope
+from sage.geometry.toric_lattice import ToricLattice
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import GCD as gcd
@@ -119,30 +122,30 @@ toric_varieties_rays_cones = {
          (-1, -1, -1), (-1, 1, -1), (1, -1, -1), (1, 1, -1)],
         [[0,1,2,3],[4,5,6,7],[0,1,7,6],[4,5,3,2],[0,2,5,7],[4,6,1,3]] ],
     'BCdlOG':[
-        [(-1, 0, 0, 2, 3),  #  0
-         ( 0,-1, 0, 2, 3),  #  1
-         ( 0, 0,-1, 2, 3),  #  2
-         ( 0, 0,-1, 1, 2),  #  3
-         ( 0, 0, 0,-1, 0),  #  4
-         ( 0, 0, 0, 0,-1),  #  5
-         ( 0, 0, 0, 2, 3),  #  6
-         ( 0, 0, 1, 2, 3),  #  7
-         ( 0, 0, 2, 2, 3),  #  8
-         ( 0, 0, 1, 1, 1),  #  9
+        [(-1, 0, 0, 2, 3),  # 0
+         ( 0,-1, 0, 2, 3),  # 1
+         ( 0, 0,-1, 2, 3),  # 2
+         ( 0, 0,-1, 1, 2),  # 3
+         ( 0, 0, 0,-1, 0),  # 4
+         ( 0, 0, 0, 0,-1),  # 5
+         ( 0, 0, 0, 2, 3),  # 6
+         ( 0, 0, 1, 2, 3),  # 7
+         ( 0, 0, 2, 2, 3),  # 8
+         ( 0, 0, 1, 1, 1),  # 9
          ( 0, 1, 2, 2, 3),  # 10
          ( 0, 1, 3, 2, 3),  # 11
-         ( 1, 0, 4, 2, 3)], # 12
-        [ [0,6,7,1,4],   [0,6,10,2,4],  [0,6,1,2,4],   [0,9,7,1,5],  [0,6,7,1,5],
-          [0,6,10,2,5],  [0,6,1,2,5],   [0,9,1,4,5],   [0,6,10,4,11],[0,6,7,4,11],
-          [0,6,10,5,11], [0,9,7,5,11],  [0,6,7,5,11],  [0,9,4,5,11], [0,10,4,5,11],
-          [0,9,7,1,8],   [0,9,1,4,8],   [0,7,1,4,8],   [0,9,7,11,8], [0,9,4,11,8],
-          [0,7,4,11,8],  [0,10,2,4,3],  [0,1,2,4,3],   [0,10,2,5,3], [0,1,2,5,3],
-          [0,10,4,5,3],  [0,1,4,5,3],   [12,6,7,1,4],  [12,6,10,2,4],[12,6,1,2,4],
-          [12,9,7,1,5],  [12,6,7,1,5],  [12,6,10,2,5], [12,6,1,2,5], [12,9,1,4,5],
+         ( 1, 0, 4, 2, 3)],  # 12
+        [ [0,6,7,1,4], [0,6,10,2,4], [0,6,1,2,4], [0,9,7,1,5], [0,6,7,1,5],
+          [0,6,10,2,5], [0,6,1,2,5], [0,9,1,4,5], [0,6,10,4,11],[0,6,7,4,11],
+          [0,6,10,5,11], [0,9,7,5,11], [0,6,7,5,11], [0,9,4,5,11], [0,10,4,5,11],
+          [0,9,7,1,8], [0,9,1,4,8], [0,7,1,4,8], [0,9,7,11,8], [0,9,4,11,8],
+          [0,7,4,11,8], [0,10,2,4,3], [0,1,2,4,3], [0,10,2,5,3], [0,1,2,5,3],
+          [0,10,4,5,3], [0,1,4,5,3], [12,6,7,1,4], [12,6,10,2,4],[12,6,1,2,4],
+          [12,9,7,1,5], [12,6,7,1,5], [12,6,10,2,5], [12,6,1,2,5], [12,9,1,4,5],
           [12,6,10,4,11],[12,6,7,4,11], [12,6,10,5,11],[12,9,7,5,11],[12,6,7,5,11],
-          [12,9,4,5,11], [12,10,4,5,11],[12,9,7,1,8],  [12,9,1,4,8], [12,7,1,4,8],
+          [12,9,4,5,11], [12,10,4,5,11],[12,9,7,1,8], [12,9,1,4,8], [12,7,1,4,8],
           [12,9,7,11,8], [12,9,4,11,8], [12,7,4,11,8], [12,10,2,4,3],[12,1,2,4,3],
-          [12,10,2,5,3], [12,1,2,5,3],  [12,10,4,5,3], [12,1,4,5,3] ]  ],
+          [12,10,2,5,3], [12,1,2,5,3], [12,10,4,5,3], [12,1,4,5,3] ]  ],
     'BCdlOG_base':[
         [(-1, 0, 0),
          ( 0,-1, 0),
@@ -533,7 +536,7 @@ class ToricVarietyFactory(SageObject):
         if n <= 0:
             raise ValueError("only projective spaces of positive dimension "
                              "can be constructed!\nGot: %s" % n)
-        m = identity_matrix(n).augment(matrix(n, 1, [-1]*n))
+        m = identity_matrix(n).augment(matrix(n, 1, [-1] * n))
         charts = [list(range(i)) + list(range(i + 1, n + 1))
                   for i in range(n + 1)]
         return CPRFanoToricVariety(
@@ -865,7 +868,7 @@ class ToricVarietyFactory(SageObject):
 
         .. NOTE::
 
-            * This is an example of an non-polyhedral fan.
+            * This is an example of a non-polyhedral fan.
 
             * Its Chow group has torsion: `A_2(X)=\ZZ^5 \oplus \ZZ_2`
 
@@ -933,9 +936,15 @@ class ToricVarietyFactory(SageObject):
         if k < 0:
             raise ValueError("cube deformations X_k are defined only for "
                              "non-negative k!\nGot: %s" % k)
-        rays = lambda kappa: matrix([[ 1, 1, 2*kappa+1],[ 1,-1, 1],[-1, 1, 1],[-1,-1, 1],
-                                       [-1,-1,-1],[-1, 1,-1],[ 1,-1,-1],[ 1, 1,-1]])
-        cones = [[0,1,2,3],[4,5,6,7],[0,1,7,6],[4,5,3,2],[0,2,5,7],[4,6,1,3]]
+
+        def rays(kappa):
+            return matrix([[1, 1, 2 * kappa + 1], [1, -1, 1],
+                           [-1, 1, 1], [-1, -1, 1],
+                           [-1, -1, -1], [-1, 1, -1],
+                           [1, -1, -1], [1, 1, -1]])
+
+        cones = [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 7, 6],
+                 [4, 5, 3, 2], [0, 2, 5, 7], [4, 6, 1, 3]]
         fan = Fan(cones, rays(k))
         return ToricVariety(fan, coordinate_names=names)
 
@@ -1275,7 +1284,7 @@ class ToricVarietyFactory(SageObject):
 
         L = ToricLattice(m)
         L_sub = L.submodule([L(q)])
-        Q = L/L_sub
+        Q = L / L_sub
         rays = []
         cones = []
         w = list(range(m))
@@ -1284,7 +1293,7 @@ class ToricVarietyFactory(SageObject):
             b = L_basis[i]
             v = Q.coordinate_vector(Q(b))
             rays = rays + [v]
-            w_c = w[:i] + w[i+1:]
+            w_c = w[:i] + w[i + 1:]
             cones = cones + [tuple(w_c)]
         fan = Fan(cones,rays)
         return ToricVariety(fan, coordinate_names=names, base_ring=base_ring)
@@ -1322,7 +1331,7 @@ class ToricVarietyFactory(SageObject):
             in 3-d lattice N
             sage: T3.gens()
             (z0, z1, z2)
-            sage: sorted(T3.change_ring(GF(3)).point_set().list())                      # optional - sage.rings.finite_rings
+            sage: sorted(T3.change_ring(GF(3)).point_set().list())
             [[1 : 1 : 1], [1 : 1 : 2], [1 : 2 : 1], [1 : 2 : 2],
              [2 : 1 : 1], [2 : 1 : 2], [2 : 2 : 1], [2 : 2 : 2]]
         """

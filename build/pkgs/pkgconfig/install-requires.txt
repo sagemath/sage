@@ -1,1 +1,1 @@
-pkgconfig >=1.5.1
+pkgconfig

@@ -46,7 +46,7 @@ equivalent::
     sage: type(_)
     <class 'sage.rings.integer.Integer'>
 
-    sage: libgap.eval('5/3 + 7*E(3)').sage()
+    sage: libgap.eval('5/3 + 7*E(3)').sage()                                            # needs sage.rings.number_field
     7*zeta3 + 5/3
 
     sage: gens_of_group = libgap.AlternatingGroup(4).GeneratorsOfGroup()
@@ -213,10 +213,11 @@ AUTHORS:
 
 from pathlib import Path
 
-from .gap_includes cimport *
-from .util cimport *
-from .element cimport *
+from sage.libs.gap.gap_includes cimport *
+from sage.libs.gap.util cimport *
+from sage.libs.gap.element cimport *
 
+from sage.cpython.string cimport str_to_bytes
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Vector
 from sage.rings.integer_ring import ZZ
@@ -264,7 +265,7 @@ class Gap(Parent):
 
             sage: libgap.has_coerce_map_from(ZZ)
             True
-            sage: libgap.has_coerce_map_from(CyclotomicField(5)['x','y'])
+            sage: libgap.has_coerce_map_from(CyclotomicField(5)['x','y'])               # needs sage.rings.number_field
             True
         """
         return True
@@ -309,7 +310,7 @@ class Gap(Parent):
             return make_GapElement_Boolean(self, GAP_True if x else GAP_False)
         elif isinstance(x, int):
             return make_GapElement_Integer(self, make_gap_integer(x))
-        elif isinstance(x, basestring):
+        elif isinstance(x, str):
             return make_GapElement_String(self, make_gap_string(x))
         elif isinstance(x, Path):
             return make_GapElement_String(self, make_gap_string(str(x)))
@@ -318,7 +319,7 @@ class Gap(Parent):
                 return x._libgap_()
             except AttributeError:
                 pass
-            x = str(x._libgap_init_())
+            x = str(x._gap_init_())
             return make_any_gap_element(self, gap_eval(x))
 
     def _construct_matrix(self, M):
@@ -361,11 +362,12 @@ class Gap(Parent):
 
         We gracefully handle the case that the conversion fails (:trac:`18039`)::
 
-            sage: F.<a> = GF(9, modulus="first_lexicographic")
-            sage: libgap(Matrix(F, [[a]]))
+            sage: F.<a> = GF(9, modulus="first_lexicographic")                          # needs sage.rings.finite_rings
+            sage: libgap(Matrix(F, [[a]]))                                              # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            NotImplementedError: conversion of (Givaro) finite field element to GAP not implemented except for fields defined by Conway polynomials.
+            NotImplementedError: conversion of (Givaro) finite field element to GAP
+            not implemented except for fields defined by Conway polynomials.
         """
         ring = M.base_ring()
         try:
@@ -397,8 +399,8 @@ class Gap(Parent):
         """
         cdef GapElement elem
 
-        if not isinstance(gap_command, basestring):
-            gap_command = str(gap_command._libgap_init_())
+        if not isinstance(gap_command, str):
+            gap_command = str(gap_command._gap_init_())
 
         initialize()
         elem = make_any_gap_element(self, gap_eval(gap_command))
@@ -411,7 +413,7 @@ class Gap(Parent):
 
     def load_package(self, pkg):
         """
-        If loading fails, raise a RuntimeError exception.
+        If loading fails, raise a :class:`RuntimeError` exception.
 
         TESTS::
 
@@ -478,9 +480,7 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
         is_bound = self.function_factory('IsBoundGlobal')
         bind_global = self.function_factory('BindGlobal')
@@ -503,9 +503,7 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
         is_readonlyglobal = self.function_factory('IsReadOnlyGlobal')
         make_readwrite = self.function_factory('MakeReadWriteGlobal')
@@ -535,12 +533,9 @@ class Gap(Parent):
             1
             sage: libgap.unset_global('FooBar')
             sage: libgap.get_global('FooBar')
-            Traceback (most recent call last):
-            ...
-            GAPError: Error, VAL_GVAR: No value bound to FooBar
+            NULL
         """
-        value_global = self.function_factory('ValueGlobal')
-        return value_global(variable)
+        return make_any_gap_element(self, GAP_ValueGlobalVariable(str_to_bytes(variable)))
 
     def global_context(self, variable, value):
         """
@@ -782,9 +777,7 @@ class Gap(Parent):
             sage: libgap.collect()
         """
         initialize()
-        rc = CollectBags(0, 1)
-        if rc != 1:
-            raise RuntimeError('Garbage collection failed.')
+        GAP_CollectBags(1)
 
 
 libgap = Gap()

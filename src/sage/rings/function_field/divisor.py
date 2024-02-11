@@ -39,7 +39,8 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): initial version
 
 """
-#*****************************************************************************
+
+# ****************************************************************************
 #       Copyright (C) 2016-2022 Kwankyu Lee <ekwankyu@gmail.com>
 #                     2019      Brent Baccala
 #
@@ -47,7 +48,7 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import random
 
@@ -1022,7 +1023,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
             sage: F.divisor_group()
             Divisor group of Function field in y defined by y^2 + 4*x^3 + 4
         """
-        return "Divisor group of %s"%(self._field,)
+        return "Divisor group of %s" % (self._field,)
 
     def _element_constructor_(self, x):
         """

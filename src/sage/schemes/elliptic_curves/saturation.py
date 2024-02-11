@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings sage.rings.number_field
+# sage.doctest: needs sage.rings.finite_rings sage.rings.number_field
 r"""
 Saturation of Mordell-Weil groups of elliptic curves over number fields
 
@@ -128,10 +128,10 @@ class EllipticCurveSaturator(SageObject):
         else:
             self._Kpol = K.defining_polynomial()
         self._D = self._Kpol.discriminant()
-        self._reductions = dict()
-        self._lincombs = dict()
+        self._reductions = {}
+        self._lincombs = {}
         self._torsion_gens = [t.element() for t in E.torsion_subgroup().gens()]
-        self._reductions = dict()
+        self._reductions = {}
         # This will hold a dictionary with keys (q,aq) with q prime
         # and aq a root of K's defining polynomial mod q, and values
         # (n,gens) where n is the cardinality of the reduction of E
@@ -198,7 +198,7 @@ class EllipticCurveSaturator(SageObject):
         """
         if q in self._reductions:
             return
-        self._reductions[q] = redmodq = dict()
+        self._reductions[q] = redmodq = {}
         if q.divides(self._N) or q.divides(self._D):
             return
         from sage.schemes.elliptic_curves.constructor import EllipticCurve
@@ -385,7 +385,7 @@ class EllipticCurveSaturator(SageObject):
             Using sieve method to saturate...
             ...
             -- points were not 2-saturated, gaining index 2
-            (0, (-1/4*a + 3/4 : 59/8*a - 317/8 : 1))
+            (1, (0 : 1 : 0))
 
         A CM example where large siecing primes are needed (LMFDB
         label 2.0.3.1-50625.1-CMb2)::
@@ -492,7 +492,7 @@ class EllipticCurveSaturator(SageObject):
         # and there is no simple test.)
 
         avoid = [self._N, self._D] + [P[0].denominator_ideal().norm() for P in Plist]
-        cm_test = E.has_rational_cm() and kro(E.cm_discriminant(), p)==-1
+        cm_test = E.has_rational_cm() and kro(E.cm_discriminant(), p) == -1
         for q in Primes():
             if any(q.divides(m) for m in avoid):
                 continue
@@ -543,7 +543,7 @@ class EllipticCurveSaturator(SageObject):
                             # point which is certainly a p-multiple
                             # modulo 15 primes Q, and we test if it
                             # actually is a p-multiple:
-                            if len(Rlist)==1:
+                            if len(Rlist) == 1:
                                 R = Rlist[0]
                                 pts = R.division_points(p)
                                 if pts:
@@ -650,7 +650,7 @@ def p_projections(Eq, Plist, p, debug=False):
     m = n.prime_to_m_part(p)      # prime-to-p part of order
     if debug:
         print("m={}, n={}".format(m,n))
-    if m==n: # p-primary part trivial, nothing to do
+    if m == n: # p-primary part trivial, nothing to do
         return []
     G = Eq.abelian_group()
     if debug:

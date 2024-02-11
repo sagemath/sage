@@ -32,9 +32,9 @@ cdef class CRElement(pAdicTemplateElement):
     cdef long ordp
     cdef long relprec
 
-    cdef CRElement _new_c(self)
+    cdef CRElement _new_c(self) noexcept
     cdef int _normalize(self) except -1
-    cpdef val_unit(self, p=*)
+    cpdef val_unit(self, p=*) noexcept
 
 cdef class pAdicCoercion_ZZ_CR(RingHomomorphism):
     cdef CRElement _zero

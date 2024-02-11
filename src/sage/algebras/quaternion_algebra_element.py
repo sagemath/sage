@@ -1,3 +1,5 @@
+# sage.doctest: needs sage.modules
+
 #######################################################################
 # Backward compatible unpickle functions
 #######################################################################
@@ -37,6 +39,7 @@ def unpickle_QuaternionAlgebraElement_number_field_v0(*args):
     """
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a); z = i + j
         sage: f, t = z.__reduce__()
         sage: import sage.algebras.quaternion_algebra_element

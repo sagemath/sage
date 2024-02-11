@@ -67,7 +67,7 @@ There is also a method ``reinitialize`` to reinitialize the algorithm::
     sage: x.get_solution()
     [0, 1]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>
 #       Copyright (C) 2015-2018 Sébastien Labbé <slabqc@gmail.com>
 #
@@ -75,8 +75,8 @@ There is also a method ``reinitialize`` to reinitialize the algorithm::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
 from libcpp.vector cimport vector
@@ -330,7 +330,6 @@ cdef class dancing_linksWrapper:
         """
         return PyObject_RichCompare(left._rows, right._rows, op)
 
-
     def get_solution(self):
         """
         Return the current solution.
@@ -473,7 +472,7 @@ cdef class dancing_linksWrapper:
         from copy import copy
         rows = copy(self._rows)
         ncols = self.ncols()
-        for i,row_index in enumerate(indices):
+        for i, row_index in enumerate(indices):
             # in the line below we want the creation of a new list
             rows[row_index] = rows[row_index] + [ncols+i]
         return dlx_solver(rows)
@@ -546,8 +545,8 @@ cdef class dancing_linksWrapper:
         if not 0 <= column < self.ncols():
             raise ValueError("column(={}) must be in range(ncols) "
                              "where ncols={}".format(column, self.ncols()))
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
-        return {i:self.restrict([i]) for i in indices}
+        indices = (i for i, row in enumerate(self._rows) if column in row)
+        return {i: self.restrict([i]) for i in indices}
 
     def solutions_iterator(self):
         r"""
@@ -792,7 +791,7 @@ cdef class dancing_linksWrapper:
                 L.append(dlx.get_solution())
             return L
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for i, row in enumerate(self._rows) if column in row]
         L = []
         for (args_kwds, val) in all_solutions(indices):
             L.extend(val)
@@ -892,7 +891,7 @@ cdef class dancing_linksWrapper:
                 N += 1
             return N
 
-        indices = [i for (i,row) in enumerate(self._rows) if column in row]
+        indices = [i for i, row in enumerate(self._rows) if column in row]
         return sum(val for (args_kwds, val) in nb_sol(indices))
 
     @cached_method
@@ -921,11 +920,11 @@ cdef class dancing_linksWrapper:
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2], [0,2], [1], [3]]
             sage: x = dlx_solver(rows)
-            sage: s = x.to_sat_solver()
+            sage: s = x.to_sat_solver()                                                 # needs sage.sat
 
         Using some optional SAT solvers::
 
-            sage: x.to_sat_solver('cryptominisat')          # optional - pycryptosat
+            sage: x.to_sat_solver('cryptominisat')      # optional - pycryptosat        # needs sage.sat
             CryptoMiniSat solver: 4 variables, 7 clauses.
 
         """
@@ -935,7 +934,7 @@ cdef class dancing_linksWrapper:
         # Note that row number i is associated to SAT variable i+1 to
         # avoid a variable zero
         columns = [[] for _ in range(self.ncols())]
-        for i,row in enumerate(self.rows(), start=1):
+        for i, row in enumerate(self.rows(), start=1):
             for a in row:
                 columns[a].append(i)
 
@@ -946,8 +945,8 @@ cdef class dancing_linksWrapper:
         # At most one 1 in each column
         import itertools
         for clause in columns:
-            for p,q in itertools.combinations(clause, 2):
-                sub_clause = [-p,-q]
+            for p, q in itertools.combinations(clause, 2):
+                sub_clause = [-p, -q]
                 s.add_clause(sub_clause)
 
         return s
@@ -980,28 +979,27 @@ cdef class dancing_linksWrapper:
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: d = dlx_solver(rows)
             sage: solutions = [[0,1], [2,3], [4,5]]
-            sage: d.one_solution_using_sat_solver() in solutions
+            sage: d.one_solution_using_sat_solver() in solutions                        # needs sage.sat
             True
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_sat_solver('glucose') # optional - glucose
-            sage: s in solutions                                 # optional - glucose
+            sage: s = d.one_solution_using_sat_solver('glucose')                # optional - glucose, needs sage.sat
+            sage: s in solutions                                                # optional - glucose, needs sage.sat
             True
 
         When no solution is found::
 
             sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
             sage: d = dlx_solver(rows)
-            sage: d.one_solution_using_sat_solver() is None
+            sage: d.one_solution_using_sat_solver() is None                             # needs sage.sat
             True
-
         """
         sat_solver = self.to_sat_solver(solver)
         solution = sat_solver()
         if not solution:
             return None
-        return [key for (key,val) in enumerate(solution, start=-1) if val]
+        return [key for key, val in enumerate(solution, start=-1) if val]
 
     @cached_method
     def to_milp(self, solver=None):
@@ -1028,16 +1026,16 @@ cdef class dancing_linksWrapper:
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2], [0,2], [1], [3]]
             sage: d = dlx_solver(rows)
-            sage: p,x = d.to_milp()
-            sage: p
+            sage: p,x = d.to_milp()                                                     # needs sage.numerical.mip
+            sage: p                                                                     # needs sage.numerical.mip
             Boolean Program (no objective, 4 variables, ... constraints)
-            sage: x
+            sage: x                                                                     # needs sage.numerical.mip
             MIPVariable with 4 binary components
 
         In the reduction, the boolean variable x_i is True if and only if
         the i-th row is in the solution::
 
-            sage: p.show()
+            sage: p.show()                                                              # needs sage.numerical.mip
             Maximization:
             <BLANKLINE>
             <BLANKLINE>
@@ -1054,7 +1052,7 @@ cdef class dancing_linksWrapper:
 
         Using some optional MILP solvers::
 
-            sage: d.to_milp('gurobi')   # optional - gurobi sage_numerical_backends_gurobi
+            sage: d.to_milp('gurobi')           # optional - gurobi sage_numerical_backends_gurobi, needs sage.numerical.mip
             (Boolean Program (no objective, 4 variables, 4 constraints),
              MIPVariable with 4 binary components)
 
@@ -1108,33 +1106,33 @@ cdef class dancing_linksWrapper:
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: d = dlx_solver(rows)
             sage: solutions = [[0,1], [2,3], [4,5]]
-            sage: d.one_solution_using_milp_solver() in solutions
+            sage: d.one_solution_using_milp_solver() in solutions                       # needs sage.numerical.mip
             True
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_milp_solver('gurobi') # optional - gurobi sage_numerical_backends_gurobi
-            sage: s in solutions                                 # optional - gurobi sage_numerical_backends_gurobi
+            sage: # optional - gurobi sage_numerical_backends_gurobi, needs sage.numerical.mip
+            sage: s = d.one_solution_using_milp_solver('gurobi')
+            sage: s in solutions
             True
 
         When no solution is found::
 
             sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
             sage: d = dlx_solver(rows)
-            sage: d.one_solution_using_milp_solver() is None
+            sage: d.one_solution_using_milp_solver() is None                            # needs sage.numerical.mip
             True
-
         """
         from sage.numerical.mip import MIPSolverException
-        p,x = self.to_milp(solver)
+        p, x = self.to_milp(solver)
         try:
             p.solve()
         except MIPSolverException:
             return None
-        else:
-            soln = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
-            support = sorted(key for key in soln if soln[key])
-            return support
+
+        soln = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
+        return sorted(key for key in soln if soln[key])
+
 
 def dlx_solver(rows):
     """

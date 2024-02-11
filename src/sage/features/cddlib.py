@@ -17,7 +17,7 @@ from . import Executable
 class CddExecutable(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of an executable
-    which comes as a part of ``cddlib``.
+    which comes as a part of :ref:`cddlib <spkg_cddlib>`.
 
     EXAMPLES::
 
@@ -34,4 +34,4 @@ class CddExecutable(Executable):
             True
         """
         Executable.__init__(self, name=name, executable=name, spkg="cddlib",
-                            url="https://github.com/cddlib/cddlib")
+                            url="https://github.com/cddlib/cddlib", type="standard")

@@ -216,6 +216,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         NotImplementedError: base ring other than Q are not yet supported for quasimodular forms ring
     """
     Element = QuasiModularFormsElement
+
     def __init__(self, group=1, base_ring=QQ, name='E2'):
         r"""
         INPUT:

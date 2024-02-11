@@ -1,18 +1,20 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Highest Weight Crystals
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010    Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import (Crystals, CrystalHomset,
                                       CrystalMorphismByGenerators)
 from sage.categories.tensor import TensorProductsCategory
+
 
 class HighestWeightCrystals(Category_singleton):
     """
@@ -128,7 +130,8 @@ class HighestWeightCrystals(Category_singleton):
             ::
 
                 sage: C = crystals.Letters(['A',2])
-                sage: T = crystals.TensorProduct(C,C,C,generators=[[C(2),C(1),C(1)],[C(1),C(2),C(1)]])
+                sage: T = crystals.TensorProduct(C, C, C, generators=[[C(2),C(1),C(1)],
+                ....:                                                 [C(1),C(2),C(1)]])
                 sage: T.highest_weight_vectors()
                 ([2, 1, 1], [1, 2, 1])
             """
@@ -174,7 +177,8 @@ class HighestWeightCrystals(Category_singleton):
             ::
 
                 sage: C = crystals.Letters(['A',2])
-                sage: T = crystals.TensorProduct(C,C,C,generators=[[C(2),C(1),C(1)],[C(1),C(2),C(1)]])
+                sage: T = crystals.TensorProduct(C, C, C,generators=[[C(2),C(1),C(1)],
+                ....:                                                [C(1),C(2),C(1)]])
                 sage: T.lowest_weight_vectors()
                 ([3, 2, 3], [3, 3, 2])
             """
@@ -339,7 +343,7 @@ class HighestWeightCrystals(Category_singleton):
                     deg += 1
                     yield len(next)
                     todo = next
-                    next = set([])
+                    next = set()
                     while todo:
                         x = todo.pop()
                         for i in I:
@@ -407,7 +411,8 @@ class HighestWeightCrystals(Category_singleton):
             The sole purpose of this method is to construct the homset as a
             :class:`~sage.categories.highest_weight_crystals.HighestWeightCrystalHomset`.
             If ``category`` is specified and is not a subcategory of
-            :class:`HighestWeightCrystals`, a ``TypeError`` is raised instead
+            :class:`HighestWeightCrystals`, a :class:`TypeError` is raised
+            instead
 
             This method is not meant to be called directly. Please use
             :func:`sage.categories.homset.Hom` instead.

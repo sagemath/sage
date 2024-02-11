@@ -799,7 +799,7 @@ class mwrank_MordellWeil(SageObject):
             Subgroup of Mordell-Weil group: []
         """
         if not isinstance(curve, mwrank_EllipticCurve):
-            raise TypeError("curve (=%s) must be an mwrank_EllipticCurve"%curve)
+            raise TypeError("curve (=%s) must be an mwrank_EllipticCurve" % curve)
         self.__curve = curve
         self.__verbose = verbose
         self.__pp = pp
@@ -841,7 +841,7 @@ class mwrank_MordellWeil(SageObject):
             sage: EQ.__repr__()
             'Subgroup of Mordell-Weil group: [[1:-1:1], [-2:3:1], [-14:25:8]]'
         """
-        return "Subgroup of Mordell-Weil group: %s"%self.__mw
+        return "Subgroup of Mordell-Weil group: %s" % self.__mw
 
     def process(self, v, saturation_bound=0):
         """Process points in the list ``v``.
@@ -988,11 +988,11 @@ class mwrank_MordellWeil(SageObject):
             (True, 1, '[ ]')
         """
         if not isinstance(v, list):
-            raise TypeError("v (=%s) must be a list"%v)
+            raise TypeError("v (=%s) must be a list" % v)
         saturation_bound = int(saturation_bound)
         for P in v:
             if not isinstance(P, (list, tuple)) or len(P) != 3:
-                raise TypeError("v (=%s) must be a list of 3-tuples (or 3-element lists) of ints"%v)
+                raise TypeError("v (=%s) must be a list of 3-tuples (or 3-element lists) of ints" % v)
             self.__mw.process(P, saturation_bound)
 
     def regulator(self):

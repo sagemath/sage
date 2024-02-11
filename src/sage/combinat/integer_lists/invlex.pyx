@@ -99,7 +99,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
       value is `\infty`.
 
     - ``min_slope`` -- an integer or `-\infty` (default: `-\infty`):
-      an lower bound on the slope between consecutive parts:
+      a lower bound on the slope between consecutive parts:
       ``min_slope <= l[i+1]-l[i]`` for ``0 <= i < len(l)-1``
 
     - ``max_slope`` -- an integer or `+\infty` (defaults: `+\infty`)
@@ -560,7 +560,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     ::
 
-        sage: Partitions(2, max_slope=-1, length=2).list()
+        sage: Partitions(2, max_slope=-1, length=2).list()                              # needs sage.combinat
         []
         sage: list(IntegerListsLex(0, floor=ConstantFunction(1), min_slope=0))
         [[]]
@@ -796,7 +796,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
 cdef class IntegerListsBackend_invlex(IntegerListsBackend):
     """
-    Cython back-end of an set of lists of integers with specified
+    Cython back-end of a set of lists of integers with specified
     constraints enumerated in inverse lexicographic order.
     """
     def __init__(self, *args, check=True, **kwds):
@@ -862,7 +862,7 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
         ``None`` if this method finds a proof that there
         exists an upper bound on the length. Otherwise a
-        ``ValueError`` is raised.
+        :class:`ValueError` is raised.
 
         EXAMPLES::
 

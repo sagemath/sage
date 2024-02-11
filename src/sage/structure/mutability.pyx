@@ -66,7 +66,7 @@ cdef class Mutability:
         """
         self._is_immutable = is_immutable
 
-    cpdef _require_mutable(self):
+    cpdef _require_mutable(self) noexcept:
         r"""
         Whenever mutability is required, this method can be called.
 
@@ -92,7 +92,7 @@ cdef class Mutability:
         if self._is_immutable:
             raise ValueError("object is immutable; please change a copy instead")
 
-    cpdef _require_immutable(self):
+    cpdef _require_immutable(self) noexcept:
         r"""
         Whenever immutability is required, this method can be called.
 
@@ -135,7 +135,7 @@ cdef class Mutability:
         """
         self._is_immutable = 1
 
-    cpdef bint is_immutable(self):
+    cpdef bint is_immutable(self) noexcept:
         """
         Return ``True`` if this object is immutable (cannot be changed)
         and ``False`` if it is not.
@@ -156,7 +156,7 @@ cdef class Mutability:
         """
         return self._is_immutable
 
-    cpdef bint is_mutable(self):
+    cpdef bint is_mutable(self) noexcept:
         """
         Return ``True`` if this object is mutable (can be changed)
         and ``False`` if it is not.

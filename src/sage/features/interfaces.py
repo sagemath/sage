@@ -1,5 +1,5 @@
 r"""
-Features for testing whether interpreter interfaces are functional
+Features for testing whether interpreter interfaces to ``magma``, ``maple``, ``mathematica`` etc. are functional
 """
 
 # ****************************************************************************

@@ -22,10 +22,11 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: R = RootSystem(["A",3])
         sage: e = R.ambient_space(); e
         Ambient space of the Root system of type ['A', 3]
-        sage: TestSuite(e).run()
+        sage: TestSuite(e).run()                                                        # needs sage.graphs
 
     By default, this ambient space uses the barycentric projection for plotting::
 
+        sage: # needs sage.symbolic
         sage: L = RootSystem(["A",2]).ambient_space()
         sage: e = L.basis()
         sage: L._plot_projection(e[0])
@@ -253,22 +254,20 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
 
         EXAMPLES::
 
-            sage: a = CartanType(['A',3]).dynkin_diagram()
-            sage: a
+            sage: a = CartanType(['A',3]).dynkin_diagram(); a                           # needs sage.graphs
             O---O---O
             1   2   3
             A3
-            sage: a.edges(sort=True)
+            sage: a.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
 
         TESTS::
 
-            sage: a = DynkinDiagram(['A',1])
-            sage: a
+            sage: a = DynkinDiagram(['A',1]); a                                         # needs sage.graphs
             O
             1
             A1
-            sage: a.vertices(sort=False), a.edges(sort=False)
+            sage: a.vertices(sort=False), a.edges(sort=False)                           # needs sage.graphs
             ([1], [])
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -278,7 +277,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             g.add_edge(i, i+1)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -298,6 +297,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n > 1:
@@ -307,7 +308,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
         return ret + "".join(node((i-1)*node_dist, 0, label(i))
                              for i in self.index_set())
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the Dynkin diagram.
 
@@ -333,6 +334,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
         n = self.n
         if n == 0:
             return ""
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         ret = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"

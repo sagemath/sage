@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Elements of Affine Groups
 
@@ -67,25 +66,26 @@ class AffineGroupElement(MultiplicativeGroupElement):
       correct vector space.
 
     - ``check`` - bool (default: ``True``). Whether to do some
-       checks or just accept the input as valid.
+      checks or just accept the input as valid.
 
     As a special case, ``A`` can be a matrix obtained from
     :meth:`matrix`, that is, one row and one column larger. In
     that case, the group element defining that matrix is
     reconstructed.
 
-    OUTPUT:
-
-    The affine group element `x \mapsto Ax + b`
+    OUTPUT: The affine group element `x \mapsto Ax + b`
 
     EXAMPLES::
 
         sage: G = AffineGroup(2, GF(3))
+
+        sage: # needs sage.libs.gap
         sage: g = G.random_element()
         sage: type(g)
         <class 'sage.groups.affine_gps.affine_group.AffineGroup_with_category.element_class'>
         sage: G(g.matrix()) == g
         True
+
         sage: G(2)
               [2 0]     [0]
         x |-> [0 2] x + [0]
@@ -110,6 +110,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         TESTS::
 
+            sage: # needs sage.libs.gap
             sage: G = AffineGroup(4, GF(5))
             sage: g = G.random_element()
             sage: TestSuite(g).run()
@@ -144,9 +145,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the general linear part of an affine group element.
 
-        OUTPUT:
-
-        The matrix `A` of the affine group element `Ax + b`.
+        OUTPUT: The matrix `A` of the affine group element `Ax + b`.
 
         EXAMPLES::
 
@@ -163,9 +162,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the translation part of an affine group element.
 
-        OUTPUT:
-
-        The vector `b` of the affine group element `Ax + b`.
+        OUTPUT: The vector `b` of the affine group element `Ax + b`.
 
         EXAMPLES::
 
@@ -207,6 +204,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         Composition of affine group elements equals multiplication of
         the matrices::
 
+            sage: # needs sage.libs.gap
             sage: g1 = G.random_element()
             sage: g2 = G.random_element()
             sage: g1.matrix() * g2.matrix() == (g1*g2).matrix()
@@ -361,9 +359,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         - ``v`` -- a polynomial, a multivariate polynomial, a polyhedron, a
           vector, or anything that can be converted into a vector.
 
-        OUTPUT:
-
-        The image of ``v`` under the affine group element.
+        OUTPUT: The image of ``v`` under the affine group element.
 
         EXAMPLES::
 
@@ -403,8 +399,8 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: M = matrix(3, [-1, -2, 0, 0, 0, 1, -2, 1, -1])
             sage: v = vector(QQ,(1,2,3))
             sage: f = F(M, v)
-            sage: cube = polytopes.cube()
-            sage: f(cube)
+            sage: cube = polytopes.cube()                                               # needs sage.geometry.polyhedron
+            sage: f(cube)                                                               # needs sage.geometry.polyhedron
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 8 vertices
 
         """
@@ -459,9 +455,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the inverse group element.
 
-        OUTPUT:
-
-        Another affine group element.
+        OUTPUT: Another affine group element.
 
         EXAMPLES::
 
@@ -488,9 +482,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Compare ``self`` with ``other``.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 

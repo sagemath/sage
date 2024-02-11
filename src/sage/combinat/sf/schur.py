@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Schur symmetric functions
 """
@@ -18,13 +19,15 @@ Schur symmetric functions
 # ****************************************************************************
 
 from . import classical
-import sage.libs.lrcalc.lrcalc as lrcalc
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.data_structures.blas_dict import convert_remove_zeroes
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.misc import factorial
 from sage.combinat.tableau import StandardTableaux
+
+lazy_import('sage.libs.lrcalc', 'lrcalc')
 
 
 class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classical):
@@ -661,10 +664,10 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 q^4 + q^3 + 2*q^2 + q + 1
 
                 sage: x = 3*s[2,2] + 2*s[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 3*(q^4 - 1)*(q^3 - 1)*q^2/((q^2 - 1)*(q - 1)) + 2*(q^3 - 1)/(q - 1) + 1
 
-                sage: x.principal_specialization(q=var("q"))
+                sage: x.principal_specialization(q=var("q"))                            # needs sage.symbolic
                 -2/(q - 1) + 3*q^2/((q^3 - 1)*(q^2 - 1)^2*(q - 1)) + 1
 
             TESTS::
@@ -715,7 +718,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                         quotient = ZZq((prod(1-q_lim**(n+j-i)
                                              for (i, j) in partition.cells()))
                                     / prod(1-q_lim**h for h in partition.hooks()))
-                        return (power * quotient.subs({q_lim: q}))
+                        return power * quotient.subs({q_lim: q})
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
 
@@ -805,7 +808,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(s[3].exponential_specialization(q=var("q"), t=var("t")))
+                sage: factor(s[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 t^3/((q^2 + q + 1)*(q + 1))
 
             TESTS::

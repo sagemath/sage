@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 """
 QQbar decorators
 
@@ -36,7 +37,6 @@ def handle_AA_and_QQbar(func):
 
     @sage_wraps(func)
     def wrapper(*args, **kwds):
-
         """
         TESTS::
 
@@ -58,6 +58,7 @@ def handle_AA_and_QQbar(func):
 
         Check that :trac:`29468` is fixed::
 
+            sage: # needs sage.libs.singular
             sage: J = QQbar['x,y'].ideal('x^2 - y')
             sage: type(J.groebner_basis())
             <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>

@@ -1,0 +1,12 @@
+Disable tests in scipy/datasets, which require internet access.
+See https://github.com/scipy/scipy/pull/17965
+
+diff --git a/scipy/datasets/meson.build b/scipy/datasets/meson.build
+index 10137725381..132e8d29534 100644
+--- a/scipy/datasets/meson.build
++++ b/scipy/datasets/meson.build
+@@ -11,4 +11,3 @@ py3.install_sources(
+   subdir: 'scipy/datasets'
+ )
+ 
+-subdir('tests')

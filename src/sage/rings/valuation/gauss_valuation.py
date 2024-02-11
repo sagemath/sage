@@ -141,9 +141,9 @@ class GaussValuation_generic(NonFinalInductiveValuation):
     EXAMPLES::
 
         sage: R = Zp(3,5)
-        sage: S.<x> = R[]
+        sage: S.<x> = R[]                                                               # needs sage.libs.ntl
         sage: v0 = R.valuation()
-        sage: v = GaussValuation(S, v0); v
+        sage: v = GaussValuation(S, v0); v                                              # needs sage.libs.ntl
         Gauss valuation induced by 3-adic valuation
 
         sage: S.<x> = QQ[]
@@ -152,7 +152,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
     TESTS::
 
-        sage: TestSuite(v).run() # long time
+        sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
 
     """
     def __init__(self, parent, v):
@@ -295,9 +295,9 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: S.<x> = Qp(2,5)[]
-            sage: v = GaussValuation(S)
-            sage: v.residue_ring()
+            sage: S.<x> = Qp(2,5)[]                                                     # needs sage.libs.ntl
+            sage: v = GaussValuation(S)                                                 # needs sage.libs.ntl
+            sage: v.residue_ring()                                                      # needs sage.libs.ntl
             Univariate Polynomial Ring in x over Finite Field of size 2 (using ...)
 
         """
@@ -329,6 +329,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(2,5)[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 16
@@ -339,8 +340,8 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         The reduction is only defined for integral elements::
 
-            sage: f = x^2/2
-            sage: v.reduce(f)
+            sage: f = x^2/2                                                             # needs sage.libs.ntl
+            sage: v.reduce(f)                                                           # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             ValueError: reduction not defined for non-integral elements and (2^-1 + O(2^4))*x^2 is not integral over Gauss valuation induced by 2-adic valuation
@@ -377,6 +378,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(3,5)[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 16
@@ -449,6 +451,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(3,5)[]
             sage: v = GaussValuation(S)
             sage: v.equivalence_unit(2)
@@ -484,6 +487,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -501,6 +505,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -539,7 +544,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             sage: v = ZZ.valuation(2)
             sage: R.<x> = ZZ[]
             sage: w = GaussValuation(R, v)
-            sage: w.extensions(GaussianIntegers()['x'])
+            sage: w.extensions(GaussianIntegers()['x'])                                 # needs sage.rings.number_field
             [Gauss valuation induced by 2-adic valuation]
 
         """
@@ -576,6 +581,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -592,6 +598,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -624,9 +631,9 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: R.<x> = Qp(2, 5)[]
-            sage: v = GaussValuation(R)
-            sage: v.monic_integral_model(5*x^2 + 1/2*x + 1/4)
+            sage: R.<x> = Qp(2, 5)[]                                                    # needs sage.libs.ntl
+            sage: v = GaussValuation(R)                                                 # needs sage.libs.ntl
+            sage: v.monic_integral_model(5*x^2 + 1/2*x + 1/4)                           # needs sage.libs.ntl
             (Ring endomorphism of Univariate Polynomial Ring in x over 2-adic Field with capped relative precision 5
                Defn: (1 + O(2^5))*x |--> (2^-1 + O(2^4))*x,
              Ring endomorphism of Univariate Polynomial Ring in x over 2-adic Field with capped relative precision 5
@@ -755,6 +762,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -780,13 +788,14 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
     def lower_bound(self, f):
         r"""
-        Return an lower bound of this valuation at ``f``.
+        Return a lower bound of this valuation at ``f``.
 
         Use this method to get an approximation of the valuation of ``f``
         when speed is more important than accuracy.
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -815,6 +824,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)

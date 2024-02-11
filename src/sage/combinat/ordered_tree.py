@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Ordered Rooted Trees
 
@@ -353,15 +352,17 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 
         INPUT:
 
-        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the
+        - ``bijection`` -- (default: ``'Boussicault-Socci'``) is the name of the
           bijection to use. Possible values are ``'Boussicault-Socci'``,
           ``'via dyck and Delest-Viennot'``.
 
         EXAMPLES::
 
+            sage: # needs sage.combinat sage.modules
             sage: T = OrderedTree([[[], [[], [[]]]], [], [[[],[]]], [], []])
-            sage: T.to_parallelogram_polyomino( bijection='Boussicault-Socci' )
-            [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
+            sage: T.to_parallelogram_polyomino(bijection='Boussicault-Socci')
+            [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+             [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
             sage: T = OrderedTree( [] )
             sage: T.to_parallelogram_polyomino()
             [[1], [1]]
@@ -388,6 +389,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
 
         EXAMPLES::
 
+            sage: # needs sage.combinat sage.modules
             sage: T = OrderedTree(
             ....:     [[[], [[], [[]]]], [], [[[],[]]], [], []]
             ....: )
@@ -500,13 +502,13 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         EXAMPLES::
 
             sage: T = OrderedTree([[],[]])
-            sage: T.to_dyck_word()
+            sage: T.to_dyck_word()                                                      # needs sage.combinat
             [1, 0, 1, 0]
             sage: T = OrderedTree([[],[[]]])
-            sage: T.to_dyck_word()
+            sage: T.to_dyck_word()                                                      # needs sage.combinat
             [1, 0, 1, 1, 0, 0]
             sage: T = OrderedTree([[], [[], []], [[], [[]]]])
-            sage: T.to_dyck_word()
+            sage: T.to_dyck_word()                                                      # needs sage.combinat
             [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0]
         """
         word = []
@@ -596,14 +598,14 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             sage: t.to_poset()
             Finite poset containing 1 elements
             sage: p = OrderedTree([[[]],[],[]]).to_poset()
-            sage: p.height(), p.width()
+            sage: p.height(), p.width()                                                 # needs networkx
             (3, 3)
 
         If the tree is labelled, we use its labelling to label the poset.
         Otherwise, we use the poset canonical labelling::
 
             sage: t = OrderedTree([[[]],[],[]]).canonical_labelling().to_poset()
-            sage: t.height(), t.width()
+            sage: t.height(), t.width()                                                 # needs networkx
             (3, 3)
         """
         if self in LabelledOrderedTrees():
@@ -674,7 +676,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             o o o
             |
             o
-            sage: p.plot()
+            sage: p.plot()                                                              # needs sage.plot
             Graphics object consisting of 10 graphics primitives
 
         .. PLOT::
@@ -691,7 +693,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             2 3 5
               |
               4
-            sage: g.plot()
+            sage: g.plot()                                                              # needs sage.plot
             Graphics object consisting of 10 graphics primitives
 
         .. PLOT::
@@ -931,7 +933,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
             sage: B is OrderedTrees_all()
             True
             sage: TestSuite(B).run() # long time
-            """
+        """
         DisjointUnionEnumeratedSets.__init__(
             self, Family(NonNegativeIntegers(), OrderedTrees_size),
             facade=True, keepkey=False)
@@ -1087,18 +1089,19 @@ class OrderedTrees_size(OrderedTrees):
 
         EXAMPLES::
 
-            sage: OrderedTrees(5).random_element() # random
+            sage: OrderedTrees(5).random_element()  # random                            # needs sage.combinat
             [[[], []], []]
             sage: OrderedTrees(0).random_element()
             Traceback (most recent call last):
             ...
             EmptySetError: there are no ordered trees of size 0
-            sage: OrderedTrees(1).random_element()
+            sage: OrderedTrees(1).random_element()                                      # needs sage.combinat
             []
 
         TESTS::
 
-            sage: all(OrderedTrees(10).random_element() in OrderedTrees(10) for i in range(20))
+            sage: all(OrderedTrees(10).random_element() in OrderedTrees(10)             # needs sage.combinat
+            ....:     for i in range(20))
             True
         """
         if self._size == 0:

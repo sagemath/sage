@@ -1,4 +1,4 @@
-igraph texttable $(PYTHON) | $(PYTHON_TOOLCHAIN)
+igraph texttable  | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

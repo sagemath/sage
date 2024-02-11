@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
 Finite field morphisms
 
@@ -120,7 +121,7 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
     """
     A class implementing sections of embeddings between finite fields.
     """
-    cpdef Element _call_(self, x):  # Not optimized
+    cpdef Element _call_(self, x) noexcept:  # Not optimized
         """
         TESTS::
 
@@ -290,7 +291,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         return self.domain()._latex_() + " \\hookrightarrow " + self.codomain()._latex_()
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         TESTS::
 
@@ -317,7 +318,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
     def is_injective(self):
         """
-        Return True since a embedding between finite fields is
+        Return ``True`` since a embedding between finite fields is
         always injective.
 
         EXAMPLES::
@@ -334,7 +335,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
     def is_surjective(self):
         """
-        Return true if this embedding is surjective (and hence an
+        Return ``True`` if this embedding is surjective (and hence an
         isomorphism.
 
         EXAMPLES::
@@ -425,7 +426,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         """
         return Morphism.__hash__(self)
 
-    cdef dict _extra_slots(self):
+    cdef dict _extra_slots(self) noexcept:
         r"""
         Helper function for copying and pickling
 
@@ -453,7 +454,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         slots['_section_class'] = self._section_class
         return slots
 
-    cdef _update_slots(self, dict slots):
+    cdef _update_slots(self, dict slots) noexcept:
         r"""
         Helper function for copying and pickling
 
@@ -608,7 +609,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         return s
 
 
-    cpdef Element _call_(self, x):
+    cpdef Element _call_(self, x) noexcept:
         """
         TESTS::
 
@@ -762,7 +763,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         if self._degree_fixed == 1:
             k = FiniteField(self.domain().characteristic())
-            from .hom_prime_finite_field import FiniteFieldHomomorphism_prime
+            from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
             f = FiniteFieldHomomorphism_prime(Hom(k, self.domain()))
         else:
             k = FiniteField(self.domain().characteristic()**self._degree_fixed,
@@ -773,7 +774,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def is_injective(self):
         """
-        Return true since any power of the Frobenius endomorphism
+        Return ``True`` since any power of the Frobenius endomorphism
         over a finite field is always injective.
 
         EXAMPLES::
@@ -788,7 +789,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def is_surjective(self):
         """
-        Return true since any power of the Frobenius endomorphism
+        Return ``True`` since any power of the Frobenius endomorphism
         over a finite field is always surjective.
 
         EXAMPLES::
@@ -803,7 +804,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def is_identity(self):
         """
-        Return true if this morphism is the identity morphism.
+        Return ``True`` if this morphism is the identity morphism.
 
         EXAMPLES::
 
@@ -829,7 +830,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         return Morphism.__hash__(self)
 
-    cdef _update_slots(self, dict slots):
+    cdef _update_slots(self, dict slots) noexcept:
         r"""
         Helper function for copying and pickling
 

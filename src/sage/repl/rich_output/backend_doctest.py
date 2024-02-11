@@ -164,14 +164,14 @@ class BackendDoctest(BackendBase):
 
         This ends up calling the displayhook::
 
-            sage: plt = plot(sin)
-            sage: plt
+            sage: plt = plot(sin)                                                       # needs sage.plot sage.symbolic
+            sage: plt                                                                   # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
-            sage: plt.show()
+            sage: plt.show()                                                            # needs sage.plot sage.symbolic
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
-            sage: dm.displayhook(plt)       # indirect doctest
+            sage: dm.displayhook(plt)       # indirect doctest                          # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
         """
         self.validate(rich_output)
@@ -198,14 +198,14 @@ class BackendDoctest(BackendBase):
         displayhook, the plot is still shown. Nothing is shown during
         doctests::
 
-            sage: plt = plot(sin)
-            sage: plt
+            sage: plt = plot(sin)                                                       # needs sage.plot sage.symbolic
+            sage: plt                                                                   # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
-            sage: plt.show()
+            sage: plt.show()                                                            # needs sage.plot sage.symbolic
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
-            sage: dm.display_immediately(plt)   # indirect doctest
+            sage: dm.display_immediately(plt)   # indirect doctest                      # needs sage.plot sage.symbolic
         """
         self.validate(rich_output)
         types_to_print = [OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputHtml]

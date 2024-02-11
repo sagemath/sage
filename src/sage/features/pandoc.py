@@ -18,7 +18,7 @@ from . import Executable
 
 class Pandoc(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``pandoc``
+    A :class:`~sage.features.Feature` describing the presence of :ref:`pandoc <spkg_pandoc>`.
 
     EXAMPLES::
 

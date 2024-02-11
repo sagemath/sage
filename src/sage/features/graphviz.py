@@ -19,9 +19,9 @@ from .join_feature import JoinFeature
 
 class dot(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``dot``
+    A :class:`~sage.features.Feature` describing the presence of ``dot``.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.graphviz import dot
         sage: dot().is_present()  # optional - graphviz
@@ -42,9 +42,9 @@ class dot(Executable):
 
 class neato(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``neato``
+    A :class:`~sage.features.Feature` describing the presence of ``neato``.
 
-    EXAMPLES::
+    TESTS:
 
         sage: from sage.features.graphviz import neato
         sage: neato().is_present()  # optional - graphviz
@@ -65,9 +65,9 @@ class neato(Executable):
 
 class twopi(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``twopi``
+    A :class:`~sage.features.Feature` describing the presence of ``twopi``.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.features.graphviz import twopi
         sage: twopi().is_present()  # optional - graphviz
@@ -89,8 +89,8 @@ class twopi(Executable):
 class Graphviz(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
-    the ``dot``, ``neato``, and ``twopi`` executables from the
-    ``graphviz`` package.
+    the :class:`dot`, :class:`neato`, and :class:`twopi` executables from the
+    :ref:`graphviz <spkg_graphviz>` package.
 
     EXAMPLES::
 

@@ -24,8 +24,8 @@ import os
 import warnings
 import sage.env
 
-from .gap_includes cimport *
-from .element cimport *
+from sage.libs.gap.gap_includes cimport *
+from sage.libs.gap.element cimport *
 from sage.cpython.string import FS_ENCODING
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.interfaces.gap_workspace import prepare_workspace_dir
@@ -103,7 +103,7 @@ cdef class ObjWrapper():
         return <Py_hash_t>(self.value)
 
 
-cdef ObjWrapper wrap_obj(Obj obj):
+cdef ObjWrapper wrap_obj(Obj obj) noexcept:
     """
     Constructor function for :class:`ObjWrapper`
     """
@@ -120,14 +120,14 @@ cdef dict owned_objects_refcount = dict()
 #
 # used in Sage's libgap.Gap.count_GAP_objects
 #
-cpdef get_owned_objects():
+cpdef get_owned_objects() noexcept:
     """
     Helper to access the refcount dictionary from Python code
     """
     return owned_objects_refcount
 
 
-cdef void reference_obj(Obj obj):
+cdef void reference_obj(Obj obj) noexcept:
     """
     Reference ``obj``
     """
@@ -140,7 +140,7 @@ cdef void reference_obj(Obj obj):
         owned_objects_refcount[wrapped] = 1
 
 
-cdef void dereference_obj(Obj obj):
+cdef void dereference_obj(Obj obj) noexcept:
     """
     Reference ``obj``
     """
@@ -151,13 +151,13 @@ cdef void dereference_obj(Obj obj):
         owned_objects_refcount[wrapped] = refcount - 1
 
 
-cdef void gasman_callback() with gil:
+cdef void gasman_callback() noexcept with gil:
     """
     Callback before each GAP garbage collection
     """
     global owned_objects_refcount
     for obj in owned_objects_refcount:
-        MarkBag((<ObjWrapper>obj).value)
+        GAP_MarkBag((<ObjWrapper>obj).value)
 
 
 ############################################################################
@@ -184,7 +184,7 @@ MakeImmutable(libgap_errout);
 """
 
 
-cdef initialize():
+cdef initialize() noexcept:
     """
     Initialize the GAP library, if it hasn't already been
     initialized.  It is safe to call this multiple times. One can set
@@ -217,30 +217,31 @@ cdef initialize():
     # initialize GAP.
     cdef char* argv[16]
     argv[0] = "sage"
-    argv[1] = "-l"
-    s = str_to_bytes(sage.env.GAP_LIB_DIR + ";" + sage.env.GAP_SHARE_DIR, FS_ENCODING, "surrogateescape")
-    argv[2] = s
+    argv[1] = "-A"
+    argv[2] = "-l"
+    s = str_to_bytes(sage.env.GAP_ROOT_PATHS, FS_ENCODING, "surrogateescape")
+    argv[3] = s
 
-    argv[3] = "-m"
-    argv[4] = "64m"
+    argv[4] = "-m"
+    argv[5] = "64m"
 
-    argv[5] = "-q"    # no prompt!
-    argv[6] = "-E"   # don't use readline as this will interfere with Python
-    argv[7] = "--nointeract"  # Implies -T
-    argv[8] = "-x"    # set the "screen" width so that GAP is less likely to
-    argv[9] = "4096"  # insert newlines when printing objects
+    argv[6] = "-q"    # no prompt!
+    argv[7] = "-E"   # don't use readline as this will interfere with Python
+    argv[8] = "--nointeract"  # Implies -T
+    argv[9] = "-x"    # set the "screen" width so that GAP is less likely to
+    argv[10] = "4096"  # insert newlines when printing objects
                       # 4096 unfortunately is the hard-coded max, but should
                       # be long enough for most cases
-    cdef int argc = 10   # argv[argc] must be NULL
+    cdef int argc = 11   # argv[argc] must be NULL
     gap_mem = sage.env.SAGE_GAP_MEMORY
     if gap_mem is not None:
         argc += 2
-        argv[10] = "-s"
+        argv[11] = "-s"
         s1 = str_to_bytes(gap_mem, FS_ENCODING, "surrogateescape")
-        argv[11] = s1
-        argv[4] = s1
+        argv[12] = s1
+        argv[5] = s1
 
-    from .saved_workspace import workspace
+    from sage.libs.gap.saved_workspace import workspace
     workspace, workspace_is_up_to_date = workspace()
     ws = str_to_bytes(workspace, FS_ENCODING, "surrogateescape")
     if workspace_is_up_to_date:
@@ -273,10 +274,6 @@ cdef initialize():
     # Set the ERROR_OUTPUT global in GAP to an output stream in which to
     # receive error output
     GAP_EvalString(_reset_error_output_cmd)
-
-    # Prepare global GAP variable to hold temporary GAP objects
-    global reference_holder
-    reference_holder = GVarName("$SAGE_libgap_reference_holder")
 
     # Finished!
     _gap_is_initialized = True
@@ -372,15 +369,15 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # If an error occurred in GAP_EvalString we won't even get
         # here if the error handler was set; but in case it wasn't
         # let's still check the result...
-        nresults = LEN_LIST(result)
+        nresults = GAP_LenList(result)
         if nresults > 1:  # to mimick the old libGAP
             # TODO: Get rid of this restriction eventually?
             raise GAPError("can only evaluate a single statement")
 
         # Get the result of the first statement
-        result = ELM0_LIST(result, 1) # 1-indexed!
+        result = GAP_ElmList(result, 1) # 1-indexed!
 
-        if ELM0_LIST(result, 1) != GAP_True:
+        if GAP_ElmList(result, 1) != GAP_True:
             # An otherwise unhandled error occurred in GAP (such as a
             # syntax error).  Try running the error handler manually
             # to capture the error output, if any.
@@ -392,33 +389,10 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # 0 is returned without setting a Python exception, so we should treat
         # this like returning None)
 
-        return ELM0_LIST(result, 2)
+        return GAP_ElmList(result, 2)
     finally:
         GAP_Leave()
         sig_off()
-
-
-###########################################################################
-### Helper to protect temporary objects from deletion ######################
-############################################################################
-
-# Hold a reference (inside the GAP kernel) to obj so that it doesn't
-# get deleted this works by assigning it to a global variable. This is
-# very simple, but you can't use it to keep two objects alive. Be
-# careful.
-cdef UInt reference_holder
-
-cdef void hold_reference(Obj obj):
-    """
-    Hold a reference (inside the GAP kernel) to obj
-
-    This ensures that the GAP garbage collector does not delete
-    ``obj``. This works by assigning it to a global variable. This is
-    very simple, but you can't use it to keep two objects alive. Be
-    careful.
-    """
-    global reference_holder
-    AssGVar(reference_holder, obj)
 
 
 ############################################################################
@@ -431,7 +405,7 @@ class GAPError(ValueError):  # ValueError for historical reasons
     """
 
 
-cdef str extract_libgap_errout():
+cdef str extract_libgap_errout() noexcept:
     """
     Reads the global variable libgap_errout and returns a Python string
     containing the error message (with some boilerplate removed).
@@ -443,7 +417,7 @@ cdef str extract_libgap_errout():
 
     # Grab a pointer to the C string underlying the GAP string libgap_errout
     # then copy it to a Python str (char_to_str contains an implicit strcpy)
-    msg = CSTR_STRING(r)
+    msg = GAP_CSTR_STRING(r)
     if msg != NULL:
         msg_py = char_to_str(msg)
         msg_py = msg_py.replace('For debugging hints type ?Recovery from '
@@ -455,7 +429,7 @@ cdef str extract_libgap_errout():
     return msg_py
 
 
-cdef void error_handler() with gil:
+cdef void error_handler() noexcept with gil:
     """
     The libgap error handler.
 

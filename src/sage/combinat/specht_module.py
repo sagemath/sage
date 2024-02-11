@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
 Specht Modules
 
@@ -23,6 +24,7 @@ from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.categories.modules_with_basis import ModulesWithBasis
+
 
 class SpechtModule(SubmoduleWithBasis):
     r"""
@@ -143,7 +145,7 @@ class SpechtModule(SubmoduleWithBasis):
         basis = SGA.echelon_form(span_set, False, order=support_order)
         basis = Family(basis)
         SubmoduleWithBasis.__init__(self, basis, support_order, ambient=SGA,
-                                     unitriangular=False, category=Mod.Subobjects())
+                                    unitriangular=False, category=Mod.Subobjects())
 
     def _repr_(self):
         r"""
@@ -335,6 +337,7 @@ class SpechtModule(SubmoduleWithBasis):
                     return P.retract(P._ambient(x) * self.lift())
             return None
 
+
 def _to_diagram(D):
     r"""
     Convert ``D`` to a list of cells representing a diagram.
@@ -372,6 +375,7 @@ def _to_diagram(D):
         D = [tuple(cell) for cell in D]
     return D
 
+
 def specht_module_spanning_set(D, SGA=None):
     r"""
     Return a spanning set of the Specht module of diagram ``D``.
@@ -394,6 +398,15 @@ def specht_module_spanning_set(D, SGA=None):
         sage: specht_module_spanning_set([(0,0), (1,1), (2,1)], SGA)
         (() - (2,3), -(1,2) + (1,3,2), (1,2,3) - (1,3),
          -() + (2,3), -(1,2,3) + (1,3), (1,2) - (1,3,2))
+
+    TESTS:
+
+    Verify that diagrams bigger than the rank work::
+
+        sage: specht_module_spanning_set([(0,0), (3,5)])
+        ([1, 2], [2, 1])
+        sage: specht_module_spanning_set([(0,0), (5,3)])
+        ([1, 2], [2, 1])
     """
     n = len(D)
     if SGA is None:
@@ -401,10 +414,12 @@ def specht_module_spanning_set(D, SGA=None):
         SGA = SymmetricGroupAlgebra(QQ, n)
     elif SGA.group().rank() != n - 1:
         raise ValueError("the rank does not match the size of the diagram")
-    row_diagram = [set() for _ in range(n)]
-    col_diagram = [set() for _ in range(n)]
-    for i,cell in enumerate(D):
-        x,y = cell
+    nr = max((c[0] for c in D), default=0) + 1
+    nc = max((c[1] for c in D), default=0) + 1
+    row_diagram = [set() for _ in range(nr)]
+    col_diagram = [set() for _ in range(nc)]
+    for i, cell in enumerate(D):
+        x, y = cell
         row_diagram[x].add(i)
         col_diagram[y].add(i)
     # Construct the row and column stabilizer elements
@@ -412,19 +427,20 @@ def specht_module_spanning_set(D, SGA=None):
     col_stab = SGA.zero()
     B = SGA.basis()
     for w in B.keys():
-            # Remember that the permutation w is 1-based
-            row_perm = [set() for _ in range(n)]
-            col_perm = [set() for _ in range(n)]
-            for i,cell in enumerate(D):
-                    x,y = cell
-                    row_perm[x].add(w(i+1)-1)
-                    col_perm[y].add(w(i+1)-1)
-            if row_diagram == row_perm:
-                    row_stab += B[w]
-            if col_diagram == col_perm:
-                    col_stab += w.sign() * B[w]
+        # Remember that the permutation w is 1-based
+        row_perm = [set() for _ in range(nr)]
+        col_perm = [set() for _ in range(nc)]
+        for i, cell in enumerate(D):
+            x, y = cell
+            row_perm[x].add(w(i + 1) - 1)
+            col_perm[y].add(w(i + 1) - 1)
+        if row_diagram == row_perm:
+            row_stab += B[w]
+        if col_diagram == col_perm:
+            col_stab += w.sign() * B[w]
     gen = col_stab * row_stab
     return tuple([b * gen for b in B])
+
 
 def specht_module_rank(D, base_ring=None):
     r"""
@@ -441,3 +457,111 @@ def specht_module_rank(D, base_ring=None):
     if base_ring is None:
         base_ring = QQ
     return matrix(base_ring, [v.to_vector() for v in span_set]).rank()
+
+
+def polytabloid(T):
+    r"""
+    Compute the polytabloid element associated to a tableau ``T``.
+
+    For a tableau `T`, the polytabloid associated to `T` is
+
+    .. MATH::
+
+        e_T = \sum_{\sigma \in C_T} (-1)^{\sigma} \{\sigma T\},
+
+    where `\{\}` is the row-equivalence class, i.e. a tabloid,
+    and `C_T` is the column stabilizer of `T`. The sum takes place in
+    the module spanned by tabloids `\{T\}`.
+
+    OUTPUT:
+
+    A ``dict`` whose keys are tabloids represented by tuples of frozensets
+    and whose values are the coefficient.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.specht_module import polytabloid
+        sage: T = StandardTableau([[1,3,4],[2,5]])
+        sage: polytabloid(T)
+        {(frozenset({1, 3, 4}), frozenset({2, 5})): 1,
+         (frozenset({1, 4, 5}), frozenset({2, 3})): -1,
+         (frozenset({2, 3, 4}), frozenset({1, 5})): -1,
+         (frozenset({2, 4, 5}), frozenset({1, 3})): 1}
+    """
+    e_T = {}
+    C_T = T.column_stabilizer()
+    for perm in C_T:
+        TT = tuple([frozenset(perm(val) for val in row) for row in T])
+        if TT in e_T:
+            e_T[TT] += perm.sign()
+        else:
+            e_T[TT] = perm.sign()
+    return e_T
+
+
+def tabloid_gram_matrix(la, base_ring):
+    r"""
+    Compute the Gram matrix of the bilinear form of a Specht module
+    pulled back from the tabloid module.
+
+    For the module spanned by all tabloids, we define an bilinear form
+    by having the tabloids be an orthonormal basis. We then pull this
+    bilinear form back across the natural injection of the Specht module
+    into the tabloid module.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.specht_module import tabloid_gram_matrix
+        sage: tabloid_gram_matrix([3,2], GF(5))
+        [4 2 2 1 4]
+        [2 4 1 2 1]
+        [2 1 4 2 1]
+        [1 2 2 4 2]
+        [4 1 1 2 4]
+    """
+    from sage.combinat.tableau import StandardTableaux
+    ST = StandardTableaux(la)
+
+    def bilinear_form(p1, p2):
+        if len(p2) < len(p1):
+            p1, p2 = p2, p1
+        return sum(c1 * p2.get(T1, 0) for T1, c1 in p1.items() if c1)
+
+    gram_matrix = [[bilinear_form(polytabloid(T1), polytabloid(T2)) for T1 in ST] for T2 in ST]
+    return matrix(base_ring, gram_matrix)
+
+
+def simple_module_rank(la, base_ring):
+    r"""
+    Return the rank of the simple `S_n`-module corresponding to the
+    partition ``la`` of size `n` over ``base_ring``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.specht_module import simple_module_rank
+        sage: simple_module_rank([3,2,1,1], GF(3))
+        13
+
+    TESTS::
+
+        sage: from sage.combinat.specht_module import simple_module_rank
+        sage: simple_module_rank([1,1,1,1], GF(3))
+        Traceback (most recent call last):
+        ...
+        ValueError: the partition [1, 1, 1, 1] is not 3-regular
+
+        sage: from sage.combinat.specht_module import simple_module_rank
+        sage: simple_module_rank([2,1], GF(3)['x'])
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: the base must be a field
+    """
+    from sage.categories.fields import Fields
+    from sage.combinat.partition import Partition
+    if base_ring not in Fields():
+        raise NotImplementedError("the base must be a field")
+    p = base_ring.characteristic()
+    la = Partition(la)
+    if not la.is_regular(p):
+        raise ValueError(f"the partition {la} is not {p}-regular")
+    return tabloid_gram_matrix(la, base_ring).rank()

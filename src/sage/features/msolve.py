@@ -24,12 +24,12 @@ from . import FeatureTestResult
 
 class msolve(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of msolve
+    A :class:`~sage.features.Feature` describing the presence of :ref:`msolve <spkg_msolve>`.
 
     EXAMPLES::
 
         sage: from sage.features.msolve import msolve
-        sage: msolve().is_present() # optional - msolve
+        sage: msolve().is_present()  # optional - msolve
         FeatureTestResult('msolve', True)
     """
     def __init__(self):
@@ -45,12 +45,12 @@ class msolve(Executable):
 
     def is_functional(self):
         r"""
-        Test if our installation of msolve is working
+        Test if our installation of msolve is working.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.features.msolve import msolve
-            sage: msolve().is_functional() # optional - msolve
+            sage: msolve().is_functional()  # optional - msolve
             FeatureTestResult('msolve', True)
         """
         msolve_out = subprocess.run(["msolve", "-h"], capture_output=True)

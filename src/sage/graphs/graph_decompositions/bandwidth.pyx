@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Bandwidth of undirected graphs
 
@@ -108,7 +109,7 @@ Functions
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from libc.stdint cimport uint16_t
@@ -116,7 +117,6 @@ from cysignals.signals cimport sig_check
 from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.distances_all_pairs cimport all_pairs_shortest_path_BFS
-from sage.graphs.base.boost_graph import bandwidth_heuristics
 
 ctypedef uint16_t index_t
 
@@ -160,7 +160,7 @@ def bandwidth(G, k=None):
         False
         sage: bandwidth(G)
         (5, [0, 4, 5, 8, 1, 9, 3, 7, 6, 2])
-        sage: G.adjacency_matrix(vertices=[0, 4, 5, 8, 1, 9, 3, 7, 6, 2])
+        sage: G.adjacency_matrix(vertices=[0, 4, 5, 8, 1, 9, 3, 7, 6, 2])               # needs sage.modules
         [0 1 1 0 1 0 0 0 0 0]
         [1 0 0 0 0 1 1 0 0 0]
         [1 0 0 1 0 0 0 1 0 0]
@@ -174,7 +174,7 @@ def bandwidth(G, k=None):
         sage: G = graphs.ChvatalGraph()
         sage: bandwidth(G)
         (6, [0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])
-        sage: G.adjacency_matrix(vertices=[0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])
+        sage: G.adjacency_matrix(vertices=[0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])       # needs sage.modules
         [0 0 1 1 0 1 1 0 0 0 0 0]
         [0 0 0 1 1 1 0 1 0 0 0 0]
         [1 0 0 0 1 0 0 1 1 0 0 0]
@@ -254,7 +254,7 @@ def bandwidth(G, k=None):
     cdef range_t ** ith_range_array = <range_t **> mem.allocarray(n, sizeof(range_t *))
     cdef range_t * range_array_tmp = <range_t *> mem.allocarray(n, sizeof(range_t))
 
-    cdef int i, j, kk
+    cdef int i, kk
     # compute the distance matrix
     all_pairs_shortest_path_BFS(G, NULL, distances, NULL, vertex_list=int_to_vertex)
 
@@ -294,7 +294,7 @@ cdef bint bandwidth_C(int n, int k,
                       index_t * left_to_order,     # begins with the assigned vertices, ends with the others
                       index_t * index_array_tmp,   # tmp space
                       range_t ** ith_range_array,  # array of ranges, for every step of the algorithm
-                      range_t * range_array_tmp):  # tmp space
+                      range_t * range_array_tmp) noexcept:  # tmp space
 
     cdef int i, v
     cdef int pi  # the position for which a vertex is being chosen
@@ -366,7 +366,7 @@ cdef bint bandwidth_C(int n, int k,
             # swap back
             left_to_order[i], left_to_order[current[i]] = left_to_order[current[i]], left_to_order[i]
 
-cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_array_tmp, index_t * index_array_tmp):
+cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_array_tmp, index_t * index_array_tmp) noexcept:
     r"""
     Test if the matching is feasible
 

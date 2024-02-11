@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Key polynomials
 
@@ -794,6 +795,7 @@ def divided_difference(f, i):
     si_f = f.subs({z[i]: z[i-1], z[i-1]: z[i]})
     return (si_f - f) // (z[i] - z[i-1])
 
+
 def isobaric_divided_difference(f, w):
     r"""
     Apply the isobaric divided difference operator `\pi_w` to the
@@ -838,6 +840,7 @@ def isobaric_divided_difference(f, w):
         si_fp = fp.subs({z[i]: z[i-1], z[i-1]: z[i]})
         f = (si_fp - fp) // (z[i] - z[i-1])
     return f
+
 
 def sorting_word(alpha):
     r"""

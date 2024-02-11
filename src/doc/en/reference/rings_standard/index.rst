@@ -12,6 +12,8 @@ Integers
    sage/rings/bernmm
    sage/rings/bernoulli_mod_p
    sage/rings/factorint
+   sage/rings/factorint_flint
+   sage/rings/factorint_pari
    sage/rings/fast_arith
    sage/rings/sum_of_squares
    sage/arith/functions

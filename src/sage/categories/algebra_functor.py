@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.groups
 r"""
 Group algebras and beyond: the Algebra functorial construction
 
@@ -577,7 +577,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
             sage: from sage.categories.algebra_functor import GroupAlgebraFunctor
             sage: GroupAlgebraFunctor(CyclicPermutationGroup(17)).group() == CyclicPermutationGroup(17)
             True
-         """
+        """
         return self.__group
 
     def _apply_functor(self, base_ring):

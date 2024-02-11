@@ -20,7 +20,7 @@ In this chapter, we discuss interfaces between Sage and :ref:`PARI
 
 .. _section-pari-library:
 
-The PARI C Library Interface
+The PARI C library interface
 ============================
 
 Here is a step-by-step guide to adding new PARI functions to Sage. We
@@ -97,14 +97,14 @@ In case you are familiar with gp, please note that the PARI C function
 may have a name that is different from the corresponding gp function
 (for example, see ``mathnf``), so always check the manual.
 
-We can also add a ``frobenius(flag)`` method to the ``matrix_integer``
+We can also add a ``frobenius_form(flag)`` method to the ``matrix_integer``
 class where we call the ``matfrobenius()`` method on the PARI object
 associated to the matrix after doing some sanity checking. Then we
 convert output from PARI to Sage objects:
 
 .. CODE-BLOCK:: cython
 
-    def frobenius(self, flag=0, var='x'):
+    def frobenius_form(self, flag=0, var='x'):
         """
         Return the Frobenius form (rational canonical form) of this matrix.
 
@@ -129,13 +129,13 @@ convert output from PARI to Sage objects:
         EXAMPLES::
 
             sage: A = MatrixSpace(ZZ, 3)(range(9))
-            sage: A.frobenius(0)
+            sage: A.frobenius_form(0)
             [ 0  0  0]
             [ 1  0 18]
             [ 0  1 12]
-            sage: A.frobenius(1)
+            sage: A.frobenius_form(1)
             [x^3 - 12*x^2 - 18*x]
-            sage: A.frobenius(1, var='y')
+            sage: A.frobenius_form(1, var='y')
             [y^3 - 12*y^2 - 18*y]
         """
         if not self.is_square():
@@ -570,7 +570,7 @@ One more example (in addition to the one in the docstring):
     ((0, 1, 0), (1, 0, 0), (0, 0, 1))
 
 
-Singular: Another Approach
+Singular: another approach
 ==========================
 
 There is also a more Python-like interface to Singular. Using this,
@@ -626,7 +626,7 @@ implemented in the Sage/Singular interface, whereas the code in the
 previous section used only the barest minimum of that interface.
 
 
-Creating a New Pseudo-TTY Interface
+Creating a new pseudo-TTY interface
 ===================================
 
 You can create Sage pseudo-tty interfaces that allow Sage to work with
@@ -708,13 +708,13 @@ dumps the user into an Octave interactive shell:
             Use octave to compute a solution x to A*x = b, as a list.
 
             INPUT:
-            
+
             - A -- mxn matrix A with entries in QQ or RR
             - b -- m-vector b entries in QQ or RR (resp)
 
             OUTPUT:
 
-            An list x (if it exists) which solves M*x = b
+            A list x (if it exists) which solves M*x = b
 
             EXAMPLES::
 

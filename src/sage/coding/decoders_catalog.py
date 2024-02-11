@@ -12,6 +12,7 @@ that code (:meth:`sage.coding.linear_code.AbstractLinearCode.decoder`).
 - :class:`extended_code.ExtendedCodeOriginalCodeDecoder <sage.coding.extended_code.ExtendedCodeOriginalCodeDecoder>`
 
 **Subfield subcode decoder**
+
 - :class:`subfield_subcode.SubfieldSubcodeOriginalCodeDecoder <sage.coding.subfield_subcode.SubfieldSubcodeOriginalCodeDecoder>`
 
 **Generalized Reed-Solomon code decoders**
@@ -45,11 +46,9 @@ that code (:meth:`sage.coding.linear_code.AbstractLinearCode.decoder`).
 - :class:`ag_code_decoders.EvaluationAGCodeUniqueDecoder <sage.coding.ag_code_decoders.EvaluationAGCodeUniqueDecoder>`
 - :class:`ag_code_decoders.DifferentialAGCodeUniqueDecoder <sage.coding.ag_code_decoders.DifferentialAGCodeUniqueDecoder>`
 
-.. NOTE::
+To import these names into the global namespace, use::
 
-    To import these names into the global namespace, use:
-
-        sage: from sage.coding.decoders_catalog import *
+    sage: from sage.coding.decoders_catalog import *
 """
 #*****************************************************************************
 #       Copyright (C) 2009 David Joyner <wdjoyner@gmail.com>

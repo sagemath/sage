@@ -54,9 +54,9 @@ def random_testing(fn):
     fails (raises an exception).
 
     If you want a very long-running test using this setup, you should do
-    something like (in Python 2)::
+    something like::
 
-        for _ in xrange(10^10): test_foo(100)
+        for _ in range(10^10): test_foo(100)
 
     instead of::
 
@@ -184,7 +184,7 @@ def test_add_commutes(trials, verbose=False):
         b = QQ.random_element()
         if verbose:
             print("a == {}, b == {} ...".format(a, b))
-        assert(a + b == b + a)
+        assert a + b == b + a
         if verbose:
             print("Passes!")
 
@@ -258,6 +258,6 @@ def test_add_is_mul(trials, verbose=False):
         b = QQ.random_element()
         if verbose:
             print("a == {}, b == {} ...".format(a, b))
-        assert(a + b == a * b)
+        assert a + b == a * b
         if verbose:
             print("Passes!")

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Database of generalised quadrangles with spread
 
@@ -122,6 +123,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
     raise RuntimeError(
         f"Sage can't build a GQ of order ({s}, {t}) with a spread")
 
+
 def is_GQ_with_spread(GQ, S, s=None, t=None):
     r"""
     Check if GQ is a generalised quadrangle of order `(s,t)` and
@@ -232,6 +234,7 @@ def dual_GQ_ovoid(GQ, O):
     D = IncidenceStructure(newBlocks)
     return (D, S)
 
+
 def generalised_quadrangle_hermitian_with_ovoid(const int q):
     r"""
     Construct the generalised quadrangle `H(3,q^2)` with an ovoid.
@@ -286,7 +289,6 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
     from sage.arith.misc import is_prime_power
 
     GU = libgap.GU(4, q)
-    H = libgap.InvariantSesquilinearForm(GU)["matrix"]
     Fq = libgap.GF(q * q)
     zero = libgap.Zero(Fq)
     one = libgap.One(Fq)
@@ -310,14 +312,13 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
     lines = [list(map(lambda x: int(x - 1), b)) for b in lines]  # convert to int
     # lines defines the GQ H(3, q^2)
 
-
     # to find an ovoid, we embed H(3,q^2) in H(4,q^2)
     # the embedding is (a,b,c,d) -> (a,b,0,c,d)
     # then we find a point in the latter and not in the former
     # this point will be collinear (in H(3,q^2)) to all points in an ovoid
     if q % 2 == 1:
-        (p, k) = is_prime_power(q, get_data=True)
-        a = (p-1) // 2
+        p, _ = is_prime_power(q, get_data=True)
+        a = (p - 1) // 2
         aGap = zero
         for i in range(a):
             aGap += one

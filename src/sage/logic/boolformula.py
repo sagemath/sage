@@ -148,7 +148,7 @@ latex_operators = [('&', '\\wedge '),
                    ('->', '\\rightarrow ')]
 
 
-class BooleanFormula():
+class BooleanFormula:
     """
     Boolean formulas.
 
@@ -673,10 +673,7 @@ class BooleanFormula():
             False
         """
         table = self.truthtable().get_table_list()
-        for row in table[1:]:
-            if row[-1] is True:
-                return True
-        return False
+        return any(row[-1] is True for row in table[1:])
 
     def is_tautology(self):
         r"""
@@ -1167,7 +1164,7 @@ class BooleanFormula():
             lval = ('prop', tree[1])
         else:
             lval = tree[1]
-        if not isinstance(tree[2], tuple) and not(tree[2] is None):
+        if not isinstance(tree[2], tuple) and tree[2] is not None:
             rval = ('prop', tree[2])
         else:
             rval = tree[2]
@@ -1309,11 +1306,11 @@ class BooleanFormula():
         if tree[0] == '<->':
             # parse tree for (~tree[1]|tree[2])&(~tree[2]|tree[1])
             new_tree = ['&', ['|', ['~', tree[1], None], tree[2]],
-                       ['|', ['~', tree[2], None], tree[1]]]
+                        ['|', ['~', tree[2], None], tree[1]]]
         elif tree[0] == '^':
             # parse tree for (tree[1]|tree[2])&~(tree[1]&tree[2])
             new_tree = ['&', ['|', tree[1], tree[2]],
-                       ['~', ['&', tree[1], tree[2]], None]]
+                        ['~', ['&', tree[1], tree[2]], None]]
         elif tree[0] == '->':
             # parse tree for ~tree[1]|tree[2]
             new_tree = ['|', ['~', tree[1], None], tree[2]]
@@ -1354,10 +1351,7 @@ class BooleanFormula():
         if tree[0] == '~' and isinstance(tree[1], list):
             op = tree[1][0]
             if op != '~':
-                if op == '&':
-                    op = '|'
-                else:
-                    op = '&'
+                op = '|' if op == '&' else '&'
                 new_tree = [op, ['~', tree[1][1], None], ['~', tree[1][2], None]]
                 return logicparser.apply_func(new_tree, self.dist_not)
             else:
@@ -1556,6 +1550,7 @@ class BooleanFormula():
     # For backward compatibility, we allow `self.length()` to be called as
     # `len(self)`, but this may be deprecated in the future (see :trac:`32148`):
     __len__ = length
+
 
 # allow is_consequence to be called as a function (not only as a method of BooleanFormula)
 is_consequence = BooleanFormula.is_consequence

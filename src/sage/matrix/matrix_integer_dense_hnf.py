@@ -10,7 +10,7 @@ from copy import copy
 
 from sage.arith.misc import CRT_list, previous_prime
 from sage.matrix.constructor import identity_matrix, matrix, random_matrix
-from sage.misc.misc import cputime
+from sage.misc.timing import cputime
 from sage.misc.verbose import verbose
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -236,8 +236,8 @@ def double_det(A, b, c, proof):
     INPUT:
 
     - A -- an (n-1) x n matrix
-    - b -- an 1 x n matrix
-    - c -- an 1 x n matrix
+    - b -- a 1 x n matrix
+    - c -- a 1 x n matrix
     - proof -- whether or not to compute the det modulo enough times to
       provably compute the determinant.
 

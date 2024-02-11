@@ -213,19 +213,24 @@ class FiniteField_pari_ffelt(FiniteField):
         TESTS::
 
             sage: F = FiniteField(37^10, 'a', impl='pari_ffelt')
-            sage: x = F.random_element()
-            sage: all(x**(37**k) == F(F._pari_frobenius(k).ffmap(x)) for k in range(1, 30) if k % 10 != 0)
+            sage: x = F.random_element()                                                # needs sage.modules
+            sage: all(x**(37**k) == F(F._pari_frobenius(k).ffmap(x))                    # needs sage.modules
+            ....:     for k in range(1, 30) if k % 10 != 0)
             True
-            sage: F(F._pari_frobenius(-1).ffmap(x))**37 == x
+            sage: F(F._pari_frobenius(-1).ffmap(x))**37 == x                            # needs sage.modules
             True
-
         """
         k = k % self.degree()
         if k == 0:
             raise ValueError("_pari_frobenius requires a non-zero exponent")
         g = self.gen()
         i = len(self.__pari_frobenius_powers)
+        if i == 0:
+            self.__pari_frobenius_powers.append(g.__pari__().fffrobenius(1))
+            i = 1
+        f1 = self.__pari_frobenius_powers[0]
         while i < k:
             i += 1
-            self.__pari_frobenius_powers.append(g.__pari__().fffrobenius(i))
+            fi = self.__pari_frobenius_powers[-1].ffcompomap(f1)
+            self.__pari_frobenius_powers.append(fi)
         return self.__pari_frobenius_powers[k-1]
