@@ -534,7 +534,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
             sage: maxima(gamma_inc_lower(x, x))                                         # needs sage.symbolic
             gamma_incomplete_lower(_SAGE_VAR_x,_SAGE_VAR_x)
 
-    .. SEEALSO::
+        .. SEEALSO::
 
         :class:`Function_gamma_inc`
         """
@@ -726,7 +726,7 @@ def gamma(a, *args, **kwds):
     .. SEEALSO::
 
         :class:`Function_gamma`
-        """
+    """
     if not args:
         return gamma1(a, **kwds)
     if len(args) > 1:

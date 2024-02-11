@@ -97,26 +97,26 @@ Obtaining an instance of :class:`Link`::
     <class 'sage.knots.link.Link'>
 
 If you have `SnapPy <https://snappy.math.uic.edu/index.html>`__ installed inside
-Sage you can obtain an instance of :class:`~spherogram.links.links_base.Link`,
+Sage, you can obtain an instance of :class:`~spherogram.links.links_base.Link`,
 too::
 
+    sage: # optional - snappy
     sage: L6 = KnotInfo.L6a1_0
-    sage: l6s = L6.link(snappy=True); l6s      # optional - snappy
+    sage: l6s = L6.link(snappy=True); l6s
     Plink failed to import tkinter.
     <Link: 2 comp; 6 cross>
-
-    sage: type(l6s)                            # optional - snappy
+    sage: type(l6s)
     <class 'spherogram.links.invariants.Link'>
     sage: l6  = L6.link()
-    sage: l6 == l6s.sage_link()                # optional - snappy
+    sage: l6 == l6s.sage_link()
     True
-    sage: L6.link(L6.items.name, snappy=True)  # optional - snappy
+    sage: L6.link(L6.items.name, snappy=True)
     <Link L6a1: 2 comp; 6 cross>
-    sage: l6sn = _                             # optional - snappy
-    sage: l6s == l6sn                          # optional - snappy
+    sage: l6sn = _
+    sage: l6s == l6sn
     False
-    sage: l6m = l6.mirror_image()              # optional - snappy
-    sage: l6sn.sage_link().is_isotopic(l6m)    # optional - snappy
+    sage: l6m = l6.mirror_image()
+    sage: l6sn.sage_link().is_isotopic(l6m)
     True
 
 But observe that the name conversion to SnapPy does not distinguish orientation
@@ -238,13 +238,15 @@ Thanks to Chuck Livingston and Allison Moore for their support. For further ackn
 
 from enum import Enum
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
-from sage.groups.braid import BraidGroup
 from sage.knots.knot import Knots
 from sage.databases.knotinfo_db import KnotInfoColumns, db
+
+lazy_import('sage.groups.braid', 'BraidGroup')
 
 
 def eval_knotinfo(string, locals={}, to_tuple=True):
@@ -694,8 +696,7 @@ class KnotInfoBase(Enum):
     @cached_method
     def braid(self):
         r"""
-        Return the braid notation of self as an instance of :class:`~sage.groups.braid.Braid`.
-
+        Return the braid notation of ``self`` as an instance of :class:`~sage.groups.braid.Braid`.
 
         EXAMPLES::
 

@@ -453,7 +453,8 @@ class Animation(WithEqualityById, SageObject):
             ....:                         floor(G.ymin()), ceil(G.ymax()))
             ....:        G.save_image(filename, **kwds)
 
-            sage: B = MyAnimation([graphs.CompleteGraph(n) for n in range(7,11)], figsize=5)
+            sage: B = MyAnimation([graphs.CompleteGraph(n)
+            ....:                  for n in range(7,11)], figsize=5)
             sage: d = B.png()
             sage: v = os.listdir(d); v.sort(); v
             ['00000000.png', '00000001.png', '00000002.png', '00000003.png']

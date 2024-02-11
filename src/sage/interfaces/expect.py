@@ -158,7 +158,7 @@ class Expect(Interface):
         else:
             self.__path = os.path.join(SAGE_EXTCODE, name, script_subdirectory)
         if not os.path.isdir(self.__path):
-            raise EnvironmentError("path %r does not exist" % self.__path)
+            raise OSError("path %r does not exist" % self.__path)
         self.__initialized = False
         self.__seq = -1
         self._session_number = 0
@@ -802,7 +802,7 @@ If this all works, you can then make calls like:
         os.system(cmd)
 
     def _remove_tmpfile_from_server(self):
-        if not (self.__remote_tmpfile is None):
+        if self.__remote_tmpfile is not None:
             raise NotImplementedError
 
     def _eval_line_using_file(self, line, restart_if_needed=True):

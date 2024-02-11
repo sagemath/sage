@@ -96,7 +96,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
        specify information and generic operations for elements of this
        category.
 
-     - ``_functor_name`` - an string which specifies the name of the
+     - ``_functor_name`` - a string which specifies the name of the
        functor, and also (when relevant) of the method on parents and
        elements used for calling the construction.
 
@@ -145,7 +145,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
         # But then this would impose that, for any constructor, the
         # category of the result does not depend on the order/repetition
         # of the categories of the parents
-        return self.category_from_categories(tuple(set(parent.category() for parent in parents)))
+        return self.category_from_categories(tuple({parent.category() for parent in parents}))
 
     @cached_method
     def category_from_categories(self, categories):

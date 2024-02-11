@@ -1458,7 +1458,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     def _an_element_(self):
         r"""
         Overwrite the original method from :mod:`~sage.combinat.free_module`
-        to obtain an more interesting element for ``TestSuite``.
+        to obtain a more interesting element for ``TestSuite``.
 
         EXAMPLES::
 
@@ -2233,7 +2233,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             sage: CHA5._basis_extension
             [[4], [-4], [4, 1]]
 
-        case where the braid already has an corresponding basis element::
+        case where the braid already has a corresponding basis element::
 
             sage: CHA5._braid_image_by_basis_extension((1,)) # optional - database_cubic_hecke
             c0
@@ -2405,7 +2405,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             result = result_ele.to_vector()
 
         elif abs(k) == 1:
-            result_ele = self._tietze_to_finite_sub_basis_monomial(tuple([k]))
+            result_ele = self._tietze_to_finite_sub_basis_monomial((k,))
             result = result_ele.to_vector()
 
         else:
@@ -2874,7 +2874,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             True
         """
         braid_group = self.braid_group()
-        reverse_gens = [g for g in braid_group.gens()]
+        reverse_gens = list(braid_group.gens())
         reverse_gens.reverse()
         brgrp_garside_involution = braid_group.hom(reverse_gens, check=False)
         return self._extend_braid_automorphism(element, brgrp_garside_involution)
@@ -3446,7 +3446,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         GER = self.extension_ring(generic=True)
         generic_result = [GER(s) for s in gap3_result]
         if generic:
-            return [s for s in generic_result]
+            return list(generic_result)
         else:
             ER = self.extension_ring()
             return [ER(s) for s in generic_result]

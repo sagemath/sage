@@ -21,7 +21,7 @@ class ComplexReflectionGroups(Category_singleton):
     The category of complex reflection groups.
 
     Let `V` be a complex vector space. A *complex reflection* is an
-    element of `\operatorname{GL}(V)` fixing an hyperplane pointwise
+    element of `\operatorname{GL}(V)` fixing a hyperplane pointwise
     and acting by multiplication by a root of unity on a complementary
     line.
 
@@ -45,10 +45,10 @@ class ComplexReflectionGroups(Category_singleton):
         sage: ComplexReflectionGroups()
         Category of complex reflection groups
         sage: ComplexReflectionGroups().super_categories()
-        [Category of complex reflection or generalized coxeter groups]
+        [Category of complex reflection or generalized Coxeter groups]
         sage: ComplexReflectionGroups().all_super_categories()
         [Category of complex reflection groups,
-         Category of complex reflection or generalized coxeter groups,
+         Category of complex reflection or generalized Coxeter groups,
          Category of groups,
          Category of monoids,
          Category of finitely generated semigroups,
@@ -87,7 +87,7 @@ class ComplexReflectionGroups(Category_singleton):
 
             sage: from sage.categories.complex_reflection_groups import ComplexReflectionGroups
             sage: ComplexReflectionGroups().super_categories()
-            [Category of complex reflection or generalized coxeter groups]
+            [Category of complex reflection or generalized Coxeter groups]
         """
         return [ComplexReflectionOrGeneralizedCoxeterGroups()]
 

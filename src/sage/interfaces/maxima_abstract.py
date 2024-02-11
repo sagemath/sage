@@ -356,7 +356,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding Maxima command completion list (this takes")
@@ -392,7 +392,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         ::
 
-            sage: maxima.interact()     # this is not tested either
+            sage: maxima.interact()     # not tested
               --> Switching to Maxima <--
             maxima: 2+2
             4
@@ -918,9 +918,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
            variables will have these initial conditions automatically
            imposed.
         """
-        if not (ics is None):
+        if ics is not None:
             d = len(ics)
-            for i in range(0,d-1):
+            for i in range(d - 1):
                 ic = 'atvalue(diff(%s(%s), %s, %s), %s = %s, %s)' % (
                     vars[1], vars[0], vars[0], i, vars[0], ics[0], ics[1+i])
                 self.eval(ic)

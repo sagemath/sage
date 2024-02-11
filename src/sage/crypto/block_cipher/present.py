@@ -473,7 +473,7 @@ class PRESENT(SageObject):
             sage: c4 = 0x3333DCD3213210D2
             sage: present.decrypt(c4, k4) == p4
             True
-       """
+        """
         if isinstance(ciphertext, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(ciphertext, (Integer, int)):

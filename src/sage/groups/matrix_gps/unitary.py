@@ -8,11 +8,11 @@ EXAMPLES::
 
     sage: # needs sage.rings.finite_rings
     sage: G = SU(3,5)
-    sage: G.order()
+    sage: G.order()                                                                     # needs sage.libs.gap
     378000
     sage: G
     Special Unitary Group of degree 3 over Finite Field in a of size 5^2
-    sage: G.gens()
+    sage: G.gens()                                                                      # needs sage.libs.gap
     (
     [      a       0       0]  [4*a   4   1]
     [      0 2*a + 2       0]  [  4   4   0]
@@ -100,7 +100,7 @@ def _UG(n, R, special, var='a', invariant_form=None):
 
     TESTS::
 
-        sage: GU(3,25).order()  # indirect doctest                                      # needs sage.rings.finite_rings
+        sage: GU(3,25).order()  # indirect doctest                                      # needs sage.libs.gap sage.rings.finite_rings
         3961191000000
     """
     prefix = 'General'
@@ -131,11 +131,11 @@ def _UG(n, R, special, var='a', invariant_form=None):
 
         name = '{0} Unitary Group of degree {1} over {2} {3}\n{4}'.format(prefix,
                                  degree, ring, inserted_text, invariant_form)
-        ltx  = r'\text{{{0}U}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(latex_prefix,
+        ltx = r'\text{{{0}U}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(latex_prefix,
                      degree, latex(ring), inserted_text, latex(invariant_form))
     else:
         name = '{0} Unitary Group of degree {1} over {2}'.format(prefix, degree, ring)
-        ltx  = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
+        ltx = r'\text{{{0}U}}_{{{1}}}({2})'.format(latex_prefix, degree, latex(ring))
 
     if isinstance(ring, FiniteField):
         try:
@@ -195,7 +195,7 @@ def GU(n, R, var='a', invariant_form=None):
 
         sage: G = GU(3, 7); G                                                           # needs sage.rings.finite_rings
         General Unitary Group of degree 3 over Finite Field in a of size 7^2
-        sage: G.gens()                                                                  # needs sage.rings.finite_rings
+        sage: G.gens()                                                                  # needs sage.libs.gap sage.rings.finite_rings
         (
         [  a   0   0]  [6*a   6   1]
         [  0   1   0]  [  6   6   0]
@@ -207,7 +207,7 @@ def GU(n, R, var='a', invariant_form=None):
         sage: G = GU(3, 5, var='beta')                                                  # needs sage.rings.finite_rings
         sage: G.base_ring()                                                             # needs sage.rings.finite_rings
         Finite Field in beta of size 5^2
-        sage: G.gens()                                                                  # needs sage.rings.finite_rings
+        sage: G.gens()                                                                  # needs sage.libs.gap sage.rings.finite_rings
         (
         [  beta      0      0]  [4*beta      4      1]
         [     0      1      0]  [     4      4      0]

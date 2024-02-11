@@ -454,12 +454,12 @@ class ErrorErasureChannel(Channel):
     - ``space`` -- the input and output space
 
     - ``number_errors`` -- the number of errors created in each transmitted
-      message. It can be either an integer of a tuple. If an tuple is passed as
+      message. It can be either an integer of a tuple. If a tuple is passed as
       an argument, the number of errors will be a random integer between the
       two bounds of this tuple.
 
     - ``number_erasures`` -- the number of erasures created in each transmitted
-      message. It can be either an integer of a tuple. If an tuple is passed as an
+      message. It can be either an integer of a tuple. If a tuple is passed as an
       argument, the number of erasures will be a random integer between the
       two bounds of this tuple.
 
@@ -564,7 +564,7 @@ class ErrorErasureChannel(Channel):
         Return ``message`` with as many errors as ``self._number_errors`` in it,
         and as many erasures as ``self._number_erasures`` in it.
 
-        If ``self._number_errors`` was passed as an tuple for the number of errors, it will
+        If ``self._number_errors`` was passed as a tuple for the number of errors, it will
         pick a random integer between the bounds of the tuple and use it as the number of errors.
         It does the same with ``self._number_erasures``.
 

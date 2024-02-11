@@ -395,7 +395,7 @@ class LiE(ExtraTabCompletion, Expect):
                 self._tab_completion_dict = trait_dict
                 self._help_dict = help_dict
                 return
-            except IOError:
+            except OSError:
                 pass
 
         # Go through INFO.3 and get the necessary information
@@ -536,11 +536,11 @@ class LiE(ExtraTabCompletion, Expect):
         else:
             return self._tab_completion_list
 
-    def _an_element_impl(self):
+    def _an_element_(self):
         """
         EXAMPLES::
 
-            sage: lie._an_element_impl() # optional - lie
+            sage: lie._an_element_() # optional - lie
             0
         """
         return self(0)

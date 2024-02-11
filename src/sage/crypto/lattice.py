@@ -211,7 +211,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [-4 -3 2 -5 0 0 0 0 0 1]
         ]
 
-        sage: sage.crypto.gen_lattice(m=10, q=11, seed=42, lattice=True)
+        sage: sage.crypto.gen_lattice(m=10, q=11, seed=42, lattice=True)                # needs fpylll
         Free module of degree 10 and rank 10 over Integer Ring
         User basis matrix:
         [ 0  0  1  1  0 -1 -1 -1  1  0]

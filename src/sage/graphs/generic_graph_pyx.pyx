@@ -501,7 +501,7 @@ def length_and_string_from_graph6(s):
 
     INPUT:
 
-    - ``s`` -- a graph6 string describing an binary vector (and encoding its
+    - ``s`` -- a graph6 string describing a binary vector (and encoding its
       length).
 
     EXAMPLES::
@@ -611,6 +611,7 @@ def binary_string_from_dig6(s, n):
         l.append('0'*(6 - len(a)) + a)
     m = "".join(l)
     return m[:n*n]
+
 
 # Exhaustive search in graphs
 
@@ -831,16 +832,16 @@ cdef class SubgraphSearch:
         # whether both are of the same type)
         self.directed = G.is_directed()
 
-        cdef int i, j, k
+        cdef int i, j
 
         # A vertex is said to be busy if it is already part of the partial copy
         # of H in G.
-        self.busy       = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.tmp_array  = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.stack      = <int *>  self.mem.allocarray(self.nh, sizeof(int))
-        self.vertices   = <int *>  self.mem.allocarray(self.nh, sizeof(int))
+        self.busy = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.tmp_array = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.stack = <int *> self.mem.allocarray(self.nh, sizeof(int))
+        self.vertices = <int *> self.mem.allocarray(self.nh, sizeof(int))
         self.line_h_out = <int **> self.mem.allocarray(self.nh, sizeof(int *))
-        self.line_h_in  = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
+        self.line_h_in = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
 
         self.line_h_out[0] = <int *> self.mem.allocarray(self.nh*self.nh,
                                                          sizeof(int))
@@ -1029,6 +1030,7 @@ cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
         if a[i] < b[i]:
             return False
     return True
+
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
@@ -1347,7 +1349,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     find_path = (find_path > 0)
 
     if G.is_clique(induced=False):
-        # We have an hamiltonian path since n >= 2, but we have an hamiltonian
+        # We have a hamiltonian path since n >= 2, but we have a hamiltonian
         # cycle only if n >= 3
         return find_path or n >= 3, list(G)
 
