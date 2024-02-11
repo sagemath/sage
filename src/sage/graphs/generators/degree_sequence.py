@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Graphs with a given degree sequence
 
@@ -98,8 +97,8 @@ def DegreeSequenceBipartite(s1, s2):
         True
 
     Some sequences being incompatible if, for example, their sums are different,
-    the functions raises a ``ValueError`` when no graph corresponding to the
-    degree sequences exists::
+    the functions raises a :class:`ValueError` when no graph corresponding
+    to the degree sequences exists::
 
         sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])                     # needs sage.combinat sage.modules
         Traceback (most recent call last):

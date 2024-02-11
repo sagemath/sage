@@ -1,11 +1,6 @@
-cd src
+# pip can install its own wheel! But first we need to ensure that the
+# wheel file is on the PYTHONPATH
+export PYTHONPATH=$(pwd)/$(cd dist && for w in *.whl; do cp $w ..; echo $w; break; done)
 
-sdh_setup_bdist_wheel
-
-# pip can install its own wheel! But first we need to ensure that the pip
-# source directory in on the PYTHONPATH
-export PYTHONPATH="$(pwd)/src"
-
-# --ignore-installed makes sure that pip does not mistake
-# its own source tree as an existing installation
-sdh_store_and_pip_install_wheel --ignore-installed .
+# This line is the same as what sage-spkg uses to install the wheel.
+sdh_store_and_pip_install_wheel .

@@ -658,6 +658,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             NotImplementedError: square free factorization of polynomials over rings with composite characteristic is not implemented
 
+        :trac:`20003`::
+
+            sage: P.<x> = GF(7)[]
+            sage: (6*x+3).squarefree_decomposition()
+            (6) * (x + 4)
         """
         if not self.base_ring().is_field():
             raise NotImplementedError("square free factorization of polynomials over rings with composite characteristic is not implemented")
@@ -810,9 +815,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         cdef Polynomial_zmod_flint res = self._new()
         cdef unsigned long d
         if degree is not None:
+            if degree < 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             nmod_poly_reverse(&res.x, &self.x, d+1) # FLINT expects length
         else:
             nmod_poly_reverse(&res.x, &self.x, nmod_poly_length(&self.x))

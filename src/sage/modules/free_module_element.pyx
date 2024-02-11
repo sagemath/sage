@@ -4788,11 +4788,10 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: v.nonzero_positions()
             [0, 1, 3, 4]
         """
-        #WARNING: In creation, we do not check that the indices i satisfy
+        # WARNING: In creation, we do not check that the indices i satisfy
         #     0 <= i < degree
         # or even that the indices are integers.
         FreeModuleElement.__init__(self, parent)
-        R = self.base_ring()
         cdef Py_ssize_t i
         cdef dict entries_dict, e
         if not entries:

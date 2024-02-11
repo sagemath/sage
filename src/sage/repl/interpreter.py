@@ -153,6 +153,18 @@ from IPython.terminal.embed import InteractiveShellEmbed
 from IPython.terminal.ipapp import TerminalIPythonApp, IPAppCrashHandler
 from IPython.core.crashhandler import CrashHandler
 
+from ctypes import pythonapi, c_int, c_void_p
+# The following functions are part of the stable ABI since python 3.2
+# See: https://docs.python.org/3/c-api/sys.html#c.PyOS_getsig
+
+# PyOS_sighandler_t PyOS_getsig(int i)
+pythonapi.PyOS_getsig.restype = c_void_p
+pythonapi.PyOS_getsig.argtypes = c_int,
+
+# PyOS_sighandler_t PyOS_setsig(int i, PyOS_sighandler_t h)
+pythonapi.PyOS_setsig.restype = c_void_p
+pythonapi.PyOS_setsig.argtypes = c_int, c_void_p,
+
 
 # TODO: This global variable _do_preparse should be associated with an
 # IPython InteractiveShell as opposed to a global variable in this
@@ -287,6 +299,18 @@ class SageTerminalInteractiveShell(SageShellOverride, TerminalInteractiveShell):
         backend = BackendIPythonCommandline()
         backend.get_display_manager().switch_backend(backend, shell=self)
 
+    def prompt_for_code(self):
+        # save sigint handlers (python and os level)
+        # https://github.com/prompt-toolkit/python-prompt-toolkit/issues/1576
+        # https://github.com/sagemath/sage/issues/33428
+        # https://github.com/sagemath/sage/pull/35251
+        import signal
+        sigint = signal.getsignal(signal.SIGINT)
+        sigint_os = pythonapi.PyOS_getsig(signal.SIGINT)
+        text = TerminalInteractiveShell.prompt_for_code(self)
+        signal.signal(signal.SIGINT, sigint)
+        pythonapi.PyOS_setsig(signal.SIGINT, sigint_os)
+        return text
 
 class SageTestShell(SageShellOverride, TerminalInteractiveShell):
     """

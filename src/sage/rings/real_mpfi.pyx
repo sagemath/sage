@@ -258,6 +258,8 @@ from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT, Py_GE
 
 from cysignals.signals cimport sig_on, sig_off
 
+import sage.arith.misc
+
 from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
 from sage.libs.mpfi cimport *
@@ -269,11 +271,11 @@ from sage.structure.element cimport have_same_parent
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
 
-from .convert.mpfi cimport mpfi_set_sage
-from .real_mpfr cimport RealField_class, RealNumber, RealField
-from .integer cimport Integer
-from .integer_ring import ZZ
-from .rational_field import QQ
+from sage.rings.convert.mpfi cimport mpfi_set_sage
+from sage.rings.real_mpfr cimport RealField_class, RealNumber, RealField
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 cimport sage.rings.abc
 
@@ -5035,7 +5037,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         known_bits = -self.relative_diameter().log2()
 
-        return sage.arith.all.algdep(self.center(), n, known_bits=known_bits)
+        return sage.arith.misc.algdep(self.center(), n, known_bits=known_bits)
 
     def factorial(self):
         """

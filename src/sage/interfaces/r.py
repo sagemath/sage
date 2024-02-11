@@ -1085,7 +1085,7 @@ class R(ExtraTabCompletion, Interface):
         """
         return self.function_call(function_name, args=args, kwds=kwds)
 
-    def _an_element_impl(self):
+    def _an_element_(self):
         """
         Returns an element belonging to the R interpreter.  This is used
         behind the scenes when doing things like comparisons, etc.
@@ -1094,7 +1094,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._an_element_impl()  # optional - rpy2
+            sage: r._an_element_()  # optional - rpy2
             [1] 0
             sage: type(_)  # optional - rpy2
             <class 'sage.interfaces.r.RElement'>
@@ -1239,7 +1239,7 @@ class R(ExtraTabCompletion, Interface):
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose and use_disk_cache:
                 print("\nBuilding R command completion list (this takes")

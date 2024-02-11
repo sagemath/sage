@@ -588,7 +588,7 @@ cdef class PointConfiguration_base(Parent):
 
     def _assert_is_affine(self):
         """
-        Raise a ``ValueError`` if the point configuration is not
+        Raise a :class:`ValueError` if the point configuration is not
         defined by affine points.
 
         EXAMPLES::

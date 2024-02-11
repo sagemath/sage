@@ -955,7 +955,26 @@ def extend(v):
         [ 30   0  -7]
         sage: M.det()
         2
+
+    TESTS::
+
+        sage: M = matrix(3, extend( (0, 0, 1) ))
+        sage: M.det()
+        1
+        sage: M.column(0)
+        (0, 0, 1)
+        sage: M = matrix(3, extend( (0, 0, -2) ))
+        sage: M.det()
+        2
+        sage: M.column(0)
+        (0, 0, -2)
     """
+    if v[0] == v[1] == 0:
+        if v[2] < 0:
+            return v[0], 0, 1, v[1], 1, 0, v[2], 0, 0
+        else:
+            return v[0], 1, 0, v[1], 0, 1, v[2], 0, 0
+
     b1 = xgcd(v[0], v[1])
     b2 = xgcd(b1[1], b1[2])
     b3 = xgcd(b1[0], v[2])

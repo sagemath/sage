@@ -204,7 +204,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
          by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
     """
 
-    def __init__(self, A, X):
+    def __init__(self, A, X, category=None):
         """
         Initialize.
 
@@ -218,7 +218,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         if not is_ProjectiveSpace(A):
             raise TypeError("A (=%s) must be a projective space" % A)
 
-        Curve_generic.__init__(self, A, X)
+        Curve_generic.__init__(self, A, X, category=category)
 
     def _repr_type(self):
         r"""
@@ -495,7 +495,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         phi = K(l)
         G = [phi(f) for f in J.gens()]
         C = PP2.curve(G)
-        return tuple([psi, C])
+        return (psi, C)
 
     def plane_projection(self, PP=None):
         r"""
@@ -577,7 +577,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             psi = K(phi.defining_polynomials())
             H = Hom(self, L[1].ambient_space())
             phi = H([psi(L[0].defining_polynomials()[i]) for i in range(len(L[0].defining_polynomials()))])
-        return tuple([phi, C])
+        return (phi, C)
 
 
 class ProjectivePlaneCurve(ProjectiveCurve):
@@ -610,7 +610,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
          defined by y^2*z - x*z^2 - z^3
     """
 
-    def __init__(self, A, f):
+    def __init__(self, A, f, category=None):
         """
         Initialize.
 
@@ -624,7 +624,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         if not (is_ProjectiveSpace(A) and A.dimension != 2):
             raise TypeError("the ambient space is not a projective plane")
 
-        super().__init__(A, [f])
+        super().__init__(A, [f], category=category)
 
     def _repr_type(self):
         r"""
@@ -1104,7 +1104,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         T = []
         for item in G.dict().items():
             tup = tuple([item[0][i] - degs[i] for i in range(len(L))])
-            T.append(tuple([tup, item[1]]))
+            T.append((tup, item[1]))
         G = R(dict(T))
         H = Hom(self, PP.curve(G))
         phi = H(coords)
@@ -1579,7 +1579,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
     """
     _point = ProjectiveCurvePoint_field
 
-    def __init__(self, A, X):
+    def __init__(self, A, X, category=None):
         """
         Initialize.
 
@@ -1590,7 +1590,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             sage: loads(dumps(C)) == C
             True
         """
-        super().__init__(A, X)
+        super().__init__(A, X, category=category)
 
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")
@@ -2325,7 +2325,14 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
     def function(self, f):
         """
-        Return the function field element coerced from ``x``.
+        Return the function field element corresponding to ``f``.
+
+        INPUT:
+
+        - ``f`` -- a fraction of homogeneous polynomials of the coordinate ring
+          of the ambient space of the curve
+
+        OUTPUT: An element of the function field.
 
         EXAMPLES::
 
@@ -2343,7 +2350,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
              - Place (y, z + 1)
         """
         S = self.ambient_space().coordinate_ring()
-        phi = self._lift_to_function_field
+        phi = self._map_to_function_field
         num = S(f.numerator())
         den = S(f.denominator())
         if num.degree() != den.degree():
@@ -2373,6 +2380,40 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         inv = ~coords[i]
         return tuple([coords[j]*inv for j in range(len(coords)) if j != i])
 
+    def pull_from_function_field(self, f):
+        """
+        Return the fraction corresponding to ``f``.
+
+        INPUT:
+
+        -  ``f`` -- an element of the function field
+
+        OUTPUT:
+
+        A fraction of homogeneous polynomials in the coordinate ring of the
+        ambient space of the curve.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: F = C.function_field()
+            sage: C.pull_from_function_field(F.gen())
+            z/x
+            sage: C.pull_from_function_field(F.one())
+            1
+            sage: C.pull_from_function_field(F.zero())
+            0
+            sage: f1 = F.gen()
+            sage: f2 = F.base_ring().gen()
+            sage: C.function(C.pull_from_function_field(f1)) == f1
+            True
+            sage: C.function(C.pull_from_function_field(f2)) == f2
+            True
+        """
+        return self._map_from_function_field(f)
+
     @lazy_attribute
     def _function_field(self):
         """
@@ -2388,15 +2429,15 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         return self._open_affine._function_field
 
     @lazy_attribute
-    def _lift_to_function_field(self):
+    def _map_to_function_field(self):
         """
-        Return the map to function field of the curve.
+        Return the map to the function field of the curve.
 
         TESTS::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
             sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
-            sage: C._lift_to_function_field
+            sage: C._map_to_function_field
             Ring morphism:
               From: Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
               To:   Function field in z defined by z^8 + 4*y^2*z^7 + 1
@@ -2426,6 +2467,33 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         return tuple(coords)
 
     @lazy_attribute
+    def _map_from_function_field(self):
+        """
+        Return the map from the function field of the curve.
+
+        TESTS::
+
+            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
+            sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
+            sage: F = C.function_field()
+            sage: f = F.random_element()
+            sage: C.function(C._map_from_function_field(f)) == f
+            True
+        """
+        F = self._function_field
+        S = self.ambient_space().coordinate_ring()
+        phi = self._open_affine._nonsingular_model[2]
+        i = self._open_affine_index
+
+        def m(f):
+            pf = phi(f)
+            num = S(pf.numerator()).homogenize(i)
+            den = S(pf.denominator()).homogenize(i)
+            return num / den * S.gen(i) ** (den.total_degree() - num.total_degree())
+
+        return m
+
+    @lazy_attribute
     def _singularities(self):
         """
         Return a list of the pairs of a singular closed point and the places above it.
@@ -2442,7 +2510,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         """
         S = self.ambient_space().coordinate_ring()
-        to_F = self._lift_to_function_field
+        to_F = self._map_to_function_field
         sing = self.singular_subscheme()  # singular locus
 
         # for each affine patch, places on which the dehomogenized polynomials
@@ -2628,7 +2696,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             if not S.gen(i) in prime:
                 break
 
-        phi = self._lift_to_function_field
+        phi = self._map_to_function_field
         denom = self._coordinate_functions[i]
         gs = [phi(f)/denom**f.degree() for f in prime.gens()]
         fs = [g for g in gs if not g.is_zero()]

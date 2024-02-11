@@ -1044,6 +1044,11 @@ REFERENCES:
             *Guide to using plantri*, version 5.0, 2016.
             http://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt
 
+.. [BM2021] Alin Bostan and Ryuhei Mori,
+            *A simple and fast algorithm for computing the N-th term of a linearly recurrent sequence*,
+            Proceedings of Symposium on Simplicity in Algorithms (SOSA), pp. 118--132, 2021.
+            :doi:`10.1137/1.9781611976496.14`
+
 .. [BMBFLR2008] A. Blondin-Massé, S. Brlek, A. Frosini, S. Labbé,
                 S. Rinaldi, *Reconstructing words from a fixed
                 palindromic length sequence*, Proc. TCS 2008, 5th IFIP
@@ -1133,6 +1138,10 @@ REFERENCES:
             Theory and its Applications, 1 (2015),
             83–96. :arxiv:`1406.5337`
 
+.. [BP2023] \N. Brettell and R. Pendavingh, *Computing excluded minors for
+            classes of matroids representable over partial fields*, arXiv
+            preprint :arxiv:`2302.13175` (2023).
+
 .. [BPRS2009] \J. Bastian, \T. Prellberg, \M. Rubey, \C. Stump, *Counting the
             number of elements in the mutation classes of* `\tilde{A}_n`-*quivers*;
             :arxiv:`0906.0487`
@@ -1216,6 +1225,9 @@ REFERENCES:
              Journal on Discrete Mathematics, 22 (4): 1277–1296,
              :doi:`10.1137/060664690`.
 
+.. [Bre2023] \N. Brettell, *The excluded minors for GF(5)-representable matroids
+             on ten elements*, arXiv preprint :arxiv:`2307.14614` (2023).
+
 .. [Bro2011] Francis Brown, *Multiple zeta values and periods: From
              moduli spaces to Feynman integrals*, in Contemporary Mathematics
              vol 539, pages 27-52, 2011.
@@ -1237,6 +1249,9 @@ REFERENCES:
              Computer Science, 1989, pp. 442-447.
              :doi:`10.1109/SFCS.1989.63516`,
              <http://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf>_
+
+.. [Bro2009] \R. Bröker: *Constructing supersingular elliptic curves*.
+             Journal of Combinatorics and Number Theory 1.3 (2009), pp. 269--273.
 
 .. [Broder2000] Broder, A.Z., Kumar, R., Maghoul, F., Raghavan, P., Rajagopalan,
                 S., Stata, R., Tomkins, A., Wiener, J.L.: Graph structure in
@@ -1347,6 +1362,10 @@ REFERENCES:
             complexes and posets. I*. Trans. of
             Amer. Math. Soc. **348** No. 4. (1996)
 
+.. [BY2016] Pauline Bailet and Masahiko Yoshinaga. *Vanishing results for the
+            Aomoto complex of real hyperplane arrangements via minimality*.
+            J. Singularities. **14** (2016), 74-90.
+
 .. [BZ01] \A. Berenstein, A. Zelevinsky
           *Tensor product multiplicities, canonical bases
           and totally positive varieties*
@@ -1371,6 +1390,9 @@ REFERENCES:
 
 .. [Car1972] \R. W. Carter. *Simple groups of Lie type*, volume 28 of
              Pure and Applied Mathematics. John Wiley and Sons, 1972.
+
+.. [Car1972a] \R. W. Carter. *Conjugacy classes in the Weyl group*, Comp. Math.
+              Vol 26 (1972) 1-59.
 
 .. [Cha2005] \F. Chapoton, *Une Base Symétrique de l'algèbre des
              Coinvariants Quasi-Symétriques*, Electronic Journal of
@@ -1480,6 +1502,11 @@ REFERENCES:
 
 .. [CFI1992] Cai, JY., Fürer, M. & Immerman, N. Combinatorica (1992) 12: 389.
              :doi:`10.1007/BF01305232`
+
+.. [CFKLMPPS15] Marek Cygan, Fedor V. Fomin, Łukasz Kowalik, Daniel Lokshtanov,
+                Dániel Marx, Marcin Pilipczuk, Michał Pilipczuk, Saket Saurabh.
+                *Parameterized Algorithms*. Springer International Publishing
+                Switzerland 2015
 
 .. [CFKP1997] James W. Cannon, William J. Floyd, Richard Kenyon and Walter R. Parry.
               *Hyperbolic Geometry*. Flavors of Geometry, MSRI Publications,
@@ -2334,6 +2361,9 @@ REFERENCES:
 .. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and
             Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
 
+.. [Dy2001] \M. J. Dyer. *On minimal lengths of expressions of Coxeter group elements as
+            products of reflections*. Proc. Amer. Math. Soc. Vol 129 (9) (Sep 2001) pp. 2591-2595
+
 .. _ref-E:
 
 **E**
@@ -2413,6 +2443,11 @@ REFERENCES:
 .. [Epp2008] David Eppstein, *Recognizing partial cubes in quadratic time*,
              J. Graph Algorithms and Applications 15 (2): 269-293, 2011.
              :doi:`10.7155/jgaa.00226`, :arxiv:`0705.1025`.
+
+.. [EPSV2023] Jonathan Komada Eriksen, Lorenz Panny, Jana Sotáková, and Mattia Veroni.
+              Deuring for the People: Supersingular Elliptic Curves with Prescribed
+              Endomorphism Ring in General Characteristic.
+              LuCaNT 2023. https://ia.cr/2023/106
 
 .. [Eri1995] \H. Erikson.  Computational and Combinatorial Aspects
              of Coxeter Groups.  Thesis, 1995.
@@ -4507,6 +4542,10 @@ REFERENCES:
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
 
+.. [Mathas2004] Andrew Mathas.
+                *Matrix units and generic degrees for the Ariki-Koike algebras*.
+                J. Algebra. **281** (2004) pp. 695-730.
+
 .. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
              in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
              405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
@@ -4559,13 +4598,14 @@ REFERENCES:
 .. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order `pq^2 + 1`*,
              Canad. J. Math. 30 (1978) 321-331, :doi:`10.4153/CJM-1978-029-1`.
 
+.. [Mat2012] Yoshitake Matsumoto, *Database of Matroids*, 2012,
+             https://www-imai.is.s.u-tokyo.ac.jp/~ymatsu/matroid/index.html
+
 .. [Mat2015]  \A. Mathas. *Cyclotomic quiver Hecke algebras of type A*,
               in "Modular representation theory of finite and p-adic groups",
               165–266, Lect. Notes Ser. Inst. Math. Sci. Natl. Univ. Singap.,
               **30**, World Sci. Publ., Hackensack, NJ, 2015.
               :mathscinet:`MR3495747`
-
-.. [MatroidDatabase] `Database of Matroids <http://www-imai.is.s.u-tokyo.ac.jp/~ymatsu/matroid/index.html>`_
 
 .. [May1964] \J. P. May, "The cohomology of restricted Lie algebras
              and of Hopf algebras; application to the Steenrod
@@ -4682,6 +4722,12 @@ REFERENCES:
 
 .. [MM2015] \J. Matherne and \G. Muller, *Computing upper cluster algebras*,
             Int. Math. Res. Not. IMRN, 2015, 3121-3149.
+
+.. [MMRS2022] Ruslan G. Marzo, Rafael A. Melo,  Celso C. Ribeiro and
+              Marcio C. Santos: *New formulations and branch-and-cut procedures
+              for the longest induced path problem*. Computers & Operations
+              Research. 139, 105627 (2022)
+              :doi:`10.1016/j.cor.2021.105627`
 
 .. [Moh1988] \B. Mohar, *Isoperimetric inequalities, growth, and the spectrum
              of graphs*, Linear Algebra and its Applications 103 (1988),
@@ -5032,6 +5078,9 @@ REFERENCES:
              vol. 109, n. 13, p. 745--748, Elsevier.
              :doi:`10.1016/j.ipl.2009.03.018`.
              http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf
+
+.. [Oxl1987] James Oxley, *The binary matroids with no 4-wheel minor*, 1987,
+             Transactions of the American Mathematical Society, 301(1), 63-75.
 
 .. [Oxl1992] James Oxley, *Matroid theory*, Oxford University
              Press, 1992.
@@ -6298,6 +6347,8 @@ REFERENCES:
 
 .. [Voi2012] \J. Voight. Identifying the matrix ring: algorithms for
              quaternion algebras and quadratic forms, to appear.
+
+.. [Voi2021] \J. Voight. Quaternion algebras, Springer Nature (2021).
 
 .. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
             Fields. Birkh\"auser, 2006.

@@ -58,7 +58,8 @@ from sage.matrix.matrix cimport Matrix
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_get_mpz
-from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, fmpz_poly_set_coeff_mpz, _fmpz_poly_set_length
+from sage.libs.flint.fmpz_poly cimport fmpz_poly_fit_length, _fmpz_poly_set_length
+from sage.libs.flint.fmpz_poly_sage cimport fmpz_poly_set_coeff_mpz
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
 
 from sage.matrix.matrix_modn_sparse cimport Matrix_modn_sparse
@@ -847,6 +848,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             sage: matrix(ZZ, 1, 1, sparse=True)._charpoly_linbox()
             x
         """
+        cdef mpz_t tmp
         if self._nrows != self._ncols:
             raise ArithmeticError('only valid for square matrix')
 
@@ -869,7 +871,8 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         cdef size_t i
         fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+            tmp = p[0][i].get_mpz_const()
+            fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
         _fmpz_poly_set_length(g._poly, p.size())
 
         del M
@@ -966,9 +969,11 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         sig_off()
 
         cdef size_t i
+        cdef mpz_t tmp
         fmpz_poly_fit_length(g._poly, p.size())
         for i in range(p.size()):
-            fmpz_poly_set_coeff_mpz(g._poly, i, p[0][i].get_mpz_const())
+            tmp = p[0][i].get_mpz_const()
+            fmpz_poly_set_coeff_mpz(g._poly, i, tmp)
         _fmpz_poly_set_length(g._poly, p.size())
 
         del M

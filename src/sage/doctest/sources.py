@@ -238,7 +238,7 @@ class DocTestSource():
                 # Line number refers to the end of the docstring
                 sigon = doctest.Example(sig_on_count_doc_doctest, "0\n", lineno=docstring.count("\n"))
                 sigon.sage_source = sig_on_count_doc_doctest
-                sigon.optional_tags = frozenset()
+                sigon.optional_tags = frozenset(self.file_optional_tags)
                 sigon.probed_tags = frozenset()
                 dt.examples.append(sigon)
             doctests.append(dt)
@@ -798,7 +798,7 @@ class FileDocTestSource(DocTestSource):
         """
         if not os.path.exists(self.path):
             import errno
-            raise IOError(errno.ENOENT, "File does not exist", self.path)
+            raise OSError(errno.ENOENT, "File does not exist", self.path)
         base, filename = os.path.split(self.path)
         _, ext = os.path.splitext(filename)
         if not self.in_lib and ext in ('.py', '.pyx', '.sage', '.spyx'):

@@ -921,7 +921,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         L = floor((max_upper_target - self._epsilon) / self._p) + 1
         if s0 not in self._vertical_fat_s:
             (m0, m1), (M0, M1) = self._vertical_matrix_reduction(s0)
-            D0, D1 = map(lambda y: matrix(self._Zq, [y]), [m0, m1])
+            D0, D1 = (matrix(self._Zq, [y]) for y in [m0, m1])
             targets = [0] * (2 * L)
             for l in reversed(range(L)):
                 targets[2 * l] = max_upper_target - self._p * (L - l)
@@ -1268,7 +1268,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 f = x ** self._delta - lc
                 L = f.splitting_field("a")
                 roots = [r for r, _ in f.change_ring(L).roots()]
-                roots_dict = dict([(r, i) for i, r in enumerate(roots)])
+                roots_dict = {r: i for i, r in enumerate(roots)}
                 rootsfrob = [L.frobenius_endomorphism(self._Fq.degree())(r) for r in roots]
                 m = zero_matrix(len(roots))
                 for i, r in enumerate(roots):

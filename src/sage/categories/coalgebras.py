@@ -10,14 +10,14 @@ Coalgebras
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from .category_types import Category_over_base_ring
-from sage.categories.modules import Modules
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.tensor import TensorProductsCategory
 from sage.categories.dual import DualObjectsCategory
 from sage.categories.filtered_modules import FilteredModulesCategory
-from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.modules import Modules
 from sage.categories.realizations import RealizationsCategory
+from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.tensor import TensorProductsCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
