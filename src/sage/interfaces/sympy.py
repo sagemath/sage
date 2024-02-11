@@ -504,7 +504,7 @@ def _sympysage_function(self):
         Traceback (most recent call last):
         ...
         AttributeError...
-        """
+    """
     fname = self.func.__name__
     func = _sympysage_function_by_name(fname)
     args = [arg._sage_() for arg in self.args]
@@ -1041,7 +1041,7 @@ def _sympysage_relational(self):
         sage: assert (x < 0) == Lt(x, 0)._sage_()
         sage: assert (x <= 0)._sympy_() == Le(sx, 0)
         sage: assert (x <= 0) == Le(x, 0)._sage_()
-     """
+    """
     from operator import eq, ne, gt, lt, ge, le
     from sympy import Eq, Ne, Gt, Ge, Lt, Le
     ops = {Eq: eq, Ne: ne, Gt: gt, Lt: lt, Ge: ge, Le: le}
