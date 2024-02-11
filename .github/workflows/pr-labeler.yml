@@ -17,22 +17,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           CHANGES=$((${{github.event.pull_request.additions}} + ${{github.event.pull_request.deletions}}))
-          echo "Changed files: $CHANGES"
+          echo "Changes Made: $CHANGES"
 
-          THRESHOLD=200
+          MINIMAL_THRESHOLD=50
+          SMALL_THRESHOLD=100
+          MODERATE_THRESHOLD=300
 
           PR_NUMBER="${{ github.event.number }}"
           API_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
           AUTH_HEADER="Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
 
-          if [ "$CHANGES" -le "$THRESHOLD" ]; then
-            LABEL="tiny"
-            DELETE_LABEL="huge"
+          DELETE_LABELS=("minimal" "small" "moderate" "large")
+
+          if [ "$CHANGES" -le "$MINIMAL_THRESHOLD" ]; then
+            LABEL="minimal"
+          elif [ "$CHANGES" -le "$SMALL_THRESHOLD" ]; then
+            LABEL="small"
+          elif [ "$CHANGES" -le "$MODERATE_THRESHOLD" ]; then
+            LABEL="moderate"
           else
-            LABEL="huge"
-            DELETE_LABEL="tiny"
+            LABEL="large"
           fi
+
+          DELETE_LABELS=("${DELETE_LABELS[@]/$LABEL}")
 
           echo "Adding label: $LABEL"
           curl -X POST -H "$AUTH_HEADER" -d "{\"labels\":[\"$LABEL\"]}" "$API_URL"
-          curl -X DELETE -H "$AUTH_HEADER" "$API_URL/$DELETE_LABEL"
+          for DELETE_LABEL in "${DELETE_LABELS[@]}"; do
+              curl -X DELETE -H "$AUTH_HEADER" "$API_URL/$DELETE_LABEL"
+          done
