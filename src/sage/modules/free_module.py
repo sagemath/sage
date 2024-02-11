@@ -2515,7 +2515,7 @@ class FreeModule_generic(Module_free_ambient):
             return sage.rings.integer.Integer(1)
         return self.base_ring().cardinality() ** self.rank()
 
-    __len__ = cardinality # for backward compatibility
+    __len__ = cardinality  # for backward compatibility
 
     def basis(self):
         """
@@ -2532,7 +2532,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         raise NotImplementedError
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of basis elements of ``self``.
 

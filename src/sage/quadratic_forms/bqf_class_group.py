@@ -314,7 +314,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         gens = [BinaryQF(g) for g in gens]
         return AdditiveAbelianGroupWrapper(self, gens, ords)
 
-    def gens(self):
+    def gens(self) -> list:
         r"""
         Return a generating set of this form class group.
 
