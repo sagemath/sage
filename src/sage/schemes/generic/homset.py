@@ -656,7 +656,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         if len(v) == 1:
             v = v[0]
-        return self.codomain()._point(self, v, **kwds)
+        return self.extended_codomain()._point(self, v, **kwds)
 
     def extended_codomain(self):
         """
@@ -692,6 +692,12 @@ class SchemeHomset_points(SchemeHomset_generic):
             X = self.codomain()
         self._extended_codomain = X
         return X
+
+    def zero(self):
+        """
+        Return the identity of the codomain with extended base, if necessary.
+        """
+        return self.extended_codomain().zero()
 
     def _repr_(self):
         """

@@ -183,7 +183,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         inverse = inv
         op = mul
     elif operation in addition_names:
-        identity = a.parent()(0)
+        identity = a.parent().zero()
         inverse = neg
         op = add
     else:
@@ -330,7 +330,7 @@ class multiples:
             self.op = mul
         elif operation in addition_names:
             if P0 is None:
-                P0 = P.parent()(0)
+                P0 = P.parent().zero()
             self.op = add
         else:
             if P0 is None:
@@ -443,7 +443,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     This will return a multiple of the order of P::
 
-        sage: bsgs(P, P.parent()(0), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
+        sage: bsgs(P, P.parent().zero(), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
         69327408
 
     AUTHOR:
@@ -460,7 +460,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         op = mul
     elif operation in addition_names:
         # Should this be replaced with .zero()? With an extra AttributeError handler?
-        identity = a.parent()(0)
+        identity = a.parent().zero()
         inverse = neg
         op = add
     else:
@@ -1010,7 +1010,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     This will return a multiple of the order of P::
 
-        sage: discrete_log_lambda(P.parent()(0), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
+        sage: discrete_log_lambda(P.parent().zero(), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
         ....:                     operation='+')
         69327408
 
@@ -1262,7 +1262,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     if operation in multiplication_names:
         identity = P.parent().one()
     elif operation in addition_names:
-        identity = P.parent()(0)
+        identity = P.parent().zero()
     else:
         if identity is None or inverse is None or op is None:
             raise ValueError("identity, inverse and operation must all be specified")
@@ -1401,7 +1401,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         identity = P.parent().one()
     elif operation in addition_names:
         op = add
-        identity = P.parent()(0)
+        identity = P.parent().zero()
     else:
         if op is None:
             raise ValueError("operation and identity must be specified")
@@ -1581,7 +1581,7 @@ def merge_points(P1, P2, operation='+',
         identity = g1.parent().one()
     elif operation in addition_names:
         op = add
-        identity = g1.parent()(0)
+        identity = g1.parent().zero()
     else:
         if op is None:
             raise ValueError("operation and identity must be specified")
