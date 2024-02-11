@@ -1,0 +1,5 @@
+{
+    "sage.libs.gap.element": {
+        "failed": "https://github.com/sagemath/sage/issues/37289"
+    }
+}
