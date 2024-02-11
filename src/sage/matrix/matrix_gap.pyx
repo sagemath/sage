@@ -63,11 +63,11 @@ cdef class Matrix_gap(Matrix_dense):
 
         sage: rings = [ZZ, QQ, UniversalCyclotomicField(), GF(2), GF(3)]
         sage: rings += [UniversalCyclotomicField()]                                     # needs sage.rings.number_field
-        sage: for ring in rings:
+        sage: for ring in rings:  # known bug: linux (sporadic segfaults, #37295)
         ....:     M = MatrixSpace(ring, 2, implementation='gap')
         ....:     TestSuite(M).run(skip=['_test_construction'])
         ....:     M = MatrixSpace(ring, 2, 3, implementation='gap')
-        ....:     TestSuite(M).run(skip=['_test_construction'])  # known bug: linux (sporadic segfaults, #37295)
+        ....:     TestSuite(M).run(skip=['_test_construction'])
     """
     def __init__(self, parent, entries=None, copy=None, bint coerce=True):
         r"""
