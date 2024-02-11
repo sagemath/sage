@@ -6431,7 +6431,7 @@ from sage.categories.functor import Functor
 
 class SymmetricFunctionsFunctor(ConstructionFunctor):
     """
-    A constructor for free Zinbiel algebras.
+    A constructor for algebras of symmetric functions.
 
     EXAMPLES::
 
