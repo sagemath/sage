@@ -3463,6 +3463,10 @@ REFERENCES:
               Trans. Am. Math. Soc. 375, No. 6, 4411-4427 (2022).
               :arxiv:`1906.09633`, :doi:`10.1090/tran/8606`.
 
+.. [Humphreys08] James E. Humphreys. *Representations of Semisimple Lie
+                 Algebras in the BGG Category* `\mathcal{O}`.
+                 Graduate Studies in Mathematics. Amer. Math. Soc., 2008.
+
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater
               than one. PhD Thesis, Brown University 2007
 
