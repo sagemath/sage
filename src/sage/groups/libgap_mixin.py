@@ -18,6 +18,7 @@ from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
 from sage.groups.class_function import ClassFunction_libgap
 from sage.groups.libgap_wrapper import ElementLibGAP
+from sage.arith.misc import integer_ceil as ceil
 
 class GroupMixinLibGAP():
     def __contains__(self, elt):
@@ -1022,36 +1023,6 @@ def minimum_generating_set(group, gap_based=False):
     from sage.misc.functional import log
     from sage.libs.gap.element import GapElement
 
-    def minimal_generating_set(group):
-        lis = group.AsList()
-        dic = {each:False for each in lis}
-        ans = set()
-        for each in lis:
-            if each==lis[0]:
-                dic[each] = True
-                continue
-            each2 = each*each
-            check = False
-            if not dic[each]:
-                check = True
-                dic[each] = True
-            while each2!=each:
-                if not dic[each2]:
-                    dic[each2] = True
-                    check = True
-                each2 = each2*each
-            for each2 in lis:
-                if dic[each2]:
-                    if not dic[each*each2]:
-                        dic[each*each2] = True
-                        check = True
-                    if not dic[each2*each]:
-                        dic[each2*each] = True
-                        check = True
-            if check:
-                ans.add(each)
-        return ans
-
     if not isinstance(group, GapElement):
         group = group._libgap_()
 
@@ -1080,7 +1051,7 @@ def minimum_generating_set(group, gap_based=False):
     # but for this algorithm we need only one minimal normal subgroup (which is not trivial).
     # TODO: Replace the function with the one that gives only one minimal normal subgroup
     N = group.MinimalNormalSubgroups()[0]
-    n = list(minimal_generating_set(N))
+    n = N.SmallGeneratingSet()
 
     phi = group.NaturalHomomorphismByNormalSubgroup(N)
     GbyN = phi.ImagesSource()
@@ -1105,36 +1076,21 @@ def minimum_generating_set(group, gap_based=False):
             return set(g+[n[0]])
         return set([ele.sage() for ele in g] + [n[0].sage()])
 
-    def gen_combinations(g, N_old, t):
-        # This function is used to generate some combinations (which are required for the algorithm)
-        # of the elements of N_old and g.
-        L = [g]
-        N = [ele for ele in N_old]  # This line is included because N_old does not have slicing method
-        N = N[1:]
-        for i in range(t):
-            newL = []
-            for g in L:
-                for j in range(len(N)):
-                    x = g[:i]
-                    y = g[i]
-                    y = y * (N[j])
-                    x = x + [y]
-                    x = x + g[i+1:]
-                    newL.append(x)
-            L = L + newL
-        return L
+    def gen_combinations(g, N, t):
+        if t>len(g):
+            t = len(g)
+        if t<=0:
+            yield g
+        for go in gen_combinations(g,N,t-1):
+            for j in range(len(N)):
+                gm = go[:t-1] + [go[t-1]*N[j]] + go[t:]
+                yield gm
 
-    t = (13/5 + log(group.Size().sage(), 2)/log(N.Size().sage(), 2))
+    t = ceil((13/5 + log(group.Size().sage(), 2)/log(N.Size().sage(), 2)))
     N_list = N.AsList()
-    if t <= l:
-        for gens in gen_combinations(g, N_list, t):
-            if is_GroupByGenerators(group, gens):
-                if gap_based:
-                    return set(gens)
-                return set([ele.sage() for ele in gens])
 
     for nl in N_list:
-        for raw_gens in gen_combinations(g, N_list, l):
+        for raw_gens in gen_combinations(g, N_list, t):
             if nl==N_list[0]:
                 gens = set(raw_gens)
             else:
