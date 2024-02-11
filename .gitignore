@@ -56,6 +56,7 @@
 /src/pyproject.toml
 /src/Pipfile
 /src/Pipfile.lock
+/src/pyproject.toml
 /Pipfile
 /Pipfile.lock
 
@@ -223,6 +224,7 @@ build/bin/sage-build-env-config
 /pkgs/sagemath-categories/pyproject.toml
 /pkgs/sagemath-environment/pyproject.toml
 /pkgs/sagemath-repl/pyproject.toml
+/pkgs/sagemath-standard/pyproject.toml
 /pkgs/sagemath-objects/requirements.txt
 /pkgs/sagemath-bliss/requirements.txt
 /pkgs/sagemath-coxeter3/requirements.txt
