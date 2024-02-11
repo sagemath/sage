@@ -847,7 +847,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: B = braid_in_segment(glist, p1b, p2b); B              # optional - sirocco
         s5*s3^-1
     """
-    precision1 = {k: v for k, v in precision.items()}
+    precision1 = precision.copy()
     g = prod(glist)
     F1 = g.base_ring()
     x, y = g.parent().gens()
