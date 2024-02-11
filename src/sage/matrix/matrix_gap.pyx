@@ -67,7 +67,7 @@ cdef class Matrix_gap(Matrix_dense):
         ....:     M = MatrixSpace(ring, 2, implementation='gap')
         ....:     TestSuite(M).run(skip=['_test_construction'])
         ....:     M = MatrixSpace(ring, 2, 3, implementation='gap')
-        ....:     TestSuite(M).run(skip=['_test_construction'])
+        ....:     TestSuite(M).run(skip=['_test_construction'])  # known bug: linux (sporadic segfaults, #37295)
     """
     def __init__(self, parent, entries=None, copy=None, bint coerce=True):
         r"""
