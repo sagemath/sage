@@ -195,11 +195,10 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             Nonetheless, there is no guarantee that the set that is acted upon
             will always be cached in such a way, so that following the above
             example is good practice.
-
         """
         if self.G.ncols() != self.underlying_set().nrows():
             raise TypeError("incompatible dimensions %s, %s" %
-                    (self.G.ncols(),  self.underlying_set().nrows()))
+                    (self.G.ncols(), self.underlying_set().nrows()))
         return MatrixSpace(base, self.G.nrows(), self.underlying_set().ncols(),
                            sparse = self.G.is_sparse() and self.underlying_set().is_sparse())
 

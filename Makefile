@@ -50,6 +50,9 @@ SPKG_COLLECT_FILES = build/pkgs/*/type build/pkgs/*/package-version.txt build/pk
 # If configure was run before, rerun it with the old arguments.
 # Otherwise, run configure with argument $PREREQ_OPTIONS.
 build/make/Makefile: configure $(SPKG_COLLECT_FILES) $(CONFIG_FILES:%=%.in)
+	$(MAKE) reconfigure
+
+reconfigure:
 	rm -f config.log
 	mkdir -p logs/pkgs
 	ln -s logs/pkgs/config.log config.log
@@ -339,7 +342,7 @@ list:
 	@$(MAKE) --silent build/make/Makefile >&2
 	@$(MAKE) --silent -f build/make/Makefile SAGE_PKGCONFIG=dummy $@
 
-.PHONY: default build dist install micro_release \
+.PHONY: default build dist install micro_release reconfigure \
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \

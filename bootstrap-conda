@@ -115,6 +115,7 @@ echo >&2 $0:$LINENO: generate conda environment files
     (
         sed 's/name: sage/name: sage-dev/' src/environment-template.yml
         echo "  # Additional dev tools"
+        echo "  - conda-lock"
         for pkg in $DEVELOP_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done

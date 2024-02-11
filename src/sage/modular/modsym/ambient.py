@@ -94,7 +94,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.rational_field import QQ
-from sage.rings.ring import Ring
+from sage.categories.fields import Fields
 from sage.structure.factorization import Factorization
 from sage.structure.formal_sum import FormalSum
 
@@ -168,8 +168,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             raise TypeError("group must be a congruence subgroup")
 
         sign = int(sign)
-        if not isinstance(base_ring, Ring) and base_ring.is_field():
-            raise TypeError("base_ring must be a commutative ring")
+        if base_ring not in Fields():
+            raise TypeError("base_ring must be a field")
 
         if character is None and arithgroup.is_Gamma0(group):
             character = TrivialCharacter(group.level(), base_ring)
@@ -2983,7 +2983,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             self._hecke_matrices = {}
         except KeyError:
             pass
-        tm = verbose("Computing Hecke operator T_%s" % p)
+        tm = verbose(f"Computing Hecke operator T_{p}")
 
         H = heilbronn.HeilbronnCremona(p)
         # H = heilbronn.HeilbronnMerel(p)
@@ -3150,7 +3150,7 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
 
         sage: ModularSymbols(Gamma1(7),3)
         Modular Symbols space of dimension 8 for Gamma_1(7) of weight 3 with sign 0 over Rational Field
-        """
+    """
 
     def __init__(self, level, weight, sign, F, custom_init=None, category=None):
         r"""

@@ -74,7 +74,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
             sage: CartanType(['G',2]).root_system().ambient_space().simple_roots()
             Finite family {1: (0, 1, -1), 2: (1, -2, 1)}
-         """
+        """
         return self.monomial(1)-self.monomial(2) if i == 1 else self.monomial(0)-2*self.monomial(1)+self.monomial(2)
 
     def positive_roots(self):
