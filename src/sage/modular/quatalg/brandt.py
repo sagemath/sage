@@ -1365,7 +1365,10 @@ class BrandtModule_class(AmbientHeckeModule):
                             ideals_theta[J_theta] = [J]
                         verbose("found %s of %s ideals" % (len(ideals), self.dimension()), level=2)
                         if len(ideals) >= self.dimension():
-                            ideals = tuple(sorted(ideals))
+                            # order by basis matrix (as ideals were previously
+                            # ordered) for backward compatibility and
+                            # deterministic order of the output
+                            ideals = tuple(sorted(ideals, key=lambda x: x.basis_matrix()))
                             self.__right_ideals = ideals
                             return ideals
                         got_something_new = True

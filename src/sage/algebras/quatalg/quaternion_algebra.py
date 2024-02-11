@@ -2585,8 +2585,35 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: I != I                # indirect doctest
             False
+
+        TESTS::
+
+            sage: B = QuaternionAlgebra(QQ,-1,-11)
+            sage: i,j,k = B.gens()
+            sage: I = B.ideal([1,i,j,i*j])
+            sage: I == I
+            True
+            sage: O = B.ideal([1,i,(i+j)/2,(1+i*j)/2])
+            sage: I <= O
+            True
+            sage: I >= O
+            False
+            sage: I != O
+            True
+            sage: I == O
+            False
+            sage: I != I
+            False
+            sage: I < I
+            False
+            sage: I < O
+            True
+            sage: I <= I
+            True
+            sage: O >= O
+            True
         """
-        return self.basis_matrix()._richcmp_(right.basis_matrix(), op)
+        return self.free_module().__richcmp__(right.free_module(), op)
 
     def __hash__(self):
         """
