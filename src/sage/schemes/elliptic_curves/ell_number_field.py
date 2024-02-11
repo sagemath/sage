@@ -2117,7 +2117,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<t> = NumberField(x^2 + 2*x + 10)
             sage: EK = E.base_extend(K)
             sage: EK.torsion_points()
-            [(-7 : -5*t - 2 : 1),
+            [(0 : 1 : 0),
+             (-7 : -5*t - 2 : 1),
              (-7 : 5*t + 8 : 1),
              (-13/4 : 9/8 : 1),
              (-2 : -2 : 1),
@@ -2127,7 +2128,6 @@ class EllipticCurve_number_field(EllipticCurve_field):
              (-1 : 0 : 1),
              (t : t - 5 : 1),
              (t : -2*t + 4 : 1),
-             (0 : 1 : 0),
              (1/2 : -5/4*t - 2 : 1),
              (1/2 : 5/4*t + 1/2 : 1),
              (3 : -2 : 1),
@@ -2139,7 +2139,12 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<i> = QuadraticField(-1)
             sage: EK = EllipticCurve(K, [0,0,0,0,-1])
             sage: EK.torsion_points()
-             [(-2 : -3*i : 1), (-2 : 3*i : 1), (0 : -i : 1), (0 : i : 1), (0 : 1 : 0), (1 : 0 : 1)]
+             [(0 : 1 : 0),
+              (-2 : -3*i : 1),
+              (-2 : 3*i : 1),
+              (0 : -i : 1),
+              (0 : i : 1),
+              (1 : 0 : 1)]
         """
         T = self.torsion_subgroup()  # cached
         return sorted(T.points())           # these are also cached in T
